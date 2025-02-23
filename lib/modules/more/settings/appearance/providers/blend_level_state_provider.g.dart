@@ -12,14 +12,15 @@ String _$blendLevelStateHash() => r'ceb7965073b2d6676a91acbe662bfa881f2f5e30';
 @ProviderFor(BlendLevelState)
 final blendLevelStateProvider =
     AutoDisposeNotifierProvider<BlendLevelState, double>.internal(
-  BlendLevelState.new,
-  name: r'blendLevelStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$blendLevelStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      BlendLevelState.new,
+      name: r'blendLevelStateProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$blendLevelStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$BlendLevelState = AutoDisposeNotifier<double>;
 // ignore_for_file: type=lint

@@ -18,7 +18,7 @@ class JsDomSelector {
         'body' => doc.body,
         'documentElement' => doc.documentElement,
         'head' => doc.head,
-        _ => doc.parent
+        _ => doc.parent,
       };
       _elementKey++;
       _elements[_elementKey] = element;
@@ -28,7 +28,10 @@ class JsDomSelector {
       final input = args[0];
       final type = args[1];
       final doc = parse(input);
-      final res = switch (type) { 'text' => doc.text, _ => doc.outerHtml };
+      final res = switch (type) {
+        'text' => doc.text,
+        _ => doc.outerHtml,
+      };
       return res ?? "";
     });
     runtime.onMessage('get_element_string', (dynamic args) {
@@ -45,7 +48,7 @@ class JsDomSelector {
         'getSrc' => element?.getSrc,
         'getImg' => element?.getImg,
         'getHref' => element?.getHref,
-        _ => element?.getDataSrc
+        _ => element?.getDataSrc,
       };
       return res ?? "";
     });
@@ -69,7 +72,7 @@ class JsDomSelector {
       final ele = _elements[key];
       final element = switch (type) {
         'nextElementSibling' => ele?.nextElementSibling,
-        _ => ele?.previousElementSibling
+        _ => ele?.previousElementSibling,
       };
       _elementKey++;
       _elements[_elementKey] = element;
@@ -124,7 +127,7 @@ class JsDomSelector {
       final elements = switch (type) {
         'children' => doc.children,
         'getElementsByTagName' => doc.getElementsByTagName(name),
-        _ => doc.getElementsByClassName(name)
+        _ => doc.getElementsByClassName(name),
       };
       List<int> elementKeys = [];
       for (var element in elements) {
@@ -142,7 +145,7 @@ class JsDomSelector {
       final elements = switch (type) {
         'children' => element?.children,
         'getElementsByTagName' => element?.getElementsByTagName(name),
-        _ => element?.getElementsByClassName(name)
+        _ => element?.getElementsByClassName(name),
       };
       List<int> elementKeys = [];
       for (var element in elements ?? []) {

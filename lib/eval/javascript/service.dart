@@ -84,8 +84,10 @@ var extention = new DefaultExtension();
 
   @override
   Map<String, String> getHeaders() {
-    return _extensionCall<Map>('getHeaders(`${source.baseUrl ?? ''}`)', {})
-        .toMapStringString!;
+    return _extensionCall<Map>(
+      'getHeaders(`${source.baseUrl ?? ''}`)',
+      {},
+    ).toMapStringString!;
   }
 
   @override
@@ -106,14 +108,18 @@ var extention = new DefaultExtension();
   @override
   Future<MPages> getLatestUpdates(int page) async {
     return MPages.fromJson(
-        await _extensionCallAsync('getLatestUpdates($page)', {}));
+      await _extensionCallAsync('getLatestUpdates($page)', {}),
+    );
   }
 
   @override
   Future<MPages> search(String query, int page, List<dynamic> filters) async {
-    return MPages.fromJson(await _extensionCallAsync(
+    return MPages.fromJson(
+      await _extensionCallAsync(
         'search("$query",$page,${jsonEncode(filterValuesListToJson(filters))})',
-        {}));
+        {},
+      ),
+    );
   }
 
   @override
@@ -124,17 +130,21 @@ var extention = new DefaultExtension();
   @override
   Future<List<PageUrl>> getPageList(String url) async {
     return (await _extensionCallAsync<List>('getPageList(`$url`)', []))
-        .map((e) => e is String
-            ? PageUrl(e.trim())
-            : PageUrl.fromJson((e as Map).toMapStringDynamic!))
+        .map(
+          (e) =>
+              e is String
+                  ? PageUrl(e.trim())
+                  : PageUrl.fromJson((e as Map).toMapStringDynamic!),
+        )
         .toList();
   }
 
   @override
   Future<List<Video>> getVideoList(String url) async {
     return (await _extensionCallAsync<List>('getVideoList(`$url`)', []))
-        .where((element) =>
-            element['url'] != null && element['originalUrl'] != null)
+        .where(
+          (element) => element['url'] != null && element['originalUrl'] != null,
+        )
         .map((e) => Video.fromJson(e))
         .toList()
         .toSet()
@@ -144,18 +154,24 @@ var extention = new DefaultExtension();
   @override
   Future<String> getHtmlContent(String url) async {
     _init();
-    final res = (await runtime.handlePromise(await runtime.evaluateAsync(
-            'jsonStringify(() => extention.getHtmlContent(`$url`))')))
-        .stringResult;
+    final res =
+        (await runtime.handlePromise(
+          await runtime.evaluateAsync(
+            'jsonStringify(() => extention.getHtmlContent(`$url`))',
+          ),
+        )).stringResult;
     return res;
   }
 
   @override
   Future<String> cleanHtmlContent(String html) async {
     _init();
-    final res = (await runtime.handlePromise(await runtime.evaluateAsync(
-            'jsonStringify(() => extention.cleanHtmlContent(`$html`))')))
-        .stringResult;
+    final res =
+        (await runtime.handlePromise(
+          await runtime.evaluateAsync(
+            'jsonStringify(() => extention.cleanHtmlContent(`$html`))',
+          ),
+        )).stringResult;
     return res;
   }
 
@@ -174,9 +190,10 @@ var extention = new DefaultExtension();
 
   @override
   List<SourcePreference> getSourcePreferences() {
-    return _extensionCall('getSourcePreferences()', [])
-        .map((e) => SourcePreference.fromJson(e)..sourceId = source.id)
-        .toList();
+    return _extensionCall(
+      'getSourcePreferences()',
+      [],
+    ).map((e) => SourcePreference.fromJson(e)..sourceId = source.id).toList();
   }
 
   T _extensionCall<T>(String call, T def) {
@@ -200,7 +217,8 @@ var extention = new DefaultExtension();
 
     try {
       final promised = await runtime.handlePromise(
-          await runtime.evaluateAsync('jsonStringify(() => extention.$call)'));
+        await runtime.evaluateAsync('jsonStringify(() => extention.$call)'),
+      );
 
       return jsonDecode(promised.stringResult) as T;
     } catch (_) {

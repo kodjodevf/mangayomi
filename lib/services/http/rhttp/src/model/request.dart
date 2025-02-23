@@ -32,13 +32,14 @@ class BaseHttpRequest {
   /// This is not const to allow for modifications.
   final Map<String, dynamic> additionalData = {};
 
-  BaseHttpRequest(
-      {required this.method,
-      required this.url,
-      required this.query,
-      required this.headers,
-      required this.body,
-      required this.cancelToken});
+  BaseHttpRequest({
+    required this.method,
+    required this.url,
+    required this.query,
+    required this.headers,
+    required this.body,
+    required this.cancelToken,
+  });
 }
 
 /// An HTTP request with the information which client to use.
@@ -50,13 +51,14 @@ class HttpRequest extends BaseHttpRequest {
   /// This is **only** used if [client] is `null`.
   final ClientSettings? settings;
 
-  HttpRequest(
-      {required this.client,
-      required this.settings,
-      required super.method,
-      required super.url,
-      required super.query,
-      required super.headers,
-      required super.body,
-      required super.cancelToken});
+  HttpRequest({
+    required this.client,
+    required this.settings,
+    required super.method,
+    required super.url,
+    required super.query,
+    required super.headers,
+    required super.body,
+    required super.cancelToken,
+  });
 }

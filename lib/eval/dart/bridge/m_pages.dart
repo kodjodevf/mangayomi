@@ -8,39 +8,54 @@ class $MPages implements MPages, $Instance {
   $MPages.wrap(this.$value) : _superclass = $Object($value);
 
   static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MPages'));
+    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MPages'),
+  );
 
-  static const $declaration = BridgeClassDef(BridgeClassType($type),
-      constructors: {
-        '': BridgeConstructorDef(
-            BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [
-          BridgeParameter(
+  static const $declaration = BridgeClassDef(
+    BridgeClassType($type),
+    constructors: {
+      '': BridgeConstructorDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation($type),
+          params: [
+            BridgeParameter(
               'list',
               BridgeTypeAnnotation(
-                  BridgeTypeRef(CoreTypes.list, [$MManga.$type])),
-              false),
-          BridgeParameter(
+                BridgeTypeRef(CoreTypes.list, [$MManga.$type]),
+              ),
+              false,
+            ),
+            BridgeParameter(
               'hasNextPage',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool),
-                  nullable: true),
-              true),
-        ]))
-      },
-      fields: {
-        'list': BridgeFieldDef(
-          BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list, [$MManga.$type])),
+              BridgeTypeAnnotation(
+                BridgeTypeRef(CoreTypes.bool),
+                nullable: true,
+              ),
+              true,
+            ),
+          ],
         ),
-        'hasNextPage': BridgeFieldDef(BridgeTypeAnnotation(
-            BridgeTypeRef(CoreTypes.bool),
-            nullable: true)),
-      },
-      wrap: true);
+      ),
+    },
+    fields: {
+      'list': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list, [$MManga.$type])),
+      ),
+      'hasNextPage': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool), nullable: true),
+      ),
+    },
+    wrap: true,
+  );
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
     List<$Value> list = args[0]!.$value;
-    return $MPages.wrap(MPages(
+    return $MPages.wrap(
+      MPages(
         list: list.map((e) => e as MManga).toList(),
-        hasNextPage: args[1]?.$value ?? false));
+        hasNextPage: args[1]?.$value ?? false,
+      ),
+    );
   }
 
   @override
@@ -86,7 +101,7 @@ class $MPages implements MPages, $Instance {
 
   @override
   Map<String, dynamic> toJson() => {
-        'list': list.map((v) => v.toJson()).toList(),
-        'hasNextPage': hasNextPage,
-      };
+    'list': list.map((v) => v.toJson()).toList(),
+    'hasNextPage': hasNextPage,
+  };
 }

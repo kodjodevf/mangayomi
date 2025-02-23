@@ -14,7 +14,8 @@ class MarkEpisodeAsSeenTypeState extends _$MarkEpisodeAsSeenTypeState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-        () => isar.settings.putSync(settings!..markEpisodeAsSeenType = value));
+      () => isar.settings.putSync(settings!..markEpisodeAsSeenType = value),
+    );
   }
 }
 
@@ -29,7 +30,8 @@ class DefaultSkipIntroLengthState extends _$DefaultSkipIntroLengthState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-        () => isar.settings.putSync(settings!..defaultSkipIntroLength = value));
+      () => isar.settings.putSync(settings!..defaultSkipIntroLength = value),
+    );
   }
 }
 
@@ -44,8 +46,11 @@ class DefaultDoubleTapToSkipLengthState
   void set(int value) {
     final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(() =>
-        isar.settings.putSync(settings!..defaultDoubleTapToSkipLength = value));
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!..defaultDoubleTapToSkipLength = value,
+      ),
+    );
   }
 }
 
@@ -60,7 +65,8 @@ class DefaultPlayBackSpeedState extends _$DefaultPlayBackSpeedState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-        () => isar.settings.putSync(settings!..defaultPlayBackSpeed = value));
+      () => isar.settings.putSync(settings!..defaultPlayBackSpeed = value),
+    );
   }
 }
 
@@ -75,7 +81,8 @@ class FullScreenPlayerState extends _$FullScreenPlayerState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-        () => isar.settings.putSync(settings!..fullScreenPlayer = value));
+      () => isar.settings.putSync(settings!..fullScreenPlayer = value),
+    );
   }
 }
 
@@ -90,7 +97,8 @@ class EnableAniSkipState extends _$EnableAniSkipState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-        () => isar.settings.putSync(settings!..enableAniSkip = value));
+      () => isar.settings.putSync(settings!..enableAniSkip = value),
+    );
   }
 }
 
@@ -105,7 +113,8 @@ class EnableAutoSkipState extends _$EnableAutoSkipState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-        () => isar.settings.putSync(settings!..enableAutoSkip = value));
+      () => isar.settings.putSync(settings!..enableAutoSkip = value),
+    );
   }
 }
 
@@ -120,7 +129,8 @@ class AniSkipTimeoutLengthState extends _$AniSkipTimeoutLengthState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-        () => isar.settings.putSync(settings!..aniSkipTimeoutLength = value));
+      () => isar.settings.putSync(settings!..aniSkipTimeoutLength = value),
+    );
   }
 }
 
@@ -135,6 +145,7 @@ class UseLibassState extends _$UseLibassState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-        () => isar.settings.putSync(settings!..useLibass = value));
+      () => isar.settings.putSync(settings!..useLibass = value),
+    );
   }
 }

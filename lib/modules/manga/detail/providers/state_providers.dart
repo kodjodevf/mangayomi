@@ -88,18 +88,15 @@ class SortChapterState extends _$SortChapterState {
             .where((element) => element.mangaId == mangaId)
             .toList()
             .firstOrNull ??
-        SortChapter(
-          mangaId: mangaId,
-          index: 1,
-          reverse: false,
-        );
+        SortChapter(mangaId: mangaId, index: 1, reverse: false);
   }
 
   void update(bool reverse, int index) {
-    var value = SortChapter()
-      ..index = index
-      ..mangaId = mangaId
-      ..reverse = state.index == index ? !reverse : reverse;
+    var value =
+        SortChapter()
+          ..index = index
+          ..mangaId = mangaId
+          ..reverse = state.index == index ? !reverse : reverse;
     final settings = isar.settings.getSync(227)!;
     List<SortChapter>? sortChapterList = [];
     for (var sortChapter in settings.sortChapterList!) {
@@ -140,17 +137,15 @@ class ChapterFilterDownloadedState extends _$ChapterFilterDownloadedState {
                 .where((element) => element.mangaId == mangaId)
                 .toList()
                 .firstOrNull ??
-            ChapterFilterDownloaded(
-              mangaId: mangaId,
-              type: 0,
-            ))
+            ChapterFilterDownloaded(mangaId: mangaId, type: 0))
         .type!;
   }
 
   void setType(int type) {
-    var value = ChapterFilterDownloaded()
-      ..type = type
-      ..mangaId = mangaId;
+    var value =
+        ChapterFilterDownloaded()
+          ..type = type
+          ..mangaId = mangaId;
     final settings = isar.settings.getSync(227)!;
     List<ChapterFilterDownloaded>? chapterFilterDownloadedList = [];
     for (var filterChapter in settings.chapterFilterDownloadedList!) {
@@ -161,7 +156,8 @@ class ChapterFilterDownloadedState extends _$ChapterFilterDownloadedState {
     chapterFilterDownloadedList.add(value);
     isar.writeTxnSync(() {
       isar.settings.putSync(
-          settings..chapterFilterDownloadedList = chapterFilterDownloadedList);
+        settings..chapterFilterDownloadedList = chapterFilterDownloadedList,
+      );
     });
 
     state = type;
@@ -193,17 +189,15 @@ class ChapterFilterUnreadState extends _$ChapterFilterUnreadState {
                 .where((element) => element.mangaId == mangaId)
                 .toList()
                 .firstOrNull ??
-            ChapterFilterUnread(
-              mangaId: mangaId,
-              type: 0,
-            ))
+            ChapterFilterUnread(mangaId: mangaId, type: 0))
         .type!;
   }
 
   void setType(int type) {
-    var value = ChapterFilterUnread()
-      ..type = type
-      ..mangaId = mangaId;
+    var value =
+        ChapterFilterUnread()
+          ..type = type
+          ..mangaId = mangaId;
     final settings = isar.settings.getSync(227)!;
     List<ChapterFilterUnread>? chapterFilterUnreadList = [];
     for (var filterChapter in settings.chapterFilterUnreadList!) {
@@ -213,8 +207,9 @@ class ChapterFilterUnreadState extends _$ChapterFilterUnreadState {
     }
     chapterFilterUnreadList.add(value);
     isar.writeTxnSync(() {
-      isar.settings
-          .putSync(settings..chapterFilterUnreadList = chapterFilterUnreadList);
+      isar.settings.putSync(
+        settings..chapterFilterUnreadList = chapterFilterUnreadList,
+      );
     });
     state = type;
   }
@@ -245,17 +240,15 @@ class ChapterFilterBookmarkedState extends _$ChapterFilterBookmarkedState {
                 .where((element) => element.mangaId == mangaId)
                 .toList()
                 .firstOrNull ??
-            ChapterFilterBookmarked(
-              mangaId: mangaId,
-              type: 0,
-            ))
+            ChapterFilterBookmarked(mangaId: mangaId, type: 0))
         .type!;
   }
 
   void setType(int type) {
-    var value = ChapterFilterBookmarked()
-      ..type = type
-      ..mangaId = mangaId;
+    var value =
+        ChapterFilterBookmarked()
+          ..type = type
+          ..mangaId = mangaId;
     final settings = isar.settings.getSync(227)!;
     List<ChapterFilterBookmarked>? chapterFilterBookmarkedList = [];
     for (var filterChapter in settings.chapterFilterBookmarkedList!) {
@@ -266,7 +259,8 @@ class ChapterFilterBookmarkedState extends _$ChapterFilterBookmarkedState {
     chapterFilterBookmarkedList.add(value);
     isar.writeTxnSync(() {
       isar.settings.putSync(
-          settings..chapterFilterBookmarkedList = chapterFilterBookmarkedList);
+        settings..chapterFilterBookmarkedList = chapterFilterBookmarkedList,
+      );
     });
     state = type;
   }
@@ -286,13 +280,16 @@ class ChapterFilterBookmarkedState extends _$ChapterFilterBookmarkedState {
 class ChapterFilterResultState extends _$ChapterFilterResultState {
   @override
   bool build({required Manga manga}) {
-    final downloadFilterType =
-        ref.watch(chapterFilterDownloadedStateProvider(mangaId: manga.id!));
-    final unreadFilterType =
-        ref.watch(chapterFilterUnreadStateProvider(mangaId: manga.id!));
+    final downloadFilterType = ref.watch(
+      chapterFilterDownloadedStateProvider(mangaId: manga.id!),
+    );
+    final unreadFilterType = ref.watch(
+      chapterFilterUnreadStateProvider(mangaId: manga.id!),
+    );
 
-    final bookmarkedFilterType =
-        ref.watch(chapterFilterBookmarkedStateProvider(mangaId: manga.id!));
+    final bookmarkedFilterType = ref.watch(
+      chapterFilterBookmarkedStateProvider(mangaId: manga.id!),
+    );
     final scanlators = ref.watch(scanlatorsFilterStateProvider(manga));
     return downloadFilterType == 0 &&
         unreadFilterType == 0 &&
@@ -313,8 +310,14 @@ class ChapterSetIsBookmarkState extends _$ChapterSetIsBookmarkState {
         chapter.isBookmarked = !chapter.isBookmarked!;
         isar.chapters.putSync(chapter..manga.value = manga);
         chapter.manga.saveSync();
-        ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
-            ActionType.updateChapter, chapter.id, chapter.toJson(), false);
+        ref
+            .read(synchingProvider(syncId: 1).notifier)
+            .addChangedPart(
+              ActionType.updateChapter,
+              chapter.id,
+              chapter.toJson(),
+              false,
+            );
       }
     });
     ref.read(isLongPressedStateProvider.notifier).update(false);
@@ -334,8 +337,14 @@ class ChapterSetIsReadState extends _$ChapterSetIsReadState {
         chapter.isRead = !chapter.isRead!;
         isar.chapters.putSync(chapter..manga.value = manga);
         chapter.manga.saveSync();
-        ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
-            ActionType.updateChapter, chapter.id, chapter.toJson(), false);
+        ref
+            .read(synchingProvider(syncId: 1).notifier)
+            .addChangedPart(
+              ActionType.updateChapter,
+              chapter.id,
+              chapter.toJson(),
+              false,
+            );
       }
     });
     ref.read(isLongPressedStateProvider.notifier).update(false);
@@ -402,9 +411,10 @@ class ScanlatorsFilterState extends _$ScanlatorsFilterState {
 
   void set(List<String> filterScanlators) async {
     final settings = isar.settings.getSync(227)!;
-    var value = FilterScanlator()
-      ..scanlators = filterScanlators
-      ..mangaId = manga.id;
+    var value =
+        FilterScanlator()
+          ..scanlators = filterScanlators
+          ..mangaId = manga.id;
     List<FilterScanlator>? filterScanlatorList = [];
     for (var filterScanlator in settings.filterScanlatorList ?? []) {
       if (filterScanlator.mangaId != manga.id) {
@@ -413,8 +423,9 @@ class ScanlatorsFilterState extends _$ScanlatorsFilterState {
     }
     filterScanlatorList.add(value);
     isar.writeTxnSync(() {
-      isar.settings
-          .putSync(settings..filterScanlatorList = filterScanlatorList);
+      isar.settings.putSync(
+        settings..filterScanlatorList = filterScanlatorList,
+      );
     });
     state = (_getScanlators(), _getFilterScanlator()!, filterScanlators);
   }
@@ -437,7 +448,10 @@ class ScanlatorsFilterState extends _$ScanlatorsFilterState {
     } else {
       scanlatorFilteredList.add(scanlator);
     }
-    state =
-        (_getScanlators(), _getFilterScanlator() ?? [], scanlatorFilteredList);
+    state = (
+      _getScanlators(),
+      _getFilterScanlator() ?? [],
+      scanlatorFilteredList,
+    );
   }
 }

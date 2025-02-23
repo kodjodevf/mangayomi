@@ -8,13 +8,14 @@ class CustomFloatingActionBtn extends StatelessWidget {
   final double width;
   final double textWidth;
 
-  const CustomFloatingActionBtn(
-      {super.key,
-      required this.isExtended,
-      required this.onPressed,
-      required this.label,
-      required this.width,
-      required this.textWidth});
+  const CustomFloatingActionBtn({
+    super.key,
+    required this.isExtended,
+    required this.onPressed,
+    required this.label,
+    required this.width,
+    required this.textWidth,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +32,7 @@ class CustomFloatingActionBtn extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Icon(
-                  Icons.play_arrow,
-                  color: Colors.white,
-                ),
+                const Icon(Icons.play_arrow, color: Colors.white),
                 AnimatedContainer(
                   curve: Curves.easeIn,
                   width: !isExtended ? 0 : 5,

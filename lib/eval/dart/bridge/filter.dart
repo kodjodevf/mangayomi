@@ -6,26 +6,38 @@ class $FilterList implements FilterList, $Instance {
   $FilterList.wrap(this.$value) : _superclass = $Object($value);
 
   static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'FilterList'));
+    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'FilterList'),
+  );
 
-  static const $declaration = BridgeClassDef(BridgeClassType($type),
-      constructors: {
-        '': BridgeConstructorDef(
-            BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [
-          BridgeParameter(
+  static const $declaration = BridgeClassDef(
+    BridgeClassType($type),
+    constructors: {
+      '': BridgeConstructorDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation($type),
+          params: [
+            BridgeParameter(
               'filters',
-              BridgeTypeAnnotation(BridgeTypeRef(
-                  CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])),
-              false),
-        ]))
-      },
-      fields: {
-        'filters': BridgeFieldDef(
-          BridgeTypeAnnotation(BridgeTypeRef(
-              CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])),
+              BridgeTypeAnnotation(
+                BridgeTypeRef(CoreTypes.list, [
+                  BridgeTypeRef(CoreTypes.dynamic),
+                ]),
+              ),
+              false,
+            ),
+          ],
         ),
-      },
-      wrap: true);
+      ),
+    },
+    fields: {
+      'filters': BridgeFieldDef(
+        BridgeTypeAnnotation(
+          BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)]),
+        ),
+      ),
+    },
+    wrap: true,
+  );
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
     return $FilterList.wrap(args[0]!.$value);
@@ -57,9 +69,10 @@ class $FilterList implements FilterList, $Instance {
   void $setProperty(Runtime runtime, String identifier, $Value value) {
     switch (identifier) {
       case 'filters':
-        $value.filters = (value.$reified as List)
-            .map((e) => e is $Value ? e.$reified : e)
-            .toList();
+        $value.filters =
+            (value.$reified as List)
+                .map((e) => e is $Value ? e.$reified : e)
+                .toList();
       default:
         _superclass.$setProperty(runtime, identifier, value);
     }
@@ -81,42 +94,66 @@ class $SelectFilter implements SelectFilter, $Instance {
   $SelectFilter.wrap(this.$value) : _superclass = $Object($value);
 
   static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'SelectFilter'));
+    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'SelectFilter'),
+  );
 
-  static const $declaration = BridgeClassDef(BridgeClassType($type),
-      constructors: {
-        '': BridgeConstructorDef(
-            BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [
-          BridgeParameter('type',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('name',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('state',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)), false),
-          BridgeParameter(
+  static const $declaration = BridgeClassDef(
+    BridgeClassType($type),
+    constructors: {
+      '': BridgeConstructorDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation($type),
+          params: [
+            BridgeParameter(
+              'type',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+            BridgeParameter(
+              'name',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+            BridgeParameter(
+              'state',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)),
+              false,
+            ),
+            BridgeParameter(
               'values',
-              BridgeTypeAnnotation(BridgeTypeRef(
-                  CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])),
-              false),
-        ]))
-      },
-      fields: {
-        'type': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'name': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'state': BridgeFieldDef(BridgeTypeAnnotation(
-          BridgeTypeRef(CoreTypes.int),
-        )),
-        'values': BridgeFieldDef(
-          BridgeTypeAnnotation(BridgeTypeRef(
-              CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])),
+              BridgeTypeAnnotation(
+                BridgeTypeRef(CoreTypes.list, [
+                  BridgeTypeRef(CoreTypes.dynamic),
+                ]),
+              ),
+              false,
+            ),
+          ],
         ),
-      },
-      wrap: true);
+      ),
+    },
+    fields: {
+      'type': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'name': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'state': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)),
+      ),
+      'values': BridgeFieldDef(
+        BridgeTypeAnnotation(
+          BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)]),
+        ),
+      ),
+    },
+    wrap: true,
+  );
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $SelectFilter.wrap(SelectFilter(
+    return $SelectFilter.wrap(
+      SelectFilter(
         args[0]!.$value,
         args[1]!.$value,
         args[2]!.$value,
@@ -128,15 +165,18 @@ class $SelectFilter implements SelectFilter, $Instance {
               map = value.map((key, value) => MapEntry(key.toString(), value));
               if (map['type'] == 'SelectOption') {
                 final filter = map['filter'] as Map;
-                return SelectFilterOption.fromJson(filter
-                    .map((key, value) => MapEntry(key.toString(), value)));
+                return SelectFilterOption.fromJson(
+                  filter.map((key, value) => MapEntry(key.toString(), value)),
+                );
               }
             }
             return value;
           }
           return e;
         }).toList(),
-        null));
+        null,
+      ),
+    );
   }
 
   @override
@@ -222,30 +262,46 @@ class $SelectFilter implements SelectFilter, $Instance {
 class $SelectFilterOption implements SelectFilterOption, $Instance {
   $SelectFilterOption.wrap(this.$value) : _superclass = $Object($value);
 
-  static const $type = BridgeTypeRef(BridgeTypeSpec(
-      'package:mangayomi/bridge_lib.dart', 'SelectFilterOption'));
+  static const $type = BridgeTypeRef(
+    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'SelectFilterOption'),
+  );
 
-  static const $declaration = BridgeClassDef(BridgeClassType($type),
-      constructors: {
-        '': BridgeConstructorDef(
-            BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [
-          BridgeParameter('name',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('value',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-        ]))
-      },
-      fields: {
-        'name': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'value': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-      },
-      wrap: true);
+  static const $declaration = BridgeClassDef(
+    BridgeClassType($type),
+    constructors: {
+      '': BridgeConstructorDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation($type),
+          params: [
+            BridgeParameter(
+              'name',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+            BridgeParameter(
+              'value',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+          ],
+        ),
+      ),
+    },
+    fields: {
+      'name': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'value': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+    },
+    wrap: true,
+  );
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $SelectFilterOption
-        .wrap(SelectFilterOption(args[0]!.$value, args[1]!.$value, null));
+    return $SelectFilterOption.wrap(
+      SelectFilterOption(args[0]!.$value, args[1]!.$value, null),
+    );
   }
 
   @override
@@ -313,25 +369,37 @@ class $SeparatorFilter implements SeparatorFilter, $Instance {
   $SeparatorFilter.wrap(this.$value) : _superclass = $Object($value);
 
   static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'SeparatorFilter'));
+    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'SeparatorFilter'),
+  );
 
-  static const $declaration = BridgeClassDef(BridgeClassType($type),
-      constructors: {
-        '': BridgeConstructorDef(
-            BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [
-          BridgeParameter('type',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), true),
-        ]))
-      },
-      fields: {
-        'type': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-      },
-      wrap: true);
+  static const $declaration = BridgeClassDef(
+    BridgeClassType($type),
+    constructors: {
+      '': BridgeConstructorDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation($type),
+          params: [
+            BridgeParameter(
+              'type',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              true,
+            ),
+          ],
+        ),
+      ),
+    },
+    fields: {
+      'type': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+    },
+    wrap: true,
+  );
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $SeparatorFilter
-        .wrap(SeparatorFilter(null, type: args[0]?.$value ?? ''));
+    return $SeparatorFilter.wrap(
+      SeparatorFilter(null, type: args[0]?.$value ?? ''),
+    );
   }
 
   @override
@@ -388,29 +456,45 @@ class $HeaderFilter implements HeaderFilter, $Instance {
   $HeaderFilter.wrap(this.$value) : _superclass = $Object($value);
 
   static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'HeaderFilter'));
+    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'HeaderFilter'),
+  );
 
-  static const $declaration = BridgeClassDef(BridgeClassType($type),
-      constructors: {
-        '': BridgeConstructorDef(
-            BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [
-          BridgeParameter('name',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('type',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), true),
-        ]))
-      },
-      fields: {
-        'name': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'type': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-      },
-      wrap: true);
+  static const $declaration = BridgeClassDef(
+    BridgeClassType($type),
+    constructors: {
+      '': BridgeConstructorDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation($type),
+          params: [
+            BridgeParameter(
+              'name',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+            BridgeParameter(
+              'type',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              true,
+            ),
+          ],
+        ),
+      ),
+    },
+    fields: {
+      'name': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'type': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+    },
+    wrap: true,
+  );
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $HeaderFilter
-        .wrap(HeaderFilter(args[0]!.$value, null, type: args[1]?.$value ?? ''));
+    return $HeaderFilter.wrap(
+      HeaderFilter(args[0]!.$value, null, type: args[1]?.$value ?? ''),
+    );
   }
 
   @override
@@ -478,25 +562,40 @@ class $TextFilter implements TextFilter, $Instance {
   $TextFilter.wrap(this.$value) : _superclass = $Object($value);
 
   static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'TextFilter'));
+    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'TextFilter'),
+  );
 
-  static const $declaration = BridgeClassDef(BridgeClassType($type),
-      constructors: {
-        '': BridgeConstructorDef(
-            BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [
-          BridgeParameter('type',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('name',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-        ]))
-      },
-      fields: {
-        'type': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'name': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-      },
-      wrap: true);
+  static const $declaration = BridgeClassDef(
+    BridgeClassType($type),
+    constructors: {
+      '': BridgeConstructorDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation($type),
+          params: [
+            BridgeParameter(
+              'type',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+            BridgeParameter(
+              'name',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+          ],
+        ),
+      ),
+    },
+    fields: {
+      'type': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'name': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+    },
+    wrap: true,
+  );
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
     return $TextFilter.wrap(TextFilter(args[0]!.$value, args[1]!.$value, null));
@@ -576,48 +675,76 @@ class $SortFilter implements SortFilter, $Instance {
   $SortFilter.wrap(this.$value) : _superclass = $Object($value);
 
   static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'SortFilter'));
+    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'SortFilter'),
+  );
 
-  static const $declaration = BridgeClassDef(BridgeClassType($type),
-      constructors: {
-        '': BridgeConstructorDef(
-            BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [
-          BridgeParameter('type',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('name',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter(
-              'state', BridgeTypeAnnotation($SortState.$type), false),
-          BridgeParameter(
+  static const $declaration = BridgeClassDef(
+    BridgeClassType($type),
+    constructors: {
+      '': BridgeConstructorDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation($type),
+          params: [
+            BridgeParameter(
+              'type',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+            BridgeParameter(
+              'name',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+            BridgeParameter(
+              'state',
+              BridgeTypeAnnotation($SortState.$type),
+              false,
+            ),
+            BridgeParameter(
               'values',
-              BridgeTypeAnnotation(BridgeTypeRef(
-                  CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])),
-              false),
-        ]))
-      },
-      fields: {
-        'type': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'name': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'state': BridgeFieldDef(BridgeTypeAnnotation($SortState.$type)),
-        'values': BridgeFieldDef(
-          BridgeTypeAnnotation(BridgeTypeRef(
-              CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])),
+              BridgeTypeAnnotation(
+                BridgeTypeRef(CoreTypes.list, [
+                  BridgeTypeRef(CoreTypes.dynamic),
+                ]),
+              ),
+              false,
+            ),
+          ],
         ),
-      },
-      wrap: true);
+      ),
+    },
+    fields: {
+      'type': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'name': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'state': BridgeFieldDef(BridgeTypeAnnotation($SortState.$type)),
+      'values': BridgeFieldDef(
+        BridgeTypeAnnotation(
+          BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)]),
+        ),
+      ),
+    },
+    wrap: true,
+  );
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $SortFilter.wrap(SortFilter(
+    return $SortFilter.wrap(
+      SortFilter(
         args[0]!.$value,
         args[1]!.$value,
         args[2]!.$value,
         (args[3]!.$value as List)
-            .map((e) =>
-                SelectFilterOption(e.$reified.name, e.$reified.value, null))
+            .map(
+              (e) =>
+                  SelectFilterOption(e.$reified.name, e.$reified.value, null),
+            )
             .toList(),
-        null));
+        null,
+      ),
+    );
   }
 
   @override
@@ -704,27 +831,40 @@ class $SortState implements SortState, $Instance {
   $SortState.wrap(this.$value) : _superclass = $Object($value);
 
   static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'SortState'));
+    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'SortState'),
+  );
 
-  static const $declaration = BridgeClassDef(BridgeClassType($type),
-      constructors: {
-        '': BridgeConstructorDef(
-            BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [
-          BridgeParameter('index',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)), false),
-          BridgeParameter('ascending',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)), false),
-        ]))
-      },
-      fields: {
-        'index': BridgeFieldDef(BridgeTypeAnnotation(
-          BridgeTypeRef(CoreTypes.int),
-        )),
-        'ascending': BridgeFieldDef(BridgeTypeAnnotation(
-          BridgeTypeRef(CoreTypes.bool),
-        )),
-      },
-      wrap: true);
+  static const $declaration = BridgeClassDef(
+    BridgeClassType($type),
+    constructors: {
+      '': BridgeConstructorDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation($type),
+          params: [
+            BridgeParameter(
+              'index',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)),
+              false,
+            ),
+            BridgeParameter(
+              'ascending',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)),
+              false,
+            ),
+          ],
+        ),
+      ),
+    },
+    fields: {
+      'index': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)),
+      ),
+      'ascending': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)),
+      ),
+    },
+    wrap: true,
+  );
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
     return $SortState.wrap(SortState(args[0]!.$value, args[1]!.$value, null));
@@ -795,40 +935,69 @@ class $TriStateFilter implements TriStateFilter, $Instance {
   $TriStateFilter.wrap(this.$value) : _superclass = $Object($value);
 
   static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'TriStateFilter'));
+    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'TriStateFilter'),
+  );
 
-  static const $declaration = BridgeClassDef(BridgeClassType($type),
-      constructors: {
-        '': BridgeConstructorDef(
-            BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [
-          BridgeParameter('name',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('value',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('type',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), true),
-        ], namedParams: [
-          BridgeParameter(
-              'state', BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)), true)
-        ]))
-      },
-      fields: {
-        'name': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'value': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'type': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'state': BridgeFieldDef(BridgeTypeAnnotation(
-          BridgeTypeRef(CoreTypes.int),
-        )),
-      },
-      wrap: true);
+  static const $declaration = BridgeClassDef(
+    BridgeClassType($type),
+    constructors: {
+      '': BridgeConstructorDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation($type),
+          params: [
+            BridgeParameter(
+              'name',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+            BridgeParameter(
+              'value',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+            BridgeParameter(
+              'type',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              true,
+            ),
+          ],
+          namedParams: [
+            BridgeParameter(
+              'state',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)),
+              true,
+            ),
+          ],
+        ),
+      ),
+    },
+    fields: {
+      'name': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'value': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'type': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'state': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)),
+      ),
+    },
+    wrap: true,
+  );
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $TriStateFilter.wrap(TriStateFilter(
-        args[2]?.$value ?? '', args[0]!.$value, args[1]!.$value, null,
-        state: args[3]?.$value ?? 0));
+    return $TriStateFilter.wrap(
+      TriStateFilter(
+        args[2]?.$value ?? '',
+        args[0]!.$value,
+        args[1]!.$value,
+        null,
+        state: args[3]?.$value ?? 0,
+      ),
+    );
   }
 
   @override
@@ -916,37 +1085,58 @@ class $GroupFilter implements GroupFilter, $Instance {
   $GroupFilter.wrap(this.$value) : _superclass = $Object($value);
 
   static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'GroupFilter'));
+    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'GroupFilter'),
+  );
 
-  static const $declaration = BridgeClassDef(BridgeClassType($type),
-      constructors: {
-        '': BridgeConstructorDef(
-            BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [
-          BridgeParameter('type',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('name',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter(
+  static const $declaration = BridgeClassDef(
+    BridgeClassType($type),
+    constructors: {
+      '': BridgeConstructorDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation($type),
+          params: [
+            BridgeParameter(
+              'type',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+            BridgeParameter(
+              'name',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+            BridgeParameter(
               'state',
-              BridgeTypeAnnotation(BridgeTypeRef(
-                  CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])),
-              false),
-        ]))
-      },
-      fields: {
-        'type': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'name': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'state': BridgeFieldDef(
-          BridgeTypeAnnotation(BridgeTypeRef(
-              CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)])),
+              BridgeTypeAnnotation(
+                BridgeTypeRef(CoreTypes.list, [
+                  BridgeTypeRef(CoreTypes.dynamic),
+                ]),
+              ),
+              false,
+            ),
+          ],
         ),
-      },
-      wrap: true);
+      ),
+    },
+    fields: {
+      'type': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'name': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'state': BridgeFieldDef(
+        BridgeTypeAnnotation(
+          BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)]),
+        ),
+      ),
+    },
+    wrap: true,
+  );
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $GroupFilter.wrap(GroupFilter(
+    return $GroupFilter.wrap(
+      GroupFilter(
         args[0]!.$value,
         args[1]!.$value,
         (args[2]!.$value as List).map((e) {
@@ -957,19 +1147,23 @@ class $GroupFilter implements GroupFilter, $Instance {
               map = value.map((key, value) => MapEntry(key.toString(), value));
               if (map['type'] == 'TriState') {
                 final filter = map['filter'] as Map;
-                return TriStateFilter.fromJson(filter
-                    .map((key, value) => MapEntry(key.toString(), value)));
+                return TriStateFilter.fromJson(
+                  filter.map((key, value) => MapEntry(key.toString(), value)),
+                );
               } else if (map['type'] == 'CheckBox') {
                 final filter = map['filter'] as Map;
-                return CheckBoxFilter.fromJson(filter
-                    .map((key, value) => MapEntry(key.toString(), value)));
+                return CheckBoxFilter.fromJson(
+                  filter.map((key, value) => MapEntry(key.toString(), value)),
+                );
               }
             }
             return value;
           }
           return e;
         }).toList(),
-        null));
+        null,
+      ),
+    );
   }
 
   @override
@@ -1047,40 +1241,69 @@ class $CheckBoxFilter implements CheckBoxFilter, $Instance {
   $CheckBoxFilter.wrap(this.$value) : _superclass = $Object($value);
 
   static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'CheckBoxFilter'));
+    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'CheckBoxFilter'),
+  );
 
-  static const $declaration = BridgeClassDef(BridgeClassType($type),
-      constructors: {
-        '': BridgeConstructorDef(
-            BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [
-          BridgeParameter('name',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('value',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-          BridgeParameter('type',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), true),
-        ], namedParams: [
-          BridgeParameter('state',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)), true),
-        ]))
-      },
-      fields: {
-        'name': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'value': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'type': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'state': BridgeFieldDef(BridgeTypeAnnotation(
-          BridgeTypeRef(CoreTypes.bool),
-        )),
-      },
-      wrap: true);
+  static const $declaration = BridgeClassDef(
+    BridgeClassType($type),
+    constructors: {
+      '': BridgeConstructorDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation($type),
+          params: [
+            BridgeParameter(
+              'name',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+            BridgeParameter(
+              'value',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+            BridgeParameter(
+              'type',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              true,
+            ),
+          ],
+          namedParams: [
+            BridgeParameter(
+              'state',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)),
+              true,
+            ),
+          ],
+        ),
+      ),
+    },
+    fields: {
+      'name': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'value': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'type': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'state': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)),
+      ),
+    },
+    wrap: true,
+  );
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $CheckBoxFilter.wrap(CheckBoxFilter(
-        args[2]?.$value ?? '', args[0]!.$value, args[1]!.$value, null,
-        state: args[3]?.$value ?? false));
+    return $CheckBoxFilter.wrap(
+      CheckBoxFilter(
+        args[2]?.$value ?? '',
+        args[0]!.$value,
+        args[1]!.$value,
+        null,
+        state: args[3]?.$value ?? false,
+      ),
+    );
   }
 
   @override

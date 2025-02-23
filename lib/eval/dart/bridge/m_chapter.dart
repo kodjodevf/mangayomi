@@ -6,44 +6,68 @@ class $MChapter implements MChapter, $Instance {
   $MChapter.wrap(this.$value) : _superclass = $Object($value);
 
   static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MChapter'));
+    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MChapter'),
+  );
 
-  static const $declaration = BridgeClassDef(BridgeClassType($type),
-      constructors: {
-        '': BridgeConstructorDef(BridgeFunctionDef(
-            returns: BridgeTypeAnnotation($type),
-            params: [],
-            namedParams: [
-              BridgeParameter('name',
-                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-              BridgeParameter('url',
-                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-              BridgeParameter('dateUpload',
-                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), false),
-              BridgeParameter('scanlator',
-                  BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)), true),
-            ]))
-      },
-      // Specify class fields
-      fields: {
-        'name': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'url': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'dateUpload': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'scanlator': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-      },
-      wrap: true);
+  static const $declaration = BridgeClassDef(
+    BridgeClassType($type),
+    constructors: {
+      '': BridgeConstructorDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation($type),
+          params: [],
+          namedParams: [
+            BridgeParameter(
+              'name',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+            BridgeParameter(
+              'url',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+            BridgeParameter(
+              'dateUpload',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+            BridgeParameter(
+              'scanlator',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              true,
+            ),
+          ],
+        ),
+      ),
+    },
+    // Specify class fields
+    fields: {
+      'name': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'url': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'dateUpload': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'scanlator': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+    },
+    wrap: true,
+  );
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $MChapter.wrap(MChapter(
-      name: args[0]?.$reified,
-      url: args[1]?.$reified,
-      dateUpload: args[2]?.$reified,
-      scanlator: args[3]?.$reified,
-    ));
+    return $MChapter.wrap(
+      MChapter(
+        name: args[0]?.$reified,
+        url: args[1]?.$reified,
+        dateUpload: args[2]?.$reified,
+        scanlator: args[3]?.$reified,
+      ),
+    );
   }
 
   @override
@@ -115,9 +139,9 @@ class $MChapter implements MChapter, $Instance {
 
   @override
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'url': url,
-        'dateUpload': dateUpload,
-        'scanlator': scanlator
-      };
+    'name': name,
+    'url': url,
+    'dateUpload': dateUpload,
+    'scanlator': scanlator,
+  };
 }

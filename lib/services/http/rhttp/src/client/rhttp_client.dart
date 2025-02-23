@@ -20,10 +20,7 @@ class RhttpClient {
 
   final rust_client.RequestClient ref;
 
-  const RhttpClient._({
-    required this.settings,
-    required this.ref,
-  });
+  const RhttpClient._({required this.settings, required this.ref});
 
   /// Creates a new HTTP client synchronously.
   /// Use this method if your app is starting up to simplify the code
@@ -32,17 +29,10 @@ class RhttpClient {
   /// Note:
   /// This method crashes when configured to use HTTP/3.
   /// See: https://github.com/Tienisto/rhttp/issues/10
-  factory RhttpClient.createSync({
-    ClientSettings? settings,
-  }) {
+  factory RhttpClient.createSync({ClientSettings? settings}) {
     settings ??= const ClientSettings();
-    final ref = rust.registerClientSync(
-      settings: settings.toRustType(),
-    );
-    return RhttpClient._(
-      settings: settings,
-      ref: ref,
-    );
+    final ref = rust.registerClientSync(settings: settings.toRustType());
+    return RhttpClient._(settings: settings, ref: ref);
   }
 
   /// Disposes the client.
@@ -65,38 +55,43 @@ class RhttpClient {
 
   /// Makes an HTTP request.
   /// Use [send] if you already have a [BaseHttpRequest] object.
-  Future<HttpResponse> request(
-          {required rust.HttpMethod method,
-          required String url,
-          Map<String, String>? query,
-          required rust.HttpHeaders headers,
-          Uint8List? body,
-          CancelToken? cancelToken}) =>
-      requestInternalGeneric(HttpRequest(
-          client: this,
-          settings: settings,
-          method: method,
-          url: url,
-          query: query,
-          headers: headers,
-          body: body,
-          cancelToken: cancelToken));
+  Future<HttpResponse> request({
+    required rust.HttpMethod method,
+    required String url,
+    Map<String, String>? query,
+    required rust.HttpHeaders headers,
+    Uint8List? body,
+    CancelToken? cancelToken,
+  }) => requestInternalGeneric(
+    HttpRequest(
+      client: this,
+      settings: settings,
+      method: method,
+      url: url,
+      query: query,
+      headers: headers,
+      body: body,
+      cancelToken: cancelToken,
+    ),
+  );
 
   /// Makes an HTTP request and returns the response as a stream.
-  Future<HttpStreamResponse> requestStream(
-      {required rust.HttpMethod method,
-      required String url,
-      Map<String, String>? query,
-      required rust.HttpHeaders headers,
-      Uint8List? body,
-      CancelToken? cancelToken}) async {
+  Future<HttpStreamResponse> requestStream({
+    required rust.HttpMethod method,
+    required String url,
+    Map<String, String>? query,
+    required rust.HttpHeaders headers,
+    Uint8List? body,
+    CancelToken? cancelToken,
+  }) async {
     final response = await request(
-        method: method,
-        url: url,
-        query: query,
-        headers: headers,
-        body: body,
-        cancelToken: cancelToken);
+      method: method,
+      url: url,
+      query: query,
+      headers: headers,
+      body: body,
+      cancelToken: cancelToken,
+    );
     return response as HttpStreamResponse;
   }
 }

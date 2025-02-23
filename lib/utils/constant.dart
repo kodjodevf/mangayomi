@@ -40,38 +40,38 @@ String getTrackStatus(TrackStatus status, BuildContext context) {
     TrackStatus.onHold => l10n.on_hold,
     TrackStatus.dropped => l10n.dropped,
     TrackStatus.planToRead => l10n.plan_to_read,
-    TrackStatus.rereading => l10n.re_reading
+    TrackStatus.rereading => l10n.re_reading,
   };
 }
 
 TrackStatus toTrackStatus(TrackStatus status, ItemType itemType, int syncId) {
   return itemType == ItemType.anime && syncId == 2
       ? switch (status) {
-          TrackStatus.reading => TrackStatus.watching,
-          TrackStatus.planToRead => TrackStatus.planToWatch,
-          TrackStatus.rereading => TrackStatus.reWatching,
-          _ => status
-        }
+        TrackStatus.reading => TrackStatus.watching,
+        TrackStatus.planToRead => TrackStatus.planToWatch,
+        TrackStatus.rereading => TrackStatus.reWatching,
+        _ => status,
+      }
       : status;
 }
 
 (String, String, Color) trackInfos(int id) {
   return switch (id) {
     1 => (
-        "assets/trackers_icons/tracker_mal.webp",
-        "MyAnimeList",
-        const Color.fromRGBO(46, 81, 162, 1)
-      ),
+      "assets/trackers_icons/tracker_mal.webp",
+      "MyAnimeList",
+      const Color.fromRGBO(46, 81, 162, 1),
+    ),
     2 => (
-        "assets/trackers_icons/tracker_anilist.webp",
-        "Anilist",
-        const Color.fromRGBO(51, 37, 50, 1)
-      ),
+      "assets/trackers_icons/tracker_anilist.webp",
+      "Anilist",
+      const Color.fromRGBO(51, 37, 50, 1),
+    ),
     _ => (
-        "assets/trackers_icons/tracker_kitsu.webp",
-        "Kitsu",
-        const Color.fromRGBO(18, 25, 35, 1)
-      ),
+      "assets/trackers_icons/tracker_kitsu.webp",
+      "Kitsu",
+      const Color.fromRGBO(18, 25, 35, 1),
+    ),
   };
 }
 

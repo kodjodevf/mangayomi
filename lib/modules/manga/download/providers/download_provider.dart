@@ -41,14 +41,16 @@ Future<void> downloadChapter(
     return;
   }
   final http = MClient.init(
-      reqcopyWith: {'useDartHttpClient': true, 'followRedirects': false});
+    reqcopyWith: {'useDartHttpClient': true, 'followRedirects': false},
+  );
 
   List<PageUrl> pageUrls = [];
   List<PageUrl> pages = [];
   final StorageProvider storageProvider = StorageProvider();
   await storageProvider.requestPermission();
-  final mangaMainDirectory =
-      await storageProvider.getMangaMainDirectory(chapter);
+  final mangaMainDirectory = await storageProvider.getMangaMainDirectory(
+    chapter,
+  );
 
   bool isOk = false;
   final manga = chapter.manga.value!;
@@ -69,12 +71,14 @@ Future<void> downloadChapter(
 
   Future<void> processConvert() async {
     if (ref.watch(saveAsCBZArchiveStateProvider)) {
-      await ref.watch(convertToCBZProvider(
-              chapterDirectory.path,
-              mangaMainDirectory!.path,
-              chapter.name!,
-              pageUrls.map((e) => e.url).toList())
-          .future);
+      await ref.watch(
+        convertToCBZProvider(
+          chapterDirectory.path,
+          mangaMainDirectory!.path,
+          chapter.name!,
+          pageUrls.map((e) => e.url).toList(),
+        ).future,
+      );
     }
   }
 
@@ -86,9 +90,10 @@ Future<void> downloadChapter(
     if (download == null) {
       final download = Download(
         id: chapter.id,
-        succeeded: progress.completed == 0
-            ? 0
-            : (progress.completed / progress.total * 100).toInt(),
+        succeeded:
+            progress.completed == 0
+                ? 0
+                : (progress.completed / progress.total * 100).toInt(),
         failed: 0,
         total: 100,
         isDownload: progress.isCompleted,
@@ -101,13 +106,16 @@ Future<void> downloadChapter(
       final download = isar.downloads.getSync(chapter.id!);
       if (download != null && progress.total != 0) {
         isar.writeTxnSync(() {
-          isar.downloads.putSync(download
-            ..succeeded = progress.completed == 0
-                ? 0
-                : (progress.completed / progress.total * 100).toInt()
-            ..total = 100
-            ..failed = 0
-            ..isDownload = progress.isCompleted);
+          isar.downloads.putSync(
+            download
+              ..succeeded =
+                  progress.completed == 0
+                      ? 0
+                      : (progress.completed / progress.total * 100).toInt()
+              ..total = 100
+              ..failed = 0
+              ..isDownload = progress.isCompleted,
+          );
         });
       }
     }
@@ -122,26 +130,29 @@ Future<void> downloadChapter(
         chapterPageUrls.add(chapterPageUrl);
       }
     }
-    final chapterPageHeaders = pageUrls
-        .map((e) => e.headers == null ? null : jsonEncode(e.headers))
-        .toList();
-    chapterPageUrls.add(ChapterPageurls()
-      ..chapterId = chapter.id
-      ..urls = pageUrls.map((e) => e.url).toList()
-      ..chapterUrl = chapter.url
-      ..headers = chapterPageHeaders.first != null
-          ? chapterPageHeaders.map((e) => e.toString()).toList()
-          : null);
-    isar.writeTxnSync(() =>
-        isar.settings.putSync(settings..chapterPageUrlsList = chapterPageUrls));
+    final chapterPageHeaders =
+        pageUrls
+            .map((e) => e.headers == null ? null : jsonEncode(e.headers))
+            .toList();
+    chapterPageUrls.add(
+      ChapterPageurls()
+        ..chapterId = chapter.id
+        ..urls = pageUrls.map((e) => e.url).toList()
+        ..chapterUrl = chapter.url
+        ..headers =
+            chapterPageHeaders.first != null
+                ? chapterPageHeaders.map((e) => e.toString()).toList()
+                : null,
+    );
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings..chapterPageUrlsList = chapterPageUrls,
+      ),
+    );
   }
 
   if (itemType == ItemType.manga) {
-    ref
-        .read(getChapterPagesProvider(
-      chapter: chapter,
-    ).future)
-        .then((value) {
+    ref.read(getChapterPagesProvider(chapter: chapter).future).then((value) {
       if (value.pageUrls.isNotEmpty) {
         pageUrls = value.pageUrls;
         isOk = true;
@@ -149,25 +160,30 @@ Future<void> downloadChapter(
     });
   } else if (itemType == ItemType.anime) {
     ref.read(getVideoListProvider(episode: chapter).future).then((value) async {
-      final m3u8Urls = value.$1
-          .where((element) =>
-              element.originalUrl.endsWith(".m3u8") ||
-              element.originalUrl.endsWith(".m3u"))
-          .toList();
-      final nonM3u8Urls = value.$1
-          .where((element) => element.originalUrl.isMediaVideo())
-          .toList();
+      final m3u8Urls =
+          value.$1
+              .where(
+                (element) =>
+                    element.originalUrl.endsWith(".m3u8") ||
+                    element.originalUrl.endsWith(".m3u"),
+              )
+              .toList();
+      final nonM3u8Urls =
+          value.$1
+              .where((element) => element.originalUrl.isMediaVideo())
+              .toList();
       nonM3U8File = nonM3u8Urls.isNotEmpty;
       hasM3U8File = nonM3U8File ? false : m3u8Urls.isNotEmpty;
       final videosUrls = nonM3U8File ? nonM3u8Urls : m3u8Urls;
       if (videosUrls.isNotEmpty) {
         if (hasM3U8File) {
           m3u8Downloader = M3u8Downloader(
-              m3u8Url: videosUrls.first.url,
-              downloadDir: chapterDirectory.path,
-              headers: videosUrls.first.headers ?? {},
-              fileName: p.join(mangaMainDirectory!.path, "$chapterName.mp4"),
-              chapter: chapter);
+            m3u8Url: videosUrls.first.url,
+            downloadDir: chapterDirectory.path,
+            headers: videosUrls.first.headers ?? {},
+            fileName: p.join(mangaMainDirectory!.path, "$chapterName.mp4"),
+            chapter: chapter,
+          );
         } else {
           pageUrls = [PageUrl(videosUrls.first.url)];
         }
@@ -177,9 +193,12 @@ Future<void> downloadChapter(
     });
   } else if (itemType == ItemType.novel && chapter.url != null) {
     final cookie = MClient.getCookiesPref(chapter.url!);
-    final headers = itemType == ItemType.manga
-        ? ref.watch(headersProvider(source: manga.source!, lang: manga.lang!))
-        : itemType == ItemType.anime
+    final headers =
+        itemType == ItemType.manga
+            ? ref.watch(
+              headersProvider(source: manga.source!, lang: manga.lang!),
+            )
+            : itemType == ItemType.anime
             ? videoHeader
             : htmlHeader;
     if (cookie.isNotEmpty) {
@@ -206,15 +225,18 @@ Future<void> downloadChapter(
 
   if (pageUrls.isNotEmpty) {
     bool cbzFileExist =
-        await File(p.join(mangaMainDirectory!.path, "${chapter.name}.cbz"))
-                .exists() &&
-            ref.watch(saveAsCBZArchiveStateProvider);
+        await File(
+          p.join(mangaMainDirectory!.path, "${chapter.name}.cbz"),
+        ).exists() &&
+        ref.watch(saveAsCBZArchiveStateProvider);
     bool mp4FileExist =
-        await File(p.join(mangaMainDirectory.path, "$chapterName.mp4"))
-            .exists();
+        await File(
+          p.join(mangaMainDirectory.path, "$chapterName.mp4"),
+        ).exists();
     bool htmlFileExist =
-        await File(p.join(mangaMainDirectory.path, "$chapterName.html"))
-            .exists();
+        await File(
+          p.join(mangaMainDirectory.path, "$chapterName.html"),
+        ).exists();
     if (!cbzFileExist && itemType == ItemType.manga ||
         !mp4FileExist && itemType == ItemType.anime ||
         !htmlFileExist && itemType == ItemType.novel) {
@@ -227,10 +249,12 @@ Future<void> downloadChapter(
         }
         final page = pageUrls[index];
         final cookie = MClient.getCookiesPref(page.url);
-        final headers = itemType == ItemType.manga
-            ? ref.watch(
-                headersProvider(source: manga.source!, lang: manga.lang!))
-            : itemType == ItemType.anime
+        final headers =
+            itemType == ItemType.manga
+                ? ref.watch(
+                  headersProvider(source: manga.source!, lang: manga.lang!),
+                )
+                : itemType == ItemType.anime
                 ? videoHeader
                 : htmlHeader;
         if (cookie.isNotEmpty) {
@@ -242,34 +266,44 @@ Future<void> downloadChapter(
         pageHeaders.addAll(page.headers ?? {});
 
         if (itemType == ItemType.manga) {
-          final file =
-              File(p.join(chapterDirectory.path, "${padIndex(index + 1)}.jpg"));
+          final file = File(
+            p.join(chapterDirectory.path, "${padIndex(index + 1)}.jpg"),
+          );
           if (!file.existsSync()) {
-            pages.add(PageUrl(
-              page.url.trim().trimLeft().trimRight(),
-              headers: pageHeaders,
-              fileName:
-                  p.join(chapterDirectory.path, "${padIndex(index + 1)}.jpg"),
-            ));
+            pages.add(
+              PageUrl(
+                page.url.trim().trimLeft().trimRight(),
+                headers: pageHeaders,
+                fileName: p.join(
+                  chapterDirectory.path,
+                  "${padIndex(index + 1)}.jpg",
+                ),
+              ),
+            );
           }
         } else if (itemType == ItemType.anime) {
-          final file =
-              File(p.join(mangaMainDirectory.path, "$chapterName.mp4"));
+          final file = File(
+            p.join(mangaMainDirectory.path, "$chapterName.mp4"),
+          );
           if (!file.existsSync()) {
-            pages.add(PageUrl(
-              page.url.trim().trimLeft().trimRight(),
-              headers: pageHeaders,
-              fileName: p.join(mangaMainDirectory.path, "$chapterName.mp4"),
-            ));
+            pages.add(
+              PageUrl(
+                page.url.trim().trimLeft().trimRight(),
+                headers: pageHeaders,
+                fileName: p.join(mangaMainDirectory.path, "$chapterName.mp4"),
+              ),
+            );
           }
         } else {
           final file = File(p.join(chapterDirectory.path, "$chapterName.html"));
           if (!file.existsSync()) {
-            pages.add(PageUrl(
-              page.url.trim().trimLeft().trimRight(),
-              headers: pageHeaders,
-              fileName: p.join(chapterDirectory.path, "$chapterName.html"),
-            ));
+            pages.add(
+              PageUrl(
+                page.url.trim().trimLeft().trimRight(),
+                headers: pageHeaders,
+                fileName: p.join(chapterDirectory.path, "$chapterName.html"),
+              ),
+            );
           }
         }
       }
@@ -297,10 +331,8 @@ Future<void> downloadChapter(
       });
     }
   } else if (hasM3U8File) {
-    await m3u8Downloader?.download(
-      (progress) {
-        setProgress(progress);
-      },
-    );
+    await m3u8Downloader?.download((progress) {
+      setProgress(progress);
+    });
   }
 }

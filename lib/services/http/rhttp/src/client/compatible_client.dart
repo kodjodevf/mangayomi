@@ -27,9 +27,7 @@ class RhttpCompatibleClient with BaseClient {
   /// Note:
   /// This method crashes when configured to use HTTP/3.
   /// See: https://github.com/Tienisto/rhttp/issues/10
-  factory RhttpCompatibleClient.createSync({
-    ClientSettings? settings,
-  }) {
+  factory RhttpCompatibleClient.createSync({ClientSettings? settings}) {
     final client = RhttpClient.createSync(
       settings: (settings ?? const ClientSettings()).digest(),
     );
@@ -78,10 +76,7 @@ class RhttpCompatibleClient with BaseClient {
         st,
       );
     } catch (e, st) {
-      Error.throwWithStackTrace(
-        ClientException(e.toString(), request.url),
-        st,
-      );
+      Error.throwWithStackTrace(ClientException(e.toString(), request.url), st);
     }
   }
 
@@ -108,9 +103,7 @@ extension on ClientSettings {
   ClientSettings digest() {
     ClientSettings settings = this;
     if (throwOnStatusCode) {
-      settings = settings.copyWith(
-        throwOnStatusCode: false,
-      );
+      settings = settings.copyWith(throwOnStatusCode: false);
     }
 
     return settings;

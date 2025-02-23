@@ -39,24 +39,15 @@ class CheckForUpdateFamily extends Family<AsyncValue<void>> {
   const CheckForUpdateFamily();
 
   /// See also [checkForUpdate].
-  CheckForUpdateProvider call({
-    BuildContext? context,
-    bool? manualUpdate,
-  }) {
-    return CheckForUpdateProvider(
-      context: context,
-      manualUpdate: manualUpdate,
-    );
+  CheckForUpdateProvider call({BuildContext? context, bool? manualUpdate}) {
+    return CheckForUpdateProvider(context: context, manualUpdate: manualUpdate);
   }
 
   @override
   CheckForUpdateProvider getProviderOverride(
     covariant CheckForUpdateProvider provider,
   ) {
-    return call(
-      context: provider.context,
-      manualUpdate: provider.manualUpdate,
-    );
+    return call(context: provider.context, manualUpdate: provider.manualUpdate);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -77,27 +68,25 @@ class CheckForUpdateFamily extends Family<AsyncValue<void>> {
 /// See also [checkForUpdate].
 class CheckForUpdateProvider extends AutoDisposeFutureProvider<void> {
   /// See also [checkForUpdate].
-  CheckForUpdateProvider({
-    BuildContext? context,
-    bool? manualUpdate,
-  }) : this._internal(
-          (ref) => checkForUpdate(
-            ref as CheckForUpdateRef,
-            context: context,
-            manualUpdate: manualUpdate,
-          ),
-          from: checkForUpdateProvider,
-          name: r'checkForUpdateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$checkForUpdateHash,
-          dependencies: CheckForUpdateFamily._dependencies,
-          allTransitiveDependencies:
-              CheckForUpdateFamily._allTransitiveDependencies,
+  CheckForUpdateProvider({BuildContext? context, bool? manualUpdate})
+    : this._internal(
+        (ref) => checkForUpdate(
+          ref as CheckForUpdateRef,
           context: context,
           manualUpdate: manualUpdate,
-        );
+        ),
+        from: checkForUpdateProvider,
+        name: r'checkForUpdateProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$checkForUpdateHash,
+        dependencies: CheckForUpdateFamily._dependencies,
+        allTransitiveDependencies:
+            CheckForUpdateFamily._allTransitiveDependencies,
+        context: context,
+        manualUpdate: manualUpdate,
+      );
 
   CheckForUpdateProvider._internal(
     super._createNotifier, {
@@ -165,7 +154,8 @@ mixin CheckForUpdateRef on AutoDisposeFutureProviderRef<void> {
 }
 
 class _CheckForUpdateProviderElement
-    extends AutoDisposeFutureProviderElement<void> with CheckForUpdateRef {
+    extends AutoDisposeFutureProviderElement<void>
+    with CheckForUpdateRef {
   _CheckForUpdateProviderElement(super.provider);
 
   @override
@@ -173,5 +163,6 @@ class _CheckForUpdateProviderElement
   @override
   bool? get manualUpdate => (origin as CheckForUpdateProvider).manualUpdate;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

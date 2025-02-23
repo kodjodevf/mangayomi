@@ -37,22 +37,23 @@ class Track {
   @enumerated
   late ItemType itemType;
 
-  Track(
-      {this.id = Isar.autoIncrement,
-      this.libraryId,
-      this.mediaId,
-      this.mangaId,
-      this.syncId,
-      this.title,
-      this.lastChapterRead,
-      this.totalChapter,
-      this.score,
-      required this.status,
-      this.startedReadingDate,
-      this.finishedReadingDate,
-      this.trackingUrl,
-      this.isManga,
-      this.itemType = ItemType.manga});
+  Track({
+    this.id = Isar.autoIncrement,
+    this.libraryId,
+    this.mediaId,
+    this.mangaId,
+    this.syncId,
+    this.title,
+    this.lastChapterRead,
+    this.totalChapter,
+    this.score,
+    required this.status,
+    this.startedReadingDate,
+    this.finishedReadingDate,
+    this.trackingUrl,
+    this.isManga,
+    this.itemType = ItemType.manga,
+  });
   Track.fromJson(Map<String, dynamic> json) {
     finishedReadingDate = json['finishedReadingDate'];
     id = json['id'];
@@ -71,21 +72,21 @@ class Track {
   }
 
   Map<String, dynamic> toJson() => {
-        'finishedReadingDate': finishedReadingDate,
-        'id': id,
-        'lastChapterRead': lastChapterRead,
-        'libraryId': libraryId,
-        'mangaId': mangaId,
-        'mediaId': mediaId,
-        'score': score,
-        'startedReadingDate': startedReadingDate,
-        'status': status.index,
-        'syncId': syncId,
-        'title': title,
-        'totalChapter': totalChapter,
-        'trackingUrl': trackingUrl,
-        'isManga': isManga,
-      };
+    'finishedReadingDate': finishedReadingDate,
+    'id': id,
+    'lastChapterRead': lastChapterRead,
+    'libraryId': libraryId,
+    'mangaId': mangaId,
+    'mediaId': mediaId,
+    'score': score,
+    'startedReadingDate': startedReadingDate,
+    'status': status.index,
+    'syncId': syncId,
+    'title': title,
+    'totalChapter': totalChapter,
+    'trackingUrl': trackingUrl,
+    'isManga': isManga,
+  };
 }
 
 enum TrackStatus {
@@ -97,5 +98,5 @@ enum TrackStatus {
   rereading,
   watching,
   planToWatch,
-  reWatching
+  reWatching,
 }

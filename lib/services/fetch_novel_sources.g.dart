@@ -40,24 +40,15 @@ class FetchNovelSourcesListFamily extends Family<AsyncValue<void>> {
   const FetchNovelSourcesListFamily();
 
   /// See also [fetchNovelSourcesList].
-  FetchNovelSourcesListProvider call({
-    int? id,
-    required dynamic reFresh,
-  }) {
-    return FetchNovelSourcesListProvider(
-      id: id,
-      reFresh: reFresh,
-    );
+  FetchNovelSourcesListProvider call({int? id, required dynamic reFresh}) {
+    return FetchNovelSourcesListProvider(id: id, reFresh: reFresh);
   }
 
   @override
   FetchNovelSourcesListProvider getProviderOverride(
     covariant FetchNovelSourcesListProvider provider,
   ) {
-    return call(
-      id: provider.id,
-      reFresh: provider.reFresh,
-    );
+    return call(id: provider.id, reFresh: provider.reFresh);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -78,27 +69,25 @@ class FetchNovelSourcesListFamily extends Family<AsyncValue<void>> {
 /// See also [fetchNovelSourcesList].
 class FetchNovelSourcesListProvider extends FutureProvider<void> {
   /// See also [fetchNovelSourcesList].
-  FetchNovelSourcesListProvider({
-    int? id,
-    required dynamic reFresh,
-  }) : this._internal(
-          (ref) => fetchNovelSourcesList(
-            ref as FetchNovelSourcesListRef,
-            id: id,
-            reFresh: reFresh,
-          ),
-          from: fetchNovelSourcesListProvider,
-          name: r'fetchNovelSourcesListProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$fetchNovelSourcesListHash,
-          dependencies: FetchNovelSourcesListFamily._dependencies,
-          allTransitiveDependencies:
-              FetchNovelSourcesListFamily._allTransitiveDependencies,
+  FetchNovelSourcesListProvider({int? id, required dynamic reFresh})
+    : this._internal(
+        (ref) => fetchNovelSourcesList(
+          ref as FetchNovelSourcesListRef,
           id: id,
           reFresh: reFresh,
-        );
+        ),
+        from: fetchNovelSourcesListProvider,
+        name: r'fetchNovelSourcesListProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$fetchNovelSourcesListHash,
+        dependencies: FetchNovelSourcesListFamily._dependencies,
+        allTransitiveDependencies:
+            FetchNovelSourcesListFamily._allTransitiveDependencies,
+        id: id,
+        reFresh: reFresh,
+      );
 
   FetchNovelSourcesListProvider._internal(
     super._createNotifier, {
@@ -174,5 +163,6 @@ class _FetchNovelSourcesListProviderElement extends FutureProviderElement<void>
   @override
   dynamic get reFresh => (origin as FetchNovelSourcesListProvider).reFresh;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

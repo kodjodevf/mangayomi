@@ -12,7 +12,8 @@ part of 'http.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 /// @nodoc
 mixin _$HttpHeaders {
@@ -21,47 +22,42 @@ mixin _$HttpHeaders {
   TResult when<TResult extends Object?>({
     required TResult Function(Map<String, String> field0) map,
     required TResult Function(List<(String, String)> field0) list,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(Map<String, String> field0)? map,
     TResult? Function(List<(String, String)> field0)? list,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(Map<String, String> field0)? map,
     TResult Function(List<(String, String)> field0)? list,
     required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(HttpHeaders_Map value) map,
     required TResult Function(HttpHeaders_List value) list,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(HttpHeaders_Map value)? map,
     TResult? Function(HttpHeaders_List value)? list,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(HttpHeaders_Map value)? map,
     TResult Function(HttpHeaders_List value)? list,
     required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class $HttpHeadersCopyWith<$Res> {
   factory $HttpHeadersCopyWith(
-          HttpHeaders value, $Res Function(HttpHeaders) then) =
-      _$HttpHeadersCopyWithImpl<$Res, HttpHeaders>;
+    HttpHeaders value,
+    $Res Function(HttpHeaders) then,
+  ) = _$HttpHeadersCopyWithImpl<$Res, HttpHeaders>;
 }
 
 /// @nodoc
@@ -80,9 +76,10 @@ class _$HttpHeadersCopyWithImpl<$Res, $Val extends HttpHeaders>
 
 /// @nodoc
 abstract class _$$HttpHeaders_MapImplCopyWith<$Res> {
-  factory _$$HttpHeaders_MapImplCopyWith(_$HttpHeaders_MapImpl value,
-          $Res Function(_$HttpHeaders_MapImpl) then) =
-      __$$HttpHeaders_MapImplCopyWithImpl<$Res>;
+  factory _$$HttpHeaders_MapImplCopyWith(
+    _$HttpHeaders_MapImpl value,
+    $Res Function(_$HttpHeaders_MapImpl) then,
+  ) = __$$HttpHeaders_MapImplCopyWithImpl<$Res>;
   @useResult
   $Res call({Map<String, String> field0});
 }
@@ -92,22 +89,23 @@ class __$$HttpHeaders_MapImplCopyWithImpl<$Res>
     extends _$HttpHeadersCopyWithImpl<$Res, _$HttpHeaders_MapImpl>
     implements _$$HttpHeaders_MapImplCopyWith<$Res> {
   __$$HttpHeaders_MapImplCopyWithImpl(
-      _$HttpHeaders_MapImpl _value, $Res Function(_$HttpHeaders_MapImpl) _then)
-      : super(_value, _then);
+    _$HttpHeaders_MapImpl _value,
+    $Res Function(_$HttpHeaders_MapImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of HttpHeaders
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? field0 = null,
-  }) {
-    return _then(_$HttpHeaders_MapImpl(
-      null == field0
-          ? _value._field0
-          : field0 // ignore: cast_nullable_to_non_nullable
-              as Map<String, String>,
-    ));
+  $Res call({Object? field0 = null}) {
+    return _then(
+      _$HttpHeaders_MapImpl(
+        null == field0
+            ? _value._field0
+            : field0 // ignore: cast_nullable_to_non_nullable
+                as Map<String, String>,
+      ),
+    );
   }
 }
 
@@ -115,8 +113,8 @@ class __$$HttpHeaders_MapImplCopyWithImpl<$Res>
 
 class _$HttpHeaders_MapImpl extends HttpHeaders_Map {
   const _$HttpHeaders_MapImpl(final Map<String, String> field0)
-      : _field0 = field0,
-        super._();
+    : _field0 = field0,
+      super._();
 
   final Map<String, String> _field0;
   @override
@@ -150,7 +148,9 @@ class _$HttpHeaders_MapImpl extends HttpHeaders_Map {
   @pragma('vm:prefer-inline')
   _$$HttpHeaders_MapImplCopyWith<_$HttpHeaders_MapImpl> get copyWith =>
       __$$HttpHeaders_MapImplCopyWithImpl<_$HttpHeaders_MapImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   @optionalTypeArgs
@@ -232,9 +232,10 @@ abstract class HttpHeaders_Map extends HttpHeaders {
 
 /// @nodoc
 abstract class _$$HttpHeaders_ListImplCopyWith<$Res> {
-  factory _$$HttpHeaders_ListImplCopyWith(_$HttpHeaders_ListImpl value,
-          $Res Function(_$HttpHeaders_ListImpl) then) =
-      __$$HttpHeaders_ListImplCopyWithImpl<$Res>;
+  factory _$$HttpHeaders_ListImplCopyWith(
+    _$HttpHeaders_ListImpl value,
+    $Res Function(_$HttpHeaders_ListImpl) then,
+  ) = __$$HttpHeaders_ListImplCopyWithImpl<$Res>;
   @useResult
   $Res call({List<(String, String)> field0});
 }
@@ -243,23 +244,24 @@ abstract class _$$HttpHeaders_ListImplCopyWith<$Res> {
 class __$$HttpHeaders_ListImplCopyWithImpl<$Res>
     extends _$HttpHeadersCopyWithImpl<$Res, _$HttpHeaders_ListImpl>
     implements _$$HttpHeaders_ListImplCopyWith<$Res> {
-  __$$HttpHeaders_ListImplCopyWithImpl(_$HttpHeaders_ListImpl _value,
-      $Res Function(_$HttpHeaders_ListImpl) _then)
-      : super(_value, _then);
+  __$$HttpHeaders_ListImplCopyWithImpl(
+    _$HttpHeaders_ListImpl _value,
+    $Res Function(_$HttpHeaders_ListImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of HttpHeaders
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? field0 = null,
-  }) {
-    return _then(_$HttpHeaders_ListImpl(
-      null == field0
-          ? _value._field0
-          : field0 // ignore: cast_nullable_to_non_nullable
-              as List<(String, String)>,
-    ));
+  $Res call({Object? field0 = null}) {
+    return _then(
+      _$HttpHeaders_ListImpl(
+        null == field0
+            ? _value._field0
+            : field0 // ignore: cast_nullable_to_non_nullable
+                as List<(String, String)>,
+      ),
+    );
   }
 }
 
@@ -267,8 +269,8 @@ class __$$HttpHeaders_ListImplCopyWithImpl<$Res>
 
 class _$HttpHeaders_ListImpl extends HttpHeaders_List {
   const _$HttpHeaders_ListImpl(final List<(String, String)> field0)
-      : _field0 = field0,
-        super._();
+    : _field0 = field0,
+      super._();
 
   final List<(String, String)> _field0;
   @override
@@ -302,7 +304,9 @@ class _$HttpHeaders_ListImpl extends HttpHeaders_List {
   @pragma('vm:prefer-inline')
   _$$HttpHeaders_ListImplCopyWith<_$HttpHeaders_ListImpl> get copyWith =>
       __$$HttpHeaders_ListImplCopyWithImpl<_$HttpHeaders_ListImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   @optionalTypeArgs
@@ -389,52 +393,47 @@ mixin _$HttpResponseBody {
     required TResult Function(String field0) text,
     required TResult Function(Uint8List field0) bytes,
     required TResult Function() stream,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(String field0)? text,
     TResult? Function(Uint8List field0)? bytes,
     TResult? Function()? stream,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(String field0)? text,
     TResult Function(Uint8List field0)? bytes,
     TResult Function()? stream,
     required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(HttpResponseBody_Text value) text,
     required TResult Function(HttpResponseBody_Bytes value) bytes,
     required TResult Function(HttpResponseBody_Stream value) stream,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(HttpResponseBody_Text value)? text,
     TResult? Function(HttpResponseBody_Bytes value)? bytes,
     TResult? Function(HttpResponseBody_Stream value)? stream,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(HttpResponseBody_Text value)? text,
     TResult Function(HttpResponseBody_Bytes value)? bytes,
     TResult Function(HttpResponseBody_Stream value)? stream,
     required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class $HttpResponseBodyCopyWith<$Res> {
   factory $HttpResponseBodyCopyWith(
-          HttpResponseBody value, $Res Function(HttpResponseBody) then) =
-      _$HttpResponseBodyCopyWithImpl<$Res, HttpResponseBody>;
+    HttpResponseBody value,
+    $Res Function(HttpResponseBody) then,
+  ) = _$HttpResponseBodyCopyWithImpl<$Res, HttpResponseBody>;
 }
 
 /// @nodoc
@@ -454,9 +453,9 @@ class _$HttpResponseBodyCopyWithImpl<$Res, $Val extends HttpResponseBody>
 /// @nodoc
 abstract class _$$HttpResponseBody_TextImplCopyWith<$Res> {
   factory _$$HttpResponseBody_TextImplCopyWith(
-          _$HttpResponseBody_TextImpl value,
-          $Res Function(_$HttpResponseBody_TextImpl) then) =
-      __$$HttpResponseBody_TextImplCopyWithImpl<$Res>;
+    _$HttpResponseBody_TextImpl value,
+    $Res Function(_$HttpResponseBody_TextImpl) then,
+  ) = __$$HttpResponseBody_TextImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String field0});
 }
@@ -465,23 +464,24 @@ abstract class _$$HttpResponseBody_TextImplCopyWith<$Res> {
 class __$$HttpResponseBody_TextImplCopyWithImpl<$Res>
     extends _$HttpResponseBodyCopyWithImpl<$Res, _$HttpResponseBody_TextImpl>
     implements _$$HttpResponseBody_TextImplCopyWith<$Res> {
-  __$$HttpResponseBody_TextImplCopyWithImpl(_$HttpResponseBody_TextImpl _value,
-      $Res Function(_$HttpResponseBody_TextImpl) _then)
-      : super(_value, _then);
+  __$$HttpResponseBody_TextImplCopyWithImpl(
+    _$HttpResponseBody_TextImpl _value,
+    $Res Function(_$HttpResponseBody_TextImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of HttpResponseBody
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? field0 = null,
-  }) {
-    return _then(_$HttpResponseBody_TextImpl(
-      null == field0
-          ? _value.field0
-          : field0 // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
+  $Res call({Object? field0 = null}) {
+    return _then(
+      _$HttpResponseBody_TextImpl(
+        null == field0
+            ? _value.field0
+            : field0 // ignore: cast_nullable_to_non_nullable
+                as String,
+      ),
+    );
   }
 }
 
@@ -515,8 +515,11 @@ class _$HttpResponseBody_TextImpl extends HttpResponseBody_Text {
   @override
   @pragma('vm:prefer-inline')
   _$$HttpResponseBody_TextImplCopyWith<_$HttpResponseBody_TextImpl>
-      get copyWith => __$$HttpResponseBody_TextImplCopyWithImpl<
-          _$HttpResponseBody_TextImpl>(this, _$identity);
+  get copyWith =>
+      __$$HttpResponseBody_TextImplCopyWithImpl<_$HttpResponseBody_TextImpl>(
+        this,
+        _$identity,
+      );
 
   @override
   @optionalTypeArgs
@@ -598,15 +601,15 @@ abstract class HttpResponseBody_Text extends HttpResponseBody {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$HttpResponseBody_TextImplCopyWith<_$HttpResponseBody_TextImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class _$$HttpResponseBody_BytesImplCopyWith<$Res> {
   factory _$$HttpResponseBody_BytesImplCopyWith(
-          _$HttpResponseBody_BytesImpl value,
-          $Res Function(_$HttpResponseBody_BytesImpl) then) =
-      __$$HttpResponseBody_BytesImplCopyWithImpl<$Res>;
+    _$HttpResponseBody_BytesImpl value,
+    $Res Function(_$HttpResponseBody_BytesImpl) then,
+  ) = __$$HttpResponseBody_BytesImplCopyWithImpl<$Res>;
   @useResult
   $Res call({Uint8List field0});
 }
@@ -616,23 +619,23 @@ class __$$HttpResponseBody_BytesImplCopyWithImpl<$Res>
     extends _$HttpResponseBodyCopyWithImpl<$Res, _$HttpResponseBody_BytesImpl>
     implements _$$HttpResponseBody_BytesImplCopyWith<$Res> {
   __$$HttpResponseBody_BytesImplCopyWithImpl(
-      _$HttpResponseBody_BytesImpl _value,
-      $Res Function(_$HttpResponseBody_BytesImpl) _then)
-      : super(_value, _then);
+    _$HttpResponseBody_BytesImpl _value,
+    $Res Function(_$HttpResponseBody_BytesImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of HttpResponseBody
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? field0 = null,
-  }) {
-    return _then(_$HttpResponseBody_BytesImpl(
-      null == field0
-          ? _value.field0
-          : field0 // ignore: cast_nullable_to_non_nullable
-              as Uint8List,
-    ));
+  $Res call({Object? field0 = null}) {
+    return _then(
+      _$HttpResponseBody_BytesImpl(
+        null == field0
+            ? _value.field0
+            : field0 // ignore: cast_nullable_to_non_nullable
+                as Uint8List,
+      ),
+    );
   }
 }
 
@@ -667,8 +670,11 @@ class _$HttpResponseBody_BytesImpl extends HttpResponseBody_Bytes {
   @override
   @pragma('vm:prefer-inline')
   _$$HttpResponseBody_BytesImplCopyWith<_$HttpResponseBody_BytesImpl>
-      get copyWith => __$$HttpResponseBody_BytesImplCopyWithImpl<
-          _$HttpResponseBody_BytesImpl>(this, _$identity);
+  get copyWith =>
+      __$$HttpResponseBody_BytesImplCopyWithImpl<_$HttpResponseBody_BytesImpl>(
+        this,
+        _$identity,
+      );
 
   @override
   @optionalTypeArgs
@@ -750,15 +756,15 @@ abstract class HttpResponseBody_Bytes extends HttpResponseBody {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$HttpResponseBody_BytesImplCopyWith<_$HttpResponseBody_BytesImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class _$$HttpResponseBody_StreamImplCopyWith<$Res> {
   factory _$$HttpResponseBody_StreamImplCopyWith(
-          _$HttpResponseBody_StreamImpl value,
-          $Res Function(_$HttpResponseBody_StreamImpl) then) =
-      __$$HttpResponseBody_StreamImplCopyWithImpl<$Res>;
+    _$HttpResponseBody_StreamImpl value,
+    $Res Function(_$HttpResponseBody_StreamImpl) then,
+  ) = __$$HttpResponseBody_StreamImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
@@ -766,9 +772,9 @@ class __$$HttpResponseBody_StreamImplCopyWithImpl<$Res>
     extends _$HttpResponseBodyCopyWithImpl<$Res, _$HttpResponseBody_StreamImpl>
     implements _$$HttpResponseBody_StreamImplCopyWith<$Res> {
   __$$HttpResponseBody_StreamImplCopyWithImpl(
-      _$HttpResponseBody_StreamImpl _value,
-      $Res Function(_$HttpResponseBody_StreamImpl) _then)
-      : super(_value, _then);
+    _$HttpResponseBody_StreamImpl _value,
+    $Res Function(_$HttpResponseBody_StreamImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of HttpResponseBody
   /// with the given fields replaced by the non-null parameter values.

@@ -85,89 +85,117 @@ class Synching extends _$Synching {
   }
 
   void addChangedPart(
-      ActionType action, int? isarId, Object data, bool writeTxn) {
+    ActionType action,
+    int? isarId,
+    Object data,
+    bool writeTxn,
+  ) {
     if (!state.syncOn) {
       return;
     }
-    final changedPart = isar.changedParts
-        .filter()
-        .actionTypeEqualTo(action)
-        .isarIdEqualTo(isarId)
-        .findFirstSync();
+    final changedPart =
+        isar.changedParts
+            .filter()
+            .actionTypeEqualTo(action)
+            .isarIdEqualTo(isarId)
+            .findFirstSync();
     if (writeTxn) {
       isar.writeTxnSync(() {
         if (changedPart != null) {
-          isar.changedParts.putSync(changedPart
-            ..data = jsonEncode(data)
-            ..clientDate = DateTime.now().millisecondsSinceEpoch);
+          isar.changedParts.putSync(
+            changedPart
+              ..data = jsonEncode(data)
+              ..clientDate = DateTime.now().millisecondsSinceEpoch,
+          );
         } else {
-          isar.changedParts.putSync(ChangedPart(
+          isar.changedParts.putSync(
+            ChangedPart(
               actionType: action,
               isarId: isarId,
               data: jsonEncode(data),
-              clientDate: DateTime.now().millisecondsSinceEpoch));
+              clientDate: DateTime.now().millisecondsSinceEpoch,
+            ),
+          );
         }
       });
     } else {
       if (changedPart != null) {
-        isar.changedParts.putSync(changedPart
-          ..data = jsonEncode(data)
-          ..clientDate = DateTime.now().millisecondsSinceEpoch);
+        isar.changedParts.putSync(
+          changedPart
+            ..data = jsonEncode(data)
+            ..clientDate = DateTime.now().millisecondsSinceEpoch,
+        );
       } else {
-        isar.changedParts.putSync(ChangedPart(
+        isar.changedParts.putSync(
+          ChangedPart(
             actionType: action,
             isarId: isarId,
             data: jsonEncode(data),
-            clientDate: DateTime.now().millisecondsSinceEpoch));
+            clientDate: DateTime.now().millisecondsSinceEpoch,
+          ),
+        );
       }
     }
   }
 
   Future<void> addChangedPartAsync(
-      ActionType action, int? isarId, Object data, bool writeTxn) async {
+    ActionType action,
+    int? isarId,
+    Object data,
+    bool writeTxn,
+  ) async {
     if (!state.syncOn) {
       return;
     }
-    final changedPart = isar.changedParts
-        .filter()
-        .actionTypeEqualTo(action)
-        .isarIdEqualTo(isarId)
-        .findFirstSync();
+    final changedPart =
+        isar.changedParts
+            .filter()
+            .actionTypeEqualTo(action)
+            .isarIdEqualTo(isarId)
+            .findFirstSync();
     if (writeTxn) {
       await isar.writeTxn(() async {
         if (changedPart != null) {
-          await isar.changedParts.put(changedPart
-            ..data = jsonEncode(data)
-            ..clientDate = DateTime.now().millisecondsSinceEpoch);
+          await isar.changedParts.put(
+            changedPart
+              ..data = jsonEncode(data)
+              ..clientDate = DateTime.now().millisecondsSinceEpoch,
+          );
         } else {
-          await isar.changedParts.put(ChangedPart(
+          await isar.changedParts.put(
+            ChangedPart(
               actionType: action,
               isarId: isarId,
               data: jsonEncode(data),
-              clientDate: DateTime.now().millisecondsSinceEpoch));
+              clientDate: DateTime.now().millisecondsSinceEpoch,
+            ),
+          );
         }
       });
     } else {
       if (changedPart != null) {
-        await isar.changedParts.put(changedPart
-          ..data = jsonEncode(data)
-          ..clientDate = DateTime.now().millisecondsSinceEpoch);
+        await isar.changedParts.put(
+          changedPart
+            ..data = jsonEncode(data)
+            ..clientDate = DateTime.now().millisecondsSinceEpoch,
+        );
       } else {
-        await isar.changedParts.put(ChangedPart(
+        await isar.changedParts.put(
+          ChangedPart(
             actionType: action,
             isarId: isarId,
             data: jsonEncode(data),
-            clientDate: DateTime.now().millisecondsSinceEpoch));
+            clientDate: DateTime.now().millisecondsSinceEpoch,
+          ),
+        );
       }
     }
   }
 
   void clearChangedParts(List<ActionType> actions) {
-    var temp = isar.changedParts
-        .filter()
-        .idIsNotNull()
-        .and()
-        .actionTypeEqualTo(actions.first);
+    var temp = isar.changedParts.filter().idIsNotNull().and().actionTypeEqualTo(
+      actions.first,
+    );
     for (ActionType action in actions.skip(1)) {
       temp = temp.or().actionTypeEqualTo(action);
     }

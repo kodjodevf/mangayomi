@@ -12,8 +12,6 @@ class _MigrateScreenState extends State<MigrateScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
-    return Center(
-      child: Text(l10n.migrate),
-    );
+    return Center(child: Text(l10n.migrate));
   }
 }

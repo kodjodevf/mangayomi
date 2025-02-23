@@ -81,7 +81,8 @@ class _CustomSubtitleViewState extends ConsumerState<CustomSubtitleView> {
             kTextScaleFactorReferenceWidth * kTextScaleFactorReferenceHeight;
         final textScaleFactor = sqrt((nr / dr).clamp(0.0, 1.0));
 
-        final textScaler = widget.configuration.textScaler ??
+        final textScaler =
+            widget.configuration.textScaler ??
             TextScaler.linear(textScaleFactor);
         return Material(
           color: Colors.transparent,
@@ -107,35 +108,49 @@ class _CustomSubtitleViewState extends ConsumerState<CustomSubtitleView> {
 
 TextStyle subtileTextStyle(WidgetRef ref) {
   final subSets = ref.watch(subtitleSettingsStateProvider);
-  final borderColor = Color.fromARGB(subSets.borderColorA!,
-      subSets.borderColorR!, subSets.borderColorG!, subSets.borderColorB!);
+  final borderColor = Color.fromARGB(
+    subSets.borderColorA!,
+    subSets.borderColorR!,
+    subSets.borderColorG!,
+    subSets.borderColorB!,
+  );
   return TextStyle(
-      fontSize: subSets.fontSize!.toDouble(),
-      fontWeight: subSets.useBold! ? FontWeight.bold : null,
-      fontStyle: subSets.useItalic! ? FontStyle.italic : null,
-      color: Color.fromARGB(subSets.textColorA!, subSets.textColorR!,
-          subSets.textColorG!, subSets.textColorB!),
-      shadows: [
-        Shadow(
-            offset: const Offset(-1.5, -1.5),
-            color: borderColor,
-            blurRadius: 1.4),
-        Shadow(
-            offset: const Offset(1.5, -1.5),
-            color: borderColor,
-            blurRadius: 1.4),
-        Shadow(
-            offset: const Offset(1.5, 1.5),
-            color: borderColor,
-            blurRadius: 1.4),
-        Shadow(
-            offset: const Offset(-1.5, 1.5),
-            color: borderColor,
-            blurRadius: 1.4)
-      ],
-      backgroundColor: Color.fromARGB(
-          subSets.backgroundColorA!,
-          subSets.backgroundColorR!,
-          subSets.backgroundColorG!,
-          subSets.backgroundColorB!));
+    fontSize: subSets.fontSize!.toDouble(),
+    fontWeight: subSets.useBold! ? FontWeight.bold : null,
+    fontStyle: subSets.useItalic! ? FontStyle.italic : null,
+    color: Color.fromARGB(
+      subSets.textColorA!,
+      subSets.textColorR!,
+      subSets.textColorG!,
+      subSets.textColorB!,
+    ),
+    shadows: [
+      Shadow(
+        offset: const Offset(-1.5, -1.5),
+        color: borderColor,
+        blurRadius: 1.4,
+      ),
+      Shadow(
+        offset: const Offset(1.5, -1.5),
+        color: borderColor,
+        blurRadius: 1.4,
+      ),
+      Shadow(
+        offset: const Offset(1.5, 1.5),
+        color: borderColor,
+        blurRadius: 1.4,
+      ),
+      Shadow(
+        offset: const Offset(-1.5, 1.5),
+        color: borderColor,
+        blurRadius: 1.4,
+      ),
+    ],
+    backgroundColor: Color.fromARGB(
+      subSets.backgroundColorA!,
+      subSets.backgroundColorR!,
+      subSets.backgroundColorG!,
+      subSets.backgroundColorB!,
+    ),
+  );
 }

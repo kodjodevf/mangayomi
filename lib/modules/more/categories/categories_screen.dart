@@ -68,20 +68,17 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
             ],
           ),
         ),
-        body: TabBarView(controller: _tabBarController, children: [
-          if (!hideItems.contains("/MangaLibrary"))
-            CategoriesTab(
-              itemType: ItemType.manga,
-            ),
-          if (!hideItems.contains("/AnimeLibrary"))
-            CategoriesTab(
-              itemType: ItemType.anime,
-            ),
-          if (!hideItems.contains("/NovelLibrary"))
-            CategoriesTab(
-              itemType: ItemType.novel,
-            )
-        ]),
+        body: TabBarView(
+          controller: _tabBarController,
+          children: [
+            if (!hideItems.contains("/MangaLibrary"))
+              CategoriesTab(itemType: ItemType.manga),
+            if (!hideItems.contains("/AnimeLibrary"))
+              CategoriesTab(itemType: ItemType.anime),
+            if (!hideItems.contains("/NovelLibrary"))
+              CategoriesTab(itemType: ItemType.novel),
+          ],
+        ),
       ),
     );
   }
@@ -100,8 +97,9 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
-    final categories =
-        ref.watch(getMangaCategorieStreamProvider(itemType: widget.itemType));
+    final categories = ref.watch(
+      getMangaCategorieStreamProvider(itemType: widget.itemType),
+    );
     return Scaffold(
       body: categories.when(
         data: (data) {
@@ -127,29 +125,31 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                   child: Column(
                     children: [
                       ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              elevation: 0,
-                              shadowColor: Colors.transparent,
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(0),
-                                      bottomRight: Radius.circular(0),
-                                      topRight: Radius.circular(10),
-                                      topLeft: Radius.circular(10)))),
-                          onPressed: () {
-                            _renameCategory(_entries[index]);
-                          },
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              const Icon(Icons.label_outline_rounded),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(child: Text(_entries[index].name!))
-                            ],
-                          )),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          elevation: 0,
+                          shadowColor: Colors.transparent,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(0),
+                              bottomRight: Radius.circular(0),
+                              topRight: Radius.circular(10),
+                              topLeft: Radius.circular(10),
+                            ),
+                          ),
+                        ),
+                        onPressed: () {
+                          _renameCategory(_entries[index]);
+                        },
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            const Icon(Icons.label_outline_rounded),
+                            const SizedBox(width: 10),
+                            Expanded(child: Text(_entries[index].name!)),
+                          ],
+                        ),
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -158,91 +158,90 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                               SizedBox(width: 10),
                               Icon(Icons.arrow_drop_up_outlined),
                               SizedBox(width: 10),
-                              Icon(Icons.arrow_drop_down_outlined)
+                              Icon(Icons.arrow_drop_down_outlined),
                             ],
                           ),
                           Row(
                             children: [
                               IconButton(
-                                  onPressed: () {
-                                    _renameCategory(_entries[index]);
-                                  },
-                                  icon: const Icon(
-                                      Icons.mode_edit_outline_outlined)),
+                                onPressed: () {
+                                  _renameCategory(_entries[index]);
+                                },
+                                icon: const Icon(
+                                  Icons.mode_edit_outline_outlined,
+                                ),
+                              ),
                               IconButton(
-                                  onPressed: () {
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return StatefulBuilder(
-                                            builder: (context, setState) {
-                                              return AlertDialog(
-                                                title: Text(
-                                                  l10n.delete_category,
-                                                ),
-                                                content: Text(
-                                                    l10n.delete_category_msg(
-                                                        _entries[index].name!)),
-                                                actions: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    children: [
-                                                      TextButton(
-                                                          onPressed: () {
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          child: Text(
-                                                              l10n.cancel)),
-                                                      const SizedBox(
-                                                        width: 15,
-                                                      ),
-                                                      TextButton(
-                                                          onPressed: () async {
-                                                            await isar.writeTxn(
-                                                                () async {
-                                                              await isar
-                                                                  .categorys
-                                                                  .delete(_entries[
-                                                                          index]
-                                                                      .id!);
-                                                            });
-                                                            await ref
-                                                                .read(synchingProvider(
-                                                                        syncId:
-                                                                            1)
-                                                                    .notifier)
-                                                                .addChangedPartAsync(
-                                                                    ActionType
-                                                                        .removeCategory,
-                                                                    _entries[
-                                                                            index]
-                                                                        .id,
-                                                                    "{}",
-                                                                    true);
-                                                            if (context
-                                                                .mounted) {
-                                                              Navigator.pop(
-                                                                  context);
-                                                            }
-                                                          },
-                                                          child: Text(
-                                                            l10n.ok,
-                                                          )),
-                                                    ],
-                                                  )
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return StatefulBuilder(
+                                        builder: (context, setState) {
+                                          return AlertDialog(
+                                            title: Text(l10n.delete_category),
+                                            content: Text(
+                                              l10n.delete_category_msg(
+                                                _entries[index].name!,
+                                              ),
+                                            ),
+                                            actions: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                children: [
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Text(l10n.cancel),
+                                                  ),
+                                                  const SizedBox(width: 15),
+                                                  TextButton(
+                                                    onPressed: () async {
+                                                      await isar.writeTxn(
+                                                        () async {
+                                                          await isar.categorys
+                                                              .delete(
+                                                                _entries[index]
+                                                                    .id!,
+                                                              );
+                                                        },
+                                                      );
+                                                      await ref
+                                                          .read(
+                                                            synchingProvider(
+                                                              syncId: 1,
+                                                            ).notifier,
+                                                          )
+                                                          .addChangedPartAsync(
+                                                            ActionType
+                                                                .removeCategory,
+                                                            _entries[index].id,
+                                                            "{}",
+                                                            true,
+                                                          );
+                                                      if (context.mounted) {
+                                                        Navigator.pop(context);
+                                                      }
+                                                    },
+                                                    child: Text(l10n.ok),
+                                                  ),
                                                 ],
-                                              );
-                                            },
+                                              ),
+                                            ],
                                           );
-                                        });
-                                  },
-                                  icon: const Icon(Icons.delete_outlined))
+                                        },
+                                      );
+                                    },
+                                  );
+                                },
+                                icon: const Icon(Icons.delete_outlined),
+                              ),
                             ],
                           ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -267,94 +266,98 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {
-            bool isExist = false;
-            final controller = TextEditingController();
-            showDialog(
-                context: context,
-                builder: (context) {
-                  return SizedBox(
-                    child: StatefulBuilder(
-                      builder: (context, setState) {
-                        return AlertDialog(
-                          title: Text(l10n.add_category),
-                          content: CustomTextFormField(
-                              controller: controller,
-                              entries: _entries,
-                              context: context,
-                              exist: (value) {
-                                setState(() {
-                                  isExist = value;
-                                });
+        onPressed: () {
+          bool isExist = false;
+          final controller = TextEditingController();
+          showDialog(
+            context: context,
+            builder: (context) {
+              return SizedBox(
+                child: StatefulBuilder(
+                  builder: (context, setState) {
+                    return AlertDialog(
+                      title: Text(l10n.add_category),
+                      content: CustomTextFormField(
+                        controller: controller,
+                        entries: _entries,
+                        context: context,
+                        exist: (value) {
+                          setState(() {
+                            isExist = value;
+                          });
+                        },
+                        isExist: isExist,
+                        val: (val) {},
+                      ),
+                      actions: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
                               },
-                              isExist: isExist,
-                              val: (val) {}),
-                          actions: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text(l10n.cancel)),
-                                const SizedBox(
-                                  width: 15,
-                                ),
-                                TextButton(
-                                    onPressed: controller.text.isEmpty ||
-                                            isExist
-                                        ? null
-                                        : () async {
-                                            final category = Category(
-                                              forItemType: widget.itemType,
-                                              name: controller.text,
+                              child: Text(l10n.cancel),
+                            ),
+                            const SizedBox(width: 15),
+                            TextButton(
+                              onPressed:
+                                  controller.text.isEmpty || isExist
+                                      ? null
+                                      : () async {
+                                        final category = Category(
+                                          forItemType: widget.itemType,
+                                          name: controller.text,
+                                        );
+                                        await isar.writeTxn(() async {
+                                          await isar.categorys.put(category);
+                                        });
+                                        await ref
+                                            .read(
+                                              synchingProvider(
+                                                syncId: 1,
+                                              ).notifier,
+                                            )
+                                            .addChangedPartAsync(
+                                              ActionType.addCategory,
+                                              category.id,
+                                              category.toJson(),
+                                              true,
                                             );
-                                            await isar.writeTxn(() async {
-                                              await isar.categorys
-                                                  .put(category);
-                                            });
-                                            await ref
-                                                .read(
-                                                    synchingProvider(syncId: 1)
-                                                        .notifier)
-                                                .addChangedPartAsync(
-                                                    ActionType.addCategory,
-                                                    category.id,
-                                                    category.toJson(),
-                                                    true);
-                                            if (context.mounted) {
-                                              Navigator.pop(context);
-                                            }
-                                          },
-                                    child: Text(
-                                      l10n.add,
-                                      style: TextStyle(
-                                          color:
-                                              controller.text.isEmpty || isExist
-                                                  ? Theme.of(context)
-                                                      .primaryColor
-                                                      .withValues(alpha: 0.2)
-                                                  : null),
-                                    )),
-                              ],
-                            )
+                                        if (context.mounted) {
+                                          Navigator.pop(context);
+                                        }
+                                      },
+                              child: Text(
+                                l10n.add,
+                                style: TextStyle(
+                                  color:
+                                      controller.text.isEmpty || isExist
+                                          ? Theme.of(
+                                            context,
+                                          ).primaryColor.withValues(alpha: 0.2)
+                                          : null,
+                                ),
+                              ),
+                            ),
                           ],
-                        );
-                      },
-                    ),
-                  );
-                });
-          },
-          label: Row(
-            children: [
-              const Icon(Icons.add),
-              const SizedBox(
-                width: 10,
-              ),
-              Text(l10n.add)
-            ],
-          )),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              );
+            },
+          );
+        },
+        label: Row(
+          children: [
+            const Icon(Icons.add),
+            const SizedBox(width: 10),
+            Text(l10n.add),
+          ],
+        ),
+      ),
     );
   }
 
@@ -363,82 +366,81 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
     final controller = TextEditingController(text: category.name);
     bool isSameName = controller.text == category.name;
     showDialog(
-        context: context,
-        builder: (context) {
-          return StatefulBuilder(
-            builder: (context, setState) {
-              final l10n = l10nLocalizations(context);
-              return AlertDialog(
-                title: Text(
-                  l10n!.rename_category,
-                ),
-                content: CustomTextFormField(
-                    controller: controller,
-                    entries: _entries,
-                    context: context,
-                    exist: (value) {
-                      setState(() {
-                        isExist = value;
-                      });
-                    },
-                    isExist: isExist,
-                    name: category.name!,
-                    val: (val) {
-                      setState(() {
-                        isSameName = controller.text == category.name;
-                      });
-                    }),
-                actions: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text(l10n.cancel)),
-                      const SizedBox(
-                        width: 15,
-                      ),
-                      TextButton(
-                          onPressed: controller.text.isEmpty ||
-                                  isExist ||
-                                  isSameName
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            final l10n = l10nLocalizations(context);
+            return AlertDialog(
+              title: Text(l10n!.rename_category),
+              content: CustomTextFormField(
+                controller: controller,
+                entries: _entries,
+                context: context,
+                exist: (value) {
+                  setState(() {
+                    isExist = value;
+                  });
+                },
+                isExist: isExist,
+                name: category.name!,
+                val: (val) {
+                  setState(() {
+                    isSameName = controller.text == category.name;
+                  });
+                },
+              ),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(l10n.cancel),
+                    ),
+                    const SizedBox(width: 15),
+                    TextButton(
+                      onPressed:
+                          controller.text.isEmpty || isExist || isSameName
                               ? null
                               : () async {
-                                  await isar.writeTxn(() async {
-                                    category.name = controller.text;
-                                    await isar.categorys.put(category);
-                                  });
-                                  await ref
-                                      .read(
-                                          synchingProvider(syncId: 1).notifier)
-                                      .addChangedPartAsync(
-                                          ActionType.renameCategory,
-                                          category.id,
-                                          category.toJson(),
-                                          true);
-                                  if (context.mounted) {
-                                    Navigator.pop(context);
-                                  }
-                                },
-                          child: Text(
-                            l10n.ok,
-                            style: TextStyle(
-                                color: controller.text.isEmpty ||
-                                        isExist ||
-                                        isSameName
-                                    ? Theme.of(context)
-                                        .primaryColor
-                                        .withValues(alpha: 0.2)
-                                    : null),
-                          )),
-                    ],
-                  )
-                ],
-              );
-            },
-          );
-        });
+                                await isar.writeTxn(() async {
+                                  category.name = controller.text;
+                                  await isar.categorys.put(category);
+                                });
+                                await ref
+                                    .read(synchingProvider(syncId: 1).notifier)
+                                    .addChangedPartAsync(
+                                      ActionType.renameCategory,
+                                      category.id,
+                                      category.toJson(),
+                                      true,
+                                    );
+                                if (context.mounted) {
+                                  Navigator.pop(context);
+                                }
+                              },
+                      child: Text(
+                        l10n.ok,
+                        style: TextStyle(
+                          color:
+                              controller.text.isEmpty || isExist || isSameName
+                                  ? Theme.of(
+                                    context,
+                                  ).primaryColor.withValues(alpha: 0.2)
+                                  : null,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 }

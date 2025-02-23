@@ -46,18 +46,21 @@ class WordSet {
   WordSet(this.words);
 
   bool anyWordIn(String dateString) {
-    return words
-        .any((word) => dateString.toLowerCase().contains(word.toLowerCase()));
+    return words.any(
+      (word) => dateString.toLowerCase().contains(word.toLowerCase()),
+    );
   }
 
   bool startsWith(String dateString) {
-    return words
-        .any((word) => dateString.toLowerCase().startsWith(word.toLowerCase()));
+    return words.any(
+      (word) => dateString.toLowerCase().startsWith(word.toLowerCase()),
+    );
   }
 
   bool endsWith(String dateString) {
-    return words
-        .any((word) => dateString.toLowerCase().endsWith(word.toLowerCase()));
+    return words.any(
+      (word) => dateString.toLowerCase().endsWith(word.toLowerCase()),
+    );
   }
 }
 
@@ -81,7 +84,6 @@ class MBridge {
           attrs.add(element!.trim().trimLeft().trimRight());
         }
       }
-
       //Return one attr
       else if (query.nodes.length == 1) {
         String attr =
@@ -108,10 +110,9 @@ class MBridge {
         statusMap = element;
       }
       for (var element in statusMap.entries) {
-        if (element.key
-            .toString()
-            .toLowerCase()
-            .contains(status.toLowerCase().trim().trimLeft().trimRight())) {
+        if (element.key.toString().toLowerCase().contains(
+          status.toLowerCase().trim().trimLeft().trimRight(),
+        )) {
           return switch (element.value as int) {
             0 => Status.ongoing,
             1 => Status.completed,
@@ -180,7 +181,6 @@ class MBridge {
           if (type == 0) {
             val = jsonRes.first.value.toString();
           }
-
           //Decode jsonRes first map value
           else {
             val = jsonEncode(jsonRes.first.value);
@@ -189,14 +189,15 @@ class MBridge {
         }
         return $List.wrap(list.map((e) => $String(e)).toList());
       }
-
       // else jsonDecode(source) is Map value
       else {
         var map = json.decode(source);
         var values = JsonPath(expression).readValues(map);
-        return $List.wrap(values.map((e) {
-          return $String(e == null ? "{}" : json.encode(e));
-        }).toList());
+        return $List.wrap(
+          values.map((e) {
+            return $String(e == null ? "{}" : json.encode(e));
+          }).toList(),
+        );
       }
     } catch (_) {
       return $List.wrap([]);
@@ -238,7 +239,6 @@ class MBridge {
           values.add(map);
         }
       }
-
       // else jsonDecode(source) is Map value
       else {
         final mMap = jsonDecode(source) as Map?;
@@ -269,7 +269,10 @@ class MBridge {
 
   //Parse a list of dates to millisecondsSinceEpoch
   static List parseDates(
-      List value, String dateFormat, String dateFormatLocale) {
+    List value,
+    String dateFormat,
+    String dateFormatLocale,
+  ) {
     List<dynamic> val = [];
     for (var element in value) {
       if (element is $Value) {
@@ -286,16 +289,11 @@ class MBridge {
         if (error) {
           dateStr = DateTime.now().millisecondsSinceEpoch.toString();
         } else {
-          dateStr = parseChapterDate(
-            date,
-            dateFormat,
-            dateFormatLocale,
-            (val) {
-              dateFormat = val.$1;
-              dateFormatLocale = val.$2;
-              error = val.$3;
-            },
-          );
+          dateStr = parseChapterDate(date, dateFormat, dateFormatLocale, (val) {
+            dateFormat = val.$1;
+            dateFormatLocale = val.$2;
+            error = val.$3;
+          });
         }
         valD.add(dateStr);
       }
@@ -315,7 +313,12 @@ class MBridge {
 
   //Utility to use RegExp
   static String regExp(
-      String expression, String source, String replace, int type, int group) {
+    String expression,
+    String source,
+    String replace,
+    int type,
+    int group,
+  ) {
     if (type == 0) {
       return expression.replaceAll(RegExp(source), replace);
     }
@@ -331,23 +334,36 @@ class MBridge {
   }
 
   static Future<List<Video>> streamWishExtractor(
-      String url, String prefix) async {
+    String url,
+    String prefix,
+  ) async {
     return await StreamWishExtractor().videosFromUrl(url, prefix);
   }
 
   static Future<List<Video>> filemoonExtractor(
-      String url, String prefix, String suffix) async {
+    String url,
+    String prefix,
+    String suffix,
+  ) async {
     return await FilemoonExtractor().videosFromUrl(url, prefix, suffix);
   }
 
   static Future<List<Video>> mp4UploadExtractor(
-      String url, String? headers, String prefix, String suffix) async {
+    String url,
+    String? headers,
+    String prefix,
+    String suffix,
+  ) async {
     Map<String, String> newHeaders = {};
     if (headers != null) {
       newHeaders = (jsonDecode(headers) as Map).toMapStringString!;
     }
-    return await Mp4uploadExtractor()
-        .videosFromUrl(url, newHeaders, prefix: prefix, suffix: suffix);
+    return await Mp4uploadExtractor().videosFromUrl(
+      url,
+      newHeaders,
+      prefix: prefix,
+      suffix: suffix,
+    );
   }
 
   static final Map<CloudDriveType, QuarkUcExtractor> _extractorCache = {};
@@ -362,33 +378,45 @@ class MBridge {
   }
 
   static Future<List<Map<String, String>>> quarkFilesExtractor(
-      List<String> url, String cookie) async {
+    List<String> url,
+    String cookie,
+  ) async {
     var quark = _getExtractor(cookie, CloudDriveType.quark);
     return await quark.videoFilesFromUrl(url);
   }
 
   static Future<List<Video>> quarkVideosExtractor(
-      String url, String cookie) async {
+    String url,
+    String cookie,
+  ) async {
     var quark = _getExtractor(cookie, CloudDriveType.quark);
     return await quark.videosFromUrl(url);
   }
 
   static Future<List<Map<String, String>>> ucFilesExtractor(
-      List<String> url, String cookie) async {
+    List<String> url,
+    String cookie,
+  ) async {
     var uc = _getExtractor(cookie, CloudDriveType.uc);
     return await uc.videoFilesFromUrl(url);
   }
 
   static Future<List<Video>> ucVideosExtractor(
-      String url, String cookie) async {
+    String url,
+    String cookie,
+  ) async {
     var uc = _getExtractor(cookie, CloudDriveType.uc);
     return await uc.videosFromUrl(url);
   }
 
   static Future<List<Video>> streamTapeExtractor(
-      String url, String? quality) async {
-    return await StreamTapeExtractor()
-        .videosFromUrl(url, quality: quality ?? "StreamTape");
+    String url,
+    String? quality,
+  ) async {
+    return await StreamTapeExtractor().videosFromUrl(
+      url,
+      quality: quality ?? "StreamTape",
+    );
   }
 
   //Utility to use substring
@@ -411,8 +439,12 @@ class MBridge {
   }
 
   //Parse a chapter date to millisecondsSinceEpoch
-  static String parseChapterDate(String date, String dateFormat,
-      String dateFormatLocale, Function((String, String, bool)) newLocale) {
+  static String parseChapterDate(
+    String date,
+    String dateFormat,
+    String dateFormatLocale,
+    Function((String, String, bool)) newLocale,
+  ) {
     int parseRelativeDate(String date) {
       final number = int.tryParse(RegExp(r"(\d+)").firstMatch(date)!.group(0)!);
       if (number == null) return 0;
@@ -429,7 +461,7 @@ class MBridge {
         "ngày",
         "giorni",
         "أيام",
-        "天"
+        "天",
       ]).anyWordIn(date)) {
         return cal.subtract(Duration(days: number)).millisecondsSinceEpoch;
       } else if (WordSet([
@@ -442,15 +474,26 @@ class MBridge {
         "giờ",
         "ore",
         "ساعة",
-        "小时"
+        "小时",
       ]).anyWordIn(date)) {
         return cal.subtract(Duration(hours: number)).millisecondsSinceEpoch;
-      } else if (WordSet(
-              ["menit", "dakika", "min", "minute", "minuto", "นาที", "دقائق"])
-          .anyWordIn(date)) {
+      } else if (WordSet([
+        "menit",
+        "dakika",
+        "min",
+        "minute",
+        "minuto",
+        "นาที",
+        "دقائق",
+      ]).anyWordIn(date)) {
         return cal.subtract(Duration(minutes: number)).millisecondsSinceEpoch;
-      } else if (WordSet(["detik", "segundo", "second", "วินาที", "sec"])
-          .anyWordIn(date)) {
+      } else if (WordSet([
+        "detik",
+        "segundo",
+        "second",
+        "วินาที",
+        "sec",
+      ]).anyWordIn(date)) {
         return cal.subtract(Duration(seconds: number)).millisecondsSinceEpoch;
       } else if (WordSet(["week", "semana"]).anyWordIn(date)) {
         return cal.subtract(Duration(days: number * 7)).millisecondsSinceEpoch;
@@ -485,19 +528,22 @@ class MBridge {
       } else if (date.contains(RegExp(r"\d(st|nd|rd|th)"))) {
         final cleanedDate = date
             .split(" ")
-            .map((it) => it.contains(RegExp(r"\d\D\D"))
-                ? it.replaceAll(RegExp(r"\D"), "")
-                : it)
+            .map(
+              (it) =>
+                  it.contains(RegExp(r"\d\D\D"))
+                      ? it.replaceAll(RegExp(r"\D"), "")
+                      : it,
+            )
             .join(" ");
-        return DateFormat(dateFormat, dateFormatLocale)
-            .parse(cleanedDate)
-            .millisecondsSinceEpoch
-            .toString();
+        return DateFormat(
+          dateFormat,
+          dateFormatLocale,
+        ).parse(cleanedDate).millisecondsSinceEpoch.toString();
       } else {
-        return DateFormat(dateFormat, dateFormatLocale)
-            .parse(date)
-            .millisecondsSinceEpoch
-            .toString();
+        return DateFormat(
+          dateFormat,
+          dateFormatLocale,
+        ).parse(date).millisecondsSinceEpoch.toString();
       }
     } catch (e) {
       final supportedLocales = DateFormat.allLocalesWithSymbols();
@@ -519,27 +565,34 @@ class MBridge {
               DateTime cal = DateTime.now().subtract(const Duration(days: 2));
               cal = DateTime(cal.year, cal.month, cal.day);
               return cal.millisecondsSinceEpoch.toString();
-            } else if (WordSet(["ago", "atrás", "önce", "قبل"])
-                .endsWith(date)) {
+            } else if (WordSet([
+              "ago",
+              "atrás",
+              "önce",
+              "قبل",
+            ]).endsWith(date)) {
               return parseRelativeDate(date).toString();
             } else if (WordSet(["hace"]).startsWith(date)) {
               return parseRelativeDate(date).toString();
             } else if (date.contains(RegExp(r"\d(st|nd|rd|th)"))) {
               final cleanedDate = date
                   .split(" ")
-                  .map((it) => it.contains(RegExp(r"\d\D\D"))
-                      ? it.replaceAll(RegExp(r"\D"), "")
-                      : it)
+                  .map(
+                    (it) =>
+                        it.contains(RegExp(r"\d\D\D"))
+                            ? it.replaceAll(RegExp(r"\D"), "")
+                            : it,
+                  )
                   .join(" ");
-              return DateFormat(dateFormat, locale)
-                  .parse(cleanedDate)
-                  .millisecondsSinceEpoch
-                  .toString();
+              return DateFormat(
+                dateFormat,
+                locale,
+              ).parse(cleanedDate).millisecondsSinceEpoch.toString();
             } else {
-              return DateFormat(dateFormat, locale)
-                  .parse(date)
-                  .millisecondsSinceEpoch
-                  .toString();
+              return DateFormat(
+                dateFormat,
+                locale,
+              ).parse(date).millisecondsSinceEpoch.toString();
             }
           } catch (_) {}
         }
@@ -558,14 +611,18 @@ class MBridge {
   }
 
   static Future<List<Video>> sendVidExtractor(
-      String url, String? headers, String prefix) async {
+    String url,
+    String? headers,
+    String prefix,
+  ) async {
     Map<String, String> newHeaders = {};
     if (headers != null) {
       newHeaders = (jsonDecode(headers) as Map).toMapStringString!;
     }
 
-    return await SendvidExtractor(newHeaders)
-        .videosFromUrl(url, prefix: prefix);
+    return await SendvidExtractor(
+      newHeaders,
+    ).videosFromUrl(url, prefix: prefix);
   }
 
   static Future<List<Video>> myTvExtractor(String url) async {
@@ -577,13 +634,21 @@ class MBridge {
   }
 
   static Future<List<Video>> yourUploadExtractor(
-      String url, String? headers, String? name, String prefix) async {
+    String url,
+    String? headers,
+    String? name,
+    String prefix,
+  ) async {
     Map<String, String> newHeaders = {};
     if (headers != null) {
       newHeaders = (jsonDecode(headers) as Map).toMapStringString!;
     }
-    return await YourUploadExtractor().videosFromUrl(url, newHeaders,
-        prefix: prefix, name: name ?? "YourUpload");
+    return await YourUploadExtractor().videosFromUrl(
+      url,
+      newHeaders,
+      prefix: prefix,
+      name: name ?? "YourUpload",
+    );
   }
 
   static Future<List<Video>> voeExtractor(String url, String? quality) async {
@@ -595,9 +660,15 @@ class MBridge {
   }
 
   static Future<List<Video>> streamlareExtractor(
-      String url, String prefix, String suffix) async {
-    return await StreamlareExtractor()
-        .videosFromUrl(url, prefix: prefix, suffix: suffix);
+    String url,
+    String prefix,
+    String suffix,
+  ) async {
+    return await StreamlareExtractor().videosFromUrl(
+      url,
+      prefix: prefix,
+      suffix: suffix,
+    );
   }
 
   static String encryptAESCryptoJS(String plainText, String passphrase) {
@@ -608,18 +679,34 @@ class MBridge {
     return CryptoAES.decryptAESCryptoJS(encrypted, passphrase);
   }
 
-  static Video toVideo(String url, String quality, String originalUrl,
-      String? headers, List<Track>? subtitles, List<Track>? audios) {
+  static Video toVideo(
+    String url,
+    String quality,
+    String originalUrl,
+    String? headers,
+    List<Track>? subtitles,
+    List<Track>? audios,
+  ) {
     Map<String, String> newHeaders = {};
     if (headers != null) {
       newHeaders = (jsonDecode(headers) as Map).toMapStringString!;
     }
-    return Video(url, quality, originalUrl,
-        headers: newHeaders, subtitles: subtitles ?? [], audios: audios ?? []);
+    return Video(
+      url,
+      quality,
+      originalUrl,
+      headers: newHeaders,
+      subtitles: subtitles ?? [],
+      audios: audios ?? [],
+    );
   }
 
   static String cryptoHandler(
-      String text, String iv, String secretKeyString, bool encrypt) {
+    String text,
+    String iv,
+    String secretKeyString,
+    bool encrypt,
+  ) {
     try {
       if (encrypt) {
         final encryptt = _encrypt(secretKeyString, iv);
@@ -636,8 +723,11 @@ class MBridge {
   }
 
   static Future<String> evaluateJavascriptViaWebview(
-      String url, Map<String, String> headers, List<String> scripts,
-      {int time = 30}) async {
+    String url,
+    Map<String, String> headers,
+    List<String> scripts, {
+    int time = 30,
+  }) async {
     int t = 0;
     bool timeOut = false;
     bool isOk = false;
@@ -717,20 +807,22 @@ final List<String> _dateFormats = [
   "dd 'de' MMMMM 'de' yyyy",
   "dd MMMMM, yyyy",
   "MMMM d, yyyy",
-  "MMM dd,yyyy"
+  "MMM dd,yyyy",
 ];
 
-void botToast(String title,
-    {int second = 10,
-    double? fontSize,
-    double alignX = 0,
-    double alignY = 0.99,
-    bool hasCloudFlare = false,
-    String? url}) {
+void botToast(
+  String title, {
+  int second = 10,
+  double? fontSize,
+  double alignX = 0,
+  double alignY = 0.99,
+  bool hasCloudFlare = false,
+  String? url,
+}) {
   final context = navigatorKey.currentState?.context;
   final assets = [
     'assets/app_icons/icon-black.png',
-    'assets/app_icons/icon-red.png'
+    'assets/app_icons/icon-red.png',
   ];
   BotToast.showNotification(
     onlyOne: true,
@@ -741,18 +833,23 @@ void botToast(String title,
     animationReverseDuration: const Duration(milliseconds: 200),
     leading: (_) => Image.asset((assets..shuffle()).first, height: 25),
     title: (_) => Text(title, style: TextStyle(fontSize: fontSize)),
-    trailing: hasCloudFlare
-        ? (_) => OutlinedButton.icon(
+    trailing:
+        hasCloudFlare
+            ? (_) => OutlinedButton.icon(
               style: OutlinedButton.styleFrom(elevation: 10),
               onPressed: () {
-                context
-                    ?.push("/mangawebview", extra: {'url': url, 'title': ''});
+                context?.push(
+                  "/mangawebview",
+                  extra: {'url': url, 'title': ''},
+                );
               },
-              label: Text("Resolve Cloudflare challenge",
-                  style: TextStyle(color: context?.secondaryColor)),
+              label: Text(
+                "Resolve Cloudflare challenge",
+                style: TextStyle(color: context?.secondaryColor),
+              ),
               icon: const Icon(Icons.public),
             )
-        : null,
+            : null,
   );
 }
 
@@ -760,6 +857,7 @@ void botToast(String title,
   final key = encrypt.Key.fromUtf8(keyy);
   final iv = encrypt.IV.fromUtf8(ivv);
   final encrypter = encrypt.Encrypter(
-      encrypt.AES(key, mode: encrypt.AESMode.cbc, padding: 'PKCS7'));
+    encrypt.AES(key, mode: encrypt.AESMode.cbc, padding: 'PKCS7'),
+  );
   return (encrypter, iv);
 }

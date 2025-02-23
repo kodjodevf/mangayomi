@@ -13,12 +13,13 @@ class DoubleColummVerticalView extends StatelessWidget {
   final Function(UChapDataPreload datas) onLongPressData;
   final BackgroundColor backgroundColor;
   final Function(bool) isFailedToLoadImage;
-  const DoubleColummVerticalView(
-      {super.key,
-      required this.datas,
-      required this.onLongPressData,
-      required this.backgroundColor,
-      required this.isFailedToLoadImage});
+  const DoubleColummVerticalView({
+    super.key,
+    required this.datas,
+    required this.onLongPressData,
+    required this.backgroundColor,
+    required this.isFailedToLoadImage,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +28,7 @@ class DoubleColummVerticalView extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (datas[0] != null && datas[0]!.index == 0)
-          SizedBox(
-            height: MediaQuery.of(context).padding.top,
-          ),
+          SizedBox(height: MediaQuery.of(context).padding.top),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -50,7 +49,8 @@ class DoubleColummVerticalView extends StatelessWidget {
                         color: getBackgroundColor(backgroundColor),
                         height: context.height(0.8),
                         child: CircularProgressIndicatorAnimateRotate(
-                            progress: progress),
+                          progress: progress,
+                        ),
                       );
                     }
                     if (state.extendedImageLoadState == LoadState.completed) {
@@ -60,43 +60,46 @@ class DoubleColummVerticalView extends StatelessWidget {
                     if (state.extendedImageLoadState == LoadState.failed) {
                       isFailedToLoadImage(true);
                       return Container(
-                          color: getBackgroundColor(backgroundColor),
-                          height: context.height(0.8),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                l10n.image_loading_error,
-                                style: TextStyle(
-                                    color: Colors.white.withValues(alpha: 0.7)),
+                        color: getBackgroundColor(backgroundColor),
+                        height: context.height(0.8),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              l10n.image_loading_error,
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.7),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: GestureDetector(
-                                    onLongPress: () {
-                                      state.reLoadImage();
-                                      isFailedToLoadImage(false);
-                                    },
-                                    onTap: () {
-                                      state.reLoadImage();
-                                      isFailedToLoadImage(false);
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: context.primaryColor,
-                                          borderRadius:
-                                              BorderRadius.circular(30)),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 8, horizontal: 16),
-                                        child: Text(
-                                          l10n.retry,
-                                        ),
-                                      ),
-                                    )),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: GestureDetector(
+                                onLongPress: () {
+                                  state.reLoadImage();
+                                  isFailedToLoadImage(false);
+                                },
+                                onTap: () {
+                                  state.reLoadImage();
+                                  isFailedToLoadImage(false);
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: context.primaryColor,
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 8,
+                                      horizontal: 16,
+                                    ),
+                                    child: Text(l10n.retry),
+                                  ),
+                                ),
                               ),
-                            ],
-                          ));
+                            ),
+                          ],
+                        ),
+                      );
                     }
                     return null;
                   },
@@ -121,7 +124,8 @@ class DoubleColummVerticalView extends StatelessWidget {
                         color: getBackgroundColor(backgroundColor),
                         height: context.height(0.8),
                         child: CircularProgressIndicatorAnimateRotate(
-                            progress: progress),
+                          progress: progress,
+                        ),
                       );
                     }
                     if (state.extendedImageLoadState == LoadState.completed) {
@@ -131,43 +135,46 @@ class DoubleColummVerticalView extends StatelessWidget {
                     if (state.extendedImageLoadState == LoadState.failed) {
                       isFailedToLoadImage(true);
                       return Container(
-                          color: getBackgroundColor(backgroundColor),
-                          height: context.height(0.8),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                l10n.image_loading_error,
-                                style: TextStyle(
-                                    color: Colors.white.withValues(alpha: 0.7)),
+                        color: getBackgroundColor(backgroundColor),
+                        height: context.height(0.8),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              l10n.image_loading_error,
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.7),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: GestureDetector(
-                                    onLongPress: () {
-                                      state.reLoadImage();
-                                      isFailedToLoadImage(false);
-                                    },
-                                    onTap: () {
-                                      state.reLoadImage();
-                                      isFailedToLoadImage(false);
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: context.primaryColor,
-                                          borderRadius:
-                                              BorderRadius.circular(30)),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 8, horizontal: 16),
-                                        child: Text(
-                                          l10n.retry,
-                                        ),
-                                      ),
-                                    )),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: GestureDetector(
+                                onLongPress: () {
+                                  state.reLoadImage();
+                                  isFailedToLoadImage(false);
+                                },
+                                onTap: () {
+                                  state.reLoadImage();
+                                  isFailedToLoadImage(false);
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: context.primaryColor,
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 8,
+                                      horizontal: 16,
+                                    ),
+                                    child: Text(l10n.retry),
+                                  ),
+                                ),
                               ),
-                            ],
-                          ));
+                            ),
+                          ],
+                        ),
+                      );
                     }
                     return null;
                   },

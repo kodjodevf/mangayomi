@@ -11,8 +11,7 @@ class AppFontFamily extends _$AppFontFamily {
     final fontFamily = isar.settings.getSync(227)!.appFontFamily;
     if (fontFamily == null) return null;
 
-    return GoogleFonts.asMap()
-        .entries
+    return GoogleFonts.asMap().entries
         .toList()
         .firstWhere((element) => element.value().fontFamily! == fontFamily)
         .value()
@@ -23,6 +22,7 @@ class AppFontFamily extends _$AppFontFamily {
     final settings = isar.settings.getSync(227);
     state = fontFamily;
     isar.writeTxnSync(
-        () => isar.settings.putSync(settings!..appFontFamily = fontFamily));
+      () => isar.settings.putSync(settings!..appFontFamily = fontFamily),
+    );
   }
 }

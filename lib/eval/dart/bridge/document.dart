@@ -10,149 +10,201 @@ class $MDocument implements MDocument, $Instance {
   $MDocument.wrap(this.$value) : _superclass = $Object($value);
 
   static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MDocument'));
+    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MDocument'),
+  );
 
-  static const $declaration = BridgeClassDef(BridgeClassType($type),
-      constructors: {
-        '': BridgeConstructorDef(
-          BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: [
-            BridgeParameter('document',
-                BridgeTypeAnnotation($Element.$type, nullable: true), false),
-          ]),
-        )
-      },
-      fields: {
-        'document': BridgeFieldDef(BridgeTypeAnnotation($Element.$type)),
-      },
-      getters: {
-        'body': BridgeMethodDef(BridgeFunctionDef(
+  static const $declaration = BridgeClassDef(
+    BridgeClassType($type),
+    constructors: {
+      '': BridgeConstructorDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation($type),
+          params: [
+            BridgeParameter(
+              'document',
+              BridgeTypeAnnotation($Element.$type, nullable: true),
+              false,
+            ),
+          ],
+        ),
+      ),
+    },
+    fields: {'document': BridgeFieldDef(BridgeTypeAnnotation($Element.$type))},
+    getters: {
+      'body': BridgeMethodDef(
+        BridgeFunctionDef(
           returns: BridgeTypeAnnotation($MElement.$type, nullable: true),
-        )),
-        'documentElement': BridgeMethodDef(BridgeFunctionDef(
+        ),
+      ),
+      'documentElement': BridgeMethodDef(
+        BridgeFunctionDef(
           returns: BridgeTypeAnnotation($MElement.$type, nullable: true),
-        )),
-        'head': BridgeMethodDef(BridgeFunctionDef(
+        ),
+      ),
+      'head': BridgeMethodDef(
+        BridgeFunctionDef(
           returns: BridgeTypeAnnotation($MElement.$type, nullable: true),
-        )),
-        'parent': BridgeMethodDef(BridgeFunctionDef(
+        ),
+      ),
+      'parent': BridgeMethodDef(
+        BridgeFunctionDef(
           returns: BridgeTypeAnnotation($MElement.$type, nullable: true),
-        )),
-        'outerHtml': BridgeMethodDef(BridgeFunctionDef(
-          returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string),
-              nullable: true),
-        )),
-        'text': BridgeMethodDef(BridgeFunctionDef(
-          returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string),
-              nullable: true),
-        )),
-        'children': BridgeMethodDef(BridgeFunctionDef(
+        ),
+      ),
+      'outerHtml': BridgeMethodDef(
+        BridgeFunctionDef(
           returns: BridgeTypeAnnotation(
-              BridgeTypeRef(CoreTypes.list, [$MElement.$type]),
-              nullable: true),
-        )),
-      },
-      methods: {
-        'select': BridgeMethodDef(
-          BridgeFunctionDef(
-              returns: BridgeTypeAnnotation(
-                  BridgeTypeRef(CoreTypes.list, [$MElement.$type]),
-                  nullable: true),
-              params: [
-                BridgeParameter(
-                    'selector',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-                    false)
-              ]),
+            BridgeTypeRef(CoreTypes.string),
+            nullable: true,
+          ),
         ),
-        'selectFirst': BridgeMethodDef(
-          BridgeFunctionDef(
-              returns: BridgeTypeAnnotation($MElement.$type, nullable: true),
-              params: [
-                BridgeParameter(
-                    'selector',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-                    false)
-              ]),
+      ),
+      'text': BridgeMethodDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation(
+            BridgeTypeRef(CoreTypes.string),
+            nullable: true,
+          ),
         ),
-        'getElementsByClassName': BridgeMethodDef(
-          BridgeFunctionDef(
-              returns: BridgeTypeAnnotation(
-                  BridgeTypeRef(CoreTypes.list, [$type]),
-                  nullable: true),
-              params: [
-                BridgeParameter(
-                    'classNames',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-                    false)
-              ]),
+      ),
+      'children': BridgeMethodDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation(
+            BridgeTypeRef(CoreTypes.list, [$MElement.$type]),
+            nullable: true,
+          ),
         ),
-        'getElementsByTagName': BridgeMethodDef(
-          BridgeFunctionDef(
-              returns: BridgeTypeAnnotation(
-                  BridgeTypeRef(CoreTypes.list, [$type]),
-                  nullable: true),
-              params: [
-                BridgeParameter(
-                    'localNames',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-                    false)
-              ]),
+      ),
+    },
+    methods: {
+      'select': BridgeMethodDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation(
+            BridgeTypeRef(CoreTypes.list, [$MElement.$type]),
+            nullable: true,
+          ),
+          params: [
+            BridgeParameter(
+              'selector',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+          ],
         ),
-        'getElementById': BridgeMethodDef(
-          BridgeFunctionDef(
-              returns: BridgeTypeAnnotation($MElement.$type, nullable: true),
-              params: [
-                BridgeParameter(
-                    'id',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-                    false)
-              ]),
+      ),
+      'selectFirst': BridgeMethodDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation($MElement.$type, nullable: true),
+          params: [
+            BridgeParameter(
+              'selector',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+          ],
         ),
-        'xpath': BridgeMethodDef(
-          BridgeFunctionDef(
-              returns: BridgeTypeAnnotation(BridgeTypeRef(
-                  CoreTypes.list, [BridgeTypeRef(CoreTypes.string)])),
-              params: [
-                BridgeParameter(
-                    'xpath',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-                    false)
-              ]),
+      ),
+      'getElementsByClassName': BridgeMethodDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation(
+            BridgeTypeRef(CoreTypes.list, [$type]),
+            nullable: true,
+          ),
+          params: [
+            BridgeParameter(
+              'classNames',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+          ],
         ),
-        'xpathFirst': BridgeMethodDef(
-          BridgeFunctionDef(
-              returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string),
-                  nullable: true),
-              params: [
-                BridgeParameter(
-                    'xpath',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-                    false)
-              ]),
+      ),
+      'getElementsByTagName': BridgeMethodDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation(
+            BridgeTypeRef(CoreTypes.list, [$type]),
+            nullable: true,
+          ),
+          params: [
+            BridgeParameter(
+              'localNames',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+          ],
         ),
-        'attr': BridgeMethodDef(
-          BridgeFunctionDef(
-              returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-              params: [
-                BridgeParameter(
-                    'attr',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string),
-                        nullable: true),
-                    false)
-              ]),
+      ),
+      'getElementById': BridgeMethodDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation($MElement.$type, nullable: true),
+          params: [
+            BridgeParameter(
+              'id',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+          ],
         ),
-        'hasAttr': BridgeMethodDef(
-          BridgeFunctionDef(
-              returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)),
-              params: [
-                BridgeParameter(
-                    'attr',
-                    BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-                    false)
-              ]),
+      ),
+      'xpath': BridgeMethodDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation(
+            BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.string)]),
+          ),
+          params: [
+            BridgeParameter(
+              'xpath',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+          ],
         ),
-      },
-      wrap: true);
+      ),
+      'xpathFirst': BridgeMethodDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation(
+            BridgeTypeRef(CoreTypes.string),
+            nullable: true,
+          ),
+          params: [
+            BridgeParameter(
+              'xpath',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+          ],
+        ),
+      ),
+      'attr': BridgeMethodDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+          params: [
+            BridgeParameter(
+              'attr',
+              BridgeTypeAnnotation(
+                BridgeTypeRef(CoreTypes.string),
+                nullable: true,
+              ),
+              false,
+            ),
+          ],
+        ),
+      ),
+      'hasAttr': BridgeMethodDef(
+        BridgeFunctionDef(
+          returns: BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)),
+          params: [
+            BridgeParameter(
+              'attr',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+          ],
+        ),
+      ),
+    },
+    wrap: true,
+  );
 
   @override
   get $reified => $value;
@@ -219,7 +271,10 @@ class $MDocument implements MDocument, $Instance {
 
   static const $Function __select = $Function(_select);
   static $Value? _select(
-      final Runtime runtime, final $Value? target, final List<$Value?> args) {
+    final Runtime runtime,
+    final $Value? target,
+    final List<$Value?> args,
+  ) {
     final res = (target!.$value as MDocument).select(args[0]?.$value);
     return res == null
         ? const $null()
@@ -228,33 +283,49 @@ class $MDocument implements MDocument, $Instance {
 
   static const $Function __selectFirst = $Function(_selectFirst);
   static $Value? _selectFirst(
-      final Runtime runtime, final $Value? target, final List<$Value?> args) {
+    final Runtime runtime,
+    final $Value? target,
+    final List<$Value?> args,
+  ) {
     final res = (target!.$value as MDocument).selectFirst(args[0]?.$value);
     return res == null ? const $null() : $MElement.wrap(res);
   }
 
   static $Value? $new(
-      final Runtime runtime, final $Value? target, final List<$Value?> args) {
+    final Runtime runtime,
+    final $Value? target,
+    final List<$Value?> args,
+  ) {
     return $MDocument.wrap(MDocument(args[0]?.$value));
   }
 
-  static const $Function __getElementsByClassName =
-      $Function(_getElementsByClassName);
+  static const $Function __getElementsByClassName = $Function(
+    _getElementsByClassName,
+  );
   static $Value? _getElementsByClassName(
-      final Runtime runtime, final $Value? target, final List<$Value?> args) {
-    final res =
-        (target!.$value as MDocument).getElementsByClassName(args[0]?.$value);
+    final Runtime runtime,
+    final $Value? target,
+    final List<$Value?> args,
+  ) {
+    final res = (target!.$value as MDocument).getElementsByClassName(
+      args[0]?.$value,
+    );
     return res == null
         ? const $null()
         : $List.wrap(res.map((e) => $MElement.wrap(e)).toList());
   }
 
-  static const $Function __getElementsByTagName =
-      $Function(_getElementsByTagName);
+  static const $Function __getElementsByTagName = $Function(
+    _getElementsByTagName,
+  );
   static $Value? _getElementsByTagName(
-      final Runtime runtime, final $Value? target, final List<$Value?> args) {
-    final res =
-        (target!.$value as MDocument).getElementsByTagName(args[0]?.$value);
+    final Runtime runtime,
+    final $Value? target,
+    final List<$Value?> args,
+  ) {
+    final res = (target!.$value as MDocument).getElementsByTagName(
+      args[0]?.$value,
+    );
     return res == null
         ? const $null()
         : $List.wrap(res.map((e) => $MElement.wrap(e)).toList());
@@ -262,35 +333,50 @@ class $MDocument implements MDocument, $Instance {
 
   static const $Function __getElementById = $Function(_getElementById);
   static $Value? _getElementById(
-      final Runtime runtime, final $Value? target, final List<$Value?> args) {
+    final Runtime runtime,
+    final $Value? target,
+    final List<$Value?> args,
+  ) {
     final res = (target!.$value as MDocument).getElementById(args[0]?.$value);
     return res == null ? const $null() : $MElement.wrap(res);
   }
 
   static const $Function __xpath = $Function(_xpath);
   static $Value? _xpath(
-      final Runtime runtime, final $Value? target, final List<$Value?> args) {
+    final Runtime runtime,
+    final $Value? target,
+    final List<$Value?> args,
+  ) {
     final res = (target!.$value as MDocument).xpath(args[0]?.$value);
     return $List.wrap(res.map((e) => $String(e)).toList());
   }
 
   static const $Function __xpathFirst = $Function(_xpathFirst);
   static $Value? _xpathFirst(
-      final Runtime runtime, final $Value? target, final List<$Value?> args) {
+    final Runtime runtime,
+    final $Value? target,
+    final List<$Value?> args,
+  ) {
     final res = (target!.$value as MDocument).xpathFirst(args[0]?.$value);
     return res == null ? const $null() : $String(res);
   }
 
   static const $Function __attr = $Function(_attr);
   static $Value? _attr(
-      final Runtime runtime, final $Value? target, final List<$Value?> args) {
+    final Runtime runtime,
+    final $Value? target,
+    final List<$Value?> args,
+  ) {
     final res = (target!.$value as MDocument).attr(args[0]?.$value ?? "");
     return res == null ? const $null() : $String(res);
   }
 
   static const $Function __hasAttr = $Function(_hasAttr);
   static $Value? _hasAttr(
-      final Runtime runtime, final $Value? target, final List<$Value?> args) {
+    final Runtime runtime,
+    final $Value? target,
+    final List<$Value?> args,
+  ) {
     final res = (target!.$value as MDocument).attr(args[0]?.$value ?? "");
     return res == null ? const $null() : $String(res);
   }
@@ -350,13 +436,15 @@ class $Document implements $Instance {
   $Document.wrap(this.$value) : _superclass = $Object($value);
 
   static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'Document'));
+    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'Document'),
+  );
 
   static const $declaration = BridgeClassDef(
     BridgeClassType($type),
     constructors: {
-      '': BridgeConstructorDef(BridgeFunctionDef(
-          returns: BridgeTypeAnnotation($type, nullable: true)))
+      '': BridgeConstructorDef(
+        BridgeFunctionDef(returns: BridgeTypeAnnotation($type, nullable: true)),
+      ),
     },
     wrap: true,
   );

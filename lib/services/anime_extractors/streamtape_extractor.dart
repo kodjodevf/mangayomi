@@ -5,10 +5,13 @@ import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 
 class StreamTapeExtractor {
-  Future<List<Video>> videosFromUrl(String url,
-      {String quality = "StreamTape"}) async {
-    final InterceptedClient client =
-        MClient.init(reqcopyWith: {'useDartHttpClient': true});
+  Future<List<Video>> videosFromUrl(
+    String url, {
+    String quality = "StreamTape",
+  }) async {
+    final InterceptedClient client = MClient.init(
+      reqcopyWith: {'useDartHttpClient': true},
+    );
     try {
       const baseUrl = "https://streamtape.com/e/";
       final newUrl =
@@ -19,11 +22,12 @@ class StreamTapeExtractor {
 
       const targetLine = "document.getElementById('robotlink')";
       String script = "";
-      final scri = document
-          .querySelectorAll("script")
-          .where((element) => element.innerHtml.contains(targetLine))
-          .map((e) => e.innerHtml)
-          .toList();
+      final scri =
+          document
+              .querySelectorAll("script")
+              .where((element) => element.innerHtml.contains(targetLine))
+              .map((e) => e.innerHtml)
+              .toList();
       if (scri.isEmpty) {
         return [];
       }

@@ -7,7 +7,7 @@ Uint8List compilerEval(String code) {
   final plugin = MEvalPlugin();
   compiler.addPlugin(plugin);
   final program = compiler.compile({
-    'mangayomi': {'main.dart': code}
+    'mangayomi': {'main.dart': code},
   });
 
   final bytecode = program.write();

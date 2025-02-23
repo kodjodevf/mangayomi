@@ -71,8 +71,9 @@ class StorageProvider {
     Directory? directory;
     String path = isar.settings.getSync(227)!.downloadLocation ?? "";
     if (Platform.isAndroid) {
-      directory =
-          Directory(path.isEmpty ? "/storage/emulated/0/Mangayomi/" : "$path/");
+      directory = Directory(
+        path.isEmpty ? "/storage/emulated/0/Mangayomi/" : "$path/",
+      );
     } else {
       final dir = await getApplicationDocumentsDirectory();
       final p = path.isEmpty ? dir.path : path;
@@ -81,37 +82,40 @@ class StorageProvider {
     return directory;
   }
 
-  Future<Directory?> getMangaChapterDirectory(
-    Chapter chapter,
-  ) async {
+  Future<Directory?> getMangaChapterDirectory(Chapter chapter) async {
     final manga = chapter.manga.value!;
-    String scanlator = chapter.scanlator?.isNotEmpty ?? false
-        ? "${chapter.scanlator!.replaceForbiddenCharacters('_')}_"
-        : "";
+    String scanlator =
+        chapter.scanlator?.isNotEmpty ?? false
+            ? "${chapter.scanlator!.replaceForbiddenCharacters('_')}_"
+            : "";
     final itemType = chapter.manga.value!.itemType;
-    final itemTypePath = itemType == ItemType.manga
-        ? "Manga"
-        : itemType == ItemType.anime
+    final itemTypePath =
+        itemType == ItemType.manga
+            ? "Manga"
+            : itemType == ItemType.anime
             ? "Anime"
             : "Novel";
     final dir = await getDirectory();
     return Directory(
-        "${dir!.path}downloads/$itemTypePath/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceForbiddenCharacters('_')}/$scanlator${chapter.name!.replaceForbiddenCharacters('_')}/"
-            .fixSeparator);
+      "${dir!.path}downloads/$itemTypePath/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceForbiddenCharacters('_')}/$scanlator${chapter.name!.replaceForbiddenCharacters('_')}/"
+          .fixSeparator,
+    );
   }
 
   Future<Directory?> getMangaMainDirectory(Chapter chapter) async {
     final manga = chapter.manga.value!;
     final itemType = chapter.manga.value!.itemType;
-    final itemTypePath = itemType == ItemType.manga
-        ? "Manga"
-        : itemType == ItemType.anime
+    final itemTypePath =
+        itemType == ItemType.manga
+            ? "Manga"
+            : itemType == ItemType.anime
             ? "Anime"
             : "Novel";
     final dir = await getDirectory();
     return Directory(
-        "${dir!.path}/downloads/$itemTypePath/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceForbiddenCharacters('_')}/"
-            .fixSeparator);
+      "${dir!.path}/downloads/$itemTypePath/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceForbiddenCharacters('_')}/"
+          .fixSeparator,
+    );
   }
 
   Future<Directory?> getDatabaseDirectory() async {
@@ -145,29 +149,32 @@ class StorageProvider {
       dir = Directory(path);
     }
 
-    final isar = Isar.openSync([
-      MangaSchema,
-      ChangedPartSchema,
-      ChapterSchema,
-      CategorySchema,
-      UpdateSchema,
-      HistorySchema,
-      DownloadSchema,
-      SourceSchema,
-      SettingsSchema,
-      TrackPreferenceSchema,
-      TrackSchema,
-      SyncPreferenceSchema,
-      SourcePreferenceSchema,
-      SourcePreferenceStringValueSchema,
-    ], directory: dir!.path, name: "mangayomiDb", inspector: inspector!);
+    final isar = Isar.openSync(
+      [
+        MangaSchema,
+        ChangedPartSchema,
+        ChapterSchema,
+        CategorySchema,
+        UpdateSchema,
+        HistorySchema,
+        DownloadSchema,
+        SourceSchema,
+        SettingsSchema,
+        TrackPreferenceSchema,
+        TrackSchema,
+        SyncPreferenceSchema,
+        SourcePreferenceSchema,
+        SourcePreferenceStringValueSchema,
+      ],
+      directory: dir!.path,
+      name: "mangayomiDb",
+      inspector: inspector!,
+    );
 
     if (isar.settings.filter().idEqualTo(227).isEmptySync()) {
-      isar.writeTxnSync(
-        () {
-          isar.settings.putSync(Settings());
-        },
-      );
+      isar.writeTxnSync(() {
+        isar.settings.putSync(Settings());
+      });
     }
 
     return isar;

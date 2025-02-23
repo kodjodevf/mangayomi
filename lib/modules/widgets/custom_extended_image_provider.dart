@@ -122,7 +122,9 @@ class CustomExtendedNetworkImageProvider
         return <DiagnosticsNode>[
           DiagnosticsProperty<ImageProvider>('Image provider', this),
           DiagnosticsProperty<image_provider.ExtendedNetworkImageProvider>(
-              'Image key', key),
+            'Image key',
+            key,
+          ),
         ];
       },
     );
@@ -130,7 +132,8 @@ class CustomExtendedNetworkImageProvider
 
   @override
   Future<CustomExtendedNetworkImageProvider> obtainKey(
-      ImageConfiguration configuration) {
+    ImageConfiguration configuration,
+  ) {
     return SynchronousFuture<CustomExtendedNetworkImageProvider>(this);
   }
 
@@ -144,11 +147,7 @@ class CustomExtendedNetworkImageProvider
     ui.Codec? result;
     if (cache) {
       try {
-        final Uint8List? data = await _loadCache(
-          key,
-          chunkEvents,
-          md5Key,
-        );
+        final Uint8List? data = await _loadCache(key, chunkEvents, md5Key);
         if (data != null) {
           result = await instantiateImageCodec(data, decode);
         }
@@ -161,10 +160,7 @@ class CustomExtendedNetworkImageProvider
 
     if (result == null) {
       try {
-        final Uint8List? data = await _loadNetwork(
-          key,
-          chunkEvents,
-        );
+        final Uint8List? data = await _loadNetwork(key, chunkEvents);
         if (data != null) {
           result = await instantiateImageCodec(data, decode);
         }
@@ -190,10 +186,13 @@ class CustomExtendedNetworkImageProvider
     StreamController<ImageChunkEvent>? chunkEvents,
     String md5Key,
   ) async {
-    final Directory cacheImagesDirectory = Directory(join(
+    final Directory cacheImagesDirectory = Directory(
+      join(
         (await getTemporaryDirectory()).path,
         'Mangayomi',
-        imageCacheFolderName ?? 'cacheimagecover'));
+        imageCacheFolderName ?? 'cacheimagecover',
+      ),
+    );
     Uint8List? data;
     // exist, try to find cache image file
     if (cacheImagesDirectory.existsSync()) {
@@ -218,10 +217,7 @@ class CustomExtendedNetworkImageProvider
     }
     // load from network
     if (data == null) {
-      data = await _loadNetwork(
-        key,
-        chunkEvents,
-      );
+      data = await _loadNetwork(key, chunkEvents);
       if (data != null) {
         // cache image file
         await File(join(cacheImagesDirectory.path, md5Key)).writeAsBytes(data);
@@ -249,8 +245,12 @@ class CustomExtendedNetworkImageProvider
           try {
             received += chunk.length;
             if (chunkEvents != null) {}
-            chunkEvents!.add(ImageChunkEvent(
-                cumulativeBytesLoaded: received, expectedTotalBytes: total));
+            chunkEvents!.add(
+              ImageChunkEvent(
+                cumulativeBytesLoaded: received,
+                expectedTotalBytes: total,
+              ),
+            );
           } catch (e) {
             if (kDebugMode) {
               print(e);
@@ -263,7 +263,8 @@ class CustomExtendedNetworkImageProvider
 
       if (bytes.isEmpty) {
         return Future<Uint8List>.error(
-            StateError('NetworkImage is an empty file: $resolved'));
+          StateError('NetworkImage is an empty file: $resolved'),
+        );
       }
 
       return Uint8List.fromList(bytes);
@@ -286,14 +287,14 @@ class CustomExtendedNetworkImageProvider
     var request = Request('GET', resolved);
     request.headers.addAll(headers ?? {});
 
-    StreamedResponse response =
-        await MClient.init(showCloudFlareError: showCloudFlareError)
-            .send(request);
+    StreamedResponse response = await MClient.init(
+      showCloudFlareError: showCloudFlareError,
+    ).send(request);
     if (response.statusCode != 200) {
       final res = await MClient.init(
-              reqcopyWith: {'useDartHttpClient': true},
-              showCloudFlareError: showCloudFlareError)
-          .send(response.request!);
+        reqcopyWith: {'useDartHttpClient': true},
+        showCloudFlareError: showCloudFlareError,
+      ).send(response.request!);
       return res;
     }
 
@@ -301,9 +302,7 @@ class CustomExtendedNetworkImageProvider
   }
 
   // Http get with cancel, delay try again
-  Future<StreamedResponse?> _tryGetResponse(
-    Uri resolved,
-  ) async {
+  Future<StreamedResponse?> _tryGetResponse(Uri resolved) async {
     cancelToken?.throwIfCancellationRequested();
     return await RetryHelper.tryRun<StreamedResponse>(
       () {
@@ -340,25 +339,24 @@ class CustomExtendedNetworkImageProvider
 
   @override
   int get hashCode => Object.hash(
-        url,
-        scale,
-        cacheRawData,
-        timeLimit,
-        cancelToken,
-        timeRetry,
-        cache,
-        cacheKey,
-        //headers,
-        retries,
-        imageCacheName,
-        cacheMaxAge,
-      );
+    url,
+    scale,
+    cacheRawData,
+    timeLimit,
+    cancelToken,
+    timeRetry,
+    cache,
+    cacheKey,
+    //headers,
+    retries,
+    imageCacheName,
+    cacheMaxAge,
+  );
 
   @override
   String toString() => '$runtimeType("$url", scale: $scale)';
 
   @override
-
   /// Get network image data from cached
   Future<Uint8List?> getNetworkImageData({
     StreamController<ImageChunkEvent>? chunkEvents,
@@ -366,16 +364,9 @@ class CustomExtendedNetworkImageProvider
     final String uId = cacheKey ?? keyToMd5(url);
 
     if (cache) {
-      return await _loadCache(
-        this,
-        chunkEvents,
-        uId,
-      );
+      return await _loadCache(this, chunkEvents, uId);
     }
 
-    return await _loadNetwork(
-      this,
-      chunkEvents,
-    );
+    return await _loadNetwork(this, chunkEvents);
   }
 }

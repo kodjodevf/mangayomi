@@ -4,8 +4,9 @@ import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 
 class SibnetExtractor {
-  final InterceptedClient client =
-      MClient.init(reqcopyWith: {'useDartHttpClient': true});
+  final InterceptedClient client = MClient.init(
+    reqcopyWith: {'useDartHttpClient': true},
+  );
 
   Future<List<Video>> videosFromUrl(String url, {String prefix = ""}) async {
     List<Video> videoList = [];
@@ -25,9 +26,7 @@ class SibnetExtractor {
       String videoUrl =
           slug.contains("http") ? slug : "https://${Uri.parse(url).host}$slug";
 
-      Map<String, String> videoHeaders = {
-        "Referer": url,
-      };
+      Map<String, String> videoHeaders = {"Referer": url};
 
       videoList.add(
         Video(videoUrl, "$prefix - Sibnet", videoUrl, headers: videoHeaders),

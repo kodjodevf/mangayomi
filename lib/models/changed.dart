@@ -11,19 +11,20 @@ class ChangedPart {
   String data;
   int clientDate;
 
-  ChangedPart(
-      {this.id = Isar.autoIncrement,
-      required this.actionType,
-      this.isarId,
-      required this.data,
-      required this.clientDate});
+  ChangedPart({
+    this.id = Isar.autoIncrement,
+    required this.actionType,
+    this.isarId,
+    required this.data,
+    required this.clientDate,
+  });
 
   Map<String, dynamic> toJson() => {
-        'action': actionType.name,
-        'isarId': isarId,
-        'data': data,
-        'clientDate': clientDate
-      };
+    'action': actionType.name,
+    'isarId': isarId,
+    'data': data,
+    'clientDate': clientDate,
+  };
 }
 
 enum ActionType {

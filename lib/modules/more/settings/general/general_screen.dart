@@ -13,64 +13,62 @@ class GeneralScreen extends ConsumerWidget {
     final l10n = l10nLocalizations(context);
     final l10nLocale = ref.watch(l10nLocaleStateProvider);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n!.general),
-      ),
+      appBar: AppBar(title: Text(l10n!.general)),
       body: SingleChildScrollView(
         child: Column(
           children: [
             ListTile(
               onTap: () {
                 showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text(
-                          l10n.app_language,
-                        ),
-                        content: SizedBox(
-                            width: context.width(0.8),
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount:
-                                  AppLocalizations.supportedLocales.length,
-                              itemBuilder: (context, index) {
-                                final locale =
-                                    AppLocalizations.supportedLocales[index];
-                                return RadioListTile(
-                                  dense: true,
-                                  contentPadding: const EdgeInsets.all(0),
-                                  value: locale,
-                                  groupValue: l10nLocale,
-                                  onChanged: (value) {
-                                    ref
-                                        .read(l10nLocaleStateProvider.notifier)
-                                        .setLocale(locale);
-                                    Navigator.pop(context);
-                                  },
-                                  title: Text(completeLanguageName(
-                                      locale.toLanguageTag())),
-                                );
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(l10n.app_language),
+                      content: SizedBox(
+                        width: context.width(0.8),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: AppLocalizations.supportedLocales.length,
+                          itemBuilder: (context, index) {
+                            final locale =
+                                AppLocalizations.supportedLocales[index];
+                            return RadioListTile(
+                              dense: true,
+                              contentPadding: const EdgeInsets.all(0),
+                              value: locale,
+                              groupValue: l10nLocale,
+                              onChanged: (value) {
+                                ref
+                                    .read(l10nLocaleStateProvider.notifier)
+                                    .setLocale(locale);
+                                Navigator.pop(context);
                               },
-                            )),
-                        actions: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              TextButton(
-                                  onPressed: () async {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text(
-                                    l10n.cancel,
-                                    style:
-                                        TextStyle(color: context.primaryColor),
-                                  )),
-                            ],
-                          )
-                        ],
-                      );
-                    });
+                              title: Text(
+                                completeLanguageName(locale.toLanguageTag()),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      actions: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                l10n.cancel,
+                                style: TextStyle(color: context.primaryColor),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
               title: Text(l10n.app_language),
               subtitle: Text(

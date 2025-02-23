@@ -14,7 +14,8 @@ class DateFormatState extends _$DateFormatState {
     final settings = isar.settings.getSync(227);
     state = dateFormat;
     isar.writeTxnSync(
-        () => isar.settings.putSync(settings!..dateFormat = state));
+      () => isar.settings.putSync(settings!..dateFormat = state),
+    );
   }
 }
 
@@ -29,6 +30,7 @@ class RelativeTimesTampsState extends _$RelativeTimesTampsState {
     final settings = isar.settings.getSync(227);
     state = type;
     isar.writeTxnSync(
-        () => isar.settings.putSync(settings!..relativeTimesTamps = state));
+      () => isar.settings.putSync(settings!..relativeTimesTamps = state),
+    );
   }
 }

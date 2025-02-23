@@ -26,11 +26,7 @@ String regImgMatcher(String input) {
   return firstMatch!;
 }
 
-String regCustomMatcher(
-  String input,
-  String source,
-  int group,
-) {
+String regCustomMatcher(String input, String source, int group) {
   try {
     RegExp exp = RegExp(source);
     Iterable<Match> matches = exp.allMatches(input);

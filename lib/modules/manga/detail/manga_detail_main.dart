@@ -27,8 +27,8 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
   _init() async {
     await Future.delayed(const Duration(milliseconds: 100));
     await ref.read(
-        updateMangaDetailProvider(mangaId: widget.mangaId, isInit: true)
-            .future);
+      updateMangaDetailProvider(mangaId: widget.mangaId, isInit: true).future,
+    );
     if (mounted) {
       setState(() {
         _isLoading = false;
@@ -39,12 +39,13 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
   bool _isLoading = true;
   @override
   Widget build(BuildContext context) {
-    final manga =
-        ref.watch(getMangaDetailStreamProvider(mangaId: widget.mangaId));
+    final manga = ref.watch(
+      getMangaDetailStreamProvider(mangaId: widget.mangaId),
+    );
     return Scaffold(
-        body: manga.when(
-      data: (manga) {
-        return StreamBuilder(
+      body: manga.when(
+        data: (manga) {
+          return StreamBuilder(
             stream: isar.sources
                 .filter()
                 .langContains(manga!.lang!, caseSensitive: false)
@@ -62,9 +63,12 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
               return RefreshIndicator(
                 onRefresh: () async {
                   if (sourceExist && !_isLoading) {
-                    await ref.read(updateMangaDetailProvider(
-                            mangaId: manga.id, isInit: false)
-                        .future);
+                    await ref.read(
+                      updateMangaDetailProvider(
+                        mangaId: manga.id,
+                        isInit: false,
+                      ).future,
+                    );
                   }
                 },
                 child: Stack(
@@ -78,9 +82,12 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
                             _isLoading = true;
                           });
                           if (sourceExist) {
-                            await ref.read(updateMangaDetailProvider(
-                                    mangaId: manga.id, isInit: false)
-                                .future);
+                            await ref.read(
+                              updateMangaDetailProvider(
+                                mangaId: manga.id,
+                                isInit: false,
+                              ).future,
+                            );
                           }
                           if (mounted) {
                             setState(() {
@@ -92,26 +99,27 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
                     ),
                     if (_isLoading)
                       const Positioned(
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          child: Padding(
-                            padding: EdgeInsets.only(top: 40),
-                            child: Center(
-                              child: RefreshProgressIndicator(),
-                            ),
-                          )),
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 40),
+                          child: Center(child: RefreshProgressIndicator()),
+                        ),
+                      ),
                   ],
                 ),
               );
-            });
-      },
-      error: (Object error, StackTrace stackTrace) {
-        return ErrorText(error);
-      },
-      loading: () {
-        return const ProgressCenter();
-      },
-    ));
+            },
+          );
+        },
+        error: (Object error, StackTrace stackTrace) {
+          return ErrorText(error);
+        },
+        loading: () {
+          return const ProgressCenter();
+        },
+      ),
+    );
   }
 }

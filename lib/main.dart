@@ -55,8 +55,10 @@ void main(List<String> args) async {
     if (availableVersion != null) {
       final document = await getApplicationDocumentsDirectory();
       webViewEnvironment = await WebViewEnvironment.create(
-          settings: WebViewEnvironmentSettings(
-              userDataFolder: p.join(document.path, 'flutter_inappwebview')));
+        settings: WebViewEnvironmentSettings(
+          userDataFolder: p.join(document.path, 'flutter_inappwebview'),
+        ),
+      );
     }
   }
   isar = await StorageProvider().initDB(null, inspector: kDebugMode);
@@ -180,8 +182,11 @@ class _MyAppState extends ConsumerState<MyApp> {
           if (mangaRepoUrls != null) {
             final mangaRepos =
                 ref.read(extensionsRepoStateProvider(ItemType.manga)).toList();
-            mangaRepos.addAll(mangaRepoUrls.map(
-                (e) => Repo(name: repoName, jsonUrl: e, website: repoUrl)));
+            mangaRepos.addAll(
+              mangaRepoUrls.map(
+                (e) => Repo(name: repoName, jsonUrl: e, website: repoUrl),
+              ),
+            );
             ref
                 .read(extensionsRepoStateProvider(ItemType.manga).notifier)
                 .set(mangaRepos);
@@ -189,8 +194,11 @@ class _MyAppState extends ConsumerState<MyApp> {
           if (animeRepoUrls != null) {
             final animeRepos =
                 ref.read(extensionsRepoStateProvider(ItemType.anime)).toList();
-            animeRepos.addAll(animeRepoUrls.map(
-                (e) => Repo(name: repoName, jsonUrl: e, website: repoUrl)));
+            animeRepos.addAll(
+              animeRepoUrls.map(
+                (e) => Repo(name: repoName, jsonUrl: e, website: repoUrl),
+              ),
+            );
             ref
                 .read(extensionsRepoStateProvider(ItemType.anime).notifier)
                 .set(animeRepos);
@@ -198,8 +206,11 @@ class _MyAppState extends ConsumerState<MyApp> {
           if (novelRepoUrls != null) {
             final novelRepos =
                 ref.read(extensionsRepoStateProvider(ItemType.novel)).toList();
-            novelRepos.addAll(novelRepoUrls.map(
-                (e) => Repo(name: repoName, jsonUrl: e, website: repoUrl)));
+            novelRepos.addAll(
+              novelRepoUrls.map(
+                (e) => Repo(name: repoName, jsonUrl: e, website: repoUrl),
+              ),
+            );
             ref
                 .read(extensionsRepoStateProvider(ItemType.novel).notifier)
                 .set(novelRepos);

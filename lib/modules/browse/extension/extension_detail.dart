@@ -29,14 +29,11 @@ class ExtensionDetail extends ConsumerStatefulWidget {
 class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
   late Source source = isar.sources.getSync(widget.source.id!)!;
   late List<SourcePreference> sourcePreference =
-      getSourcePreference(source: source)
-          .map((e) => getSourcePreferenceEntry(e.key!, source.id!))
-          .toList();
+      getSourcePreference(
+        source: source,
+      ).map((e) => getSourcePreferenceEntry(e.key!, source.id!)).toList();
   Future<void> _launchInBrowser(Uri url) async {
-    if (!await launchUrl(
-      url,
-      mode: LaunchMode.externalApplication,
-    )) {
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       throw 'Could not launch $url';
     }
   }
@@ -51,10 +48,11 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
         actions: [
           if (source.repo?.website != null)
             IconButton(
-                onPressed: () {
-                  _launchInBrowser(Uri.parse(source.repo!.website!));
-                },
-                icon: Icon(Icons.open_in_new_outlined))
+              onPressed: () {
+                _launchInBrowser(Uri.parse(source.repo!.website!));
+              },
+              icon: Icon(Icons.open_in_new_outlined),
+            ),
         ],
       ),
       body: SingleChildScrollView(
@@ -64,34 +62,38 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
               padding: const EdgeInsets.only(top: 20),
               child: Container(
                 decoration: BoxDecoration(
-                    color: Theme.of(context)
-                        .secondaryHeaderColor
-                        .withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(10)),
-                child: widget.source.iconUrl!.isEmpty
-                    ? const Icon(Icons.source_outlined, size: 140)
-                    : cachedNetworkImage(
-                        imageUrl: widget.source.iconUrl!,
-                        fit: BoxFit.contain,
-                        width: 140,
-                        height: 140,
-                        errorWidget: const SizedBox(
+                  color: Theme.of(
+                    context,
+                  ).secondaryHeaderColor.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child:
+                    widget.source.iconUrl!.isEmpty
+                        ? const Icon(Icons.source_outlined, size: 140)
+                        : cachedNetworkImage(
+                          imageUrl: widget.source.iconUrl!,
+                          fit: BoxFit.contain,
                           width: 140,
                           height: 140,
-                          child: Center(
-                            child: Icon(Icons.source_outlined, size: 140),
+                          errorWidget: const SizedBox(
+                            width: 140,
+                            height: 140,
+                            child: Center(
+                              child: Icon(Icons.source_outlined, size: 140),
+                            ),
                           ),
+                          headers: {},
                         ),
-                        headers: {},
-                      ),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(12),
               child: Text(
                 widget.source.name!,
-                style:
-                    const TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 23,
+                  fontWeight: FontWeight.bold,
+                ),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -99,8 +101,9 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
               padding: const EdgeInsets.all(8.0),
               child: Container(
                 decoration: BoxDecoration(
-                    color: context.primaryColor.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(10)),
+                  color: context.primaryColor.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(20),
                   child: Row(
@@ -111,7 +114,9 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                           Text(
                             widget.source.version!,
                             style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           Text(
                             l10n.version,
@@ -124,7 +129,9 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                           Text(
                             completeLanguageName(widget.source.lang!),
                             style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           Text(
                             l10n.language,
@@ -142,66 +149,52 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
               child: SizedBox(
                 width: context.width(1),
                 child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.all(0),
-                        backgroundColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5)),
-                        elevation: 0,
-                        shadowColor: Colors.transparent),
-                    onPressed: () async {
-                      final res =
-                          await context.push('/codeEditor', extra: source.id);
-                      if (res != null && mounted) {
-                        setState(() {
-                          source = res as Source;
-                          sourcePreference = getSourcePreference(source: source)
-                              .map((e) =>
-                                  getSourcePreferenceEntry(e.key!, source.id!))
-                              .toList();
-                        });
-                      }
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Text(
-                            l10n.edit_code,
-                            style: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.all(0),
+                    backgroundColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    elevation: 0,
+                    shadowColor: Colors.transparent,
+                  ),
+                  onPressed: () async {
+                    final res = await context.push(
+                      '/codeEditor',
+                      extra: source.id,
+                    );
+                    if (res != null && mounted) {
+                      setState(() {
+                        source = res as Source;
+                        sourcePreference =
+                            getSourcePreference(source: source)
+                                .map(
+                                  (e) => getSourcePreferenceEntry(
+                                    e.key!,
+                                    source.id!,
+                                  ),
+                                )
+                                .toList();
+                      });
+                    }
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Text(
+                          l10n.edit_code,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const Icon(Icons.code)
-                      ],
-                    )),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: SizedBox(
-                width: context.width(1),
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.all(0),
-                        backgroundColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5)),
-                        elevation: 0,
-                        shadowColor: Colors.transparent),
-                    onPressed: () async {
-                      MClient.deleteAllCookies(source.baseUrl ?? "");
-                      botToast("Cookies deleted!");
-                    },
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Text(
-                        "Delete all cookies",
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
                       ),
-                    )),
+                      const Icon(Icons.code),
+                    ],
+                  ),
+                ),
               ),
             ),
             Padding(
@@ -209,109 +202,153 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
               child: SizedBox(
                 width: context.width(1),
                 child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.all(0),
-                        side:
-                            BorderSide(color: context.primaryColor, width: 0.3),
-                        backgroundColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5)),
-                        elevation: 0,
-                        shadowColor: Colors.transparent),
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (ctx) {
-                            return AlertDialog(
-                              title: Text(
-                                widget.source.name!,
-                              ),
-                              content: Text(l10n
-                                  .uninstall_extension(widget.source.name!)),
-                              actions: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(ctx);
-                                        },
-                                        child: Text(l10n.cancel)),
-                                    const SizedBox(
-                                      width: 15,
-                                    ),
-                                    TextButton(
-                                        onPressed: () {
-                                          final sourcePrefsIds = isar
-                                              .sourcePreferences
-                                              .filter()
-                                              .sourceIdEqualTo(source.id!)
-                                              .findAllSync()
-                                              .map((e) => e.id!)
-                                              .toList();
-                                          final sourcePrefsStringIds = isar
-                                              .sourcePreferenceStringValues
-                                              .filter()
-                                              .sourceIdEqualTo(source.id!)
-                                              .findAllSync()
-                                              .map((e) => e.id)
-                                              .toList();
-                                          isar.writeTxnSync(() {
-                                            if (source.isObsolete ?? false) {
-                                              isar.sources.deleteSync(
-                                                  widget.source.id!);
-                                              ref
-                                                  .read(synchingProvider(
-                                                          syncId: 1)
-                                                      .notifier)
-                                                  .addChangedPart(
-                                                      ActionType
-                                                          .removeExtension,
-                                                      source.id,
-                                                      "{}",
-                                                      false);
-                                            } else {
-                                              isar.sources.putSync(widget.source
-                                                ..sourceCode = ""
-                                                ..isAdded = false
-                                                ..isPinned = false);
-                                              ref
-                                                  .read(synchingProvider(
-                                                          syncId: 1)
-                                                      .notifier)
-                                                  .addChangedPart(
-                                                      ActionType
-                                                          .updateExtension,
-                                                      source.id,
-                                                      source.toJson(),
-                                                      false);
-                                            }
-                                            isar.sourcePreferences
-                                                .deleteAllSync(sourcePrefsIds);
-                                            isar.sourcePreferenceStringValues
-                                                .deleteAllSync(
-                                                    sourcePrefsStringIds);
-                                          });
-
-                                          Navigator.pop(ctx);
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text(l10n.ok)),
-                                  ],
-                                )
-                              ],
-                            );
-                          });
-                    },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.all(0),
+                    backgroundColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    elevation: 0,
+                    shadowColor: Colors.transparent,
+                  ),
+                  onPressed: () async {
+                    MClient.deleteAllCookies(source.baseUrl ?? "");
+                    botToast("Cookies deleted!");
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
                     child: Text(
-                      l10n.uninstall,
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
-                    )),
+                      "Delete all cookies",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SizedBox(
+                width: context.width(1),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.all(0),
+                    side: BorderSide(color: context.primaryColor, width: 0.3),
+                    backgroundColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    elevation: 0,
+                    shadowColor: Colors.transparent,
+                  ),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (ctx) {
+                        return AlertDialog(
+                          title: Text(widget.source.name!),
+                          content: Text(
+                            l10n.uninstall_extension(widget.source.name!),
+                          ),
+                          actions: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(ctx);
+                                  },
+                                  child: Text(l10n.cancel),
+                                ),
+                                const SizedBox(width: 15),
+                                TextButton(
+                                  onPressed: () {
+                                    final sourcePrefsIds =
+                                        isar.sourcePreferences
+                                            .filter()
+                                            .sourceIdEqualTo(source.id!)
+                                            .findAllSync()
+                                            .map((e) => e.id!)
+                                            .toList();
+                                    final sourcePrefsStringIds =
+                                        isar.sourcePreferenceStringValues
+                                            .filter()
+                                            .sourceIdEqualTo(source.id!)
+                                            .findAllSync()
+                                            .map((e) => e.id)
+                                            .toList();
+                                    isar.writeTxnSync(() {
+                                      if (source.isObsolete ?? false) {
+                                        isar.sources.deleteSync(
+                                          widget.source.id!,
+                                        );
+                                        ref
+                                            .read(
+                                              synchingProvider(
+                                                syncId: 1,
+                                              ).notifier,
+                                            )
+                                            .addChangedPart(
+                                              ActionType.removeExtension,
+                                              source.id,
+                                              "{}",
+                                              false,
+                                            );
+                                      } else {
+                                        isar.sources.putSync(
+                                          widget.source
+                                            ..sourceCode = ""
+                                            ..isAdded = false
+                                            ..isPinned = false,
+                                        );
+                                        ref
+                                            .read(
+                                              synchingProvider(
+                                                syncId: 1,
+                                              ).notifier,
+                                            )
+                                            .addChangedPart(
+                                              ActionType.updateExtension,
+                                              source.id,
+                                              source.toJson(),
+                                              false,
+                                            );
+                                      }
+                                      isar.sourcePreferences.deleteAllSync(
+                                        sourcePrefsIds,
+                                      );
+                                      isar.sourcePreferenceStringValues
+                                          .deleteAllSync(sourcePrefsStringIds);
+                                    });
+
+                                    Navigator.pop(ctx);
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(l10n.ok),
+                                ),
+                              ],
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: Text(
+                    l10n.uninstall,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               ),
             ),
             SourcePreferenceWidget(
-                sourcePreference: sourcePreference, source: source)
+              sourcePreference: sourcePreference,
+              source: source,
+            ),
           ],
         ),
       ),

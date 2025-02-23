@@ -12,11 +12,12 @@ Future<void> fetchMangaSourcesList(Ref ref, {int? id, required reFresh}) async {
     final repos = ref.watch(extensionsRepoStateProvider(ItemType.manga));
     for (Repo repo in repos) {
       await fetchSourcesList(
-          repo: repo,
-          refresh: reFresh,
-          id: id,
-          ref: ref,
-          itemType: ItemType.manga);
+        repo: repo,
+        refresh: reFresh,
+        id: id,
+        ref: ref,
+        itemType: ItemType.manga,
+      );
     }
   }
 }

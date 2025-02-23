@@ -33,7 +33,8 @@ class BackupFrequencyOptionsState extends _$BackupFrequencyOptionsState {
     final settings = isar.settings.getSync(227);
     state = values;
     isar.writeTxnSync(
-        () => isar.settings.putSync(settings!..backupListOptions = values));
+      () => isar.settings.putSync(settings!..backupListOptions = values),
+    );
   }
 }
 
@@ -49,21 +50,23 @@ class AutoBackupLocationState extends _$AutoBackupLocationState {
     final settings = isar.settings.getSync(227);
     state = (p.join(_storageProvider!.path, "backup"), location);
     isar.writeTxnSync(
-        () => isar.settings.putSync(settings!..autoBackupLocation = location));
+      () => isar.settings.putSync(settings!..autoBackupLocation = location),
+    );
   }
 
   Directory? _storageProvider;
 
   Future _refresh() async {
-    _storageProvider = Platform.isIOS
-        ? await StorageProvider().getIosBackupDirectory()
-        : await StorageProvider().getDefaultDirectory();
+    _storageProvider =
+        Platform.isIOS
+            ? await StorageProvider().getIosBackupDirectory()
+            : await StorageProvider().getDefaultDirectory();
     final settings = isar.settings.getSync(227);
     state = (
       Platform.isIOS
           ? _storageProvider!.path
           : p.join(_storageProvider!.path, "backup"),
-      settings!.autoBackupLocation ?? ""
+      settings!.autoBackupLocation ?? "",
     );
   }
 }
@@ -75,8 +78,9 @@ Future<void> checkAndBackup(Ref ref) async {
     final backupFrequency = _duration(settings.backupFrequency);
     if (backupFrequency != null) {
       if (settings.startDatebackup != null) {
-        final startDatebackup =
-            DateTime.fromMillisecondsSinceEpoch(settings.startDatebackup!);
+        final startDatebackup = DateTime.fromMillisecondsSinceEpoch(
+          settings.startDatebackup!,
+        );
         if (DateTime.now().isAfter(startDatebackup)) {
           _setBackupFrequency(settings.backupFrequency!);
           final storageProvider = StorageProvider();
@@ -84,19 +88,24 @@ Future<void> checkAndBackup(Ref ref) async {
           final defaulteDirectory = await storageProvider.getDefaultDirectory();
           final backupLocation = ref.watch(autoBackupLocationStateProvider).$2;
           Directory? backupDirectory;
-          backupDirectory = Directory(backupLocation.isEmpty
-              ? p.join(defaulteDirectory!.path, "backup")
-              : backupLocation);
+          backupDirectory = Directory(
+            backupLocation.isEmpty
+                ? p.join(defaulteDirectory!.path, "backup")
+                : backupLocation,
+          );
           if (Platform.isIOS) {
             backupDirectory = await (storageProvider.getIosBackupDirectory());
           }
           if (!(await backupDirectory!.exists())) {
             backupDirectory.create();
           }
-          ref.watch(doBackUpProvider(
+          ref.watch(
+            doBackUpProvider(
               list: ref.watch(backupFrequencyOptionsStateProvider),
               path: backupDirectory.path,
-              context: null));
+              context: null,
+            ),
+          );
         }
       }
     }
@@ -110,7 +119,7 @@ Duration? _duration(int? backupFrequency) {
     3 => const Duration(days: 1),
     4 => const Duration(days: 2),
     5 => const Duration(days: 7),
-    _ => null
+    _ => null,
   };
 }
 
@@ -119,7 +128,11 @@ void _setBackupFrequency(int value) {
   final duration = _duration(value);
   final now = DateTime.now();
   final startDate = duration != null ? now.add(duration) : null;
-  isar.writeTxnSync(() => isar.settings.putSync(settings!
-    ..backupFrequency = value
-    ..startDatebackup = startDate?.millisecondsSinceEpoch));
+  isar.writeTxnSync(
+    () => isar.settings.putSync(
+      settings!
+        ..backupFrequency = value
+        ..startDatebackup = startDate?.millisecondsSinceEpoch,
+    ),
+  );
 }

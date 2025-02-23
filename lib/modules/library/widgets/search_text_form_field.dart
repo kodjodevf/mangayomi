@@ -7,13 +7,14 @@ class SeachFormTextField extends StatelessWidget {
   final VoidCallback onSuffixPressed;
   final TextEditingController controller;
   final Function(String)? onFieldSubmitted;
-  const SeachFormTextField(
-      {super.key,
-      required this.onChanged,
-      required this.onPressed,
-      required this.controller,
-      this.onFieldSubmitted,
-      required this.onSuffixPressed});
+  const SeachFormTextField({
+    super.key,
+    required this.onChanged,
+    required this.onPressed,
+    required this.controller,
+    this.onFieldSubmitted,
+    required this.onSuffixPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,26 +27,25 @@ class SeachFormTextField extends StatelessWidget {
         onChanged: onChanged,
         onFieldSubmitted: onFieldSubmitted,
         decoration: InputDecoration(
-            isDense: true,
-            hintText: l10n.search,
-            filled: true,
-            fillColor: Colors.transparent,
-            prefixIcon: IconButton(
-                onPressed: onPressed,
-                icon: const Icon(
-                  Icons.arrow_back,
-                )),
-            suffixIcon: controller.text.isEmpty
-                ? null
-                : IconButton(
-                    onPressed: onSuffixPressed, icon: const Icon(Icons.clear)),
-            enabledBorder: const OutlineInputBorder(
-              borderSide: BorderSide.none,
-            ),
-            focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide.none,
-            ),
-            border: const OutlineInputBorder(borderSide: BorderSide.none)),
+          isDense: true,
+          hintText: l10n.search,
+          filled: true,
+          fillColor: Colors.transparent,
+          prefixIcon: IconButton(
+            onPressed: onPressed,
+            icon: const Icon(Icons.arrow_back),
+          ),
+          suffixIcon:
+              controller.text.isEmpty
+                  ? null
+                  : IconButton(
+                    onPressed: onSuffixPressed,
+                    icon: const Icon(Icons.clear),
+                  ),
+          enabledBorder: const OutlineInputBorder(borderSide: BorderSide.none),
+          focusedBorder: const OutlineInputBorder(borderSide: BorderSide.none),
+          border: const OutlineInputBorder(borderSide: BorderSide.none),
+        ),
       ),
     );
   }

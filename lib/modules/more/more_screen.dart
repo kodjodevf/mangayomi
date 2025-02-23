@@ -14,16 +14,15 @@ class MoreScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(
-              height: AppBar().preferredSize.height,
-            ),
+            SizedBox(height: AppBar().preferredSize.height),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 40),
               child: Image.asset(
                 "assets/app_icons/icon.png",
-                color: Theme.of(context).brightness == Brightness.light
-                    ? Colors.black
-                    : Colors.white,
+                color:
+                    Theme.of(context).brightness == Brightness.light
+                        ? Colors.black
+                        : Colors.white,
                 fit: BoxFit.cover,
                 height: 100,
               ),
@@ -71,11 +70,12 @@ class MoreScreen extends StatelessWidget {
               title: l10n.settings,
             ),
             ListTileWidget(
-                onTap: () {
-                  context.push('/about');
-                },
-                icon: Icons.info_outline,
-                title: l10n.about),
+              onTap: () {
+                context.push('/about');
+              },
+              icon: Icons.info_outline,
+              title: l10n.about,
+            ),
             // ListTileWidget(
             //   onTap: () {},
             //   icon: Icons.help_outline,

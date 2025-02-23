@@ -34,9 +34,10 @@ class JsUtils {
     });
     runtime.onMessage('evaluateJavascriptViaWebview', (dynamic args) async {
       return await MBridge.evaluateJavascriptViaWebview(
-          args[0]!,
-          (args[1]! as Map).toMapStringString!,
-          (args[2]! as List).map((e) => e.toString()).toList());
+        args[0]!,
+        (args[1]! as Map).toMapStringString!,
+        (args[2]! as List).map((e) => e.toString()).toList(),
+      );
     });
 
     runtime.evaluate('''

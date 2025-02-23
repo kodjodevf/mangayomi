@@ -4,21 +4,24 @@ import 'package:intl/intl.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/date_format_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 
-String dateFormat(String? timestamp,
-    {required WidgetRef ref,
-    required BuildContext context,
-    String? stringDate,
-    bool forHistoryValue = false,
-    bool useRelativeTimesTamps = true,
-    String dateFormat = "",
-    bool showHOURorMINUTE = false}) {
+String dateFormat(
+  String? timestamp, {
+  required WidgetRef ref,
+  required BuildContext context,
+  String? stringDate,
+  bool forHistoryValue = false,
+  bool useRelativeTimesTamps = true,
+  String dateFormat = "",
+  bool showHOURorMINUTE = false,
+}) {
   final l10n = l10nLocalizations(context)!;
   final locale = currentLocale(context);
   final relativeTimestamps = ref.watch(relativeTimesTampsStateProvider);
   final dateFrmt = ref.watch(dateFormatStateProvider);
-  final dateTime = stringDate != null
-      ? DateTime.parse(stringDate)
-      : DateTime.fromMillisecondsSinceEpoch(int.parse(timestamp!));
+  final dateTime =
+      stringDate != null
+          ? DateTime.parse(stringDate)
+          : DateTime.fromMillisecondsSinceEpoch(int.parse(timestamp!));
   stringDate = null;
   final date = DateTime(dateTime.year, dateTime.month, dateTime.day);
   if (stringDate == null) {
@@ -32,7 +35,9 @@ String dateFormat(String? timestamp,
     final sixDaysAgo = DateTime(now.year, now.month, now.day - 6);
     final aWeekAgo = DateTime(now.year, now.month, now.day - 7);
     final formatter = DateFormat(
-        dateFormat.isEmpty ? dateFrmt : dateFormat, locale.toLanguageTag());
+      dateFormat.isEmpty ? dateFrmt : dateFormat,
+      locale.toLanguageTag(),
+    );
 
     if (date == today && useRelativeTimesTamps && relativeTimestamps != 0) {
       if (showHOURorMINUTE) {
@@ -92,7 +97,7 @@ List<String> dateFormatsList = [
   "dd/MM/yy",
   "yyyy-MM-dd",
   "dd MMM yyyy",
-  "MMM dd, yyyy"
+  "MMM dd, yyyy",
 ];
 
 List<String> relativeTimestampsList(BuildContext context) {

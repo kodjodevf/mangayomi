@@ -11,37 +11,48 @@ class $MManga implements MManga, $Instance {
   $MManga.wrap(this.$value) : _superclass = $Object($value);
 
   static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MManga'));
+    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MManga'),
+  );
 
-  static const $declaration = BridgeClassDef(BridgeClassType($type),
-      constructors: {
-        '': BridgeConstructorDef(
-            BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: []))
-      },
-      // Specify class fields
-      fields: {
-        'author': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'artist': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'status': BridgeFieldDef(BridgeTypeAnnotation($MStatus.$type)),
-        'genre': BridgeFieldDef(
-          BridgeTypeAnnotation(
-            BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.string)]),
-          ),
+  static const $declaration = BridgeClassDef(
+    BridgeClassType($type),
+    constructors: {
+      '': BridgeConstructorDef(
+        BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: []),
+      ),
+    },
+    // Specify class fields
+    fields: {
+      'author': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'artist': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'status': BridgeFieldDef(BridgeTypeAnnotation($MStatus.$type)),
+      'genre': BridgeFieldDef(
+        BridgeTypeAnnotation(
+          BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.string)]),
         ),
-        'imageUrl': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'name': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'link': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'description': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'chapters': BridgeFieldDef(BridgeTypeAnnotation(
-            BridgeTypeRef(CoreTypes.list, [$MChapter.$type]))),
-      },
-      wrap: true);
+      ),
+      'imageUrl': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'name': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'link': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'description': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'chapters': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list, [$MChapter.$type])),
+      ),
+    },
+    wrap: true,
+  );
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
     return $MManga.wrap(MManga());
@@ -76,8 +87,9 @@ class $MManga implements MManga, $Instance {
       case 'description':
         return $String($value.description!);
       case 'chapters':
-        return $List
-            .wrap($value.chapters!.map((e) => $MChapter.wrap(e)).toList());
+        return $List.wrap(
+          $value.chapters!.map((e) => $MChapter.wrap(e)).toList(),
+        );
 
       default:
         return _superclass.$getProperty(runtime, identifier);
@@ -108,13 +120,17 @@ class $MManga implements MManga, $Instance {
       case 'description':
         $value.description = value.$reified;
       case 'chapters':
-        $value.chapters = (value.$reified as List)
-            .map((e) => MChapter(
-                dateUpload: e.dateUpload,
-                url: e.url,
-                name: e.name,
-                scanlator: e.scanlator))
-            .toList();
+        $value.chapters =
+            (value.$reified as List)
+                .map(
+                  (e) => MChapter(
+                    dateUpload: e.dateUpload,
+                    url: e.url,
+                    name: e.name,
+                    scanlator: e.scanlator,
+                  ),
+                )
+                .toList();
 
       default:
         _superclass.$setProperty(runtime, identifier, value);
@@ -193,14 +209,14 @@ class $MManga implements MManga, $Instance {
 
   @override
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'link': link,
-        'imageUrl': imageUrl,
-        'description': description,
-        'author': author,
-        'artist': artist,
-        'status': status.toString().substringAfter("."),
-        'genre': genre,
-        'chapters': chapters?.map((e) => e.toJson()).toList()
-      };
+    'name': name,
+    'link': link,
+    'imageUrl': imageUrl,
+    'description': description,
+    'author': author,
+    'artist': artist,
+    'status': status.toString().substringAfter("."),
+    'genre': genre,
+    'chapters': chapters?.map((e) => e.toJson()).toList(),
+  };
 }

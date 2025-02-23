@@ -45,8 +45,14 @@ class DownloadProgress {
   bool isCompleted;
   ItemType itemType;
 
-  DownloadProgress(this.completed, this.total, this.itemType,
-      {this.segment, this.pageUrl, this.isCompleted = false});
+  DownloadProgress(
+    this.completed,
+    this.total,
+    this.itemType, {
+    this.segment,
+    this.pageUrl,
+    this.isCompleted = false,
+  });
 
   @override
   String toString() {

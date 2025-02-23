@@ -11,7 +11,10 @@ class AniSkip extends _$AniSkip {
   void build() {}
 
   Future<List<Results>?> getResult(
-      (int, int) id, int episodeNumber, double episodeLength) async {
+    (int, int) id,
+    int episodeNumber,
+    double episodeLength,
+  ) async {
     try {
       final malId = await _getMalId(id);
 

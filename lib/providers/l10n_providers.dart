@@ -10,7 +10,9 @@ class L10nLocaleState extends _$L10nLocaleState {
   @override
   Locale build() {
     return Locale(
-        _getLocale()!.languageCode ?? "en", _getLocale()!.countryCode ?? "");
+      _getLocale()!.languageCode ?? "en",
+      _getLocale()!.countryCode ?? "",
+    );
   }
 
   L10nLocale? _getLocale() {
@@ -21,10 +23,13 @@ class L10nLocaleState extends _$L10nLocaleState {
   void setLocale(Locale locale) async {
     final settings = isar.settings.getSync(227)!;
     isar.writeTxnSync(() {
-      isar.settings.putSync(settings
-        ..locale = L10nLocale(
+      isar.settings.putSync(
+        settings
+          ..locale = L10nLocale(
             languageCode: locale.languageCode,
-            countryCode: locale.countryCode));
+            countryCode: locale.countryCode,
+          ),
+      );
     });
     state = locale;
   }

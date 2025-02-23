@@ -6,22 +6,27 @@ class $MTrack implements Track, $Instance {
   $MTrack.wrap(this.$value) : _superclass = $Object($value);
 
   static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MTrack'));
+    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MTrack'),
+  );
 
-  static const $declaration = BridgeClassDef(BridgeClassType($type),
-      constructors: {
-        '': BridgeConstructorDef(BridgeFunctionDef(
-          returns: BridgeTypeAnnotation($type),
-        ))
-      },
-      // Specify class fields
-      fields: {
-        'file': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'label': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-      },
-      wrap: true);
+  static const $declaration = BridgeClassDef(
+    BridgeClassType($type),
+    constructors: {
+      '': BridgeConstructorDef(
+        BridgeFunctionDef(returns: BridgeTypeAnnotation($type)),
+      ),
+    },
+    // Specify class fields
+    fields: {
+      'file': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'label': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+    },
+    wrap: true,
+  );
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
     return $MTrack.wrap(Track());

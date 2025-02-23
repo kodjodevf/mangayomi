@@ -13,9 +13,10 @@ String _$getPackageInfoHash() => r'41844966a85f413f78ccddac1f5c235d2547c33f';
 final getPackageInfoProvider = AutoDisposeFutureProvider<PackageInfo>.internal(
   getPackageInfo,
   name: r'getPackageInfoProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$getPackageInfoHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$getPackageInfoHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );

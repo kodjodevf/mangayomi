@@ -8,10 +8,7 @@ import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
 
 class ThemeSelector extends ConsumerStatefulWidget {
-  const ThemeSelector({
-    super.key,
-    this.contentPadding,
-  });
+  const ThemeSelector({super.key, this.contentPadding});
   final EdgeInsetsGeometry? contentPadding;
 
   @override
@@ -45,9 +42,10 @@ class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
                       Column(
                         children: [
                           FlexThemeModeOptionButton(
-                            flexSchemeColor: isLight
-                                ? ThemeAA.schemes[index].light
-                                : ThemeAA.schemes[index].dark,
+                            flexSchemeColor:
+                                isLight
+                                    ? ThemeAA.schemes[index].light
+                                    : ThemeAA.schemes[index].dark,
                             selected: selected == index,
                             selectedBorder: BorderSide(
                               color: theme.primaryColorLight,
@@ -66,40 +64,47 @@ class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
                               isLight
                                   ? ref
                                       .read(
-                                          flexSchemeColorStateProvider.notifier)
-                                      .setTheme(ThemeAA.schemes[selected].light,
-                                          selected)
+                                        flexSchemeColorStateProvider.notifier,
+                                      )
+                                      .setTheme(
+                                        ThemeAA.schemes[selected].light,
+                                        selected,
+                                      )
                                   : ref
                                       .read(
-                                          flexSchemeColorStateProvider.notifier)
-                                      .setTheme(ThemeAA.schemes[selected].dark,
-                                          selected);
+                                        flexSchemeColorStateProvider.notifier,
+                                      )
+                                      .setTheme(
+                                        ThemeAA.schemes[selected].dark,
+                                        selected,
+                                      );
                             },
                             optionButtonPadding: EdgeInsets.zero,
                             optionButtonMargin: EdgeInsets.zero,
                           ),
-                          const SizedBox(
-                            height: 3,
-                          ),
+                          const SizedBox(height: 3),
                           Text(
                             ThemeAA.schemes[index].name,
                             style: const TextStyle(
-                                fontSize: 12, fontWeight: FontWeight.w300),
-                          )
+                              fontSize: 12,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
                         ],
                       ),
                       if (selected == index)
                         Padding(
                           padding: const EdgeInsets.all(5),
                           child: CircleAvatar(
-                              radius: 14,
-                              backgroundColor: theme.primaryColorLight,
-                              child: Icon(
-                                FontAwesomeIcons.check,
-                                color: context.secondaryColor,
-                                size: 16,
-                              )),
-                        )
+                            radius: 14,
+                            backgroundColor: theme.primaryColorLight,
+                            child: Icon(
+                              FontAwesomeIcons.check,
+                              color: context.secondaryColor,
+                              size: 16,
+                            ),
+                          ),
+                        ),
                     ],
                   ),
                 );

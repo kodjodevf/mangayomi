@@ -39,21 +39,15 @@ class GetHtmlContentFamily extends Family<AsyncValue<String>> {
   const GetHtmlContentFamily();
 
   /// See also [getHtmlContent].
-  GetHtmlContentProvider call({
-    required Chapter chapter,
-  }) {
-    return GetHtmlContentProvider(
-      chapter: chapter,
-    );
+  GetHtmlContentProvider call({required Chapter chapter}) {
+    return GetHtmlContentProvider(chapter: chapter);
   }
 
   @override
   GetHtmlContentProvider getProviderOverride(
     covariant GetHtmlContentProvider provider,
   ) {
-    return call(
-      chapter: provider.chapter,
-    );
+    return call(chapter: provider.chapter);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -74,24 +68,20 @@ class GetHtmlContentFamily extends Family<AsyncValue<String>> {
 /// See also [getHtmlContent].
 class GetHtmlContentProvider extends AutoDisposeFutureProvider<String> {
   /// See also [getHtmlContent].
-  GetHtmlContentProvider({
-    required Chapter chapter,
-  }) : this._internal(
-          (ref) => getHtmlContent(
-            ref as GetHtmlContentRef,
-            chapter: chapter,
-          ),
-          from: getHtmlContentProvider,
-          name: r'getHtmlContentProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$getHtmlContentHash,
-          dependencies: GetHtmlContentFamily._dependencies,
-          allTransitiveDependencies:
-              GetHtmlContentFamily._allTransitiveDependencies,
-          chapter: chapter,
-        );
+  GetHtmlContentProvider({required Chapter chapter})
+    : this._internal(
+        (ref) => getHtmlContent(ref as GetHtmlContentRef, chapter: chapter),
+        from: getHtmlContentProvider,
+        name: r'getHtmlContentProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$getHtmlContentHash,
+        dependencies: GetHtmlContentFamily._dependencies,
+        allTransitiveDependencies:
+            GetHtmlContentFamily._allTransitiveDependencies,
+        chapter: chapter,
+      );
 
   GetHtmlContentProvider._internal(
     super._createNotifier, {
@@ -150,11 +140,13 @@ mixin GetHtmlContentRef on AutoDisposeFutureProviderRef<String> {
 }
 
 class _GetHtmlContentProviderElement
-    extends AutoDisposeFutureProviderElement<String> with GetHtmlContentRef {
+    extends AutoDisposeFutureProviderElement<String>
+    with GetHtmlContentRef {
   _GetHtmlContentProviderElement(super.provider);
 
   @override
   Chapter get chapter => (origin as GetHtmlContentProvider).chapter;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

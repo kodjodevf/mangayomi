@@ -18,37 +18,39 @@ part 'http.freezed.dart';
 Future<RequestClient> registerClient({required ClientSettings settings}) =>
     RustLib.instance.api.crateApiRhttpHttpRegisterClient(settings: settings);
 
-RequestClient registerClientSync({required ClientSettings settings}) =>
-    RustLib.instance.api
-        .crateApiRhttpHttpRegisterClientSync(settings: settings);
+RequestClient registerClientSync({required ClientSettings settings}) => RustLib
+    .instance
+    .api
+    .crateApiRhttpHttpRegisterClientSync(settings: settings);
 
 Future<void> cancelRunningRequests({required RequestClient client}) =>
     RustLib.instance.api.crateApiRhttpHttpCancelRunningRequests(client: client);
 
-Stream<Uint8List> makeHttpRequestReceiveStream(
-        {RequestClient? client,
-        ClientSettings? settings,
-        required HttpMethod method,
-        required String url,
-        List<(String, String)>? query,
-        HttpHeaders? headers,
-        Uint8List? body,
-        required FutureOr<void> Function(HttpResponse) onResponse,
-        required FutureOr<void> Function(RhttpError) onError,
-        required FutureOr<void> Function(CancellationToken) onCancelToken,
-        required bool cancelable}) =>
-    RustLib.instance.api.crateApiRhttpHttpMakeHttpRequestReceiveStream(
-        client: client,
-        settings: settings,
-        method: method,
-        url: url,
-        query: query,
-        headers: headers,
-        body: body,
-        onResponse: onResponse,
-        onError: onError,
-        onCancelToken: onCancelToken,
-        cancelable: cancelable);
+Stream<Uint8List> makeHttpRequestReceiveStream({
+  RequestClient? client,
+  ClientSettings? settings,
+  required HttpMethod method,
+  required String url,
+  List<(String, String)>? query,
+  HttpHeaders? headers,
+  Uint8List? body,
+  required FutureOr<void> Function(HttpResponse) onResponse,
+  required FutureOr<void> Function(RhttpError) onError,
+  required FutureOr<void> Function(CancellationToken) onCancelToken,
+  required bool cancelable,
+}) => RustLib.instance.api.crateApiRhttpHttpMakeHttpRequestReceiveStream(
+  client: client,
+  settings: settings,
+  method: method,
+  url: url,
+  query: query,
+  headers: headers,
+  body: body,
+  onResponse: onResponse,
+  onError: onError,
+  onCancelToken: onCancelToken,
+  cancelable: cancelable,
+);
 
 Future<void> cancelRequest({required CancellationToken token}) =>
     RustLib.instance.api.crateApiRhttpHttpCancelRequest(token: token);
@@ -57,12 +59,9 @@ Future<void> cancelRequest({required CancellationToken token}) =>
 sealed class HttpHeaders with _$HttpHeaders {
   const HttpHeaders._();
 
-  const factory HttpHeaders.map(
-    Map<String, String> field0,
-  ) = HttpHeaders_Map;
-  const factory HttpHeaders.list(
-    List<(String, String)> field0,
-  ) = HttpHeaders_List;
+  const factory HttpHeaders.map(Map<String, String> field0) = HttpHeaders_Map;
+  const factory HttpHeaders.list(List<(String, String)> field0) =
+      HttpHeaders_List;
 }
 
 enum HttpMethod {
@@ -75,7 +74,6 @@ enum HttpMethod {
   trace,
   connect,
   patch,
-  ;
 }
 
 class HttpResponse {
@@ -110,19 +108,10 @@ class HttpResponse {
 sealed class HttpResponseBody with _$HttpResponseBody {
   const HttpResponseBody._();
 
-  const factory HttpResponseBody.text(
-    String field0,
-  ) = HttpResponseBody_Text;
-  const factory HttpResponseBody.bytes(
-    Uint8List field0,
-  ) = HttpResponseBody_Bytes;
+  const factory HttpResponseBody.text(String field0) = HttpResponseBody_Text;
+  const factory HttpResponseBody.bytes(Uint8List field0) =
+      HttpResponseBody_Bytes;
   const factory HttpResponseBody.stream() = HttpResponseBody_Stream;
 }
 
-enum HttpVersion {
-  http09,
-  http10,
-  http11,
-  other,
-  ;
-}
+enum HttpVersion { http09, http10, http11, other }

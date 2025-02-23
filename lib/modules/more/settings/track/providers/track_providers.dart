@@ -29,11 +29,12 @@ class Tracks extends _$Tracks {
   }
 
   void updateTrackManga(Track track, ItemType itemType) {
-    final tra = isar.tracks
-        .filter()
-        .syncIdEqualTo(syncId)
-        .mangaIdEqualTo(track.mangaId)
-        .findAllSync();
+    final tra =
+        isar.tracks
+            .filter()
+            .syncIdEqualTo(syncId)
+            .mangaIdEqualTo(track.mangaId)
+            .findAllSync();
     if (tra.isNotEmpty) {
       if (tra.first.mediaId != track.mangaId) {
         track.id = tra.first.id;
@@ -41,16 +42,24 @@ class Tracks extends _$Tracks {
     }
 
     isar.writeTxnSync(() {
-      isar.tracks.putSync(track
-        ..syncId = syncId
-        ..itemType = itemType);
+      isar.tracks.putSync(
+        track
+          ..syncId = syncId
+          ..itemType = itemType,
+      );
       if (tra.isEmpty) {
         ref
             .read(synchingProvider(syncId: 1).notifier)
             .addChangedPart(ActionType.addTrack, null, track.toJson(), false);
       } else {
-        ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
-            ActionType.updateTrack, track.id, track.toJson(), false);
+        ref
+            .read(synchingProvider(syncId: 1).notifier)
+            .addChangedPart(
+              ActionType.updateTrack,
+              track.id,
+              track.toJson(),
+              false,
+            );
       }
     });
   }
@@ -76,7 +85,9 @@ class UpdateProgressAfterReadingState
   void set(bool value) {
     final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(() =>
-        isar.settings.putSync(settings!..updateProgressAfterReading = value));
+    isar.writeTxnSync(
+      () =>
+          isar.settings.putSync(settings!..updateProgressAfterReading = value),
+    );
   }
 }

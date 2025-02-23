@@ -25,8 +25,10 @@ Future<String> getHtmlContent(Ref ref, {required Chapter chapter}) async {
     temp.getElementsByTagName("script").forEach((el) => el.remove());
     htmlContent = temp.outerHtml;
   }
-  final source =
-      getSource(chapter.manga.value!.lang!, chapter.manga.value!.source!);
+  final source = getSource(
+    chapter.manga.value!.lang!,
+    chapter.manga.value!.source!,
+  );
   String? html;
   if (htmlContent != null) {
     html = await getExtensionService(source!).cleanHtmlContent(htmlContent);

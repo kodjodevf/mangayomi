@@ -39,24 +39,13 @@ class HeadersFamily extends Family<Map<String, String>> {
   const HeadersFamily();
 
   /// See also [headers].
-  HeadersProvider call({
-    required String source,
-    required String lang,
-  }) {
-    return HeadersProvider(
-      source: source,
-      lang: lang,
-    );
+  HeadersProvider call({required String source, required String lang}) {
+    return HeadersProvider(source: source, lang: lang);
   }
 
   @override
-  HeadersProvider getProviderOverride(
-    covariant HeadersProvider provider,
-  ) {
-    return call(
-      source: provider.source,
-      lang: provider.lang,
-    );
+  HeadersProvider getProviderOverride(covariant HeadersProvider provider) {
+    return call(source: provider.source, lang: provider.lang);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -77,26 +66,20 @@ class HeadersFamily extends Family<Map<String, String>> {
 /// See also [headers].
 class HeadersProvider extends AutoDisposeProvider<Map<String, String>> {
   /// See also [headers].
-  HeadersProvider({
-    required String source,
-    required String lang,
-  }) : this._internal(
-          (ref) => headers(
-            ref as HeadersRef,
-            source: source,
-            lang: lang,
-          ),
-          from: headersProvider,
-          name: r'headersProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$headersHash,
-          dependencies: HeadersFamily._dependencies,
-          allTransitiveDependencies: HeadersFamily._allTransitiveDependencies,
-          source: source,
-          lang: lang,
-        );
+  HeadersProvider({required String source, required String lang})
+    : this._internal(
+        (ref) => headers(ref as HeadersRef, source: source, lang: lang),
+        from: headersProvider,
+        name: r'headersProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$headersHash,
+        dependencies: HeadersFamily._dependencies,
+        allTransitiveDependencies: HeadersFamily._allTransitiveDependencies,
+        source: source,
+        lang: lang,
+      );
 
   HeadersProvider._internal(
     super._createNotifier, {
@@ -164,7 +147,8 @@ mixin HeadersRef on AutoDisposeProviderRef<Map<String, String>> {
 }
 
 class _HeadersProviderElement
-    extends AutoDisposeProviderElement<Map<String, String>> with HeadersRef {
+    extends AutoDisposeProviderElement<Map<String, String>>
+    with HeadersRef {
   _HeadersProviderElement(super.provider);
 
   @override
@@ -172,5 +156,6 @@ class _HeadersProviderElement
   @override
   String get lang => (origin as HeadersProvider).lang;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

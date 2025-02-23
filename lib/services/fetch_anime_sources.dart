@@ -7,17 +7,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'fetch_anime_sources.g.dart';
 
 @Riverpod(keepAlive: true)
-Future<void> fetchAnimeSourcesList(Ref ref,
-    {int? id, required bool reFresh}) async {
+Future<void> fetchAnimeSourcesList(
+  Ref ref, {
+  int? id,
+  required bool reFresh,
+}) async {
   if (ref.watch(checkForExtensionsUpdateStateProvider) || reFresh) {
     final repos = ref.watch(extensionsRepoStateProvider(ItemType.anime));
     for (Repo repo in repos) {
       await fetchSourcesList(
-          repo: repo,
-          refresh: reFresh,
-          id: id,
-          ref: ref,
-          itemType: ItemType.anime);
+        repo: repo,
+        refresh: reFresh,
+        id: id,
+        ref: ref,
+        itemType: ItemType.anime,
+      );
     }
   }
 }

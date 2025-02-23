@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 
 class CircularProgressIndicatorAnimateRotate extends StatefulWidget {
   final double progress;
-  const CircularProgressIndicatorAnimateRotate(
-      {super.key, required this.progress});
+  const CircularProgressIndicatorAnimateRotate({
+    super.key,
+    required this.progress,
+  });
 
   @override
   State<CircularProgressIndicatorAnimateRotate> createState() =>
@@ -19,9 +21,10 @@ class _CircularProgressIndicatorAnimateRotateState
   @override
   void initState() {
     super.initState();
-    _controller =
-        AnimationController(vsync: this, duration: const Duration(seconds: 10))
-          ..repeat();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 10),
+    )..repeat();
   }
 
   @override
@@ -33,28 +36,26 @@ class _CircularProgressIndicatorAnimateRotateState
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: widget.progress == 0
-          ? const CircularProgressIndicator()
-          : AnimatedBuilder(
-              animation: _controller,
-              builder: (_, child) {
-                return Transform.rotate(
-                  angle: _controller.value * 2 * pi,
-                  child: child,
-                );
-              },
-              child: TweenAnimationBuilder<double>(
-                duration: const Duration(milliseconds: 500),
-                curve: Curves.easeInOut,
-                tween: Tween<double>(
-                  begin: 0,
-                  end: widget.progress,
-                ),
-                builder: (context, value, _) => CircularProgressIndicator(
-                  value: value,
+      child:
+          widget.progress == 0
+              ? const CircularProgressIndicator()
+              : AnimatedBuilder(
+                animation: _controller,
+                builder: (_, child) {
+                  return Transform.rotate(
+                    angle: _controller.value * 2 * pi,
+                    child: child,
+                  );
+                },
+                child: TweenAnimationBuilder<double>(
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeInOut,
+                  tween: Tween<double>(begin: 0, end: widget.progress),
+                  builder:
+                      (context, value, _) =>
+                          CircularProgressIndicator(value: value),
                 ),
               ),
-            ),
     );
   }
 }

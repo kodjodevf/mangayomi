@@ -6,36 +6,48 @@ class $MSource implements MSource, $Instance {
   $MSource.wrap(this.$value) : _superclass = $Object($value);
 
   static const $type = BridgeTypeRef(
-      BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MSource'));
+    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MSource'),
+  );
 
-  static const $declaration = BridgeClassDef(BridgeClassType($type),
-      constructors: {
-        '': BridgeConstructorDef(
-            BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: []))
-      },
-      fields: {
-        'id':
-            BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int))),
-        'name': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'baseUrl': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'lang': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'isFullData':
-            BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool))),
-        'hasCloudflare':
-            BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool))),
-        'dateFormat': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'dateFormatLocale': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'apiUrl': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-        'additionalParams': BridgeFieldDef(
-            BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string))),
-      },
-      wrap: true);
+  static const $declaration = BridgeClassDef(
+    BridgeClassType($type),
+    constructors: {
+      '': BridgeConstructorDef(
+        BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: []),
+      ),
+    },
+    fields: {
+      'id': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int))),
+      'name': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'baseUrl': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'lang': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'isFullData': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)),
+      ),
+      'hasCloudflare': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)),
+      ),
+      'dateFormat': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'dateFormatLocale': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'apiUrl': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+      'additionalParams': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
+    },
+    wrap: true,
+  );
 
   static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
     return $MSource.wrap(MSource());
@@ -171,15 +183,15 @@ class $MSource implements MSource, $Instance {
 
   @override
   Map<String, dynamic> toJson() => {
-        'apiUrl': apiUrl,
-        'baseUrl': baseUrl,
-        'dateFormat': dateFormat,
-        'dateFormatLocale': dateFormatLocale,
-        'hasCloudflare': hasCloudflare,
-        'id': id,
-        'isFullData': isFullData,
-        'lang': lang,
-        'name': name,
-        'additionalParams': additionalParams
-      };
+    'apiUrl': apiUrl,
+    'baseUrl': baseUrl,
+    'dateFormat': dateFormat,
+    'dateFormatLocale': dateFormatLocale,
+    'hasCloudflare': hasCloudflare,
+    'id': id,
+    'isFullData': isFullData,
+    'lang': lang,
+    'name': name,
+    'additionalParams': additionalParams,
+  };
 }

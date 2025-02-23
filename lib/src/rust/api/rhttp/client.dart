@@ -14,13 +14,15 @@ part 'client.freezed.dart';
 // These functions are ignored (category: IgnoreBecauseNotAllowedOwner): `digest_ip`
 
 DnsSettings createStaticResolverSync({required StaticDnsSettings settings}) =>
-    RustLib.instance.api
-        .crateApiRhttpClientCreateStaticResolverSync(settings: settings);
+    RustLib.instance.api.crateApiRhttpClientCreateStaticResolverSync(
+      settings: settings,
+    );
 
-DnsSettings createDynamicResolverSync(
-        {required FutureOr<List<String>> Function(String) resolver}) =>
-    RustLib.instance.api
-        .crateApiRhttpClientCreateDynamicResolverSync(resolver: resolver);
+DnsSettings createDynamicResolverSync({
+  required FutureOr<List<String>> Function(String) resolver,
+}) => RustLib.instance.api.crateApiRhttpClientCreateDynamicResolverSync(
+  resolver: resolver,
+);
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<DnsSettings>>
 abstract class DnsSettings implements RustOpaqueInterface {}
@@ -100,10 +102,7 @@ class CustomProxy {
   final String url;
   final ProxyCondition condition;
 
-  const CustomProxy({
-    required this.url,
-    required this.condition,
-  });
+  const CustomProxy({required this.url, required this.condition});
 
   @override
   int get hashCode => url.hashCode ^ condition.hashCode;
@@ -117,21 +116,15 @@ class CustomProxy {
           condition == other.condition;
 }
 
-enum ProxyCondition {
-  http,
-  https,
-  all,
-  ;
-}
+enum ProxyCondition { http, https, all }
 
 @freezed
 sealed class ProxySettings with _$ProxySettings {
   const ProxySettings._();
 
   const factory ProxySettings.noProxy() = ProxySettings_NoProxy;
-  const factory ProxySettings.customProxyList(
-    List<CustomProxy> field0,
-  ) = ProxySettings_CustomProxyList;
+  const factory ProxySettings.customProxyList(List<CustomProxy> field0) =
+      ProxySettings_CustomProxyList;
 }
 
 @freezed
@@ -139,19 +132,15 @@ sealed class RedirectSettings with _$RedirectSettings {
   const RedirectSettings._();
 
   const factory RedirectSettings.noRedirect() = RedirectSettings_NoRedirect;
-  const factory RedirectSettings.limitedRedirects(
-    int field0,
-  ) = RedirectSettings_LimitedRedirects;
+  const factory RedirectSettings.limitedRedirects(int field0) =
+      RedirectSettings_LimitedRedirects;
 }
 
 class StaticDnsSettings {
   final Map<String, List<String>> overrides;
   final String? fallback;
 
-  const StaticDnsSettings({
-    required this.overrides,
-    this.fallback,
-  });
+  const StaticDnsSettings({required this.overrides, this.fallback});
 
   @override
   int get hashCode => overrides.hashCode ^ fallback.hashCode;
@@ -235,8 +224,4 @@ class TlsSettings {
           maxTlsVersion == other.maxTlsVersion;
 }
 
-enum TlsVersion {
-  tls12,
-  tls13,
-  ;
-}
+enum TlsVersion { tls12, tls13 }

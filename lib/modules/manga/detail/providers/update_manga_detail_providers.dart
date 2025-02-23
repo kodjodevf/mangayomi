@@ -13,8 +13,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'update_manga_detail_providers.g.dart';
 
 @riverpod
-Future<dynamic> updateMangaDetail(Ref ref,
-    {required int? mangaId, required bool isInit}) async {
+Future<dynamic> updateMangaDetail(
+  Ref ref, {
+  required int? mangaId,
+  required bool isInit,
+}) async {
   final manga = isar.mangas.getSync(mangaId!);
   if (manga!.chapters.isNotEmpty && isInit) {
     return;
@@ -22,13 +25,15 @@ Future<dynamic> updateMangaDetail(Ref ref,
   final source = getSource(manga.lang!, manga.source!);
   MManga getManga;
   try {
-    getManga = await ref
-        .watch(getDetailProvider(url: manga.link!, source: source!).future);
+    getManga = await ref.watch(
+      getDetailProvider(url: manga.link!, source: source!).future,
+    );
   } catch (e) {
     botToast(e.toString());
     return;
   }
-  final genre = getManga.genre
+  final genre =
+      getManga.genre
           ?.map((e) => e.toString().trim().trimLeft().trimRight())
           .toList()
           .toSet()
@@ -44,7 +49,8 @@ Future<dynamic> updateMangaDetail(Ref ref,
         getManga.artist?.trim().trimLeft().trimRight() ?? manga.artist ?? ""
     ..status =
         getManga.status == Status.unknown ? manga.status : getManga.status!
-    ..description = getManga.description?.trim().trimLeft().trimRight() ??
+    ..description =
+        getManga.description?.trim().trimLeft().trimRight() ??
         manga.description ??
         ""
     ..link = getManga.link?.trim().trimLeft().trimRight() ?? manga.link
@@ -73,9 +79,10 @@ Future<dynamic> updateMangaDetail(Ref ref,
         final chapter = Chapter(
           name: chaps[i].name!,
           url: chaps[i].url!.trim().trimLeft().trimRight(),
-          dateUpload: chaps[i].dateUpload == null
-              ? DateTime.now().millisecondsSinceEpoch.toString()
-              : chaps[i].dateUpload.toString(),
+          dateUpload:
+              chaps[i].dateUpload == null
+                  ? DateTime.now().millisecondsSinceEpoch.toString()
+                  : chaps[i].dateUpload.toString(),
           scanlator: chaps[i].scanlator ?? '',
           mangaId: mangaId,
         )..manga.value = manga;
@@ -86,18 +93,30 @@ Future<dynamic> updateMangaDetail(Ref ref,
       for (var chap in chapters.reversed.toList()) {
         isar.chapters.putSync(chap);
         chap.manga.saveSync();
-        ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
-            ActionType.addChapter, chap.id, chap.toJson(), false);
+        ref
+            .read(synchingProvider(syncId: 1).notifier)
+            .addChangedPart(
+              ActionType.addChapter,
+              chap.id,
+              chap.toJson(),
+              false,
+            );
         if (manga.chapters.isNotEmpty) {
           final update = Update(
-              mangaId: mangaId,
-              chapterName: chap.name,
-              date: DateTime.now().millisecondsSinceEpoch.toString())
-            ..chapter.value = chap;
+            mangaId: mangaId,
+            chapterName: chap.name,
+            date: DateTime.now().millisecondsSinceEpoch.toString(),
+          )..chapter.value = chap;
           isar.updates.putSync(update);
           update.chapter.saveSync();
-          ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
-              ActionType.addUpdate, update.id, update.toJson(), false);
+          ref
+              .read(synchingProvider(syncId: 1).notifier)
+              .addChangedPart(
+                ActionType.addUpdate,
+                update.id,
+                update.toJson(),
+                false,
+              );
         }
       }
     }
@@ -107,7 +126,8 @@ Future<dynamic> updateMangaDetail(Ref ref,
       for (var i = 0; i < oldChapers.length; i++) {
         final oldChap = oldChapers[i];
         final newChap = chaps[i];
-        final hasChanged = oldChap.name != newChap.name ||
+        final hasChanged =
+            oldChap.name != newChap.name ||
             oldChap.url != newChap.url ||
             oldChap.scanlator != newChap.scanlator;
         oldChap.name = newChap.name;
@@ -116,10 +136,22 @@ Future<dynamic> updateMangaDetail(Ref ref,
         isar.chapters.putSync(oldChap);
         oldChap.manga.saveSync();
         if (!hasChanged) {
-          ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
-              ActionType.updateItem, manga.id, manga.toJson(), false);
-          ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
-              ActionType.updateChapter, oldChap.id, oldChap.toJson(), false);
+          ref
+              .read(synchingProvider(syncId: 1).notifier)
+              .addChangedPart(
+                ActionType.updateItem,
+                manga.id,
+                manga.toJson(),
+                false,
+              );
+          ref
+              .read(synchingProvider(syncId: 1).notifier)
+              .addChangedPart(
+                ActionType.updateChapter,
+                oldChap.id,
+                oldChap.toJson(),
+                false,
+              );
         }
       }
     }

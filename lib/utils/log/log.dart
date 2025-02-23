@@ -4,11 +4,11 @@ bool useLogger = false;
 
 class Logger {
   static final StreamController<(LoggerLevel, String, DateTime)>
-      _logStreamController =
+  _logStreamController =
       StreamController<(LoggerLevel, String, DateTime)>.broadcast();
 
   static StreamController<(LoggerLevel, String, DateTime)>
-      get logStreamController => _logStreamController;
+  get logStreamController => _logStreamController;
 
   static final List<(LoggerLevel, String, DateTime)> _logs = [];
 

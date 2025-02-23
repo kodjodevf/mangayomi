@@ -16,16 +16,16 @@ class BrowseSScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final onlyIncludePinnedSource =
-        ref.watch(onlyIncludePinnedSourceStateProvider);
-    final checkForExtensionUpdates =
-        ref.watch(checkForExtensionsUpdateStateProvider);
+    final onlyIncludePinnedSource = ref.watch(
+      onlyIncludePinnedSourceStateProvider,
+    );
+    final checkForExtensionUpdates = ref.watch(
+      checkForExtensionsUpdateStateProvider,
+    );
     final autoUpdateExtensions = ref.watch(autoUpdateExtensionsStateProvider);
     final l10n = l10nLocalizations(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n!.browse),
-      ),
+      appBar: AppBar(title: Text(l10n!.browse)),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -37,57 +37,78 @@ class BrowseSScreen extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Row(
                       children: [
-                        Text(l10n.extensions,
-                            style: TextStyle(
-                                fontSize: 13, color: context.primaryColor)),
+                        Text(
+                          l10n.extensions,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: context.primaryColor,
+                          ),
+                        ),
                       ],
                     ),
                   ),
                   ListTile(
-                      onTap: () {
-                        context.push("/SourceRepositories",
-                            extra: ItemType.manga);
-                      },
-                      title: Text(l10n.manga_extensions_repo),
-                      subtitle: Text(
-                        l10n.manage_manga_repo_urls,
-                        style: TextStyle(
-                            fontSize: 11, color: context.secondaryColor),
-                      )),
+                    onTap: () {
+                      context.push(
+                        "/SourceRepositories",
+                        extra: ItemType.manga,
+                      );
+                    },
+                    title: Text(l10n.manga_extensions_repo),
+                    subtitle: Text(
+                      l10n.manage_manga_repo_urls,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.secondaryColor,
+                      ),
+                    ),
+                  ),
                   ListTile(
-                      onTap: () {
-                        context.push("/SourceRepositories",
-                            extra: ItemType.anime);
-                      },
-                      title: Text(l10n.anime_extensions_repo),
-                      subtitle: Text(
-                        l10n.manage_anime_repo_urls,
-                        style: TextStyle(
-                            fontSize: 11, color: context.secondaryColor),
-                      )),
+                    onTap: () {
+                      context.push(
+                        "/SourceRepositories",
+                        extra: ItemType.anime,
+                      );
+                    },
+                    title: Text(l10n.anime_extensions_repo),
+                    subtitle: Text(
+                      l10n.manage_anime_repo_urls,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.secondaryColor,
+                      ),
+                    ),
+                  ),
                   ListTile(
-                      onTap: () {
-                        context.push("/SourceRepositories",
-                            extra: ItemType.novel);
-                      },
-                      title: Text(l10n.novel_extensions_repo),
-                      subtitle: Text(
-                        l10n.manage_novel_repo_urls,
-                        style: TextStyle(
-                            fontSize: 11, color: context.secondaryColor),
-                      )),
+                    onTap: () {
+                      context.push(
+                        "/SourceRepositories",
+                        extra: ItemType.novel,
+                      );
+                    },
+                    title: Text(l10n.novel_extensions_repo),
+                    subtitle: Text(
+                      l10n.manage_novel_repo_urls,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.secondaryColor,
+                      ),
+                    ),
+                  ),
                   SwitchListTile(
-                      value: checkForExtensionUpdates,
-                      title: Text(l10n.check_for_extension_updates),
-                      onChanged: (value) {
-                        ref
-                            .read(
-                                checkForExtensionsUpdateStateProvider.notifier)
-                            .set(value);
-                      }),
+                    value: checkForExtensionUpdates,
+                    title: Text(l10n.check_for_extension_updates),
+                    onChanged: (value) {
+                      ref
+                          .read(checkForExtensionsUpdateStateProvider.notifier)
+                          .set(value);
+                    },
+                  ),
                   Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 5,
+                    ),
                     child: SizedBox(
                       width: context.width(1),
                       child: ElevatedButton(
@@ -97,28 +118,35 @@ class BrowseSScreen extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        onPressed: () =>
-                            _showClearAllSourcesDialog(context, l10n),
+                        onPressed:
+                            () => _showClearAllSourcesDialog(context, l10n),
                         child: Text(
                           l10n.clear_all_sources,
                           style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
                   ),
                   if (checkForExtensionUpdates)
                     SwitchListTile(
-                        value: autoUpdateExtensions,
-                        title: Text(l10n.auto_extensions_updates),
-                        subtitle: Text(l10n.auto_extensions_updates_subtitle,
-                            style: TextStyle(
-                                fontSize: 11, color: context.secondaryColor)),
-                        onChanged: (value) {
-                          ref
-                              .read(autoUpdateExtensionsStateProvider.notifier)
-                              .set(value);
-                        }),
+                      value: autoUpdateExtensions,
+                      title: Text(l10n.auto_extensions_updates),
+                      subtitle: Text(
+                        l10n.auto_extensions_updates_subtitle,
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: context.secondaryColor,
+                        ),
+                      ),
+                      onChanged: (value) {
+                        ref
+                            .read(autoUpdateExtensionsStateProvider.notifier)
+                            .set(value);
+                      },
+                    ),
                 ],
               ),
             ),
@@ -130,20 +158,25 @@ class BrowseSScreen extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Row(
                       children: [
-                        Text(l10n.global_search,
-                            style: TextStyle(
-                                fontSize: 13, color: context.primaryColor)),
+                        Text(
+                          l10n.global_search,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: context.primaryColor,
+                          ),
+                        ),
                       ],
                     ),
                   ),
                   SwitchListTile(
-                      value: onlyIncludePinnedSource,
-                      title: Text(l10n.only_include_pinned_sources),
-                      onChanged: (value) {
-                        ref
-                            .read(onlyIncludePinnedSourceStateProvider.notifier)
-                            .set(value);
-                      }),
+                    value: onlyIncludePinnedSource,
+                    title: Text(l10n.only_include_pinned_sources),
+                    onChanged: (value) {
+                      ref
+                          .read(onlyIncludePinnedSourceStateProvider.notifier)
+                          .set(value);
+                    },
+                  ),
                 ],
               ),
             ),
@@ -156,44 +189,48 @@ class BrowseSScreen extends ConsumerWidget {
 
 void _showClearAllSourcesDialog(BuildContext context, dynamic l10n) {
   showDialog(
-      context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          title: Text(
-            l10n.clear_all_sources,
-          ),
-          content: Text(l10n.clear_all_sources_msg),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                    onPressed: () {
-                      Navigator.pop(ctx);
-                    },
-                    child: Text(l10n.cancel)),
-                const SizedBox(
-                  width: 15,
-                ),
-                Consumer(
-                  builder: (context, ref, child) => TextButton(
+    context: context,
+    builder: (ctx) {
+      return AlertDialog(
+        title: Text(l10n.clear_all_sources),
+        content: Text(l10n.clear_all_sources_msg),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                },
+                child: Text(l10n.cancel),
+              ),
+              const SizedBox(width: 15),
+              Consumer(
+                builder:
+                    (context, ref, child) => TextButton(
                       onPressed: () {
                         isar.writeTxnSync(() {
                           isar.sources.clearSync();
                           ref
                               .read(synchingProvider(syncId: 1).notifier)
                               .addChangedPart(
-                                  ActionType.clearHistory, null, "{}", false);
+                                ActionType.clearHistory,
+                                null,
+                                "{}",
+                                false,
+                              );
                         });
 
                         Navigator.pop(ctx);
                         botToast(l10n.sources_cleared);
                       },
-                      child: Text(l10n.ok)),
-                ),
-              ],
-            )
-          ],
-        );
-      });
+                      child: Text(l10n.ok),
+                    ),
+              ),
+            ],
+          ),
+        ],
+      );
+    },
+  );
 }

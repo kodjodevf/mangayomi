@@ -62,22 +62,27 @@ class ClientSettings {
     return ClientSettings(
       baseUrl: identical(baseUrl, _keepBaseUrl) ? this.baseUrl : baseUrl,
       timeout: identical(timeout, _keepDuration) ? this.timeout : timeout,
-      timeoutSettings: identical(timeoutSettings, _keepTimeoutSettings)
-          ? this.timeoutSettings
-          : timeoutSettings,
+      timeoutSettings:
+          identical(timeoutSettings, _keepTimeoutSettings)
+              ? this.timeoutSettings
+              : timeoutSettings,
       throwOnStatusCode: throwOnStatusCode ?? this.throwOnStatusCode,
-      proxySettings: identical(proxySettings, _keepProxySettings)
-          ? this.proxySettings
-          : proxySettings,
-      redirectSettings: identical(redirectSettings, _keepRedirectSettings)
-          ? this.redirectSettings
-          : redirectSettings,
-      tlsSettings: identical(tlsSettings, _keepTlsSettings)
-          ? this.tlsSettings
-          : tlsSettings,
-      dnsSettings: identical(dnsSettings, _keepDnsSettings)
-          ? this.dnsSettings
-          : dnsSettings,
+      proxySettings:
+          identical(proxySettings, _keepProxySettings)
+              ? this.proxySettings
+              : proxySettings,
+      redirectSettings:
+          identical(redirectSettings, _keepRedirectSettings)
+              ? this.redirectSettings
+              : redirectSettings,
+      tlsSettings:
+          identical(tlsSettings, _keepTlsSettings)
+              ? this.tlsSettings
+              : tlsSettings,
+      dnsSettings:
+          identical(dnsSettings, _keepDnsSettings)
+              ? this.dnsSettings
+              : dnsSettings,
     );
   }
 }
@@ -178,28 +183,16 @@ class StaticProxy extends CustomProxy {
   /// Which requests to proxy.
   final ProxyCondition condition;
 
-  const StaticProxy({
-    required this.url,
-    required this.condition,
-  }) : super._();
+  const StaticProxy({required this.url, required this.condition}) : super._();
 
   const StaticProxy.http(String url)
-      : this(
-          url: url,
-          condition: ProxyCondition.onlyHttp,
-        );
+    : this(url: url, condition: ProxyCondition.onlyHttp);
 
   const StaticProxy.https(String url)
-      : this(
-          url: url,
-          condition: ProxyCondition.onlyHttps,
-        );
+    : this(url: url, condition: ProxyCondition.onlyHttps);
 
   const StaticProxy.all(String url)
-      : this(
-          url: url,
-          condition: ProxyCondition.all,
-        );
+    : this(url: url, condition: ProxyCondition.all);
 }
 
 class CustomProxyList extends ProxySettings {
@@ -285,10 +278,7 @@ class StaticDnsSettings extends DnsSettings {
   /// all requests that don't match any override.
   final String? fallback;
 
-  const StaticDnsSettings._({
-    this.overrides = const {},
-    this.fallback,
-  });
+  const StaticDnsSettings._({this.overrides = const {}, this.fallback});
 }
 
 /// Dynamic DNS settings and resolver.
@@ -296,9 +286,7 @@ class DynamicDnsSettings extends DnsSettings {
   /// The function to resolve the IP address for a host.
   final Future<List<String>> Function(String host) resolver;
 
-  const DynamicDnsSettings._({
-    required this.resolver,
-  });
+  const DynamicDnsSettings._({required this.resolver});
 }
 
 extension ClientSettingsExt on ClientSettings {
@@ -319,11 +307,11 @@ extension on ProxySettings {
     return switch (this) {
       NoProxy() => const rust_client.ProxySettings.noProxy(),
       CustomProxy proxy => rust_client.ProxySettings.customProxyList([
-          proxy._toRustType(),
-        ]),
+        proxy._toRustType(),
+      ]),
       CustomProxyList list => rust_client.ProxySettings.customProxyList(
-          list.proxies.map((e) => e._toRustType()).toList(),
-        ),
+        list.proxies.map((e) => e._toRustType()).toList(),
+      ),
     };
   }
 }
@@ -332,13 +320,13 @@ extension on CustomProxy {
   rust_client.CustomProxy _toRustType() {
     return switch (this) {
       StaticProxy s => rust_client.CustomProxy(
-          url: s.url,
-          condition: switch (s.condition) {
-            ProxyCondition.onlyHttp => rust_client.ProxyCondition.http,
-            ProxyCondition.onlyHttps => rust_client.ProxyCondition.https,
-            ProxyCondition.all => rust_client.ProxyCondition.all,
-          },
-        ),
+        url: s.url,
+        condition: switch (s.condition) {
+          ProxyCondition.onlyHttp => rust_client.ProxyCondition.http,
+          ProxyCondition.onlyHttps => rust_client.ProxyCondition.https,
+          ProxyCondition.all => rust_client.ProxyCondition.all,
+        },
+      ),
     };
   }
 }
@@ -358,8 +346,9 @@ extension on RedirectSettings {
   rust_client.RedirectSettings _toRustType() {
     return switch (this) {
       NoRedirectSetting() => const rust_client.RedirectSettings.noRedirect(),
-      LimitedRedirects r =>
-        rust_client.RedirectSettings.limitedRedirects(r.maxRedirects),
+      LimitedRedirects r => rust_client.RedirectSettings.limitedRedirects(
+        r.maxRedirects,
+      ),
     };
   }
 }
@@ -368,9 +357,10 @@ extension on TlsSettings {
   rust_client.TlsSettings _toRustType() {
     return rust_client.TlsSettings(
       trustRootCertificates: trustRootCertificates,
-      trustedRootCertificates: trustedRootCertificates
-          .map((e) => Uint8List.fromList(e.codeUnits))
-          .toList(),
+      trustedRootCertificates:
+          trustedRootCertificates
+              .map((e) => Uint8List.fromList(e.codeUnits))
+              .toList(),
       verifyCertificates: verifyCertificates,
       clientCertificate: clientCertificate?._toRustType(),
       minTlsVersion: minTlsVersion,
@@ -392,14 +382,14 @@ extension on DnsSettings {
   rust_client.DnsSettings _toRustType() {
     return switch (this) {
       StaticDnsSettings s => rust_client.createStaticResolverSync(
-          settings: rust_client.StaticDnsSettings(
-            overrides: s.overrides,
-            fallback: s.fallback,
-          ),
+        settings: rust_client.StaticDnsSettings(
+          overrides: s.overrides,
+          fallback: s.fallback,
         ),
+      ),
       DynamicDnsSettings d => rust_client.createDynamicResolverSync(
-          resolver: d.resolver,
-        ),
+        resolver: d.resolver,
+      ),
     };
   }
 }

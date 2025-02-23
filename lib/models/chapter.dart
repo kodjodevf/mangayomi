@@ -28,17 +28,18 @@ class Chapter {
 
   final manga = IsarLink<Manga>();
 
-  Chapter(
-      {this.id = Isar.autoIncrement,
-      required this.mangaId,
-      required this.name,
-      this.url = '',
-      this.dateUpload = '',
-      this.isBookmarked = false,
-      this.scanlator = '',
-      this.isRead = false,
-      this.lastPageRead = '',
-      this.archivePath = ''});
+  Chapter({
+    this.id = Isar.autoIncrement,
+    required this.mangaId,
+    required this.name,
+    this.url = '',
+    this.dateUpload = '',
+    this.isBookmarked = false,
+    this.scanlator = '',
+    this.isRead = false,
+    this.lastPageRead = '',
+    this.archivePath = '',
+  });
 
   Chapter.fromJson(Map<String, dynamic> json) {
     archivePath = json['archivePath'];
@@ -54,15 +55,15 @@ class Chapter {
   }
 
   Map<String, dynamic> toJson() => {
-        'archivePath': archivePath,
-        'dateUpload': dateUpload,
-        'id': id,
-        'isBookmarked': isBookmarked,
-        'isRead': isRead,
-        'lastPageRead': lastPageRead,
-        'mangaId': mangaId,
-        'name': name,
-        'scanlator': scanlator,
-        'url': url
-      };
+    'archivePath': archivePath,
+    'dateUpload': dateUpload,
+    'id': id,
+    'isBookmarked': isBookmarked,
+    'isRead': isRead,
+    'lastPageRead': lastPageRead,
+    'mangaId': mangaId,
+    'name': name,
+    'scanlator': scanlator,
+    'url': url,
+  };
 }

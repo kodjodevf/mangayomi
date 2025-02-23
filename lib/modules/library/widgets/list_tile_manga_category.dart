@@ -9,13 +9,14 @@ class ListTileMangaCategory extends StatefulWidget {
   final List<Manga> mangasList;
   final Function(List<Manga>) res;
   final VoidCallback onTap;
-  const ListTileMangaCategory(
-      {super.key,
-      required this.category,
-      required this.mangasList,
-      required this.res,
-      required this.onTap,
-      required this.categoryIds});
+  const ListTileMangaCategory({
+    super.key,
+    required this.category,
+    required this.mangasList,
+    required this.res,
+    required this.onTap,
+    required this.categoryIds,
+  });
 
   @override
   State<ListTileMangaCategory> createState() => _ListTileMangaCategoryState();
@@ -24,13 +25,12 @@ class ListTileMangaCategory extends StatefulWidget {
 class _ListTileMangaCategoryState extends State<ListTileMangaCategory> {
   @override
   void initState() {
-    final res = widget.mangasList.where(
-      (element) {
-        return element.categories == null
-            ? false
-            : element.categories!.contains(widget.category.id);
-      },
-    ).toList();
+    final res =
+        widget.mangasList.where((element) {
+          return element.categories == null
+              ? false
+              : element.categories!.contains(widget.category.id);
+        }).toList();
     widget.res(res);
     super.initState();
   }

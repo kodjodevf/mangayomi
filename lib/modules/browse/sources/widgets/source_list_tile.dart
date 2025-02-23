@@ -15,100 +15,130 @@ import 'package:mangayomi/utils/language.dart';
 class SourceListTile extends StatelessWidget {
   final ItemType itemType;
   final Source source;
-  const SourceListTile(
-      {super.key, required this.source, required this.itemType});
+  const SourceListTile({
+    super.key,
+    required this.source,
+    required this.itemType,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Consumer(
-      builder: (context, ref, child) => ListTile(
-        onTap: () {
-          final sources = isar.sources
-              .filter()
-              .idIsNotNull()
-              .and()
-              .itemTypeEqualTo(itemType)
-              .findAllSync();
-          isar.writeTxnSync(() {
-            for (var src in sources) {
-              isar.sources
-                  .putSync(src..lastUsed = src.id == source.id ? true : false);
-              ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
-                  ActionType.updateExtension, src.id, src.toJson(), false);
-            }
-          });
-          context.push('/mangaHome', extra: (source, false));
-        },
-        leading: Container(
-          height: 37,
-          width: 37,
-          decoration: BoxDecoration(
-              color:
-                  Theme.of(context).secondaryHeaderColor.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(5)),
-          child: source.iconUrl!.isEmpty
-              ? const Icon(Icons.extension_rounded)
-              : cachedNetworkImage(
-                  imageUrl: source.iconUrl!,
-                  fit: BoxFit.contain,
-                  width: 37,
-                  height: 37,
-                  errorWidget: const SizedBox(
-                    width: 37,
-                    height: 37,
-                    child: Center(
-                      child: Icon(Icons.extension_rounded),
+      builder:
+          (context, ref, child) => ListTile(
+            onTap: () {
+              final sources =
+                  isar.sources
+                      .filter()
+                      .idIsNotNull()
+                      .and()
+                      .itemTypeEqualTo(itemType)
+                      .findAllSync();
+              isar.writeTxnSync(() {
+                for (var src in sources) {
+                  isar.sources.putSync(
+                    src..lastUsed = src.id == source.id ? true : false,
+                  );
+                  ref
+                      .read(synchingProvider(syncId: 1).notifier)
+                      .addChangedPart(
+                        ActionType.updateExtension,
+                        src.id,
+                        src.toJson(),
+                        false,
+                      );
+                }
+              });
+              context.push('/mangaHome', extra: (source, false));
+            },
+            leading: Container(
+              height: 37,
+              width: 37,
+              decoration: BoxDecoration(
+                color: Theme.of(
+                  context,
+                ).secondaryHeaderColor.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child:
+                  source.iconUrl!.isEmpty
+                      ? const Icon(Icons.extension_rounded)
+                      : cachedNetworkImage(
+                        imageUrl: source.iconUrl!,
+                        fit: BoxFit.contain,
+                        width: 37,
+                        height: 37,
+                        errorWidget: const SizedBox(
+                          width: 37,
+                          height: 37,
+                          child: Center(child: Icon(Icons.extension_rounded)),
+                        ),
+                        useCustomNetworkImage: false,
+                      ),
+            ),
+            subtitle: Row(
+              children: [
+                Text(
+                  completeLanguageName(source.lang!.toLowerCase()),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w300,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+            title: Text(source.name!),
+            trailing: SizedBox(
+              width: 150,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Consumer(
+                    builder: (context, ref, child) {
+                      // final supportsLatest =  ref.watch(supportsLatestProvider(source: source));
+                      // if (supportsLatest) {
+                      return TextButton(
+                        style: const ButtonStyle(
+                          padding: WidgetStatePropertyAll(EdgeInsets.all(10)),
+                        ),
+                        onPressed:
+                            () => context.push(
+                              '/mangaHome',
+                              extra: (source, true),
+                            ),
+                        child: Text(context.l10n.latest),
+                      );
+                      // }
+                      // return const SizedBox.shrink();
+                    },
+                  ),
+                  const SizedBox(width: 10),
+                  IconButton(
+                    padding: const EdgeInsets.all(0),
+                    onPressed: () {
+                      isar.writeTxnSync(
+                        () => isar.sources.putSync(
+                          source..isPinned = !source.isPinned!,
+                        ),
+                      );
+                      ref
+                          .read(synchingProvider(syncId: 1).notifier)
+                          .addChangedPart(
+                            ActionType.updateExtension,
+                            source.id,
+                            source.toJson(),
+                            false,
+                          );
+                    },
+                    icon: Icon(
+                      Icons.push_pin_outlined,
+                      color: source.isPinned! ? context.primaryColor : null,
                     ),
                   ),
-                  useCustomNetworkImage: false),
-        ),
-        subtitle: Row(
-          children: [
-            Text(
-              completeLanguageName(source.lang!.toLowerCase()),
-              style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 12),
-            ),
-          ],
-        ),
-        title: Text(source.name!),
-        trailing: SizedBox(
-          width: 150,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Consumer(
-                builder: (context, ref, child) {
-                  // final supportsLatest =  ref.watch(supportsLatestProvider(source: source));
-                  // if (supportsLatest) {
-                  return TextButton(
-                      style: const ButtonStyle(
-                          padding: WidgetStatePropertyAll(EdgeInsets.all(10))),
-                      onPressed: () =>
-                          context.push('/mangaHome', extra: (source, true)),
-                      child: Text(context.l10n.latest));
-                  // }
-                  // return const SizedBox.shrink();
-                },
+                ],
               ),
-              const SizedBox(width: 10),
-              IconButton(
-                  padding: const EdgeInsets.all(0),
-                  onPressed: () {
-                    isar.writeTxnSync(() => isar.sources
-                        .putSync(source..isPinned = !source.isPinned!));
-                    ref
-                        .read(synchingProvider(syncId: 1).notifier)
-                        .addChangedPart(ActionType.updateExtension, source.id,
-                            source.toJson(), false);
-                  },
-                  icon: Icon(
-                    Icons.push_pin_outlined,
-                    color: source.isPinned! ? context.primaryColor : null,
-                  )),
-            ],
+            ),
           ),
-        ),
-      ),
     );
   }
 }

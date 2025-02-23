@@ -9,19 +9,23 @@ part 'archive_reader_providers.g.dart';
 
 @riverpod
 Future<List<(String, LocalExtensionType, Uint8List, String)>>
-    getArchivesDataFromDirectory(Ref ref, String path) async {
+getArchivesDataFromDirectory(Ref ref, String path) async {
   return compute(_extractOnly, path);
 }
 
 @riverpod
 Future<List<LocalArchive>> getArchiveDataFromDirectory(
-    Ref ref, String path) async {
+  Ref ref,
+  String path,
+) async {
   return compute(_extract, path);
 }
 
 @riverpod
 Future<(String, LocalExtensionType, Uint8List, String)> getArchivesDataFromFile(
-    Ref ref, String path) async {
+  Ref ref,
+  String path,
+) async {
   return compute(_extractArchiveOnly, path);
 }
 
@@ -35,7 +39,8 @@ Future<List<LocalArchive>> _extract(String data) async {
 }
 
 Future<List<(String, LocalExtensionType, Uint8List, String)>> _extractOnly(
-    String data) async {
+  String data,
+) async {
   return await _searchForArchiveOnly(Directory(data));
 }
 
@@ -58,7 +63,7 @@ Future<List<LocalArchive>> _searchForArchive(Directory dir) async {
 }
 
 Future<List<(String, LocalExtensionType, Uint8List, String)>>
-    _searchForArchiveOnly(Directory dir) async {
+_searchForArchiveOnly(Directory dir) async {
   List<FileSystemEntity> entities = dir.listSync();
   for (FileSystemEntity entity in entities) {
     if (entity is Directory) {
@@ -97,10 +102,13 @@ bool _isArchiveFile(String path) {
 }
 
 LocalArchive _extractArchive(String path) {
-  final localArchive = LocalArchive()
-    ..path = path
-    ..extensionType = setTypeExtension(p.extension(path).replaceFirst(".", ""))
-    ..name = p.basenameWithoutExtension(path);
+  final localArchive =
+      LocalArchive()
+        ..path = path
+        ..extensionType = setTypeExtension(
+          p.extension(path).replaceFirst(".", ""),
+        )
+        ..name = p.basenameWithoutExtension(path);
   Archive? archive;
   final inputStream = InputFileStream(path);
   final extensionType = localArchive.extensionType;
@@ -119,9 +127,11 @@ LocalArchive _extractArchive(String path) {
         if (filename.contains("cover")) {
           localArchive.coverImage = data;
         } else {
-          localArchive.images!.add(LocalImage()
-            ..image = data
-            ..name = p.basename(filename));
+          localArchive.images!.add(
+            LocalImage()
+              ..image = data
+              ..name = p.basename(filename),
+          );
         }
       }
     }
@@ -132,9 +142,11 @@ LocalArchive _extractArchive(String path) {
 }
 
 (String, LocalExtensionType, Uint8List, String) _extractArchiveOnly(
-    String path) {
-  final extensionType =
-      setTypeExtension(p.extension(path).replaceFirst('.', ''));
+  String path,
+) {
+  final extensionType = setTypeExtension(
+    p.extension(path).replaceFirst('.', ''),
+  );
   final name = p.basenameWithoutExtension(path);
   Uint8List? coverImage;
 
@@ -148,21 +160,24 @@ LocalArchive _extractArchive(String path) {
     archive = ZipDecoder().decodeStream(inputStream);
   }
 
-  final cover = archive.files.where((file) =>
-      file.isFile && _isImageFile(file.name) && file.name.contains("cover"));
+  final cover = archive.files.where(
+    (file) =>
+        file.isFile && _isImageFile(file.name) && file.name.contains("cover"),
+  );
 
   if (cover.isNotEmpty) {
     coverImage = cover.first.content;
   } else {
-    List<ArchiveFile> lArchive = archive.files
-        .where((file) =>
-            file.isFile &&
-            _isImageFile(file.name) &&
-            !file.name.contains("cover"))
-        .toList();
-    lArchive.sort(
-      (a, b) => a.name.compareTo(b.name),
-    );
+    List<ArchiveFile> lArchive =
+        archive.files
+            .where(
+              (file) =>
+                  file.isFile &&
+                  _isImageFile(file.name) &&
+                  !file.name.contains("cover"),
+            )
+            .toList();
+    lArchive.sort((a, b) => a.name.compareTo(b.name));
     coverImage = lArchive.first.content;
   }
 

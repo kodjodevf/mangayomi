@@ -118,5 +118,5 @@ final languagesMap = {
   "Chinese (Traditional)": "zh-tw",
   "Latin": "la",
   "Uzbek": "uz",
-  "Tagalog": "tl"
+  "Tagalog": "tl",
 };

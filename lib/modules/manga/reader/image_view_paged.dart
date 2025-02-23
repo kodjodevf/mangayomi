@@ -13,7 +13,7 @@ class ImageViewPaged extends ConsumerWidget {
   final Widget? Function(ExtendedImageState state) loadStateChanged;
   final Function(ExtendedImageGestureState state)? onDoubleTap;
   final GestureConfig Function(ExtendedImageState state)?
-      initGestureConfigHandler;
+  initGestureConfigHandler;
   const ImageViewPaged({
     super.key,
     required this.data,
@@ -31,16 +31,17 @@ class ImageViewPaged extends ConsumerWidget {
     return GestureDetector(
       onLongPress: () => onLongPressData.call(data),
       child: ExtendedImage(
-          image: image,
-          colorBlendMode: colorBlendMode,
-          color: color,
-          fit: getBoxFit(scaleType),
-          filterQuality: FilterQuality.medium,
-          mode: ExtendedImageMode.gesture,
-          handleLoadingProgress: true,
-          loadStateChanged: loadStateChanged,
-          initGestureConfigHandler: initGestureConfigHandler,
-          onDoubleTap: onDoubleTap),
+        image: image,
+        colorBlendMode: colorBlendMode,
+        color: color,
+        fit: getBoxFit(scaleType),
+        filterQuality: FilterQuality.medium,
+        mode: ExtendedImageMode.gesture,
+        handleLoadingProgress: true,
+        loadStateChanged: loadStateChanged,
+        initGestureConfigHandler: initGestureConfigHandler,
+        onDoubleTap: onDoubleTap,
+      ),
     );
   }
 }

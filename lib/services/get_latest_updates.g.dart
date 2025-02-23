@@ -39,24 +39,15 @@ class GetLatestUpdatesFamily extends Family<AsyncValue<MPages?>> {
   const GetLatestUpdatesFamily();
 
   /// See also [getLatestUpdates].
-  GetLatestUpdatesProvider call({
-    required Source source,
-    required int page,
-  }) {
-    return GetLatestUpdatesProvider(
-      source: source,
-      page: page,
-    );
+  GetLatestUpdatesProvider call({required Source source, required int page}) {
+    return GetLatestUpdatesProvider(source: source, page: page);
   }
 
   @override
   GetLatestUpdatesProvider getProviderOverride(
     covariant GetLatestUpdatesProvider provider,
   ) {
-    return call(
-      source: provider.source,
-      page: provider.page,
-    );
+    return call(source: provider.source, page: provider.page);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -77,27 +68,25 @@ class GetLatestUpdatesFamily extends Family<AsyncValue<MPages?>> {
 /// See also [getLatestUpdates].
 class GetLatestUpdatesProvider extends AutoDisposeFutureProvider<MPages?> {
   /// See also [getLatestUpdates].
-  GetLatestUpdatesProvider({
-    required Source source,
-    required int page,
-  }) : this._internal(
-          (ref) => getLatestUpdates(
-            ref as GetLatestUpdatesRef,
-            source: source,
-            page: page,
-          ),
-          from: getLatestUpdatesProvider,
-          name: r'getLatestUpdatesProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$getLatestUpdatesHash,
-          dependencies: GetLatestUpdatesFamily._dependencies,
-          allTransitiveDependencies:
-              GetLatestUpdatesFamily._allTransitiveDependencies,
+  GetLatestUpdatesProvider({required Source source, required int page})
+    : this._internal(
+        (ref) => getLatestUpdates(
+          ref as GetLatestUpdatesRef,
           source: source,
           page: page,
-        );
+        ),
+        from: getLatestUpdatesProvider,
+        name: r'getLatestUpdatesProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$getLatestUpdatesHash,
+        dependencies: GetLatestUpdatesFamily._dependencies,
+        allTransitiveDependencies:
+            GetLatestUpdatesFamily._allTransitiveDependencies,
+        source: source,
+        page: page,
+      );
 
   GetLatestUpdatesProvider._internal(
     super._createNotifier, {
@@ -165,7 +154,8 @@ mixin GetLatestUpdatesRef on AutoDisposeFutureProviderRef<MPages?> {
 }
 
 class _GetLatestUpdatesProviderElement
-    extends AutoDisposeFutureProviderElement<MPages?> with GetLatestUpdatesRef {
+    extends AutoDisposeFutureProviderElement<MPages?>
+    with GetLatestUpdatesRef {
   _GetLatestUpdatesProviderElement(super.provider);
 
   @override
@@ -173,5 +163,6 @@ class _GetLatestUpdatesProviderElement
   @override
   int get page => (origin as GetLatestUpdatesProvider).page;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

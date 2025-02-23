@@ -12,12 +12,7 @@ class TrackPreference {
 
   String? prefs;
 
-  TrackPreference({
-    this.syncId,
-    this.username,
-    this.oAuth,
-    this.prefs,
-  });
+  TrackPreference({this.syncId, this.username, this.oAuth, this.prefs});
 
   TrackPreference.fromJson(Map<String, dynamic> json) {
     syncId = json['syncId'];
@@ -26,6 +21,10 @@ class TrackPreference {
     prefs = json['prefs'];
   }
 
-  Map<String, dynamic> toJson() =>
-      {'syncId': syncId, 'username': username, 'oAuth': oAuth, 'prefs': prefs};
+  Map<String, dynamic> toJson() => {
+    'syncId': syncId,
+    'username': username,
+    'oAuth': oAuth,
+    'prefs': prefs,
+  };
 }

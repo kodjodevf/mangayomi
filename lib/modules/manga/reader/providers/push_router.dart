@@ -10,19 +10,20 @@ Future<void> pushMangaReaderView({
   required BuildContext context,
   required Chapter chapter,
 }) async {
-  final sourceExist = isar.sources
-      .filter()
-      .langContains(chapter.manga.value!.lang!, caseSensitive: false)
-      .and()
-      .nameContains(chapter.manga.value!.source!, caseSensitive: false)
-      .and()
-      .idIsNotNull()
-      .and()
-      .isActiveEqualTo(true)
-      .and()
-      .isAddedEqualTo(true)
-      .findAllSync()
-      .isNotEmpty;
+  final sourceExist =
+      isar.sources
+          .filter()
+          .langContains(chapter.manga.value!.lang!, caseSensitive: false)
+          .and()
+          .nameContains(chapter.manga.value!.source!, caseSensitive: false)
+          .and()
+          .idIsNotNull()
+          .and()
+          .isActiveEqualTo(true)
+          .and()
+          .isAddedEqualTo(true)
+          .findAllSync()
+          .isNotEmpty;
   if (sourceExist || chapter.manga.value!.isLocalArchive!) {
     switch (chapter.manga.value!.itemType) {
       case ItemType.manga:
@@ -38,8 +39,10 @@ Future<void> pushMangaReaderView({
   }
 }
 
-void pushReplacementMangaReaderView(
-    {required BuildContext context, required Chapter chapter}) {
+void pushReplacementMangaReaderView({
+  required BuildContext context,
+  required Chapter chapter,
+}) {
   switch (chapter.manga.value!.itemType) {
     case ItemType.manga:
       context.pushReplacement('/mangaReaderView', extra: chapter.id!);

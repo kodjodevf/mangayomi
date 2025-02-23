@@ -40,10 +40,10 @@ class History {
   }
 
   Map<String, dynamic> toJson() => {
-        'chapterId': chapterId,
-        'date': date,
-        'id': id,
-        'itemType': itemType.index,
-        'mangaId': mangaId
-      };
+    'chapterId': chapterId,
+    'date': date,
+    'id': id,
+    'itemType': itemType.index,
+    'mangaId': mangaId,
+  };
 }

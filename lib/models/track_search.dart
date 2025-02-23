@@ -33,22 +33,23 @@ class TrackSearch {
 
   String? startDate;
 
-  TrackSearch(
-      {this.id,
-      this.libraryId,
-      this.mediaId,
-      this.syncId,
-      this.title,
-      this.lastChapterRead,
-      this.totalChapter,
-      this.score,
-      this.status = '',
-      this.startedReadingDate,
-      this.finishedReadingDate,
-      this.trackingUrl,
-      this.coverUrl = '',
-      this.publishingStatus = '',
-      this.publishingType = '',
-      this.startDate = '',
-      this.summary = ''});
+  TrackSearch({
+    this.id,
+    this.libraryId,
+    this.mediaId,
+    this.syncId,
+    this.title,
+    this.lastChapterRead,
+    this.totalChapter,
+    this.score,
+    this.status = '',
+    this.startedReadingDate,
+    this.finishedReadingDate,
+    this.trackingUrl,
+    this.coverUrl = '',
+    this.publishingStatus = '',
+    this.publishingType = '',
+    this.startDate = '',
+    this.summary = '',
+  });
 }

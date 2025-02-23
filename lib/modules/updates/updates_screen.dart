@@ -37,27 +37,35 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
     setState(() {
       _isLoading = true;
     });
-    botToast(context.l10n.updating_library,
-        fontSize: 13, second: 1600, alignY: !context.isTablet ? 0.85 : 1);
-    final mangaList = isar.mangas
-        .filter()
-        .idIsNotNull()
-        .favoriteEqualTo(true)
-        .and()
-        .itemTypeEqualTo(_tabBarController.index == 0
-            ? ItemType.manga
-            : _tabBarController.index == 1
-                ? ItemType.anime
-                : ItemType.novel)
-        .and()
-        .isLocalArchiveEqualTo(false)
-        .findAllSync();
+    botToast(
+      context.l10n.updating_library,
+      fontSize: 13,
+      second: 1600,
+      alignY: !context.isTablet ? 0.85 : 1,
+    );
+    final mangaList =
+        isar.mangas
+            .filter()
+            .idIsNotNull()
+            .favoriteEqualTo(true)
+            .and()
+            .itemTypeEqualTo(
+              _tabBarController.index == 0
+                  ? ItemType.manga
+                  : _tabBarController.index == 1
+                  ? ItemType.anime
+                  : ItemType.novel,
+            )
+            .and()
+            .isLocalArchiveEqualTo(false)
+            .findAllSync();
     int numbers = 0;
 
     for (var manga in mangaList) {
       try {
         await ref.read(
-            updateMangaDetailProvider(mangaId: manga.id, isInit: false).future);
+          updateMangaDetailProvider(mangaId: manga.id, isInit: false).future,
+        );
       } catch (_) {}
       numbers++;
     }
@@ -120,111 +128,127 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
-          title: _isSearch
-              ? null
-              : Text(
-                  l10n.updates,
-                  style: TextStyle(color: Theme.of(context).hintColor),
-                ),
+          title:
+              _isSearch
+                  ? null
+                  : Text(
+                    l10n.updates,
+                    style: TextStyle(color: Theme.of(context).hintColor),
+                  ),
           actions: [
             _isSearch
                 ? SeachFormTextField(
-                    onChanged: (value) {
-                      setState(() {});
-                    },
-                    onSuffixPressed: () {
-                      _textEditingController.clear();
-                      setState(() {});
-                    },
-                    onPressed: () {
-                      setState(() {
-                        _isSearch = false;
-                      });
-                      _textEditingController.clear();
-                    },
-                    controller: _textEditingController,
-                  )
+                  onChanged: (value) {
+                    setState(() {});
+                  },
+                  onSuffixPressed: () {
+                    _textEditingController.clear();
+                    setState(() {});
+                  },
+                  onPressed: () {
+                    setState(() {
+                      _isSearch = false;
+                    });
+                    _textEditingController.clear();
+                  },
+                  controller: _textEditingController,
+                )
                 : IconButton(
-                    splashRadius: 20,
-                    onPressed: () {
-                      setState(() {
-                        _isSearch = true;
-                      });
-                    },
-                    icon: Icon(Icons.search_outlined,
-                        color: Theme.of(context).hintColor)),
+                  splashRadius: 20,
+                  onPressed: () {
+                    setState(() {
+                      _isSearch = true;
+                    });
+                  },
+                  icon: Icon(
+                    Icons.search_outlined,
+                    color: Theme.of(context).hintColor,
+                  ),
+                ),
             IconButton(
-                splashRadius: 20,
-                onPressed: () {
-                  _updateLibrary();
-                },
-                icon: Icon(Icons.refresh_outlined,
-                    color: Theme.of(context).hintColor)),
+              splashRadius: 20,
+              onPressed: () {
+                _updateLibrary();
+              },
+              icon: Icon(
+                Icons.refresh_outlined,
+                color: Theme.of(context).hintColor,
+              ),
+            ),
             IconButton(
-                splashRadius: 20,
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text(
-                            l10n.remove_everything,
-                          ),
-                          content: Text(l10n.remove_all_update_msg),
-                          actions: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text(l10n.cancel)),
-                                const SizedBox(
-                                  width: 15,
-                                ),
-                                TextButton(
-                                    onPressed: () {
-                                      List<Update> updates = isar.updates
-                                          .filter()
-                                          .idIsNotNull()
-                                          .chapter((q) => q.manga((q) => q
-                                              .itemTypeEqualTo(_tabBarController
-                                                              .index ==
-                                                          0 &&
+              splashRadius: 20,
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(l10n.remove_everything),
+                      content: Text(l10n.remove_all_update_msg),
+                      actions: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text(l10n.cancel),
+                            ),
+                            const SizedBox(width: 15),
+                            TextButton(
+                              onPressed: () {
+                                List<Update> updates =
+                                    isar.updates
+                                        .filter()
+                                        .idIsNotNull()
+                                        .chapter(
+                                          (q) => q.manga(
+                                            (q) => q.itemTypeEqualTo(
+                                              _tabBarController.index == 0 &&
                                                       !hideItems.contains(
-                                                          "/MangaLibrary")
+                                                        "/MangaLibrary",
+                                                      )
                                                   ? ItemType.manga
                                                   : _tabBarController.index ==
-                                                              1 -
-                                                                  (hideItems.contains(
-                                                                          "/MangaLibrary")
-                                                                      ? 1
-                                                                      : 0) &&
-                                                          !hideItems.contains(
-                                                              "/AnimeLibrary")
-                                                      ? ItemType.anime
-                                                      : ItemType.novel)))
-                                          .findAllSync()
-                                          .toList();
-                                      isar.writeTxnSync(() {
-                                        for (var update in updates) {
-                                          isar.updates.deleteSync(update.id!);
-                                        }
-                                      });
-                                      if (mounted) {
-                                        Navigator.pop(context);
-                                      }
-                                    },
-                                    child: Text(l10n.ok)),
-                              ],
-                            )
+                                                          1 -
+                                                              (hideItems.contains(
+                                                                    "/MangaLibrary",
+                                                                  )
+                                                                  ? 1
+                                                                  : 0) &&
+                                                      !hideItems.contains(
+                                                        "/AnimeLibrary",
+                                                      )
+                                                  ? ItemType.anime
+                                                  : ItemType.novel,
+                                            ),
+                                          ),
+                                        )
+                                        .findAllSync()
+                                        .toList();
+                                isar.writeTxnSync(() {
+                                  for (var update in updates) {
+                                    isar.updates.deleteSync(update.id!);
+                                  }
+                                });
+                                if (mounted) {
+                                  Navigator.pop(context);
+                                }
+                              },
+                              child: Text(l10n.ok),
+                            ),
                           ],
-                        );
-                      });
-                },
-                icon: Icon(Icons.delete_sweep_outlined,
-                    color: Theme.of(context).hintColor)),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              icon: Icon(
+                Icons.delete_sweep_outlined,
+                color: Theme.of(context).hintColor,
+              ),
+            ),
           ],
           bottom: TabBar(
             indicatorSize: TabBarIndicatorSize.tab,
@@ -236,7 +260,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
                   children: [
                     Tab(text: l10n.manga),
                     const SizedBox(width: 8),
-                    _updateNumbers(ref, ItemType.manga)
+                    _updateNumbers(ref, ItemType.manga),
                   ],
                 ),
               if (!hideItems.contains("/AnimeLibrary"))
@@ -245,7 +269,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
                   children: [
                     Tab(text: l10n.anime),
                     const SizedBox(width: 8),
-                    _updateNumbers(ref, ItemType.anime)
+                    _updateNumbers(ref, ItemType.anime),
                   ],
                 ),
               if (!hideItems.contains("/NovelLibrary"))
@@ -254,7 +278,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
                   children: [
                     Tab(text: l10n.novel),
                     const SizedBox(width: 8),
-                    _updateNumbers(ref, ItemType.novel)
+                    _updateNumbers(ref, ItemType.novel),
                   ],
                 ),
             ],
@@ -262,23 +286,29 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
         ),
         body: Padding(
           padding: const EdgeInsets.only(top: 10),
-          child: TabBarView(controller: _tabBarController, children: [
-            if (!hideItems.contains("/MangaLibrary"))
-              UpdateTab(
+          child: TabBarView(
+            controller: _tabBarController,
+            children: [
+              if (!hideItems.contains("/MangaLibrary"))
+                UpdateTab(
                   itemType: ItemType.manga,
                   query: _textEditingController.text,
-                  isLoading: _isLoading),
-            if (!hideItems.contains("/AnimeLibrary"))
-              UpdateTab(
+                  isLoading: _isLoading,
+                ),
+              if (!hideItems.contains("/AnimeLibrary"))
+                UpdateTab(
                   itemType: ItemType.anime,
                   query: _textEditingController.text,
-                  isLoading: _isLoading),
-            if (!hideItems.contains("/NovelLibrary"))
-              UpdateTab(
+                  isLoading: _isLoading,
+                ),
+              if (!hideItems.contains("/NovelLibrary"))
+                UpdateTab(
                   itemType: ItemType.novel,
                   query: _textEditingController.text,
-                  isLoading: _isLoading)
-          ]),
+                  isLoading: _isLoading,
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -289,11 +319,12 @@ class UpdateTab extends ConsumerStatefulWidget {
   final String query;
   final ItemType itemType;
   final bool isLoading;
-  const UpdateTab(
-      {required this.itemType,
-      required this.query,
-      required this.isLoading,
-      super.key});
+  const UpdateTab({
+    required this.itemType,
+    required this.query,
+    required this.isLoading,
+    super.key,
+  });
 
   @override
   ConsumerState<UpdateTab> createState() => _UpdateTabState();
@@ -303,125 +334,150 @@ class _UpdateTabState extends ConsumerState<UpdateTab> {
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
-    final update =
-        ref.watch(getAllUpdateStreamProvider(itemType: widget.itemType));
+    final update = ref.watch(
+      getAllUpdateStreamProvider(itemType: widget.itemType),
+    );
     return Scaffold(
-        body: Stack(
-      children: [
-        update.when(
-          data: (data) {
-            final entries = data
-                .where((element) => widget.query.isNotEmpty
-                    ? element.chapter.value!.manga.value!.name!
-                        .toLowerCase()
-                        .contains(widget.query.toLowerCase())
-                    : true)
-                .toList();
-            final lastUpdatedList = data
-                .map((e) => e.chapter.value!.manga.value!.lastUpdate!)
-                .toList();
-            lastUpdatedList.sort((a, b) => a.compareTo(b));
-            final lastUpdated = lastUpdatedList.firstOrNull;
-            if (entries.isNotEmpty) {
-              return CustomScrollView(
-                slivers: [
-                  if (lastUpdated != null)
-                    SliverPadding(
-                      padding: const EdgeInsets.only(
-                          left: 10, right: 10, top: 10, bottom: 20),
-                      sliver: SliverList(
+      body: Stack(
+        children: [
+          update.when(
+            data: (data) {
+              final entries =
+                  data
+                      .where(
+                        (element) =>
+                            widget.query.isNotEmpty
+                                ? element.chapter.value!.manga.value!.name!
+                                    .toLowerCase()
+                                    .contains(widget.query.toLowerCase())
+                                : true,
+                      )
+                      .toList();
+              final lastUpdatedList =
+                  data
+                      .map((e) => e.chapter.value!.manga.value!.lastUpdate!)
+                      .toList();
+              lastUpdatedList.sort((a, b) => a.compareTo(b));
+              final lastUpdated = lastUpdatedList.firstOrNull;
+              if (entries.isNotEmpty) {
+                return CustomScrollView(
+                  slivers: [
+                    if (lastUpdated != null)
+                      SliverPadding(
+                        padding: const EdgeInsets.only(
+                          left: 10,
+                          right: 10,
+                          top: 10,
+                          bottom: 20,
+                        ),
+                        sliver: SliverList(
                           delegate: SliverChildListDelegate.fixed([
-                        Text(
-                            l10n.library_last_updated(dateFormat(
-                                lastUpdated.toString(),
-                                ref: ref,
-                                context: context,
-                                showHOURorMINUTE: true)),
-                            style: TextStyle(
+                            Text(
+                              l10n.library_last_updated(
+                                dateFormat(
+                                  lastUpdated.toString(),
+                                  ref: ref,
+                                  context: context,
+                                  showHOURorMINUTE: true,
+                                ),
+                              ),
+                              style: TextStyle(
                                 fontStyle: FontStyle.italic,
-                                color: context.secondaryColor))
-                      ])),
-                    ),
-                  SliverGroupedListView<Update, String>(
-                    elements: entries,
-                    groupBy: (element) => dateFormat(element.date!,
-                        context: context,
-                        ref: ref,
-                        forHistoryValue: true,
-                        useRelativeTimesTamps: false),
-                    groupSeparatorBuilder: (String groupByValue) => Padding(
-                      padding: const EdgeInsets.only(bottom: 8, left: 12),
-                      child: Row(
-                        children: [
-                          Text(dateFormat(
-                            null,
-                            context: context,
-                            stringDate: groupByValue,
-                            ref: ref,
-                          )),
-                        ],
+                                color: context.secondaryColor,
+                              ),
+                            ),
+                          ]),
+                        ),
                       ),
+                    SliverGroupedListView<Update, String>(
+                      elements: entries,
+                      groupBy:
+                          (element) => dateFormat(
+                            element.date!,
+                            context: context,
+                            ref: ref,
+                            forHistoryValue: true,
+                            useRelativeTimesTamps: false,
+                          ),
+                      groupSeparatorBuilder:
+                          (String groupByValue) => Padding(
+                            padding: const EdgeInsets.only(bottom: 8, left: 12),
+                            child: Row(
+                              children: [
+                                Text(
+                                  dateFormat(
+                                    null,
+                                    context: context,
+                                    stringDate: groupByValue,
+                                    ref: ref,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      itemBuilder: (context, element) {
+                        final chapter = element.chapter.value!;
+                        return UpdateChapterListTileWidget(
+                          chapter: chapter,
+                          sourceExist: true,
+                        );
+                      },
+                      itemComparator:
+                          (item1, item2) => item1.date!.compareTo(item2.date!),
+                      order: GroupedListOrder.DESC,
                     ),
-                    itemBuilder: (context, element) {
-                      final chapter = element.chapter.value!;
-                      return UpdateChapterListTileWidget(
-                          chapter: chapter, sourceExist: true);
-                    },
-                    itemComparator: (item1, item2) =>
-                        item1.date!.compareTo(item2.date!),
-                    order: GroupedListOrder.DESC,
-                  ),
-                ],
-              );
-            }
-            return Center(
-              child: Text(l10n.no_recent_updates),
-            );
-          },
-          error: (Object error, StackTrace stackTrace) {
-            return ErrorText(error);
-          },
-          loading: () {
-            return const ProgressCenter();
-          },
-        ),
-        if (widget.isLoading)
-          const Positioned(
+                  ],
+                );
+              }
+              return Center(child: Text(l10n.no_recent_updates));
+            },
+            error: (Object error, StackTrace stackTrace) {
+              return ErrorText(error);
+            },
+            loading: () {
+              return const ProgressCenter();
+            },
+          ),
+          if (widget.isLoading)
+            const Positioned(
               top: 0,
               left: 0,
               right: 0,
               child: Padding(
                 padding: EdgeInsets.only(top: 40),
-                child: Center(
-                  child: RefreshProgressIndicator(),
-                ),
-              )),
-      ],
-    ));
+                child: Center(child: RefreshProgressIndicator()),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }
 
 Widget _updateNumbers(WidgetRef ref, ItemType itemType) {
   return StreamBuilder(
-      stream: isar.updates
-          .filter()
-          .idIsNotNull()
-          .and()
-          .chapter((q) => q.manga((q) => q.itemTypeEqualTo(itemType)))
-          .watch(fireImmediately: true),
-      builder: (context, snapshot) {
-        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-          final entries = snapshot.data!.toList();
-          return entries.isEmpty
-              ? SizedBox.shrink()
-              : Badge(
-                  backgroundColor: Theme.of(context).focusColor,
-                  label: Text(
-                    entries.length.toString(),
-                    style: TextStyle(
-                        color: Theme.of(context).textTheme.bodySmall!.color),
-                  ));
-        }
-        return Container();
-      });
+    stream: isar.updates
+        .filter()
+        .idIsNotNull()
+        .and()
+        .chapter((q) => q.manga((q) => q.itemTypeEqualTo(itemType)))
+        .watch(fireImmediately: true),
+    builder: (context, snapshot) {
+      if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+        final entries = snapshot.data!.toList();
+        return entries.isEmpty
+            ? SizedBox.shrink()
+            : Badge(
+              backgroundColor: Theme.of(context).focusColor,
+              label: Text(
+                entries.length.toString(),
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.bodySmall!.color,
+                ),
+              ),
+            );
+      }
+      return Container();
+    },
+  );
 }

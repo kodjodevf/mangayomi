@@ -2,17 +2,22 @@ import 'dart:math';
 
 class JsUnpacker {
   static final RegExp _packedRegex = RegExp(
-      r"eval[(]function[(]p,a,c,k,e,[r|d]?",
-      caseSensitive: false,
-      multiLine: true);
+    r"eval[(]function[(]p,a,c,k,e,[r|d]?",
+    caseSensitive: false,
+    multiLine: true,
+  );
 
   static final RegExp _packedExtractRegex = RegExp(
-      r"[}][(]'(.*)', *(\d+), *(\d+), *'(.*?)'[.]split[(]'[|]'[)]",
-      caseSensitive: false,
-      multiLine: true);
+    r"[}][(]'(.*)', *(\d+), *(\d+), *'(.*?)'[.]split[(]'[|]'[)]",
+    caseSensitive: false,
+    multiLine: true,
+  );
 
-  static final RegExp _unpackReplaceRegex =
-      RegExp(r"\b\w+\b", caseSensitive: false, multiLine: true);
+  static final RegExp _unpackReplaceRegex = RegExp(
+    r"\b\w+\b",
+    caseSensitive: false,
+    multiLine: true,
+  );
 
   static bool detect(String scriptBlock) {
     return _packedRegex.hasMatch(scriptBlock);
@@ -41,8 +46,9 @@ class JsUnpacker {
       final unbaser = Unbaser(radix);
 
       if (symtab != null && symtab.length == count) {
-        final unpackedPayload =
-            payload!.replaceAllMapped(_unpackReplaceRegex, (match) {
+        final unpackedPayload = payload!.replaceAllMapped(_unpackReplaceRegex, (
+          match,
+        ) {
           final word = match.group(0)!;
           final unbased = symtab[unbaser.unbase(word)];
           return unbased.isEmpty ? word : unbased;
@@ -59,7 +65,8 @@ class Unbaser {
     52: "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOP",
     54: "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQR",
     62: "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
-    95: " !\"#\$%&\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
+    95:
+        " !\"#\$%&\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
   };
 
   Unbaser(this.base);

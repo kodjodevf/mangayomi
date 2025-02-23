@@ -38,15 +38,15 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
   final CodeLineEditingController _controller = CodeLineEditingController();
 
   List<(String, int)> _getServices(BuildContext context) => [
-        ("getPopular", 0),
-        ("getLatestUpdates", 1),
-        ("search", 2),
-        ("getDetail", 3),
-        if (source?.itemType == ItemType.manga) ("getPageList", 4),
-        if (source?.itemType == ItemType.anime) ("getVideoList", 5),
-        if (source?.itemType == ItemType.novel) ("getHtmlContent", 6),
-        if (source?.itemType == ItemType.novel) ("cleanHtmlContent", 7)
-      ];
+    ("getPopular", 0),
+    ("getLatestUpdates", 1),
+    ("search", 2),
+    ("getDetail", 3),
+    if (source?.itemType == ItemType.manga) ("getPageList", 4),
+    if (source?.itemType == ItemType.anime) ("getVideoList", 5),
+    if (source?.itemType == ItemType.novel) ("getHtmlContent", 6),
+    if (source?.itemType == ItemType.novel) ("cleanHtmlContent", 7),
+  ];
 
   int _serviceIndex = 0;
   int _page = 1;
@@ -56,8 +56,9 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
   bool _isLoading = false;
   String _errorText = "";
   bool _error = false;
-  final _logsNotifier =
-      ValueNotifier<List<(LoggerLevel, String, DateTime)>>([]);
+  final _logsNotifier = ValueNotifier<List<(LoggerLevel, String, DateTime)>>(
+    [],
+  );
   late final _logStreamController = Logger.logStreamController;
   final _scrollController = ScrollController();
   @override
@@ -79,51 +80,56 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
   Future<String?> filterDialog(BuildContext context) async {
     return await showModalBottomSheet(
       context: context,
-      builder: (context) => StatefulBuilder(builder: (context, setState) {
-        return Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
+      builder:
+          (context) => StatefulBuilder(
+            builder: (context, setState) {
+              return Column(
                 children: [
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        filters = getFilterList(source: source!);
-                      });
-                    },
-                    child: Text(context.l10n.reset),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            setState(() {
+                              filters = getFilterList(source: source!);
+                            });
+                          },
+                          child: Text(context.l10n.reset),
+                        ),
+                        const Spacer(),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: context.primaryColor,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context, 'filter');
+                          },
+                          child: Text(
+                            context.l10n.filter,
+                            style: TextStyle(
+                              color: Theme.of(context).scaffoldBackgroundColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  const Spacer(),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: context.primaryColor),
-                    onPressed: () {
-                      Navigator.pop(context, 'filter');
-                    },
-                    child: Text(
-                      context.l10n.filter,
-                      style: TextStyle(
-                          color: Theme.of(context).scaffoldBackgroundColor),
+                  const Divider(),
+                  Expanded(
+                    child: FilterWidget(
+                      filterList: filters,
+                      onChanged: (values) {
+                        setState(() {
+                          filters = values;
+                        });
+                      },
                     ),
                   ),
                 ],
-              ),
-            ),
-            const Divider(),
-            Expanded(
-              child: FilterWidget(
-                filterList: filters,
-                onChanged: (values) {
-                  setState(() {
-                    filters = values;
-                  });
-                },
-              ),
-            ),
-          ],
-        );
-      }),
+              );
+            },
+          ),
     );
   }
 
@@ -143,17 +149,22 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
     final appFontFamily = ref.watch(appFontFamilyProvider);
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(onPressed: () {
-          isar.writeTxnSync(() {
-            isar.sources.putSync(source!);
-            ref.read(synchingProvider(syncId: 1).notifier).addChangedPart(
-                ActionType.updateExtension,
-                source!.id,
-                source!.toJson(),
-                false);
-          });
-          Navigator.pop(context, source);
-        }),
+        leading: BackButton(
+          onPressed: () {
+            isar.writeTxnSync(() {
+              isar.sources.putSync(source!);
+              ref
+                  .read(synchingProvider(syncId: 1).notifier)
+                  .addChangedPart(
+                    ActionType.updateExtension,
+                    source!.id,
+                    source!.toJson(),
+                    false,
+                  );
+            });
+            Navigator.pop(context, source);
+          },
+        ),
       ),
       body: Column(
         children: [
@@ -162,50 +173,65 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
             child: Row(
               children: [
                 Flexible(
-                    flex: 7,
-                    child: CodeEditor(
-                        style: CodeEditorStyle(
-                          fontSize: 15,
-                          fontFamily: appFontFamily,
-                          codeTheme: CodeHighlightTheme(languages: {
-                            'dart': CodeHighlightThemeMode(mode: langDart),
-                            'javascript':
-                                CodeHighlightThemeMode(mode: langJavascript),
-                          }, theme: vs2015Theme),
-                        ),
-                        controller: _controller,
-                        onChanged: (_) {
-                          source?.sourceCode = _controller.text;
-                          if (source != null && context.mounted) {
-                            isar.writeTxnSync(() {
-                              isar.sources.putSync(source!);
-                              ref
-                                  .read(synchingProvider(syncId: 1).notifier)
-                                  .addChangedPart(ActionType.updateExtension,
-                                      source!.id, source!.toJson(), false);
-                            });
-                          }
+                  flex: 7,
+                  child: CodeEditor(
+                    style: CodeEditorStyle(
+                      fontSize: 15,
+                      fontFamily: appFontFamily,
+                      codeTheme: CodeHighlightTheme(
+                        languages: {
+                          'dart': CodeHighlightThemeMode(mode: langDart),
+                          'javascript': CodeHighlightThemeMode(
+                            mode: langJavascript,
+                          ),
                         },
-                        wordWrap: false,
-                        indicatorBuilder: (context, editingController,
-                            chunkController, notifier) {
-                          return Row(
-                            children: [
-                              DefaultCodeLineNumber(
-                                controller: editingController,
-                                notifier: notifier,
-                              ),
-                              DefaultCodeChunkIndicator(
-                                  width: 20,
-                                  controller: chunkController,
-                                  notifier: notifier)
-                            ],
-                          );
-                        },
-                        sperator: Container(
-                          width: 1,
-                          color: context.dynamicThemeColor,
-                        ))),
+                        theme: vs2015Theme,
+                      ),
+                    ),
+                    controller: _controller,
+                    onChanged: (_) {
+                      source?.sourceCode = _controller.text;
+                      if (source != null && context.mounted) {
+                        isar.writeTxnSync(() {
+                          isar.sources.putSync(source!);
+                          ref
+                              .read(synchingProvider(syncId: 1).notifier)
+                              .addChangedPart(
+                                ActionType.updateExtension,
+                                source!.id,
+                                source!.toJson(),
+                                false,
+                              );
+                        });
+                      }
+                    },
+                    wordWrap: false,
+                    indicatorBuilder: (
+                      context,
+                      editingController,
+                      chunkController,
+                      notifier,
+                    ) {
+                      return Row(
+                        children: [
+                          DefaultCodeLineNumber(
+                            controller: editingController,
+                            notifier: notifier,
+                          ),
+                          DefaultCodeChunkIndicator(
+                            width: 20,
+                            controller: chunkController,
+                            notifier: notifier,
+                          ),
+                        ],
+                      );
+                    },
+                    sperator: Container(
+                      width: 1,
+                      color: context.dynamicThemeColor,
+                    ),
+                  ),
+                ),
                 if (context.isTablet)
                   Flexible(
                     flex: 3,
@@ -217,20 +243,28 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
                             icon: const Icon(Icons.keyboard_arrow_down),
                             isExpanded: true,
                             value: _getServices(context).firstWhere(
-                                (element) => element.$2 == _serviceIndex),
+                              (element) => element.$2 == _serviceIndex,
+                            ),
                             hint: Text(
+                              _getServices(context)
+                                  .firstWhere(
+                                    (element) => element.$2 == _serviceIndex,
+                                  )
+                                  .$1,
+                              style: const TextStyle(fontSize: 13),
+                            ),
+                            items:
                                 _getServices(context)
-                                    .firstWhere((element) =>
-                                        element.$2 == _serviceIndex)
-                                    .$1,
-                                style: const TextStyle(fontSize: 13)),
-                            items: _getServices(context)
-                                .map((e) => DropdownMenuItem(
-                                      value: e,
-                                      child: Text(e.$1,
-                                          style: const TextStyle(fontSize: 13)),
-                                    ))
-                                .toList(),
+                                    .map(
+                                      (e) => DropdownMenuItem(
+                                        value: e,
+                                        child: Text(
+                                          e.$1,
+                                          style: const TextStyle(fontSize: 13),
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
                             onChanged: (v) {
                               setState(() {
                                 _serviceIndex = v!.$2;
@@ -252,8 +286,9 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
                             _serviceIndex == 4 ||
                             _serviceIndex == 5 ||
                             _serviceIndex == 6)
-                          _textEditing("Url", context, "ex: url of the entry",
-                              (v) {
+                          _textEditing("Url", context, "ex: url of the entry", (
+                            v,
+                          ) {
                             _url = v;
                           }),
                         if (_serviceIndex == 7)
@@ -266,190 +301,203 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
                             crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
                               ElevatedButton(
-                                  onPressed: () async {
-                                    source?.sourceCode = _controller.text;
-                                    if (source != null && context.mounted) {
-                                      isar.writeTxnSync(() {
-                                        isar.sources.putSync(source!);
-                                        ref
-                                            .read(synchingProvider(syncId: 1)
-                                                .notifier)
-                                            .addChangedPart(
-                                                ActionType.updateExtension,
-                                                source!.id,
-                                                source!.toJson(),
-                                                false);
-                                      });
+                                onPressed: () async {
+                                  source?.sourceCode = _controller.text;
+                                  if (source != null && context.mounted) {
+                                    isar.writeTxnSync(() {
+                                      isar.sources.putSync(source!);
+                                      ref
+                                          .read(
+                                            synchingProvider(
+                                              syncId: 1,
+                                            ).notifier,
+                                          )
+                                          .addChangedPart(
+                                            ActionType.updateExtension,
+                                            source!.id,
+                                            source!.toJson(),
+                                            false,
+                                          );
+                                    });
+                                  }
+                                  setState(() {
+                                    result = null;
+                                    _isLoading = true;
+                                    _error = false;
+                                    _errorText = "";
+                                  });
+                                  if (source != null) {
+                                    final service = getExtensionService(
+                                      source!,
+                                    );
+
+                                    try {
+                                      if (_serviceIndex == 0) {
+                                        final getManga = await ref.watch(
+                                          getPopularProvider(
+                                            source: source!,
+                                            page: _page,
+                                          ).future,
+                                        );
+                                        result = getManga!.toJson();
+                                      } else if (_serviceIndex == 1) {
+                                        final getManga = await ref.watch(
+                                          getLatestUpdatesProvider(
+                                            source: source!,
+                                            page: _page,
+                                          ).future,
+                                        );
+                                        result = getManga!.toJson();
+                                      } else if (_serviceIndex == 2) {
+                                        final getManga = await ref.watch(
+                                          searchProvider(
+                                            source: source!,
+                                            query: _query,
+                                            page: _page,
+                                            filterList: filterList,
+                                          ).future,
+                                        );
+                                        result = getManga!.toJson();
+                                      } else if (_serviceIndex == 3) {
+                                        final getManga = await ref.watch(
+                                          getDetailProvider(
+                                            source: source!,
+                                            url: _url,
+                                          ).future,
+                                        );
+                                        result = getManga.toJson();
+                                      } else if (_serviceIndex == 4) {
+                                        result = {
+                                          "pages":
+                                              (await service.getPageList(_url))
+                                                  .map((e) => e.toJson())
+                                                  .toList(),
+                                        };
+                                      } else if (_serviceIndex == 5) {
+                                        result =
+                                            (await service.getVideoList(
+                                              _url,
+                                            )).map((e) => e.toJson()).toList();
+                                      } else if (_serviceIndex == 6) {
+                                        result = (await service.getHtmlContent(
+                                          _url,
+                                        ));
+                                      } else {
+                                        result = (await service
+                                            .cleanHtmlContent(_html));
+                                      }
+                                      if (context.mounted) {
+                                        setState(() {
+                                          _isLoading = false;
+                                        });
+                                      }
+                                    } catch (e) {
+                                      if (context.mounted) {
+                                        setState(() {
+                                          _error = true;
+                                          _errorText = e.toString();
+                                          _isLoading = false;
+                                        });
+                                      }
                                     }
+                                  }
+                                },
+                                child: const Text("Execute"),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: ElevatedButton(
+                                  onPressed: () {
                                     setState(() {
                                       result = null;
-                                      _isLoading = true;
+                                      _isLoading = false;
                                       _error = false;
                                       _errorText = "";
+                                      filters = [];
                                     });
+                                  },
+                                  child: Text(context.l10n.reset),
+                                ),
+                              ),
+                              if (_serviceIndex == 2 && filterList.isNotEmpty)
+                                ElevatedButton(
+                                  onPressed: () async {
                                     if (source != null) {
-                                      final service =
-                                          getExtensionService(source!);
-
+                                      setState(() {
+                                        filterList = getFilterList(
+                                          source: source!,
+                                        );
+                                      });
                                       try {
-                                        if (_serviceIndex == 0) {
-                                          final getManga = await ref.watch(
-                                              getPopularProvider(
-                                                      source: source!,
-                                                      page: _page)
-                                                  .future);
-                                          result = getManga!.toJson();
-                                        } else if (_serviceIndex == 1) {
-                                          final getManga = await ref.watch(
-                                              getLatestUpdatesProvider(
-                                                      source: source!,
-                                                      page: _page)
-                                                  .future);
-                                          result = getManga!.toJson();
-                                        } else if (_serviceIndex == 2) {
-                                          final getManga = await ref.watch(
-                                              searchProvider(
-                                                      source: source!,
-                                                      query: _query,
-                                                      page: _page,
-                                                      filterList: filterList)
-                                                  .future);
-                                          result = getManga!.toJson();
-                                        } else if (_serviceIndex == 3) {
-                                          final getManga = await ref.watch(
-                                              getDetailProvider(
-                                                      source: source!,
-                                                      url: _url)
-                                                  .future);
-                                          result = getManga.toJson();
-                                        } else if (_serviceIndex == 4) {
-                                          result = {
-                                            "pages": (await service
-                                                    .getPageList(_url))
-                                                .map((e) => e.toJson())
-                                                .toList(),
-                                          };
-                                        } else if (_serviceIndex == 5) {
-                                          result =
-                                              (await service.getVideoList(_url))
-                                                  .map((e) => e.toJson())
-                                                  .toList();
-                                        } else if (_serviceIndex == 6) {
-                                          result = (await service
-                                              .getHtmlContent(_url));
-                                        } else {
-                                          result = (await service
-                                              .cleanHtmlContent(_html));
+                                        if (filters.isEmpty) {
+                                          filters = filterList;
                                         }
-                                        if (context.mounted) {
+                                        final res = await filterDialog(context);
+                                        if (res == 'filter' &&
+                                            context.mounted) {
+                                          setState(() {
+                                            result = null;
+                                            _isLoading = true;
+                                            _error = false;
+                                            _errorText = "";
+                                          });
+                                          final getManga = await ref.watch(
+                                            searchProvider(
+                                              source: source!,
+                                              query: _query,
+                                              page: _page,
+                                              filterList: filters,
+                                            ).future,
+                                          );
+                                          result = getManga!.toJson();
                                           setState(() {
                                             _isLoading = false;
                                           });
                                         }
                                       } catch (e) {
-                                        if (context.mounted) {
-                                          setState(() {
-                                            _error = true;
-                                            _errorText = e.toString();
-                                            _isLoading = false;
-                                          });
-                                        }
+                                        setState(() {
+                                          _error = true;
+                                          _errorText = e.toString();
+                                          _isLoading = false;
+                                        });
                                       }
                                     }
                                   },
-                                  child: const Text("Execute")),
-                              Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: ElevatedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        result = null;
-                                        _isLoading = false;
-                                        _error = false;
-                                        _errorText = "";
-                                        filters = [];
-                                      });
-                                    },
-                                    child: Text(context.l10n.reset)),
-                              ),
-                              if (_serviceIndex == 2 && filterList.isNotEmpty)
-                                ElevatedButton(
-                                    onPressed: () async {
-                                      if (source != null) {
-                                        setState(() {
-                                          filterList =
-                                              getFilterList(source: source!);
-                                        });
-                                        try {
-                                          if (filters.isEmpty) {
-                                            filters = filterList;
-                                          }
-                                          final res =
-                                              await filterDialog(context);
-                                          if (res == 'filter' &&
-                                              context.mounted) {
-                                            setState(() {
-                                              result = null;
-                                              _isLoading = true;
-                                              _error = false;
-                                              _errorText = "";
-                                            });
-                                            final getManga = await ref.watch(
-                                                searchProvider(
-                                                        source: source!,
-                                                        query: _query,
-                                                        page: _page,
-                                                        filterList: filters)
-                                                    .future);
-                                            result = getManga!.toJson();
-                                            setState(() {
-                                              _isLoading = false;
-                                            });
-                                          }
-                                        } catch (e) {
-                                          setState(() {
-                                            _error = true;
-                                            _errorText = e.toString();
-                                            _isLoading = false;
-                                          });
-                                        }
-                                      }
-                                    },
-                                    child: Text(context.l10n.filter)),
+                                  child: Text(context.l10n.filter),
+                                ),
                             ],
                           ),
                         ),
                         Expanded(
-                            child: _error
-                                ? SingleChildScrollView(
+                          child:
+                              _error
+                                  ? SingleChildScrollView(
                                     child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
-                                      children: [
-                                        Text(_errorText),
-                                      ],
+                                      children: [Text(_errorText)],
                                     ),
                                   )
-                                : _isLoading
-                                    ? const Center(
-                                        child: CircularProgressIndicator())
-                                    : result != null
-                                        ? JsonConfig(
-                                            data: JsonConfigData(
-                                              gap: 100,
-                                              style: const JsonStyleScheme(
-                                                quotation:
-                                                    JsonQuotation.same('"'),
-                                                openAtStart: false,
-                                                arrow:
-                                                    Icon(Icons.arrow_forward),
-                                                depth: 4,
-                                              ),
-                                              color: const JsonColorScheme(),
-                                            ),
-                                            child: JsonView(json: result),
-                                          )
-                                        : const SizedBox.shrink())
+                                  : _isLoading
+                                  ? const Center(
+                                    child: CircularProgressIndicator(),
+                                  )
+                                  : result != null
+                                  ? JsonConfig(
+                                    data: JsonConfigData(
+                                      gap: 100,
+                                      style: const JsonStyleScheme(
+                                        quotation: JsonQuotation.same('"'),
+                                        openAtStart: false,
+                                        arrow: Icon(Icons.arrow_forward),
+                                        depth: 4,
+                                      ),
+                                      color: const JsonColorScheme(),
+                                    ),
+                                    child: JsonView(json: result),
+                                  )
+                                  : const SizedBox.shrink(),
+                        ),
                       ],
                     ),
                   ),
@@ -467,47 +515,60 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
               height: 200,
               child: ValueListenableBuilder(
                 valueListenable: _logsNotifier,
-                builder: (context, logs, child) => SuperListView.separated(
-                  separatorBuilder: (context, index) => const Divider(),
-                  controller: _scrollController,
-                  padding: const EdgeInsets.all(10),
-                  itemCount: logs.length,
-                  itemBuilder: (context, index) {
-                    final value = logs[index];
-                    return SelectableText(value.$2,
-                        style: TextStyle(
-                            color: value.$1 == LoggerLevel.info
-                                ? Colors.yellow
-                                : Colors.blueAccent));
-                  },
-                ),
+                builder:
+                    (context, logs, child) => SuperListView.separated(
+                      separatorBuilder: (context, index) => const Divider(),
+                      controller: _scrollController,
+                      padding: const EdgeInsets.all(10),
+                      itemCount: logs.length,
+                      itemBuilder: (context, index) {
+                        final value = logs[index];
+                        return SelectableText(
+                          value.$2,
+                          style: TextStyle(
+                            color:
+                                value.$1 == LoggerLevel.info
+                                    ? Colors.yellow
+                                    : Colors.blueAccent,
+                          ),
+                        );
+                      },
+                    ),
               ),
-            )
+            ),
         ],
       ),
     );
   }
 }
 
-Widget _textEditing(String label, BuildContext context, String hintText,
-    void Function(String)? onChanged) {
+Widget _textEditing(
+  String label,
+  BuildContext context,
+  String hintText,
+  void Function(String)? onChanged,
+) {
   return Padding(
     padding: const EdgeInsets.all(4),
     child: TextFormField(
       keyboardType: TextInputType.number,
       onChanged: onChanged,
       decoration: InputDecoration(
-          hintText: hintText,
-          labelText: label,
-          isDense: true,
-          filled: true,
-          fillColor: Colors.transparent,
-          enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: context.dynamicThemeColor)),
-          focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: context.dynamicThemeColor)),
-          border: OutlineInputBorder(
-              borderSide: BorderSide(color: context.dynamicThemeColor))),
+        hintText: hintText,
+        labelText: label,
+        isDense: true,
+        filled: true,
+        fillColor: Colors.transparent,
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: context.dynamicThemeColor),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: context.dynamicThemeColor),
+        ),
+        border: OutlineInputBorder(
+          borderSide: BorderSide(color: context.dynamicThemeColor),
+        ),
+      ),
     ),
   );
 }

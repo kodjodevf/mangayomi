@@ -7,8 +7,10 @@ import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provi
 import 'package:mangayomi/services/download_manager/m3u8/m3u8_downloader.dart';
 
 extension ChapterExtension on Chapter {
-  Future<void> pushToReaderView(BuildContext context,
-      {bool ignoreIsRead = false}) async {
+  Future<void> pushToReaderView(
+    BuildContext context, {
+    bool ignoreIsRead = false,
+  }) async {
     if (ignoreIsRead || !isRead!) {
       await pushMangaReaderView(context: context, chapter: this);
     } else {

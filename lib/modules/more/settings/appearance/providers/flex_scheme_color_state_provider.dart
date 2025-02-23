@@ -20,7 +20,8 @@ class FlexSchemeColorState extends _$FlexSchemeColorState {
     final settings = isar.settings.getSync(227);
     state = color;
     isar.writeTxnSync(
-        () => isar.settings.putSync(settings!..flexSchemeColorIndex = index));
+      () => isar.settings.putSync(settings!..flexSchemeColorIndex = index),
+    );
   }
 }
 

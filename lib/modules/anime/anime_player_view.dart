@@ -52,8 +52,10 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
     for (var infoHash in _infoHashList) {
       MTorrentServer().removeTorrent(infoHash);
     }
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: SystemUiOverlay.values);
+    SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual,
+      overlays: SystemUiOverlay.values,
+    );
     super.dispose();
   }
 
@@ -84,37 +86,37 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
                 },
               ),
             ),
-            body: const Center(
-              child: Text("Video list is empty"),
-            ),
+            body: const Center(child: Text("Video list is empty")),
           );
         }
 
         return AnimeStreamPage(
-            episode: episode,
-            videos: videos,
-            isLocal: isLocal,
-            isTorrent: infoHashList.isNotEmpty,
-            desktopFullScreenPlayer: (value) {
-              desktopFullScreenPlayer = value;
-            });
+          episode: episode,
+          videos: videos,
+          isLocal: isLocal,
+          isTorrent: infoHashList.isNotEmpty,
+          desktopFullScreenPlayer: (value) {
+            desktopFullScreenPlayer = value;
+          },
+        );
       },
-      error: (error, stackTrace) => Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        appBar: AppBar(
-          title: const Text(''),
-          leading: BackButton(
-            onPressed: () {
-              SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-                  overlays: SystemUiOverlay.values);
-              Navigator.pop(context);
-            },
+      error:
+          (error, stackTrace) => Scaffold(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            appBar: AppBar(
+              title: const Text(''),
+              leading: BackButton(
+                onPressed: () {
+                  SystemChrome.setEnabledSystemUIMode(
+                    SystemUiMode.manual,
+                    overlays: SystemUiOverlay.values,
+                  );
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            body: Center(child: Text(error.toString())),
           ),
-        ),
-        body: Center(
-          child: Text(error.toString()),
-        ),
-      ),
       loading: () {
         return Scaffold(
           backgroundColor: Colors.black,
@@ -124,8 +126,10 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
             leading: BackButton(
               color: Colors.white,
               onPressed: () {
-                SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-                    overlays: SystemUiOverlay.values);
+                SystemChrome.setEnabledSystemUIMode(
+                  SystemUiMode.manual,
+                  overlays: SystemUiOverlay.values,
+                );
                 Navigator.pop(context);
               },
             ),
@@ -143,13 +147,14 @@ class AnimeStreamPage extends riv.ConsumerStatefulWidget {
   final bool isLocal;
   final bool isTorrent;
   final void Function(bool) desktopFullScreenPlayer;
-  const AnimeStreamPage(
-      {super.key,
-      required this.isLocal,
-      required this.videos,
-      required this.episode,
-      required this.isTorrent,
-      required this.desktopFullScreenPlayer});
+  const AnimeStreamPage({
+    super.key,
+    required this.isLocal,
+    required this.videos,
+    required this.episode,
+    required this.isTorrent,
+    required this.desktopFullScreenPlayer,
+  });
 
   @override
   riv.ConsumerState<AnimeStreamPage> createState() => _AnimeStreamPageState();
@@ -159,21 +164,30 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     with TickerProviderStateMixin {
   late final GlobalKey<VideoState> _key = GlobalKey<VideoState>();
   late final useLibass = ref.read(useLibassStateProvider);
-  late final Player _player =
-      Player(configuration: PlayerConfiguration(libass: useLibass));
+  late final Player _player = Player(
+    configuration: PlayerConfiguration(libass: useLibass),
+  );
   late final VideoController _controller = VideoController(_player);
-  late final _streamController =
-      ref.read(animeStreamControllerProvider(episode: widget.episode).notifier);
+  late final _streamController = ref.read(
+    animeStreamControllerProvider(episode: widget.episode).notifier,
+  );
   late final _firstVid = widget.videos.first;
-  late final ValueNotifier<VideoPrefs?> _video = ValueNotifier(VideoPrefs(
+  late final ValueNotifier<VideoPrefs?> _video = ValueNotifier(
+    VideoPrefs(
       videoTrack: VideoTrack(
-          _firstVid.originalUrl, _firstVid.quality, _firstVid.quality),
-      headers: _firstVid.headers));
+        _firstVid.originalUrl,
+        _firstVid.quality,
+        _firstVid.quality,
+      ),
+      headers: _firstVid.headers,
+    ),
+  );
   final ValueNotifier<double> _playbackSpeed = ValueNotifier(1.0);
   final ValueNotifier<bool> _enterFullScreen = ValueNotifier(false);
   final ValueNotifier<bool> _isDoubleSpeed = ValueNotifier(false);
-  late final ValueNotifier<Duration> _currentPosition =
-      ValueNotifier(_streamController.geTCurrentPosition());
+  late final ValueNotifier<Duration> _currentPosition = ValueNotifier(
+    _streamController.geTCurrentPosition(),
+  );
   final ValueNotifier<Duration?> _currentTotalDuration = ValueNotifier(null);
   final ValueNotifier<bool> _showFitLabel = ValueNotifier(false);
   final ValueNotifier<bool> _isCompleted = ValueNotifier(false);
@@ -187,52 +201,58 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   bool _hasEndingSkip = false;
   bool _initSubtitleAndAudio = true;
 
-  late StreamSubscription<Duration> _currentPositionSub =
-      _player.stream.position.listen(
-    (position) async {
-      _isCompleted.value =
-          _player.state.duration.inSeconds - _currentPosition.value.inSeconds <=
-              10;
-      _currentPosition.value = position;
+  late StreamSubscription<Duration> _currentPositionSub = _player
+      .stream
+      .position
+      .listen((position) async {
+        _isCompleted.value =
+            _player.state.duration.inSeconds -
+                _currentPosition.value.inSeconds <=
+            10;
+        _currentPosition.value = position;
 
-      if (_firstVid.subtitles?.isNotEmpty ?? false) {
-        if (_initSubtitleAndAudio) {
-          try {
-            final file = _firstVid.subtitles!.first.file ?? "";
-            final label = _firstVid.subtitles!.first.label;
-            _player.setSubtitleTrack(file.startsWith("http")
-                ? SubtitleTrack.uri(file, title: label, language: label)
-                : SubtitleTrack.data(file, title: label, language: label));
-          } catch (_) {}
-          try {
-            if (_firstVid.audios?.isNotEmpty ?? false) {
-              _player.setAudioTrack(AudioTrack.uri(
-                  _firstVid.audios!.first.file ?? "",
-                  title: _firstVid.audios!.first.label,
-                  language: _firstVid.audios!.first.label));
-            }
-          } catch (_) {}
+        if (_firstVid.subtitles?.isNotEmpty ?? false) {
+          if (_initSubtitleAndAudio) {
+            try {
+              final file = _firstVid.subtitles!.first.file ?? "";
+              final label = _firstVid.subtitles!.first.label;
+              _player.setSubtitleTrack(
+                file.startsWith("http")
+                    ? SubtitleTrack.uri(file, title: label, language: label)
+                    : SubtitleTrack.data(file, title: label, language: label),
+              );
+            } catch (_) {}
+            try {
+              if (_firstVid.audios?.isNotEmpty ?? false) {
+                _player.setAudioTrack(
+                  AudioTrack.uri(
+                    _firstVid.audios!.first.file ?? "",
+                    title: _firstVid.audios!.first.label,
+                    language: _firstVid.audios!.first.label,
+                  ),
+                );
+              }
+            } catch (_) {}
+          }
+          _initSubtitleAndAudio = false;
         }
-        _initSubtitleAndAudio = false;
-      }
-    },
-  );
+      });
 
-  late final StreamSubscription<Duration> _currentTotalDurationSub =
-      _player.stream.duration.listen(
-    (duration) {
-      _currentTotalDuration.value = duration;
-    },
-  );
+  late final StreamSubscription<Duration> _currentTotalDurationSub = _player
+      .stream
+      .duration
+      .listen((duration) {
+        _currentTotalDuration.value = duration;
+      });
 
-  late final StreamSubscription<bool> _completed =
-      _player.stream.completed.listen((val) {
-    if (_streamController.getEpisodeIndex().$1 != 0 && val == true) {
-      if (mounted) {
-        pushToNewEpisode(context, _streamController.getNextEpisode());
-      }
-    }
-  });
+  late final StreamSubscription<bool> _completed = _player.stream.completed
+      .listen((val) {
+        if (_streamController.getEpisodeIndex().$1 != 0 && val == true) {
+          if (mounted) {
+            pushToNewEpisode(context, _streamController.getNextEpisode());
+          }
+        }
+      });
 
   void pushToNewEpisode(BuildContext context, Chapter episode) {
     widget.desktopFullScreenPlayer.call(true);
@@ -243,25 +263,23 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
 
   void _setCurrentAudSub() {
     _initSubtitleAndAudio = true;
-    _currentPositionSub = _player.stream.position.listen(
-      (position) async {
-        _isCompleted.value = _player.state.duration.inSeconds -
-                _currentPosition.value.inSeconds <=
-            10;
-        _currentPosition.value = position;
-        if (_initSubtitleAndAudio) {
-          final subtitle = _player.state.track.subtitle;
-          try {
-            _player.setSubtitleTrack(subtitle);
-          } catch (_) {}
-          try {
-            final audio = _player.state.track.audio;
-            _player.setAudioTrack(audio);
-          } catch (_) {}
-        }
-        _initSubtitleAndAudio = false;
-      },
-    );
+    _currentPositionSub = _player.stream.position.listen((position) async {
+      _isCompleted.value =
+          _player.state.duration.inSeconds - _currentPosition.value.inSeconds <=
+          10;
+      _currentPosition.value = position;
+      if (_initSubtitleAndAudio) {
+        final subtitle = _player.state.track.subtitle;
+        try {
+          _player.setSubtitleTrack(subtitle);
+        } catch (_) {}
+        try {
+          final audio = _player.state.track.audio;
+          _player.setAudioTrack(audio);
+        } catch (_) {}
+      }
+      _initSubtitleAndAudio = false;
+    });
   }
 
   @override
@@ -269,24 +287,30 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     _currentPositionSub;
     _currentTotalDurationSub;
     _completed;
-    _loadAndroidFont().then(
-      (_) {
-        _player.open(Media(_video.value!.videoTrack!.id,
-            httpHeaders: _video.value!.headers,
-            start: _streamController.geTCurrentPosition()));
-        if (widget.isTorrent) {
-          Future.delayed(const Duration(seconds: 10)).then((_) {
-            if (mounted) {
-              _player.open(Media(_video.value!.videoTrack!.id,
-                  httpHeaders: _video.value!.headers,
-                  start: _streamController.geTCurrentPosition()));
-            }
-          });
-        }
-        _setPlaybackSpeed(ref.read(defaultPlayBackSpeedStateProvider));
-        _initAniSkip();
-      },
-    );
+    _loadAndroidFont().then((_) {
+      _player.open(
+        Media(
+          _video.value!.videoTrack!.id,
+          httpHeaders: _video.value!.headers,
+          start: _streamController.geTCurrentPosition(),
+        ),
+      );
+      if (widget.isTorrent) {
+        Future.delayed(const Duration(seconds: 10)).then((_) {
+          if (mounted) {
+            _player.open(
+              Media(
+                _video.value!.videoTrack!.id,
+                httpHeaders: _video.value!.headers,
+                start: _streamController.geTCurrentPosition(),
+              ),
+            );
+          }
+        });
+      }
+      _setPlaybackSpeed(ref.read(defaultPlayBackSpeedStateProvider));
+      _initAniSkip();
+    });
     super.initState();
   }
 
@@ -296,14 +320,20 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         final subDir = await getApplicationDocumentsDirectory();
         final fontPath = path.join(subDir.path, 'subfont.ttf');
         final data = await rootBundle.load('assets/fonts/subfont.ttf');
-        final bytes =
-            data.buffer.asInt8List(data.offsetInBytes, data.lengthInBytes);
+        final bytes = data.buffer.asInt8List(
+          data.offsetInBytes,
+          data.lengthInBytes,
+        );
         final fontFile = await File(fontPath).create(recursive: true);
         await fontFile.writeAsBytes(bytes);
-        await (_player.platform as NativePlayer)
-            .setProperty('sub-fonts-dir', subDir.path);
-        await (_player.platform as NativePlayer)
-            .setProperty('sub-font', 'Droid Sans Fallback');
+        await (_player.platform as NativePlayer).setProperty(
+          'sub-fonts-dir',
+          subDir.path,
+        );
+        await (_player.platform as NativePlayer).setProperty(
+          'sub-font',
+          'Droid Sans Fallback',
+        );
       } catch (_) {}
     }
   }
@@ -344,90 +374,118 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
 
   void _setCurrentPosition(bool save) {
     _streamController.setCurrentPosition(
-        _currentPosition.value, _currentTotalDuration.value,
-        save: save);
+      _currentPosition.value,
+      _currentTotalDuration.value,
+      save: save,
+    );
     _streamController.setAnimeHistoryUpdate();
   }
 
   void _setLandscapeMode(bool state) {
     if (state) {
-      SystemChrome.setPreferredOrientations(
-          [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ]);
     } else {
       SystemChrome.setPreferredOrientations([
         DeviceOrientation.portraitUp,
         DeviceOrientation.portraitDown,
         DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight
+        DeviceOrientation.landscapeRight,
       ]);
     }
   }
 
   Widget textWidget(String text, bool selected) => Row(
-        children: [
-          Flexible(
-              child: Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: MediaQuery.of(context).padding.top),
-            child: Text(text,
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    fontSize: 16,
-                    fontStyle: selected ? FontStyle.italic : null,
-                    color: selected ? context.primaryColor : null),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis),
-          )),
-        ],
-      );
+    children: [
+      Flexible(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).padding.top,
+          ),
+          child: Text(
+            text,
+            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+              fontSize: 16,
+              fontStyle: selected ? FontStyle.italic : null,
+              color: selected ? context.primaryColor : null,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ),
+    ],
+  );
 
   Widget _videoQualityWidget(BuildContext context) {
-    List<VideoPrefs> videoQuality = _player.state.tracks.video
-        .where((element) =>
-            element.w != null && element.h != null && widget.isLocal)
-        .toList()
-        .map((e) => VideoPrefs(videoTrack: e, isLocal: true))
-        .toList();
+    List<VideoPrefs> videoQuality =
+        _player.state.tracks.video
+            .where(
+              (element) =>
+                  element.w != null && element.h != null && widget.isLocal,
+            )
+            .toList()
+            .map((e) => VideoPrefs(videoTrack: e, isLocal: true))
+            .toList();
 
     if (widget.videos.isNotEmpty && !widget.isLocal) {
       for (var video in widget.videos) {
-        videoQuality.add(VideoPrefs(
+        videoQuality.add(
+          VideoPrefs(
             videoTrack: VideoTrack(video.url, video.quality, video.quality),
             headers: video.headers,
-            isLocal: false));
+            isLocal: false,
+          ),
+        );
       }
     }
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
       child: Column(
-        children: videoQuality.map((quality) {
-          final selected =
-              _video.value!.videoTrack!.title == quality.videoTrack!.title ||
+        children:
+            videoQuality.map((quality) {
+              final selected =
+                  _video.value!.videoTrack!.title ==
+                      quality.videoTrack!.title ||
                   widget.isLocal;
-          return GestureDetector(
-            child: textWidget(
-                widget.isLocal ? _firstVid.quality : quality.videoTrack!.title!,
-                selected),
-            onTap: () async {
-              _video.value = quality;
-              if (quality.isLocal) {
-                if (widget.isLocal) {
-                  _player.setVideoTrack(quality.videoTrack!);
-                } else {
-                  _player.open(Media(quality.videoTrack!.id,
-                      httpHeaders: quality.headers,
-                      start: _currentPosition.value));
-                }
-              } else {
-                _player.open(Media(quality.videoTrack!.id,
-                    httpHeaders: quality.headers,
-                    start: _currentPosition.value));
-              }
-              _setCurrentAudSub();
-              Navigator.pop(context);
-            },
-          );
-        }).toList(),
+              return GestureDetector(
+                child: textWidget(
+                  widget.isLocal
+                      ? _firstVid.quality
+                      : quality.videoTrack!.title!,
+                  selected,
+                ),
+                onTap: () async {
+                  _video.value = quality;
+                  if (quality.isLocal) {
+                    if (widget.isLocal) {
+                      _player.setVideoTrack(quality.videoTrack!);
+                    } else {
+                      _player.open(
+                        Media(
+                          quality.videoTrack!.id,
+                          httpHeaders: quality.headers,
+                          start: _currentPosition.value,
+                        ),
+                      );
+                    }
+                  } else {
+                    _player.open(
+                      Media(
+                        quality.videoTrack!.id,
+                        httpHeaders: quality.headers,
+                        start: _currentPosition.value,
+                      ),
+                    );
+                  }
+                  _setCurrentAudSub();
+                  Navigator.pop(context);
+                },
+              );
+            }).toList(),
       ),
     );
   }
@@ -445,45 +503,51 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       children: [
         _videoQualityWidget(context),
         _videoSubtitle(context, (value) => hasSubtitleTrack = value),
-        _videoAudios(context)
+        _videoAudios(context),
       ],
       context: context,
       vsync: this,
       fullWidth: true,
       moreWidget: IconButton(
-          onPressed: () async {
-            if (useLibass) {
-              BotToast.showText(
-                  contentColor: Colors.white,
-                  textStyle: const TextStyle(color: Colors.black, fontSize: 20),
-                  onlyOne: true,
-                  align: const Alignment(0, 0.90),
-                  duration: const Duration(seconds: 2),
-                  text: context.l10n.libass_not_disable_message);
-            } else {
-              await customDraggableTabBar(tabs: [
-                Tab(text: l10n.font),
-                Tab(text: l10n.color),
-              ], children: [
+        onPressed: () async {
+          if (useLibass) {
+            BotToast.showText(
+              contentColor: Colors.white,
+              textStyle: const TextStyle(color: Colors.black, fontSize: 20),
+              onlyOne: true,
+              align: const Alignment(0, 0.90),
+              duration: const Duration(seconds: 2),
+              text: context.l10n.libass_not_disable_message,
+            );
+          } else {
+            await customDraggableTabBar(
+              tabs: [Tab(text: l10n.font), Tab(text: l10n.color)],
+              children: [
                 FontSettingWidget(hasSubtitleTrack: hasSubtitleTrack),
-                ColorSettingWidget(hasSubtitleTrack: hasSubtitleTrack)
-              ], context: context, vsync: this, fullWidth: true);
-              if (context.mounted) {
-                Navigator.pop(context);
-              }
+                ColorSettingWidget(hasSubtitleTrack: hasSubtitleTrack),
+              ],
+              context: context,
+              vsync: this,
+              fullWidth: true,
+            );
+            if (context.mounted) {
+              Navigator.pop(context);
             }
-          },
-          icon: const Icon(Icons.settings_outlined)),
+          }
+        },
+        icon: const Icon(Icons.settings_outlined),
+      ),
     );
     setState(() {});
     _player.play();
   }
 
   Widget _videoSubtitle(BuildContext context, Function(bool) hasSubtitleTrack) {
-    List<VideoPrefs> videoSubtitle = _player.state.tracks.subtitle
-        .toList()
-        .map((e) => VideoPrefs(isLocal: true, subtitle: e))
-        .toList();
+    List<VideoPrefs> videoSubtitle =
+        _player.state.tracks.subtitle
+            .toList()
+            .map((e) => VideoPrefs(isLocal: true, subtitle: e))
+            .toList();
 
     List<String> subs = [];
     if (widget.videos.isNotEmpty && !widget.isLocal) {
@@ -492,33 +556,45 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
           if (!subs.contains(sub.file)) {
             final file = sub.file!;
             final label = sub.label;
-            videoSubtitle.add(VideoPrefs(
+            videoSubtitle.add(
+              VideoPrefs(
                 isLocal: false,
-                subtitle: file.startsWith("http")
-                    ? SubtitleTrack.uri(file, title: label, language: label)
-                    : SubtitleTrack.data(file, title: label, language: label)));
+                subtitle:
+                    file.startsWith("http")
+                        ? SubtitleTrack.uri(file, title: label, language: label)
+                        : SubtitleTrack.data(
+                          file,
+                          title: label,
+                          language: label,
+                        ),
+              ),
+            );
             subs.add(sub.file!);
           }
         }
       }
     }
     final subtitle = _player.state.track.subtitle;
-    videoSubtitle = videoSubtitle
-        .map((e) {
-          VideoPrefs vid = e;
-          vid.title = vid.subtitle?.title ??
-              vid.subtitle?.language ??
-              vid.subtitle?.channels ??
-              "";
-          return vid;
-        })
-        .toList()
-        .where((element) => element.title!.isNotEmpty)
-        .toList();
+    videoSubtitle =
+        videoSubtitle
+            .map((e) {
+              VideoPrefs vid = e;
+              vid.title =
+                  vid.subtitle?.title ??
+                  vid.subtitle?.language ??
+                  vid.subtitle?.channels ??
+                  "";
+              return vid;
+            })
+            .toList()
+            .where((element) => element.title!.isNotEmpty)
+            .toList();
     videoSubtitle.sort((a, b) => a.title!.compareTo(b.title!));
     hasSubtitleTrack.call(videoSubtitle.isNotEmpty);
     videoSubtitle.insert(
-        0, VideoPrefs(isLocal: false, subtitle: SubtitleTrack.no()));
+      0,
+      VideoPrefs(isLocal: false, subtitle: SubtitleTrack.no()),
+    );
     List<VideoPrefs> videoSubtitleLast = [];
     for (var element in videoSubtitle) {
       final contains = videoSubtitleLast.any((sub) {
@@ -540,88 +616,103 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
       child: Column(
-        children: videoSubtitleLast.toSet().toList().map((sub) {
-          final title = sub.title ??
-              sub.subtitle?.title ??
-              sub.subtitle?.language ??
-              sub.subtitle?.channels ??
-              "None";
+        children:
+            videoSubtitleLast.toSet().toList().map((sub) {
+              final title =
+                  sub.title ??
+                  sub.subtitle?.title ??
+                  sub.subtitle?.language ??
+                  sub.subtitle?.channels ??
+                  "None";
 
-          final selected = (title ==
-                  (subtitle.title ??
-                      subtitle.language ??
-                      subtitle.channels ??
-                      "None")) ||
-              (subtitle.id == "no" && title == "None");
-          return GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-              try {
-                _player.setSubtitleTrack(sub.subtitle!);
-              } catch (_) {}
-            },
-            child: textWidget(title, selected),
-          );
-        }).toList(),
+              final selected =
+                  (title ==
+                      (subtitle.title ??
+                          subtitle.language ??
+                          subtitle.channels ??
+                          "None")) ||
+                  (subtitle.id == "no" && title == "None");
+              return GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                  try {
+                    _player.setSubtitleTrack(sub.subtitle!);
+                  } catch (_) {}
+                },
+                child: textWidget(title, selected),
+              );
+            }).toList(),
       ),
     );
   }
 
   Widget _videoAudios(BuildContext context) {
-    List<VideoPrefs> videoAudio = _player.state.tracks.audio
-        .toList()
-        .map((e) => VideoPrefs(isLocal: true, audio: e))
-        .toList();
+    List<VideoPrefs> videoAudio =
+        _player.state.tracks.audio
+            .toList()
+            .map((e) => VideoPrefs(isLocal: true, audio: e))
+            .toList();
 
     List<String> audios = [];
     if (widget.videos.isNotEmpty && !widget.isLocal) {
       for (var video in widget.videos) {
         for (var audio in video.audios ?? []) {
           if (!audios.contains(audio.file)) {
-            videoAudio.add(VideoPrefs(
+            videoAudio.add(
+              VideoPrefs(
                 isLocal: false,
-                audio: AudioTrack.uri(audio.file!,
-                    title: audio.label, language: audio.label)));
+                audio: AudioTrack.uri(
+                  audio.file!,
+                  title: audio.label,
+                  language: audio.label,
+                ),
+              ),
+            );
             audios.add(audio.file!);
           }
         }
       }
     }
     final audio = _player.state.track.audio;
-    videoAudio = videoAudio
-        .map((e) {
-          VideoPrefs vid = e;
-          vid.title = vid.audio?.title ??
-              vid.audio?.language ??
-              vid.audio?.channels ??
-              "";
-          return vid;
-        })
-        .toList()
-        .where((element) => element.title!.isNotEmpty)
-        .toList();
+    videoAudio =
+        videoAudio
+            .map((e) {
+              VideoPrefs vid = e;
+              vid.title =
+                  vid.audio?.title ??
+                  vid.audio?.language ??
+                  vid.audio?.channels ??
+                  "";
+              return vid;
+            })
+            .toList()
+            .where((element) => element.title!.isNotEmpty)
+            .toList();
     videoAudio.sort((a, b) => a.title!.compareTo(b.title!));
     videoAudio.insert(0, VideoPrefs(isLocal: false, audio: AudioTrack.no()));
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
       child: Column(
-        children: videoAudio.toSet().toList().map((aud) {
-          final title = aud.title ??
-              aud.audio?.title ??
-              aud.audio?.language ??
-              aud.audio?.channels ??
-              "None";
-          final selected =
-              (aud.audio == audio) || (audio.id == "no" && title == "None");
-          return GestureDetector(
-              onTap: () {
-                Navigator.pop(context);
-                try {
-                  _player.setAudioTrack(aud.audio!);
-                } catch (_) {}
-              },
-              child: textWidget(title, selected));
-        }).toList(),
+        children:
+            videoAudio.toSet().toList().map((aud) {
+              final title =
+                  aud.title ??
+                  aud.audio?.title ??
+                  aud.audio?.language ??
+                  aud.audio?.channels ??
+                  "None";
+              final selected =
+                  (aud.audio == audio) || (audio.id == "no" && title == "None");
+              return GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                  try {
+                    _player.setAudioTrack(aud.audio!);
+                  } catch (_) {}
+                },
+                child: textWidget(title, selected),
+              );
+            }).toList(),
       ),
     );
   }
@@ -636,7 +727,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     if (allowedSpeeds.indexOf(_playbackSpeed.value) <
         allowedSpeeds.length - 1) {
       _setPlaybackSpeed(
-          allowedSpeeds[allowedSpeeds.indexOf(_playbackSpeed.value) + 1]);
+        allowedSpeeds[allowedSpeeds.indexOf(_playbackSpeed.value) + 1],
+      );
     } else {
       _setPlaybackSpeed(allowedSpeeds[0]);
     }
@@ -650,7 +742,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       BoxFit.fitHeight,
       BoxFit.fitWidth,
       BoxFit.scaleDown,
-      BoxFit.none
+      BoxFit.none,
     ];
     _showFitLabel.value = true;
     BoxFit? fit;
@@ -662,34 +754,43 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     _fit.value = fit;
     _key.currentState?.update(fit: fit);
     BotToast.showText(
-        onlyOne: true,
-        align: const Alignment(0, 0.90),
-        duration: const Duration(seconds: 1),
-        text: fit.name.toUpperCase());
+      onlyOne: true,
+      align: const Alignment(0, 0.90),
+      duration: const Duration(seconds: 1),
+      text: fit.name.toUpperCase(),
+    );
   }
 
   Widget _seekToWidget() {
-    final defaultSkipIntroLength =
-        ref.watch(defaultSkipIntroLengthStateProvider);
+    final defaultSkipIntroLength = ref.watch(
+      defaultSkipIntroLengthStateProvider,
+    );
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: SizedBox(
         height: 35,
         child: ElevatedButton(
-            onPressed: () async {
-              _tempPosition.value = Duration(
-                  seconds: defaultSkipIntroLength +
-                      _currentPosition.value.inSeconds);
-              await _player.seek(Duration(
-                  seconds: _currentPosition.value.inSeconds +
-                      defaultSkipIntroLength));
-              _tempPosition.value = null;
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text("+$defaultSkipIntroLength",
-                  style: const TextStyle(fontWeight: FontWeight.w100)),
-            )),
+          onPressed: () async {
+            _tempPosition.value = Duration(
+              seconds:
+                  defaultSkipIntroLength + _currentPosition.value.inSeconds,
+            );
+            await _player.seek(
+              Duration(
+                seconds:
+                    _currentPosition.value.inSeconds + defaultSkipIntroLength,
+              ),
+            );
+            _tempPosition.value = null;
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "+$defaultSkipIntroLength",
+              style: const TextStyle(fontWeight: FontWeight.w100),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -717,40 +818,44 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                       ),
                     ),
                     TextButton(
-                        child: ValueListenableBuilder<double>(
-                          valueListenable: _playbackSpeed,
-                          builder: (context, value, child) {
-                            return Text(
-                              "${value}x",
-                              style: const TextStyle(color: Colors.white),
-                            );
-                          },
-                        ),
-                        onPressed: () {
-                          _togglePlaybackSpeed();
-                        }),
+                      child: ValueListenableBuilder<double>(
+                        valueListenable: _playbackSpeed,
+                        builder: (context, value, child) {
+                          return Text(
+                            "${value}x",
+                            style: const TextStyle(color: Colors.white),
+                          );
+                        },
+                      ),
+                      onPressed: () {
+                        _togglePlaybackSpeed();
+                      },
+                    ),
                     IconButton(
-                      icon: const Icon(Icons.fit_screen_outlined,
-                          color: Colors.white),
+                      icon: const Icon(
+                        Icons.fit_screen_outlined,
+                        color: Colors.white,
+                      ),
                       onPressed: () async {
                         _changeFitLabel(ref);
                       },
                     ),
                     ValueListenableBuilder<bool>(
-                        valueListenable: _enterFullScreen,
-                        builder: (context, snapshot, _) {
-                          return IconButton(
-                            onPressed: () {
-                              _setLandscapeMode(!snapshot);
-                              _enterFullScreen.value = !snapshot;
-                            },
-                            icon: Icon(snapshot
-                                ? Icons.fullscreen_exit
-                                : Icons.fullscreen),
-                            iconSize: 25,
-                            color: Colors.white,
-                          );
-                        })
+                      valueListenable: _enterFullScreen,
+                      builder: (context, snapshot, _) {
+                        return IconButton(
+                          onPressed: () {
+                            _setLandscapeMode(!snapshot);
+                            _enterFullScreen.value = !snapshot;
+                          },
+                          icon: Icon(
+                            snapshot ? Icons.fullscreen_exit : Icons.fullscreen,
+                          ),
+                          iconSize: 25,
+                          color: Colors.white,
+                        );
+                      },
+                    ),
                   ],
                 ),
               ],
@@ -762,9 +867,11 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   }
 
   Widget _desktopBottomButtonBar(BuildContext context) {
-    bool hasPrevEpisode = _streamController.getEpisodeIndex().$1 + 1 !=
-        _streamController
-            .getEpisodesLength(_streamController.getEpisodeIndex().$2);
+    bool hasPrevEpisode =
+        _streamController.getEpisodeIndex().$1 + 1 !=
+        _streamController.getEpisodesLength(
+          _streamController.getEpisodeIndex().$2,
+        );
     bool hasNextEpisode = _streamController.getEpisodeIndex().$1 != 0;
     final skipDuration = ref.watch(defaultDoubleTapToSkipLengthStateProvider);
     return Column(
@@ -779,12 +886,11 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   IconButton(
                     onPressed: () {
                       pushToNewEpisode(
-                          context, _streamController.getPrevEpisode());
+                        context,
+                        _streamController.getPrevEpisode(),
+                      );
                     },
-                    icon: const Icon(
-                      Icons.skip_previous,
-                      color: Colors.white,
-                    ),
+                    icon: const Icon(Icons.skip_previous, color: Colors.white),
                   ),
                 CustomeMaterialDesktopPlayOrPauseButton(
                   controller: _controller,
@@ -793,7 +899,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   IconButton(
                     onPressed: () async {
                       pushToNewEpisode(
-                          context, _streamController.getNextEpisode());
+                        context,
+                        _streamController.getNextEpisode(),
+                      );
                     },
                     icon: const Icon(Icons.skip_next, color: Colors.white),
                   ),
@@ -803,11 +911,15 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   child: IconButton(
                     onPressed: () async {
                       _tempPosition.value = Duration(
+                        seconds:
+                            skipDuration - _currentPosition.value.inSeconds,
+                      );
+                      await _player.seek(
+                        Duration(
                           seconds:
-                              skipDuration - _currentPosition.value.inSeconds);
-                      await _player.seek(Duration(
-                          seconds:
-                              _currentPosition.value.inSeconds - skipDuration));
+                              _currentPosition.value.inSeconds - skipDuration,
+                        ),
+                      );
                       _tempPosition.value = null;
                     },
                     icon: Stack(
@@ -821,14 +933,17 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                         ),
                         Positioned.fill(
                           child: Center(
-                              child: Padding(
-                            padding: const EdgeInsets.only(top: 2),
-                            child: Text(
-                              skipDuration.toString(),
-                              style: const TextStyle(
-                                  fontSize: 9, color: Colors.white),
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 2),
+                              child: Text(
+                                skipDuration.toString(),
+                                style: const TextStyle(
+                                  fontSize: 9,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
-                          )),
+                          ),
                         ),
                       ],
                     ),
@@ -840,11 +955,15 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   child: IconButton(
                     onPressed: () async {
                       _tempPosition.value = Duration(
+                        seconds:
+                            skipDuration + _currentPosition.value.inSeconds,
+                      );
+                      await _player.seek(
+                        Duration(
                           seconds:
-                              skipDuration + _currentPosition.value.inSeconds);
-                      await _player.seek(Duration(
-                          seconds:
-                              _currentPosition.value.inSeconds + skipDuration));
+                              _currentPosition.value.inSeconds + skipDuration,
+                        ),
+                      );
                       _tempPosition.value = null;
                     },
                     icon: Stack(
@@ -858,62 +977,64 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                         ),
                         Positioned.fill(
                           child: Center(
-                              child: Padding(
-                            padding: const EdgeInsets.only(top: 2),
-                            child: Text(
-                              skipDuration.toString(),
-                              style: const TextStyle(
-                                  fontSize: 9, color: Colors.white),
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 2),
+                              child: Text(
+                                skipDuration.toString(),
+                                style: const TextStyle(
+                                  fontSize: 9,
+                                  color: Colors.white,
+                                ),
+                              ),
                             ),
-                          )),
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ),
-                CustomMaterialDesktopVolumeButton(
-                  controller: _controller,
-                ),
+                CustomMaterialDesktopVolumeButton(controller: _controller),
                 ValueListenableBuilder(
                   valueListenable: _tempPosition,
-                  builder: (context, value, child) =>
-                      CustomMaterialDesktopPositionIndicator(
-                          delta: value, controller: _controller),
-                )
+                  builder:
+                      (context, value, child) =>
+                          CustomMaterialDesktopPositionIndicator(
+                            delta: value,
+                            controller: _controller,
+                          ),
+                ),
               ],
             ),
             Row(
               children: [
                 IconButton(
                   onPressed: () => _videoSettingDraggableMenu(context),
-                  icon: const Icon(
-                    Icons.video_settings,
-                    color: Colors.white,
-                  ),
+                  icon: const Icon(Icons.video_settings, color: Colors.white),
                 ),
                 TextButton(
-                    child: ValueListenableBuilder<double>(
-                      valueListenable: _playbackSpeed,
-                      builder: (context, value, child) {
-                        return Text(
-                          "${value}x",
-                          style: const TextStyle(color: Colors.white),
-                        );
-                      },
-                    ),
-                    onPressed: () {
-                      _togglePlaybackSpeed();
-                    }),
+                  child: ValueListenableBuilder<double>(
+                    valueListenable: _playbackSpeed,
+                    builder: (context, value, child) {
+                      return Text(
+                        "${value}x",
+                        style: const TextStyle(color: Colors.white),
+                      );
+                    },
+                  ),
+                  onPressed: () {
+                    _togglePlaybackSpeed();
+                  },
+                ),
                 IconButton(
-                  icon: const Icon(Icons.fit_screen_outlined,
-                      color: Colors.white),
+                  icon: const Icon(
+                    Icons.fit_screen_outlined,
+                    color: Colors.white,
+                  ),
                   onPressed: () async {
                     _changeFitLabel(ref);
                   },
                 ),
-                CustomMaterialDesktopFullscreenButton(
-                  controller: _controller,
-                )
+                CustomMaterialDesktopFullscreenButton(controller: _controller),
               ],
             ),
           ],
@@ -924,78 +1045,88 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
 
   Widget _topButtonBar(BuildContext context) {
     return ValueListenableBuilder<bool>(
-        valueListenable: _enterFullScreen,
-        builder: (context, fullScreen, _) {
-          return Padding(
-            padding: EdgeInsets.only(
-                top: !_isDesktop && !fullScreen
+      valueListenable: _enterFullScreen,
+      builder: (context, fullScreen, _) {
+        return Padding(
+          padding: EdgeInsets.only(
+            top:
+                !_isDesktop && !fullScreen
                     ? MediaQuery.of(context).padding.top
-                    : 0),
-            child: Row(
-              children: [
-                BackButton(
-                  color: Colors.white,
-                  onPressed: () async {
-                    if (_isDesktop) {
-                      if (fullScreen) {
-                        setFullScreen(value: false);
-                      } else {
-                        if (mounted) {
-                          Navigator.pop(context);
-                        }
-                      }
+                    : 0,
+          ),
+          child: Row(
+            children: [
+              BackButton(
+                color: Colors.white,
+                onPressed: () async {
+                  if (_isDesktop) {
+                    if (fullScreen) {
+                      setFullScreen(value: false);
                     } else {
-                      SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-                          overlays: SystemUiOverlay.values);
                       if (mounted) {
                         Navigator.pop(context);
                       }
                     }
-                  },
-                ),
-                Flexible(
-                  child: ListTile(
-                    dense: true,
-                    title: SizedBox(
-                      width: context.width(0.8),
-                      child: Text(
-                        widget.episode.manga.value!.name!,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.white),
-                        overflow: TextOverflow.ellipsis,
+                  } else {
+                    SystemChrome.setEnabledSystemUIMode(
+                      SystemUiMode.manual,
+                      overlays: SystemUiOverlay.values,
+                    );
+                    if (mounted) {
+                      Navigator.pop(context);
+                    }
+                  }
+                },
+              ),
+              Flexible(
+                child: ListTile(
+                  dense: true,
+                  title: SizedBox(
+                    width: context.width(0.8),
+                    child: Text(
+                      widget.episode.manga.value!.name!,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    subtitle: SizedBox(
-                      width: context.width(0.8),
-                      child: Text(
-                        widget.episode.name!,
-                        style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.white.withValues(alpha: 0.7)),
-                        overflow: TextOverflow.ellipsis,
+                  ),
+                  subtitle: SizedBox(
+                    width: context.width(0.8),
+                    child: Text(
+                      widget.episode.name!,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white.withValues(alpha: 0.7),
                       ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),
-                Flexible(
-                  fit: FlexFit.tight,
-                  child: ValueListenableBuilder<bool>(
-                      valueListenable: _isDoubleSpeed,
-                      builder: (context, snapshot, _) {
-                        return Text.rich(
-                          TextSpan(
-                            children: snapshot
+              ),
+              Flexible(
+                fit: FlexFit.tight,
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: _isDoubleSpeed,
+                  builder: (context, snapshot, _) {
+                    return Text.rich(
+                      TextSpan(
+                        children:
+                            snapshot
                                 ? [
-                                    WidgetSpan(child: Icon(Icons.fast_forward)),
-                                    TextSpan(text: " 2X"),
-                                  ]
+                                  WidgetSpan(child: Icon(Icons.fast_forward)),
+                                  TextSpan(text: " 2X"),
+                                ]
                                 : [],
-                          ),
-                        );
-                      }),
+                      ),
+                    );
+                  },
                 ),
-                Row(children: [
+              ),
+              Row(
+                children: [
                   btnToShowChapterListDialog(
                     context,
                     context.l10n.episodes,
@@ -1055,18 +1186,23 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   //           });
                   //     },
                   //     icon: Icon(Icons.adaptive.more))
-                ])
-              ],
-            ),
-          );
-        });
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _resize(BoxFit fit) async {
     await Future.delayed(const Duration(milliseconds: 100));
     if (mounted) {
       _key.currentState?.update(
-          fit: fit, width: context.width(1), height: context.height(1));
+        fit: fit,
+        width: context.width(1),
+        height: context.height(1),
+      );
     }
   }
 
@@ -1077,41 +1213,41 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       children: [
         Video(
           subtitleViewConfiguration: SubtitleViewConfiguration(
-              visible: false, style: subtileTextStyle(ref)),
+            visible: false,
+            style: subtileTextStyle(ref),
+          ),
           fit: fit,
           key: _key,
-          controls: (state) => _isDesktop
-              ? DesktopControllerWidget(
-                  videoController: _controller,
-                  topButtonBarWidget: _topButtonBar(context),
-                  videoStatekey: _key,
-                  bottomButtonBarWidget: _desktopBottomButtonBar(context),
-                  streamController: _streamController,
-                  seekToWidget: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Row(
-                      children: [
-                        _seekToWidget(),
-                      ],
-                    ),
-                  ),
-                  tempDuration: (value) {
-                    _tempPosition.value = value;
-                  },
-                  doubleSpeed: (value) {
-                    _isDoubleSpeed.value = value ?? false;
-                  },
-                )
-              : MobileControllerWidget(
-                  videoController: _controller,
-                  topButtonBarWidget: _topButtonBar(context),
-                  videoStatekey: _key,
-                  bottomButtonBarWidget: _mobileBottomButtonBar(context),
-                  streamController: _streamController,
-                  doubleSpeed: (value) {
-                    _isDoubleSpeed.value = value ?? false;
-                  },
-                ),
+          controls:
+              (state) =>
+                  _isDesktop
+                      ? DesktopControllerWidget(
+                        videoController: _controller,
+                        topButtonBarWidget: _topButtonBar(context),
+                        videoStatekey: _key,
+                        bottomButtonBarWidget: _desktopBottomButtonBar(context),
+                        streamController: _streamController,
+                        seekToWidget: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          child: Row(children: [_seekToWidget()]),
+                        ),
+                        tempDuration: (value) {
+                          _tempPosition.value = value;
+                        },
+                        doubleSpeed: (value) {
+                          _isDoubleSpeed.value = value ?? false;
+                        },
+                      )
+                      : MobileControllerWidget(
+                        videoController: _controller,
+                        topButtonBarWidget: _topButtonBar(context),
+                        videoStatekey: _key,
+                        bottomButtonBarWidget: _mobileBottomButtonBar(context),
+                        streamController: _streamController,
+                        doubleSpeed: (value) {
+                          _isDoubleSpeed.value = value ?? false;
+                        },
+                      ),
           controller: _controller,
           width: context.width(1),
           height: context.height(1),
@@ -1147,21 +1283,25 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   _showAniSkipEndingButton.value = false;
                 }
               }
-              return Consumer(builder: (context, ref, _) {
-                late final enableAniSkip =
-                    ref.watch(enableAniSkipStateProvider);
-                late final enableAutoSkip =
-                    ref.watch(enableAutoSkipStateProvider);
-                late final aniSkipTimeoutLength =
-                    ref.watch(aniSkipTimeoutLengthStateProvider);
-                return ValueListenableBuilder(
-                  valueListenable: _showAniSkipOpeningButton,
-                  builder: (context, showAniSkipOpENINGButton, child) {
-                    return ValueListenableBuilder(
-                      valueListenable: _showAniSkipEndingButton,
-                      builder: (context, showAniSkipENDINGButton, child) {
-                        return showAniSkipOpENINGButton
-                            ? Container(
+              return Consumer(
+                builder: (context, ref, _) {
+                  late final enableAniSkip = ref.watch(
+                    enableAniSkipStateProvider,
+                  );
+                  late final enableAutoSkip = ref.watch(
+                    enableAutoSkipStateProvider,
+                  );
+                  late final aniSkipTimeoutLength = ref.watch(
+                    aniSkipTimeoutLengthStateProvider,
+                  );
+                  return ValueListenableBuilder(
+                    valueListenable: _showAniSkipOpeningButton,
+                    builder: (context, showAniSkipOpENINGButton, child) {
+                      return ValueListenableBuilder(
+                        valueListenable: _showAniSkipEndingButton,
+                        builder: (context, showAniSkipENDINGButton, child) {
+                          return showAniSkipOpENINGButton
+                              ? Container(
                                 key: const Key('skip_opening'),
                                 child: AniSkipCountDownButton(
                                   active: enableAniSkip,
@@ -1170,24 +1310,27 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                                   skipTypeText: context.l10n.skip_opening,
                                   player: _player,
                                   aniSkipResult: _openingResult,
-                                ))
-                            : showAniSkipENDINGButton
-                                ? Container(
-                                    key: const Key('skip_ending'),
-                                    child: AniSkipCountDownButton(
-                                      active: enableAniSkip,
-                                      autoSkip: enableAutoSkip,
-                                      timeoutLength: aniSkipTimeoutLength,
-                                      skipTypeText: context.l10n.skip_ending,
-                                      player: _player,
-                                      aniSkipResult: _endingResult,
-                                    ))
-                                : const SizedBox.shrink();
-                      },
-                    );
-                  },
-                );
-              });
+                                ),
+                              )
+                              : showAniSkipENDINGButton
+                              ? Container(
+                                key: const Key('skip_ending'),
+                                child: AniSkipCountDownButton(
+                                  active: enableAniSkip,
+                                  autoSkip: enableAutoSkip,
+                                  timeoutLength: aniSkipTimeoutLength,
+                                  skipTypeText: context.l10n.skip_ending,
+                                  player: _player,
+                                  aniSkipResult: _endingResult,
+                                ),
+                              )
+                              : const SizedBox.shrink();
+                        },
+                      );
+                    },
+                  );
+                },
+              );
             },
           ),
         ),
@@ -1197,9 +1340,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _videoPlayer(context),
-    );
+    return Scaffold(body: _videoPlayer(context));
   }
 }
 
@@ -1212,12 +1353,18 @@ Widget seekIndicatorTextWidget(Duration duration, Duration currentPosition) {
       Text(
         Duration(seconds: value).label(),
         style: const TextStyle(
-            fontSize: 65.0, fontWeight: FontWeight.bold, color: Colors.white),
+          fontSize: 65.0,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
       ),
       Text(
         "[${swipeDuration > 0 ? "+${Duration(seconds: swipeDuration).label()}" : "-${Duration(seconds: swipeDuration).label()}"}]",
         style: const TextStyle(
-            fontSize: 40.0, color: Colors.white, fontWeight: FontWeight.bold),
+          fontSize: 40.0,
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     ],
   );
@@ -1230,11 +1377,12 @@ class VideoPrefs {
   AudioTrack? audio;
   bool isLocal;
   final Map<String, String>? headers;
-  VideoPrefs(
-      {this.videoTrack,
-      this.isLocal = true,
-      this.headers,
-      this.subtitle,
-      this.audio,
-      this.title});
+  VideoPrefs({
+    this.videoTrack,
+    this.isLocal = true,
+    this.headers,
+    this.subtitle,
+    this.audio,
+    this.title,
+  });
 }

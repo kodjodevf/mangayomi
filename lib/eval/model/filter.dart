@@ -18,16 +18,21 @@ class SelectFilter {
 
   SelectFilter(this.type, this.name, this.state, this.values, this.typeName);
   factory SelectFilter.fromJson(Map<String, dynamic> json) {
-    return SelectFilter(json['type'], json['name'], json['state'] ?? 0,
-        fromJsonFilterValuesToList(json['values']), json['type_name']);
+    return SelectFilter(
+      json['type'],
+      json['name'],
+      json['state'] ?? 0,
+      fromJsonFilterValuesToList(json['values']),
+      json['type_name'],
+    );
   }
   Map<String, dynamic> toJson() => {
-        'type': type,
-        'name': name,
-        'state': state,
-        'values': filterValuesListToJson(values),
-        'type_name': "SelectFilter"
-      };
+    'type': type,
+    'name': name,
+    'state': state,
+    'values': filterValuesListToJson(values),
+    'type_name': "SelectFilter",
+  };
 }
 
 class SelectFilterOption {
@@ -39,8 +44,11 @@ class SelectFilterOption {
   factory SelectFilterOption.fromJson(Map<String, dynamic> json) {
     return SelectFilterOption(json['name'], json['value'], json['type_name']);
   }
-  Map<String, dynamic> toJson() =>
-      {'value': value, 'name': name, 'type_name': "SelectOption"};
+  Map<String, dynamic> toJson() => {
+    'value': value,
+    'name': name,
+    'type_name': "SelectOption",
+  };
 }
 
 class SeparatorFilter {
@@ -50,8 +58,10 @@ class SeparatorFilter {
   factory SeparatorFilter.fromJson(Map<String, dynamic> json) {
     return SeparatorFilter(type: json['type'], json['type_name']);
   }
-  Map<String, dynamic> toJson() =>
-      {'type': type, 'type_name': "SeparatorFilter"};
+  Map<String, dynamic> toJson() => {
+    'type': type,
+    'type_name': "SeparatorFilter",
+  };
 }
 
 class HeaderFilter {
@@ -62,8 +72,11 @@ class HeaderFilter {
   factory HeaderFilter.fromJson(Map<String, dynamic> json) {
     return HeaderFilter(json['name'], json['type_name'], type: json['value']);
   }
-  Map<String, dynamic> toJson() =>
-      {'type': type, 'name': name, 'type_name': "HeaderFilter"};
+  Map<String, dynamic> toJson() => {
+    'type': type,
+    'name': name,
+    'type_name': "HeaderFilter",
+  };
 }
 
 class TextFilter {
@@ -74,11 +87,19 @@ class TextFilter {
 
   TextFilter(this.type, this.name, this.typeName, {this.state = ""});
   factory TextFilter.fromJson(Map<String, dynamic> json) {
-    return TextFilter(json['type'], json['name'], json['type_name'],
-        state: json['state'] ?? "");
+    return TextFilter(
+      json['type'],
+      json['name'],
+      json['type_name'],
+      state: json['state'] ?? "",
+    );
   }
-  Map<String, dynamic> toJson() =>
-      {'type': type, 'name': name, 'state': state, 'type_name': "TextFilter"};
+  Map<String, dynamic> toJson() => {
+    'type': type,
+    'name': name,
+    'state': state,
+    'type_name': "TextFilter",
+  };
 }
 
 class SortFilter {
@@ -91,21 +112,22 @@ class SortFilter {
   SortFilter(this.type, this.name, this.state, this.values, this.typeName);
   factory SortFilter.fromJson(Map<String, dynamic> json) {
     return SortFilter(
-        json['type'],
-        json['name'],
-        json['state'] == null
-            ? SortState(0, false, "")
-            : SortState.fromJson(json['state']),
-        fromJsonFilterValuesToList(json['values']),
-        json['type_name']);
+      json['type'],
+      json['name'],
+      json['state'] == null
+          ? SortState(0, false, "")
+          : SortState.fromJson(json['state']),
+      fromJsonFilterValuesToList(json['values']),
+      json['type_name'],
+    );
   }
   Map<String, dynamic> toJson() => {
-        'type': type,
-        'name': name,
-        'state': state.toJson(),
-        'values': filterValuesListToJson(values),
-        'type_name': "SortFilter"
-      };
+    'type': type,
+    'name': name,
+    'state': state.toJson(),
+    'values': filterValuesListToJson(values),
+    'type_name': "SortFilter",
+  };
 }
 
 class SortState {
@@ -117,8 +139,11 @@ class SortState {
   factory SortState.fromJson(Map<String, dynamic> json) {
     return SortState(json['index'], json['ascending'], json['type_name']);
   }
-  Map<String, dynamic> toJson() =>
-      {'index': index, 'ascending': ascending, 'type_name': "SortState"};
+  Map<String, dynamic> toJson() => {
+    'index': index,
+    'ascending': ascending,
+    'type_name': "SortState",
+  };
 }
 
 class TriStateFilter {
@@ -130,18 +155,27 @@ class TriStateFilter {
 
   factory TriStateFilter.fromJson(Map<String, dynamic> json) {
     return TriStateFilter(
-        json['type'], json['name'], json['value'], json['type_name'],
-        state: json['state'] ?? 0);
+      json['type'],
+      json['name'],
+      json['value'],
+      json['type_name'],
+      state: json['state'] ?? 0,
+    );
   }
-  TriStateFilter(this.type, this.name, this.value, this.typeName,
-      {this.state = 0});
+  TriStateFilter(
+    this.type,
+    this.name,
+    this.value,
+    this.typeName, {
+    this.state = 0,
+  });
   Map<String, dynamic> toJson() => {
-        'type': type,
-        'name': name,
-        'value': value,
-        'state': state,
-        'type_name': "TriState"
-      };
+    'type': type,
+    'name': name,
+    'value': value,
+    'state': state,
+    'type_name': "TriState",
+  };
 }
 
 class GroupFilter {
@@ -152,15 +186,19 @@ class GroupFilter {
 
   GroupFilter(this.type, this.name, this.state, this.typeName);
   factory GroupFilter.fromJson(Map<String, dynamic> json) {
-    return GroupFilter(json['type'], json['name'],
-        fromJsonFilterValuesToList(json['state']), json['type_name']);
+    return GroupFilter(
+      json['type'],
+      json['name'],
+      fromJsonFilterValuesToList(json['state']),
+      json['type_name'],
+    );
   }
   Map<String, dynamic> toJson() => {
-        'type': type,
-        'name': name,
-        'state': filterValuesListToJson(state),
-        'type_name': "GroupFilter"
-      };
+    'type': type,
+    'name': name,
+    'state': filterValuesListToJson(state),
+    'type_name': "GroupFilter",
+  };
 }
 
 class CheckBoxFilter {
@@ -170,20 +208,29 @@ class CheckBoxFilter {
   bool state;
   String? typeName;
 
-  CheckBoxFilter(this.type, this.name, this.value, this.typeName,
-      {this.state = false});
+  CheckBoxFilter(
+    this.type,
+    this.name,
+    this.value,
+    this.typeName, {
+    this.state = false,
+  });
   factory CheckBoxFilter.fromJson(Map<String, dynamic> json) {
     return CheckBoxFilter(
-        json['type'], json['name'], json['value'], json['type_name'],
-        state: json['state'] ?? false);
+      json['type'],
+      json['name'],
+      json['value'],
+      json['type_name'],
+      state: json['state'] ?? false,
+    );
   }
   Map<String, dynamic> toJson() => {
-        'type': type,
-        'name': name,
-        'value': value,
-        'state': state,
-        'type_name': "CheckBox"
-      };
+    'type': type,
+    'name': name,
+    'value': value,
+    'state': state,
+    'type_name': "CheckBox",
+  };
 }
 
 List<dynamic> fromJsonFilterValuesToList(List list) {
@@ -194,11 +241,13 @@ List<dynamic> fromJsonFilterValuesToList(List list) {
         return switch (map['type_name']) {
           'TriState' => TriStateFilter.fromJson(map.toMapStringDynamic!),
           'CheckBox' => CheckBoxFilter.fromJson(map.toMapStringDynamic!),
-          'SelectOption' =>
-            SelectFilterOption.fromJson(map.toMapStringDynamic!),
+          'SelectOption' => SelectFilterOption.fromJson(
+            map.toMapStringDynamic!,
+          ),
           'SelectFilter' => SelectFilter.fromJson(map.toMapStringDynamic!),
-          'SeparatorFilter' =>
-            SeparatorFilter.fromJson(map.toMapStringDynamic!),
+          'SeparatorFilter' => SeparatorFilter.fromJson(
+            map.toMapStringDynamic!,
+          ),
           'HeaderFilter' => HeaderFilter.fromJson(map.toMapStringDynamic!),
           'TextFilter' => TextFilter.fromJson(map.toMapStringDynamic!),
           'SortFilter' => SortFilter.fromJson(map.toMapStringDynamic!),

@@ -23,12 +23,13 @@ class GetChapterPagesModel {
   List<bool> isLocaleList = [];
   List<Uint8List?> archiveImages = [];
   List<UChapDataPreload> uChapDataPreload;
-  GetChapterPagesModel(
-      {required this.path,
-      required this.pageUrls,
-      required this.isLocaleList,
-      required this.archiveImages,
-      required this.uChapDataPreload});
+  GetChapterPagesModel({
+    required this.path,
+    required this.pageUrls,
+    required this.isLocaleList,
+    required this.archiveImages,
+    required this.uChapDataPreload,
+  });
 }
 
 @riverpod
@@ -43,9 +44,10 @@ Future<GetChapterPagesModel> getChapterPages(
   final settings = isar.settings.getSync(227);
   List<ChapterPageurls>? chapterPageUrlsList =
       settings!.chapterPageUrlsList ?? [];
-  final isarPageUrls = chapterPageUrlsList
-      .where((element) => element.chapterId == chapter.id)
-      .firstOrNull;
+  final isarPageUrls =
+      chapterPageUrlsList
+          .where((element) => element.chapterId == chapter.id)
+          .firstOrNull;
   final incognitoMode = ref.watch(incognitoModeStateProvider);
   final storageProvider = StorageProvider();
   path = await storageProvider.getMangaChapterDirectory(chapter);
@@ -74,11 +76,13 @@ Future<GetChapterPagesModel> getChapterPages(
   if (pageUrls.isNotEmpty || isLocalArchive) {
     if (await File("${mangaDirectory!.path}${chapter.name}.cbz").exists() ||
         isLocalArchive) {
-      final path = isLocalArchive
-          ? chapter.archivePath
-          : "${mangaDirectory.path}${chapter.name}.cbz";
-      final local =
-          await ref.watch(getArchiveDataFromFileProvider(path!).future);
+      final path =
+          isLocalArchive
+              ? chapter.archivePath
+              : "${mangaDirectory.path}${chapter.name}.cbz";
+      final local = await ref.watch(
+        getArchiveDataFromFileProvider(path!).future,
+      );
       for (var image in local.images!) {
         archiveImages.add(image.image!);
         isLocaleList.add(true);
@@ -86,7 +90,10 @@ Future<GetChapterPagesModel> getChapterPages(
     } else {
       for (var i = 0; i < pageUrls.length; i++) {
         archiveImages.add(null);
-        if (await File("${path!.path}" "${padIndex(i + 1)}.jpg").exists()) {
+        if (await File(
+          "${path!.path}"
+          "${padIndex(i + 1)}.jpg",
+        ).exists()) {
           isLocaleList.add(true);
         } else {
           isLocaleList.add(false);
@@ -105,21 +112,29 @@ Future<GetChapterPagesModel> getChapterPages(
           chapterPageUrls.add(chapterPageUrl);
         }
       }
-      final chapterPageHeaders = pageUrls
-          .map((e) => e.headers == null ? null : jsonEncode(e.headers))
-          .toList();
-      chapterPageUrls.add(ChapterPageurls()
-        ..chapterId = chapter.id
-        ..urls = pageUrls.map((e) => e.url).toList()
-        ..chapterUrl = chapter.url
-        ..headers = chapterPageHeaders.first != null
-            ? chapterPageHeaders.map((e) => e.toString()).toList()
-            : null);
-      isar.writeTxnSync(() => isar.settings
-          .putSync(settings..chapterPageUrlsList = chapterPageUrls));
+      final chapterPageHeaders =
+          pageUrls
+              .map((e) => e.headers == null ? null : jsonEncode(e.headers))
+              .toList();
+      chapterPageUrls.add(
+        ChapterPageurls()
+          ..chapterId = chapter.id
+          ..urls = pageUrls.map((e) => e.url).toList()
+          ..chapterUrl = chapter.url
+          ..headers =
+              chapterPageHeaders.first != null
+                  ? chapterPageHeaders.map((e) => e.toString()).toList()
+                  : null,
+      );
+      isar.writeTxnSync(
+        () => isar.settings.putSync(
+          settings..chapterPageUrlsList = chapterPageUrls,
+        ),
+      );
     }
     for (var i = 0; i < pageUrls.length; i++) {
-      uChapDataPreloadp.add(UChapDataPreload(
+      uChapDataPreloadp.add(
+        UChapDataPreload(
           chapter,
           path,
           pageUrls[i],
@@ -127,19 +142,23 @@ Future<GetChapterPagesModel> getChapterPages(
           archiveImages[i],
           i,
           GetChapterPagesModel(
-              path: path,
-              pageUrls: pageUrls,
-              isLocaleList: isLocaleList,
-              archiveImages: archiveImages,
-              uChapDataPreload: uChapDataPreloadp),
-          i));
+            path: path,
+            pageUrls: pageUrls,
+            isLocaleList: isLocaleList,
+            archiveImages: archiveImages,
+            uChapDataPreload: uChapDataPreloadp,
+          ),
+          i,
+        ),
+      );
     }
   }
 
   return GetChapterPagesModel(
-      path: path,
-      pageUrls: pageUrls,
-      isLocaleList: isLocaleList,
-      archiveImages: archiveImages,
-      uChapDataPreload: uChapDataPreloadp);
+    path: path,
+    pageUrls: pageUrls,
+    isLocaleList: isLocaleList,
+    archiveImages: archiveImages,
+    uChapDataPreload: uChapDataPreloadp,
+  );
 }

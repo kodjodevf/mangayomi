@@ -47,13 +47,13 @@ class SyncPreference {
   }
 
   Map<String, dynamic> toJson() => {
-        'syncId': syncId,
-        'email': email,
-        'authToken': authToken,
-        'lastSync': lastSync,
-        'lastUpload': lastUpload,
-        'lastDownload': lastDownload,
-        'syncOn': syncOn,
-        'autoSyncFrequency': autoSyncFrequency,
-      };
+    'syncId': syncId,
+    'email': email,
+    'authToken': authToken,
+    'lastSync': lastSync,
+    'lastUpload': lastUpload,
+    'lastDownload': lastDownload,
+    'syncOn': syncOn,
+    'autoSyncFrequency': autoSyncFrequency,
+  };
 }

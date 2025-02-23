@@ -7,8 +7,13 @@ import 'package:path/path.dart' as path;
 part 'convert_to_cbz.g.dart';
 
 @riverpod
-Future<List<String>> convertToCBZ(Ref ref, String chapterDir, String mangaDir,
-    String chapterName, List<String> pageList) async {
+Future<List<String>> convertToCBZ(
+  Ref ref,
+  String chapterDir,
+  String mangaDir,
+  String chapterName,
+  List<String> pageList,
+) async {
   return compute(_convertToCBZ, (chapterDir, mangaDir, chapterName, pageList));
 }
 
@@ -26,11 +31,9 @@ List<String> _convertToCBZ((String, String, String, List<String>) datas) {
         }
       }
     }
-    imagesPaths.sort(
-      (a, b) {
-        return a.toString().compareTo(b.toString());
-      },
-    );
+    imagesPaths.sort((a, b) {
+      return a.toString().compareTo(b.toString());
+    });
   }
 
   if (imagesPaths.isNotEmpty && pageList.length == imagesPaths.length) {

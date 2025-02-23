@@ -11,10 +11,12 @@ class ReaderScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final defaultReadingMode = ref.watch(defaultReadingModeStateProvider);
-    final animatePageTransitions =
-        ref.watch(animatePageTransitionsStateProvider);
-    final doubleTapAnimationSpeed =
-        ref.watch(doubleTapAnimationSpeedStateProvider);
+    final animatePageTransitions = ref.watch(
+      animatePageTransitionsStateProvider,
+    );
+    final doubleTapAnimationSpeed = ref.watch(
+      doubleTapAnimationSpeedStateProvider,
+    );
     final pagePreloadAmount = ref.watch(pagePreloadAmountStateProvider);
     final scaleType = ref.watch(scaleTypeStateProvider);
     final backgroundColor = ref.watch(backgroundColorStateProvider);
@@ -23,64 +25,69 @@ class ReaderScreen extends ConsumerWidget {
 
     final cropBorders = ref.watch(cropBordersStateProvider);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n.reader),
-      ),
+      appBar: AppBar(title: Text(context.l10n.reader)),
       body: SingleChildScrollView(
         child: Column(
           children: [
             ListTile(
               onTap: () {
                 showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text(context.l10n.default_reading_mode),
-                        content: SizedBox(
-                            width: context.width(0.8),
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: ReaderMode.values.length,
-                              itemBuilder: (context, index) {
-                                return RadioListTile(
-                                  dense: true,
-                                  contentPadding: const EdgeInsets.all(0),
-                                  value: ReaderMode.values[index],
-                                  groupValue: defaultReadingMode,
-                                  onChanged: (value) {
-                                    ref
-                                        .read(defaultReadingModeStateProvider
-                                            .notifier)
-                                        .set(value!);
-                                    Navigator.pop(context);
-                                  },
-                                  title: Row(
-                                    children: [
-                                      Text(getReaderModeName(
-                                          ReaderMode.values[index], context))
-                                    ],
-                                  ),
-                                );
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(context.l10n.default_reading_mode),
+                      content: SizedBox(
+                        width: context.width(0.8),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: ReaderMode.values.length,
+                          itemBuilder: (context, index) {
+                            return RadioListTile(
+                              dense: true,
+                              contentPadding: const EdgeInsets.all(0),
+                              value: ReaderMode.values[index],
+                              groupValue: defaultReadingMode,
+                              onChanged: (value) {
+                                ref
+                                    .read(
+                                      defaultReadingModeStateProvider.notifier,
+                                    )
+                                    .set(value!);
+                                Navigator.pop(context);
                               },
-                            )),
-                        actions: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              TextButton(
-                                  onPressed: () async {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text(
-                                    context.l10n.cancel,
-                                    style:
-                                        TextStyle(color: context.primaryColor),
-                                  )),
-                            ],
-                          )
-                        ],
-                      );
-                    });
+                              title: Row(
+                                children: [
+                                  Text(
+                                    getReaderModeName(
+                                      ReaderMode.values[index],
+                                      context,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      actions: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                context.l10n.cancel,
+                                style: TextStyle(color: context.primaryColor),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
               title: Text(context.l10n.default_reading_mode),
               subtitle: Text(
@@ -91,58 +98,58 @@ class ReaderScreen extends ConsumerWidget {
             ListTile(
               onTap: () {
                 showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text(
-                          context.l10n.double_tap_animation_speed,
-                        ),
-                        content: SizedBox(
-                            width: context.width(0.8),
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: 3,
-                              itemBuilder: (context, index) {
-                                return RadioListTile(
-                                  dense: true,
-                                  contentPadding: const EdgeInsets.all(0),
-                                  value: index,
-                                  groupValue: doubleTapAnimationSpeed,
-                                  onChanged: (value) {
-                                    ref
-                                        .read(
-                                            doubleTapAnimationSpeedStateProvider
-                                                .notifier)
-                                        .set(value!);
-                                    Navigator.pop(context);
-                                  },
-                                  title: Row(
-                                    children: [
-                                      Text(
-                                          getAnimationSpeedName(index, context))
-                                    ],
-                                  ),
-                                );
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(context.l10n.double_tap_animation_speed),
+                      content: SizedBox(
+                        width: context.width(0.8),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: 3,
+                          itemBuilder: (context, index) {
+                            return RadioListTile(
+                              dense: true,
+                              contentPadding: const EdgeInsets.all(0),
+                              value: index,
+                              groupValue: doubleTapAnimationSpeed,
+                              onChanged: (value) {
+                                ref
+                                    .read(
+                                      doubleTapAnimationSpeedStateProvider
+                                          .notifier,
+                                    )
+                                    .set(value!);
+                                Navigator.pop(context);
                               },
-                            )),
-                        actions: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              TextButton(
-                                  onPressed: () async {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text(
-                                    context.l10n.cancel,
-                                    style:
-                                        TextStyle(color: context.primaryColor),
-                                  )),
-                            ],
-                          )
-                        ],
-                      );
-                    });
+                              title: Row(
+                                children: [
+                                  Text(getAnimationSpeedName(index, context)),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      actions: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                context.l10n.cancel,
+                                style: TextStyle(color: context.primaryColor),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
               title: Text(context.l10n.double_tap_animation_speed),
               subtitle: Text(
@@ -153,56 +160,60 @@ class ReaderScreen extends ConsumerWidget {
             ListTile(
               onTap: () {
                 showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text(context.l10n.background_color),
-                        content: SizedBox(
-                            width: context.width(0.8),
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: BackgroundColor.values.length,
-                              itemBuilder: (context, index) {
-                                return RadioListTile(
-                                  dense: true,
-                                  contentPadding: const EdgeInsets.all(0),
-                                  value: BackgroundColor.values[index],
-                                  groupValue: backgroundColor,
-                                  onChanged: (value) {
-                                    ref
-                                        .read(backgroundColorStateProvider
-                                            .notifier)
-                                        .set(value!);
-                                    Navigator.pop(context);
-                                  },
-                                  title: Row(
-                                    children: [
-                                      Text(getBackgroundColorName(
-                                          BackgroundColor.values[index],
-                                          context))
-                                    ],
-                                  ),
-                                );
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(context.l10n.background_color),
+                      content: SizedBox(
+                        width: context.width(0.8),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: BackgroundColor.values.length,
+                          itemBuilder: (context, index) {
+                            return RadioListTile(
+                              dense: true,
+                              contentPadding: const EdgeInsets.all(0),
+                              value: BackgroundColor.values[index],
+                              groupValue: backgroundColor,
+                              onChanged: (value) {
+                                ref
+                                    .read(backgroundColorStateProvider.notifier)
+                                    .set(value!);
+                                Navigator.pop(context);
                               },
-                            )),
-                        actions: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              TextButton(
-                                  onPressed: () async {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text(
-                                    context.l10n.cancel,
-                                    style:
-                                        TextStyle(color: context.primaryColor),
-                                  )),
-                            ],
-                          )
-                        ],
-                      );
-                    });
+                              title: Row(
+                                children: [
+                                  Text(
+                                    getBackgroundColorName(
+                                      BackgroundColor.values[index],
+                                      context,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      actions: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                context.l10n.cancel,
+                                style: TextStyle(color: context.primaryColor),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
               title: Text(context.l10n.background_color),
               subtitle: Text(
@@ -214,54 +225,55 @@ class ReaderScreen extends ConsumerWidget {
               onTap: () {
                 List<int> numbers = [4, 6, 8, 10, 12, 14, 16, 18, 20];
                 showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text(
-                          context.l10n.page_preload_amount,
-                        ),
-                        content: SizedBox(
-                            width: context.width(0.8),
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: numbers.length,
-                              itemBuilder: (context, index) {
-                                return RadioListTile(
-                                  dense: true,
-                                  contentPadding: const EdgeInsets.all(0),
-                                  value: numbers[index],
-                                  groupValue: pagePreloadAmount,
-                                  onChanged: (value) {
-                                    ref
-                                        .read(pagePreloadAmountStateProvider
-                                            .notifier)
-                                        .set(value!);
-                                    Navigator.pop(context);
-                                  },
-                                  title: Row(
-                                    children: [Text(numbers[index].toString())],
-                                  ),
-                                );
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(context.l10n.page_preload_amount),
+                      content: SizedBox(
+                        width: context.width(0.8),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: numbers.length,
+                          itemBuilder: (context, index) {
+                            return RadioListTile(
+                              dense: true,
+                              contentPadding: const EdgeInsets.all(0),
+                              value: numbers[index],
+                              groupValue: pagePreloadAmount,
+                              onChanged: (value) {
+                                ref
+                                    .read(
+                                      pagePreloadAmountStateProvider.notifier,
+                                    )
+                                    .set(value!);
+                                Navigator.pop(context);
                               },
-                            )),
-                        actions: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              TextButton(
-                                  onPressed: () async {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text(
-                                    context.l10n.cancel,
-                                    style:
-                                        TextStyle(color: context.primaryColor),
-                                  )),
-                            ],
-                          )
-                        ],
-                      );
-                    });
+                              title: Row(
+                                children: [Text(numbers[index].toString())],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      actions: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                context.l10n.cancel,
+                                style: TextStyle(color: context.primaryColor),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
               title: Text(context.l10n.page_preload_amount),
               subtitle: Text(
@@ -272,56 +284,59 @@ class ReaderScreen extends ConsumerWidget {
             ListTile(
               onTap: () {
                 showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text(
-                          context.l10n.scale_type,
-                        ),
-                        content: SizedBox(
-                            width: context.width(0.8),
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: getScaleTypeNames(context).length,
-                              itemBuilder: (context, index) {
-                                return RadioListTile(
-                                  // dense: true,
-                                  contentPadding: const EdgeInsets.all(0),
-                                  value: index,
-                                  groupValue: scaleType.index,
-                                  onChanged: (value) {
-                                    ref
-                                        .read(scaleTypeStateProvider.notifier)
-                                        .set(ScaleType.values[value!]);
-                                    Navigator.pop(context);
-                                  },
-                                  title: Row(
-                                    children: [
-                                      Text(getScaleTypeNames(context)[index]
-                                          .toString())
-                                    ],
-                                  ),
-                                );
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(context.l10n.scale_type),
+                      content: SizedBox(
+                        width: context.width(0.8),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: getScaleTypeNames(context).length,
+                          itemBuilder: (context, index) {
+                            return RadioListTile(
+                              // dense: true,
+                              contentPadding: const EdgeInsets.all(0),
+                              value: index,
+                              groupValue: scaleType.index,
+                              onChanged: (value) {
+                                ref
+                                    .read(scaleTypeStateProvider.notifier)
+                                    .set(ScaleType.values[value!]);
+                                Navigator.pop(context);
                               },
-                            )),
-                        actions: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              TextButton(
-                                  onPressed: () async {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text(
-                                    context.l10n.cancel,
-                                    style:
-                                        TextStyle(color: context.primaryColor),
-                                  )),
-                            ],
-                          )
-                        ],
-                      );
-                    });
+                              title: Row(
+                                children: [
+                                  Text(
+                                    getScaleTypeNames(
+                                      context,
+                                    )[index].toString(),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      actions: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                context.l10n.cancel,
+                                style: TextStyle(color: context.primaryColor),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
               title: Text(context.l10n.scale_type),
               subtitle: Text(
@@ -330,31 +345,35 @@ class ReaderScreen extends ConsumerWidget {
               ),
             ),
             SwitchListTile(
-                value: fullScreenReader,
-                title: Text(context.l10n.fullscreen),
-                onChanged: (value) {
-                  ref.read(fullScreenReaderStateProvider.notifier).set(value);
-                }),
+              value: fullScreenReader,
+              title: Text(context.l10n.fullscreen),
+              onChanged: (value) {
+                ref.read(fullScreenReaderStateProvider.notifier).set(value);
+              },
+            ),
             SwitchListTile(
-                value: animatePageTransitions,
-                title: Text(context.l10n.animate_page_transitions),
-                onChanged: (value) {
-                  ref
-                      .read(animatePageTransitionsStateProvider.notifier)
-                      .set(value);
-                }),
+              value: animatePageTransitions,
+              title: Text(context.l10n.animate_page_transitions),
+              onChanged: (value) {
+                ref
+                    .read(animatePageTransitionsStateProvider.notifier)
+                    .set(value);
+              },
+            ),
             SwitchListTile(
-                value: cropBorders,
-                title: Text(context.l10n.crop_borders),
-                onChanged: (value) {
-                  ref.read(cropBordersStateProvider.notifier).set(value);
-                }),
+              value: cropBorders,
+              title: Text(context.l10n.crop_borders),
+              onChanged: (value) {
+                ref.read(cropBordersStateProvider.notifier).set(value);
+              },
+            ),
             SwitchListTile(
-                value: usePageTapZones,
-                title: Text(context.l10n.use_page_tap_zones),
-                onChanged: (value) {
-                  ref.read(usePageTapZonesStateProvider.notifier).set(value);
-                }),
+              value: usePageTapZones,
+              title: Text(context.l10n.use_page_tap_zones),
+              onChanged: (value) {
+                ref.read(usePageTapZonesStateProvider.notifier).set(value);
+              },
+            ),
           ],
         ),
       ),
@@ -370,12 +389,14 @@ String getReaderModeName(ReaderMode readerMode, BuildContext context) {
     ReaderMode.ltr => context.l10n.reading_mode_left_to_right,
     ReaderMode.rtl => context.l10n.reading_mode_right_to_left,
     ReaderMode.horizontalContinuous => context.l10n.horizontal_continious,
-    _ => context.l10n.reading_mode_webtoon
+    _ => context.l10n.reading_mode_webtoon,
   };
 }
 
 String getBackgroundColorName(
-    BackgroundColor backgroundColor, BuildContext context) {
+  BackgroundColor backgroundColor,
+  BuildContext context,
+) {
   return switch (backgroundColor) {
     BackgroundColor.white => context.l10n.white,
     BackgroundColor.grey => context.l10n.grey,
@@ -394,7 +415,9 @@ Color? getBackgroundColor(BackgroundColor backgroundColor) {
 }
 
 String getColorFilterBlendModeName(
-    ColorFilterBlendMode backgroundColor, BuildContext context) {
+  ColorFilterBlendMode backgroundColor,
+  BuildContext context,
+) {
   return switch (backgroundColor) {
     ColorFilterBlendMode.none => context.l10n.blend_mode_default,
     ColorFilterBlendMode.multiply => context.l10n.blend_mode_multiply,
@@ -413,7 +436,9 @@ String getColorFilterBlendModeName(
 }
 
 BlendMode? getColorFilterBlendMode(
-    ColorFilterBlendMode backgroundColor, BuildContext context) {
+  ColorFilterBlendMode backgroundColor,
+  BuildContext context,
+) {
   return switch (backgroundColor) {
     ColorFilterBlendMode.none => null,
     ColorFilterBlendMode.multiply => BlendMode.multiply,

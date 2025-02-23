@@ -23,13 +23,10 @@ sealed class RhttpError with _$RhttpError {
     List<(String, String)> field1,
     HttpResponseBody field2,
   ) = RhttpError_RhttpStatusCodeError;
-  const factory RhttpError.rhttpInvalidCertificateError(
-    String field0,
-  ) = RhttpError_RhttpInvalidCertificateError;
-  const factory RhttpError.rhttpConnectionError(
-    String field0,
-  ) = RhttpError_RhttpConnectionError;
-  const factory RhttpError.rhttpUnknownError(
-    String field0,
-  ) = RhttpError_RhttpUnknownError;
+  const factory RhttpError.rhttpInvalidCertificateError(String field0) =
+      RhttpError_RhttpInvalidCertificateError;
+  const factory RhttpError.rhttpConnectionError(String field0) =
+      RhttpError_RhttpConnectionError;
+  const factory RhttpError.rhttpUnknownError(String field0) =
+      RhttpError_RhttpUnknownError;
 }

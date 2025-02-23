@@ -9,8 +9,8 @@ sealed class HttpResponse {
   final List<(String, String)> headers;
 
   Map<String, String> get headerMap => {
-        for (final entry in headers) entry.$1: entry.$2,
-      };
+    for (final entry in headers) entry.$1: entry.$2,
+  };
 
   const HttpResponse({
     required this.request,
@@ -54,22 +54,17 @@ class HttpStreamResponse extends HttpResponse {
   }
 }
 
-enum HttpVersion {
-  http09,
-  http1_0,
-  http1_1,
-  other,
-  ;
-}
+enum HttpVersion { http09, http1_0, http1_1, other }
 
 HttpResponse parseHttpResponse(
   HttpRequest request,
   rust.HttpResponse response, {
   Stream<Uint8List>? bodyStream,
 }) {
-  assert((response.body is rust.HttpResponseBody_Stream &&
-          bodyStream != null) ||
-      (response.body is! rust.HttpResponseBody_Stream && bodyStream == null));
+  assert(
+    (response.body is rust.HttpResponseBody_Stream && bodyStream != null) ||
+        (response.body is! rust.HttpResponseBody_Stream && bodyStream == null),
+  );
 
   return HttpStreamResponse(
     request: request,

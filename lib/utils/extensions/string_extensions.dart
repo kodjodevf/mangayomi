@@ -38,9 +38,9 @@ extension StringExtensions on String {
 
   String replaceForbiddenCharacters(String source) {
     return replaceAll(
-        RegExp(
-            r'[\\/:*?"<>|\0]|(^CON$|^PRN$|^AUX$|^NUL$|^COM[1-9]$|^LPT[1-9]$)'),
-        source);
+      RegExp(r'[\\/:*?"<>|\0]|(^CON$|^PRN$|^AUX$|^NUL$|^COM[1-9]$|^LPT[1-9]$)'),
+      source,
+    );
   }
 
   String get getUrlWithoutDomain {
@@ -69,7 +69,7 @@ extension StringExtensions on String {
       "mp4",
       "wmv",
       "mkv",
-      "mov"
+      "mov",
     ].any((extension) => toLowerCase().endsWith(extension));
   }
 }

@@ -48,8 +48,8 @@ class RhttpStatusCodeException extends RhttpException {
   final List<(String, String)> headers;
 
   Map<String, String> get headerMap => {
-        for (final entry in headers) entry.$1: entry.$2,
-      };
+    for (final entry in headers) entry.$1: entry.$2,
+  };
 
   /// The response body. For simplicity, we don't differentiate between
   /// text or bytes. Streams are always null.
@@ -131,20 +131,24 @@ RhttpException parseError(HttpRequest request, rust.RhttpError error) {
     rhttpCancelError: () => RhttpCancelException(request),
     rhttpTimeoutError: () => RhttpTimeoutException(request),
     rhttpRedirectError: () => RhttpRedirectException(request),
-    rhttpStatusCodeError: (code, headers, body) => RhttpStatusCodeException(
-      request: request,
-      statusCode: code,
-      headers: headers,
-      body: switch (body) {
-        rust_http.HttpResponseBody_Text() => body.field0,
-        rust_http.HttpResponseBody_Bytes() => body.field0,
-        rust_http.HttpResponseBody_Stream() => null,
-      },
-    ),
-    rhttpInvalidCertificateError: (message) =>
-        RhttpInvalidCertificateException(request: request, message: message),
-    rhttpConnectionError: (message) =>
-        RhttpConnectionException(request, message),
+    rhttpStatusCodeError:
+        (code, headers, body) => RhttpStatusCodeException(
+          request: request,
+          statusCode: code,
+          headers: headers,
+          body: switch (body) {
+            rust_http.HttpResponseBody_Text() => body.field0,
+            rust_http.HttpResponseBody_Bytes() => body.field0,
+            rust_http.HttpResponseBody_Stream() => null,
+          },
+        ),
+    rhttpInvalidCertificateError:
+        (message) => RhttpInvalidCertificateException(
+          request: request,
+          message: message,
+        ),
+    rhttpConnectionError:
+        (message) => RhttpConnectionException(request, message),
     rhttpUnknownError: (message) => RhttpUnknownException(request, message),
   );
 }

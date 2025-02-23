@@ -40,7 +40,8 @@ class TotalChapterCacheSizeState extends _$TotalChapterCacheSizeState {
     if (msg != null && showToast) {
       state = msg;
       botToast(
-          navigatorKey.currentContext?.l10n.cache_cleared ?? "Cache cleared");
+        navigatorKey.currentContext?.l10n.cache_cleared ?? "Cache cleared",
+      );
     }
   }
 
@@ -48,9 +49,11 @@ class TotalChapterCacheSizeState extends _$TotalChapterCacheSizeState {
     final tempPath = (await getTemporaryDirectory()).path;
     try {
       return await _getdirectorySize(
-              Directory(join(tempPath, _cacheImageMangaPath))) +
+            Directory(join(tempPath, _cacheImageMangaPath)),
+          ) +
           await _getdirectorySize(
-              Directory(join(tempPath, _cacheDownloadPath)));
+            Directory(join(tempPath, _cacheDownloadPath)),
+          );
     } catch (_) {}
     return 0;
   }
@@ -63,8 +66,8 @@ class TotalChapterCacheSizeState extends _$TotalChapterCacheSizeState {
             .where((entity) => entity is File)
             .cast<File>()
             .fold(0, (total, file) {
-          return total + file.lengthSync();
-        });
+              return total + file.lengthSync();
+            });
       }
     } catch (_) {}
     return 0;
@@ -95,7 +98,10 @@ class ClearChapterCacheOnAppLaunchState
   void set(bool value) {
     final settings = isar.settings.getSync(227);
     state = value;
-    isar.writeTxnSync(() =>
-        isar.settings.putSync(settings!..clearChapterCacheOnAppLaunch = value));
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!..clearChapterCacheOnAppLaunch = value,
+      ),
+    );
   }
 }
