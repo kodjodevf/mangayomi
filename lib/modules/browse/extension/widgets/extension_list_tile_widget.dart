@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/services/fetch_anime_sources.dart';
 import 'package:mangayomi/services/fetch_manga_sources.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -15,14 +12,13 @@ import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
 
+final extensionListTileWidget = Provider.family<Widget, Source>((ref, source) {
+  return ExtensionListTileWidget(source: source);
+});
+
 class ExtensionListTileWidget extends ConsumerStatefulWidget {
   final Source source;
-  final bool isTestSource;
-  const ExtensionListTileWidget({
-    super.key,
-    required this.source,
-    this.isTestSource = false,
-  });
+  const ExtensionListTileWidget({super.key, required this.source});
 
   @override
   ConsumerState<ExtensionListTileWidget> createState() =>
@@ -32,69 +28,94 @@ class ExtensionListTileWidget extends ConsumerStatefulWidget {
 class _ExtensionListTileWidgetState
     extends ConsumerState<ExtensionListTileWidget> {
   bool _isLoading = false;
+  late final bool _updateAvailable;
+  late final bool _sourceNotEmpty;
+
+  @override
+  void initState() {
+    super.initState();
+    _updateAvailable =
+        compareVersions(widget.source.version!, widget.source.versionLast!) < 0;
+    _sourceNotEmpty =
+        widget.source.sourceCode != null &&
+        widget.source.sourceCode!.isNotEmpty;
+  }
+
+  Future<void> _handleSourceFetch() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final future = switch (widget.source.itemType) {
+        ItemType.manga => ref.watch(
+          fetchMangaSourcesListProvider(
+            id: widget.source.id,
+            reFresh: true,
+          ).future,
+        ),
+        ItemType.anime => ref.watch(
+          fetchAnimeSourcesListProvider(
+            id: widget.source.id,
+            reFresh: true,
+          ).future,
+        ),
+        _ => ref.watch(
+          fetchNovelSourcesListProvider(
+            id: widget.source.id,
+            reFresh: true,
+          ).future,
+        ),
+      };
+
+      await future;
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  Widget _buildTrailingButton(BuildContext context, String label) {
+    return TextButton(
+      onPressed:
+          _isLoading
+              ? null
+              : () {
+                if (!_updateAvailable && _sourceNotEmpty) {
+                  context.push('/extension_detail', extra: widget.source);
+                } else {
+                  _handleSourceFetch();
+                }
+              },
+      child:
+          _isLoading
+              ? const SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(strokeWidth: 2.0),
+              )
+              : Text(label),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
-    final updateAivalable =
-        widget.isTestSource
-            ? false
-            : compareVersions(
-                  widget.source.version!,
-                  widget.source.versionLast!,
-                ) <
-                0;
-    final sourceNotEmpty =
-        widget.source.sourceCode != null &&
-        widget.source.sourceCode!.isNotEmpty;
+    final buttonLabel =
+        !_sourceNotEmpty
+            ? l10n.install
+            : _updateAvailable
+            ? l10n.update
+            : l10n.settings;
 
     return ListTile(
-      onTap: () async {
-        if (sourceNotEmpty || widget.isTestSource) {
-          if (widget.isTestSource) {
-            isar.writeTxnSync(() {
-              isar.sources.putSync(widget.source);
-              ref
-                  .read(synchingProvider(syncId: 1).notifier)
-                  .addChangedPart(
-                    ActionType.updateExtension,
-                    widget.source.id,
-                    widget.source.toJson(),
-                    false,
-                  );
-            });
-          }
-          context.push('/extension_detail', extra: widget.source);
-        } else {
-          setState(() {
-            _isLoading = true;
-          });
-          widget.source.itemType == ItemType.manga
-              ? await ref.watch(
-                fetchMangaSourcesListProvider(
-                  id: widget.source.id,
-                  reFresh: true,
-                ).future,
-              )
-              : widget.source.itemType == ItemType.anime
-              ? await ref.watch(
-                fetchAnimeSourcesListProvider(
-                  id: widget.source.id,
-                  reFresh: true,
-                ).future,
-              )
-              : await ref.watch(
-                fetchNovelSourcesListProvider(
-                  id: widget.source.id,
-                  reFresh: true,
-                ).future,
-              );
-          if (mounted) {
-            setState(() {
-              _isLoading = false;
-            });
-          }
-        }
-      },
+      onTap:
+          _isLoading
+              ? null
+              : () {
+                if (_sourceNotEmpty) {
+                  context.push('/extension_detail', extra: widget.source);
+                } else {
+                  _handleSourceFetch();
+                }
+              },
       leading: Container(
         height: 37,
         width: 37,
@@ -145,59 +166,7 @@ class _ExtensionListTileWidgetState
             ),
         ],
       ),
-      trailing: TextButton(
-        onPressed:
-            widget.isTestSource || !updateAivalable && sourceNotEmpty
-                ? () {
-                  context.push('/extension_detail', extra: widget.source);
-                }
-                : () async {
-                  setState(() {
-                    _isLoading = true;
-                  });
-                  widget.source.itemType == ItemType.manga
-                      ? await ref.watch(
-                        fetchMangaSourcesListProvider(
-                          id: widget.source.id,
-                          reFresh: true,
-                        ).future,
-                      )
-                      : widget.source.itemType == ItemType.anime
-                      ? await ref.watch(
-                        fetchAnimeSourcesListProvider(
-                          id: widget.source.id,
-                          reFresh: true,
-                        ).future,
-                      )
-                      : await ref.watch(
-                        fetchNovelSourcesListProvider(
-                          id: widget.source.id,
-                          reFresh: true,
-                        ).future,
-                      );
-                  if (mounted) {
-                    setState(() {
-                      _isLoading = false;
-                    });
-                  }
-                },
-        child:
-            _isLoading
-                ? const SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2.0),
-                )
-                : Text(
-                  widget.isTestSource
-                      ? l10n.settings
-                      : !sourceNotEmpty
-                      ? l10n.install
-                      : updateAivalable
-                      ? l10n.update
-                      : l10n.settings,
-                ),
-      ),
+      trailing: _buildTrailingButton(context, buttonLabel),
     );
   }
 }
