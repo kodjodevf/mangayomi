@@ -13,15 +13,14 @@ String _$incognitoModeStateHash() =>
 @ProviderFor(IncognitoModeState)
 final incognitoModeStateProvider =
     AutoDisposeNotifierProvider<IncognitoModeState, bool>.internal(
-      IncognitoModeState.new,
-      name: r'incognitoModeStateProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$incognitoModeStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  IncognitoModeState.new,
+  name: r'incognitoModeStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$incognitoModeStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$IncognitoModeState = AutoDisposeNotifier<bool>;
 // ignore_for_file: type=lint

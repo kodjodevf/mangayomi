@@ -50,7 +50,9 @@ abstract class _$RouterCurrentLocationState
     extends BuildlessAutoDisposeNotifier<String?> {
   late final BuildContext context;
 
-  String? build(BuildContext context);
+  String? build(
+    BuildContext context,
+  );
 }
 
 /// See also [RouterCurrentLocationState].
@@ -63,15 +65,21 @@ class RouterCurrentLocationStateFamily extends Family<String?> {
   const RouterCurrentLocationStateFamily();
 
   /// See also [RouterCurrentLocationState].
-  RouterCurrentLocationStateProvider call(BuildContext context) {
-    return RouterCurrentLocationStateProvider(context);
+  RouterCurrentLocationStateProvider call(
+    BuildContext context,
+  ) {
+    return RouterCurrentLocationStateProvider(
+      context,
+    );
   }
 
   @override
   RouterCurrentLocationStateProvider getProviderOverride(
     covariant RouterCurrentLocationStateProvider provider,
   ) {
-    return call(provider.context);
+    return call(
+      provider.context,
+    );
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -91,23 +99,24 @@ class RouterCurrentLocationStateFamily extends Family<String?> {
 
 /// See also [RouterCurrentLocationState].
 class RouterCurrentLocationStateProvider
-    extends
-        AutoDisposeNotifierProviderImpl<RouterCurrentLocationState, String?> {
+    extends AutoDisposeNotifierProviderImpl<RouterCurrentLocationState,
+        String?> {
   /// See also [RouterCurrentLocationState].
-  RouterCurrentLocationStateProvider(BuildContext context)
-    : this._internal(
-        () => RouterCurrentLocationState()..context = context,
-        from: routerCurrentLocationStateProvider,
-        name: r'routerCurrentLocationStateProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$routerCurrentLocationStateHash,
-        dependencies: RouterCurrentLocationStateFamily._dependencies,
-        allTransitiveDependencies:
-            RouterCurrentLocationStateFamily._allTransitiveDependencies,
-        context: context,
-      );
+  RouterCurrentLocationStateProvider(
+    BuildContext context,
+  ) : this._internal(
+          () => RouterCurrentLocationState()..context = context,
+          from: routerCurrentLocationStateProvider,
+          name: r'routerCurrentLocationStateProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$routerCurrentLocationStateHash,
+          dependencies: RouterCurrentLocationStateFamily._dependencies,
+          allTransitiveDependencies:
+              RouterCurrentLocationStateFamily._allTransitiveDependencies,
+          context: context,
+        );
 
   RouterCurrentLocationStateProvider._internal(
     super._createNotifier, {
@@ -122,8 +131,12 @@ class RouterCurrentLocationStateProvider
   final BuildContext context;
 
   @override
-  String? runNotifierBuild(covariant RouterCurrentLocationState notifier) {
-    return notifier.build(context);
+  String? runNotifierBuild(
+    covariant RouterCurrentLocationState notifier,
+  ) {
+    return notifier.build(
+      context,
+    );
   }
 
   @override
@@ -144,7 +157,7 @@ class RouterCurrentLocationStateProvider
 
   @override
   AutoDisposeNotifierProviderElement<RouterCurrentLocationState, String?>
-  createElement() {
+      createElement() {
     return _RouterCurrentLocationStateProviderElement(this);
   }
 
@@ -171,15 +184,13 @@ mixin RouterCurrentLocationStateRef on AutoDisposeNotifierProviderRef<String?> {
 }
 
 class _RouterCurrentLocationStateProviderElement
-    extends
-        AutoDisposeNotifierProviderElement<RouterCurrentLocationState, String?>
-    with RouterCurrentLocationStateRef {
+    extends AutoDisposeNotifierProviderElement<RouterCurrentLocationState,
+        String?> with RouterCurrentLocationStateRef {
   _RouterCurrentLocationStateProviderElement(super.provider);
 
   @override
   BuildContext get context =>
       (origin as RouterCurrentLocationStateProvider).context;
 }
-
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

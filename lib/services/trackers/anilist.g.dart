@@ -33,7 +33,10 @@ abstract class _$Anilist extends BuildlessAutoDisposeNotifier<void> {
   late final int syncId;
   late final ItemType? itemType;
 
-  void build({required int syncId, ItemType? itemType});
+  void build({
+    required int syncId,
+    ItemType? itemType,
+  });
 }
 
 /// See also [Anilist].
@@ -46,13 +49,24 @@ class AnilistFamily extends Family<void> {
   const AnilistFamily();
 
   /// See also [Anilist].
-  AnilistProvider call({required int syncId, ItemType? itemType}) {
-    return AnilistProvider(syncId: syncId, itemType: itemType);
+  AnilistProvider call({
+    required int syncId,
+    ItemType? itemType,
+  }) {
+    return AnilistProvider(
+      syncId: syncId,
+      itemType: itemType,
+    );
   }
 
   @override
-  AnilistProvider getProviderOverride(covariant AnilistProvider provider) {
-    return call(syncId: provider.syncId, itemType: provider.itemType);
+  AnilistProvider getProviderOverride(
+    covariant AnilistProvider provider,
+  ) {
+    return call(
+      syncId: provider.syncId,
+      itemType: provider.itemType,
+    );
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -73,23 +87,24 @@ class AnilistFamily extends Family<void> {
 /// See also [Anilist].
 class AnilistProvider extends AutoDisposeNotifierProviderImpl<Anilist, void> {
   /// See also [Anilist].
-  AnilistProvider({required int syncId, ItemType? itemType})
-    : this._internal(
-        () =>
-            Anilist()
-              ..syncId = syncId
-              ..itemType = itemType,
-        from: anilistProvider,
-        name: r'anilistProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$anilistHash,
-        dependencies: AnilistFamily._dependencies,
-        allTransitiveDependencies: AnilistFamily._allTransitiveDependencies,
-        syncId: syncId,
-        itemType: itemType,
-      );
+  AnilistProvider({
+    required int syncId,
+    ItemType? itemType,
+  }) : this._internal(
+          () => Anilist()
+            ..syncId = syncId
+            ..itemType = itemType,
+          from: anilistProvider,
+          name: r'anilistProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$anilistHash,
+          dependencies: AnilistFamily._dependencies,
+          allTransitiveDependencies: AnilistFamily._allTransitiveDependencies,
+          syncId: syncId,
+          itemType: itemType,
+        );
 
   AnilistProvider._internal(
     super._createNotifier, {
@@ -106,8 +121,13 @@ class AnilistProvider extends AutoDisposeNotifierProviderImpl<Anilist, void> {
   final ItemType? itemType;
 
   @override
-  void runNotifierBuild(covariant Anilist notifier) {
-    return notifier.build(syncId: syncId, itemType: itemType);
+  void runNotifierBuild(
+    covariant Anilist notifier,
+  ) {
+    return notifier.build(
+      syncId: syncId,
+      itemType: itemType,
+    );
   }
 
   @override
@@ -115,10 +135,9 @@ class AnilistProvider extends AutoDisposeNotifierProviderImpl<Anilist, void> {
     return ProviderOverride(
       origin: this,
       override: AnilistProvider._internal(
-        () =>
-            create()
-              ..syncId = syncId
-              ..itemType = itemType,
+        () => create()
+          ..syncId = syncId
+          ..itemType = itemType,
         from: from,
         name: null,
         dependencies: null,
@@ -163,8 +182,7 @@ mixin AnilistRef on AutoDisposeNotifierProviderRef<void> {
 }
 
 class _AnilistProviderElement
-    extends AutoDisposeNotifierProviderElement<Anilist, void>
-    with AnilistRef {
+    extends AutoDisposeNotifierProviderElement<Anilist, void> with AnilistRef {
   _AnilistProviderElement(super.provider);
 
   @override
@@ -172,6 +190,5 @@ class _AnilistProviderElement
   @override
   ItemType? get itemType => (origin as AnilistProvider).itemType;
 }
-
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

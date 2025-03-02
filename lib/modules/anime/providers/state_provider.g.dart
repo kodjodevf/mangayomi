@@ -12,15 +12,12 @@ String _$subtitleSettingsStateHash() =>
 /// See also [SubtitleSettingsState].
 @ProviderFor(SubtitleSettingsState)
 final subtitleSettingsStateProvider = AutoDisposeNotifierProvider<
-  SubtitleSettingsState,
-  PlayerSubtitleSettings
->.internal(
+    SubtitleSettingsState, PlayerSubtitleSettings>.internal(
   SubtitleSettingsState.new,
   name: r'subtitleSettingsStateProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$subtitleSettingsStateHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$subtitleSettingsStateHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );

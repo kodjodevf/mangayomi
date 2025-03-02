@@ -543,12 +543,12 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             return [
                               if (!isLocalArchive)
                                 PopupMenuItem<int>(
-                                  value: 3,
+                                  value: 0,
                                   child: Text(l10n.refresh),
                                 ),
                               if (widget.manga!.favorite!)
                                 PopupMenuItem<int>(
-                                  value: 0,
+                                  value: 1,
                                   child: Text(l10n.edit_categories),
                                 ),
                               if (!isLocalArchive)
@@ -556,33 +556,43 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   value: 2,
                                   child: Text(l10n.share),
                                 ),
+                              PopupMenuItem<int>(
+                                value: 3,
+                                child: Text(l10n.migrate),
+                              ),
                             ];
                           },
                           onSelected: (value) {
-                            if (value == 3) {
-                              widget.checkForUpdate(true);
-                            }
-                            if (value == 0) {
-                              context.push(
-                                "/categories",
-                                extra: (
-                                  true,
-                                  widget.manga!.itemType == ItemType.manga
-                                      ? 0
-                                      : widget.manga!.itemType == ItemType.anime
-                                      ? 1
-                                      : 2,
-                                ),
-                              );
-                            } else if (value == 1) {
-                            } else if (value == 2) {
-                              final source = getSource(
-                                widget.manga!.lang!,
-                                widget.manga!.source!,
-                              );
-                              final url =
-                                  "${source!.baseUrl}${widget.manga!.link!.getUrlWithoutDomain}";
-                              Share.share(url);
+                            switch (value) {
+                              case 0:
+                                widget.checkForUpdate(true);
+                                break;
+                              case 1:
+                                context.push(
+                                  "/categories",
+                                  extra: (
+                                    true,
+                                    widget.manga!.itemType == ItemType.manga
+                                        ? 0
+                                        : widget.manga!.itemType ==
+                                            ItemType.anime
+                                        ? 1
+                                        : 2,
+                                  ),
+                                );
+                                break;
+                              case 2:
+                                final source = getSource(
+                                  widget.manga!.lang!,
+                                  widget.manga!.source!,
+                                );
+                                final url =
+                                    "${source!.baseUrl}${widget.manga!.link!.getUrlWithoutDomain}";
+                                Share.share(url);
+                                break;
+                              case 3:
+                                context.push("/migrate", extra: widget.manga);
+                                break;
                             }
                           },
                         ),

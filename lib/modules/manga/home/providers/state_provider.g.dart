@@ -12,15 +12,12 @@ String _$mangaHomeDisplayTypeStateHash() =>
 /// See also [MangaHomeDisplayTypeState].
 @ProviderFor(MangaHomeDisplayTypeState)
 final mangaHomeDisplayTypeStateProvider = AutoDisposeNotifierProvider<
-  MangaHomeDisplayTypeState,
-  DisplayType
->.internal(
+    MangaHomeDisplayTypeState, DisplayType>.internal(
   MangaHomeDisplayTypeState.new,
   name: r'mangaHomeDisplayTypeStateProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$mangaHomeDisplayTypeStateHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$mangaHomeDisplayTypeStateHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );

@@ -135,7 +135,7 @@ Future<dynamic> updateMangaDetail(
         oldChap.scanlator = newChap.scanlator;
         isar.chapters.putSync(oldChap);
         oldChap.manga.saveSync();
-        if (!hasChanged) {
+        if (hasChanged) {
           ref
               .read(synchingProvider(syncId: 1).notifier)
               .addChangedPart(

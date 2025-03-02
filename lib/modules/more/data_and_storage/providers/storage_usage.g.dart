@@ -13,15 +13,14 @@ String _$totalChapterCacheSizeStateHash() =>
 @ProviderFor(TotalChapterCacheSizeState)
 final totalChapterCacheSizeStateProvider =
     AutoDisposeNotifierProvider<TotalChapterCacheSizeState, String>.internal(
-      TotalChapterCacheSizeState.new,
-      name: r'totalChapterCacheSizeStateProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$totalChapterCacheSizeStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  TotalChapterCacheSizeState.new,
+  name: r'totalChapterCacheSizeStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$totalChapterCacheSizeStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$TotalChapterCacheSizeState = AutoDisposeNotifier<String>;
 String _$clearChapterCacheOnAppLaunchStateHash() =>
@@ -30,15 +29,12 @@ String _$clearChapterCacheOnAppLaunchStateHash() =>
 /// See also [ClearChapterCacheOnAppLaunchState].
 @ProviderFor(ClearChapterCacheOnAppLaunchState)
 final clearChapterCacheOnAppLaunchStateProvider = AutoDisposeNotifierProvider<
-  ClearChapterCacheOnAppLaunchState,
-  bool
->.internal(
+    ClearChapterCacheOnAppLaunchState, bool>.internal(
   ClearChapterCacheOnAppLaunchState.new,
   name: r'clearChapterCacheOnAppLaunchStateProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$clearChapterCacheOnAppLaunchStateHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$clearChapterCacheOnAppLaunchStateHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );

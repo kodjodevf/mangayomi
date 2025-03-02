@@ -43,12 +43,20 @@ class DoRestoreFamily extends Family<void> {
     required String path,
     required BuildContext context,
   }) {
-    return DoRestoreProvider(path: path, context: context);
+    return DoRestoreProvider(
+      path: path,
+      context: context,
+    );
   }
 
   @override
-  DoRestoreProvider getProviderOverride(covariant DoRestoreProvider provider) {
-    return call(path: provider.path, context: provider.context);
+  DoRestoreProvider getProviderOverride(
+    covariant DoRestoreProvider provider,
+  ) {
+    return call(
+      path: provider.path,
+      context: provider.context,
+    );
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -69,20 +77,26 @@ class DoRestoreFamily extends Family<void> {
 /// See also [doRestore].
 class DoRestoreProvider extends AutoDisposeProvider<void> {
   /// See also [doRestore].
-  DoRestoreProvider({required String path, required BuildContext context})
-    : this._internal(
-        (ref) => doRestore(ref as DoRestoreRef, path: path, context: context),
-        from: doRestoreProvider,
-        name: r'doRestoreProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$doRestoreHash,
-        dependencies: DoRestoreFamily._dependencies,
-        allTransitiveDependencies: DoRestoreFamily._allTransitiveDependencies,
-        path: path,
-        context: context,
-      );
+  DoRestoreProvider({
+    required String path,
+    required BuildContext context,
+  }) : this._internal(
+          (ref) => doRestore(
+            ref as DoRestoreRef,
+            path: path,
+            context: context,
+          ),
+          from: doRestoreProvider,
+          name: r'doRestoreProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$doRestoreHash,
+          dependencies: DoRestoreFamily._dependencies,
+          allTransitiveDependencies: DoRestoreFamily._allTransitiveDependencies,
+          path: path,
+          context: context,
+        );
 
   DoRestoreProvider._internal(
     super._createNotifier, {
@@ -99,7 +113,9 @@ class DoRestoreProvider extends AutoDisposeProvider<void> {
   final BuildContext context;
 
   @override
-  Override overrideWith(void Function(DoRestoreRef provider) create) {
+  Override overrideWith(
+    void Function(DoRestoreRef provider) create,
+  ) {
     return ProviderOverride(
       origin: this,
       override: DoRestoreProvider._internal(
@@ -169,15 +185,24 @@ class RestoreBackupFamily extends Family<void> {
   const RestoreBackupFamily();
 
   /// See also [restoreBackup].
-  RestoreBackupProvider call(Map<String, dynamic> backup, {bool full = true}) {
-    return RestoreBackupProvider(backup, full: full);
+  RestoreBackupProvider call(
+    Map<String, dynamic> backup, {
+    bool full = true,
+  }) {
+    return RestoreBackupProvider(
+      backup,
+      full: full,
+    );
   }
 
   @override
   RestoreBackupProvider getProviderOverride(
     covariant RestoreBackupProvider provider,
   ) {
-    return call(provider.backup, full: provider.full);
+    return call(
+      provider.backup,
+      full: provider.full,
+    );
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -198,21 +223,27 @@ class RestoreBackupFamily extends Family<void> {
 /// See also [restoreBackup].
 class RestoreBackupProvider extends AutoDisposeProvider<void> {
   /// See also [restoreBackup].
-  RestoreBackupProvider(Map<String, dynamic> backup, {bool full = true})
-    : this._internal(
-        (ref) => restoreBackup(ref as RestoreBackupRef, backup, full: full),
-        from: restoreBackupProvider,
-        name: r'restoreBackupProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$restoreBackupHash,
-        dependencies: RestoreBackupFamily._dependencies,
-        allTransitiveDependencies:
-            RestoreBackupFamily._allTransitiveDependencies,
-        backup: backup,
-        full: full,
-      );
+  RestoreBackupProvider(
+    Map<String, dynamic> backup, {
+    bool full = true,
+  }) : this._internal(
+          (ref) => restoreBackup(
+            ref as RestoreBackupRef,
+            backup,
+            full: full,
+          ),
+          from: restoreBackupProvider,
+          name: r'restoreBackupProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$restoreBackupHash,
+          dependencies: RestoreBackupFamily._dependencies,
+          allTransitiveDependencies:
+              RestoreBackupFamily._allTransitiveDependencies,
+          backup: backup,
+          full: full,
+        );
 
   RestoreBackupProvider._internal(
     super._createNotifier, {
@@ -229,7 +260,9 @@ class RestoreBackupProvider extends AutoDisposeProvider<void> {
   final bool full;
 
   @override
-  Override overrideWith(void Function(RestoreBackupRef provider) create) {
+  Override overrideWith(
+    void Function(RestoreBackupRef provider) create,
+  ) {
     return ProviderOverride(
       origin: this,
       override: RestoreBackupProvider._internal(
@@ -286,6 +319,5 @@ class _RestoreBackupProviderElement extends AutoDisposeProviderElement<void>
   @override
   bool get full => (origin as RestoreBackupProvider).full;
 }
-
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

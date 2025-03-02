@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/changed.dart';
+import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -130,6 +134,17 @@ class BrowseSScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
+                  ListTile(
+                    onTap: () => _showCleanNonLibraryDialog(context, l10n),
+                    title: Text(l10n.clean_database),
+                    subtitle: Text(
+                      l10n.clean_database_desc,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.secondaryColor,
+                      ),
+                    ),
+                  ),
                   if (checkForExtensionUpdates)
                     SwitchListTile(
                       value: autoUpdateExtensions,
@@ -223,6 +238,78 @@ void _showClearAllSourcesDialog(BuildContext context, dynamic l10n) {
 
                         Navigator.pop(ctx);
                         botToast(l10n.sources_cleared);
+                      },
+                      child: Text(l10n.ok),
+                    ),
+              ),
+            ],
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void _showCleanNonLibraryDialog(BuildContext context, dynamic l10n) {
+  showDialog(
+    context: context,
+    builder: (ctx) {
+      return AlertDialog(
+        title: Text(l10n.clean_database),
+        content: Text(l10n.clean_database_desc),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                },
+                child: Text(l10n.cancel),
+              ),
+              const SizedBox(width: 15),
+              Consumer(
+                builder:
+                    (context, ref, child) => TextButton(
+                      onPressed: () {
+                        final mangasList =
+                            isar.mangas
+                                .filter()
+                                .favoriteEqualTo(false)
+                                .findAllSync();
+                        isar.writeTxnSync(() {
+                          for (var manga in mangasList) {
+                            final histories =
+                                isar.historys
+                                    .filter()
+                                    .mangaIdEqualTo(manga.id)
+                                    .findAllSync();
+                            for (var history in histories) {
+                              isar.historys.deleteSync(history.id!);
+                            }
+
+                            for (var chapter in manga.chapters) {
+                              isar.updates
+                                  .filter()
+                                  .mangaIdEqualTo(chapter.mangaId)
+                                  .chapterNameEqualTo(chapter.name)
+                                  .deleteAllSync();
+                              isar.chapters.deleteSync(chapter.id!);
+                            }
+                            isar.mangas.deleteSync(manga.id!);
+                            ref
+                                .read(synchingProvider(syncId: 1).notifier)
+                                .addChangedPart(
+                                  ActionType.removeItem,
+                                  manga.id,
+                                  "{}",
+                                  false,
+                                );
+                          }
+                        });
+
+                        Navigator.pop(ctx);
+                        botToast(l10n.cleaned_database);
                       },
                       child: Text(l10n.ok),
                     ),
