@@ -309,7 +309,7 @@ void _showCleanNonLibraryDialog(BuildContext context, dynamic l10n) {
                         });
 
                         Navigator.pop(ctx);
-                        botToast(l10n.cleaned_database);
+                        botToast(l10n.cleaned_database(mangasList.length));
                       },
                       child: Text(l10n.ok),
                     ),

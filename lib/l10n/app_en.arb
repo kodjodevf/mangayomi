@@ -60,7 +60,7 @@
   "migrate": "Migrate",
   "migrate_confirm": "Migrate to another source",
   "clean_database": "Clean database",
-  "cleaned_database": "Database cleaned!",
+  "cleaned_database": "Database cleaned! {x} entries removed",
   "clean_database_desc": "This will remove all items that are not added to the library!",
   "incognito_mode": "Incognito Mode",
   "incognito_mode_description": "Pauses reading history",

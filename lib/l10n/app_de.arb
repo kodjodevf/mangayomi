@@ -60,7 +60,7 @@
     "migrate": "Migrieren",
     "migrate_confirm": "Zu einer anderen Erweiterung migrieren",
     "clean_database": "Datenbank säubern",
-    "cleaned_database": "Datenbank wurde gesäubert!",
+    "cleaned_database": "Datenbank wurde gesäubert! {x} Einträge gelöscht",
     "clean_database_desc": "Diese Aktion löscht alle Einträge, die nicht im Bibliothek sind!",
     "incognito_mode": "Inkognito-Modus",
     "incognito_mode_description": "Pausiert den Leseverlauf",
