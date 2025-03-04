@@ -1478,26 +1478,52 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     ),
                                     child: SizedBox(
                                       height: 30,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          elevation: 0,
-                                          backgroundColor: Colors.grey
-                                              .withValues(alpha: 0.2),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              5,
+                                      child: PopupMenuButton(
+                                        popUpAnimationStyle:
+                                            popupAnimationStyle,
+                                        itemBuilder: (context) {
+                                          return [
+                                            PopupMenuItem<int>(
+                                              height: 40,
+                                              value: 0,
+                                              child: Text(
+                                                context.l10n.open_in_browser,
+                                              ),
+                                            ),
+                                            PopupMenuItem<int>(
+                                              height: 40,
+                                              value: 1,
+                                              child: Text(
+                                                context.l10n.settings,
+                                              ),
+                                            ),
+                                          ];
+                                        },
+                                        onSelected: (value) async {
+                                          if (value == 0) {
+                                            // context.push('/mangaHome', extra: (source, false));
+                                          } else {}
+                                        },
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            elevation: 0,
+                                            backgroundColor: Colors.grey
+                                                .withValues(alpha: 0.2),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
                                             ),
                                           ),
-                                        ),
-                                        onPressed: () {},
-                                        child: Text(
-                                          widget.manga!.genre![i],
-                                          style: TextStyle(
-                                            fontSize: 11.5,
-                                            color:
-                                                context.isLight
-                                                    ? Colors.black
-                                                    : Colors.white,
+                                          onPressed: null,
+                                          child: Text(
+                                            widget.manga!.genre![i],
+                                            style: TextStyle(
+                                              fontSize: 11.5,
+                                              color:
+                                                  context.isLight
+                                                      ? Colors.black
+                                                      : Colors.white,
+                                            ),
                                           ),
                                         ),
                                       ),
