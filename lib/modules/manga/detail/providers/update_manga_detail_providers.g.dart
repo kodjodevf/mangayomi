@@ -6,7 +6,7 @@ part of 'update_manga_detail_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$updateMangaDetailHash() => r'4aed7678d299321491de442c592968df22b62f48';
+String _$updateMangaDetailHash() => r'cfeaefe8375a38abbf07a774830d97ca57c6f2c9';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -43,14 +43,20 @@ class UpdateMangaDetailFamily extends Family<AsyncValue<dynamic>> {
     required int? mangaId,
     required bool isInit,
   }) {
-    return UpdateMangaDetailProvider(mangaId: mangaId, isInit: isInit);
+    return UpdateMangaDetailProvider(
+      mangaId: mangaId,
+      isInit: isInit,
+    );
   }
 
   @override
   UpdateMangaDetailProvider getProviderOverride(
     covariant UpdateMangaDetailProvider provider,
   ) {
-    return call(mangaId: provider.mangaId, isInit: provider.isInit);
+    return call(
+      mangaId: provider.mangaId,
+      isInit: provider.isInit,
+    );
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -71,25 +77,27 @@ class UpdateMangaDetailFamily extends Family<AsyncValue<dynamic>> {
 /// See also [updateMangaDetail].
 class UpdateMangaDetailProvider extends AutoDisposeFutureProvider<dynamic> {
   /// See also [updateMangaDetail].
-  UpdateMangaDetailProvider({required int? mangaId, required bool isInit})
-    : this._internal(
-        (ref) => updateMangaDetail(
-          ref as UpdateMangaDetailRef,
+  UpdateMangaDetailProvider({
+    required int? mangaId,
+    required bool isInit,
+  }) : this._internal(
+          (ref) => updateMangaDetail(
+            ref as UpdateMangaDetailRef,
+            mangaId: mangaId,
+            isInit: isInit,
+          ),
+          from: updateMangaDetailProvider,
+          name: r'updateMangaDetailProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$updateMangaDetailHash,
+          dependencies: UpdateMangaDetailFamily._dependencies,
+          allTransitiveDependencies:
+              UpdateMangaDetailFamily._allTransitiveDependencies,
           mangaId: mangaId,
           isInit: isInit,
-        ),
-        from: updateMangaDetailProvider,
-        name: r'updateMangaDetailProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$updateMangaDetailHash,
-        dependencies: UpdateMangaDetailFamily._dependencies,
-        allTransitiveDependencies:
-            UpdateMangaDetailFamily._allTransitiveDependencies,
-        mangaId: mangaId,
-        isInit: isInit,
-      );
+        );
 
   UpdateMangaDetailProvider._internal(
     super._createNotifier, {
@@ -166,6 +174,5 @@ class _UpdateMangaDetailProviderElement
   @override
   bool get isInit => (origin as UpdateMangaDetailProvider).isInit;
 }
-
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

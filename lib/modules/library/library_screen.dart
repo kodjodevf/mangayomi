@@ -1064,8 +1064,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
               (element) =>
                   _textEditingController.text.isNotEmpty
                       ? element.name!.toLowerCase().contains(
-                        _textEditingController.text.toLowerCase(),
-                      )
+                            _textEditingController.text.toLowerCase(),
+                          ) ||
+                          (element.source != null &&
+                              element.source!.toLowerCase().contains(
+                                _textEditingController.text.toLowerCase(),
+                              ))
                       : true,
             )
             .toList();

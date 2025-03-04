@@ -13,10 +13,9 @@ String _$checkAndBackupHash() => r'c3fa9f0b0f9009088ee8e787407a691b0044901f';
 final checkAndBackupProvider = AutoDisposeFutureProvider<void>.internal(
   checkAndBackup,
   name: r'checkAndBackupProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$checkAndBackupHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$checkAndBackupHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -31,15 +30,14 @@ String _$backupFrequencyStateHash() =>
 @ProviderFor(BackupFrequencyState)
 final backupFrequencyStateProvider =
     AutoDisposeNotifierProvider<BackupFrequencyState, int>.internal(
-      BackupFrequencyState.new,
-      name: r'backupFrequencyStateProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$backupFrequencyStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  BackupFrequencyState.new,
+  name: r'backupFrequencyStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$backupFrequencyStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$BackupFrequencyState = AutoDisposeNotifier<int>;
 String _$backupFrequencyOptionsStateHash() =>
@@ -48,15 +46,12 @@ String _$backupFrequencyOptionsStateHash() =>
 /// See also [BackupFrequencyOptionsState].
 @ProviderFor(BackupFrequencyOptionsState)
 final backupFrequencyOptionsStateProvider = AutoDisposeNotifierProvider<
-  BackupFrequencyOptionsState,
-  List<int>
->.internal(
+    BackupFrequencyOptionsState, List<int>>.internal(
   BackupFrequencyOptionsState.new,
   name: r'backupFrequencyOptionsStateProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$backupFrequencyOptionsStateHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$backupFrequencyOptionsStateHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -68,15 +63,12 @@ String _$autoBackupLocationStateHash() =>
 /// See also [AutoBackupLocationState].
 @ProviderFor(AutoBackupLocationState)
 final autoBackupLocationStateProvider = AutoDisposeNotifierProvider<
-  AutoBackupLocationState,
-  (String, String)
->.internal(
+    AutoBackupLocationState, (String, String)>.internal(
   AutoBackupLocationState.new,
   name: r'autoBackupLocationStateProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$autoBackupLocationStateHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$autoBackupLocationStateHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );

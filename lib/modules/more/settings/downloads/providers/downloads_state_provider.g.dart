@@ -12,15 +12,14 @@ String _$onlyOnWifiStateHash() => r'613d0fd2a72fdfeb0c8da05dc8ed4144cc8df6f5';
 @ProviderFor(OnlyOnWifiState)
 final onlyOnWifiStateProvider =
     AutoDisposeNotifierProvider<OnlyOnWifiState, bool>.internal(
-      OnlyOnWifiState.new,
-      name: r'onlyOnWifiStateProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$onlyOnWifiStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  OnlyOnWifiState.new,
+  name: r'onlyOnWifiStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$onlyOnWifiStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$OnlyOnWifiState = AutoDisposeNotifier<bool>;
 String _$saveAsCBZArchiveStateHash() =>
@@ -30,15 +29,14 @@ String _$saveAsCBZArchiveStateHash() =>
 @ProviderFor(SaveAsCBZArchiveState)
 final saveAsCBZArchiveStateProvider =
     AutoDisposeNotifierProvider<SaveAsCBZArchiveState, bool>.internal(
-      SaveAsCBZArchiveState.new,
-      name: r'saveAsCBZArchiveStateProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$saveAsCBZArchiveStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  SaveAsCBZArchiveState.new,
+  name: r'saveAsCBZArchiveStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$saveAsCBZArchiveStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$SaveAsCBZArchiveState = AutoDisposeNotifier<bool>;
 String _$downloadLocationStateHash() =>
@@ -47,15 +45,12 @@ String _$downloadLocationStateHash() =>
 /// See also [DownloadLocationState].
 @ProviderFor(DownloadLocationState)
 final downloadLocationStateProvider = AutoDisposeNotifierProvider<
-  DownloadLocationState,
-  (String, String)
->.internal(
+    DownloadLocationState, (String, String)>.internal(
   DownloadLocationState.new,
   name: r'downloadLocationStateProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$downloadLocationStateHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$downloadLocationStateHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );

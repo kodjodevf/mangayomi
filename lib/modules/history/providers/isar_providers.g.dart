@@ -40,15 +40,21 @@ class GetAllHistoryStreamFamily extends Family<AsyncValue<List<History>>> {
   const GetAllHistoryStreamFamily();
 
   /// See also [getAllHistoryStream].
-  GetAllHistoryStreamProvider call({required ItemType itemType}) {
-    return GetAllHistoryStreamProvider(itemType: itemType);
+  GetAllHistoryStreamProvider call({
+    required ItemType itemType,
+  }) {
+    return GetAllHistoryStreamProvider(
+      itemType: itemType,
+    );
   }
 
   @override
   GetAllHistoryStreamProvider getProviderOverride(
     covariant GetAllHistoryStreamProvider provider,
   ) {
-    return call(itemType: provider.itemType);
+    return call(
+      itemType: provider.itemType,
+    );
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -70,23 +76,24 @@ class GetAllHistoryStreamFamily extends Family<AsyncValue<List<History>>> {
 class GetAllHistoryStreamProvider
     extends AutoDisposeStreamProvider<List<History>> {
   /// See also [getAllHistoryStream].
-  GetAllHistoryStreamProvider({required ItemType itemType})
-    : this._internal(
-        (ref) => getAllHistoryStream(
-          ref as GetAllHistoryStreamRef,
+  GetAllHistoryStreamProvider({
+    required ItemType itemType,
+  }) : this._internal(
+          (ref) => getAllHistoryStream(
+            ref as GetAllHistoryStreamRef,
+            itemType: itemType,
+          ),
+          from: getAllHistoryStreamProvider,
+          name: r'getAllHistoryStreamProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$getAllHistoryStreamHash,
+          dependencies: GetAllHistoryStreamFamily._dependencies,
+          allTransitiveDependencies:
+              GetAllHistoryStreamFamily._allTransitiveDependencies,
           itemType: itemType,
-        ),
-        from: getAllHistoryStreamProvider,
-        name: r'getAllHistoryStreamProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$getAllHistoryStreamHash,
-        dependencies: GetAllHistoryStreamFamily._dependencies,
-        allTransitiveDependencies:
-            GetAllHistoryStreamFamily._allTransitiveDependencies,
-        itemType: itemType,
-      );
+        );
 
   GetAllHistoryStreamProvider._internal(
     super._createNotifier, {
@@ -166,15 +173,21 @@ class GetAllUpdateStreamFamily extends Family<AsyncValue<List<Update>>> {
   const GetAllUpdateStreamFamily();
 
   /// See also [getAllUpdateStream].
-  GetAllUpdateStreamProvider call({required ItemType itemType}) {
-    return GetAllUpdateStreamProvider(itemType: itemType);
+  GetAllUpdateStreamProvider call({
+    required ItemType itemType,
+  }) {
+    return GetAllUpdateStreamProvider(
+      itemType: itemType,
+    );
   }
 
   @override
   GetAllUpdateStreamProvider getProviderOverride(
     covariant GetAllUpdateStreamProvider provider,
   ) {
-    return call(itemType: provider.itemType);
+    return call(
+      itemType: provider.itemType,
+    );
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -196,23 +209,24 @@ class GetAllUpdateStreamFamily extends Family<AsyncValue<List<Update>>> {
 class GetAllUpdateStreamProvider
     extends AutoDisposeStreamProvider<List<Update>> {
   /// See also [getAllUpdateStream].
-  GetAllUpdateStreamProvider({required ItemType itemType})
-    : this._internal(
-        (ref) => getAllUpdateStream(
-          ref as GetAllUpdateStreamRef,
+  GetAllUpdateStreamProvider({
+    required ItemType itemType,
+  }) : this._internal(
+          (ref) => getAllUpdateStream(
+            ref as GetAllUpdateStreamRef,
+            itemType: itemType,
+          ),
+          from: getAllUpdateStreamProvider,
+          name: r'getAllUpdateStreamProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$getAllUpdateStreamHash,
+          dependencies: GetAllUpdateStreamFamily._dependencies,
+          allTransitiveDependencies:
+              GetAllUpdateStreamFamily._allTransitiveDependencies,
           itemType: itemType,
-        ),
-        from: getAllUpdateStreamProvider,
-        name: r'getAllUpdateStreamProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$getAllUpdateStreamHash,
-        dependencies: GetAllUpdateStreamFamily._dependencies,
-        allTransitiveDependencies:
-            GetAllUpdateStreamFamily._allTransitiveDependencies,
-        itemType: itemType,
-      );
+        );
 
   GetAllUpdateStreamProvider._internal(
     super._createNotifier, {
@@ -278,6 +292,5 @@ class _GetAllUpdateStreamProviderElement
   @override
   ItemType get itemType => (origin as GetAllUpdateStreamProvider).itemType;
 }
-
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

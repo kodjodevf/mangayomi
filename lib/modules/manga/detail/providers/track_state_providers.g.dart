@@ -33,7 +33,10 @@ abstract class _$TrackState extends BuildlessAutoDisposeNotifier<Track> {
   late final Track? track;
   late final ItemType? itemType;
 
-  Track build({Track? track, required ItemType? itemType});
+  Track build({
+    Track? track,
+    required ItemType? itemType,
+  });
 }
 
 /// See also [TrackState].
@@ -46,15 +49,24 @@ class TrackStateFamily extends Family<Track> {
   const TrackStateFamily();
 
   /// See also [TrackState].
-  TrackStateProvider call({Track? track, required ItemType? itemType}) {
-    return TrackStateProvider(track: track, itemType: itemType);
+  TrackStateProvider call({
+    Track? track,
+    required ItemType? itemType,
+  }) {
+    return TrackStateProvider(
+      track: track,
+      itemType: itemType,
+    );
   }
 
   @override
   TrackStateProvider getProviderOverride(
     covariant TrackStateProvider provider,
   ) {
-    return call(track: provider.track, itemType: provider.itemType);
+    return call(
+      track: provider.track,
+      itemType: provider.itemType,
+    );
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -76,23 +88,25 @@ class TrackStateFamily extends Family<Track> {
 class TrackStateProvider
     extends AutoDisposeNotifierProviderImpl<TrackState, Track> {
   /// See also [TrackState].
-  TrackStateProvider({Track? track, required ItemType? itemType})
-    : this._internal(
-        () =>
-            TrackState()
-              ..track = track
-              ..itemType = itemType,
-        from: trackStateProvider,
-        name: r'trackStateProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$trackStateHash,
-        dependencies: TrackStateFamily._dependencies,
-        allTransitiveDependencies: TrackStateFamily._allTransitiveDependencies,
-        track: track,
-        itemType: itemType,
-      );
+  TrackStateProvider({
+    Track? track,
+    required ItemType? itemType,
+  }) : this._internal(
+          () => TrackState()
+            ..track = track
+            ..itemType = itemType,
+          from: trackStateProvider,
+          name: r'trackStateProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$trackStateHash,
+          dependencies: TrackStateFamily._dependencies,
+          allTransitiveDependencies:
+              TrackStateFamily._allTransitiveDependencies,
+          track: track,
+          itemType: itemType,
+        );
 
   TrackStateProvider._internal(
     super._createNotifier, {
@@ -109,8 +123,13 @@ class TrackStateProvider
   final ItemType? itemType;
 
   @override
-  Track runNotifierBuild(covariant TrackState notifier) {
-    return notifier.build(track: track, itemType: itemType);
+  Track runNotifierBuild(
+    covariant TrackState notifier,
+  ) {
+    return notifier.build(
+      track: track,
+      itemType: itemType,
+    );
   }
 
   @override
@@ -118,10 +137,9 @@ class TrackStateProvider
     return ProviderOverride(
       origin: this,
       override: TrackStateProvider._internal(
-        () =>
-            create()
-              ..track = track
-              ..itemType = itemType,
+        () => create()
+          ..track = track
+          ..itemType = itemType,
         from: from,
         name: null,
         dependencies: null,
@@ -175,6 +193,5 @@ class _TrackStateProviderElement
   @override
   ItemType? get itemType => (origin as TrackStateProvider).itemType;
 }
-
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

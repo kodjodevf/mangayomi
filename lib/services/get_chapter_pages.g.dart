@@ -39,15 +39,21 @@ class GetChapterPagesFamily extends Family<AsyncValue<GetChapterPagesModel>> {
   const GetChapterPagesFamily();
 
   /// See also [getChapterPages].
-  GetChapterPagesProvider call({required Chapter chapter}) {
-    return GetChapterPagesProvider(chapter: chapter);
+  GetChapterPagesProvider call({
+    required Chapter chapter,
+  }) {
+    return GetChapterPagesProvider(
+      chapter: chapter,
+    );
   }
 
   @override
   GetChapterPagesProvider getProviderOverride(
     covariant GetChapterPagesProvider provider,
   ) {
-    return call(chapter: provider.chapter);
+    return call(
+      chapter: provider.chapter,
+    );
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -69,20 +75,24 @@ class GetChapterPagesFamily extends Family<AsyncValue<GetChapterPagesModel>> {
 class GetChapterPagesProvider
     extends AutoDisposeFutureProvider<GetChapterPagesModel> {
   /// See also [getChapterPages].
-  GetChapterPagesProvider({required Chapter chapter})
-    : this._internal(
-        (ref) => getChapterPages(ref as GetChapterPagesRef, chapter: chapter),
-        from: getChapterPagesProvider,
-        name: r'getChapterPagesProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$getChapterPagesHash,
-        dependencies: GetChapterPagesFamily._dependencies,
-        allTransitiveDependencies:
-            GetChapterPagesFamily._allTransitiveDependencies,
-        chapter: chapter,
-      );
+  GetChapterPagesProvider({
+    required Chapter chapter,
+  }) : this._internal(
+          (ref) => getChapterPages(
+            ref as GetChapterPagesRef,
+            chapter: chapter,
+          ),
+          from: getChapterPagesProvider,
+          name: r'getChapterPagesProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$getChapterPagesHash,
+          dependencies: GetChapterPagesFamily._dependencies,
+          allTransitiveDependencies:
+              GetChapterPagesFamily._allTransitiveDependencies,
+          chapter: chapter,
+        );
 
   GetChapterPagesProvider._internal(
     super._createNotifier, {
@@ -148,6 +158,5 @@ class _GetChapterPagesProviderElement
   @override
   Chapter get chapter => (origin as GetChapterPagesProvider).chapter;
 }
-
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

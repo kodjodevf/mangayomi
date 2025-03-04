@@ -10,6 +10,7 @@ import 'package:mangayomi/modules/browse/extension/edit_code.dart';
 import 'package:mangayomi/modules/browse/extension/extension_detail.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/create_extension.dart';
 import 'package:mangayomi/modules/browse/sources/sources_filter_screen.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/migrate_screen.dart';
 import 'package:mangayomi/modules/more/data_and_storage/create_backup.dart';
 import 'package:mangayomi/modules/more/data_and_storage/data_and_storage.dart';
 import 'package:mangayomi/modules/more/settings/appearance/custom_navigation_settings.dart';
@@ -556,6 +557,21 @@ class RouterNotifier extends ChangeNotifier {
         return transitionPage(
           key: state.pageKey,
           child: const CustomNavigationSettings(),
+        );
+      },
+    ),
+    GoRoute(
+      path: "/migrate",
+      name: "migrate",
+      builder: (context, state) {
+        final manga = state.extra as Manga;
+        return MigrationScreen(manga: manga);
+      },
+      pageBuilder: (context, state) {
+        final manga = state.extra as Manga;
+        return transitionPage(
+          key: state.pageKey,
+          child: MigrationScreen(manga: manga),
         );
       },
     ),
