@@ -215,7 +215,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
           if (_initSubtitleAndAudio) {
             try {
               final file = _firstVid.subtitles!.first.file ?? "";
-              final label = _firstVid.subtitles!.first.label;
+              final label = _firstVid.subtitles!.first.label; // TODO add setting for default
+              print("DEBUG $file   $label");
               _player.setSubtitleTrack(
                 file.startsWith("http")
                     ? SubtitleTrack.uri(file, title: label, language: label)

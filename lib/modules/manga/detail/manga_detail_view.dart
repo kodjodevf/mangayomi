@@ -1487,22 +1487,49 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                               height: 40,
                                               value: 0,
                                               child: Text(
-                                                context.l10n.open_in_browser,
+                                                context
+                                                    .l10n
+                                                    .genre_search_library,
                                               ),
                                             ),
                                             PopupMenuItem<int>(
                                               height: 40,
                                               value: 1,
                                               child: Text(
-                                                context.l10n.settings,
+                                                context
+                                                    .l10n
+                                                    .genre_search_source,
                                               ),
                                             ),
                                           ];
                                         },
                                         onSelected: (value) async {
+                                          final source = getSource(
+                                            widget.manga!.lang!,
+                                            widget.manga!.source!,
+                                          );
+                                          if (source == null) {
+                                            botToast(l10n.source_not_added);
+                                            return;
+                                          }
                                           if (value == 0) {
-                                            // context.push('/mangaHome', extra: (source, false));
-                                          } else {}
+                                            switch (widget.manga!.itemType) {
+                                              case ItemType.manga:
+                                                context.push('/MangaLibrary');
+                                                break;
+                                              case ItemType.anime:
+                                                context.push('/AnimeLibrary');
+                                                break;
+                                              case ItemType.novel:
+                                                context.push('/NovelLibrary');
+                                                break;
+                                            }
+                                          } else {
+                                            context.push(
+                                              '/mangaHome',
+                                              extra: (source, false),
+                                            );
+                                          }
                                         },
                                         child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
