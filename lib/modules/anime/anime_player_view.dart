@@ -24,6 +24,7 @@ import 'package:mangayomi/services/aniskip.dart';
 import 'package:mangayomi/services/get_video_list.dart';
 import 'package:mangayomi/services/torrent_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/utils/language.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
@@ -69,6 +70,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10nLocale = ref.watch(l10nLocaleStateProvider);
     final serversData = ref.watch(getVideoListProvider(episode: episode));
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     return serversData.when(
@@ -91,6 +93,9 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
         }
 
         return AnimeStreamPage(
+          defaultSubtitle: completeLanguageNameEnglish(
+            l10nLocale.toLanguageTag(),
+          ),
           episode: episode,
           videos: videos,
           isLocal: isLocal,
@@ -144,11 +149,13 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
 class AnimeStreamPage extends riv.ConsumerStatefulWidget {
   final List<vid.Video> videos;
   final Chapter episode;
+  final String defaultSubtitle;
   final bool isLocal;
   final bool isTorrent;
   final void Function(bool) desktopFullScreenPlayer;
   const AnimeStreamPage({
     super.key,
+    required this.defaultSubtitle,
     required this.isLocal,
     required this.videos,
     required this.episode,
@@ -214,9 +221,12 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         if (_firstVid.subtitles?.isNotEmpty ?? false) {
           if (_initSubtitleAndAudio) {
             try {
-              final file = _firstVid.subtitles!.first.file ?? "";
-              final label = _firstVid.subtitles!.first.label; // TODO add setting for default
-              print("DEBUG $file   $label");
+              final defaultTrack = _firstVid.subtitles!.firstWhere(
+                (sub) => sub.label == widget.defaultSubtitle,
+                orElse: () => _firstVid.subtitles!.first,
+              );
+              final file = defaultTrack.file ?? "";
+              final label = defaultTrack.label;
               _player.setSubtitleTrack(
                 file.startsWith("http")
                     ? SubtitleTrack.uri(file, title: label, language: label)

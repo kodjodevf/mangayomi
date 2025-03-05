@@ -1515,17 +1515,17 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                           if (value == 0) {
                                             switch (widget.manga!.itemType) {
                                               case ItemType.manga:
-                                                context.push('/MangaLibrary');
+                                                context.replace('/MangaLibrary');
                                                 break;
                                               case ItemType.anime:
-                                                context.push('/AnimeLibrary');
+                                                context.replace('/AnimeLibrary');
                                                 break;
                                               case ItemType.novel:
-                                                context.push('/NovelLibrary');
+                                                context.replace('/NovelLibrary');
                                                 break;
                                             }
                                           } else {
-                                            context.push(
+                                            context.replace(
                                               '/mangaHome',
                                               extra: (source, false),
                                             );
