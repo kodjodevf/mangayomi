@@ -95,35 +95,65 @@ class RouterNotifier extends ChangeNotifier {
         GoRoute(
           name: "MangaLibrary",
           path: '/MangaLibrary',
-          builder:
-              (context, state) => const LibraryScreen(itemType: ItemType.manga),
-          pageBuilder:
-              (context, state) => transitionPage(
-                key: state.pageKey,
-                child: const LibraryScreen(itemType: ItemType.manga),
+          builder: (context, state) {
+            final presetInput = state.extra as String?;
+            return LibraryScreen(
+              itemType: ItemType.manga,
+              presetInput: presetInput,
+            );
+          },
+          pageBuilder: (context, state) {
+            final presetInput = state.extra as String?;
+            return transitionPage(
+              key: state.pageKey,
+              child: LibraryScreen(
+                itemType: ItemType.manga,
+                presetInput: presetInput,
               ),
+            );
+          },
         ),
         GoRoute(
           name: "AnimeLibrary",
           path: '/AnimeLibrary',
-          builder:
-              (context, state) => const LibraryScreen(itemType: ItemType.anime),
-          pageBuilder:
-              (context, state) => transitionPage(
-                key: state.pageKey,
-                child: const LibraryScreen(itemType: ItemType.anime),
+          builder: (context, state) {
+            final presetInput = state.extra as String?;
+            return LibraryScreen(
+              itemType: ItemType.anime,
+              presetInput: presetInput,
+            );
+          },
+          pageBuilder: (context, state) {
+            final presetInput = state.extra as String?;
+            return transitionPage(
+              key: state.pageKey,
+              child: LibraryScreen(
+                itemType: ItemType.anime,
+                presetInput: presetInput,
               ),
+            );
+          },
         ),
         GoRoute(
           name: "NovelLibrary",
           path: '/NovelLibrary',
-          builder:
-              (context, state) => const LibraryScreen(itemType: ItemType.novel),
-          pageBuilder:
-              (context, state) => transitionPage(
-                key: state.pageKey,
-                child: const LibraryScreen(itemType: ItemType.novel),
+          builder: (context, state) {
+            final presetInput = state.extra as String?;
+            return LibraryScreen(
+              itemType: ItemType.novel,
+              presetInput: presetInput,
+            );
+          },
+          pageBuilder: (context, state) {
+            final presetInput = state.extra as String?;
+            return transitionPage(
+              key: state.pageKey,
+              child: LibraryScreen(
+                itemType: ItemType.novel,
+                presetInput: presetInput,
               ),
+            );
+          },
         ),
         GoRoute(
           name: "history",

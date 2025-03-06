@@ -45,7 +45,12 @@ class ConvertToCBZFamily extends Family<AsyncValue<List<String>>> {
     String chapterName,
     List<String> pageList,
   ) {
-    return ConvertToCBZProvider(chapterDir, mangaDir, chapterName, pageList);
+    return ConvertToCBZProvider(
+      chapterDir,
+      mangaDir,
+      chapterName,
+      pageList,
+    );
   }
 
   @override
@@ -84,27 +89,27 @@ class ConvertToCBZProvider extends AutoDisposeFutureProvider<List<String>> {
     String chapterName,
     List<String> pageList,
   ) : this._internal(
-        (ref) => convertToCBZ(
-          ref as ConvertToCBZRef,
-          chapterDir,
-          mangaDir,
-          chapterName,
-          pageList,
-        ),
-        from: convertToCBZProvider,
-        name: r'convertToCBZProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$convertToCBZHash,
-        dependencies: ConvertToCBZFamily._dependencies,
-        allTransitiveDependencies:
-            ConvertToCBZFamily._allTransitiveDependencies,
-        chapterDir: chapterDir,
-        mangaDir: mangaDir,
-        chapterName: chapterName,
-        pageList: pageList,
-      );
+          (ref) => convertToCBZ(
+            ref as ConvertToCBZRef,
+            chapterDir,
+            mangaDir,
+            chapterName,
+            pageList,
+          ),
+          from: convertToCBZProvider,
+          name: r'convertToCBZProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$convertToCBZHash,
+          dependencies: ConvertToCBZFamily._dependencies,
+          allTransitiveDependencies:
+              ConvertToCBZFamily._allTransitiveDependencies,
+          chapterDir: chapterDir,
+          mangaDir: mangaDir,
+          chapterName: chapterName,
+          pageList: pageList,
+        );
 
   ConvertToCBZProvider._internal(
     super._createNotifier, {
@@ -201,6 +206,5 @@ class _ConvertToCBZProviderElement
   @override
   List<String> get pageList => (origin as ConvertToCBZProvider).pageList;
 }
-
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

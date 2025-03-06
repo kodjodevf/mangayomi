@@ -125,7 +125,6 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   Widget build(BuildContext context) {
     final supportsLatest = ref.watch(supportsLatestProvider(source: source));
     final filterList = getFilterList(source: source);
-    print(jsonEncode(filterList.where((f) => f.type == "GenreFilter").toList()));
     if (_selectedIndex == 2 && (_isSearch && _query.isNotEmpty) ||
         _isFiltering) {
       _getManga = ref.watch(

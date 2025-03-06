@@ -1513,19 +1513,20 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                             return;
                                           }
                                           if (value == 0) {
+                                            final genre = widget.manga!.genre![i];
                                             switch (widget.manga!.itemType) {
                                               case ItemType.manga:
-                                                context.replace('/MangaLibrary');
+                                                context.pushReplacement('/MangaLibrary', extra: genre);
                                                 break;
                                               case ItemType.anime:
-                                                context.replace('/AnimeLibrary');
+                                                context.pushReplacement('/AnimeLibrary', extra: genre);
                                                 break;
                                               case ItemType.novel:
-                                                context.replace('/NovelLibrary');
+                                                context.pushReplacement('/NovelLibrary', extra: genre);
                                                 break;
                                             }
                                           } else {
-                                            context.replace(
+                                            context.pushReplacement(
                                               '/mangaHome',
                                               extra: (source, false),
                                             );

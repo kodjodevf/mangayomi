@@ -441,6 +441,6 @@
     "manage_novel_repo_url": "Verwalte Repository-Links für Novellen",
     "repo_added": "Erweiterungs-Repository hinzugefügt!",
     "genre_search_library": "Genre im Bibliothek suchen",
-    "genre_search_source": "Genre in der Erweiterung suchen",
+    "genre_search_source": "Zur Erweiterung navigieren",
     "source_not_added": "Die Erweiterung ist nicht installiert!"
 }

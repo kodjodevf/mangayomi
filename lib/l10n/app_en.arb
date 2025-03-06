@@ -454,6 +454,6 @@
   "repo_added": "Source repository added!",
   "add_repo": "Add Repository?",
   "genre_search_library": "Search genre in library",
-  "genre_search_source": "Search genre in source",
+  "genre_search_source": "Browse in source",
   "source_not_added": "Source is not installed!"
 }
