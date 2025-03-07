@@ -44,7 +44,11 @@ class MyAnimeList extends _$MyAnimeList {
       if (queryParams['code'] == null) return null;
 
       final oAuth = await _getOAuth(queryParams['code']!);
-      final mALOAuth = OAuth.fromJson(oAuth as Map<String, dynamic>);
+      final mALOAuth = OAuth.fromJson(oAuth as Map<String, dynamic>)
+        ..expiresIn =
+            DateTime.now()
+                .add(Duration(seconds: oAuth['expires_in']))
+                .millisecondsSinceEpoch;
       final username = await _getUserName(mALOAuth.accessToken!);
       ref
           .read(tracksProvider(syncId: syncId).notifier)
