@@ -260,20 +260,28 @@ class ResolveCloudFlareChallenge extends RetryPolicy {
           url: flutter_inappwebview.WebUri(response.request!.url.toString()),
         ),
         onLoadStop: (controller, url) async {
-          isCloudFlare = await controller.platform.evaluateJavascript(
-            source:
-                "document.head.innerHTML.includes('#challenge-success-text')",
-          );
+          try {
+            isCloudFlare = await controller.platform.evaluateJavascript(
+              source:
+                  "document.head.innerHTML.includes('#challenge-success-text')",
+            );
+          } catch (_) {
+            isCloudFlare = false;
+          }
 
           await Future.doWhile(() async {
             if (timeOut == true) {
               return false;
             }
             if (isCloudFlare) {
-              isCloudFlare = await controller.platform.evaluateJavascript(
-                source:
-                    "document.head.innerHTML.includes('#challenge-success-text')",
-              );
+              try {
+                isCloudFlare = await controller.platform.evaluateJavascript(
+                  source:
+                      "document.head.innerHTML.includes('#challenge-success-text')",
+                );
+              } catch (_) {
+                isCloudFlare = false;
+              }
               return true;
             }
             return false;
