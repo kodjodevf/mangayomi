@@ -134,7 +134,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                         data.sort((a, b) => (a.pos ?? 0).compareTo(b.pos ?? 0));
 
                         final entr =
-                            data.where((e) => e.hide ?? false).toList();
+                            data.where((e) => !(e.hide ?? false)).toList();
                         tabBarController = TabController(
                           length:
                               withoutCategory.isNotEmpty
@@ -1176,7 +1176,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                               );
 
                               final entries =
-                                  data.where((e) => e.hide ?? false).toList();
+                                  data.where((e) => !(e.hide ?? false)).toList();
                               if (entries.isEmpty) {
                                 return Text(l10n.library_no_category_exist);
                               }
