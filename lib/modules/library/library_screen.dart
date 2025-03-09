@@ -1150,7 +1150,16 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                         child: Builder(
                           builder: (context) {
                             if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                              final entries = snapshot.data!;
+                              final data = snapshot.data!;
+                              data.sort(
+                                (a, b) => (a.pos ?? 0).compareTo(b.pos ?? 0),
+                              );
+
+                              final entries =
+                                  data.where((e) => e.hide ?? false).toList();
+                              if (entries.isEmpty) {
+                                return Text(l10n.library_no_category_exist);
+                              }
                               return SuperListView.builder(
                                 shrinkWrap: true,
                                 itemCount: entries.length,
@@ -1192,7 +1201,14 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                   onPressed: () {
                                     context.push(
                                       "/categories",
-                                      extra: (true, widget.itemType),
+                                      extra: (
+                                        true,
+                                        widget.itemType == ItemType.manga
+                                            ? 0
+                                            : widget.itemType == ItemType.anime
+                                            ? 1
+                                            : 2,
+                                      ),
                                     );
                                     Navigator.pop(context);
                                   },
@@ -1259,7 +1275,14 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                   onPressed: () {
                                     context.push(
                                       "/categories",
-                                      extra: (true, widget.itemType),
+                                      extra: (
+                                        true,
+                                        widget.itemType == ItemType.manga
+                                            ? 0
+                                            : widget.itemType == ItemType.anime
+                                            ? 1
+                                            : 2,
+                                      ),
                                     );
                                     Navigator.pop(context);
                                   },
