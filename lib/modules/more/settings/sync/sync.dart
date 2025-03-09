@@ -10,6 +10,7 @@ import 'package:mangayomi/modules/more/settings/sync/widgets/sync_listile.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/sync_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class SyncScreen extends ConsumerWidget {
   const SyncScreen({super.key});
@@ -69,7 +70,7 @@ class SyncScreen extends ConsumerWidget {
                           title: Text(l10n.sync_auto),
                           content: SizedBox(
                             width: context.width(0.8),
-                            child: ListView.builder(
+                            child: SuperListView.builder(
                               shrinkWrap: true,
                               itemCount: autoSyncOptions.length,
                               itemBuilder: (context, index) {
@@ -666,7 +667,7 @@ class SyncScreen extends ConsumerWidget {
                                           title: Text(l10n.sync_snapshots),
                                           content: SizedBox(
                                             width: context.width(0.8),
-                                            child: ListView.builder(
+                                            child: SuperListView.builder(
                                               shrinkWrap: true,
                                               itemCount: snapshots.length,
                                               itemBuilder: (context, index) {

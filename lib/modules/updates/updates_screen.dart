@@ -1,7 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:grouped_list/sliver_grouped_list.dart';
+import 'package:mangayomi/modules/widgets/custom_sliver_grouped_list_view.dart';
 
 import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
@@ -389,7 +389,7 @@ class _UpdateTabState extends ConsumerState<UpdateTab> {
                           ]),
                         ),
                       ),
-                    SliverGroupedListView<Update, String>(
+                    CustomSliverGroupedListView<Update, String>(
                       elements: entries,
                       groupBy:
                           (element) => dateFormat(

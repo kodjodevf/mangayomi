@@ -9,6 +9,7 @@ import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.da
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/extension_lang_list_tile_widget.dart';
 import 'package:mangayomi/utils/global_style.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class ExtensionsLang extends ConsumerWidget {
   final ItemType itemType;
@@ -71,7 +72,7 @@ class ExtensionsLang extends ConsumerWidget {
           final languages = entries!.map((e) => e.lang!).toSet().toList();
 
           languages.sort((a, b) => a.compareTo(b));
-          return ListView.builder(
+          return SuperListView.builder(
             itemCount: languages.length,
             itemBuilder: (context, index) {
               final lang = languages[index];

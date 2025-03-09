@@ -11,6 +11,7 @@ import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:numberpicker/numberpicker.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class TrackerWidget extends ConsumerStatefulWidget {
   final ItemType itemType;
@@ -171,7 +172,7 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                           title: Text(l10n!.status),
                           content: SizedBox(
                             width: context.width(0.8),
-                            child: ListView.builder(
+                            child: SuperListView.builder(
                               shrinkWrap: true,
                               itemCount:
                                   ref

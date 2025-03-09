@@ -10,6 +10,7 @@ import 'package:mangayomi/modules/more/data_and_storage/providers/storage_usage.
 import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class DataAndStorage extends ConsumerWidget {
   const DataAndStorage({super.key});
@@ -38,7 +39,7 @@ class DataAndStorage extends ConsumerWidget {
                       title: Text(l10n.download_location),
                       content: SizedBox(
                         width: context.width(0.8),
-                        child: ListView(
+                        child: SuperListView(
                           shrinkWrap: true,
                           children: [
                             RadioListTile(
@@ -184,7 +185,7 @@ class DataAndStorage extends ConsumerWidget {
                                 title: Text(l10n.restore_backup),
                                 content: SizedBox(
                                   width: context.width(0.8),
-                                  child: ListView(
+                                  child: SuperListView(
                                     shrinkWrap: true,
                                     children: [
                                       Row(
@@ -277,7 +278,7 @@ class DataAndStorage extends ConsumerWidget {
                       title: Text(l10n.backup_frequency),
                       content: SizedBox(
                         width: context.width(0.8),
-                        child: ListView.builder(
+                        child: SuperListView.builder(
                           shrinkWrap: true,
                           itemCount: list.length,
                           itemBuilder: (context, index) {

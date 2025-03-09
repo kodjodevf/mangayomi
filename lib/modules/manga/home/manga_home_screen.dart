@@ -25,6 +25,7 @@ import 'package:mangayomi/modules/manga/home/widget/mangas_card_selector.dart';
 import 'package:mangayomi/modules/widgets/gridview_widget.dart';
 import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
 import 'package:mangayomi/utils/global_style.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class MangaHomeScreen extends ConsumerStatefulWidget {
   final Source source;
@@ -294,7 +295,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
               SizedBox(
                 width: context.width(1),
                 height: 45,
-                child: ListView.builder(
+                child: SuperListView.builder(
                   scrollDirection: Axis.horizontal,
                   shrinkWrap: true,
                   itemCount: 3,
@@ -536,7 +537,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                         Flexible(
                           child:
                               displayType == DisplayType.list
-                                  ? ListViewWidget(
+                                  ? SuperListViewWidget(
                                     controller: _scrollController,
                                     itemCount: _length + 1,
                                     itemBuilder: (context, index) {

@@ -10,6 +10,7 @@ import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_pr
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class CategoriesScreen extends ConsumerStatefulWidget {
   final (bool, int) data;
@@ -116,7 +117,7 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
             );
           }
           _entries = data;
-          return ListView.builder(
+          return SuperListView.builder(
             itemCount: _entries.length,
             itemBuilder: (context, index) {
               return Padding(

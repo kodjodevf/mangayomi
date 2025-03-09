@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
-class ListViewWidget extends StatelessWidget {
+class SuperListViewWidget extends StatelessWidget {
   final ScrollController? controller;
   final int? itemCount;
   final bool reverse;
   final Widget? Function(BuildContext, int) itemBuilder;
-  const ListViewWidget({
+  const SuperListViewWidget({
     super.key,
     this.controller,
     required this.itemCount,

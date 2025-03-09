@@ -18,6 +18,7 @@ import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 import 'package:mangayomi/utils/extensions/chapter.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class MangaDetailsView extends ConsumerStatefulWidget {
   final Manga manga;
@@ -328,7 +329,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                       final entries = snapshot.data!;
-                      return ListView.builder(
+                      return SuperListView.builder(
                         shrinkWrap: true,
                         itemCount: entries.length,
                         itemBuilder: (context, index) {

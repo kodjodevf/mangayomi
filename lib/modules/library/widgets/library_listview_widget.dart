@@ -37,7 +37,7 @@ class LibraryListViewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListViewWidget(
+    return SuperListViewWidget(
       itemCount: entriesManga.length,
       itemBuilder: (context, index) {
         final entry = entriesManga[index];

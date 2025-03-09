@@ -6,6 +6,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class SourceRepositories extends ConsumerStatefulWidget {
   final ItemType itemType;
@@ -49,7 +50,7 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
           }
           _entries = data;
 
-          return ListView.builder(
+          return SuperListView.builder(
             itemCount: _entries.length,
             itemBuilder: (context, index) {
               final repo = _entries[index];

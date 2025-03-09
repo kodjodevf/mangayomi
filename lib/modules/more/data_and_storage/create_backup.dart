@@ -9,6 +9,7 @@ import 'package:mangayomi/modules/more/data_and_storage/providers/backup.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class CreateBackup extends ConsumerStatefulWidget {
   const CreateBackup({super.key});
@@ -64,7 +65,7 @@ class _CreateBackupState extends ConsumerState<CreateBackup> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25),
                 ),
-                child: ListView.builder(
+                child: SuperListView.builder(
                   padding: EdgeInsets.symmetric(horizontal: 0, vertical: 15),
                   shrinkWrap: true,
                   primary: false,
@@ -99,7 +100,7 @@ class _CreateBackupState extends ConsumerState<CreateBackup> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25),
                 ),
-                child: ListView.builder(
+                child: SuperListView.builder(
                   padding: EdgeInsets.symmetric(horizontal: 0, vertical: 15),
                   shrinkWrap: true,
                   primary: false,
@@ -134,7 +135,7 @@ class _CreateBackupState extends ConsumerState<CreateBackup> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25),
                 ),
-                child: ListView.builder(
+                child: SuperListView.builder(
                   padding: EdgeInsets.symmetric(horizontal: 0, vertical: 15),
                   shrinkWrap: true,
                   primary: false,

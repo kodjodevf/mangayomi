@@ -4,6 +4,7 @@ import 'package:mangayomi/modules/more/settings/player/providers/player_state_pr
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:numberpicker/numberpicker.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class PlayerScreen extends ConsumerWidget {
   const PlayerScreen({super.key});
@@ -39,7 +40,7 @@ class PlayerScreen extends ConsumerWidget {
                       title: Text(context.l10n.markEpisodeAsSeenSetting),
                       content: SizedBox(
                         width: context.width(0.8),
-                        child: ListView.builder(
+                        child: SuperListView.builder(
                           shrinkWrap: true,
                           itemCount: values.length,
                           itemBuilder: (context, index) {
@@ -173,7 +174,7 @@ class PlayerScreen extends ConsumerWidget {
                       ),
                       content: SizedBox(
                         width: context.width(0.8),
-                        child: ListView.builder(
+                        child: SuperListView.builder(
                           shrinkWrap: true,
                           itemCount: values.length,
                           itemBuilder: (context, index) {
@@ -232,7 +233,7 @@ class PlayerScreen extends ConsumerWidget {
                       title: Text(context.l10n.default_playback_speed_length),
                       content: SizedBox(
                         width: context.width(0.8),
-                        child: ListView.builder(
+                        child: SuperListView.builder(
                           shrinkWrap: true,
                           itemCount: values.length,
                           itemBuilder: (context, index) {
@@ -338,7 +339,7 @@ class PlayerScreen extends ConsumerWidget {
                           ),
                           content: SizedBox(
                             width: context.width(0.8),
-                            child: ListView.builder(
+                            child: SuperListView.builder(
                               shrinkWrap: true,
                               itemCount: values.length,
                               itemBuilder: (context, index) {

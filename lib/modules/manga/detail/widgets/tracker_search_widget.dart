@@ -10,6 +10,7 @@ import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class TrackerWidgetSearch extends ConsumerStatefulWidget {
   final ItemType itemType;
@@ -94,7 +95,7 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
                         ),
                       if (_errorMsg == null && !hide)
                         Flexible(
-                          child: ListView.separated(
+                          child: SuperListView.separated(
                             padding: const EdgeInsets.only(top: 20),
                             itemCount: tracks!.length,
                             itemBuilder: (context, index) {

@@ -44,6 +44,7 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:path/path.dart' as p;
 
@@ -296,7 +297,7 @@ class _MangaChapterPageGalleryState
         context: context,
         constraints: BoxConstraints(maxWidth: context.width(1)),
         builder: (context) {
-          return ListView(
+          return SuperListView(
             shrinkWrap: true,
             children: [
               Container(

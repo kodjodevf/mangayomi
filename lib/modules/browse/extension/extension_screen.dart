@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:grouped_list/sliver_grouped_list.dart';
+import 'package:mangayomi/modules/widgets/custom_sliver_grouped_list_view.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extensions_provider.dart';
@@ -152,7 +152,7 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
   }
 
   Widget _buildUpdateSection(List<Source> updateEntries, dynamic l10n) {
-    return SliverGroupedListView<Source, String>(
+    return CustomSliverGroupedListView<Source, String>(
       elements: updateEntries,
       groupBy: (_) => "",
       groupSeparatorBuilder:
@@ -211,7 +211,7 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
   }
 
   Widget _buildInstalledSection(List<Source> installedEntries, dynamic l10n) {
-    return SliverGroupedListView<Source, String>(
+    return CustomSliverGroupedListView<Source, String>(
       elements: installedEntries,
       groupBy: (_) => "",
       groupSeparatorBuilder:
@@ -233,7 +233,7 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
   }
 
   Widget _buildNotInstalledSection(List<Source> notInstalledEntries) {
-    return SliverGroupedListView<Source, String>(
+    return CustomSliverGroupedListView<Source, String>(
       elements: notInstalledEntries,
       groupBy:
           (element) => completeLanguageName(element.lang?.toLowerCase() ?? ''),

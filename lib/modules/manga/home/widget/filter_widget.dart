@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mangayomi/eval/model/filter.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class FilterWidget extends StatelessWidget {
   final List<dynamic> filterList;
@@ -13,7 +14,7 @@ class FilterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return SuperListView.builder(
       padding: const EdgeInsets.all(0),
       itemCount: filterList.length,
       primary: false,

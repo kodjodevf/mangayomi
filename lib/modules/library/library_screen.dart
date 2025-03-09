@@ -39,6 +39,7 @@ import 'package:mangayomi/modules/manga/detail/widgets/chapter_sort_list_tile_wi
 import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/utils/global_style.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class LibraryScreen extends ConsumerStatefulWidget {
   final ItemType itemType;
@@ -1147,7 +1148,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                           builder: (context) {
                             if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                               final entries = snapshot.data!;
-                              return ListView.builder(
+                              return SuperListView.builder(
                                 shrinkWrap: true,
                                 itemCount: entries.length,
                                 itemBuilder: (context, index) {

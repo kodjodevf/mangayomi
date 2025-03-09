@@ -4,6 +4,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class GeneralScreen extends ConsumerWidget {
   const GeneralScreen({super.key});
@@ -26,7 +27,7 @@ class GeneralScreen extends ConsumerWidget {
                       title: Text(l10n.app_language),
                       content: SizedBox(
                         width: context.width(0.8),
-                        child: ListView.builder(
+                        child: SuperListView.builder(
                           shrinkWrap: true,
                           itemCount: AppLocalizations.supportedLocales.length,
                           itemBuilder: (context, index) {

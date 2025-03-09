@@ -6,6 +6,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class ThemeSelector extends ConsumerStatefulWidget {
   const ThemeSelector({super.key, this.contentPadding});
@@ -29,7 +30,7 @@ class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
       child: Row(
         children: [
           Expanded(
-            child: ListView.builder(
+            child: SuperListView.builder(
               padding: const EdgeInsetsDirectional.only(start: 8, end: 16),
               physics: const ClampingScrollPhysics(),
               scrollDirection: Axis.horizontal,

@@ -5,6 +5,7 @@ import 'package:mangayomi/modules/browse/extension/providers/extension_preferenc
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class SourcePreferenceWidget extends StatefulWidget {
   final List<SourcePreference> sourcePreference;
@@ -128,7 +129,7 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                             ),
                             content: SizedBox(
                               width: context.width(0.8),
-                              child: ListView.builder(
+                              child: SuperListView.builder(
                                 shrinkWrap: true,
                                 itemCount: pref.entries!.length,
                                 itemBuilder: (context, index) {
@@ -198,7 +199,7 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                               title: Text(pref.title!),
                               content: SizedBox(
                                 width: context.width(0.8),
-                                child: ListView.builder(
+                                child: SuperListView.builder(
                                   shrinkWrap: true,
                                   itemCount: pref.entries!.length,
                                   itemBuilder: (context, index) {

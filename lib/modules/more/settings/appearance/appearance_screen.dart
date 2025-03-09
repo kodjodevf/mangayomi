@@ -117,7 +117,7 @@ class AppearanceScreen extends ConsumerWidget {
                             title: Text(l10n.app_language),
                             content: SizedBox(
                               width: context.width(0.8),
-                              child: ListView.builder(
+                              child: SuperListView.builder(
                                 shrinkWrap: true,
                                 itemCount:
                                     AppLocalizations.supportedLocales.length,
@@ -388,7 +388,7 @@ class AppearanceScreen extends ConsumerWidget {
                             title: Text(l10n.relative_timestamp),
                             content: SizedBox(
                               width: context.width(0.8),
-                              child: ListView.builder(
+                              child: SuperListView.builder(
                                 shrinkWrap: true,
                                 itemCount:
                                     relativeTimestampsList(context).length,
@@ -460,7 +460,7 @@ class AppearanceScreen extends ConsumerWidget {
                             title: Text(l10n.date_format),
                             content: SizedBox(
                               width: context.width(0.8),
-                              child: ListView.builder(
+                              child: SuperListView.builder(
                                 shrinkWrap: true,
                                 itemCount: dateFormatsList.length,
                                 itemBuilder: (context, index) {

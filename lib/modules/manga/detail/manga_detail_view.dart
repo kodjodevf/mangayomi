@@ -1166,7 +1166,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                         ),
                                         content: SizedBox(
                                           width: context.width(0.8),
-                                          child: ListView.builder(
+                                          child: SuperListView.builder(
                                             shrinkWrap: true,
                                             itemCount: scanlators.$1.length,
                                             itemBuilder: (context, index) {
@@ -2251,7 +2251,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
           clipBehavior: Clip.antiAliasWithSaveLayer,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: ListView.separated(
+            child: SuperListView.separated(
               padding: const EdgeInsets.all(0),
               itemCount: entries!.length,
               primary: false,

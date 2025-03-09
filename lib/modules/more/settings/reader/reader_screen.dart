@@ -4,6 +4,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class ReaderScreen extends ConsumerWidget {
   const ReaderScreen({super.key});
@@ -38,7 +39,7 @@ class ReaderScreen extends ConsumerWidget {
                       title: Text(context.l10n.default_reading_mode),
                       content: SizedBox(
                         width: context.width(0.8),
-                        child: ListView.builder(
+                        child: SuperListView.builder(
                           shrinkWrap: true,
                           itemCount: ReaderMode.values.length,
                           itemBuilder: (context, index) {
@@ -104,7 +105,7 @@ class ReaderScreen extends ConsumerWidget {
                       title: Text(context.l10n.double_tap_animation_speed),
                       content: SizedBox(
                         width: context.width(0.8),
-                        child: ListView.builder(
+                        child: SuperListView.builder(
                           shrinkWrap: true,
                           itemCount: 3,
                           itemBuilder: (context, index) {
@@ -166,7 +167,7 @@ class ReaderScreen extends ConsumerWidget {
                       title: Text(context.l10n.background_color),
                       content: SizedBox(
                         width: context.width(0.8),
-                        child: ListView.builder(
+                        child: SuperListView.builder(
                           shrinkWrap: true,
                           itemCount: BackgroundColor.values.length,
                           itemBuilder: (context, index) {
@@ -231,7 +232,7 @@ class ReaderScreen extends ConsumerWidget {
                       title: Text(context.l10n.page_preload_amount),
                       content: SizedBox(
                         width: context.width(0.8),
-                        child: ListView.builder(
+                        child: SuperListView.builder(
                           shrinkWrap: true,
                           itemCount: numbers.length,
                           itemBuilder: (context, index) {
@@ -290,7 +291,7 @@ class ReaderScreen extends ConsumerWidget {
                       title: Text(context.l10n.scale_type),
                       content: SizedBox(
                         width: context.width(0.8),
-                        child: ListView.builder(
+                        child: SuperListView.builder(
                           shrinkWrap: true,
                           itemCount: getScaleTypeNames(context).length,
                           itemBuilder: (context, index) {

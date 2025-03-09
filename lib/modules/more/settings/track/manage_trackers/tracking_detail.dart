@@ -7,6 +7,7 @@ import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/constant.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class TrackingDetail extends StatefulWidget {
   final TrackPreference trackerPref;
@@ -85,7 +86,7 @@ class TrackingTab extends StatelessWidget {
         final mediaIds = trackRes!.map((e) => e.mediaId).toSet().toList();
         return Padding(
           padding: const EdgeInsets.all(8.0),
-          child: ListView.separated(
+          child: SuperListView.separated(
             padding: const EdgeInsets.all(0),
             itemCount: mediaIds.length,
             primary: false,
@@ -149,7 +150,7 @@ class TrackingWidget extends StatelessWidget {
         }
         return Padding(
           padding: const EdgeInsets.all(8.0),
-          child: ListView.separated(
+          child: SuperListView.separated(
             padding: const EdgeInsets.all(0),
             itemCount: trackRes.length,
             primary: false,
