@@ -126,8 +126,9 @@ class BrowseSScreen extends ConsumerWidget {
                             () => _showClearAllSourcesDialog(context, l10n),
                         child: Text(
                           l10n.clear_all_sources,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 20,
+                            color: Colors.redAccent.withValues(alpha: 0.8),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
