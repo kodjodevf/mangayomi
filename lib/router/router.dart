@@ -16,6 +16,7 @@ import 'package:mangayomi/modules/more/data_and_storage/data_and_storage.dart';
 import 'package:mangayomi/modules/more/settings/appearance/custom_navigation_settings.dart';
 import 'package:mangayomi/modules/more/settings/browse/source_repositories.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/modules/more/statistics/statistics_screen.dart';
 import 'package:mangayomi/modules/novel/novel_reader_view.dart';
 import 'package:mangayomi/modules/updates/updates_screen.dart';
 import 'package:mangayomi/modules/more/categories/categories_screen.dart';
@@ -95,35 +96,65 @@ class RouterNotifier extends ChangeNotifier {
         GoRoute(
           name: "MangaLibrary",
           path: '/MangaLibrary',
-          builder:
-              (context, state) => const LibraryScreen(itemType: ItemType.manga),
-          pageBuilder:
-              (context, state) => transitionPage(
-                key: state.pageKey,
-                child: const LibraryScreen(itemType: ItemType.manga),
+          builder: (context, state) {
+            final presetInput = state.extra as String?;
+            return LibraryScreen(
+              itemType: ItemType.manga,
+              presetInput: presetInput,
+            );
+          },
+          pageBuilder: (context, state) {
+            final presetInput = state.extra as String?;
+            return transitionPage(
+              key: state.pageKey,
+              child: LibraryScreen(
+                itemType: ItemType.manga,
+                presetInput: presetInput,
               ),
+            );
+          },
         ),
         GoRoute(
           name: "AnimeLibrary",
           path: '/AnimeLibrary',
-          builder:
-              (context, state) => const LibraryScreen(itemType: ItemType.anime),
-          pageBuilder:
-              (context, state) => transitionPage(
-                key: state.pageKey,
-                child: const LibraryScreen(itemType: ItemType.anime),
+          builder: (context, state) {
+            final presetInput = state.extra as String?;
+            return LibraryScreen(
+              itemType: ItemType.anime,
+              presetInput: presetInput,
+            );
+          },
+          pageBuilder: (context, state) {
+            final presetInput = state.extra as String?;
+            return transitionPage(
+              key: state.pageKey,
+              child: LibraryScreen(
+                itemType: ItemType.anime,
+                presetInput: presetInput,
               ),
+            );
+          },
         ),
         GoRoute(
           name: "NovelLibrary",
           path: '/NovelLibrary',
-          builder:
-              (context, state) => const LibraryScreen(itemType: ItemType.novel),
-          pageBuilder:
-              (context, state) => transitionPage(
-                key: state.pageKey,
-                child: const LibraryScreen(itemType: ItemType.novel),
+          builder: (context, state) {
+            final presetInput = state.extra as String?;
+            return LibraryScreen(
+              itemType: ItemType.novel,
+              presetInput: presetInput,
+            );
+          },
+          pageBuilder: (context, state) {
+            final presetInput = state.extra as String?;
+            return transitionPage(
+              key: state.pageKey,
+              child: LibraryScreen(
+                itemType: ItemType.novel,
+                presetInput: presetInput,
               ),
+            );
+          },
         ),
         GoRoute(
           name: "history",
@@ -398,6 +429,16 @@ class RouterNotifier extends ChangeNotifier {
           key: state.pageKey,
           child: CategoriesScreen(data: data),
         );
+      },
+    ),
+    GoRoute(
+      path: "/statistics",
+      name: "statistics",
+      builder: (context, state) {
+        return StatisticsScreen();
+      },
+      pageBuilder: (context, state) {
+        return transitionPage(key: state.pageKey, child: StatisticsScreen());
       },
     ),
     GoRoute(

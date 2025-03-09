@@ -92,6 +92,8 @@ class Settings {
 
   L10nLocale? locale;
 
+  L10nLocale? defaultSubtitleLang;
+
   @enumerated
   late DisplayType animeDisplayType;
 
@@ -427,6 +429,8 @@ class Settings {
     libraryShowNumbersOfItems = json['libraryShowNumbersOfItems'];
     locale =
         json['locale'] != null ? L10nLocale.fromJson(json['locale']) : null;
+    defaultSubtitleLang =
+        json['defaultSubtitleLang'] != null ? L10nLocale.fromJson(json['defaultSubtitleLang']) : null;
     onlyIncludePinnedSources = json['onlyIncludePinnedSources'];
     pagePreloadAmount = json['pagePreloadAmount'];
     if (json['personalPageModeList'] != null) {
@@ -616,6 +620,7 @@ class Settings {
     'libraryShowLanguage': libraryShowLanguage,
     'libraryShowNumbersOfItems': libraryShowNumbersOfItems,
     'locale': locale?.toJson(),
+    'defaultSubtitleLang': defaultSubtitleLang?.toJson(),
     'onlyIncludePinnedSources': onlyIncludePinnedSources,
     'pagePreloadAmount': pagePreloadAmount,
     'personalPageModeList':

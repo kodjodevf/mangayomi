@@ -1478,26 +1478,80 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     ),
                                     child: SizedBox(
                                       height: 30,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          elevation: 0,
-                                          backgroundColor: Colors.grey
-                                              .withValues(alpha: 0.2),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              5,
+                                      child: PopupMenuButton(
+                                        popUpAnimationStyle:
+                                            popupAnimationStyle,
+                                        itemBuilder: (context) {
+                                          return [
+                                            PopupMenuItem<int>(
+                                              height: 40,
+                                              value: 0,
+                                              child: Text(
+                                                context
+                                                    .l10n
+                                                    .genre_search_library,
+                                              ),
+                                            ),
+                                            PopupMenuItem<int>(
+                                              height: 40,
+                                              value: 1,
+                                              child: Text(
+                                                context
+                                                    .l10n
+                                                    .genre_search_source,
+                                              ),
+                                            ),
+                                          ];
+                                        },
+                                        onSelected: (value) async {
+                                          final source = getSource(
+                                            widget.manga!.lang!,
+                                            widget.manga!.source!,
+                                          );
+                                          if (source == null) {
+                                            botToast(l10n.source_not_added);
+                                            return;
+                                          }
+                                          if (value == 0) {
+                                            final genre = widget.manga!.genre![i];
+                                            switch (widget.manga!.itemType) {
+                                              case ItemType.manga:
+                                                context.pushReplacement('/MangaLibrary', extra: genre);
+                                                break;
+                                              case ItemType.anime:
+                                                context.pushReplacement('/AnimeLibrary', extra: genre);
+                                                break;
+                                              case ItemType.novel:
+                                                context.pushReplacement('/NovelLibrary', extra: genre);
+                                                break;
+                                            }
+                                          } else {
+                                            context.pushReplacement(
+                                              '/mangaHome',
+                                              extra: (source, false),
+                                            );
+                                          }
+                                        },
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            elevation: 0,
+                                            backgroundColor: Colors.grey
+                                                .withValues(alpha: 0.2),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
                                             ),
                                           ),
-                                        ),
-                                        onPressed: () {},
-                                        child: Text(
-                                          widget.manga!.genre![i],
-                                          style: TextStyle(
-                                            fontSize: 11.5,
-                                            color:
-                                                context.isLight
-                                                    ? Colors.black
-                                                    : Colors.white,
+                                          onPressed: null,
+                                          child: Text(
+                                            widget.manga!.genre![i],
+                                            style: TextStyle(
+                                              fontSize: 11.5,
+                                              color:
+                                                  context.isLight
+                                                      ? Colors.black
+                                                      : Colors.white,
+                                            ),
                                           ),
                                         ),
                                       ),
