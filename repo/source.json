@@ -4,8 +4,8 @@
   "headerURL": "https://raw.githubusercontent.com/tanakrit-d/mangayomi-workflow-test/refs/heads/main/repo/images/headers/source_header_default.webp",
   "website": "https://github.com/kodjodevf/mangayomi",
   "iconURL": "https://raw.githubusercontent.com/tanakrit-d/mangayomi-workflow-test/refs/heads/main/repo/images/icons/icon_default.webp",
-  "subtitle": "Mangayomi app source.",
-  "description": "This is the official source for Mangayomi.\n\nFor full details, check the GitHub repository:\nhttps://github.com/tanakrit-d/mangayomi-source",
+  "subtitle": "An experience like no other.",
+  "description": "This is the official source for Mangayomi.\n\nFor full details, check the GitHub repository:\nhttps://github.com/tanakrit-d/mangayomi-workflow-test",
   "tintColor": "EF4444",
   "apps": [
     {
