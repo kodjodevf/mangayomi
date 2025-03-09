@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/changed.dart';
@@ -60,7 +61,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
             style: TextStyle(color: Theme.of(context).hintColor),
           ),
           bottom: TabBar(
-            indicatorSize: TabBarIndicatorSize.tab,
+            indicatorSize: TabBarIndicatorSize.label,
             controller: _tabBarController,
             tabs: [
               if (!hideItems.contains("/MangaLibrary")) Tab(text: l10n.manga),
@@ -95,6 +96,17 @@ class CategoriesTab extends ConsumerStatefulWidget {
 
 class _CategoriesTabState extends ConsumerState<CategoriesTab> {
   List<Category> _entries = [];
+  void _updateCategoriesOrder(List<Category> categories) {
+    isar.writeTxnSync(() {
+      isar.categorys.clearSync();
+      isar.categorys.putAllSync(categories);
+      final cats = isar.categorys.filter().posIsNull().findAllSync();
+      for (var category in cats) {
+        isar.categorys.putSync(category..pos = category.id);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
@@ -116,136 +128,235 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
               ),
             );
           }
+          data.sort((a, b) => (a.pos ?? 0).compareTo(b.pos ?? 0));
           _entries = data;
+
           return SuperListView.builder(
             itemCount: _entries.length,
             itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Card(
-                  child: Column(
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          elevation: 0,
-                          shadowColor: Colors.transparent,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(0),
-                              bottomRight: Radius.circular(0),
-                              topRight: Radius.circular(10),
-                              topLeft: Radius.circular(10),
+              final category = _entries[index];
+              return AnimatedSwitcher(
+                duration: const Duration(milliseconds: 900),
+                child: Padding(
+                  key: Key('category_${category.id}'),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: Card(
+                    child: Column(
+                      children: [
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            elevation: 0,
+                            shadowColor: Colors.transparent,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(0),
+                                bottomRight: Radius.circular(0),
+                                topRight: Radius.circular(10),
+                                topLeft: Radius.circular(10),
+                              ),
                             ),
                           ),
+                          onPressed: () {
+                            _renameCategory(category);
+                          },
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              const Icon(Icons.label_outline_rounded),
+                              const SizedBox(width: 10),
+                              Expanded(child: Text(category.name!)),
+                            ],
+                          ),
                         ),
-                        onPressed: () {
-                          _renameCategory(_entries[index]);
-                        },
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Icon(Icons.label_outline_rounded),
-                            const SizedBox(width: 10),
-                            Expanded(child: Text(_entries[index].name!)),
+                            Row(
+                              children: [
+                                Row(
+                                  children: [
+                                    const SizedBox(width: 10),
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.arrow_drop_up_outlined,
+                                      ),
+                                      onPressed:
+                                          index > 0
+                                              ? () {
+                                                final item =
+                                                    _entries[index - 1];
+                                                _entries.removeAt(index);
+                                                _entries.removeAt(index - 1);
+                                                int? currentPos = category.pos;
+                                                int? pos = item.pos;
+                                                setState(() {});
+                                                _updateCategoriesOrder([
+                                                  ..._entries,
+                                                  category..pos = pos,
+                                                  item..pos = currentPos,
+                                                ]);
+                                              }
+                                              : null,
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.arrow_drop_down_outlined,
+                                      ),
+                                      onPressed:
+                                          index < _entries.length - 1
+                                              ? () {
+                                                final item =
+                                                    _entries[index + 1];
+                                                _entries.removeAt(index + 1);
+                                                _entries.removeAt(index);
+                                                int? currentPos = category.pos;
+                                                int? pos = item.pos;
+                                                setState(() {});
+                                                _updateCategoriesOrder([
+                                                  ..._entries,
+                                                  category..pos = pos,
+                                                  item..pos = currentPos,
+                                                ]);
+                                              }
+                                              : null,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    _renameCategory(category);
+                                  },
+                                  icon: const Icon(
+                                    Icons.mode_edit_outline_outlined,
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                IconButton(
+                                  onPressed: () {
+                                    isar.writeTxnSync(() async {
+                                      category.hide = !(category.hide ?? false);
+                                      isar.categorys.putSync(category);
+                                    });
+                                    ref
+                                        .read(
+                                          synchingProvider(syncId: 1).notifier,
+                                        )
+                                        .addChangedPartAsync(
+                                          ActionType.renameCategory,
+                                          category.id,
+                                          category.toJson(),
+                                          true,
+                                        );
+                                  },
+                                  icon: Icon(
+                                    (category.hide ?? false)
+                                        ? Icons.visibility_outlined
+                                        : Icons.visibility_off_outlined,
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                IconButton(
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return StatefulBuilder(
+                                          builder: (context, setState) {
+                                            return AlertDialog(
+                                              title: Text(l10n.delete_category),
+                                              content: Text(
+                                                l10n.delete_category_msg(
+                                                  category.name!,
+                                                ),
+                                              ),
+                                              actions: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Text(l10n.cancel),
+                                                    ),
+                                                    const SizedBox(width: 15),
+                                                    TextButton(
+                                                      onPressed: () async {
+                                                        await isar.writeTxn(
+                                                          () async {
+                                                            await isar.categorys
+                                                                .delete(
+                                                                  category.id!,
+                                                                );
+                                                          },
+                                                        );
+                                                        await ref
+                                                            .read(
+                                                              synchingProvider(
+                                                                syncId: 1,
+                                                              ).notifier,
+                                                            )
+                                                            .addChangedPartAsync(
+                                                              ActionType
+                                                                  .removeCategory,
+                                                              category.id,
+                                                              "{}",
+                                                              true,
+                                                            );
+                                                        if (context.mounted) {
+                                                          Navigator.pop(
+                                                            context,
+                                                          );
+                                                        }
+                                                      },
+                                                      child: Text(l10n.ok),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                    );
+                                  },
+                                  icon: const Icon(Icons.delete_outlined),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Row(
-                            children: [
-                              SizedBox(width: 10),
-                              Icon(Icons.arrow_drop_up_outlined),
-                              SizedBox(width: 10),
-                              Icon(Icons.arrow_drop_down_outlined),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  _renameCategory(_entries[index]);
-                                },
-                                icon: const Icon(
-                                  Icons.mode_edit_outline_outlined,
-                                ),
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return StatefulBuilder(
-                                        builder: (context, setState) {
-                                          return AlertDialog(
-                                            title: Text(l10n.delete_category),
-                                            content: Text(
-                                              l10n.delete_category_msg(
-                                                _entries[index].name!,
-                                              ),
-                                            ),
-                                            actions: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: Text(l10n.cancel),
-                                                  ),
-                                                  const SizedBox(width: 15),
-                                                  TextButton(
-                                                    onPressed: () async {
-                                                      await isar.writeTxn(
-                                                        () async {
-                                                          await isar.categorys
-                                                              .delete(
-                                                                _entries[index]
-                                                                    .id!,
-                                                              );
-                                                        },
-                                                      );
-                                                      await ref
-                                                          .read(
-                                                            synchingProvider(
-                                                              syncId: 1,
-                                                            ).notifier,
-                                                          )
-                                                          .addChangedPartAsync(
-                                                            ActionType
-                                                                .removeCategory,
-                                                            _entries[index].id,
-                                                            "{}",
-                                                            true,
-                                                          );
-                                                      if (context.mounted) {
-                                                        Navigator.pop(context);
-                                                      }
-                                                    },
-                                                    child: Text(l10n.ok),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
-                                  );
-                                },
-                                icon: const Icon(Icons.delete_outlined),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  return SlideTransition(
+                    position: Tween<Offset>(
+                      begin: const Offset(0, 1),
+                      end: Offset.zero,
+                    ).animate(
+                      CurvedAnimation(
+                        parent: animation,
+                        curve: Curves.fastLinearToSlowEaseIn,
+                      ),
+                    ),
+                    child: SizeTransition(
+                      sizeFactor: CurvedAnimation(
+                        parent: animation,
+                        curve: Curves.fastLinearToSlowEaseIn,
+                      ),
+                      axisAlignment: 0.5,
+                      child: child,
+                    ),
+                  );
+                },
               );
             },
           );
@@ -310,9 +421,22 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                           forItemType: widget.itemType,
                                           name: controller.text,
                                         );
-                                        await isar.writeTxn(() async {
-                                          await isar.categorys.put(category);
+                                        isar.writeTxnSync(() {
+                                          isar.categorys.putSync(
+                                            category..pos = category.id,
+                                          );
+                                          final categories =
+                                              isar.categorys
+                                                  .filter()
+                                                  .posIsNull()
+                                                  .findAllSync();
+                                          for (var category in categories) {
+                                            isar.categorys.putSync(
+                                              category..pos = category.id,
+                                            );
+                                          }
                                         });
+
                                         await ref
                                             .read(
                                               synchingProvider(
@@ -362,7 +486,7 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
     );
   }
 
-  _renameCategory(Category category) {
+  void _renameCategory(Category category) {
     bool isExist = false;
     final controller = TextEditingController(text: category.name);
     bool isSameName = controller.text == category.name;

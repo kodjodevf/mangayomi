@@ -117,7 +117,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   return categories.when(
                     data: (data) {
                       if (data.isNotEmpty && showCategoryTabs) {
-                        final entr = data;
+                        data.sort((a, b) => (a.pos ?? 0).compareTo(b.pos ?? 0));
+
+                        final entr =
+                            data.where((e) => e.hide ?? false).toList();
                         tabBarController = TabController(
                           length:
                               withoutCategory.isNotEmpty
