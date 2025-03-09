@@ -32,6 +32,8 @@ Features include:
 ## Download
 Get the app from our [releases page](https://github.com/kodjodevf/mangayomi/releases).
 
+iOS / ipadOS users can also get the latest app from AltStore / Feather / SideStore via [Dominics GitHub repository](https://github.com/tanakrit-d/mangayomi-source).
+
 # Contributing
 
 Contributions are welcome!
