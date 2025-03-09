@@ -145,10 +145,7 @@ void _addNewSource(Source source, Ref ref, Repo? repo, ItemType itemType) {
         ..appMinVerReq = source.appMinVerReq
         ..isObsolete = false
         ..repo = repo;
-
-  isar.writeTxnSync(() {
-    isar.sources.putSync(newSource);
-  });
+  isar.sources.putSync(newSource);
   ref
       .read(synchingProvider(syncId: 1).notifier)
       .addChangedPart(ActionType.addExtension, null, newSource.toJson(), false);

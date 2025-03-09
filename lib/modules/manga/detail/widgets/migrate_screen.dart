@@ -23,7 +23,6 @@ import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/language.dart';
-import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/widgets/bottom_text_widget.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
@@ -36,54 +35,49 @@ class MigrationScreen extends ConsumerStatefulWidget {
 }
 
 class _MigrationScreenScreenState extends ConsumerState<MigrationScreen> {
+  late final List<Source> sourceList =
+      isar.sources
+          .filter()
+          .idIsNotNull()
+          .and()
+          .isAddedEqualTo(true)
+          .and()
+          .itemTypeEqualTo(widget.manga.itemType)
+          .findAllSync();
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
-    List<Source> sourceList =
-        ref.watch(onlyIncludePinnedSourceStateProvider)
-            ? isar.sources
-                .filter()
-                .isPinnedEqualTo(true)
-                .and()
-                .itemTypeEqualTo(widget.manga.itemType)
-                .findAllSync()
-            : isar.sources
-                .filter()
-                .idIsNotNull()
-                .and()
-                .isAddedEqualTo(true)
-                .and()
-                .itemTypeEqualTo(widget.manga.itemType)
-                .findAllSync();
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.migrate)),
       body:
           widget.manga.name != null && widget.manga.author != null
-              ? ListView(
-                children: [
-                  for (var source in sourceList)
-                    SizedBox(
-                      height: 260,
-                      child: SourceSearchScreen(
-                        query: widget.manga.name ?? widget.manga.author!,
-                        manga: widget.manga,
-                        source: source,
-                      ),
+              ? SuperListView.builder(
+                itemCount: sourceList.length,
+                extentPrecalculationPolicy: SuperPrecalculationPolicy(),
+                itemBuilder: (context, index) {
+                  final source = sourceList[index];
+                  return SizedBox(
+                    height: 260,
+                    child: MigrationSourceSearchScreen(
+                      query: widget.manga.name ?? widget.manga.author ?? "",
+                      manga: widget.manga,
+                      source: source,
                     ),
-                ],
+                  );
+                },
               )
               : Container(),
     );
   }
 }
 
-class SourceSearchScreen extends StatefulWidget {
+class MigrationSourceSearchScreen extends StatefulWidget {
   final String query;
   final Manga manga;
 
   final Source source;
-  const SourceSearchScreen({
+  const MigrationSourceSearchScreen({
     super.key,
     required this.query,
     required this.manga,
@@ -91,10 +85,12 @@ class SourceSearchScreen extends StatefulWidget {
   });
 
   @override
-  State<SourceSearchScreen> createState() => _SourceSearchScreenState();
+  State<MigrationSourceSearchScreen> createState() =>
+      _MigrationSourceSearchScreenState();
 }
 
-class _SourceSearchScreenState extends State<SourceSearchScreen> {
+class _MigrationSourceSearchScreenState
+    extends State<MigrationSourceSearchScreen> {
   @override
   void initState() {
     _init();
@@ -155,11 +151,13 @@ class _SourceSearchScreenState extends State<SourceSearchScreen> {
                             return Center(child: Text(_errorMessage));
                           }
                           if (pages!.list.isNotEmpty) {
-                            return ListView.builder(
+                            return SuperListView.builder(
+                              extentPrecalculationPolicy:
+                                  SuperPrecalculationPolicy(),
                               scrollDirection: Axis.horizontal,
                               itemCount: pages!.list.length,
                               itemBuilder: (context, index) {
-                                return MangaGlobalImageCard(
+                                return MigrationMangaGlobalImageCard(
                                   oldManga: widget.manga,
                                   manga: pages!.list[index],
                                   source: widget.source,
@@ -178,12 +176,12 @@ class _SourceSearchScreenState extends State<SourceSearchScreen> {
   }
 }
 
-class MangaGlobalImageCard extends ConsumerStatefulWidget {
+class MigrationMangaGlobalImageCard extends ConsumerStatefulWidget {
   final Manga oldManga;
   final MManga manga;
   final Source source;
 
-  const MangaGlobalImageCard({
+  const MigrationMangaGlobalImageCard({
     super.key,
     required this.oldManga,
     required this.manga,
@@ -191,12 +189,13 @@ class MangaGlobalImageCard extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<MangaGlobalImageCard> createState() =>
-      _MangaGlobalImageCardState();
+  ConsumerState<MigrationMangaGlobalImageCard> createState() =>
+      _MigrationMangaGlobalImageCardState();
 }
 
-class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
-    with AutomaticKeepAliveClientMixin<MangaGlobalImageCard> {
+class _MigrationMangaGlobalImageCardState
+    extends ConsumerState<MigrationMangaGlobalImageCard>
+    with AutomaticKeepAliveClientMixin<MigrationMangaGlobalImageCard> {
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -487,5 +486,12 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
             );
           }
         });
+  }
+}
+
+class SuperPrecalculationPolicy extends ExtentPrecalculationPolicy {
+  @override
+  bool shouldPrecalculateExtents(ExtentPrecalculationContext context) {
+    return context.numberOfItems < 100;
   }
 }
