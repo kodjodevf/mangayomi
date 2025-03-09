@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -7,6 +8,7 @@ import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_pr
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SourceRepositories extends ConsumerStatefulWidget {
   final ItemType itemType;
@@ -19,6 +21,12 @@ class SourceRepositories extends ConsumerStatefulWidget {
 class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
   List<Repo> _entries = [];
   String urlInput = "";
+  Future<void> _launchInBrowser(Uri url) async {
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
@@ -57,27 +65,20 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: Card(
-                  child: Column(
-                    children: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          elevation: 0,
-                          shadowColor: Colors.transparent,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(0),
-                              bottomRight: Radius.circular(0),
-                              topRight: Radius.circular(10),
-                              topLeft: Radius.circular(10),
-                            ),
-                          ),
-                        ),
-                        onPressed: () {},
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Column(
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Icon(Icons.label_outline_rounded),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 15,
+                              ),
+                              child: const Icon(Icons.label_outline_rounded),
+                            ),
                             const SizedBox(width: 10),
                             Expanded(
                               child: Text(
@@ -88,88 +89,102 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                             ),
                           ],
                         ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            if (repo.website != null)
                               IconButton(
                                 onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return StatefulBuilder(
-                                        builder: (context, setState) {
-                                          return AlertDialog(
-                                            title: Text(
-                                              l10n.remove_extensions_repo,
-                                            ),
-                                            content: Text(
-                                              l10n.remove_extensions_repo,
-                                            ),
-                                            actions: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: Text(l10n.cancel),
-                                                  ),
-                                                  const SizedBox(width: 15),
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      final mangaRepos =
-                                                          ref
-                                                              .read(
-                                                                extensionsRepoStateProvider(
-                                                                  widget
-                                                                      .itemType,
-                                                                ),
-                                                              )
-                                                              .toList();
-                                                      mangaRepos.removeWhere(
-                                                        (url) =>
-                                                            url ==
-                                                            _entries[index],
-                                                      );
-                                                      ref
-                                                          .read(
-                                                            extensionsRepoStateProvider(
-                                                              widget.itemType,
-                                                            ).notifier,
-                                                          )
-                                                          .set(mangaRepos);
-                                                      ref.watch(
-                                                        extensionsRepoStateProvider(
-                                                          widget.itemType,
-                                                        ),
-                                                      );
-                                                      if (context.mounted) {
-                                                        Navigator.pop(context);
-                                                      }
-                                                    },
-                                                    child: Text(l10n.ok),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
-                                  );
+                                  _launchInBrowser(Uri.parse(repo.website!));
                                 },
-                                icon: const Icon(Icons.delete_outlined),
+                                icon: Icon(Icons.open_in_new_outlined),
                               ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
+                            SizedBox(width: 10),
+                            IconButton(
+                              onPressed: () async {
+                                if (repo.jsonUrl != null) {
+                                  await Clipboard.setData(
+                                    ClipboardData(text: repo.jsonUrl!),
+                                  );
+                                }
+                              },
+                              icon: const Icon(Icons.content_copy),
+                            ),
+                            SizedBox(width: 10),
+                            IconButton(
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return StatefulBuilder(
+                                      builder: (context, setState) {
+                                        return AlertDialog(
+                                          title: Text(
+                                            l10n.remove_extensions_repo,
+                                          ),
+                                          content: Text(
+                                            l10n.remove_extensions_repo,
+                                          ),
+                                          actions: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text(l10n.cancel),
+                                                ),
+                                                const SizedBox(width: 15),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    final mangaRepos =
+                                                        ref
+                                                            .read(
+                                                              extensionsRepoStateProvider(
+                                                                widget.itemType,
+                                                              ),
+                                                            )
+                                                            .toList();
+                                                    mangaRepos.removeWhere(
+                                                      (url) =>
+                                                          url ==
+                                                          _entries[index],
+                                                    );
+                                                    ref
+                                                        .read(
+                                                          extensionsRepoStateProvider(
+                                                            widget.itemType,
+                                                          ).notifier,
+                                                        )
+                                                        .set(mangaRepos);
+                                                    ref.watch(
+                                                      extensionsRepoStateProvider(
+                                                        widget.itemType,
+                                                      ),
+                                                    );
+                                                    if (context.mounted) {
+                                                      Navigator.pop(context);
+                                                    }
+                                                  },
+                                                  child: Text(l10n.ok),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                );
+                              },
+                              icon: const Icon(Icons.delete_outlined),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );
