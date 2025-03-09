@@ -1,0 +1,408 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - v*
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-release-android-apks:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout branch
+        uses: actions/checkout@v4
+
+      - name: setup flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Java toolchain (Only Android target)
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: "3.18.1"
+
+      - name: Setup ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
+
+      - name: Install the CLI tool
+        run: cargo install 'flutter_rust_bridge_codegen'
+
+      - name: Setup Android keystore
+        run: |
+          echo "${{ secrets.SIGNING_KEY_STORE_BASE64 }}" | base64 -di > android/app/upload-keystore.jks
+          echo "${{ secrets.SIGNING_KEY_PROPERTIES }}" > android/key.properties
+
+      - name: flutter pub get
+        run: flutter pub get
+
+      - name: build android apks
+        run: |
+          flutter build apk --release --split-per-abi
+          cd build/app/outputs/flutter-apk
+          mv app-arm64-v8a-release.apk Mangayomi-${{ github.ref_name }}-android-arm64-v8a.apk
+          mv app-armeabi-v7a-release.apk Mangayomi-${{ github.ref_name }}-android-armeabi-v7a.apk
+          mv app-x86_64-release.apk Mangayomi-${{ github.ref_name }}-android-x86_64.apk
+
+      - name: upload artifact android apks
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mangayomi-${{ github.ref_name }}-android
+          path: "build/app/outputs/flutter-apk/Mangayomi-*.apk"
+
+      - name: release packages android apks
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/app/outputs/flutter-apk/Mangayomi-*.apk"
+          allowUpdates: true
+
+  build-and-release-ios-ipa:
+    permissions:
+      contents: write
+    runs-on: macos-latest
+    steps:
+      # Checkout branch
+      - name: checkout branch
+        uses: actions/checkout@v4
+
+      - name: setup flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install the CLI tool
+        run: cargo install 'flutter_rust_bridge_codegen'
+
+      - name: flutter pub get
+        run: flutter pub get
+
+      - name: build ios
+        run: |
+          flutter build ios --release --no-codesign
+          cd build/ios/iphoneos
+          mkdir Payload
+          cd Payload
+          ln -s ../Runner.app
+          cd ..
+          zip -r app-release.ipa Payload
+          mv app-release.ipa Mangayomi-${{ github.ref_name }}-ios.ipa
+
+      - name: upload artifact ios ipa
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mangayomi-${{ github.ref_name }}-ios
+          path: "build/ios/iphoneos/Mangayomi-*.ipa"
+
+      - name: release package ios ipa
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/ios/iphoneos/Mangayomi-*.ipa"
+          allowUpdates: true
+
+  build-and-release-macos-dmg:
+    permissions:
+      contents: write
+    runs-on: macos-latest
+    steps:
+      - name: checkout branch
+        uses: actions/checkout@v4
+
+      - name: setup flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install the CLI tool
+        run: cargo install 'flutter_rust_bridge_codegen'
+
+      - name: flutter pub get
+        run: flutter pub get
+
+      - name: build macos
+        run: |
+          cd macos
+          pod update
+          cd ..
+          flutter build macos --release
+          brew install create-dmg 
+          create-dmg --volname Mangayomi-${{ github.ref_name }}-macos --window-pos 200 120 --window-size 800 450 --icon-size 100 --app-drop-link 600 185 Mangayomi-${{ github.ref_name }}-macos.dmg build/macos/Build/Products/Release/Mangayomi.app
+
+      - name: upload artifact macos dmg
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mangayomi-${{ github.ref_name }}-macos
+          path: "/Users/runner/work/mangayomi/mangayomi/*.dmg"
+
+      - name: release package macos dmg
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "/Users/runner/work/mangayomi/mangayomi/*.dmg"
+          allowUpdates: true
+
+  build-and-release-windows-exe_zip:
+    permissions:
+      contents: write
+    runs-on: windows-latest
+    steps:
+      - name: checkout branch
+        uses: actions/checkout@v4
+
+      - name: setup flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install the CLI tool
+        run: cargo install 'flutter_rust_bridge_codegen'
+
+      - name: flutter pub get
+        run: flutter pub get
+
+      - name: Enable inno_bundle
+        run: dart pub global activate inno_bundle
+
+      - name: Update PATH
+        run: echo 'export PATH="$PATH:$HOME/.pub-cache/bin"' >> ~/.bashrc
+
+      - name: build windows exe
+        run: |
+            dart run inno_bundle:build --release --app-version ${{ github.ref_name }} | ForEach-Object { $_ -replace "[a-z]", "" }
+
+      - name: build windows zip
+        run: |
+          cd build/windows/x64/installer/Release
+          Rename-Item -Path "*-Installer.exe" -NewName "Mangayomi-${{ github.ref_name }}-windows.exe"
+          cd ../../runner/Release
+          Compress-Archive -Path * -DestinationPath Mangayomi-Windows.zip
+          Rename-Item -Path "Mangayomi-*.zip" -NewName "Mangayomi-${{ github.ref_name }}-windows.zip"
+
+      - name: upload artifact windows exe_zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mangayomi-${{ github.ref_name }}-windows-zip
+          path: |
+            build/windows/x64/installer/Release/Mangayomi-*.exe
+            build/windows/x64/runner/Release/Mangayomi-*.zip
+
+      - name: release package windows exe_zip
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: |
+            build/windows/x64/installer/Release/Mangayomi-*.exe
+            build/windows/x64/runner/Release/Mangayomi-*.zip
+          allowUpdates: true
+
+  build-and-release-linux-zip_AppImage_RPM:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout branch
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install webkit2gtk-4.1 clang cmake ninja-build pkg-config libgtk-3-dev mpv libmpv-dev dpkg-dev libblkid-dev liblzma-dev fuse rpm
+          wget -O appimagetool "https://github.com/AppImage/AppImageKit/releases/latest/download/appimagetool-x86_64.AppImage"
+          chmod +x appimagetool
+          sudo mv appimagetool /usr/local/bin/
+
+      - name: setup flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install the CLI tool
+        run: cargo install 'flutter_rust_bridge_codegen'
+
+      - name: flutter pub get
+        run: flutter pub get
+
+      - name: build linux
+        run: flutter build linux --release
+
+      - name: Zip
+        uses: thedoctor0/zip-release@master
+        with:
+          type: "zip"
+          filename: Mangayomi-${{ github.ref_name }}-linux.zip
+          directory: build/linux/x64/release/bundle
+
+      - name: Create AppImage
+        run: |
+          # Create fresh AppDir structure
+          rm -rf AppDir
+          mkdir -p AppDir/usr/bin
+          mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
+          # Copy built files
+          cp -r build/linux/x64/release/bundle/* AppDir/usr/bin/
+          cp assets/app_icons/icon-red.png AppDir/usr/share/icons/hicolor/256x256/apps/mangayomi.png
+          cp assets/app_icons/icon-red.png AppDir/mangayomi.png
+          # Create desktop file in AppDir root
+          cat <<EOF > AppDir/mangayomi.desktop
+          [Desktop Entry]
+          Name=mangayomi
+          Exec=usr/bin/mangayomi
+          Icon=mangayomi
+          Type=Application
+          Categories=Utility;
+          EOF
+          # Create AppRun file
+          cat <<EOF > AppDir/AppRun
+          #!/bin/sh
+          SELF=\$(readlink -f "\$0")
+          HERE=\${SELF%/*}
+          export PATH="\${HERE}/usr/bin/:\${PATH}"
+          export LD_LIBRARY_PATH="\${HERE}/usr/lib/:\${LD_LIBRARY_PATH}"
+          exec "\${HERE}/usr/bin/mangayomi" "\$@"
+          EOF
+          chmod +x AppDir/AppRun
+          # Make AppImage
+          /usr/local/bin/appimagetool AppDir
+          mv $(find . -type f -name "*.AppImage") build/linux/x64/release/Mangayomi-${{ github.ref_name }}-linux.AppImage
+
+      - name: Create RPM Package
+        run: |
+          mkdir -p rpm_build/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+          cp -r build/linux/x64/release/bundle rpm_build/SOURCES/mangayomi-1.0.0
+          tar czf rpm_build/SOURCES/mangayomi-1.0.0.tar.gz -C rpm_build/SOURCES mangayomi-1.0.0
+          mkdir -p rpm_build/SOURCES/usr/share/icons/hicolor/256x256/apps
+          cp assets/app_icons/icon-red.png rpm_build/SOURCES/usr/share/icons/hicolor/256x256/apps/mangayomi.png
+          # RPM Spec File
+          cat <<EOF > rpm_build/SPECS/mangayomi.spec
+          Name: mangayomi
+          Version: 1.0.0
+          Release: 1%{?dist}
+          Summary: Mangayomi is an open-source Flutter app for reading manga, novels, and watching animes across multiple platforms
+          License: MIT
+          Source0: %{name}-%{version}.tar.gz
+          BuildArch: x86_64
+
+          %description
+          Mangayomi is an open-source Flutter app for reading manga, novels, and watching animes across multiple platforms.
+
+          %prep
+          %setup -q
+
+          %install
+          mkdir -p %{buildroot}/usr/bin
+          mkdir -p %{buildroot}/usr/share/applications
+          mkdir -p %{buildroot}/usr/share/icons/hicolor/256x256/apps
+          cp -r * %{buildroot}/usr/bin/
+          cp -r %{_sourcedir}/usr/share/* %{buildroot}/usr/share/
+          cat <<EOL > %{buildroot}/usr/share/applications/mangayomi.desktop
+          [Desktop Entry]
+          Name=mangayomi
+          Exec=/usr/bin/mangayomi
+          Icon=mangayomi
+          Type=Application
+          Categories=Utility;
+          EOL
+          %files
+          /usr/bin/*
+          /usr/share/applications/mangayomi.desktop
+          /usr/share/icons/hicolor/256x256/apps/mangayomi.png
+          EOF
+
+          rpmbuild --define "_topdir $(pwd)/rpm_build" -ba rpm_build/SPECS/mangayomi.spec
+          mv rpm_build/RPMS/x86_64/*.rpm build/linux/x64/release/Mangayomi-${{ github.ref_name }}-linux.rpm
+
+      - name: upload artifact linux zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mangayomi-${{ github.ref_name }}-limux-zip
+          path: |
+            build/linux/x64/release/bundle/Mangayomi-*.zip
+            build/linux/x64/release/Mangayomi-*.AppImage
+            build/linux/x64/release/Mangayomi-*.rpm
+      - name: release packages linux zip
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: |
+            build/linux/x64/release/bundle/Mangayomi-*.zip
+            build/linux/x64/release/Mangayomi-*.AppImage
+            build/linux/x64/release/Mangayomi-*.rpm
+          allowUpdates: true
+
+  build-and-release-linux-deb:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout branch
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install webkit2gtk-4.1 clang cmake ninja-build pkg-config libgtk-3-dev mpv libmpv-dev dpkg-dev libfuse2
+
+      - name: setup flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install the CLI tool
+        run: cargo install 'flutter_rust_bridge_codegen'
+
+      - name: flutter pub get
+        run: flutter pub get
+
+      - name: Enable dart_distributor
+        run: dart pub global activate flutter_distributor
+
+      - name: Update PATH
+        run: echo 'export PATH="$PATH:$HOME/.pub-cache/bin"' >> ~/.bashrc
+
+      - name: Build deb package
+        run: flutter_distributor package --platform linux --targets deb
+
+      - name: Move deb file
+        run: mv $(find dist -type f -name "mangayomi*.deb") dist/Mangayomi-${{ github.ref_name }}-linux.deb
+
+      - name: upload artifact linux deb
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mangayomi-${{ github.ref_name }}-linux-deb
+          path: dist/Mangayomi-*.deb
+
+      - name: Release package deb
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: dist/Mangayomi-*.deb
+          allowUpdates: true
+
+  call-workflow-sideloading:
+    needs: build-and-release-ios-ipa
+    uses: ./.github/workflows/update_sideloading_source.yml
