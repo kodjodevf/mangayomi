@@ -121,6 +121,7 @@ final languagesMap = {
   "Tagalog": "tl",
 };
 
+/// this might not always work depending on how every extension provides its subtitles
 completeLanguageNameEnglish(String lang) {
   lang = lang.toLowerCase();
   for (var element in languagesMapEnglish.entries) {

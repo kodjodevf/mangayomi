@@ -70,7 +70,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
 
   @override
   Widget build(BuildContext context) {
-    final l10nLocale = ref.watch(l10nLocaleStateProvider);
+    final defaultSubtitleLang = ref.watch(defaultSubtitleLangStateProvider);
     final serversData = ref.watch(getVideoListProvider(episode: episode));
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     return serversData.when(
@@ -94,7 +94,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
 
         return AnimeStreamPage(
           defaultSubtitle: completeLanguageNameEnglish(
-            l10nLocale.toLanguageTag(),
+            defaultSubtitleLang.toLanguageTag(),
           ),
           episode: episode,
           videos: videos,

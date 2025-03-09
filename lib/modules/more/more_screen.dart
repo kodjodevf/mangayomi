@@ -56,6 +56,13 @@ class MoreScreen extends StatelessWidget {
             ),
             ListTileWidget(
               onTap: () {
+                context.push('/statistics');
+              },
+              icon: Icons.query_stats_outlined,
+              title: l10n.statistics,
+            ),
+            ListTileWidget(
+              onTap: () {
                 context.push('/dataAndStorage');
               },
               icon: Icons.storage,

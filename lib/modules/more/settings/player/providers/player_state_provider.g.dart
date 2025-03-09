@@ -6,6 +6,23 @@ part of 'player_state_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+String _$defaultSubtitleLangStateHash() =>
+    r'bec45a4fbd70922b767dbef7c98a423d908ed9d3';
+
+/// See also [DefaultSubtitleLangState].
+@ProviderFor(DefaultSubtitleLangState)
+final defaultSubtitleLangStateProvider =
+    AutoDisposeNotifierProvider<DefaultSubtitleLangState, Locale>.internal(
+  DefaultSubtitleLangState.new,
+  name: r'defaultSubtitleLangStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$defaultSubtitleLangStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$DefaultSubtitleLangState = AutoDisposeNotifier<Locale>;
 String _$markEpisodeAsSeenTypeStateHash() =>
     r'94ae90e6bc51bbd4f88dfc9780cc5e9eb4ed5770';
 

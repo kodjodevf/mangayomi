@@ -16,6 +16,7 @@ import 'package:mangayomi/modules/more/data_and_storage/data_and_storage.dart';
 import 'package:mangayomi/modules/more/settings/appearance/custom_navigation_settings.dart';
 import 'package:mangayomi/modules/more/settings/browse/source_repositories.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/modules/more/statistics/statistics_screen.dart';
 import 'package:mangayomi/modules/novel/novel_reader_view.dart';
 import 'package:mangayomi/modules/updates/updates_screen.dart';
 import 'package:mangayomi/modules/more/categories/categories_screen.dart';
@@ -428,6 +429,16 @@ class RouterNotifier extends ChangeNotifier {
           key: state.pageKey,
           child: CategoriesScreen(data: data),
         );
+      },
+    ),
+    GoRoute(
+      path: "/statistics",
+      name: "statistics",
+      builder: (context, state) {
+        return StatisticsScreen();
+      },
+      pageBuilder: (context, state) {
+        return transitionPage(key: state.pageKey, child: StatisticsScreen());
       },
     ),
     GoRoute(
