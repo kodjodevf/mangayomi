@@ -66,6 +66,7 @@
     "incognito_mode_description": "Pausiert den Leseverlauf",
     "download_queue": "Download-Warteschlange",
     "categories": "Kategorien",
+    "statistics": "Statistiken",
     "settings": "Einstellungen",
     "about": "Über",
     "help": "Hilfe",
@@ -83,6 +84,7 @@
     "general": "Allgemein",
     "general_subtitle": "App-Sprache",
     "app_language": "App-Sprache",
+    "default_subtitle_language": "Standard Untertitel-Sprache",
     "appearance": "Aussehen",
     "appearance_subtitle": "Thema, Datum- & Zeitformat",
     "theme": "Thema",
@@ -439,5 +441,8 @@
     "manage_manga_repo_url": "Verwalte Repository-Links für Manga",
     "manage_anime_repo_url": "Verwalte Repository-Links für Anime",
     "manage_novel_repo_url": "Verwalte Repository-Links für Novellen",
-    "repo_added": "Erweiterungs-Repository hinzugefügt!"
+    "repo_added": "Erweiterungs-Repository hinzugefügt!",
+    "genre_search_library": "Genre im Bibliothek suchen",
+    "genre_search_source": "Zur Erweiterung navigieren",
+    "source_not_added": "Die Erweiterung ist nicht installiert!"
 }

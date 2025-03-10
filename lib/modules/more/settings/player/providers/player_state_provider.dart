@@ -1,7 +1,39 @@
+import 'dart:ui';
+
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'player_state_provider.g.dart';
+
+@riverpod
+class DefaultSubtitleLangState extends _$DefaultSubtitleLangState {
+  @override
+  Locale build() {
+    return Locale(
+      _getLocale()!.languageCode ?? "en",
+      _getLocale()!.countryCode ?? "",
+    );
+  }
+
+  L10nLocale? _getLocale() {
+    return isar.settings.getSync(227)!.defaultSubtitleLang ??
+        L10nLocale(languageCode: "en", countryCode: "");
+  }
+
+  void setLocale(Locale locale) async {
+    final settings = isar.settings.getSync(227)!;
+    isar.writeTxnSync(() {
+      isar.settings.putSync(
+        settings
+          ..defaultSubtitleLang = L10nLocale(
+            languageCode: locale.languageCode,
+            countryCode: locale.countryCode,
+          ),
+      );
+    });
+    state = locale;
+  }
+}
 
 @riverpod
 class MarkEpisodeAsSeenTypeState extends _$MarkEpisodeAsSeenTypeState {

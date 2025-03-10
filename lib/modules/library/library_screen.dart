@@ -43,7 +43,12 @@ import 'package:super_sliver_list/super_sliver_list.dart';
 
 class LibraryScreen extends ConsumerStatefulWidget {
   final ItemType itemType;
-  const LibraryScreen({required this.itemType, super.key});
+  final String? presetInput;
+  const LibraryScreen({
+    required this.itemType,
+    required this.presetInput,
+    super.key,
+  });
 
   @override
   ConsumerState<LibraryScreen> createState() => _LibraryScreenState();
@@ -56,6 +61,15 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   final _textEditingController = TextEditingController();
   late TabController tabBarController;
   int _tabIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.presetInput != null) {
+      _isSearch = true;
+      _textEditingController.text = widget.presetInput!;
+    }
+  }
 
   Future<void> _updateLibrary(List<Manga> mangaList) async {
     botToast(
@@ -120,7 +134,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                         data.sort((a, b) => (a.pos ?? 0).compareTo(b.pos ?? 0));
 
                         final entr =
-                            data.where((e) => e.hide ?? false).toList();
+                            data.where((e) => !(e.hide ?? false)).toList();
                         tabBarController = TabController(
                           length:
                               withoutCategory.isNotEmpty
@@ -1067,13 +1081,19 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             .where(
               (element) =>
                   _textEditingController.text.isNotEmpty
-                      ? element.name!.toLowerCase().contains(
-                            _textEditingController.text.toLowerCase(),
-                          ) ||
-                          (element.source != null &&
-                              element.source!.toLowerCase().contains(
-                                _textEditingController.text.toLowerCase(),
-                              ))
+                      ? _textEditingController.text
+                          .split(",")
+                          .any(
+                            (keyword) =>
+                                element.name!.toLowerCase().contains(
+                                  _textEditingController.text.toLowerCase(),
+                                ) ||
+                                (element.source != null &&
+                                    element.source!.toLowerCase().contains(
+                                      _textEditingController.text.toLowerCase(),
+                                    )) ||
+                                element.genre!.contains(keyword),
+                          )
                       : true,
             )
             .toList();
@@ -1156,7 +1176,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                               );
 
                               final entries =
-                                  data.where((e) => e.hide ?? false).toList();
+                                  data.where((e) => !(e.hide ?? false)).toList();
                               if (entries.isEmpty) {
                                 return Text(l10n.library_no_category_exist);
                               }
