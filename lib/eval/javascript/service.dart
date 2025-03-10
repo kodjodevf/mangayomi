@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter_qjs/flutter_qjs.dart';
 import 'package:mangayomi/eval/javascript/dom_selector.dart';
 import 'package:mangayomi/eval/javascript/extractors.dart';
@@ -102,13 +101,13 @@ var extention = new DefaultExtension();
 
   @override
   Future<MPages> getPopular(int page) async {
-    return MPages.fromJson(await _extensionCallAsync('getPopular($page)', {}));
+    return MPages.fromJson(await _extensionCallAsync('getPopular($page)'));
   }
 
   @override
   Future<MPages> getLatestUpdates(int page) async {
     return MPages.fromJson(
-      await _extensionCallAsync('getLatestUpdates($page)', {}),
+      await _extensionCallAsync('getLatestUpdates($page)'),
     );
   }
 
@@ -117,19 +116,18 @@ var extention = new DefaultExtension();
     return MPages.fromJson(
       await _extensionCallAsync(
         'search("$query",$page,${jsonEncode(filterValuesListToJson(filters))})',
-        {},
       ),
     );
   }
 
   @override
   Future<MManga> getDetail(String url) async {
-    return MManga.fromJson(await _extensionCallAsync('getDetail(`$url`)', {}));
+    return MManga.fromJson(await _extensionCallAsync('getDetail(`$url`)'));
   }
 
   @override
   Future<List<PageUrl>> getPageList(String url) async {
-    return (await _extensionCallAsync<List>('getPageList(`$url`)', []))
+    return (await _extensionCallAsync<List>('getPageList(`$url`)'))
         .map(
           (e) =>
               e is String
@@ -141,7 +139,7 @@ var extention = new DefaultExtension();
 
   @override
   Future<List<Video>> getVideoList(String url) async {
-    return (await _extensionCallAsync<List>('getVideoList(`$url`)', []))
+    return (await _extensionCallAsync<List>('getVideoList(`$url`)'))
         .where(
           (element) => element['url'] != null && element['originalUrl'] != null,
         )
@@ -212,7 +210,7 @@ var extention = new DefaultExtension();
     }
   }
 
-  Future<T> _extensionCallAsync<T>(String call, T def) async {
+  Future<T> _extensionCallAsync<T>(String call) async {
     _init();
 
     try {
@@ -221,11 +219,7 @@ var extention = new DefaultExtension();
       );
 
       return jsonDecode(promised.stringResult) as T;
-    } catch (_) {
-      if (def != null) {
-        return def;
-      }
-
+    } catch (e) {
       rethrow;
     }
   }
