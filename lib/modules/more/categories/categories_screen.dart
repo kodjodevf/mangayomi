@@ -133,6 +133,7 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
 
           return SuperListView.builder(
             itemCount: _entries.length,
+            padding: const EdgeInsets.only(bottom: 100),
             itemBuilder: (context, index) {
               final category = _entries[index];
               return AnimatedSwitcher(
@@ -254,7 +255,7 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                         );
                                   },
                                   icon: Icon(
-                                    (category.hide ?? false)
+                                    !(category.hide ?? false)
                                         ? Icons.visibility_outlined
                                         : Icons.visibility_off_outlined,
                                   ),
