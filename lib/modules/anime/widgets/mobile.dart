@@ -126,14 +126,14 @@ class _MobileControllerWidgetState
     for (final subscription in subscriptions) {
       subscription.cancel();
     }
-    // --------------------------------------------------
+
     // package:screen_brightness
     Future.microtask(() async {
       try {
         await ScreenBrightness.instance.resetApplicationScreenBrightness();
       } catch (_) {}
     });
-    // --------------------------------------------------
+
     super.dispose();
   }
 
@@ -218,25 +218,24 @@ class _MobileControllerWidgetState
     });
   }
 
+  late final VolumeController _volumeController;
   @override
   void initState() {
     super.initState();
-    // --------------------------------------------------
-    // package:volume_controller
+    _volumeController = VolumeController.instance;
+
     Future.microtask(() async {
       try {
-        VolumeController().showSystemUI = false;
-        _volumeValue.value = await VolumeController().getVolume();
-        VolumeController().listener((value) {
+        _volumeController.showSystemUI = false;
+        _volumeValue.value = await _volumeController.getVolume();
+        _volumeController.addListener((value) {
           if (mounted && !_volumeInterceptEventStream) {
             _volumeValue.value = value;
           }
         });
       } catch (_) {}
     });
-    // --------------------------------------------------
-    // --------------------------------------------------
-    // package:screen_brightness
+
     Future.microtask(() async {
       try {
         _brightnessValue.value = await ScreenBrightness.instance.application;
@@ -249,14 +248,11 @@ class _MobileControllerWidgetState
         });
       } catch (_) {}
     });
-    // --------------------------------------------------
   }
 
   Future<void> setVolume(double value) async {
-    // --------------------------------------------------
-    // package:volume_controller
     try {
-      VolumeController().setVolume(value);
+      _volumeController.setVolume(value);
     } catch (_) {}
     _volumeValue.value = value;
     _volumeIndicator.value = true;
@@ -268,11 +264,9 @@ class _MobileControllerWidgetState
         _volumeInterceptEventStream = false;
       }
     });
-    // --------------------------------------------------
   }
 
   Future<void> setBrightness(double value) async {
-    // --------------------------------------------------
     // package:screen_brightness
     try {
       await ScreenBrightness.instance.setApplicationScreenBrightness(value);
@@ -284,7 +278,6 @@ class _MobileControllerWidgetState
         _brightnessIndicator.value = false;
       }
     });
-    // --------------------------------------------------
   }
 
   @override

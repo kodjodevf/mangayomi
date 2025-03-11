@@ -47,7 +47,7 @@ dependencies:
     git:
       url: https://github.com/media-kit/media-kit.git
       path: media_kit_video
-      ref: 652c49e02701bb6bb80953a6fdf650a5c8f002f9
+      ref: d2145a50f68394096845915a28874341fbf5b3fe
   media_kit_libs_video: ^1.0.4
   crypto: ^3.0.6
   cupertino_icons: ^1.0.8
@@ -92,12 +92,12 @@ dependency_overrides:
     git:
       url: https://github.com/media-kit/media-kit.git
       path: libs/windows/media_kit_libs_windows_video
-      ref: 652c49e02701bb6bb80953a6fdf650a5c8f002f9
+      ref: d2145a50f68394096845915a28874341fbf5b3fe
   media_kit:
     git:
       url: https://github.com/media-kit/media-kit.git
       path: media_kit
-      ref: 652c49e02701bb6bb80953a6fdf650a5c8f002f9
+      ref: d2145a50f68394096845915a28874341fbf5b3fe
   meta: ^1.15.0
   collection: ^1.19.0
   js: ^0.7.1
