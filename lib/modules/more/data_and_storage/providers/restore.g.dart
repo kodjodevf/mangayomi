@@ -6,7 +6,7 @@ part of 'restore.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$doRestoreHash() => r'ff5b1cbb192ec7f0da82d79c5ac90e15dd28c1de';
+String _$doRestoreHash() => r'355f3ca8fb830aedc6fdc24cb91e2adc25c760f7';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -318,6 +318,137 @@ class _RestoreBackupProviderElement extends AutoDisposeProviderElement<void>
   Map<String, dynamic> get backup => (origin as RestoreBackupProvider).backup;
   @override
   bool get full => (origin as RestoreBackupProvider).full;
+}
+
+String _$restoreKotatsuBackupHash() =>
+    r'a27c30891ba09cc48d4df69270a93a783aeb919f';
+
+/// See also [restoreKotatsuBackup].
+@ProviderFor(restoreKotatsuBackup)
+const restoreKotatsuBackupProvider = RestoreKotatsuBackupFamily();
+
+/// See also [restoreKotatsuBackup].
+class RestoreKotatsuBackupFamily extends Family<void> {
+  /// See also [restoreKotatsuBackup].
+  const RestoreKotatsuBackupFamily();
+
+  /// See also [restoreKotatsuBackup].
+  RestoreKotatsuBackupProvider call(
+    Archive archive,
+  ) {
+    return RestoreKotatsuBackupProvider(
+      archive,
+    );
+  }
+
+  @override
+  RestoreKotatsuBackupProvider getProviderOverride(
+    covariant RestoreKotatsuBackupProvider provider,
+  ) {
+    return call(
+      provider.archive,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'restoreKotatsuBackupProvider';
+}
+
+/// See also [restoreKotatsuBackup].
+class RestoreKotatsuBackupProvider extends AutoDisposeProvider<void> {
+  /// See also [restoreKotatsuBackup].
+  RestoreKotatsuBackupProvider(
+    Archive archive,
+  ) : this._internal(
+          (ref) => restoreKotatsuBackup(
+            ref as RestoreKotatsuBackupRef,
+            archive,
+          ),
+          from: restoreKotatsuBackupProvider,
+          name: r'restoreKotatsuBackupProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$restoreKotatsuBackupHash,
+          dependencies: RestoreKotatsuBackupFamily._dependencies,
+          allTransitiveDependencies:
+              RestoreKotatsuBackupFamily._allTransitiveDependencies,
+          archive: archive,
+        );
+
+  RestoreKotatsuBackupProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.archive,
+  }) : super.internal();
+
+  final Archive archive;
+
+  @override
+  Override overrideWith(
+    void Function(RestoreKotatsuBackupRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: RestoreKotatsuBackupProvider._internal(
+        (ref) => create(ref as RestoreKotatsuBackupRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        archive: archive,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<void> createElement() {
+    return _RestoreKotatsuBackupProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is RestoreKotatsuBackupProvider && other.archive == archive;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, archive.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin RestoreKotatsuBackupRef on AutoDisposeProviderRef<void> {
+  /// The parameter `archive` of this provider.
+  Archive get archive;
+}
+
+class _RestoreKotatsuBackupProviderElement
+    extends AutoDisposeProviderElement<void> with RestoreKotatsuBackupRef {
+  _RestoreKotatsuBackupProviderElement(super.provider);
+
+  @override
+  Archive get archive => (origin as RestoreKotatsuBackupProvider).archive;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

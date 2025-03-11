@@ -32,29 +32,64 @@ part 'restore.g.dart';
 void doRestore(Ref ref, {required String path, required BuildContext context}) {
   final inputStream = InputFileStream(path);
   final archive = ZipDecoder().decodeStream(inputStream);
-  final backup =
-      jsonDecode(utf8.decode(archive.files.first.content))
-          as Map<String, dynamic>;
   try {
-    ref.read(restoreBackupProvider(backup));
-    BotToast.showNotification(
-      animationDuration: const Duration(milliseconds: 200),
-      animationReverseDuration: const Duration(milliseconds: 200),
-      duration: const Duration(seconds: 5),
-      backButtonBehavior: BackButtonBehavior.none,
-      leading: (_) => Image.asset('assets/app_icons/icon-red.png', height: 40),
-      title:
-          (_) => const Text(
-            "Backup restored!",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-      enableSlideOff: true,
-      onlyOne: true,
-      crossPage: true,
-    );
+    final backupType = checkBackupType(path, archive);
+    switch (backupType) {
+      case BackupType.mangayomi:
+        final backup =
+            jsonDecode(utf8.decode(archive.files.first.content))
+                as Map<String, dynamic>;
+        ref.read(restoreBackupProvider(backup));
+        break;
+      case BackupType.kotatsu:
+        ref.read(restoreKotatsuBackupProvider(archive));
+        break;
+      default:
+    }
+    if (backupType != BackupType.unknown) {
+      showBotToast("Backup restored!");
+    } else {
+      showBotToast("Backup Type not supported!");
+    }
   } catch (e) {
     botToast(e.toString());
   }
+}
+
+void showBotToast(String text) {
+  BotToast.showNotification(
+    animationDuration: const Duration(milliseconds: 200),
+    animationReverseDuration: const Duration(milliseconds: 200),
+    duration: const Duration(seconds: 5),
+    backButtonBehavior: BackButtonBehavior.none,
+    leading: (_) => Image.asset('assets/app_icons/icon-red.png', height: 40),
+    title: (_) => Text(text, style: TextStyle(fontWeight: FontWeight.bold)),
+    enableSlideOff: true,
+    onlyOne: true,
+    crossPage: true,
+  );
+}
+
+enum BackupType { unknown, mangayomi, tachibk, kotatsu }
+
+BackupType checkBackupType(String path, Archive archive) {
+  if (path.toLowerCase().contains("mangayomi") &&
+      archive.files.first.name.endsWith(".backup.db")) {
+    return BackupType.mangayomi;
+  } else if (path.toLowerCase().contains("kotatsu") &&
+      archive.files.where((f) {
+            switch (f.name) {
+              case "categories":
+              case "favourites":
+                return true;
+              default:
+                return false;
+            }
+          }).length ==
+          2) {
+    return BackupType.kotatsu;
+  }
+  return BackupType.unknown;
 }
 
 @riverpod
@@ -245,4 +280,82 @@ ItemType _convertToItemTypeCategory(Map<String, dynamic> backup) {
       : forManga
       ? ItemType.manga
       : ItemType.anime;
+}
+
+@riverpod
+void restoreKotatsuBackup(Ref ref, Archive archive) {
+  for (var f in archive.files) {
+    List<Category> cats = [];
+    switch (f.name) {
+      case "categories":
+        final categories = jsonDecode(utf8.decode(f.content)) as List? ?? [];
+        isar.writeTxnSync(() {
+          isar.categorys.clearSync();
+          for (var category in categories) {
+            final cat = Category(
+              id: category["id"],
+              name: category["title"],
+              forItemType: ItemType.manga,
+              hide: !(category["show_in_lib"] ?? true)
+            );
+            isar.categorys.putSync(cat);
+            cats.add(cat);
+          }
+        });
+      case "favourites":
+        final favourites = jsonDecode(utf8.decode(f.content)) as List? ?? [];
+        isar.writeTxnSync(() {
+          isar.mangas.clearSync();
+          for (var favourite in favourites) {
+            final tempManga = favourite["manga"];
+            final manga = Manga(
+              source: tempManga["source"],
+              author: tempManga["author"],
+              artist: null,
+              genre:
+                  (tempManga["tags"] as List?)
+                      ?.map((t) => t["title"] as String)
+                      .toList() ??
+                  [],
+              imageUrl: tempManga["large_cover_url"],
+              lang: 'en',
+              link: tempManga["url"],
+              name: tempManga["title"],
+              status: Status.values.firstWhere(
+                (s) =>
+                    s.name.toLowerCase() ==
+                    (tempManga["state"] as String?)?.toLowerCase(),
+                orElse: () => Status.unknown,
+              ),
+              description: null,
+              categories: [favourite["category_id"]],
+              itemType: ItemType.manga,
+              favorite: true
+            );
+            isar.mangas.putSync(manga);
+          }
+        });
+      default:
+        continue;
+    }
+  }
+  isar.writeTxnSync(() {
+    isar.chapters.clearSync();
+    isar.downloads.clearSync();
+    isar.historys.clearSync();
+    isar.updates.clearSync();
+    isar.tracks.clearSync();
+    isar.trackPreferences.clearSync();
+    ref.read(synchingProvider(syncId: 1).notifier).clearAllChangedParts(false);
+    ref.invalidate(themeModeStateProvider);
+    ref.invalidate(blendLevelStateProvider);
+    ref.invalidate(flexSchemeColorStateProvider);
+    ref.invalidate(pureBlackDarkModeStateProvider);
+    ref.invalidate(l10nLocaleStateProvider);
+    ref.invalidate(navigationOrderStateProvider);
+    ref.invalidate(hideItemsStateProvider);
+    ref.invalidate(extensionsRepoStateProvider(ItemType.manga));
+    ref.invalidate(extensionsRepoStateProvider(ItemType.anime));
+    ref.invalidate(extensionsRepoStateProvider(ItemType.novel));
+  });
 }
