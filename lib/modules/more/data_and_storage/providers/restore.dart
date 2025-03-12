@@ -217,8 +217,8 @@ void restoreBackup(Ref ref, Map<String, dynamic> backup, {bool full = true}) {
         }
 
         if (full) {
-          isar.trackPreferences.clearSync();
           if (trackPreferences != null) {
+            isar.trackPreferences.clearSync();
             isar.trackPreferences.putAllSync(trackPreferences);
           }
         }
