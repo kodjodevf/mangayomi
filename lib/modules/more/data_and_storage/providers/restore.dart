@@ -427,8 +427,8 @@ void restoreTachiBkBackup(Ref ref, String path, BackupType bkType) {
                 .toList(),
         itemType: ItemType.manga,
         favorite: true,
-        dateAdded: tempManga.dateAdded,
-        lastUpdate: tempManga.lastModifiedAt,
+        dateAdded: tempManga.dateAdded * 1000,
+        lastUpdate: tempManga.lastModifiedAt * 1000,
       );
       if (bkType == BackupType.neko) {
         manga.source = "MangaDex";
@@ -439,21 +439,30 @@ void restoreTachiBkBackup(Ref ref, String path, BackupType bkType) {
         final chapter = Chapter(
           mangaId: manga.id!,
           name: tempChapter.name,
-          dateUpload: "${tempChapter.dateUpload}",
+          dateUpload:
+              bkType != BackupType.neko
+                  ? "${tempChapter.dateUpload * 1000}"
+                  : "${DateTime.now().millisecondsSinceEpoch - tempChapter.dateUpload.abs()}",
           isBookmarked: tempChapter.bookmark,
           isRead: tempChapter.read,
-          lastPageRead: "${tempChapter.lastPageRead}",
+          lastPageRead:
+              tempChapter.lastPageRead != 0
+                  ? "${tempChapter.lastPageRead}"
+                  : "1",
           scanlator: tempChapter.scanlator,
           url: tempChapter.url,
         );
         isar.chapters.putSync(chapter..manga.value = manga);
         chapter.manga.saveSync();
-        if ((chapter.isRead ?? false) &&
-            (history == null ||
-                int.parse(history.date ?? "0") < tempChapter.lastModifiedAt)) {
+        if ((history == null ||
+            int.parse(history.date ?? "0") <
+                tempChapter.lastModifiedAt * 1000)) {
           history = History(
             mangaId: manga.id,
-            date: "${tempChapter.lastModifiedAt}",
+            date:
+                bkType != BackupType.neko
+                    ? "${tempChapter.lastModifiedAt * 1000}"
+                    : "${DateTime.now().millisecondsSinceEpoch - tempChapter.dateUpload.abs()}",
             itemType: ItemType.manga,
             chapterId: chapter.id,
           )..chapter.value = chapter;
@@ -501,8 +510,8 @@ void restoreTachiBkBackup(Ref ref, String path, BackupType bkType) {
                   .toList(),
           itemType: ItemType.anime,
           favorite: true,
-          dateAdded: tempAnime.dateAdded,
-          lastUpdate: tempAnime.lastModifiedAt,
+          dateAdded: tempAnime.dateAdded * 1000,
+          lastUpdate: tempAnime.lastModifiedAt * 1000,
         );
         isar.mangas.putSync(anime);
         History? history;
@@ -510,22 +519,24 @@ void restoreTachiBkBackup(Ref ref, String path, BackupType bkType) {
           final episode = Chapter(
             mangaId: anime.id!,
             name: tempEpisode.name,
-            dateUpload: "${tempEpisode.dateUpload}",
+            dateUpload: "${tempEpisode.dateUpload * 1000}",
             isBookmarked: tempEpisode.bookmark,
             isRead: tempEpisode.seen,
-            lastPageRead: "${tempEpisode.lastSecondSeen}",
+            lastPageRead:
+                tempEpisode.lastSecondSeen != 0
+                    ? "${tempEpisode.lastSecondSeen * 1000}"
+                    : "1",
             scanlator: tempEpisode.scanlator,
             url: tempEpisode.url,
           );
           isar.chapters.putSync(episode..manga.value = anime);
           episode.manga.saveSync();
-          if ((episode.isRead ?? false) &&
-              (history == null ||
-                  int.parse(history.date ?? "0") <
-                      tempEpisode.lastModifiedAt)) {
+          if ((history == null ||
+              int.parse(history.date ?? "0") <
+                  tempEpisode.lastModifiedAt * 1000)) {
             history = History(
               mangaId: anime.id,
-              date: "${tempEpisode.lastModifiedAt}",
+              date: "${tempEpisode.lastModifiedAt * 1000}",
               itemType: ItemType.anime,
               chapterId: episode.id,
             )..chapter.value = episode;
