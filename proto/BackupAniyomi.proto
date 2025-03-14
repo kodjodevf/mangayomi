@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+import "BackupManga.proto";
+import "BackupCategory.proto";
+import "BackupAnime.proto";
+import "BackupSource.proto";
+
+message BackupAniyomi {
+    repeated BackupManga backupManga = 1;
+    repeated BackupCategory backupCategories = 2;
+    repeated BackupAnime backupAnime = 3;
+    repeated BackupCategory backupAnimeCategories = 4;
+    repeated BackupSource backupSources = 101;
+    repeated BackupSource backupAnimeSources = 103;
+}

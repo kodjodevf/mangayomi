@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+import "BackupManga.proto";
+import "BackupCategory.proto";
+import "BackupSource.proto";
+
+message BackupMihon {
+    repeated BackupManga backupManga = 1;
+    repeated BackupCategory backupCategories = 2;
+    repeated BackupSource backupSources = 101;
+}

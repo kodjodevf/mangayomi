@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+message BackupEpisode {
+    string url = 1;
+    string name = 2;
+    optional string scanlator = 3;
+    bool seen = 4;
+    bool bookmark = 5;
+    int32 lastSecondSeen = 6;
+    int32 dateFetch = 7;
+    int32 dateUpload = 8;
+    float episodeNumber = 9;
+    int32 sourceOrder = 10;
+    int32 lastModifiedAt = 11;
+    int32 version = 12;
+    int32 totalSeconds = 16;
+}

@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+message BackupSource {
+    string name = 1;
+    int32 sourceId = 2;
+}
