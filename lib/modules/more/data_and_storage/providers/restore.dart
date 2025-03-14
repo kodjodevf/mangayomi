@@ -97,10 +97,10 @@ BackupType checkBackupType(String path, Archive archive) {
     return BackupType.kotatsu;
   } else if (path.toLowerCase().endsWith(".tachibk") ||
       path.toLowerCase().endsWith(".proto.gz")) {
-    return path.contains("tachiyomi") || path.contains("mihon")
-        ? BackupType.mihon
-        : path.contains("xyz.jmir.tachiyomi.mi")
+    return path.contains("xyz.jmir.tachiyomi.mi") || path.contains("aniyomi.mi")
         ? BackupType.aniyomi
+        : path.contains("tachiyomi") || path.contains("mihon")
+        ? BackupType.mihon
         : BackupType.unknown;
   }
   return BackupType.unknown;
