@@ -49,6 +49,7 @@ void doRestore(Ref ref, {required String path, required BuildContext context}) {
         break;
       case BackupType.mihon:
       case BackupType.aniyomi:
+      case BackupType.neko:
         ref.read(restoreTachiBkBackupProvider(path, backupType));
         break;
       default:
@@ -77,7 +78,7 @@ void showBotToast(String text) {
   );
 }
 
-enum BackupType { unknown, mangayomi, mihon, aniyomi, kotatsu }
+enum BackupType { unknown, mangayomi, mihon, aniyomi, kotatsu, neko }
 
 BackupType checkBackupType(String path, Archive archive) {
   if (path.toLowerCase().contains("mangayomi") &&
@@ -101,6 +102,8 @@ BackupType checkBackupType(String path, Archive archive) {
         ? BackupType.aniyomi
         : path.contains("tachiyomi") || path.contains("mihon")
         ? BackupType.mihon
+        : path.contains("neko")
+        ? BackupType.neko
         : BackupType.unknown;
   }
   return BackupType.unknown;
@@ -427,6 +430,9 @@ void restoreTachiBkBackup(Ref ref, String path, BackupType bkType) {
         dateAdded: tempManga.dateAdded,
         lastUpdate: tempManga.lastModifiedAt,
       );
+      if (bkType == BackupType.neko) {
+        manga.source = "MangaDex";
+      }
       isar.mangas.putSync(manga);
       History? history;
       for (var tempChapter in tempManga.chapters) {
