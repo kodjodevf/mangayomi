@@ -35,7 +35,7 @@ Future<void> downloadChapter(
 }) async {
   bool onlyOnWifi = useWifi ?? ref.watch(onlyOnWifiStateProvider);
   final connectivity = await Connectivity().checkConnectivity();
-  final isOnWifi = connectivity.contains(ConnectivityResult.wifi);
+  final isOnWifi = connectivity.contains(ConnectivityResult.wifi) || connectivity.contains(ConnectivityResult.ethernet);
   if (onlyOnWifi && !isOnWifi) {
     botToast(navigatorKey.currentContext!.l10n.downloads_are_limited_to_wifi);
     return;
