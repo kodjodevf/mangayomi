@@ -1,0 +1,86 @@
+{
+  "name": "Mangayomi",
+  "identifier": "com.kodjodevf.mangayomi",
+  "headerURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/headers/source_header_default.webp",
+  "website": "https://github.com/kodjodevf/mangayomi",
+  "iconURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/icons/icon_default.webp",
+  "subtitle": "An experience like no other.",
+  "description": "This is the official source for Mangayomi.\n\nFor full details, check the GitHub repository:\nhttps://github.com/kodjodevf/mangayomi",
+  "tintColor": "EF4444",
+  "apps": [
+    {
+      "beta": false,
+      "name": "Mangayomi",
+      "bundleIdentifier": "com.kodjodevf.mangayomi",
+      "developerName": "Moustapha Kodjo Amadou",
+      "subtitle": "Read manga, novels, and watch anime",
+      "version": "0.5.2",
+      "versionDate": "2025-02-23T16:08:37Z",
+      "versionDescription": "What's Changed\r\n* Update quarkuc extractor  by @yxxyun in https://github.com/kodjodevf/mangayomi/pull/393\r\n* added long press for 2x playback speed by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/396\r\n* fix broken category \r\n* add confirmation dialog for adding repositories\r\n\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.5.1...v0.5.2",
+      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.5.2/Mangayomi-v0.5.2-ios.ipa",
+      "localizedDescription": "Mangayomi is an open-source Flutter app for reading manga, novels, and watching anime across multiple platforms.",
+      "iconURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/icons/icon_default.webp",
+      "tintColor": "EF4444",
+      "category": "entertainment",
+      "size": 56680831,
+      "screenshotURLs": [
+        "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_0_default.webp",
+        "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_1_default.webp",
+        "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_2_default.webp"
+      ],
+      "versions": [
+        {
+          "version": "0.5.2",
+          "date": "2025-02-23T16:08:37Z",
+          "localizedDescription": "What's Changed\r\n* Update quarkuc extractor  by @yxxyun in https://github.com/kodjodevf/mangayomi/pull/393\r\n* added long press for 2x playback speed by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/396\r\n* fix broken category \r\n* add confirmation dialog for adding repositories\r\n\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.5.1...v0.5.2",
+          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.5.2/Mangayomi-v0.5.2-ios.ipa",
+          "size": 56680831
+        },
+        {
+          "version": "0.5.1",
+          "date": "2025-02-20T14:29:54Z",
+          "localizedDescription": "What's Changed\r\n* added deep links for repo urls by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/379\r\n* enhanced sync feature by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/380\r\n* optimized sync and bug fixes by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/381\r\n\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.5.0...v0.5.1",
+          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.5.1/Mangayomi-v0.5.1-ios.ipa",
+          "size": 56754892
+        },
+        {
+          "version": "0.5.0",
+          "date": "2025-02-12T11:16:16Z",
+          "localizedDescription": "\u2022 improve chapter download\r\n\u2022 improve custom navigation settings\r\n\u2022 remove embedded URLs from extensions\r\n\u2022 co\u2022written with @Schnitzel5 : update source fetching methods to utilize the given repositories",
+          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.5.0/Mangayomi-v0.5.0-ios.ipa",
+          "size": 56707308
+        }
+      ],
+      "appPermissions": {
+        "entitlements": [
+          {
+            "name": "com.apple.security.application-groups"
+          },
+          {
+            "name": "com.apple.developer.associated-domains"
+          },
+          {
+            "name": "keychain-access-groups"
+          },
+          {
+            "name": "aps-environment"
+          }
+        ],
+        "privacy": []
+      }
+    }
+  ],
+  "news": [
+    {
+      "appID": "com.kodjodevf.mangayomi",
+      "title": "0.5.2 - 23 Feb",
+      "identifier": "release-0.5.2",
+      "caption": "Update for Mangayomi now available!",
+      "date": "2025-02-23T16:08:37Z",
+      "tintColor": "EF4444",
+      "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
+      "notify": true,
+      "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.5.2"
+    }
+  ]
+}
