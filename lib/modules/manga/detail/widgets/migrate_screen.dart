@@ -392,13 +392,26 @@ class _MigrationMangaGlobalImageCardState
                         Consumer(
                           builder:
                               (context, ref, child) => TextButton(
-                                onPressed: () {
+                                onPressed: () async {
+                                  String? historyChapter;
+                                  String? historyDate;
+                                  List<Chapter> chaptersProgress = [];
                                   isar.writeTxnSync(() {
                                     final histories =
                                         isar.historys
                                             .filter()
                                             .mangaIdEqualTo(widget.oldManga.id)
+                                            .sortByDate()
                                             .findAllSync();
+                                    historyChapter = _extractChapterNumber(
+                                      histories
+                                              .lastOrNull
+                                              ?.chapter
+                                              .value
+                                              ?.name ??
+                                          "",
+                                    );
+                                    historyDate = histories.lastOrNull?.date;
                                     for (var history in histories) {
                                       isar.historys.deleteSync(history.id!);
                                       ref
@@ -416,6 +429,7 @@ class _MigrationMangaGlobalImageCardState
                                     }
                                     for (var chapter
                                         in widget.oldManga.chapters) {
+                                      chaptersProgress.add(chapter);
                                       isar.updates
                                           .filter()
                                           .mangaIdEqualTo(chapter.mangaId)
@@ -461,19 +475,70 @@ class _MigrationMangaGlobalImageCardState
                                           false,
                                         );
                                   });
-                                  ref.read(
+                                  await ref.read(
                                     updateMangaDetailProvider(
                                       mangaId: widget.oldManga.id,
                                       isInit: false,
-                                    ),
+                                    ).future,
                                   );
+                                  isar.writeTxnSync(() {
+                                    for (var oldChapter in chaptersProgress) {
+                                      final chapter =
+                                          isar.chapters
+                                              .filter()
+                                              .mangaIdEqualTo(
+                                                widget.oldManga.id,
+                                              )
+                                              .nameContains(
+                                                _extractChapterNumber(
+                                                      oldChapter.name ?? "",
+                                                    ) ??
+                                                    ".....",
+                                                caseSensitive: false,
+                                              )
+                                              .findFirstSync();
+                                      if (chapter != null) {
+                                        chapter.isBookmarked =
+                                            oldChapter.isBookmarked;
+                                        chapter.lastPageRead =
+                                            oldChapter.lastPageRead;
+                                        chapter.isRead = oldChapter.isRead;
+                                        isar.chapters.putSync(chapter);
+                                      }
+                                    }
+                                    final chapter =
+                                        isar.chapters
+                                            .filter()
+                                            .mangaIdEqualTo(widget.oldManga.id)
+                                            .nameContains(
+                                              historyChapter ?? ".....",
+                                              caseSensitive: false,
+                                            )
+                                            .findFirstSync();
+                                    if (chapter != null) {
+                                      isar.historys.putSync(
+                                        History(
+                                          mangaId: widget.oldManga.id,
+                                          date:
+                                              historyDate ??
+                                              DateTime.now()
+                                                  .millisecondsSinceEpoch
+                                                  .toString(),
+                                          itemType: widget.oldManga.itemType,
+                                          chapterId: chapter.id,
+                                        )..chapter.value = chapter,
+                                      );
+                                    }
+                                  });
                                   ref.invalidate(
                                     getMangaDetailStreamProvider(
                                       mangaId: widget.oldManga.id!,
                                     ),
                                   );
-                                  Navigator.pop(ctx);
-                                  Navigator.pop(ctx);
+                                  if (ctx.mounted) {
+                                    Navigator.pop(ctx);
+                                    Navigator.pop(ctx);
+                                  }
                                 },
                                 child: Text(l10n.ok),
                               ),
@@ -486,6 +551,17 @@ class _MigrationMangaGlobalImageCardState
             );
           }
         });
+  }
+
+  String? _extractChapterNumber(String chapterName) {
+    return RegExp(
+          r'\s*(\d+\.\d+)\s*',
+          multiLine: true,
+        ).firstMatch(chapterName)?.group(0) ??
+        RegExp(
+          r'\s*(\d+)\s*',
+          multiLine: true,
+        ).firstMatch(chapterName)?.group(0);
   }
 }
 

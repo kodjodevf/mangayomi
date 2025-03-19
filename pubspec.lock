@@ -1432,6 +1432,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.1"
+  protobuf:
+    dependency: "direct main"
+    description:
+      name: protobuf
+      sha256: "68645b24e0716782e58948f8467fd42a880f255096a821f9e7d0ec625b00c84d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.0"
+  protoc_plugin:
+    dependency: "direct dev"
+    description:
+      name: protoc_plugin
+      sha256: fb0554851c9eca30bd18405fbbfe81e39166d4a2f0e5b770606fd69da3da0b2f
+      url: "https://pub.dev"
+    source: hosted
+    version: "21.1.2"
   provider:
     dependency: transitive
     description:
