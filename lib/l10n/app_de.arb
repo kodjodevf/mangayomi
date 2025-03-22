@@ -444,5 +444,6 @@
     "repo_added": "Erweiterungs-Repository hinzugefügt!",
     "genre_search_library": "Genre im Bibliothek suchen",
     "genre_search_source": "Zur Erweiterung navigieren",
-    "source_not_added": "Die Erweiterung ist nicht installiert!"
+    "source_not_added": "Die Erweiterung ist nicht installiert!",
+    "load_own_subtitles": "Deine eigene Untertiteln laden..."
 }
