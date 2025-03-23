@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' as riv;
+import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/video.dart' as vid;
@@ -627,32 +629,54 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
       child: Column(
-        children:
-            videoSubtitleLast.toSet().toList().map((sub) {
-              final title =
-                  sub.title ??
-                  sub.subtitle?.title ??
-                  sub.subtitle?.language ??
-                  sub.subtitle?.channels ??
-                  "None";
+        children: [
+          ...videoSubtitleLast.toSet().toList().map((sub) {
+            final title =
+                sub.title ??
+                sub.subtitle?.title ??
+                sub.subtitle?.language ??
+                sub.subtitle?.channels ??
+                "None";
 
-              final selected =
-                  (title ==
-                      (subtitle.title ??
-                          subtitle.language ??
-                          subtitle.channels ??
-                          "None")) ||
-                  (subtitle.id == "no" && title == "None");
-              return GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                  try {
-                    _player.setSubtitleTrack(sub.subtitle!);
-                  } catch (_) {}
-                },
-                child: textWidget(title, selected),
-              );
-            }).toList(),
+            final selected =
+                (title ==
+                    (subtitle.title ??
+                        subtitle.language ??
+                        subtitle.channels ??
+                        "None")) ||
+                (subtitle.id == "no" && title == "None");
+            return GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+                try {
+                  _player.setSubtitleTrack(sub.subtitle!);
+                } catch (_) {}
+              },
+              child: textWidget(title, selected),
+            );
+          }),
+          GestureDetector(
+            onTap: () async {
+              try {
+                FilePickerResult? result = await FilePicker.platform.pickFiles(
+                  allowMultiple: false,
+                );
+
+                if (result != null && context.mounted) {
+                  _player.setSubtitleTrack(
+                    SubtitleTrack.uri(result.files.first.path!),
+                  );
+                }
+                if (!context.mounted) return;
+                Navigator.pop(context);
+              } catch (_) {
+                botToast("Error");
+                Navigator.pop(context);
+              }
+            },
+            child: textWidget(context.l10n.load_own_subtitles, false),
+          ),
+        ],
       ),
     );
   }

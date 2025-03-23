@@ -457,5 +457,6 @@
   "add_repo": "Add Repository?",
   "genre_search_library": "Search genre in library",
   "genre_search_source": "Browse in source",
-  "source_not_added": "Source is not installed!"
+  "source_not_added": "Source is not installed!",
+  "load_own_subtitles": "Load your own subtitles..."
 }
