@@ -6,6 +6,7 @@ import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -100,6 +101,15 @@ class _MyAppState extends ConsumerState<MyApp> {
       }
     });
     super.initState();
+    var dispatcher = SchedulerBinding.instance.platformDispatcher;
+    dispatcher.onPlatformBrightnessChanged = () {
+      var brightness = dispatcher.platformBrightness;
+      if (brightness == Brightness.light) {
+        ref.read(themeModeStateProvider.notifier).setLightTheme();
+      } else {
+        ref.read(themeModeStateProvider.notifier).setDarkTheme();
+      }
+    };
   }
 
   @override
