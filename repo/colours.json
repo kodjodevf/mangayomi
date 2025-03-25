@@ -2,10 +2,10 @@
   "Themes": {
     "Default": {
       "Tint": "#EF4444",
-      "Primary": "#7F1D1D",
+      "Primary": "#EF4444",
       "Gradient": {
-        "Primary": "#B91C1C",
-        "Secondary": "#7F1D1D"
+        "Primary": "#EF4444",
+        "Secondary": "#991B1B"
       }
     },
     "Black": {
