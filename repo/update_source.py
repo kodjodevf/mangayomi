@@ -2,7 +2,7 @@ import json
 import re
 import requests
 from datetime import datetime
-from typing import Dict, List, Optional, Set, Any, TypedDict, Tuple
+from typing import Dict, List, Optional, Any, TypedDict
 
 
 class ReleaseAsset(TypedDict):
@@ -52,23 +52,50 @@ class AppData(TypedDict):
     news: List[NewsEntry]
 
 
-REPO_URL: str = "kodjodevf/mangayomi"
-JSON_FILE: str = "repo/source.json"
-APP_ID: str = "com.kodjodevf.mangayomi"
-APP_NAME: str = "Mangayomi"
-CAPTION = f"Update for {APP_NAME} now available!"
-IMAGE_URL = f"https://raw.githubusercontent.com/{REPO_URL}/refs/heads/main/repo/images/news/update_default.webp"
-TINT_COLOUR = "EF4444"
+class AppConfig(TypedDict):
+    repo_url: str
+    json_file: str
+    app_id: str
+    app_name: str
+    caption: str
+    tint_colour: str
+    image_url: str
 
 
-def fetch_all_releases() -> List[GitHubRelease]:
+def load_config(config_path: str) -> AppConfig:
+    """
+    Load repo configuration values.
+    """
+    try:
+        with open(config_path, 'r') as config_file:
+            config_data = json.load(config_file)
+        
+        return {
+            "repo_url": config_data["repo_url"],
+            "json_file": config_data["json_file"],
+            "app_id": config_data["app_id"],
+            "app_name": config_data["app_name"],
+            "caption": config_data["caption"],
+            "tint_colour": config_data["tint_colour"],
+            "image_url": config_data["image_url"],
+        }
+    
+    except FileNotFoundError:
+        print(f"Configuration file not found at {config_path}")
+        raise
+    except (json.JSONDecodeError, KeyError) as e:
+        print(f"Error parsing configuration: {e}")
+        raise
+
+
+def fetch_all_releases(repo_url: str) -> List[GitHubRelease]:
     """
     Fetch all GitHub releases for the repository, sorted by published date (oldest first).
 
     Returns:
         List[GitHubRelease]: List of all releases sorted by publication date
     """
-    api_url: str = f"https://api.github.com/repos/{REPO_URL}/releases"
+    api_url: str = f"https://api.github.com/repos/{repo_url}/releases"
     headers: Dict[str, str] = {"Accept": "application/vnd.github+json"}
 
     response = requests.get(api_url, headers=headers)
@@ -80,7 +107,7 @@ def fetch_all_releases() -> List[GitHubRelease]:
     return sorted_releases
 
 
-def fetch_latest_release() -> GitHubRelease:
+def fetch_latest_release(repo_url: str) -> GitHubRelease:
     """
     Fetch the latest GitHub release for the repository.
 
@@ -90,7 +117,7 @@ def fetch_latest_release() -> GitHubRelease:
     Raises:
         ValueError: If no releases are found
     """
-    api_url: str = f"https://api.github.com/repos/{REPO_URL}/releases"
+    api_url: str = f"https://api.github.com/repos/{repo_url}/releases"
     headers: Dict[str, str] = {"Accept": "application/vnd.github+json"}
 
     response = requests.get(api_url, headers=headers)
@@ -105,21 +132,22 @@ def fetch_latest_release() -> GitHubRelease:
     raise ValueError("No release found.")
 
 
-def purge_old_news(data: AppData, fetched_versions: List[str]) -> None:
-    """
-    Remove news entries for versions that no longer exist.
+# 2025-03-25: Reimplement this at a later date (@tanakrit-d)
+# def purge_old_news(data: AppData, fetched_versions: List[str]) -> None:
+#     """
+#     Remove news entries for versions that no longer exist.
 
-    Args:
-        data: The app data dictionary
-        fetched_versions: List of valid version strings
-    """
-    if "news" not in data:
-        return
+#     Args:
+#         data: The app data dictionary
+#         fetched_versions: List of valid version strings
+#     """
+#     if "news" not in data:
+#         return
 
-    valid_identifiers: Set[str] = {f"release-{version}" for version in fetched_versions}
-    data["news"] = [
-        entry for entry in data["news"] if entry["identifier"] in valid_identifiers
-    ]
+#     valid_identifiers: Set[str] = {f"release-{version}" for version in fetched_versions}
+#     data["news"] = [
+#         entry for entry in data["news"] if entry["identifier"] in valid_identifiers
+#     ]
 
 
 def format_description(description: str) -> str:
@@ -132,7 +160,6 @@ def format_description(description: str) -> str:
     Returns:
         str: Cleaned description text
     """
-    # Remove HTML tags
     formatted = re.sub(r"<[^<]+?>", "", description)  # HTML tags
     formatted = re.sub(r"#{1,6}\s?", "", formatted)  # Markdown header tags
     formatted = formatted.replace(r"\*{2}", "").replace("-", "•").replace("`", '"')
@@ -152,7 +179,6 @@ def find_download_url_and_size(
     Returns:
         tuple: (download_url, size) or (None, None) if not found
     """
-    # Find IPA asset
     for asset in release["assets"]:
         if asset["name"].endswith(".ipa"):
             return asset["browser_download_url"], asset["size"]
@@ -163,23 +189,71 @@ def find_download_url_and_size(
 def normalize_version(version: str) -> str:
     """
     Strip the version tag (e.g., -hotfix) from a version string.
-    
+
     Args:
         version: Version string (e.g., v0.5.2-hotfix, 0.5.2-beta)
-        
+
     Returns:
         Normalized version string without the tag (e.g., 0.5.2)
     """
-    version = version.lstrip('v')
-    
-    # Extract the base version without tags
-    match = re.search(r'(\d+\.\d+\.\d+)', version)
+    version = version.lstrip("v")
+
+    match = re.search(r"(\d+\.\d+\.\d+)", version)
     if match:
         return match.group(1)
     return version
 
 
+def process_versions(versions_data: List[VersionEntry]) -> List[VersionEntry]:
+    """
+    Process the versions list to remove duplicate versions, keeping the newest version.
+
+    Args:
+        versions_data (List[VersionEntry]): List of version dictionaries containing:
+                                            version: str
+                                            date: str
+                                            localizedDescription: str
+                                            downloadURL: Optional[str]
+                                            size: Optional[int]
+
+    Returns:
+        List[VersionEntry]: Processed list with only the newest versions.
+    """
+    # Create a list to store unique versions with their details
+    version_entries: List[VersionEntry] = []
+
+    # Iterate through the versions in the order they appear
+    for version in versions_data:
+        # Parse the date for comparison
+        current_date = datetime.fromisoformat(version["date"].replace("Z", "+00:00"))
+
+        # Check if this version already exists in unique_versions
+        existing_version_index = next(
+            (
+                index
+                for index, v in enumerate(version_entries)
+                if v["version"] == version["version"]
+            ),
+            None,
+        )
+
+        if existing_version_index is not None:
+            # Compare dates and keep the newer version
+            existing_date = datetime.fromisoformat(
+                version_entries[existing_version_index]["date"].replace("Z", "+00:00")
+            )
+
+            if current_date > existing_date:
+                version_entries[existing_version_index] = version
+        else:
+            # If no duplicate found, add to unique versions
+            version_entries.append(version)
+
+    return version_entries
+
+
 def update_json_file(
+    config: AppConfig,
     json_file: str,
     fetched_data_all: List[GitHubRelease],
     fetched_data_latest: GitHubRelease,
@@ -197,14 +271,7 @@ def update_json_file(
 
     app = data["apps"][0]
 
-    # Initialize versions list if it doesn't exist
-    if "versions" not in app:
-        app["versions"] = []
-
-    fetched_versions: List[str] = []
-    
-    # Dictionary to track the latest release for each base version
-    latest_versions: Dict[str, Tuple[str, str, VersionEntry]] = {}
+    releases = []
 
     # Process all releases
     for release in fetched_data_all:
@@ -215,8 +282,7 @@ def update_json_file(
             continue
 
         version_date = release["published_at"]
-        fetched_versions.append(full_version)
-        
+
         # Get base version without tags
         base_version = normalize_version(full_version)
 
@@ -225,11 +291,14 @@ def update_json_file(
         keyword = "{APP_NAME} Release Information"
         if keyword in description:
             description = description.split(keyword, 1)[1].strip()
-
         description = format_description(description)
 
         # Find download URL and size
         download_url, size = find_download_url_and_size(release)
+
+        # Skip release entries without a download URL
+        if not download_url:
+            continue
 
         # Create version entry
         version_entry: VersionEntry = {
@@ -239,27 +308,16 @@ def update_json_file(
             "downloadURL": download_url,
             "size": size,
         }
-        
-        # Check if we need to update the latest version for this base version
-        if base_version in latest_versions:
-            _, existing_date, _ = latest_versions[base_version]
-            if version_date > existing_date:
-                latest_versions[base_version] = (full_version, version_date, version_entry)
-        else:
-            latest_versions[base_version] = (full_version, version_date, version_entry)
 
-    # Remove all versions that will be replaced
-    for base_version, (full_version, _, _) in latest_versions.items():
-        # Keep versions that don't share a base version with our updates
-        app["versions"] = [
-            v for v in app["versions"] 
-            if normalize_version(v["version"]) != base_version or v["version"] == full_version
-        ]
-    
-    # Add all the latest versions
-    for _, (_, _, version_entry) in latest_versions.items():
-        if version_entry["downloadURL"]:  # Only add if download URL exists
-            app["versions"].insert(0, version_entry)
+        releases.append(version_entry)
+
+    deduplicated_versions = process_versions(releases)
+    app["versions"] = []
+    for i in deduplicated_versions:
+        app["versions"].insert(0, i)
+    app["versions"] = sorted(
+        app["versions"], key=lambda x: x.get("date", ""), reverse=True
+    )
 
     # Update app info with latest release
     latest_version = fetched_data_latest["tag_name"].lstrip("v")
@@ -279,7 +337,8 @@ def update_json_file(
     app["size"] = size
 
     # Update news entries
-    purge_old_news(data, fetched_versions)
+    # 2025-03-25: Reimplement this at a later date (@tanakrit-d)
+    # purge_old_news(data, fetched_versions)
 
     if "news" not in data:
         data["news"] = []
@@ -292,15 +351,15 @@ def update_json_file(
         ).strftime("%d %b")
 
         news_entry: NewsEntry = {
-            "appID": APP_ID,
+            "appID": config["app_id"],
             "title": f"{latest_version} - {formatted_date}",
             "identifier": news_identifier,
-            "caption": CAPTION,
+            "caption": config["caption"],
             "date": fetched_data_latest["published_at"],
-            "tintColor": TINT_COLOUR,
-            "imageURL": IMAGE_URL,
+            "tintColor": config["tint_colour"],
+            "imageURL": config["image_url"],
             "notify": True,
-            "url": f"https://github.com/{REPO_URL}/releases/tag/{tag}",
+            "url": f"https://github.com/{config["repo_url"]}/releases/tag/{tag}",
         }
         data["news"].append(news_entry)
 
@@ -313,10 +372,11 @@ def main() -> None:
     Entrypoint for GitHub workflow action.
     """
     try:
-        fetched_data_all = fetch_all_releases()
-        fetched_data_latest = fetch_latest_release()
-        update_json_file(JSON_FILE, fetched_data_all, fetched_data_latest)
-        print(f"Successfully updated {JSON_FILE} with latest releases.")
+        config = load_config("repo/config.json")
+        fetched_data_all = fetch_all_releases(config["repo_url"])
+        fetched_data_latest = fetch_latest_release(config["repo_url"])
+        update_json_file(config, "repo/source.json", fetched_data_all, fetched_data_latest)
+        print("Successfully updated repo/source.json with latest releases.")
     except Exception as e:
         print(f"Error updating releases: {e}")
 

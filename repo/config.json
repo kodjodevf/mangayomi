@@ -1,0 +1,9 @@
+{
+    "repo_url": "kodjodevf/mangayomi",
+    "json_file": "repo/source.json",
+    "app_id": "com.kodjodevf.mangayomi",
+    "app_name": "Mangayomi",
+    "caption": "Update for Mangayomi now available!",
+    "tint_colour": "EF4444",
+    "image_url": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update.webp"
+}
