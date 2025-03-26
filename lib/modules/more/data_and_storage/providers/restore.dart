@@ -82,7 +82,7 @@ enum BackupType { unknown, mangayomi, mihon, aniyomi, kotatsu, neko }
 
 BackupType checkBackupType(String path, Archive archive) {
   if (path.toLowerCase().contains("mangayomi") &&
-      archive.files.first.name.endsWith(".backup.db")) {
+      (archive.files.firstOrNull?.name ?? "").endsWith(".backup.db")) {
     return BackupType.mangayomi;
   } else if (path.toLowerCase().contains("kotatsu") &&
       archive.files.where((f) {
