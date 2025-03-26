@@ -22,5 +22,22 @@ final themeModeStateProvider =
 );
 
 typedef _$ThemeModeState = AutoDisposeNotifier<bool>;
+String _$followSystemThemeStateHash() =>
+    r'0c65e1471807dddb2f536d336d1f44b29e9e3a5a';
+
+/// See also [FollowSystemThemeState].
+@ProviderFor(FollowSystemThemeState)
+final followSystemThemeStateProvider =
+    AutoDisposeNotifierProvider<FollowSystemThemeState, bool>.internal(
+  FollowSystemThemeState.new,
+  name: r'followSystemThemeStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$followSystemThemeStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$FollowSystemThemeState = AutoDisposeNotifier<bool>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

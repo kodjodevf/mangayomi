@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/app_font_family.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/appearance/widgets/follow_system_theme_button.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/date.dart';
@@ -71,6 +72,7 @@ class AppearanceScreen extends ConsumerWidget {
                     ),
                   ),
                   const DarkModeButton(),
+                  const FollowSystemThemeButton(),
                   const ThemeSelector(),
                   if (isDarkTheme)
                     Padding(

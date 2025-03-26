@@ -51,6 +51,8 @@ class Settings {
 
   bool? themeIsDark;
 
+  bool? followSystemTheme;
+
   bool? incognitoMode;
 
   List<ChapterPageurls>? chapterPageUrlsList;
@@ -254,6 +256,7 @@ class Settings {
     this.relativeTimesTamps = 2,
     this.flexSchemeColorIndex = 2,
     this.themeIsDark = false,
+    this.followSystemTheme = false,
     this.incognitoMode = false,
     this.chapterPageUrlsList,
     this.showPagesNumber = true,
@@ -472,6 +475,7 @@ class Settings {
               .toList();
     }
     themeIsDark = json['themeIsDark'];
+    followSystemTheme = json['followSystemTheme'];
     userAgent = json['userAgent'];
     backupFrequency = json['backupFrequency'];
     backupListOptions = json['backupListOptions']?.cast<int>();
@@ -637,6 +641,7 @@ class Settings {
     'sortLibraryAnime': sortLibraryAnime?.toJson(),
     'sortLibraryManga': sortLibraryManga?.toJson(),
     'themeIsDark': themeIsDark,
+    'followSystemTheme': followSystemTheme,
     'userAgent': userAgent,
     'backupFrequency': backupFrequency,
     'backupListOptions': backupListOptions,
