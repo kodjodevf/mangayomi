@@ -48,6 +48,7 @@ class AppearanceScreen extends ConsumerWidget {
                   (element) => element.value().fontFamily! == appFontFamily,
                 )
                 .key;
+    bool followSystemTheme = ref.watch(followSystemThemeStateProvider);
     return Scaffold(
       appBar: AppBar(title: Text(l10n!.appearance)),
       body: SingleChildScrollView(
@@ -71,7 +72,7 @@ class AppearanceScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  const DarkModeButton(),
+                  if (!followSystemTheme) const DarkModeButton(),
                   const FollowSystemThemeButton(),
                   const ThemeSelector(),
                   if (isDarkTheme)

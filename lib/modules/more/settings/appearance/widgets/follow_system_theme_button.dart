@@ -8,10 +8,12 @@ class FollowSystemThemeButton extends ConsumerStatefulWidget {
   const FollowSystemThemeButton({super.key});
 
   @override
-  ConsumerState<FollowSystemThemeButton> createState() => _FollowSystemThemeButtonState();
+  ConsumerState<FollowSystemThemeButton> createState() =>
+      _FollowSystemThemeButtonState();
 }
 
-class _FollowSystemThemeButtonState extends ConsumerState<FollowSystemThemeButton> {
+class _FollowSystemThemeButtonState
+    extends ConsumerState<FollowSystemThemeButton> {
   @override
   Widget build(BuildContext context) {
     bool isFollow = ref.watch(followSystemThemeStateProvider);
