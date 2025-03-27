@@ -194,25 +194,21 @@ class CustomExtendedNetworkImageProvider
       ),
     );
     Uint8List? data;
+    final File cacheFile = File(join(cacheImagesDirectory.path, md5Key));
     // exist, try to find cache image file
-    if (cacheImagesDirectory.existsSync()) {
-      final File cacheFlie = File(join(cacheImagesDirectory.path, md5Key));
-      if (cacheFlie.existsSync()) {
-        if (key.cacheMaxAge != null) {
-          final DateTime now = DateTime.now();
-          final FileStat fs = cacheFlie.statSync();
-          if (now.subtract(key.cacheMaxAge!).isAfter(fs.changed)) {
-            cacheFlie.deleteSync(recursive: true);
-          } else {
-            data = await cacheFlie.readAsBytes();
-          }
+    if (cacheFile.existsSync()) {
+      if (key.cacheMaxAge != null) {
+        final DateTime now = DateTime.now();
+        final DateTime lastModified = cacheFile.lastModifiedSync();
+        if (now.difference(lastModified) > key.cacheMaxAge!) {
+          cacheFile.deleteSync();
         } else {
-          data = await cacheFlie.readAsBytes();
+          data = await cacheFile.readAsBytes();
         }
+      } else {
+        data = await cacheFile.readAsBytes();
       }
-    }
-    // create folder
-    else {
+    } else if (!cacheImagesDirectory.existsSync()) {
       await cacheImagesDirectory.create(recursive: true);
     }
     // load from network
