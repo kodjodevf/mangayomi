@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'anilist.dart';
+part of 'statistics_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$anilistHash() => r'70e8cd537270a9054a1ef72de117fc7ad5545218';
+String _$statisticsStateHash() => r'6c94816bb70881890bc883480677e38885fa6ab2';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,43 +29,38 @@ class _SystemHash {
   }
 }
 
-abstract class _$Anilist extends BuildlessAutoDisposeNotifier<void> {
-  late final int syncId;
-  late final ItemType? itemType;
+abstract class _$StatisticsState extends BuildlessAutoDisposeNotifier<void> {
+  late final ItemType itemType;
 
-  void build({
-    required int syncId,
-    ItemType? itemType,
-  });
+  void build(
+    ItemType itemType,
+  );
 }
 
-/// See also [Anilist].
-@ProviderFor(Anilist)
-const anilistProvider = AnilistFamily();
+/// See also [StatisticsState].
+@ProviderFor(StatisticsState)
+const statisticsStateProvider = StatisticsStateFamily();
 
-/// See also [Anilist].
-class AnilistFamily extends Family<void> {
-  /// See also [Anilist].
-  const AnilistFamily();
+/// See also [StatisticsState].
+class StatisticsStateFamily extends Family<void> {
+  /// See also [StatisticsState].
+  const StatisticsStateFamily();
 
-  /// See also [Anilist].
-  AnilistProvider call({
-    required int syncId,
-    ItemType? itemType,
-  }) {
-    return AnilistProvider(
-      syncId: syncId,
-      itemType: itemType,
+  /// See also [StatisticsState].
+  StatisticsStateProvider call(
+    ItemType itemType,
+  ) {
+    return StatisticsStateProvider(
+      itemType,
     );
   }
 
   @override
-  AnilistProvider getProviderOverride(
-    covariant AnilistProvider provider,
+  StatisticsStateProvider getProviderOverride(
+    covariant StatisticsStateProvider provider,
   ) {
     return call(
-      syncId: provider.syncId,
-      itemType: provider.itemType,
+      provider.itemType,
     );
   }
 
@@ -81,90 +76,79 @@ class AnilistFamily extends Family<void> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'anilistProvider';
+  String? get name => r'statisticsStateProvider';
 }
 
-/// See also [Anilist].
-class AnilistProvider extends AutoDisposeNotifierProviderImpl<Anilist, void> {
-  /// See also [Anilist].
-  AnilistProvider({
-    required int syncId,
-    ItemType? itemType,
-  }) : this._internal(
-          () => Anilist()
-            ..syncId = syncId
-            ..itemType = itemType,
-          from: anilistProvider,
-          name: r'anilistProvider',
+/// See also [StatisticsState].
+class StatisticsStateProvider
+    extends AutoDisposeNotifierProviderImpl<StatisticsState, void> {
+  /// See also [StatisticsState].
+  StatisticsStateProvider(
+    ItemType itemType,
+  ) : this._internal(
+          () => StatisticsState()..itemType = itemType,
+          from: statisticsStateProvider,
+          name: r'statisticsStateProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$anilistHash,
-          dependencies: AnilistFamily._dependencies,
-          allTransitiveDependencies: AnilistFamily._allTransitiveDependencies,
-          syncId: syncId,
+                  : _$statisticsStateHash,
+          dependencies: StatisticsStateFamily._dependencies,
+          allTransitiveDependencies:
+              StatisticsStateFamily._allTransitiveDependencies,
           itemType: itemType,
         );
 
-  AnilistProvider._internal(
+  StatisticsStateProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.syncId,
     required this.itemType,
   }) : super.internal();
 
-  final int syncId;
-  final ItemType? itemType;
+  final ItemType itemType;
 
   @override
   void runNotifierBuild(
-    covariant Anilist notifier,
+    covariant StatisticsState notifier,
   ) {
     return notifier.build(
-      syncId: syncId,
-      itemType: itemType,
+      itemType,
     );
   }
 
   @override
-  Override overrideWith(Anilist Function() create) {
+  Override overrideWith(StatisticsState Function() create) {
     return ProviderOverride(
       origin: this,
-      override: AnilistProvider._internal(
-        () => create()
-          ..syncId = syncId
-          ..itemType = itemType,
+      override: StatisticsStateProvider._internal(
+        () => create()..itemType = itemType,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        syncId: syncId,
         itemType: itemType,
       ),
     );
   }
 
   @override
-  AutoDisposeNotifierProviderElement<Anilist, void> createElement() {
-    return _AnilistProviderElement(this);
+  AutoDisposeNotifierProviderElement<StatisticsState, void> createElement() {
+    return _StatisticsStateProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is AnilistProvider &&
-        other.syncId == syncId &&
-        other.itemType == itemType;
+    return other is StatisticsStateProvider && other.itemType == itemType;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, syncId.hashCode);
     hash = _SystemHash.combine(hash, itemType.hashCode);
 
     return _SystemHash.finish(hash);
@@ -173,22 +157,18 @@ class AnilistProvider extends AutoDisposeNotifierProviderImpl<Anilist, void> {
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin AnilistRef on AutoDisposeNotifierProviderRef<void> {
-  /// The parameter `syncId` of this provider.
-  int get syncId;
-
+mixin StatisticsStateRef on AutoDisposeNotifierProviderRef<void> {
   /// The parameter `itemType` of this provider.
-  ItemType? get itemType;
+  ItemType get itemType;
 }
 
-class _AnilistProviderElement
-    extends AutoDisposeNotifierProviderElement<Anilist, void> with AnilistRef {
-  _AnilistProviderElement(super.provider);
+class _StatisticsStateProviderElement
+    extends AutoDisposeNotifierProviderElement<StatisticsState, void>
+    with StatisticsStateRef {
+  _StatisticsStateProviderElement(super.provider);
 
   @override
-  int get syncId => (origin as AnilistProvider).syncId;
-  @override
-  ItemType? get itemType => (origin as AnilistProvider).itemType;
+  ItemType get itemType => (origin as StatisticsStateProvider).itemType;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
