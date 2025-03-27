@@ -190,7 +190,7 @@ jobs:
 
       - name: build windows exe
         run: |
-            dart run inno_bundle:build --release --app-version ${{ github.ref_name }} | ForEach-Object { $_ -replace "[a-z]", "" }
+            dart run inno_bundle:build --release --app-version ${{ github.ref_name }}
 
       - name: build windows zip
         run: |

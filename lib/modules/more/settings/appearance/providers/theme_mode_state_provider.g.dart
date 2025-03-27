@@ -23,7 +23,7 @@ final themeModeStateProvider =
 
 typedef _$ThemeModeState = AutoDisposeNotifier<bool>;
 String _$followSystemThemeStateHash() =>
-    r'0c65e1471807dddb2f536d336d1f44b29e9e3a5a';
+    r'a2d5e573e05364c3c89abe81f25c7f39b0ae91e2';
 
 /// See also [FollowSystemThemeState].
 @ProviderFor(FollowSystemThemeState)
