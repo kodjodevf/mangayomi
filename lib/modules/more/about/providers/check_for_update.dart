@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 part 'check_for_update.g.dart';
 
 @riverpod
@@ -28,7 +30,12 @@ Future<void> checkForUpdate(
   if (kDebugMode) {
     log(info.data.toString());
   }
-
+  if (Platform.isAndroid) {
+    final deviceInfo = DeviceInfoPlugin();
+    final androidInfo = await deviceInfo.androidInfo;
+    print("DEBUG");
+    print(androidInfo.supportedAbis.join(", ")); // x86_64, arm64-v8a
+  }
   final updateAvailable = await _checkUpdate();
   if (compareVersions(info.version, updateAvailable.$1) < 0) {
     if (manualUpdate) {
@@ -56,7 +63,7 @@ Future<void> checkForUpdate(
                   ),
                   const SizedBox(width: 15),
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       _launchInBrowser(Uri.parse(updateAvailable.$3));
                     },
                     child: Text(l10n.download),
