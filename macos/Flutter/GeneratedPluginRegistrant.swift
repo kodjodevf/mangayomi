@@ -5,7 +5,6 @@
 import FlutterMacOS
 import Foundation
 
-import app_installer
 import app_links
 import audio_session
 import connectivity_plus
@@ -32,7 +31,6 @@ import window_manager
 import window_to_front
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
-  AppInstallerPlugin.register(with: registry.registrar(forPlugin: "AppInstallerPlugin"))
   AppLinksMacosPlugin.register(with: registry.registrar(forPlugin: "AppLinksMacosPlugin"))
   AudioSessionPlugin.register(with: registry.registrar(forPlugin: "AudioSessionPlugin"))
   ConnectivityPlusPlugin.register(with: registry.registrar(forPlugin: "ConnectivityPlusPlugin"))
