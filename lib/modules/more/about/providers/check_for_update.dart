@@ -29,7 +29,7 @@ Future<void> checkForUpdate(
     log(info.data.toString());
   }
   final updateAvailable = await _checkUpdate();
-  if (compareVersions(info.version, updateAvailable.$1) < 0 || true) {
+  if (compareVersions(info.version, updateAvailable.$1) < 0) {
     if (manualUpdate) {
       BotToast.showText(text: l10n.new_update_available);
       await Future.delayed(const Duration(seconds: 1));
@@ -49,7 +49,7 @@ Future<void> checkForUpdate(
   }
 }
 
-Future<(String, String, String, List<String>)> _checkUpdate() async {
+Future<(String, String, String, List<dynamic>)> _checkUpdate() async {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
   try {
     final res = await http.get(
@@ -67,8 +67,7 @@ Future<(String, String, String, List<String>)> _checkUpdate() async {
       resListJson.first["html_url"].toString(),
       (resListJson.first["assets"] as List)
               .map((asset) => asset["browser_download_url"])
-              .toList()
-          as List<String>,
+              .toList(),
     );
   } catch (e) {
     rethrow;

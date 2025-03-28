@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
@@ -8,10 +9,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DownloadFileScreen extends ConsumerStatefulWidget {
-  final (String, String, String, List<String>) updateAvailable;
+  final (String, String, String, List<dynamic>) updateAvailable;
   const DownloadFileScreen({required this.updateAvailable, super.key});
 
   @override
@@ -23,6 +25,7 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
   int _received = 0;
   late http.StreamedResponse _response;
   final List<int> _bytes = [];
+  late StreamSubscription<List<int>>? _subscription;
 
   @override
   Widget build(BuildContext context) {
@@ -30,26 +33,42 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
     final updateAvailable = widget.updateAvailable;
     return AlertDialog(
       title: Text(l10n.new_update_available),
-      content: Text(
-        "${l10n.app_version(updateAvailable.$1)}\n\n${updateAvailable.$2}",
+      content: SingleChildScrollView(
+        child: Column(
+          children: [
+            Text(
+              "${l10n.app_version(updateAvailable.$1)}\n\n${updateAvailable.$2}",
+            ),
+            _total > 0
+                ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Flexible(
+                      child: LinearProgressIndicator(
+                        value: _total > 0 ? (_received * 1.0) / _total : 0.0,
+                      ),
+                    ),
+                    Flexible(
+                      child: Text(
+                        '${(_received / 1048576.0).toStringAsFixed(2)}/${(_total / 1048576.0).toStringAsFixed(2)} MB',
+                      ),
+                    ),
+                  ],
+                )
+                : SizedBox.shrink(),
+          ],
+        ),
       ),
       actions: [
-        _total > 0
-            ? Row(
-              children: [
-                LinearProgressIndicator(
-                  value: _received > 0 ? _total / _received : 0,
-                ),
-                Text('${_received ~/ 1024}/${_total ~/ 1024} KB'),
-              ],
-            )
-            : SizedBox.shrink(),
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
+              onPressed: () async {
+                await _subscription?.cancel();
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
               },
               child: Text(l10n.cancel),
             ),
@@ -62,7 +81,7 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
                   String apkUrl = "";
                   for (String abi in androidInfo.supportedAbis) {
                     final url = updateAvailable.$4.firstWhereOrNull(
-                      (apk) => apk.contains(abi),
+                      (apk) => (apk as String).contains(abi),
                     );
                     if (url != null) {
                       apkUrl = url;
@@ -70,10 +89,6 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
                     }
                   }
                   await _downloadApk(apkUrl);
-                  print("DEBUG");
-                  print(
-                    androidInfo.supportedAbis.join(", "),
-                  ); // x86_64, arm64-v8a, armeabi-v7a
                 } else {
                   _launchInBrowser(Uri.parse(updateAvailable.$3));
                 }
@@ -87,28 +102,46 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
   }
 
   Future<void> _downloadApk(String url) async {
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      await Permission.storage.request();
+    }
+    Directory? dir = Directory('/storage/emulated/0/Download');
+    if (!await dir.exists()) dir = await getExternalStorageDirectory();
+    final file = File(
+      '${dir!.path}/${url.split("/").lastOrNull ?? "Mangayomi.apk"}',
+    );
+    if (await file.exists()) {
+      await _installApk(file);
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+      return;
+    }
     _response = await http.Client().send(http.Request('GET', Uri.parse(url)));
     _total = _response.contentLength ?? 0;
+    _subscription = _response.stream.listen((value) {
+      setState(() {
+        _bytes.addAll(value);
+        _received += value.length;
+      });
+    });
+    _subscription?.onDone(() async {
+      await file.writeAsBytes(_bytes);
+      await _installApk(file);
+      if (context.mounted) {
+        Navigator.pop(context);
+      }
+    });
+  }
 
-    _response.stream
-        .listen((value) {
-          setState(() {
-            _bytes.addAll(value);
-            _received += value.length;
-          });
-        })
-        .onDone(() async {
-          final file = File(
-            '${(await getApplicationDocumentsDirectory()).path}/${url.split("/").lastOrNull ?? "Mangayomi.apk"}',
-          );
-          await file.writeAsBytes(_bytes);
-          final FlutterAppInstaller appInstaller = FlutterAppInstaller();
-          await appInstaller.installApk(filePath: file.path);
-          await file.delete();
-          if (context.mounted) {
-            Navigator.pop(context);
-          }
-        });
+  Future<void> _installApk(File file) async {
+    var status = await Permission.requestInstallPackages.status;
+    if (!status.isGranted) {
+      await Permission.requestInstallPackages.request();
+    }
+    final FlutterAppInstaller appInstaller = FlutterAppInstaller();
+    await appInstaller.installApk(filePath: file.path);
   }
 
   Future<void> _launchInBrowser(Uri url) async {
