@@ -9,6 +9,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name }}
   cancel-in-progress: true
 
+env:
+  ZSIGN_VERSION: '0.7'
+
 jobs:
   build-and-release-android-apks:
     permissions:
@@ -77,8 +80,12 @@ jobs:
     runs-on: macos-latest
     steps:
       # Checkout branch
-      - name: checkout branch
+      - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
+          path: .
 
       - name: setup flutter
         uses: subosito/flutter-action@v2
@@ -94,16 +101,27 @@ jobs:
       - name: flutter pub get
         run: flutter pub get
 
+      - name: setup signing environment
+        env:
+          P12_BASE64: ${{ secrets.P12_CERTIFICATE }}
+          PROVISIONING_PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE }}
+        run: |
+          echo "$P12_BASE64" | base64 -d > certificate.p12
+          echo "$PROVISIONING_PROFILE_BASE64" | base64 -d > profile.mobileprovision
+          curl -L -o zsign.zip "https://github.com/zhlynn/zsign/releases/download/v${{ env.ZSIGN_VERSION }}/zsign-v${{ env.ZSIGN_VERSION }}-macos-x64.zip"
+          unzip zsign.zip
+          chmod +x zsign || chmod +x zsign-*
+
       - name: build ios
+        env:
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
         run: |
           flutter build ios --release --no-codesign
+          mkdir -p build/ios/iphoneos/Payload
+          ln -s ../Runner.app build/ios/iphoneos/Payload/Runner.app
+          ./zsign -f -k ./certificate.p12 -p "$P12_PASSWORD" -m ./profile.mobileprovision ./build/ios/iphoneos/Payload/Runner.app
           cd build/ios/iphoneos
-          mkdir Payload
-          cd Payload
-          ln -s ../Runner.app
-          cd ..
-          zip -r app-release.ipa Payload
-          mv app-release.ipa Mangayomi-${{ github.ref_name }}-ios.ipa
+          zip -r ./Mangayomi-${{ github.ref_name }}-ios.ipa Payload
 
       - name: upload artifact ios ipa
         uses: actions/upload-artifact@v4
@@ -402,3 +420,7 @@ jobs:
         with:
           artifacts: dist/Mangayomi-*.deb
           allowUpdates: true
+
+  ios-source-build:
+    needs: build-and-release-ios-ipa
+    uses: ./.github/workflows/update_sideloading_source.yml

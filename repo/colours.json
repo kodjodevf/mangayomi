@@ -1,0 +1,20 @@
+{
+  "Themes": {
+    "Default": {
+      "Tint": "#EF4444",
+      "Primary": "#EF4444",
+      "Gradient": {
+        "Primary": "#EF4444",
+        "Secondary": "#991B1B"
+      }
+    },
+    "Black": {
+      "Tint": "#71717A",
+      "Primary": "#18181B",
+      "Gradient": {
+        "Primary": "#3F3F46",
+        "Secondary": "#18181B"
+      }
+    }
+  }
+}
