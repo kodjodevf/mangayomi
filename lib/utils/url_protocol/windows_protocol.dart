@@ -47,7 +47,7 @@ class WindowsProtocolHandler extends ProtocolHandler {
         hKey,
         txtKey,
         txtValue,
-        REG_VALUE_TYPE.REG_SZ,
+        REG_SZ,
         txtData,
         txtData.length * 2 + 2,
       );

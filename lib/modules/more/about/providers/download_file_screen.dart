@@ -74,25 +74,28 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
             ),
             const SizedBox(width: 15),
             ElevatedButton(
-              onPressed: () async {
-                if (Platform.isAndroid) {
-                  final deviceInfo = DeviceInfoPlugin();
-                  final androidInfo = await deviceInfo.androidInfo;
-                  String apkUrl = "";
-                  for (String abi in androidInfo.supportedAbis) {
-                    final url = updateAvailable.$4.firstWhereOrNull(
-                      (apk) => (apk as String).contains(abi),
-                    );
-                    if (url != null) {
-                      apkUrl = url;
-                      break;
-                    }
-                  }
-                  await _downloadApk(apkUrl);
-                } else {
-                  _launchInBrowser(Uri.parse(updateAvailable.$3));
-                }
-              },
+              onPressed:
+                  _total == 0
+                      ? () async {
+                        if (Platform.isAndroid) {
+                          final deviceInfo = DeviceInfoPlugin();
+                          final androidInfo = await deviceInfo.androidInfo;
+                          String apkUrl = "";
+                          for (String abi in androidInfo.supportedAbis) {
+                            final url = updateAvailable.$4.firstWhereOrNull(
+                              (apk) => (apk as String).contains(abi),
+                            );
+                            if (url != null) {
+                              apkUrl = url;
+                              break;
+                            }
+                          }
+                          await _downloadApk(apkUrl);
+                        } else {
+                          _launchInBrowser(Uri.parse(updateAvailable.$3));
+                        }
+                      }
+                      : null,
               child: Text(l10n.download),
             ),
           ],
@@ -113,7 +116,7 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
     );
     if (await file.exists()) {
       await _installApk(file);
-      if (context.mounted) {
+      if (mounted) {
         Navigator.pop(context);
       }
       return;
@@ -129,7 +132,7 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
     _subscription?.onDone(() async {
       await file.writeAsBytes(_bytes);
       await _installApk(file);
-      if (context.mounted) {
+      if (mounted) {
         Navigator.pop(context);
       }
     });
