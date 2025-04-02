@@ -91,6 +91,7 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   @override
   void initState() {
+    super.initState();
     _iniDateFormatting();
     _initDeepLinks();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -100,7 +101,17 @@ class _MyAppState extends ConsumerState<MyApp> {
             .clearCache(showToast: false);
       }
     });
-    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Check if System theme has changed since last app start and adjust
+      var brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+      if (brightness == Brightness.light) {
+        ref.read(themeModeStateProvider.notifier).setLightTheme();
+      } else {
+        ref.read(themeModeStateProvider.notifier).setDarkTheme();
+      }
+    });
+    
     var dispatcher = SchedulerBinding.instance.platformDispatcher;
     dispatcher.onPlatformBrightnessChanged = () {
       var brightness = dispatcher.platformBrightness;
