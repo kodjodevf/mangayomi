@@ -447,5 +447,21 @@
     "genre_search_library": "Genre im Bibliothek suchen",
     "genre_search_source": "Zur Erweiterung navigieren",
     "source_not_added": "Die Erweiterung ist nicht installiert!",
-    "load_own_subtitles": "Deine eigene Untertiteln laden..."
+    "load_own_subtitles": "Deine eigene Untertiteln laden...",
+    "downloads_are_limited_to_wifi": "Downloads sind nur über WLAN verfügbar",
+    "manga_extensions_repo": "Manga-Erweiterungs-Repository",
+    "anime_extensions_repo": "Anime-Erweiterungs-Repository",
+    "novel_extensions_repo": "Roman-Erweiterungs-Repository",
+    "undefined": "Nicht definiert",
+    "manage_manga_repo_urls": "Manga-Repository-URLs verwalten",
+    "manage_anime_repo_urls": "Anime-Repository-URLs verwalten",
+    "manage_novel_repo_urls": "Roman-Repository-URLs verwalten",
+    "url_cannot_be_empty": "URL darf nicht leer sein",
+    "url_must_end_with_dot_json": "URL muss mit .json enden",
+    "repo_url": "Repository-URL",
+    "invalid_url_format": "Ungültiges URL-Format",
+    "clear_all_sources": "Alle Quellen löschen",
+    "clear_all_sources_msg": "Dies wird alle Quellen der Anwendung vollständig löschen. Möchten Sie wirklich fortfahren?",
+    "sources_cleared": "Quellen gelöscht!",
+    "add_repo": "Repository hinzufügen?"
 }
