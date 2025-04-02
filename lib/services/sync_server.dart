@@ -18,7 +18,7 @@ import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.da
 import 'package:mangayomi/services/http/m_client.dart';
 import 'dart:convert';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:mangayomi/l10n/generated/app_localizations.dart';
 part 'sync_server.g.dart';
 
 @riverpod
