@@ -96,7 +96,7 @@
       "caption": "Update for Mangayomi now available!",
       "date": "2025-04-02T13:40:06Z",
       "tintColor": "EF4444",
-      "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update.webp",
+      "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
       "notify": true,
       "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.6.0"
     }
