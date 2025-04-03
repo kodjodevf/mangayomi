@@ -26,7 +26,7 @@ import 'package:mangayomi/modules/more/settings/appearance/providers/blend_level
 import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
 import 'package:mangayomi/utils/url_protocol/api.dart';
 import 'package:media_kit/media_kit.dart';
@@ -91,6 +91,7 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   @override
   void initState() {
+    super.initState();
     _iniDateFormatting();
     _initDeepLinks();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -100,7 +101,17 @@ class _MyAppState extends ConsumerState<MyApp> {
             .clearCache(showToast: false);
       }
     });
-    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Check if System theme has changed since last app start and adjust
+      var brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+      if (brightness == Brightness.light) {
+        ref.read(themeModeStateProvider.notifier).setLightTheme();
+      } else {
+        ref.read(themeModeStateProvider.notifier).setDarkTheme();
+      }
+    });
+    
     var dispatcher = SchedulerBinding.instance.platformDispatcher;
     dispatcher.onPlatformBrightnessChanged = () {
       var brightness = dispatcher.platformBrightness;

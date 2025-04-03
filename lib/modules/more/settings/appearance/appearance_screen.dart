@@ -13,7 +13,7 @@ import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_
 import 'package:mangayomi/modules/more/settings/appearance/widgets/blend_level_slider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/widgets/dark_mode_button.dart';
 import 'package:mangayomi/modules/more/settings/appearance/widgets/theme_selector.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 

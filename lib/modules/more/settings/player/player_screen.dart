@@ -6,7 +6,7 @@ import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:mangayomi/l10n/generated/app_localizations.dart';
 
 class PlayerScreen extends ConsumerWidget {
   const PlayerScreen({super.key});
