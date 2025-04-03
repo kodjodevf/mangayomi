@@ -6,7 +6,6 @@ import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -94,33 +93,24 @@ class _MyAppState extends ConsumerState<MyApp> {
     super.initState();
     _iniDateFormatting();
     _initDeepLinks();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (ref.read(clearChapterCacheOnAppLaunchStateProvider)) {
         ref
             .read(totalChapterCacheSizeStateProvider.notifier)
             .clearCache(showToast: false);
       }
-    });
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
       // Check if System theme has changed since last app start and adjust
-      var brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
-      if (brightness == Brightness.light) {
-        ref.read(themeModeStateProvider.notifier).setLightTheme();
-      } else {
-        ref.read(themeModeStateProvider.notifier).setDarkTheme();
+      if (ref.read(followSystemThemeStateProvider)) {
+        var brightness =
+            WidgetsBinding.instance.platformDispatcher.platformBrightness;
+        if (brightness == Brightness.light) {
+          ref.read(themeModeStateProvider.notifier).setLightTheme();
+        } else {
+          ref.read(themeModeStateProvider.notifier).setDarkTheme();
+        }
       }
     });
-    
-    var dispatcher = SchedulerBinding.instance.platformDispatcher;
-    dispatcher.onPlatformBrightnessChanged = () {
-      var brightness = dispatcher.platformBrightness;
-      if (brightness == Brightness.light) {
-        ref.read(themeModeStateProvider.notifier).setLightTheme();
-      } else {
-        ref.read(themeModeStateProvider.notifier).setDarkTheme();
-      }
-    };
   }
 
   @override
