@@ -22,6 +22,7 @@ class DesktopControllerWidget extends StatefulWidget {
   final GlobalKey<VideoState> videoStatekey;
   final Widget bottomButtonBarWidget;
   final Widget seekToWidget;
+  final int defaultSkipIntroLength;
   const DesktopControllerWidget({
     super.key,
     required this.videoController,
@@ -32,6 +33,7 @@ class DesktopControllerWidget extends StatefulWidget {
     required this.seekToWidget,
     required this.tempDuration,
     required this.doubleSpeed,
+    required this.defaultSkipIntroLength,
   });
 
   @override
@@ -171,6 +173,12 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
           final rate =
               widget.videoController.player.state.position +
               const Duration(seconds: 10);
+          widget.videoController.player.seek(rate);
+        },
+        const SingleActivator(LogicalKeyboardKey.enter): () {
+          final rate =
+              widget.videoController.player.state.position +
+              Duration(seconds: widget.defaultSkipIntroLength);
           widget.videoController.player.seek(rate);
         },
         const SingleActivator(LogicalKeyboardKey.arrowLeft): () {
