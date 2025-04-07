@@ -48,7 +48,7 @@ class StorageProvider {
       directory = Directory("/storage/emulated/0/Mangayomi/");
     } else {
       final dir = await getApplicationDocumentsDirectory();
-      directory = Directory("${dir.path}/Mangayomi/".fixSeparator);
+      directory = Directory(path.join(dir.path, 'Mangayomi'));
     }
     return directory;
   }
@@ -69,15 +69,15 @@ class StorageProvider {
 
   Future<Directory?> getDirectory() async {
     Directory? directory;
-    String path = isar.settings.getSync(227)!.downloadLocation ?? "";
+    String dPath = isar.settings.getSync(227)!.downloadLocation ?? "";
     if (Platform.isAndroid) {
       directory = Directory(
-        path.isEmpty ? "/storage/emulated/0/Mangayomi/" : "$path/",
+        dPath.isEmpty ? "/storage/emulated/0/Mangayomi/" : "$dPath/",
       );
     } else {
       final dir = await getApplicationDocumentsDirectory();
-      final p = path.isEmpty ? dir.path : path;
-      directory = Directory("$p/Mangayomi/".fixSeparator);
+      final p = dPath.isEmpty ? dir.path : dPath;
+      directory = Directory(path.join(p, 'Mangayomi'));
     }
     return directory;
   }
@@ -97,8 +97,14 @@ class StorageProvider {
             : "Novel";
     final dir = await getDirectory();
     return Directory(
-      "${dir!.path}downloads/$itemTypePath/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceForbiddenCharacters('_')}/$scanlator${chapter.name!.replaceForbiddenCharacters('_')}/"
-          .fixSeparator,
+      path.join(
+        dir!.path,
+        'downloads',
+        itemTypePath,
+        '${manga.source} ${manga.lang!.toUpperCase()}',
+        manga.name!.replaceForbiddenCharacters('_'),
+        scanlator + chapter.name!.replaceForbiddenCharacters('_'),
+      ),
     );
   }
 
@@ -113,8 +119,13 @@ class StorageProvider {
             : "Novel";
     final dir = await getDirectory();
     return Directory(
-      "${dir!.path}/downloads/$itemTypePath/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceForbiddenCharacters('_')}/"
-          .fixSeparator,
+      path.join(
+        dir!.path,
+        'downloads',
+        itemTypePath,
+        '${manga.source} ${manga.lang!.toUpperCase()}',
+        manga.name!.replaceForbiddenCharacters('_'),
+      ),
     );
   }
 
@@ -136,7 +147,6 @@ class StorageProvider {
     } else {
       gPath = path.join(gPath, 'Pictures');
     }
-    gPath = gPath.fixSeparator;
     await Directory(gPath).create(recursive: true);
     return Directory(gPath);
   }
@@ -179,8 +189,4 @@ class StorageProvider {
 
     return isar;
   }
-}
-
-extension StringPathExtension on String {
-  String get fixSeparator => replaceAll("/", path.separator);
 }
