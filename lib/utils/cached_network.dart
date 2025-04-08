@@ -31,3 +31,36 @@ Widget cachedNetworkImage({
     },
   );
 }
+
+Widget cachedCompressedNetworkImage({
+  Map<String, String>? headers,
+  required String imageUrl,
+  required double? width,
+  required double? height,
+  required BoxFit? fit,
+  AlignmentGeometry? alignment,
+  bool useCustomNetworkImage = true,
+  Widget errorWidget = const Icon(Icons.error, size: 50),
+}) {
+  return ExtendedImage(
+    image: ExtendedResizeImage(
+      useCustomNetworkImage
+          ? CustomExtendedNetworkImageProvider(imageUrl, headers: headers)
+          : ExtendedNetworkImageProvider(imageUrl, headers: headers),
+      maxBytes: 5 << 10,
+    ),
+    width: width,
+    height: height,
+    fit: fit,
+    filterQuality: FilterQuality.medium,
+    mode: ExtendedImageMode.gesture,
+    handleLoadingProgress: true,
+    clearMemoryCacheWhenDispose: true,
+    loadStateChanged: (state) {
+      if (state.extendedImageLoadState == LoadState.failed) {
+        return errorWidget;
+      }
+      return null;
+    },
+  );
+}

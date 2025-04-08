@@ -12,12 +12,17 @@ part 'isar_providers.g.dart';
 Stream<List<History>> getAllHistoryStream(
   Ref ref, {
   required ItemType itemType,
+  required String search,
 }) async* {
   yield* isar.historys
       .filter()
       .idIsNotNull()
       .and()
       .chapter((q) => q.manga((q) => q.itemTypeEqualTo(itemType)))
+      .and()
+      .chapter(
+        (q) => q.manga((q) => q.nameContains(search, caseSensitive: false)),
+      )
       .watch(fireImmediately: true);
 }
 

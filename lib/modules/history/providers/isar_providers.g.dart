@@ -7,7 +7,7 @@ part of 'isar_providers.dart';
 // **************************************************************************
 
 String _$getAllHistoryStreamHash() =>
-    r'42048cb03035be55b52fc501fb2309cdb2acfcb8';
+    r'704060d31ee10db47bb6f9900b0678747f67abbe';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -42,9 +42,11 @@ class GetAllHistoryStreamFamily extends Family<AsyncValue<List<History>>> {
   /// See also [getAllHistoryStream].
   GetAllHistoryStreamProvider call({
     required ItemType itemType,
+    required String search,
   }) {
     return GetAllHistoryStreamProvider(
       itemType: itemType,
+      search: search,
     );
   }
 
@@ -54,6 +56,7 @@ class GetAllHistoryStreamFamily extends Family<AsyncValue<List<History>>> {
   ) {
     return call(
       itemType: provider.itemType,
+      search: provider.search,
     );
   }
 
@@ -78,10 +81,12 @@ class GetAllHistoryStreamProvider
   /// See also [getAllHistoryStream].
   GetAllHistoryStreamProvider({
     required ItemType itemType,
+    required String search,
   }) : this._internal(
           (ref) => getAllHistoryStream(
             ref as GetAllHistoryStreamRef,
             itemType: itemType,
+            search: search,
           ),
           from: getAllHistoryStreamProvider,
           name: r'getAllHistoryStreamProvider',
@@ -93,6 +98,7 @@ class GetAllHistoryStreamProvider
           allTransitiveDependencies:
               GetAllHistoryStreamFamily._allTransitiveDependencies,
           itemType: itemType,
+          search: search,
         );
 
   GetAllHistoryStreamProvider._internal(
@@ -103,9 +109,11 @@ class GetAllHistoryStreamProvider
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.itemType,
+    required this.search,
   }) : super.internal();
 
   final ItemType itemType;
+  final String search;
 
   @override
   Override overrideWith(
@@ -121,6 +129,7 @@ class GetAllHistoryStreamProvider
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         itemType: itemType,
+        search: search,
       ),
     );
   }
@@ -132,13 +141,16 @@ class GetAllHistoryStreamProvider
 
   @override
   bool operator ==(Object other) {
-    return other is GetAllHistoryStreamProvider && other.itemType == itemType;
+    return other is GetAllHistoryStreamProvider &&
+        other.itemType == itemType &&
+        other.search == search;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, itemType.hashCode);
+    hash = _SystemHash.combine(hash, search.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -149,6 +161,9 @@ class GetAllHistoryStreamProvider
 mixin GetAllHistoryStreamRef on AutoDisposeStreamProviderRef<List<History>> {
   /// The parameter `itemType` of this provider.
   ItemType get itemType;
+
+  /// The parameter `search` of this provider.
+  String get search;
 }
 
 class _GetAllHistoryStreamProviderElement
@@ -158,6 +173,8 @@ class _GetAllHistoryStreamProviderElement
 
   @override
   ItemType get itemType => (origin as GetAllHistoryStreamProvider).itemType;
+  @override
+  String get search => (origin as GetAllHistoryStreamProvider).search;
 }
 
 String _$getAllUpdateStreamHash() =>

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/modules/widgets/custom_sliver_grouped_list_view.dart';
 
 import 'package:isar/isar.dart';
@@ -137,45 +138,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                             ),
                             const SizedBox(width: 15),
                             TextButton(
-                              onPressed: () {
-                                List<History> histories =
-                                    isar.historys
-                                        .filter()
-                                        .idIsNotNull()
-                                        .chapter(
-                                          (q) => q.manga(
-                                            (q) => q.itemTypeEqualTo(
-                                              _tabBarController.index == 0 &&
-                                                      !hideItems.contains(
-                                                        "/MangaLibrary",
-                                                      )
-                                                  ? ItemType.manga
-                                                  : _tabBarController.index ==
-                                                          1 -
-                                                              (hideItems.contains(
-                                                                    "/MangaLibrary",
-                                                                  )
-                                                                  ? 1
-                                                                  : 0) &&
-                                                      !hideItems.contains(
-                                                        "/AnimeLibrary",
-                                                      )
-                                                  ? ItemType.anime
-                                                  : ItemType.novel,
-                                            ),
-                                          ),
-                                        )
-                                        .findAllSync()
-                                        .toList();
-                                isar.writeTxnSync(() {
-                                  for (var history in histories) {
-                                    isar.historys.deleteSync(history.id!);
-                                  }
-                                });
-                                if (mounted) {
-                                  Navigator.pop(context);
-                                }
-                              },
+                              onPressed: () => clearHistory(hideItems),
                               child: Text(l10n.ok),
                             ),
                           ],
@@ -227,6 +190,38 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
       ),
     );
   }
+
+  void clearHistory(List<String> hideItems) {
+    List<History> histories =
+        isar.historys
+            .filter()
+            .idIsNotNull()
+            .chapter(
+              (q) => q.manga(
+                (q) => q.itemTypeEqualTo(getCurrentItemType(hideItems)),
+              ),
+            )
+            .findAllSync()
+            .toList();
+    isar.writeTxnSync(() {
+      for (var history in histories) {
+        isar.historys.deleteSync(history.id!);
+      }
+    });
+    if (mounted) {
+      Navigator.pop(context);
+    }
+  }
+
+  ItemType getCurrentItemType(List<String> hideItems) {
+    return _tabBarController.index == 0 && !hideItems.contains("/MangaLibrary")
+        ? ItemType.manga
+        : _tabBarController.index ==
+                1 - (hideItems.contains("/MangaLibrary") ? 1 : 0) &&
+            !hideItems.contains("/AnimeLibrary")
+        ? ItemType.anime
+        : ItemType.novel;
+  }
 }
 
 class HistoryTab extends ConsumerStatefulWidget {
@@ -243,23 +238,11 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
     final history = ref.watch(
-      getAllHistoryStreamProvider(itemType: widget.itemType),
+      getAllHistoryStreamProvider(itemType: widget.itemType, search: widget.query),
     );
     return Scaffold(
       body: history.when(
-        data: (data) {
-          final entries =
-              data
-                  .where(
-                    (element) =>
-                        widget.query.isNotEmpty
-                            ? element.chapter.value!.manga.value!.name!
-                                .toLowerCase()
-                                .contains(widget.query.toLowerCase())
-                            : true,
-                  )
-                  .toList();
-
+        data: (entries) {
           if (entries.isNotEmpty) {
             return CustomScrollView(
               slivers: [
@@ -302,8 +285,8 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
                         elevation: 0,
                         shadowColor: Colors.transparent,
                       ),
-                      onPressed: () {
-                        chapter.pushToReaderView(context);
+                      onPressed: () async {
+                        await chapter.pushToReaderView(context);
                       },
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -330,28 +313,7 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
                                   },
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(7),
-                                    child:
-                                        manga.customCoverImage != null
-                                            ? Image.memory(
-                                              manga.customCoverImage
-                                                  as Uint8List,
-                                            )
-                                            : cachedNetworkImage(
-                                              headers: ref.watch(
-                                                headersProvider(
-                                                  source: manga.source!,
-                                                  lang: manga.lang!,
-                                                ),
-                                              ),
-                                              imageUrl: toImgUrl(
-                                                manga.customCoverFromTracker ??
-                                                    manga.imageUrl ??
-                                                    "",
-                                              ),
-                                              width: 60,
-                                              height: 90,
-                                              fit: BoxFit.cover,
-                                            ),
+                                    child: getCoverImage(manga),
                                   ),
                                 ),
                               ),
@@ -418,81 +380,12 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
                                       ),
                                     ),
                                     IconButton(
-                                      onPressed: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return AlertDialog(
-                                              title: Text(l10n.remove),
-                                              content: Text(
-                                                l10n.remove_history_msg,
-                                              ),
-                                              actions: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  children: [
-                                                    TextButton(
-                                                      onPressed: () {
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Text(l10n.cancel),
-                                                    ),
-                                                    const SizedBox(width: 15),
-                                                    TextButton(
-                                                      onPressed: () async {
-                                                        await manga.chapters
-                                                            .load();
-                                                        final chapters =
-                                                            manga.chapters;
-                                                        await isar.writeTxn(
-                                                          () async {
-                                                            await isar.historys
-                                                                .delete(
-                                                                  element.id!,
-                                                                );
-                                                            for (var chapter
-                                                                in chapters) {
-                                                              await isar
-                                                                  .chapters
-                                                                  .delete(
-                                                                    chapter.id!,
-                                                                  );
-                                                            }
-                                                            await isar.mangas
-                                                                .delete(
-                                                                  manga.id!,
-                                                                );
-                                                          },
-                                                        );
-                                                        await ref
-                                                            .read(
-                                                              synchingProvider(
-                                                                syncId: 1,
-                                                              ).notifier,
-                                                            )
-                                                            .addChangedPartAsync(
-                                                              ActionType
-                                                                  .removeItem,
-                                                              manga.id,
-                                                              "{}",
-                                                              true,
-                                                            );
-                                                        if (context.mounted) {
-                                                          Navigator.pop(
-                                                            context,
-                                                          );
-                                                        }
-                                                      },
-                                                      child: Text(l10n.remove),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      },
+                                      onPressed:
+                                          () => openDeleteDialog(
+                                            l10n,
+                                            manga,
+                                            element.id,
+                                          ),
                                       icon: Icon(
                                         Icons.delete_outline,
                                         size: 25,
@@ -528,5 +421,73 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
         },
       ),
     );
+  }
+
+  Widget getCoverImage(Manga manga) {
+    return manga.customCoverImage != null
+        ? Image.memory(manga.customCoverImage as Uint8List,)
+        : cachedCompressedNetworkImage(
+          headers: ref.watch(
+            headersProvider(source: manga.source!, lang: manga.lang!),
+          ),
+          imageUrl: toImgUrl(
+            manga.customCoverFromTracker ?? manga.imageUrl ?? "",
+          ),
+          width: 60,
+          height: 90,
+          fit: BoxFit.cover,
+        );
+  }
+
+  void openDeleteDialog(AppLocalizations l10n, Manga manga, int? deleteId) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(l10n.remove),
+          content: Text(l10n.remove_history_msg),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(l10n.cancel),
+                ),
+                const SizedBox(width: 15),
+                TextButton(
+                  onPressed: () async => deleteManga(context, manga, deleteId),
+                  child: Text(l10n.remove),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> deleteManga(
+    BuildContext context,
+    Manga manga,
+    int? deleteId,
+  ) async {
+    await manga.chapters.load();
+    final chapters = manga.chapters;
+    await isar.writeTxn(() async {
+      await isar.historys.delete(deleteId!);
+      for (var chapter in chapters) {
+        await isar.chapters.delete(chapter.id!);
+      }
+      await isar.mangas.delete(manga.id!);
+    });
+    await ref
+        .read(synchingProvider(syncId: 1).notifier)
+        .addChangedPartAsync(ActionType.removeItem, manga.id, "{}", true);
+    if (context.mounted) {
+      Navigator.pop(context);
+    }
   }
 }
