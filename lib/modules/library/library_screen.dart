@@ -59,7 +59,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   bool _isSearch = false;
   final List<Manga> _entries = [];
   final _textEditingController = TextEditingController();
-  late TabController tabBarController;
+  TabController? tabBarController;
   int _tabIndex = 0;
 
   @override
@@ -135,17 +135,29 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
 
                         final entr =
                             data.where((e) => !(e.hide ?? false)).toList();
-                        tabBarController = TabController(
-                          length:
-                              withoutCategory.isNotEmpty
-                                  ? entr.length + 1
-                                  : entr.length,
-                          vsync: this,
-                        );
-                        tabBarController.animateTo(_tabIndex);
-                        tabBarController.addListener(() {
-                          _tabIndex = tabBarController.index;
-                        });
+                        int tabCount =
+                            withoutCategory.isNotEmpty
+                                ? entr.length + 1
+                                : entr.length;
+                        if (tabBarController == null ||
+                            tabBarController!.length != tabCount) {
+                          int newTabIndex = _tabIndex;
+                          if (newTabIndex >= tabCount) {
+                            newTabIndex = tabCount - 1;
+                          }
+                          tabBarController?.dispose();
+                          tabBarController = TabController(
+                            length: tabCount,
+                            vsync: this,
+                            initialIndex: newTabIndex,
+                          );
+                          _tabIndex = newTabIndex;
+                          tabBarController!.addListener(() {
+                            setState(() {
+                              _tabIndex = tabBarController!.index;
+                            });
+                          });
+                        }
 
                         return Consumer(
                           builder: (context, ref, child) {

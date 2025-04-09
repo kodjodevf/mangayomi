@@ -18,31 +18,24 @@ Future<List<String>> convertToCBZ(
 }
 
 List<String> _convertToCBZ((String, String, String, List<String>) datas) {
-  List<String> imagesPaths = [];
   final (chapterDir, mangaDir, chapterName, pageList) = datas;
+  final imagesPaths =
+      pageList.where((path) => path.endsWith('.jpg')).toList()..sort();
 
-  if (Directory(chapterDir).existsSync()) {
-    List<FileSystemEntity> entities = Directory(chapterDir).listSync();
-    for (FileSystemEntity entity in entities) {
-      if (entity is File) {
-        String path = entity.path;
-        if (path.endsWith('.jpg')) {
-          imagesPaths.add(path);
-        }
+  if (imagesPaths.isNotEmpty) {
+    final archive = Archive();
+    final cbzPath = path.join(mangaDir, "$chapterName.cbz");
+
+    for (var imagePath in imagesPaths) {
+      final file = File(imagePath);
+      if (file.existsSync()) {
+        final bytes = file.readAsBytesSync();
+        final fileName = path.basename(imagePath);
+        archive.add(ArchiveFile.bytes(fileName, bytes));
       }
     }
-    imagesPaths.sort((a, b) {
-      return a.toString().compareTo(b.toString());
-    });
-  }
-
-  if (imagesPaths.isNotEmpty && pageList.length == imagesPaths.length) {
-    var encoder = ZipFileEncoder();
-    encoder.create(path.join(mangaDir, "$chapterName.cbz"));
-    for (var path in imagesPaths) {
-      encoder.addFile(File(path));
-    }
-    encoder.close();
+    final cbzData = ZipEncoder().encode(archive);
+    File(cbzPath).writeAsBytesSync(cbzData);
     Directory(chapterDir).deleteSync(recursive: true);
   }
 

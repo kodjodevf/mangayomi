@@ -291,7 +291,7 @@ jobs:
           Exec=usr/bin/mangayomi
           Icon=mangayomi
           Type=Application
-          Categories=Utility;
+          Categories=AudioVideo;
           EOF
           # Create AppRun file
           cat <<EOF > AppDir/AppRun
@@ -342,7 +342,7 @@ jobs:
           Exec=/usr/bin/mangayomi
           Icon=mangayomi
           Type=Application
-          Categories=Utility;
+          Categories=AudioVideo;
           EOL
           %files
           /usr/bin/*
@@ -356,7 +356,7 @@ jobs:
       - name: upload artifact linux zip
         uses: actions/upload-artifact@v4
         with:
-          name: Mangayomi-${{ github.ref_name }}-limux-zip
+          name: Mangayomi-${{ github.ref_name }}-linux-zip
           path: |
             build/linux/x64/release/bundle/Mangayomi-*.zip
             build/linux/x64/release/Mangayomi-*.AppImage
