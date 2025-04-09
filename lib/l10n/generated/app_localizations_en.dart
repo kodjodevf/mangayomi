@@ -876,7 +876,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String uninstall_extension(Object ext) {
-    return 'Uninstall $ext extension ?';
+    return 'Uninstall $ext extension?';
   }
 
   @override

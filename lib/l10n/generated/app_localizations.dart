@@ -1800,7 +1800,7 @@ abstract class AppLocalizations {
   /// No description provided for @uninstall_extension.
   ///
   /// In en, this message translates to:
-  /// **'Uninstall {ext} extension ?'**
+  /// **'Uninstall {ext} extension?'**
   String uninstall_extension(Object ext);
 
   /// No description provided for @langauage.

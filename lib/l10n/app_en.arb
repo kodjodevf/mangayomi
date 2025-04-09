@@ -280,7 +280,7 @@
   "searching_for_updates": "Searching for updates...",
   "no_new_updates_available": "No new updates available",
   "uninstall": "Uninstall",
-  "uninstall_extension": "Uninstall {ext} extension ?",
+  "uninstall_extension": "Uninstall {ext} extension?",
   "langauage": "Language",
   "extension_detail": "Extension detail",
   "scale_type": "Scale type",

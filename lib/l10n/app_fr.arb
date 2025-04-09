@@ -201,7 +201,7 @@
   "searching_for_updates": "Vérification des mise à jours",
   "no_new_updates_available": "Aucune mise à jours disponible",
   "uninstall": "Désinstaller",
-  "uninstall_extension": "Désinstaller l'extension {ext} ?",
+  "uninstall_extension": "Désinstaller l'extension {ext}?",
   "langauage": "Langue",
   "extension_detail": "Informations de l'extension",
   "scale_type": "Type de mise à l'échelle",
