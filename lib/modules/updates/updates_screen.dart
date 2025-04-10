@@ -64,7 +64,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
     for (var manga in mangaList) {
       try {
         await ref.read(
-          updateMangaDetailProvider(mangaId: manga.id, isInit: false).future,
+          updateMangaDetailProvider(mangaId: manga.id, isInit: false, showToast: false).future,
         );
       } catch (_) {}
       numbers++;
@@ -357,7 +357,7 @@ class _UpdateTabState extends ConsumerState<UpdateTab> {
                   data
                       .map((e) => e.chapter.value!.manga.value!.lastUpdate!)
                       .toList();
-              lastUpdatedList.sort((a, b) => a.compareTo(b));
+              lastUpdatedList.sort((a, b) => b.compareTo(a));
               final lastUpdated = lastUpdatedList.firstOrNull;
               if (entries.isNotEmpty) {
                 return CustomScrollView(
