@@ -64,7 +64,11 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
     for (var manga in mangaList) {
       try {
         await ref.read(
-          updateMangaDetailProvider(mangaId: manga.id, isInit: false, showToast: false).future,
+          updateMangaDetailProvider(
+            mangaId: manga.id,
+            isInit: false,
+            showToast: false,
+          ).future,
         );
       } catch (_) {}
       numbers++;
@@ -335,26 +339,18 @@ class _UpdateTabState extends ConsumerState<UpdateTab> {
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
     final update = ref.watch(
-      getAllUpdateStreamProvider(itemType: widget.itemType),
+      getAllUpdateStreamProvider(
+        itemType: widget.itemType,
+        search: widget.query,
+      ),
     );
     return Scaffold(
       body: Stack(
         children: [
           update.when(
-            data: (data) {
-              final entries =
-                  data
-                      .where(
-                        (element) =>
-                            widget.query.isNotEmpty
-                                ? element.chapter.value!.manga.value!.name!
-                                    .toLowerCase()
-                                    .contains(widget.query.toLowerCase())
-                                : true,
-                      )
-                      .toList();
+            data: (entries) {
               final lastUpdatedList =
-                  data
+                  entries
                       .map((e) => e.chapter.value!.manga.value!.lastUpdate!)
                       .toList();
               lastUpdatedList.sort((a, b) => b.compareTo(a));

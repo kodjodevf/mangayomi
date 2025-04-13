@@ -41,13 +41,14 @@ Widget cachedCompressedNetworkImage({
   AlignmentGeometry? alignment,
   bool useCustomNetworkImage = true,
   Widget errorWidget = const Icon(Icons.error, size: 50),
+  int maxBytes = 5 << 10,
 }) {
   return ExtendedImage(
     image: ExtendedResizeImage(
       useCustomNetworkImage
           ? CustomExtendedNetworkImageProvider(imageUrl, headers: headers)
           : ExtendedNetworkImageProvider(imageUrl, headers: headers),
-      maxBytes: 5 << 10,
+      maxBytes: maxBytes,
     ),
     width: width,
     height: height,

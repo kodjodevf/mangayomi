@@ -7,7 +7,7 @@ part of 'isar_providers.dart';
 // **************************************************************************
 
 String _$getAllHistoryStreamHash() =>
-    r'704060d31ee10db47bb6f9900b0678747f67abbe';
+    r'1ce5bd0046fbbec46e91b7a486523945699d95f3';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -42,7 +42,7 @@ class GetAllHistoryStreamFamily extends Family<AsyncValue<List<History>>> {
   /// See also [getAllHistoryStream].
   GetAllHistoryStreamProvider call({
     required ItemType itemType,
-    required String search,
+    String search = "",
   }) {
     return GetAllHistoryStreamProvider(
       itemType: itemType,
@@ -81,7 +81,7 @@ class GetAllHistoryStreamProvider
   /// See also [getAllHistoryStream].
   GetAllHistoryStreamProvider({
     required ItemType itemType,
-    required String search,
+    String search = "",
   }) : this._internal(
           (ref) => getAllHistoryStream(
             ref as GetAllHistoryStreamRef,
@@ -178,7 +178,7 @@ class _GetAllHistoryStreamProviderElement
 }
 
 String _$getAllUpdateStreamHash() =>
-    r'6a20f8feba3010c2ab7a80560f7a7f6cf10c7366';
+    r'43369b20d702d12aeae627fcd04ceb61caf0dc74';
 
 /// See also [getAllUpdateStream].
 @ProviderFor(getAllUpdateStream)
@@ -192,9 +192,11 @@ class GetAllUpdateStreamFamily extends Family<AsyncValue<List<Update>>> {
   /// See also [getAllUpdateStream].
   GetAllUpdateStreamProvider call({
     required ItemType itemType,
+    String search = "",
   }) {
     return GetAllUpdateStreamProvider(
       itemType: itemType,
+      search: search,
     );
   }
 
@@ -204,6 +206,7 @@ class GetAllUpdateStreamFamily extends Family<AsyncValue<List<Update>>> {
   ) {
     return call(
       itemType: provider.itemType,
+      search: provider.search,
     );
   }
 
@@ -228,10 +231,12 @@ class GetAllUpdateStreamProvider
   /// See also [getAllUpdateStream].
   GetAllUpdateStreamProvider({
     required ItemType itemType,
+    String search = "",
   }) : this._internal(
           (ref) => getAllUpdateStream(
             ref as GetAllUpdateStreamRef,
             itemType: itemType,
+            search: search,
           ),
           from: getAllUpdateStreamProvider,
           name: r'getAllUpdateStreamProvider',
@@ -243,6 +248,7 @@ class GetAllUpdateStreamProvider
           allTransitiveDependencies:
               GetAllUpdateStreamFamily._allTransitiveDependencies,
           itemType: itemType,
+          search: search,
         );
 
   GetAllUpdateStreamProvider._internal(
@@ -253,9 +259,11 @@ class GetAllUpdateStreamProvider
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.itemType,
+    required this.search,
   }) : super.internal();
 
   final ItemType itemType;
+  final String search;
 
   @override
   Override overrideWith(
@@ -271,6 +279,7 @@ class GetAllUpdateStreamProvider
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         itemType: itemType,
+        search: search,
       ),
     );
   }
@@ -282,13 +291,16 @@ class GetAllUpdateStreamProvider
 
   @override
   bool operator ==(Object other) {
-    return other is GetAllUpdateStreamProvider && other.itemType == itemType;
+    return other is GetAllUpdateStreamProvider &&
+        other.itemType == itemType &&
+        other.search == search;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, itemType.hashCode);
+    hash = _SystemHash.combine(hash, search.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -299,6 +311,9 @@ class GetAllUpdateStreamProvider
 mixin GetAllUpdateStreamRef on AutoDisposeStreamProviderRef<List<Update>> {
   /// The parameter `itemType` of this provider.
   ItemType get itemType;
+
+  /// The parameter `search` of this provider.
+  String get search;
 }
 
 class _GetAllUpdateStreamProviderElement
@@ -308,6 +323,8 @@ class _GetAllUpdateStreamProviderElement
 
   @override
   ItemType get itemType => (origin as GetAllUpdateStreamProvider).itemType;
+  @override
+  String get search => (origin as GetAllUpdateStreamProvider).search;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

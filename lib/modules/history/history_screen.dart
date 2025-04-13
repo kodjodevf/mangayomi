@@ -238,7 +238,10 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
     final history = ref.watch(
-      getAllHistoryStreamProvider(itemType: widget.itemType, search: widget.query),
+      getAllHistoryStreamProvider(
+        itemType: widget.itemType,
+        search: widget.query,
+      ),
     );
     return Scaffold(
       body: history.when(
@@ -425,7 +428,7 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
 
   Widget getCoverImage(Manga manga) {
     return manga.customCoverImage != null
-        ? Image.memory(manga.customCoverImage as Uint8List,)
+        ? Image.memory(manga.customCoverImage as Uint8List)
         : cachedCompressedNetworkImage(
           headers: ref.watch(
             headersProvider(source: manga.source!, lang: manga.lang!),
