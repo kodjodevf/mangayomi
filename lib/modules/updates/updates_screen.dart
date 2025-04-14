@@ -200,45 +200,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
                             ),
                             const SizedBox(width: 15),
                             TextButton(
-                              onPressed: () {
-                                List<Update> updates =
-                                    isar.updates
-                                        .filter()
-                                        .idIsNotNull()
-                                        .chapter(
-                                          (q) => q.manga(
-                                            (q) => q.itemTypeEqualTo(
-                                              _tabBarController.index == 0 &&
-                                                      !hideItems.contains(
-                                                        "/MangaLibrary",
-                                                      )
-                                                  ? ItemType.manga
-                                                  : _tabBarController.index ==
-                                                          1 -
-                                                              (hideItems.contains(
-                                                                    "/MangaLibrary",
-                                                                  )
-                                                                  ? 1
-                                                                  : 0) &&
-                                                      !hideItems.contains(
-                                                        "/AnimeLibrary",
-                                                      )
-                                                  ? ItemType.anime
-                                                  : ItemType.novel,
-                                            ),
-                                          ),
-                                        )
-                                        .findAllSync()
-                                        .toList();
-                                isar.writeTxnSync(() {
-                                  for (var update in updates) {
-                                    isar.updates.deleteSync(update.id!);
-                                  }
-                                });
-                                if (mounted) {
-                                  Navigator.pop(context);
-                                }
-                              },
+                              onPressed: () => clearUpdates(hideItems),
                               child: Text(l10n.ok),
                             ),
                           ],
@@ -316,6 +278,38 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
         ),
       ),
     );
+  }
+
+  void clearUpdates(List<String> hideItems) {
+    List<Update> updates =
+        isar.updates
+            .filter()
+            .idIsNotNull()
+            .chapter(
+              (q) => q.manga(
+                (q) => q.itemTypeEqualTo(getCurrentItemType(hideItems)),
+              ),
+            )
+            .findAllSync()
+            .toList();
+    isar.writeTxnSync(() {
+      for (var update in updates) {
+        isar.updates.deleteSync(update.id!);
+      }
+    });
+    if (mounted) {
+      Navigator.pop(context);
+    }
+  }
+
+  ItemType getCurrentItemType(List<String> hideItems) {
+    return _tabBarController.index == 0 && !hideItems.contains("/MangaLibrary")
+        ? ItemType.manga
+        : _tabBarController.index ==
+                1 - (hideItems.contains("/MangaLibrary") ? 1 : 0) &&
+            !hideItems.contains("/AnimeLibrary")
+        ? ItemType.anime
+        : ItemType.novel;
   }
 }
 
