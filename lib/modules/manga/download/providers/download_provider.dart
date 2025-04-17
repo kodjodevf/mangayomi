@@ -76,7 +76,7 @@ Future<void> downloadChapter(
           chapterDirectory.path,
           mangaMainDirectory!.path,
           chapter.name!,
-          pageUrls.map((e) => e.url).toList(),
+          pages.map((e) => e.fileName!).toList(),
         ).future,
       );
     }

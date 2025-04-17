@@ -1290,6 +1290,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                         doubleSpeed: (value) {
                           _isDoubleSpeed.value = value ?? false;
                         },
+                        defaultSkipIntroLength: ref.watch(
+                          defaultSkipIntroLengthStateProvider,
+                        ),
                       )
                       : MobileControllerWidget(
                         videoController: _controller,
