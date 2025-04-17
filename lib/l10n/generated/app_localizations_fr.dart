@@ -1136,7 +1136,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get update_library => 'Mettre à jour la bibliothèque';
 
   @override
-  String get updating_library => 'Mise à jour de la bibliothèque';
+  String updating_library(Object cur, Object failed, Object max) {
+    return 'Mise à jour de la bibliothèque ($cur / $max) - Échec: $failed';
+  }
 
   @override
   String get next_chapter => 'Chapitre suivant';

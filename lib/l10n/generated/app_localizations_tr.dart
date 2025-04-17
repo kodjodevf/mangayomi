@@ -1136,7 +1136,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get update_library => 'Kütüphaneyi güncelle';
 
   @override
-  String get updating_library => 'Kütüphaneyi güncelleme';
+  String updating_library(Object cur, Object failed, Object max) {
+    return 'Kütüphaneyi güncelleme ($cur / $max) - Başarısız: $failed';
+  }
 
   @override
   String get next_chapter => 'Sonraki bölüm';

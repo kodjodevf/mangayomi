@@ -284,7 +284,7 @@
     "aniskip_button_timeout": "Düğme Zaman Aşımı",
     "fullscreen": "Tam ekran",
     "update_library": "Kütüphaneyi güncelle",
-    "updating_library": "Kütüphaneyi güncelleme",
+    "updating_library": "Kütüphaneyi güncelleme ({cur} / {max}) - Başarısız: {failed}",
     "next_chapter": "Sonraki bölüm",
     "next_5_chapters": "Sonraki 5 bölüm",
     "next_10_chapters": "Sonraki 10 bölüm",

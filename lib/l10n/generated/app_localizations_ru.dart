@@ -1136,7 +1136,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get update_library => 'Обновить библиотеку';
 
   @override
-  String get updating_library => 'Обновление библиотеки';
+  String updating_library(Object cur, Object failed, Object max) {
+    return 'Обновление библиотеки ($cur / $max) - Не удалось: $failed';
+  }
 
   @override
   String get next_chapter => 'Следующая глава';

@@ -2310,8 +2310,8 @@ abstract class AppLocalizations {
   /// No description provided for @updating_library.
   ///
   /// In en, this message translates to:
-  /// **'Updating library'**
-  String get updating_library;
+  /// **'Updating library ({cur} / {max}) - Failed: {failed}'**
+  String updating_library(Object cur, Object failed, Object max);
 
   /// No description provided for @next_chapter.
   ///

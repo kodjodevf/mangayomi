@@ -73,19 +73,33 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
 
   Future<void> _updateLibrary(List<Manga> mangaList) async {
     botToast(
-      context.l10n.updating_library,
+      context.l10n.updating_library("0", "0", "0"),
       fontSize: 13,
-      second: 1600,
+      second: 30,
       alignY: !context.isTablet ? 0.85 : 1,
     );
     int numbers = 0;
+    int failed = 0;
     for (var manga in mangaList) {
       try {
         await ref.read(
           updateMangaDetailProvider(mangaId: manga.id, isInit: false).future,
         );
-      } catch (_) {}
+      } catch (_) {
+        failed++;
+      }
       numbers++;
+      if (context.mounted) {
+        botToast(
+          context.l10n.updating_library(numbers, failed, mangaList.length),
+          fontSize: 13,
+          second: 10,
+          alignY: !context.isTablet ? 0.85 : 1,
+          animationDuration: 0,
+          dismissDirections: [DismissDirection.none],
+          onlyOne: false
+        );
+      }
     }
     await Future.doWhile(() async {
       await Future.delayed(const Duration(seconds: 1));
