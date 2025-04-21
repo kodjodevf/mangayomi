@@ -491,7 +491,7 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                   text:
                       widget.trackRes.startedReadingDate != null &&
                               widget.trackRes.startedReadingDate! >
-                                  DateTime(1970).millisecondsSinceEpoch
+                                  DateTime.utc(1970).millisecondsSinceEpoch
                           ? dateFormat(
                             widget.trackRes.startedReadingDate.toString(),
                             ref: ref,
@@ -532,7 +532,7 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                   text:
                       widget.trackRes.finishedReadingDate != null &&
                               widget.trackRes.finishedReadingDate! >
-                                  DateTime(1970).millisecondsSinceEpoch
+                                  DateTime.utc(1970).millisecondsSinceEpoch
                           ? dateFormat(
                             widget.trackRes.finishedReadingDate.toString(),
                             ref: ref,
