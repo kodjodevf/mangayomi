@@ -54,24 +54,11 @@ class TrackState extends _$TrackState {
             )
             .updateLibAnime(track!),
       },
-      _ => switch (itemType) {
-        ItemType.manga => ref
-            .read(
-              kitsuProvider(
-                syncId: track!.syncId!,
-                itemType: itemType,
-              ).notifier,
-            )
-            .updateLibManga(track!),
-        _ => ref
-            .read(
-              kitsuProvider(
-                syncId: track!.syncId!,
-                itemType: itemType,
-              ).notifier,
-            )
-            .updateLibAnime(track!),
-      },
+      _ => ref
+          .read(
+            kitsuProvider(syncId: track!.syncId!, itemType: itemType).notifier,
+          )
+          .updateLib(track!, _isManga),
     };
 
     ref
@@ -205,18 +192,9 @@ class TrackState extends _$TrackState {
                   )
                   .addLibAnime(track);
     } else if (syncId == 3) {
-      findManga =
-          _isManga
-              ? await ref
-                  .read(
-                    kitsuProvider(syncId: syncId, itemType: itemType).notifier,
-                  )
-                  .addLibManga(track)
-              : await ref
-                  .read(
-                    kitsuProvider(syncId: syncId, itemType: itemType).notifier,
-                  )
-                  .addLibAnime(track);
+      findManga = await ref
+          .read(kitsuProvider(syncId: syncId, itemType: itemType).notifier)
+          .addLib(track, _isManga);
     }
 
     ref
@@ -266,24 +244,11 @@ class TrackState extends _$TrackState {
                   )
                   .aniListStatusListAnime;
     } else if (track!.syncId == 3) {
-      statusList =
-          _isManga
-              ? ref
-                  .read(
-                    kitsuProvider(
-                      syncId: track!.syncId!,
-                      itemType: itemType,
-                    ).notifier,
-                  )
-                  .kitsuStatusListManga
-              : ref
-                  .read(
-                    kitsuProvider(
-                      syncId: track!.syncId!,
-                      itemType: itemType,
-                    ).notifier,
-                  )
-                  .kitsuStatusListAnime;
+      statusList = ref
+          .read(
+            kitsuProvider(syncId: track!.syncId!, itemType: itemType).notifier,
+          )
+          .kitsuStatusList(_isManga);
     }
     for (var element in TrackStatus.values) {
       if (statusList.contains(element)) {
@@ -324,24 +289,11 @@ class TrackState extends _$TrackState {
                   )
                   .findLibAnime(track!);
     } else if (track!.syncId == 3) {
-      findManga =
-          _isManga
-              ? await ref
-                  .read(
-                    kitsuProvider(
-                      syncId: track!.syncId!,
-                      itemType: itemType,
-                    ).notifier,
-                  )
-                  .findLibManga(track!)
-              : await ref
-                  .read(
-                    kitsuProvider(
-                      syncId: track!.syncId!,
-                      itemType: itemType,
-                    ).notifier,
-                  )
-                  .findLibAnime(track!);
+      findManga = await ref
+          .read(
+            kitsuProvider(syncId: track!.syncId!, itemType: itemType).notifier,
+          )
+          .findLibItem(track!, _isManga);
     }
     return findManga;
   }
@@ -377,24 +329,11 @@ class TrackState extends _$TrackState {
                   )
                   .searchAnime(query);
     } else if (track!.syncId == 3) {
-      tracks =
-          _isManga
-              ? await ref
-                  .read(
-                    kitsuProvider(
-                      syncId: track!.syncId!,
-                      itemType: itemType,
-                    ).notifier,
-                  )
-                  .search(query)
-              : await ref
-                  .read(
-                    kitsuProvider(
-                      syncId: track!.syncId!,
-                      itemType: itemType,
-                    ).notifier,
-                  )
-                  .searchAnime(query);
+      tracks = await ref
+          .read(
+            kitsuProvider(syncId: track!.syncId!, itemType: itemType).notifier,
+          )
+          .search(query, _isManga);
     }
     return tracks;
   }
