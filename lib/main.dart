@@ -3,32 +3,26 @@ import 'dart:io';
 import 'package:app_links/app_links.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
-import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/storage_usage.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/app_font_family.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/router/router.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/blend_level_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
 import 'package:mangayomi/utils/url_protocol/api.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/theme_provider.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
@@ -38,11 +32,7 @@ late Isar isar;
 WebViewEnvironment? webViewEnvironment;
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (Platform.isLinux) {
-    if (runWebViewTitleBarWidget(args)) {
-      return;
-    }
-  }
+  if (Platform.isLinux && runWebViewTitleBarWidget(args)) return;
   MediaKit.ensureInitialized();
   await RustLib.init();
   if (!(Platform.isAndroid || Platform.isIOS)) {
@@ -63,19 +53,14 @@ void main(List<String> args) async {
     }
   }
   isar = await StorageProvider().initDB(null, inspector: kDebugMode);
-  await StorageProvider().requestPermission();
-  await StorageProvider().deleteBtDirectory();
-  GoogleFonts.aBeeZee();
 
   runApp(const ProviderScope(child: MyApp()));
+  unawaited(postLaunchInit()); // Defer non-essential async operations
 }
 
-void _iniDateFormatting() {
-  initializeDateFormatting();
-  final supportedLocales = DateFormat.allLocalesWithSymbols();
-  for (var locale in supportedLocales) {
-    initializeDateFormatting(locale);
-  }
+Future<void> postLaunchInit() async {
+  await StorageProvider().requestPermission();
+  await StorageProvider().deleteBtDirectory();
 }
 
 class MyApp extends ConsumerStatefulWidget {
@@ -88,90 +73,61 @@ class MyApp extends ConsumerStatefulWidget {
 class _MyAppState extends ConsumerState<MyApp> {
   late AppLinks _appLinks;
   StreamSubscription<Uri>? _linkSubscription;
+  Uri? lastUri;
 
   @override
   void initState() {
     super.initState();
-    _iniDateFormatting();
+    initializeDateFormatting();
     _initDeepLinks();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (ref.read(clearChapterCacheOnAppLaunchStateProvider)) {
-        ref
-            .read(totalChapterCacheSizeStateProvider.notifier)
-            .clearCache(showToast: false);
+      checkAndClearCache();
+      handleThemeSync();
+    });
+  }
+
+  void checkAndClearCache() {
+    if (ref.read(clearChapterCacheOnAppLaunchStateProvider)) {
+      ref
+          .read(totalChapterCacheSizeStateProvider.notifier)
+          .clearCache(showToast: false);
+    }
+  }
+
+  void handleThemeSync() {
+    // Check if System theme has changed since last app start and adjust
+    if (ref.read(followSystemThemeStateProvider)) {
+      var brightness =
+          WidgetsBinding.instance.platformDispatcher.platformBrightness;
+      if (brightness == Brightness.light) {
+        ref.read(themeModeStateProvider.notifier).setLightTheme();
+      } else {
+        ref.read(themeModeStateProvider.notifier).setDarkTheme();
       }
-      // Check if System theme has changed since last app start and adjust
-      if (ref.read(followSystemThemeStateProvider)) {
-        var brightness =
-            WidgetsBinding.instance.platformDispatcher.platformBrightness;
-        if (brightness == Brightness.light) {
+      // Listen to System theme changes and adjust accordingly
+      final dispatcher = SchedulerBinding.instance.platformDispatcher;
+      dispatcher.onPlatformBrightnessChanged = () {
+        var newBrightness = dispatcher.platformBrightness;
+        if (newBrightness == Brightness.light) {
           ref.read(themeModeStateProvider.notifier).setLightTheme();
         } else {
           ref.read(themeModeStateProvider.notifier).setDarkTheme();
         }
-        // Listen to System theme changes and adjust accordingly
-        final dispatcher = SchedulerBinding.instance.platformDispatcher;
-        dispatcher.onPlatformBrightnessChanged = () {
-          var newBrightness = dispatcher.platformBrightness;
-          if (newBrightness == Brightness.light) {
-            ref.read(themeModeStateProvider.notifier).setLightTheme();
-          } else {
-            ref.read(themeModeStateProvider.notifier).setDarkTheme();
-          }
-        };
-      }
-    });
+      };
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final isDarkTheme = ref.watch(themeModeStateProvider);
-    final blendLevel = ref.watch(blendLevelStateProvider);
-    final appFontFamily = ref.watch(appFontFamilyProvider);
-    final pureBlackDarkMode = ref.watch(pureBlackDarkModeStateProvider);
     final locale = ref.watch(l10nLocaleStateProvider);
-    ThemeData themeLight = FlexThemeData.light(
-      colors: ref.watch(flexSchemeColorStateProvider),
-      surfaceMode: FlexSurfaceMode.highScaffoldLevelSurface,
-      blendLevel: blendLevel.toInt(),
-      appBarOpacity: 0.00,
-      subThemesData: const FlexSubThemesData(
-        blendOnLevel: 10,
-        thinBorderWidth: 2.0,
-        unselectedToggleIsColored: true,
-        inputDecoratorRadius: 24.0,
-        chipRadius: 24.0,
-      ),
-      useMaterial3ErrorColors: true,
-      visualDensity: FlexColorScheme.comfortablePlatformDensity,
-      useMaterial3: true,
-      fontFamily: appFontFamily,
-    );
-    ThemeData themeDark = FlexThemeData.dark(
-      colors: ref.watch(flexSchemeColorStateProvider),
-      surfaceMode: FlexSurfaceMode.level,
-      blendLevel: blendLevel.toInt(),
-      appBarOpacity: 0.00,
-      scaffoldBackground: pureBlackDarkMode ? Colors.black : null,
-      subThemesData: const FlexSubThemesData(
-        blendOnLevel: 10,
-        thinBorderWidth: 2.0,
-        unselectedToggleIsColored: true,
-        inputDecoratorRadius: 24.0,
-        chipRadius: 24.0,
-      ),
-      useMaterial3ErrorColors: true,
-      visualDensity: FlexColorScheme.comfortablePlatformDensity,
-      useMaterial3: true,
-      fontFamily: appFontFamily,
-    );
     final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
-      darkTheme: themeDark,
+      theme: ref.watch(lightThemeProvider),
+      darkTheme: ref.watch(darkThemeProvider),
       themeMode: isDarkTheme ? ThemeMode.dark : ThemeMode.light,
-      theme: themeLight,
       debugShowCheckedModeBanner: false,
       locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -193,6 +149,8 @@ class _MyAppState extends ConsumerState<MyApp> {
   Future<void> _initDeepLinks() async {
     _appLinks = AppLinks();
     _linkSubscription = _appLinks.uriLinkStream.listen((uri) {
+      if (uri == lastUri) return; // Debouncing Deep Links
+      lastUri = uri;
       switch (uri.host) {
         case "add-repo":
           final repoName = uri.queryParameters["repo_name"];
@@ -201,8 +159,8 @@ class _MyAppState extends ConsumerState<MyApp> {
           final animeRepoUrls = uri.queryParametersAll["anime_url"];
           final novelRepoUrls = uri.queryParametersAll["novel_url"];
           final context = navigatorKey.currentContext;
-          if (!(context?.mounted ?? false)) return;
-          final l10n = context!.l10n;
+          if (context == null || !context.mounted) return;
+          final l10n = context.l10n;
           showDialog(
             context: navigatorKey.currentContext!,
             builder: (BuildContext context) {
@@ -226,78 +184,30 @@ class _MyAppState extends ConsumerState<MyApp> {
                     child: Text(l10n.add),
                     onPressed: () {
                       Navigator.of(context).pop();
-                      if (mangaRepoUrls != null) {
-                        final mangaRepos =
-                            ref
-                                .read(
-                                  extensionsRepoStateProvider(ItemType.manga),
-                                )
-                                .toList();
-                        mangaRepos.addAll(
-                          mangaRepoUrls.map(
+
+                      void addRepos(ItemType type, List<String>? urls) {
+                        if (urls == null) return;
+                        final current = ref.read(
+                          extensionsRepoStateProvider(type),
+                        );
+                        final updated = [
+                          ...current,
+                          ...urls.map(
                             (e) => Repo(
                               name: repoName,
                               jsonUrl: e,
                               website: repoUrl,
                             ),
                           ),
-                        );
+                        ];
                         ref
-                            .read(
-                              extensionsRepoStateProvider(
-                                ItemType.manga,
-                              ).notifier,
-                            )
-                            .set(mangaRepos);
+                            .read(extensionsRepoStateProvider(type).notifier)
+                            .set(updated);
                       }
-                      if (animeRepoUrls != null) {
-                        final animeRepos =
-                            ref
-                                .read(
-                                  extensionsRepoStateProvider(ItemType.anime),
-                                )
-                                .toList();
-                        animeRepos.addAll(
-                          animeRepoUrls.map(
-                            (e) => Repo(
-                              name: repoName,
-                              jsonUrl: e,
-                              website: repoUrl,
-                            ),
-                          ),
-                        );
-                        ref
-                            .read(
-                              extensionsRepoStateProvider(
-                                ItemType.anime,
-                              ).notifier,
-                            )
-                            .set(animeRepos);
-                      }
-                      if (novelRepoUrls != null) {
-                        final novelRepos =
-                            ref
-                                .read(
-                                  extensionsRepoStateProvider(ItemType.novel),
-                                )
-                                .toList();
-                        novelRepos.addAll(
-                          novelRepoUrls.map(
-                            (e) => Repo(
-                              name: repoName,
-                              jsonUrl: e,
-                              website: repoUrl,
-                            ),
-                          ),
-                        );
-                        ref
-                            .read(
-                              extensionsRepoStateProvider(
-                                ItemType.novel,
-                              ).notifier,
-                            )
-                            .set(novelRepos);
-                      }
+
+                      addRepos(ItemType.manga, mangaRepoUrls);
+                      addRepos(ItemType.anime, animeRepoUrls);
+                      addRepos(ItemType.novel, novelRepoUrls);
                       botToast(l10n.repo_added);
                     },
                   ),
