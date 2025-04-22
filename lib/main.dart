@@ -5,7 +5,6 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -82,52 +81,29 @@ class _MyAppState extends ConsumerState<MyApp> {
     _initDeepLinks();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      checkAndClearCache();
-      handleThemeSync();
-    });
-  }
-
-  void checkAndClearCache() {
-    if (ref.read(clearChapterCacheOnAppLaunchStateProvider)) {
-      ref
-          .read(totalChapterCacheSizeStateProvider.notifier)
-          .clearCache(showToast: false);
-    }
-  }
-
-  void handleThemeSync() {
-    // Check if System theme has changed since last app start and adjust
-    if (ref.read(followSystemThemeStateProvider)) {
-      var brightness =
-          WidgetsBinding.instance.platformDispatcher.platformBrightness;
-      if (brightness == Brightness.light) {
-        ref.read(themeModeStateProvider.notifier).setLightTheme();
-      } else {
-        ref.read(themeModeStateProvider.notifier).setDarkTheme();
+      if (ref.read(clearChapterCacheOnAppLaunchStateProvider)) {
+        ref
+            .read(totalChapterCacheSizeStateProvider.notifier)
+            .clearCache(showToast: false);
       }
-      // Listen to System theme changes and adjust accordingly
-      final dispatcher = SchedulerBinding.instance.platformDispatcher;
-      dispatcher.onPlatformBrightnessChanged = () {
-        var newBrightness = dispatcher.platformBrightness;
-        if (newBrightness == Brightness.light) {
-          ref.read(themeModeStateProvider.notifier).setLightTheme();
-        } else {
-          ref.read(themeModeStateProvider.notifier).setDarkTheme();
-        }
-      };
-    }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDarkTheme = ref.watch(themeModeStateProvider);
+    final followSystem = ref.watch(followSystemThemeStateProvider);
+    final forcedDark = ref.watch(themeModeStateProvider);
+    final themeMode =
+        followSystem
+            ? ThemeMode.system
+            : (forcedDark ? ThemeMode.dark : ThemeMode.light);
     final locale = ref.watch(l10nLocaleStateProvider);
     final router = ref.watch(routerProvider);
 
     return MaterialApp.router(
       theme: ref.watch(lightThemeProvider),
       darkTheme: ref.watch(darkThemeProvider),
-      themeMode: isDarkTheme ? ThemeMode.dark : ThemeMode.light,
+      themeMode: themeMode,
       debugShowCheckedModeBanner: false,
       locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
