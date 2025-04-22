@@ -1,6 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/modules/widgets/custom_sliver_grouped_list_view.dart';
 
 import 'package:isar/isar.dart';
@@ -37,11 +38,13 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
     setState(() {
       _isLoading = true;
     });
+    bool isDark = ref.read(themeModeStateProvider);
     botToast(
       context.l10n.updating_library("0", "0", "0"),
       fontSize: 13,
       second: 30,
       alignY: !context.isTablet ? 0.85 : 1,
+      themeDark: isDark,
     );
     final mangaList =
         isar.mangas
@@ -83,7 +86,8 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
           alignY: !context.isTablet ? 0.85 : 1,
           animationDuration: 0,
           dismissDirections: [DismissDirection.none],
-          onlyOne: false
+          onlyOne: false,
+          themeDark: isDark,
         );
       }
     }

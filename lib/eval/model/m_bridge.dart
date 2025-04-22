@@ -819,8 +819,12 @@ void Function() botToast(
   bool hasCloudFlare = false,
   String? url,
   int animationDuration = 200,
-  List<DismissDirection> dismissDirections = const [DismissDirection.horizontal, DismissDirection.down],
+  List<DismissDirection> dismissDirections = const [
+    DismissDirection.horizontal,
+    DismissDirection.down,
+  ],
   bool onlyOne = true,
+  bool? themeDark,
 }) {
   final context = navigatorKey.currentState?.context;
   final assets = [
@@ -834,7 +838,13 @@ void Function() botToast(
     duration: Duration(seconds: second),
     animationDuration: Duration(milliseconds: animationDuration),
     animationReverseDuration: Duration(milliseconds: animationDuration),
-    leading: (_) => Image.asset((assets..shuffle()).first, height: 25),
+    leading:
+        (_) => Image.asset(
+          (themeDark == null
+              ? (assets..shuffle()).first
+              : assets[themeDark ? 0 : 1]),
+          height: 25,
+        ),
     title: (_) => Text(title, style: TextStyle(fontSize: fontSize)),
     trailing:
         hasCloudFlare
