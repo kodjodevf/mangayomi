@@ -39,6 +39,7 @@ import 'package:mangayomi/modules/manga/reader/image_view_vertical.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
+import 'package:mangayomi/modules/manga/reader/providers/manga_reader_provider.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
@@ -52,62 +53,60 @@ typedef DoubleClickAnimationListener = void Function();
 
 class MangaReaderView extends ConsumerWidget {
   final int chapterId;
-  MangaReaderView({super.key, required this.chapterId});
-  late final Chapter chapter = isar.chapters.getSync(chapterId)!;
+  const MangaReaderView({super.key, required this.chapterId});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final chapterData = ref.watch(getChapterPagesProvider(chapter: chapter));
+    final chapterData = ref.watch(mangaReaderProvider(chapterId));
 
     return chapterData.when(
+      loading: () => scaffoldWith(context, const ProgressCenter()),
+      error:
+          (error, _) =>
+              scaffoldWith(context, Center(child: Text(error.toString()))),
       data: (data) {
-        if (data.pageUrls.isEmpty &&
-            (chapter.manga.value!.isLocalArchive ?? false) == false) {
-          return Scaffold(
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            appBar: AppBar(
-              title: const Text(''),
-              leading: BackButton(
-                onPressed: () {
-                  SystemChrome.setEnabledSystemUIMode(
-                    SystemUiMode.manual,
-                    overlays: SystemUiOverlay.values,
-                  );
-                  Navigator.pop(context);
-                },
-              ),
-            ),
-            body: const Center(child: Text("Error")),
+        final chapter = data.chapter;
+        final model = data.pages;
+
+        if (model.pageUrls.isEmpty &&
+            !(chapter.manga.value?.isLocalArchive ?? false)) {
+          return scaffoldWith(
+            context,
+            const Center(child: Text('Error: no pages available')),
+            restoreUi: true,
           );
         }
-        return MangaChapterPageGallery(chapter: chapter, chapterUrlModel: data);
-      },
-      error:
-          (error, stackTrace) => Scaffold(
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            appBar: AppBar(
-              title: const Text(''),
-              leading: BackButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ),
-            body: Center(child: Text(error.toString())),
-          ),
-      loading: () {
-        return Scaffold(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          appBar: AppBar(
-            title: const Text(''),
-            leading: BackButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ),
-          body: const ProgressCenter(),
+
+        return MangaChapterPageGallery(
+          chapter: chapter,
+          chapterUrlModel: model,
         );
       },
+    );
+  }
+
+  Widget scaffoldWith(
+    BuildContext context,
+    Widget body, {
+    bool restoreUi = false,
+  }) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: const Text(''),
+        leading: BackButton(
+          onPressed: () {
+            if (restoreUi) {
+              SystemChrome.setEnabledSystemUIMode(
+                SystemUiMode.manual,
+                overlays: SystemUiOverlay.values,
+              );
+            }
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
+      body: body,
     );
   }
 }
