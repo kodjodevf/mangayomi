@@ -28,6 +28,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
   bool isNotWebviewWindow = false;
   @override
   void initState() {
+    super.initState();
     if (Platform.isLinux || Platform.isWindows) {
       _runWebViewDesktop();
     } else {
@@ -35,7 +36,6 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
         isNotWebviewWindow = true;
       });
     }
-    super.initState();
   }
 
   Webview? _desktopWebview;

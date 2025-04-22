@@ -117,8 +117,8 @@ class SourceSearchScreen extends StatefulWidget {
 class _SourceSearchScreenState extends State<SourceSearchScreen> {
   @override
   void initState() {
-    _init();
     super.initState();
+    _init();
   }
 
   String _errorMessage = "";

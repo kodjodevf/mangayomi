@@ -82,11 +82,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     with TickerProviderStateMixin {
   @override
   void initState() {
+    super.initState();
     _scrollController =
         ScrollController()..addListener(() {
           ref.read(offetProvider.notifier).state = _scrollController.offset;
         });
-    super.initState();
   }
 
   final offetProvider = StateProvider((ref) => 0.0);

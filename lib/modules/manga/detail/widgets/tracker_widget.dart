@@ -35,8 +35,8 @@ class TrackerWidget extends ConsumerStatefulWidget {
 class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
   @override
   initState() {
-    _init();
     super.initState();
+    _init();
   }
 
   _init() async {

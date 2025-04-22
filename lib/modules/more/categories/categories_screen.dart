@@ -27,10 +27,9 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
   int tabs = 3;
   @override
   void initState() {
+    super.initState();
     _tabBarController = TabController(length: tabs, vsync: this);
     _tabBarController.animateTo(widget.data.$2);
-
-    super.initState();
   }
 
   @override

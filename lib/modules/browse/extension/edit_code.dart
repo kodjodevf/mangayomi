@@ -63,6 +63,7 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
   final _scrollController = ScrollController();
   @override
   void initState() {
+    super.initState();
     _controller.text = source?.sourceCode ?? "";
     useLogger = true;
     _logStreamController.stream.asBroadcastStream().listen((event) async {
@@ -72,7 +73,6 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
         _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
       } catch (_) {}
     });
-    super.initState();
   }
 
   List<dynamic> filters = [];

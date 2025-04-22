@@ -20,8 +20,8 @@ class MangaReaderDetail extends ConsumerStatefulWidget {
 class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
   @override
   void initState() {
-    _init();
     super.initState();
+    _init();
   }
 
   _init() async {

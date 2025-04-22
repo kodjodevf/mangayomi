@@ -19,10 +19,10 @@ class _ManageTrackersScreenState extends State<ManageTrackersScreen> {
   late List<TrackPreference> trackPreferences = [];
   @override
   void initState() {
+    super.initState();
     trackPreferences =
         isar.trackPreferences.filter().syncIdIsNotNull().findAllSync();
     // trackPreferences.insert(0, TrackPreference(syncId: -1));
-    super.initState();
   }
 
   @override

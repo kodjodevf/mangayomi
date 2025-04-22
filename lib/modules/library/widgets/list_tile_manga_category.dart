@@ -25,6 +25,7 @@ class ListTileMangaCategory extends StatefulWidget {
 class _ListTileMangaCategoryState extends State<ListTileMangaCategory> {
   @override
   void initState() {
+    super.initState();
     final res =
         widget.mangasList.where((element) {
           return element.categories == null
@@ -32,7 +33,6 @@ class _ListTileMangaCategoryState extends State<ListTileMangaCategory> {
               : element.categories!.contains(widget.category.id);
         }).toList();
     widget.res(res);
-    super.initState();
   }
 
   @override

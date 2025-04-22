@@ -40,12 +40,12 @@ class _CustomSubtitleViewState extends ConsumerState<CustomSubtitleView> {
 
   @override
   void initState() {
+    super.initState();
     subscription = widget.controller.player.stream.subtitle.listen((value) {
       setState(() {
         subtitle = value;
       });
     });
-    super.initState();
   }
 
   @override

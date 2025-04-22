@@ -91,10 +91,10 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
 
   @override
   void initState() {
+    super.initState();
     _tabBarController = TabController(length: tabs, vsync: this);
     _tabBarController.animateTo(0);
     _tabBarController.addListener(tabListener);
-    super.initState();
   }
 
   final _textEditingController = TextEditingController();

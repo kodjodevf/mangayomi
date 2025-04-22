@@ -29,8 +29,8 @@ class TrackerWidgetSearch extends ConsumerStatefulWidget {
 class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
   @override
   initState() {
-    _init();
     super.initState();
+    _init();
   }
 
   late String query = widget.track.title!.trim();

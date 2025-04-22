@@ -57,8 +57,8 @@ class _ChapterListWidgetState extends State<ChapterListWidget> {
   );
   @override
   void initState() {
-    _jumpTo();
     super.initState();
+    _jumpTo();
   }
 
   Future<void> _jumpTo() async {
