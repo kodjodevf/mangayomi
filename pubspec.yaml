@@ -81,6 +81,7 @@ dependencies:
   protobuf: ^3.1.0
   device_info_plus: ^11.3.3
   flutter_app_installer: ^1.0.0
+  marquee: ^2.2.3
 
 dependency_overrides:
   ffi: ^2.1.3

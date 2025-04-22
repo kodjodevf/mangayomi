@@ -38,6 +38,8 @@ class MainScreen extends ConsumerStatefulWidget {
 }
 
 class _MainScreenState extends ConsumerState<MainScreen> {
+  Timer? _backupTimer;
+  Timer? _syncTimer;
   String getHyphenatedUpdatesLabel(String languageCode, String defaultLabel) {
     switch (languageCode) {
       case 'de':
@@ -63,26 +65,19 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   late String defaultLocation = navigationOrder.first;
   @override
   initState() {
+    super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.go(defaultLocation);
 
-      Timer.periodic(Duration(minutes: 5), (timer) {
-        ref.read(checkAndBackupProvider);
-      });
+      _backupTimer = Timer.periodic(
+        const Duration(minutes: 5),
+        _onBackupTimerTick,
+      );
       if (autoSyncFrequency != 0) {
-        final l10n = l10nLocalizations(context)!;
-        Timer.periodic(Duration(seconds: autoSyncFrequency), (timer) {
-          try {
-            ref
-                .read(syncServerProvider(syncId: 1).notifier)
-                .startSync(l10n, true);
-          } catch (e) {
-            botToast(
-              "Failed to sync! Maybe the sync server is down. Restart the app to resume auto sync.",
-            );
-            timer.cancel();
-          }
-        });
+        _syncTimer = Timer.periodic(
+          Duration(seconds: autoSyncFrequency),
+          _onSyncTimerTick,
+        );
       }
 
       ref.watch(checkForUpdateProvider(context: context));
@@ -90,8 +85,38 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       ref.watch(fetchAnimeSourcesListProvider(id: null, reFresh: false));
       ref.watch(fetchNovelSourcesListProvider(id: null, reFresh: false));
     });
+  }
 
-    super.initState();
+  void _onBackupTimerTick(Timer timer) {
+    if (!mounted) {
+      timer.cancel();
+      return;
+    }
+    ref.read(checkAndBackupProvider);
+  }
+
+  void _onSyncTimerTick(Timer timer) {
+    if (!mounted) {
+      timer.cancel();
+      return;
+    }
+    try {
+      final l10n = l10nLocalizations(context)!;
+      ref.read(syncServerProvider(syncId: 1).notifier).startSync(l10n, true);
+    } catch (e) {
+      botToast(
+        "Failed to sync! Maybe the sync server is down. "
+        "Restart the app to resume auto sync.",
+      );
+      timer.cancel();
+    }
+  }
+
+  @override
+  void dispose() {
+    _backupTimer?.cancel();
+    _syncTimer?.cancel();
+    super.dispose();
   }
 
   @override

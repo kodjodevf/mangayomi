@@ -31,6 +31,7 @@ class CustomSeekBarState extends State<CustomSeekBar> {
 
   @override
   void initState() {
+    super.initState();
     player.stream.position.listen((event) {
       if (mounted) {
         setState(() {
@@ -55,7 +56,6 @@ class CustomSeekBarState extends State<CustomSeekBar> {
     position = player.state.position;
     duration = player.state.duration;
     buffer = player.state.buffer;
-    super.initState();
   }
 
   final isDesktop = Platform.isMacOS || Platform.isWindows || Platform.isLinux;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:marquee/marquee.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -64,13 +65,7 @@ class ChapterListTileWidget extends ConsumerWidget {
             chapter.isBookmarked!
                 ? Icon(Icons.bookmark, size: 16, color: context.primaryColor)
                 : Container(),
-            Flexible(
-              child: Text(
-                chapter.name!,
-                style: const TextStyle(fontSize: 13),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
+            Flexible(child: _buildTitle(chapter.name!, context)),
           ],
         ),
         subtitle: Row(
@@ -139,6 +134,42 @@ class ChapterListTileWidget extends ConsumerWidget {
                 ? null
                 : ChapterPageDownload(chapter: chapter),
       ),
+    );
+  }
+
+  Widget _buildTitle(String text, BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final textPainter = TextPainter(
+          text: TextSpan(text: text, style: const TextStyle(fontSize: 13)),
+          maxLines: 1,
+          textDirection: TextDirection.ltr,
+        )..layout(
+          maxWidth: (constraints.maxWidth - (35 + 5)),
+        ); // - Download icon size (download_page_widget.dart, Widget Build SizedBox width: 35)
+
+        final isOverflowing = textPainter.didExceedMaxLines;
+
+        if (isOverflowing) {
+          return SizedBox(
+            height: 20,
+            child: Marquee(
+              text: text,
+              style: const TextStyle(fontSize: 13),
+              blankSpace: 40.0,
+              velocity: 30.0,
+              pauseAfterRound: const Duration(seconds: 1),
+              startPadding: 10.0,
+            ),
+          );
+        } else {
+          return Text(
+            text,
+            style: const TextStyle(fontSize: 13),
+            overflow: TextOverflow.ellipsis,
+          );
+        }
+      },
     );
   }
 }

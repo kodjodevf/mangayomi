@@ -25,10 +25,10 @@ class _MeasureWidgetSizeState extends State<MeasureWidgetSize> {
 
   @override
   initState() {
+    super.initState();
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => widget.onCalculateSize(_key.currentContext?.size),
     );
-    super.initState();
   }
 
   @override

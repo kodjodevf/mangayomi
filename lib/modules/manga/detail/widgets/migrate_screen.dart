@@ -93,8 +93,8 @@ class _MigrationSourceSearchScreenState
     extends State<MigrationSourceSearchScreen> {
   @override
   void initState() {
-    _init();
     super.initState();
+    _init();
   }
 
   String _errorMessage = "";

@@ -305,6 +305,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
 
   @override
   void initState() {
+    super.initState();
     _currentPositionSub;
     _currentTotalDurationSub;
     _completed;
@@ -332,7 +333,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       _setPlaybackSpeed(ref.read(defaultPlayBackSpeedStateProvider));
       _initAniSkip();
     });
-    super.initState();
   }
 
   Future<void> _loadAndroidFont() async {

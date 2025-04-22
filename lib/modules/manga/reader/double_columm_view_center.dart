@@ -68,6 +68,7 @@ class _DoubleColummViewState extends State<DoubleColummView>
 
   @override
   void initState() {
+    super.initState();
     _scaleAnimationController = AnimationController(
       duration: _doubleTapAnimationDuration(),
       vsync: this,
@@ -78,8 +79,6 @@ class _DoubleColummViewState extends State<DoubleColummView>
     _animation.addListener(() {
       _photoViewController.scale = _animation.value;
     });
-
-    super.initState();
   }
 
   void _toggleScale(Offset tapPosition) {

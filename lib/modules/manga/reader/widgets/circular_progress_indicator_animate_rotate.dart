@@ -51,9 +51,13 @@ class _CircularProgressIndicatorAnimateRotateState
                   duration: const Duration(milliseconds: 500),
                   curve: Curves.easeInOut,
                   tween: Tween<double>(begin: 0, end: widget.progress),
-                  builder:
-                      (context, value, _) =>
-                          CircularProgressIndicator(value: value),
+                  builder: (context, value, _) {
+                    final safeValue =
+                        value.isNaN || value.isInfinite
+                            ? null
+                            : value.clamp(0.0, 1.0);
+                    return CircularProgressIndicator(value: safeValue);
+                  },
                 ),
               ),
     );

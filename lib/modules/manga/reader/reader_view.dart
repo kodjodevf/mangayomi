@@ -189,6 +189,7 @@ class _MangaChapterPageGalleryState
       StreamController<double>.broadcast();
   @override
   void initState() {
+    super.initState();
     _doubleClickAnimationController = AnimationController(
       duration: _doubleTapAnimationDuration(),
       vsync: this,
@@ -203,8 +204,6 @@ class _MangaChapterPageGalleryState
     _animation.addListener(() => _photoViewController.scale = _animation.value);
     _itemPositionsListener.itemPositions.addListener(_readProgressListener);
     _initCurrentIndex();
-
-    super.initState();
   }
 
   final double _horizontalScaleValue = 1.0;
@@ -960,53 +959,55 @@ class _MangaChapterPageGalleryState
   }
 
   void _readProgressListener() {
-    _currentIndex = _itemPositionsListener.itemPositions.value.first.index;
+    final itemPositions = _itemPositionsListener.itemPositions.value;
 
-    int pagesLength =
-        (_pageMode == PageMode.doublePage &&
-                !(ref.watch(_currentReaderMode) ==
-                    ReaderMode.horizontalContinuous))
-            ? (_uChapDataPreload.length / 2).ceil() + 1
-            : _uChapDataPreload.length;
+    if (itemPositions.isNotEmpty) {
+      _currentIndex = itemPositions.first.index;
+      int pagesLength =
+          (_pageMode == PageMode.doublePage &&
+                  !(ref.watch(_currentReaderMode) ==
+                      ReaderMode.horizontalContinuous))
+              ? (_uChapDataPreload.length / 2).ceil() + 1
+              : _uChapDataPreload.length;
 
-    if (_currentIndex! >= 0 && _currentIndex! < pagesLength) {
-      if (_readerController.chapter.id !=
-          _uChapDataPreload[_currentIndex!].chapter!.id) {
-        _readerController.setPageIndex(
-          _geCurrentIndex(_uChapDataPreload[_currentIndex! - 1].index!),
-          false,
-        );
-        if (mounted) {
-          setState(() {
-            _readerController = ref.read(
-              readerControllerProvider(
-                chapter: _uChapDataPreload[_currentIndex!].chapter!,
-              ).notifier,
-            );
+      if (_currentIndex! >= 0 && _currentIndex! < pagesLength) {
+        if (_readerController.chapter.id !=
+            _uChapDataPreload[_currentIndex!].chapter!.id) {
+          _readerController.setPageIndex(
+            _geCurrentIndex(_uChapDataPreload[_currentIndex! - 1].index!),
+            false,
+          );
+          if (mounted) {
+            setState(() {
+              _readerController = ref.read(
+                readerControllerProvider(
+                  chapter: _uChapDataPreload[_currentIndex!].chapter!,
+                ).notifier,
+              );
 
-            chapter = _uChapDataPreload[_currentIndex!].chapter!;
-            _chapterUrlModel =
-                _uChapDataPreload[_currentIndex!].chapterUrlModel!;
-            _isBookmarked = _readerController.getChapterBookmarked();
-          });
+              chapter = _uChapDataPreload[_currentIndex!].chapter!;
+              _chapterUrlModel =
+                  _uChapDataPreload[_currentIndex!].chapterUrlModel!;
+              _isBookmarked = _readerController.getChapterBookmarked();
+            });
+          }
         }
-      }
-      if (_itemPositionsListener.itemPositions.value.last.index ==
-          pagesLength - 1) {
-        try {
-          ref
-              .watch(
-                getChapterPagesProvider(
-                  chapter: _readerController.getNextChapter(),
-                ).future,
-              )
-              .then((value) => _preloadNextChapter(value, chapter));
-        } catch (_) {}
-      }
+        if (itemPositions.last.index == pagesLength - 1) {
+          try {
+            ref
+                .watch(
+                  getChapterPagesProvider(
+                    chapter: _readerController.getNextChapter(),
+                  ).future,
+                )
+                .then((value) => _preloadNextChapter(value, chapter));
+          } catch (_) {}
+        }
 
-      ref
-          .read(currentIndexProvider(chapter).notifier)
-          .setCurrentIndex(_uChapDataPreload[_currentIndex!].index!);
+        ref
+            .read(currentIndexProvider(chapter).notifier)
+            .setCurrentIndex(_uChapDataPreload[_currentIndex!].index!);
+      }
     }
   }
 

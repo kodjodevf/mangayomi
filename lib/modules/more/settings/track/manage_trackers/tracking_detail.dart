@@ -22,10 +22,9 @@ class _TrackingDetailState extends State<TrackingDetail>
   late TabController _tabBarController;
   @override
   void initState() {
+    super.initState();
     _tabBarController = TabController(length: 2, vsync: this);
     _tabBarController.animateTo(0);
-
-    super.initState();
   }
 
   @override
