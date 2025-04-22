@@ -1136,7 +1136,9 @@ class AppLocalizationsTh extends AppLocalizations {
   String get update_library => 'อัพเดทชั้นหนังสือ';
 
   @override
-  String get updating_library => 'กำลังอัพเดทชั้นหนังสือ';
+  String updating_library(Object cur, Object failed, Object max) {
+    return 'กำลังอัพเดทชั้นหนังสือ ($cur / $max) - ล้มเหลว: $failed';
+  }
 
   @override
   String get next_chapter => 'ตอนถัดไป';

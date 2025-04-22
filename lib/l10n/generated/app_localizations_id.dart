@@ -1136,7 +1136,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get update_library => 'Perbarui perpustakaan';
 
   @override
-  String get updating_library => 'Memperbarui perpustakaan';
+  String updating_library(Object cur, Object failed, Object max) {
+    return 'Memperbarui perpustakaan ($cur / $max) - Gagal: $failed';
+  }
 
   @override
   String get next_chapter => 'Berikutnya bab';

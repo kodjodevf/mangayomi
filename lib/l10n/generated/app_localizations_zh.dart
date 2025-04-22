@@ -1136,7 +1136,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get update_library => '更新库';
 
   @override
-  String get updating_library => '正在更新库';
+  String updating_library(Object cur, Object failed, Object max) {
+    return '正在更新库 ($cur / $max) - 失败: $failed';
+  }
 
   @override
   String get next_chapter => '下一章';

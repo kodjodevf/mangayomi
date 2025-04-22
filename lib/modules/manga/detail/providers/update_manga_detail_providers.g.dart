@@ -6,7 +6,7 @@ part of 'update_manga_detail_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$updateMangaDetailHash() => r'cfeaefe8375a38abbf07a774830d97ca57c6f2c9';
+String _$updateMangaDetailHash() => r'47fb1d79d48c4832fa7027ea76020044eb1fa2b4';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -42,10 +42,12 @@ class UpdateMangaDetailFamily extends Family<AsyncValue<dynamic>> {
   UpdateMangaDetailProvider call({
     required int? mangaId,
     required bool isInit,
+    bool showToast = true,
   }) {
     return UpdateMangaDetailProvider(
       mangaId: mangaId,
       isInit: isInit,
+      showToast: showToast,
     );
   }
 
@@ -56,6 +58,7 @@ class UpdateMangaDetailFamily extends Family<AsyncValue<dynamic>> {
     return call(
       mangaId: provider.mangaId,
       isInit: provider.isInit,
+      showToast: provider.showToast,
     );
   }
 
@@ -80,11 +83,13 @@ class UpdateMangaDetailProvider extends AutoDisposeFutureProvider<dynamic> {
   UpdateMangaDetailProvider({
     required int? mangaId,
     required bool isInit,
+    bool showToast = true,
   }) : this._internal(
           (ref) => updateMangaDetail(
             ref as UpdateMangaDetailRef,
             mangaId: mangaId,
             isInit: isInit,
+            showToast: showToast,
           ),
           from: updateMangaDetailProvider,
           name: r'updateMangaDetailProvider',
@@ -97,6 +102,7 @@ class UpdateMangaDetailProvider extends AutoDisposeFutureProvider<dynamic> {
               UpdateMangaDetailFamily._allTransitiveDependencies,
           mangaId: mangaId,
           isInit: isInit,
+          showToast: showToast,
         );
 
   UpdateMangaDetailProvider._internal(
@@ -108,10 +114,12 @@ class UpdateMangaDetailProvider extends AutoDisposeFutureProvider<dynamic> {
     required super.from,
     required this.mangaId,
     required this.isInit,
+    required this.showToast,
   }) : super.internal();
 
   final int? mangaId;
   final bool isInit;
+  final bool showToast;
 
   @override
   Override overrideWith(
@@ -128,6 +136,7 @@ class UpdateMangaDetailProvider extends AutoDisposeFutureProvider<dynamic> {
         debugGetCreateSourceHash: null,
         mangaId: mangaId,
         isInit: isInit,
+        showToast: showToast,
       ),
     );
   }
@@ -141,7 +150,8 @@ class UpdateMangaDetailProvider extends AutoDisposeFutureProvider<dynamic> {
   bool operator ==(Object other) {
     return other is UpdateMangaDetailProvider &&
         other.mangaId == mangaId &&
-        other.isInit == isInit;
+        other.isInit == isInit &&
+        other.showToast == showToast;
   }
 
   @override
@@ -149,6 +159,7 @@ class UpdateMangaDetailProvider extends AutoDisposeFutureProvider<dynamic> {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, mangaId.hashCode);
     hash = _SystemHash.combine(hash, isInit.hashCode);
+    hash = _SystemHash.combine(hash, showToast.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -162,6 +173,9 @@ mixin UpdateMangaDetailRef on AutoDisposeFutureProviderRef<dynamic> {
 
   /// The parameter `isInit` of this provider.
   bool get isInit;
+
+  /// The parameter `showToast` of this provider.
+  bool get showToast;
 }
 
 class _UpdateMangaDetailProviderElement
@@ -173,6 +187,8 @@ class _UpdateMangaDetailProviderElement
   int? get mangaId => (origin as UpdateMangaDetailProvider).mangaId;
   @override
   bool get isInit => (origin as UpdateMangaDetailProvider).isInit;
+  @override
+  bool get showToast => (origin as UpdateMangaDetailProvider).showToast;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

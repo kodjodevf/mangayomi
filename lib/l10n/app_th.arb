@@ -286,7 +286,7 @@
   "skip_ending": "ข้ามตอนจบ",
   "fullscreen": "เต็มจอ",
   "update_library": "อัพเดทชั้นหนังสือ",
-  "updating_library": "กำลังอัพเดทชั้นหนังสือ",
+  "updating_library": "กำลังอัพเดทชั้นหนังสือ ({cur} / {max}) - ล้มเหลว: {failed}",
   "next_chapter": "ตอนถัดไป",
   "next_5_chapters": "5 ตอนถัดไป",
   "next_10_chapters": "10 ตอนถัดไป",

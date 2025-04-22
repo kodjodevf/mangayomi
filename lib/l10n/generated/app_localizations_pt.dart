@@ -1136,7 +1136,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get update_library => 'Atualizar biblioteca';
 
   @override
-  String get updating_library => 'Atualizando biblioteca';
+  String updating_library(Object cur, Object failed, Object max) {
+    return 'Atualizando biblioteca ($cur / $max) - Falha: $failed';
+  }
 
   @override
   String get next_chapter => 'Próximo capítulo';
@@ -2570,7 +2572,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get update_library => 'Atualizar biblioteca';
 
   @override
-  String get updating_library => 'Atualizando biblioteca';
+  String updating_library(Object cur, Object failed, Object max) {
+    return 'Atualizando biblioteca ($cur / $max) - Falha: $failed';
+  }
 
   @override
   String get next_chapter => 'Próximo capítulo';

@@ -1136,7 +1136,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get update_library => 'Update library';
 
   @override
-  String get updating_library => 'Updating library';
+  String updating_library(Object cur, Object failed, Object max) {
+    return 'Updating library ($cur / $max) - Failed: $failed';
+  }
 
   @override
   String get next_chapter => 'Next chapter';
