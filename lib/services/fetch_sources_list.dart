@@ -106,6 +106,7 @@ Future<void> _updateSource(
         ..sourceCodeLanguage = source.sourceCodeLanguage
         ..additionalParams = source.additionalParams ?? ""
         ..isObsolete = false
+        ..notes = source.notes
         ..repo = repo;
 
   isar.writeTxnSync(() {
@@ -144,6 +145,7 @@ void _addNewSource(Source source, Ref ref, Repo? repo, ItemType itemType) {
         ..isFullData = source.isFullData ?? false
         ..appMinVerReq = source.appMinVerReq
         ..isObsolete = false
+        ..notes = source.notes
         ..repo = repo;
   isar.sources.putSync(newSource);
   ref

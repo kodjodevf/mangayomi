@@ -2882,6 +2882,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Load your own subtitles...'**
   String get load_own_subtitles;
+
+  /// No description provided for @extension_notes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes: {notes}'**
+  String extension_notes(Object notes);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

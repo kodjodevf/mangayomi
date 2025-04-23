@@ -463,5 +463,6 @@
     "clear_all_sources": "Alle Quellen löschen",
     "clear_all_sources_msg": "Dies wird alle Quellen der Anwendung vollständig löschen. Möchten Sie wirklich fortfahren?",
     "sources_cleared": "Quellen gelöscht!",
-    "add_repo": "Repository hinzufügen?"
+    "add_repo": "Repository hinzufügen?",
+    "extension_notes": "Hinweis: {notes}"
 }

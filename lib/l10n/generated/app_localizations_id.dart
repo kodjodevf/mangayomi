@@ -1438,4 +1438,9 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get load_own_subtitles => 'Muat subtitle Anda sendiri...';
+
+  @override
+  String extension_notes(Object notes) {
+    return 'Notes: $notes';
+  }
 }

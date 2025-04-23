@@ -1438,6 +1438,11 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get load_own_subtitles => 'Carregar suas próprias legendas...';
+
+  @override
+  String extension_notes(Object notes) {
+    return 'Notes: $notes';
+  }
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).

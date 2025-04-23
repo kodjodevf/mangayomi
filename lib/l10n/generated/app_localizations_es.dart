@@ -1438,6 +1438,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get load_own_subtitles => 'Cargar tus propios subtítulos...';
+
+  @override
+  String extension_notes(Object notes) {
+    return 'Notes: $notes';
+  }
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
