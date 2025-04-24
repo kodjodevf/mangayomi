@@ -95,7 +95,7 @@ enum TrackStatus {
   onHold,
   dropped,
   planToRead,
-  rereading,
+  reReading,
   watching,
   planToWatch,
   reWatching,
