@@ -153,55 +153,76 @@ class MBridge {
   }
 
   ///Read values in parsed JSON object and return resut to List<String>
-  static const $Function jsonPathToList = $Function(_jsonPathToList);
+  static final $Function jsonPathToList = $Function(
+    (runtime, thisObj, List<$Value?> args) =>
+        _jsonPathToStringOrList(runtime, thisObj, true, args),
+  );
 
-  static $Value? _jsonPathToList(_, __, List<$Value?> args) {
-    String source = args[0]!.$reified;
-    String expression = args[1]!.$reified;
-    int type = args[2]!.$reified;
+  static $Value? _jsonPathToStringOrList(
+    Object? runtime, // unused by bridge
+    Object? thisObj, // unused by bridge
+    bool toList, // new flag: list vs. single-string
+    List<$Value?> args, // [ sourceJson, jsonPathExpr ]
+  ) {
+    final source = args[0]!.$reified;
+    final expression = args[1]!.$reified;
+
+    dynamic decoded;
     try {
-      //Check jsonDecode(source) is list value
-      if (jsonDecode(source) is List) {
-        List<dynamic> values = [];
-        final val = jsonDecode(source) as List;
-        for (var element in val) {
-          final mMap = element as Map?;
-          Map<String, dynamic> map = {};
-          if (mMap != null) {
-            map = mMap.map((key, value) => MapEntry(key.toString(), value));
-          }
-          values.add(map);
-        }
-        List<String> list = [];
-        for (var data in values) {
-          final jsonRes = JsonPath(expression).read(data);
-          String val = "";
-
-          //Get jsonRes first string value
-          if (type == 0) {
-            val = jsonRes.first.value.toString();
-          }
-          //Decode jsonRes first map value
-          else {
-            val = jsonEncode(jsonRes.first.value);
-          }
-          list.add(val);
-        }
-        return $List.wrap(list.map((e) => $String(e)).toList());
-      }
-      // else jsonDecode(source) is Map value
-      else {
-        var map = json.decode(source);
-        var values = JsonPath(expression).readValues(map);
-        return $List.wrap(
-          values.map((e) {
-            return $String(e == null ? "{}" : json.encode(e));
-          }).toList(),
-        );
-      }
+      decoded = jsonDecode(source);
     } catch (_) {
-      return $List.wrap([]);
+      return toList ? $List.wrap(<$Value>[]) : $String('');
     }
+
+    // Normalize a JSON element (either Map or List) into a Map<String, dynamic>
+    Map<String, dynamic> normalize(dynamic elt) {
+      if (elt is Map) {
+        return elt.map((k, v) => MapEntry(k.toString(), v));
+      }
+      return <String, dynamic>{};
+    }
+
+    /// Common JSONPath read logic
+    List<dynamic> extractList(Map<String, dynamic> dataMap) {
+      // readValues returns all matches; .read returns Match objects
+      final matches = JsonPath(expression).read(dataMap);
+      return matches.map((m) => m.value).toList();
+    }
+
+    if (decoded is List) {
+      // Branch: JSON root is a list → always return a List<$String>
+      final out = <$Value>[];
+      for (var elt in decoded) {
+        final map = normalize(elt);
+        final extracted = extractList(map);
+        if (toList) {
+          // join into JSON strings per element
+          out.addAll(extracted.map((e) => $String(jsonEncode(e))));
+        } else if (extracted.isNotEmpty) {
+          // only first match as string
+          out.add($String(extracted.first.toString()));
+        } else {
+          out.add($String(''));
+        }
+      }
+      return $List.wrap(out);
+    } else if (decoded is Map) {
+      // Branch: JSON root is object
+      final map = normalize(decoded);
+      final extracted = extractList(map);
+      if (toList) {
+        return $List.wrap(
+          extracted
+              .map((e) => $String(e == null ? '{}' : jsonEncode(e)))
+              .toList(),
+        );
+      } else {
+        return $String(extracted.isNotEmpty ? extracted.first.toString() : '');
+      }
+    }
+
+    // Fallback: neither List nor Map
+    return toList ? $List.wrap(<$Value>[]) : $String('');
   }
 
   ///GetMapValue
@@ -218,54 +239,10 @@ class MBridge {
   }
 
   ///Read values in parsed JSON object and return resut to String
-  static const $Function jsonPathToString = $Function(_jsonPathToString);
-
-  static $Value? _jsonPathToString(_, __, List<$Value?> args) {
-    String source = args[0]!.$reified;
-    String expression = args[1]!.$reified;
-    String join = args[2]!.$reified;
-    try {
-      List<dynamic> values = [];
-
-      //Check jsonDecode(source) is list value
-      if (jsonDecode(source) is List) {
-        final val = jsonDecode(source) as List;
-        for (var element in val) {
-          final mMap = element as Map?;
-          Map<String, dynamic> map = {};
-          if (mMap != null) {
-            map = mMap.map((key, value) => MapEntry(key.toString(), value));
-          }
-          values.add(map);
-        }
-      }
-      // else jsonDecode(source) is Map value
-      else {
-        final mMap = jsonDecode(source) as Map?;
-        Map<String, dynamic> map = {};
-        if (mMap != null) {
-          map = mMap.map((key, value) => MapEntry(key.toString(), value));
-        }
-        values.add(map);
-      }
-
-      List<String> listRg = [];
-
-      for (var data in values) {
-        final jsonRes = JsonPath(expression).readValues(data);
-        List list = [];
-
-        for (var element in jsonRes) {
-          list.add(element);
-        }
-        //join the list into listRg
-        listRg.add(list.join(join));
-      }
-      return $String(listRg.first);
-    } catch (_) {
-      return $String("");
-    }
-  }
+  static final $Function jsonPathToString = $Function(
+    (runtime, thisObj, List<$Value?> args) =>
+        _jsonPathToStringOrList(runtime, thisObj, false, args),
+  );
 
   //Parse a list of dates to millisecondsSinceEpoch
   static List parseDates(
