@@ -348,19 +348,18 @@ class MBridge {
     return await FilemoonExtractor().videosFromUrl(url, prefix, suffix);
   }
 
+  static Map<String, String> decodeHeaders(String? headers) =>
+      headers == null ? {} : (jsonDecode(headers) as Map).toMapStringString!;
+
   static Future<List<Video>> mp4UploadExtractor(
     String url,
     String? headers,
     String prefix,
     String suffix,
   ) async {
-    Map<String, String> newHeaders = {};
-    if (headers != null) {
-      newHeaders = (jsonDecode(headers) as Map).toMapStringString!;
-    }
     return await Mp4uploadExtractor().videosFromUrl(
       url,
-      newHeaders,
+      decodeHeaders(headers),
       prefix: prefix,
       suffix: suffix,
     );
@@ -615,13 +614,8 @@ class MBridge {
     String? headers,
     String prefix,
   ) async {
-    Map<String, String> newHeaders = {};
-    if (headers != null) {
-      newHeaders = (jsonDecode(headers) as Map).toMapStringString!;
-    }
-
     return await SendvidExtractor(
-      newHeaders,
+      decodeHeaders(headers),
     ).videosFromUrl(url, prefix: prefix);
   }
 
@@ -639,13 +633,9 @@ class MBridge {
     String? name,
     String prefix,
   ) async {
-    Map<String, String> newHeaders = {};
-    if (headers != null) {
-      newHeaders = (jsonDecode(headers) as Map).toMapStringString!;
-    }
     return await YourUploadExtractor().videosFromUrl(
       url,
-      newHeaders,
+      decodeHeaders(headers),
       prefix: prefix,
       name: name ?? "YourUpload",
     );
@@ -687,15 +677,11 @@ class MBridge {
     List<Track>? subtitles,
     List<Track>? audios,
   ) {
-    Map<String, String> newHeaders = {};
-    if (headers != null) {
-      newHeaders = (jsonDecode(headers) as Map).toMapStringString!;
-    }
     return Video(
       url,
       quality,
       originalUrl,
-      headers: newHeaders,
+      headers: decodeHeaders(headers),
       subtitles: subtitles ?? [],
       audios: audios ?? [],
     );
