@@ -33,6 +33,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get filter => 'Filtro';
 
   @override
+  String get ignore_filters => 'Ignorar filtros';
+
+  @override
   String get downloaded => 'Baixados';
 
   @override
@@ -1465,6 +1468,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get filter => 'Filtro';
+
+  @override
+  String get ignore_filters => 'Ignorar filtros';
 
   @override
   String get downloaded => 'Baixado';

@@ -8,6 +8,7 @@
   "open_random_entry": "สุ่มอ่าน",
   "import": "นำเข้า",
   "filter": "ตัวกรอง",
+  "ignore_filters": "ไม่สนใจตัวกรอง",
   "downloaded": "ดาวน์โหลดแล้ว",
   "unread": "ยังไม่อ่าน",
   "started": "เริ่มแล้ว",

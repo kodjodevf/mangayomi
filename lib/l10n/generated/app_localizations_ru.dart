@@ -33,6 +33,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get filter => 'Фильтр';
 
   @override
+  String get ignore_filters => 'Игнорировать фильтры';
+
+  @override
   String get downloaded => 'Загружено';
 
   @override

@@ -8,6 +8,7 @@
     "open_random_entry": "Открыть случайную запись",
     "import": "Импорт",
     "filter": "Фильтр",
+    "ignore_filters": "Игнорировать фильтры",
     "downloaded": "Загружено",
     "unread": "Непрочитанное",
     "started": "Начато",

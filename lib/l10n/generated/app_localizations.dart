@@ -165,6 +165,12 @@ abstract class AppLocalizations {
   /// **'Filter'**
   String get filter;
 
+  /// No description provided for @ignore_filters.
+  ///
+  /// In en, this message translates to:
+  /// **'Ignore Filters'**
+  String get ignore_filters;
+
   /// No description provided for @downloaded.
   ///
   /// In en, this message translates to:

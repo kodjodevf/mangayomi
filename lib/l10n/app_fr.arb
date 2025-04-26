@@ -8,6 +8,7 @@
   "open_random_entry": "Ouvrir une entrée au hasard",
   "import": "Importer",
   "filter": "Filtre",
+  "ignore_filters": "Ignorer les filtres",
   "downloaded": "Téléchargé",
   "unread": "Non lus",
   "started": "Commencé",

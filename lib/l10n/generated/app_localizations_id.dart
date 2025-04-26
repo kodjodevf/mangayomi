@@ -33,6 +33,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get filter => 'Filter';
 
   @override
+  String get ignore_filters => 'Abaikan filter';
+
+  @override
   String get downloaded => 'Telah Diunduh';
 
   @override
