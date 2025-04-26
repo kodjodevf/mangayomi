@@ -81,7 +81,7 @@ class Kitsu extends _$Kitsu {
     );
     final headers = {
       "Content-Type": "application/vnd.api+json",
-      'Authorization': 'Bearer ${getAccessToken()}',
+      'Authorization': 'Bearer ${_getAccessToken()}',
     };
     final payload = jsonEncode({
       "data": {
@@ -122,10 +122,10 @@ class Kitsu extends _$Kitsu {
   }
 
   Future<List<TrackSearch>> search(String search, bool isManga) async {
-    final accessToken = getAccessToken();
+    final accessToken = _getAccessToken();
 
     final url = Uri.parse(_algoliaKeyUrl);
-    final algoliaKeyResponse = await makeGetRequest(url, accessToken);
+    final algoliaKeyResponse = await _makeGetRequest(url, accessToken);
     final key = json.decode(algoliaKeyResponse.body)["media"]["key"];
     final response = await http.post(
       Uri.parse(_algoliaUrl),
@@ -169,12 +169,12 @@ class Kitsu extends _$Kitsu {
   Future<Track?> findLibItem(Track track, bool isManga) async {
     final type = isManga ? "manga" : "anime";
     final userId = _getUserId();
-    final accessToken = getAccessToken();
+    final accessToken = _getAccessToken();
 
     final url = Uri.parse(
       '${_baseUrl}library-entries?filter[${type}_id]=${track.libraryId}&filter[user_id]=$userId&include=$type',
     );
-    Response response = await makeGetRequest(url, accessToken);
+    Response response = await _makeGetRequest(url, accessToken);
     if (response.statusCode == 200) {
       final parsed = parseTrackResponse(response, track, type);
       if (parsed != null) return parsed;
@@ -182,7 +182,7 @@ class Kitsu extends _$Kitsu {
     return await getItem(track, type);
   }
 
-  Future<Response> makeGetRequest(Uri url, String accessToken) async {
+  Future<Response> _makeGetRequest(Uri url, String accessToken) async {
     return await http.get(
       url,
       headers: {
@@ -193,11 +193,11 @@ class Kitsu extends _$Kitsu {
   }
 
   Future<Track?> getItem(Track track, String type) async {
-    final accessToken = getAccessToken();
+    final accessToken = _getAccessToken();
     final url = Uri.parse(
       '${_baseUrl}library-entries?filter[id]=${track.mediaId}&include=$type',
     );
-    Response response = await makeGetRequest(url, accessToken);
+    Response response = await _makeGetRequest(url, accessToken);
     if (response.statusCode == 200) {
       return parseTrackResponse(response, track, type);
     }
@@ -232,7 +232,7 @@ class Kitsu extends _$Kitsu {
 
   Future<(String, String)> _getCurrentUser(String accessToken) async {
     final url = Uri.parse('${_baseUrl}users?filter[self]=true');
-    Response response = await makeGetRequest(url, accessToken);
+    Response response = await _makeGetRequest(url, accessToken);
     final data = json.decode(response.body)['data'][0];
     return (
       data['id'].toString(),
@@ -240,7 +240,7 @@ class Kitsu extends _$Kitsu {
     );
   }
 
-  String getAccessToken() {
+  String _getAccessToken() {
     final track = ref.watch(tracksProvider(syncId: syncId));
     final mAKOAuth = OAuth.fromJson(
       jsonDecode(track!.oAuth!) as Map<String, dynamic>,

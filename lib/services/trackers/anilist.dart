@@ -16,15 +16,15 @@ part 'anilist.g.dart';
 @riverpod
 class Anilist extends _$Anilist {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
-  static final isDesktop = Platform.isWindows || Platform.isLinux;
-  final String _clientId = isDesktop ? '13587' : '13588';
+  static final _isDesktop = Platform.isWindows || Platform.isLinux;
+  final String _clientId = _isDesktop ? '13587' : '13588';
   static const String _baseApiUrl = "https://graphql.anilist.co/";
   final String _redirectUri =
-      isDesktop
+      _isDesktop
           ? 'http://localhost:43824/success?code=1337'
           : 'mangayomi://success?code=1337';
   final String _clientSecret =
-      isDesktop
+      _isDesktop
           ? 'tJA13cAR2tCCXrJCwwvmwEDbWRoIaahFiJTXToHd'
           : 'G2fFUiGtgFd60D0lCkhgGKvMmrCfDmZXADQIzWXr';
 
@@ -33,7 +33,7 @@ class Anilist extends _$Anilist {
 
   Future<bool?> login() async {
     final callbackUrlScheme =
-        isDesktop ? 'http://localhost:43824' : 'mangayomi';
+        _isDesktop ? 'http://localhost:43824' : 'mangayomi';
     final loginUrl =
         'https://anilist.co/api/v2/oauth/authorize?client_id=$_clientId'
         '&redirect_uri=$_redirectUri&response_type=code';
@@ -207,7 +207,7 @@ class Anilist extends _$Anilist {
       ..libraryId = jsonRes['id'] as int
       ..syncId = syncId
       ..mediaId = jsonRes['media']['id'] as int
-      ..status = getALTrackStatus(jsonRes['status'], isManga)
+      ..status = _getALTrackStatus(jsonRes['status'], isManga)
       ..title = jsonRes['media']['title']['userPreferred'] ?? ''
       ..score = jsonRes['scoreRaw'] as int?
       ..lastChapterRead = jsonRes['progress'] as int? ?? 0
@@ -224,7 +224,7 @@ class Anilist extends _$Anilist {
       Uri.parse(_baseApiUrl),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer ${await getAccessToken()}',
+        'Authorization': 'Bearer ${await _getAccessToken()}',
       },
       body: jsonEncode({'query': document, 'variables': variables}),
     );
@@ -265,7 +265,7 @@ class Anilist extends _$Anilist {
     );
   }
 
-  Future<String> getAccessToken() async {
+  Future<String> _getAccessToken() async {
     final track = ref.watch(tracksProvider(syncId: syncId));
     final mALOAuth = OAuth.fromJson(
       jsonDecode(track!.oAuth!) as Map<String, dynamic>,
@@ -304,7 +304,7 @@ class Anilist extends _$Anilist {
     };
   }
 
-  TrackStatus getALTrackStatus(String status, bool isManga) {
+  TrackStatus _getALTrackStatus(String status, bool isManga) {
     return switch (status) {
       "CURRENT" => isManga ? TrackStatus.reading : TrackStatus.watching,
       "COMPLETED" => TrackStatus.completed,
