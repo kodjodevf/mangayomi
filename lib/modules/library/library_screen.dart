@@ -1039,7 +1039,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     List<Manga>? mangas;
     final searchQuery = _textEditingController.text;
     // Skip all filters, just do search
-    if (searchQuery.isNotEmpty && ignoreFiltersOnSearch) {
+    if (searchQuery.isNotEmpty && _ignoreFiltersOnSearch) {
       mangas =
           data
               .where((element) => matchesSearchQuery(element, searchQuery))
@@ -2053,7 +2053,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     return l10n.date_added;
   }
 
-  bool ignoreFiltersOnSearch = false;
+  bool _ignoreFiltersOnSearch = false;
+  final bool _isMobile = Platform.isIOS || Platform.isAndroid;
   PreferredSize _appBar(
     bool isNotFiltering,
     bool showNumbersOfItems,
@@ -2217,12 +2218,21 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(l10n.ignore_filters),
+                        Text(
+                          _isMobile
+                              // Adds a line break where spaces exist for better mobile layout.
+                              // Works for languages that use spaces between words.
+                              ? l10n.ignore_filters.replaceAll(' ', '\n')
+                              // Removes manually added line breaks for Thai and Chinese,
+                              // where spaces aren’t used, to ensure proper desktop rendering.
+                              : l10n.ignore_filters.replaceAll('\n', ''),
+                          textAlign: TextAlign.center,
+                        ),
                         Checkbox(
-                          value: ignoreFiltersOnSearch,
+                          value: _ignoreFiltersOnSearch,
                           onChanged: (val) {
                             setState(() {
-                              ignoreFiltersOnSearch = val ?? false;
+                              _ignoreFiltersOnSearch = val ?? false;
                             });
                           },
                         ),

@@ -8,7 +8,10 @@
     "open_random_entry": "随机打开条目",
     "import": "导入",
     "filter": "筛选",
-    "ignore_filters": "忽略筛选",
+    "ignore_filters": "忽略\n筛选",
+    "@ignore_filters": {
+      "description": "Manual line break added for better rendering of the ignore filters text on mobile."
+    },
     "downloaded": "已下载",
     "unread": "未读",
     "started": "已开始",
