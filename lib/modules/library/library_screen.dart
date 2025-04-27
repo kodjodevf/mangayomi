@@ -2223,7 +2223,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                           _isMobile
                               // Adds a line break where spaces exist for better mobile layout.
                               // Works for languages that use spaces between words.
-                              ? l10n.ignore_filters.replaceAll(' ', '\n')
+                              ? l10n.ignore_filters.replaceFirst(' ', '\n')
                               // Removes manually added line breaks for Thai and Chinese,
                               // where spaces aren’t used, to ensure proper desktop rendering.
                               : l10n.ignore_filters.replaceAll('\n', ''),
