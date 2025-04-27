@@ -2214,6 +2214,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                         },
                         icon: const Icon(Icons.search),
                       ),
+                  // Checkbox when searching library to ignore filters
                   if (_isSearch)
                     Row(
                       mainAxisSize: MainAxisSize.min,
