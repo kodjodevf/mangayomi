@@ -72,8 +72,8 @@ class AppearanceScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  if (!followSystemTheme) const DarkModeButton(),
                   const FollowSystemThemeButton(),
+                  if (!followSystemTheme) const DarkModeButton(),
                   const ThemeSelector(),
                   if (isDarkTheme)
                     Padding(
