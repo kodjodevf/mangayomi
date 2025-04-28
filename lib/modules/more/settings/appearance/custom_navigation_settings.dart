@@ -21,70 +21,67 @@ class _CustomNavigationSettingsState
     final hideItems = ref.watch(hideItemsStateProvider);
     return Scaffold(
       appBar: AppBar(title: Text(l10n.reorder_navigation)),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: ReorderableListView.builder(
-            buildDefaultDragHandles: false,
-            shrinkWrap: true,
-            itemCount: navigationOrder.length,
-            itemBuilder: (context, index) {
-              final navigation = navigationOrder[index];
-              return Row(
-                key: Key('navigation_$navigation'),
-                children: [
-                  ReorderableDragStartListener(
-                    index: index,
-                    child: const Icon(Icons.drag_handle),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: ReorderableListView.builder(
+          buildDefaultDragHandles: false,
+          itemCount: navigationOrder.length,
+          itemBuilder: (context, index) {
+            final navigation = navigationOrder[index];
+            return Row(
+              key: Key('navigation_$navigation'),
+              children: [
+                ReorderableDragStartListener(
+                  index: index,
+                  child: const Icon(Icons.drag_handle),
+                ),
+                Expanded(
+                  child: SwitchListTile(
+                    key: Key(navigation),
+                    dense: true,
+                    value: !hideItems.contains(navigation),
+                    onChanged:
+                        [
+                              "/more",
+                              "/browse",
+                              "/history",
+                            ].any((element) => element == navigation)
+                            ? null
+                            : (value) {
+                              final temp = hideItems.toList();
+                              if (!value && !hideItems.contains(navigation)) {
+                                temp.add(navigation);
+                              } else if (value) {
+                                temp.remove(navigation);
+                              }
+                              ref
+                                  .read(hideItemsStateProvider.notifier)
+                                  .set(temp);
+                            },
+                    title: Text(navigationItems[navigation]!),
                   ),
-                  Expanded(
-                    child: SwitchListTile(
-                      key: Key(navigation),
-                      dense: true,
-                      value: !hideItems.contains(navigation),
-                      onChanged:
-                          [
-                                "/more",
-                                "/browse",
-                                "/history",
-                              ].any((element) => element == navigation)
-                              ? null
-                              : (value) {
-                                final temp = hideItems.toList();
-                                if (!value && !hideItems.contains(navigation)) {
-                                  temp.add(navigation);
-                                } else if (value) {
-                                  temp.remove(navigation);
-                                }
-                                ref
-                                    .read(hideItemsStateProvider.notifier)
-                                    .set(temp);
-                              },
-                      title: Text(navigationItems[navigation]!),
-                    ),
-                  ),
-                ],
-              );
-            },
-            onReorder: (oldIndex, newIndex) {
-              if (oldIndex < newIndex) {
-                final draggedItem = navigationOrder[oldIndex];
-                for (var i = oldIndex; i < newIndex - 1; i++) {
-                  navigationOrder[i] = navigationOrder[i + 1];
-                }
-                navigationOrder[newIndex - 1] = draggedItem;
-              } else {
-                final draggedItem = navigationOrder[oldIndex];
-                for (var i = oldIndex; i > newIndex; i--) {
-                  navigationOrder[i] = navigationOrder[i - 1];
-                }
-                navigationOrder[newIndex] = draggedItem;
+                ),
+              ],
+            );
+          },
+          onReorder: (oldIndex, newIndex) {
+            if (oldIndex < newIndex) {
+              final draggedItem = navigationOrder[oldIndex];
+              for (var i = oldIndex; i < newIndex - 1; i++) {
+                navigationOrder[i] = navigationOrder[i + 1];
               }
-              ref
-                  .read(navigationOrderStateProvider.notifier)
-                  .set(navigationOrder);
-            },
-          ),
+              navigationOrder[newIndex - 1] = draggedItem;
+            } else {
+              final draggedItem = navigationOrder[oldIndex];
+              for (var i = oldIndex; i > newIndex; i--) {
+                navigationOrder[i] = navigationOrder[i - 1];
+              }
+              navigationOrder[newIndex] = draggedItem;
+            }
+            ref
+                .read(navigationOrderStateProvider.notifier)
+                .set(navigationOrder);
+          },
         ),
       ),
     );
