@@ -93,530 +93,132 @@ class RouterNotifier extends ChangeNotifier {
     ShellRoute(
       builder: (context, state, child) => MainScreen(child: child),
       routes: [
-        GoRoute(
+        _genericRoute<String?>(
           name: "MangaLibrary",
-          path: '/MangaLibrary',
-          builder: (context, state) {
-            final presetInput = state.extra as String?;
-            return LibraryScreen(
-              itemType: ItemType.manga,
-              presetInput: presetInput,
-            );
-          },
-          pageBuilder: (context, state) {
-            final presetInput = state.extra as String?;
-            return transitionPage(
-              key: state.pageKey,
-              child: LibraryScreen(
-                itemType: ItemType.manga,
-                presetInput: presetInput,
-              ),
-            );
-          },
+          builder:
+              (id) => LibraryScreen(itemType: ItemType.manga, presetInput: id),
         ),
-        GoRoute(
+        _genericRoute<String?>(
           name: "AnimeLibrary",
-          path: '/AnimeLibrary',
-          builder: (context, state) {
-            final presetInput = state.extra as String?;
-            return LibraryScreen(
-              itemType: ItemType.anime,
-              presetInput: presetInput,
-            );
-          },
-          pageBuilder: (context, state) {
-            final presetInput = state.extra as String?;
-            return transitionPage(
-              key: state.pageKey,
-              child: LibraryScreen(
-                itemType: ItemType.anime,
-                presetInput: presetInput,
-              ),
-            );
-          },
+          builder:
+              (id) => LibraryScreen(itemType: ItemType.anime, presetInput: id),
         ),
-        GoRoute(
+        _genericRoute<String?>(
           name: "NovelLibrary",
-          path: '/NovelLibrary',
-          builder: (context, state) {
-            final presetInput = state.extra as String?;
-            return LibraryScreen(
-              itemType: ItemType.novel,
-              presetInput: presetInput,
-            );
-          },
-          pageBuilder: (context, state) {
-            final presetInput = state.extra as String?;
-            return transitionPage(
-              key: state.pageKey,
-              child: LibraryScreen(
-                itemType: ItemType.novel,
-                presetInput: presetInput,
-              ),
-            );
-          },
+          builder:
+              (id) => LibraryScreen(itemType: ItemType.novel, presetInput: id),
         ),
-        GoRoute(
-          name: "history",
-          path: '/history',
-          builder: (context, state) => const HistoryScreen(),
-          pageBuilder:
-              (context, state) => transitionPage(
-                key: state.pageKey,
-                child: const HistoryScreen(),
-              ),
-        ),
-        GoRoute(
-          name: "updates",
-          path: '/updates',
-          builder: (context, state) => const UpdatesScreen(),
-          pageBuilder:
-              (context, state) => transitionPage(
-                key: state.pageKey,
-                child: const UpdatesScreen(),
-              ),
-        ),
-        GoRoute(
-          name: "browse",
-          path: '/browse',
-          builder: (context, state) => const BrowseScreen(),
-          pageBuilder:
-              (context, state) => transitionPage(
-                key: state.pageKey,
-                child: const BrowseScreen(),
-              ),
-        ),
-        GoRoute(
-          name: "more",
-          path: '/more',
-          builder: (context, state) => const MoreScreen(),
-          pageBuilder:
-              (context, state) =>
-                  transitionPage(key: state.pageKey, child: const MoreScreen()),
-        ),
+        _genericRoute(name: "history", child: const HistoryScreen()),
+        _genericRoute(name: "updates", child: const UpdatesScreen()),
+        _genericRoute(name: "browse", child: const BrowseScreen()),
+        _genericRoute(name: "more", child: const MoreScreen()),
       ],
     ),
-    GoRoute(
-      path: "/mangaHome",
+    _genericRoute<(Source?, bool)>(
       name: "mangaHome",
-      builder: (context, state) {
-        final source = state.extra as (Source?, bool);
-        return MangaHomeScreen(source: source.$1!, isLatest: source.$2);
-      },
-      pageBuilder: (context, state) {
-        final source = state.extra as (Source?, bool);
-        return transitionPage(
-          key: state.pageKey,
-          child: MangaHomeScreen(source: source.$1!, isLatest: source.$2),
-        );
-      },
+      builder: (id) => MangaHomeScreen(source: id.$1!, isLatest: id.$2),
     ),
-    GoRoute(
-      path: '/manga-reader/detail',
-      builder: (context, state) {
-        int mangaId = state.extra as int;
-
-        return MangaReaderDetail(mangaId: mangaId);
-      },
-      pageBuilder: (context, state) {
-        int mangaId = state.extra as int;
-
-        return transitionPage(
-          key: state.pageKey,
-          child: MangaReaderDetail(mangaId: mangaId),
-        );
-      },
+    _genericRoute<int>(
+      path: "/manga-reader/detail",
+      builder: (id) => MangaReaderDetail(mangaId: id),
     ),
-    GoRoute(
-      path: "/mangaReaderView",
+    _genericRoute<int>(
       name: "mangaReaderView",
-      builder: (context, state) {
-        final chapterId = state.extra as int;
-        return MangaReaderView(chapterId: chapterId);
-      },
-      pageBuilder: (context, state) {
-        final chapterId = state.extra as int;
-        return transitionPage(
-          key: state.pageKey,
-          child: MangaReaderView(chapterId: chapterId),
-        );
-      },
+      builder: (id) => MangaReaderView(chapterId: id),
     ),
-    GoRoute(
-      path: "/animePlayerView",
+    _genericRoute<int>(
       name: "animePlayerView",
-      builder: (context, state) {
-        final episodeId = state.extra as int;
-        return AnimePlayerView(episodeId: episodeId);
-      },
-      pageBuilder: (context, state) {
-        final episodeId = state.extra as int;
-        return transitionPage(
-          key: state.pageKey,
-          child: AnimePlayerView(episodeId: episodeId),
-        );
-      },
+      builder: (id) => AnimePlayerView(episodeId: id),
     ),
-    GoRoute(
-      path: "/novelReaderView",
+    _genericRoute<int>(
       name: "novelReaderView",
-      builder: (context, state) {
-        final chapterId = state.extra as int;
-        return NovelReaderView(chapterId: chapterId);
-      },
-      pageBuilder: (context, state) {
-        final chapterId = state.extra as int;
-        return transitionPage(
-          key: state.pageKey,
-          child: NovelReaderView(chapterId: chapterId),
-        );
-      },
+      builder: (id) => NovelReaderView(chapterId: id),
     ),
-    GoRoute(
-      path: "/ExtensionLang",
+    _genericRoute<ItemType>(
       name: "ExtensionLang",
-      builder: (context, state) {
-        final itemType = state.extra as ItemType;
-        return ExtensionsLang(itemType: itemType);
-      },
-      pageBuilder: (context, state) {
-        final itemType = state.extra as ItemType;
-        return transitionPage(
-          key: state.pageKey,
-          child: ExtensionsLang(itemType: itemType),
-        );
-      },
+      builder: (itemType) => ExtensionsLang(itemType: itemType),
     ),
-    GoRoute(
-      path: "/settings",
-      name: "settings",
-      builder: (context, state) {
-        return const SettingsScreen();
-      },
-      pageBuilder: (context, state) {
-        return transitionPage(
-          key: state.pageKey,
-          child: const SettingsScreen(),
-        );
-      },
-    ),
-    GoRoute(
-      path: "/appearance",
-      name: "appearance",
-      builder: (context, state) {
-        return const AppearanceScreen();
-      },
-      pageBuilder: (context, state) {
-        return transitionPage(
-          key: state.pageKey,
-          child: const AppearanceScreen(),
-        );
-      },
-    ),
-    GoRoute(
-      path: "/extension_detail",
+    _genericRoute(name: "settings", child: const SettingsScreen()),
+    _genericRoute(name: "appearance", child: const AppearanceScreen()),
+    _genericRoute<Source>(
       name: "extension_detail",
-      builder: (context, state) {
-        final source = state.extra as Source;
-        return ExtensionDetail(source: source);
-      },
-      pageBuilder: (context, state) {
-        final source = state.extra as Source;
-        return transitionPage(
-          key: state.pageKey,
-          child: ExtensionDetail(source: source),
-        );
-      },
+      builder: (source) => ExtensionDetail(source: source),
     ),
-    GoRoute(
-      path: "/globalSearch",
+    _genericRoute<ItemType>(
       name: "globalSearch",
-      builder: (context, state) {
-        final itemType = state.extra as ItemType;
-        return GlobalSearchScreen(itemType: itemType);
-      },
-      pageBuilder: (context, state) {
-        final itemType = state.extra as ItemType;
-        return transitionPage(
-          key: state.pageKey,
-          child: GlobalSearchScreen(itemType: itemType),
-        );
-      },
+      builder: (itemType) => GlobalSearchScreen(itemType: itemType),
     ),
-    GoRoute(
-      path: "/about",
-      name: "about",
-      builder: (context, state) {
-        return const AboutScreen();
-      },
-      pageBuilder: (context, state) {
-        return transitionPage(key: state.pageKey, child: const AboutScreen());
-      },
-    ),
-    GoRoute(
-      path: "/track",
-      name: "track",
-      builder: (context, state) {
-        return const TrackScreen();
-      },
-      pageBuilder: (context, state) {
-        return transitionPage(key: state.pageKey, child: const TrackScreen());
-      },
-    ),
-    GoRoute(
-      path: "/sync",
-      name: "sync",
-      builder: (context, state) {
-        return const SyncScreen();
-      },
-      pageBuilder: (context, state) {
-        return transitionPage(key: state.pageKey, child: const SyncScreen());
-      },
-    ),
-    GoRoute(
-      path: "/sourceFilter",
+    _genericRoute(name: "about", child: const AboutScreen()),
+    _genericRoute(name: "track", child: const TrackScreen()),
+    _genericRoute(name: "sync", child: const SyncScreen()),
+    _genericRoute<ItemType>(
       name: "sourceFilter",
-      builder: (context, state) {
-        final itemType = state.extra as ItemType;
-        return SourcesFilterScreen(itemType: itemType);
-      },
-      pageBuilder: (context, state) {
-        final itemType = state.extra as ItemType;
-        return transitionPage(
-          key: state.pageKey,
-          child: SourcesFilterScreen(itemType: itemType),
-        );
-      },
+      builder: (itemType) => SourcesFilterScreen(itemType: itemType),
     ),
-    GoRoute(
-      path: "/downloadQueue",
-      name: "downloadQueue",
-      builder: (context, state) {
-        return const DownloadQueueScreen();
-      },
-      pageBuilder: (context, state) {
-        return transitionPage(
-          key: state.pageKey,
-          child: const DownloadQueueScreen(),
-        );
-      },
-    ),
-    GoRoute(
-      path: "/mangawebview",
+    _genericRoute(name: "downloadQueue", child: const DownloadQueueScreen()),
+    _genericRoute<Map<String, dynamic>>(
       name: "mangawebview",
-      builder: (context, state) {
-        final data = state.extra as Map<String, dynamic>;
-        return MangaWebView(url: data["url"]!, title: data['title']!);
-      },
-      pageBuilder: (context, state) {
-        final data = state.extra as Map<String, dynamic>;
-        return transitionPage(
-          key: state.pageKey,
-          child: MangaWebView(url: data["url"]!, title: data['title']!),
-        );
-      },
+      builder: (data) => MangaWebView(url: data["url"]!, title: data['title']!),
     ),
-    GoRoute(
-      path: "/categories",
+    _genericRoute<(bool, int)>(
       name: "categories",
-      builder: (context, state) {
-        final data = state.extra as (bool, int);
-        return CategoriesScreen(data: data);
-      },
-      pageBuilder: (context, state) {
-        final data = state.extra as (bool, int);
-        return transitionPage(
-          key: state.pageKey,
-          child: CategoriesScreen(data: data),
-        );
-      },
+      builder: (data) => CategoriesScreen(data: data),
     ),
-    GoRoute(
-      path: "/statistics",
-      name: "statistics",
-      builder: (context, state) {
-        return StatisticsScreen();
-      },
-      pageBuilder: (context, state) {
-        return transitionPage(key: state.pageKey, child: StatisticsScreen());
-      },
-    ),
-    GoRoute(
-      path: "/general",
-      name: "general",
-      builder: (context, state) {
-        return const GeneralScreen();
-      },
-      pageBuilder: (context, state) {
-        return transitionPage(key: state.pageKey, child: const GeneralScreen());
-      },
-    ),
-    GoRoute(
-      path: "/readerMode",
-      name: "readerMode",
-      builder: (context, state) {
-        return const ReaderScreen();
-      },
-      pageBuilder: (context, state) {
-        return transitionPage(key: state.pageKey, child: const ReaderScreen());
-      },
-    ),
-    GoRoute(
-      path: "/browseS",
-      name: "browseS",
-      builder: (context, state) {
-        return const BrowseSScreen();
-      },
-      pageBuilder: (context, state) {
-        return transitionPage(key: state.pageKey, child: const BrowseSScreen());
-      },
-    ),
-    GoRoute(
-      path: "/SourceRepositories",
+    _genericRoute(name: "statistics", child: const StatisticsScreen()),
+    _genericRoute(name: "general", child: const GeneralScreen()),
+    _genericRoute(name: "readerMode", child: const ReaderScreen()),
+    _genericRoute(name: "browseS", child: const BrowseSScreen()),
+    _genericRoute<ItemType>(
       name: "SourceRepositories",
-      builder: (context, state) {
-        final itemType = state.extra as ItemType;
-        return SourceRepositories(itemType: itemType);
-      },
-      pageBuilder: (context, state) {
-        final itemType = state.extra as ItemType;
-        return transitionPage(
-          key: state.pageKey,
-          child: SourceRepositories(itemType: itemType),
-        );
-      },
+      builder: (itemType) => SourceRepositories(itemType: itemType),
     ),
-    GoRoute(
-      path: "/downloads",
-      name: "downloads",
-      builder: (context, state) {
-        return const DownloadsScreen();
-      },
-      pageBuilder: (context, state) {
-        return transitionPage(
-          key: state.pageKey,
-          child: const DownloadsScreen(),
-        );
-      },
-    ),
-    GoRoute(
-      path: "/dataAndStorage",
-      name: "dataAndStorage",
-      builder: (context, state) {
-        return const DataAndStorage();
-      },
-      pageBuilder: (context, state) {
-        return transitionPage(
-          key: state.pageKey,
-          child: const DataAndStorage(),
-        );
-      },
-    ),
-    GoRoute(
-      path: "/manageTrackers",
-      name: "manageTrackers",
-      builder: (context, state) {
-        return const ManageTrackersScreen();
-      },
-      pageBuilder: (context, state) {
-        return transitionPage(
-          key: state.pageKey,
-          child: const ManageTrackersScreen(),
-        );
-      },
-    ),
-    GoRoute(
-      path: "/trackingDetail",
+    _genericRoute(name: "downloads", child: const DownloadsScreen()),
+    _genericRoute(name: "dataAndStorage", child: const DataAndStorage()),
+    _genericRoute(name: "manageTrackers", child: const ManageTrackersScreen()),
+    _genericRoute<TrackPreference>(
       name: "trackingDetail",
-      builder: (context, state) {
-        final trackerPref = state.extra as TrackPreference;
-        return TrackingDetail(trackerPref: trackerPref);
-      },
-      pageBuilder: (context, state) {
-        final trackerPref = state.extra as TrackPreference;
-        return transitionPage(
-          key: state.pageKey,
-          child: TrackingDetail(trackerPref: trackerPref),
-        );
-      },
+      builder: (trackerPref) => TrackingDetail(trackerPref: trackerPref),
     ),
-    GoRoute(
-      path: "/playerMode",
-      name: "playerMode",
-      builder: (context, state) {
-        return const PlayerScreen();
-      },
-      pageBuilder: (context, state) {
-        return transitionPage(key: state.pageKey, child: const PlayerScreen());
-      },
-    ),
-    GoRoute(
-      path: "/codeEditor",
+    _genericRoute(name: "playerMode", child: const PlayerScreen()),
+    _genericRoute<int>(
       name: "codeEditor",
-      builder: (context, state) {
-        final sourceId = state.extra as int?;
-        return CodeEditorPage(sourceId: sourceId);
-      },
-      pageBuilder: (context, state) {
-        final sourceId = state.extra as int?;
-        return transitionPage(
-          key: state.pageKey,
-          child: CodeEditorPage(sourceId: sourceId),
-        );
-      },
+      builder: (sourceId) => CodeEditorPage(sourceId: sourceId),
     ),
-    GoRoute(
-      path: "/createExtension",
-      name: "createExtension",
-      builder: (context, state) {
-        return const CreateExtension();
-      },
-      pageBuilder: (context, state) {
-        return transitionPage(
-          key: state.pageKey,
-          child: const CreateExtension(),
-        );
-      },
-    ),
-    GoRoute(
-      path: "/createBackup",
-      name: "createBackup",
-      builder: (context, state) {
-        return const CreateBackup();
-      },
-      pageBuilder: (context, state) {
-        return transitionPage(key: state.pageKey, child: const CreateBackup());
-      },
-    ),
-    GoRoute(
-      path: "/customNavigationSettings",
+    _genericRoute(name: "createExtension", child: const CreateExtension()),
+    _genericRoute(name: "createBackup", child: const CreateBackup()),
+    _genericRoute(
       name: "customNavigationSettings",
-      builder: (context, state) {
-        return const CustomNavigationSettings();
-      },
-      pageBuilder: (context, state) {
-        return transitionPage(
-          key: state.pageKey,
-          child: const CustomNavigationSettings(),
-        );
-      },
+      child: const CustomNavigationSettings(),
     ),
-    GoRoute(
-      path: "/migrate",
+    _genericRoute<Manga>(
       name: "migrate",
-      builder: (context, state) {
-        final manga = state.extra as Manga;
-        return MigrationScreen(manga: manga);
-      },
-      pageBuilder: (context, state) {
-        final manga = state.extra as Manga;
-        return transitionPage(
-          key: state.pageKey,
-          child: MigrationScreen(manga: manga),
-        );
-      },
+      builder: (manga) => MigrationScreen(manga: manga),
     ),
   ];
+
+  GoRoute _genericRoute<T>({
+    String? name,
+    String? path,
+    Widget Function(T extra)? builder,
+    Widget? child,
+  }) {
+    return GoRoute(
+      path: path ?? (name != null ? "/$name" : "/"),
+      name: name,
+      builder: (context, state) {
+        if (builder != null) {
+          final id = state.extra as T;
+          return builder(id);
+        } else {
+          return child!;
+        }
+      },
+      pageBuilder: (context, state) {
+        final pageChild = builder != null ? builder(state.extra as T) : child!;
+        return transitionPage(key: state.pageKey, child: pageChild);
+      },
+    );
+  }
 }
 
 Page transitionPage({required LocalKey key, required child}) {
