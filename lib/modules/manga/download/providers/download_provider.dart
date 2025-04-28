@@ -40,6 +40,7 @@ Future<void> downloadChapter(
     botToast(navigatorKey.currentContext!.l10n.downloads_are_limited_to_wifi);
     return;
   }
+  final concurrentDownloads = ref.watch(concurrentDownloadsStateProvider);
   final http = MClient.init(
     reqcopyWith: {'useDartHttpClient': true, 'followRedirects': false},
   );
@@ -183,6 +184,7 @@ Future<void> downloadChapter(
             headers: videosUrls.first.headers ?? {},
             fileName: p.join(mangaMainDirectory!.path, "$chapterName.mp4"),
             chapter: chapter,
+            concurrentDownloads: concurrentDownloads,
           );
         } else {
           pageUrls = [PageUrl(videosUrls.first.url)];
@@ -326,7 +328,7 @@ Future<void> downloadChapter(
       });
     } else {
       savePageUrls();
-      await MDownloader(chapter: chapter, pageUrls: pages).download((progress) {
+      await MDownloader(chapter: chapter, pageUrls: pages, concurrentDownloads: concurrentDownloads).download((progress) {
         setProgress(progress);
       });
     }

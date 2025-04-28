@@ -373,6 +373,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get save_as_cbz_archive => 'CBZ Arşivi Olarak Kaydet';
 
   @override
+  String get concurrent_downloads => 'Concurrent downloads';
+
+  @override
   String get browse_subtitle => 'Kaynaklar, genel arama';
 
   @override
@@ -1153,6 +1156,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get next_25_chapters => 'Sonraki 25 bölüm';
 
   @override
+  String get all_chapters => 'All chapters';
+
+  @override
   String get next_episode => 'Sonraki Bölüm';
 
   @override
@@ -1163,6 +1169,9 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get next_25_episodes => 'Sonraki 25 Bölüm';
+
+  @override
+  String get all_episodes => 'All episodes';
 
   @override
   String get cover_saved => 'Kapak kaydedildi';

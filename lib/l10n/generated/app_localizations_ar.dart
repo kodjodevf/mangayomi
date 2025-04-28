@@ -373,6 +373,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get save_as_cbz_archive => 'حفظ كأرشيف CBZ';
 
   @override
+  String get concurrent_downloads => 'Concurrent downloads';
+
+  @override
   String get browse_subtitle => 'المصادر، البحث العام';
 
   @override
@@ -1153,6 +1156,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get next_25_chapters => 'الفصول الخمسة والعشرون التالية';
 
   @override
+  String get all_chapters => 'All chapters';
+
+  @override
   String get next_episode => 'الحلقة التالية';
 
   @override
@@ -1163,6 +1169,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get next_25_episodes => 'الخمسة وعشرون حلقة التالية';
+
+  @override
+  String get all_episodes => 'All episodes';
 
   @override
   String get cover_saved => 'الغلاف المحفوظ';

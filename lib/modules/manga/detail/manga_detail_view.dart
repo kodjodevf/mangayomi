@@ -443,6 +443,14 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                         : context.l10n.unwatched,
                                   ),
                                 ),
+                                PopupMenuItem<int>(
+                                  value: 5,
+                                  child: Text(
+                                    widget.itemType != ItemType.anime
+                                        ? context.l10n.all_chapters
+                                        : context.l10n.all_episodes,
+                                  ),
+                                ),
                               ];
                             },
                             onSelected: (value) {
@@ -512,6 +520,25 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                         .isReadEqualTo(false)
                                         .findAllSync();
                                 for (var chapter in unreadChapters) {
+                                  final entry =
+                                      isar.downloads
+                                          .filter()
+                                          .idEqualTo(chapter.id)
+                                          .findFirstSync();
+                                  if (entry == null || !entry.isDownload!) {
+                                    ref.watch(
+                                      downloadChapterProvider(chapter: chapter),
+                                    );
+                                  }
+                                }
+                              } else if (value == 5) {
+                                final allChapters =
+                                    isar.chapters
+                                        .filter()
+                                        .idIsNotNull()
+                                        .mangaIdEqualTo(widget.manga!.id!)
+                                        .findAllSync();
+                                for (var chapter in allChapters) {
                                   final entry =
                                       isar.downloads
                                           .filter()

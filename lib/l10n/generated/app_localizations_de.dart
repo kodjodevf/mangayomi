@@ -373,6 +373,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get save_as_cbz_archive => 'Als CBZ-Archiv speichern';
 
   @override
+  String get concurrent_downloads => 'Concurrent downloads';
+
+  @override
   String get browse_subtitle => 'Quellen, globale Suche';
 
   @override
@@ -1153,6 +1156,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get next_25_chapters => 'Nächsten 25 Kapitel';
 
   @override
+  String get all_chapters => 'All chapters';
+
+  @override
   String get next_episode => 'Nächste Episode';
 
   @override
@@ -1163,6 +1169,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get next_25_episodes => 'Nächsten 25 Episoden';
+
+  @override
+  String get all_episodes => 'All episodes';
 
   @override
   String get cover_saved => 'Titelbild gespeichert';
