@@ -1472,7 +1472,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                         final mangaDir = await storageProvider
                                             .getMangaMainDirectory(chapter);
                                         final path = await storageProvider
-                                            .getMangaChapterDirectory(chapter);
+                                            .getMangaChapterDirectory(
+                                              chapter,
+                                              mangaMainDirectory: mangaDir,
+                                            );
 
                                         try {
                                           try {

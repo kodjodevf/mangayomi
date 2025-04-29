@@ -103,8 +103,11 @@ class StorageProvider {
     );
   }
 
-  Future<Directory?> getMangaChapterDirectory(Chapter chapter) async {
-    final basedir = await getMangaMainDirectory(chapter);
+  Future<Directory?> getMangaChapterDirectory(
+    Chapter chapter, {
+    Directory? mangaMainDirectory,
+  }) async {
+    final basedir = mangaMainDirectory ?? await getMangaMainDirectory(chapter);
     String scanlator =
         chapter.scanlator?.isNotEmpty ?? false
             ? "${chapter.scanlator!.replaceForbiddenCharacters('_')}_"

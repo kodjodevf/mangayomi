@@ -57,7 +57,10 @@ Future<void> downloadChapter(
   final chapterName = chapter.name!.replaceForbiddenCharacters(' ');
   final itemType = chapter.manga.value!.itemType;
   final chapterDirectory =
-      (await storageProvider.getMangaChapterDirectory(chapter))!;
+      (await storageProvider.getMangaChapterDirectory(
+        chapter,
+        mangaMainDirectory: mangaMainDirectory,
+      ))!;
   await Directory(chapterDirectory.path).create(recursive: true);
   Map<String, String> videoHeader = {};
   Map<String, String> htmlHeader = {

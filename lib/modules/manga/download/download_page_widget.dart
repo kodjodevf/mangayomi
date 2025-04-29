@@ -28,7 +28,10 @@ class ChapterPageDownload extends ConsumerWidget {
   void _sendFile() async {
     final storageProvider = StorageProvider();
     final mangaDir = await storageProvider.getMangaMainDirectory(chapter);
-    final path = await storageProvider.getMangaChapterDirectory(chapter);
+    final path = await storageProvider.getMangaChapterDirectory(
+      chapter,
+      mangaMainDirectory: mangaDir,
+    );
 
     List<XFile> files = [];
 
@@ -57,7 +60,10 @@ class ChapterPageDownload extends ConsumerWidget {
   void _deleteFile(int downloadId) async {
     final storageProvider = StorageProvider();
     final mangaDir = await storageProvider.getMangaMainDirectory(chapter);
-    final path = await storageProvider.getMangaChapterDirectory(chapter);
+    final path = await storageProvider.getMangaChapterDirectory(
+      chapter,
+      mangaMainDirectory: mangaDir,
+    );
 
     try {
       try {
