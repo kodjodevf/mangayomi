@@ -478,7 +478,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                           .findFirstSync();
                                   if (entry == null || !entry.isDownload!) {
                                     ref.watch(
-                                      downloadChapterProvider(chapter: chapter),
+                                      addDownloadToQueueProvider(
+                                        chapter: chapter,
+                                      ),
                                     );
                                   }
                                 } else {
@@ -503,7 +505,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                               .findFirstSync();
                                       if (entry == null || !entry.isDownload!) {
                                         ref.watch(
-                                          downloadChapterProvider(
+                                          addDownloadToQueueProvider(
                                             chapter: chapter,
                                           ),
                                         );
@@ -527,7 +529,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                           .findFirstSync();
                                   if (entry == null || !entry.isDownload!) {
                                     ref.watch(
-                                      downloadChapterProvider(chapter: chapter),
+                                      addDownloadToQueueProvider(
+                                        chapter: chapter,
+                                      ),
                                     );
                                   }
                                 }
@@ -546,7 +550,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                           .findFirstSync();
                                   if (entry == null || !entry.isDownload!) {
                                     ref.watch(
-                                      downloadChapterProvider(chapter: chapter),
+                                      addDownloadToQueueProvider(
+                                        chapter: chapter,
+                                      ),
                                     );
                                   }
                                 }
@@ -998,7 +1004,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   if (entries.isEmpty ||
                                       !entries.first.isDownload!) {
                                     ref.watch(
-                                      downloadChapterProvider(chapter: chapter),
+                                      addDownloadToQueueProvider(
+                                        chapter: chapter,
+                                      ),
                                     );
                                   }
                                 }
@@ -1540,16 +1548,26 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                             return;
                                           }
                                           if (value == 0) {
-                                            final genre = widget.manga!.genre![i];
+                                            final genre =
+                                                widget.manga!.genre![i];
                                             switch (widget.manga!.itemType) {
                                               case ItemType.manga:
-                                                context.pushReplacement('/MangaLibrary', extra: genre);
+                                                context.pushReplacement(
+                                                  '/MangaLibrary',
+                                                  extra: genre,
+                                                );
                                                 break;
                                               case ItemType.anime:
-                                                context.pushReplacement('/AnimeLibrary', extra: genre);
+                                                context.pushReplacement(
+                                                  '/AnimeLibrary',
+                                                  extra: genre,
+                                                );
                                                 break;
                                               case ItemType.novel:
-                                                context.pushReplacement('/NovelLibrary', extra: genre);
+                                                context.pushReplacement(
+                                                  '/NovelLibrary',
+                                                  extra: genre,
+                                                );
                                                 break;
                                             }
                                           } else {

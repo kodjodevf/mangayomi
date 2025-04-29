@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/page.dart';
@@ -28,19 +30,39 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'download_provider.g.dart';
 
 @riverpod
+Future<void> addDownloadToQueue(Ref ref, {required Chapter chapter}) async {
+  final download = isar.downloads.getSync(chapter.id!);
+  if (download == null) {
+    final download = Download(
+      id: chapter.id,
+      succeeded: 0,
+      failed: 0,
+      total: 100,
+      isDownload: false,
+      isStartDownload: true,
+    );
+    isar.writeTxnSync(() {
+      isar.downloads.putSync(download..chapter.value = chapter);
+    });
+  }
+}
+
+@riverpod
 Future<void> downloadChapter(
   Ref ref, {
   required Chapter chapter,
   bool? useWifi,
+  VoidCallback? callback,
 }) async {
   bool onlyOnWifi = useWifi ?? ref.watch(onlyOnWifiStateProvider);
   final connectivity = await Connectivity().checkConnectivity();
-  final isOnWifi = connectivity.contains(ConnectivityResult.wifi) || connectivity.contains(ConnectivityResult.ethernet);
+  final isOnWifi =
+      connectivity.contains(ConnectivityResult.wifi) ||
+      connectivity.contains(ConnectivityResult.ethernet);
   if (onlyOnWifi && !isOnWifi) {
     botToast(navigatorKey.currentContext!.l10n.downloads_are_limited_to_wifi);
     return;
   }
-  final concurrentDownloads = ref.watch(concurrentDownloadsStateProvider);
   final http = MClient.init(
     reqcopyWith: {'useDartHttpClient': true, 'followRedirects': false},
   );
@@ -184,7 +206,6 @@ Future<void> downloadChapter(
             headers: videosUrls.first.headers ?? {},
             fileName: p.join(mangaMainDirectory!.path, "$chapterName.mp4"),
             chapter: chapter,
-            concurrentDownloads: concurrentDownloads,
           );
         } else {
           pageUrls = [PageUrl(videosUrls.first.url)];
@@ -328,7 +349,7 @@ Future<void> downloadChapter(
       });
     } else {
       savePageUrls();
-      await MDownloader(chapter: chapter, pageUrls: pages, concurrentDownloads: concurrentDownloads).download((progress) {
+      await MDownloader(chapter: chapter, pageUrls: pages).download((progress) {
         setProgress(progress);
       });
     }
@@ -337,4 +358,42 @@ Future<void> downloadChapter(
       setProgress(progress);
     });
   }
+  if (callback != null) {
+    callback();
+  }
+}
+
+@riverpod
+Future<void> processDownloads(Ref ref, {bool? useWifi}) async {
+  final ongoingDownloads =
+      await isar.downloads
+          .filter()
+          .idIsNotNull()
+          .isDownloadEqualTo(false)
+          .isStartDownloadEqualTo(true)
+          .findAll();
+  final maxConcurrentDownloads = ref.read(concurrentDownloadsStateProvider);
+  int index = 0;
+  int downloaded = 0;
+  int current = 0;
+  await Future.doWhile(() async {
+    await Future.delayed(const Duration(seconds: 1));
+    if (ongoingDownloads.length == downloaded) {
+      return false;
+    }
+    if (current < maxConcurrentDownloads) {
+      current++;
+      ref.read(
+        downloadChapterProvider(
+          chapter: ongoingDownloads[index++].chapter.value!,
+          useWifi: useWifi,
+          callback: () {
+            downloaded++;
+            current--;
+          },
+        ),
+      );
+    }
+    return true;
+  });
 }
