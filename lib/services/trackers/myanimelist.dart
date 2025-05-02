@@ -27,7 +27,7 @@ class MyAnimeList extends _$MyAnimeList {
           : '0c9100ccd443ddb441a319a881180f7f';
 
   @override
-  void build({required int syncId, ItemType? itemType}) {}
+  void build({required int syncId, required ItemType? itemType}) {}
 
   Future<bool?> login() async {
     final callbackUrlScheme =
