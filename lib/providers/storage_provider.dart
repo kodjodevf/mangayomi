@@ -97,8 +97,8 @@ class StorageProvider {
         dir!.path,
         'downloads',
         itemTypePath,
-        '${manga.source} (${manga.lang!.toUpperCase()})',
-        manga.name!.replaceForbiddenCharacters('_'),
+        '${manga.source} (${manga.lang!.toUpperCase()})'.trim(),
+        manga.name!.replaceForbiddenCharacters('_').trim(),
       ),
     );
   }
@@ -110,12 +110,12 @@ class StorageProvider {
     final basedir = mangaMainDirectory ?? await getMangaMainDirectory(chapter);
     String scanlator =
         chapter.scanlator?.isNotEmpty ?? false
-            ? "${chapter.scanlator!.replaceForbiddenCharacters('_')}_"
+            ? "${chapter.scanlator!.replaceForbiddenCharacters('_')}_".trim()
             : "";
     return Directory(
       path.join(
         basedir!.path,
-        scanlator + chapter.name!.replaceForbiddenCharacters('_'),
+        scanlator + chapter.name!.replaceForbiddenCharacters('_').trim(),
       ),
     );
   }
