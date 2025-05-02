@@ -22,6 +22,7 @@ import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
 import 'package:mangayomi/utils/url_protocol/api.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_provider.dart';
+import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
@@ -54,10 +55,10 @@ void main(List<String> args) async {
   isar = await StorageProvider().initDB(null, inspector: kDebugMode);
 
   runApp(const ProviderScope(child: MyApp()));
-  unawaited(postLaunchInit()); // Defer non-essential async operations
+  unawaited(_postLaunchInit()); // Defer non-essential async operations
 }
 
-Future<void> postLaunchInit() async {
+Future<void> _postLaunchInit() async {
   await StorageProvider().requestPermission();
   await StorageProvider().deleteBtDirectory();
 }
@@ -79,6 +80,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     super.initState();
     initializeDateFormatting();
     _initDeepLinks();
+    unawaited(ref.read(scanLocalLibraryProvider.future));
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (ref.read(clearChapterCacheOnAppLaunchStateProvider)) {
