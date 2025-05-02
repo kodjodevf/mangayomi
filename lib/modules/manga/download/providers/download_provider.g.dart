@@ -321,7 +321,7 @@ class _DownloadChapterProviderElement
   void Function()? get callback => (origin as DownloadChapterProvider).callback;
 }
 
-String _$processDownloadsHash() => r'6204b2ae0394c2b422ab3b5cd2eaaaa822a59ee1';
+String _$processDownloadsHash() => r'ef5107f9674f2175a7aa18b8e4fc4555f3b6b584';
 
 /// See also [processDownloads].
 @ProviderFor(processDownloads)

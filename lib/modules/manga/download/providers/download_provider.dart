@@ -21,6 +21,7 @@ import 'package:mangayomi/services/get_chapter_pages.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/download_manager/m3u8/m3u8_downloader.dart';
 import 'package:mangayomi/services/download_manager/m3u8/models/download.dart';
+import 'package:mangayomi/utils/extensions/chapter.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
@@ -383,9 +384,12 @@ Future<void> processDownloads(Ref ref, {bool? useWifi}) async {
     }
     if (current < maxConcurrentDownloads) {
       current++;
+      final downloadItem = ongoingDownloads[index++];
+      final chapter = downloadItem.chapter.value!;
+      chapter.cancelDownloads(downloadItem.id);
       ref.read(
         downloadChapterProvider(
-          chapter: ongoingDownloads[index++].chapter.value!,
+          chapter: chapter,
           useWifi: useWifi,
           callback: () {
             downloaded++;

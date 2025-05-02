@@ -18,16 +18,16 @@ class DownloadQueueScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = l10nLocalizations(context);
     return StreamBuilder(
-      stream: isar.downloads.filter().idIsNotNull().watch(
-        fireImmediately: true,
-      ),
+      stream: isar.downloads
+          .filter()
+          .idIsNotNull()
+          .isDownloadEqualTo(false)
+          .isStartDownloadEqualTo(true)
+          .sortBySucceededDesc()
+          .watch(fireImmediately: true),
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-          final entries =
-              snapshot.data!
-                  .where((element) => element.isDownload == false)
-                  .where((element) => element.isStartDownload == true)
-                  .toList();
+          final entries = snapshot.data!;
           final allQueueLength = entries.toList().length;
           return Scaffold(
             appBar: AppBar(
