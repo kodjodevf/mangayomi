@@ -439,6 +439,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.3"
+  epubx:
+    dependency: "direct main"
+    description:
+      path: epubx
+      relative: true
+    source: path
+    version: "4.0.2"
   exception_templates:
     dependency: transitive
     description:
