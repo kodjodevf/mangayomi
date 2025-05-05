@@ -19,9 +19,10 @@ class Kitsu extends _$Kitsu {
       'dd031b32d2f56c990b1425efe6c42ad847e7fe3ab46bf1299f05ecd856bdb7dd';
   final String _clientSecret =
       '54d7307928f63414defd96399fc31ba847961ceaecef3a5fd93144e960c0e151';
-  final String _baseUrl = 'https://kitsu.io/api/edge/';
-  final String _loginUrl = 'https://kitsu.io/api/oauth/token';
-  final String _algoliaKeyUrl = 'https://kitsu.io/api/edge/algolia-keys/media/';
+  final String _baseUrl = 'https://kitsu.app/api/edge/';
+  final String _loginUrl = 'https://kitsu.app/api/oauth/token';
+  final String _algoliaKeyUrl =
+      'https://kitsu.app/api/edge/algolia-keys/media/';
   final String _algoliaUrl =
       'https://AWQO5J657S-dsn.algolia.net/1/indexes/production_media/query/';
   final String _algoliaAppId = 'AWQO5J657S';
@@ -31,7 +32,7 @@ class Kitsu extends _$Kitsu {
       '${isManga ? 'chapter' : 'episode'}Count%22%2C%22posterImage%22%2C%22'
       'startDate%22%2C%22subtype%22%2C%22endDate%22%2C%20%22id%22%5D';
 
-  String _mediaUrl(String type, int id) => 'https://kitsu.io/$type/$id';
+  String _mediaUrl(String type, int id) => 'https://kitsu.app/$type/$id';
 
   @override
   void build({required int syncId, ItemType? itemType}) {}
@@ -53,7 +54,11 @@ class Kitsu extends _$Kitsu {
       final res =
           jsonDecode(await response.stream.bytesToString())
               as Map<String, dynamic>;
-      final aKOAuth = OAuth.fromJson(res);
+      final aKOAuth = OAuth.fromJson(res)
+        ..expiresIn =
+            DateTime.now()
+                .add(Duration(seconds: res['expires_in']))
+                .millisecondsSinceEpoch;
       final currentUser = await _getCurrentUser(aKOAuth.accessToken!);
       ref
           .read(tracksProvider(syncId: syncId).notifier)
@@ -77,7 +82,7 @@ class Kitsu extends _$Kitsu {
     final String? userId = isNew ? _getUserId() : null;
     final type = isManga ? 'manga' : 'anime';
     final url = Uri.parse(
-      '${_baseUrl}library-entries${isNew ? "" : "/$track.libraryId"}',
+      '${_baseUrl}library-entries${isNew ? "" : "/${track.libraryId}"}',
     );
     final headers = {
       "Content-Type": "application/vnd.api+json",
@@ -106,14 +111,16 @@ class Kitsu extends _$Kitsu {
       },
     });
     if (isNew) {
-      var response = await http.post(url, headers: headers, body: payload);
+      final response = await http.post(url, headers: headers, body: payload);
       if (response.statusCode != 200) {
-        final found = await findLibItem(track, true);
+        final found = await findLibItem(track, isManga);
         if (found == null) {
           throw Exception('Could not add $type entry for ${track.mediaId}');
         }
+        track.libraryId = found.libraryId;
+        return track;
       }
-      var jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+      final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
       track.libraryId = int.parse(jsonData['data']['id']);
     } else {
       await http.patch(url, headers: headers, body: payload);

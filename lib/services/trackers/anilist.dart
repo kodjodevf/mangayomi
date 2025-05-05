@@ -56,7 +56,11 @@ class Anilist extends _$Anilist {
         },
       );
       final res = jsonDecode(response.body) as Map<String, dynamic>;
-      final aLOAuth = OAuth.fromJson(res);
+      final aLOAuth = OAuth.fromJson(res)
+        ..expiresIn =
+            DateTime.now()
+                .add(Duration(seconds: res['expires_in']))
+                .millisecondsSinceEpoch;
       final currenUser = await _getCurrentUser(aLOAuth.accessToken!);
       ref
           .read(tracksProvider(syncId: syncId).notifier)
