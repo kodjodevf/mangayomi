@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter_qjs/flutter_qjs.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/services/http/m_client.dart';
@@ -16,6 +17,12 @@ class JsHttpClient {
       );
     }
 
+    runtime.onMessage('bytes_get', (dynamic args) async {
+      return await _toBytesResponse(client(args[1]), "GET", args);
+    });
+    runtime.onMessage('http_head', (dynamic args) async {
+      return await _toHttpResponse(client(args[1]), "HEAD", args);
+    });
     runtime.onMessage('http_get', (dynamic args) async {
       return await _toHttpResponse(client(args[1]), "GET", args);
     });
@@ -35,6 +42,22 @@ class JsHttpClient {
 class Client {
     constructor(reqcopyWith) {
         this.reqcopyWith = reqcopyWith;
+    }
+    async getBytes(url, headers) {
+        headers = headers;
+        const result = await sendMessage(
+            "bytes_get",
+            JSON.stringify([null, this.reqcopyWith, url, headers])
+        );
+        return result;
+    }
+    async head(url, headers) {
+        headers = headers;
+        const result = await sendMessage(
+            "http_head",
+            JSON.stringify([null, this.reqcopyWith, url, headers])
+        );
+        return JSON.parse(result);
     }
     async get(url, headers) {
         headers = headers;
@@ -115,6 +138,7 @@ Future<String> _toHttpResponse(Client client, String method, List args) async {
     return jsonEncode(resMap);
   }
   final future = switch (method) {
+    "HEAD" => client.head(Uri.parse(url), headers: headers),
     "GET" => client.get(Uri.parse(url), headers: headers),
     "POST" => client.post(Uri.parse(url), headers: headers, body: body),
     "PUT" => client.put(Uri.parse(url), headers: headers, body: body),
@@ -122,6 +146,29 @@ Future<String> _toHttpResponse(Client client, String method, List args) async {
     _ => client.patch(Uri.parse(url), headers: headers, body: body),
   };
   return jsonEncode((await future).toJson());
+}
+
+Future<Uint8List> _toBytesResponse(Client client, String method, List args) async {
+  final url = args[2] as String;
+  final headers = (args[3] as Map?)?.toMapStringString;
+  final body =
+      args.length >= 5
+          ? args[4] is List
+              ? args[4] as List
+              : args[4] is String
+              ? args[4] as String
+              : (args[4] as Map?)?.toMapStringDynamic
+          : null;
+  var request = http.Request(method, Uri.parse(url));
+  request.headers.addAll(headers ?? {});
+  final future = switch (method) {
+    "GET" => client.get(Uri.parse(url), headers: headers),
+    "POST" => client.post(Uri.parse(url), headers: headers, body: body),
+    "PUT" => client.put(Uri.parse(url), headers: headers, body: body),
+    "DELETE" => client.delete(Uri.parse(url), headers: headers, body: body),
+    _ => client.patch(Uri.parse(url), headers: headers, body: body),
+  };
+  return (await future).bodyBytes;
 }
 
 extension ResponseExtexsion on Response {

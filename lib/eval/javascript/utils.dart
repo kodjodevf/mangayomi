@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:epubx/epubx.dart';
 import 'package:flutter_qjs/flutter_qjs.dart';
@@ -43,7 +44,7 @@ class JsUtils {
       );
     });
     runtime.onMessage('parseEpub', (dynamic args) async {
-      final book = await EpubReader.readBook(args[0]);
+      final book = await EpubReader.readBook(decodeBytes(args[0]));
       final List<String> chapters = [];
       for (var chapter in book.Chapters ?? []) {
         String chapterTitle = chapter.Title;
@@ -52,12 +53,11 @@ class JsUtils {
       return jsonEncode({
         "title": book.Title,
         "author": book.Author,
-        "cover": book.CoverImage?.data?.buffer.asUint8List(),
         "chapters": chapters,
       });
     });
     runtime.onMessage('parseEpubChapter', (dynamic args) async {
-      final book = await EpubReader.readBook(args[0]);
+      final book = await EpubReader.readBook(decodeBytes(args[0]));
       final chapter =
           book.Chapters?.where(
             (element) => element.Title == args[1],
@@ -169,10 +169,10 @@ async function evaluateJavascriptViaWebview(url, headers, scripts) {
     );
 }
 async function parseEpub(bytes) {
-    return await sendMessage(
+    return JSON.parse(await sendMessage(
         "parseEpub",
         JSON.stringify([bytes])
-    );
+    ));
 }
 async function parseEpubChapter(bytes, chapterTitle) {
     return await sendMessage(
@@ -181,5 +181,10 @@ async function parseEpubChapter(bytes, chapterTitle) {
     );
 }
 ''');
+  }
+
+  Uint8List decodeBytes(String value) {
+    var bytes = Uint8List.fromList(value.codeUnits);
+    return bytes;
   }
 }
