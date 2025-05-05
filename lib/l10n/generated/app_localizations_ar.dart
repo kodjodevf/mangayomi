@@ -33,6 +33,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get filter => 'مرشح';
 
   @override
+  String get ignore_filters => 'تجاهل مرشح';
+
+  @override
   String get downloaded => 'تم التحميل';
 
   @override

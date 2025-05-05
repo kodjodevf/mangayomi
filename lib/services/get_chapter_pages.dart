@@ -50,8 +50,11 @@ Future<GetChapterPagesModel> getChapterPages(
           .firstOrNull;
   final incognitoMode = ref.watch(incognitoModeStateProvider);
   final storageProvider = StorageProvider();
-  path = await storageProvider.getMangaChapterDirectory(chapter);
   final mangaDirectory = await storageProvider.getMangaMainDirectory(chapter);
+  path = await storageProvider.getMangaChapterDirectory(
+    chapter,
+    mangaMainDirectory: mangaDirectory,
+  );
 
   List<Uint8List?> archiveImages = [];
   final isLocalArchive = (chapter.archivePath ?? '').isNotEmpty;

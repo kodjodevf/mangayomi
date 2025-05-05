@@ -8,6 +8,10 @@
   "open_random_entry": "สุ่มอ่าน",
   "import": "นำเข้า",
   "filter": "ตัวกรอง",
+  "ignore_filters": "ไม่สนใจ\nตัวกรอง",
+  "@ignore_filters": {
+    "description": "Manual line break added for better rendering of the ignore filters text on mobile."
+  },
   "downloaded": "ดาวน์โหลดแล้ว",
   "unread": "ยังไม่อ่าน",
   "started": "เริ่มแล้ว",

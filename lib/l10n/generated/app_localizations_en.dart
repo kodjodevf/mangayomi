@@ -33,6 +33,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filter => 'Filter';
 
   @override
+  String get ignore_filters => 'Ignore Filters';
+
+  @override
   String get downloaded => 'Downloaded';
 
   @override

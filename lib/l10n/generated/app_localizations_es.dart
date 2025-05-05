@@ -33,6 +33,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get filter => 'Filtrar';
 
   @override
+  String get ignore_filters => 'Ignorar filtros';
+
+  @override
   String get downloaded => 'Descargado';
 
   @override
@@ -1465,6 +1468,9 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get filter => 'Filtrar';
+
+  @override
+  String get ignore_filters => 'Ignorar filtros';
 
   @override
   String get downloaded => 'Descargado';

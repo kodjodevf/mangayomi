@@ -33,6 +33,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get filter => 'Filtre';
 
   @override
+  String get ignore_filters => 'Filtreleri yok say';
+
+  @override
   String get downloaded => 'İndirildi';
 
   @override

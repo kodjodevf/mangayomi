@@ -57,7 +57,10 @@ Future<void> downloadChapter(
   final chapterName = chapter.name!.replaceForbiddenCharacters(' ');
   final itemType = chapter.manga.value!.itemType;
   final chapterDirectory =
-      (await storageProvider.getMangaChapterDirectory(chapter))!;
+      (await storageProvider.getMangaChapterDirectory(
+        chapter,
+        mangaMainDirectory: mangaMainDirectory,
+      ))!;
   await Directory(chapterDirectory.path).create(recursive: true);
   Map<String, String> videoHeader = {};
   Map<String, String> htmlHeader = {
@@ -240,8 +243,8 @@ Future<void> downloadChapter(
     if (!cbzFileExist && itemType == ItemType.manga ||
         !mp4FileExist && itemType == ItemType.anime ||
         !htmlFileExist && itemType == ItemType.novel) {
+      final mainDirectory = (await storageProvider.getDirectory())!;
       for (var index = 0; index < pageUrls.length; index++) {
-        final mainDirectory = (await storageProvider.getDirectory())!;
         if (Platform.isAndroid) {
           if (!(await File(p.join(mainDirectory.path, ".nomedia")).exists())) {
             await File(p.join(mainDirectory.path, ".nomedia")).create();

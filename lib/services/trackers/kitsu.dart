@@ -19,9 +19,10 @@ class Kitsu extends _$Kitsu {
       'dd031b32d2f56c990b1425efe6c42ad847e7fe3ab46bf1299f05ecd856bdb7dd';
   final String _clientSecret =
       '54d7307928f63414defd96399fc31ba847961ceaecef3a5fd93144e960c0e151';
-  final String _baseUrl = 'https://kitsu.io/api/edge/';
-  final String _loginUrl = 'https://kitsu.io/api/oauth/token';
-  final String _algoliaKeyUrl = 'https://kitsu.io/api/edge/algolia-keys/media/';
+  final String _baseUrl = 'https://kitsu.app/api/edge/';
+  final String _loginUrl = 'https://kitsu.app/api/oauth/token';
+  final String _algoliaKeyUrl =
+      'https://kitsu.app/api/edge/algolia-keys/media/';
   final String _algoliaUrl =
       'https://AWQO5J657S-dsn.algolia.net/1/indexes/production_media/query/';
   final String _algoliaAppId = 'AWQO5J657S';
@@ -31,7 +32,7 @@ class Kitsu extends _$Kitsu {
       '${isManga ? 'chapter' : 'episode'}Count%22%2C%22posterImage%22%2C%22'
       'startDate%22%2C%22subtype%22%2C%22endDate%22%2C%20%22id%22%5D';
 
-  String _mediaUrl(String type, int id) => 'https://kitsu.io/$type/$id';
+  String _mediaUrl(String type, int id) => 'https://kitsu.app/$type/$id';
 
   @override
   void build({required int syncId, ItemType? itemType}) {}
@@ -53,7 +54,11 @@ class Kitsu extends _$Kitsu {
       final res =
           jsonDecode(await response.stream.bytesToString())
               as Map<String, dynamic>;
-      final aKOAuth = OAuth.fromJson(res);
+      final aKOAuth = OAuth.fromJson(res)
+        ..expiresIn =
+            DateTime.now()
+                .add(Duration(seconds: res['expires_in']))
+                .millisecondsSinceEpoch;
       final currentUser = await _getCurrentUser(aKOAuth.accessToken!);
       ref
           .read(tracksProvider(syncId: syncId).notifier)
@@ -72,68 +77,54 @@ class Kitsu extends _$Kitsu {
     }
   }
 
-  Future<Track?> addLib(Track track, bool isManga) async {
-    final userId = _getUserId();
-    final accessToken = _getAccessToken();
-    var data = jsonEncode({
-      'data': {
-        'type': 'libraryEntries',
-        'attributes': {
-          'status': toKitsuStatus(track.status, isManga),
-          'progress': track.lastChapterRead,
-        },
-        'relationships': {
-          'user': {
-            'data': {'id': userId, 'type': 'users'},
-          },
-          'media': {
-            'data': {'id': track.mediaId, 'type': isManga ? 'manga' : 'anime'},
-          },
-        },
-      },
-    });
-
-    var response = await http.post(
-      Uri.parse('${_baseUrl}library-entries'),
-      headers: {
-        'Content-Type': 'application/vnd.api+json',
-        'Authorization': 'Bearer $accessToken',
-      },
-      body: data,
+  Future<Track> update(Track track, bool isManga) async {
+    final isNew = track.libraryId == null;
+    final String? userId = isNew ? _getUserId() : null;
+    final type = isManga ? 'manga' : 'anime';
+    final url = Uri.parse(
+      '${_baseUrl}library-entries${isNew ? "" : "/${track.libraryId}"}',
     );
-    if (response.statusCode != 200) {
-      return await findLibItem(track, true);
-    }
-
-    var jsonData = jsonDecode(response.body) as Map<String, dynamic>;
-    track.libraryId = int.parse(jsonData['data']['id']);
-    return track;
-  }
-
-  Future<Track> updateLib(Track track, bool isManga) async {
-    final accessToken = _getAccessToken();
-    final data = jsonEncode({
+    final headers = {
+      "Content-Type": "application/vnd.api+json",
+      'Authorization': 'Bearer ${_getAccessToken()}',
+    };
+    final payload = jsonEncode({
       "data": {
         "type": "libraryEntries",
-        "id": track.libraryId,
+        if (!isNew) "id": track.libraryId,
         "attributes": {
           "status": toKitsuStatus(track.status, isManga),
           "progress": track.lastChapterRead,
-          "ratingTwenty": _toKitsuScore(track.score!),
-          "startedAt": _convertDate(track.startedReadingDate!),
-          "finishedAt": _convertDate(track.finishedReadingDate!),
+          if (!isNew) "ratingTwenty": _toKitsuScore(track.score!),
+          if (!isNew) "startedAt": _convertDate(track.startedReadingDate!),
+          if (!isNew) "finishedAt": _convertDate(track.finishedReadingDate!),
         },
+        if (isNew)
+          "relationships": {
+            'user': {
+              'data': {'id': userId, 'type': 'users'},
+            },
+            'media': {
+              'data': {'id': track.mediaId, 'type': type},
+            },
+          },
       },
     });
-
-    await http.patch(
-      Uri.parse('${_baseUrl}library-entries/${track.libraryId}'),
-      headers: {
-        "Content-Type": "application/vnd.api+json",
-        'Authorization': 'Bearer $accessToken',
-      },
-      body: data,
-    );
+    if (isNew) {
+      final response = await http.post(url, headers: headers, body: payload);
+      if (response.statusCode != 200) {
+        final found = await findLibItem(track, isManga);
+        if (found == null) {
+          throw Exception('Could not add $type entry for ${track.mediaId}');
+        }
+        track.libraryId = found.libraryId;
+        return track;
+      }
+      final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+      track.libraryId = int.parse(jsonData['data']['id']);
+    } else {
+      await http.patch(url, headers: headers, body: payload);
+    }
     return track;
   }
 
@@ -141,7 +132,7 @@ class Kitsu extends _$Kitsu {
     final accessToken = _getAccessToken();
 
     final url = Uri.parse(_algoliaKeyUrl);
-    final algoliaKeyResponse = await makeGetRequest(url, accessToken);
+    final algoliaKeyResponse = await _makeGetRequest(url, accessToken);
     final key = json.decode(algoliaKeyResponse.body)["media"]["key"];
     final response = await http.post(
       Uri.parse(_algoliaUrl),
@@ -190,7 +181,7 @@ class Kitsu extends _$Kitsu {
     final url = Uri.parse(
       '${_baseUrl}library-entries?filter[${type}_id]=${track.libraryId}&filter[user_id]=$userId&include=$type',
     );
-    Response response = await makeGetRequest(url, accessToken);
+    Response response = await _makeGetRequest(url, accessToken);
     if (response.statusCode == 200) {
       final parsed = parseTrackResponse(response, track, type);
       if (parsed != null) return parsed;
@@ -198,15 +189,14 @@ class Kitsu extends _$Kitsu {
     return await getItem(track, type);
   }
 
-  Future<Response> makeGetRequest(Uri url, String accessToken) async {
-    final response = await http.get(
+  Future<Response> _makeGetRequest(Uri url, String accessToken) async {
+    return await http.get(
       url,
       headers: {
         "Content-Type": "application/json",
         'Authorization': 'Bearer $accessToken',
       },
     );
-    return response;
   }
 
   Future<Track?> getItem(Track track, String type) async {
@@ -214,7 +204,7 @@ class Kitsu extends _$Kitsu {
     final url = Uri.parse(
       '${_baseUrl}library-entries?filter[id]=${track.mediaId}&include=$type',
     );
-    Response response = await makeGetRequest(url, accessToken);
+    Response response = await _makeGetRequest(url, accessToken);
     if (response.statusCode == 200) {
       return parseTrackResponse(response, track, type);
     }
@@ -233,23 +223,23 @@ class Kitsu extends _$Kitsu {
     final included = jsonResponse['included'][0]["attributes"];
     final id = int.parse(obj["id"]);
     final totalChapter = type == 'manga' ? "chapterCount" : "episodeCount";
-    track.mediaId = id;
-    track.libraryId = id;
-    track.syncId = syncId;
-    track.trackingUrl = _mediaUrl(type, id);
-    track.totalChapter = included[totalChapter] ?? 0;
-    track.status = getKitsuTrackStatus(attributes["status"], type);
-    track.score = ((attributes["ratingTwenty"] ?? 0) / 2).toInt();
-    track.title = included["canonicalTitle"];
-    track.lastChapterRead = attributes["progress"];
-    track.startedReadingDate = _parseDate(attributes["startedAt"]);
-    track.finishedReadingDate = _parseDate(attributes["finishedAt"]);
-    return track;
+    return track
+      ..mediaId = id
+      ..libraryId = id
+      ..syncId = syncId
+      ..trackingUrl = _mediaUrl(type, id)
+      ..totalChapter = included[totalChapter] ?? 0
+      ..status = getKitsuTrackStatus(attributes["status"], type)
+      ..score = ((attributes["ratingTwenty"] ?? 0) / 2).toInt()
+      ..title = included["canonicalTitle"]
+      ..lastChapterRead = attributes["progress"]
+      ..startedReadingDate = _parseDate(attributes["startedAt"])
+      ..finishedReadingDate = _parseDate(attributes["finishedAt"]);
   }
 
   Future<(String, String)> _getCurrentUser(String accessToken) async {
     final url = Uri.parse('${_baseUrl}users?filter[self]=true');
-    Response response = await makeGetRequest(url, accessToken);
+    Response response = await _makeGetRequest(url, accessToken);
     final data = json.decode(response.body)['data'][0];
     return (
       data['id'].toString(),
@@ -286,7 +276,7 @@ class Kitsu extends _$Kitsu {
     };
   }
 
-  List<TrackStatus> kitsuStatusList(bool isManga) => [
+  List<TrackStatus> statusList(bool isManga) => [
     isManga ? TrackStatus.reading : TrackStatus.watching,
     TrackStatus.completed,
     TrackStatus.onHold,

@@ -16,15 +16,15 @@ part 'anilist.g.dart';
 @riverpod
 class Anilist extends _$Anilist {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
-  final String _clientId =
-      (Platform.isWindows || Platform.isLinux) ? '13587' : '13588';
+  static final _isDesktop = Platform.isWindows || Platform.isLinux;
+  final String _clientId = _isDesktop ? '13587' : '13588';
   static const String _baseApiUrl = "https://graphql.anilist.co/";
   final String _redirectUri =
-      (Platform.isWindows || Platform.isLinux)
+      _isDesktop
           ? 'http://localhost:43824/success?code=1337'
           : 'mangayomi://success?code=1337';
   final String _clientSecret =
-      (Platform.isWindows || Platform.isLinux)
+      _isDesktop
           ? 'tJA13cAR2tCCXrJCwwvmwEDbWRoIaahFiJTXToHd'
           : 'G2fFUiGtgFd60D0lCkhgGKvMmrCfDmZXADQIzWXr';
 
@@ -33,11 +33,10 @@ class Anilist extends _$Anilist {
 
   Future<bool?> login() async {
     final callbackUrlScheme =
-        (Platform.isWindows || Platform.isLinux)
-            ? 'http://localhost:43824'
-            : 'mangayomi';
+        _isDesktop ? 'http://localhost:43824' : 'mangayomi';
     final loginUrl =
-        'https://anilist.co/api/v2/oauth/authorize?client_id=$_clientId&redirect_uri=$_redirectUri&response_type=code';
+        'https://anilist.co/api/v2/oauth/authorize?client_id=$_clientId'
+        '&redirect_uri=$_redirectUri&response_type=code';
 
     try {
       final uri = await FlutterWebAuth2.authenticate(
@@ -57,7 +56,11 @@ class Anilist extends _$Anilist {
         },
       );
       final res = jsonDecode(response.body) as Map<String, dynamic>;
-      final aLOAuth = OAuth.fromJson(res);
+      final aLOAuth = OAuth.fromJson(res)
+        ..expiresIn =
+            DateTime.now()
+                .add(Duration(seconds: res['expires_in']))
+                .millisecondsSinceEpoch;
       final currenUser = await _getCurrentUser(aLOAuth.accessToken!);
       ref
           .read(tracksProvider(syncId: syncId).notifier)
@@ -76,84 +79,19 @@ class Anilist extends _$Anilist {
     }
   }
 
-  Future<Track> addLibManga(Track track) async {
-    final accessToken = await _getAccesToken();
+  Future<Track> update(Track track, bool isManga) async {
+    final isNew = track.libraryId == null;
+    final opName = isNew ? 'AddEntry' : 'UpdateEntry';
+    final idVarName = isNew ? 'mediaId' : 'id';
+    final idVarValue = isNew ? track.mediaId : track.libraryId!;
 
-    const query = '''
-    mutation AddManga(\$mangaId: Int, \$progress: Int, \$status: MediaListStatus) {
-      SaveMediaListEntry(mediaId: \$mangaId, progress: \$progress, status: \$status) {
-        id
-        status
-      }
-    }
-    ''';
-
-    final body = {
-      "query": query,
-      "variables": {
-        "mangaId": track.mediaId,
-        "progress": track.lastChapterRead,
-        "status": toAniListStatusManga(track.status),
-      },
-    };
-
-    final response = await http.post(
-      Uri.parse(_baseApiUrl),
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $accessToken',
-      },
-      body: json.encode(body),
-    );
-    final data = json.decode(response.body);
-    track.libraryId = data['data']['SaveMediaListEntry']['id'];
-    return track;
-  }
-
-  Future<Track> addLibAnime(Track track) async {
-    final accessToken = await _getAccesToken();
-
-    const query = '''
-    mutation AddAnime(\$animeId: Int, \$progress: Int, \$status: MediaListStatus) {
-      SaveMediaListEntry(mediaId: \$animeId, progress: \$progress, status: \$status) {
-        id
-        status
-      }
-    }
-    ''';
-    final body = {
-      "query": query,
-      "variables": {
-        "animeId": track.mediaId,
-        "progress": track.lastChapterRead,
-        "status": toAniListStatusAnime(track.status),
-      },
-    };
-
-    final response = await http.post(
-      Uri.parse(_baseApiUrl),
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $accessToken',
-      },
-      body: json.encode(body),
-    );
-    final data = json.decode(response.body);
-    track.libraryId = data['data']['SaveMediaListEntry']['id'];
-    return track;
-  }
-
-  Future<Track> updateLibManga(Track track) async {
-    final accessToken = await _getAccesToken();
-    const query = '''
-    mutation UpdateManga(\$listId: Int, \$progress: Int, \$status: MediaListStatus, \$score: Int, \$startedAt: FuzzyDateInput, \$completedAt: FuzzyDateInput) {
+    final document = '''
+    mutation $opName(\$$idVarName: Int!, \$progress: Int!, \$status: MediaListStatus${isNew ? '' : ', \$score: Int, \$startedAt: FuzzyDateInput, \$completedAt: FuzzyDateInput'} ) {
       SaveMediaListEntry(
-        id: \$listId,
+        ${isNew ? 'mediaId' : 'id'}: \$$idVarName,
         progress: \$progress,
         status: \$status,
-        scoreRaw: \$score,
-        startedAt: \$startedAt,
-        completedAt: \$completedAt,
+        ${!isNew ? 'scoreRaw: \$score, startedAt: \$startedAt, completedAt: \$completedAt,' : ''}
       ) {
         id
         status
@@ -162,115 +100,47 @@ class Anilist extends _$Anilist {
     }
     ''';
 
-    final body = {
-      "query": query,
-      "variables": {
-        "listId": track.libraryId,
-        "progress": track.lastChapterRead,
-        "status": toAniListStatusManga(track.status),
-        "score": track.score!,
-        "startedAt": createDate(track.startedReadingDate!),
-        "completedAt": createDate(track.finishedReadingDate!),
-      },
+    final vars = {
+      idVarName: idVarValue,
+      'progress': track.lastChapterRead,
+      'status': toAniListStatus(track.status, isManga),
+      if (!isNew) 'score': track.score!,
+      if (!isNew) 'startedAt': createDate(track.startedReadingDate!),
+      if (!isNew) 'completedAt': createDate(track.finishedReadingDate!),
     };
 
-    await http.post(
-      Uri.parse(_baseApiUrl),
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $accessToken',
-      },
-      body: json.encode(body),
-    );
+    final data = await _executeGraphQL(document, vars);
+    final entry = data['SaveMediaListEntry'] as Map<String, dynamic>;
+    track.libraryId = entry['id'] as int;
     return track;
   }
 
-  Future<Track> updateLibAnime(Track track) async {
-    final accessToken = await _getAccesToken();
-    const query = '''
-    mutation UpdateAnime(\$listId: Int, \$progress: Int, \$status: MediaListStatus, \$score: Int, \$startedAt: FuzzyDateInput, \$completedAt: FuzzyDateInput) {
-      SaveMediaListEntry(
-        id: \$listId,
-        progress: \$progress,
-        status: \$status,
-        scoreRaw: \$score,
-        startedAt: \$startedAt,
-        completedAt: \$completedAt,
-      ) {
-        id
-        status
-        progress
-      }
-    }
-    ''';
-
-    final body = {
-      "query": query,
-      "variables": {
-        "listId": track.libraryId,
-        "progress": track.lastChapterRead,
-        "status": toAniListStatusAnime(track.status),
-        "score": track.score!,
-        "startedAt": createDate(track.startedReadingDate!),
-        "completedAt": createDate(track.finishedReadingDate!),
-      },
-    };
-    await http.post(
-      Uri.parse(_baseApiUrl),
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $accessToken',
-      },
-      body: json.encode(body),
-    );
-    return track;
-  }
-
-  Future<List<TrackSearch>> search(String search) async {
-    final accessToken = await _getAccesToken();
-    const query = '''
+  Future<List<TrackSearch>> search(String search, bool isManga) async {
+    final type = isManga ? "MANGA" : "ANIME";
+    final contentUnit = isManga ? "chapters" : "episodes";
+    final query = '''
     query Search(\$query: String) {
       Page(perPage: 50) {
-        media(search: \$query, type: MANGA, format_not_in: [NOVEL]) {
+        media(search: \$query, type: $type, format_not_in: [NOVEL]) {
           id
-          title {
-            userPreferred
-          }
-          coverImage {
-            large
-          }
+          title { userPreferred }
+          coverImage { large }
           format
           status
-          chapters
+          $contentUnit
           description
-          startDate {
-            year
-            month
-            day
-          }
+          startDate { year month day }
         }
       }
     }
     ''';
 
-    final body = {
-      "query": query,
-      "variables": {"query": search},
-    };
+    final vars = {"query": search};
 
-    final response = await http.post(
-      Uri.parse(_baseApiUrl),
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $accessToken',
-      },
-      body: json.encode(body),
-    );
-
-    final data = json.decode(response.body);
+    final data = await _executeGraphQL(query, vars);
 
     final entries = List<Map<String, dynamic>>.from(
-      data['data']['Page']['media'],
+      data['Page']['media'] as List,
     );
     return entries
         .map(
@@ -280,7 +150,7 @@ class Anilist extends _$Anilist {
             trackingUrl: "",
             mediaId: jsonRes['id'],
             summary: jsonRes['description'] ?? "",
-            totalChapter: jsonRes['chapters'] ?? 0,
+            totalChapter: jsonRes[contentUnit] ?? 0,
             coverUrl: jsonRes['coverImage']['large'] ?? "",
             title: jsonRes['title']['userPreferred'],
             startDate:
@@ -295,229 +165,77 @@ class Anilist extends _$Anilist {
         .toList();
   }
 
-  Future<List<TrackSearch>> searchAnime(String search) async {
-    final accessToken = await _getAccesToken();
-    const query = '''
-    query Search(\$query: String) {
-      Page(perPage: 50) {
-        media(search: \$query, type: ANIME) {
-          id
-          title {
-            userPreferred
-          }
-          coverImage {
-            large
-          }
-          format
-          status
-          episodes
-          description
-          startDate {
-            year
-            month
-            day
-          }
-        }
-      }
-    }
-    ''';
-
-    final body = {
-      "query": query,
-      "variables": {"query": search},
-    };
-
-    final response = await http.post(
-      Uri.parse(_baseApiUrl),
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $accessToken',
-      },
-      body: json.encode(body),
+  Future<Track?> findLibItem(Track track, bool isManga) async {
+    final userId = int.parse(
+      ref.watch(tracksProvider(syncId: syncId))!.username!,
     );
+    final type = isManga ? "MANGA" : "ANIME";
+    final typeVar = isManga ? "manga_id" : "anime_id";
+    final contentUnit = isManga ? "chapters" : "episodes";
 
-    final data = json.decode(response.body);
-
-    final entries = List<Map<String, dynamic>>.from(
-      data['data']['Page']['media'],
-    );
-    return entries
-        .map(
-          (jsonRes) => TrackSearch(
-            libraryId: jsonRes['id'],
-            syncId: syncId,
-            trackingUrl: "",
-            mediaId: jsonRes['id'],
-            summary: jsonRes['description'] ?? "",
-            totalChapter: jsonRes['episodes'] ?? 0,
-            coverUrl: jsonRes['coverImage']['large'] ?? "",
-            title: jsonRes['title']['userPreferred'],
-            startDate:
-                jsonRes["start_date"] ??
-                DateTime.fromMillisecondsSinceEpoch(
-                  parseDate(jsonRes, 'startDate'),
-                ).toString(),
-            publishingType: "",
-            publishingStatus: jsonRes['status'],
-          ),
-        )
-        .toList();
-  }
-
-  Future<Track?> findLibManga(Track track) async {
-    final userId = ref.watch(tracksProvider(syncId: syncId))!.username;
-
-    final accessToken = await _getAccesToken();
-    const query = '''
-    query(\$id: Int!, \$manga_id: Int!) {
+    final query = '''
+    query(\$id: Int!, \$$typeVar: Int!) {
       Page {
-        mediaList(userId: \$id, type: MANGA, mediaId: \$manga_id) {
+        mediaList(userId: \$id, type: $type, mediaId: \$$typeVar) {
           id
           status
           scoreRaw: score(format: POINT_100)
           progress
-          startedAt {
-            year
-            month
-            day
-          }
-          completedAt {
-            year
-            month
-            day
-          }
+          startedAt { year month day }
+          completedAt { year month day }
           media {
             id
-            title {
-              userPreferred
-            }
-            coverImage {
-              large
-            }
+            title { userPreferred }
+            coverImage { large }
             format
             status
-            chapters
+            $contentUnit
             description
-            startDate {
-              year
-              month
-              day
-            }
+            startDate { year month day }
           }
         }
       }
     }
     ''';
 
-    final body = {
-      "query": query,
-      "variables": {"id": int.parse(userId!), "manga_id": track.mediaId},
-    };
+    final vars = {"id": userId, typeVar: track.mediaId};
 
-    final response = await http.post(
-      Uri.parse(_baseApiUrl),
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $accessToken',
-      },
-      body: json.encode(body),
-    );
-    final data = json.decode(response.body);
+    final data = await _executeGraphQL(query, vars);
     final entries = List<Map<String, dynamic>>.from(
-      data['data']['Page']['mediaList'],
+      data['Page']['mediaList'] as List,
     );
-    if (entries.isNotEmpty) {
-      final jsonRes = entries.first;
-      track.libraryId = jsonRes['id'];
-      track.syncId = syncId;
-      track.mediaId = jsonRes['media']['id'];
-      track.status = _getALTrackStatusManga(jsonRes['status']);
-      track.title = jsonRes['media']['title']['userPreferred'] ?? '';
-      track.score = jsonRes['scoreRaw'] ?? 0;
-      track.lastChapterRead = jsonRes['progress'] ?? 0;
-      track.startedReadingDate = parseDate(jsonRes, 'startedAt');
-      track.finishedReadingDate = parseDate(jsonRes, 'completedAt');
-      track.totalChapter = jsonRes['media']["chapters"] ?? 0;
-    }
-    return entries.isNotEmpty ? track : null;
+    if (entries.isEmpty) return null;
+
+    final jsonRes = entries.first;
+    return track
+      ..libraryId = jsonRes['id'] as int
+      ..syncId = syncId
+      ..mediaId = jsonRes['media']['id'] as int
+      ..status = _getALTrackStatus(jsonRes['status'], isManga)
+      ..title = jsonRes['media']['title']['userPreferred'] ?? ''
+      ..score = jsonRes['scoreRaw'] as int?
+      ..lastChapterRead = jsonRes['progress'] as int? ?? 0
+      ..startedReadingDate = parseDate(jsonRes, 'startedAt')
+      ..finishedReadingDate = parseDate(jsonRes, 'completedAt')
+      ..totalChapter = jsonRes['media'][contentUnit] as int? ?? 0;
   }
 
-  Future<Track?> findLibAnime(Track track) async {
-    final userId = ref.watch(tracksProvider(syncId: syncId))!.username;
-
-    final accessToken = await _getAccesToken();
-    const query = '''
-    query(\$id: Int!, \$anime_id: Int!) {
-      Page {
-        mediaList(userId: \$id, type: ANIME, mediaId: \$anime_id) {
-          id
-          status
-          scoreRaw: score(format: POINT_100)
-          progress
-          startedAt {
-            year
-            month
-            day
-          }
-          completedAt {
-            year
-            month
-            day
-          }
-          media {
-            id
-            title {
-              userPreferred
-            }
-            coverImage {
-              large
-            }
-            format
-            status
-            episodes
-            description
-            startDate {
-              year
-              month
-              day
-            }
-          }
-        }
-      }
-    }
-    ''';
-
-    final body = {
-      "query": query,
-      "variables": {"id": int.parse(userId!), "anime_id": track.mediaId},
-    };
-
+  Future<Map<String, dynamic>> _executeGraphQL(
+    String document,
+    Map<String, dynamic> variables,
+  ) async {
     final response = await http.post(
       Uri.parse(_baseApiUrl),
       headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $accessToken',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ${await _getAccessToken()}',
       },
-      body: json.encode(body),
+      body: jsonEncode({'query': document, 'variables': variables}),
     );
-    final data = json.decode(response.body);
-    final entries = List<Map<String, dynamic>>.from(
-      data['data']['Page']['mediaList'],
-    );
-    if (entries.isNotEmpty) {
-      final jsonRes = entries.first;
-      track.libraryId = jsonRes['id'];
-      track.syncId = syncId;
-      track.mediaId = jsonRes['media']['id'];
-      track.status = _getALTrackStatusAnime(jsonRes['status']);
-      track.title = jsonRes['media']['title']['userPreferred'] ?? '';
-      track.score = jsonRes['scoreRaw'] ?? 0;
-      track.lastChapterRead = jsonRes['progress'] ?? 0;
-      track.startedReadingDate = parseDate(jsonRes, 'startedAt');
-      track.finishedReadingDate = parseDate(jsonRes, 'completedAt');
-      track.totalChapter = jsonRes['media']["episodes"] ?? 0;
-    }
-    return entries.isNotEmpty ? track : null;
+
+    final decoded = jsonDecode(response.body) as Map<String, dynamic>;
+
+    return decoded['data'] as Map<String, dynamic>;
   }
 
   Future<(String, String)> _getCurrentUser(String accessToken) async {
@@ -551,7 +269,7 @@ class Anilist extends _$Anilist {
     );
   }
 
-  Future<String> _getAccesToken() async {
+  Future<String> _getAccessToken() async {
     final track = ref.watch(tracksProvider(syncId: syncId));
     final mALOAuth = OAuth.fromJson(
       jsonDecode(track!.oAuth!) as Map<String, dynamic>,
@@ -590,63 +308,35 @@ class Anilist extends _$Anilist {
     };
   }
 
-  TrackStatus _getALTrackStatusManga(String status) {
+  TrackStatus _getALTrackStatus(String status, bool isManga) {
     return switch (status) {
-      "CURRENT" => TrackStatus.reading,
+      "CURRENT" => isManga ? TrackStatus.reading : TrackStatus.watching,
       "COMPLETED" => TrackStatus.completed,
       "PAUSED" => TrackStatus.onHold,
       "DROPPED" => TrackStatus.dropped,
-      "PLANNING" => TrackStatus.planToRead,
-      _ => TrackStatus.rereading,
+      "PLANNING" => isManga ? TrackStatus.planToRead : TrackStatus.planToWatch,
+      _ => isManga ? TrackStatus.reReading : TrackStatus.reWatching,
     };
   }
 
-  TrackStatus _getALTrackStatusAnime(String status) {
-    return switch (status) {
-      "CURRENT" => TrackStatus.watching,
-      "COMPLETED" => TrackStatus.completed,
-      "PAUSED" => TrackStatus.onHold,
-      "DROPPED" => TrackStatus.dropped,
-      "PLANNING" => TrackStatus.planToWatch,
-      _ => TrackStatus.reWatching,
-    };
-  }
-
-  List<TrackStatus> aniListStatusListManga = [
-    TrackStatus.reading,
+  List<TrackStatus> statusList(bool isManga) => [
+    isManga ? TrackStatus.reading : TrackStatus.watching,
     TrackStatus.completed,
     TrackStatus.onHold,
     TrackStatus.dropped,
-    TrackStatus.planToRead,
-    TrackStatus.rereading,
-  ];
-  List<TrackStatus> aniListStatusListAnime = [
-    TrackStatus.watching,
-    TrackStatus.completed,
-    TrackStatus.onHold,
-    TrackStatus.dropped,
-    TrackStatus.planToWatch,
-    TrackStatus.reWatching,
+    isManga ? TrackStatus.planToRead : TrackStatus.planToWatch,
+    isManga ? TrackStatus.reReading : TrackStatus.reWatching,
   ];
 
-  String? toAniListStatusManga(TrackStatus status) {
+  String? toAniListStatus(TrackStatus status, bool isManga) {
     return switch (status) {
-      TrackStatus.reading => "CURRENT",
+      TrackStatus.reading when isManga => "CURRENT",
+      TrackStatus.watching when !isManga => "CURRENT",
       TrackStatus.completed => "COMPLETED",
       TrackStatus.onHold => "PAUSED",
       TrackStatus.dropped => "DROPPED",
-      TrackStatus.planToRead => "PLANNING",
-      _ => "REPEATING",
-    };
-  }
-
-  String? toAniListStatusAnime(TrackStatus status) {
-    return switch (status) {
-      TrackStatus.watching => "CURRENT",
-      TrackStatus.completed => "COMPLETED",
-      TrackStatus.onHold => "PAUSED",
-      TrackStatus.dropped => "DROPPED",
-      TrackStatus.planToWatch => "PLANNING",
+      TrackStatus.planToRead when isManga => "PLANNING",
+      TrackStatus.planToWatch when !isManga => "PLANNING",
       _ => "REPEATING",
     };
   }

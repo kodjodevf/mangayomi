@@ -8,9 +8,7 @@ class OAuth {
 
   OAuth.fromJson(Map<String, dynamic> json) {
     tokenType = json['token_type'];
-    expiresIn =
-        (json['expires_in'] as int) * 1000 +
-        DateTime.now().millisecondsSinceEpoch;
+    expiresIn = json['expires_in'] as int;
     accessToken = json['access_token'];
     refreshToken = json['refresh_token'];
   }

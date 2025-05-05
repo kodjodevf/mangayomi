@@ -102,6 +102,29 @@ bool _isArchiveFile(String path) {
 }
 
 LocalArchive _extractArchive(String path) {
+  // Folder of images?
+  if (Directory(path).existsSync()) {
+    final dir = Directory(path);
+    final pages =
+        dir.listSync().whereType<File>().where((f) => _isImageFile(f.path)).map(
+            (f) {
+              return LocalImage()
+                ..image = f.readAsBytesSync()
+                ..name = p.basename(f.path);
+            },
+          ).toList()
+          ..sort((a, b) => a.name!.compareTo(b.name!));
+
+    final localArchive =
+        LocalArchive()
+          ..path = path
+          ..extensionType = LocalExtensionType.folder
+          ..name = p.basename(path)
+          ..images = pages
+          ..coverImage = pages.first.image;
+
+    return localArchive;
+  }
   final localArchive =
       LocalArchive()
         ..path = path
@@ -144,6 +167,19 @@ LocalArchive _extractArchive(String path) {
 (String, LocalExtensionType, Uint8List, String) _extractArchiveOnly(
   String path,
 ) {
+  // If it's a directory, just read its images:
+  if (Directory(path).existsSync()) {
+    final dir = Directory(path);
+    final images =
+        dir
+            .listSync()
+            .whereType<File>()
+            .where((f) => _isImageFile(f.path))
+            .toList()
+          ..sort((a, b) => a.path.compareTo(b.path));
+    final cover = images.first.readAsBytesSync();
+    return (p.basename(path), LocalExtensionType.folder, cover, path);
+  }
   final extensionType = setTypeExtension(
     p.extension(path).replaceFirst('.', ''),
   );

@@ -1013,6 +1013,21 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     );
   }
 
+  bool matchesSearchQuery(Manga manga, String query) {
+    final keywords = query
+        .toLowerCase()
+        .split(',')
+        .map((k) => k.trim())
+        .where((k) => k.isNotEmpty);
+
+    return keywords.any(
+      (keyword) =>
+          (manga.name?.toLowerCase().contains(keyword) ?? false) ||
+          (manga.source?.toLowerCase().contains(keyword) ?? false) ||
+          (manga.genre?.any((g) => g.toLowerCase().contains(keyword)) ?? false),
+    );
+  }
+
   List<Manga> _filterAndSortManga({
     required List<Manga> data,
     required int downloadFilterType,
@@ -1022,133 +1037,126 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     required int sortType,
   }) {
     List<Manga>? mangas;
-    mangas =
-        data
-            .where((element) {
-              List list = [];
-              if (downloadFilterType == 1) {
-                for (var chap in element.chapters) {
-                  final modelChapDownload =
-                      isar.downloads.filter().idEqualTo(chap.id).findAllSync();
-
-                  if (modelChapDownload.isNotEmpty &&
-                      modelChapDownload.first.isDownload == true) {
-                    list.add(true);
-                  }
-                }
-                return list.isNotEmpty;
-              } else if (downloadFilterType == 2) {
-                for (var chap in element.chapters) {
-                  final modelChapDownload =
-                      isar.downloads.filter().idEqualTo(chap.id).findAllSync();
-                  if (!(modelChapDownload.isNotEmpty &&
-                      modelChapDownload.first.isDownload == true)) {
-                    list.add(true);
-                  }
-                }
-                return list.length == element.chapters.length;
-              }
-              return true;
-            })
-            .where((element) {
-              List list = [];
-              if (unreadFilterType == 1 || startedFilterType == 1) {
-                for (var chap in element.chapters) {
-                  if (!chap.isRead!) {
-                    list.add(true);
-                  }
-                }
-                return list.isNotEmpty;
-              } else if (unreadFilterType == 2 || startedFilterType == 2) {
+    final searchQuery = _textEditingController.text;
+    // Skip all filters, just do search
+    if (searchQuery.isNotEmpty && _ignoreFiltersOnSearch) {
+      mangas =
+          data
+              .where((element) => matchesSearchQuery(element, searchQuery))
+              .toList();
+    } else {
+      // Apply filters + search
+      mangas =
+          data
+              .where((element) {
+                // Filter by download
                 List list = [];
-                for (var chap in element.chapters) {
-                  if (chap.isRead!) {
-                    list.add(true);
-                  }
-                }
-                return list.length == element.chapters.length;
-              }
-              return true;
-            })
-            .where((element) {
-              List list = [];
-              if (bookmarkedFilterType == 1) {
-                for (var chap in element.chapters) {
-                  if (chap.isBookmarked!) {
-                    list.add(true);
-                  }
-                }
-                return list.isNotEmpty;
-              } else if (bookmarkedFilterType == 2) {
-                List list = [];
-                for (var chap in element.chapters) {
-                  if (!chap.isBookmarked!) {
-                    list.add(true);
-                  }
-                }
-                return list.length == element.chapters.length;
-              }
-              return true;
-            })
-            .where(
-              (element) =>
-                  _textEditingController.text.isNotEmpty
-                      ? _textEditingController.text
-                          .split(",")
-                          .any(
-                            (keyword) =>
-                                element.name!.toLowerCase().contains(
-                                  _textEditingController.text.toLowerCase(),
-                                ) ||
-                                (element.source != null &&
-                                    element.source!.toLowerCase().contains(
-                                      _textEditingController.text.toLowerCase(),
-                                    )) ||
-                                element.genre!.contains(keyword),
-                          )
-                      : true,
-            )
-            .toList();
+                if (downloadFilterType == 1) {
+                  for (var chap in element.chapters) {
+                    final modelChapDownload =
+                        isar.downloads
+                            .filter()
+                            .idEqualTo(chap.id)
+                            .findAllSync();
 
-    if (sortType == 0) {
-      mangas.sort((a, b) {
-        return a.name!.compareTo(b.name!);
-      });
-    } else if (sortType == 1) {
-      mangas.sort((a, b) {
-        return a.lastRead!.compareTo(b.lastRead!);
-      });
-    } else if (sortType == 2) {
-      mangas.sort((a, b) {
-        return a.lastUpdate?.compareTo(b.lastUpdate ?? 0) ?? 0;
-      });
-    } else if (sortType == 3) {
-      mangas.sort((a, b) {
-        return a.chapters
-            .where((element) => !element.isRead!)
-            .toList()
-            .length
-            .compareTo(
-              b.chapters.where((element) => !element.isRead!).toList().length,
-            );
-      });
-    } else if (sortType == 4) {
-      mangas.sort((a, b) {
-        return a.chapters.length.compareTo(b.chapters.length);
-      });
-    } else if (sortType == 5) {
-      mangas.sort((a, b) {
-        final aChaps = a.chapters;
-        final bChaps = b.chapters;
-        return (aChaps.lastOrNull?.dateUpload ?? "").compareTo(
-          bChaps.lastOrNull?.dateUpload ?? "",
-        );
-      });
-    } else if (sortType == 6) {
-      mangas.sort((a, b) {
-        return a.dateAdded?.compareTo(b.dateAdded ?? 0) ?? 0;
-      });
+                    if (modelChapDownload.isNotEmpty &&
+                        modelChapDownload.first.isDownload == true) {
+                      list.add(true);
+                    }
+                  }
+                  return list.isNotEmpty;
+                } else if (downloadFilterType == 2) {
+                  for (var chap in element.chapters) {
+                    final modelChapDownload =
+                        isar.downloads
+                            .filter()
+                            .idEqualTo(chap.id)
+                            .findAllSync();
+                    if (!(modelChapDownload.isNotEmpty &&
+                        modelChapDownload.first.isDownload == true)) {
+                      list.add(true);
+                    }
+                  }
+                  return list.length == element.chapters.length;
+                }
+                return true;
+              })
+              .where((element) {
+                // Filter by unread or started
+                List list = [];
+                if (unreadFilterType == 1 || startedFilterType == 1) {
+                  for (var chap in element.chapters) {
+                    if (!chap.isRead!) {
+                      list.add(true);
+                    }
+                  }
+                  return list.isNotEmpty;
+                } else if (unreadFilterType == 2 || startedFilterType == 2) {
+                  List list = [];
+                  for (var chap in element.chapters) {
+                    if (chap.isRead!) {
+                      list.add(true);
+                    }
+                  }
+                  return list.length == element.chapters.length;
+                }
+                return true;
+              })
+              .where((element) {
+                // Filter by bookmarked
+                List list = [];
+                if (bookmarkedFilterType == 1) {
+                  for (var chap in element.chapters) {
+                    if (chap.isBookmarked!) {
+                      list.add(true);
+                    }
+                  }
+                  return list.isNotEmpty;
+                } else if (bookmarkedFilterType == 2) {
+                  List list = [];
+                  for (var chap in element.chapters) {
+                    if (!chap.isBookmarked!) {
+                      list.add(true);
+                    }
+                  }
+                  return list.length == element.chapters.length;
+                }
+                return true;
+              })
+              .where(
+                (element) =>
+                    searchQuery.isNotEmpty
+                        ? matchesSearchQuery(element, searchQuery)
+                        : true,
+              )
+              .toList();
     }
+    // Sorting the data based on selected sort type
+    mangas.sort((a, b) {
+      switch (sortType) {
+        case 0:
+          return a.name!.compareTo(b.name!);
+        case 1:
+          return a.lastRead!.compareTo(b.lastRead!);
+        case 2:
+          return a.lastUpdate?.compareTo(b.lastUpdate ?? 0) ?? 0;
+        case 3:
+          return a.chapters
+              .where((e) => !e.isRead!)
+              .length
+              .compareTo(b.chapters.where((e) => !e.isRead!).length);
+        case 4:
+          return a.chapters.length.compareTo(b.chapters.length);
+        case 5:
+          return (a.chapters.lastOrNull?.dateUpload ?? "").compareTo(
+            b.chapters.lastOrNull?.dateUpload ?? "",
+          );
+        case 6:
+          return a.dateAdded?.compareTo(b.dateAdded ?? 0) ?? 0;
+        default:
+          return 0;
+      }
+    });
     return mangas;
   }
 
@@ -1188,7 +1196,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                               );
 
                               final entries =
-                                  data.where((e) => !(e.hide ?? false)).toList();
+                                  data
+                                      .where((e) => !(e.hide ?? false))
+                                      .toList();
                               if (entries.isEmpty) {
                                 return Text(l10n.library_no_category_exist);
                               }
@@ -1462,7 +1472,10 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                         final mangaDir = await storageProvider
                                             .getMangaMainDirectory(chapter);
                                         final path = await storageProvider
-                                            .getMangaChapterDirectory(chapter);
+                                            .getMangaChapterDirectory(
+                                              chapter,
+                                              mangaMainDirectory: mangaDir,
+                                            );
 
                                         try {
                                           try {
@@ -2043,6 +2056,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     return l10n.date_added;
   }
 
+  bool _ignoreFiltersOnSearch = false;
+  final bool _isMobile = Platform.isIOS || Platform.isAndroid;
   PreferredSize _appBar(
     bool isNotFiltering,
     bool showNumbersOfItems,
@@ -2202,6 +2217,31 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                         },
                         icon: const Icon(Icons.search),
                       ),
+                  // Checkbox when searching library to ignore filters
+                  if (_isSearch)
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _isMobile
+                              // Adds a line break where spaces exist for better mobile layout.
+                              // Works for languages that use spaces between words.
+                              ? l10n.ignore_filters.replaceFirst(' ', '\n')
+                              // Removes manually added line breaks for Thai and Chinese,
+                              // where spaces aren’t used, to ensure proper desktop rendering.
+                              : l10n.ignore_filters.replaceAll('\n', ''),
+                          textAlign: TextAlign.center,
+                        ),
+                        Checkbox(
+                          value: _ignoreFiltersOnSearch,
+                          onChanged: (val) {
+                            setState(() {
+                              _ignoreFiltersOnSearch = val ?? false;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
                   IconButton(
                     splashRadius: 20,
                     onPressed: () {

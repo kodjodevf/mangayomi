@@ -40,7 +40,7 @@ String getTrackStatus(TrackStatus status, BuildContext context) {
     TrackStatus.onHold => l10n.on_hold,
     TrackStatus.dropped => l10n.dropped,
     TrackStatus.planToRead => l10n.plan_to_read,
-    TrackStatus.rereading => l10n.re_reading,
+    TrackStatus.reReading => l10n.re_reading,
   };
 }
 
@@ -49,7 +49,7 @@ TrackStatus toTrackStatus(TrackStatus status, ItemType itemType, int syncId) {
       ? switch (status) {
         TrackStatus.reading => TrackStatus.watching,
         TrackStatus.planToRead => TrackStatus.planToWatch,
-        TrackStatus.rereading => TrackStatus.reWatching,
+        TrackStatus.reReading => TrackStatus.reWatching,
         _ => status,
       }
       : status;

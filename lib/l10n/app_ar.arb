@@ -8,6 +8,7 @@
     "open_random_entry": "فتح مدخل عشوائي",
     "import": "استيراد",
     "filter": "مرشح",
+    "ignore_filters": "تجاهل مرشح",
     "downloaded": "تم التحميل",
     "unread": "غير مقروء",
     "started": "بدأ",

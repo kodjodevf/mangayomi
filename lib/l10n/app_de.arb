@@ -8,6 +8,7 @@
     "open_random_entry": "Zufälligen Eintrag öffnen",
     "import": "Importieren",
     "filter": "Filter",
+    "ignore_filters": "Filter ignorieren",
     "downloaded": "Heruntergeladen",
     "unread": "Ungelesen",
     "unwatched": "Nicht angeschaut",

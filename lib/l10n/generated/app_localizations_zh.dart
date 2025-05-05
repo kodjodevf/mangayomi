@@ -33,6 +33,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get filter => '筛选';
 
   @override
+  String get ignore_filters => '忽略\n筛选';
+
+  @override
   String get downloaded => '已下载';
 
   @override

@@ -12,7 +12,7 @@ class LocalArchive {
   String? path;
 }
 
-enum LocalExtensionType { cbz, zip, cbt, tar }
+enum LocalExtensionType { cbz, zip, cbt, tar, folder }
 
 class LocalImage {
   String? name;
