@@ -773,7 +773,7 @@ final List<String> _dateFormats = [
   "MMM dd,yyyy",
 ];
 
-void botToast(
+void Function() botToast(
   String title, {
   int second = 10,
   double? fontSize,
@@ -781,20 +781,33 @@ void botToast(
   double alignY = 0.99,
   bool hasCloudFlare = false,
   String? url,
+  int animationDuration = 200,
+  List<DismissDirection> dismissDirections = const [
+    DismissDirection.horizontal,
+    DismissDirection.down,
+  ],
+  bool onlyOne = true,
+  bool? themeDark,
 }) {
   final context = navigatorKey.currentState?.context;
   final assets = [
     'assets/app_icons/icon-black.png',
     'assets/app_icons/icon-red.png',
   ];
-  BotToast.showNotification(
-    onlyOne: true,
-    dismissDirections: [DismissDirection.horizontal, DismissDirection.down],
+  return BotToast.showNotification(
+    onlyOne: onlyOne,
+    dismissDirections: dismissDirections,
     align: Alignment(alignX, alignY),
     duration: Duration(seconds: second),
-    animationDuration: const Duration(milliseconds: 200),
-    animationReverseDuration: const Duration(milliseconds: 200),
-    leading: (_) => Image.asset((assets..shuffle()).first, height: 25),
+    animationDuration: Duration(milliseconds: animationDuration),
+    animationReverseDuration: Duration(milliseconds: animationDuration),
+    leading:
+        (_) => Image.asset(
+          (themeDark == null
+              ? (assets..shuffle()).first
+              : assets[themeDark ? 0 : 1]),
+          height: 25,
+        ),
     title: (_) => Text(title, style: TextStyle(fontSize: fontSize)),
     trailing:
         hasCloudFlare

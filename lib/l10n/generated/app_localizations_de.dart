@@ -376,6 +376,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get save_as_cbz_archive => 'Als CBZ-Archiv speichern';
 
   @override
+  String get concurrent_downloads => 'Concurrent downloads';
+
+  @override
   String get browse_subtitle => 'Quellen, globale Suche';
 
   @override
@@ -1139,7 +1142,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get update_library => 'Bibliothek aktualisieren';
 
   @override
-  String get updating_library => 'Bibliothek wird aktualisiert';
+  String updating_library(Object cur, Object failed, Object max) {
+    return 'Bibliothek wird aktualisiert ($cur / $max) - Fehlgeschlagen: $failed';
+  }
 
   @override
   String get next_chapter => 'Nächstes Kapitel';
@@ -1154,6 +1159,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get next_25_chapters => 'Nächsten 25 Kapitel';
 
   @override
+  String get all_chapters => 'All chapters';
+
+  @override
   String get next_episode => 'Nächste Episode';
 
   @override
@@ -1164,6 +1172,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get next_25_episodes => 'Nächsten 25 Episoden';
+
+  @override
+  String get all_episodes => 'All episodes';
 
   @override
   String get cover_saved => 'Titelbild gespeichert';
@@ -1439,4 +1450,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get load_own_subtitles => 'Deine eigene Untertiteln laden...';
+
+  @override
+  String extension_notes(Object notes) {
+    return 'Hinweis: $notes';
+  }
 }

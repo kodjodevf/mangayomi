@@ -65,3 +65,19 @@ class DownloadLocationState extends _$DownloadLocationState {
     );
   }
 }
+
+@riverpod
+class ConcurrentDownloadsState extends _$ConcurrentDownloadsState {
+  @override
+  int build() {
+    return isar.settings.getSync(227)!.concurrentDownloads ?? 2;
+  }
+
+  void set(int value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(settings!..concurrentDownloads = value),
+    );
+  }
+}

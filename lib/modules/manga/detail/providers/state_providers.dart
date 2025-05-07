@@ -364,7 +364,7 @@ class ChapterSetDownloadState extends _$ChapterSetDownloadState {
         final entries =
             isar.downloads.filter().idEqualTo(chapter.id).findAllSync();
         if (entries.isEmpty || !entries.first.isDownload!) {
-          ref.watch(downloadChapterProvider(chapter: chapter));
+          ref.watch(addDownloadToQueueProvider(chapter: chapter));
         }
       }
     });

@@ -17,6 +17,7 @@ Future<dynamic> updateMangaDetail(
   Ref ref, {
   required int? mangaId,
   required bool isInit,
+  bool showToast = true,
 }) async {
   final manga = isar.mangas.getSync(mangaId!);
   if (manga!.chapters.isNotEmpty && isInit) {
@@ -29,7 +30,7 @@ Future<dynamic> updateMangaDetail(
       getDetailProvider(url: manga.link!, source: source!).future,
     );
   } catch (e) {
-    botToast(e.toString());
+    if (showToast) botToast(e.toString());
     return;
   }
   final genre =

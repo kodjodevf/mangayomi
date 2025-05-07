@@ -82,6 +82,8 @@ class Settings {
 
   bool? saveAsCBZArchive;
 
+  int? concurrentDownloads;
+
   String? downloadLocation;
 
   List<FilterScanlator>? filterScanlatorList;
@@ -271,6 +273,7 @@ class Settings {
     this.pureBlackDarkMode = false,
     this.downloadOnlyOnWifi = false,
     this.saveAsCBZArchive = false,
+    this.concurrentDownloads = 2,
     this.downloadLocation = "",
     this.cropBorders = false,
     this.libraryLocalSource,
@@ -404,6 +407,7 @@ class Settings {
     doubleTapAnimationSpeed = json['doubleTapAnimationSpeed'];
     downloadLocation = json['downloadLocation'];
     downloadOnlyOnWifi = json['downloadOnlyOnWifi'];
+    concurrentDownloads = json['concurrentDownloads'];
     filterScanlatorList =
         (json['filterScanlatorList'] as List?)
             ?.map((e) => FilterScanlator.fromJson(e))
@@ -604,6 +608,7 @@ class Settings {
     'doubleTapAnimationSpeed': doubleTapAnimationSpeed,
     'downloadLocation': downloadLocation,
     'downloadOnlyOnWifi': downloadOnlyOnWifi,
+    'concurrentDownloads': concurrentDownloads,
     'filterScanlatorList': filterScanlatorList,
     'flexColorSchemeBlendLevel': flexColorSchemeBlendLevel,
     'flexSchemeColorIndex': flexSchemeColorIndex,

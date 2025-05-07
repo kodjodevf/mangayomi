@@ -376,6 +376,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get save_as_cbz_archive => '保存为CBZ档案';
 
   @override
+  String get concurrent_downloads => 'Concurrent downloads';
+
+  @override
   String get browse_subtitle => '来源，全球搜索';
 
   @override
@@ -1139,7 +1142,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get update_library => '更新库';
 
   @override
-  String get updating_library => '正在更新库';
+  String updating_library(Object cur, Object failed, Object max) {
+    return '正在更新库 ($cur / $max) - 失败: $failed';
+  }
 
   @override
   String get next_chapter => '下一章';
@@ -1154,6 +1159,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get next_25_chapters => '下25章';
 
   @override
+  String get all_chapters => 'All chapters';
+
+  @override
   String get next_episode => '下一集';
 
   @override
@@ -1164,6 +1172,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get next_25_episodes => '接下来的 25 集';
+
+  @override
+  String get all_episodes => 'All episodes';
 
   @override
   String get cover_saved => '封面已保存';
@@ -1439,4 +1450,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get load_own_subtitles => '加载自定义字幕';
+
+  @override
+  String extension_notes(Object notes) {
+    return 'Notes: $notes';
+  }
 }

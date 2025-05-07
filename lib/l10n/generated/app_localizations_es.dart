@@ -376,6 +376,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get save_as_cbz_archive => 'Guardar como archivo CBZ';
 
   @override
+  String get concurrent_downloads => 'Concurrent downloads';
+
+  @override
   String get browse_subtitle => 'Fuentes, búsqueda global';
 
   @override
@@ -1139,7 +1142,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get update_library => 'Actualizar biblioteca';
 
   @override
-  String get updating_library => 'Actualizando biblioteca';
+  String updating_library(Object cur, Object failed, Object max) {
+    return 'Actualizando biblioteca ($cur / $max) - Fallido: $failed';
+  }
 
   @override
   String get next_chapter => 'Próximo capítulo';
@@ -1154,6 +1159,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get next_25_chapters => 'Próximos 25 capítulos';
 
   @override
+  String get all_chapters => 'All chapters';
+
+  @override
   String get next_episode => 'Siguiente episodio';
 
   @override
@@ -1164,6 +1172,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get next_25_episodes => 'Siguientes 25 episodios';
+
+  @override
+  String get all_episodes => 'All episodes';
 
   @override
   String get cover_saved => 'Portada guardada';
@@ -1439,6 +1450,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get load_own_subtitles => 'Cargar tus propios subtítulos...';
+
+  @override
+  String extension_notes(Object notes) {
+    return 'Notes: $notes';
+  }
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -2576,7 +2592,9 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get update_library => 'Actualizar biblioteca';
 
   @override
-  String get updating_library => 'Actualizando biblioteca';
+  String updating_library(Object cur, Object failed, Object max) {
+    return 'Actualizando biblioteca ($cur / $max) - Fallido: $failed';
+  }
 
   @override
   String get next_chapter => 'Siguiente capítulo';

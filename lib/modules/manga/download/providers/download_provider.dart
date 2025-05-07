@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/page.dart';
@@ -19,6 +21,7 @@ import 'package:mangayomi/services/get_chapter_pages.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/download_manager/m3u8/m3u8_downloader.dart';
 import 'package:mangayomi/services/download_manager/m3u8/models/download.dart';
+import 'package:mangayomi/utils/extensions/chapter.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
@@ -28,14 +31,35 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'download_provider.g.dart';
 
 @riverpod
+Future<void> addDownloadToQueue(Ref ref, {required Chapter chapter}) async {
+  final download = isar.downloads.getSync(chapter.id!);
+  if (download == null) {
+    final download = Download(
+      id: chapter.id,
+      succeeded: 0,
+      failed: 0,
+      total: 100,
+      isDownload: false,
+      isStartDownload: true,
+    );
+    isar.writeTxnSync(() {
+      isar.downloads.putSync(download..chapter.value = chapter);
+    });
+  }
+}
+
+@riverpod
 Future<void> downloadChapter(
   Ref ref, {
   required Chapter chapter,
   bool? useWifi,
+  VoidCallback? callback,
 }) async {
   bool onlyOnWifi = useWifi ?? ref.watch(onlyOnWifiStateProvider);
   final connectivity = await Connectivity().checkConnectivity();
-  final isOnWifi = connectivity.contains(ConnectivityResult.wifi) || connectivity.contains(ConnectivityResult.ethernet);
+  final isOnWifi =
+      connectivity.contains(ConnectivityResult.wifi) ||
+      connectivity.contains(ConnectivityResult.ethernet);
   if (onlyOnWifi && !isOnWifi) {
     botToast(navigatorKey.currentContext!.l10n.downloads_are_limited_to_wifi);
     return;
@@ -338,4 +362,45 @@ Future<void> downloadChapter(
       setProgress(progress);
     });
   }
+  if (callback != null) {
+    callback();
+  }
+}
+
+@riverpod
+Future<void> processDownloads(Ref ref, {bool? useWifi}) async {
+  final ongoingDownloads =
+      await isar.downloads
+          .filter()
+          .idIsNotNull()
+          .isDownloadEqualTo(false)
+          .isStartDownloadEqualTo(true)
+          .findAll();
+  final maxConcurrentDownloads = ref.read(concurrentDownloadsStateProvider);
+  int index = 0;
+  int downloaded = 0;
+  int current = 0;
+  await Future.doWhile(() async {
+    await Future.delayed(const Duration(seconds: 1));
+    if (ongoingDownloads.length == downloaded) {
+      return false;
+    }
+    if (current < maxConcurrentDownloads) {
+      current++;
+      final downloadItem = ongoingDownloads[index++];
+      final chapter = downloadItem.chapter.value!;
+      chapter.cancelDownloads(downloadItem.id);
+      ref.read(
+        downloadChapterProvider(
+          chapter: chapter,
+          useWifi: useWifi,
+          callback: () {
+            downloaded++;
+            current--;
+          },
+        ),
+      );
+    }
+    return true;
+  });
 }

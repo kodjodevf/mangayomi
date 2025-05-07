@@ -1,7 +1,17 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:epubx/epubx.dart';
 import 'package:flutter_qjs/flutter_qjs.dart';
+import 'package:http/http.dart' as http;
+import 'package:path/path.dart' as p;
+import 'package:http_interceptor/http/intercepted_client.dart';
 import 'package:js_packer/js_packer.dart';
 import 'package:mangayomi/eval/javascript/http.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
+import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/cryptoaes/js_unpacker.dart';
 import 'package:mangayomi/utils/log/log.dart';
 
@@ -10,6 +20,10 @@ class JsUtils {
   JsUtils(this.runtime);
 
   void init() {
+    InterceptedClient client() {
+      return MClient.init();
+    }
+
     runtime.onMessage('log', (dynamic args) {
       Logger.add(LoggerLevel.warning, "${args[0]}");
       return null;
@@ -38,6 +52,29 @@ class JsUtils {
         (args[1]! as Map).toMapStringString!,
         (args[2]! as List).map((e) => e.toString()).toList(),
       );
+    });
+    runtime.onMessage('parseEpub', (dynamic args) async {
+      final bytes = await _toBytesResponse(client(), "GET", args);
+      final book = await EpubReader.readBook(bytes);
+      final List<String> chapters = [];
+      for (var chapter in book.Chapters ?? []) {
+        final chapterTitle = chapter.Title;
+        chapters.add(chapterTitle);
+      }
+      return jsonEncode({
+        "title": book.Title,
+        "author": book.Author,
+        "chapters": chapters,
+      });
+    });
+    runtime.onMessage('parseEpubChapter', (dynamic args) async {
+      final bytes = await _toBytesResponse(client(), "GET", args);
+      final book = await EpubReader.readBook(bytes);
+      final chapter =
+          book.Chapters?.where(
+            (element) => element.Title == args[3],
+          ).firstOrNull;
+      return chapter?.HtmlContent;
     });
 
     runtime.evaluate('''
@@ -143,6 +180,62 @@ async function evaluateJavascriptViaWebview(url, headers, scripts) {
         JSON.stringify([url, headers, scripts])
     );
 }
+async function parseEpub(bookName, url, headers) {
+    return JSON.parse(await sendMessage(
+        "parseEpub",
+        JSON.stringify([bookName, url, headers])
+    ));
+}
+async function parseEpubChapter(bookName, url, headers, chapterTitle) {
+    return await sendMessage(
+        "parseEpubChapter",
+        JSON.stringify([bookName, url, headers, chapterTitle])
+    );
+}
 ''');
+  }
+
+  Future<Uint8List> _toBytesResponse(
+    http.Client client,
+    String method,
+    List args,
+  ) async {
+    final bookName = args[0] as String;
+    final url = args[1] as String;
+    final headers = (args[2] as Map?)?.toMapStringString;
+    final body =
+        args.length >= 4
+            ? args[3] is List
+                ? args[3] as List
+                : args[3] is String
+                ? args[3] as String
+                : (args[3] as Map?)?.toMapStringDynamic
+            : null;
+
+    final tmpDirectory = (await StorageProvider().getTmpDirectory())!;
+    if (Platform.isAndroid) {
+      if (!(await File(p.join(tmpDirectory.path, ".nomedia")).exists())) {
+        await File(p.join(tmpDirectory.path, ".nomedia")).create();
+      }
+    }
+    final file = File(
+      p.join(tmpDirectory.path, "$bookName.epub"),
+    );
+    if (await file.exists()) {
+      return await file.readAsBytes();
+    }
+
+    var request = http.Request(method, Uri.parse(url));
+    request.headers.addAll(headers ?? {});
+    final future = switch (method) {
+      "GET" => client.get(Uri.parse(url), headers: headers),
+      "POST" => client.post(Uri.parse(url), headers: headers, body: body),
+      "PUT" => client.put(Uri.parse(url), headers: headers, body: body),
+      "DELETE" => client.delete(Uri.parse(url), headers: headers, body: body),
+      _ => client.patch(Uri.parse(url), headers: headers, body: body),
+    };
+    final bytes = (await future).bodyBytes;
+    await file.writeAsBytes(bytes);
+    return bytes;
   }
 }

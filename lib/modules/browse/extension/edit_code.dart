@@ -380,6 +380,7 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
                                             )).map((e) => e.toJson()).toList();
                                       } else if (_serviceIndex == 6) {
                                         result = (await service.getHtmlContent(
+                                          "test",
                                           _url,
                                         ));
                                       } else {

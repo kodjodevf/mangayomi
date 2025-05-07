@@ -59,7 +59,7 @@ class MProvider {
     async getVideoList(url) {
         throw new Error("getVideoList not implemented");
     }
-    async getHtmlContent(url) {
+    async getHtmlContent(name, url) {
         throw new Error("getHtmlContent not implemented");
     }
     async cleanHtmlContent(html) {
@@ -150,12 +150,12 @@ var extention = new DefaultExtension();
   }
 
   @override
-  Future<String> getHtmlContent(String url) async {
+  Future<String> getHtmlContent(String name, String url) async {
     _init();
     final res =
         (await runtime.handlePromise(
           await runtime.evaluateAsync(
-            'jsonStringify(() => extention.getHtmlContent(`$url`))',
+            'jsonStringify(() => extention.getHtmlContent(`$name`, `$url`))',
           ),
         )).stringResult;
     return res;

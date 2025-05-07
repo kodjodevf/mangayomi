@@ -5,6 +5,8 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/custom_floating_action_btn.dart';
+import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/chapter.dart';
 import 'package:mangayomi/utils/global_style.dart';
@@ -16,16 +18,16 @@ class DownloadQueueScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = l10nLocalizations(context);
     return StreamBuilder(
-      stream: isar.downloads.filter().idIsNotNull().watch(
-        fireImmediately: true,
-      ),
+      stream: isar.downloads
+          .filter()
+          .idIsNotNull()
+          .isDownloadEqualTo(false)
+          .isStartDownloadEqualTo(true)
+          .sortBySucceededDesc()
+          .watch(fireImmediately: true),
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-          final entries =
-              snapshot.data!
-                  .where((element) => element.isDownload == false)
-                  .where((element) => element.isStartDownload == true)
-                  .toList();
+          final entries = snapshot.data!;
           final allQueueLength = entries.toList().length;
           return Scaffold(
             appBar: AppBar(
@@ -172,6 +174,23 @@ class DownloadQueueScreen extends ConsumerWidget {
                           ),
               order: GroupedListOrder.DESC,
             ),
+            floatingActionButton: CustomFloatingActionBtn(
+              isExtended: false,
+              label: l10n.download_queue,
+              onPressed: () {
+                ref.read(processDownloadsProvider());
+              },
+              textWidth:
+                  measureText(
+                    l10n.download_queue,
+                    Theme.of(context).textTheme.labelLarge!,
+                  ).width,
+              width: calculateDynamicButtonWidth(
+                l10n.download_queue,
+                Theme.of(context).textTheme.labelLarge!,
+                50,
+              ), // 50 Padding, else RenderFlex overflow Exception
+            ),
           );
         }
         return Scaffold(
@@ -180,5 +199,22 @@ class DownloadQueueScreen extends ConsumerWidget {
         );
       },
     );
+  }
+
+  Size measureText(String text, TextStyle style) {
+    final TextPainter textPainter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    return textPainter.size;
+  }
+
+  double calculateDynamicButtonWidth(
+    String text,
+    TextStyle textStyle,
+    double padding,
+  ) {
+    final textSize = measureText(text, textStyle);
+    return textSize.width + padding;
   }
 }

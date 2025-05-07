@@ -160,6 +160,38 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     );
   }
 
+  List<Chapter> _getFilteredAndSortedChapters() {
+    final filterScanlator = ref.read(
+      scanlatorsFilterStateProvider(widget.manga!),
+    );
+    final filterUnread = ref.read(
+      chapterFilterUnreadStateProvider(mangaId: widget.manga!.id!),
+    );
+    final filterBookmarked = ref.read(
+      chapterFilterBookmarkedStateProvider(mangaId: widget.manga!.id!),
+    );
+    final filterDownloaded = ref.read(
+      chapterFilterDownloadedStateProvider(mangaId: widget.manga!.id!),
+    );
+    final sortChapter =
+        ref.read(sortChapterStateProvider(mangaId: widget.manga!.id!)).index
+            as int;
+    final chapters =
+        isar.chapters
+            .filter()
+            .idIsNotNull()
+            .mangaIdEqualTo(widget.manga!.id!)
+            .findAllSync();
+    return _filterAndSortChapter(
+      data: chapters,
+      filterUnread: filterUnread,
+      filterBookmarked: filterBookmarked,
+      filterDownloaded: filterDownloaded,
+      sortChapter: sortChapter,
+      filterScanlator: filterScanlator.$2,
+    );
+  }
+
   List<Chapter> _filterAndSortChapter({
     required List<Chapter> data,
     required int filterUnread,
@@ -443,15 +475,18 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                         : context.l10n.unwatched,
                                   ),
                                 ),
+                                PopupMenuItem<int>(
+                                  value: 5,
+                                  child: Text(
+                                    widget.itemType != ItemType.anime
+                                        ? context.l10n.all_chapters
+                                        : context.l10n.all_episodes,
+                                  ),
+                                ),
                               ];
                             },
                             onSelected: (value) {
-                              final chapters =
-                                  isar.chapters
-                                      .filter()
-                                      .idIsNotNull()
-                                      .mangaIdEqualTo(widget.manga!.id!)
-                                      .findAllSync();
+                              final chapters = _getFilteredAndSortedChapters();
                               if (value == 0 ||
                                   value == 1 ||
                                   value == 2 ||
@@ -470,8 +505,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                           .findFirstSync();
                                   if (entry == null || !entry.isDownload!) {
                                     ref.watch(
-                                      downloadChapterProvider(chapter: chapter),
+                                      addDownloadToQueueProvider(
+                                        chapter: chapter,
+                                      ),
                                     );
+                                    ref.watch(processDownloadsProvider());
                                   }
                                 } else {
                                   final length = switch (value) {
@@ -495,22 +533,29 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                               .findFirstSync();
                                       if (entry == null || !entry.isDownload!) {
                                         ref.watch(
-                                          downloadChapterProvider(
+                                          addDownloadToQueueProvider(
                                             chapter: chapter,
                                           ),
                                         );
                                       }
                                     }
                                   }
+                                  ref.watch(processDownloadsProvider());
                                 }
                               } else if (value == 4) {
-                                final unreadChapters =
-                                    isar.chapters
-                                        .filter()
-                                        .idIsNotNull()
-                                        .mangaIdEqualTo(widget.manga!.id!)
-                                        .isReadEqualTo(false)
-                                        .findAllSync();
+                                final List<Chapter> unreadChapters =
+                                    _getFilteredAndSortedChapters()
+                                        .where(
+                                          (element) =>
+                                              !(element.isRead ?? false),
+                                        )
+                                        .toList();
+                                isar.chapters
+                                    .filter()
+                                    .idIsNotNull()
+                                    .mangaIdEqualTo(widget.manga!.id!)
+                                    .isReadEqualTo(false)
+                                    .findAllSync();
                                 for (var chapter in unreadChapters) {
                                   final entry =
                                       isar.downloads
@@ -519,10 +564,31 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                           .findFirstSync();
                                   if (entry == null || !entry.isDownload!) {
                                     ref.watch(
-                                      downloadChapterProvider(chapter: chapter),
+                                      addDownloadToQueueProvider(
+                                        chapter: chapter,
+                                      ),
                                     );
                                   }
                                 }
+                                ref.watch(processDownloadsProvider());
+                              } else if (value == 5) {
+                                final List<Chapter> allChapters =
+                                    _getFilteredAndSortedChapters();
+                                for (var chapter in allChapters) {
+                                  final entry =
+                                      isar.downloads
+                                          .filter()
+                                          .idEqualTo(chapter.id)
+                                          .findFirstSync();
+                                  if (entry == null || !entry.isDownload!) {
+                                    ref.watch(
+                                      addDownloadToQueueProvider(
+                                        chapter: chapter,
+                                      ),
+                                    );
+                                  }
+                                }
+                                ref.watch(processDownloadsProvider());
                               }
                             },
                           ),
@@ -971,7 +1037,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   if (entries.isEmpty ||
                                       !entries.first.isDownload!) {
                                     ref.watch(
-                                      downloadChapterProvider(chapter: chapter),
+                                      addDownloadToQueueProvider(
+                                        chapter: chapter,
+                                      ),
                                     );
                                   }
                                 }
@@ -1513,16 +1581,26 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                             return;
                                           }
                                           if (value == 0) {
-                                            final genre = widget.manga!.genre![i];
+                                            final genre =
+                                                widget.manga!.genre![i];
                                             switch (widget.manga!.itemType) {
                                               case ItemType.manga:
-                                                context.pushReplacement('/MangaLibrary', extra: genre);
+                                                context.pushReplacement(
+                                                  '/MangaLibrary',
+                                                  extra: genre,
+                                                );
                                                 break;
                                               case ItemType.anime:
-                                                context.pushReplacement('/AnimeLibrary', extra: genre);
+                                                context.pushReplacement(
+                                                  '/AnimeLibrary',
+                                                  extra: genre,
+                                                );
                                                 break;
                                               case ItemType.novel:
-                                                context.pushReplacement('/NovelLibrary', extra: genre);
+                                                context.pushReplacement(
+                                                  '/NovelLibrary',
+                                                  extra: genre,
+                                                );
                                                 break;
                                             }
                                           } else {

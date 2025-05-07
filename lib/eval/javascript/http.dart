@@ -16,6 +16,9 @@ class JsHttpClient {
       );
     }
 
+    runtime.onMessage('http_head', (dynamic args) async {
+      return await _toHttpResponse(client(args[1]), "HEAD", args);
+    });
     runtime.onMessage('http_get', (dynamic args) async {
       return await _toHttpResponse(client(args[1]), "GET", args);
     });
@@ -35,6 +38,14 @@ class JsHttpClient {
 class Client {
     constructor(reqcopyWith) {
         this.reqcopyWith = reqcopyWith;
+    }
+    async head(url, headers) {
+        headers = headers;
+        const result = await sendMessage(
+            "http_head",
+            JSON.stringify([null, this.reqcopyWith, url, headers])
+        );
+        return JSON.parse(result);
     }
     async get(url, headers) {
         headers = headers;
@@ -115,6 +126,7 @@ Future<String> _toHttpResponse(Client client, String method, List args) async {
     return jsonEncode(resMap);
   }
   final future = switch (method) {
+    "HEAD" => client.head(Uri.parse(url), headers: headers),
     "GET" => client.get(Uri.parse(url), headers: headers),
     "POST" => client.post(Uri.parse(url), headers: headers, body: body),
     "PUT" => client.put(Uri.parse(url), headers: headers, body: body),
