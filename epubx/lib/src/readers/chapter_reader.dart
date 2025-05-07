@@ -16,10 +16,10 @@ class ChapterReader {
       EpubBookRef bookRef, List<EpubNavigationPoint> navigationPoints) {
     var result = <EpubChapterRef>[];
     // navigationPoints.forEach((EpubNavigationPoint navigationPoint) {
-    for (var navigationPoint in navigationPoints){
+    for (var navigationPoint in navigationPoints) {
       String? contentFileName;
       String? anchor;
-      if (navigationPoint.Content?.Source ==null) continue;
+      if (navigationPoint.Content?.Source == null) continue;
       var contentSourceAnchorCharIndex =
           navigationPoint.Content!.Source!.indexOf('#');
       if (contentSourceAnchorCharIndex == -1) {
@@ -31,7 +31,7 @@ class ChapterReader {
         anchor = navigationPoint.Content!.Source!
             .substring(contentSourceAnchorCharIndex + 1);
       }
-      contentFileName = Uri.decodeFull(contentFileName!);
+      contentFileName = Uri.decodeFull(contentFileName!).replaceAll("\\", "/");
       EpubTextContentFileRef? htmlContentFileRef;
       if (!bookRef.Content!.Html!.containsKey(contentFileName)) {
         throw Exception(
@@ -45,21 +45,23 @@ class ChapterReader {
       chapterRef.Title = navigationPoint.NavigationLabels!.first.Text;
       chapterRef.SubChapters =
           getChaptersImpl(bookRef, navigationPoint.ChildNavigationPoints!);
-      if(chapterRef.ContentFileName!.contains('_split_')) {
+      if (chapterRef.ContentFileName!.contains('_split_')) {
         var fileNamePart = chapterRef.ContentFileName!.split('_split_')[0];
         for (var fileName in bookRef.Content!.Html!.keys) {
-          if(fileName.contains(fileNamePart)) {
+          if (fileName.contains(fileNamePart)) {
             if (fileName == contentFileName) {
               continue;
             }
-            chapterRef.otherTextContentFileRefs.add(bookRef.Content!.Html![fileName]!);
+            chapterRef.otherTextContentFileRefs
+                .add(bookRef.Content!.Html![fileName]!);
             chapterRef.OtherContentFileNames.add(fileName);
           }
         }
       }
 
       result.add(chapterRef);
-    };
+    }
+    ;
     return result;
   }
 }

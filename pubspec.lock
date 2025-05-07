@@ -445,7 +445,7 @@ packages:
       path: epubx
       relative: true
     source: path
-    version: "4.0.2"
+    version: "4.0.3"
   exception_templates:
     dependency: transitive
     description:

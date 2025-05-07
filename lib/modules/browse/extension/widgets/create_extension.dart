@@ -338,7 +338,7 @@ class TestSource extends MProvider {
   
   // For novel html content
   @override
-  Future<String> getHtmlContent(String url) async {
+  Future<String> getHtmlContent(String name, String url) async {
     // TODO: implement
   }
   
@@ -409,7 +409,7 @@ class DefaultExtension extends MProvider {
         throw new Error("getDetail not implemented");
     }
     // For novel html content
-    async getHtmlContent(url) {
+    async getHtmlContent(name, url) {
         throw new Error("getHtmlContent not implemented");
     }
     // Clean html up for reader

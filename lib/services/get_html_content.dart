@@ -33,7 +33,7 @@ Future<String> getHtmlContent(Ref ref, {required Chapter chapter}) async {
   if (htmlContent != null) {
     html = await getExtensionService(source!).cleanHtmlContent(htmlContent);
   } else {
-    html = await getExtensionService(source!).getHtmlContent(chapter.url!);
+    html = await getExtensionService(source!).getHtmlContent(chapter.manga.value!.name!, chapter.url!);
   }
   return '''<div id="readerViewContent"><div style="padding: 2em;">${html.substring(1, html.length - 1)}</div></div>'''
       .replaceAll("\\n", "")

@@ -308,9 +308,15 @@ class PackageReader {
         case 'scheme':
           result.Scheme = attributeValue;
           break;
+        case 'content':
+          result.Content = attributeValue;
+          break;
+        case 'name':
+          result.Name = attributeValue;
+          break;
       }
     });
-    result.Content = metadataMetaNode.text;
+    result.Content = result.Content ?? metadataMetaNode.text;
     return result;
   }
 

@@ -165,6 +165,11 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
           ),
           params: [
             BridgeParameter(
+              'name',
+              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+              false,
+            ),
+            BridgeParameter(
               'url',
               BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
               false,
@@ -1673,8 +1678,8 @@ class $MProvider extends MProvider with $Bridge<MProvider> {
   }
 
   @override
-  Future<String> getHtmlContent(String url) async =>
-      await $_invoke('getHtmlContent', [$String(url)]);
+  Future<String> getHtmlContent(String name, String url) async =>
+      await $_invoke('getHtmlContent', [$String(name), $String(url)]);
 
   @override
   Future<String> cleanHtmlContent(String html) async =>

@@ -11,25 +11,32 @@ import '../schema/opf/epub_metadata_meta.dart';
 
 class BookCoverReader {
   static Future<images.Image?> readBookCover(EpubBookRef bookRef) async {
-    var metaItems = bookRef.Schema!.Package!.Metadata!.MetaItems;
-    if (metaItems == null || metaItems.isEmpty) return null;
+    EpubManifestItem? coverManifestItem =
+        bookRef.Schema!.Package!.Manifest!.Items!.firstWhereOrNull(
+      (i) => i.Properties == "cover-image",
+    );
 
-    var coverMetaItem = metaItems.firstWhereOrNull(
-        (EpubMetadataMeta metaItem) =>
-            metaItem.Name != null && metaItem.Name!.toLowerCase() == 'cover');
-    if (coverMetaItem == null) return null;
-    if (coverMetaItem.Content == null || coverMetaItem.Content!.isEmpty) {
-      throw Exception(
-          'Incorrect EPUB metadata: cover item content is missing.');
+    if (coverManifestItem == null) {
+      var metaItems = bookRef.Schema!.Package!.Metadata!.MetaItems;
+      if (metaItems == null || metaItems.isEmpty) return null;
+
+      var coverMetaItem = metaItems.firstWhereOrNull(
+          (EpubMetadataMeta metaItem) =>
+              metaItem.Name != null && metaItem.Name!.toLowerCase() == 'cover');
+      if (coverMetaItem == null) return null;
+      if (coverMetaItem.Content == null || coverMetaItem.Content!.isEmpty) {
+        throw Exception(
+            'Incorrect EPUB metadata: cover item content is missing.');
+      }
+
+      coverManifestItem = bookRef.Schema!.Package!.Manifest!.Items!
+          .firstWhereOrNull((EpubManifestItem manifestItem) =>
+              manifestItem.Id!.toLowerCase() ==
+              coverMetaItem.Content!.toLowerCase());
     }
 
-    var coverManifestItem = bookRef.Schema!.Package!.Manifest!.Items!
-        .firstWhereOrNull((EpubManifestItem manifestItem) =>
-            manifestItem.Id!.toLowerCase() ==
-            coverMetaItem.Content!.toLowerCase());
     if (coverManifestItem == null) {
-      throw Exception(
-          'Incorrect EPUB manifest: item with ID = \"${coverMetaItem.Content}\" is missing.');
+      throw Exception('Incorrect EPUB manifest');
     }
 
     EpubByteContentFileRef? coverImageContentFileRef;
