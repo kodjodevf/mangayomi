@@ -530,10 +530,10 @@ packages:
     dependency: "direct main"
     description:
       name: file_picker
-      sha256: "8986dec4581b4bcd4b6df5d75a2ea0bede3db802f500635d05fa8be298f9467f"
+      sha256: b4303b48136c7913fccb7297458b450bb7f94dd1d77b6b6e752e8a0208c0469d
       url: "https://pub.dev"
     source: hosted
-    version: "10.1.2"
+    version: "10.1.4"
   fixnum:
     dependency: transitive
     description:
@@ -888,10 +888,10 @@ packages:
     dependency: "direct main"
     description:
       name: http
-      sha256: fe7ab022b76f3034adc518fb6ea04a82387620e19977665ea18d30a1cf43442f
+      sha256: "2c11f3f94c687ee9bad77c171151672986360b2b001d109814ee7140b2cf261b"
       url: "https://pub.dev"
     source: hosted
-    version: "1.3.0"
+    version: "1.4.0"
   http_client_helper:
     dependency: transitive
     description:
@@ -1616,10 +1616,10 @@ packages:
     dependency: "direct main"
     description:
       name: screen_brightness
-      sha256: eca7bd9d2c3c688bcad14855361cab7097839400b6b4a56f62b7ae511c709958
+      sha256: "46d1b448729c1ed67c812f2c97d7fa8308809d91031c7ecdeb216ca65f7660de"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.2"
+    version: "2.1.3"
   screen_brightness_android:
     dependency: transitive
     description:
@@ -1644,6 +1644,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
+  screen_brightness_ohos:
+    dependency: transitive
+    description:
+      name: screen_brightness_ohos
+      sha256: "61e313e46eaee3f83dd4e85a2a91f8a81be02c154bc9e60830a7c0fd76dac286"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.1.0"
   screen_brightness_platform_interface:
     dependency: transitive
     description:
@@ -2037,10 +2045,10 @@ packages:
     dependency: transitive
     description:
       name: video_player_android
-      sha256: ae7d4f1b41e3ac6d24dd9b9d5d6831b52d74a61bdd90a7a6262a33d8bb97c29a
+      sha256: "1f4e8e0e02403452d699ef7cf73fe9936fac8f6f0605303d111d71acb375d1bc"
       url: "https://pub.dev"
     source: hosted
-    version: "2.8.2"
+    version: "2.8.3"
   video_player_avfoundation:
     dependency: transitive
     description:
@@ -2117,10 +2125,10 @@ packages:
     dependency: transitive
     description:
       name: web_socket
-      sha256: bfe6f435f6ec49cb6c01da1e275ae4228719e59a6b067048c51e72d9d63bcc4b
+      sha256: "34d64019aa8e36bf9842ac014bb5d2f5586ca73df5e4d9bf5c936975cae6982c"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0"
+    version: "1.0.1"
   web_socket_channel:
     dependency: transitive
     description:
