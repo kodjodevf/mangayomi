@@ -121,10 +121,9 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   AsyncValue<MPages?>? _getManga;
   int _length = 0;
   bool _isFiltering = false;
-
+  late final supportsLatest = ref.watch(supportsLatestProvider(source: source));
   @override
   Widget build(BuildContext context) {
-    final supportsLatest = ref.watch(supportsLatestProvider(source: source));
     final filterList = getFilterList(source: source);
     if (_selectedIndex == 2 && (_isSearch && _query.isNotEmpty) ||
         _isFiltering) {
