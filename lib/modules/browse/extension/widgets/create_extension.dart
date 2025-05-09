@@ -22,6 +22,7 @@ class _CreateExtensionState extends State<CreateExtension> {
   String _baseUrl = "";
   String _apiUrl = "";
   String _iconUrl = "";
+  String _notes = "";
   int _sourceTypeIndex = 0;
   int _itemTypeIndex = 0;
   int _languageIndex = 0;
@@ -109,6 +110,11 @@ class _CreateExtensionState extends State<CreateExtension> {
               _textEditing("iconUrl", context, "Source icon url", (v) {
                 setState(() {
                   _iconUrl = v;
+                });
+              }),
+              _textEditing("notes", context, "ex: this extension requires login", (v) {
+                setState(() {
+                  _notes = v;
                 });
               }),
               Padding(
@@ -217,6 +223,7 @@ class _CreateExtensionState extends State<CreateExtension> {
                                   isActive: true,
                                   version: "0.0.1",
                                   isNsfw: false,
+                                  notes: _notes,
                                 )..sourceCodeLanguage = _sourceCodeLanguage;
                                 source =
                                     source
@@ -331,7 +338,7 @@ class TestSource extends MProvider {
   
   // For novel html content
   @override
-  Future<String> getHtmlContent(String url) async {
+  Future<String> getHtmlContent(String name, String url) async {
     // TODO: implement
   }
   
@@ -378,7 +385,8 @@ const mangayomiSources = [{
     "typeSource": "${source.typeSource}",
     "itemType": ${source.itemType.index},
     "version": "${source.version}",
-    "pkgPath": ""
+    "pkgPath": "",
+    "notes": ""
 }];
 
 class DefaultExtension extends MProvider {
@@ -401,7 +409,7 @@ class DefaultExtension extends MProvider {
         throw new Error("getDetail not implemented");
     }
     // For novel html content
-    async getHtmlContent(url) {
+    async getHtmlContent(name, url) {
         throw new Error("getHtmlContent not implemented");
     }
     // Clean html up for reader

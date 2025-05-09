@@ -39,7 +39,7 @@ class M3u8Downloader {
     required this.fileName,
     this.headers,
     required this.chapter,
-    this.concurrentDownloads = 15,
+    this.concurrentDownloads = 2,
   });
 
   void _log(String message) {

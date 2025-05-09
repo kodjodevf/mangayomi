@@ -376,6 +376,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get save_as_cbz_archive => 'Salvar como arquivo CBZ';
 
   @override
+  String get concurrent_downloads => 'Concurrent downloads';
+
+  @override
   String get browse_subtitle => 'Fontes, pesquisa global';
 
   @override
@@ -1139,7 +1142,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get update_library => 'Atualizar biblioteca';
 
   @override
-  String get updating_library => 'Atualizando biblioteca';
+  String updating_library(Object cur, Object failed, Object max) {
+    return 'Atualizando biblioteca ($cur / $max) - Falha: $failed';
+  }
 
   @override
   String get next_chapter => 'Próximo capítulo';
@@ -1154,6 +1159,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get next_25_chapters => 'Próximos 25 capítulos';
 
   @override
+  String get all_chapters => 'All chapters';
+
+  @override
   String get next_episode => 'Próximo episódio';
 
   @override
@@ -1164,6 +1172,9 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get next_25_episodes => 'Próximos 25 episódios';
+
+  @override
+  String get all_episodes => 'All episodes';
 
   @override
   String get cover_saved => 'Capa salva';
@@ -1439,6 +1450,11 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get load_own_subtitles => 'Carregar suas próprias legendas...';
+
+  @override
+  String extension_notes(Object notes) {
+    return 'Notes: $notes';
+  }
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -2576,7 +2592,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get update_library => 'Atualizar biblioteca';
 
   @override
-  String get updating_library => 'Atualizando biblioteca';
+  String updating_library(Object cur, Object failed, Object max) {
+    return 'Atualizando biblioteca ($cur / $max) - Falha: $failed';
+  }
 
   @override
   String get next_chapter => 'Próximo capítulo';

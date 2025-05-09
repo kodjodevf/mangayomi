@@ -65,6 +65,8 @@ class Source {
   @enumerated
   SourceCodeLanguage sourceCodeLanguage = SourceCodeLanguage.dart;
 
+  String? notes;
+
   Repo? repo;
 
   Source({
@@ -95,6 +97,7 @@ class Source {
     this.additionalParams = "",
     this.isLocal = false,
     this.isObsolete = false,
+    this.notes = '',
     this.repo,
   });
 
@@ -128,6 +131,7 @@ class Source {
     isLocal = json['isLocal'];
     sourceCodeLanguage =
         SourceCodeLanguage.values[json['sourceCodeLanguage'] ?? 0];
+    notes = json['notes'] ?? "";
     repo = json['repo'] != null ? Repo.fromJson(json['repo']) : null;
   }
 
@@ -160,6 +164,7 @@ class Source {
     'sourceCodeLanguage': sourceCodeLanguage.index,
     'isObsolete': isObsolete,
     'isLocal': isLocal,
+    'notes': notes,
     'repo': repo?.toJson(),
   };
 

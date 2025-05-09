@@ -42,6 +42,11 @@ class StorageProvider {
     await Directory(d!.path).delete(recursive: true);
   }
 
+  Future<void> deleteTmpDirectory() async {
+    final d = await getTmpDirectory();
+    await Directory(d!.path).delete(recursive: true);
+  }
+
   Future<Directory?> getDefaultDirectory() async {
     Directory? directory;
     if (Platform.isAndroid) {
@@ -56,6 +61,13 @@ class StorageProvider {
   Future<Directory?> getBtDirectory() async {
     final gefaultDirectory = await getDefaultDirectory();
     String dbDir = path.join(gefaultDirectory!.path, 'torrents');
+    await Directory(dbDir).create(recursive: true);
+    return Directory(dbDir);
+  }
+
+  Future<Directory?> getTmpDirectory() async {
+    final gefaultDirectory = await getDirectory();
+    String dbDir = path.join(gefaultDirectory!.path, 'tmp');
     await Directory(dbDir).create(recursive: true);
     return Directory(dbDir);
   }

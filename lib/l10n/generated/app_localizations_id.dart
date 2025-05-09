@@ -376,6 +376,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get save_as_cbz_archive => 'Simpan sebagai Arsip CBZ';
 
   @override
+  String get concurrent_downloads => 'Concurrent downloads';
+
+  @override
   String get browse_subtitle => 'Sumber, Pencarian Umum';
 
   @override
@@ -1139,7 +1142,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get update_library => 'Perbarui perpustakaan';
 
   @override
-  String get updating_library => 'Memperbarui perpustakaan';
+  String updating_library(Object cur, Object failed, Object max) {
+    return 'Memperbarui perpustakaan ($cur / $max) - Gagal: $failed';
+  }
 
   @override
   String get next_chapter => 'Berikutnya bab';
@@ -1154,6 +1159,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get next_25_chapters => '25 bab berikutnya';
 
   @override
+  String get all_chapters => 'All chapters';
+
+  @override
   String get next_episode => 'Episode berikutnya';
 
   @override
@@ -1164,6 +1172,9 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get next_25_episodes => '25 episode berikutnya';
+
+  @override
+  String get all_episodes => 'All episodes';
 
   @override
   String get cover_saved => 'Sampul disimpan';
@@ -1439,4 +1450,9 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get load_own_subtitles => 'Muat subtitle Anda sendiri...';
+
+  @override
+  String extension_notes(Object notes) {
+    return 'Notes: $notes';
+  }
 }

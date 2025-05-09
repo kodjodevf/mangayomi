@@ -843,6 +843,12 @@ abstract class AppLocalizations {
   /// **'Save as CBZ archive'**
   String get save_as_cbz_archive;
 
+  /// No description provided for @concurrent_downloads.
+  ///
+  /// In en, this message translates to:
+  /// **'Concurrent downloads'**
+  String get concurrent_downloads;
+
   /// No description provided for @browse_subtitle.
   ///
   /// In en, this message translates to:
@@ -2316,8 +2322,8 @@ abstract class AppLocalizations {
   /// No description provided for @updating_library.
   ///
   /// In en, this message translates to:
-  /// **'Updating library'**
-  String get updating_library;
+  /// **'Updating library ({cur} / {max}) - Failed: {failed}'**
+  String updating_library(Object cur, Object failed, Object max);
 
   /// No description provided for @next_chapter.
   ///
@@ -2343,6 +2349,12 @@ abstract class AppLocalizations {
   /// **'Next 25 chapters'**
   String get next_25_chapters;
 
+  /// No description provided for @all_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'All chapters'**
+  String get all_chapters;
+
   /// No description provided for @next_episode.
   ///
   /// In en, this message translates to:
@@ -2366,6 +2378,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Next 25 episodes'**
   String get next_25_episodes;
+
+  /// No description provided for @all_episodes.
+  ///
+  /// In en, this message translates to:
+  /// **'All episodes'**
+  String get all_episodes;
 
   /// No description provided for @cover_saved.
   ///
@@ -2888,6 +2906,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Load your own subtitles...'**
   String get load_own_subtitles;
+
+  /// No description provided for @extension_notes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes: {notes}'**
+  String extension_notes(Object notes);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

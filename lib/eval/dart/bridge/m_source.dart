@@ -45,6 +45,9 @@ class $MSource implements MSource, $Instance {
       'additionalParams': BridgeFieldDef(
         BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
       ),
+      'notes': BridgeFieldDef(
+        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
+      ),
     },
     wrap: true,
   );
@@ -84,6 +87,8 @@ class $MSource implements MSource, $Instance {
         return $String($value.apiUrl!);
       case 'additionalParams':
         return $String($value.additionalParams!);
+      case 'notes':
+        return $String($value.notes!);
 
       default:
         return _superclass.$getProperty(runtime, identifier);
@@ -116,6 +121,8 @@ class $MSource implements MSource, $Instance {
         $value.apiUrl = value.$reified;
       case 'additionalParams':
         $value.additionalParams = value.$reified;
+      case 'notes':
+        $value.notes = value.$reified;
       default:
         _superclass.$setProperty(runtime, identifier, value);
     }
@@ -152,6 +159,9 @@ class $MSource implements MSource, $Instance {
   String? get additionalParams => $value.additionalParams;
 
   @override
+  String? get notes => $value.notes;
+
+  @override
   set apiUrl(String? apiUrl) {}
 
   @override
@@ -182,6 +192,9 @@ class $MSource implements MSource, $Instance {
   set additionalParams(String? additionalParams) {}
 
   @override
+  set notes(String? notes) {}
+
+  @override
   Map<String, dynamic> toJson() => {
     'apiUrl': apiUrl,
     'baseUrl': baseUrl,
@@ -193,5 +206,6 @@ class $MSource implements MSource, $Instance {
     'lang': lang,
     'name': name,
     'additionalParams': additionalParams,
+    'notes': notes,
   };
 }

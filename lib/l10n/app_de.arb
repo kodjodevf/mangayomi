@@ -362,7 +362,7 @@
     "skip_ending": "Ending überspringen",
     "fullscreen": "Vollbild",
     "update_library": "Bibliothek aktualisieren",
-    "updating_library": "Bibliothek wird aktualisiert",
+    "updating_library": "Bibliothek wird aktualisiert ({cur} / {max}) - Fehlgeschlagen: {failed}",
     "next_chapter": "Nächstes Kapitel",
     "next_5_chapters": "Nächsten 5 Kapitel",
     "next_10_chapters": "Nächsten 10 Kapitel",
@@ -464,5 +464,6 @@
     "clear_all_sources": "Alle Quellen löschen",
     "clear_all_sources_msg": "Dies wird alle Quellen der Anwendung vollständig löschen. Möchten Sie wirklich fortfahren?",
     "sources_cleared": "Quellen gelöscht!",
-    "add_repo": "Repository hinzufügen?"
+    "add_repo": "Repository hinzufügen?",
+    "extension_notes": "Hinweis: {notes}"
 }

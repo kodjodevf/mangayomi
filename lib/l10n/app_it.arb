@@ -285,7 +285,7 @@
     "aniskip_button_timeout": "Timeout del pulsante",
     "fullscreen": "Schermo intero",
     "update_library": "Aggiorna libreria",
-    "updating_library": "Aggiornamento della libreria",
+    "updating_library": "Aggiornamento della libreria ({cur} / {max}) - Fallito: {failed}",
     "next_chapter": "Capitolo successivo",
     "next_5_chapters": "Prossimi 5 capitoli",
     "next_10_chapters": "Prossimi 10 capitoli",

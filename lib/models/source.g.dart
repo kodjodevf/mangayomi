@@ -128,40 +128,45 @@ const SourceSchema = CollectionSchema(
       name: r'name',
       type: IsarType.string,
     ),
-    r'repo': PropertySchema(
+    r'notes': PropertySchema(
       id: 22,
+      name: r'notes',
+      type: IsarType.string,
+    ),
+    r'repo': PropertySchema(
+      id: 23,
       name: r'repo',
       type: IsarType.object,
       target: r'Repo',
     ),
     r'sourceCode': PropertySchema(
-      id: 23,
+      id: 24,
       name: r'sourceCode',
       type: IsarType.string,
     ),
     r'sourceCodeLanguage': PropertySchema(
-      id: 24,
+      id: 25,
       name: r'sourceCodeLanguage',
       type: IsarType.byte,
       enumMap: _SourcesourceCodeLanguageEnumValueMap,
     ),
     r'sourceCodeUrl': PropertySchema(
-      id: 25,
+      id: 26,
       name: r'sourceCodeUrl',
       type: IsarType.string,
     ),
     r'typeSource': PropertySchema(
-      id: 26,
+      id: 27,
       name: r'typeSource',
       type: IsarType.string,
     ),
     r'version': PropertySchema(
-      id: 27,
+      id: 28,
       name: r'version',
       type: IsarType.string,
     ),
     r'versionLast': PropertySchema(
-      id: 28,
+      id: 29,
       name: r'versionLast',
       type: IsarType.string,
     )
@@ -247,6 +252,12 @@ int _sourceEstimateSize(
     }
   }
   {
+    final value = object.notes;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
     final value = object.repo;
     if (value != null) {
       bytesCount +=
@@ -314,18 +325,19 @@ void _sourceSerialize(
   writer.writeString(offsets[19], object.lang);
   writer.writeBool(offsets[20], object.lastUsed);
   writer.writeString(offsets[21], object.name);
+  writer.writeString(offsets[22], object.notes);
   writer.writeObject<Repo>(
-    offsets[22],
+    offsets[23],
     allOffsets,
     RepoSchema.serialize,
     object.repo,
   );
-  writer.writeString(offsets[23], object.sourceCode);
-  writer.writeByte(offsets[24], object.sourceCodeLanguage.index);
-  writer.writeString(offsets[25], object.sourceCodeUrl);
-  writer.writeString(offsets[26], object.typeSource);
-  writer.writeString(offsets[27], object.version);
-  writer.writeString(offsets[28], object.versionLast);
+  writer.writeString(offsets[24], object.sourceCode);
+  writer.writeByte(offsets[25], object.sourceCodeLanguage.index);
+  writer.writeString(offsets[26], object.sourceCodeUrl);
+  writer.writeString(offsets[27], object.typeSource);
+  writer.writeString(offsets[28], object.version);
+  writer.writeString(offsets[29], object.versionLast);
 }
 
 Source _sourceDeserialize(
@@ -358,19 +370,20 @@ Source _sourceDeserialize(
     lang: reader.readStringOrNull(offsets[19]),
     lastUsed: reader.readBoolOrNull(offsets[20]),
     name: reader.readStringOrNull(offsets[21]),
+    notes: reader.readStringOrNull(offsets[22]),
     repo: reader.readObjectOrNull<Repo>(
-      offsets[22],
+      offsets[23],
       RepoSchema.deserialize,
       allOffsets,
     ),
-    sourceCode: reader.readStringOrNull(offsets[23]),
-    sourceCodeUrl: reader.readStringOrNull(offsets[25]),
-    typeSource: reader.readStringOrNull(offsets[26]),
-    version: reader.readStringOrNull(offsets[27]),
-    versionLast: reader.readStringOrNull(offsets[28]),
+    sourceCode: reader.readStringOrNull(offsets[24]),
+    sourceCodeUrl: reader.readStringOrNull(offsets[26]),
+    typeSource: reader.readStringOrNull(offsets[27]),
+    version: reader.readStringOrNull(offsets[28]),
+    versionLast: reader.readStringOrNull(offsets[29]),
   );
   object.sourceCodeLanguage = _SourcesourceCodeLanguageValueEnumMap[
-          reader.readByteOrNull(offsets[24])] ??
+          reader.readByteOrNull(offsets[25])] ??
       SourceCodeLanguage.dart;
   return object;
 }
@@ -428,24 +441,26 @@ P _sourceDeserializeProp<P>(
     case 21:
       return (reader.readStringOrNull(offset)) as P;
     case 22:
+      return (reader.readStringOrNull(offset)) as P;
+    case 23:
       return (reader.readObjectOrNull<Repo>(
         offset,
         RepoSchema.deserialize,
         allOffsets,
       )) as P;
-    case 23:
-      return (reader.readStringOrNull(offset)) as P;
     case 24:
+      return (reader.readStringOrNull(offset)) as P;
+    case 25:
       return (_SourcesourceCodeLanguageValueEnumMap[
               reader.readByteOrNull(offset)] ??
           SourceCodeLanguage.dart) as P;
-    case 25:
-      return (reader.readStringOrNull(offset)) as P;
     case 26:
       return (reader.readStringOrNull(offset)) as P;
     case 27:
       return (reader.readStringOrNull(offset)) as P;
     case 28:
+      return (reader.readStringOrNull(offset)) as P;
+    case 29:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -2418,6 +2433,152 @@ extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterFilterCondition> notesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'notes',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> notesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'notes',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> notesEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'notes',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> notesGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'notes',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> notesLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'notes',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> notesBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'notes',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> notesStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'notes',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> notesEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'notes',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> notesContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'notes',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> notesMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'notes',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> notesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'notes',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> notesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'notes',
+        value: '',
+      ));
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterFilterCondition> repoIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -3497,6 +3658,18 @@ extension SourceQuerySortBy on QueryBuilder<Source, Source, QSortBy> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterSortBy> sortByNotes() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'notes', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> sortByNotesDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'notes', Sort.desc);
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterSortBy> sortBySourceCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sourceCode', Sort.asc);
@@ -3847,6 +4020,18 @@ extension SourceQuerySortThenBy on QueryBuilder<Source, Source, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterSortBy> thenByNotes() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'notes', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> thenByNotesDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'notes', Sort.desc);
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterSortBy> thenBySourceCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sourceCode', Sort.asc);
@@ -4065,6 +4250,13 @@ extension SourceQueryWhereDistinct on QueryBuilder<Source, Source, QDistinct> {
     });
   }
 
+  QueryBuilder<Source, Source, QDistinct> distinctByNotes(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'notes', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Source, Source, QDistinct> distinctBySourceCode(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -4244,6 +4436,12 @@ extension SourceQueryProperty on QueryBuilder<Source, Source, QQueryProperty> {
   QueryBuilder<Source, String?, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
+    });
+  }
+
+  QueryBuilder<Source, String?, QQueryOperations> notesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'notes');
     });
   }
 

@@ -3,6 +3,7 @@ import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -36,6 +37,9 @@ class TotalChapterCacheSizeState extends _$TotalChapterCacheSizeState {
         await dir.delete(recursive: true);
       }
       msg = "0.00 B";
+    } catch (_) {}
+    try {
+      await StorageProvider().deleteTmpDirectory();
     } catch (_) {}
     if (msg != null && showToast) {
       state = msg;

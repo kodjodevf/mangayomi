@@ -19,6 +19,8 @@ class MSource {
 
   String? additionalParams;
 
+  String? notes;
+
   MSource({
     this.id,
     this.name,
@@ -30,6 +32,7 @@ class MSource {
     this.dateFormatLocale,
     this.apiUrl,
     this.additionalParams,
+    this.notes,
   });
 
   Map<String, dynamic> toJson() => {
@@ -43,5 +46,6 @@ class MSource {
     'lang': lang,
     'name': name,
     'additionalParams': additionalParams,
+    'notes': notes,
   };
 }

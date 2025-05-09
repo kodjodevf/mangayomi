@@ -14,6 +14,14 @@ class ThemeModeState extends _$ThemeModeState {
     return isar.settings.getSync(227)!.themeIsDark!;
   }
 
+  void setTheme(Brightness brightness) {
+    if (brightness == Brightness.light) {
+      ref.read(themeModeStateProvider.notifier).setLightTheme();
+    } else {
+      ref.read(themeModeStateProvider.notifier).setDarkTheme();
+    }
+  }
+
   void setLightTheme() {
     final settings = isar.settings.getSync(227);
     state = false;

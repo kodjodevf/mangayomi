@@ -56,5 +56,22 @@ final downloadLocationStateProvider = AutoDisposeNotifierProvider<
 );
 
 typedef _$DownloadLocationState = AutoDisposeNotifier<(String, String)>;
+String _$concurrentDownloadsStateHash() =>
+    r'665ec25af7d72e3345ce1ca96319419f11f121e6';
+
+/// See also [ConcurrentDownloadsState].
+@ProviderFor(ConcurrentDownloadsState)
+final concurrentDownloadsStateProvider =
+    AutoDisposeNotifierProvider<ConcurrentDownloadsState, int>.internal(
+  ConcurrentDownloadsState.new,
+  name: r'concurrentDownloadsStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$concurrentDownloadsStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$ConcurrentDownloadsState = AutoDisposeNotifier<int>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
