@@ -1,211 +1,44 @@
-import 'package:dart_eval/dart_eval_bridge.dart';
-import 'package:dart_eval/stdlib/core.dart';
+import 'package:d4rt/d4rt.dart';
 import 'package:mangayomi/eval/model/m_source.dart';
 
-class $MSource implements MSource, $Instance {
-  $MSource.wrap(this.$value) : _superclass = $Object($value);
-
-  static const $type = BridgeTypeRef(
-    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MSource'),
-  );
-
-  static const $declaration = BridgeClassDef(
-    BridgeClassType($type),
+class MSourceBridge {
+  final mSourceBridgedClass = BridgedClassDefinition(
+    nativeType: MSource,
+    name: 'MSource',
     constructors: {
-      '': BridgeConstructorDef(
-        BridgeFunctionDef(returns: BridgeTypeAnnotation($type), params: []),
-      ),
+      '': (visitor, positionalArgs, namedArgs) {
+        return MSource(
+          id: namedArgs.get<int?>('id'),
+          name: namedArgs.get<String?>('name'),
+          baseUrl: namedArgs.get<String?>('baseUrl'),
+          lang: namedArgs.get<String?>('lang'),
+          isFullData: namedArgs.get<bool?>('isFullData'),
+          hasCloudflare: namedArgs.get<bool?>('hasCloudflare'),
+          dateFormat: namedArgs.get<String?>('dateFormat'),
+          dateFormatLocale: namedArgs.get<String?>('dateFormatLocale'),
+          apiUrl: namedArgs.get<String?>('apiUrl'),
+          additionalParams: namedArgs.get<String?>('additionalParams'),
+          notes: namedArgs.get<String?>('notes'),
+        );
+      },
     },
-    fields: {
-      'id': BridgeFieldDef(BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int))),
-      'name': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'baseUrl': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'lang': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'isFullData': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)),
-      ),
-      'hasCloudflare': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)),
-      ),
-      'dateFormat': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'dateFormatLocale': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'apiUrl': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'additionalParams': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'notes': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
+    getters: {
+      'id': (visitor, target) => (target as MSource).id,
+      'name': (visitor, target) => (target as MSource).name,
+      'baseUrl': (visitor, target) => (target as MSource).baseUrl,
+      'lang': (visitor, target) => (target as MSource).lang,
+      'isFullData': (visitor, target) => (target as MSource).isFullData,
+      'hasCloudflare': (visitor, target) => (target as MSource).hasCloudflare,
+      'dateFormat': (visitor, target) => (target as MSource).dateFormat,
+      'dateFormatLocale':
+          (visitor, target) => (target as MSource).dateFormatLocale,
+      'apiUrl': (visitor, target) => (target as MSource).apiUrl,
+      'additionalParams':
+          (visitor, target) => (target as MSource).additionalParams,
+      'notes': (visitor, target) => (target as MSource).notes,
     },
-    wrap: true,
   );
-
-  static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $MSource.wrap(MSource());
+  void registerBridgedClasses(D4rt interpreter) {
+    interpreter.registerBridgedClass(mSourceBridgedClass);
   }
-
-  @override
-  final MSource $value;
-
-  @override
-  MSource get $reified => $value;
-
-  final $Instance _superclass;
-
-  @override
-  $Value? $getProperty(Runtime runtime, String identifier) {
-    switch (identifier) {
-      case 'id':
-        return $int($value.id!);
-      case 'name':
-        return $String($value.name!);
-      case 'baseUrl':
-        return $String($value.baseUrl!);
-      case 'lang':
-        return $String($value.lang!);
-      case 'isFullData':
-        return $bool($value.isFullData!);
-      case 'hasCloudflare':
-        return $bool($value.hasCloudflare!);
-      case 'dateFormat':
-        return $String($value.dateFormat!);
-      case 'dateFormatLocale':
-        return $String($value.dateFormatLocale!);
-      case 'apiUrl':
-        return $String($value.apiUrl!);
-      case 'additionalParams':
-        return $String($value.additionalParams!);
-      case 'notes':
-        return $String($value.notes!);
-
-      default:
-        return _superclass.$getProperty(runtime, identifier);
-    }
-  }
-
-  @override
-  int $getRuntimeType(Runtime runtime) => runtime.lookupType($type.spec!);
-
-  @override
-  void $setProperty(Runtime runtime, String identifier, $Value value) {
-    switch (identifier) {
-      case 'id':
-        $value.id = value.$reified;
-      case 'name':
-        $value.name = value.$reified;
-      case 'baseUrl':
-        $value.baseUrl = value.$reified;
-      case 'lang':
-        $value.lang = value.$reified;
-      case 'isFullData':
-        $value.isFullData = value.$reified;
-      case 'hasCloudflare':
-        $value.hasCloudflare = value.$reified;
-      case 'dateFormat':
-        $value.dateFormat = value.$reified;
-      case 'dateFormatLocale':
-        $value.dateFormatLocale = value.$reified;
-      case 'apiUrl':
-        $value.apiUrl = value.$reified;
-      case 'additionalParams':
-        $value.additionalParams = value.$reified;
-      case 'notes':
-        $value.notes = value.$reified;
-      default:
-        _superclass.$setProperty(runtime, identifier, value);
-    }
-  }
-
-  @override
-  String? get apiUrl => $value.apiUrl;
-
-  @override
-  String? get baseUrl => $value.baseUrl;
-
-  @override
-  String? get dateFormat => $value.dateFormat;
-
-  @override
-  String? get dateFormatLocale => $value.dateFormatLocale;
-
-  @override
-  bool? get hasCloudflare => $value.hasCloudflare;
-
-  @override
-  int? get id => $value.id;
-
-  @override
-  bool? get isFullData => $value.isFullData;
-
-  @override
-  String? get lang => $value.lang;
-
-  @override
-  String? get name => $value.name;
-
-  @override
-  String? get additionalParams => $value.additionalParams;
-
-  @override
-  String? get notes => $value.notes;
-
-  @override
-  set apiUrl(String? apiUrl) {}
-
-  @override
-  set baseUrl(String? baseUrl) {}
-
-  @override
-  set dateFormat(String? dateFormat) {}
-
-  @override
-  set dateFormatLocale(String? dateFormatLocale) {}
-
-  @override
-  set hasCloudflare(bool? hasCloudflare) {}
-
-  @override
-  set id(int? id) {}
-
-  @override
-  set isFullData(bool? isFullData) {}
-
-  @override
-  set lang(String? lang) {}
-
-  @override
-  set name(String? name) {}
-
-  @override
-  set additionalParams(String? additionalParams) {}
-
-  @override
-  set notes(String? notes) {}
-
-  @override
-  Map<String, dynamic> toJson() => {
-    'apiUrl': apiUrl,
-    'baseUrl': baseUrl,
-    'dateFormat': dateFormat,
-    'dateFormatLocale': dateFormatLocale,
-    'hasCloudflare': hasCloudflare,
-    'id': id,
-    'isFullData': isFullData,
-    'lang': lang,
-    'name': name,
-    'additionalParams': additionalParams,
-    'notes': notes,
-  };
 }

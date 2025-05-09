@@ -1,1388 +1,373 @@
-import 'package:dart_eval/dart_eval_bridge.dart';
-import 'package:dart_eval/stdlib/core.dart';
+import 'package:d4rt/d4rt.dart';
 import 'package:mangayomi/eval/model/filter.dart';
 
-class $FilterList implements FilterList, $Instance {
-  $FilterList.wrap(this.$value) : _superclass = $Object($value);
-
-  static const $type = BridgeTypeRef(
-    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'FilterList'),
-  );
-
-  static const $declaration = BridgeClassDef(
-    BridgeClassType($type),
+class FilterBridge {
+  final filterBridgedClass = BridgedClassDefinition(
+    nativeType: FilterList,
+    name: 'FilterList',
     constructors: {
-      '': BridgeConstructorDef(
-        BridgeFunctionDef(
-          returns: BridgeTypeAnnotation($type),
-          params: [
-            BridgeParameter(
-              'filters',
-              BridgeTypeAnnotation(
-                BridgeTypeRef(CoreTypes.list, [
-                  BridgeTypeRef(CoreTypes.dynamic),
-                ]),
-              ),
-              false,
-            ),
-          ],
-        ),
-      ),
+      '': (visitor, positionalArgs, namedArgs) {
+        return FilterList(positionalArgs[0] as List);
+      },
     },
-    fields: {
-      'filters': BridgeFieldDef(
-        BridgeTypeAnnotation(
-          BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)]),
-        ),
-      ),
+    methods: {
+      'filters':
+          (visitor, target, positionalArgs, namedArgs) =>
+              (target as FilterList).filters,
     },
-    wrap: true,
+    setters: {
+      'filters':
+          (visitor, target, value) =>
+              (target as FilterList).filters = value as List,
+    },
   );
-
-  static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $FilterList.wrap(args[0]!.$value);
-  }
-
-  @override
-  final FilterList $value;
-
-  @override
-  FilterList get $reified => $value;
-
-  final $Instance _superclass;
-
-  @override
-  $Value? $getProperty(Runtime runtime, String identifier) {
-    switch (identifier) {
-      case 'filters':
-        return $List.wrap($value.filters);
-
-      default:
-        return _superclass.$getProperty(runtime, identifier);
-    }
-  }
-
-  @override
-  int $getRuntimeType(Runtime runtime) => runtime.lookupType($type.spec!);
-
-  @override
-  void $setProperty(Runtime runtime, String identifier, $Value value) {
-    switch (identifier) {
-      case 'filters':
-        $value.filters =
-            (value.$reified as List)
-                .map((e) => e is $Value ? e.$reified : e)
-                .toList();
-      default:
-        _superclass.$setProperty(runtime, identifier, value);
-    }
-  }
-
-  @override
-  List<dynamic> get filters => $value.filters;
-
-  @override
-  set filters(List<dynamic> filters) {}
-
-  @override
-  Map<String, dynamic> toJson() {
-    throw UnimplementedError();
-  }
-}
-
-class $SelectFilter implements SelectFilter, $Instance {
-  $SelectFilter.wrap(this.$value) : _superclass = $Object($value);
-
-  static const $type = BridgeTypeRef(
-    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'SelectFilter'),
-  );
-
-  static const $declaration = BridgeClassDef(
-    BridgeClassType($type),
+  final selectFilterBridgedClass = BridgedClassDefinition(
+    nativeType: SelectFilter,
+    name: 'SelectFilter',
     constructors: {
-      '': BridgeConstructorDef(
-        BridgeFunctionDef(
-          returns: BridgeTypeAnnotation($type),
-          params: [
-            BridgeParameter(
-              'type',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-              false,
-            ),
-            BridgeParameter(
-              'name',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-              false,
-            ),
-            BridgeParameter(
-              'state',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)),
-              false,
-            ),
-            BridgeParameter(
-              'values',
-              BridgeTypeAnnotation(
-                BridgeTypeRef(CoreTypes.list, [
-                  BridgeTypeRef(CoreTypes.dynamic),
-                ]),
-              ),
-              false,
-            ),
-          ],
-        ),
-      ),
+      '': (visitor, positionalArgs, namedArgs) {
+        return SelectFilter(
+          positionalArgs.get<String?>(0),
+          positionalArgs.get<String>(1)!,
+          positionalArgs.get<int>(2)!,
+          positionalArgs.get<List>(3)!,
+          positionalArgs.get<String?>(4),
+        );
+      },
     },
-    fields: {
-      'type': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'name': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'state': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)),
-      ),
-      'values': BridgeFieldDef(
-        BridgeTypeAnnotation(
-          BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)]),
-        ),
-      ),
+    getters: {
+      'type': (visitor, target) => (target as SelectFilter).type,
+      'name': (visitor, target) => (target as SelectFilter).name,
+      'state': (visitor, target) => (target as SelectFilter).state,
+      'values': (visitor, target) => (target as SelectFilter).values,
+      'typeName': (visitor, target) => (target as SelectFilter).typeName,
     },
-    wrap: true,
+    setters: {
+      'state':
+          (visitor, target, value) =>
+              (target as SelectFilter).state = value as int,
+      'values':
+          (visitor, target, value) =>
+              (target as SelectFilter).values = value as List,
+      'type':
+          (visitor, target, value) =>
+              (target as SelectFilter).type = value as String,
+      'name':
+          (visitor, target, value) =>
+              (target as SelectFilter).name = value as String,
+      'typeName':
+          (visitor, target, value) =>
+              (target as SelectFilter).typeName = value as String?,
+    },
   );
-
-  static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $SelectFilter.wrap(
-      SelectFilter(
-        args[0]!.$value,
-        args[1]!.$value,
-        args[2]!.$value,
-        (args[3]!.$value as List).map((e) {
-          if (e is $Value) {
-            final value = e.$reified;
-            if (value is Map) {
-              Map<String, dynamic> map = {};
-              map = value.map((key, value) => MapEntry(key.toString(), value));
-              if (map['type'] == 'SelectOption') {
-                final filter = map['filter'] as Map;
-                return SelectFilterOption.fromJson(
-                  filter.map((key, value) => MapEntry(key.toString(), value)),
-                );
-              }
-            }
-            return value;
-          }
-          return e;
-        }).toList(),
-        null,
-      ),
-    );
-  }
-
-  @override
-  final SelectFilter $value;
-
-  @override
-  SelectFilter get $reified => $value;
-
-  final $Instance _superclass;
-
-  @override
-  $Value? $getProperty(Runtime runtime, String identifier) {
-    switch (identifier) {
-      case 'name':
-        return $String($value.name);
-      case 'type':
-        return $String($value.type ?? '');
-      case 'state':
-        return $int($value.state);
-      case 'values':
-        return $List.wrap($value.values);
-
-      default:
-        return _superclass.$getProperty(runtime, identifier);
-    }
-  }
-
-  @override
-  int $getRuntimeType(Runtime runtime) => runtime.lookupType($type.spec!);
-
-  @override
-  void $setProperty(Runtime runtime, String identifier, $Value value) {
-    switch (identifier) {
-      case 'type':
-        $value.type = value.$reified;
-      case 'name':
-        $value.name = value.$reified;
-      case 'state':
-        $value.state = value.$reified;
-      case 'values':
-        $value.values = value.$reified;
-      default:
-        _superclass.$setProperty(runtime, identifier, value);
-    }
-  }
-
-  @override
-  String? get type => $value.type ?? '';
-
-  @override
-  String get name => $value.name;
-
-  @override
-  int get state => $value.state;
-
-  @override
-  String? get typeName => $value.typeName;
-
-  @override
-  set typeName(String? typeName) {}
-
-  @override
-  List<dynamic> get values => $value.values;
-
-  @override
-  set name(String name) {}
-
-  @override
-  set type(String? type) {}
-
-  @override
-  set state(int state) {}
-
-  @override
-  set values(List<dynamic> values) {}
-
-  @override
-  Map<String, dynamic> toJson() {
-    throw UnimplementedError();
-  }
-}
-
-class $SelectFilterOption implements SelectFilterOption, $Instance {
-  $SelectFilterOption.wrap(this.$value) : _superclass = $Object($value);
-
-  static const $type = BridgeTypeRef(
-    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'SelectFilterOption'),
-  );
-
-  static const $declaration = BridgeClassDef(
-    BridgeClassType($type),
+  final selectFilterOptionBridgedClass = BridgedClassDefinition(
+    nativeType: SelectFilterOption,
+    name: 'SelectFilterOption',
     constructors: {
-      '': BridgeConstructorDef(
-        BridgeFunctionDef(
-          returns: BridgeTypeAnnotation($type),
-          params: [
-            BridgeParameter(
-              'name',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-              false,
-            ),
-            BridgeParameter(
-              'value',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-              false,
-            ),
-          ],
-        ),
-      ),
+      '': (visitor, positionalArgs, namedArgs) {
+        return SelectFilterOption(
+          positionalArgs.get<String>(0)!,
+          positionalArgs.get<String>(1)!,
+          positionalArgs.get<String?>(2),
+        );
+      },
     },
-    fields: {
-      'name': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'value': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
+    getters: {
+      'name': (visitor, target) => (target as SelectFilterOption).name,
+      'value': (visitor, target) => (target as SelectFilterOption).value,
+      'typeName': (visitor, target) => (target as SelectFilterOption).typeName,
     },
-    wrap: true,
+    setters: {
+      'name':
+          (visitor, target, value) =>
+              (target as SelectFilterOption).name = value as String,
+      'value':
+          (visitor, target, value) =>
+              (target as SelectFilterOption).value = value as String,
+      'typeName':
+          (visitor, target, value) =>
+              (target as SelectFilterOption).typeName = value as String?,
+    },
   );
 
-  static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $SelectFilterOption.wrap(
-      SelectFilterOption(args[0]!.$value, args[1]!.$value, null),
-    );
-  }
-
-  @override
-  final SelectFilterOption $value;
-
-  @override
-  SelectFilterOption get $reified => $value;
-
-  final $Instance _superclass;
-
-  @override
-  $Value? $getProperty(Runtime runtime, String identifier) {
-    switch (identifier) {
-      case 'name':
-        return $String($value.name);
-      case 'value':
-        return $String($value.value);
-
-      default:
-        return _superclass.$getProperty(runtime, identifier);
-    }
-  }
-
-  @override
-  int $getRuntimeType(Runtime runtime) => runtime.lookupType($type.spec!);
-
-  @override
-  void $setProperty(Runtime runtime, String identifier, $Value value) {
-    switch (identifier) {
-      case 'value':
-        $value.value = value.$reified;
-      case 'name':
-        $value.name = value.$reified;
-
-      default:
-        _superclass.$setProperty(runtime, identifier, value);
-    }
-  }
-
-  @override
-  String get value => $value.value;
-
-  @override
-  String get name => $value.name;
-
-  @override
-  String? get typeName => $value.typeName;
-
-  @override
-  set typeName(String? typeName) {}
-
-  @override
-  set name(String name) {}
-
-  @override
-  set value(String value) {}
-
-  @override
-  Map<String, dynamic> toJson() {
-    throw UnimplementedError();
-  }
-}
-
-class $SeparatorFilter implements SeparatorFilter, $Instance {
-  $SeparatorFilter.wrap(this.$value) : _superclass = $Object($value);
-
-  static const $type = BridgeTypeRef(
-    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'SeparatorFilter'),
-  );
-
-  static const $declaration = BridgeClassDef(
-    BridgeClassType($type),
+  final separatorFilterBridgedClass = BridgedClassDefinition(
+    nativeType: SeparatorFilter,
+    name: 'SeparatorFilter',
     constructors: {
-      '': BridgeConstructorDef(
-        BridgeFunctionDef(
-          returns: BridgeTypeAnnotation($type),
-          params: [
-            BridgeParameter(
-              'type',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-              true,
-            ),
-          ],
-        ),
-      ),
+      '': (visitor, positionalArgs, namedArgs) {
+        return SeparatorFilter(
+          null,
+          type: positionalArgs.get<String?>(0) ?? '',
+        );
+      },
     },
-    fields: {
-      'type': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
+    getters: {
+      'type': (visitor, target) => (target as SeparatorFilter),
+      'typeName': (visitor, target) => (target as SeparatorFilter).typeName,
     },
-    wrap: true,
+    setters: {
+      'type':
+          (visitor, target, value) =>
+              (target as SeparatorFilter).type = value as String?,
+      'typeName':
+          (visitor, target, value) =>
+              (target as SeparatorFilter).typeName = value as String?,
+    },
   );
 
-  static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $SeparatorFilter.wrap(
-      SeparatorFilter(null, type: args[0]?.$value ?? ''),
-    );
-  }
-
-  @override
-  final SeparatorFilter $value;
-
-  @override
-  SeparatorFilter get $reified => $value;
-
-  final $Instance _superclass;
-
-  @override
-  $Value? $getProperty(Runtime runtime, String identifier) {
-    switch (identifier) {
-      case 'type':
-        return $String($value.type ?? '');
-      default:
-        return _superclass.$getProperty(runtime, identifier);
-    }
-  }
-
-  @override
-  int $getRuntimeType(Runtime runtime) => runtime.lookupType($type.spec!);
-
-  @override
-  void $setProperty(Runtime runtime, String identifier, $Value value) {
-    switch (identifier) {
-      case 'type':
-        $value.type = value.$reified;
-
-      default:
-        _superclass.$setProperty(runtime, identifier, value);
-    }
-  }
-
-  @override
-  String? get type => $value.type ?? '';
-
-  @override
-  String? get typeName => $value.typeName;
-
-  @override
-  set typeName(String? typeName) {}
-
-  @override
-  set type(String? type) {}
-
-  @override
-  Map<String, dynamic> toJson() {
-    throw UnimplementedError();
-  }
-}
-
-class $HeaderFilter implements HeaderFilter, $Instance {
-  $HeaderFilter.wrap(this.$value) : _superclass = $Object($value);
-
-  static const $type = BridgeTypeRef(
-    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'HeaderFilter'),
-  );
-
-  static const $declaration = BridgeClassDef(
-    BridgeClassType($type),
+  final headerFilterBridgedClass = BridgedClassDefinition(
+    nativeType: HeaderFilter,
+    name: 'HeaderFilter',
     constructors: {
-      '': BridgeConstructorDef(
-        BridgeFunctionDef(
-          returns: BridgeTypeAnnotation($type),
-          params: [
-            BridgeParameter(
-              'name',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-              false,
-            ),
-            BridgeParameter(
-              'type',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-              true,
-            ),
-          ],
-        ),
-      ),
+      '': (visitor, positionalArgs, namedArgs) {
+        return HeaderFilter(
+          positionalArgs.get<String>(0)!,
+          null,
+          type: positionalArgs.get<String?>(1) ?? '',
+        );
+      },
     },
-    fields: {
-      'name': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'type': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
+    getters: {
+      'type': (visitor, target) => (target as HeaderFilter).type,
+      'name': (visitor, target) => (target as HeaderFilter).name,
+      'typeName': (visitor, target) => (target as HeaderFilter).typeName,
     },
-    wrap: true,
+    setters: {
+      'type':
+          (visitor, target, value) =>
+              (target as HeaderFilter).type = value as String?,
+      'name':
+          (visitor, target, value) =>
+              (target as HeaderFilter).name = value as String,
+      'typeName':
+          (visitor, target, value) =>
+              (target as HeaderFilter).typeName = value as String?,
+    },
   );
 
-  static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $HeaderFilter.wrap(
-      HeaderFilter(args[0]!.$value, null, type: args[1]?.$value ?? ''),
-    );
-  }
-
-  @override
-  final HeaderFilter $value;
-
-  @override
-  HeaderFilter get $reified => $value;
-
-  final $Instance _superclass;
-
-  @override
-  $Value? $getProperty(Runtime runtime, String identifier) {
-    switch (identifier) {
-      case 'type':
-        return $String($value.type ?? '');
-      case 'name':
-        return $String($value.name);
-
-      default:
-        return _superclass.$getProperty(runtime, identifier);
-    }
-  }
-
-  @override
-  int $getRuntimeType(Runtime runtime) => runtime.lookupType($type.spec!);
-
-  @override
-  void $setProperty(Runtime runtime, String identifier, $Value value) {
-    switch (identifier) {
-      case 'name':
-        $value.name = value.$reified;
-      case 'type':
-        $value.type = value.$reified;
-
-      default:
-        _superclass.$setProperty(runtime, identifier, value);
-    }
-  }
-
-  @override
-  String get name => $value.name;
-
-  @override
-  set name(String name) {}
-
-  @override
-  set type(String? type) {}
-
-  @override
-  String? get type => $value.type ?? '';
-
-  @override
-  String? get typeName => $value.typeName;
-
-  @override
-  set typeName(String? typeName) {}
-
-  @override
-  Map<String, dynamic> toJson() {
-    throw UnimplementedError();
-  }
-}
-
-class $TextFilter implements TextFilter, $Instance {
-  $TextFilter.wrap(this.$value) : _superclass = $Object($value);
-
-  static const $type = BridgeTypeRef(
-    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'TextFilter'),
-  );
-
-  static const $declaration = BridgeClassDef(
-    BridgeClassType($type),
+  final textFilterBridgedClass = BridgedClassDefinition(
+    nativeType: TextFilter,
+    name: 'TextFilter',
     constructors: {
-      '': BridgeConstructorDef(
-        BridgeFunctionDef(
-          returns: BridgeTypeAnnotation($type),
-          params: [
-            BridgeParameter(
-              'type',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-              false,
-            ),
-            BridgeParameter(
-              'name',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-              false,
-            ),
-          ],
-        ),
-      ),
+      '': (visitor, positionalArgs, namedArgs) {
+        return TextFilter(
+          positionalArgs.get<String>(0),
+          positionalArgs.get<String>(1)!,
+          positionalArgs.get<String>(2),
+          state: namedArgs.get<String?>('state') ?? '',
+        );
+      },
     },
-    fields: {
-      'type': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'name': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
+    getters: {
+      'type': (visitor, target) => (target as TextFilter).type,
+      'name': (visitor, target) => (target as TextFilter).name,
+      'state': (visitor, target) => (target as TextFilter).state,
+      'typeName': (visitor, target) => (target as TextFilter).typeName,
     },
-    wrap: true,
+    setters: {
+      'state':
+          (visitor, target, value) =>
+              (target as TextFilter).state = value as String,
+      'type':
+          (visitor, target, value) =>
+              (target as TextFilter).type = value as String?,
+      'name':
+          (visitor, target, value) =>
+              (target as TextFilter).name = value as String,
+      'typeName':
+          (visitor, target, value) =>
+              (target as TextFilter).typeName = value as String?,
+    },
   );
 
-  static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $TextFilter.wrap(TextFilter(args[0]!.$value, args[1]!.$value, null));
-  }
-
-  @override
-  final TextFilter $value;
-
-  @override
-  TextFilter get $reified => $value;
-
-  final $Instance _superclass;
-
-  @override
-  $Value? $getProperty(Runtime runtime, String identifier) {
-    switch (identifier) {
-      case 'type':
-        return $String($value.type ?? '');
-      case 'name':
-        return $String($value.name);
-      case 'state':
-        return $String($value.state);
-
-      default:
-        return _superclass.$getProperty(runtime, identifier);
-    }
-  }
-
-  @override
-  int $getRuntimeType(Runtime runtime) => runtime.lookupType($type.spec!);
-
-  @override
-  void $setProperty(Runtime runtime, String identifier, $Value value) {
-    switch (identifier) {
-      case 'type':
-        $value.type = value.$reified;
-      case 'name':
-        $value.name = value.$reified;
-      case 'state':
-        $value.state = value.$reified;
-
-      default:
-        _superclass.$setProperty(runtime, identifier, value);
-    }
-  }
-
-  @override
-  String? get type => $value.type ?? '';
-  @override
-  String get name => $value.name;
-
-  @override
-  String get state => $value.state;
-
-  @override
-  String? get typeName => $value.typeName;
-
-  @override
-  set typeName(String? typeName) {}
-
-  @override
-  set type(String? type) {}
-
-  @override
-  set name(String name) {}
-
-  @override
-  set state(String state) {}
-
-  @override
-  Map<String, dynamic> toJson() {
-    throw UnimplementedError();
-  }
-}
-
-class $SortFilter implements SortFilter, $Instance {
-  $SortFilter.wrap(this.$value) : _superclass = $Object($value);
-
-  static const $type = BridgeTypeRef(
-    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'SortFilter'),
-  );
-
-  static const $declaration = BridgeClassDef(
-    BridgeClassType($type),
+  final sortFilterBridgedClass = BridgedClassDefinition(
+    nativeType: SortFilter,
+    name: 'SortFilter',
     constructors: {
-      '': BridgeConstructorDef(
-        BridgeFunctionDef(
-          returns: BridgeTypeAnnotation($type),
-          params: [
-            BridgeParameter(
-              'type',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-              false,
-            ),
-            BridgeParameter(
-              'name',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-              false,
-            ),
-            BridgeParameter(
-              'state',
-              BridgeTypeAnnotation($SortState.$type),
-              false,
-            ),
-            BridgeParameter(
-              'values',
-              BridgeTypeAnnotation(
-                BridgeTypeRef(CoreTypes.list, [
-                  BridgeTypeRef(CoreTypes.dynamic),
-                ]),
-              ),
-              false,
-            ),
-          ],
-        ),
-      ),
+      '': (visitor, positionalArgs, namedArgs) {
+        return SortFilter(
+          positionalArgs.get<String>(0),
+          positionalArgs.get<String>(1)!,
+          positionalArgs.get<SortState>(2)!,
+          positionalArgs.get<List>(3)!,
+          positionalArgs.get<String?>(4),
+        );
+      },
     },
-    fields: {
-      'type': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'name': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'state': BridgeFieldDef(BridgeTypeAnnotation($SortState.$type)),
-      'values': BridgeFieldDef(
-        BridgeTypeAnnotation(
-          BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)]),
-        ),
-      ),
+    getters: {
+      'type': (visitor, target) => (target as SortFilter).type,
+      'name': (visitor, target) => (target as SortFilter).name,
+      'state': (visitor, target) => (target as SortFilter).state,
+      'typeName': (visitor, target) => (target as SortFilter).typeName,
+      'values': (visitor, target) => (target as SortFilter).values,
     },
-    wrap: true,
+    setters: {
+      'type':
+          (visitor, target, value) =>
+              (target as SortFilter).type = value as String?,
+      'name':
+          (visitor, target, value) =>
+              (target as SortFilter).name = value as String,
+      'typeName':
+          (visitor, target, value) =>
+              (target as SortFilter).typeName = value as String?,
+      'values':
+          (visitor, target, value) =>
+              (target as SortFilter).values = value as List,
+    },
   );
-
-  static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $SortFilter.wrap(
-      SortFilter(
-        args[0]!.$value,
-        args[1]!.$value,
-        args[2]!.$value,
-        (args[3]!.$value as List)
-            .map(
-              (e) =>
-                  SelectFilterOption(e.$reified.name, e.$reified.value, null),
-            )
-            .toList(),
-        null,
-      ),
-    );
-  }
-
-  @override
-  final SortFilter $value;
-
-  @override
-  SortFilter get $reified => $value;
-
-  final $Instance _superclass;
-
-  @override
-  $Value? $getProperty(Runtime runtime, String identifier) {
-    switch (identifier) {
-      case 'type':
-        return $String($value.type ?? '');
-      case 'name':
-        return $String($value.name);
-      case 'state':
-        return $SortState.wrap($value.state);
-      case 'values':
-        return $List.wrap($value.values);
-
-      default:
-        return _superclass.$getProperty(runtime, identifier);
-    }
-  }
-
-  @override
-  int $getRuntimeType(Runtime runtime) => runtime.lookupType($type.spec!);
-
-  @override
-  void $setProperty(Runtime runtime, String identifier, $Value value) {
-    switch (identifier) {
-      case 'type':
-        $value.type = value.$reified;
-      case 'name':
-        $value.name = value.$reified;
-      case 'state':
-        $value.state = value.$reified;
-      case 'values':
-        $value.values = value.$reified;
-      default:
-        _superclass.$setProperty(runtime, identifier, value);
-    }
-  }
-
-  @override
-  String? get type => $value.type ?? '';
-
-  @override
-  String get name => $value.name;
-
-  @override
-  SortState get state => $value.state;
-
-  @override
-  List<dynamic> get values => $value.values;
-
-  @override
-  String? get typeName => $value.typeName;
-
-  @override
-  set typeName(String? typeName) {}
-
-  @override
-  set type(String? type) {}
-
-  @override
-  set name(String name) {}
-
-  @override
-  set state(SortState state) {}
-
-  @override
-  set values(List<dynamic> values) {}
-
-  @override
-  Map<String, dynamic> toJson() {
-    throw UnimplementedError();
-  }
-}
-
-class $SortState implements SortState, $Instance {
-  $SortState.wrap(this.$value) : _superclass = $Object($value);
-
-  static const $type = BridgeTypeRef(
-    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'SortState'),
-  );
-
-  static const $declaration = BridgeClassDef(
-    BridgeClassType($type),
+  final sortStateBridgedClass = BridgedClassDefinition(
+    nativeType: SortState,
+    name: 'SortState',
     constructors: {
-      '': BridgeConstructorDef(
-        BridgeFunctionDef(
-          returns: BridgeTypeAnnotation($type),
-          params: [
-            BridgeParameter(
-              'index',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)),
-              false,
-            ),
-            BridgeParameter(
-              'ascending',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)),
-              false,
-            ),
-          ],
-        ),
-      ),
+      '': (visitor, positionalArgs, namedArgs) {
+        return SortState(
+          positionalArgs.get<int>(0)!,
+          positionalArgs.get<bool>(1)!,
+          positionalArgs.get<String?>(2),
+        );
+      },
     },
-    fields: {
-      'index': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)),
-      ),
-      'ascending': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)),
-      ),
+    getters: {
+      'index': (visitor, target) => (target as SortState).index,
+      'ascending': (visitor, target) => (target as SortState).ascending,
+      'typeName': (visitor, target) => (target as SortState).typeName,
     },
-    wrap: true,
+    setters: {
+      'index':
+          (visitor, target, value) =>
+              (target as SortState).index = value as int,
+      'ascending':
+          (visitor, target, value) =>
+              (target as SortState).ascending = value as bool,
+      'typeName':
+          (visitor, target, value) =>
+              (target as SortState).typeName = value as String?,
+    },
   );
 
-  static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $SortState.wrap(SortState(args[0]!.$value, args[1]!.$value, null));
-  }
-
-  @override
-  final SortState $value;
-
-  @override
-  SortState get $reified => $value;
-
-  final $Instance _superclass;
-
-  @override
-  $Value? $getProperty(Runtime runtime, String identifier) {
-    switch (identifier) {
-      case 'index':
-        return $int($value.index);
-      case 'ascending':
-        return $bool($value.ascending);
-
-      default:
-        return _superclass.$getProperty(runtime, identifier);
-    }
-  }
-
-  @override
-  int $getRuntimeType(Runtime runtime) => runtime.lookupType($type.spec!);
-
-  @override
-  void $setProperty(Runtime runtime, String identifier, $Value value) {
-    switch (identifier) {
-      case 'index':
-        $value.index = value.$reified;
-      case 'ascending':
-        $value.ascending = value.$reified;
-
-      default:
-        _superclass.$setProperty(runtime, identifier, value);
-    }
-  }
-
-  @override
-  int get index => $value.index;
-
-  @override
-  bool get ascending => $value.ascending;
-
-  @override
-  String? get typeName => $value.typeName;
-
-  @override
-  set typeName(String? typeName) {}
-
-  @override
-  set ascending(bool ascending) {}
-
-  @override
-  set index(int index) {}
-
-  @override
-  Map<String, dynamic> toJson() {
-    throw UnimplementedError();
-  }
-}
-
-class $TriStateFilter implements TriStateFilter, $Instance {
-  $TriStateFilter.wrap(this.$value) : _superclass = $Object($value);
-
-  static const $type = BridgeTypeRef(
-    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'TriStateFilter'),
-  );
-
-  static const $declaration = BridgeClassDef(
-    BridgeClassType($type),
+  final triStateFilterBridgedClass = BridgedClassDefinition(
+    nativeType: TriStateFilter,
+    name: 'TriStateFilter',
     constructors: {
-      '': BridgeConstructorDef(
-        BridgeFunctionDef(
-          returns: BridgeTypeAnnotation($type),
-          params: [
-            BridgeParameter(
-              'name',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-              false,
-            ),
-            BridgeParameter(
-              'value',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-              false,
-            ),
-            BridgeParameter(
-              'type',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-              true,
-            ),
-          ],
-          namedParams: [
-            BridgeParameter(
-              'state',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)),
-              true,
-            ),
-          ],
-        ),
-      ),
+      '': (visitor, positionalArgs, namedArgs) {
+        return TriStateFilter(
+          positionalArgs.get<String?>(2),
+          positionalArgs.get<String>(0)!,
+          positionalArgs.get<String>(1)!,
+          positionalArgs.get<String?>(3),
+          state: positionalArgs.get<int?>(3) ?? 0,
+        );
+      },
     },
-    fields: {
-      'name': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'value': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'type': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'state': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.int)),
-      ),
+    getters: {
+      'type': (visitor, target) => (target as TriStateFilter).type,
+      'name': (visitor, target) => (target as TriStateFilter).name,
+      'state': (visitor, target) => (target as TriStateFilter).state,
+      'typeName': (visitor, target) => (target as TriStateFilter).typeName,
+      'value': (visitor, target) => (target as TriStateFilter).value,
     },
-    wrap: true,
+    setters: {
+      'state':
+          (visitor, target, value) =>
+              (target as TriStateFilter).state = value as int,
+      'type':
+          (visitor, target, value) =>
+              (target as TriStateFilter).type = value as String?,
+      'name':
+          (visitor, target, value) =>
+              (target as TriStateFilter).name = value as String,
+      'typeName':
+          (visitor, target, value) =>
+              (target as TriStateFilter).typeName = value as String?,
+    },
   );
 
-  static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $TriStateFilter.wrap(
-      TriStateFilter(
-        args[2]?.$value ?? '',
-        args[0]!.$value,
-        args[1]!.$value,
-        null,
-        state: args[3]?.$value ?? 0,
-      ),
-    );
-  }
-
-  @override
-  final TriStateFilter $value;
-
-  @override
-  TriStateFilter get $reified => $value;
-
-  final $Instance _superclass;
-
-  @override
-  $Value? $getProperty(Runtime runtime, String identifier) {
-    switch (identifier) {
-      case 'type':
-        return $String($value.type ?? '');
-      case 'name':
-        return $String($value.name);
-      case 'state':
-        return $int($value.state);
-      case 'value':
-        return $String($value.value);
-
-      default:
-        return _superclass.$getProperty(runtime, identifier);
-    }
-  }
-
-  @override
-  int $getRuntimeType(Runtime runtime) => runtime.lookupType($type.spec!);
-
-  @override
-  void $setProperty(Runtime runtime, String identifier, $Value value) {
-    switch (identifier) {
-      case 'type':
-        $value.type = value.$reified;
-      case 'name':
-        $value.name = value.$reified;
-      case 'state':
-        $value.state = value.$reified;
-      case 'value':
-        $value.value = value.$reified;
-
-      default:
-        _superclass.$setProperty(runtime, identifier, value);
-    }
-  }
-
-  @override
-  String? get type => $value.type ?? '';
-
-  @override
-  String get name => $value.name;
-
-  @override
-  set name(String name) {}
-
-  @override
-  int get state => $value.state;
-
-  @override
-  String get value => $value.value;
-
-  @override
-  String? get typeName => $value.typeName;
-
-  @override
-  set typeName(String? typeName) {}
-
-  @override
-  set state(int state) {}
-
-  @override
-  set type(String? type) {}
-
-  @override
-  set value(String value) {}
-
-  @override
-  Map<String, dynamic> toJson() {
-    throw UnimplementedError();
-  }
-}
-
-class $GroupFilter implements GroupFilter, $Instance {
-  $GroupFilter.wrap(this.$value) : _superclass = $Object($value);
-
-  static const $type = BridgeTypeRef(
-    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'GroupFilter'),
-  );
-
-  static const $declaration = BridgeClassDef(
-    BridgeClassType($type),
+  final groupFilterBridgedClass = BridgedClassDefinition(
+    nativeType: GroupFilter,
+    name: 'GroupFilter',
     constructors: {
-      '': BridgeConstructorDef(
-        BridgeFunctionDef(
-          returns: BridgeTypeAnnotation($type),
-          params: [
-            BridgeParameter(
-              'type',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-              false,
-            ),
-            BridgeParameter(
-              'name',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-              false,
-            ),
-            BridgeParameter(
-              'state',
-              BridgeTypeAnnotation(
-                BridgeTypeRef(CoreTypes.list, [
-                  BridgeTypeRef(CoreTypes.dynamic),
-                ]),
-              ),
-              false,
-            ),
-          ],
-        ),
-      ),
+      '': (visitor, positionalArgs, namedArgs) {
+        return GroupFilter(
+          positionalArgs.get<String?>(0),
+          positionalArgs.get<String>(1)!,
+          positionalArgs.get<List>(2)!,
+          positionalArgs.get<String?>(3),
+        );
+      },
     },
-    fields: {
-      'type': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'name': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'state': BridgeFieldDef(
-        BridgeTypeAnnotation(
-          BridgeTypeRef(CoreTypes.list, [BridgeTypeRef(CoreTypes.dynamic)]),
-        ),
-      ),
+    getters: {
+      'type': (visitor, target) => (target as GroupFilter).type,
+      'name': (visitor, target) => (target as GroupFilter).name,
+      'state': (visitor, target) => (target as GroupFilter).state,
+      'typeName': (visitor, target) => (target as GroupFilter).typeName,
     },
-    wrap: true,
+    setters: {
+      'type':
+          (visitor, target, value) =>
+              (target as GroupFilter).type = value as String?,
+      'name':
+          (visitor, target, value) =>
+              (target as GroupFilter).name = value as String,
+      'typeName':
+          (visitor, target, value) =>
+              (target as GroupFilter).typeName = value as String?,
+      'state':
+          (visitor, target, value) =>
+              (target as GroupFilter).state = value as List,
+    },
   );
 
-  static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $GroupFilter.wrap(
-      GroupFilter(
-        args[0]!.$value,
-        args[1]!.$value,
-        (args[2]!.$value as List).map((e) {
-          if (e is $Value) {
-            final value = e.$reified;
-            if (value is Map) {
-              Map<String, dynamic> map = {};
-              map = value.map((key, value) => MapEntry(key.toString(), value));
-              if (map['type'] == 'TriState') {
-                final filter = map['filter'] as Map;
-                return TriStateFilter.fromJson(
-                  filter.map((key, value) => MapEntry(key.toString(), value)),
-                );
-              } else if (map['type'] == 'CheckBox') {
-                final filter = map['filter'] as Map;
-                return CheckBoxFilter.fromJson(
-                  filter.map((key, value) => MapEntry(key.toString(), value)),
-                );
-              }
-            }
-            return value;
-          }
-          return e;
-        }).toList(),
-        null,
-      ),
-    );
-  }
-
-  @override
-  final GroupFilter $value;
-
-  @override
-  GroupFilter get $reified => $value;
-
-  final $Instance _superclass;
-
-  @override
-  $Value? $getProperty(Runtime runtime, String identifier) {
-    switch (identifier) {
-      case 'type':
-        return $String($value.type ?? '');
-      case 'name':
-        return $String($value.name);
-      case 'state':
-        return $List.wrap($value.state.map((e) => e).toList());
-
-      default:
-        return _superclass.$getProperty(runtime, identifier);
-    }
-  }
-
-  @override
-  int $getRuntimeType(Runtime runtime) => runtime.lookupType($type.spec!);
-
-  @override
-  void $setProperty(Runtime runtime, String identifier, $Value value) {
-    switch (identifier) {
-      case 'type':
-        $value.type = value.$reified;
-      case 'name':
-        $value.name = value.$reified;
-      case 'state':
-        $value.state = value.$reified;
-
-      default:
-        _superclass.$setProperty(runtime, identifier, value);
-    }
-  }
-
-  @override
-  String? get type => $value.type ?? '';
-
-  @override
-  String get name => $value.name;
-
-  @override
-  List<dynamic> get state => $value.state;
-
-  @override
-  String? get typeName => $value.typeName;
-
-  @override
-  set typeName(String? typeName) {}
-
-  @override
-  set type(String? type) {}
-
-  @override
-  set name(String name) {}
-
-  @override
-  set state(List<dynamic> state) {}
-
-  @override
-  Map<String, dynamic> toJson() {
-    throw UnimplementedError();
-  }
-}
-
-class $CheckBoxFilter implements CheckBoxFilter, $Instance {
-  $CheckBoxFilter.wrap(this.$value) : _superclass = $Object($value);
-
-  static const $type = BridgeTypeRef(
-    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'CheckBoxFilter'),
-  );
-
-  static const $declaration = BridgeClassDef(
-    BridgeClassType($type),
+  final checkBoxFilterBridgedClass = BridgedClassDefinition(
+    nativeType: CheckBoxFilter,
+    name: 'CheckBoxFilter',
     constructors: {
-      '': BridgeConstructorDef(
-        BridgeFunctionDef(
-          returns: BridgeTypeAnnotation($type),
-          params: [
-            BridgeParameter(
-              'name',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-              false,
-            ),
-            BridgeParameter(
-              'value',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-              false,
-            ),
-            BridgeParameter(
-              'type',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-              true,
-            ),
-          ],
-          namedParams: [
-            BridgeParameter(
-              'state',
-              BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)),
-              true,
-            ),
-          ],
-        ),
-      ),
+      '': (visitor, positionalArgs, namedArgs) {
+        return CheckBoxFilter(
+          positionalArgs.get<String?>(2) ?? '',
+          positionalArgs.get<String>(0)!,
+          positionalArgs.get<String>(1)!,
+          null,
+          state: positionalArgs.get<bool?>(3) ?? false,
+        );
+      },
     },
-    fields: {
-      'name': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'value': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'type': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'state': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool)),
-      ),
+    getters: {
+      'type': (visitor, target) => (target as CheckBoxFilter).type,
+      'name': (visitor, target) => (target as CheckBoxFilter).name,
+      'state': (visitor, target) => (target as CheckBoxFilter).state,
+      'typeName': (visitor, target) => (target as CheckBoxFilter).typeName,
+      'value': (visitor, target) => (target as CheckBoxFilter).value,
     },
-    wrap: true,
+    setters: {
+      'state':
+          (visitor, target, value) =>
+              (target as CheckBoxFilter).state = value as bool,
+      'type':
+          (visitor, target, value) =>
+              (target as CheckBoxFilter).type = value as String?,
+      'name':
+          (visitor, target, value) =>
+              (target as CheckBoxFilter).name = value as String,
+      'typeName':
+          (visitor, target, value) =>
+              (target as CheckBoxFilter).typeName = value as String?,
+      'value':
+          (visitor, target, value) =>
+              (target as CheckBoxFilter).value = value as String,
+    },
   );
-
-  static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $CheckBoxFilter.wrap(
-      CheckBoxFilter(
-        args[2]?.$value ?? '',
-        args[0]!.$value,
-        args[1]!.$value,
-        null,
-        state: args[3]?.$value ?? false,
-      ),
-    );
-  }
-
-  @override
-  final CheckBoxFilter $value;
-
-  @override
-  CheckBoxFilter get $reified => $value;
-
-  final $Instance _superclass;
-
-  @override
-  $Value? $getProperty(Runtime runtime, String identifier) {
-    switch (identifier) {
-      case 'type':
-        return $String($value.type ?? '');
-      case 'name':
-        return $String($value.name);
-      case 'state':
-        return $bool($value.state);
-      case 'value':
-        return $String($value.value);
-
-      default:
-        return _superclass.$getProperty(runtime, identifier);
-    }
-  }
-
-  @override
-  int $getRuntimeType(Runtime runtime) => runtime.lookupType($type.spec!);
-
-  @override
-  void $setProperty(Runtime runtime, String identifier, $Value value) {
-    switch (identifier) {
-      case 'type':
-        $value.type = value.$reified;
-      case 'name':
-        $value.name = value.$reified;
-      case 'state':
-        $value.state = value.$reified;
-      case 'value':
-        $value.value = value.$reified;
-
-      default:
-        _superclass.$setProperty(runtime, identifier, value);
-    }
-  }
-
-  @override
-  String? get type => $value.type ?? '';
-
-  @override
-  String get name => $value.name;
-
-  @override
-  set name(String name) {}
-
-  @override
-  bool get state => $value.state;
-
-  @override
-  String get value => $value.value;
-
-  @override
-  String? get typeName => $value.typeName;
-
-  @override
-  set typeName(String? typeName) {}
-
-  @override
-  set type(String? type) {}
-
-  @override
-  set state(bool state) {}
-
-  @override
-  set value(String value) {}
-
-  @override
-  Map<String, dynamic> toJson() {
-    throw UnimplementedError();
+  void registerBridgedClasses(D4rt interpreter) {
+    interpreter.registerBridgedClass(filterBridgedClass);
+    interpreter.registerBridgedClass(selectFilterBridgedClass);
+    interpreter.registerBridgedClass(selectFilterOptionBridgedClass);
+    interpreter.registerBridgedClass(separatorFilterBridgedClass);
+    interpreter.registerBridgedClass(headerFilterBridgedClass);
+    interpreter.registerBridgedClass(textFilterBridgedClass);
+    interpreter.registerBridgedClass(sortFilterBridgedClass);
+    interpreter.registerBridgedClass(sortStateBridgedClass);
+    interpreter.registerBridgedClass(triStateFilterBridgedClass);
+    interpreter.registerBridgedClass(groupFilterBridgedClass);
+    interpreter.registerBridgedClass(checkBoxFilterBridgedClass);
   }
 }

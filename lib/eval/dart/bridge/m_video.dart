@@ -1,164 +1,51 @@
-import 'package:dart_eval/dart_eval_bridge.dart';
-import 'package:dart_eval/stdlib/core.dart';
-import 'package:mangayomi/eval/dart/bridge/m_track.dart';
+import 'package:d4rt/d4rt.dart';
 import 'package:mangayomi/models/video.dart';
 
-class $MVideo implements Video, $Instance {
-  $MVideo.wrap(this.$value) : _superclass = $Object($value);
-
-  static const $type = BridgeTypeRef(
-    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MVideo'),
-  );
-
-  static const $declaration = BridgeClassDef(
-    BridgeClassType($type),
+class MVideoBridge {
+  final mVideoBridgedClass = BridgedClassDefinition(
+    nativeType: Video,
+    name: 'MVideo',
     constructors: {
-      '': BridgeConstructorDef(
-        BridgeFunctionDef(returns: BridgeTypeAnnotation($type)),
-      ),
+      '': (visitor, positionalArgs, namedArgs) {
+        return Video(
+          positionalArgs.get<String?>(0) ?? '',
+          positionalArgs.get<String?>(1) ?? '',
+          positionalArgs.get<String?>(2) ?? '',
+          headers: namedArgs.get<Map?>('headers')?.cast(),
+          subtitles: namedArgs.get<List<Track>?>('subtitles'),
+          audios: namedArgs.get<List<Track>?>('audios'),
+        );
+      },
     },
-    // Specify class fields
-    fields: {
-      'url': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'quality': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'originalUrl': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.string)),
-      ),
-      'headers': BridgeFieldDef(
-        BridgeTypeAnnotation(
-          BridgeTypeRef(CoreTypes.map, [
-            BridgeTypeRef(CoreTypes.string),
-            BridgeTypeRef(CoreTypes.string),
-          ]),
-          nullable: true,
-        ),
-      ),
-      'subtitles': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list, [$MTrack.$type])),
-      ),
-      'audios': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list, [$MTrack.$type])),
-      ),
+    getters: {
+      'url': (visitor, target) => (target as Video).url,
+      'quality': (visitor, target) => (target as Video).quality,
+      'originalUrl': (visitor, target) => (target as Video).originalUrl,
+      'headers': (visitor, target) => (target as Video).headers,
+      'subtitles': (visitor, target) => (target as Video).subtitles,
+      'audios': (visitor, target) => (target as Video).audios,
     },
-    wrap: true,
+    setters: {
+      'url':
+          (visitor, target, value) => (target as Video).url = value as String,
+      'quality':
+          (visitor, target, value) =>
+              (target as Video).quality = value as String,
+      'originalUrl':
+          (visitor, target, value) =>
+              (target as Video).originalUrl = value as String,
+      'headers':
+          (visitor, target, value) =>
+              (target as Video).headers = (value as Map?)?.cast(),
+      'subtitles':
+          (visitor, target, value) =>
+              (target as Video).subtitles = (value as List?)?.cast(),
+      'audios':
+          (visitor, target, value) =>
+              (target as Video).audios = (value as List?)?.cast(),
+    },
   );
-
-  static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    return $MVideo.wrap(Video("", "", ""));
-  }
-
-  @override
-  final Video $value;
-
-  @override
-  Video get $reified => $value;
-
-  final $Instance _superclass;
-
-  @override
-  $Value? $getProperty(Runtime runtime, String identifier) {
-    switch (identifier) {
-      case 'url':
-        return $String($value.url);
-      case 'quality':
-        return $String($value.quality);
-      case 'originalUrl':
-        return $String($value.originalUrl);
-      case 'headers':
-        return $Map.wrap($value.headers ?? {});
-      case 'subtitles':
-        return $List.wrap(
-          $value.subtitles!
-              .map((e) => $MTrack.wrap(Track(file: e.file, label: e.label)))
-              .toList(),
-        );
-      case 'audios':
-        return $List.wrap(
-          $value.audios!
-              .map((e) => $MTrack.wrap(Track(file: e.file, label: e.label)))
-              .toList(),
-        );
-
-      default:
-        return _superclass.$getProperty(runtime, identifier);
-    }
-  }
-
-  @override
-  int $getRuntimeType(Runtime runtime) => runtime.lookupType($type.spec!);
-
-  @override
-  void $setProperty(Runtime runtime, String identifier, $Value value) {
-    switch (identifier) {
-      case 'url':
-        $value.url = value.$reified;
-      case 'quality':
-        $value.quality = value.$reified;
-      case 'originalUrl':
-        $value.originalUrl = value.$reified;
-      case 'headers':
-        $value.headers = (value.$reified as Map).map(
-          (key, value) => MapEntry(key.toString(), value.toString()),
-        );
-      case 'subtitles':
-        $value.subtitles =
-            (value.$reified as List)
-                .map((e) => Track(file: e.file, label: e.label))
-                .toList();
-
-      case 'audios':
-        $value.audios =
-            (value.$reified as List)
-                .map((e) => Track(file: e.file, label: e.label))
-                .toList();
-
-      default:
-        _superclass.$setProperty(runtime, identifier, value);
-    }
-  }
-
-  @override
-  String get url => $value.url;
-
-  @override
-  List<Track>? get subtitles => $value.subtitles;
-
-  @override
-  List<Track>? get audios => $value.audios;
-
-  @override
-  String get quality => $value.quality;
-
-  @override
-  Map<String, String>? get headers => $value.headers;
-
-  @override
-  String get originalUrl => $value.originalUrl;
-
-  @override
-  set url(String? url) {}
-
-  @override
-  set quality(String? quality) {}
-
-  @override
-  set headers(Map? headers) {}
-
-  @override
-  set originalUrl(String? originalUrl) {}
-
-  @override
-  set subtitles(List? subtitles) {}
-
-  @override
-  set audios(List? audios) {}
-
-  @override
-  Map<String, dynamic> toJson() {
-    throw UnimplementedError();
+  void registerBridgedClasses(D4rt interpreter) {
+    interpreter.registerBridgedClass(mVideoBridgedClass);
   }
 }

@@ -36,7 +36,6 @@ dependencies:
   file_picker: ^10.0.0
   path_provider: ^2.1.5
   scrollable_positioned_list: ^0.3.8
-  dart_eval: ^0.7.10
   json_path: ^0.7.4
   bot_toast: ^4.1.3
   flutter_web_auth_2: ^3.1.2
@@ -88,6 +87,7 @@ dependencies:
   marquee: ^2.2.3
   epubx:
     path: ./epubx
+  d4rt: ^0.0.1
 
 dependency_overrides:
   ffi: ^2.1.3

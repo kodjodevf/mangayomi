@@ -1,107 +1,33 @@
-import 'package:dart_eval/dart_eval_bridge.dart';
-import 'package:dart_eval/stdlib/core.dart';
-import 'package:mangayomi/eval/dart/bridge/m_manga.dart';
+import 'package:d4rt/d4rt.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/eval/model/m_pages.dart';
 
-class $MPages implements MPages, $Instance {
-  $MPages.wrap(this.$value) : _superclass = $Object($value);
-
-  static const $type = BridgeTypeRef(
-    BridgeTypeSpec('package:mangayomi/bridge_lib.dart', 'MPages'),
-  );
-
-  static const $declaration = BridgeClassDef(
-    BridgeClassType($type),
+class MPagesBridge {
+  final mPageBridgedClass = BridgedClassDefinition(
+    nativeType: MPages,
+    name: 'MPages',
     constructors: {
-      '': BridgeConstructorDef(
-        BridgeFunctionDef(
-          returns: BridgeTypeAnnotation($type),
-          params: [
-            BridgeParameter(
-              'list',
-              BridgeTypeAnnotation(
-                BridgeTypeRef(CoreTypes.list, [$MManga.$type]),
-              ),
-              false,
-            ),
-            BridgeParameter(
-              'hasNextPage',
-              BridgeTypeAnnotation(
-                BridgeTypeRef(CoreTypes.bool),
-                nullable: true,
-              ),
-              true,
-            ),
-          ],
-        ),
-      ),
+      '': (visitor, positionalArgs, namedArgs) {
+        return MPages(
+          list: (positionalArgs[0] as List).map((e) => e as MManga).toList(),
+          hasNextPage: positionalArgs[1] as bool,
+        );
+      },
     },
-    fields: {
-      'list': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.list, [$MManga.$type])),
-      ),
-      'hasNextPage': BridgeFieldDef(
-        BridgeTypeAnnotation(BridgeTypeRef(CoreTypes.bool), nullable: true),
-      ),
+    getters: {
+      'list': (visitor, target) => (target as MPages).list,
+      'hasNextPage': (visitor, target) => (target as MPages).hasNextPage,
     },
-    wrap: true,
+    setters: {
+      'list':
+          (visitor, target, value) =>
+              (target as MPages).list = (value as List).cast<MManga>(),
+      'hasNextPage':
+          (visitor, target, value) =>
+              (target as MPages).hasNextPage = value as bool,
+    },
   );
-
-  static $Value? $new(Runtime runtime, $Value? target, List<$Value?> args) {
-    List<$Value> list = args[0]!.$value;
-    return $MPages.wrap(
-      MPages(
-        list: list.map((e) => e as MManga).toList(),
-        hasNextPage: args[1]?.$value ?? false,
-      ),
-    );
+  void registerBridgedClasses(D4rt interpreter) {
+    interpreter.registerBridgedClass(mPageBridgedClass);
   }
-
-  @override
-  final MPages $value;
-
-  @override
-  MPages get $reified => $value;
-
-  final $Instance _superclass;
-
-  @override
-  $Value? $getProperty(Runtime runtime, String identifier) {
-    switch (identifier) {
-      case 'list':
-        return $List.wrap($value.list);
-      case 'hasNextPage':
-        return $bool($value.hasNextPage);
-
-      default:
-        return _superclass.$getProperty(runtime, identifier);
-    }
-  }
-
-  @override
-  int $getRuntimeType(Runtime runtime) => runtime.lookupType($type.spec!);
-
-  @override
-  void $setProperty(Runtime runtime, String identifier, $Value value) {
-    return _superclass.$setProperty(runtime, identifier, value);
-  }
-
-  @override
-  List<MManga> get list => $value.list;
-
-  @override
-  bool get hasNextPage => $value.hasNextPage;
-
-  @override
-  set hasNextPage(bool hasNextPage) {}
-
-  @override
-  set list(List<MManga> list) {}
-
-  @override
-  Map<String, dynamic> toJson() => {
-    'list': list.map((v) => v.toJson()).toList(),
-    'hasNextPage': hasNextPage,
-  };
 }

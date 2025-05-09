@@ -222,14 +222,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.1"
-  change_case:
-    dependency: transitive
-    description:
-      name: change_case
-      sha256: e41ef3df58521194ef8d7649928954805aeb08061917cf658322305e61568003
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.0"
   characters:
     dependency: transitive
     description:
@@ -358,14 +350,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0+7.3.0"
-  dart_eval:
+  d4rt:
     dependency: "direct main"
     description:
-      name: dart_eval
-      sha256: bbad8246a99a3c61925e19b3d2c2bd6311f8186fb4642a16bf3d22153b3ade55
+      name: d4rt
+      sha256: c59d4546fe58a76250dda4cd7db9ec5bb2eb633f47f5104a1f60de72b111639e
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.10"
+    version: "0.0.1"
   dart_style:
     dependency: transitive
     description:
@@ -415,14 +407,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.2"
-  directed_graph:
-    dependency: transitive
-    description:
-      name: directed_graph
-      sha256: "6582283519fc08a6a14172d8a3798238f09275a1147e7599baf09c6245e3104a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.4.5"
   draggable_menu:
     dependency: "direct main"
     description:
@@ -446,14 +430,6 @@ packages:
       relative: true
     source: path
     version: "4.0.3"
-  exception_templates:
-    dependency: transitive
-    description:
-      name: exception_templates
-      sha256: "517f7c770da690073663f867ee2057ae2f4ffb28edae9da9faa624aa29ac76eb"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.3.1"
   expandable_text:
     dependency: "direct main"
     description:
@@ -1076,14 +1052,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.4.15"
-  lazy_memo:
-    dependency: transitive
-    description:
-      name: lazy_memo
-      sha256: dcb30b4184a6d767e1d779d74ce784d752d38313b8fb4bad6b659ae7af4bb34d
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.3"
   leak_tracker:
     dependency: transitive
     description:
@@ -1525,14 +1493,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.2"
-  quote_buffer:
-    dependency: transitive
-    description:
-      name: quote_buffer
-      sha256: c4cd07e55ed1b1645a1cc74278a03b2a642c9f6ea3c0528d51827fdd320acf87
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.6"
   re_editor:
     dependency: "direct main"
     description:

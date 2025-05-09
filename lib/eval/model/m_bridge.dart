@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'package:bot_toast/bot_toast.dart';
-import 'package:dart_eval/dart_eval_bridge.dart';
-import 'package:dart_eval/stdlib/core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:go_router/go_router.dart';
@@ -9,7 +7,6 @@ import 'package:html/dom.dart' hide Text;
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:js_packer/js_packer.dart';
-import 'package:json_path/json_path.dart';
 import 'package:mangayomi/eval/model/document.dart';
 import 'package:mangayomi/eval/javascript/http.dart';
 import 'package:mangayomi/main.dart';
@@ -70,11 +67,8 @@ class MBridge {
   }
 
   ///Create query by html string
-  static const $Function xpath = $Function(_xpath);
 
-  static $Value? _xpath(_, __, List<$Value?> args) {
-    String html = args[0]!.$reified;
-    String xpath = args[1]!.$reified;
+  static List<String>? xpath(String html, String xpath) {
     List<String> attrs = [];
     try {
       var htmlXPath = HtmlXPath.html(html);
@@ -92,9 +86,9 @@ class MBridge {
           attrs = [attr];
         }
       }
-      return $List.wrap(attrs.map((e) => $String(e)).toList());
+      return attrs;
     } catch (_) {
-      return $List.wrap([]);
+      return [];
     }
   }
 
@@ -104,11 +98,7 @@ class MBridge {
   static Status parseStatus(String status, List statusList) {
     for (var element in statusList) {
       Map statusMap = {};
-      if (element is $Map<$Value, $Value>) {
-        statusMap = element.$reified;
-      } else {
-        statusMap = element;
-      }
+      statusMap = element;
       for (var element in statusMap.entries) {
         if (element.key.toString().toLowerCase().contains(
           status.toLowerCase().trim().trimLeft().trimRight(),
@@ -128,101 +118,23 @@ class MBridge {
   }
 
   ///Unpack a JS code
-  static const $Function unpackJs = $Function(_unpackJs);
 
-  static $Value? _unpackJs(_, __, List<$Value?> args) {
-    String code = args[0]!.$reified;
+  static String? unpackJs(String code) {
     try {
       final jsPacker = JSPacker(code);
-      return $String(jsPacker.unpack() ?? "");
+      return jsPacker.unpack() ?? "";
     } catch (_) {
-      return $String("");
+      return "";
     }
   }
 
   ///Unpack a JS code
-  static const $Function unpackJsAndCombine = $Function(_unpackJsAndCombine);
-
-  static $Value? _unpackJsAndCombine(_, __, List<$Value?> args) {
-    String code = args[0]!.$reified;
+  static String? unpackJsAndCombine(String code) {
     try {
-      return $String(JsUnpacker.unpackAndCombine(code) ?? "");
+      return JsUnpacker.unpackAndCombine(code) ?? "";
     } catch (_) {
-      return $String("");
+      return "";
     }
-  }
-
-  ///Read values in parsed JSON object and return resut to List<String>
-  static final $Function jsonPathToList = $Function(
-    (runtime, thisObj, List<$Value?> args) =>
-        _jsonPathToStringOrList(runtime, thisObj, true, args),
-  );
-
-  static $Value? _jsonPathToStringOrList(
-    Object? runtime, // unused by bridge
-    Object? thisObj, // unused by bridge
-    bool toList, // new flag: list vs. single-string
-    List<$Value?> args, // [ sourceJson, jsonPathExpr ]
-  ) {
-    final source = args[0]!.$reified;
-    final expression = args[1]!.$reified;
-
-    dynamic decoded;
-    try {
-      decoded = jsonDecode(source);
-    } catch (_) {
-      return toList ? $List.wrap(<$Value>[]) : $String('');
-    }
-
-    // Normalize a JSON element (either Map or List) into a Map<String, dynamic>
-    Map<String, dynamic> normalize(dynamic elt) {
-      if (elt is Map) {
-        return elt.map((k, v) => MapEntry(k.toString(), v));
-      }
-      return <String, dynamic>{};
-    }
-
-    /// Common JSONPath read logic
-    List<dynamic> extractList(Map<String, dynamic> dataMap) {
-      // readValues returns all matches; .read returns Match objects
-      final matches = JsonPath(expression).read(dataMap);
-      return matches.map((m) => m.value).toList();
-    }
-
-    if (decoded is List) {
-      // Branch: JSON root is a list → always return a List<$String>
-      final out = <$Value>[];
-      for (var elt in decoded) {
-        final map = normalize(elt);
-        final extracted = extractList(map);
-        if (toList) {
-          // join into JSON strings per element
-          out.addAll(extracted.map((e) => $String(jsonEncode(e))));
-        } else if (extracted.isNotEmpty) {
-          // only first match as string
-          out.add($String(extracted.first.toString()));
-        } else {
-          out.add($String(''));
-        }
-      }
-      return $List.wrap(out);
-    } else if (decoded is Map) {
-      // Branch: JSON root is object
-      final map = normalize(decoded);
-      final extracted = extractList(map);
-      if (toList) {
-        return $List.wrap(
-          extracted
-              .map((e) => $String(e == null ? '{}' : jsonEncode(e)))
-              .toList(),
-        );
-      } else {
-        return $String(extracted.isNotEmpty ? extracted.first.toString() : '');
-      }
-    }
-
-    // Fallback: neither List nor Map
-    return toList ? $List.wrap(<$Value>[]) : $String('');
   }
 
   ///GetMapValue
@@ -238,12 +150,6 @@ class MBridge {
     }
   }
 
-  ///Read values in parsed JSON object and return resut to String
-  static final $Function jsonPathToString = $Function(
-    (runtime, thisObj, List<$Value?> args) =>
-        _jsonPathToStringOrList(runtime, thisObj, false, args),
-  );
-
   //Parse a list of dates to millisecondsSinceEpoch
   static List parseDates(
     List value,
@@ -252,11 +158,7 @@ class MBridge {
   ) {
     List<dynamic> val = [];
     for (var element in value) {
-      if (element is $Value) {
-        val.add(element.$reified.toString());
-      } else {
-        val.add(element);
-      }
+      val.add(element);
     }
     bool error = false;
     List<dynamic> valD = [];
