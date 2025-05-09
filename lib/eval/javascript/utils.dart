@@ -218,9 +218,7 @@ async function parseEpubChapter(bookName, url, headers, chapterTitle) {
         await File(p.join(tmpDirectory.path, ".nomedia")).create();
       }
     }
-    final file = File(
-      p.join(tmpDirectory.path, "$bookName.epub"),
-    );
+    final file = File(p.join(tmpDirectory.path, "$bookName.epub"));
     if (await file.exists()) {
       return await file.readAsBytes();
     }

@@ -539,14 +539,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_app_installer:
-    dependency: "direct main"
-    description:
-      name: flutter_app_installer
-      sha256: "2243cf0e58d6f126420a800fcd06e7c5b3a048c5551914a006b29575125d8dc0"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.1"
   flutter_cache_manager:
     dependency: transitive
     description:

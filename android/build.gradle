@@ -12,7 +12,7 @@ subprojects {
     if (project.plugins.hasPlugin("com.android.application") ||
       project.plugins.hasPlugin("com.android.library")) {
       project.android {
-        compileSdkVersion 34
+        compileSdkVersion 35
         buildToolsVersion "34.0.0"
       }
     }
