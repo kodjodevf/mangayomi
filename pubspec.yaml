@@ -83,7 +83,6 @@ dependencies:
   win32: ^5.10.1
   protobuf: ^4.0.0
   device_info_plus: ^11.3.3
-  flutter_app_installer: ^1.0.0
   marquee: ^2.2.3
   epubx:
     path: ./epubx
