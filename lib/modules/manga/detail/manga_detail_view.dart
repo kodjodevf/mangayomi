@@ -1025,25 +1025,25 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               shadowColor: Colors.transparent,
                             ),
                             onPressed: () {
-                              isar.txnSync(() {
-                                for (var chapter in ref.watch(
-                                  chaptersListStateProvider,
-                                )) {
-                                  final entries =
-                                      isar.downloads
-                                          .filter()
-                                          .idEqualTo(chapter.id)
-                                          .findAllSync();
-                                  if (entries.isEmpty ||
-                                      !entries.first.isDownload!) {
-                                    ref.watch(
-                                      addDownloadToQueueProvider(
-                                        chapter: chapter,
-                                      ),
-                                    );
-                                  }
+                              for (var chapter in ref.watch(
+                                chaptersListStateProvider,
+                              )) {
+                                final entries =
+                                    isar.downloads
+                                        .filter()
+                                        .idEqualTo(chapter.id)
+                                        .findAllSync();
+                                if (entries.isEmpty ||
+                                    !entries.first.isDownload!) {
+                                  ref.read(
+                                    addDownloadToQueueProvider(
+                                      chapter: chapter,
+                                    ),
+                                  );
                                 }
-                              });
+                              }
+                              ref.watch(processDownloadsProvider());
+
                               ref
                                   .read(isLongPressedStateProvider.notifier)
                                   .update(false);
