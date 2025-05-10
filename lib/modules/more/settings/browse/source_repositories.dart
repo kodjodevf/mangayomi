@@ -303,8 +303,8 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                                               widget.itemType,
                                             ),
                                           );
-                                        } catch (e) {
-                                          botToast(e.toString());
+                                        } catch (e, s) {
+                                          botToast('$e\n$s');
                                         }
 
                                         if (context.mounted) {

@@ -86,7 +86,7 @@ dependencies:
   marquee: ^2.2.3
   epubx:
     path: ./epubx
-  d4rt: ^0.0.1
+  d4rt: ^0.0.2
 
 dependency_overrides:
   ffi: ^2.1.3

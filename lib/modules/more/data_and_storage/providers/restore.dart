@@ -59,8 +59,8 @@ void doRestore(Ref ref, {required String path, required BuildContext context}) {
     } else {
       showBotToast("Backup Type not supported!");
     }
-  } catch (e) {
-    botToast(e.toString());
+  } catch (e, s) {
+    botToast('$e\n$s');
   }
 }
 
