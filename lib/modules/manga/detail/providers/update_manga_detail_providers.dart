@@ -49,7 +49,9 @@ Future<dynamic> updateMangaDetail(
     ..artist =
         getManga.artist?.trim().trimLeft().trimRight() ?? manga.artist ?? ""
     ..status =
-        getManga.status == Status.unknown ? manga.status : getManga.status!
+        getManga.status == Status.unknown
+            ? manga.status
+            : getManga.status ?? Status.unknown
     ..description =
         getManga.description?.trim().trimLeft().trimRight() ??
         manga.description ??

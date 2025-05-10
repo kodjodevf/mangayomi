@@ -21,13 +21,7 @@ class DartExtensionService implements ExtensionService {
     final interpreter = D4rt();
     RegistrerBridge.registerBridge(interpreter);
 
-    interpreter.execute(
-      source.sourceCode!.replaceAll(
-        "final Client client = Client(source)",
-        "final Client client = Client()",
-      ),
-      mainArgs: source.toMSource(),
-    );
+    interpreter.execute(source.sourceCode!, mainArgs: source.toMSource());
     return interpreter;
   }
 
