@@ -105,13 +105,8 @@ class StorageProvider {
             : "Novel";
     final dir = await getDirectory();
     return Directory(
-      path.join(
-        dir!.path,
-        'downloads',
-        itemTypePath,
-        '${manga.source} (${manga.lang!.toUpperCase()})'.trim(),
-        manga.name!.replaceForbiddenCharacters('_').trim(),
-      ),
+      "${dir!.path}downloads/$itemTypePath/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceForbiddenCharacters('_')}/"
+          .fixSeparator,
     );
   }
 
@@ -122,13 +117,11 @@ class StorageProvider {
     final basedir = mangaMainDirectory ?? await getMangaMainDirectory(chapter);
     String scanlator =
         chapter.scanlator?.isNotEmpty ?? false
-            ? "${chapter.scanlator!.replaceForbiddenCharacters('_')}_".trim()
+            ? "${chapter.scanlator!.replaceForbiddenCharacters('_')}_"
             : "";
     return Directory(
-      path.join(
-        basedir!.path,
-        scanlator + chapter.name!.replaceForbiddenCharacters('_').trim(),
-      ),
+      "${basedir!.path}$scanlator${chapter.name!.replaceForbiddenCharacters('_')}/"
+          .fixSeparator,
     );
   }
 
@@ -192,4 +185,8 @@ class StorageProvider {
 
     return isar;
   }
+}
+
+extension StringPathExtension on String {
+  String get fixSeparator => replaceAll("/", path.separator);
 }
