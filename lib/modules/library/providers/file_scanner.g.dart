@@ -6,7 +6,7 @@ part of 'file_scanner.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$scanLocalLibraryHash() => r'8a80e2582c4abda500034c9e139cdb8be58942e7';
+String _$scanLocalLibraryHash() => r'7e028c45097e5802ee974d9f0c5a2bc540bba91c';
 
 /// Scans `Mangayomi/local` folder (if exists) for Mangas/Animes and imports in library.
 ///
@@ -29,10 +29,9 @@ String _$scanLocalLibraryHash() => r'8a80e2582c4abda500034c9e139cdb8be58942e7';
 final scanLocalLibraryProvider = AutoDisposeFutureProvider<void>.internal(
   scanLocalLibrary,
   name: r'scanLocalLibraryProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$scanLocalLibraryHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$scanLocalLibraryHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );

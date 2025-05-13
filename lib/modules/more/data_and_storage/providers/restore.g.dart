@@ -6,7 +6,7 @@ part of 'restore.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$doRestoreHash() => r'd60314f193636cc87fecc8d21d1a83d735cd75e1';
+String _$doRestoreHash() => r'196cb936fe7bfcb6535f5e6b4d86e0c77064f45e';
 
 /// Copied from Dart SDK
 class _SystemHash {

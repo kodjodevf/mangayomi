@@ -290,6 +290,12 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                                               jsonUrl: controller.text,
                                             ).future,
                                           );
+                                          if (repo == null) {
+                                            botToast(
+                                              "You've tried to add an unsupported repository. Please check the discord server for support!",
+                                            );
+                                            return;
+                                          }
                                           mangaRepos.add(repo);
                                           ref
                                               .read(

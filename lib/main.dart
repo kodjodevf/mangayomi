@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:app_links/app_links.dart';
 import 'package:bot_toast/bot_toast.dart';
@@ -12,6 +13,7 @@ import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/storage_usage.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -19,6 +21,7 @@ import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
+import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
 import 'package:mangayomi/utils/url_protocol/api.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_provider.dart';
@@ -160,8 +163,21 @@ class _MyAppState extends ConsumerState<MyApp> {
                   ),
                   FilledButton(
                     child: Text(l10n.add),
-                    onPressed: () {
-                      Navigator.of(context).pop();
+                    onPressed: () async {
+                      if (context.mounted) Navigator.of(context).pop();
+
+                      final validUrls = await _checkValidUrls([
+                        ...mangaRepoUrls ?? [],
+                        ...animeRepoUrls ?? [],
+                        ...novelRepoUrls ?? [],
+                      ]);
+
+                      if (!validUrls) {
+                        botToast(
+                          "You've tried to add an unsupported repository. Please check the discord server for support!",
+                        );
+                        return;
+                      }
 
                       void addRepos(ItemType type, List<String>? urls) {
                         if (urls == null) return;
@@ -197,5 +213,23 @@ class _MyAppState extends ConsumerState<MyApp> {
         default:
       }
     });
+  }
+
+  Future<bool> _checkValidUrls(List<String> urls) async {
+    final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
+    for (final url in urls) {
+      final req = await http.get(Uri.parse("$url/repo.json"));
+      try {
+        final sourceList = (jsonDecode(req.body) as List).map(
+          (e) => Source.fromJson(e),
+        );
+        if (sourceList.firstOrNull?.name == null) {
+          return false;
+        }
+      } catch (err) {
+        return false;
+      }
+    }
+    return true;
   }
 }
