@@ -465,5 +465,6 @@
     "clear_all_sources_msg": "Dies wird alle Quellen der Anwendung vollständig löschen. Möchten Sie wirklich fortfahren?",
     "sources_cleared": "Quellen gelöscht!",
     "add_repo": "Repository hinzufügen?",
-    "extension_notes": "Hinweis: {notes}"
+    "extension_notes": "Hinweis: {notes}",
+    "unsupported_repo": "Du hast gerade versucht, ein ungültiges Repository hinzuzufügen. Bitte schau mal beim Discord Server vorbei!"
 }

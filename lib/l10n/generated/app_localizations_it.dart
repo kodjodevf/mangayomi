@@ -1455,4 +1455,7 @@ class AppLocalizationsIt extends AppLocalizations {
   String extension_notes(Object notes) {
     return 'Notes: $notes';
   }
+
+  @override
+  String get unsupported_repo => 'Hai provato ad aggiungere un repository non supportato. Controlla il server discord per ricevere supporto!';
 }

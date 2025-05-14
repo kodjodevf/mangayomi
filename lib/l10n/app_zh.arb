@@ -468,5 +468,6 @@
     "genre_search_library": "按类别搜索图书馆",
     "genre_search_source": "按类别搜索来源",
     "source_not_added": "来源未添加",
-    "load_own_subtitles": "加载自定义字幕"
+    "load_own_subtitles": "加载自定义字幕",
+    "unsupported_repo": "您试图添加不支持的版本库。请查看 discord 服务器以获得支持！"
 }

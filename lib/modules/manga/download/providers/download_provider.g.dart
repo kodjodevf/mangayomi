@@ -158,7 +158,7 @@ class _AddDownloadToQueueProviderElement
   Chapter get chapter => (origin as AddDownloadToQueueProvider).chapter;
 }
 
-String _$downloadChapterHash() => r'd20136bb2b86f930c3c48bc0dd07b16eaf1de133';
+String _$downloadChapterHash() => r'ee2f93aaa7fd64b46d5ce729d1e58ba20a6fa0fc';
 
 /// See also [downloadChapter].
 @ProviderFor(downloadChapter)

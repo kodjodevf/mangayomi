@@ -465,5 +465,6 @@
   "genre_search_source": "Browse in source",
   "source_not_added": "Source is not installed!",
   "load_own_subtitles": "Load your own subtitles...",
-  "extension_notes": "Notes: {notes}"
+  "extension_notes": "Notes: {notes}",
+  "unsupported_repo": "You've tried to add an unsupported repository. Please check the discord server for support!"
 }

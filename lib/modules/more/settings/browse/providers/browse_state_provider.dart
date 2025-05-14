@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/services/fetch_anime_sources.dart';
 import 'package:mangayomi/services/fetch_manga_sources.dart';
 import 'package:mangayomi/services/fetch_novel_sources.dart';
@@ -104,20 +106,39 @@ class CheckForExtensionsUpdateState extends _$CheckForExtensionsUpdateState {
 }
 
 @riverpod
-Future<Repo> getRepoInfos(Ref ref, {required String jsonUrl}) async {
+Future<Repo?> getRepoInfos(Ref ref, {required String jsonUrl}) async {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
 
   Map<String, dynamic> infos = {};
   final match = RegExp(r'^(.*)/[^/]+\.json$').firstMatch(jsonUrl);
 
+  final res = await http.get(Uri.parse(jsonUrl));
+  if (!_checkValidUrl(res)) {
+    return null;
+  }
+
   if (match != null) {
     String url = match.group(1)!;
-    final req = await http.get(Uri.parse("$url/repo.json"));
-    if (req.statusCode == 200) {
-      infos.addAll(jsonDecode(req.body));
+    final res = await http.get(Uri.parse("$url/repo.json"));
+    if (res.statusCode == 200) {
+      infos.addAll(jsonDecode(res.body));
     }
   }
 
   infos["jsonUrl"] = jsonUrl;
   return Repo.fromJson(infos);
+}
+
+bool _checkValidUrl(Response res) {
+  try {
+    final sourceList = (jsonDecode(res.body) as List).map(
+      (e) => Source.fromJson(e),
+    );
+    if (sourceList.firstOrNull?.name == null) {
+      return false;
+    }
+  } catch (err) {
+    return false;
+  }
+  return true;
 }

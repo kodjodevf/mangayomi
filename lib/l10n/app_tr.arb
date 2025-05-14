@@ -463,5 +463,6 @@
     "genre_search_library": "Kütüphanede tür ara",
     "genre_search_source": "Kaynağı keşfet",
     "source_not_added": "Kaynak yüklenmedi!",
-    "load_own_subtitles": "Kendi altyazılarınızı yükleyin..."
+    "load_own_subtitles": "Kendi altyazılarınızı yükleyin...",
+    "unsupported_repo": "Desteklenmeyen bir depo eklemeye çalıştınız. Lütfen destek için discord sunucusunu kontrol edin!"
 }

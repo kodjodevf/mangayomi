@@ -463,5 +463,6 @@
     "genre_search_library": "Cari genre di perpustakaan",
     "genre_search_source": "Jelajahi di sumber",
     "source_not_added": "Sumber tidak diinstal!",
-    "load_own_subtitles": "Muat subtitle Anda sendiri..."
+    "load_own_subtitles": "Muat subtitle Anda sendiri...",
+    "unsupported_repo": "Anda telah mencoba menambahkan repositori yang tidak didukung. Silakan periksa server discord untuk mendapatkan dukungan!"
 }

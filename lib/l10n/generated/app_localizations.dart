@@ -2912,6 +2912,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Notes: {notes}'**
   String extension_notes(Object notes);
+
+  /// No description provided for @unsupported_repo.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve tried to add an unsupported repository. Please check the discord server for support!'**
+  String get unsupported_repo;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

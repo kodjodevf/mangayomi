@@ -7,7 +7,7 @@ part of 'storage_usage.dart';
 // **************************************************************************
 
 String _$totalChapterCacheSizeStateHash() =>
-    r'83bf78de5ef674d61d3a9311061ef0933e59109b';
+    r'bb403516c1d94652146d0a38101b51ffe8ea72f8';
 
 /// See also [TotalChapterCacheSizeState].
 @ProviderFor(TotalChapterCacheSizeState)

@@ -463,5 +463,6 @@
     "genre_search_library": "بحث النوع في المكتبة",
     "genre_search_source": "تصفح في المصدر",
     "source_not_added": "المصدر غير مثبت!",
-    "load_own_subtitles": "تحميل الترجمة الخاصة بك..."
+    "load_own_subtitles": "تحميل الترجمة الخاصة بك...",
+    "unsupported_repo": "لقد حاولت إضافة مستودع غير مدعوم. يرجى التحقق من خادم الخلاف للحصول على الدعم!"
 }
