@@ -291,9 +291,7 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                                             ).future,
                                           );
                                           if (repo == null) {
-                                            botToast(
-                                              "You've tried to add an unsupported repository. Please check the discord server for support!",
-                                            );
+                                            botToast(l10n.unsupported_repo);
                                             return;
                                           }
                                           mangaRepos.add(repo);

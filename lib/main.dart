@@ -173,9 +173,7 @@ class _MyAppState extends ConsumerState<MyApp> {
                       ]);
 
                       if (!validUrls) {
-                        botToast(
-                          "You've tried to add an unsupported repository. Please check the discord server for support!",
-                        );
+                        botToast(l10n.unsupported_repo);
                         return;
                       }
 
@@ -218,7 +216,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   Future<bool> _checkValidUrls(List<String> urls) async {
     final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
     for (final url in urls) {
-      final req = await http.get(Uri.parse("$url/repo.json"));
+      final req = await http.get(Uri.parse(url));
       try {
         final sourceList = (jsonDecode(req.body) as List).map(
           (e) => Source.fromJson(e),
