@@ -765,18 +765,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     _playbackSpeed.value = speed;
   }
 
-  void _togglePlaybackSpeed() {
-    List<double> allowedSpeeds = [0.25, 0.5, 0.75, 1.0, 1.25, 1.50, 1.75, 2.0];
-    if (allowedSpeeds.indexOf(_playbackSpeed.value) <
-        allowedSpeeds.length - 1) {
-      _setPlaybackSpeed(
-        allowedSpeeds[allowedSpeeds.indexOf(_playbackSpeed.value) + 1],
-      );
-    } else {
-      _setPlaybackSpeed(allowedSpeeds[0]);
-    }
-  }
-
   Future<void> _changeFitLabel(WidgetRef ref) async {
     List<BoxFit> fitList = [
       BoxFit.contain,
@@ -1011,19 +999,22 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
           onPressed: () => _videoSettingDraggableMenu(context),
           icon: const Icon(Icons.video_settings, color: Colors.white),
         ),
-        TextButton(
-          child: ValueListenableBuilder<double>(
-            valueListenable: _playbackSpeed,
-            builder: (context, value, child) {
-              return Text(
-                "${value}x",
-                style: const TextStyle(color: Colors.white),
-              );
-            },
-          ),
-          onPressed: () {
-            _togglePlaybackSpeed();
-          },
+        PopupMenuButton<double>(
+          tooltip: '', // Remove default tooltip "Show menu" for consistency
+          icon: const Icon(Icons.speed, color: Colors.white),
+          itemBuilder:
+              (context) =>
+                  [0.25, 0.5, 0.75, 1.0, 1.25, 1.50, 1.75, 2.0]
+                      .map(
+                        (speed) => PopupMenuItem<double>(
+                          value: speed,
+                          child: Text("${speed}x"),
+                          onTap: () {
+                            _setPlaybackSpeed(speed);
+                          },
+                        ),
+                      )
+                      .toList(),
         ),
         IconButton(
           icon: const Icon(Icons.fit_screen_outlined, color: Colors.white),
