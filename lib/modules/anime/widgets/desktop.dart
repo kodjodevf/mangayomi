@@ -804,8 +804,12 @@ class CustomMaterialDesktopPositionIndicatorState
 
   @override
   Widget build(BuildContext context) {
+    final clampedPosition = (widget.delta ?? position).clamp(
+      Duration.zero,
+      duration,
+    );
     return Text(
-      '${(widget.delta ?? position).label(reference: duration)} / ${duration.label(reference: duration)}',
+      '${clampedPosition.label(reference: duration)} / ${duration.label(reference: duration)}',
       style: const TextStyle(height: 1.0, fontSize: 12.0, color: Colors.white),
     );
   }
