@@ -1455,4 +1455,7 @@ class AppLocalizationsId extends AppLocalizations {
   String extension_notes(Object notes) {
     return 'Notes: $notes';
   }
+
+  @override
+  String get unsupported_repo => 'Anda telah mencoba menambahkan repositori yang tidak didukung. Silakan periksa server discord untuk mendapatkan dukungan!';
 }
