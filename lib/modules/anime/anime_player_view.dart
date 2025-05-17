@@ -15,6 +15,7 @@ import 'package:mangayomi/models/video.dart' as vid;
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/aniskip_countdown_btn.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
+import 'package:mangayomi/modules/anime/widgets/play_or_pause_button.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
@@ -870,8 +871,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                     },
                     icon: const Icon(Icons.skip_previous, color: Colors.white),
                   ),
-                CustomeMaterialDesktopPlayOrPauseButton(
+                CustomPlayOrPauseButton(
                   controller: _controller,
+                  isDesktop: _isDesktop,
                 ),
                 if (hasNextEpisode)
                   IconButton(
