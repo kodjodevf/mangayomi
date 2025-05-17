@@ -1455,4 +1455,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String extension_notes(Object notes) {
     return 'Notes: $notes';
   }
+
+  @override
+  String get unsupported_repo => '您试图添加不支持的版本库。请查看 discord 服务器以获得支持！';
 }

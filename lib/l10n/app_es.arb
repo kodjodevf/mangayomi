@@ -463,5 +463,6 @@
     "genre_search_library": "Buscar género en la biblioteca",
     "genre_search_source": "Explorar en la fuente",
     "source_not_added": "¡La fuente no está instalada!",
-    "load_own_subtitles": "Cargar tus propios subtítulos..."
+    "load_own_subtitles": "Cargar tus propios subtítulos...",
+    "unsupported_repo": "Has intentado añadir un repositorio no soportado. Por favor, ¡consulta el servidor discord para soporte!"
 }

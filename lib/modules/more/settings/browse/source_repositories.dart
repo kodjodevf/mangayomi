@@ -290,6 +290,10 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                                               jsonUrl: controller.text,
                                             ).future,
                                           );
+                                          if (repo == null) {
+                                            botToast(l10n.unsupported_repo);
+                                            return;
+                                          }
                                           mangaRepos.add(repo);
                                           ref
                                               .read(

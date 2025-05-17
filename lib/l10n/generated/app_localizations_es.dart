@@ -1455,6 +1455,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String extension_notes(Object notes) {
     return 'Notes: $notes';
   }
+
+  @override
+  String get unsupported_repo => 'Has intentado añadir un repositorio no soportado. Por favor, ¡consulta el servidor discord para soporte!';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -2894,4 +2897,7 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get load_own_subtitles => 'Cargar tus propios subtítulos...';
+
+  @override
+  String get unsupported_repo => 'Has intentado añadir un repositorio no soportado. Por favor, ¡consulta el servidor discord para soporte!';
 }

@@ -1455,6 +1455,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String extension_notes(Object notes) {
     return 'Notes: $notes';
   }
+
+  @override
+  String get unsupported_repo => 'Tentou adicionar um repositório não suportado. Por favor, verifique o servidor discord para obter suporte!';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -2894,4 +2897,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get load_own_subtitles => 'Carregar suas próprias legendas...';
+
+  @override
+  String get unsupported_repo => 'Você tentou adicionar um repositório sem suporte. Consulte o servidor do Discord para obter suporte!';
 }

@@ -6,7 +6,7 @@ part of 'browse_state_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getRepoInfosHash() => r'250bc0082ac2841114d6f1815303955b8798240e';
+String _$getRepoInfosHash() => r'aae66dfcaadf7f59867fbc599b900862ef1dd3e7';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -34,7 +34,7 @@ class _SystemHash {
 const getRepoInfosProvider = GetRepoInfosFamily();
 
 /// See also [getRepoInfos].
-class GetRepoInfosFamily extends Family<AsyncValue<Repo>> {
+class GetRepoInfosFamily extends Family<AsyncValue<Repo?>> {
   /// See also [getRepoInfos].
   const GetRepoInfosFamily();
 
@@ -72,7 +72,7 @@ class GetRepoInfosFamily extends Family<AsyncValue<Repo>> {
 }
 
 /// See also [getRepoInfos].
-class GetRepoInfosProvider extends AutoDisposeFutureProvider<Repo> {
+class GetRepoInfosProvider extends AutoDisposeFutureProvider<Repo?> {
   /// See also [getRepoInfos].
   GetRepoInfosProvider({
     required String jsonUrl,
@@ -107,7 +107,7 @@ class GetRepoInfosProvider extends AutoDisposeFutureProvider<Repo> {
 
   @override
   Override overrideWith(
-    FutureOr<Repo> Function(GetRepoInfosRef provider) create,
+    FutureOr<Repo?> Function(GetRepoInfosRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -124,7 +124,7 @@ class GetRepoInfosProvider extends AutoDisposeFutureProvider<Repo> {
   }
 
   @override
-  AutoDisposeFutureProviderElement<Repo> createElement() {
+  AutoDisposeFutureProviderElement<Repo?> createElement() {
     return _GetRepoInfosProviderElement(this);
   }
 
@@ -144,13 +144,13 @@ class GetRepoInfosProvider extends AutoDisposeFutureProvider<Repo> {
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin GetRepoInfosRef on AutoDisposeFutureProviderRef<Repo> {
+mixin GetRepoInfosRef on AutoDisposeFutureProviderRef<Repo?> {
   /// The parameter `jsonUrl` of this provider.
   String get jsonUrl;
 }
 
 class _GetRepoInfosProviderElement
-    extends AutoDisposeFutureProviderElement<Repo> with GetRepoInfosRef {
+    extends AutoDisposeFutureProviderElement<Repo?> with GetRepoInfosRef {
   _GetRepoInfosProviderElement(super.provider);
 
   @override

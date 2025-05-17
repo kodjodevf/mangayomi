@@ -1455,4 +1455,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String extension_notes(Object notes) {
     return 'Notes: $notes';
   }
+
+  @override
+  String get unsupported_repo => 'Desteklenmeyen bir depo eklemeye çalıştınız. Lütfen destek için discord sunucusunu kontrol edin!';
 }
