@@ -17,7 +17,7 @@ class MDocument {
 
   String? get outerHtml => _document?.outerHtml;
 
-  String? get text => _document?.text;
+  String? get text => _document?.text?.trim();
 
   List<MElement>? get children =>
       _document?.children.map((e) => MElement(e)).toList();
@@ -57,7 +57,7 @@ class MDocument {
   }
 
   String? attr(String attr) {
-    return _document?.attr(attr);
+    return _document?.attr(attr)?.trim();
   }
 
   bool hasAttr(String attr) {

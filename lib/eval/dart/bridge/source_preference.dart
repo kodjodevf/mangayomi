@@ -176,10 +176,25 @@ class SourcePreferenceBridge {
   );
 
   void registerBridgedClasses(D4rt interpreter) {
-    interpreter.registerBridgedClass(checkBoxPreferenceBridgedClass);
-    interpreter.registerBridgedClass(switchPreferenceCompatBridgedClass);
-    interpreter.registerBridgedClass(listPreferenceBridgedClass);
-    interpreter.registerBridgedClass(multiSelectListPreferenceBridgedClass);
-    interpreter.registerBridgedClass(editTextPreferenceBridgedClass);
+    interpreter.registerBridgedClass(
+      checkBoxPreferenceBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
+    interpreter.registerBridgedClass(
+      switchPreferenceCompatBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
+    interpreter.registerBridgedClass(
+      listPreferenceBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
+    interpreter.registerBridgedClass(
+      multiSelectListPreferenceBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
+    interpreter.registerBridgedClass(
+      editTextPreferenceBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
   }
 }

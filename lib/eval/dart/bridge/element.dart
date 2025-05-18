@@ -61,6 +61,9 @@ class MElementBridge {
   );
 
   void registerBridgedClasses(D4rt interpreter) {
-    interpreter.registerBridgedClass(elementBridgedClass);
+    interpreter.registerBridgedClass(
+      elementBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
   }
 }

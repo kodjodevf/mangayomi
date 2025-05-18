@@ -53,6 +53,9 @@ class MDocumentBridge {
   );
 
   void registerBridgedClasses(D4rt interpreter) {
-    interpreter.registerBridgedClass(documentBridgedClass);
+    interpreter.registerBridgedClass(
+      documentBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
   }
 }

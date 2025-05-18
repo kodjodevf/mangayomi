@@ -28,6 +28,9 @@ class MPagesBridge {
     },
   );
   void registerBridgedClasses(D4rt interpreter) {
-    interpreter.registerBridgedClass(mPageBridgedClass);
+    interpreter.registerBridgedClass(
+      mPageBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
   }
 }

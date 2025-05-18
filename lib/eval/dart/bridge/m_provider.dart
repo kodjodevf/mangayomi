@@ -63,7 +63,10 @@ class MProviderBridged {
   );
 
   void registerBridgedClasses(D4rt interpreter) {
-    interpreter.registerBridgedClass(mProviderBridged);
+    interpreter.registerBridgedClass(
+      mProviderBridged,
+      'package:mangayomi/bridge_lib.dart',
+    );
     interpreter.registertopLevelFunction(
       'getPreferenceValue',
       (visitor, positionalArgs, namedArgs, _) => getPreferenceValue(

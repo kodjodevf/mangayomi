@@ -62,15 +62,17 @@ class MManga {
               : [],
     );
   }
-  Map<String, dynamic> toJson() => {
-    'name': name,
-    'link': link,
-    'imageUrl': imageUrl,
-    'description': description,
-    'author': author,
-    'artist': artist,
-    'status': status.toString().substringAfter("."),
-    'genre': genre,
-    'chapters': chapters!.map((e) => e.toJson()).toList(),
-  };
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'link': link,
+      'imageUrl': imageUrl,
+      'description': description,
+      'author': author,
+      'artist': artist,
+      'status': status.toString().substringAfter("."),
+      'genre': genre,
+      'chapters': chapters!.map((e) => e.toJson()).toList(),
+    };
+  }
 }

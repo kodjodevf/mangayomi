@@ -358,16 +358,41 @@ class FilterBridge {
     },
   );
   void registerBridgedClasses(D4rt interpreter) {
-    interpreter.registerBridgedClass(filterBridgedClass);
-    interpreter.registerBridgedClass(selectFilterBridgedClass);
-    interpreter.registerBridgedClass(selectFilterOptionBridgedClass);
-    interpreter.registerBridgedClass(separatorFilterBridgedClass);
-    interpreter.registerBridgedClass(headerFilterBridgedClass);
-    interpreter.registerBridgedClass(textFilterBridgedClass);
-    interpreter.registerBridgedClass(sortFilterBridgedClass);
-    interpreter.registerBridgedClass(sortStateBridgedClass);
-    interpreter.registerBridgedClass(triStateFilterBridgedClass);
-    interpreter.registerBridgedClass(groupFilterBridgedClass);
-    interpreter.registerBridgedClass(checkBoxFilterBridgedClass);
+    interpreter.registerBridgedClass(
+      filterBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
+    interpreter.registerBridgedClass(
+      selectFilterBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
+    interpreter.registerBridgedClass(
+      selectFilterOptionBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
+    interpreter.registerBridgedClass(
+      separatorFilterBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
+    interpreter.registerBridgedClass(
+      textFilterBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
+    interpreter.registerBridgedClass(
+      sortFilterBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
+    interpreter.registerBridgedClass(
+      triStateFilterBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
+    interpreter.registerBridgedClass(
+      groupFilterBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
+    interpreter.registerBridgedClass(
+      checkBoxFilterBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
   }
 }
