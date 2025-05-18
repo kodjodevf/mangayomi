@@ -13,10 +13,10 @@ class MMangaBridge {
           author: namedArgs.get<String?>('author'),
           description: namedArgs.get<String?>('description'),
           genre: namedArgs.get<List?>('genre')?.cast(),
-          status: namedArgs.get<Status?>('status'),
+          status: namedArgs.get<Status?>('status') ?? Status.unknown,
           imageUrl: namedArgs.get<String?>('imageUrl'),
           link: namedArgs.get<String?>('link'),
-          chapters: namedArgs.get<List?>('chapters')?.cast(),
+          chapters: namedArgs.get<List?>('chapters')?.cast() ?? [],
           name: namedArgs.get<String?>('name'),
         );
       },
@@ -62,6 +62,9 @@ class MMangaBridge {
     },
   );
   void registerBridgedClasses(D4rt interpreter) {
-    interpreter.registerBridgedClass(mMangaBridgedClass);
+    interpreter.registerBridgedClass(
+      mMangaBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
   }
 }

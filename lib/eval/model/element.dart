@@ -10,7 +10,7 @@ class MElement {
 
   String? get innerHtml => _element?.innerHtml;
 
-  String? get text => _element?.text;
+  String? get text => _element?.text.trim();
 
   String? get className => _element?.className;
 

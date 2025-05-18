@@ -33,7 +33,7 @@ class HttpBridge {
               (target as Client).post(
                 positionalArgs[0] as Uri,
                 headers: namedArgs.get<Map?>('headers')?.cast(),
-                body: namedArgs.get<String?>('body'),
+                body: namedArgs.get<Object?>('body'),
                 encoding: namedArgs.get<Encoding?>('encoding'),
               ),
       'put':
@@ -41,7 +41,7 @@ class HttpBridge {
               (target as Client).put(
                 positionalArgs[0] as Uri,
                 headers: namedArgs.get<Map?>('headers')?.cast(),
-                body: namedArgs.get<String?>('body'),
+                body: namedArgs.get<Object?>('body'),
                 encoding: namedArgs.get<Encoding?>('encoding'),
               ),
       'delete':
@@ -49,7 +49,7 @@ class HttpBridge {
               (target as Client).delete(
                 positionalArgs[0] as Uri,
                 headers: namedArgs.get<Map?>('headers')?.cast(),
-                body: namedArgs.get<String?>('body'),
+                body: namedArgs.get<Object?>('body'),
                 encoding: namedArgs.get<Encoding?>('encoding'),
               ),
       'head':
@@ -63,7 +63,7 @@ class HttpBridge {
               (target as Client).patch(
                 positionalArgs[0] as Uri,
                 headers: namedArgs.get<Map?>('headers')?.cast(),
-                body: namedArgs.get<String?>('body'),
+                body: namedArgs.get<Object?>('body'),
                 encoding: namedArgs.get<Encoding?>('encoding'),
               ),
       'read':
@@ -165,10 +165,25 @@ class HttpBridge {
   );
 
   void registerBridgedClasses(D4rt interpreter) {
-    interpreter.registerBridgedClass(baseRequestBridgedClass);
-    interpreter.registerBridgedClass(clientBridgedClass);
-    interpreter.registerBridgedClass(responseBridgedClass);
-    interpreter.registerBridgedClass(streamedResponseBridgedClass);
-    interpreter.registerBridgedClass(byteStreamBridgedClass);
+    interpreter.registerBridgedClass(
+      baseRequestBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
+    interpreter.registerBridgedClass(
+      clientBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
+    interpreter.registerBridgedClass(
+      responseBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
+    interpreter.registerBridgedClass(
+      streamedResponseBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
+    interpreter.registerBridgedClass(
+      byteStreamBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
   }
 }

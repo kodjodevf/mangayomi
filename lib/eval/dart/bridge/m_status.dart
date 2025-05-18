@@ -7,6 +7,9 @@ class MStatusBridge {
     values: Status.values,
   );
   void registerBridgedEnum(D4rt interpreter) {
-    interpreter.registerBridgedEnum(statusDefinition);
+    interpreter.registerBridgedEnum(
+      statusDefinition,
+      'package:mangayomi/bridge_lib.dart',
+    );
   }
 }

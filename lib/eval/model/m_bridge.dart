@@ -158,24 +158,25 @@ class MBridge {
   ) {
     List<dynamic> val = [];
     for (var element in value) {
-      val.add(element);
+      element = element.toString().trim();
+      if (element.isNotEmpty) {
+        val.add(element);
+      }
     }
     bool error = false;
     List<dynamic> valD = [];
     for (var date in val) {
-      if (date.toString().isNotEmpty) {
-        String dateStr = "";
-        if (error) {
-          dateStr = DateTime.now().millisecondsSinceEpoch.toString();
-        } else {
-          dateStr = parseChapterDate(date, dateFormat, dateFormatLocale, (val) {
-            dateFormat = val.$1;
-            dateFormatLocale = val.$2;
-            error = val.$3;
-          });
-        }
-        valD.add(dateStr);
+      String dateStr = "";
+      if (error) {
+        dateStr = DateTime.now().millisecondsSinceEpoch.toString();
+      } else {
+        dateStr = parseChapterDate(date, dateFormat, dateFormatLocale, (val) {
+          dateFormat = val.$1;
+          dateFormatLocale = val.$2;
+          error = val.$3;
+        });
       }
+      valD.add(dateStr);
     }
     return valD;
   }

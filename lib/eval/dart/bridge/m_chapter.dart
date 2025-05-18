@@ -37,6 +37,9 @@ class MChapterBridge {
     },
   );
   void registerBridgedClasses(D4rt interpreter) {
-    interpreter.registerBridgedClass(mChapterBridgedClass);
+    interpreter.registerBridgedClass(
+      mChapterBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
   }
 }

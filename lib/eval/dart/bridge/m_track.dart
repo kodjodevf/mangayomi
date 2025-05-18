@@ -26,6 +26,9 @@ class MTrackBridge {
     },
   );
   void registerBridgedClasses(D4rt interpreter) {
-    interpreter.registerBridgedClass(mTrackBridgedClass);
+    interpreter.registerBridgedClass(
+      mTrackBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
   }
 }

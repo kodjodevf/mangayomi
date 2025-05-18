@@ -354,10 +354,10 @@ packages:
     dependency: "direct main"
     description:
       name: d4rt
-      sha256: ceaeb41ec6d1a208b553deb19cf6a1dc7a588d41dae9652953920d0636c2e9c0
+      sha256: "3bb743e9e7567e240d0c8326a99fd7e26989e2a16516acef50f2bc55ade39451"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.2"
+    version: "0.0.5"
   dart_style:
     dependency: transitive
     description:

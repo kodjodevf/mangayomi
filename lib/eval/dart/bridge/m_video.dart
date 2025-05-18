@@ -46,6 +46,9 @@ class MVideoBridge {
     },
   );
   void registerBridgedClasses(D4rt interpreter) {
-    interpreter.registerBridgedClass(mVideoBridgedClass);
+    interpreter.registerBridgedClass(
+      mVideoBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
   }
 }
