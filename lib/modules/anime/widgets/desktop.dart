@@ -500,75 +500,6 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
   }
 }
 
-// BUTTON: PLAY/PAUSE
-
-/// A material design play/pause button.
-class CustomeMaterialDesktopPlayOrPauseButton extends StatefulWidget {
-  final VideoController controller;
-
-  const CustomeMaterialDesktopPlayOrPauseButton({
-    super.key,
-    required this.controller,
-  });
-
-  @override
-  CustomeMaterialDesktopPlayOrPauseButtonState createState() =>
-      CustomeMaterialDesktopPlayOrPauseButtonState();
-}
-
-class CustomeMaterialDesktopPlayOrPauseButtonState
-    extends State<CustomeMaterialDesktopPlayOrPauseButton>
-    with SingleTickerProviderStateMixin {
-  late final animation = AnimationController(
-    vsync: this,
-    value: widget.controller.player.state.playing ? 1 : 0,
-    duration: const Duration(milliseconds: 200),
-  );
-
-  StreamSubscription<bool>? subscription;
-
-  @override
-  void setState(VoidCallback fn) {
-    if (mounted) {
-      super.setState(fn);
-    }
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    subscription ??= widget.controller.player.stream.playing.listen((event) {
-      if (event) {
-        animation.forward();
-      } else {
-        animation.reverse();
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    animation.dispose();
-    subscription?.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: widget.controller.player.playOrPause,
-      iconSize: 25,
-      color: Colors.white,
-      icon: AnimatedIcon(
-        progress: animation,
-        icon: AnimatedIcons.play_pause,
-        size: 25,
-        color: Colors.white,
-      ),
-    );
-  }
-}
-
 // BUTTON: VOLUME
 
 /// MaterialDesktop design volume button & slider.
@@ -804,8 +735,12 @@ class CustomMaterialDesktopPositionIndicatorState
 
   @override
   Widget build(BuildContext context) {
+    final clampedPosition = (widget.delta ?? position).clamp(
+      Duration.zero,
+      duration,
+    );
     return Text(
-      '${(widget.delta ?? position).label(reference: duration)} / ${duration.label(reference: duration)}',
+      '${clampedPosition.label(reference: duration)} / ${duration.label(reference: duration)}',
       style: const TextStyle(height: 1.0, fontSize: 12.0, color: Colors.white),
     );
   }

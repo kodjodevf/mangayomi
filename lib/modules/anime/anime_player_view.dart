@@ -15,6 +15,7 @@ import 'package:mangayomi/models/video.dart' as vid;
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/aniskip_countdown_btn.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
+import 'package:mangayomi/modules/anime/widgets/play_or_pause_button.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
@@ -765,18 +766,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     _playbackSpeed.value = speed;
   }
 
-  void _togglePlaybackSpeed() {
-    List<double> allowedSpeeds = [0.25, 0.5, 0.75, 1.0, 1.25, 1.50, 1.75, 2.0];
-    if (allowedSpeeds.indexOf(_playbackSpeed.value) <
-        allowedSpeeds.length - 1) {
-      _setPlaybackSpeed(
-        allowedSpeeds[allowedSpeeds.indexOf(_playbackSpeed.value) + 1],
-      );
-    } else {
-      _setPlaybackSpeed(allowedSpeeds[0]);
-    }
-  }
-
   Future<void> _changeFitLabel(WidgetRef ref) async {
     List<BoxFit> fitList = [
       BoxFit.contain,
@@ -848,60 +837,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _seekToWidget(),
-                Row(
-                  children: [
-                    IconButton(
-                      padding: const EdgeInsets.all(5),
-                      onPressed: () => _videoSettingDraggableMenu(context),
-                      icon: const Icon(
-                        Icons.video_settings,
-                        color: Colors.white,
-                      ),
-                    ),
-                    TextButton(
-                      child: ValueListenableBuilder<double>(
-                        valueListenable: _playbackSpeed,
-                        builder: (context, value, child) {
-                          return Text(
-                            "${value}x",
-                            style: const TextStyle(color: Colors.white),
-                          );
-                        },
-                      ),
-                      onPressed: () {
-                        _togglePlaybackSpeed();
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(
-                        Icons.fit_screen_outlined,
-                        color: Colors.white,
-                      ),
-                      onPressed: () async {
-                        _changeFitLabel(ref);
-                      },
-                    ),
-                    ValueListenableBuilder<bool>(
-                      valueListenable: _enterFullScreen,
-                      builder: (context, snapshot, _) {
-                        return IconButton(
-                          onPressed: () {
-                            _setLandscapeMode(!snapshot);
-                            _enterFullScreen.value = !snapshot;
-                          },
-                          icon: Icon(
-                            snapshot ? Icons.fullscreen_exit : Icons.fullscreen,
-                          ),
-                          iconSize: 25,
-                          color: Colors.white,
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ],
+              children: [_seekToWidget(), _buildSettingsButtons(context)],
             ),
           ),
         ],
@@ -935,8 +871,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                     },
                     icon: const Icon(Icons.skip_previous, color: Colors.white),
                   ),
-                CustomeMaterialDesktopPlayOrPauseButton(
+                CustomPlayOrPauseButton(
                   controller: _controller,
+                  isDesktop: _isDesktop,
                 ),
                 if (hasNextEpisode)
                   IconButton(
@@ -1048,40 +985,62 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                 ),
               ],
             ),
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () => _videoSettingDraggableMenu(context),
-                  icon: const Icon(Icons.video_settings, color: Colors.white),
-                ),
-                TextButton(
-                  child: ValueListenableBuilder<double>(
-                    valueListenable: _playbackSpeed,
-                    builder: (context, value, child) {
-                      return Text(
-                        "${value}x",
-                        style: const TextStyle(color: Colors.white),
-                      );
-                    },
-                  ),
-                  onPressed: () {
-                    _togglePlaybackSpeed();
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(
-                    Icons.fit_screen_outlined,
-                    color: Colors.white,
-                  ),
-                  onPressed: () async {
-                    _changeFitLabel(ref);
-                  },
-                ),
-                CustomMaterialDesktopFullscreenButton(controller: _controller),
-              ],
-            ),
+            _buildSettingsButtons(context),
           ],
         ),
+      ],
+    );
+  }
+
+  /// helper method for _mobileBottomButtonBar() and _desktopBottomButtonBar()
+  Widget _buildSettingsButtons(BuildContext context) {
+    return Row(
+      children: [
+        IconButton(
+          padding: _isDesktop ? EdgeInsets.zero : const EdgeInsets.all(5),
+          onPressed: () => _videoSettingDraggableMenu(context),
+          icon: const Icon(Icons.video_settings, color: Colors.white),
+        ),
+        PopupMenuButton<double>(
+          tooltip: '', // Remove default tooltip "Show menu" for consistency
+          icon: const Icon(Icons.speed, color: Colors.white),
+          itemBuilder:
+              (context) =>
+                  [0.25, 0.5, 0.75, 1.0, 1.25, 1.50, 1.75, 2.0]
+                      .map(
+                        (speed) => PopupMenuItem<double>(
+                          value: speed,
+                          child: Text("${speed}x"),
+                          onTap: () {
+                            _setPlaybackSpeed(speed);
+                          },
+                        ),
+                      )
+                      .toList(),
+        ),
+        IconButton(
+          icon: const Icon(Icons.fit_screen_outlined, color: Colors.white),
+          onPressed: () async {
+            _changeFitLabel(ref);
+          },
+        ),
+        if (_isDesktop)
+          CustomMaterialDesktopFullscreenButton(controller: _controller)
+        else
+          ValueListenableBuilder<bool>(
+            valueListenable: _enterFullScreen,
+            builder: (context, snapshot, _) {
+              return IconButton(
+                onPressed: () {
+                  _setLandscapeMode(!snapshot);
+                  _enterFullScreen.value = !snapshot;
+                },
+                icon: Icon(snapshot ? Icons.fullscreen_exit : Icons.fullscreen),
+                iconSize: 25,
+                color: Colors.white,
+              );
+            },
+          ),
       ],
     );
   }

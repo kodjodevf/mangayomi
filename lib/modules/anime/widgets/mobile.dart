@@ -10,6 +10,7 @@ import 'package:mangayomi/modules/anime/widgets/indicator_builder.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
+import 'package:mangayomi/modules/anime/widgets/play_or_pause_button.dart';
 import 'package:volume_controller/volume_controller.dart';
 import 'package:screen_brightness/screen_brightness.dart';
 import 'package:flutter/material.dart';
@@ -884,74 +885,6 @@ class _ForwardSeekIndicatorState extends State<_ForwardSeekIndicator> {
   }
 }
 
-// BUTTON: PLAY/PAUSE
-
-/// A material design play/pause button.
-class CustomMaterialPlayOrPauseButton extends StatefulWidget {
-  final VideoController controller;
-
-  const CustomMaterialPlayOrPauseButton({super.key, required this.controller});
-
-  @override
-  CustomMaterialPlayOrPauseButtonState createState() =>
-      CustomMaterialPlayOrPauseButtonState();
-}
-
-class CustomMaterialPlayOrPauseButtonState
-    extends State<CustomMaterialPlayOrPauseButton>
-    with SingleTickerProviderStateMixin {
-  late final animation = AnimationController(
-    vsync: this,
-    value: widget.controller.player.state.playing ? 1 : 0,
-    duration: const Duration(milliseconds: 200),
-  );
-
-  StreamSubscription<bool>? subscription;
-
-  @override
-  void setState(VoidCallback fn) {
-    if (mounted) {
-      super.setState(fn);
-    }
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    subscription ??= widget.controller.player.stream.playing.listen((event) {
-      if (event) {
-        animation.forward();
-      } else {
-        animation.reverse();
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    animation.dispose();
-    subscription?.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: widget.controller.player.playOrPause,
-      iconSize: 65,
-      color: Colors.white,
-      icon: IgnorePointer(
-        child: AnimatedIcon(
-          progress: animation,
-          icon: AnimatedIcons.play_pause,
-          size: 65,
-          color: Colors.white,
-        ),
-      ),
-    );
-  }
-}
-
 List<Widget> mobilePrimaryButtonBar(
   BuildContext context,
   GlobalKey<VideoState> key,
@@ -985,7 +918,7 @@ List<Widget> mobilePrimaryButtonBar(
       ),
     ),
     const Spacer(),
-    CustomMaterialPlayOrPauseButton(controller: controller),
+    CustomPlayOrPauseButton(controller: controller, isDesktop: false),
     const Spacer(),
     IconButton(
       onPressed:
