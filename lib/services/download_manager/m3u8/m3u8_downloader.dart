@@ -360,8 +360,8 @@ class M3u8Downloader {
 
       final outFile = File(fileName).openWrite();
       for (var file in files) {
-        final bytes = await File(file.path).readAsBytes();
-        outFile.add(bytes);
+        final inFile = File(file.path).openRead();
+        await outFile.addStream(inFile);
       }
       await outFile.close();
     } catch (e) {
