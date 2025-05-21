@@ -21,7 +21,7 @@ dependencies:
   extended_image: ^10.0.0
   photo_view: ^0.15.0
   grouped_list: ^6.0.0
-  intl: ^0.19.0
+  intl: 0.20.2
   google_fonts: ^6.2.1
   url_launcher: ^6.3.1
   package_info_plus: ^8.0.0
@@ -64,7 +64,7 @@ dependencies:
   re_highlight: ^0.0.3
   json_view: ^0.4.2
   super_sliver_list: ^0.4.1
-  flutter_rust_bridge: 2.9.0
+  flutter_rust_bridge: 2.10.0
   rust_lib_mangayomi:
     path: rust_builder
   pseudom: ^1.0.1
@@ -86,7 +86,7 @@ dependencies:
   marquee: ^2.2.3
   epubx:
     path: ./epubx
-  d4rt: ^0.0.5
+  d4rt: ^0.0.6
 
 dependency_overrides:
   ffi: ^2.1.3

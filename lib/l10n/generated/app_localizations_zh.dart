@@ -638,7 +638,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sync_logged => '登录成功';
 
   @override
-  String get syncing_subtitle => '通过自托管服务器在多个设备间同步您的进度。首次同步时，请先上传；或者在设备上启用（自动）同步之前先下载！';
+  String get syncing_subtitle =>
+      '通过自托管服务器在多个设备间同步您的进度。首次同步时，请先上传；或者在设备上启用（自动）同步之前先下载！';
 
   @override
   String get last_sync => '上次同步时间：';
@@ -916,7 +917,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get page_preload_amount => '页面预加载量';
 
   @override
-  String get page_preload_amount_subtitle => '阅读时预加载的页面数量。更高的值将导致更顺畅的阅读体验，但会增加缓存和网络使用。';
+  String get page_preload_amount_subtitle =>
+      '阅读时预加载的页面数量。更高的值将导致更顺畅的阅读体验，但会增加缓存和网络使用。';
 
   @override
   String get image_loading_error => '无法加载此图片';
@@ -1314,7 +1316,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get use_native_http_client => '使用本地 HTTP 客户端';
 
   @override
-  String get use_native_http_client_info => '它自动支持平台特性，如 VPN，支持更多 HTTP 特性，如 HTTP/3 和自定义重定向处理';
+  String get use_native_http_client_info =>
+      '它自动支持平台特性，如 VPN，支持更多 HTTP 特性，如 HTTP/3 和自定义重定向处理';
 
   @override
   String n_hour_ago(Object hour) {

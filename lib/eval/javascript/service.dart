@@ -23,7 +23,7 @@ class JsExtensionService implements ExtensionService {
   JsExtensionService(this.source);
 
   void _init() {
-    runtime = getJavascriptRuntime(xhr: false);
+    runtime = getJavascriptRuntime();
     JsHttpClient(runtime).init();
     JsDomSelector(runtime).init();
     JsVideosExtractors(runtime).init();

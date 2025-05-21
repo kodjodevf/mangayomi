@@ -126,10 +126,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get other => 'Другое';
 
   @override
-  String get show_continue_reading_buttons => 'Показать кнопки продолжения чтения';
+  String get show_continue_reading_buttons =>
+      'Показать кнопки продолжения чтения';
 
   @override
-  String get show_continue_watching_buttons => 'Показать кнопки продолжения просмотра';
+  String get show_continue_watching_buttons =>
+      'Показать кнопки продолжения просмотра';
 
   @override
   String get empty_library => 'Пустая библиотека';
@@ -147,7 +149,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get remove_everything_msg => 'Вы уверены? Вся история будет потеряна';
 
   @override
-  String get remove_all_update_msg => 'Вы уверены? Все обновления будут удалены';
+  String get remove_all_update_msg =>
+      'Вы уверены? Все обновления будут удалены';
 
   @override
   String get ok => 'ОК';
@@ -159,7 +162,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get remove => 'Удалить';
 
   @override
-  String get remove_history_msg => 'Это удалит дату чтения этой главы. Вы уверены?';
+  String get remove_history_msg =>
+      'Это удалит дату чтения этой главы. Вы уверены?';
 
   @override
   String get last_used => 'Последнее использование';
@@ -197,7 +201,8 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get clean_database_desc => 'Это удалит все элементы, которые не добавлены в библиотеку!';
+  String get clean_database_desc =>
+      'Это удалит все элементы, которые не добавлены в библиотеку!';
 
   @override
   String get incognito_mode => 'Инкогнито режим';
@@ -230,7 +235,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get edit_categories => 'Изменить категории';
 
   @override
-  String get edit_categories_description => 'У вас нет категорий. Нажмите на кнопку плюса, чтобы создать одну для организации вашей библиотеки';
+  String get edit_categories_description =>
+      'У вас нет категорий. Нажмите на кнопку плюса, чтобы создать одну для организации вашей библиотеки';
 
   @override
   String get add => 'Добавить';
@@ -245,7 +251,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get category_name_required => '*Требуется';
 
   @override
-  String get add_category_error_exist => 'Категория с этим именем уже существует!';
+  String get add_category_error_exist =>
+      'Категория с этим именем уже существует!';
 
   @override
   String get delete_category => 'Удалить категорию';
@@ -352,7 +359,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get no_animation => 'Без анимации';
 
   @override
-  String get animate_page_transitions => 'Анимированные переходы между страницами';
+  String get animate_page_transitions =>
+      'Анимированные переходы между страницами';
 
   @override
   String get crop_borders => 'Обрезать края';
@@ -382,16 +390,19 @@ class AppLocalizationsRu extends AppLocalizations {
   String get browse_subtitle => 'Источники, глобальный поиск';
 
   @override
-  String get only_include_pinned_sources => 'Включать только закрепленные источники';
+  String get only_include_pinned_sources =>
+      'Включать только закрепленные источники';
 
   @override
   String get nsfw_sources => 'Источники NSFW (+18)';
 
   @override
-  String get nsfw_sources_show => 'Показывать в списках источников и расширений';
+  String get nsfw_sources_show =>
+      'Показывать в списках источников и расширений';
 
   @override
-  String get nsfw_sources_info => 'Это не предотвращает появление контента NSFW (18+) в приложении от неофициальных или неправильно помеченных расширений';
+  String get nsfw_sources_info =>
+      'Это не предотвращает появление контента NSFW (18+) в приложении от неофициальных или неправильно помеченных расширений';
 
   @override
   String get version => 'Версия';
@@ -638,7 +649,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get sync_logged => 'Вход выполнен успешно';
 
   @override
-  String get syncing_subtitle => 'Синхронизируйте ваш прогресс на нескольких устройствах через собственный сервер. Убедитесь, что вы сначала загрузили, если это ваш первый раз синхронизации, или скачайте перед использованием (авто) синхронизации на этом устройстве!';
+  String get syncing_subtitle =>
+      'Синхронизируйте ваш прогресс на нескольких устройствах через собственный сервер. Убедитесь, что вы сначала загрузили, если это ваш первый раз синхронизации, или скачайте перед использованием (авто) синхронизации на этом устройстве!';
 
   @override
   String get last_sync => 'Последняя синхронизация: ';
@@ -653,7 +665,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get sync_server => 'Адрес сервера синхронизации';
 
   @override
-  String get sync_login_invalid_creds => 'Неверный адрес электронной почты или пароль';
+  String get sync_login_invalid_creds =>
+      'Неверный адрес электронной почты или пароль';
 
   @override
   String get sync_checking => 'Проверка синхронизации...';
@@ -692,13 +705,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get sync_button_download => 'Полное скачивание';
 
   @override
-  String get sync_confirm_snapshot => 'Запросите у сервера создание удаленной резервной копии!';
+  String get sync_confirm_snapshot =>
+      'Запросите у сервера создание удаленной резервной копии!';
 
   @override
-  String get sync_confirm_upload => 'Полная загрузка полностью заменит удаленные данные на ваши текущие!';
+  String get sync_confirm_upload =>
+      'Полная загрузка полностью заменит удаленные данные на ваши текущие!';
 
   @override
-  String get sync_confirm_download => 'Полное скачивание полностью заменит ваши текущие данные на удаленные!';
+  String get sync_confirm_download =>
+      'Полное скачивание полностью заменит ваши текущие данные на удаленные!';
 
   @override
   String get sync_on => 'Включить синхронизацию';
@@ -737,7 +753,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get sync_snapshot_deleted => 'Снимок удален!';
 
   @override
-  String get sync_snapshot_no_data => 'Нет данных для создания снимка! Сначала выполните полную загрузку!';
+  String get sync_snapshot_no_data =>
+      'Нет данных для создания снимка! Сначала выполните полную загрузку!';
 
   @override
   String get sync_browse_snapshots => 'Просмотр старых резервных копий';
@@ -755,7 +772,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get sync_auto => 'Автосинхронизация';
 
   @override
-  String get sync_auto_warning => 'Автосинхронизация в настоящее время является экспериментальной функцией!';
+  String get sync_auto_warning =>
+      'Автосинхронизация в настоящее время является экспериментальной функцией!';
 
   @override
   String get sync_auto_off => 'Выключено';
@@ -800,13 +818,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get reorder_navigation => 'Настроить навигацию';
 
   @override
-  String get reorder_navigation_description => 'Перестройте и настройте каждую навигацию в соответствии с вашими потребностями.';
+  String get reorder_navigation_description =>
+      'Перестройте и настройте каждую навигацию в соответствии с вашими потребностями.';
 
   @override
   String get full_screen_player => 'Использовать полноэкранный режим';
 
   @override
-  String get full_screen_player_info => 'Автоматически использовать полноэкранный режим при воспроизведении видео.';
+  String get full_screen_player_info =>
+      'Автоматически использовать полноэкранный режим при воспроизведении видео.';
 
   @override
   String episode_progress(Object n) {
@@ -916,7 +936,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get page_preload_amount => 'Количество предзагружаемых страниц';
 
   @override
-  String get page_preload_amount_subtitle => 'Количество страниц для предварительной загрузки при чтении. Большие значения обеспечивают более плавное чтение, но требуют больше кэша и сетевого трафика.';
+  String get page_preload_amount_subtitle =>
+      'Количество страниц для предварительной загрузки при чтении. Большие значения обеспечивают более плавное чтение, но требуют больше кэша и сетевого трафика.';
 
   @override
   String get image_loading_error => 'Это изображение не удалось загрузить';
@@ -937,7 +958,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get auto_extensions_updates => 'Автоматические обновления расширений';
 
   @override
-  String get auto_extensions_updates_subtitle => 'Автоматически обновлять расширение при появлении новой версии.';
+  String get auto_extensions_updates_subtitle =>
+      'Автоматически обновлять расширение при появлении новой версии.';
 
   @override
   String get reading_mode => 'Режим чтения';
@@ -1004,16 +1026,19 @@ class AppLocalizationsRu extends AppLocalizations {
   String get create_backup => 'Создать резервную копию';
 
   @override
-  String get create_backup_dialog_title => 'Что вы хотите сохранить в резервной копии?';
+  String get create_backup_dialog_title =>
+      'Что вы хотите сохранить в резервной копии?';
 
   @override
-  String get create_backup_subtitle => 'Может использоваться для восстановления текущей библиотеки';
+  String get create_backup_subtitle =>
+      'Может использоваться для восстановления текущей библиотеки';
 
   @override
   String get restore_backup => 'Восстановить из резервной копии';
 
   @override
-  String get restore_backup_subtitle => 'Восстановить библиотеку из резервной копии';
+  String get restore_backup_subtitle =>
+      'Восстановить библиотеку из резервной копии';
 
   @override
   String get automatic_backups => 'Автоматические резервные копии';
@@ -1028,13 +1053,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get backup_options => 'Опции резервного копирования';
 
   @override
-  String get backup_options_dialog_title => 'Что вы хотите включить в резервную копию?';
+  String get backup_options_dialog_title =>
+      'Что вы хотите включить в резервную копию?';
 
   @override
-  String get backup_options_subtitle => 'Какую информацию включить в резервную копию';
+  String get backup_options_subtitle =>
+      'Какую информацию включить в резервную копию';
 
   @override
-  String get backup_and_restore_warning_info => 'Следует хранить копии резервных копий в других местах';
+  String get backup_and_restore_warning_info =>
+      'Следует хранить копии резервных копий в других местах';
 
   @override
   String get library_entries => 'Записи библиотеки';
@@ -1058,13 +1086,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get weekly => 'Еженедельно';
 
   @override
-  String get restore_backup_warning_title => 'Восстановление резервной копии перезапишет все существующие данные.\n\nПродолжить восстановление?';
+  String get restore_backup_warning_title =>
+      'Восстановление резервной копии перезапишет все существующие данные.\n\nПродолжить восстановление?';
 
   @override
   String get services => 'Сервисы';
 
   @override
-  String get tracking_warning_info => 'Односторонняя синхронизация для обновления прогресса чтения в службах отслеживания. Настройте отслеживание для отдельных записей из их кнопки отслеживания.';
+  String get tracking_warning_info =>
+      'Односторонняя синхронизация для обновления прогресса чтения в службах отслеживания. Настройте отслеживание для отдельных записей из их кнопки отслеживания.';
 
   @override
   String get use_page_tap_zones => 'Использовать зоны касания страницы';
@@ -1097,13 +1127,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get player => 'Игрок';
 
   @override
-  String get markEpisodeAsSeenSetting => 'В какой момент отметить эпизод как просмотренный';
+  String get markEpisodeAsSeenSetting =>
+      'В какой момент отметить эпизод как просмотренный';
 
   @override
-  String get default_skip_intro_length => 'Стандартная длина пропуска вступления';
+  String get default_skip_intro_length =>
+      'Стандартная длина пропуска вступления';
 
   @override
-  String get default_playback_speed_length => 'Стандартная длина скорости воспроизведения';
+  String get default_playback_speed_length =>
+      'Стандартная длина скорости воспроизведения';
 
   @override
   String get updateProgressAfterReading => 'Обновить прогресс после чтения';
@@ -1115,10 +1148,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get show_extensions => 'Показать расширения';
 
   @override
-  String get default_skip_forward_skip_length => 'Длина пропуска вперед по умолчанию';
+  String get default_skip_forward_skip_length =>
+      'Длина пропуска вперед по умолчанию';
 
   @override
-  String get aniskip_requires_info => 'AniSkip требует отслеживания аниме с использованием MAL или Anilist для работы.';
+  String get aniskip_requires_info =>
+      'AniSkip требует отслеживания аниме с использованием MAL или Anilist для работы.';
 
   @override
   String get enable_aniskip => 'Включить AniSkip';
@@ -1267,7 +1302,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get background => 'Фон';
 
   @override
-  String get no_subtite_warning_message => 'Не имеет эффекта, потому что в этом видео нет субтитров';
+  String get no_subtite_warning_message =>
+      'Не имеет эффекта, потому что в этом видео нет субтитров';
 
   @override
   String get grid_size => 'Размер сетки';
@@ -1287,10 +1323,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get use_libass => 'Включить libass';
 
   @override
-  String get use_libass_info => 'Используйте рендеринг субтитров на основе libass для нативного бэкенда.';
+  String get use_libass_info =>
+      'Используйте рендеринг субтитров на основе libass для нативного бэкенда.';
 
   @override
-  String get libass_not_disable_message => 'Отключите `use libass` в настройках плеера, чтобы иметь возможность настраивать субтитры.';
+  String get libass_not_disable_message =>
+      'Отключите `use libass` в настройках плеера, чтобы иметь возможность настраивать субтитры.';
 
   @override
   String get torrent_stream => 'Торрент-стрим';
@@ -1299,7 +1337,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get add_torrent => 'Добавить торрент';
 
   @override
-  String get enter_torrent_hint_text => 'Введите magnet-ссылку или URL торрент-файла';
+  String get enter_torrent_hint_text =>
+      'Введите magnet-ссылку или URL торрент-файла';
 
   @override
   String get torrent_url => 'URL торрента';
@@ -1314,7 +1353,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get use_native_http_client => 'Использовать нативный HTTP-клиент';
 
   @override
-  String get use_native_http_client_info => 'он автоматически поддерживает функции платформы, такие как VPN, поддерживает больше функций HTTP, таких как HTTP/3 и пользовательская обработка перенаправлений';
+  String get use_native_http_client_info =>
+      'он автоматически поддерживает функции платформы, такие как VPN, поддерживает больше функций HTTP, таких как HTTP/3 и пользовательская обработка перенаправлений';
 
   @override
   String n_hour_ago(Object hour) {
@@ -1365,7 +1405,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get cache_cleared => 'Кэш очищен';
 
   @override
-  String get clear_chapter_or_episode_cache_on_app_launch => 'Очистить кэш глав/эпизодов при запуске приложения';
+  String get clear_chapter_or_episode_cache_on_app_launch =>
+      'Очистить кэш глав/эпизодов при запуске приложения';
 
   @override
   String get app_settings => 'Настройки приложения';
@@ -1374,13 +1415,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get sources_settings => 'Настройки источников';
 
   @override
-  String get include_sensitive_settings => 'Включить чувствительные настройки (например, токены для входа в трекер)';
+  String get include_sensitive_settings =>
+      'Включить чувствительные настройки (например, токены для входа в трекер)';
 
   @override
   String get create => 'Создать';
 
   @override
-  String get downloads_are_limited_to_wifi => 'Загрузки ограничены только Wi-Fi';
+  String get downloads_are_limited_to_wifi =>
+      'Загрузки ограничены только Wi-Fi';
 
   @override
   String get manga_extensions_repo => 'Репозиторий расширений манги';
@@ -1395,7 +1438,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get undefined => 'Не определено';
 
   @override
-  String get empty_extensions_repo => 'У вас здесь нет URL-адресов репозитория. Нажмите кнопку добавления, чтобы добавить один!';
+  String get empty_extensions_repo =>
+      'У вас здесь нет URL-адресов репозитория. Нажмите кнопку добавления, чтобы добавить один!';
 
   @override
   String get add_extensions_repo => 'Добавить URL репозитория';
@@ -1404,13 +1448,16 @@ class AppLocalizationsRu extends AppLocalizations {
   String get remove_extensions_repo => 'Удалить URL репозитория';
 
   @override
-  String get manage_manga_repo_urls => 'Управление URL-адресами репозитория манги';
+  String get manage_manga_repo_urls =>
+      'Управление URL-адресами репозитория манги';
 
   @override
-  String get manage_anime_repo_urls => 'Управление URL-адресами репозитория аниме';
+  String get manage_anime_repo_urls =>
+      'Управление URL-адресами репозитория аниме';
 
   @override
-  String get manage_novel_repo_urls => 'Управление URL-адресами репозитория новелл';
+  String get manage_novel_repo_urls =>
+      'Управление URL-адресами репозитория новелл';
 
   @override
   String get url_cannot_be_empty => 'URL не может быть пустым';
@@ -1428,7 +1475,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get clear_all_sources => 'Очистить все источники';
 
   @override
-  String get clear_all_sources_msg => 'Это полностью очистит все источники приложения. Вы уверены, что хотите продолжить?';
+  String get clear_all_sources_msg =>
+      'Это полностью очистит все источники приложения. Вы уверены, что хотите продолжить?';
 
   @override
   String get sources_cleared => 'Источники очищены!';
@@ -1457,5 +1505,6 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get unsupported_repo => 'Вы попытались добавить неподдерживаемый репозиторий. Пожалуйста, обратитесь за поддержкой на сервер discord!';
+  String get unsupported_repo =>
+      'Вы попытались добавить неподдерживаемый репозиторий. Пожалуйста, обратитесь за поддержкой на сервер discord!';
 }

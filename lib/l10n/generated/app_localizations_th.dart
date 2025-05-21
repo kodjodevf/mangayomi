@@ -144,10 +144,12 @@ class AppLocalizationsTh extends AppLocalizations {
   String get remove_everything => 'ลบออกทุกอย่าง';
 
   @override
-  String get remove_everything_msg => 'ประวัติทุกอย่างจะหายไป คุณแน่ใจนะว่าจะลบ?';
+  String get remove_everything_msg =>
+      'ประวัติทุกอย่างจะหายไป คุณแน่ใจนะว่าจะลบ?';
 
   @override
-  String get remove_all_update_msg => 'คุณแน่ใจหรือไม่? การอัปเดตทั้งหมดจะถูกลบ';
+  String get remove_all_update_msg =>
+      'คุณแน่ใจหรือไม่? การอัปเดตทั้งหมดจะถูกลบ';
 
   @override
   String get ok => 'ตกลง';
@@ -159,7 +161,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get remove => 'ลบ';
 
   @override
-  String get remove_history_msg => 'นี่จะเป็นการลบวันที่อ่านของตอนนี้ คุณแน่ใจนะ?';
+  String get remove_history_msg =>
+      'นี่จะเป็นการลบวันที่อ่านของตอนนี้ คุณแน่ใจนะ?';
 
   @override
   String get last_used => 'ใช้ล่าสุด';
@@ -197,7 +200,8 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
-  String get clean_database_desc => 'สิ่งนี้จะลบรายการทั้งหมดที่ไม่ได้เพิ่มในห้องสมุด!';
+  String get clean_database_desc =>
+      'สิ่งนี้จะลบรายการทั้งหมดที่ไม่ได้เพิ่มในห้องสมุด!';
 
   @override
   String get incognito_mode => 'โหมดไม่ระบุตัวตน';
@@ -230,7 +234,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get edit_categories => 'แก้ไขหมวดหมู่';
 
   @override
-  String get edit_categories_description => 'คุณยังไม่ได้สร้างหมวดหมู่ แตะปุ่มบวกสร้างใหม่ขึ้นมาเพื่อจัดสรรชั้นหนังสือของคุณ';
+  String get edit_categories_description =>
+      'คุณยังไม่ได้สร้างหมวดหมู่ แตะปุ่มบวกสร้างใหม่ขึ้นมาเพื่อจัดสรรชั้นหนังสือของคุณ';
 
   @override
   String get add => 'เพิ่ม';
@@ -340,7 +345,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get reading_mode_webtoon => 'เว็บตูน';
 
   @override
-  String get double_tap_animation_speed => 'ความเร็วการเคลื่อนไหวของการแตะสองครั้ง';
+  String get double_tap_animation_speed =>
+      'ความเร็วการเคลื่อนไหวของการแตะสองครั้ง';
 
   @override
   String get normal => 'ปกติ';
@@ -391,7 +397,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get nsfw_sources_show => 'แสดงในแหลงที่มาและรายการส่วนขยาย';
 
   @override
-  String get nsfw_sources_info => 'สิ่งนี้ไม่ได้ป้องกันส่วนขยายที่ไม่เป็นทางการหรือที่อาจถูกตั้งค่าสถานะผิดพลาดจากการแสดงเนื้อหา NSFW (18+) ภายในแอป';
+  String get nsfw_sources_info =>
+      'สิ่งนี้ไม่ได้ป้องกันส่วนขยายที่ไม่เป็นทางการหรือที่อาจถูกตั้งค่าสถานะผิดพลาดจากการแสดงเนื้อหา NSFW (18+) ภายในแอป';
 
   @override
   String get version => 'เวอร์ชั่น';
@@ -638,7 +645,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get sync_logged => 'เข้าสู่ระบบสำเร็จ';
 
   @override
-  String get syncing_subtitle => 'ซิงค์ความคืบหน้าของคุณระหว่างอุปกรณ์หลายเครื่องผ่านเซิร์ฟเวอร์ที่โฮสต์เอง ตรวจสอบให้แน่ใจว่าได้อัปโหลดก่อนหากเป็นครั้งแรกที่คุณซิงค์ หรือดาวน์โหลดก่อนที่จะใช้การซิงค์ (อัตโนมัติ) บนอุปกรณ์นี้!';
+  String get syncing_subtitle =>
+      'ซิงค์ความคืบหน้าของคุณระหว่างอุปกรณ์หลายเครื่องผ่านเซิร์ฟเวอร์ที่โฮสต์เอง ตรวจสอบให้แน่ใจว่าได้อัปโหลดก่อนหากเป็นครั้งแรกที่คุณซิงค์ หรือดาวน์โหลดก่อนที่จะใช้การซิงค์ (อัตโนมัติ) บนอุปกรณ์นี้!';
 
   @override
   String get last_sync => 'ซิงค์ล่าสุดที่: ';
@@ -692,13 +700,16 @@ class AppLocalizationsTh extends AppLocalizations {
   String get sync_button_download => 'ดาวน์โหลดทั้งหมด';
 
   @override
-  String get sync_confirm_snapshot => 'ขอให้เซิร์ฟเวอร์สร้างข้อมูลสำรองระยะไกล!';
+  String get sync_confirm_snapshot =>
+      'ขอให้เซิร์ฟเวอร์สร้างข้อมูลสำรองระยะไกล!';
 
   @override
-  String get sync_confirm_upload => 'การอัปโหลดทั้งหมดจะทำการแทนที่ข้อมูลระยะไกลด้วยข้อมูลปัจจุบันของคุณ!';
+  String get sync_confirm_upload =>
+      'การอัปโหลดทั้งหมดจะทำการแทนที่ข้อมูลระยะไกลด้วยข้อมูลปัจจุบันของคุณ!';
 
   @override
-  String get sync_confirm_download => 'การดาวน์โหลดทั้งหมดจะทำการแทนที่ข้อมูลปัจจุบันของคุณด้วยข้อมูลจากระยะไกล!';
+  String get sync_confirm_download =>
+      'การดาวน์โหลดทั้งหมดจะทำการแทนที่ข้อมูลปัจจุบันของคุณด้วยข้อมูลจากระยะไกล!';
 
   @override
   String get sync_on => 'เปิดการซิงค์';
@@ -737,7 +748,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get sync_snapshot_deleted => 'ลบภาพรวมแล้ว!';
 
   @override
-  String get sync_snapshot_no_data => 'ไม่มีข้อมูลสำหรับสร้างภาพรวม! โปรดอัปโหลดทั้งหมดก่อน!';
+  String get sync_snapshot_no_data =>
+      'ไม่มีข้อมูลสำหรับสร้างภาพรวม! โปรดอัปโหลดทั้งหมดก่อน!';
 
   @override
   String get sync_browse_snapshots => 'เรียกดูข้อมูลสำรองเก่า';
@@ -800,13 +812,15 @@ class AppLocalizationsTh extends AppLocalizations {
   String get reorder_navigation => 'ปรับแต่งการนำทาง';
 
   @override
-  String get reorder_navigation_description => 'จัดเรียงและปรับแต่งการนำทางแต่ละรายการตามความต้องการของคุณ';
+  String get reorder_navigation_description =>
+      'จัดเรียงและปรับแต่งการนำทางแต่ละรายการตามความต้องการของคุณ';
 
   @override
   String get full_screen_player => 'ใช้โหมดเต็มหน้าจอ';
 
   @override
-  String get full_screen_player_info => 'ใช้โหมดเต็มหน้าจอโดยอัตโนมัติเมื่อเล่นวิดีโอ';
+  String get full_screen_player_info =>
+      'ใช้โหมดเต็มหน้าจอโดยอัตโนมัติเมื่อเล่นวิดีโอ';
 
   @override
   String episode_progress(Object n) {
@@ -916,7 +930,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get page_preload_amount => 'จำนวนการโหลดล่วงหน้า';
 
   @override
-  String get page_preload_amount_subtitle => 'จำนวนหน้าที่จะโหลดไว้ล่วงหน้าเมื่ออ่าน ค่าที่สูงจะส่งผลให้ประสบการณ์การอ่านไหลลื่นยิ่งขึ้น โดยใช้แคชและเครือข่ายที่มากขึ้น';
+  String get page_preload_amount_subtitle =>
+      'จำนวนหน้าที่จะโหลดไว้ล่วงหน้าเมื่ออ่าน ค่าที่สูงจะส่งผลให้ประสบการณ์การอ่านไหลลื่นยิ่งขึ้น โดยใช้แคชและเครือข่ายที่มากขึ้น';
 
   @override
   String get image_loading_error => 'ไม่สามารถโหลดรูปภาพนี้ได้';
@@ -937,7 +952,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get auto_extensions_updates => 'อัพเดทส่วนขยายอัตโนมัติ';
 
   @override
-  String get auto_extensions_updates_subtitle => 'จะทำการอัพเดทส่วนขยายเมื่อมีเวอร์ชั่นใหม่พร้อมใช้งานโดยอัตโนมัติ';
+  String get auto_extensions_updates_subtitle =>
+      'จะทำการอัพเดทส่วนขยายเมื่อมีเวอร์ชั่นใหม่พร้อมใช้งานโดยอัตโนมัติ';
 
   @override
   String get reading_mode => 'โหมดการอ่าน';
@@ -1007,7 +1023,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get create_backup_dialog_title => 'คุณต้องการสำรองอะไรบ้าง?';
 
   @override
-  String get create_backup_subtitle => 'สามารถใช้ในการกู้คืนชั้นหนังสือปัจจุบัน';
+  String get create_backup_subtitle =>
+      'สามารถใช้ในการกู้คืนชั้นหนังสือปัจจุบัน';
 
   @override
   String get restore_backup => 'กู้คืนการสำรอง';
@@ -1031,10 +1048,12 @@ class AppLocalizationsTh extends AppLocalizations {
   String get backup_options_dialog_title => 'คุณต้องการสำรองอะไรบ้าง?';
 
   @override
-  String get backup_options_subtitle => 'ข้อมูลอะไรบ้างที่ต้องการรวมไว้ในไฟล์สำรอง';
+  String get backup_options_subtitle =>
+      'ข้อมูลอะไรบ้างที่ต้องการรวมไว้ในไฟล์สำรอง';
 
   @override
-  String get backup_and_restore_warning_info => 'คุณควรเก็บสำเนาไฟล์สำรองไว้ที่อื่นด้วย';
+  String get backup_and_restore_warning_info =>
+      'คุณควรเก็บสำเนาไฟล์สำรองไว้ที่อื่นด้วย';
 
   @override
   String get library_entries => 'รายการชั้นหนังสือ';
@@ -1058,13 +1077,15 @@ class AppLocalizationsTh extends AppLocalizations {
   String get weekly => 'ทุกสัปดาห์';
 
   @override
-  String get restore_backup_warning_title => 'การคืนค่าข้อมูลสำรองจะเขียนทับข้อมูลที่มีอยู่ทั้งหมด\n\nต้องการคืนค่าต่อหรือไม่';
+  String get restore_backup_warning_title =>
+      'การคืนค่าข้อมูลสำรองจะเขียนทับข้อมูลที่มีอยู่ทั้งหมด\n\nต้องการคืนค่าต่อหรือไม่';
 
   @override
   String get services => 'บริการ';
 
   @override
-  String get tracking_warning_info => 'การซิงค์ทางเดียวจะอัพเดทความคืบหน้าบทในบริการการติดตาม กำหนเาค่าการติดตั้งสำหรับรายบุคคลจากปุ่มการติดตามS';
+  String get tracking_warning_info =>
+      'การซิงค์ทางเดียวจะอัพเดทความคืบหน้าบทในบริการการติดตาม กำหนเาค่าการติดตั้งสำหรับรายบุคคลจากปุ่มการติดตามS';
 
   @override
   String get use_page_tap_zones => 'ใช้โซนการแตะหน้า';
@@ -1097,13 +1118,15 @@ class AppLocalizationsTh extends AppLocalizations {
   String get player => 'ตัวเล่น';
 
   @override
-  String get markEpisodeAsSeenSetting => 'กำหนดจุดที่จะทำเครื่องหมายตอนว่าดูแล้ว';
+  String get markEpisodeAsSeenSetting =>
+      'กำหนดจุดที่จะทำเครื่องหมายตอนว่าดูแล้ว';
 
   @override
   String get default_skip_intro_length => 'ค่าพื้นฐานความยาวการเข้าอินโทร';
 
   @override
-  String get default_playback_speed_length => 'ค่าพื้นฐานความยาวความเร็วการเล่น';
+  String get default_playback_speed_length =>
+      'ค่าพื้นฐานความยาวความเร็วการเล่น';
 
   @override
   String get updateProgressAfterReading => 'อัพเดทความคืบหน้าหลังอ่าน';
@@ -1115,10 +1138,12 @@ class AppLocalizationsTh extends AppLocalizations {
   String get show_extensions => 'แสดงส่วนขยาย';
 
   @override
-  String get default_skip_forward_skip_length => 'ค่าพื้นฐานความยาวการข้ามไปข้างหน้า';
+  String get default_skip_forward_skip_length =>
+      'ค่าพื้นฐานความยาวการข้ามไปข้างหน้า';
 
   @override
-  String get aniskip_requires_info => 'AniSkip จำเป็นต้องใช้การติดตามอนิเมะ MAL หรือ Anilist เพื่อใช้งาน';
+  String get aniskip_requires_info =>
+      'AniSkip จำเป็นต้องใช้การติดตามอนิเมะ MAL หรือ Anilist เพื่อใช้งาน';
 
   @override
   String get enable_aniskip => 'เปิดใช้ AniSkip';
@@ -1267,7 +1292,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get background => 'พื้นหลัง';
 
   @override
-  String get no_subtite_warning_message => 'ไม่มีผลกระทบเนื่องจากไม่มีคำบรรยายใด ๆ ในวีดีโอนี้';
+  String get no_subtite_warning_message =>
+      'ไม่มีผลกระทบเนื่องจากไม่มีคำบรรยายใด ๆ ในวีดีโอนี้';
 
   @override
   String get grid_size => 'ขนาดตาราง';
@@ -1287,10 +1313,12 @@ class AppLocalizationsTh extends AppLocalizations {
   String get use_libass => 'เปิดใช้งาน libass';
 
   @override
-  String get use_libass_info => 'ใช้การเรนเดอร์คำบรรยายที่ใช้ libass สำหรับแบ็คเอนด์พื้นเมือง';
+  String get use_libass_info =>
+      'ใช้การเรนเดอร์คำบรรยายที่ใช้ libass สำหรับแบ็คเอนด์พื้นเมือง';
 
   @override
-  String get libass_not_disable_message => 'ปิดการใช้งาน `ใช้ libass` ในการตั้งค่าเพลเยอร์เพื่อให้สามารถปรับแต่งคำบรรยายได้';
+  String get libass_not_disable_message =>
+      'ปิดการใช้งาน `ใช้ libass` ในการตั้งค่าเพลเยอร์เพื่อให้สามารถปรับแต่งคำบรรยายได้';
 
   @override
   String get torrent_stream => 'สตรีมทอเรนต์';
@@ -1314,7 +1342,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get use_native_http_client => 'ใช้ไคลเอนต์ HTTP พื้นเมือง';
 
   @override
-  String get use_native_http_client_info => 'รองรับฟีเจอร์ของแพลตฟอร์มโดยอัตโนมัติ เช่น VPNs รองรับฟีเจอร์ HTTP มากขึ้น เช่น HTTP/3 และการจัดการการเปลี่ยนเส้นทางที่กำหนดเอง';
+  String get use_native_http_client_info =>
+      'รองรับฟีเจอร์ของแพลตฟอร์มโดยอัตโนมัติ เช่น VPNs รองรับฟีเจอร์ HTTP มากขึ้น เช่น HTTP/3 และการจัดการการเปลี่ยนเส้นทางที่กำหนดเอง';
 
   @override
   String n_hour_ago(Object hour) {
@@ -1365,7 +1394,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get cache_cleared => 'ล้างแคชแล้ว';
 
   @override
-  String get clear_chapter_or_episode_cache_on_app_launch => 'ล้างแคชบท/ตอนเมื่อเปิดแอป';
+  String get clear_chapter_or_episode_cache_on_app_launch =>
+      'ล้างแคชบท/ตอนเมื่อเปิดแอป';
 
   @override
   String get app_settings => 'การตั้งค่าแอป';
@@ -1374,13 +1404,15 @@ class AppLocalizationsTh extends AppLocalizations {
   String get sources_settings => 'การตั้งค่าแหล่งข้อมูล';
 
   @override
-  String get include_sensitive_settings => 'รวมการตั้งค่าที่อ่อนไหว (เช่น โทเค็นการเข้าสู่ระบบของตัวติดตาม)';
+  String get include_sensitive_settings =>
+      'รวมการตั้งค่าที่อ่อนไหว (เช่น โทเค็นการเข้าสู่ระบบของตัวติดตาม)';
 
   @override
   String get create => 'สร้าง';
 
   @override
-  String get downloads_are_limited_to_wifi => 'การดาวน์โหลดจำกัดเฉพาะ Wi-Fi เท่านั้น';
+  String get downloads_are_limited_to_wifi =>
+      'การดาวน์โหลดจำกัดเฉพาะ Wi-Fi เท่านั้น';
 
   @override
   String get manga_extensions_repo => 'ที่เก็บส่วนขยายมังงะ';
@@ -1395,7 +1427,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get undefined => 'ไม่ได้กำหนด';
 
   @override
-  String get empty_extensions_repo => 'คุณไม่มี URL ที่เก็บข้อมูลที่นี่ คลิกปุ่มเพิ่มเพื่อเพิ่ม!';
+  String get empty_extensions_repo =>
+      'คุณไม่มี URL ที่เก็บข้อมูลที่นี่ คลิกปุ่มเพิ่มเพื่อเพิ่ม!';
 
   @override
   String get add_extensions_repo => 'เพิ่ม URL ที่เก็บข้อมูล';
@@ -1428,7 +1461,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get clear_all_sources => 'ล้างแหล่งข้อมูลทั้งหมด';
 
   @override
-  String get clear_all_sources_msg => 'สิ่งนี้จะล้างแหล่งข้อมูลทั้งหมดในแอปอย่างสมบูรณ์ คุณแน่ใจหรือไม่ว่าต้องการดำเนินการต่อ?';
+  String get clear_all_sources_msg =>
+      'สิ่งนี้จะล้างแหล่งข้อมูลทั้งหมดในแอปอย่างสมบูรณ์ คุณแน่ใจหรือไม่ว่าต้องการดำเนินการต่อ?';
 
   @override
   String get sources_cleared => 'ล้างแหล่งข้อมูลแล้ว!';
@@ -1457,5 +1491,6 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
-  String get unsupported_repo => 'คุณพยายามเพิ่มที่เก็บข้อมูลที่ไม่รองรับ โปรดตรวจสอบเซิร์ฟเวอร์ Discord เพื่อรับการสนับสนุน!';
+  String get unsupported_repo =>
+      'คุณพยายามเพิ่มที่เก็บข้อมูลที่ไม่รองรับ โปรดตรวจสอบเซิร์ฟเวอร์ Discord เพื่อรับการสนับสนุน!';
 }

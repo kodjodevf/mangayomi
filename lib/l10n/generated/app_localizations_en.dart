@@ -147,7 +147,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get remove_everything_msg => 'Are you sure? All history will be lost';
 
   @override
-  String get remove_all_update_msg => 'Are you sure? The whole update will be cleared';
+  String get remove_all_update_msg =>
+      'Are you sure? The whole update will be cleared';
 
   @override
   String get ok => 'OK';
@@ -159,7 +160,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get remove => 'Remove';
 
   @override
-  String get remove_history_msg => 'This will remove the read date of this chapter. Are you sure?';
+  String get remove_history_msg =>
+      'This will remove the read date of this chapter. Are you sure?';
 
   @override
   String get last_used => 'Last Used';
@@ -197,7 +199,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get clean_database_desc => 'This will remove all items that are not added to the library!';
+  String get clean_database_desc =>
+      'This will remove all items that are not added to the library!';
 
   @override
   String get incognito_mode => 'Incognito Mode';
@@ -230,7 +233,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get edit_categories => 'Edit Categories';
 
   @override
-  String get edit_categories_description => 'You have no categories. Tap the plus button to create one for organizing your library';
+  String get edit_categories_description =>
+      'You have no categories. Tap the plus button to create one for organizing your library';
 
   @override
   String get add => 'Add';
@@ -245,7 +249,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get category_name_required => '*Required';
 
   @override
-  String get add_category_error_exist => 'A category with this name already exist!';
+  String get add_category_error_exist =>
+      'A category with this name already exist!';
 
   @override
   String get delete_category => 'Delete Category';
@@ -391,7 +396,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nsfw_sources_show => 'Show in sources and extensions lists';
 
   @override
-  String get nsfw_sources_info => 'This does not prevent unofficial or potentially incorrectly flagged extensions from surfacing NSFW (18+) content within the app';
+  String get nsfw_sources_info =>
+      'This does not prevent unofficial or potentially incorrectly flagged extensions from surfacing NSFW (18+) content within the app';
 
   @override
   String get version => 'Version';
@@ -638,7 +644,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sync_logged => 'Login successful';
 
   @override
-  String get syncing_subtitle => 'Sync your progress across multiple devices via a self-hosted \nserver. Make sure to upload first if this is your first time \nsyncing or download before using (auto) sync on this device!';
+  String get syncing_subtitle =>
+      'Sync your progress across multiple devices via a self-hosted \nserver. Make sure to upload first if this is your first time \nsyncing or download before using (auto) sync on this device!';
 
   @override
   String get last_sync => 'Last sync at: ';
@@ -692,13 +699,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sync_button_download => 'Full download';
 
   @override
-  String get sync_confirm_snapshot => 'Request the server to create a remote copy of the current backup!';
+  String get sync_confirm_snapshot =>
+      'Request the server to create a remote copy of the current backup!';
 
   @override
-  String get sync_confirm_upload => 'A full upload will completely replace the remote data with your current one!';
+  String get sync_confirm_upload =>
+      'A full upload will completely replace the remote data with your current one!';
 
   @override
-  String get sync_confirm_download => 'A full download will completely replace your current data with the remote one!';
+  String get sync_confirm_download =>
+      'A full download will completely replace your current data with the remote one!';
 
   @override
   String get sync_on => 'Enable sync';
@@ -737,7 +747,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sync_snapshot_deleted => 'Snapshot deleted!';
 
   @override
-  String get sync_snapshot_no_data => 'No data to create a snapshot! Do a full upload first!';
+  String get sync_snapshot_no_data =>
+      'No data to create a snapshot! Do a full upload first!';
 
   @override
   String get sync_browse_snapshots => 'Browse older backups';
@@ -755,7 +766,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sync_auto => 'Auto Sync';
 
   @override
-  String get sync_auto_warning => 'Auto Sync is currently an experimental feature!';
+  String get sync_auto_warning =>
+      'Auto Sync is currently an experimental feature!';
 
   @override
   String get sync_auto_off => 'Off';
@@ -800,13 +812,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reorder_navigation => 'Customize navigation';
 
   @override
-  String get reorder_navigation_description => 'Reorder and toggle each navigation to your needs.';
+  String get reorder_navigation_description =>
+      'Reorder and toggle each navigation to your needs.';
 
   @override
   String get full_screen_player => 'Use Fullscreen';
 
   @override
-  String get full_screen_player_info => 'Automatically use fullscreen when playing a video.';
+  String get full_screen_player_info =>
+      'Automatically use fullscreen when playing a video.';
 
   @override
   String episode_progress(Object n) {
@@ -916,7 +930,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get page_preload_amount => 'Page preload amount';
 
   @override
-  String get page_preload_amount_subtitle => 'The amount of pages to preload when reading. Higher values will result in a smoother reading experience, at the cost of higher cache and network usage.';
+  String get page_preload_amount_subtitle =>
+      'The amount of pages to preload when reading. Higher values will result in a smoother reading experience, at the cost of higher cache and network usage.';
 
   @override
   String get image_loading_error => 'This image couldn\'t be loaded';
@@ -937,7 +952,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get auto_extensions_updates => 'Auto extension updates';
 
   @override
-  String get auto_extensions_updates_subtitle => 'Will automatically update the extension when a new version is available.';
+  String get auto_extensions_updates_subtitle =>
+      'Will automatically update the extension when a new version is available.';
 
   @override
   String get reading_mode => 'Reading mode';
@@ -1031,10 +1047,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backup_options_dialog_title => 'What do you want to backup?';
 
   @override
-  String get backup_options_subtitle => 'What information to include in the backup file?';
+  String get backup_options_subtitle =>
+      'What information to include in the backup file?';
 
   @override
-  String get backup_and_restore_warning_info => 'You should keep copies of backups in other places as well';
+  String get backup_and_restore_warning_info =>
+      'You should keep copies of backups in other places as well';
 
   @override
   String get library_entries => 'Library entries';
@@ -1058,13 +1076,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get weekly => 'Weekly';
 
   @override
-  String get restore_backup_warning_title => 'Restoring a backup will overwrite all existing data.\n\nContinue restoring?';
+  String get restore_backup_warning_title =>
+      'Restoring a backup will overwrite all existing data.\n\nContinue restoring?';
 
   @override
   String get services => 'Services';
 
   @override
-  String get tracking_warning_info => 'One-way sync to update the chapter progress in tracking services. Set up tracking for individual entries from their tracking button.';
+  String get tracking_warning_info =>
+      'One-way sync to update the chapter progress in tracking services. Set up tracking for individual entries from their tracking button.';
 
   @override
   String get use_page_tap_zones => 'Use page tap zones';
@@ -1097,7 +1117,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get player => 'Player';
 
   @override
-  String get markEpisodeAsSeenSetting => 'At what point to mark the episode as seen';
+  String get markEpisodeAsSeenSetting =>
+      'At what point to mark the episode as seen';
 
   @override
   String get default_skip_intro_length => 'Default Skip intro length';
@@ -1115,10 +1136,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get show_extensions => 'Show extensions';
 
   @override
-  String get default_skip_forward_skip_length => 'Default skip forward skip length';
+  String get default_skip_forward_skip_length =>
+      'Default skip forward skip length';
 
   @override
-  String get aniskip_requires_info => 'AniSkip requires the anime to be tracked with MAL or Anilist to work.';
+  String get aniskip_requires_info =>
+      'AniSkip requires the anime to be tracked with MAL or Anilist to work.';
 
   @override
   String get enable_aniskip => 'Enable AniSkip';
@@ -1267,7 +1290,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get background => 'Background';
 
   @override
-  String get no_subtite_warning_message => 'Has no effect because there aren\'t any subtitle tracks in this video';
+  String get no_subtite_warning_message =>
+      'Has no effect because there aren\'t any subtitle tracks in this video';
 
   @override
   String get grid_size => 'Grid size';
@@ -1287,10 +1311,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get use_libass => 'Enable libass';
 
   @override
-  String get use_libass_info => 'Use libass based subtitle rendering for native backend.';
+  String get use_libass_info =>
+      'Use libass based subtitle rendering for native backend.';
 
   @override
-  String get libass_not_disable_message => 'Disable `use libass` in player settings to be able to customize the subtitles.';
+  String get libass_not_disable_message =>
+      'Disable `use libass` in player settings to be able to customize the subtitles.';
 
   @override
   String get torrent_stream => 'Torrent Stream';
@@ -1314,7 +1340,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get use_native_http_client => 'Use native http client';
 
   @override
-  String get use_native_http_client_info => 'it automatically supports platform features such VPNs, support more HTTP features such as HTTP/3 and custom redirect handling';
+  String get use_native_http_client_info =>
+      'it automatically supports platform features such VPNs, support more HTTP features such as HTTP/3 and custom redirect handling';
 
   @override
   String n_hour_ago(Object hour) {
@@ -1359,13 +1386,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get storage => 'Storage';
 
   @override
-  String get clear_chapter_and_episode_cache => 'Clear chapter and episode cache';
+  String get clear_chapter_and_episode_cache =>
+      'Clear chapter and episode cache';
 
   @override
   String get cache_cleared => 'Cache cleared';
 
   @override
-  String get clear_chapter_or_episode_cache_on_app_launch => 'Clear chapter/episode cache on app launch';
+  String get clear_chapter_or_episode_cache_on_app_launch =>
+      'Clear chapter/episode cache on app launch';
 
   @override
   String get app_settings => 'App settings';
@@ -1374,13 +1403,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sources_settings => 'Sources settings';
 
   @override
-  String get include_sensitive_settings => 'Include sensitive settings (e.g., tracker login tokens)';
+  String get include_sensitive_settings =>
+      'Include sensitive settings (e.g., tracker login tokens)';
 
   @override
   String get create => 'Create';
 
   @override
-  String get downloads_are_limited_to_wifi => 'Downloads are limited to Wi-Fi only';
+  String get downloads_are_limited_to_wifi =>
+      'Downloads are limited to Wi-Fi only';
 
   @override
   String get manga_extensions_repo => 'Manga extensions repo';
@@ -1395,7 +1426,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get undefined => 'undefined';
 
   @override
-  String get empty_extensions_repo => 'You don\'t have any repository urls here. Click on the plus button to add one!';
+  String get empty_extensions_repo =>
+      'You don\'t have any repository urls here. Click on the plus button to add one!';
 
   @override
   String get add_extensions_repo => 'Add repo URL';
@@ -1428,7 +1460,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clear_all_sources => 'Clear all sources';
 
   @override
-  String get clear_all_sources_msg => 'This will completely erase all sources of the application. Are you sure you want to continue?';
+  String get clear_all_sources_msg =>
+      'This will completely erase all sources of the application. Are you sure you want to continue?';
 
   @override
   String get sources_cleared => 'Sources cleared!!!';
@@ -1457,5 +1490,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get unsupported_repo => 'You\'ve tried to add an unsupported repository. Please check the discord server for support!';
+  String get unsupported_repo =>
+      'You\'ve tried to add an unsupported repository. Please check the discord server for support!';
 }
