@@ -309,6 +309,11 @@ class MProviderBridged {
           getJavascriptRuntime().evaluateAsync(positionalArgs[0] as String),
     );
     interpreter.registertopLevelFunction(
+      'evalJsSync',
+      (visitor, positionalArgs, namedArgs, _) =>
+          getJavascriptRuntime().evaluate(positionalArgs[0] as String),
+    );
+    interpreter.registertopLevelFunction(
       'regExp',
       (visitor, positionalArgs, namedArgs, _) => MBridge.regExp(
         positionalArgs[0] as String,
