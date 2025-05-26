@@ -21,14 +21,17 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:path/path.dart' as path;
 
 class StorageProvider {
+  static bool _hasPermission = false;
   Future<bool> requestPermission() async {
-    Permission permission = Permission.manageExternalStorage;
+    if (_hasPermission) return true;
     if (Platform.isAndroid) {
+      Permission permission = Permission.manageExternalStorage;
       if (await permission.isGranted) {
         return true;
       } else {
         final result = await permission.request();
         if (result == PermissionStatus.granted) {
+          _hasPermission = true;
           return true;
         }
         return false;
@@ -155,7 +158,7 @@ class StorageProvider {
       dir = Directory(path);
     }
 
-    final isar = Isar.openSync(
+    final isar = await Isar.open(
       [
         MangaSchema,
         ChangedPartSchema,
@@ -177,9 +180,10 @@ class StorageProvider {
       inspector: inspector!,
     );
 
-    if (isar.settings.filter().idEqualTo(227).isEmptySync()) {
-      isar.writeTxnSync(() {
-        isar.settings.putSync(Settings());
+    final settings = await isar.settings.filter().idEqualTo(227).findFirst();
+    if (settings == null) {
+      await isar.writeTxn(() async {
+        isar.settings.put(Settings());
       });
     }
 
