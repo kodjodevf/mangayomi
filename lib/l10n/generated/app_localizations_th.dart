@@ -1493,4 +1493,23 @@ class AppLocalizationsTh extends AppLocalizations {
   @override
   String get unsupported_repo =>
       'คุณพยายามเพิ่มที่เก็บข้อมูลที่ไม่รองรับ โปรดตรวจสอบเซิร์ฟเวอร์ Discord เพื่อรับการสนับสนุน!';
+
+  @override
+  String get end_of_chapter => 'End of chapter';
+
+  @override
+  String get chapter_completed => 'Chapter completed';
+
+  @override
+  String get continue_to_next_chapter =>
+      'Continue scrolling to read the next chapter';
+
+  @override
+  String get no_next_chapter => 'No next chapter';
+
+  @override
+  String get you_have_finished_reading => 'You have finished reading';
+
+  @override
+  String get return_to_the_list_of_chapters => 'Return to the list of chapters';
 }

@@ -466,5 +466,13 @@
   "source_not_added": "Source is not installed!",
   "load_own_subtitles": "Load your own subtitles...",
   "extension_notes": "Notes: {notes}",
-  "unsupported_repo": "You've tried to add an unsupported repository. Please check the discord server for support!"
+  "unsupported_repo": "You've tried to add an unsupported repository. Please check the discord server for support!",
+  "end_of_chapter": "End of chapter",
+  "chapter_completed": "Chapter completed",
+  "continue_to_next_chapter": "Continue scrolling to read the next chapter",
+  "no_next_chapter": "No next chapter",
+  "you_have_finished_reading": "You have finished reading",
+  "return_to_the_list_of_chapters": "Return to the list of chapters"
+
+
 }

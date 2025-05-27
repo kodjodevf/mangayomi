@@ -38,6 +38,8 @@ import 'package:mangayomi/modules/manga/reader/image_view_paged.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_vertical.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/transition_view_vertical.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/transition_view_paged.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/modules/manga/reader/providers/manga_reader_provider.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
@@ -140,10 +142,11 @@ class _MangaChapterPageGalleryState
   @override
   void dispose() {
     _readerController.setMangaHistoryUpdate();
-    _readerController.setPageIndex(
-      _geCurrentIndex(_uChapDataPreload[_currentIndex!].index!),
-      true,
-    );
+    final index = _uChapDataPreload[_currentIndex!].index;
+    if (index != null) {
+      _readerController.setPageIndex(_geCurrentIndex(index), true);
+    }
+
     _rebuildDetail.close();
     _doubleClickAnimationController.dispose();
     _autoScroll.value = false;
@@ -167,7 +170,7 @@ class _MangaChapterPageGalleryState
 
   late Chapter chapter = widget.chapter;
 
-  List<UChapDataPreload> _uChapDataPreload = [];
+  final List<UChapDataPreload> _uChapDataPreload = [];
 
   final _failedToLoadImage = ValueNotifier<bool>(false);
 
@@ -530,10 +533,7 @@ class _MangaChapterPageGalleryState
                         ? PhotoViewGallery.builder(
                           itemCount: 1,
                           builder:
-                              (
-                                _,
-                                __,
-                              ) => PhotoViewGalleryPageOptions.customChild(
+                              (_, _) => PhotoViewGalleryPageOptions.customChild(
                                 controller: _photoViewController,
                                 scaleStateController:
                                     _photoViewScaleStateController,
@@ -560,6 +560,13 @@ class _MangaChapterPageGalleryState
                                   scrollOffsetController: _pageOffsetController,
                                   itemPositionsListener: _itemPositionsListener,
                                   itemBuilder: (context, index) {
+                                    if (_uChapDataPreload[index]
+                                        .isTransitionPage) {
+                                      return TransitionViewVertical(
+                                        data: _uChapDataPreload[index],
+                                      );
+                                    }
+
                                     int index1 = index * 2 - 1;
                                     int index2 = index1 + 1;
                                     return GestureDetector(
@@ -658,6 +665,14 @@ class _MangaChapterPageGalleryState
                                       return _horizontalScaleValue == 1.0;
                                     },
                                     itemBuilder: (context, index) {
+                                      if (index < _uChapDataPreload.length &&
+                                          _uChapDataPreload[index]
+                                              .isTransitionPage) {
+                                        return TransitionViewPaged(
+                                          data: _uChapDataPreload[index],
+                                        );
+                                      }
+
                                       int index1 = index * 2 - 1;
                                       int index2 = index1 + 1;
                                       final pageList =
@@ -712,6 +727,13 @@ class _MangaChapterPageGalleryState
                                       BuildContext context,
                                       int index,
                                     ) {
+                                      if (_uChapDataPreload[index]
+                                          .isTransitionPage) {
+                                        return TransitionViewPaged(
+                                          data: _uChapDataPreload[index],
+                                        );
+                                      }
+
                                       return ImageViewPaged(
                                         data: _uChapDataPreload[index],
                                         loadStateChanged: (state) {
@@ -959,7 +981,6 @@ class _MangaChapterPageGalleryState
 
   void _readProgressListener() {
     final itemPositions = _itemPositionsListener.itemPositions.value;
-
     if (itemPositions.isNotEmpty) {
       _currentIndex = itemPositions.first.index;
       int pagesLength =
@@ -968,14 +989,13 @@ class _MangaChapterPageGalleryState
                       ReaderMode.horizontalContinuous))
               ? (_uChapDataPreload.length / 2).ceil() + 1
               : _uChapDataPreload.length;
-
       if (_currentIndex! >= 0 && _currentIndex! < pagesLength) {
         if (_readerController.chapter.id !=
             _uChapDataPreload[_currentIndex!].chapter!.id) {
-          _readerController.setPageIndex(
-            _geCurrentIndex(_uChapDataPreload[_currentIndex! - 1].index!),
-            false,
-          );
+          final ind = _uChapDataPreload[_currentIndex! - 1].index;
+          if (ind != null) {
+            _readerController.setPageIndex(_geCurrentIndex(ind), false);
+          }
           if (mounted) {
             setState(() {
               _readerController = ref.read(
@@ -985,8 +1005,13 @@ class _MangaChapterPageGalleryState
               );
 
               chapter = _uChapDataPreload[_currentIndex!].chapter!;
-              _chapterUrlModel =
-                  _uChapDataPreload[_currentIndex!].chapterUrlModel!;
+              final chapterUrlModel =
+                  _uChapDataPreload[_currentIndex!].chapterUrlModel;
+
+              if (chapterUrlModel != null) {
+                _chapterUrlModel = chapterUrlModel;
+              }
+
               _isBookmarked = _readerController.getChapterBookmarked();
             });
           }
@@ -1000,64 +1025,94 @@ class _MangaChapterPageGalleryState
                   ).future,
                 )
                 .then((value) => _preloadNextChapter(value, chapter));
-          } catch (_) {}
+          } on RangeError {
+            _addLastPageTransition(chapter);
+          }
         }
-
-        ref
-            .read(currentIndexProvider(chapter).notifier)
-            .setCurrentIndex(_uChapDataPreload[_currentIndex!].index!);
+        final idx = _uChapDataPreload[_currentIndex!].index;
+        if (idx != null) {
+          ref.read(currentIndexProvider(chapter).notifier).setCurrentIndex(idx);
+        }
       }
     }
   }
 
-  void _preloadNextChapter(GetChapterPagesModel chapterData, Chapter chap) {
+  void _addLastPageTransition(Chapter chap) {
     try {
-      int length = 0;
-      bool isExist = false;
-      List<UChapDataPreload> uChapDataPreloadP = [];
-      List<UChapDataPreload> uChapDataPreloadL = _uChapDataPreload;
-      List<UChapDataPreload> preChap = [];
-      final uIsNotEmpty =
-          chapterData.uChapDataPreload.first.chapter!.url!.isNotEmpty;
-      final aIsNotEmpty =
-          chapterData.uChapDataPreload.first.chapter!.archivePath!.isNotEmpty;
-      for (var chp in _uChapDataPreload) {
-        final cuIsNotEmpty = chp.chapter!.url!.isNotEmpty;
-        final caIsNotEmpty = chp.chapter!.archivePath!.isNotEmpty;
-        if (uIsNotEmpty &&
-                cuIsNotEmpty &&
-                chapterData.uChapDataPreload.first.chapter!.url ==
-                    chp.chapter!.url ||
-            aIsNotEmpty &&
-                caIsNotEmpty &&
-                chapterData.uChapDataPreload.first.chapter!.archivePath ==
-                    chp.chapter!.archivePath) {
-          isExist = true;
-        }
-      }
-      if (!isExist) {
-        for (var ch in chapterData.uChapDataPreload) {
-          preChap.add(ch);
-        }
-      }
+      if (!mounted || (_uChapDataPreload.last.isLastChapter ?? false)) return;
+      final currentLength = _uChapDataPreload.length;
+      final transitionPage = UChapDataPreload.transition(
+        currentChapter: chap,
+        nextChapter: null,
+        mangaName: chap.manga.value?.name ?? '',
+        isLastChapter: true,
+        pageIndex: currentLength,
+      );
 
-      if (preChap.isNotEmpty) {
-        length = _uChapDataPreload.length;
-        for (var i = 0; i < preChap.length; i++) {
-          int index = i + length;
-          final dataPreload = preChap[i];
-          uChapDataPreloadP.add(dataPreload..pageIndex = index);
-        }
-        if (mounted) {
-          uChapDataPreloadL.addAll(uChapDataPreloadP);
-          if (mounted) {
-            setState(() {
-              _uChapDataPreload = uChapDataPreloadL;
-            });
-          }
-        }
+      if (mounted) {
+        setState(() {
+          _uChapDataPreload.add(transitionPage);
+        });
       }
     } catch (_) {}
+  }
+
+  void _preloadNextChapter(GetChapterPagesModel chapterData, Chapter chap) {
+    try {
+      if (chapterData.uChapDataPreload.isEmpty || !mounted) return;
+
+      final firstChapter = chapterData.uChapDataPreload.first.chapter;
+      if (firstChapter == null) return;
+
+      if (_isChapterAlreadyLoaded(firstChapter)) return;
+
+      final currentLength = _uChapDataPreload.length;
+
+      final transitionPage = UChapDataPreload.transition(
+        currentChapter: chap,
+        nextChapter: firstChapter,
+        mangaName: chap.manga.value?.name ?? '',
+        pageIndex: currentLength,
+      );
+
+      final newPages =
+          chapterData.uChapDataPreload
+              .asMap()
+              .entries
+              .map(
+                (entry) =>
+                    entry.value..pageIndex = currentLength + 1 + entry.key,
+              )
+              .toList();
+
+      if (mounted) {
+        setState(() {
+          _uChapDataPreload.add(transitionPage);
+          _uChapDataPreload.addAll(newPages);
+        });
+      }
+    } catch (_) {}
+  }
+
+  bool _isChapterAlreadyLoaded(Chapter chapter) {
+    final existingIdentifiers =
+        _uChapDataPreload
+            .map((item) => item.chapter)
+            .where((ch) => ch != null)
+            .map((ch) => _getChapterIdentifier(ch!))
+            .toSet();
+
+    return existingIdentifiers.contains(_getChapterIdentifier(chapter));
+  }
+
+  String _getChapterIdentifier(Chapter chapter) {
+    final url = chapter.url?.trim() ?? '';
+    final archivePath = chapter.archivePath?.trim() ?? '';
+
+    if (url.isNotEmpty) return 'url:$url';
+    if (archivePath.isNotEmpty) return 'archive:$archivePath';
+
+    return 'id:${chapter.id}';
   }
 
   void _initCurrentIndex() async {
@@ -1113,10 +1168,12 @@ class _MangaChapterPageGalleryState
     }
 
     if (_readerController.chapter.id != _uChapDataPreload[index].chapter!.id) {
-      _readerController.setPageIndex(
-        _geCurrentIndex(_uChapDataPreload[_currentIndex!].index!),
-        false,
-      );
+      if (_uChapDataPreload[_currentIndex!].index != null) {
+        _readerController.setPageIndex(
+          _geCurrentIndex(_uChapDataPreload[_currentIndex!].index!),
+          false,
+        );
+      }
       if (mounted) {
         setState(() {
           _readerController = ref.read(
@@ -1125,16 +1182,20 @@ class _MangaChapterPageGalleryState
             ).notifier,
           );
           chapter = _uChapDataPreload[_currentIndex!].chapter!;
-          _chapterUrlModel = _uChapDataPreload[index].chapterUrlModel!;
+          final chapterUrlModel = _uChapDataPreload[index].chapterUrlModel;
+          if (chapterUrlModel != null) {
+            _chapterUrlModel = chapterUrlModel;
+          }
           _isBookmarked = _readerController.getChapterBookmarked();
         });
       }
     }
     _currentIndex = index;
-
-    ref
-        .read(currentIndexProvider(chapter).notifier)
-        .setCurrentIndex(_uChapDataPreload[index].index!);
+    if (_uChapDataPreload[index].index != null) {
+      ref
+          .read(currentIndexProvider(chapter).notifier)
+          .setCurrentIndex(_uChapDataPreload[index].index!);
+    }
 
     if (_uChapDataPreload[index].pageIndex! == _uChapDataPreload.length - 1) {
       try {
@@ -1145,7 +1206,9 @@ class _MangaChapterPageGalleryState
               ).future,
             )
             .then((value) => _preloadNextChapter(value, chapter));
-      } catch (_) {}
+      } on RangeError {
+        _addLastPageTransition(chapter);
+      }
     }
   }
 
@@ -2514,6 +2577,11 @@ class UChapDataPreload {
   GetChapterPagesModel? chapterUrlModel;
   int? pageIndex;
   Uint8List? cropImage;
+  bool isTransitionPage;
+  Chapter? nextChapter;
+  String? mangaName;
+  bool? isLastChapter;
+
   UChapDataPreload(
     this.chapter,
     this.directory,
@@ -2524,7 +2592,27 @@ class UChapDataPreload {
     this.chapterUrlModel,
     this.pageIndex, {
     this.cropImage,
+    this.isTransitionPage = false,
+    this.nextChapter,
+    this.mangaName,
+    this.isLastChapter = false,
   });
+
+  UChapDataPreload.transition({
+    required Chapter currentChapter,
+    required this.nextChapter,
+    required String this.mangaName,
+    required int this.pageIndex,
+    this.isLastChapter = false,
+  }) : chapter = currentChapter,
+       isTransitionPage = true,
+       directory = null,
+       pageUrl = null,
+       isLocale = null,
+       archiveImage = null,
+       index = null,
+       chapterUrlModel = null,
+       cropImage = null;
 }
 
 class CustomPopupMenuButton<T> extends StatelessWidget {

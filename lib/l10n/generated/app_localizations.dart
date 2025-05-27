@@ -2921,6 +2921,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You\'ve tried to add an unsupported repository. Please check the discord server for support!'**
   String get unsupported_repo;
+
+  /// No description provided for @end_of_chapter.
+  ///
+  /// In en, this message translates to:
+  /// **'End of chapter'**
+  String get end_of_chapter;
+
+  /// No description provided for @chapter_completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter completed'**
+  String get chapter_completed;
+
+  /// No description provided for @continue_to_next_chapter.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue scrolling to read the next chapter'**
+  String get continue_to_next_chapter;
+
+  /// No description provided for @no_next_chapter.
+  ///
+  /// In en, this message translates to:
+  /// **'No next chapter'**
+  String get no_next_chapter;
+
+  /// No description provided for @you_have_finished_reading.
+  ///
+  /// In en, this message translates to:
+  /// **'You have finished reading'**
+  String get you_have_finished_reading;
+
+  /// No description provided for @return_to_the_list_of_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Return to the list of chapters'**
+  String get return_to_the_list_of_chapters;
 }
 
 class _AppLocalizationsDelegate

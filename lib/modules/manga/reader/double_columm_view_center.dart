@@ -5,6 +5,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_paged.dart';
 import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/transition_view_paged.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -111,6 +112,14 @@ class _DoubleColummViewState extends State<DoubleColummView>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.datas[0]?.isTransitionPage ?? false) {
+      return TransitionViewPaged(data: widget.datas[0]!);
+    }
+    if (widget.datas.length > 1 &&
+        (widget.datas[1]?.isTransitionPage ?? false)) {
+      return TransitionViewPaged(data: widget.datas[1]!);
+    }
+
     return PhotoViewGallery.builder(
       backgroundDecoration: const BoxDecoration(color: Colors.transparent),
       itemCount: 1,
