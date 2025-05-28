@@ -179,7 +179,7 @@ class Kitsu extends _$Kitsu {
     final accessToken = _getAccessToken();
 
     final url = Uri.parse(
-      '${_baseUrl}library-entries?filter[${type}_id]=${track.libraryId}&filter[user_id]=$userId&include=$type',
+      '${_baseUrl}library-entries?filter[${type}_id]=${track.mediaId}&filter[user_id]=$userId&include=$type',
     );
     Response response = await _makeGetRequest(url, accessToken);
     if (response.statusCode == 200) {
