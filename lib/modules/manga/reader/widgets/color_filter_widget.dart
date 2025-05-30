@@ -17,11 +17,11 @@ import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
     customColorFilter == null
         ? null
         : Color.fromARGB(
-          customColorFilter.a ?? 0,
-          customColorFilter.r ?? 0,
-          customColorFilter.g ?? 0,
-          customColorFilter.b ?? 0,
-        ),
+            customColorFilter.a ?? 0,
+            customColorFilter.r ?? 0,
+            customColorFilter.g ?? 0,
+            customColorFilter.b ?? 0,
+          ),
   );
 }
 

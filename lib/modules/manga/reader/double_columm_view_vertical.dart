@@ -51,9 +51,9 @@ class DoubleColummVerticalView extends StatelessWidget {
                           state.loadingProgress;
                       final double progress =
                           loadingProgress?.expectedTotalBytes != null
-                              ? loadingProgress!.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
-                              : 0;
+                          ? loadingProgress!.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                          : 0;
                       return Container(
                         color: getBackgroundColor(backgroundColor),
                         height: context.height(0.8),
@@ -126,9 +126,9 @@ class DoubleColummVerticalView extends StatelessWidget {
                           state.loadingProgress;
                       final double progress =
                           loadingProgress?.expectedTotalBytes != null
-                              ? loadingProgress!.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
-                              : 0;
+                          ? loadingProgress!.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                          : 0;
                       return Container(
                         color: getBackgroundColor(backgroundColor),
                         height: context.height(0.8),

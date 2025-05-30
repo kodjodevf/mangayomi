@@ -676,15 +676,15 @@ class __$$RhttpError_RhttpStatusCodeErrorImplCopyWithImpl<$Res>
         null == field0
             ? _value.field0
             : field0 // ignore: cast_nullable_to_non_nullable
-                as int,
+                  as int,
         null == field1
             ? _value._field1
             : field1 // ignore: cast_nullable_to_non_nullable
-                as List<(String, String)>,
+                  as List<(String, String)>,
         null == field2
             ? _value.field2
             : field2 // ignore: cast_nullable_to_non_nullable
-                as HttpResponseBody,
+                  as HttpResponseBody,
       ),
     );
   }
@@ -755,9 +755,10 @@ class _$RhttpError_RhttpStatusCodeErrorImpl
   _$$RhttpError_RhttpStatusCodeErrorImplCopyWith<
     _$RhttpError_RhttpStatusCodeErrorImpl
   >
-  get copyWith => __$$RhttpError_RhttpStatusCodeErrorImplCopyWithImpl<
-    _$RhttpError_RhttpStatusCodeErrorImpl
-  >(this, _$identity);
+  get copyWith =>
+      __$$RhttpError_RhttpStatusCodeErrorImplCopyWithImpl<
+        _$RhttpError_RhttpStatusCodeErrorImpl
+      >(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -934,7 +935,7 @@ class __$$RhttpError_RhttpInvalidCertificateErrorImplCopyWithImpl<$Res>
         null == field0
             ? _value.field0
             : field0 // ignore: cast_nullable_to_non_nullable
-                as String,
+                  as String,
       ),
     );
   }
@@ -973,9 +974,10 @@ class _$RhttpError_RhttpInvalidCertificateErrorImpl
   _$$RhttpError_RhttpInvalidCertificateErrorImplCopyWith<
     _$RhttpError_RhttpInvalidCertificateErrorImpl
   >
-  get copyWith => __$$RhttpError_RhttpInvalidCertificateErrorImplCopyWithImpl<
-    _$RhttpError_RhttpInvalidCertificateErrorImpl
-  >(this, _$identity);
+  get copyWith =>
+      __$$RhttpError_RhttpInvalidCertificateErrorImplCopyWithImpl<
+        _$RhttpError_RhttpInvalidCertificateErrorImpl
+      >(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1144,7 +1146,7 @@ class __$$RhttpError_RhttpConnectionErrorImplCopyWithImpl<$Res>
         null == field0
             ? _value.field0
             : field0 // ignore: cast_nullable_to_non_nullable
-                as String,
+                  as String,
       ),
     );
   }
@@ -1183,9 +1185,10 @@ class _$RhttpError_RhttpConnectionErrorImpl
   _$$RhttpError_RhttpConnectionErrorImplCopyWith<
     _$RhttpError_RhttpConnectionErrorImpl
   >
-  get copyWith => __$$RhttpError_RhttpConnectionErrorImplCopyWithImpl<
-    _$RhttpError_RhttpConnectionErrorImpl
-  >(this, _$identity);
+  get copyWith =>
+      __$$RhttpError_RhttpConnectionErrorImplCopyWithImpl<
+        _$RhttpError_RhttpConnectionErrorImpl
+      >(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1353,7 +1356,7 @@ class __$$RhttpError_RhttpUnknownErrorImplCopyWithImpl<$Res>
         null == field0
             ? _value.field0
             : field0 // ignore: cast_nullable_to_non_nullable
-                as String,
+                  as String,
       ),
     );
   }
@@ -1391,9 +1394,10 @@ class _$RhttpError_RhttpUnknownErrorImpl extends RhttpError_RhttpUnknownError {
   _$$RhttpError_RhttpUnknownErrorImplCopyWith<
     _$RhttpError_RhttpUnknownErrorImpl
   >
-  get copyWith => __$$RhttpError_RhttpUnknownErrorImplCopyWithImpl<
-    _$RhttpError_RhttpUnknownErrorImpl
-  >(this, _$identity);
+  get copyWith =>
+      __$$RhttpError_RhttpUnknownErrorImplCopyWithImpl<
+        _$RhttpError_RhttpUnknownErrorImpl
+      >(this, _$identity);
 
   @override
   @optionalTypeArgs

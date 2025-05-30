@@ -13,8 +13,8 @@ class MDocumentBridge {
     },
     getters: {
       'body': (visitor, target) => (target as MDocument).body,
-      'documentElement':
-          (visitor, target) => (target as MDocument).documentElement,
+      'documentElement': (visitor, target) =>
+          (target as MDocument).documentElement,
       'head': (visitor, target) => (target as MDocument).head,
       'parent': (visitor, target) => (target as MDocument).parent,
       'outerHtml': (visitor, target) => (target as MDocument).outerHtml,
@@ -22,33 +22,28 @@ class MDocumentBridge {
       'children': (visitor, target) => (target as MDocument).children,
     },
     methods: {
-      'select':
-          (visitor, target, positionalArgs, namedArgs) =>
-              (target as MDocument).select(positionalArgs[0] as String),
-      'selectFirst':
-          (visitor, target, positionalArgs, namedArgs) =>
-              (target as MDocument).selectFirst(positionalArgs[0] as String),
-      'getElementsByClassName':
-          (visitor, target, positionalArgs, namedArgs) => (target as MDocument)
-              .getElementsByClassName(positionalArgs[0] as String),
-      'getElementsByTagName':
-          (visitor, target, positionalArgs, namedArgs) => (target as MDocument)
-              .getElementsByTagName(positionalArgs[0] as String),
-      'getElementById':
-          (visitor, target, positionalArgs, namedArgs) =>
-              (target as MDocument).getElementById(positionalArgs[0] as String),
-      'attr':
-          (visitor, target, positionalArgs, namedArgs) =>
-              (target as MDocument).attr(positionalArgs[0] as String),
-      'hasAttr':
-          (visitor, target, positionalArgs, namedArgs) =>
-              (target as MDocument).hasAttr(positionalArgs[0] as String),
-      'xpath':
-          (visitor, target, positionalArgs, namedArgs) =>
-              (target as MDocument).xpath(positionalArgs[0] as String),
-      'xpathFirst':
-          (visitor, target, positionalArgs, namedArgs) =>
-              (target as MDocument).xpathFirst(positionalArgs[0] as String),
+      'select': (visitor, target, positionalArgs, namedArgs) =>
+          (target as MDocument).select(positionalArgs[0] as String),
+      'selectFirst': (visitor, target, positionalArgs, namedArgs) =>
+          (target as MDocument).selectFirst(positionalArgs[0] as String),
+      'getElementsByClassName': (visitor, target, positionalArgs, namedArgs) =>
+          (target as MDocument).getElementsByClassName(
+            positionalArgs[0] as String,
+          ),
+      'getElementsByTagName': (visitor, target, positionalArgs, namedArgs) =>
+          (target as MDocument).getElementsByTagName(
+            positionalArgs[0] as String,
+          ),
+      'getElementById': (visitor, target, positionalArgs, namedArgs) =>
+          (target as MDocument).getElementById(positionalArgs[0] as String),
+      'attr': (visitor, target, positionalArgs, namedArgs) =>
+          (target as MDocument).attr(positionalArgs[0] as String),
+      'hasAttr': (visitor, target, positionalArgs, namedArgs) =>
+          (target as MDocument).hasAttr(positionalArgs[0] as String),
+      'xpath': (visitor, target, positionalArgs, namedArgs) =>
+          (target as MDocument).xpath(positionalArgs[0] as String),
+      'xpathFirst': (visitor, target, positionalArgs, namedArgs) =>
+          (target as MDocument).xpathFirst(positionalArgs[0] as String),
     },
   );
 

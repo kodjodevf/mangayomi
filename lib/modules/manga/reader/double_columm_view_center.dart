@@ -38,8 +38,9 @@ class _DoubleColummViewState extends State<DoubleColummView>
   final PhotoViewScaleStateController _photoViewScaleStateController =
       PhotoViewScaleStateController();
   Duration? _doubleTapAnimationDuration() {
-    int doubleTapAnimationValue =
-        isar.settings.getSync(227)!.doubleTapAnimationSpeed!;
+    int doubleTapAnimationValue = isar.settings
+        .getSync(227)!
+        .doubleTapAnimationSpeed!;
     if (doubleTapAnimationValue == 0) {
       return const Duration(milliseconds: 10);
     } else if (doubleTapAnimationValue == 1) {
@@ -149,9 +150,9 @@ class _DoubleColummViewState extends State<DoubleColummView>
                               state.loadingProgress;
                           final double progress =
                               loadingProgress?.expectedTotalBytes != null
-                                  ? loadingProgress!.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes!
-                                  : 0;
+                              ? loadingProgress!.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                              : 0;
                           return Container(
                             color: getBackgroundColor(widget.backgroundColor),
                             height: context.height(0.8),
@@ -211,8 +212,8 @@ class _DoubleColummViewState extends State<DoubleColummView>
                         }
                         return null;
                       },
-                      onLongPressData:
-                          (datas) => widget.onLongPressData.call(datas),
+                      onLongPressData: (datas) =>
+                          widget.onLongPressData.call(datas),
                     ),
                   ),
                 // if (widget.datas[1] != null) const SizedBox(width: 10),
@@ -226,9 +227,9 @@ class _DoubleColummViewState extends State<DoubleColummView>
                               state.loadingProgress;
                           final double progress =
                               loadingProgress?.expectedTotalBytes != null
-                                  ? loadingProgress!.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes!
-                                  : 0;
+                              ? loadingProgress!.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                              : 0;
                           return Container(
                             color: getBackgroundColor(widget.backgroundColor),
                             height: context.height(0.8),
@@ -288,8 +289,8 @@ class _DoubleColummViewState extends State<DoubleColummView>
                         }
                         return null;
                       },
-                      onLongPressData:
-                          (datas) => widget.onLongPressData.call(datas),
+                      onLongPressData: (datas) =>
+                          widget.onLongPressData.call(datas),
                     ),
                   ),
               ],

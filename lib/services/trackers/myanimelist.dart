@@ -21,17 +21,17 @@ class MyAnimeList extends _$MyAnimeList {
   String baseApiUrl = 'https://api.myanimelist.net/v2';
   String codeVerifier = "";
   static final isDesktop = (Platform.isWindows || Platform.isLinux);
-  String clientId =
-      isDesktop
-          ? '39e9be346b4e7dbcc59a98357e2f8472'
-          : '0c9100ccd443ddb441a319a881180f7f';
+  String clientId = isDesktop
+      ? '39e9be346b4e7dbcc59a98357e2f8472'
+      : '0c9100ccd443ddb441a319a881180f7f';
 
   @override
   void build({required int syncId, required ItemType? itemType}) {}
 
   Future<bool?> login() async {
-    final callbackUrlScheme =
-        isDesktop ? 'http://localhost:43824' : 'mangayomi';
+    final callbackUrlScheme = isDesktop
+        ? 'http://localhost:43824'
+        : 'mangayomi';
     final loginUrl = _authUrl();
 
     try {
@@ -44,10 +44,9 @@ class MyAnimeList extends _$MyAnimeList {
 
       final oAuth = await _getOAuth(queryParams['code']!);
       final mALOAuth = OAuth.fromJson(oAuth as Map<String, dynamic>)
-        ..expiresIn =
-            DateTime.now()
-                .add(Duration(seconds: oAuth['expires_in']))
-                .millisecondsSinceEpoch;
+        ..expiresIn = DateTime.now()
+            .add(Duration(seconds: oAuth['expires_in']))
+            .millisecondsSinceEpoch;
       final username = await _getUserName(mALOAuth.accessToken!);
       ref
           .read(tracksProvider(syncId: syncId).notifier)
@@ -108,10 +107,9 @@ class MyAnimeList extends _$MyAnimeList {
     final result = await _makeGetRequest(url, accessToken);
     final res = jsonDecode(result.body) as Map<String, dynamic>;
 
-    List<int> mangaIds =
-        res['data'] == null
-            ? []
-            : (res['data'] as List).map((e) => e['node']["id"] as int).toList();
+    List<int> mangaIds = res['data'] == null
+        ? []
+        : (res['data'] as List).map((e) => e['node']["id"] as int).toList();
     final trackSearchResult = await Future.wait(
       mangaIds.map((id) => getDetails(id, accessToken, isManga)),
     );
@@ -254,10 +252,9 @@ class MyAnimeList extends _$MyAnimeList {
   Track _parseItem(Map<String, dynamic> mJson, Track track, bool isManga) {
     bool isRepeating =
         mJson[isManga ? "is_rereading" : "is_rewatching"] ?? false;
-    track.status =
-        isRepeating
-            ? (isManga ? TrackStatus.reReading : TrackStatus.reWatching)
-            : _getMALTrackStatus(mJson["status"], isManga);
+    track.status = isRepeating
+        ? (isManga ? TrackStatus.reReading : TrackStatus.reWatching)
+        : _getMALTrackStatus(mJson["status"], isManga);
     track.lastChapterRead = int.parse(
       mJson[isManga ? "num_chapters_read" : "num_episodes_watched"].toString(),
     );
@@ -286,8 +283,9 @@ class MyAnimeList extends _$MyAnimeList {
                   (isManga ? TrackStatus.reReading : TrackStatus.reWatching))
               .toString(),
       'score': track.score.toString(),
-      isManga ? 'num_chapters_read' : 'num_watched_episodes':
-          track.lastChapterRead.toString(),
+      isManga ? 'num_chapters_read' : 'num_watched_episodes': track
+          .lastChapterRead
+          .toString(),
       if (track.startedReadingDate != null)
         'start_date': _convertToIsoDate(track.startedReadingDate),
       if (track.finishedReadingDate != null)

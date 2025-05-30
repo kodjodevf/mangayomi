@@ -80,11 +80,10 @@ Future<void> downloadChapter(
   final manga = chapter.manga.value!;
   final chapterName = chapter.name!.replaceForbiddenCharacters(' ');
   final itemType = chapter.manga.value!.itemType;
-  final chapterDirectory =
-      (await storageProvider.getMangaChapterDirectory(
-        chapter,
-        mangaMainDirectory: mangaMainDirectory,
-      ))!;
+  final chapterDirectory = (await storageProvider.getMangaChapterDirectory(
+    chapter,
+    mangaMainDirectory: mangaMainDirectory,
+  ))!;
   await Directory(chapterDirectory.path).create(recursive: true);
   Map<String, String> videoHeader = {};
   Map<String, String> htmlHeader = {
@@ -117,10 +116,9 @@ Future<void> downloadChapter(
     if (download == null) {
       final download = Download(
         id: chapter.id,
-        succeeded:
-            progress.completed == 0
-                ? 0
-                : (progress.completed / progress.total * 100).toInt(),
+        succeeded: progress.completed == 0
+            ? 0
+            : (progress.completed / progress.total * 100).toInt(),
         failed: 0,
         total: 100,
         isDownload: progress.isCompleted,
@@ -135,10 +133,9 @@ Future<void> downloadChapter(
         isar.writeTxnSync(() {
           isar.downloads.putSync(
             download
-              ..succeeded =
-                  progress.completed == 0
-                      ? 0
-                      : (progress.completed / progress.total * 100).toInt()
+              ..succeeded = progress.completed == 0
+                  ? 0
+                  : (progress.completed / progress.total * 100).toInt()
               ..total = 100
               ..failed = 0
               ..isDownload = progress.isCompleted,
@@ -157,19 +154,17 @@ Future<void> downloadChapter(
         chapterPageUrls.add(chapterPageUrl);
       }
     }
-    final chapterPageHeaders =
-        pageUrls
-            .map((e) => e.headers == null ? null : jsonEncode(e.headers))
-            .toList();
+    final chapterPageHeaders = pageUrls
+        .map((e) => e.headers == null ? null : jsonEncode(e.headers))
+        .toList();
     chapterPageUrls.add(
       ChapterPageurls()
         ..chapterId = chapter.id
         ..urls = pageUrls.map((e) => e.url).toList()
         ..chapterUrl = chapter.url
-        ..headers =
-            chapterPageHeaders.first != null
-                ? chapterPageHeaders.map((e) => e.toString()).toList()
-                : null,
+        ..headers = chapterPageHeaders.first != null
+            ? chapterPageHeaders.map((e) => e.toString()).toList()
+            : null,
     );
     isar.writeTxnSync(
       () => isar.settings.putSync(
@@ -187,18 +182,16 @@ Future<void> downloadChapter(
     });
   } else if (itemType == ItemType.anime) {
     ref.read(getVideoListProvider(episode: chapter).future).then((value) async {
-      final m3u8Urls =
-          value.$1
-              .where(
-                (element) =>
-                    element.originalUrl.endsWith(".m3u8") ||
-                    element.originalUrl.endsWith(".m3u"),
-              )
-              .toList();
-      final nonM3u8Urls =
-          value.$1
-              .where((element) => element.originalUrl.isMediaVideo())
-              .toList();
+      final m3u8Urls = value.$1
+          .where(
+            (element) =>
+                element.originalUrl.endsWith(".m3u8") ||
+                element.originalUrl.endsWith(".m3u"),
+          )
+          .toList();
+      final nonM3u8Urls = value.$1
+          .where((element) => element.originalUrl.isMediaVideo())
+          .toList();
       nonM3U8File = nonM3u8Urls.isNotEmpty;
       hasM3U8File = nonM3U8File ? false : m3u8Urls.isNotEmpty;
       final videosUrls = nonM3U8File ? nonM3u8Urls : m3u8Urls;
@@ -220,14 +213,11 @@ Future<void> downloadChapter(
     });
   } else if (itemType == ItemType.novel && chapter.url != null) {
     final cookie = MClient.getCookiesPref(chapter.url!);
-    final headers =
-        itemType == ItemType.manga
-            ? ref.watch(
-              headersProvider(source: manga.source!, lang: manga.lang!),
-            )
-            : itemType == ItemType.anime
-            ? videoHeader
-            : htmlHeader;
+    final headers = itemType == ItemType.manga
+        ? ref.watch(headersProvider(source: manga.source!, lang: manga.lang!))
+        : itemType == ItemType.anime
+        ? videoHeader
+        : htmlHeader;
     if (cookie.isNotEmpty) {
       final userAgent = isar.settings.getSync(227)!.userAgent!;
       headers.addAll(cookie);
@@ -256,14 +246,12 @@ Future<void> downloadChapter(
           p.join(mangaMainDirectory!.path, "${chapter.name}.cbz"),
         ).exists() &&
         ref.watch(saveAsCBZArchiveStateProvider);
-    bool mp4FileExist =
-        await File(
-          p.join(mangaMainDirectory.path, "$chapterName.mp4"),
-        ).exists();
-    bool htmlFileExist =
-        await File(
-          p.join(mangaMainDirectory.path, "$chapterName.html"),
-        ).exists();
+    bool mp4FileExist = await File(
+      p.join(mangaMainDirectory.path, "$chapterName.mp4"),
+    ).exists();
+    bool htmlFileExist = await File(
+      p.join(mangaMainDirectory.path, "$chapterName.html"),
+    ).exists();
     if (!cbzFileExist && itemType == ItemType.manga ||
         !mp4FileExist && itemType == ItemType.anime ||
         !htmlFileExist && itemType == ItemType.novel) {
@@ -276,14 +264,13 @@ Future<void> downloadChapter(
         }
         final page = pageUrls[index];
         final cookie = MClient.getCookiesPref(page.url);
-        final headers =
-            itemType == ItemType.manga
-                ? ref.watch(
-                  headersProvider(source: manga.source!, lang: manga.lang!),
-                )
-                : itemType == ItemType.anime
-                ? videoHeader
-                : htmlHeader;
+        final headers = itemType == ItemType.manga
+            ? ref.watch(
+                headersProvider(source: manga.source!, lang: manga.lang!),
+              )
+            : itemType == ItemType.anime
+            ? videoHeader
+            : htmlHeader;
         if (cookie.isNotEmpty) {
           final userAgent = isar.settings.getSync(227)!.userAgent!;
           headers.addAll(cookie);
@@ -369,13 +356,12 @@ Future<void> downloadChapter(
 
 @riverpod
 Future<void> processDownloads(Ref ref, {bool? useWifi}) async {
-  final ongoingDownloads =
-      await isar.downloads
-          .filter()
-          .idIsNotNull()
-          .isDownloadEqualTo(false)
-          .isStartDownloadEqualTo(true)
-          .findAll();
+  final ongoingDownloads = await isar.downloads
+      .filter()
+      .idIsNotNull()
+      .isDownloadEqualTo(false)
+      .isStartDownloadEqualTo(true)
+      .findAll();
   final maxConcurrentDownloads = ref.read(concurrentDownloadsStateProvider);
   int index = 0;
   int downloaded = 0;

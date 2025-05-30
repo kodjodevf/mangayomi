@@ -17,12 +17,54 @@ import 'dart:typed_data' as $typed_data;
 const BackupAniyomi$json = {
   '1': 'BackupAniyomi',
   '2': [
-    {'1': 'backupManga', '3': 1, '4': 3, '5': 11, '6': '.BackupManga', '10': 'backupManga'},
-    {'1': 'backupCategories', '3': 2, '4': 3, '5': 11, '6': '.BackupCategory', '10': 'backupCategories'},
-    {'1': 'backupAnime', '3': 3, '4': 3, '5': 11, '6': '.BackupAnime', '10': 'backupAnime'},
-    {'1': 'backupAnimeCategories', '3': 4, '4': 3, '5': 11, '6': '.BackupCategory', '10': 'backupAnimeCategories'},
-    {'1': 'backupSources', '3': 101, '4': 3, '5': 11, '6': '.BackupSource', '10': 'backupSources'},
-    {'1': 'backupAnimeSources', '3': 103, '4': 3, '5': 11, '6': '.BackupSource', '10': 'backupAnimeSources'},
+    {
+      '1': 'backupManga',
+      '3': 1,
+      '4': 3,
+      '5': 11,
+      '6': '.BackupManga',
+      '10': 'backupManga'
+    },
+    {
+      '1': 'backupCategories',
+      '3': 2,
+      '4': 3,
+      '5': 11,
+      '6': '.BackupCategory',
+      '10': 'backupCategories'
+    },
+    {
+      '1': 'backupAnime',
+      '3': 3,
+      '4': 3,
+      '5': 11,
+      '6': '.BackupAnime',
+      '10': 'backupAnime'
+    },
+    {
+      '1': 'backupAnimeCategories',
+      '3': 4,
+      '4': 3,
+      '5': 11,
+      '6': '.BackupCategory',
+      '10': 'backupAnimeCategories'
+    },
+    {
+      '1': 'backupSources',
+      '3': 101,
+      '4': 3,
+      '5': 11,
+      '6': '.BackupSource',
+      '10': 'backupSources'
+    },
+    {
+      '1': 'backupAnimeSources',
+      '3': 103,
+      '4': 3,
+      '5': 11,
+      '6': '.BackupSource',
+      '10': 'backupAnimeSources'
+    },
   ],
 };
 
@@ -35,4 +77,3 @@ final $typed_data.Uint8List backupAniyomiDescriptor = $convert.base64Decode(
     'YmFja3VwQW5pbWVDYXRlZ29yaWVzEjMKDWJhY2t1cFNvdXJjZXMYZSADKAsyDS5CYWNrdXBTb3'
     'VyY2VSDWJhY2t1cFNvdXJjZXMSPQoSYmFja3VwQW5pbWVTb3VyY2VzGGcgAygLMg0uQmFja3Vw'
     'U291cmNlUhJiYWNrdXBBbmltZVNvdXJjZXM=');
-

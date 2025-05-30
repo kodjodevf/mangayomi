@@ -32,9 +32,7 @@ class _SystemHash {
 abstract class _$Synching extends BuildlessAutoDisposeNotifier<SyncPreference> {
   late final int? syncId;
 
-  SyncPreference build({
-    required int? syncId,
-  });
+  SyncPreference build({required int? syncId});
 }
 
 /// See also [Synching].
@@ -47,21 +45,13 @@ class SynchingFamily extends Family<SyncPreference> {
   const SynchingFamily();
 
   /// See also [Synching].
-  SynchingProvider call({
-    required int? syncId,
-  }) {
-    return SynchingProvider(
-      syncId: syncId,
-    );
+  SynchingProvider call({required int? syncId}) {
+    return SynchingProvider(syncId: syncId);
   }
 
   @override
-  SynchingProvider getProviderOverride(
-    covariant SynchingProvider provider,
-  ) {
-    return call(
-      syncId: provider.syncId,
-    );
+  SynchingProvider getProviderOverride(covariant SynchingProvider provider) {
+    return call(syncId: provider.syncId);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -83,20 +73,18 @@ class SynchingFamily extends Family<SyncPreference> {
 class SynchingProvider
     extends AutoDisposeNotifierProviderImpl<Synching, SyncPreference> {
   /// See also [Synching].
-  SynchingProvider({
-    required int? syncId,
-  }) : this._internal(
-          () => Synching()..syncId = syncId,
-          from: synchingProvider,
-          name: r'synchingProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$synchingHash,
-          dependencies: SynchingFamily._dependencies,
-          allTransitiveDependencies: SynchingFamily._allTransitiveDependencies,
-          syncId: syncId,
-        );
+  SynchingProvider({required int? syncId})
+    : this._internal(
+        () => Synching()..syncId = syncId,
+        from: synchingProvider,
+        name: r'synchingProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$synchingHash,
+        dependencies: SynchingFamily._dependencies,
+        allTransitiveDependencies: SynchingFamily._allTransitiveDependencies,
+        syncId: syncId,
+      );
 
   SynchingProvider._internal(
     super._createNotifier, {
@@ -111,12 +99,8 @@ class SynchingProvider
   final int? syncId;
 
   @override
-  SyncPreference runNotifierBuild(
-    covariant Synching notifier,
-  ) {
-    return notifier.build(
-      syncId: syncId,
-    );
+  SyncPreference runNotifierBuild(covariant Synching notifier) {
+    return notifier.build(syncId: syncId);
   }
 
   @override
@@ -169,5 +153,6 @@ class _SynchingProviderElement
   @override
   int? get syncId => (origin as SynchingProvider).syncId;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

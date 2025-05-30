@@ -119,21 +119,18 @@ class _ChapterListTileState extends State<ChapterListTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color:
-          widget.currentChap
-              ? context.primaryColor.withValues(alpha: 0.3)
-              : null,
+      color: widget.currentChap
+          ? context.primaryColor.withValues(alpha: 0.3)
+          : null,
       child: ListTile(
-        textColor:
-            chapter.isRead!
-                ? context.isLight
-                    ? Colors.black.withValues(alpha: 0.4)
-                    : Colors.white.withValues(alpha: 0.3)
-                : null,
-        selectedColor:
-            chapter.isRead!
-                ? Colors.white.withValues(alpha: 0.3)
-                : Colors.white,
+        textColor: chapter.isRead!
+            ? context.isLight
+                  ? Colors.black.withValues(alpha: 0.4)
+                  : Colors.white.withValues(alpha: 0.3)
+            : null,
+        selectedColor: chapter.isRead!
+            ? Colors.white.withValues(alpha: 0.3)
+            : Colors.white,
         onTap: () async {
           if (!widget.currentChap) {
             Navigator.pop(context);
@@ -149,17 +146,16 @@ class _ChapterListTileState extends State<ChapterListTile> {
           children: [
             if (!(chapter.manga.value!.isLocalArchive ?? false))
               Consumer(
-                builder:
-                    (context, ref, child) => Text(
-                      chapter.dateUpload == null || chapter.dateUpload!.isEmpty
-                          ? ""
-                          : dateFormat(
-                            chapter.dateUpload!,
-                            ref: ref,
-                            context: context,
-                          ),
-                      style: const TextStyle(fontSize: 11),
-                    ),
+                builder: (context, ref, child) => Text(
+                  chapter.dateUpload == null || chapter.dateUpload!.isEmpty
+                      ? ""
+                      : dateFormat(
+                          chapter.dateUpload!,
+                          ref: ref,
+                          context: context,
+                        ),
+                  style: const TextStyle(fontSize: 11),
+                ),
               ),
             if (!chapter.isRead!)
               if (chapter.lastPageRead!.isNotEmpty &&
@@ -172,12 +168,11 @@ class _ChapterListTileState extends State<ChapterListTile> {
                         chapter.scanlator!,
                         style: TextStyle(
                           fontSize: 11,
-                          color:
-                              chapter.isRead!
-                                  ? context.isLight
-                                      ? Colors.black.withValues(alpha: 0.4)
-                                      : Colors.white.withValues(alpha: 0.3)
-                                  : null,
+                          color: chapter.isRead!
+                              ? context.isLight
+                                    ? Colors.black.withValues(alpha: 0.4)
+                                    : Colors.white.withValues(alpha: 0.3)
+                              : null,
                         ),
                       ),
                     ],
@@ -185,33 +180,30 @@ class _ChapterListTileState extends State<ChapterListTile> {
           ],
         ),
         trailing: Consumer(
-          builder:
-              (context, ref, child) => IconButton(
-                onPressed: () {
-                  setState(() {
-                    isBookmarked = !isBookmarked;
-                  });
-                  isar.writeTxnSync(
-                    () => {
-                      isar.chapters.putSync(
-                        chapter..isBookmarked = isBookmarked,
+          builder: (context, ref, child) => IconButton(
+            onPressed: () {
+              setState(() {
+                isBookmarked = !isBookmarked;
+              });
+              isar.writeTxnSync(
+                () => {
+                  isar.chapters.putSync(chapter..isBookmarked = isBookmarked),
+                  ref
+                      .read(synchingProvider(syncId: 1).notifier)
+                      .addChangedPart(
+                        ActionType.updateChapter,
+                        chapter.id,
+                        chapter.toJson(),
+                        false,
                       ),
-                      ref
-                          .read(synchingProvider(syncId: 1).notifier)
-                          .addChangedPart(
-                            ActionType.updateChapter,
-                            chapter.id,
-                            chapter.toJson(),
-                            false,
-                          ),
-                    },
-                  );
                 },
-                icon: Icon(
-                  isBookmarked ? Icons.bookmark : Icons.bookmark_outline,
-                  color: context.primaryColor,
-                ),
-              ),
+              );
+            },
+            icon: Icon(
+              isBookmarked ? Icons.bookmark : Icons.bookmark_outline,
+              color: context.primaryColor,
+            ),
+          ),
         ),
       ),
     );

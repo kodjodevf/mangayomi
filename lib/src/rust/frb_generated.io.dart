@@ -23,16 +23,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   });
 
   CrossPlatformFinalizerArg
-  get rust_arc_decrement_strong_count_CancellationTokenPtr =>
-      wire._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationTokenPtr;
+  get rust_arc_decrement_strong_count_CancellationTokenPtr => wire
+      ._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationTokenPtr;
 
   CrossPlatformFinalizerArg
-  get rust_arc_decrement_strong_count_DnsSettingsPtr =>
-      wire._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDnsSettingsPtr;
+  get rust_arc_decrement_strong_count_DnsSettingsPtr => wire
+      ._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDnsSettingsPtr;
 
   CrossPlatformFinalizerArg
-  get rust_arc_decrement_strong_count_RequestClientPtr =>
-      wire._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClientPtr;
+  get rust_arc_decrement_strong_count_RequestClientPtr => wire
+      ._rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClientPtr;
 
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw);

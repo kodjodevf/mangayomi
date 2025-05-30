@@ -30,11 +30,11 @@ class MSourceBridge {
       'isFullData': (visitor, target) => (target as MSource).isFullData,
       'hasCloudflare': (visitor, target) => (target as MSource).hasCloudflare,
       'dateFormat': (visitor, target) => (target as MSource).dateFormat,
-      'dateFormatLocale':
-          (visitor, target) => (target as MSource).dateFormatLocale,
+      'dateFormatLocale': (visitor, target) =>
+          (target as MSource).dateFormatLocale,
       'apiUrl': (visitor, target) => (target as MSource).apiUrl,
-      'additionalParams':
-          (visitor, target) => (target as MSource).additionalParams,
+      'additionalParams': (visitor, target) =>
+          (target as MSource).additionalParams,
       'notes': (visitor, target) => (target as MSource).notes,
     },
   );

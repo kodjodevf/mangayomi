@@ -43,20 +43,20 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
             ),
             _total > 0
                 ? Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Flexible(
-                      child: LinearProgressIndicator(
-                        value: _total > 0 ? (_received * 1.0) / _total : 0.0,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Flexible(
+                        child: LinearProgressIndicator(
+                          value: _total > 0 ? (_received * 1.0) / _total : 0.0,
+                        ),
                       ),
-                    ),
-                    Flexible(
-                      child: Text(
-                        '${(_received / 1048576.0).toStringAsFixed(2)}/${(_total / 1048576.0).toStringAsFixed(2)} MB',
+                      Flexible(
+                        child: Text(
+                          '${(_received / 1048576.0).toStringAsFixed(2)}/${(_total / 1048576.0).toStringAsFixed(2)} MB',
+                        ),
                       ),
-                    ),
-                  ],
-                )
+                    ],
+                  )
                 : SizedBox.shrink(),
           ],
         ),
@@ -76,28 +76,27 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
             ),
             const SizedBox(width: 15),
             ElevatedButton(
-              onPressed:
-                  _total == 0
-                      ? () async {
-                        if (Platform.isAndroid) {
-                          final deviceInfo = DeviceInfoPlugin();
-                          final androidInfo = await deviceInfo.androidInfo;
-                          String apkUrl = "";
-                          for (String abi in androidInfo.supportedAbis) {
-                            final url = updateAvailable.$4.firstWhereOrNull(
-                              (apk) => (apk as String).contains(abi),
-                            );
-                            if (url != null) {
-                              apkUrl = url;
-                              break;
-                            }
+              onPressed: _total == 0
+                  ? () async {
+                      if (Platform.isAndroid) {
+                        final deviceInfo = DeviceInfoPlugin();
+                        final androidInfo = await deviceInfo.androidInfo;
+                        String apkUrl = "";
+                        for (String abi in androidInfo.supportedAbis) {
+                          final url = updateAvailable.$4.firstWhereOrNull(
+                            (apk) => (apk as String).contains(abi),
+                          );
+                          if (url != null) {
+                            apkUrl = url;
+                            break;
                           }
-                          await _downloadApk(apkUrl);
-                        } else {
-                          _launchInBrowser(Uri.parse(updateAvailable.$3));
                         }
+                        await _downloadApk(apkUrl);
+                      } else {
+                        _launchInBrowser(Uri.parse(updateAvailable.$3));
                       }
-                      : null,
+                    }
+                  : null,
               child: Text(l10n.download),
             ),
           ],

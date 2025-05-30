@@ -22,16 +22,12 @@ class Video {
       json['quality'].toString().trim(),
       json['originalUrl'].toString().trim(),
       headers: (json['headers'] as Map?)?.toMapStringString,
-      subtitles:
-          json['subtitles'] != null
-              ? (json['subtitles'] as List)
-                  .map((e) => Track.fromJson(e))
-                  .toList()
-              : [],
-      audios:
-          json['audios'] != null
-              ? (json['audios'] as List).map((e) => Track.fromJson(e)).toList()
-              : [],
+      subtitles: json['subtitles'] != null
+          ? (json['subtitles'] as List).map((e) => Track.fromJson(e)).toList()
+          : [],
+      audios: json['audios'] != null
+          ? (json['audios'] as List).map((e) => Track.fromJson(e)).toList()
+          : [],
     );
   }
   Map<String, dynamic> toJson() => {

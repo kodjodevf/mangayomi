@@ -103,7 +103,7 @@ class __$$HttpHeaders_MapImplCopyWithImpl<$Res>
         null == field0
             ? _value._field0
             : field0 // ignore: cast_nullable_to_non_nullable
-                as Map<String, String>,
+                  as Map<String, String>,
       ),
     );
   }
@@ -259,7 +259,7 @@ class __$$HttpHeaders_ListImplCopyWithImpl<$Res>
         null == field0
             ? _value._field0
             : field0 // ignore: cast_nullable_to_non_nullable
-                as List<(String, String)>,
+                  as List<(String, String)>,
       ),
     );
   }
@@ -479,7 +479,7 @@ class __$$HttpResponseBody_TextImplCopyWithImpl<$Res>
         null == field0
             ? _value.field0
             : field0 // ignore: cast_nullable_to_non_nullable
-                as String,
+                  as String,
       ),
     );
   }
@@ -633,7 +633,7 @@ class __$$HttpResponseBody_BytesImplCopyWithImpl<$Res>
         null == field0
             ? _value.field0
             : field0 // ignore: cast_nullable_to_non_nullable
-                as Uint8List,
+                  as Uint8List,
       ),
     );
   }

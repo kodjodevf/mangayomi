@@ -57,24 +57,23 @@ class UpdateChapterListTileWidget extends ConsumerWidget {
                               fit: BoxFit.cover,
                               width: 40,
                               height: 45,
-                              image:
-                                  manga.customCoverImage != null
-                                      ? MemoryImage(
-                                            manga.customCoverImage as Uint8List,
-                                          )
-                                          as ImageProvider
-                                      : CustomExtendedNetworkImageProvider(
-                                        toImgUrl(
-                                          manga.customCoverFromTracker ??
-                                              manga.imageUrl!,
-                                        ),
-                                        headers: ref.watch(
-                                          headersProvider(
-                                            source: manga.source!,
-                                            lang: manga.lang!,
-                                          ),
+                              image: manga.customCoverImage != null
+                                  ? MemoryImage(
+                                          manga.customCoverImage as Uint8List,
+                                        )
+                                        as ImageProvider
+                                  : CustomExtendedNetworkImageProvider(
+                                      toImgUrl(
+                                        manga.customCoverFromTracker ??
+                                            manga.imageUrl!,
+                                      ),
+                                      headers: ref.watch(
+                                        headersProvider(
+                                          source: manga.source!,
+                                          lang: manga.lang!,
                                         ),
                                       ),
+                                    ),
                               child: InkWell(child: Container()),
                             ),
                           ),
@@ -92,10 +91,9 @@ class UpdateChapterListTileWidget extends ConsumerWidget {
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color:
-                                      Theme.of(
-                                        context,
-                                      ).textTheme.bodyLarge!.color,
+                                  color: Theme.of(
+                                    context,
+                                  ).textTheme.bodyLarge!.color,
                                 ),
                               ),
                               Text(
@@ -103,12 +101,11 @@ class UpdateChapterListTileWidget extends ConsumerWidget {
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontSize: 11,
-                                  color:
-                                      chapter.isRead ?? false
-                                          ? Colors.grey
-                                          : Theme.of(
-                                            context,
-                                          ).textTheme.bodyLarge!.color,
+                                  color: chapter.isRead ?? false
+                                      ? Colors.grey
+                                      : Theme.of(
+                                          context,
+                                        ).textTheme.bodyLarge!.color,
                                 ),
                               ),
                             ],

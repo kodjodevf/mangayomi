@@ -40,24 +40,15 @@ class FetchAnimeSourcesListFamily extends Family<AsyncValue<void>> {
   const FetchAnimeSourcesListFamily();
 
   /// See also [fetchAnimeSourcesList].
-  FetchAnimeSourcesListProvider call({
-    int? id,
-    required bool reFresh,
-  }) {
-    return FetchAnimeSourcesListProvider(
-      id: id,
-      reFresh: reFresh,
-    );
+  FetchAnimeSourcesListProvider call({int? id, required bool reFresh}) {
+    return FetchAnimeSourcesListProvider(id: id, reFresh: reFresh);
   }
 
   @override
   FetchAnimeSourcesListProvider getProviderOverride(
     covariant FetchAnimeSourcesListProvider provider,
   ) {
-    return call(
-      id: provider.id,
-      reFresh: provider.reFresh,
-    );
+    return call(id: provider.id, reFresh: provider.reFresh);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -78,27 +69,24 @@ class FetchAnimeSourcesListFamily extends Family<AsyncValue<void>> {
 /// See also [fetchAnimeSourcesList].
 class FetchAnimeSourcesListProvider extends FutureProvider<void> {
   /// See also [fetchAnimeSourcesList].
-  FetchAnimeSourcesListProvider({
-    int? id,
-    required bool reFresh,
-  }) : this._internal(
-          (ref) => fetchAnimeSourcesList(
-            ref as FetchAnimeSourcesListRef,
-            id: id,
-            reFresh: reFresh,
-          ),
-          from: fetchAnimeSourcesListProvider,
-          name: r'fetchAnimeSourcesListProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$fetchAnimeSourcesListHash,
-          dependencies: FetchAnimeSourcesListFamily._dependencies,
-          allTransitiveDependencies:
-              FetchAnimeSourcesListFamily._allTransitiveDependencies,
+  FetchAnimeSourcesListProvider({int? id, required bool reFresh})
+    : this._internal(
+        (ref) => fetchAnimeSourcesList(
+          ref as FetchAnimeSourcesListRef,
           id: id,
           reFresh: reFresh,
-        );
+        ),
+        from: fetchAnimeSourcesListProvider,
+        name: r'fetchAnimeSourcesListProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$fetchAnimeSourcesListHash,
+        dependencies: FetchAnimeSourcesListFamily._dependencies,
+        allTransitiveDependencies:
+            FetchAnimeSourcesListFamily._allTransitiveDependencies,
+        id: id,
+        reFresh: reFresh,
+      );
 
   FetchAnimeSourcesListProvider._internal(
     super._createNotifier, {
@@ -174,5 +162,6 @@ class _FetchAnimeSourcesListProviderElement extends FutureProviderElement<void>
   @override
   bool get reFresh => (origin as FetchAnimeSourcesListProvider).reFresh;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

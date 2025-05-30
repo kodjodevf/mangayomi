@@ -22,18 +22,14 @@ class MChapterBridge {
       'scanlator': (visitor, target) => (target as MChapter).scanlator,
     },
     setters: {
-      'name':
-          (visitor, target, value) =>
-              (target as MChapter).name = value as String?,
-      'url':
-          (visitor, target, value) =>
-              (target as MChapter).url = value as String?,
-      'dateUpload':
-          (visitor, target, value) =>
-              (target as MChapter).dateUpload = value as String?,
-      'scanlator':
-          (visitor, target, value) =>
-              (target as MChapter).scanlator = value as String?,
+      'name': (visitor, target, value) =>
+          (target as MChapter).name = value as String?,
+      'url': (visitor, target, value) =>
+          (target as MChapter).url = value as String?,
+      'dateUpload': (visitor, target, value) =>
+          (target as MChapter).dateUpload = value as String?,
+      'scanlator': (visitor, target, value) =>
+          (target as MChapter).scanlator = value as String?,
     },
   );
   void registerBridgedClasses(D4rt interpreter) {

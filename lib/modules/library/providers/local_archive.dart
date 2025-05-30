@@ -21,10 +21,9 @@ Future importArchivesFromFile(
   FilePickerResult? result = await FilePicker.platform.pickFiles(
     allowMultiple: true,
     type: FileType.custom,
-    allowedExtensions:
-        itemType == ItemType.manga
-            ? ['cbz', 'zip']
-            : ['mp4', 'mov', 'avi', 'flv', 'wmv', 'mpeg', 'mkv'],
+    allowedExtensions: itemType == ItemType.manga
+        ? ['cbz', 'zip']
+        : ['mp4', 'mov', 'avi', 'flv', 'wmv', 'mpeg', 'mkv'],
   );
   if (result != null) {
     final dateNow = DateTime.now().millisecondsSinceEpoch;
@@ -55,10 +54,8 @@ Future importArchivesFromFile(
     for (var file in result.files.reversed.toList()) {
       (String, LocalExtensionType, Uint8List, String)? data =
           itemType == ItemType.manga
-              ? await ref.watch(
-                getArchivesDataFromFileProvider(file.path!).future,
-              )
-              : null;
+          ? await ref.watch(getArchivesDataFromFileProvider(file.path!).future)
+          : null;
       String name = _getName(file.path!);
 
       if (init) {

@@ -19,7 +19,15 @@ const BackupChapter$json = {
   '2': [
     {'1': 'url', '3': 1, '4': 1, '5': 9, '10': 'url'},
     {'1': 'name', '3': 2, '4': 1, '5': 9, '10': 'name'},
-    {'1': 'scanlator', '3': 3, '4': 1, '5': 9, '9': 0, '10': 'scanlator', '17': true},
+    {
+      '1': 'scanlator',
+      '3': 3,
+      '4': 1,
+      '5': 9,
+      '9': 0,
+      '10': 'scanlator',
+      '17': true
+    },
     {'1': 'read', '3': 4, '4': 1, '5': 8, '10': 'read'},
     {'1': 'bookmark', '3': 5, '4': 1, '5': 8, '10': 'bookmark'},
     {'1': 'lastPageRead', '3': 6, '4': 1, '5': 5, '10': 'lastPageRead'},
@@ -44,4 +52,3 @@ final $typed_data.Uint8List backupChapterDescriptor = $convert.base64Decode(
     'UgpkYXRlVXBsb2FkEiQKDWNoYXB0ZXJOdW1iZXIYCSABKAJSDWNoYXB0ZXJOdW1iZXISIAoLc2'
     '91cmNlT3JkZXIYCiABKAVSC3NvdXJjZU9yZGVyEiYKDmxhc3RNb2RpZmllZEF0GAsgASgFUg5s'
     'YXN0TW9kaWZpZWRBdBIYCgd2ZXJzaW9uGAwgASgFUgd2ZXJzaW9uQgwKCl9zY2FubGF0b3I=');
-

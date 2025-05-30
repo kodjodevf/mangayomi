@@ -33,32 +33,24 @@ class MMangaBridge {
       'chapters': (visitor, target) => (target as MManga).chapters,
     },
     setters: {
-      'name':
-          (visitor, target, value) =>
-              (target as MManga).name = value as String?,
-      'artist':
-          (visitor, target, value) =>
-              (target as MManga).artist = value as String?,
-      'author':
-          (visitor, target, value) =>
-              (target as MManga).author = value as String?,
-      'description':
-          (visitor, target, value) =>
-              (target as MManga).description = value as String?,
-      'genre':
-          (visitor, target, value) =>
-              (target as MManga).genre = (value as List?)?.cast(),
-      'status':
-          (visitor, target, value) =>
-              (target as MManga).status = value as Status?,
-      'imageUrl':
-          (visitor, target, value) =>
-              (target as MManga).imageUrl = value as String?,
-      'link':
-          (visitor, target, value) => (target as MManga).link = value as String,
-      'chapters':
-          (visitor, target, value) =>
-              (target as MManga).chapters = (value as List?)?.cast(),
+      'name': (visitor, target, value) =>
+          (target as MManga).name = value as String?,
+      'artist': (visitor, target, value) =>
+          (target as MManga).artist = value as String?,
+      'author': (visitor, target, value) =>
+          (target as MManga).author = value as String?,
+      'description': (visitor, target, value) =>
+          (target as MManga).description = value as String?,
+      'genre': (visitor, target, value) =>
+          (target as MManga).genre = (value as List?)?.cast(),
+      'status': (visitor, target, value) =>
+          (target as MManga).status = value as Status?,
+      'imageUrl': (visitor, target, value) =>
+          (target as MManga).imageUrl = value as String?,
+      'link': (visitor, target, value) =>
+          (target as MManga).link = value as String,
+      'chapters': (visitor, target, value) =>
+          (target as MManga).chapters = (value as List?)?.cast(),
     },
   );
   void registerBridgedClasses(D4rt interpreter) {

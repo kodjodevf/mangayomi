@@ -53,19 +53,17 @@ class DownloadQueueScreen extends ConsumerWidget {
             ),
             body: GroupedListView<Download, String>(
               elements: entries,
-              groupBy:
-                  (element) => element.chapter.value?.manga.value?.source ?? "",
+              groupBy: (element) =>
+                  element.chapter.value?.manga.value?.source ?? "",
               groupSeparatorBuilder: (String groupByValue) {
-                final sourceQueueLength =
-                    entries
-                        .where(
-                          (element) =>
-                              (element.chapter.value?.manga.value?.source ??
-                                  "") ==
-                              groupByValue,
-                        )
-                        .toList()
-                        .length;
+                final sourceQueueLength = entries
+                    .where(
+                      (element) =>
+                          (element.chapter.value?.manga.value?.source ?? "") ==
+                          groupByValue,
+                    )
+                    .toList()
+                    .length;
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 6, left: 12),
                   child: Text('$groupByValue ($sourceQueueLength)'),
@@ -111,9 +109,8 @@ class DownloadQueueScreen extends ConsumerWidget {
                                 begin: 0,
                                 end: element.succeeded! / element.total!,
                               ),
-                              builder:
-                                  (context, value, _) =>
-                                      LinearProgressIndicator(value: value),
+                              builder: (context, value, _) =>
+                                  LinearProgressIndicator(value: value),
                             ),
                           ],
                         ),
@@ -129,17 +126,16 @@ class DownloadQueueScreen extends ConsumerWidget {
                                 element.id!,
                               );
                             } else if (value.toString() == 'CancelAll') {
-                              final a =
-                                  entries
-                                      .where(
-                                        (e) =>
-                                            '${e.chapter.value?.manga.value?.name}' ==
-                                                '${element.chapter.value?.manga.value?.name}' &&
-                                            '${e.chapter.value?.manga.value?.source}' ==
-                                                '${element.chapter.value?.manga.value?.source}',
-                                      )
-                                      .map((e) => (e.id, e.chapter.value?.id))
-                                      .toList();
+                              final a = entries
+                                  .where(
+                                    (e) =>
+                                        '${e.chapter.value?.manga.value?.name}' ==
+                                            '${element.chapter.value?.manga.value?.name}' &&
+                                        '${e.chapter.value?.manga.value?.source}' ==
+                                            '${element.chapter.value?.manga.value?.source}',
+                                  )
+                                  .map((e) => (e.id, e.chapter.value?.id))
+                                  .toList();
                               for (var ids in a) {
                                 final (downloadId, chapterId) = ids;
                                 final chapter = isar.chapters.getSync(
@@ -149,29 +145,26 @@ class DownloadQueueScreen extends ConsumerWidget {
                               }
                             }
                           },
-                          itemBuilder:
-                              (context) => [
-                                PopupMenuItem(
-                                  value: 'Cancel',
-                                  child: Text(l10n.cancel),
-                                ),
-                                PopupMenuItem(
-                                  value: 'CancelAll',
-                                  child: Text(l10n.cancel_all_for_this_series),
-                                ),
-                              ],
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              value: 'Cancel',
+                              child: Text(l10n.cancel),
+                            ),
+                            PopupMenuItem(
+                              value: 'CancelAll',
+                              child: Text(l10n.cancel_all_for_this_series),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
                 );
               },
-              itemComparator:
-                  (item1, item2) =>
-                      (item1.chapter.value?.manga.value?.source ?? "")
-                          .compareTo(
-                            item2.chapter.value?.manga.value?.source ?? "",
-                          ),
+              itemComparator: (item1, item2) =>
+                  (item1.chapter.value?.manga.value?.source ?? "").compareTo(
+                    item2.chapter.value?.manga.value?.source ?? "",
+                  ),
               order: GroupedListOrder.DESC,
             ),
             floatingActionButton: CustomFloatingActionBtn(
@@ -180,11 +173,10 @@ class DownloadQueueScreen extends ConsumerWidget {
               onPressed: () {
                 ref.read(processDownloadsProvider());
               },
-              textWidth:
-                  measureText(
-                    l10n.download_queue,
-                    Theme.of(context).textTheme.labelLarge!,
-                  ).width,
+              textWidth: measureText(
+                l10n.download_queue,
+                Theme.of(context).textTheme.labelLarge!,
+              ).width,
               width: calculateDynamicButtonWidth(
                 l10n.download_queue,
                 Theme.of(context).textTheme.labelLarge!,

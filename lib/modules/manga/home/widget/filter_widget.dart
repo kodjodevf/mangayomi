@@ -45,13 +45,12 @@ class FilterWidget extends StatelessWidget {
               _ => null,
             },
             onChanged: (value) {
-              filterList[idx] =
-                  filterState
-                    ..state = switch (value) {
-                      null => 2,
-                      true => 1,
-                      _ => 0,
-                    };
+              filterList[idx] = filterState
+                ..state = switch (value) {
+                  null => 2,
+                  true => 1,
+                  _ => 0,
+                };
               onChanged(filterList);
             },
             title: Text(filterState.name),
@@ -86,32 +85,30 @@ class FilterWidget extends StatelessWidget {
           final ascending = filterState.state.ascending;
           widget = ExpansionTile(
             title: Text(filterState.name, style: const TextStyle(fontSize: 13)),
-            children:
-                filterState.values.map((e) {
-                  final selected =
-                      filterState.values[filterState.state.index] == e;
-                  return ListTile(
-                    dense: true,
-                    leading: Icon(
-                      ascending
-                          ? Icons.arrow_upward_rounded
-                          : Icons.arrow_downward_rounded,
-                      color: selected ? null : Colors.transparent,
-                    ),
-                    title: Text(e.name),
-                    onTap: () {
-                      if (selected) {
-                        filterState.state.ascending = !ascending;
-                      } else {
-                        filterState.state.index = filterState.values.indexWhere(
-                          (element) => element == e,
-                        );
-                      }
-                      filterList[idx] = filterState;
-                      onChanged(filterList);
-                    },
-                  );
-                }).toList(),
+            children: filterState.values.map((e) {
+              final selected = filterState.values[filterState.state.index] == e;
+              return ListTile(
+                dense: true,
+                leading: Icon(
+                  ascending
+                      ? Icons.arrow_upward_rounded
+                      : Icons.arrow_downward_rounded,
+                  color: selected ? null : Colors.transparent,
+                ),
+                title: Text(e.name),
+                onTap: () {
+                  if (selected) {
+                    filterState.state.ascending = !ascending;
+                  } else {
+                    filterState.state.index = filterState.values.indexWhere(
+                      (element) => element == e,
+                    );
+                  }
+                  filterList[idx] = filterState;
+                  onChanged(filterList);
+                },
+              );
+            }).toList(),
           );
         } else if (filterState is SelectFilter) {
           widget = SizedBox(
@@ -137,18 +134,17 @@ class FilterWidget extends StatelessWidget {
                           filterState.name,
                           style: const TextStyle(fontSize: 13),
                         ),
-                        items:
-                            filterState.values
-                                .map(
-                                  (e) => DropdownMenuItem(
-                                    value: e,
-                                    child: Text(
-                                      e.name,
-                                      style: const TextStyle(fontSize: 13),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
+                        items: filterState.values
+                            .map(
+                              (e) => DropdownMenuItem(
+                                value: e,
+                                child: Text(
+                                  e.name,
+                                  style: const TextStyle(fontSize: 13),
+                                ),
+                              ),
+                            )
+                            .toList(),
                         onChanged: (value) {
                           filterState.state = filterState.values.indexWhere(
                             (element) => element == value,

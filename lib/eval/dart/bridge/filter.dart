@@ -11,14 +11,12 @@ class FilterBridge {
       },
     },
     methods: {
-      'filters':
-          (visitor, target, positionalArgs, namedArgs) =>
-              (target as FilterList).filters,
+      'filters': (visitor, target, positionalArgs, namedArgs) =>
+          (target as FilterList).filters,
     },
     setters: {
-      'filters':
-          (visitor, target, value) =>
-              (target as FilterList).filters = value as List,
+      'filters': (visitor, target, value) =>
+          (target as FilterList).filters = value as List,
     },
   );
   final selectFilterBridgedClass = BridgedClassDefinition(
@@ -43,21 +41,16 @@ class FilterBridge {
       'typeName': (visitor, target) => (target as SelectFilter).typeName,
     },
     setters: {
-      'state':
-          (visitor, target, value) =>
-              (target as SelectFilter).state = value as int,
-      'values':
-          (visitor, target, value) =>
-              (target as SelectFilter).values = value as List,
-      'type':
-          (visitor, target, value) =>
-              (target as SelectFilter).type = value as String,
-      'name':
-          (visitor, target, value) =>
-              (target as SelectFilter).name = value as String,
-      'typeName':
-          (visitor, target, value) =>
-              (target as SelectFilter).typeName = value as String?,
+      'state': (visitor, target, value) =>
+          (target as SelectFilter).state = value as int,
+      'values': (visitor, target, value) =>
+          (target as SelectFilter).values = value as List,
+      'type': (visitor, target, value) =>
+          (target as SelectFilter).type = value as String,
+      'name': (visitor, target, value) =>
+          (target as SelectFilter).name = value as String,
+      'typeName': (visitor, target, value) =>
+          (target as SelectFilter).typeName = value as String?,
     },
   );
   final selectFilterOptionBridgedClass = BridgedClassDefinition(
@@ -78,15 +71,12 @@ class FilterBridge {
       'typeName': (visitor, target) => (target as SelectFilterOption).typeName,
     },
     setters: {
-      'name':
-          (visitor, target, value) =>
-              (target as SelectFilterOption).name = value as String,
-      'value':
-          (visitor, target, value) =>
-              (target as SelectFilterOption).value = value as String,
-      'typeName':
-          (visitor, target, value) =>
-              (target as SelectFilterOption).typeName = value as String?,
+      'name': (visitor, target, value) =>
+          (target as SelectFilterOption).name = value as String,
+      'value': (visitor, target, value) =>
+          (target as SelectFilterOption).value = value as String,
+      'typeName': (visitor, target, value) =>
+          (target as SelectFilterOption).typeName = value as String?,
     },
   );
 
@@ -106,12 +96,10 @@ class FilterBridge {
       'typeName': (visitor, target) => (target as SeparatorFilter).typeName,
     },
     setters: {
-      'type':
-          (visitor, target, value) =>
-              (target as SeparatorFilter).type = value as String?,
-      'typeName':
-          (visitor, target, value) =>
-              (target as SeparatorFilter).typeName = value as String?,
+      'type': (visitor, target, value) =>
+          (target as SeparatorFilter).type = value as String?,
+      'typeName': (visitor, target, value) =>
+          (target as SeparatorFilter).typeName = value as String?,
     },
   );
 
@@ -133,15 +121,12 @@ class FilterBridge {
       'typeName': (visitor, target) => (target as HeaderFilter).typeName,
     },
     setters: {
-      'type':
-          (visitor, target, value) =>
-              (target as HeaderFilter).type = value as String?,
-      'name':
-          (visitor, target, value) =>
-              (target as HeaderFilter).name = value as String,
-      'typeName':
-          (visitor, target, value) =>
-              (target as HeaderFilter).typeName = value as String?,
+      'type': (visitor, target, value) =>
+          (target as HeaderFilter).type = value as String?,
+      'name': (visitor, target, value) =>
+          (target as HeaderFilter).name = value as String,
+      'typeName': (visitor, target, value) =>
+          (target as HeaderFilter).typeName = value as String?,
     },
   );
 
@@ -165,18 +150,14 @@ class FilterBridge {
       'typeName': (visitor, target) => (target as TextFilter).typeName,
     },
     setters: {
-      'state':
-          (visitor, target, value) =>
-              (target as TextFilter).state = value as String,
-      'type':
-          (visitor, target, value) =>
-              (target as TextFilter).type = value as String?,
-      'name':
-          (visitor, target, value) =>
-              (target as TextFilter).name = value as String,
-      'typeName':
-          (visitor, target, value) =>
-              (target as TextFilter).typeName = value as String?,
+      'state': (visitor, target, value) =>
+          (target as TextFilter).state = value as String,
+      'type': (visitor, target, value) =>
+          (target as TextFilter).type = value as String?,
+      'name': (visitor, target, value) =>
+          (target as TextFilter).name = value as String,
+      'typeName': (visitor, target, value) =>
+          (target as TextFilter).typeName = value as String?,
     },
   );
 
@@ -202,18 +183,14 @@ class FilterBridge {
       'values': (visitor, target) => (target as SortFilter).values,
     },
     setters: {
-      'type':
-          (visitor, target, value) =>
-              (target as SortFilter).type = value as String?,
-      'name':
-          (visitor, target, value) =>
-              (target as SortFilter).name = value as String,
-      'typeName':
-          (visitor, target, value) =>
-              (target as SortFilter).typeName = value as String?,
-      'values':
-          (visitor, target, value) =>
-              (target as SortFilter).values = value as List,
+      'type': (visitor, target, value) =>
+          (target as SortFilter).type = value as String?,
+      'name': (visitor, target, value) =>
+          (target as SortFilter).name = value as String,
+      'typeName': (visitor, target, value) =>
+          (target as SortFilter).typeName = value as String?,
+      'values': (visitor, target, value) =>
+          (target as SortFilter).values = value as List,
     },
   );
   final sortStateBridgedClass = BridgedClassDefinition(
@@ -234,15 +211,12 @@ class FilterBridge {
       'typeName': (visitor, target) => (target as SortState).typeName,
     },
     setters: {
-      'index':
-          (visitor, target, value) =>
-              (target as SortState).index = value as int,
-      'ascending':
-          (visitor, target, value) =>
-              (target as SortState).ascending = value as bool,
-      'typeName':
-          (visitor, target, value) =>
-              (target as SortState).typeName = value as String?,
+      'index': (visitor, target, value) =>
+          (target as SortState).index = value as int,
+      'ascending': (visitor, target, value) =>
+          (target as SortState).ascending = value as bool,
+      'typeName': (visitor, target, value) =>
+          (target as SortState).typeName = value as String?,
     },
   );
 
@@ -268,18 +242,14 @@ class FilterBridge {
       'value': (visitor, target) => (target as TriStateFilter).value,
     },
     setters: {
-      'state':
-          (visitor, target, value) =>
-              (target as TriStateFilter).state = value as int,
-      'type':
-          (visitor, target, value) =>
-              (target as TriStateFilter).type = value as String?,
-      'name':
-          (visitor, target, value) =>
-              (target as TriStateFilter).name = value as String,
-      'typeName':
-          (visitor, target, value) =>
-              (target as TriStateFilter).typeName = value as String?,
+      'state': (visitor, target, value) =>
+          (target as TriStateFilter).state = value as int,
+      'type': (visitor, target, value) =>
+          (target as TriStateFilter).type = value as String?,
+      'name': (visitor, target, value) =>
+          (target as TriStateFilter).name = value as String,
+      'typeName': (visitor, target, value) =>
+          (target as TriStateFilter).typeName = value as String?,
     },
   );
 
@@ -303,18 +273,14 @@ class FilterBridge {
       'typeName': (visitor, target) => (target as GroupFilter).typeName,
     },
     setters: {
-      'type':
-          (visitor, target, value) =>
-              (target as GroupFilter).type = value as String?,
-      'name':
-          (visitor, target, value) =>
-              (target as GroupFilter).name = value as String,
-      'typeName':
-          (visitor, target, value) =>
-              (target as GroupFilter).typeName = value as String?,
-      'state':
-          (visitor, target, value) =>
-              (target as GroupFilter).state = value as List,
+      'type': (visitor, target, value) =>
+          (target as GroupFilter).type = value as String?,
+      'name': (visitor, target, value) =>
+          (target as GroupFilter).name = value as String,
+      'typeName': (visitor, target, value) =>
+          (target as GroupFilter).typeName = value as String?,
+      'state': (visitor, target, value) =>
+          (target as GroupFilter).state = value as List,
     },
   );
 
@@ -340,21 +306,16 @@ class FilterBridge {
       'value': (visitor, target) => (target as CheckBoxFilter).value,
     },
     setters: {
-      'state':
-          (visitor, target, value) =>
-              (target as CheckBoxFilter).state = value as bool,
-      'type':
-          (visitor, target, value) =>
-              (target as CheckBoxFilter).type = value as String?,
-      'name':
-          (visitor, target, value) =>
-              (target as CheckBoxFilter).name = value as String,
-      'typeName':
-          (visitor, target, value) =>
-              (target as CheckBoxFilter).typeName = value as String?,
-      'value':
-          (visitor, target, value) =>
-              (target as CheckBoxFilter).value = value as String,
+      'state': (visitor, target, value) =>
+          (target as CheckBoxFilter).state = value as bool,
+      'type': (visitor, target, value) =>
+          (target as CheckBoxFilter).type = value as String?,
+      'name': (visitor, target, value) =>
+          (target as CheckBoxFilter).name = value as String,
+      'typeName': (visitor, target, value) =>
+          (target as CheckBoxFilter).typeName = value as String?,
+      'value': (visitor, target, value) =>
+          (target as CheckBoxFilter).value = value as String,
     },
   );
   void registerBridgedClasses(D4rt interpreter) {

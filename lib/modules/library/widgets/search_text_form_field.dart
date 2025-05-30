@@ -35,13 +35,12 @@ class SeachFormTextField extends StatelessWidget {
             onPressed: onPressed,
             icon: const Icon(Icons.arrow_back),
           ),
-          suffixIcon:
-              controller.text.isEmpty
-                  ? null
-                  : IconButton(
-                    onPressed: onSuffixPressed,
-                    icon: const Icon(Icons.clear),
-                  ),
+          suffixIcon: controller.text.isEmpty
+              ? null
+              : IconButton(
+                  onPressed: onSuffixPressed,
+                  icon: const Icon(Icons.clear),
+                ),
           enabledBorder: const OutlineInputBorder(borderSide: BorderSide.none),
           focusedBorder: const OutlineInputBorder(borderSide: BorderSide.none),
           border: const OutlineInputBorder(borderSide: BorderSide.none),

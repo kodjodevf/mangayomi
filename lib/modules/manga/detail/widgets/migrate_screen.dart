@@ -35,39 +35,37 @@ class MigrationScreen extends ConsumerStatefulWidget {
 }
 
 class _MigrationScreenScreenState extends ConsumerState<MigrationScreen> {
-  late final List<Source> sourceList =
-      isar.sources
-          .filter()
-          .idIsNotNull()
-          .and()
-          .isAddedEqualTo(true)
-          .and()
-          .itemTypeEqualTo(widget.manga.itemType)
-          .findAllSync();
+  late final List<Source> sourceList = isar.sources
+      .filter()
+      .idIsNotNull()
+      .and()
+      .isAddedEqualTo(true)
+      .and()
+      .itemTypeEqualTo(widget.manga.itemType)
+      .findAllSync();
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.migrate)),
-      body:
-          widget.manga.name != null && widget.manga.author != null
-              ? SuperListView.builder(
-                itemCount: sourceList.length,
-                extentPrecalculationPolicy: SuperPrecalculationPolicy(),
-                itemBuilder: (context, index) {
-                  final source = sourceList[index];
-                  return SizedBox(
-                    height: 260,
-                    child: MigrationSourceSearchScreen(
-                      query: widget.manga.name ?? widget.manga.author ?? "",
-                      manga: widget.manga,
-                      source: source,
-                    ),
-                  );
-                },
-              )
-              : Container(),
+      body: widget.manga.name != null && widget.manga.author != null
+          ? SuperListView.builder(
+              itemCount: sourceList.length,
+              extentPrecalculationPolicy: SuperPrecalculationPolicy(),
+              itemBuilder: (context, index) {
+                final source = sourceList[index];
+                return SizedBox(
+                  height: 260,
+                  child: MigrationSourceSearchScreen(
+                    query: widget.manga.name ?? widget.manga.author ?? "",
+                    manga: widget.manga,
+                    source: source,
+                  ),
+                );
+              },
+            )
+          : Container(),
     );
   }
 }
@@ -142,32 +140,31 @@ class _MigrationSourceSearchScreenState
               ),
             ),
             Flexible(
-              child:
-                  _isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : Builder(
-                        builder: (context) {
-                          if (_errorMessage.isNotEmpty) {
-                            return Center(child: Text(_errorMessage));
-                          }
-                          if (pages!.list.isNotEmpty) {
-                            return SuperListView.builder(
-                              extentPrecalculationPolicy:
-                                  SuperPrecalculationPolicy(),
-                              scrollDirection: Axis.horizontal,
-                              itemCount: pages!.list.length,
-                              itemBuilder: (context, index) {
-                                return MigrationMangaGlobalImageCard(
-                                  oldManga: widget.manga,
-                                  manga: pages!.list[index],
-                                  source: widget.source,
-                                );
-                              },
-                            );
-                          }
-                          return Center(child: Text(l10n.no_result));
-                        },
-                      ),
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : Builder(
+                      builder: (context) {
+                        if (_errorMessage.isNotEmpty) {
+                          return Center(child: Text(_errorMessage));
+                        }
+                        if (pages!.list.isNotEmpty) {
+                          return SuperListView.builder(
+                            extentPrecalculationPolicy:
+                                SuperPrecalculationPolicy(),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: pages!.list.length,
+                            itemBuilder: (context, index) {
+                              return MigrationMangaGlobalImageCard(
+                                oldManga: widget.manga,
+                                manga: pages!.list[index],
+                                source: widget.source,
+                              );
+                            },
+                          );
+                        }
+                        return Center(child: Text(l10n.no_result));
+                      },
+                    ),
             ),
           ],
         ),
@@ -241,11 +238,11 @@ class _MigrationMangaGlobalImageCardState
                               imageUrl: toImgUrl(
                                 hasData
                                     ? snapshot
-                                            .data!
-                                            .first
-                                            .customCoverFromTracker ??
-                                        snapshot.data!.first.imageUrl ??
-                                        ""
+                                              .data!
+                                              .first
+                                              .customCoverFromTracker ??
+                                          snapshot.data!.first.imageUrl ??
+                                          ""
                                     : getMangaDetail.imageUrl ?? "",
                               ),
                               width: 110,
@@ -268,10 +265,9 @@ class _MigrationMangaGlobalImageCardState
                 Container(
                   width: 110,
                   height: 150,
-                  color:
-                      hasData && snapshot.data!.first.favorite!
-                          ? Colors.black.withValues(alpha: 0.7)
-                          : null,
+                  color: hasData && snapshot.data!.first.favorite!
+                      ? Colors.black.withValues(alpha: 0.7)
+                      : null,
                 ),
                 if (hasData && snapshot.data!.first.favorite!)
                   Positioned(
@@ -311,73 +307,70 @@ class _MigrationMangaGlobalImageCardState
               builder: (ctx) {
                 return AlertDialog(
                   title: Text(l10n.migrate_confirm),
-                  content:
-                      preview.chapters != null
-                          ? SizedBox(
-                            height: ctx.height(0.5),
-                            width: ctx.width(1),
-                            child: CustomScrollView(
-                              slivers: [
-                                SliverPadding(
-                                  padding: const EdgeInsets.all(0),
-                                  sliver: SuperSliverList.builder(
-                                    itemCount: preview.chapters!.length,
-                                    itemBuilder: (context, index) {
-                                      final chapter = preview.chapters![index];
-                                      return ListTile(
-                                        title: Row(
-                                          children: [
-                                            Flexible(
-                                              child: Text(
-                                                preview.chapters![index].name!,
-                                                style: const TextStyle(
-                                                  fontSize: 13,
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
+                  content: preview.chapters != null
+                      ? SizedBox(
+                          height: ctx.height(0.5),
+                          width: ctx.width(1),
+                          child: CustomScrollView(
+                            slivers: [
+                              SliverPadding(
+                                padding: const EdgeInsets.all(0),
+                                sliver: SuperSliverList.builder(
+                                  itemCount: preview.chapters!.length,
+                                  itemBuilder: (context, index) {
+                                    final chapter = preview.chapters![index];
+                                    return ListTile(
+                                      title: Row(
+                                        children: [
+                                          Flexible(
+                                            child: Text(
+                                              preview.chapters![index].name!,
+                                              style: const TextStyle(
+                                                fontSize: 13,
                                               ),
+                                              overflow: TextOverflow.ellipsis,
                                             ),
-                                          ],
-                                        ),
-                                        subtitle: Row(
-                                          children: [
-                                            Text(
-                                              chapter.dateUpload == null ||
-                                                      chapter
-                                                          .dateUpload!
-                                                          .isEmpty
-                                                  ? ""
-                                                  : dateFormat(
+                                          ),
+                                        ],
+                                      ),
+                                      subtitle: Row(
+                                        children: [
+                                          Text(
+                                            chapter.dateUpload == null ||
+                                                    chapter.dateUpload!.isEmpty
+                                                ? ""
+                                                : dateFormat(
                                                     chapter.dateUpload!,
                                                     ref: ref,
                                                     context: context,
                                                   ),
-                                              style: const TextStyle(
-                                                fontSize: 11,
-                                              ),
+                                            style: const TextStyle(
+                                              fontSize: 11,
                                             ),
-                                            if (chapter.scanlator?.isNotEmpty ??
-                                                false)
-                                              Row(
-                                                children: [
-                                                  const Text(' • '),
-                                                  Text(
-                                                    chapter.scanlator!,
-                                                    style: TextStyle(
-                                                      fontSize: 11,
-                                                    ),
+                                          ),
+                                          if (chapter.scanlator?.isNotEmpty ??
+                                              false)
+                                            Row(
+                                              children: [
+                                                const Text(' • '),
+                                                Text(
+                                                  chapter.scanlator!,
+                                                  style: TextStyle(
+                                                    fontSize: 11,
                                                   ),
-                                                ],
-                                              ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                        ],
+                                      ),
+                                    );
+                                  },
                                 ),
-                              ],
-                            ),
-                          )
-                          : Text(l10n.n_chapters(0)),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Text(l10n.n_chapters(0)),
                   actions: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
@@ -390,158 +383,139 @@ class _MigrationMangaGlobalImageCardState
                         ),
                         const SizedBox(width: 15),
                         Consumer(
-                          builder:
-                              (context, ref, child) => TextButton(
-                                onPressed: () async {
-                                  String? historyChapter;
-                                  String? historyDate;
-                                  List<Chapter> chaptersProgress = [];
-                                  isar.writeTxnSync(() {
-                                    final histories =
-                                        isar.historys
-                                            .filter()
-                                            .mangaIdEqualTo(widget.oldManga.id)
-                                            .sortByDate()
-                                            .findAllSync();
-                                    historyChapter = _extractChapterNumber(
-                                      histories
-                                              .lastOrNull
-                                              ?.chapter
-                                              .value
-                                              ?.name ??
-                                          "",
-                                    );
-                                    historyDate = histories.lastOrNull?.date;
-                                    for (var history in histories) {
-                                      isar.historys.deleteSync(history.id!);
-                                      ref
-                                          .read(
-                                            synchingProvider(
-                                              syncId: 1,
-                                            ).notifier,
-                                          )
-                                          .addChangedPart(
-                                            ActionType.removeHistory,
-                                            history.id,
-                                            "{}",
-                                            false,
-                                          );
-                                    }
-                                    for (var chapter
-                                        in widget.oldManga.chapters) {
-                                      chaptersProgress.add(chapter);
-                                      isar.updates
-                                          .filter()
-                                          .mangaIdEqualTo(chapter.mangaId)
-                                          .chapterNameEqualTo(chapter.name)
-                                          .deleteAllSync();
-                                      isar.chapters.deleteSync(chapter.id!);
-                                      ref
-                                          .read(
-                                            synchingProvider(
-                                              syncId: 1,
-                                            ).notifier,
-                                          )
-                                          .addChangedPart(
-                                            ActionType.removeChapter,
-                                            chapter.id,
-                                            "{}",
-                                            false,
-                                          );
-                                    }
-                                    widget.oldManga.name = widget.manga.name;
-                                    widget.oldManga.link = widget.manga.link;
-                                    widget.oldManga.imageUrl =
-                                        widget.manga.imageUrl;
-                                    widget.oldManga.lang = widget.source.lang;
-                                    widget.oldManga.source = widget.source.name;
-                                    widget.oldManga.artist = preview.artist;
-                                    widget.oldManga.author = preview.author;
-                                    widget.oldManga.status =
-                                        preview.status ??
-                                        widget.oldManga.status;
-                                    widget.oldManga.description =
-                                        preview.description;
-                                    widget.oldManga.genre = preview.genre;
-                                    isar.mangas.putSync(widget.oldManga);
-                                    ref
-                                        .read(
-                                          synchingProvider(syncId: 1).notifier,
-                                        )
-                                        .addChangedPart(
-                                          ActionType.updateItem,
-                                          widget.oldManga.id,
-                                          widget.oldManga.toJson(),
-                                          false,
-                                        );
-                                  });
-                                  await ref.read(
-                                    updateMangaDetailProvider(
-                                      mangaId: widget.oldManga.id,
-                                      isInit: false,
-                                    ).future,
-                                  );
-                                  isar.writeTxnSync(() {
-                                    for (var oldChapter in chaptersProgress) {
-                                      final chapter =
-                                          isar.chapters
-                                              .filter()
-                                              .mangaIdEqualTo(
-                                                widget.oldManga.id,
-                                              )
-                                              .nameContains(
-                                                _extractChapterNumber(
-                                                      oldChapter.name ?? "",
-                                                    ) ??
-                                                    ".....",
-                                                caseSensitive: false,
-                                              )
-                                              .findFirstSync();
-                                      if (chapter != null) {
-                                        chapter.isBookmarked =
-                                            oldChapter.isBookmarked;
-                                        chapter.lastPageRead =
-                                            oldChapter.lastPageRead;
-                                        chapter.isRead = oldChapter.isRead;
-                                        isar.chapters.putSync(chapter);
-                                      }
-                                    }
-                                    final chapter =
-                                        isar.chapters
-                                            .filter()
-                                            .mangaIdEqualTo(widget.oldManga.id)
-                                            .nameContains(
-                                              historyChapter ?? ".....",
-                                              caseSensitive: false,
-                                            )
-                                            .findFirstSync();
-                                    if (chapter != null) {
-                                      isar.historys.putSync(
-                                        History(
-                                          mangaId: widget.oldManga.id,
-                                          date:
-                                              historyDate ??
-                                              DateTime.now()
-                                                  .millisecondsSinceEpoch
-                                                  .toString(),
-                                          itemType: widget.oldManga.itemType,
-                                          chapterId: chapter.id,
-                                        )..chapter.value = chapter,
+                          builder: (context, ref, child) => TextButton(
+                            onPressed: () async {
+                              String? historyChapter;
+                              String? historyDate;
+                              List<Chapter> chaptersProgress = [];
+                              isar.writeTxnSync(() {
+                                final histories = isar.historys
+                                    .filter()
+                                    .mangaIdEqualTo(widget.oldManga.id)
+                                    .sortByDate()
+                                    .findAllSync();
+                                historyChapter = _extractChapterNumber(
+                                  histories.lastOrNull?.chapter.value?.name ??
+                                      "",
+                                );
+                                historyDate = histories.lastOrNull?.date;
+                                for (var history in histories) {
+                                  isar.historys.deleteSync(history.id!);
+                                  ref
+                                      .read(
+                                        synchingProvider(syncId: 1).notifier,
+                                      )
+                                      .addChangedPart(
+                                        ActionType.removeHistory,
+                                        history.id,
+                                        "{}",
+                                        false,
                                       );
-                                    }
-                                  });
-                                  ref.invalidate(
-                                    getMangaDetailStreamProvider(
-                                      mangaId: widget.oldManga.id!,
-                                    ),
-                                  );
-                                  if (ctx.mounted) {
-                                    Navigator.pop(ctx);
-                                    Navigator.pop(ctx);
+                                }
+                                for (var chapter in widget.oldManga.chapters) {
+                                  chaptersProgress.add(chapter);
+                                  isar.updates
+                                      .filter()
+                                      .mangaIdEqualTo(chapter.mangaId)
+                                      .chapterNameEqualTo(chapter.name)
+                                      .deleteAllSync();
+                                  isar.chapters.deleteSync(chapter.id!);
+                                  ref
+                                      .read(
+                                        synchingProvider(syncId: 1).notifier,
+                                      )
+                                      .addChangedPart(
+                                        ActionType.removeChapter,
+                                        chapter.id,
+                                        "{}",
+                                        false,
+                                      );
+                                }
+                                widget.oldManga.name = widget.manga.name;
+                                widget.oldManga.link = widget.manga.link;
+                                widget.oldManga.imageUrl =
+                                    widget.manga.imageUrl;
+                                widget.oldManga.lang = widget.source.lang;
+                                widget.oldManga.source = widget.source.name;
+                                widget.oldManga.artist = preview.artist;
+                                widget.oldManga.author = preview.author;
+                                widget.oldManga.status =
+                                    preview.status ?? widget.oldManga.status;
+                                widget.oldManga.description =
+                                    preview.description;
+                                widget.oldManga.genre = preview.genre;
+                                isar.mangas.putSync(widget.oldManga);
+                                ref
+                                    .read(synchingProvider(syncId: 1).notifier)
+                                    .addChangedPart(
+                                      ActionType.updateItem,
+                                      widget.oldManga.id,
+                                      widget.oldManga.toJson(),
+                                      false,
+                                    );
+                              });
+                              await ref.read(
+                                updateMangaDetailProvider(
+                                  mangaId: widget.oldManga.id,
+                                  isInit: false,
+                                ).future,
+                              );
+                              isar.writeTxnSync(() {
+                                for (var oldChapter in chaptersProgress) {
+                                  final chapter = isar.chapters
+                                      .filter()
+                                      .mangaIdEqualTo(widget.oldManga.id)
+                                      .nameContains(
+                                        _extractChapterNumber(
+                                              oldChapter.name ?? "",
+                                            ) ??
+                                            ".....",
+                                        caseSensitive: false,
+                                      )
+                                      .findFirstSync();
+                                  if (chapter != null) {
+                                    chapter.isBookmarked =
+                                        oldChapter.isBookmarked;
+                                    chapter.lastPageRead =
+                                        oldChapter.lastPageRead;
+                                    chapter.isRead = oldChapter.isRead;
+                                    isar.chapters.putSync(chapter);
                                   }
-                                },
-                                child: Text(l10n.ok),
-                              ),
+                                }
+                                final chapter = isar.chapters
+                                    .filter()
+                                    .mangaIdEqualTo(widget.oldManga.id)
+                                    .nameContains(
+                                      historyChapter ?? ".....",
+                                      caseSensitive: false,
+                                    )
+                                    .findFirstSync();
+                                if (chapter != null) {
+                                  isar.historys.putSync(
+                                    History(
+                                      mangaId: widget.oldManga.id,
+                                      date:
+                                          historyDate ??
+                                          DateTime.now().millisecondsSinceEpoch
+                                              .toString(),
+                                      itemType: widget.oldManga.itemType,
+                                      chapterId: chapter.id,
+                                    )..chapter.value = chapter,
+                                  );
+                                }
+                              });
+                              ref.invalidate(
+                                getMangaDetailStreamProvider(
+                                  mangaId: widget.oldManga.id!,
+                                ),
+                              );
+                              if (ctx.mounted) {
+                                Navigator.pop(ctx);
+                                Navigator.pop(ctx);
+                              }
+                            },
+                            child: Text(l10n.ok),
+                          ),
                         ),
                       ],
                     ),

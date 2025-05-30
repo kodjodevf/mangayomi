@@ -151,18 +151,18 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
       bindings: {
         // Default key-board shortcuts.
         // https://support.google.com/youtube/answer/7631406
-        const SingleActivator(LogicalKeyboardKey.mediaPlay):
-            () => widget.videoController.player.play(),
-        const SingleActivator(LogicalKeyboardKey.mediaPause):
-            () => widget.videoController.player.pause(),
-        const SingleActivator(LogicalKeyboardKey.mediaPlayPause):
-            () => widget.videoController.player.playOrPause(),
-        const SingleActivator(LogicalKeyboardKey.mediaTrackNext):
-            () => widget.videoController.player.next(),
-        const SingleActivator(LogicalKeyboardKey.mediaTrackPrevious):
-            () => widget.videoController.player.previous(),
-        const SingleActivator(LogicalKeyboardKey.space):
-            () => widget.videoController.player.playOrPause(),
+        const SingleActivator(LogicalKeyboardKey.mediaPlay): () =>
+            widget.videoController.player.play(),
+        const SingleActivator(LogicalKeyboardKey.mediaPause): () =>
+            widget.videoController.player.pause(),
+        const SingleActivator(LogicalKeyboardKey.mediaPlayPause): () =>
+            widget.videoController.player.playOrPause(),
+        const SingleActivator(LogicalKeyboardKey.mediaTrackNext): () =>
+            widget.videoController.player.next(),
+        const SingleActivator(LogicalKeyboardKey.mediaTrackPrevious): () =>
+            widget.videoController.player.previous(),
+        const SingleActivator(LogicalKeyboardKey.space): () =>
+            widget.videoController.player.playOrPause(),
         const SingleActivator(LogicalKeyboardKey.keyJ): () {
           final rate =
               widget.videoController.player.state.position -
@@ -202,51 +202,46 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
           widget.videoController.player.setVolume(volume.clamp(0.0, 100.0));
         },
         const SingleActivator(LogicalKeyboardKey.keyF): () => setFullScreen(),
-        const SingleActivator(LogicalKeyboardKey.escape):
-            () => setFullScreen(value: false),
+        const SingleActivator(LogicalKeyboardKey.escape): () =>
+            setFullScreen(value: false),
       },
       child: Stack(
         children: [
           Consumer(
-            builder:
-                (context, ref, _) =>
-                    ref.read(useLibassStateProvider)
-                        ? const SizedBox.shrink()
-                        : Positioned(
-                          child: CustomSubtitleView(
-                            controller: widget.videoController,
-                            configuration: SubtitleViewConfiguration(
-                              style: subtileTextStyle(ref),
-                            ),
-                          ),
-                        ),
+            builder: (context, ref, _) => ref.read(useLibassStateProvider)
+                ? const SizedBox.shrink()
+                : Positioned(
+                    child: CustomSubtitleView(
+                      controller: widget.videoController,
+                      configuration: SubtitleViewConfiguration(
+                        style: subtileTextStyle(ref),
+                      ),
+                    ),
+                  ),
           ),
           Focus(
             autofocus: true,
             child: Listener(
-              onPointerSignal:
-                  modifyVolumeOnScroll
-                      ? (e) {
-                        if (e is PointerScrollEvent) {
-                          if (e.delta.dy > 0) {
-                            final volume =
-                                widget.videoController.player.state.volume -
-                                5.0;
-                            widget.videoController.player.setVolume(
-                              volume.clamp(0.0, 100.0),
-                            );
-                          }
-                          if (e.delta.dy < 0) {
-                            final volume =
-                                widget.videoController.player.state.volume +
-                                5.0;
-                            widget.videoController.player.setVolume(
-                              volume.clamp(0.0, 100.0),
-                            );
-                          }
+              onPointerSignal: modifyVolumeOnScroll
+                  ? (e) {
+                      if (e is PointerScrollEvent) {
+                        if (e.delta.dy > 0) {
+                          final volume =
+                              widget.videoController.player.state.volume - 5.0;
+                          widget.videoController.player.setVolume(
+                            volume.clamp(0.0, 100.0),
+                          );
+                        }
+                        if (e.delta.dy < 0) {
+                          final volume =
+                              widget.videoController.player.state.volume + 5.0;
+                          widget.videoController.player.setVolume(
+                            volume.clamp(0.0, 100.0),
+                          );
                         }
                       }
-                      : null,
+                    }
+                  : null,
               child: GestureDetector(
                 onLongPressStart: (e) {
                   previousPlaybackSpeed =
@@ -265,46 +260,41 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
                     widget.doubleSpeed(false);
                   }
                 },
-                onTapUp:
-                    !toggleFullscreenOnDoublePress
-                        ? null
-                        : (e) {
-                          final now = DateTime.now();
-                          final difference = now.difference(last);
-                          last = now;
-                          if (difference < const Duration(milliseconds: 400)) {
-                            setFullScreen();
-                          }
-                        },
-                onPanUpdate:
-                    modifyVolumeOnScroll
-                        ? (e) {
-                          if (e.delta.dy > 0) {
-                            final volume =
-                                widget.videoController.player.state.volume -
-                                5.0;
-                            widget.videoController.player.setVolume(
-                              volume.clamp(0.0, 100.0),
-                            );
-                          }
-                          if (e.delta.dy < 0) {
-                            final volume =
-                                widget.videoController.player.state.volume +
-                                5.0;
-                            widget.videoController.player.setVolume(
-                              volume.clamp(0.0, 100.0),
-                            );
-                          }
+                onTapUp: !toggleFullscreenOnDoublePress
+                    ? null
+                    : (e) {
+                        final now = DateTime.now();
+                        final difference = now.difference(last);
+                        last = now;
+                        if (difference < const Duration(milliseconds: 400)) {
+                          setFullScreen();
                         }
-                        : null,
+                      },
+                onPanUpdate: modifyVolumeOnScroll
+                    ? (e) {
+                        if (e.delta.dy > 0) {
+                          final volume =
+                              widget.videoController.player.state.volume - 5.0;
+                          widget.videoController.player.setVolume(
+                            volume.clamp(0.0, 100.0),
+                          );
+                        }
+                        if (e.delta.dy < 0) {
+                          final volume =
+                              widget.videoController.player.state.volume + 5.0;
+                          widget.videoController.player.setVolume(
+                            volume.clamp(0.0, 100.0),
+                          );
+                        }
+                      }
+                    : null,
                 child: MouseRegion(
                   onHover: (_) => onHover(),
                   onEnter: (_) => onEnter(),
                   onExit: (_) => onExit(),
-                  cursor:
-                      cursorVisible
-                          ? SystemMouseCursors.basic
-                          : SystemMouseCursors.none,
+                  cursor: cursorVisible
+                      ? SystemMouseCursors.basic
+                      : SystemMouseCursors.none,
                   child: Stack(
                     children: [
                       AnimatedOpacity(
@@ -357,8 +347,8 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
                                     (
                                     // Add padding in fullscreen!
                                     isFullscreen(context)
-                                        ? MediaQuery.of(context).padding
-                                        : EdgeInsets.zero),
+                                    ? MediaQuery.of(context).padding
+                                    : EdgeInsets.zero),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   mainAxisAlignment: MainAxisAlignment.start,
@@ -369,12 +359,11 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
                                     Expanded(
                                       child: AnimatedOpacity(
                                         curve: Curves.easeInOut,
-                                        opacity:
-                                            buffering
-                                                ? 0.0
-                                                : !showSwipeDuration
-                                                ? 0.0
-                                                : 1.0,
+                                        opacity: buffering
+                                            ? 0.0
+                                            : !showSwipeDuration
+                                            ? 0.0
+                                            : 1.0,
                                         duration: controlsTransitionDuration,
                                         child: Center(
                                           child: seekIndicatorTextWidget(
@@ -445,8 +434,8 @@ class _DesktopControllerWidgetState extends State<DesktopControllerWidget> {
                               (
                               // Add padding in fullscreen!
                               isFullscreen(context)
-                                  ? MediaQuery.of(context).padding
-                                  : EdgeInsets.zero),
+                              ? MediaQuery.of(context).padding
+                              : EdgeInsets.zero),
                           child: Column(
                             children: [
                               Container(
@@ -605,21 +594,20 @@ class CustomMaterialDesktopVolumeButtonState
               color: Colors.white,
               icon: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 150),
-                child:
-                    volume == 0.0
-                        ? const Icon(
-                          Icons.volume_off,
-                          key: ValueKey(Icons.volume_off),
-                        )
-                        : volume < 50.0
-                        ? const Icon(
-                          Icons.volume_down,
-                          key: ValueKey(Icons.volume_down),
-                        )
-                        : const Icon(
-                          Icons.volume_up,
-                          key: ValueKey(Icons.volume_up),
-                        ),
+                child: volume == 0.0
+                    ? const Icon(
+                        Icons.volume_off,
+                        key: ValueKey(Icons.volume_off),
+                      )
+                    : volume < 50.0
+                    ? const Icon(
+                        Icons.volume_down,
+                        key: ValueKey(Icons.volume_down),
+                      )
+                    : const Icon(
+                        Icons.volume_up,
+                        key: ValueKey(Icons.volume_up),
+                      ),
               ),
             ),
             AnimatedOpacity(
@@ -788,10 +776,9 @@ class _CustomMaterialDesktopFullscreenButtonState
           _isFullscreen = isFullScreen;
         });
       },
-      icon:
-          _isFullscreen
-              ? const Icon(Icons.fullscreen_exit)
-              : const Icon(Icons.fullscreen),
+      icon: _isFullscreen
+          ? const Icon(Icons.fullscreen_exit)
+          : const Icon(Icons.fullscreen),
       iconSize: 25,
       color: Colors.white,
     );

@@ -106,10 +106,9 @@ class _CustomSliverGroupedListViewState<T, E>
 
     return SuperSliverList(
       delegate: SliverChildBuilderDelegate(
-        childCount:
-            widget.footer == null
-                ? _sortedElements.length * 2
-                : (_sortedElements.length * 2) + 1,
+        childCount: widget.footer == null
+            ? _sortedElements.length * 2
+            : (_sortedElements.length * 2) + 1,
         (context, index) {
           var actualIndex = index ~/ 2;
 
@@ -142,14 +141,13 @@ class _CustomSliverGroupedListViewState<T, E>
     _keys['$actualIndex'] = key;
     return Container(
       key: key,
-      child:
-          widget.indexedItemBuilder == null
-              ? widget.itemBuilder!(context, _sortedElements[actualIndex])
-              : widget.indexedItemBuilder!(
-                context,
-                _sortedElements[actualIndex],
-                actualIndex,
-              ),
+      child: widget.indexedItemBuilder == null
+          ? widget.itemBuilder!(context, _sortedElements[actualIndex])
+          : widget.indexedItemBuilder!(
+              context,
+              _sortedElements[actualIndex],
+              actualIndex,
+            ),
     );
   }
 

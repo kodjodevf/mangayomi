@@ -365,7 +365,8 @@ class CustomExtendedNetworkImageProvider
 
     return await _loadNetwork(this, chunkEvents);
   }
-  
+
   @override
-  WebHtmlElementStrategy get webHtmlElementStrategy => WebHtmlElementStrategy.fallback;
+  WebHtmlElementStrategy get webHtmlElementStrategy =>
+      WebHtmlElementStrategy.fallback;
 }

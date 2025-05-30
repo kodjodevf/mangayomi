@@ -105,10 +105,9 @@ class DartExtensionService implements ExtensionService {
     final result = await interpreter.invoke('getPageList', [url]);
     return (result as List)
         .map(
-          (e) =>
-              e is String
-                  ? PageUrl(e.toString().trim())
-                  : PageUrl.fromJson((e as Map).toMapStringDynamic!),
+          (e) => e is String
+              ? PageUrl(e.toString().trim())
+              : PageUrl.fromJson((e as Map).toMapStringDynamic!),
         )
         .toList();
   }

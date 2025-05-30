@@ -47,27 +47,24 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                     return AlertDialog(
                       title: Text(context.l10n.concurrent_downloads),
                       content: StatefulBuilder(
-                        builder:
-                            (context, setState) => SizedBox(
-                              height: 200,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  NumberPicker(
-                                    value: currentIntValue,
-                                    minValue: 1,
-                                    maxValue: 255,
-                                    step: 1,
-                                    haptics: true,
-                                    textMapper: (numberText) => numberText,
-                                    onChanged:
-                                        (value) => setState(
-                                          () => currentIntValue = value,
-                                        ),
-                                  ),
-                                ],
+                        builder: (context, setState) => SizedBox(
+                          height: 200,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              NumberPicker(
+                                value: currentIntValue,
+                                minValue: 1,
+                                maxValue: 255,
+                                step: 1,
+                                haptics: true,
+                                textMapper: (numberText) => numberText,
+                                onChanged: (value) =>
+                                    setState(() => currentIntValue = value),
                               ),
-                            ),
+                            ],
+                          ),
+                        ),
                       ),
                       actions: [
                         Row(

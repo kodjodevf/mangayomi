@@ -42,22 +42,20 @@ class _CustomNavigationSettingsState
                     value: !hideItems.contains(navigation),
                     onChanged:
                         [
-                              "/more",
-                              "/browse",
-                              "/history",
-                            ].any((element) => element == navigation)
-                            ? null
-                            : (value) {
-                              final temp = hideItems.toList();
-                              if (!value && !hideItems.contains(navigation)) {
-                                temp.add(navigation);
-                              } else if (value) {
-                                temp.remove(navigation);
-                              }
-                              ref
-                                  .read(hideItemsStateProvider.notifier)
-                                  .set(temp);
-                            },
+                          "/more",
+                          "/browse",
+                          "/history",
+                        ].any((element) => element == navigation)
+                        ? null
+                        : (value) {
+                            final temp = hideItems.toList();
+                            if (!value && !hideItems.contains(navigation)) {
+                              temp.add(navigation);
+                            } else if (value) {
+                              temp.remove(navigation);
+                            }
+                            ref.read(hideItemsStateProvider.notifier).set(temp);
+                          },
                     title: Text(navigationItems[navigation]!),
                   ),
                 ),

@@ -13,14 +13,14 @@ String _$pureBlackDarkModeStateHash() =>
 @ProviderFor(PureBlackDarkModeState)
 final pureBlackDarkModeStateProvider =
     AutoDisposeNotifierProvider<PureBlackDarkModeState, bool>.internal(
-  PureBlackDarkModeState.new,
-  name: r'pureBlackDarkModeStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$pureBlackDarkModeStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      PureBlackDarkModeState.new,
+      name: r'pureBlackDarkModeStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$pureBlackDarkModeStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$PureBlackDarkModeState = AutoDisposeNotifier<bool>;
 // ignore_for_file: type=lint

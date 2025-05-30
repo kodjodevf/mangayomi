@@ -40,10 +40,9 @@ class SyncServer extends _$SyncServer {
     String username,
     String password,
   ) async {
-    server =
-        server[server.length - 1] == '/'
-            ? server.substring(0, server.length - 1)
-            : server;
+    server = server[server.length - 1] == '/'
+        ? server.substring(0, server.length - 1)
+        : server;
     try {
       var response = await http.post(
         Uri.parse('$server$_loginUrl'),
@@ -74,10 +73,9 @@ class SyncServer extends _$SyncServer {
   Future<void> startSync(AppLocalizations l10n, bool silent) async {
     botToast(l10n.sync_checking, second: 2);
     try {
-      final changedParts =
-          ref
-              .read(synchingProvider(syncId: syncId).notifier)
-              .getAllChangedParts();
+      final changedParts = ref
+          .read(synchingProvider(syncId: syncId).notifier)
+          .getAllChangedParts();
 
       if (changedParts.isNotEmpty) {
         final accessToken = _getAccessToken();
@@ -342,82 +340,73 @@ class SyncServer extends _$SyncServer {
   Map<String, dynamic> _getData(bool hashCheck) {
     Map<String, dynamic> datas = {};
     datas.addAll({"version": "2"});
-    final mangas =
-        isar.mangas
-            .filter()
-            .idIsNotNull()
-            .favoriteEqualTo(true)
-            .isLocalArchiveEqualTo(false)
-            .findAllSync()
-            .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
-            .toList();
+    final mangas = isar.mangas
+        .filter()
+        .idIsNotNull()
+        .favoriteEqualTo(true)
+        .isLocalArchiveEqualTo(false)
+        .findAllSync()
+        .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
+        .toList();
     datas.addAll({"manga": mangas});
-    final categorys =
-        isar.categorys
-            .filter()
-            .idIsNotNull()
-            .findAllSync()
-            .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
-            .toList();
+    final categorys = isar.categorys
+        .filter()
+        .idIsNotNull()
+        .findAllSync()
+        .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
+        .toList();
     datas.addAll({"categories": categorys});
-    final chapters =
-        isar.chapters
-            .filter()
-            .idIsNotNull()
-            .findAllSync()
-            .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
-            .toList();
+    final chapters = isar.chapters
+        .filter()
+        .idIsNotNull()
+        .findAllSync()
+        .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
+        .toList();
     datas.addAll({"chapters": chapters});
     datas.addAll({"downloads": []});
-    final tracks =
-        isar.tracks
-            .filter()
-            .idIsNotNull()
-            .findAllSync()
-            .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
-            .toList();
+    final tracks = isar.tracks
+        .filter()
+        .idIsNotNull()
+        .findAllSync()
+        .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
+        .toList();
     datas.addAll({"tracks": tracks});
     datas.addAll({"trackPreferences": []});
-    final historys =
-        isar.historys
-            .filter()
-            .idIsNotNull()
-            .findAllSync()
-            .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
-            .toList();
+    final historys = isar.historys
+        .filter()
+        .idIsNotNull()
+        .findAllSync()
+        .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
+        .toList();
     datas.addAll({"history": historys});
-    final settings =
-        isar.settings
-            .filter()
-            .idIsNotNull()
-            .findAllSync()
-            .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
-            .toList();
+    final settings = isar.settings
+        .filter()
+        .idIsNotNull()
+        .findAllSync()
+        .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
+        .toList();
     datas.addAll({"settings": settings});
-    final sources =
-        isar.sources
-            .filter()
-            .idIsNotNull()
-            .findAllSync()
-            .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
-            .toList();
+    final sources = isar.sources
+        .filter()
+        .idIsNotNull()
+        .findAllSync()
+        .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
+        .toList();
     datas.addAll({"extensions": sources});
-    final sourcePreferences =
-        isar.sourcePreferences
-            .filter()
-            .idIsNotNull()
-            .keyIsNotNull()
-            .findAllSync()
-            .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
-            .toList();
+    final sourcePreferences = isar.sourcePreferences
+        .filter()
+        .idIsNotNull()
+        .keyIsNotNull()
+        .findAllSync()
+        .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
+        .toList();
     datas.addAll({"extensions_preferences": sourcePreferences});
-    final updates =
-        isar.updates
-            .filter()
-            .idIsNotNull()
-            .findAllSync()
-            .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
-            .toList();
+    final updates = isar.updates
+        .filter()
+        .idIsNotNull()
+        .findAllSync()
+        .map((e) => hashCheck ? (e..id = 0).toJson() : e.toJson())
+        .toList();
     datas.addAll({"updates": updates});
     return datas;
   }

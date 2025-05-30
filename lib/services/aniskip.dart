@@ -33,7 +33,8 @@ class AniSkip extends _$AniSkip {
     if (id.$2 == 1) return id.$1;
     if (id.$2 != 2) throw "";
 
-    final query = """
+    final query =
+        """
       query{
         Media(id:${id.$1}){idMal}
       }
@@ -59,8 +60,9 @@ class AniSkipResponse {
   factory AniSkipResponse.fromJson(Map<String, dynamic> json) {
     return AniSkipResponse(
       found: json['found'],
-      results:
-          (json['results'] as List?)?.map((e) => Results.fromJson(e)).toList(),
+      results: (json['results'] as List?)
+          ?.map((e) => Results.fromJson(e))
+          .toList(),
       message: json['message'],
       statusCode: json['statusCode'],
     );

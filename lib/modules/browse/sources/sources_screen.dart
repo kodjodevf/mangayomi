@@ -55,14 +55,13 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton.icon(
-                    onPressed:
-                        () => widget.tabIndex(
-                          widget.itemType == ItemType.manga
-                              ? 3
-                              : widget.itemType == ItemType.anime
-                              ? 4
-                              : 5,
-                        ),
+                    onPressed: () => widget.tabIndex(
+                      widget.itemType == ItemType.manga
+                          ? 3
+                          : widget.itemType == ItemType.anime
+                          ? 4
+                          : 5,
+                    ),
                     icon: const Icon(Icons.extension_rounded),
                     label: Text(context.l10n.show_extensions),
                   ),
@@ -70,12 +69,15 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
               ],
             );
           }
-          final lastUsedEntries =
-              sources.where((element) => element.lastUsed!).toList();
-          final isPinnedEntries =
-              sources.where((element) => element.isPinned!).toList();
-          final allEntriesWithoutIspinned =
-              sources.where((element) => !element.isPinned!).toList();
+          final lastUsedEntries = sources
+              .where((element) => element.lastUsed!)
+              .toList();
+          final isPinnedEntries = sources
+              .where((element) => element.isPinned!)
+              .toList();
+          final allEntriesWithoutIspinned = sources
+              .where((element) => !element.isPinned!)
+              .toList();
           return Scrollbar(
             interactive: true,
             controller: controller,
@@ -87,21 +89,20 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
                 CustomSliverGroupedListView<Source, String>(
                   elements: lastUsedEntries,
                   groupBy: (element) => "",
-                  groupSeparatorBuilder:
-                      (String groupByValue) => Padding(
-                        padding: const EdgeInsets.only(left: 12),
-                        child: Row(
-                          children: [
-                            Text(
-                              l10n.last_used,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
+                  groupSeparatorBuilder: (String groupByValue) => Padding(
+                    padding: const EdgeInsets.only(left: 12),
+                    child: Row(
+                      children: [
+                        Text(
+                          l10n.last_used,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
                         ),
-                      ),
+                      ],
+                    ),
+                  ),
                   itemBuilder: (context, Source element) {
                     return SourceListTile(
                       source: element,
@@ -109,28 +110,27 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
                     );
                   },
                   groupComparator: (group1, group2) => group1.compareTo(group2),
-                  itemComparator:
-                      (item1, item2) => item1.name!.compareTo(item2.name!),
+                  itemComparator: (item1, item2) =>
+                      item1.name!.compareTo(item2.name!),
                   order: GroupedListOrder.ASC,
                 ),
                 CustomSliverGroupedListView<Source, String>(
                   elements: isPinnedEntries,
                   groupBy: (element) => "",
-                  groupSeparatorBuilder:
-                      (String groupByValue) => Padding(
-                        padding: const EdgeInsets.only(left: 12),
-                        child: Row(
-                          children: [
-                            Text(
-                              l10n.pinned,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
+                  groupSeparatorBuilder: (String groupByValue) => Padding(
+                    padding: const EdgeInsets.only(left: 12),
+                    child: Row(
+                      children: [
+                        Text(
+                          l10n.pinned,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
                         ),
-                      ),
+                      ],
+                    ),
+                  ),
                   itemBuilder: (context, Source element) {
                     return SourceListTile(
                       source: element,
@@ -138,30 +138,28 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
                     );
                   },
                   groupComparator: (group1, group2) => group1.compareTo(group2),
-                  itemComparator:
-                      (item1, item2) => item1.name!.compareTo(item2.name!),
+                  itemComparator: (item1, item2) =>
+                      item1.name!.compareTo(item2.name!),
                   order: GroupedListOrder.ASC,
                 ),
                 CustomSliverGroupedListView<Source, String>(
                   elements: allEntriesWithoutIspinned,
-                  groupBy:
-                      (element) =>
-                          completeLanguageName(element.lang!.toLowerCase()),
-                  groupSeparatorBuilder:
-                      (String groupByValue) => Padding(
-                        padding: const EdgeInsets.only(left: 12),
-                        child: Row(
-                          children: [
-                            Text(
-                              groupByValue,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
+                  groupBy: (element) =>
+                      completeLanguageName(element.lang!.toLowerCase()),
+                  groupSeparatorBuilder: (String groupByValue) => Padding(
+                    padding: const EdgeInsets.only(left: 12),
+                    child: Row(
+                      children: [
+                        Text(
+                          groupByValue,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                          ),
                         ),
-                      ),
+                      ],
+                    ),
+                  ),
                   itemBuilder: (context, Source element) {
                     return SourceListTile(
                       source: element,
@@ -169,8 +167,8 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
                     );
                   },
                   groupComparator: (group1, group2) => group1.compareTo(group2),
-                  itemComparator:
-                      (item1, item2) => item1.name!.compareTo(item2.name!),
+                  itemComparator: (item1, item2) =>
+                      item1.name!.compareTo(item2.name!),
                   order: GroupedListOrder.ASC,
                 ),
               ],

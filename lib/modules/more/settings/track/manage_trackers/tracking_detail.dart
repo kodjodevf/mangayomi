@@ -45,7 +45,10 @@ class _TrackingDetailState extends State<TrackingDetail>
           bottom: TabBar(
             indicatorSize: TabBarIndicatorSize.tab,
             controller: _tabBarController,
-            tabs: [Tab(text: l10n.manga), Tab(text: l10n.anime)],
+            tabs: [
+              Tab(text: l10n.manga),
+              Tab(text: l10n.anime),
+            ],
           ),
         ),
         body: TabBarView(

@@ -36,26 +36,37 @@ class BackupMihon extends $pb.GeneratedMessage {
     return $result;
   }
   BackupMihon._() : super();
-  factory BackupMihon.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory BackupMihon.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  factory BackupMihon.fromBuffer($core.List<$core.int> i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(i, r);
+  factory BackupMihon.fromJson($core.String i,
+          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(i, r);
 
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'BackupMihon', createEmptyInstance: create)
-    ..pc<$0.BackupManga>(1, _omitFieldNames ? '' : 'backupManga', $pb.PbFieldType.PM, protoName: 'backupManga', subBuilder: $0.BackupManga.create)
-    ..pc<$1.BackupCategory>(2, _omitFieldNames ? '' : 'backupCategories', $pb.PbFieldType.PM, protoName: 'backupCategories', subBuilder: $1.BackupCategory.create)
-    ..pc<$2.BackupSource>(101, _omitFieldNames ? '' : 'backupSources', $pb.PbFieldType.PM, protoName: 'backupSources', subBuilder: $2.BackupSource.create)
-    ..hasRequiredFields = false
-  ;
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+      _omitMessageNames ? '' : 'BackupMihon',
+      createEmptyInstance: create)
+    ..pc<$0.BackupManga>(
+        1, _omitFieldNames ? '' : 'backupManga', $pb.PbFieldType.PM,
+        protoName: 'backupManga', subBuilder: $0.BackupManga.create)
+    ..pc<$1.BackupCategory>(
+        2, _omitFieldNames ? '' : 'backupCategories', $pb.PbFieldType.PM,
+        protoName: 'backupCategories', subBuilder: $1.BackupCategory.create)
+    ..pc<$2.BackupSource>(
+        101, _omitFieldNames ? '' : 'backupSources', $pb.PbFieldType.PM,
+        protoName: 'backupSources', subBuilder: $2.BackupSource.create)
+    ..hasRequiredFields = false;
 
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-  'Will be removed in next major version')
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+      'Will be removed in next major version')
   BackupMihon clone() => BackupMihon()..mergeFromMessage(this);
-  @$core.Deprecated(
-  'Using this can add significant overhead to your binary. '
-  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-  'Will be removed in next major version')
-  BackupMihon copyWith(void Function(BackupMihon) updates) => super.copyWith((message) => updates(message as BackupMihon)) as BackupMihon;
+  @$core.Deprecated('Using this can add significant overhead to your binary. '
+      'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+      'Will be removed in next major version')
+  BackupMihon copyWith(void Function(BackupMihon) updates) =>
+      super.copyWith((message) => updates(message as BackupMihon))
+          as BackupMihon;
 
   $pb.BuilderInfo get info_ => _i;
 
@@ -64,7 +75,8 @@ class BackupMihon extends $pb.GeneratedMessage {
   BackupMihon createEmptyInstance() => create();
   static $pb.PbList<BackupMihon> createRepeated() => $pb.PbList<BackupMihon>();
   @$core.pragma('dart2js:noInline')
-  static BackupMihon getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<BackupMihon>(create);
+  static BackupMihon getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<BackupMihon>(create);
   static BackupMihon? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -77,6 +89,6 @@ class BackupMihon extends $pb.GeneratedMessage {
   $core.List<$2.BackupSource> get backupSources => $_getList(2);
 }
 
-
 const _omitFieldNames = $core.bool.fromEnvironment('protobuf.omit_field_names');
-const _omitMessageNames = $core.bool.fromEnvironment('protobuf.omit_message_names');
+const _omitMessageNames =
+    $core.bool.fromEnvironment('protobuf.omit_message_names');

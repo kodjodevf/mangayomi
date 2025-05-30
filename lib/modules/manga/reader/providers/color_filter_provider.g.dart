@@ -11,16 +11,19 @@ String _$customColorFilterStateHash() =>
 
 /// See also [CustomColorFilterState].
 @ProviderFor(CustomColorFilterState)
-final customColorFilterStateProvider = AutoDisposeNotifierProvider<
-    CustomColorFilterState, CustomColorFilter?>.internal(
-  CustomColorFilterState.new,
-  name: r'customColorFilterStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$customColorFilterStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+final customColorFilterStateProvider =
+    AutoDisposeNotifierProvider<
+      CustomColorFilterState,
+      CustomColorFilter?
+    >.internal(
+      CustomColorFilterState.new,
+      name: r'customColorFilterStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$customColorFilterStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$CustomColorFilterState = AutoDisposeNotifier<CustomColorFilter?>;
 String _$enableCustomColorFilterStateHash() =>
@@ -30,14 +33,14 @@ String _$enableCustomColorFilterStateHash() =>
 @ProviderFor(EnableCustomColorFilterState)
 final enableCustomColorFilterStateProvider =
     AutoDisposeNotifierProvider<EnableCustomColorFilterState, bool>.internal(
-  EnableCustomColorFilterState.new,
-  name: r'enableCustomColorFilterStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$enableCustomColorFilterStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      EnableCustomColorFilterState.new,
+      name: r'enableCustomColorFilterStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$enableCustomColorFilterStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$EnableCustomColorFilterState = AutoDisposeNotifier<bool>;
 String _$colorFilterBlendModeStateHash() =>
@@ -45,16 +48,19 @@ String _$colorFilterBlendModeStateHash() =>
 
 /// See also [ColorFilterBlendModeState].
 @ProviderFor(ColorFilterBlendModeState)
-final colorFilterBlendModeStateProvider = AutoDisposeNotifierProvider<
-    ColorFilterBlendModeState, ColorFilterBlendMode>.internal(
-  ColorFilterBlendModeState.new,
-  name: r'colorFilterBlendModeStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$colorFilterBlendModeStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+final colorFilterBlendModeStateProvider =
+    AutoDisposeNotifierProvider<
+      ColorFilterBlendModeState,
+      ColorFilterBlendMode
+    >.internal(
+      ColorFilterBlendModeState.new,
+      name: r'colorFilterBlendModeStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$colorFilterBlendModeStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$ColorFilterBlendModeState = AutoDisposeNotifier<ColorFilterBlendMode>;
 // ignore_for_file: type=lint

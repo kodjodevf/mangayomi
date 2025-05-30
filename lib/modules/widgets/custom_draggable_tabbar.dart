@@ -79,9 +79,10 @@ Future<void> customDraggableTabBar({
             for (var i = 0; i < children.length; i++) ...[
               MeasureWidgetSize(
                 onCalculateSize: (size) {
-                  final additionnalHeight =
-                      ((List.generate(10000, (index) => index * 0.0001))
-                        ..shuffle()).first;
+                  final additionnalHeight = ((List.generate(
+                    10000,
+                    (index) => index * 0.0001,
+                  ))..shuffle()).first;
                   double newHeight = size!.height + 52.0 + additionnalHeight;
                   if (!(newHeight <= maxHeight)) {
                     newHeight = maxHeight + additionnalHeight;
@@ -108,29 +109,27 @@ Future<void> customDraggableTabBar({
       DraggableMenu(
         curve: Curves.linearToEaseOut,
         controller: controller,
-        levels:
-            widgetsHeight
-                .map((e) => e["height"])
-                .map((e) => DraggableMenuLevel(height: e))
-                .toList(),
+        levels: widgetsHeight
+            .map((e) => e["height"])
+            .map((e) => DraggableMenuLevel(height: e))
+            .toList(),
         customUi: Consumer(
           builder: (context, ref, child) {
             final location = ref.watch(
               routerCurrentLocationStateProvider(context),
             );
-            final width =
-                context.isTablet && !fullWidth
-                    ? switch (location) {
-                      null => 100,
-                      != '/MangaLibrary' &&
-                          != '/AnimeLibrary' &&
-                          != '/history' &&
-                          != '/browse' &&
-                          != '/more' =>
-                        0,
-                      _ => 100,
-                    }
-                    : 0;
+            final width = context.isTablet && !fullWidth
+                ? switch (location) {
+                    null => 100,
+                    != '/MangaLibrary' &&
+                        != '/AnimeLibrary' &&
+                        != '/history' &&
+                        != '/browse' &&
+                        != '/more' =>
+                      0,
+                    _ => 100,
+                  }
+                : 0;
             return Scaffold(
               backgroundColor: Platform.isLinux ? null : Colors.transparent,
               body: Container(
@@ -158,8 +157,9 @@ Future<void> customDraggableTabBar({
                               labelStyle: const TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),
-                              dividerColor:
-                                  context.isLight ? Colors.black : Colors.grey,
+                              dividerColor: context.isLight
+                                  ? Colors.black
+                                  : Colors.grey,
                               dividerHeight: 0.4,
                               controller: tabBarController,
                               tabs: tabs,
@@ -176,10 +176,9 @@ Future<void> customDraggableTabBar({
                                     children: [
                                       Flexible(
                                         child: Container(
-                                          color:
-                                              context.isLight
-                                                  ? Colors.black
-                                                  : Colors.grey,
+                                          color: context.isLight
+                                              ? Colors.black
+                                              : Colors.grey,
                                           height: 0.4,
                                         ),
                                       ),
@@ -193,17 +192,16 @@ Future<void> customDraggableTabBar({
                       Flexible(
                         child: TabBarView(
                           controller: tabBarController,
-                          children:
-                              children
-                                  .map(
-                                    (e) => SingleChildScrollView(
-                                      child: MeasureWidgetSize(
-                                        onCalculateSize: (_) => refresh(),
-                                        child: e,
-                                      ),
-                                    ),
-                                  )
-                                  .toList(),
+                          children: children
+                              .map(
+                                (e) => SingleChildScrollView(
+                                  child: MeasureWidgetSize(
+                                    onCalculateSize: (_) => refresh(),
+                                    child: e,
+                                  ),
+                                ),
+                              )
+                              .toList(),
                         ),
                       ),
                     ],

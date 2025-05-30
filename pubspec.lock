@@ -354,10 +354,10 @@ packages:
     dependency: "direct main"
     description:
       name: d4rt
-      sha256: "65f9d859ee2a770e1524fd7afd790340a8385ba6e7c886c98c581c1d4ad46a0c"
+      sha256: d38cde299f9e434b3c2bd0c07a7f3743e2853dfed60a3ed1f97685c34d922062
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.6"
+    version: "0.0.7"
   dart_style:
     dependency: transitive
     description:
@@ -1490,10 +1490,11 @@ packages:
   re_editor:
     dependency: "direct main"
     description:
-      name: re_editor
-      sha256: "17e430f0591dd361992ec2dd6f69191c1853fa46e05432e095310a8f82ee820e"
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: main
+      resolved-ref: f4d9107956aabae303a2b990119bebc9a2671e62
+      url: "https://github.com/kodjodevf/re-editor"
+    source: git
     version: "0.7.0"
   re_highlight:
     dependency: "direct main"

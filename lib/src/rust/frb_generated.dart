@@ -637,28 +637,28 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   RustArcIncrementStrongCountFnType
-  get rust_arc_increment_strong_count_CancellationToken =>
-      wire.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken;
+  get rust_arc_increment_strong_count_CancellationToken => wire
+      .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken;
 
   RustArcDecrementStrongCountFnType
-  get rust_arc_decrement_strong_count_CancellationToken =>
-      wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken;
+  get rust_arc_decrement_strong_count_CancellationToken => wire
+      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerCancellationToken;
 
   RustArcIncrementStrongCountFnType
-  get rust_arc_increment_strong_count_DnsSettings =>
-      wire.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDnsSettings;
+  get rust_arc_increment_strong_count_DnsSettings => wire
+      .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDnsSettings;
 
   RustArcDecrementStrongCountFnType
-  get rust_arc_decrement_strong_count_DnsSettings =>
-      wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDnsSettings;
+  get rust_arc_decrement_strong_count_DnsSettings => wire
+      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDnsSettings;
 
   RustArcIncrementStrongCountFnType
-  get rust_arc_increment_strong_count_RequestClient =>
-      wire.rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient;
+  get rust_arc_increment_strong_count_RequestClient => wire
+      .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient;
 
   RustArcDecrementStrongCountFnType
-  get rust_arc_decrement_strong_count_RequestClient =>
-      wire.rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient;
+  get rust_arc_decrement_strong_count_RequestClient => wire
+      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient;
 
   @protected
   AnyhowException dco_decode_AnyhowException(dynamic raw) {
@@ -1092,8 +1092,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     return raw == null
         ? null
         : dco_decode_AutoExplicit_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerRequestClient(
-          raw,
-        );
+            raw,
+          );
   }
 
   @protected
@@ -1111,8 +1111,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     return raw == null
         ? null
         : dco_decode_box_autoadd_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerDnsSettings(
-          raw,
-        );
+            raw,
+          );
   }
 
   @protected
@@ -3101,11 +3101,10 @@ class CancellationTokenImpl extends RustOpaque implements CancellationToken {
         RustLib.instance.api.rust_arc_increment_strong_count_CancellationToken,
     rustArcDecrementStrongCount:
         RustLib.instance.api.rust_arc_decrement_strong_count_CancellationToken,
-    rustArcDecrementStrongCountPtr:
-        RustLib
-            .instance
-            .api
-            .rust_arc_decrement_strong_count_CancellationTokenPtr,
+    rustArcDecrementStrongCountPtr: RustLib
+        .instance
+        .api
+        .rust_arc_decrement_strong_count_CancellationTokenPtr,
   );
 }
 

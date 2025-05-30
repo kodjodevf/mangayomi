@@ -100,12 +100,11 @@ class StorageProvider {
   Future<Directory?> getMangaMainDirectory(Chapter chapter) async {
     final manga = chapter.manga.value!;
     final itemType = chapter.manga.value!.itemType;
-    final itemTypePath =
-        itemType == ItemType.manga
-            ? "Manga"
-            : itemType == ItemType.anime
-            ? "Anime"
-            : "Novel";
+    final itemTypePath = itemType == ItemType.manga
+        ? "Manga"
+        : itemType == ItemType.anime
+        ? "Anime"
+        : "Novel";
     final dir = await getDirectory();
     return Directory(
       "${dir!.path}downloads/$itemTypePath/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceForbiddenCharacters('_')}/"
@@ -118,10 +117,9 @@ class StorageProvider {
     Directory? mangaMainDirectory,
   }) async {
     final basedir = mangaMainDirectory ?? await getMangaMainDirectory(chapter);
-    String scanlator =
-        chapter.scanlator?.isNotEmpty ?? false
-            ? "${chapter.scanlator!.replaceForbiddenCharacters('_')}_"
-            : "";
+    String scanlator = chapter.scanlator?.isNotEmpty ?? false
+        ? "${chapter.scanlator!.replaceForbiddenCharacters('_')}_"
+        : "";
     return Directory(
       "${basedir!.path}$scanlator${chapter.name!.replaceForbiddenCharacters('_')}/"
           .fixSeparator,

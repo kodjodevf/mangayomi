@@ -11,16 +11,19 @@ String _$subtitleSettingsStateHash() =>
 
 /// See also [SubtitleSettingsState].
 @ProviderFor(SubtitleSettingsState)
-final subtitleSettingsStateProvider = AutoDisposeNotifierProvider<
-    SubtitleSettingsState, PlayerSubtitleSettings>.internal(
-  SubtitleSettingsState.new,
-  name: r'subtitleSettingsStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$subtitleSettingsStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+final subtitleSettingsStateProvider =
+    AutoDisposeNotifierProvider<
+      SubtitleSettingsState,
+      PlayerSubtitleSettings
+    >.internal(
+      SubtitleSettingsState.new,
+      name: r'subtitleSettingsStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$subtitleSettingsStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$SubtitleSettingsState = AutoDisposeNotifier<PlayerSubtitleSettings>;
 // ignore_for_file: type=lint

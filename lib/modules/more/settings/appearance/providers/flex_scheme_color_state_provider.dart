@@ -9,8 +9,9 @@ part 'flex_scheme_color_state_provider.g.dart';
 class FlexSchemeColorState extends _$FlexSchemeColorState {
   @override
   FlexSchemeColor build() {
-    final flexSchemeColorIndex =
-        isar.settings.getSync(227)!.flexSchemeColorIndex!;
+    final flexSchemeColorIndex = isar.settings
+        .getSync(227)!
+        .flexSchemeColorIndex!;
     return ref.read(themeModeStateProvider)
         ? ThemeAA.schemes[flexSchemeColorIndex].dark
         : ThemeAA.schemes[flexSchemeColorIndex].light;

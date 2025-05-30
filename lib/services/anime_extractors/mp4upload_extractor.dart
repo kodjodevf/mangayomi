@@ -23,20 +23,18 @@ class Mp4uploadExtractor {
       final response = await client.get(Uri.parse(url), headers: newHeaders);
       String script = "";
 
-      final scriptElementWithEval =
-          xpathSelector(response.body)
-              .queryXPath(
-                '//script[contains(text(), "eval") and contains(text(), "p,a,c,k,e,d")]/text()',
-              )
-              .attrs;
+      final scriptElementWithEval = xpathSelector(response.body)
+          .queryXPath(
+            '//script[contains(text(), "eval") and contains(text(), "p,a,c,k,e,d")]/text()',
+          )
+          .attrs;
 
       if (scriptElementWithEval.isNotEmpty) {
         script = JSPacker(script).unpack() ?? "";
       } else {
-        final scriptElementWithSrc =
-            xpathSelector(response.body)
-                .queryXPath('//script[contains(text(), "player.src")]/text()')
-                .attrs;
+        final scriptElementWithSrc = xpathSelector(
+          response.body,
+        ).queryXPath('//script[contains(text(), "player.src")]/text()').attrs;
         if (scriptElementWithSrc.isNotEmpty) {
           script = scriptElementWithSrc.first!;
         } else {

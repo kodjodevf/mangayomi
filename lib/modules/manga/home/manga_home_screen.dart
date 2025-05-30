@@ -57,12 +57,11 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   int _fullDataLength = 50;
   int _page = 1;
   bool _hasNextPage = true;
-  late int _selectedIndex =
-      widget.isLatest
-          ? 1
-          : widget.isSearch
-          ? 2
-          : 0;
+  late int _selectedIndex = widget.isLatest
+      ? 1
+      : widget.isSearch
+      ? 2
+      : 0;
   late Source source = widget.source;
   late List<dynamic> filters = getFilterList(source: source);
   final List<MManga> _mangaList = [];
@@ -149,16 +148,15 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
     };
     return Scaffold(
       appBar: AppBar(
-        title:
-            _isSearch
-                ? null
-                : Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("${source.name}"),
-                    source.notes != null && source.notes!.isNotEmpty
-                        ? SizedBox(
+        title: _isSearch
+            ? null
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("${source.name}"),
+                  source.notes != null && source.notes!.isNotEmpty
+                      ? SizedBox(
                           height: 20,
                           child: Marquee(
                             text: l10n.extension_notes(source.notes!),
@@ -169,59 +167,59 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                             startPadding: 10.0,
                           ),
                         )
-                        : Container(),
-                  ],
-                ),
+                      : Container(),
+                ],
+              ),
         leading: !_isSearch ? null : Container(),
         actions: [
           _isSearch
               ? SeachFormTextField(
-                onFieldSubmitted: (submit) {
-                  _mangaList.clear();
-                  setState(() {
-                    if (submit.isNotEmpty) {
-                      _selectedIndex = 2;
+                  onFieldSubmitted: (submit) {
+                    _mangaList.clear();
+                    setState(() {
+                      if (submit.isNotEmpty) {
+                        _selectedIndex = 2;
 
-                      _query = submit;
-                    } else {
-                      _selectedIndex = 0;
-                    }
-                    _page = 1;
-                  });
-                },
-                onChanged: (value) {},
-                onSuffixPressed: () {
-                  _textEditingController.clear();
-                  _mangaList.clear();
-                  _query = "";
-                  setState(() {});
-                },
-                onPressed: () {
-                  setState(() {
-                    if (_textEditingController.text.isEmpty) {
-                      _isSearch = false;
-                      _query = "";
-                      _isFiltering = false;
-                      _selectedIndex = 0;
+                        _query = submit;
+                      } else {
+                        _selectedIndex = 0;
+                      }
                       _page = 1;
-                      _textEditingController.clear();
-                      _mangaList.clear();
-                    } else {
-                      Navigator.pop(context);
-                    }
-                  });
-                },
-                controller: _textEditingController,
-              )
+                    });
+                  },
+                  onChanged: (value) {},
+                  onSuffixPressed: () {
+                    _textEditingController.clear();
+                    _mangaList.clear();
+                    _query = "";
+                    setState(() {});
+                  },
+                  onPressed: () {
+                    setState(() {
+                      if (_textEditingController.text.isEmpty) {
+                        _isSearch = false;
+                        _query = "";
+                        _isFiltering = false;
+                        _selectedIndex = 0;
+                        _page = 1;
+                        _textEditingController.clear();
+                        _mangaList.clear();
+                      } else {
+                        Navigator.pop(context);
+                      }
+                    });
+                  },
+                  controller: _textEditingController,
+                )
               : IconButton(
-                splashRadius: 20,
-                onPressed: () {
-                  setState(() {
-                    _isSearch = true;
-                  });
-                },
-                icon: Icon(Icons.search, color: Theme.of(context).hintColor),
-              ),
+                  splashRadius: 20,
+                  onPressed: () {
+                    setState(() {
+                      _isSearch = true;
+                    });
+                  },
+                  icon: Icon(Icons.search, color: Theme.of(context).hintColor),
+                ),
           PopupMenuButton(
             popUpAnimationStyle: popupAnimationStyle,
             icon: Icon(displayTypeIcon),
@@ -339,65 +337,60 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                         if (index == 2) {
                           final result = await showModalBottomSheet(
                             context: context,
-                            builder:
-                                (context) => StatefulBuilder(
-                                  builder: (context, setState) {
-                                    return Column(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Row(
-                                            children: [
-                                              TextButton(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    filters = getFilterList(
-                                                      source: source,
-                                                    );
-                                                  });
-                                                },
-                                                child: Text(l10n.reset),
-                                              ),
-                                              const Spacer(),
-                                              ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor:
-                                                      context.primaryColor,
-                                                ),
-                                                onPressed: () {
-                                                  Navigator.pop(
-                                                    context,
-                                                    'filter',
-                                                  );
-                                                },
-                                                child: Text(
-                                                  l10n.filter,
-                                                  style: TextStyle(
-                                                    color:
-                                                        Theme.of(
-                                                          context,
-                                                        ).scaffoldBackgroundColor,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        const Divider(),
-                                        Expanded(
-                                          child: FilterWidget(
-                                            filterList: filters,
-                                            onChanged: (values) {
+                            builder: (context) => StatefulBuilder(
+                              builder: (context, setState) {
+                                return Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        children: [
+                                          TextButton(
+                                            onPressed: () {
                                               setState(() {
-                                                filters = values;
+                                                filters = getFilterList(
+                                                  source: source,
+                                                );
                                               });
                                             },
+                                            child: Text(l10n.reset),
                                           ),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                ),
+                                          const Spacer(),
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  context.primaryColor,
+                                            ),
+                                            onPressed: () {
+                                              Navigator.pop(context, 'filter');
+                                            },
+                                            child: Text(
+                                              l10n.filter,
+                                              style: TextStyle(
+                                                color: Theme.of(
+                                                  context,
+                                                ).scaffoldBackgroundColor,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const Divider(),
+                                    Expanded(
+                                      child: FilterWidget(
+                                        filterList: filters,
+                                        onChanged: (values) {
+                                          setState(() {
+                                            filters = values;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
                           );
                           if (result == 'filter') {
                             _mangaList.clear();
@@ -445,36 +438,35 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
           ),
         ),
       ),
-      body:
-          _getManga!.isLoading
-              ? const ProgressCenter()
-              : _getManga!.when(
-                data: (data) {
-                  if (_hasNextPage) {
-                    if (!data!.hasNextPage) {
-                      if (mounted) {
-                        setState(() {
-                          _hasNextPage = false;
-                        });
-                      }
+      body: _getManga!.isLoading
+          ? const ProgressCenter()
+          : _getManga!.when(
+              data: (data) {
+                if (_hasNextPage) {
+                  if (!data!.hasNextPage) {
+                    if (mounted) {
+                      setState(() {
+                        _hasNextPage = false;
+                      });
                     }
                   }
-                  if (_mangaList.isEmpty && data!.list.isNotEmpty) {
-                    _mangaList.addAll(data.list);
-                  }
-                  Widget buildProgressIndicator() {
-                    return !(data!.list.isNotEmpty &&
-                            (data.hasNextPage || _hasNextPage))
-                        ? Container()
-                        : _isLoading
-                        ? const Center(
+                }
+                if (_mangaList.isEmpty && data!.list.isNotEmpty) {
+                  _mangaList.addAll(data.list);
+                }
+                Widget buildProgressIndicator() {
+                  return !(data!.list.isNotEmpty &&
+                          (data.hasNextPage || _hasNextPage))
+                      ? Container()
+                      : _isLoading
+                      ? const Center(
                           child: SizedBox(
                             height: 100,
                             width: 200,
                             child: Center(child: CircularProgressIndicator()),
                           ),
                         )
-                        : Padding(
+                      : Padding(
                           padding: const EdgeInsets.all(4),
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -515,192 +507,180 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                             ),
                           ),
                         );
-                  }
+                }
 
-                  if (data!.list.isEmpty) {
-                    return Center(child: Text(l10n.no_result));
-                  }
-                  _scrollController.addListener(() {
-                    if (_scrollController.position.pixels ==
-                        _scrollController.position.maxScrollExtent) {
-                      if (_mangaList.isNotEmpty &&
-                          (_hasNextPage) &&
-                          !_isLoading &&
-                          !_getManga!.isLoading) {
-                        if (mounted) {
-                          setState(() {
-                            _isLoading = true;
-                          });
-                        }
-                        _loadMore().then((value) {
-                          if (mounted && value != null) {
-                            setState(() {
-                              _mangaList.addAll(value.list);
-                              _isLoading = false;
-                            });
-                          }
+                if (data!.list.isEmpty) {
+                  return Center(child: Text(l10n.no_result));
+                }
+                _scrollController.addListener(() {
+                  if (_scrollController.position.pixels ==
+                      _scrollController.position.maxScrollExtent) {
+                    if (_mangaList.isNotEmpty &&
+                        (_hasNextPage) &&
+                        !_isLoading &&
+                        !_getManga!.isLoading) {
+                      if (mounted) {
+                        setState(() {
+                          _isLoading = true;
                         });
                       }
+                      _loadMore().then((value) {
+                        if (mounted && value != null) {
+                          setState(() {
+                            _mangaList.addAll(value.list);
+                            _isLoading = false;
+                          });
+                        }
+                      });
                     }
-                  });
+                  }
+                });
 
-                  _length =
-                      source.isFullData! ? _fullDataLength : _mangaList.length;
-                  _length =
-                      (_mangaList.length < _length
-                          ? _mangaList.length
-                          : _length);
-                  final isComfortableGrid =
-                      displayType == DisplayType.comfortableGrid;
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Column(
-                      children: [
-                        Flexible(
-                          child:
-                              displayType == DisplayType.list
-                                  ? SuperListViewWidget(
+                _length = source.isFullData!
+                    ? _fullDataLength
+                    : _mangaList.length;
+                _length = (_mangaList.length < _length
+                    ? _mangaList.length
+                    : _length);
+                final isComfortableGrid =
+                    displayType == DisplayType.comfortableGrid;
+                return Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Column(
+                    children: [
+                      Flexible(
+                        child: displayType == DisplayType.list
+                            ? SuperListViewWidget(
+                                controller: _scrollController,
+                                itemCount: _length + 1,
+                                itemBuilder: (context, index) {
+                                  if (index == _length) {
+                                    return buildProgressIndicator();
+                                  }
+                                  return MangaHomeImageCardListTile(
+                                    itemType: source.itemType,
+                                    manga: _mangaList[index],
+                                    source: source,
+                                  );
+                                },
+                              )
+                            : Consumer(
+                                builder: (context, ref, child) {
+                                  final gridSize = ref.watch(
+                                    libraryGridSizeStateProvider(
+                                      itemType: source.itemType,
+                                    ),
+                                  );
+
+                                  return GridViewWidget(
+                                    gridSize: gridSize,
                                     controller: _scrollController,
                                     itemCount: _length + 1,
+                                    childAspectRatio: isComfortableGrid
+                                        ? 0.642
+                                        : 0.69,
                                     itemBuilder: (context, index) {
                                       if (index == _length) {
                                         return buildProgressIndicator();
                                       }
-                                      return MangaHomeImageCardListTile(
+                                      return MangaHomeImageCard(
                                         itemType: source.itemType,
                                         manga: _mangaList[index],
                                         source: source,
+                                        isComfortableGrid: isComfortableGrid,
                                       );
                                     },
-                                  )
-                                  : Consumer(
-                                    builder: (context, ref, child) {
-                                      final gridSize = ref.watch(
-                                        libraryGridSizeStateProvider(
-                                          itemType: source.itemType,
-                                        ),
-                                      );
-
-                                      return GridViewWidget(
-                                        gridSize: gridSize,
-                                        controller: _scrollController,
-                                        itemCount: _length + 1,
-                                        childAspectRatio:
-                                            isComfortableGrid ? 0.642 : 0.69,
-                                        itemBuilder: (context, index) {
-                                          if (index == _length) {
-                                            return buildProgressIndicator();
-                                          }
-                                          return MangaHomeImageCard(
-                                            itemType: source.itemType,
-                                            manga: _mangaList[index],
-                                            source: source,
-                                            isComfortableGrid:
-                                                isComfortableGrid,
-                                          );
-                                        },
-                                      );
-                                    },
-                                  ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                error:
-                    (error, stackTrace) => Column(
+                                  );
+                                },
+                              ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              error: (error, stackTrace) => Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(15),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Column(
-                                children: [
-                                  IconButton(
-                                    onPressed: () {
-                                      if (_selectedIndex == 2 &&
-                                              (_isSearch &&
-                                                  _query.isNotEmpty) ||
-                                          _isFiltering) {
-                                        ref.invalidate(
-                                          searchProvider(
-                                            source: source,
-                                            query: _query,
-                                            page: 1,
-                                            filterList: filters,
-                                          ),
-                                        );
-                                      } else if (_selectedIndex == 1 &&
-                                          !_isSearch &&
-                                          _query.isEmpty) {
-                                        ref.invalidate(
-                                          getLatestUpdatesProvider(
-                                            source: source,
-                                            page: 1,
-                                          ),
-                                        );
-                                      } else if (_selectedIndex == 0 &&
-                                          !_isSearch &&
-                                          _query.isEmpty) {
-                                        ref.invalidate(
-                                          getPopularProvider(
-                                            source: source,
-                                            page: 1,
-                                          ),
-                                        );
-                                      }
-                                    },
-                                    icon: const Icon(Icons.refresh),
-                                  ),
-                                  Text(l10n.refresh),
-                                ],
-                              ),
-                              const SizedBox(width: 20),
-                              Column(
-                                children: [
-                                  IconButton(
-                                    onPressed: () async {
-                                      final baseUrl = ref.watch(
-                                        sourceBaseUrlProvider(source: source),
-                                      );
-                                      Map<String, dynamic> data = {
-                                        'url': baseUrl,
-                                        'sourceId': source.id.toString(),
-                                        'title': '',
-                                        "hasCloudFlare":
-                                            source.hasCloudflare ?? false,
-                                      };
-                                      context.push(
-                                        "/mangawebview",
-                                        extra: data,
-                                      );
-                                    },
-                                    icon: Icon(
-                                      Icons.public,
-                                      size: 22,
-                                      color: context.secondaryColor,
+                        Column(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                if (_selectedIndex == 2 &&
+                                        (_isSearch && _query.isNotEmpty) ||
+                                    _isFiltering) {
+                                  ref.invalidate(
+                                    searchProvider(
+                                      source: source,
+                                      query: _query,
+                                      page: 1,
+                                      filterList: filters,
                                     ),
-                                  ),
-                                  const Text("Webview"),
-                                ],
-                              ),
-                            ],
-                          ),
+                                  );
+                                } else if (_selectedIndex == 1 &&
+                                    !_isSearch &&
+                                    _query.isEmpty) {
+                                  ref.invalidate(
+                                    getLatestUpdatesProvider(
+                                      source: source,
+                                      page: 1,
+                                    ),
+                                  );
+                                } else if (_selectedIndex == 0 &&
+                                    !_isSearch &&
+                                    _query.isEmpty) {
+                                  ref.invalidate(
+                                    getPopularProvider(source: source, page: 1),
+                                  );
+                                }
+                              },
+                              icon: const Icon(Icons.refresh),
+                            ),
+                            Text(l10n.refresh),
+                          ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            error.toString(),
-                            textAlign: TextAlign.center,
-                          ),
+                        const SizedBox(width: 20),
+                        Column(
+                          children: [
+                            IconButton(
+                              onPressed: () async {
+                                final baseUrl = ref.watch(
+                                  sourceBaseUrlProvider(source: source),
+                                );
+                                Map<String, dynamic> data = {
+                                  'url': baseUrl,
+                                  'sourceId': source.id.toString(),
+                                  'title': '',
+                                  "hasCloudFlare":
+                                      source.hasCloudflare ?? false,
+                                };
+                                context.push("/mangawebview", extra: data);
+                              },
+                              icon: Icon(
+                                Icons.public,
+                                size: 22,
+                                color: context.secondaryColor,
+                              ),
+                            ),
+                            const Text("Webview"),
+                          ],
                         ),
                       ],
                     ),
-                loading: () => const Center(child: CircularProgressIndicator()),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(error.toString(), textAlign: TextAlign.center),
+                  ),
+                ],
               ),
+              loading: () => const Center(child: CircularProgressIndicator()),
+            ),
     );
   }
 }

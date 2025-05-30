@@ -113,222 +113,218 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
     final l10n = l10nLocalizations(context);
     return (!isNotWebviewWindow && Platform.isLinux)
         ? Scaffold(
-          appBar: AppBar(
-            title: Text(
-              _title,
-              style: const TextStyle(
-                overflow: TextOverflow.ellipsis,
-                fontWeight: FontWeight.bold,
+            appBar: AppBar(
+              title: Text(
+                _title,
+                style: const TextStyle(
+                  overflow: TextOverflow.ellipsis,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              leading: IconButton(
+                onPressed: () {
+                  _desktopWebview!.close();
+
+                  Navigator.pop(context);
+                },
+                icon: const Icon(Icons.close),
               ),
             ),
-            leading: IconButton(
-              onPressed: () {
-                _desktopWebview!.close();
-
-                Navigator.pop(context);
-              },
-              icon: const Icon(Icons.close),
-            ),
-          ),
-        )
+          )
         : Material(
-          child: SafeArea(
-            child: WillPopScope(
-              onWillPop: () async {
-                final canGoback = await _webViewController?.canGoBack();
-                if (canGoback ?? false) {
-                  _webViewController?.goBack();
-                } else if (context.mounted) {
-                  context.pop();
-                }
-                return false;
-              },
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: AppBar().preferredSize.height,
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: ListTile(
-                            dense: true,
-                            subtitle: Text(
-                              _url,
-                              style: const TextStyle(
-                                fontSize: 10,
-                                overflow: TextOverflow.ellipsis,
+            child: SafeArea(
+              child: WillPopScope(
+                onWillPop: () async {
+                  final canGoback = await _webViewController?.canGoBack();
+                  if (canGoback ?? false) {
+                    _webViewController?.goBack();
+                  } else if (context.mounted) {
+                    context.pop();
+                  }
+                  return false;
+                },
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: AppBar().preferredSize.height,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: ListTile(
+                              dense: true,
+                              subtitle: Text(
+                                _url,
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                            ),
-                            title: Text(
-                              _title,
-                              style: const TextStyle(
-                                overflow: TextOverflow.ellipsis,
-                                fontWeight: FontWeight.bold,
+                              title: Text(
+                                _title,
+                                style: const TextStyle(
+                                  overflow: TextOverflow.ellipsis,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            leading: IconButton(
-                              onPressed: () {
-                                if (Platform.isWindows) {
-                                  if (browser.isOpened()) {
-                                    browser.close();
-                                    browser.dispose();
+                              leading: IconButton(
+                                onPressed: () {
+                                  if (Platform.isWindows) {
+                                    if (browser.isOpened()) {
+                                      browser.close();
+                                      browser.dispose();
+                                    }
                                   }
-                                }
-                                Navigator.pop(context);
-                              },
-                              icon: const Icon(Icons.close),
+                                  Navigator.pop(context);
+                                },
+                                icon: const Icon(Icons.close),
+                              ),
                             ),
                           ),
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.arrow_back,
-                            color: _canGoback ? null : Colors.grey,
-                          ),
-                          onPressed:
-                              _canGoback
-                                  ? () {
+                          IconButton(
+                            icon: Icon(
+                              Icons.arrow_back,
+                              color: _canGoback ? null : Colors.grey,
+                            ),
+                            onPressed: _canGoback
+                                ? () {
                                     _webViewController?.goBack();
                                   }
-                                  : null,
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.arrow_forward,
-                            color: _canGoForward ? null : Colors.grey,
+                                : null,
                           ),
-                          onPressed:
-                              _canGoForward
-                                  ? () {
+                          IconButton(
+                            icon: Icon(
+                              Icons.arrow_forward,
+                              color: _canGoForward ? null : Colors.grey,
+                            ),
+                            onPressed: _canGoForward
+                                ? () {
                                     _webViewController?.goForward();
                                   }
-                                  : null,
-                        ),
-                        PopupMenuButton(
-                          popUpAnimationStyle: popupAnimationStyle,
-                          itemBuilder: (context) {
-                            return [
-                              PopupMenuItem<int>(
-                                value: 0,
-                                child: Text(l10n!.refresh),
-                              ),
-                              PopupMenuItem<int>(
-                                value: 1,
-                                child: Text(l10n.share),
-                              ),
-                              PopupMenuItem<int>(
-                                value: 2,
-                                child: Text(l10n.open_in_browser),
-                              ),
-                              PopupMenuItem<int>(
-                                value: 3,
-                                child: Text(l10n.clear_cookie),
-                              ),
-                            ];
-                          },
-                          onSelected: (value) async {
-                            if (value == 0) {
-                              _webViewController?.reload();
-                            } else if (value == 1) {
-                              Share.share(_url);
-                            } else if (value == 2) {
-                              await InAppBrowser.openWithSystemBrowser(
-                                url: WebUri(_url),
-                              );
-                            } else if (value == 3) {
-                              CookieManager.instance().deleteAllCookies();
-                              MClient.deleteAllCookies(_url);
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  _progress < 1.0
-                      ? LinearProgressIndicator(value: _progress)
-                      : Container(),
-                  if (!Platform.isWindows)
-                    Expanded(
-                      child: InAppWebView(
-                        webViewEnvironment: webViewEnvironment,
-                        onWebViewCreated: (controller) async {
-                          _webViewController = controller;
-                        },
-                        onLoadStart: (controller, url) async {
-                          setState(() {
-                            _url = url.toString();
-                          });
-                        },
-                        shouldOverrideUrlLoading: (
-                          controller,
-                          navigationAction,
-                        ) async {
-                          var uri = navigationAction.request.url!;
-                          if (![
-                            "http",
-                            "https",
-                            "file",
-                            "chrome",
-                            "data",
-                            "javascript",
-                            "about",
-                          ].contains(uri.scheme)) {
-                            if (await canLaunchUrl(uri)) {
-                              await launchUrl(uri);
-                              return NavigationActionPolicy.CANCEL;
-                            }
-                          }
-                          return NavigationActionPolicy.ALLOW;
-                        },
-                        onLoadStop: (controller, url) async {
-                          if (mounted) {
-                            setState(() {
-                              _url = url.toString();
-                            });
-                          }
-                        },
-                        onProgressChanged: (controller, progress) async {
-                          if (mounted) {
-                            setState(() {
-                              _progress = progress / 100;
-                            });
-                          }
-                        },
-                        onUpdateVisitedHistory: (
-                          controller,
-                          url,
-                          isReload,
-                        ) async {
-                          final ua =
-                              await controller.evaluateJavascript(
-                                source: "navigator.userAgent",
-                              ) ??
-                              "";
-                          await MClient.setCookie(
-                            url.toString(),
-                            ua,
-                            controller,
-                          );
-                          final canGoback = await controller.canGoBack();
-                          final canGoForward = await controller.canGoForward();
-                          final title = await controller.getTitle();
-                          if (mounted) {
-                            setState(() {
-                              _url = url.toString();
-                              _title = title!;
-                              _canGoback = canGoback;
-                              _canGoForward = canGoForward;
-                            });
-                          }
-                        },
-                        initialUrlRequest: URLRequest(url: WebUri(widget.url)),
+                                : null,
+                          ),
+                          PopupMenuButton(
+                            popUpAnimationStyle: popupAnimationStyle,
+                            itemBuilder: (context) {
+                              return [
+                                PopupMenuItem<int>(
+                                  value: 0,
+                                  child: Text(l10n!.refresh),
+                                ),
+                                PopupMenuItem<int>(
+                                  value: 1,
+                                  child: Text(l10n.share),
+                                ),
+                                PopupMenuItem<int>(
+                                  value: 2,
+                                  child: Text(l10n.open_in_browser),
+                                ),
+                                PopupMenuItem<int>(
+                                  value: 3,
+                                  child: Text(l10n.clear_cookie),
+                                ),
+                              ];
+                            },
+                            onSelected: (value) async {
+                              if (value == 0) {
+                                _webViewController?.reload();
+                              } else if (value == 1) {
+                                Share.share(_url);
+                              } else if (value == 2) {
+                                await InAppBrowser.openWithSystemBrowser(
+                                  url: WebUri(_url),
+                                );
+                              } else if (value == 3) {
+                                CookieManager.instance().deleteAllCookies();
+                                MClient.deleteAllCookies(_url);
+                              }
+                            },
+                          ),
+                        ],
                       ),
                     ),
-                ],
+                    _progress < 1.0
+                        ? LinearProgressIndicator(value: _progress)
+                        : Container(),
+                    if (!Platform.isWindows)
+                      Expanded(
+                        child: InAppWebView(
+                          webViewEnvironment: webViewEnvironment,
+                          onWebViewCreated: (controller) async {
+                            _webViewController = controller;
+                          },
+                          onLoadStart: (controller, url) async {
+                            setState(() {
+                              _url = url.toString();
+                            });
+                          },
+                          shouldOverrideUrlLoading:
+                              (controller, navigationAction) async {
+                                var uri = navigationAction.request.url!;
+                                if (![
+                                  "http",
+                                  "https",
+                                  "file",
+                                  "chrome",
+                                  "data",
+                                  "javascript",
+                                  "about",
+                                ].contains(uri.scheme)) {
+                                  if (await canLaunchUrl(uri)) {
+                                    await launchUrl(uri);
+                                    return NavigationActionPolicy.CANCEL;
+                                  }
+                                }
+                                return NavigationActionPolicy.ALLOW;
+                              },
+                          onLoadStop: (controller, url) async {
+                            if (mounted) {
+                              setState(() {
+                                _url = url.toString();
+                              });
+                            }
+                          },
+                          onProgressChanged: (controller, progress) async {
+                            if (mounted) {
+                              setState(() {
+                                _progress = progress / 100;
+                              });
+                            }
+                          },
+                          onUpdateVisitedHistory:
+                              (controller, url, isReload) async {
+                                final ua =
+                                    await controller.evaluateJavascript(
+                                      source: "navigator.userAgent",
+                                    ) ??
+                                    "";
+                                await MClient.setCookie(
+                                  url.toString(),
+                                  ua,
+                                  controller,
+                                );
+                                final canGoback = await controller.canGoBack();
+                                final canGoForward = await controller
+                                    .canGoForward();
+                                final title = await controller.getTitle();
+                                if (mounted) {
+                                  setState(() {
+                                    _url = url.toString();
+                                    _title = title!;
+                                    _canGoback = canGoback;
+                                    _canGoForward = canGoForward;
+                                  });
+                                }
+                              },
+                          initialUrlRequest: URLRequest(
+                            url: WebUri(widget.url),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
+          );
   }
 }
 

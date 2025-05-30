@@ -30,8 +30,9 @@ class TrackScreen extends ConsumerWidget {
             fireImmediately: true,
           ),
           builder: (context, snapshot) {
-            List<TrackPreference>? entries =
-                snapshot.hasData ? snapshot.data : [];
+            List<TrackPreference>? entries = snapshot.hasData
+                ? snapshot.data
+                : [];
             return Column(
               children: [
                 SwitchListTile(
@@ -135,134 +136,125 @@ void _showDialogLogin(BuildContext context, WidgetRef ref) {
   final l10n = l10nLocalizations(context)!;
   showDialog(
     context: context,
-    builder:
-        (context) => StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              title: Text(
-                l10n.login_into("Kitsu"),
-                style: const TextStyle(fontSize: 30),
-              ),
-              content: SizedBox(
-                height: 300,
-                width: MediaQuery.of(context).size.width,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 10),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: TextFormField(
-                        controller: emailController,
-                        autofocus: true,
-                        onChanged:
-                            (value) => setState(() {
-                              email = value;
-                            }),
-                        decoration: InputDecoration(
-                          hintText: l10n.email_adress,
-                          filled: false,
-                          contentPadding: const EdgeInsets.all(12),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(width: 0.4),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5),
-                            borderSide: const BorderSide(),
-                          ),
-                        ),
+    builder: (context) => StatefulBuilder(
+      builder: (context, setState) {
+        return AlertDialog(
+          title: Text(
+            l10n.login_into("Kitsu"),
+            style: const TextStyle(fontSize: 30),
+          ),
+          content: SizedBox(
+            height: 300,
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: TextFormField(
+                    controller: emailController,
+                    autofocus: true,
+                    onChanged: (value) => setState(() {
+                      email = value;
+                    }),
+                    decoration: InputDecoration(
+                      hintText: l10n.email_adress,
+                      filled: false,
+                      contentPadding: const EdgeInsets.all(12),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(width: 0.4),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: const BorderSide(),
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: TextFormField(
-                        controller: passwordController,
-                        obscureText: obscureText,
-                        onChanged:
-                            (value) => setState(() {
-                              password = value;
-                            }),
-                        decoration: InputDecoration(
-                          hintText: l10n.password,
-                          suffixIcon: IconButton(
-                            onPressed:
-                                () => setState(() {
-                                  obscureText = !obscureText;
-                                }),
-                            icon: Icon(
-                              obscureText
-                                  ? Icons.visibility_outlined
-                                  : Icons.visibility_off_outlined,
-                            ),
-                          ),
-                          filled: false,
-                          contentPadding: const EdgeInsets.all(12),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(width: 0.4),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5),
-                            borderSide: const BorderSide(),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      errorMessage,
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                    const SizedBox(height: 10),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: SizedBox(
-                        width: context.width(1),
-                        height: 50,
-                        child: ElevatedButton(
-                          onPressed:
-                              isLoading
-                                  ? null
-                                  : () async {
-                                    setState(() {
-                                      isLoading = true;
-                                    });
-                                    final res = await ref
-                                        .read(kitsuProvider(syncId: 3).notifier)
-                                        .login(email, password);
-                                    if (!res.$1) {
-                                      setState(() {
-                                        isLoading = false;
-                                        errorMessage = res.$2;
-                                      });
-                                    } else {
-                                      if (context.mounted) {
-                                        Navigator.pop(context);
-                                      }
-                                    }
-                                  },
-                          child:
-                              isLoading
-                                  ? const CircularProgressIndicator()
-                                  : Text(l10n.login),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            );
-          },
-        ),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: TextFormField(
+                    controller: passwordController,
+                    obscureText: obscureText,
+                    onChanged: (value) => setState(() {
+                      password = value;
+                    }),
+                    decoration: InputDecoration(
+                      hintText: l10n.password,
+                      suffixIcon: IconButton(
+                        onPressed: () => setState(() {
+                          obscureText = !obscureText;
+                        }),
+                        icon: Icon(
+                          obscureText
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                        ),
+                      ),
+                      filled: false,
+                      contentPadding: const EdgeInsets.all(12),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(width: 0.4),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: const BorderSide(),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(errorMessage, style: const TextStyle(color: Colors.red)),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: SizedBox(
+                    width: context.width(1),
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: isLoading
+                          ? null
+                          : () async {
+                              setState(() {
+                                isLoading = true;
+                              });
+                              final res = await ref
+                                  .read(kitsuProvider(syncId: 3).notifier)
+                                  .login(email, password);
+                              if (!res.$1) {
+                                setState(() {
+                                  isLoading = false;
+                                  errorMessage = res.$2;
+                                });
+                              } else {
+                                if (context.mounted) {
+                                  Navigator.pop(context);
+                                }
+                              }
+                            },
+                      child: isLoading
+                          ? const CircularProgressIndicator()
+                          : Text(l10n.login),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    ),
   );
 }

@@ -19,7 +19,15 @@ const BackupEpisode$json = {
   '2': [
     {'1': 'url', '3': 1, '4': 1, '5': 9, '10': 'url'},
     {'1': 'name', '3': 2, '4': 1, '5': 9, '10': 'name'},
-    {'1': 'scanlator', '3': 3, '4': 1, '5': 9, '9': 0, '10': 'scanlator', '17': true},
+    {
+      '1': 'scanlator',
+      '3': 3,
+      '4': 1,
+      '5': 9,
+      '9': 0,
+      '10': 'scanlator',
+      '17': true
+    },
     {'1': 'seen', '3': 4, '4': 1, '5': 8, '10': 'seen'},
     {'1': 'bookmark', '3': 5, '4': 1, '5': 8, '10': 'bookmark'},
     {'1': 'lastSecondSeen', '3': 6, '4': 1, '5': 5, '10': 'lastSecondSeen'},
@@ -46,4 +54,3 @@ final $typed_data.Uint8List backupEpisodeDescriptor = $convert.base64Decode(
     'AKC3NvdXJjZU9yZGVyGAogASgFUgtzb3VyY2VPcmRlchImCg5sYXN0TW9kaWZpZWRBdBgLIAEo'
     'BVIObGFzdE1vZGlmaWVkQXQSGAoHdmVyc2lvbhgMIAEoBVIHdmVyc2lvbhIiCgx0b3RhbFNlY2'
     '9uZHMYECABKAVSDHRvdGFsU2Vjb25kc0IMCgpfc2NhbmxhdG9y');
-

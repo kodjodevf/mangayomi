@@ -11,26 +11,37 @@ part 'migration.g.dart';
 
 @riverpod
 Future<void> migration(Ref ref) async {
-  final mangas =
-      isar.mangas.filter().idIsNotNull().isMangaIsNotNull().findAllSync();
-  final categories =
-      isar.categorys.filter().idIsNotNull().forMangaIsNotNull().findAllSync();
+  final mangas = isar.mangas
+      .filter()
+      .idIsNotNull()
+      .isMangaIsNotNull()
+      .findAllSync();
+  final categories = isar.categorys
+      .filter()
+      .idIsNotNull()
+      .forMangaIsNotNull()
+      .findAllSync();
 
-  final histories =
-      isar.historys
-          .filter()
-          .idIsNotNull()
-          .chapterIdIsNull()
-          .isMangaIsNotNull()
-          .or()
-          .idIsNotNull()
-          .isMangaIsNotNull()
-          .findAllSync();
+  final histories = isar.historys
+      .filter()
+      .idIsNotNull()
+      .chapterIdIsNull()
+      .isMangaIsNotNull()
+      .or()
+      .idIsNotNull()
+      .isMangaIsNotNull()
+      .findAllSync();
 
-  final sources =
-      isar.sources.filter().idIsNotNull().isMangaIsNotNull().findAllSync();
-  final tracks =
-      isar.tracks.filter().idIsNotNull().isMangaIsNotNull().findAllSync();
+  final sources = isar.sources
+      .filter()
+      .idIsNotNull()
+      .isMangaIsNotNull()
+      .findAllSync();
+  final tracks = isar.tracks
+      .filter()
+      .idIsNotNull()
+      .isMangaIsNotNull()
+      .findAllSync();
 
   isar.writeTxnSync(() {
     for (var history in histories) {

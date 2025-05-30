@@ -17,9 +17,30 @@ import 'dart:typed_data' as $typed_data;
 const BackupMihon$json = {
   '1': 'BackupMihon',
   '2': [
-    {'1': 'backupManga', '3': 1, '4': 3, '5': 11, '6': '.BackupManga', '10': 'backupManga'},
-    {'1': 'backupCategories', '3': 2, '4': 3, '5': 11, '6': '.BackupCategory', '10': 'backupCategories'},
-    {'1': 'backupSources', '3': 101, '4': 3, '5': 11, '6': '.BackupSource', '10': 'backupSources'},
+    {
+      '1': 'backupManga',
+      '3': 1,
+      '4': 3,
+      '5': 11,
+      '6': '.BackupManga',
+      '10': 'backupManga'
+    },
+    {
+      '1': 'backupCategories',
+      '3': 2,
+      '4': 3,
+      '5': 11,
+      '6': '.BackupCategory',
+      '10': 'backupCategories'
+    },
+    {
+      '1': 'backupSources',
+      '3': 101,
+      '4': 3,
+      '5': 11,
+      '6': '.BackupSource',
+      '10': 'backupSources'
+    },
   ],
 };
 
@@ -29,4 +50,3 @@ final $typed_data.Uint8List backupMihonDescriptor = $convert.base64Decode(
     'BNYW5nYRI7ChBiYWNrdXBDYXRlZ29yaWVzGAIgAygLMg8uQmFja3VwQ2F0ZWdvcnlSEGJhY2t1'
     'cENhdGVnb3JpZXMSMwoNYmFja3VwU291cmNlcxhlIAMoCzINLkJhY2t1cFNvdXJjZVINYmFja3'
     'VwU291cmNlcw==');
-

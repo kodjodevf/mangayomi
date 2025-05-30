@@ -22,17 +22,63 @@ const BackupManga$json = {
     {'1': 'title', '3': 3, '4': 1, '5': 9, '10': 'title'},
     {'1': 'artist', '3': 4, '4': 1, '5': 9, '9': 0, '10': 'artist', '17': true},
     {'1': 'author', '3': 5, '4': 1, '5': 9, '9': 1, '10': 'author', '17': true},
-    {'1': 'description', '3': 6, '4': 1, '5': 9, '9': 2, '10': 'description', '17': true},
+    {
+      '1': 'description',
+      '3': 6,
+      '4': 1,
+      '5': 9,
+      '9': 2,
+      '10': 'description',
+      '17': true
+    },
     {'1': 'genre', '3': 7, '4': 3, '5': 9, '10': 'genre'},
     {'1': 'status', '3': 8, '4': 1, '5': 5, '10': 'status'},
-    {'1': 'thumbnailUrl', '3': 9, '4': 1, '5': 9, '9': 3, '10': 'thumbnailUrl', '17': true},
+    {
+      '1': 'thumbnailUrl',
+      '3': 9,
+      '4': 1,
+      '5': 9,
+      '9': 3,
+      '10': 'thumbnailUrl',
+      '17': true
+    },
     {'1': 'dateAdded', '3': 13, '4': 1, '5': 5, '10': 'dateAdded'},
     {'1': 'viewer', '3': 14, '4': 1, '5': 5, '10': 'viewer'},
-    {'1': 'chapters', '3': 16, '4': 3, '5': 11, '6': '.BackupChapter', '10': 'chapters'},
+    {
+      '1': 'chapters',
+      '3': 16,
+      '4': 3,
+      '5': 11,
+      '6': '.BackupChapter',
+      '10': 'chapters'
+    },
     {'1': 'categories', '3': 17, '4': 3, '5': 5, '10': 'categories'},
-    {'1': 'viewer_flags', '3': 103, '4': 1, '5': 5, '9': 4, '10': 'viewerFlags', '17': true},
-    {'1': 'history', '3': 104, '4': 3, '5': 11, '6': '.BackupHistory', '10': 'history'},
-    {'1': 'lastModifiedAt', '3': 106, '4': 1, '5': 5, '9': 5, '10': 'lastModifiedAt', '17': true},
+    {
+      '1': 'viewer_flags',
+      '3': 103,
+      '4': 1,
+      '5': 5,
+      '9': 4,
+      '10': 'viewerFlags',
+      '17': true
+    },
+    {
+      '1': 'history',
+      '3': 104,
+      '4': 3,
+      '5': 11,
+      '6': '.BackupHistory',
+      '10': 'history'
+    },
+    {
+      '1': 'lastModifiedAt',
+      '3': 106,
+      '4': 1,
+      '5': 5,
+      '9': 5,
+      '10': 'lastModifiedAt',
+      '17': true
+    },
   ],
   '8': [
     {'1': '_artist'},
@@ -57,4 +103,3 @@ final $typed_data.Uint8List backupMangaDescriptor = $convert.base64Decode(
     'IAMoCzIOLkJhY2t1cEhpc3RvcnlSB2hpc3RvcnkSKwoObGFzdE1vZGlmaWVkQXQYaiABKAVIBV'
     'IObGFzdE1vZGlmaWVkQXSIAQFCCQoHX2FydGlzdEIJCgdfYXV0aG9yQg4KDF9kZXNjcmlwdGlv'
     'bkIPCg1fdGh1bWJuYWlsVXJsQg8KDV92aWV3ZXJfZmxhZ3NCEQoPX2xhc3RNb2RpZmllZEF0');
-

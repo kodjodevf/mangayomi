@@ -80,61 +80,62 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
           actions: [
             _isSearch
                 ? SeachFormTextField(
-                  onChanged: (value) {
-                    setState(() {});
-                  },
-                  onSuffixPressed: () {
-                    _textEditingController.clear();
-                  },
-                  onPressed: () {
-                    setState(() {
-                      _isSearch = false;
-                    });
-                    _textEditingController.clear();
-                  },
-                  controller: _textEditingController,
-                )
+                    onChanged: (value) {
+                      setState(() {});
+                    },
+                    onSuffixPressed: () {
+                      _textEditingController.clear();
+                    },
+                    onPressed: () {
+                      setState(() {
+                        _isSearch = false;
+                      });
+                      _textEditingController.clear();
+                    },
+                    controller: _textEditingController,
+                  )
                 : Row(
-                  children: [
-                    if (_tabBarController.index == 3 ||
-                        _tabBarController.index == 4 ||
-                        _tabBarController.index == 5)
+                    children: [
+                      if (_tabBarController.index == 3 ||
+                          _tabBarController.index == 4 ||
+                          _tabBarController.index == 5)
+                        IconButton(
+                          onPressed: () {
+                            context.push('/createExtension');
+                          },
+                          icon: Icon(
+                            Icons.add_outlined,
+                            color: Theme.of(context).hintColor,
+                          ),
+                        ),
                       IconButton(
+                        splashRadius: 20,
                         onPressed: () {
-                          context.push('/createExtension');
+                          if (containsExtensionTab) {
+                            setState(() {
+                              _isSearch = true;
+                            });
+                          } else {
+                            context.push(
+                              '/globalSearch',
+                              extra:
+                                  switch (_tabList[_tabBarController.index]) {
+                                    "manga" => ItemType.manga,
+                                    "anime" => ItemType.anime,
+                                    _ => ItemType.novel,
+                                  },
+                            );
+                          }
                         },
                         icon: Icon(
-                          Icons.add_outlined,
+                          !containsExtensionTab
+                              ? Icons.travel_explore_rounded
+                              : Icons.search_rounded,
                           color: Theme.of(context).hintColor,
                         ),
                       ),
-                    IconButton(
-                      splashRadius: 20,
-                      onPressed: () {
-                        if (containsExtensionTab) {
-                          setState(() {
-                            _isSearch = true;
-                          });
-                        } else {
-                          context.push(
-                            '/globalSearch',
-                            extra: switch (_tabList[_tabBarController.index]) {
-                              "manga" => ItemType.manga,
-                              "anime" => ItemType.anime,
-                              _ => ItemType.novel,
-                            },
-                          );
-                        }
-                      },
-                      icon: Icon(
-                        !containsExtensionTab
-                            ? Icons.travel_explore_rounded
-                            : Icons.search_rounded,
-                        color: Theme.of(context).hintColor,
-                      ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
             IconButton(
               splashRadius: 20,
               onPressed: () {
@@ -256,25 +257,23 @@ Widget _extensionUpdateNumbers(WidgetRef ref, ItemType itemType) {
         .watch(fireImmediately: true),
     builder: (context, snapshot) {
       if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-        final entries =
-            snapshot.data!
-                .where(
-                  (element) =>
-                      compareVersions(element.version!, element.versionLast!) <
-                      0,
-                )
-                .toList();
+        final entries = snapshot.data!
+            .where(
+              (element) =>
+                  compareVersions(element.version!, element.versionLast!) < 0,
+            )
+            .toList();
         return entries.isEmpty
             ? SizedBox.shrink()
             : Badge(
-              backgroundColor: Theme.of(context).focusColor,
-              label: Text(
-                entries.length.toString(),
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodySmall!.color,
+                backgroundColor: Theme.of(context).focusColor,
+                label: Text(
+                  entries.length.toString(),
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.bodySmall!.color,
+                  ),
                 ),
-              ),
-            );
+              );
       }
       return Container();
     },

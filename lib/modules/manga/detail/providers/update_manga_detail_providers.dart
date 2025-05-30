@@ -46,10 +46,9 @@ Future<dynamic> updateMangaDetail(
           getManga.author?.trim().trimLeft().trimRight() ?? manga.author ?? ""
       ..artist =
           getManga.artist?.trim().trimLeft().trimRight() ?? manga.artist ?? ""
-      ..status =
-          getManga.status == Status.unknown
-              ? manga.status
-              : getManga.status ?? Status.unknown
+      ..status = getManga.status == Status.unknown
+          ? manga.status
+          : getManga.status ?? Status.unknown
       ..description =
           getManga.description?.trim().trimLeft().trimRight() ??
           manga.description ??
@@ -85,10 +84,9 @@ Future<dynamic> updateMangaDetail(
           final chapter = Chapter(
             name: chaps[i].name!,
             url: chaps[i].url!.trim().trimLeft().trimRight(),
-            dateUpload:
-                chaps[i].dateUpload == null
-                    ? DateTime.now().millisecondsSinceEpoch.toString()
-                    : chaps[i].dateUpload.toString(),
+            dateUpload: chaps[i].dateUpload == null
+                ? DateTime.now().millisecondsSinceEpoch.toString()
+                : chaps[i].dateUpload.toString(),
             scanlator: chaps[i].scanlator ?? '',
             mangaId: mangaId,
           )..manga.value = manga;
@@ -126,8 +124,12 @@ Future<dynamic> updateMangaDetail(
           }
         }
       }
-      final oldChapers =
-          isar.mangas.getSync(mangaId)!.chapters.toList().reversed.toList();
+      final oldChapers = isar.mangas
+          .getSync(mangaId)!
+          .chapters
+          .toList()
+          .reversed
+          .toList();
       if (oldChapers.length == chaps.length) {
         for (var i = 0; i < oldChapers.length; i++) {
           final oldChap = oldChapers[i];

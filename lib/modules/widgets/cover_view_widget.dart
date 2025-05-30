@@ -38,22 +38,18 @@ class CoverViewWidget extends StatelessWidget {
                 onLongPress: onLongPress,
                 onSecondaryTap: onSecondaryTap,
                 child: Container(
-                  color:
-                      isLongPressed != null && isLongPressed!
-                          ? context.primaryColor.withValues(alpha: 0.4)
-                          : Colors.transparent,
-                  child:
-                      image == null
-                          ? isComfortableGrid
-                              ? Column(
-                                children: [...children, bottomTextWidget!],
-                              )
-                              : Stack(children: children)
-                          : Ink.image(
-                            fit: BoxFit.cover,
-                            image: image!,
-                            child: Stack(children: children),
-                          ),
+                  color: isLongPressed != null && isLongPressed!
+                      ? context.primaryColor.withValues(alpha: 0.4)
+                      : Colors.transparent,
+                  child: image == null
+                      ? isComfortableGrid
+                            ? Column(children: [...children, bottomTextWidget!])
+                            : Stack(children: children)
+                      : Ink.image(
+                          fit: BoxFit.cover,
+                          image: image!,
+                          child: Stack(children: children),
+                        ),
                 ),
               ),
             ),

@@ -47,11 +47,11 @@ String getTrackStatus(TrackStatus status, BuildContext context) {
 TrackStatus toTrackStatus(TrackStatus status, ItemType itemType, int syncId) {
   return itemType == ItemType.anime && syncId == 2
       ? switch (status) {
-        TrackStatus.reading => TrackStatus.watching,
-        TrackStatus.planToRead => TrackStatus.planToWatch,
-        TrackStatus.reReading => TrackStatus.reWatching,
-        _ => status,
-      }
+          TrackStatus.reading => TrackStatus.watching,
+          TrackStatus.planToRead => TrackStatus.planToWatch,
+          TrackStatus.reReading => TrackStatus.reWatching,
+          _ => status,
+        }
       : status;
 }
 

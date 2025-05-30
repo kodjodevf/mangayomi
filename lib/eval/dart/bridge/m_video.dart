@@ -26,23 +26,18 @@ class MVideoBridge {
       'audios': (visitor, target) => (target as Video).audios,
     },
     setters: {
-      'url':
-          (visitor, target, value) => (target as Video).url = value as String,
-      'quality':
-          (visitor, target, value) =>
-              (target as Video).quality = value as String,
-      'originalUrl':
-          (visitor, target, value) =>
-              (target as Video).originalUrl = value as String,
-      'headers':
-          (visitor, target, value) =>
-              (target as Video).headers = (value as Map?)?.cast(),
-      'subtitles':
-          (visitor, target, value) =>
-              (target as Video).subtitles = (value as List?)?.cast(),
-      'audios':
-          (visitor, target, value) =>
-              (target as Video).audios = (value as List?)?.cast(),
+      'url': (visitor, target, value) =>
+          (target as Video).url = value as String,
+      'quality': (visitor, target, value) =>
+          (target as Video).quality = value as String,
+      'originalUrl': (visitor, target, value) =>
+          (target as Video).originalUrl = value as String,
+      'headers': (visitor, target, value) =>
+          (target as Video).headers = (value as Map?)?.cast(),
+      'subtitles': (visitor, target, value) =>
+          (target as Video).subtitles = (value as List?)?.cast(),
+      'audios': (visitor, target, value) =>
+          (target as Video).audios = (value as List?)?.cast(),
     },
   );
   void registerBridgedClasses(D4rt interpreter) {

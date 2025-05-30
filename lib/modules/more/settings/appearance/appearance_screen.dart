@@ -195,15 +195,14 @@ class AppearanceScreen extends ConsumerWidget {
     AppLocalizations l10n,
   ) {
     final appFontFamily = ref.watch(appFontFamilyProvider);
-    final appFontFamilySub =
-        appFontFamily == null
-            ? context.l10n.default0
-            : GoogleFonts.asMap().entries
-                .toList()
-                .firstWhere(
-                  (element) => element.value().fontFamily! == appFontFamily,
-                )
-                .key;
+    final appFontFamilySub = appFontFamily == null
+        ? context.l10n.default0
+        : GoogleFonts.asMap().entries
+              .toList()
+              .firstWhere(
+                (element) => element.value().fontFamily! == appFontFamily,
+              )
+              .key;
     return ListTile(
       title: Text(context.l10n.font),
       subtitle: Text(
@@ -258,14 +257,13 @@ class AppearanceScreen extends ConsumerWidget {
                         Builder(
                           builder: (context) {
                             List values = GoogleFonts.asMap().entries.toList();
-                            values =
-                                values
-                                    .where(
-                                      (values) => values.key
-                                          .toLowerCase()
-                                          .contains(textValue.toLowerCase()),
-                                    )
-                                    .toList();
+                            values = values
+                                .where(
+                                  (values) => values.key.toLowerCase().contains(
+                                    textValue.toLowerCase(),
+                                  ),
+                                )
+                                .toList();
                             return Flexible(
                               child: Scrollbar(
                                 interactive: true,

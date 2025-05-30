@@ -165,23 +165,23 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
             ((!isLogicalKeyPressed(LogicalKeyboardKey.keyN) ||
                     !isLogicalKeyPressed(LogicalKeyboardKey.pageDown)))
                 ? switch (hasNextChapter) {
-                  true => pushReplacementMangaReaderView(
-                    context: context,
-                    chapter: _readerController.getNextChapter(),
-                  ),
-                  _ => null,
-                }
+                    true => pushReplacementMangaReaderView(
+                      context: context,
+                      chapter: _readerController.getNextChapter(),
+                    ),
+                    _ => null,
+                  }
                 : null,
           LogicalKeyboardKey.keyP || LogicalKeyboardKey.pageUp =>
             ((!isLogicalKeyPressed(LogicalKeyboardKey.keyP) ||
                     !isLogicalKeyPressed(LogicalKeyboardKey.pageUp)))
                 ? switch (hasPrevChapter) {
-                  true => pushReplacementMangaReaderView(
-                    context: context,
-                    chapter: _readerController.getPrevChapter(),
-                  ),
-                  _ => null,
-                }
+                    true => pushReplacementMangaReaderView(
+                      context: context,
+                      chapter: _readerController.getPrevChapter(),
+                    ),
+                    _ => null,
+                  }
                 : null,
           _ => null,
         };
@@ -256,9 +256,9 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                       textStyle: TextStyle(
                                         color:
                                             backgroundColor ==
-                                                    BackgroundColor.white
-                                                ? Colors.black
-                                                : Colors.white,
+                                                BackgroundColor.white
+                                            ? Colors.black
+                                            : Colors.white,
                                         fontSize: fontSize.toDouble(),
                                       ),
                                     ),
@@ -271,42 +271,38 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                         children: [
                                           IconButton(
                                             padding: const EdgeInsets.all(5),
-                                            onPressed:
-                                                () =>
-                                                    pushReplacementMangaReaderView(
-                                                      context: context,
-                                                      chapter:
-                                                          _readerController
-                                                              .getPrevChapter(),
-                                                    ),
+                                            onPressed: () =>
+                                                pushReplacementMangaReaderView(
+                                                  context: context,
+                                                  chapter: _readerController
+                                                      .getPrevChapter(),
+                                                ),
                                             icon: Icon(
                                               size: 32,
                                               Icons.arrow_back,
                                               color:
                                                   backgroundColor ==
-                                                          BackgroundColor.white
-                                                      ? Colors.black
-                                                      : Colors.white,
+                                                      BackgroundColor.white
+                                                  ? Colors.black
+                                                  : Colors.white,
                                             ),
                                           ),
                                           IconButton(
                                             padding: const EdgeInsets.all(5),
-                                            onPressed:
-                                                () =>
-                                                    pushReplacementMangaReaderView(
-                                                      context: context,
-                                                      chapter:
-                                                          _readerController
-                                                              .getNextChapter(),
-                                                    ),
+                                            onPressed: () =>
+                                                pushReplacementMangaReaderView(
+                                                  context: context,
+                                                  chapter: _readerController
+                                                      .getNextChapter(),
+                                                ),
                                             icon: Icon(
                                               size: 32,
                                               Icons.arrow_forward,
                                               color:
                                                   backgroundColor ==
-                                                          BackgroundColor.white
-                                                      ? Colors.black
-                                                      : Colors.white,
+                                                      BackgroundColor.white
+                                                  ? Colors.black
+                                                  : Colors.white,
                                             ),
                                           ),
                                         ],
@@ -319,12 +315,11 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                           ),
                         );
                       },
-                      loading:
-                          () => const Expanded(
-                            child: Center(child: CircularProgressIndicator()),
-                          ),
-                      error:
-                          (err, stack) => Center(child: Text(err.toString())),
+                      loading: () => const Expanded(
+                        child: Center(child: CircularProgressIndicator()),
+                      ),
+                      error: (err, stack) =>
+                          Center(child: Text(err.toString())),
                     ),
                   ],
                 ),
@@ -351,14 +346,13 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
       return const SizedBox.shrink();
     }
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
-    double height =
-        _isView
-            ? Platform.isIOS
-                ? 120
-                : !fullScreenReader && !isDesktop
-                ? 55
-                : 80
-            : 0;
+    double height = _isView
+        ? Platform.isIOS
+              ? 120
+              : !fullScreenReader && !isDesktop
+              ? 55
+              : 80
+        : 0;
     return Positioned(
       top: 0,
       child: AnimatedContainer(
@@ -423,10 +417,9 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                   onPressed: () async {
                     final manga = chapter.manga.value!;
                     final source = getSource(manga.lang!, manga.source!)!;
-                    String url =
-                        chapter.url!.startsWith('/')
-                            ? "${source.baseUrl}/${chapter.url!}"
-                            : chapter.url!;
+                    String url = chapter.url!.startsWith('/')
+                        ? "${source.baseUrl}/${chapter.url!}"
+                        : chapter.url!;
                     Map<String, dynamic> data = {
                       'url': url,
                       'sourceId': source.id.toString(),
@@ -491,30 +484,25 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                         radius: 23,
                         backgroundColor: _backgroundColor(context),
                         child: IconButton(
-                          onPressed:
-                              hasPrevChapter
-                                  ? () {
-                                    pushReplacementMangaReaderView(
-                                      context: context,
-                                      chapter:
-                                          _readerController.getPrevChapter(),
-                                    );
-                                  }
-                                  : null,
+                          onPressed: hasPrevChapter
+                              ? () {
+                                  pushReplacementMangaReaderView(
+                                    context: context,
+                                    chapter: _readerController.getPrevChapter(),
+                                  );
+                                }
+                              : null,
                           icon: Transform.scale(
                             scaleX: 1,
                             child: Icon(
                               Icons.skip_previous_rounded,
-                              color:
-                                  hasPrevChapter
-                                      ? Theme.of(
-                                        context,
-                                      ).textTheme.bodyLarge!.color
-                                      : Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge!
-                                          .color!
-                                          .withValues(alpha: 0.4),
+                              color: hasPrevChapter
+                                  ? Theme.of(context).textTheme.bodyLarge!.color
+                                  : Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .color!
+                                        .withValues(alpha: 0.4),
                             ),
                           ),
                         ),
@@ -636,30 +624,25 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                         radius: 23,
                         backgroundColor: _backgroundColor(context),
                         child: IconButton(
-                          onPressed:
-                              hasNextChapter
-                                  ? () {
-                                    pushReplacementMangaReaderView(
-                                      context: context,
-                                      chapter:
-                                          _readerController.getNextChapter(),
-                                    );
-                                  }
-                                  : null,
+                          onPressed: hasNextChapter
+                              ? () {
+                                  pushReplacementMangaReaderView(
+                                    context: context,
+                                    chapter: _readerController.getNextChapter(),
+                                  );
+                                }
+                              : null,
                           icon: Transform.scale(
                             scaleX: 1,
                             child: Icon(
                               Icons.skip_next_rounded,
-                              color:
-                                  hasNextChapter
-                                      ? Theme.of(
-                                        context,
-                                      ).textTheme.bodyLarge!.color
-                                      : Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge!
-                                          .color!
-                                          .withValues(alpha: 0.4),
+                              color: hasNextChapter
+                                  ? Theme.of(context).textTheme.bodyLarge!.color
+                                  : Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge!
+                                        .color!
+                                        .withValues(alpha: 0.4),
                               // size: 17,
                             ),
                           ),
@@ -802,26 +785,25 @@ class CustomPopupMenuButton<T> extends StatelessWidget {
         offset: Offset.fromDirection(1),
         color: Colors.black,
         onSelected: onSelected,
-        itemBuilder:
-            (context) => [
-              for (var d in list)
-                PopupMenuItem(
-                  value: d,
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.check,
-                        color: d == value ? Colors.white : Colors.transparent,
-                      ),
-                      const SizedBox(width: 7),
-                      Text(
-                        itemText(d),
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ],
+        itemBuilder: (context) => [
+          for (var d in list)
+            PopupMenuItem(
+              value: d,
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.check,
+                    color: d == value ? Colors.white : Colors.transparent,
                   ),
-                ),
-            ],
+                  const SizedBox(width: 7),
+                  Text(
+                    itemText(d),
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+        ],
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Row(

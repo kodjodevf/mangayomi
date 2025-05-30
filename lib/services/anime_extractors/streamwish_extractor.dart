@@ -17,10 +17,9 @@ class StreamWishExtractor {
     try {
       final response = await client.get(Uri.parse(url), headers: headers);
 
-      final jsEval =
-          xpathSelector(
-            response.body,
-          ).queryXPath('//script[contains(text(), "m3u8")]/text()').attrs;
+      final jsEval = xpathSelector(
+        response.body,
+      ).queryXPath('//script[contains(text(), "m3u8")]/text()').attrs;
       if (jsEval.isEmpty) {
         return [];
       }
@@ -38,12 +37,13 @@ class StreamWishExtractor {
 
       if (masterUrl.isEmpty) return [];
 
-      final playlistHeaders = Map<String, String>.from(headers)..addAll({
-        'Accept': '*/*',
-        'Host': Uri.parse(masterUrl).host,
-        'Origin': 'https://${Uri.parse(url).host}',
-        'Referer': 'https://${Uri.parse(url).host}/',
-      });
+      final playlistHeaders = Map<String, String>.from(headers)
+        ..addAll({
+          'Accept': '*/*',
+          'Host': Uri.parse(masterUrl).host,
+          'Origin': 'https://${Uri.parse(url).host}',
+          'Referer': 'https://${Uri.parse(url).host}/',
+        });
 
       final masterBase =
           '${'https://${Uri.parse(masterUrl).host}${Uri.parse(masterUrl).path}'.substringBeforeLast('/')}/';

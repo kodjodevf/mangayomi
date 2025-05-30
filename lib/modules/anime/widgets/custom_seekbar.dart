@@ -62,8 +62,8 @@ class CustomSeekBarState extends State<CustomSeekBar> {
   @override
   Widget build(BuildContext context) {
     final maxValue = max(duration.inMilliseconds.toDouble(), 0).toDouble();
-    final rawValue =
-        (widget.delta ?? tempPosition ?? position).inMilliseconds.toDouble();
+    final rawValue = (widget.delta ?? tempPosition ?? position).inMilliseconds
+        .toDouble();
     final clampedValue = rawValue.clamp(0, maxValue).toDouble();
     return SizedBox(
       height: 20,

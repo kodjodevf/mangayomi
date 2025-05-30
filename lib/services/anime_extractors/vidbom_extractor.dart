@@ -12,10 +12,9 @@ class VidBomExtractor {
   Future<List<Video>> videosFromUrl(String url) async {
     try {
       final response = await client.get(Uri.parse(url));
-      final script =
-          xpathSelector(
-            response.body,
-          ).queryXPath('//script[contains(text(), "sources")]/text()').attrs;
+      final script = xpathSelector(
+        response.body,
+      ).queryXPath('//script[contains(text(), "sources")]/text()').attrs;
 
       final data = script.first!
           .substringAfter('sources: [')

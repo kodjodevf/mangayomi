@@ -18,86 +18,84 @@ class AboutScreen extends ConsumerWidget {
       body: ref
           .watch(getPackageInfoProvider)
           .when(
-            data:
-                (data) => SingleChildScrollView(
-                  child: Column(
+            data: (data) => SingleChildScrollView(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 40),
+                    child: Image.asset(
+                      "assets/app_icons/icon.png",
+                      color: Theme.of(context).brightness == Brightness.light
+                          ? Colors.black
+                          : Colors.white,
+                      fit: BoxFit.cover,
+                      height: 100,
+                    ),
+                  ),
+                  Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 40),
-                        child: Image.asset(
-                          "assets/app_icons/icon.png",
-                          color:
-                              Theme.of(context).brightness == Brightness.light
-                                  ? Colors.black
-                                  : Colors.white,
-                          fit: BoxFit.cover,
-                          height: 100,
+                      const Divider(color: Colors.grey),
+                      ListTile(
+                        onTap: () {},
+                        title: const Text('Version'),
+                        subtitle: Text(
+                          'Beta (${data.version})',
+                          style: const TextStyle(fontSize: 12),
                         ),
                       ),
-                      Column(
-                        children: [
-                          const Divider(color: Colors.grey),
-                          ListTile(
-                            onTap: () {},
-                            title: const Text('Version'),
-                            subtitle: Text(
-                              'Beta (${data.version})',
-                              style: const TextStyle(fontSize: 12),
+                      ListTile(
+                        onTap: () {
+                          ref.read(
+                            checkForUpdateProvider(
+                              context: context,
+                              manualUpdate: true,
                             ),
-                          ),
-                          ListTile(
-                            onTap: () {
-                              ref.read(
-                                checkForUpdateProvider(
-                                  context: context,
-                                  manualUpdate: true,
+                          );
+                        },
+                        title: Text(l10n.check_for_update),
+                      ),
+                      // ListTile(
+                      //   onTap: () {},
+                      //   title: const Text("What's news"),
+                      // ),
+                      // ListTile(
+                      //   onTap: () {},
+                      //   title: const Text('Help translation'),
+                      // ),
+                      // ListTile(
+                      //   onTap: () {},
+                      //   title: const Text('Privacy policy'),
+                      // ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              _launchInBrowser(
+                                Uri.parse(
+                                  'https://github.com/kodjodevf/mangayomi',
                                 ),
                               );
                             },
-                            title: Text(l10n.check_for_update),
+                            icon: const Icon(FontAwesomeIcons.github),
                           ),
-                          // ListTile(
-                          //   onTap: () {},
-                          //   title: const Text("What's news"),
-                          // ),
-                          // ListTile(
-                          //   onTap: () {},
-                          //   title: const Text('Help translation'),
-                          // ),
-                          // ListTile(
-                          //   onTap: () {},
-                          //   title: const Text('Privacy policy'),
-                          // ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  _launchInBrowser(
-                                    Uri.parse(
-                                      'https://github.com/kodjodevf/mangayomi',
-                                    ),
-                                  );
-                                },
-                                icon: const Icon(FontAwesomeIcons.github),
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  _launchInBrowser(
-                                    Uri.parse(
-                                      'https://discord.com/invite/EjfBuYahsP',
-                                    ),
-                                  );
-                                },
-                                icon: const Icon(FontAwesomeIcons.discord),
-                              ),
-                            ],
+                          IconButton(
+                            onPressed: () {
+                              _launchInBrowser(
+                                Uri.parse(
+                                  'https://discord.com/invite/EjfBuYahsP',
+                                ),
+                              );
+                            },
+                            icon: const Icon(FontAwesomeIcons.discord),
                           ),
                         ],
                       ),
                     ],
                   ),
-                ),
+                ],
+              ),
+            ),
             error: (error, stackTrace) => ErrorWidget(error),
             loading: () => const ProgressCenter(),
           ),

@@ -98,10 +98,9 @@ class _MyAppState extends ConsumerState<MyApp> {
   Widget build(BuildContext context) {
     final followSystem = ref.watch(followSystemThemeStateProvider);
     final forcedDark = ref.watch(themeModeStateProvider);
-    final themeMode =
-        followSystem
-            ? ThemeMode.system
-            : (forcedDark ? ThemeMode.dark : ThemeMode.light);
+    final themeMode = followSystem
+        ? ThemeMode.system
+        : (forcedDark ? ThemeMode.dark : ThemeMode.light);
     final locale = ref.watch(l10nLocaleStateProvider);
     final router = ref.watch(routerProvider);
 

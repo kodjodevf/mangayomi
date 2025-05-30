@@ -19,12 +19,10 @@ class MPagesBridge {
       'hasNextPage': (visitor, target) => (target as MPages).hasNextPage,
     },
     setters: {
-      'list':
-          (visitor, target, value) =>
-              (target as MPages).list = (value as List).cast<MManga>(),
-      'hasNextPage':
-          (visitor, target, value) =>
-              (target as MPages).hasNextPage = value as bool,
+      'list': (visitor, target, value) =>
+          (target as MPages).list = (value as List).cast<MManga>(),
+      'hasNextPage': (visitor, target, value) =>
+          (target as MPages).hasNextPage = value as bool,
     },
   );
   void registerBridgedClasses(D4rt interpreter) {

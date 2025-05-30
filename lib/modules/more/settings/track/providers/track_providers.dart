@@ -29,12 +29,11 @@ class Tracks extends _$Tracks {
   }
 
   void updateTrackManga(Track track, ItemType itemType) {
-    final tra =
-        isar.tracks
-            .filter()
-            .syncIdEqualTo(syncId)
-            .mangaIdEqualTo(track.mangaId)
-            .findAllSync();
+    final tra = isar.tracks
+        .filter()
+        .syncIdEqualTo(syncId)
+        .mangaIdEqualTo(track.mangaId)
+        .findAllSync();
     if (tra.isNotEmpty) {
       if (tra.first.mediaId != track.mangaId) {
         track.id = tra.first.id;

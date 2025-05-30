@@ -39,18 +39,17 @@ class SourcesFilterScreen extends ConsumerWidget {
                   CustomSliverGroupedListView<Source, String>(
                     elements: entries,
                     groupBy: (element) => element.lang!,
-                    groupSeparatorBuilder:
-                        (String groupByValue) => SwitchListTile(
-                          value:
-                              entries
-                                  .where(
-                                    (element) =>
-                                        element.lang!.toLowerCase() ==
-                                            groupByValue &&
-                                        element.isActive! &&
-                                        element.itemType == itemType,
-                                  )
-                                  .isNotEmpty,
+                    groupSeparatorBuilder: (String groupByValue) =>
+                        SwitchListTile(
+                          value: entries
+                              .where(
+                                (element) =>
+                                    element.lang!.toLowerCase() ==
+                                        groupByValue &&
+                                    element.isActive! &&
+                                    element.itemType == itemType,
+                              )
+                              .isNotEmpty,
                           onChanged: (val) {
                             isar.writeTxnSync(() {
                               for (var source in entries) {
@@ -102,22 +101,21 @@ class SourcesFilterScreen extends ConsumerWidget {
                             ).secondaryHeaderColor.withValues(alpha: 0.5),
                             borderRadius: BorderRadius.circular(5),
                           ),
-                          child:
-                              element.iconUrl!.isEmpty
-                                  ? const Icon(Icons.source_outlined)
-                                  : cachedNetworkImage(
-                                    imageUrl: element.iconUrl!,
-                                    fit: BoxFit.contain,
+                          child: element.iconUrl!.isEmpty
+                              ? const Icon(Icons.source_outlined)
+                              : cachedNetworkImage(
+                                  imageUrl: element.iconUrl!,
+                                  fit: BoxFit.contain,
+                                  width: 37,
+                                  height: 37,
+                                  errorWidget: const SizedBox(
                                     width: 37,
                                     height: 37,
-                                    errorWidget: const SizedBox(
-                                      width: 37,
-                                      height: 37,
-                                      child: Center(
-                                        child: Icon(Icons.source_outlined),
-                                      ),
+                                    child: Center(
+                                      child: Icon(Icons.source_outlined),
                                     ),
                                   ),
+                                ),
                         ),
                         onChanged: (bool? value) {
                           isar.writeTxnSync(() {
@@ -136,10 +134,10 @@ class SourcesFilterScreen extends ConsumerWidget {
                         title: Text(element.name!),
                       );
                     },
-                    groupComparator:
-                        (group1, group2) => group1.compareTo(group2),
-                    itemComparator:
-                        (item1, item2) => item1.name!.compareTo(item2.name!),
+                    groupComparator: (group1, group2) =>
+                        group1.compareTo(group2),
+                    itemComparator: (item1, item2) =>
+                        item1.name!.compareTo(item2.name!),
                     order: GroupedListOrder.ASC,
                   ),
                 ],

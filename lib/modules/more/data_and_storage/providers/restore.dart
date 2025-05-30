@@ -114,54 +114,43 @@ void restoreBackup(Ref ref, Map<String, dynamic> backup, {bool full = true}) {
   final version = backup['version'];
   if (["1", "2"].any((e) => e == version)) {
     try {
-      final manga =
-          (backup["manga"] as List?)
-              ?.map((e) => Manga.fromJson(e)..itemType = _convertToItemType(e))
-              .toList();
-      final chapters =
-          (backup["chapters"] as List?)
-              ?.map((e) => Chapter.fromJson(e))
-              .toList();
-      final categories =
-          (backup["categories"] as List?)
-              ?.map(
-                (e) =>
-                    Category.fromJson(e)
-                      ..forItemType = _convertToItemTypeCategory(e),
-              )
-              .toList();
-      final track =
-          (backup["tracks"] as List?)
-              ?.map((e) => Track.fromJson(e)..itemType = _convertToItemType(e))
-              .toList();
-      final trackPreferences =
-          (backup["trackPreferences"] as List?)
-              ?.map((e) => TrackPreference.fromJson(e))
-              .toList();
-      final history =
-          (backup["history"] as List?)
-              ?.map(
-                (e) => History.fromJson(e)..itemType = _convertToItemType(e),
-              )
-              .toList();
-      final downloads =
-          (backup["downloads"] as List?)
-              ?.map((e) => Download.fromJson(e))
-              .toList();
-      final settings =
-          (backup["settings"] as List?)
-              ?.map((e) => Settings.fromJson(e))
-              .toList();
-      final extensions =
-          (backup["extensions"] as List?)
-              ?.map((e) => Source.fromJson(e)..itemType = _convertToItemType(e))
-              .toList();
-      final sourcesPrefs =
-          (backup["extensions_preferences"] as List?)
-              ?.map((e) => SourcePreference.fromJson(e))
-              .toList();
-      final updates =
-          (backup["updates"] as List?)?.map((e) => Update.fromJson(e)).toList();
+      final manga = (backup["manga"] as List?)
+          ?.map((e) => Manga.fromJson(e)..itemType = _convertToItemType(e))
+          .toList();
+      final chapters = (backup["chapters"] as List?)
+          ?.map((e) => Chapter.fromJson(e))
+          .toList();
+      final categories = (backup["categories"] as List?)
+          ?.map(
+            (e) =>
+                Category.fromJson(e)
+                  ..forItemType = _convertToItemTypeCategory(e),
+          )
+          .toList();
+      final track = (backup["tracks"] as List?)
+          ?.map((e) => Track.fromJson(e)..itemType = _convertToItemType(e))
+          .toList();
+      final trackPreferences = (backup["trackPreferences"] as List?)
+          ?.map((e) => TrackPreference.fromJson(e))
+          .toList();
+      final history = (backup["history"] as List?)
+          ?.map((e) => History.fromJson(e)..itemType = _convertToItemType(e))
+          .toList();
+      final downloads = (backup["downloads"] as List?)
+          ?.map((e) => Download.fromJson(e))
+          .toList();
+      final settings = (backup["settings"] as List?)
+          ?.map((e) => Settings.fromJson(e))
+          .toList();
+      final extensions = (backup["extensions"] as List?)
+          ?.map((e) => Source.fromJson(e)..itemType = _convertToItemType(e))
+          .toList();
+      final sourcesPrefs = (backup["extensions_preferences"] as List?)
+          ?.map((e) => SourcePreference.fromJson(e))
+          .toList();
+      final updates = (backup["updates"] as List?)
+          ?.map((e) => Update.fromJson(e))
+          .toList();
 
       isar.writeTxnSync(() {
         isar.mangas.clearSync();
@@ -203,17 +192,19 @@ void restoreBackup(Ref ref, Map<String, dynamic> backup, {bool full = true}) {
 
             isar.updates.clearSync();
             if (updates != null) {
-              final tempChapters =
-                  isar.chapters.filter().idIsNotNull().findAllSync().toList();
+              final tempChapters = isar.chapters
+                  .filter()
+                  .idIsNotNull()
+                  .findAllSync()
+                  .toList();
               for (var update in updates) {
-                final matchingChapter =
-                    tempChapters
-                        .where(
-                          (chapter) =>
-                              chapter.mangaId == update.mangaId &&
-                              chapter.name == update.chapterName,
-                        )
-                        .firstOrNull;
+                final matchingChapter = tempChapters
+                    .where(
+                      (chapter) =>
+                          chapter.mangaId == update.mangaId &&
+                          chapter.name == update.chapterName,
+                    )
+                    .firstOrNull;
                 if (matchingChapter != null) {
                   isar.updates.putSync(update..chapter.value = matchingChapter);
                   update.chapter.saveSync();
@@ -420,11 +411,10 @@ void restoreTachiBkBackup(Ref ref, String path, BackupType bkType) {
         name: tempManga.title,
         status: _convertStatusFromTachiBk(tempManga.status),
         description: tempManga.description,
-        categories:
-            cats
-                .where((cat) => tempManga.categories.contains(cat.pos!))
-                .map((cat) => cat.id!)
-                .toList(),
+        categories: cats
+            .where((cat) => tempManga.categories.contains(cat.pos!))
+            .map((cat) => cat.id!)
+            .toList(),
         itemType: ItemType.manga,
         favorite: true,
         dateAdded: tempManga.dateAdded * 1000,
@@ -439,16 +429,14 @@ void restoreTachiBkBackup(Ref ref, String path, BackupType bkType) {
         final chapter = Chapter(
           mangaId: manga.id!,
           name: tempChapter.name,
-          dateUpload:
-              bkType != BackupType.neko
-                  ? "${tempChapter.dateUpload * 1000}"
-                  : "${DateTime.now().millisecondsSinceEpoch - tempChapter.dateUpload.abs()}",
+          dateUpload: bkType != BackupType.neko
+              ? "${tempChapter.dateUpload * 1000}"
+              : "${DateTime.now().millisecondsSinceEpoch - tempChapter.dateUpload.abs()}",
           isBookmarked: tempChapter.bookmark,
           isRead: tempChapter.read,
-          lastPageRead:
-              tempChapter.lastPageRead != 0
-                  ? "${tempChapter.lastPageRead}"
-                  : "1",
+          lastPageRead: tempChapter.lastPageRead != 0
+              ? "${tempChapter.lastPageRead}"
+              : "1",
           scanlator: tempChapter.scanlator,
           url: tempChapter.url,
         );
@@ -459,10 +447,9 @@ void restoreTachiBkBackup(Ref ref, String path, BackupType bkType) {
                 tempChapter.lastModifiedAt * 1000)) {
           history = History(
             mangaId: manga.id,
-            date:
-                bkType != BackupType.neko
-                    ? "${tempChapter.lastModifiedAt * 1000}"
-                    : "${DateTime.now().millisecondsSinceEpoch - tempChapter.dateUpload.abs()}",
+            date: bkType != BackupType.neko
+                ? "${tempChapter.lastModifiedAt * 1000}"
+                : "${DateTime.now().millisecondsSinceEpoch - tempChapter.dateUpload.abs()}",
             itemType: ItemType.manga,
             chapterId: chapter.id,
           )..chapter.value = chapter;
@@ -503,11 +490,10 @@ void restoreTachiBkBackup(Ref ref, String path, BackupType bkType) {
           name: tempAnime.title,
           status: _convertStatusFromTachiBk(tempAnime.status),
           description: tempAnime.description,
-          categories:
-              cats
-                  .where((cat) => tempAnime.categories.contains(cat.pos!))
-                  .map((cat) => cat.id!)
-                  .toList(),
+          categories: cats
+              .where((cat) => tempAnime.categories.contains(cat.pos!))
+              .map((cat) => cat.id!)
+              .toList(),
           itemType: ItemType.anime,
           favorite: true,
           dateAdded: tempAnime.dateAdded * 1000,
@@ -522,10 +508,9 @@ void restoreTachiBkBackup(Ref ref, String path, BackupType bkType) {
             dateUpload: "${tempEpisode.dateUpload * 1000}",
             isBookmarked: tempEpisode.bookmark,
             isRead: tempEpisode.seen,
-            lastPageRead:
-                tempEpisode.lastSecondSeen != 0
-                    ? "${tempEpisode.lastSecondSeen * 1000}"
-                    : "1",
+            lastPageRead: tempEpisode.lastSecondSeen != 0
+                ? "${tempEpisode.lastSecondSeen * 1000}"
+                : "1",
             scanlator: tempEpisode.scanlator,
             url: tempEpisode.url,
           );

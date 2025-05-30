@@ -18,10 +18,9 @@ String dateFormat(
   final locale = currentLocale(context);
   final relativeTimestamps = ref.watch(relativeTimesTampsStateProvider);
   final dateFrmt = ref.watch(dateFormatStateProvider);
-  final dateTime =
-      stringDate != null
-          ? DateTime.parse(stringDate)
-          : DateTime.fromMillisecondsSinceEpoch(int.parse(timestamp!));
+  final dateTime = stringDate != null
+      ? DateTime.parse(stringDate)
+      : DateTime.fromMillisecondsSinceEpoch(int.parse(timestamp!));
   stringDate = null;
   final date = DateTime(dateTime.year, dateTime.month, dateTime.day);
   if (stringDate == null) {

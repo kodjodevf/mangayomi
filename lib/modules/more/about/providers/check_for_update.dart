@@ -66,8 +66,8 @@ Future<(String, String, String, List<dynamic>)> _checkUpdate() async {
       resListJson.first["body"].toString(),
       resListJson.first["html_url"].toString(),
       (resListJson.first["assets"] as List)
-              .map((asset) => asset["browser_download_url"])
-              .toList(),
+          .map((asset) => asset["browser_download_url"])
+          .toList(),
     );
   } catch (e) {
     rethrow;

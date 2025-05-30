@@ -26,16 +26,15 @@ Future<void> fetchSourcesList({
   final req = await http.get(Uri.parse(url));
   final info = await PackageInfo.fromPlatform();
 
-  final sourceList =
-      (jsonDecode(req.body) as List)
-          .map((e) => Source.fromJson(e))
-          .where(
-            (source) =>
-                source.itemType == itemType &&
-                source.appMinVerReq != null &&
-                compareVersions(info.version, source.appMinVerReq!) > -1,
-          )
-          .toList();
+  final sourceList = (jsonDecode(req.body) as List)
+      .map((e) => Source.fromJson(e))
+      .where(
+        (source) =>
+            source.itemType == itemType &&
+            source.appMinVerReq != null &&
+            compareVersions(info.version, source.appMinVerReq!) > -1,
+      )
+      .toList();
 
   isar.writeTxnSync(() async {
     if (id != null) {
@@ -78,36 +77,36 @@ Future<void> _updateSource(
 ) async {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
   final req = await http.get(Uri.parse(source.sourceCodeUrl!));
-  final headers =
-      getExtensionService(source..sourceCode = req.body).getHeaders();
+  final headers = getExtensionService(
+    source..sourceCode = req.body,
+  ).getHeaders();
 
-  final updatedSource =
-      Source()
-        ..headers = jsonEncode(headers)
-        ..isAdded = true
-        ..sourceCode = req.body
-        ..sourceCodeUrl = source.sourceCodeUrl
-        ..id = source.id
-        ..apiUrl = source.apiUrl
-        ..baseUrl = source.baseUrl
-        ..dateFormat = source.dateFormat
-        ..dateFormatLocale = source.dateFormatLocale
-        ..hasCloudflare = source.hasCloudflare
-        ..iconUrl = source.iconUrl
-        ..typeSource = source.typeSource
-        ..lang = source.lang
-        ..isNsfw = source.isNsfw
-        ..name = source.name
-        ..version = source.version
-        ..versionLast = source.version
-        ..itemType = itemType
-        ..isFullData = source.isFullData ?? false
-        ..appMinVerReq = source.appMinVerReq
-        ..sourceCodeLanguage = source.sourceCodeLanguage
-        ..additionalParams = source.additionalParams ?? ""
-        ..isObsolete = false
-        ..notes = source.notes
-        ..repo = repo;
+  final updatedSource = Source()
+    ..headers = jsonEncode(headers)
+    ..isAdded = true
+    ..sourceCode = req.body
+    ..sourceCodeUrl = source.sourceCodeUrl
+    ..id = source.id
+    ..apiUrl = source.apiUrl
+    ..baseUrl = source.baseUrl
+    ..dateFormat = source.dateFormat
+    ..dateFormatLocale = source.dateFormatLocale
+    ..hasCloudflare = source.hasCloudflare
+    ..iconUrl = source.iconUrl
+    ..typeSource = source.typeSource
+    ..lang = source.lang
+    ..isNsfw = source.isNsfw
+    ..name = source.name
+    ..version = source.version
+    ..versionLast = source.version
+    ..itemType = itemType
+    ..isFullData = source.isFullData ?? false
+    ..appMinVerReq = source.appMinVerReq
+    ..sourceCodeLanguage = source.sourceCodeLanguage
+    ..additionalParams = source.additionalParams ?? ""
+    ..isObsolete = false
+    ..notes = source.notes
+    ..repo = repo;
 
   isar.writeTxnSync(() {
     isar.sources.putSync(updatedSource);
@@ -123,30 +122,29 @@ Future<void> _updateSource(
 }
 
 void _addNewSource(Source source, Ref ref, Repo? repo, ItemType itemType) {
-  final newSource =
-      Source()
-        ..sourceCodeUrl = source.sourceCodeUrl
-        ..id = source.id
-        ..sourceCode = source.sourceCode
-        ..apiUrl = source.apiUrl
-        ..baseUrl = source.baseUrl
-        ..dateFormat = source.dateFormat
-        ..dateFormatLocale = source.dateFormatLocale
-        ..hasCloudflare = source.hasCloudflare
-        ..iconUrl = source.iconUrl
-        ..typeSource = source.typeSource
-        ..lang = source.lang
-        ..isNsfw = source.isNsfw
-        ..name = source.name
-        ..version = source.version
-        ..versionLast = source.version
-        ..itemType = itemType
-        ..sourceCodeLanguage = source.sourceCodeLanguage
-        ..isFullData = source.isFullData ?? false
-        ..appMinVerReq = source.appMinVerReq
-        ..isObsolete = false
-        ..notes = source.notes
-        ..repo = repo;
+  final newSource = Source()
+    ..sourceCodeUrl = source.sourceCodeUrl
+    ..id = source.id
+    ..sourceCode = source.sourceCode
+    ..apiUrl = source.apiUrl
+    ..baseUrl = source.baseUrl
+    ..dateFormat = source.dateFormat
+    ..dateFormatLocale = source.dateFormatLocale
+    ..hasCloudflare = source.hasCloudflare
+    ..iconUrl = source.iconUrl
+    ..typeSource = source.typeSource
+    ..lang = source.lang
+    ..isNsfw = source.isNsfw
+    ..name = source.name
+    ..version = source.version
+    ..versionLast = source.version
+    ..itemType = itemType
+    ..sourceCodeLanguage = source.sourceCodeLanguage
+    ..isFullData = source.isFullData ?? false
+    ..appMinVerReq = source.appMinVerReq
+    ..isObsolete = false
+    ..notes = source.notes
+    ..repo = repo;
   isar.sources.putSync(newSource);
   ref
       .read(synchingProvider(syncId: 1).notifier)
@@ -161,19 +159,20 @@ void checkIfSourceIsObsolete(
 ) {
   if (sourceList.isEmpty) return;
 
-  final sources =
-      isar.sources
-          .filter()
-          .idIsNotNull()
-          .itemTypeEqualTo(itemType)
-          .and()
-          .isLocalEqualTo(false)
-          .findAllSync();
+  final sources = isar.sources
+      .filter()
+      .idIsNotNull()
+      .itemTypeEqualTo(itemType)
+      .and()
+      .isLocalEqualTo(false)
+      .findAllSync();
 
   if (sources.isEmpty) return;
 
-  final sourceIds =
-      sourceList.where((e) => e.id != null).map((e) => e.id!).toSet();
+  final sourceIds = sourceList
+      .where((e) => e.id != null)
+      .map((e) => e.id!)
+      .toSet();
 
   if (sourceIds.isEmpty) return;
 
@@ -203,8 +202,9 @@ void checkIfSourceIsObsolete(
 int compareVersions(String version1, String version2) {
   final v1Parts = version1.split('.');
   final v2Parts = version2.split('.');
-  final minLength =
-      v1Parts.length < v2Parts.length ? v1Parts.length : v2Parts.length;
+  final minLength = v1Parts.length < v2Parts.length
+      ? v1Parts.length
+      : v2Parts.length;
 
   for (var i = 0; i < minLength; i++) {
     final v1Value = int.parse(v1Parts[i].padRight(2, '0'));

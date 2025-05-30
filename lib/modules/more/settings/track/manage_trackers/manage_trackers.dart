@@ -20,8 +20,10 @@ class _ManageTrackersScreenState extends State<ManageTrackersScreen> {
   @override
   void initState() {
     super.initState();
-    trackPreferences =
-        isar.trackPreferences.filter().syncIdIsNotNull().findAllSync();
+    trackPreferences = isar.trackPreferences
+        .filter()
+        .syncIdIsNotNull()
+        .findAllSync();
     // trackPreferences.insert(0, TrackPreference(syncId: -1));
   }
 
@@ -50,24 +52,20 @@ class _ManageTrackersScreenState extends State<ManageTrackersScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 5),
                       child: Container(
                         decoration: BoxDecoration(
-                          color:
-                              trackerPref.syncId == -1
-                                  ? Colors.grey
-                                  : trackInfos(trackerPref.syncId!).$3,
+                          color: trackerPref.syncId == -1
+                              ? Colors.grey
+                              : trackInfos(trackerPref.syncId!).$3,
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child:
-                            trackerPref.syncId == -1
-                                ? SizedBox(
-                                  width: context.width(1),
-                                  child: const Icon(
-                                    Icons.local_library_rounded,
-                                    size: 60,
-                                  ),
-                                )
-                                : Image.asset(
-                                  trackInfos(trackerPref.syncId!).$1,
+                        child: trackerPref.syncId == -1
+                            ? SizedBox(
+                                width: context.width(1),
+                                child: const Icon(
+                                  Icons.local_library_rounded,
+                                  size: 60,
                                 ),
+                              )
+                            : Image.asset(trackInfos(trackerPref.syncId!).$1),
                       ),
                     ),
                   ),

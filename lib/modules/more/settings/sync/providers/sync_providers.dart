@@ -93,12 +93,11 @@ class Synching extends _$Synching {
     if (!state.syncOn) {
       return;
     }
-    final changedPart =
-        isar.changedParts
-            .filter()
-            .actionTypeEqualTo(action)
-            .isarIdEqualTo(isarId)
-            .findFirstSync();
+    final changedPart = isar.changedParts
+        .filter()
+        .actionTypeEqualTo(action)
+        .isarIdEqualTo(isarId)
+        .findFirstSync();
     if (writeTxn) {
       isar.writeTxnSync(() {
         if (changedPart != null) {
@@ -147,12 +146,11 @@ class Synching extends _$Synching {
     if (!state.syncOn) {
       return;
     }
-    final changedPart =
-        isar.changedParts
-            .filter()
-            .actionTypeEqualTo(action)
-            .isarIdEqualTo(isarId)
-            .findFirstSync();
+    final changedPart = isar.changedParts
+        .filter()
+        .actionTypeEqualTo(action)
+        .isarIdEqualTo(isarId)
+        .findFirstSync();
     if (writeTxn) {
       await isar.writeTxn(() async {
         if (changedPart != null) {

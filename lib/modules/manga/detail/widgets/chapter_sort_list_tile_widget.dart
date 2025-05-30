@@ -20,8 +20,9 @@ class ListTileChapterSort extends StatelessWidget {
       dense: true,
       leading: Icon(
         reverse ? Icons.arrow_downward_sharp : Icons.arrow_upward_sharp,
-        color:
-            showLeading ? Theme.of(context).primaryColor : Colors.transparent,
+        color: showLeading
+            ? Theme.of(context).primaryColor
+            : Colors.transparent,
       ),
       title: Text(label, style: const TextStyle(fontSize: 14)),
       onTap: onTap,

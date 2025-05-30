@@ -33,10 +33,9 @@ class MangasCardSelector extends StatelessWidget {
               Icon(
                 icon,
                 size: 15,
-                color:
-                    selected
-                        ? Theme.of(context).scaffoldBackgroundColor
-                        : Theme.of(context).textTheme.bodyLarge!.color,
+                color: selected
+                    ? Theme.of(context).scaffoldBackgroundColor
+                    : Theme.of(context).textTheme.bodyLarge!.color,
               ),
               const SizedBox(width: 5),
               Text(
@@ -44,10 +43,9 @@ class MangasCardSelector extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color:
-                      selected
-                          ? Theme.of(context).scaffoldBackgroundColor
-                          : Theme.of(context).textTheme.bodyLarge!.color,
+                  color: selected
+                      ? Theme.of(context).scaffoldBackgroundColor
+                      : Theme.of(context).textTheme.bodyLarge!.color,
                 ),
               ),
             ],

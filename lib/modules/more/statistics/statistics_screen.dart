@@ -96,10 +96,12 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     final downloadedItems = stats.downloadedItems;
 
     final averageChapters = totalItems > 0 ? totalChapters / totalItems : 0;
-    final readPercentage =
-        totalChapters > 0 ? (readChapters / totalChapters) * 100 : 0;
-    final completedPercentage =
-        totalItems > 0 ? (completedItems / totalItems) * 100 : 0;
+    final readPercentage = totalChapters > 0
+        ? (readChapters / totalChapters) * 100
+        : 0;
+    final completedPercentage = totalItems > 0
+        ? (completedItems / totalItems) * 100
+        : 0;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),

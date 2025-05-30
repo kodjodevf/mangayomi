@@ -162,28 +162,24 @@ class PlayerScreen extends ConsumerWidget {
                     return AlertDialog(
                       title: Text(context.l10n.default_skip_intro_length),
                       content: StatefulBuilder(
-                        builder:
-                            (context, setState) => SizedBox(
-                              height: 200,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  NumberPicker(
-                                    value: currentIntValue,
-                                    minValue: 1,
-                                    maxValue: 255,
-                                    step: 1,
-                                    haptics: true,
-                                    textMapper:
-                                        (numberText) => "${numberText}s",
-                                    onChanged:
-                                        (value) => setState(
-                                          () => currentIntValue = value,
-                                        ),
-                                  ),
-                                ],
+                        builder: (context, setState) => SizedBox(
+                          height: 200,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              NumberPicker(
+                                value: currentIntValue,
+                                minValue: 1,
+                                maxValue: 255,
+                                step: 1,
+                                haptics: true,
+                                textMapper: (numberText) => "${numberText}s",
+                                onChanged: (value) =>
+                                    setState(() => currentIntValue = value),
                               ),
-                            ),
+                            ],
+                          ),
+                        ),
                       ),
                       actions: [
                         Row(
@@ -380,9 +376,8 @@ class PlayerScreen extends ConsumerWidget {
               trailing: IgnorePointer(
                 child: Switch(value: enableAniSkip, onChanged: (_) {}),
               ),
-              onExpansionChanged:
-                  (value) =>
-                      ref.read(enableAniSkipStateProvider.notifier).set(value),
+              onExpansionChanged: (value) =>
+                  ref.read(enableAniSkipStateProvider.notifier).set(value),
               children: [
                 SwitchListTile(
                   value: enableAutoSkip,

@@ -46,8 +46,10 @@ class NovelReaderController extends _$NovelReaderController {
     });
     History? history;
 
-    final empty =
-        isar.historys.filter().mangaIdEqualTo(getManga().id).isEmptySync();
+    final empty = isar.historys
+        .filter()
+        .mangaIdEqualTo(getManga().id)
+        .isEmptySync();
 
     if (empty) {
       history = History(
@@ -98,8 +100,8 @@ class NovelReaderController extends _$NovelReaderController {
       final ch = chapter;
       isar.writeTxnSync(() {
         ch.isRead = isRead;
-        ch.lastPageRead =
-            (maxOffset != 0 ? newOffset / maxOffset : 0).toString();
+        ch.lastPageRead = (maxOffset != 0 ? newOffset / maxOffset : 0)
+            .toString();
         isar.chapters.putSync(ch);
         ref
             .read(synchingProvider(syncId: 1).notifier)
@@ -271,43 +273,40 @@ extension MangaExtensions on Manga {
             .index;
     final filterScanlator = _getFilterScanlator(this) ?? [];
     List<Chapter>? chapterList;
-    chapterList =
-        data
-            .where(
-              (element) =>
-                  filterUnread == 1
-                      ? element.isRead == false
-                      : filterUnread == 2
-                      ? element.isRead == true
-                      : true,
-            )
-            .where(
-              (element) =>
-                  filterBookmarked == 1
-                      ? element.isBookmarked == true
-                      : filterBookmarked == 2
-                      ? element.isBookmarked == false
-                      : true,
-            )
-            .where((element) {
-              final modelChapDownload =
-                  isar.downloads
-                      .filter()
-                      .idIsNotNull()
-                      .idEqualTo(element.id)
-                      .findAllSync();
-              return filterDownloaded == 1
-                  ? modelChapDownload.isNotEmpty &&
-                      modelChapDownload.first.isDownload == true
-                  : filterDownloaded == 2
-                  ? !(modelChapDownload.isNotEmpty &&
-                      modelChapDownload.first.isDownload == true)
-                  : true;
-            })
-            .where((element) => !filterScanlator.contains(element.scanlator))
-            .toList();
-    List<Chapter> chapters =
-        sortChapter == 1 ? chapterList.reversed.toList() : chapterList;
+    chapterList = data
+        .where(
+          (element) => filterUnread == 1
+              ? element.isRead == false
+              : filterUnread == 2
+              ? element.isRead == true
+              : true,
+        )
+        .where(
+          (element) => filterBookmarked == 1
+              ? element.isBookmarked == true
+              : filterBookmarked == 2
+              ? element.isBookmarked == false
+              : true,
+        )
+        .where((element) {
+          final modelChapDownload = isar.downloads
+              .filter()
+              .idIsNotNull()
+              .idEqualTo(element.id)
+              .findAllSync();
+          return filterDownloaded == 1
+              ? modelChapDownload.isNotEmpty &&
+                    modelChapDownload.first.isDownload == true
+              : filterDownloaded == 2
+              ? !(modelChapDownload.isNotEmpty &&
+                    modelChapDownload.first.isDownload == true)
+              : true;
+        })
+        .where((element) => !filterScanlator.contains(element.scanlator))
+        .toList();
+    List<Chapter> chapters = sortChapter == 1
+        ? chapterList.reversed.toList()
+        : chapterList;
     if (sortChapter == 0) {
       chapters.sort((a, b) {
         return (a.scanlator == null ||
@@ -316,7 +315,7 @@ extension MangaExtensions on Manga {
                 b.dateUpload == null)
             ? 0
             : a.scanlator!.compareTo(b.scanlator!) |
-                a.dateUpload!.compareTo(b.dateUpload!);
+                  a.dateUpload!.compareTo(b.dateUpload!);
       });
     } else if (sortChapter == 2) {
       chapters.sort((a, b) {
@@ -337,7 +336,8 @@ extension MangaExtensions on Manga {
 
 List<String>? _getFilterScanlator(Manga manga) {
   final scanlators = isar.settings.getSync(227)!.filterScanlatorList ?? [];
-  final filter =
-      scanlators.where((element) => element.mangaId == manga.id).toList();
+  final filter = scanlators
+      .where((element) => element.mangaId == manga.id)
+      .toList();
   return filter.firstOrNull?.scanlators;
 }

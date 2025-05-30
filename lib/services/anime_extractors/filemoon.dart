@@ -24,17 +24,15 @@ class FilemoonExtractor {
       };
       final response = await client.get(Uri.parse(url));
 
-      final jsEval =
-          xpathSelector(
-            response.body,
-          ).queryXPath('//script[contains(text(), "eval")]/text()').attr;
+      final jsEval = xpathSelector(
+        response.body,
+      ).queryXPath('//script[contains(text(), "eval")]/text()').attr;
 
       final unpacked = JSPacker(jsEval!).unpack() ?? "";
 
-      final masterUrl =
-          unpacked.isNotEmpty
-              ? unpacked.substringAfter('{file:"').substringBefore('"}')
-              : '';
+      final masterUrl = unpacked.isNotEmpty
+          ? unpacked.substringAfter('{file:"').substringBefore('"}')
+          : '';
 
       if (masterUrl.isEmpty) {
         return [];

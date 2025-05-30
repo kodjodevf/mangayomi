@@ -23,8 +23,9 @@ class SibnetExtractor {
           .substringAfter("\"")
           .substringBefore("\"");
 
-      String videoUrl =
-          slug.contains("http") ? slug : "https://${Uri.parse(url).host}$slug";
+      String videoUrl = slug.contains("http")
+          ? slug
+          : "https://${Uri.parse(url).host}$slug";
 
       Map<String, String> videoHeaders = {"Referer": url};
 

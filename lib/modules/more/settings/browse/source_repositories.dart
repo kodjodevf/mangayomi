@@ -139,14 +139,13 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                                                 const SizedBox(width: 15),
                                                 TextButton(
                                                   onPressed: () {
-                                                    final mangaRepos =
-                                                        ref
-                                                            .read(
-                                                              extensionsRepoStateProvider(
-                                                                widget.itemType,
-                                                              ),
-                                                            )
-                                                            .toList();
+                                                    final mangaRepos = ref
+                                                        .read(
+                                                          extensionsRepoStateProvider(
+                                                            widget.itemType,
+                                                          ),
+                                                        )
+                                                        .toList();
                                                     mangaRepos.removeWhere(
                                                       (url) =>
                                                           url ==
@@ -273,58 +272,57 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                             TextButton(
                               onPressed:
                                   controller.text.isEmpty ||
-                                          !controller.text.endsWith(".json")
-                                      ? null
-                                      : () async {
-                                        try {
-                                          final mangaRepos =
-                                              ref
-                                                  .read(
-                                                    extensionsRepoStateProvider(
-                                                      widget.itemType,
-                                                    ),
-                                                  )
-                                                  .toList();
-                                          final repo = await ref.read(
-                                            getRepoInfosProvider(
-                                              jsonUrl: controller.text,
-                                            ).future,
-                                          );
-                                          if (repo == null) {
-                                            botToast(l10n.unsupported_repo);
-                                            return;
-                                          }
-                                          mangaRepos.add(repo);
-                                          ref
-                                              .read(
-                                                extensionsRepoStateProvider(
-                                                  widget.itemType,
-                                                ).notifier,
-                                              )
-                                              .set(mangaRepos);
-                                          ref.invalidate(
-                                            extensionsRepoStateProvider(
-                                              widget.itemType,
-                                            ),
-                                          );
-                                        } catch (e, s) {
-                                          botToast('$e\n$s');
+                                      !controller.text.endsWith(".json")
+                                  ? null
+                                  : () async {
+                                      try {
+                                        final mangaRepos = ref
+                                            .read(
+                                              extensionsRepoStateProvider(
+                                                widget.itemType,
+                                              ),
+                                            )
+                                            .toList();
+                                        final repo = await ref.read(
+                                          getRepoInfosProvider(
+                                            jsonUrl: controller.text,
+                                          ).future,
+                                        );
+                                        if (repo == null) {
+                                          botToast(l10n.unsupported_repo);
+                                          return;
                                         }
+                                        mangaRepos.add(repo);
+                                        ref
+                                            .read(
+                                              extensionsRepoStateProvider(
+                                                widget.itemType,
+                                              ).notifier,
+                                            )
+                                            .set(mangaRepos);
+                                        ref.invalidate(
+                                          extensionsRepoStateProvider(
+                                            widget.itemType,
+                                          ),
+                                        );
+                                      } catch (e, s) {
+                                        botToast('$e\n$s');
+                                      }
 
-                                        if (context.mounted) {
-                                          Navigator.pop(context);
-                                        }
-                                      },
+                                      if (context.mounted) {
+                                        Navigator.pop(context);
+                                      }
+                                    },
                               child: Text(
                                 l10n.add,
                                 style: TextStyle(
                                   color:
                                       controller.text.isEmpty ||
-                                              !controller.text.endsWith(".json")
-                                          ? Theme.of(
-                                            context,
-                                          ).primaryColor.withValues(alpha: 0.2)
-                                          : null,
+                                          !controller.text.endsWith(".json")
+                                      ? Theme.of(
+                                          context,
+                                        ).primaryColor.withValues(alpha: 0.2)
+                                      : null,
                                 ),
                               ),
                             ),

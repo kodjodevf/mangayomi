@@ -90,12 +90,11 @@ class ChapterTransitionPage extends StatelessWidget {
                     ? Icons.keyboard_arrow_down
                     : Icons.check_circle_outline,
                 size: screenWidth * 0.08,
-                color:
-                    nextChapter != null
-                        ? Theme.of(context).colorScheme.primary
-                        : Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.6),
+                color: nextChapter != null
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
               ),
 
               SizedBox(height: screenHeight * 0.03),
@@ -116,25 +115,24 @@ class ChapterTransitionPage extends StatelessWidget {
                     children: [
                       Text(
                         l10n.next_chapter,
-                        style: Theme.of(
-                          context,
-                        ).textTheme.labelMedium?.copyWith(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onPrimaryContainer
-                              .withValues(alpha: 0.8),
-                        ),
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onPrimaryContainer
+                                  .withValues(alpha: 0.8),
+                            ),
                       ),
                       SizedBox(height: screenHeight * 0.01),
                       Text(
                         nextChapter!.name ?? 'Chapitre ${nextChapter!.id}',
-                        style: Theme.of(
-                          context,
-                        ).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color:
-                              Theme.of(context).colorScheme.onPrimaryContainer,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onPrimaryContainer,
+                            ),
                         textAlign: TextAlign.center,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -156,8 +154,9 @@ class ChapterTransitionPage extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(screenWidth * 0.04),
                   decoration: BoxDecoration(
-                    color:
-                        Theme.of(context).colorScheme.surfaceContainerHighest,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: Theme.of(
@@ -177,14 +176,13 @@ class ChapterTransitionPage extends StatelessWidget {
                       SizedBox(height: screenHeight * 0.01),
                       Text(
                         l10n.no_next_chapter,
-                        style: Theme.of(
-                          context,
-                        ).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.8),
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.8),
+                            ),
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: screenHeight * 0.005),

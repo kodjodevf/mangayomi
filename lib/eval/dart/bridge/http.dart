@@ -11,79 +11,69 @@ class HttpBridge {
     constructors: {
       '': (visitor, positionalArgs, namedArgs) {
         return MClient.init(
-          source:
-              positionalArgs.isNotEmpty ? positionalArgs[0] as MSource : null,
-          reqcopyWith:
-              positionalArgs.length > 1
-                  ? (jsonDecode(positionalArgs[1] as String) as Map)
-                      .cast<String, dynamic>()
-                  : null,
+          source: positionalArgs.isNotEmpty
+              ? positionalArgs[0] as MSource
+              : null,
+          reqcopyWith: positionalArgs.length > 1
+              ? (jsonDecode(positionalArgs[1] as String) as Map)
+                    .cast<String, dynamic>()
+              : null,
         );
       },
     },
     methods: {
-      'get':
-          (visitor, target, positionalArgs, namedArgs) =>
-              (target as Client).get(
-                positionalArgs[0] as Uri,
-                headers: namedArgs.get<Map?>('headers')?.cast(),
-              ),
-      'post':
-          (visitor, target, positionalArgs, namedArgs) =>
-              (target as Client).post(
-                positionalArgs[0] as Uri,
-                headers: namedArgs.get<Map?>('headers')?.cast(),
-                body: namedArgs.get<Object?>('body'),
-                encoding: namedArgs.get<Encoding?>('encoding'),
-              ),
-      'put':
-          (visitor, target, positionalArgs, namedArgs) =>
-              (target as Client).put(
-                positionalArgs[0] as Uri,
-                headers: namedArgs.get<Map?>('headers')?.cast(),
-                body: namedArgs.get<Object?>('body'),
-                encoding: namedArgs.get<Encoding?>('encoding'),
-              ),
-      'delete':
-          (visitor, target, positionalArgs, namedArgs) =>
-              (target as Client).delete(
-                positionalArgs[0] as Uri,
-                headers: namedArgs.get<Map?>('headers')?.cast(),
-                body: namedArgs.get<Object?>('body'),
-                encoding: namedArgs.get<Encoding?>('encoding'),
-              ),
-      'head':
-          (visitor, target, positionalArgs, namedArgs) =>
-              (target as Client).head(
-                positionalArgs[0] as Uri,
-                headers: namedArgs.get<Map?>('headers')?.cast(),
-              ),
-      'patch':
-          (visitor, target, positionalArgs, namedArgs) =>
-              (target as Client).patch(
-                positionalArgs[0] as Uri,
-                headers: namedArgs.get<Map?>('headers')?.cast(),
-                body: namedArgs.get<Object?>('body'),
-                encoding: namedArgs.get<Encoding?>('encoding'),
-              ),
-      'read':
-          (visitor, target, positionalArgs, namedArgs) =>
-              (target as Client).read(
-                positionalArgs[0] as Uri,
-                headers: namedArgs.get<Map?>('headers')?.cast(),
-              ),
-      'readBytes':
-          (visitor, target, positionalArgs, namedArgs) =>
-              (target as Client).readBytes(
-                positionalArgs[0] as Uri,
-                headers: namedArgs.get<Map?>('headers')?.cast(),
-              ),
-      'close':
-          (visitor, target, positionalArgs, namedArgs) =>
-              (target as Client).close(),
-      'send':
-          (visitor, target, positionalArgs, namedArgs) =>
-              (target as Client).send(positionalArgs[0] as BaseRequest),
+      'get': (visitor, target, positionalArgs, namedArgs) =>
+          (target as Client).get(
+            positionalArgs[0] as Uri,
+            headers: namedArgs.get<Map?>('headers')?.cast(),
+          ),
+      'post': (visitor, target, positionalArgs, namedArgs) =>
+          (target as Client).post(
+            positionalArgs[0] as Uri,
+            headers: namedArgs.get<Map?>('headers')?.cast(),
+            body: namedArgs.get<Object?>('body'),
+            encoding: namedArgs.get<Encoding?>('encoding'),
+          ),
+      'put': (visitor, target, positionalArgs, namedArgs) =>
+          (target as Client).put(
+            positionalArgs[0] as Uri,
+            headers: namedArgs.get<Map?>('headers')?.cast(),
+            body: namedArgs.get<Object?>('body'),
+            encoding: namedArgs.get<Encoding?>('encoding'),
+          ),
+      'delete': (visitor, target, positionalArgs, namedArgs) =>
+          (target as Client).delete(
+            positionalArgs[0] as Uri,
+            headers: namedArgs.get<Map?>('headers')?.cast(),
+            body: namedArgs.get<Object?>('body'),
+            encoding: namedArgs.get<Encoding?>('encoding'),
+          ),
+      'head': (visitor, target, positionalArgs, namedArgs) =>
+          (target as Client).head(
+            positionalArgs[0] as Uri,
+            headers: namedArgs.get<Map?>('headers')?.cast(),
+          ),
+      'patch': (visitor, target, positionalArgs, namedArgs) =>
+          (target as Client).patch(
+            positionalArgs[0] as Uri,
+            headers: namedArgs.get<Map?>('headers')?.cast(),
+            body: namedArgs.get<Object?>('body'),
+            encoding: namedArgs.get<Encoding?>('encoding'),
+          ),
+      'read': (visitor, target, positionalArgs, namedArgs) =>
+          (target as Client).read(
+            positionalArgs[0] as Uri,
+            headers: namedArgs.get<Map?>('headers')?.cast(),
+          ),
+      'readBytes': (visitor, target, positionalArgs, namedArgs) =>
+          (target as Client).readBytes(
+            positionalArgs[0] as Uri,
+            headers: namedArgs.get<Map?>('headers')?.cast(),
+          ),
+      'close': (visitor, target, positionalArgs, namedArgs) =>
+          (target as Client).close(),
+      'send': (visitor, target, positionalArgs, namedArgs) =>
+          (target as Client).send(positionalArgs[0] as BaseRequest),
     },
   );
   final baseRequestBridgedClass = BridgedClassDefinition(
@@ -95,15 +85,15 @@ class HttpBridge {
       },
     },
     getters: {
-      'contentLength':
-          (visitor, target) => (target as BaseRequest).contentLength,
+      'contentLength': (visitor, target) =>
+          (target as BaseRequest).contentLength,
       'headers': (visitor, target) => (target as BaseRequest).headers,
       'url': (visitor, target) => (target as BaseRequest).url,
-      'persistentConnection':
-          (visitor, target) => (target as BaseRequest).persistentConnection,
+      'persistentConnection': (visitor, target) =>
+          (target as BaseRequest).persistentConnection,
       'method': (visitor, target) => (target as BaseRequest).method,
-      'followRedirects':
-          (visitor, target) => (target as BaseRequest).followRedirects,
+      'followRedirects': (visitor, target) =>
+          (target as BaseRequest).followRedirects,
       'maxRedirects': (visitor, target) => (target as BaseRequest).maxRedirects,
       'finalized': (visitor, target) => (target as BaseRequest).finalized,
     },
@@ -124,8 +114,8 @@ class HttpBridge {
       'reasonPhrase': (visitor, target) => (target as Response).reasonPhrase,
       'contentLength': (visitor, target) => (target as Response).contentLength,
       'bodyBytes': (visitor, target) => (target as Response).bodyBytes,
-      'persistentConnection':
-          (visitor, target) => (target as Response).persistentConnection,
+      'persistentConnection': (visitor, target) =>
+          (target as Response).persistentConnection,
       'request': (visitor, target) => (target as Response).request,
     },
   );
@@ -138,19 +128,18 @@ class HttpBridge {
       },
     },
     getters: {
-      'statusCode':
-          (visitor, target) => (target as StreamedResponse).statusCode,
+      'statusCode': (visitor, target) =>
+          (target as StreamedResponse).statusCode,
       'headers': (visitor, target) => (target as StreamedResponse).headers,
-      'isRedirect':
-          (visitor, target) => (target as StreamedResponse).isRedirect,
-      'reasonPhrase':
-          (visitor, target) => (target as StreamedResponse).reasonPhrase,
+      'isRedirect': (visitor, target) =>
+          (target as StreamedResponse).isRedirect,
+      'reasonPhrase': (visitor, target) =>
+          (target as StreamedResponse).reasonPhrase,
       'stream': (visitor, target) => (target as StreamedResponse).stream,
-      'contentLength':
-          (visitor, target) => (target as StreamedResponse).contentLength,
-      'persistentConnection':
-          (visitor, target) =>
-              (target as StreamedResponse).persistentConnection,
+      'contentLength': (visitor, target) =>
+          (target as StreamedResponse).contentLength,
+      'persistentConnection': (visitor, target) =>
+          (target as StreamedResponse).persistentConnection,
       'request': (visitor, target) => (target as StreamedResponse).request,
     },
   );

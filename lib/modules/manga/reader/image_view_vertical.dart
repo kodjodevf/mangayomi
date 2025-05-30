@@ -42,11 +42,10 @@ class ImageViewVertical extends ConsumerWidget {
         }
         if (state.extendedImageLoadState == LoadState.loading) {
           final ImageChunkEvent? loadingProgress = state.loadingProgress;
-          final double progress =
-              loadingProgress?.expectedTotalBytes != null
-                  ? loadingProgress!.cumulativeBytesLoaded /
-                      loadingProgress.expectedTotalBytes!
-                  : 0;
+          final double progress = loadingProgress?.expectedTotalBytes != null
+              ? loadingProgress!.cumulativeBytesLoaded /
+                    loadingProgress.expectedTotalBytes!
+              : 0;
           return Container(
             color: Colors.black,
             height: context.height(0.8),
@@ -102,17 +101,16 @@ class ImageViewVertical extends ConsumerWidget {
     );
     return GestureDetector(
       onLongPress: () => onLongPressData.call(data),
-      child:
-          isHorizontal
-              ? imageWidget
-              : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (data.index == 0)
-                    SizedBox(height: MediaQuery.of(context).padding.top),
-                  imageWidget,
-                ],
-              ),
+      child: isHorizontal
+          ? imageWidget
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (data.index == 0)
+                  SizedBox(height: MediaQuery.of(context).padding.top),
+                imageWidget,
+              ],
+            ),
     );
   }
 }

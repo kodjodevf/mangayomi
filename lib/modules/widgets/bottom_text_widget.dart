@@ -24,32 +24,31 @@ class BottomTextWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return isComfortableGrid
         ? Padding(
-          padding: const EdgeInsets.only(left: 5, bottom: 5),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  text,
-                  style: TextStyle(
-                    fontSize: fontSize,
-                    fontWeight: FontWeight.w600,
-                    color: textColor ?? context.textColor,
+            padding: const EdgeInsets.only(left: 5, bottom: 5),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    text,
+                    style: TextStyle(
+                      fontSize: fontSize,
+                      fontWeight: FontWeight.w600,
+                      color: textColor ?? context.textColor,
+                    ),
+                    maxLines: isTorrent! ? 8 : maxLines,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.start,
                   ),
-                  maxLines: isTorrent! ? 8 : maxLines,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.start,
                 ),
-              ),
-            ],
-          ),
-        )
+              ],
+            ),
+          )
         : Positioned(
-          bottom: 0,
-          left: 0,
-          right: 0,
-          child:
-              isLoading
-                  ? Column(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: isLoading
+                ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -71,7 +70,7 @@ class BottomTextWidget extends StatelessWidget {
                       ),
                     ],
                   )
-                  : Container(
+                : Container(
                     height: isTorrent! ? 200 : 70,
                     decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
@@ -111,6 +110,6 @@ class BottomTextWidget extends StatelessWidget {
                       ],
                     ),
                   ),
-        );
+          );
   }
 }

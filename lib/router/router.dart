@@ -79,10 +79,9 @@ class RouterCurrentLocationState extends _$RouterCurrentLocationState {
     router.routerDelegate.addListener(() {
       final RouteMatch lastMatch =
           router.routerDelegate.currentConfiguration.last;
-      final RouteMatchList matchList =
-          lastMatch is ImperativeRouteMatch
-              ? lastMatch.matches
-              : router.routerDelegate.currentConfiguration;
+      final RouteMatchList matchList = lastMatch is ImperativeRouteMatch
+          ? lastMatch.matches
+          : router.routerDelegate.currentConfiguration;
       state = matchList.uri.toString();
     });
   }
@@ -95,18 +94,18 @@ class RouterNotifier extends ChangeNotifier {
       routes: [
         _genericRoute<String?>(
           name: "MangaLibrary",
-          builder:
-              (id) => LibraryScreen(itemType: ItemType.manga, presetInput: id),
+          builder: (id) =>
+              LibraryScreen(itemType: ItemType.manga, presetInput: id),
         ),
         _genericRoute<String?>(
           name: "AnimeLibrary",
-          builder:
-              (id) => LibraryScreen(itemType: ItemType.anime, presetInput: id),
+          builder: (id) =>
+              LibraryScreen(itemType: ItemType.anime, presetInput: id),
         ),
         _genericRoute<String?>(
           name: "NovelLibrary",
-          builder:
-              (id) => LibraryScreen(itemType: ItemType.novel, presetInput: id),
+          builder: (id) =>
+              LibraryScreen(itemType: ItemType.novel, presetInput: id),
         ),
         _genericRoute(name: "history", child: const HistoryScreen()),
         _genericRoute(name: "updates", child: const UpdatesScreen()),
@@ -240,9 +239,9 @@ Route createRoute({required Widget page}) {
   return Platform.isIOS
       ? CupertinoPageRoute(builder: (context) => page)
       : PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => page,
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(opacity: animation, child: child);
-        },
-      );
+          pageBuilder: (context, animation, secondaryAnimation) => page,
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        );
 }

@@ -214,7 +214,7 @@ class __$$ProxySettings_CustomProxyListImplCopyWithImpl<$Res>
         null == field0
             ? _value._field0
             : field0 // ignore: cast_nullable_to_non_nullable
-                as List<CustomProxy>,
+                  as List<CustomProxy>,
       ),
     );
   }
@@ -261,9 +261,10 @@ class _$ProxySettings_CustomProxyListImpl
   _$$ProxySettings_CustomProxyListImplCopyWith<
     _$ProxySettings_CustomProxyListImpl
   >
-  get copyWith => __$$ProxySettings_CustomProxyListImplCopyWithImpl<
-    _$ProxySettings_CustomProxyListImpl
-  >(this, _$identity);
+  get copyWith =>
+      __$$ProxySettings_CustomProxyListImplCopyWithImpl<
+        _$ProxySettings_CustomProxyListImpl
+      >(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -551,7 +552,7 @@ class __$$RedirectSettings_LimitedRedirectsImplCopyWithImpl<$Res>
         null == field0
             ? _value.field0
             : field0 // ignore: cast_nullable_to_non_nullable
-                as int,
+                  as int,
       ),
     );
   }
@@ -590,9 +591,10 @@ class _$RedirectSettings_LimitedRedirectsImpl
   _$$RedirectSettings_LimitedRedirectsImplCopyWith<
     _$RedirectSettings_LimitedRedirectsImpl
   >
-  get copyWith => __$$RedirectSettings_LimitedRedirectsImplCopyWithImpl<
-    _$RedirectSettings_LimitedRedirectsImpl
-  >(this, _$identity);
+  get copyWith =>
+      __$$RedirectSettings_LimitedRedirectsImplCopyWithImpl<
+        _$RedirectSettings_LimitedRedirectsImpl
+      >(this, _$identity);
 
   @override
   @optionalTypeArgs

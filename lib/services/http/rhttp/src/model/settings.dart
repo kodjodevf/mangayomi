@@ -62,27 +62,22 @@ class ClientSettings {
     return ClientSettings(
       baseUrl: identical(baseUrl, _keepBaseUrl) ? this.baseUrl : baseUrl,
       timeout: identical(timeout, _keepDuration) ? this.timeout : timeout,
-      timeoutSettings:
-          identical(timeoutSettings, _keepTimeoutSettings)
-              ? this.timeoutSettings
-              : timeoutSettings,
+      timeoutSettings: identical(timeoutSettings, _keepTimeoutSettings)
+          ? this.timeoutSettings
+          : timeoutSettings,
       throwOnStatusCode: throwOnStatusCode ?? this.throwOnStatusCode,
-      proxySettings:
-          identical(proxySettings, _keepProxySettings)
-              ? this.proxySettings
-              : proxySettings,
-      redirectSettings:
-          identical(redirectSettings, _keepRedirectSettings)
-              ? this.redirectSettings
-              : redirectSettings,
-      tlsSettings:
-          identical(tlsSettings, _keepTlsSettings)
-              ? this.tlsSettings
-              : tlsSettings,
-      dnsSettings:
-          identical(dnsSettings, _keepDnsSettings)
-              ? this.dnsSettings
-              : dnsSettings,
+      proxySettings: identical(proxySettings, _keepProxySettings)
+          ? this.proxySettings
+          : proxySettings,
+      redirectSettings: identical(redirectSettings, _keepRedirectSettings)
+          ? this.redirectSettings
+          : redirectSettings,
+      tlsSettings: identical(tlsSettings, _keepTlsSettings)
+          ? this.tlsSettings
+          : tlsSettings,
+      dnsSettings: identical(dnsSettings, _keepDnsSettings)
+          ? this.dnsSettings
+          : dnsSettings,
     );
   }
 }
@@ -357,10 +352,9 @@ extension on TlsSettings {
   rust_client.TlsSettings _toRustType() {
     return rust_client.TlsSettings(
       trustRootCertificates: trustRootCertificates,
-      trustedRootCertificates:
-          trustedRootCertificates
-              .map((e) => Uint8List.fromList(e.codeUnits))
-              .toList(),
+      trustedRootCertificates: trustedRootCertificates
+          .map((e) => Uint8List.fromList(e.codeUnits))
+          .toList(),
       verifyCertificates: verifyCertificates,
       clientCertificate: clientCertificate?._toRustType(),
       minTlsVersion: minTlsVersion,

@@ -107,31 +107,26 @@ LocalArchive _extractArchive(String path) {
     final dir = Directory(path);
     final pages =
         dir.listSync().whereType<File>().where((f) => _isImageFile(f.path)).map(
-            (f) {
-              return LocalImage()
-                ..image = f.readAsBytesSync()
-                ..name = p.basename(f.path);
-            },
-          ).toList()
-          ..sort((a, b) => a.name!.compareTo(b.name!));
+          (f) {
+            return LocalImage()
+              ..image = f.readAsBytesSync()
+              ..name = p.basename(f.path);
+          },
+        ).toList()..sort((a, b) => a.name!.compareTo(b.name!));
 
-    final localArchive =
-        LocalArchive()
-          ..path = path
-          ..extensionType = LocalExtensionType.folder
-          ..name = p.basename(path)
-          ..images = pages
-          ..coverImage = pages.first.image;
+    final localArchive = LocalArchive()
+      ..path = path
+      ..extensionType = LocalExtensionType.folder
+      ..name = p.basename(path)
+      ..images = pages
+      ..coverImage = pages.first.image;
 
     return localArchive;
   }
-  final localArchive =
-      LocalArchive()
-        ..path = path
-        ..extensionType = setTypeExtension(
-          p.extension(path).replaceFirst(".", ""),
-        )
-        ..name = p.basenameWithoutExtension(path);
+  final localArchive = LocalArchive()
+    ..path = path
+    ..extensionType = setTypeExtension(p.extension(path).replaceFirst(".", ""))
+    ..name = p.basenameWithoutExtension(path);
   Archive? archive;
   final inputStream = InputFileStream(path);
   final extensionType = localArchive.extensionType;
@@ -204,15 +199,14 @@ LocalArchive _extractArchive(String path) {
   if (cover.isNotEmpty) {
     coverImage = cover.first.content;
   } else {
-    List<ArchiveFile> lArchive =
-        archive.files
-            .where(
-              (file) =>
-                  file.isFile &&
-                  _isImageFile(file.name) &&
-                  !file.name.contains("cover"),
-            )
-            .toList();
+    List<ArchiveFile> lArchive = archive.files
+        .where(
+          (file) =>
+              file.isFile &&
+              _isImageFile(file.name) &&
+              !file.name.contains("cover"),
+        )
+        .toList();
     lArchive.sort((a, b) => a.name.compareTo(b.name));
     coverImage = lArchive.first.content;
   }

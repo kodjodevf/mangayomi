@@ -74,48 +74,44 @@ class _ExtensionListTileWidgetState
 
   Widget _buildTrailingButton(BuildContext context, String label) {
     return TextButton(
-      onPressed:
-          _isLoading
-              ? null
-              : () {
-                if (!_updateAvailable && _sourceNotEmpty) {
-                  context.push('/extension_detail', extra: widget.source);
-                } else {
-                  _handleSourceFetch();
-                }
-              },
-      child:
-          _isLoading
-              ? const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(strokeWidth: 2.0),
-              )
-              : Text(label),
+      onPressed: _isLoading
+          ? null
+          : () {
+              if (!_updateAvailable && _sourceNotEmpty) {
+                context.push('/extension_detail', extra: widget.source);
+              } else {
+                _handleSourceFetch();
+              }
+            },
+      child: _isLoading
+          ? const SizedBox(
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(strokeWidth: 2.0),
+            )
+          : Text(label),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
-    final buttonLabel =
-        !_sourceNotEmpty
-            ? l10n.install
-            : _updateAvailable
-            ? l10n.update
-            : l10n.settings;
+    final buttonLabel = !_sourceNotEmpty
+        ? l10n.install
+        : _updateAvailable
+        ? l10n.update
+        : l10n.settings;
 
     return ListTile(
-      onTap:
-          _isLoading
-              ? null
-              : () {
-                if (_sourceNotEmpty) {
-                  context.push('/extension_detail', extra: widget.source);
-                } else {
-                  _handleSourceFetch();
-                }
-              },
+      onTap: _isLoading
+          ? null
+          : () {
+              if (_sourceNotEmpty) {
+                context.push('/extension_detail', extra: widget.source);
+              } else {
+                _handleSourceFetch();
+              }
+            },
       leading: Container(
         height: 37,
         width: 37,
@@ -123,21 +119,20 @@ class _ExtensionListTileWidgetState
           color: Theme.of(context).secondaryHeaderColor.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(5),
         ),
-        child:
-            widget.source.iconUrl!.isEmpty
-                ? const Icon(Icons.extension_rounded)
-                : cachedNetworkImage(
-                  imageUrl: widget.source.iconUrl!,
-                  fit: BoxFit.contain,
+        child: widget.source.iconUrl!.isEmpty
+            ? const Icon(Icons.extension_rounded)
+            : cachedNetworkImage(
+                imageUrl: widget.source.iconUrl!,
+                fit: BoxFit.contain,
+                width: 37,
+                height: 37,
+                errorWidget: const SizedBox(
                   width: 37,
                   height: 37,
-                  errorWidget: const SizedBox(
-                    width: 37,
-                    height: 37,
-                    child: Center(child: Icon(Icons.extension_rounded)),
-                  ),
-                  useCustomNetworkImage: false,
+                  child: Center(child: Icon(Icons.extension_rounded)),
                 ),
+                useCustomNetworkImage: false,
+              ),
       ),
       title: Text(widget.source.name!),
       subtitle: Row(

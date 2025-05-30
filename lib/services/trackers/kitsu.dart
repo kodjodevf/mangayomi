@@ -55,10 +55,9 @@ class Kitsu extends _$Kitsu {
           jsonDecode(await response.stream.bytesToString())
               as Map<String, dynamic>;
       final aKOAuth = OAuth.fromJson(res)
-        ..expiresIn =
-            DateTime.now()
-                .add(Duration(seconds: res['expires_in']))
-                .millisecondsSinceEpoch;
+        ..expiresIn = DateTime.now()
+            .add(Duration(seconds: res['expires_in']))
+            .millisecondsSinceEpoch;
       final currentUser = await _getCurrentUser(aKOAuth.accessToken!);
       ref
           .read(tracksProvider(syncId: syncId).notifier)
@@ -148,10 +147,9 @@ class Kitsu extends _$Kitsu {
     );
     final data = json.decode(response.body);
 
-    final entries =
-        List<Map<String, dynamic>>.from(
-          data['hits'],
-        ).where((element) => element["subtype"] != "novel").toList();
+    final entries = List<Map<String, dynamic>>.from(
+      data['hits'],
+    ).where((element) => element["subtype"] != "novel").toList();
     final totalChapter = isManga ? "chapterCount" : "episodeCount";
     return entries
         .map(
@@ -166,8 +164,9 @@ class Kitsu extends _$Kitsu {
             title: jsonRes['canonicalTitle'],
             startDate: "",
             publishingType: (jsonRes["subtype"] ?? ""),
-            publishingStatus:
-                jsonRes['endDate'] == null ? "Publishing" : "Finished",
+            publishingStatus: jsonRes['endDate'] == null
+                ? "Publishing"
+                : "Finished",
           ),
         )
         .toList();

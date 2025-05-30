@@ -43,10 +43,9 @@ class MTorrentServer {
 
   Future<String> getInfohash(String url, bool isFilePath) async {
     try {
-      final torrentByte =
-          isFilePath
-              ? File(url).readAsBytesSync()
-              : (await http.get(Uri.parse(url))).bodyBytes;
+      final torrentByte = isFilePath
+          ? File(url).readAsBytesSync()
+          : (await http.get(Uri.parse(url))).bodyBytes;
       var request = MultipartRequest(
         'POST',
         Uri.parse('$_baseUrl/torrent/add'),

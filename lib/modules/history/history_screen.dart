@@ -83,40 +83,42 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
-          title:
-              _isSearch
-                  ? null
-                  : Text(
-                    l10n.history,
-                    style: TextStyle(color: Theme.of(context).hintColor),
-                  ),
+          title: _isSearch
+              ? null
+              : Text(
+                  l10n.history,
+                  style: TextStyle(color: Theme.of(context).hintColor),
+                ),
           actions: [
             _isSearch
                 ? SeachFormTextField(
-                  onChanged: (value) {
-                    setState(() {});
-                  },
-                  onSuffixPressed: () {
-                    _textEditingController.clear();
-                    setState(() {});
-                  },
-                  onPressed: () {
-                    setState(() {
-                      _isSearch = false;
-                    });
-                    _textEditingController.clear();
-                  },
-                  controller: _textEditingController,
-                )
+                    onChanged: (value) {
+                      setState(() {});
+                    },
+                    onSuffixPressed: () {
+                      _textEditingController.clear();
+                      setState(() {});
+                    },
+                    onPressed: () {
+                      setState(() {
+                        _isSearch = false;
+                      });
+                      _textEditingController.clear();
+                    },
+                    controller: _textEditingController,
+                  )
                 : IconButton(
-                  splashRadius: 20,
-                  onPressed: () {
-                    setState(() {
-                      _isSearch = true;
-                    });
-                  },
-                  icon: Icon(Icons.search, color: Theme.of(context).hintColor),
-                ),
+                    splashRadius: 20,
+                    onPressed: () {
+                      setState(() {
+                        _isSearch = true;
+                      });
+                    },
+                    icon: Icon(
+                      Icons.search,
+                      color: Theme.of(context).hintColor,
+                    ),
+                  ),
             IconButton(
               splashRadius: 20,
               onPressed: () {
@@ -192,17 +194,15 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
   }
 
   void clearHistory(List<String> hideItems) {
-    List<History> histories =
-        isar.historys
-            .filter()
-            .idIsNotNull()
-            .chapter(
-              (q) => q.manga(
-                (q) => q.itemTypeEqualTo(getCurrentItemType(hideItems)),
-              ),
-            )
-            .findAllSync()
-            .toList();
+    List<History> histories = isar.historys
+        .filter()
+        .idIsNotNull()
+        .chapter(
+          (q) =>
+              q.manga((q) => q.itemTypeEqualTo(getCurrentItemType(hideItems))),
+        )
+        .findAllSync()
+        .toList();
     isar.writeTxnSync(() {
       for (var history in histories) {
         isar.historys.deleteSync(history.id!);
@@ -217,8 +217,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
     return _tabBarController.index == 0 && !hideItems.contains("/MangaLibrary")
         ? ItemType.manga
         : _tabBarController.index ==
-                1 - (hideItems.contains("/MangaLibrary") ? 1 : 0) &&
-            !hideItems.contains("/AnimeLibrary")
+                  1 - (hideItems.contains("/MangaLibrary") ? 1 : 0) &&
+              !hideItems.contains("/AnimeLibrary")
         ? ItemType.anime
         : ItemType.novel;
   }
@@ -251,30 +251,28 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
               slivers: [
                 CustomSliverGroupedListView<History, String>(
                   elements: entries,
-                  groupBy:
-                      (element) => dateFormat(
-                        element.date!,
-                        context: context,
-                        ref: ref,
-                        forHistoryValue: true,
-                        useRelativeTimesTamps: false,
-                      ),
-                  groupSeparatorBuilder:
-                      (String groupByValue) => Padding(
-                        padding: const EdgeInsets.only(bottom: 8, left: 12),
-                        child: Row(
-                          children: [
-                            Text(
-                              dateFormat(
-                                null,
-                                context: context,
-                                stringDate: groupByValue,
-                                ref: ref,
-                              ),
-                            ),
-                          ],
+                  groupBy: (element) => dateFormat(
+                    element.date!,
+                    context: context,
+                    ref: ref,
+                    forHistoryValue: true,
+                    useRelativeTimesTamps: false,
+                  ),
+                  groupSeparatorBuilder: (String groupByValue) => Padding(
+                    padding: const EdgeInsets.only(bottom: 8, left: 12),
+                    child: Row(
+                      children: [
+                        Text(
+                          dateFormat(
+                            null,
+                            context: context,
+                            stringDate: groupByValue,
+                            ref: ref,
+                          ),
                         ),
-                      ),
+                      ],
+                    ),
+                  ),
                   itemBuilder: (context, History element) {
                     final manga = element.chapter.value!.manga.value!;
                     final chapter = element.chapter.value!;
@@ -338,11 +336,9 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
                                                 manga.name!,
                                                 style: TextStyle(
                                                   fontSize: 14,
-                                                  color:
-                                                      Theme.of(context)
-                                                          .textTheme
-                                                          .bodyLarge!
-                                                          .color,
+                                                  color: Theme.of(
+                                                    context,
+                                                  ).textTheme.bodyLarge!.color,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                                 textAlign: TextAlign.start,
@@ -355,22 +351,20 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
                                                     chapter.name!,
                                                     style: TextStyle(
                                                       fontSize: 11,
-                                                      color:
-                                                          Theme.of(context)
-                                                              .textTheme
-                                                              .bodyLarge!
-                                                              .color,
+                                                      color: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyLarge!
+                                                          .color,
                                                     ),
                                                   ),
                                                   Text(
                                                     " - ${dateFormatHour(element.date!, context)}",
                                                     style: TextStyle(
                                                       fontSize: 11,
-                                                      color:
-                                                          Theme.of(context)
-                                                              .textTheme
-                                                              .bodyLarge!
-                                                              .color,
+                                                      color: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyLarge!
+                                                          .color,
                                                       fontWeight:
                                                           FontWeight.w400,
                                                     ),
@@ -383,19 +377,17 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
                                       ),
                                     ),
                                     IconButton(
-                                      onPressed:
-                                          () => openDeleteDialog(
-                                            l10n,
-                                            manga,
-                                            element.id,
-                                          ),
+                                      onPressed: () => openDeleteDialog(
+                                        l10n,
+                                        manga,
+                                        element.id,
+                                      ),
                                       icon: Icon(
                                         Icons.delete_outline,
                                         size: 25,
-                                        color:
-                                            Theme.of(
-                                              context,
-                                            ).textTheme.bodyLarge!.color,
+                                        color: Theme.of(
+                                          context,
+                                        ).textTheme.bodyLarge!.color,
                                       ),
                                     ),
                                   ],
@@ -407,8 +399,8 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
                       ),
                     );
                   },
-                  itemComparator:
-                      (item1, item2) => item1.date!.compareTo(item2.date!),
+                  itemComparator: (item1, item2) =>
+                      item1.date!.compareTo(item2.date!),
                   order: GroupedListOrder.DESC,
                 ),
               ],
@@ -430,16 +422,16 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
     return manga.customCoverImage != null
         ? Image.memory(manga.customCoverImage as Uint8List)
         : cachedCompressedNetworkImage(
-          headers: ref.watch(
-            headersProvider(source: manga.source!, lang: manga.lang!),
-          ),
-          imageUrl: toImgUrl(
-            manga.customCoverFromTracker ?? manga.imageUrl ?? "",
-          ),
-          width: 60,
-          height: 90,
-          fit: BoxFit.cover,
-        );
+            headers: ref.watch(
+              headersProvider(source: manga.source!, lang: manga.lang!),
+            ),
+            imageUrl: toImgUrl(
+              manga.customCoverFromTracker ?? manga.imageUrl ?? "",
+            ),
+            width: 60,
+            height: 90,
+            fit: BoxFit.cover,
+          );
   }
 
   void openDeleteDialog(AppLocalizations l10n, Manga manga, int? deleteId) {

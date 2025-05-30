@@ -44,28 +44,23 @@ class SourcePreference {
       id: json['id'] ?? Isar.autoIncrement,
       sourceId: json['sourceId'],
       key: json['key'],
-      checkBoxPreference:
-          json['checkBoxPreference'] != null
-              ? CheckBoxPreference.fromJson(json['checkBoxPreference'])
-              : null,
-      switchPreferenceCompat:
-          json['switchPreferenceCompat'] != null
-              ? SwitchPreferenceCompat.fromJson(json['switchPreferenceCompat'])
-              : null,
-      listPreference:
-          json['listPreference'] != null
-              ? ListPreference.fromJson(json['listPreference'])
-              : null,
-      multiSelectListPreference:
-          json['multiSelectListPreference'] != null
-              ? MultiSelectListPreference.fromJson(
-                json['multiSelectListPreference'],
-              )
-              : null,
-      editTextPreference:
-          json['editTextPreference'] != null
-              ? EditTextPreference.fromJson(json['editTextPreference'])
-              : null,
+      checkBoxPreference: json['checkBoxPreference'] != null
+          ? CheckBoxPreference.fromJson(json['checkBoxPreference'])
+          : null,
+      switchPreferenceCompat: json['switchPreferenceCompat'] != null
+          ? SwitchPreferenceCompat.fromJson(json['switchPreferenceCompat'])
+          : null,
+      listPreference: json['listPreference'] != null
+          ? ListPreference.fromJson(json['listPreference'])
+          : null,
+      multiSelectListPreference: json['multiSelectListPreference'] != null
+          ? MultiSelectListPreference.fromJson(
+              json['multiSelectListPreference'],
+            )
+          : null,
+      editTextPreference: json['editTextPreference'] != null
+          ? EditTextPreference.fromJson(json['editTextPreference'])
+          : null,
     );
   }
 }

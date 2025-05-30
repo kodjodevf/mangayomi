@@ -14,21 +14,21 @@ Stream<List<Manga>> getAllMangaStream(
 }) async* {
   yield* categoryId == null
       ? isar.mangas
-          .filter()
-          .idIsNotNull()
-          .favoriteEqualTo(true)
-          .and()
-          .itemTypeEqualTo(itemType)
-          .watch(fireImmediately: true)
+            .filter()
+            .idIsNotNull()
+            .favoriteEqualTo(true)
+            .and()
+            .itemTypeEqualTo(itemType)
+            .watch(fireImmediately: true)
       : isar.mangas
-          .filter()
-          .idIsNotNull()
-          .favoriteEqualTo(true)
-          .categoriesIsNotEmpty()
-          .categoriesElementEqualTo(categoryId)
-          .and()
-          .itemTypeEqualTo(itemType)
-          .watch(fireImmediately: true);
+            .filter()
+            .idIsNotNull()
+            .favoriteEqualTo(true)
+            .categoriesIsNotEmpty()
+            .categoriesElementEqualTo(categoryId)
+            .and()
+            .itemTypeEqualTo(itemType)
+            .watch(fireImmediately: true);
 }
 
 @riverpod

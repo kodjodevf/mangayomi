@@ -44,10 +44,9 @@ Future<GetChapterPagesModel> getChapterPages(
   final settings = isar.settings.getSync(227);
   List<ChapterPageurls>? chapterPageUrlsList =
       settings!.chapterPageUrlsList ?? [];
-  final isarPageUrls =
-      chapterPageUrlsList
-          .where((element) => element.chapterId == chapter.id)
-          .firstOrNull;
+  final isarPageUrls = chapterPageUrlsList
+      .where((element) => element.chapterId == chapter.id)
+      .firstOrNull;
   final incognitoMode = ref.watch(incognitoModeStateProvider);
   final storageProvider = StorageProvider();
   final mangaDirectory = await storageProvider.getMangaMainDirectory(chapter);
@@ -59,8 +58,10 @@ Future<GetChapterPagesModel> getChapterPages(
   List<Uint8List?> archiveImages = [];
   final isLocalArchive = (chapter.archivePath ?? '').isNotEmpty;
   if (!chapter.manga.value!.isLocalArchive!) {
-    final source =
-        getSource(chapter.manga.value!.lang!, chapter.manga.value!.source!)!;
+    final source = getSource(
+      chapter.manga.value!.lang!,
+      chapter.manga.value!.source!,
+    )!;
     if ((isarPageUrls?.urls?.isNotEmpty ?? false) &&
         (isarPageUrls?.chapterUrl ?? chapter.url) == chapter.url) {
       for (var i = 0; i < isarPageUrls!.urls!.length; i++) {
@@ -79,10 +80,9 @@ Future<GetChapterPagesModel> getChapterPages(
   if (pageUrls.isNotEmpty || isLocalArchive) {
     if (await File("${mangaDirectory!.path}${chapter.name}.cbz").exists() ||
         isLocalArchive) {
-      final path =
-          isLocalArchive
-              ? chapter.archivePath
-              : "${mangaDirectory.path}${chapter.name}.cbz";
+      final path = isLocalArchive
+          ? chapter.archivePath
+          : "${mangaDirectory.path}${chapter.name}.cbz";
       final local = await ref.watch(
         getArchiveDataFromFileProvider(path!).future,
       );
@@ -115,19 +115,17 @@ Future<GetChapterPagesModel> getChapterPages(
           chapterPageUrls.add(chapterPageUrl);
         }
       }
-      final chapterPageHeaders =
-          pageUrls
-              .map((e) => e.headers == null ? null : jsonEncode(e.headers))
-              .toList();
+      final chapterPageHeaders = pageUrls
+          .map((e) => e.headers == null ? null : jsonEncode(e.headers))
+          .toList();
       chapterPageUrls.add(
         ChapterPageurls()
           ..chapterId = chapter.id
           ..urls = pageUrls.map((e) => e.url).toList()
           ..chapterUrl = chapter.url
-          ..headers =
-              chapterPageHeaders.first != null
-                  ? chapterPageHeaders.map((e) => e.toString()).toList()
-                  : null,
+          ..headers = chapterPageHeaders.first != null
+              ? chapterPageHeaders.map((e) => e.toString()).toList()
+              : null,
       );
       isar.writeTxnSync(
         () => isar.settings.putSync(

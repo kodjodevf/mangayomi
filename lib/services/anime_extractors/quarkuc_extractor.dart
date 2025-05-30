@@ -658,8 +658,9 @@ class Item {
   }
 
   String getDisplayName(String typeName) {
-    String drivePrefix =
-        cloudDriveType == CloudDriveType.quark ? '[quark]' : '[uc]';
+    String drivePrefix = cloudDriveType == CloudDriveType.quark
+        ? '[quark]'
+        : '[uc]';
     String displayName = getName();
     if (typeName == "电视剧") {
       List<String> replaceNameList = ["4k", "4K"];
@@ -671,10 +672,9 @@ class Item {
       displayName =
           RegExp(r'\.S01E(.*?)\.').firstMatch(displayName)?.group(1) ??
           displayName;
-      final numbers =
-          RegExp(
-            r'\d+',
-          ).allMatches(displayName).map((m) => m.group(0)).toList();
+      final numbers = RegExp(
+        r'\d+',
+      ).allMatches(displayName).map((m) => m.group(0)).toList();
       if (numbers.isNotEmpty) {
         displayName = numbers[0]!;
       }

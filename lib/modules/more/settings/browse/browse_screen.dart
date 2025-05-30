@@ -122,8 +122,8 @@ class BrowseSScreen extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        onPressed:
-                            () => _showClearAllSourcesDialog(context, l10n),
+                        onPressed: () =>
+                            _showClearAllSourcesDialog(context, l10n),
                         child: Text(
                           l10n.clear_all_sources,
                           style: TextStyle(
@@ -222,26 +222,25 @@ void _showClearAllSourcesDialog(BuildContext context, dynamic l10n) {
               ),
               const SizedBox(width: 15),
               Consumer(
-                builder:
-                    (context, ref, child) => TextButton(
-                      onPressed: () {
-                        isar.writeTxnSync(() {
-                          isar.sources.clearSync();
-                          ref
-                              .read(synchingProvider(syncId: 1).notifier)
-                              .addChangedPart(
-                                ActionType.clearHistory,
-                                null,
-                                "{}",
-                                false,
-                              );
-                        });
+                builder: (context, ref, child) => TextButton(
+                  onPressed: () {
+                    isar.writeTxnSync(() {
+                      isar.sources.clearSync();
+                      ref
+                          .read(synchingProvider(syncId: 1).notifier)
+                          .addChangedPart(
+                            ActionType.clearHistory,
+                            null,
+                            "{}",
+                            false,
+                          );
+                    });
 
-                        Navigator.pop(ctx);
-                        botToast(l10n.sources_cleared);
-                      },
-                      child: Text(l10n.ok),
-                    ),
+                    Navigator.pop(ctx);
+                    botToast(l10n.sources_cleared);
+                  },
+                  child: Text(l10n.ok),
+                ),
               ),
             ],
           ),
@@ -270,50 +269,47 @@ void _showCleanNonLibraryDialog(BuildContext context, dynamic l10n) {
               ),
               const SizedBox(width: 15),
               Consumer(
-                builder:
-                    (context, ref, child) => TextButton(
-                      onPressed: () {
-                        final mangasList =
-                            isar.mangas
-                                .filter()
-                                .favoriteEqualTo(false)
-                                .findAllSync();
-                        isar.writeTxnSync(() {
-                          for (var manga in mangasList) {
-                            final histories =
-                                isar.historys
-                                    .filter()
-                                    .mangaIdEqualTo(manga.id)
-                                    .findAllSync();
-                            for (var history in histories) {
-                              isar.historys.deleteSync(history.id!);
-                            }
+                builder: (context, ref, child) => TextButton(
+                  onPressed: () {
+                    final mangasList = isar.mangas
+                        .filter()
+                        .favoriteEqualTo(false)
+                        .findAllSync();
+                    isar.writeTxnSync(() {
+                      for (var manga in mangasList) {
+                        final histories = isar.historys
+                            .filter()
+                            .mangaIdEqualTo(manga.id)
+                            .findAllSync();
+                        for (var history in histories) {
+                          isar.historys.deleteSync(history.id!);
+                        }
 
-                            for (var chapter in manga.chapters) {
-                              isar.updates
-                                  .filter()
-                                  .mangaIdEqualTo(chapter.mangaId)
-                                  .chapterNameEqualTo(chapter.name)
-                                  .deleteAllSync();
-                              isar.chapters.deleteSync(chapter.id!);
-                            }
-                            isar.mangas.deleteSync(manga.id!);
-                            ref
-                                .read(synchingProvider(syncId: 1).notifier)
-                                .addChangedPart(
-                                  ActionType.removeItem,
-                                  manga.id,
-                                  "{}",
-                                  false,
-                                );
-                          }
-                        });
+                        for (var chapter in manga.chapters) {
+                          isar.updates
+                              .filter()
+                              .mangaIdEqualTo(chapter.mangaId)
+                              .chapterNameEqualTo(chapter.name)
+                              .deleteAllSync();
+                          isar.chapters.deleteSync(chapter.id!);
+                        }
+                        isar.mangas.deleteSync(manga.id!);
+                        ref
+                            .read(synchingProvider(syncId: 1).notifier)
+                            .addChangedPart(
+                              ActionType.removeItem,
+                              manga.id,
+                              "{}",
+                              false,
+                            );
+                      }
+                    });
 
-                        Navigator.pop(ctx);
-                        botToast(l10n.cleaned_database(mangasList.length));
-                      },
-                      child: Text(l10n.ok),
-                    ),
+                    Navigator.pop(ctx);
+                    botToast(l10n.cleaned_database(mangasList.length));
+                  },
+                  child: Text(l10n.ok),
+                ),
               ),
             ],
           ),
