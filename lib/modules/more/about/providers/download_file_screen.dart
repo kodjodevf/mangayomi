@@ -67,7 +67,9 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
           children: [
             TextButton(
               onPressed: () async {
-                await _subscription?.cancel();
+                try {
+                  await _subscription?.cancel();
+                } catch (_) {}
                 if (context.mounted) {
                   Navigator.pop(context);
                 }
