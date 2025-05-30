@@ -1512,4 +1512,24 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get unsupported_repo =>
       'Vous avez essayé d\'ajouter un dépôt qui n\'est pas pris en charge. Veuillez consulter le serveur discord pour obtenir de l\'aide!';
+
+  @override
+  String get end_of_chapter => 'Fin du chapitre';
+
+  @override
+  String get chapter_completed => 'Chapitre terminé';
+
+  @override
+  String get continue_to_next_chapter =>
+      'Continuez à faire défiler pour lire le chapitre suivant';
+
+  @override
+  String get no_next_chapter => 'Pas de prochain chapitre';
+
+  @override
+  String get you_have_finished_reading => 'Vous avez terminé la lecture';
+
+  @override
+  String get return_to_the_list_of_chapters =>
+      'Retournez à la liste des chapitres';
 }

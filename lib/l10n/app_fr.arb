@@ -464,5 +464,11 @@
   "genre_search_source": "Explorer dans la source",
   "source_not_added": "La source n'est pas installée !",
   "load_own_subtitles": "Charger vos propres sous-titres...",
-  "unsupported_repo": "Vous avez essayé d'ajouter un dépôt qui n'est pas pris en charge. Veuillez consulter le serveur discord pour obtenir de l'aide!"
+  "unsupported_repo": "Vous avez essayé d'ajouter un dépôt qui n'est pas pris en charge. Veuillez consulter le serveur discord pour obtenir de l'aide!",
+  "end_of_chapter": "Fin du chapitre",
+  "chapter_completed": "Chapitre terminé",
+  "continue_to_next_chapter": "Continuez à faire défiler pour lire le chapitre suivant",
+  "no_next_chapter": "Pas de prochain chapitre",
+  "you_have_finished_reading": "Vous avez terminé la lecture",
+  "return_to_the_list_of_chapters": "Retournez à la liste des chapitres"
 }

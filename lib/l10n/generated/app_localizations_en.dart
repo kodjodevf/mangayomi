@@ -1492,4 +1492,23 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get unsupported_repo =>
       'You\'ve tried to add an unsupported repository. Please check the discord server for support!';
+
+  @override
+  String get end_of_chapter => 'End of chapter';
+
+  @override
+  String get chapter_completed => 'Chapter completed';
+
+  @override
+  String get continue_to_next_chapter =>
+      'Continue scrolling to read the next chapter';
+
+  @override
+  String get no_next_chapter => 'No next chapter';
+
+  @override
+  String get you_have_finished_reading => 'You have finished reading';
+
+  @override
+  String get return_to_the_list_of_chapters => 'Return to the list of chapters';
 }

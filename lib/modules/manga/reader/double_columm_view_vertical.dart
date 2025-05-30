@@ -4,6 +4,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_paged.dart';
 import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/transition_view_vertical.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -24,10 +25,18 @@ class DoubleColummVerticalView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
+
+    if (datas[0]?.isTransitionPage ?? false) {
+      return TransitionViewVertical(data: datas[0]!);
+    }
+    if (datas.length > 1 && (datas[1]?.isTransitionPage ?? false)) {
+      return TransitionViewVertical(data: datas[1]!);
+    }
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (datas[0] != null && datas[0]!.index == 0)
+        if (datas[0]?.index == 0)
           SizedBox(height: MediaQuery.of(context).padding.top),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,

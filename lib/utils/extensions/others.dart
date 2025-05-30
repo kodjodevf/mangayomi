@@ -71,6 +71,12 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
     bool showCloudFlareError,
   ) {
     final data = this;
+
+    if (data.isTransitionPage) {
+      return const AssetImage('assets/transparent.png')
+          as ImageProvider<Object>;
+    }
+
     final isLocale = data.isLocale!;
     final archiveImage = data.archiveImage;
     final cropBorders = ref.watch(cropBordersStateProvider);

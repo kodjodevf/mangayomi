@@ -426,9 +426,11 @@ packages:
   epubx:
     dependency: "direct main"
     description:
-      path: epubx
-      relative: true
-    source: path
+      path: "."
+      ref: dev
+      resolved-ref: c8203a489fae5683001556b1d323e35f356294fb
+      url: "https://github.com/kodjodevf/epubx.dart.git"
+    source: git
     version: "4.0.3"
   expandable_text:
     dependency: "direct main"
@@ -2210,5 +2212,5 @@ packages:
     source: hosted
     version: "2.2.2"
 sdks:
-  dart: ">=3.7.2 <4.0.0"
+  dart: ">=3.8.0 <4.0.0"
   flutter: ">=3.29.0"
