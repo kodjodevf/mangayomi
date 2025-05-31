@@ -545,7 +545,7 @@ Widget _textEditing(
   return Padding(
     padding: const EdgeInsets.all(4),
     child: TextFormField(
-      keyboardType: TextInputType.number,
+      keyboardType: TextInputType.text,
       onChanged: onChanged,
       decoration: InputDecoration(
         hintText: hintText,
