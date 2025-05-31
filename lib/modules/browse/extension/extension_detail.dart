@@ -28,9 +28,15 @@ class ExtensionDetail extends ConsumerStatefulWidget {
 
 class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
   late Source source = isar.sources.getSync(widget.source.id!)!;
-  late List<SourcePreference> sourcePreference = getSourcePreference(
-    source: source,
-  ).map((e) => getSourcePreferenceEntry(e.key!, source.id!)).toList();
+  late List<SourcePreference>? sourcePreference = () {
+    try {
+      return getSourcePreference(
+        source: source,
+      ).map((e) => getSourcePreferenceEntry(e.key!, source.id!)).toList();
+    } catch (e) {
+      return null;
+    }
+  }();
   Future<void> _launchInBrowser(Uri url) async {
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       throw 'Could not launch $url';
@@ -340,10 +346,11 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                 ),
               ),
             ),
-            SourcePreferenceWidget(
-              sourcePreference: sourcePreference,
-              source: source,
-            ),
+            if (sourcePreference != null)
+              SourcePreferenceWidget(
+                sourcePreference: sourcePreference!,
+                source: source,
+              ),
           ],
         ),
       ),
