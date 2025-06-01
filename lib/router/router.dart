@@ -68,21 +68,32 @@ GoRouter router(Ref ref) {
 
 @riverpod
 class RouterCurrentLocationState extends _$RouterCurrentLocationState {
+  bool _didSubscribe = false;
   @override
   String? build(BuildContext context) {
-    _listener();
+    // Delay listener‐registration until after the first frame.
+    if (!_didSubscribe) {
+      _didSubscribe = true;
+      // Schedule the registration to run after the first build/frame:
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _listener();
+      });
+    }
     return null;
   }
 
-  _listener() {
-    final router = GoRouter.of(context);
+  void _listener() {
+    final router = ref.read(routerProvider);
     router.routerDelegate.addListener(() {
-      final RouteMatch lastMatch =
-          router.routerDelegate.currentConfiguration.last;
-      final RouteMatchList matchList = lastMatch is ImperativeRouteMatch
-          ? lastMatch.matches
-          : router.routerDelegate.currentConfiguration;
-      state = matchList.uri.toString();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final RouteMatchList matches =
+            router.routerDelegate.currentConfiguration;
+        final RouteMatch lastMatch = matches.last;
+        final RouteMatchList matchList = lastMatch is ImperativeRouteMatch
+            ? lastMatch.matches
+            : matches;
+        state = matchList.uri.toString();
+      });
     });
   }
 }

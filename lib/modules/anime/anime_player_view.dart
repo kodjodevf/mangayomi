@@ -266,12 +266,18 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         _currentTotalDuration.value = duration;
       });
 
+  bool get hasNextEpisode => _streamController.getEpisodeIndex().$1 != 0;
+
   late final StreamSubscription<bool> _completed = _player.stream.completed
       .listen((val) {
-        if (_streamController.getEpisodeIndex().$1 != 0 && val == true) {
+        if (hasNextEpisode && val) {
           if (mounted) {
             pushToNewEpisode(context, _streamController.getNextEpisode());
           }
+        }
+        // If the last episode of an Anime has ended, exit fullscreen mode
+        if (!hasNextEpisode && val && _isDesktop && !_enterFullScreen.value) {
+          setFullScreen(value: false);
         }
       });
 
@@ -839,7 +845,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         _streamController.getEpisodesLength(
           _streamController.getEpisodeIndex().$2,
         );
-    bool hasNextEpisode = _streamController.getEpisodeIndex().$1 != 0;
     final skipDuration = ref.watch(defaultDoubleTapToSkipLengthStateProvider);
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,

@@ -77,7 +77,10 @@ class AboutScreen extends ConsumerWidget {
                                 ),
                               );
                             },
-                            icon: const Icon(FontAwesomeIcons.github),
+                            icon: const Padding(
+                              padding: EdgeInsets.only(left: 2.5, right: 2.5),
+                              child: Icon(FontAwesomeIcons.github),
+                            ),
                           ),
                           IconButton(
                             onPressed: () {
@@ -87,7 +90,10 @@ class AboutScreen extends ConsumerWidget {
                                 ),
                               );
                             },
-                            icon: const Icon(FontAwesomeIcons.discord),
+                            icon: const Padding(
+                              padding: EdgeInsets.only(right: 5),
+                              child: Icon(FontAwesomeIcons.discord),
+                            ),
                           ),
                         ],
                       ),

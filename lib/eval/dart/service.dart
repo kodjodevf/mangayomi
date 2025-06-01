@@ -176,8 +176,8 @@ class DartExtensionService implements ExtensionService {
 
   @override
   List<SourcePreference> getSourcePreferences() {
-    final interpreter = _executeLib();
     try {
+      final interpreter = _executeLib();
       final result = interpreter.invoke('getSourcePreferences', []);
       return (result as List).cast();
     } catch (_) {
