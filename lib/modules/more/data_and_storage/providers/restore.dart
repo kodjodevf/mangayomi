@@ -252,6 +252,7 @@ void restoreBackup(Ref ref, Map<String, dynamic> backup, {bool full = true}) {
           ref
               .read(synchingProvider(syncId: 1).notifier)
               .clearAllChangedParts(false);
+          ref.invalidate(followSystemThemeStateProvider);
           ref.invalidate(themeModeStateProvider);
           ref.invalidate(blendLevelStateProvider);
           ref.invalidate(flexSchemeColorStateProvider);
