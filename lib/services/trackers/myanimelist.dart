@@ -149,6 +149,21 @@ class MyAnimeList extends _$MyAnimeList {
     );
   }
 
+  Future<List<TrackSearch>> getGlobalData() async {
+    final accessToken = await _getAccessToken();
+    final url = Uri.parse(
+      '$baseApiUrl/anime/ranking?ranking_type=airing&limit=15',
+    );
+    final result = await _makeGetRequest(url, accessToken);
+    final res = jsonDecode(result.body) as Map<String, dynamic>;
+
+    List<int> mangaIds = res['data'] == null
+        ? []
+        : (res['data'] as List).map((e) => e['node']["id"] as int).toList();
+
+    return [];
+  }
+
   String _convertToIsoDate(int? epochTime) {
     String date = "";
     try {
