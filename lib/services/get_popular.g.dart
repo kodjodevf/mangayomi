@@ -39,15 +39,24 @@ class GetPopularFamily extends Family<AsyncValue<MPages?>> {
   const GetPopularFamily();
 
   /// See also [getPopular].
-  GetPopularProvider call({required Source source, required int page}) {
-    return GetPopularProvider(source: source, page: page);
+  GetPopularProvider call({
+    required Source source,
+    required int page,
+  }) {
+    return GetPopularProvider(
+      source: source,
+      page: page,
+    );
   }
 
   @override
   GetPopularProvider getProviderOverride(
     covariant GetPopularProvider provider,
   ) {
-    return call(source: provider.source, page: provider.page);
+    return call(
+      source: provider.source,
+      page: provider.page,
+    );
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -68,19 +77,27 @@ class GetPopularFamily extends Family<AsyncValue<MPages?>> {
 /// See also [getPopular].
 class GetPopularProvider extends AutoDisposeFutureProvider<MPages?> {
   /// See also [getPopular].
-  GetPopularProvider({required Source source, required int page})
-    : this._internal(
-        (ref) => getPopular(ref as GetPopularRef, source: source, page: page),
-        from: getPopularProvider,
-        name: r'getPopularProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$getPopularHash,
-        dependencies: GetPopularFamily._dependencies,
-        allTransitiveDependencies: GetPopularFamily._allTransitiveDependencies,
-        source: source,
-        page: page,
-      );
+  GetPopularProvider({
+    required Source source,
+    required int page,
+  }) : this._internal(
+          (ref) => getPopular(
+            ref as GetPopularRef,
+            source: source,
+            page: page,
+          ),
+          from: getPopularProvider,
+          name: r'getPopularProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$getPopularHash,
+          dependencies: GetPopularFamily._dependencies,
+          allTransitiveDependencies:
+              GetPopularFamily._allTransitiveDependencies,
+          source: source,
+          page: page,
+        );
 
   GetPopularProvider._internal(
     super._createNotifier, {
@@ -148,8 +165,7 @@ mixin GetPopularRef on AutoDisposeFutureProviderRef<MPages?> {
 }
 
 class _GetPopularProviderElement
-    extends AutoDisposeFutureProviderElement<MPages?>
-    with GetPopularRef {
+    extends AutoDisposeFutureProviderElement<MPages?> with GetPopularRef {
   _GetPopularProviderElement(super.provider);
 
   @override
@@ -157,6 +173,5 @@ class _GetPopularProviderElement
   @override
   int get page => (origin as GetPopularProvider).page;
 }
-
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
