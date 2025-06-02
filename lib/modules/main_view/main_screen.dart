@@ -481,6 +481,7 @@ class _TabletLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final destinations = buildNavigationWidgetsDesktop(ref, dest, context);
     return Row(
       children: [
         AnimatedContainer(
@@ -497,12 +498,11 @@ class _TabletLayout extends StatelessWidget {
                 child: NavigationRail(
                   labelType: NavigationRailLabelType.all,
                   useIndicator: true,
-                  destinations: buildNavigationWidgetsDesktop(
-                    ref,
-                    dest,
-                    context,
-                  ),
-                  selectedIndex: currentIndex,
+                  destinations: destinations,
+                  selectedIndex:
+                      (currentIndex >= 0 && currentIndex < destinations.length)
+                      ? currentIndex
+                      : 0,
                   onDestinationSelected: (newIndex) {
                     route.go(dest[newIndex]);
                   },
