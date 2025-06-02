@@ -956,6 +956,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Will automatically update the extension when a new version is available.';
 
   @override
+  String get check_for_app_updates => 'Check for app updates on startup';
+
+  @override
   String get reading_mode => 'Reading mode';
 
   @override

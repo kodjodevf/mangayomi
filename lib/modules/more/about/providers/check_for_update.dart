@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/about/providers/download_file_screen.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
@@ -20,7 +22,10 @@ Future<void> checkForUpdate(
   bool? manualUpdate,
 }) async {
   manualUpdate = manualUpdate ?? false;
+  final checkForUpdates = ref.watch(checkForAppUpdatesProvider);
+  if (!checkForUpdates && !manualUpdate) return;
   final l10n = l10nLocalizations(context!)!;
+
   if (manualUpdate) {
     BotToast.showText(text: l10n.searching_for_updates);
   }
@@ -47,6 +52,11 @@ Future<void> checkForUpdate(
       BotToast.showText(text: l10n.no_new_updates_available);
     }
   }
+}
+
+@riverpod
+bool checkForAppUpdates(Ref ref) {
+  return isar.settings.getSync(227)?.checkForAppUpdates ?? true;
 }
 
 Future<(String, String, String, List<dynamic>)> _checkUpdate() async {

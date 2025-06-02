@@ -969,6 +969,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Mettra automatiquement à jour l\'extension lorsqu\'une nouvelle version est disponible.';
 
   @override
+  String get check_for_app_updates =>
+      'Vérifier les mises à jour de l\'application au démarrage';
+
+  @override
   String get reading_mode => 'Mode de lecture';
 
   @override

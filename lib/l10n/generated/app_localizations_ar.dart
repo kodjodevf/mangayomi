@@ -954,6 +954,9 @@ class AppLocalizationsAr extends AppLocalizations {
       'سيتم تحديث الامتداد تلقائياً عند توفر إصدار جديد.';
 
   @override
+  String get check_for_app_updates => 'تحقق من تحديثات التطبيق عند بدء التشغيل';
+
+  @override
   String get reading_mode => 'وضع القراءة';
 
   @override

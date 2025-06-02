@@ -958,6 +958,10 @@ class AppLocalizationsTr extends AppLocalizations {
       'Yeni bir sürümü mevcut olduğunda uzantıyı otomatik olarak günceller.';
 
   @override
+  String get check_for_app_updates =>
+      'Uygulama başlatıldığında güncellemeleri kontrol et';
+
+  @override
   String get reading_mode => 'Okuma Modu';
 
   @override

@@ -962,6 +962,10 @@ class AppLocalizationsRu extends AppLocalizations {
       'Автоматически обновлять расширение при появлении новой версии.';
 
   @override
+  String get check_for_app_updates =>
+      'Проверять обновления приложения при запуске';
+
+  @override
   String get reading_mode => 'Режим чтения';
 
   @override

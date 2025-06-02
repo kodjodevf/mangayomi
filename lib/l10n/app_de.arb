@@ -296,6 +296,7 @@
     "check_for_extension_updates": "Nach Erweiterungsupdates suchen",
     "auto_extensions_updates": "Erweiterungen automatisch aktualisieren",
     "auto_extensions_updates_subtitle": "Aktualisiert die Erweiterung automatisch, wenn eine neue Version verfügbar ist.",
+    "check_for_app_updates": "Beim Start nach App-Updates suchen",
     "reading_mode": "Lesemodus",
     "custom_filter": "Benutzerdefinierter Filter",
     "background_color": "Hintergrundfarbe",

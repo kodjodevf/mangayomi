@@ -942,6 +942,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get auto_extensions_updates_subtitle => '当有新版本可用时，将自动更新扩展。';
 
   @override
+  String get check_for_app_updates => '启动时检查应用更新';
+
+  @override
   String get reading_mode => '阅读模式';
 
   @override

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/about/providers/check_for_update.dart';
 import 'package:mangayomi/modules/more/about/providers/get_package_info.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
@@ -13,6 +15,7 @@ class AboutScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = l10nLocalizations(context);
+    final checkForUpdates = ref.watch(checkForAppUpdatesProvider);
     return Scaffold(
       appBar: AppBar(title: Text(l10n!.about)),
       body: ref
@@ -42,6 +45,19 @@ class AboutScreen extends ConsumerWidget {
                           'Beta (${data.version})',
                           style: const TextStyle(fontSize: 12),
                         ),
+                      ),
+                      SwitchListTile(
+                        title: Text(l10n.check_for_app_updates),
+                        value: checkForUpdates,
+                        onChanged: (value) {
+                          isar.writeTxnSync(() {
+                            final settings = isar.settings.getSync(227);
+                            isar.settings.putSync(
+                              settings!..checkForAppUpdates = value,
+                            );
+                          });
+                          ref.invalidate(checkForAppUpdatesProvider);
+                        },
                       ),
                       ListTile(
                         onTap: () {

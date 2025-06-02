@@ -221,6 +221,7 @@
     "check_for_extension_updates": "البحث عن تحديثات الامتداد",
     "auto_extensions_updates": "تحديثات الامتداد التلقائية",
     "auto_extensions_updates_subtitle": "سيتم تحديث الامتداد تلقائياً عند توفر إصدار جديد.",
+    "check_for_app_updates": "تحقق من تحديثات التطبيق عند بدء التشغيل",
     "reading_mode": "وضع القراءة",
     "custom_filter": "فلتر مخصص",
     "background_color": "لون الخلفية",

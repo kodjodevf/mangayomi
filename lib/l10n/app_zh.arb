@@ -224,6 +224,7 @@
     "check_for_extension_updates": "检查扩展更新",
     "auto_extensions_updates": "自动扩展更新",
     "auto_extensions_updates_subtitle": "当有新版本可用时，将自动更新扩展。",
+    "check_for_app_updates": "启动时检查应用更新",
     "reading_mode": "阅读模式",
     "custom_filter": "自定义筛选",
     "background_color": "背景颜色",
