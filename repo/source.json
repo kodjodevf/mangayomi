@@ -14,15 +14,15 @@
       "bundleIdentifier": "com.kodjodevf.mangayomi",
       "developerName": "Moustapha Kodjo Amadou",
       "subtitle": "Read manga, novels, and watch anime",
-      "version": "0.6.1",
-      "versionDate": "2025-05-30T16:44:51Z",
+      "version": "0.6.2",
+      "versionDate": "2025-06-02T11:47:44Z",
       "versionDescription": "",
-      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.1/Mangayomi-v0.6.1-ios.ipa",
+      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.2/Mangayomi-v0.6.2-ios.ipa",
       "localizedDescription": "Mangayomi is an open-source Flutter app for reading manga, novels, and watching anime across multiple platforms.",
       "iconURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/icons/icon_default.webp",
       "tintColor": "EF4444",
       "category": "entertainment",
-      "size": 58146501,
+      "size": 58152938,
       "screenshotURLs": [
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_0_default.webp",
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_1_default.webp",
@@ -30,9 +30,16 @@
       ],
       "versions": [
         {
+          "version": "0.6.2",
+          "date": "2025-06-02T11:47:44Z",
+          "localizedDescription": "",
+          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.2/Mangayomi-v0.6.2-ios.ipa",
+          "size": 58152938
+        },
+        {
           "version": "0.6.1",
           "date": "2025-05-30T16:44:51Z",
-          "localizedDescription": "",
+          "localizedDescription": "What's Changed\r\n* image path fix by @tanakrit\u2022d in https://github.com/kodjodevf/mangayomi/pull/431\r\n* Apply Correct System Theme After Restart + Localized messages are generated into source by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/432\r\n* Clean up code + Add keyboard shortcut + Fix CBZ Archive by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/436\r\n* Fix 444 + Kitsu detail change + episode/chapter name marquee effect by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/445\r\n* Refactor code, fix AniList/MAL bugs, add local scan (148, 349) by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/446\r\n* added support for epubs by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/449\r\n* migrate to d4rt package by @kodjodevf in https://github.com/kodjodevf/mangayomi/pull/450\r\n* refactor: update AndroidManifest and MainActivity for APK installatio\u2026 by @kodjodevf in https://github.com/kodjodevf/mangayomi/pull/451\r\n* added JSON structure check for repos by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/455\r\n* Improve Video Playback UI & Maintainability by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/457\r\n* Update storage_provider.dart by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/462\r\n* Fix Kitsu by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/463\r\n* Refactor reader view by @kodjodevf in https://github.com/kodjodevf/mangayomi/pull/465\r\n\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.6.0...v0.6.1",
           "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.1/Mangayomi-v0.6.1-ios.ipa",
           "size": 58146501
         },
@@ -117,6 +124,17 @@
       "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
       "notify": true,
       "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.6.1"
+    },
+    {
+      "appID": "com.kodjodevf.mangayomi",
+      "title": "0.6.2 - 02 Jun",
+      "identifier": "release-0.6.2",
+      "caption": "Update for Mangayomi now available!",
+      "date": "2025-06-02T11:47:44Z",
+      "tintColor": "EF4444",
+      "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
+      "notify": true,
+      "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.6.2"
     }
   ]
 }
