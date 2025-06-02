@@ -40,15 +40,21 @@ class GetVideoListFamily
   const GetVideoListFamily();
 
   /// See also [getVideoList].
-  GetVideoListProvider call({required Chapter episode}) {
-    return GetVideoListProvider(episode: episode);
+  GetVideoListProvider call({
+    required Chapter episode,
+  }) {
+    return GetVideoListProvider(
+      episode: episode,
+    );
   }
 
   @override
   GetVideoListProvider getProviderOverride(
     covariant GetVideoListProvider provider,
   ) {
-    return call(episode: provider.episode);
+    return call(
+      episode: provider.episode,
+    );
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -70,19 +76,24 @@ class GetVideoListFamily
 class GetVideoListProvider
     extends AutoDisposeFutureProvider<(List<Video>, bool, List<String>)> {
   /// See also [getVideoList].
-  GetVideoListProvider({required Chapter episode})
-    : this._internal(
-        (ref) => getVideoList(ref as GetVideoListRef, episode: episode),
-        from: getVideoListProvider,
-        name: r'getVideoListProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$getVideoListHash,
-        dependencies: GetVideoListFamily._dependencies,
-        allTransitiveDependencies:
-            GetVideoListFamily._allTransitiveDependencies,
-        episode: episode,
-      );
+  GetVideoListProvider({
+    required Chapter episode,
+  }) : this._internal(
+          (ref) => getVideoList(
+            ref as GetVideoListRef,
+            episode: episode,
+          ),
+          from: getVideoListProvider,
+          name: r'getVideoListProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$getVideoListHash,
+          dependencies: GetVideoListFamily._dependencies,
+          allTransitiveDependencies:
+              GetVideoListFamily._allTransitiveDependencies,
+          episode: episode,
+        );
 
   GetVideoListProvider._internal(
     super._createNotifier, {
@@ -99,9 +110,8 @@ class GetVideoListProvider
   @override
   Override overrideWith(
     FutureOr<(List<Video>, bool, List<String>)> Function(
-      GetVideoListRef provider,
-    )
-    create,
+            GetVideoListRef provider)
+        create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -119,7 +129,7 @@ class GetVideoListProvider
 
   @override
   AutoDisposeFutureProviderElement<(List<Video>, bool, List<String>)>
-  createElement() {
+      createElement() {
     return _GetVideoListProviderElement(this);
   }
 
@@ -153,6 +163,5 @@ class _GetVideoListProviderElement
   @override
   Chapter get episode => (origin as GetVideoListProvider).episode;
 }
-
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

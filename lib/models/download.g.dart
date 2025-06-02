@@ -17,7 +17,11 @@ const DownloadSchema = CollectionSchema(
   name: r'Download',
   id: 5905484153212786579,
   properties: {
-    r'failed': PropertySchema(id: 0, name: r'failed', type: IsarType.long),
+    r'failed': PropertySchema(
+      id: 0,
+      name: r'failed',
+      type: IsarType.long,
+    ),
     r'isDownload': PropertySchema(
       id: 1,
       name: r'isDownload',
@@ -33,7 +37,11 @@ const DownloadSchema = CollectionSchema(
       name: r'succeeded',
       type: IsarType.long,
     ),
-    r'total': PropertySchema(id: 4, name: r'total', type: IsarType.long),
+    r'total': PropertySchema(
+      id: 4,
+      name: r'total',
+      type: IsarType.long,
+    )
   },
   estimateSize: _downloadEstimateSize,
   serialize: _downloadSerialize,
@@ -47,7 +55,7 @@ const DownloadSchema = CollectionSchema(
       name: r'chapter',
       target: r'Chapter',
       single: true,
-    ),
+    )
   },
   embeddedSchemas: {},
   getId: _downloadGetId,
@@ -141,7 +149,10 @@ extension DownloadQueryWhereSort on QueryBuilder<Download, Download, QWhere> {
 extension DownloadQueryWhere on QueryBuilder<Download, Download, QWhereClause> {
   QueryBuilder<Download, Download, QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(lower: id, upper: id));
+      return query.addWhereClause(IdWhereClause.between(
+        lower: id,
+        upper: id,
+      ));
     });
   }
 
@@ -167,10 +178,8 @@ extension DownloadQueryWhere on QueryBuilder<Download, Download, QWhereClause> {
     });
   }
 
-  QueryBuilder<Download, Download, QAfterWhereClause> idGreaterThan(
-    Id id, {
-    bool include = false,
-  }) {
+  QueryBuilder<Download, Download, QAfterWhereClause> idGreaterThan(Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -178,10 +187,8 @@ extension DownloadQueryWhere on QueryBuilder<Download, Download, QWhereClause> {
     });
   }
 
-  QueryBuilder<Download, Download, QAfterWhereClause> idLessThan(
-    Id id, {
-    bool include = false,
-  }) {
+  QueryBuilder<Download, Download, QAfterWhereClause> idLessThan(Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -196,14 +203,12 @@ extension DownloadQueryWhere on QueryBuilder<Download, Download, QWhereClause> {
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IdWhereClause.between(
-          lower: lowerId,
-          includeLower: includeLower,
-          upper: upperId,
-          includeUpper: includeUpper,
-        ),
-      );
+      return query.addWhereClause(IdWhereClause.between(
+        lower: lowerId,
+        includeLower: includeLower,
+        upper: upperId,
+        includeUpper: includeUpper,
+      ));
     });
   }
 }
@@ -212,27 +217,27 @@ extension DownloadQueryFilter
     on QueryBuilder<Download, Download, QFilterCondition> {
   QueryBuilder<Download, Download, QAfterFilterCondition> failedIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const FilterCondition.isNull(property: r'failed'),
-      );
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'failed',
+      ));
     });
   }
 
   QueryBuilder<Download, Download, QAfterFilterCondition> failedIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const FilterCondition.isNotNull(property: r'failed'),
-      );
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'failed',
+      ));
     });
   }
 
   QueryBuilder<Download, Download, QAfterFilterCondition> failedEqualTo(
-    int? value,
-  ) {
+      int? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'failed', value: value),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'failed',
+        value: value,
+      ));
     });
   }
 
@@ -241,13 +246,11 @@ extension DownloadQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'failed',
-          value: value,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'failed',
+        value: value,
+      ));
     });
   }
 
@@ -256,13 +259,11 @@ extension DownloadQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'failed',
-          value: value,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'failed',
+        value: value,
+      ));
     });
   }
 
@@ -273,39 +274,38 @@ extension DownloadQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'failed',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'failed',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
     });
   }
 
   QueryBuilder<Download, Download, QAfterFilterCondition> idIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const FilterCondition.isNull(property: r'id'),
-      );
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'id',
+      ));
     });
   }
 
   QueryBuilder<Download, Download, QAfterFilterCondition> idIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const FilterCondition.isNotNull(property: r'id'),
-      );
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'id',
+      ));
     });
   }
 
   QueryBuilder<Download, Download, QAfterFilterCondition> idEqualTo(Id? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'id', value: value),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'id',
+        value: value,
+      ));
     });
   }
 
@@ -314,13 +314,11 @@ extension DownloadQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'id',
-          value: value,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
     });
   }
 
@@ -329,13 +327,11 @@ extension DownloadQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'id',
-          value: value,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
     });
   }
 
@@ -346,95 +342,94 @@ extension DownloadQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'id',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'id',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
     });
   }
 
   QueryBuilder<Download, Download, QAfterFilterCondition> isDownloadIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const FilterCondition.isNull(property: r'isDownload'),
-      );
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'isDownload',
+      ));
     });
   }
 
   QueryBuilder<Download, Download, QAfterFilterCondition>
-  isDownloadIsNotNull() {
+      isDownloadIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const FilterCondition.isNotNull(property: r'isDownload'),
-      );
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'isDownload',
+      ));
     });
   }
 
   QueryBuilder<Download, Download, QAfterFilterCondition> isDownloadEqualTo(
-    bool? value,
-  ) {
+      bool? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'isDownload', value: value),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isDownload',
+        value: value,
+      ));
     });
   }
 
   QueryBuilder<Download, Download, QAfterFilterCondition>
-  isStartDownloadIsNull() {
+      isStartDownloadIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const FilterCondition.isNull(property: r'isStartDownload'),
-      );
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'isStartDownload',
+      ));
     });
   }
 
   QueryBuilder<Download, Download, QAfterFilterCondition>
-  isStartDownloadIsNotNull() {
+      isStartDownloadIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const FilterCondition.isNotNull(property: r'isStartDownload'),
-      );
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'isStartDownload',
+      ));
     });
   }
 
   QueryBuilder<Download, Download, QAfterFilterCondition>
-  isStartDownloadEqualTo(bool? value) {
+      isStartDownloadEqualTo(bool? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'isStartDownload', value: value),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isStartDownload',
+        value: value,
+      ));
     });
   }
 
   QueryBuilder<Download, Download, QAfterFilterCondition> succeededIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const FilterCondition.isNull(property: r'succeeded'),
-      );
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'succeeded',
+      ));
     });
   }
 
   QueryBuilder<Download, Download, QAfterFilterCondition> succeededIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const FilterCondition.isNotNull(property: r'succeeded'),
-      );
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'succeeded',
+      ));
     });
   }
 
   QueryBuilder<Download, Download, QAfterFilterCondition> succeededEqualTo(
-    int? value,
-  ) {
+      int? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'succeeded', value: value),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'succeeded',
+        value: value,
+      ));
     });
   }
 
@@ -443,13 +438,11 @@ extension DownloadQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'succeeded',
-          value: value,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'succeeded',
+        value: value,
+      ));
     });
   }
 
@@ -458,13 +451,11 @@ extension DownloadQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'succeeded',
-          value: value,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'succeeded',
+        value: value,
+      ));
     });
   }
 
@@ -475,41 +466,39 @@ extension DownloadQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'succeeded',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'succeeded',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
     });
   }
 
   QueryBuilder<Download, Download, QAfterFilterCondition> totalIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const FilterCondition.isNull(property: r'total'),
-      );
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'total',
+      ));
     });
   }
 
   QueryBuilder<Download, Download, QAfterFilterCondition> totalIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        const FilterCondition.isNotNull(property: r'total'),
-      );
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'total',
+      ));
     });
   }
 
   QueryBuilder<Download, Download, QAfterFilterCondition> totalEqualTo(
-    int? value,
-  ) {
+      int? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'total', value: value),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'total',
+        value: value,
+      ));
     });
   }
 
@@ -518,13 +507,11 @@ extension DownloadQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'total',
-          value: value,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'total',
+        value: value,
+      ));
     });
   }
 
@@ -533,13 +520,11 @@ extension DownloadQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'total',
-          value: value,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'total',
+        value: value,
+      ));
     });
   }
 
@@ -550,15 +535,13 @@ extension DownloadQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'total',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'total',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
     });
   }
 }
@@ -569,8 +552,7 @@ extension DownloadQueryObject
 extension DownloadQueryLinks
     on QueryBuilder<Download, Download, QFilterCondition> {
   QueryBuilder<Download, Download, QAfterFilterCondition> chapter(
-    FilterQuery<Chapter> q,
-  ) {
+      FilterQuery<Chapter> q) {
     return QueryBuilder.apply(this, (query) {
       return query.link(q, r'chapter');
     });

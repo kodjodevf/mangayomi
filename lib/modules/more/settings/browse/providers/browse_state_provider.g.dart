@@ -39,15 +39,21 @@ class GetRepoInfosFamily extends Family<AsyncValue<Repo?>> {
   const GetRepoInfosFamily();
 
   /// See also [getRepoInfos].
-  GetRepoInfosProvider call({required String jsonUrl}) {
-    return GetRepoInfosProvider(jsonUrl: jsonUrl);
+  GetRepoInfosProvider call({
+    required String jsonUrl,
+  }) {
+    return GetRepoInfosProvider(
+      jsonUrl: jsonUrl,
+    );
   }
 
   @override
   GetRepoInfosProvider getProviderOverride(
     covariant GetRepoInfosProvider provider,
   ) {
-    return call(jsonUrl: provider.jsonUrl);
+    return call(
+      jsonUrl: provider.jsonUrl,
+    );
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -68,19 +74,24 @@ class GetRepoInfosFamily extends Family<AsyncValue<Repo?>> {
 /// See also [getRepoInfos].
 class GetRepoInfosProvider extends AutoDisposeFutureProvider<Repo?> {
   /// See also [getRepoInfos].
-  GetRepoInfosProvider({required String jsonUrl})
-    : this._internal(
-        (ref) => getRepoInfos(ref as GetRepoInfosRef, jsonUrl: jsonUrl),
-        from: getRepoInfosProvider,
-        name: r'getRepoInfosProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$getRepoInfosHash,
-        dependencies: GetRepoInfosFamily._dependencies,
-        allTransitiveDependencies:
-            GetRepoInfosFamily._allTransitiveDependencies,
-        jsonUrl: jsonUrl,
-      );
+  GetRepoInfosProvider({
+    required String jsonUrl,
+  }) : this._internal(
+          (ref) => getRepoInfos(
+            ref as GetRepoInfosRef,
+            jsonUrl: jsonUrl,
+          ),
+          from: getRepoInfosProvider,
+          name: r'getRepoInfosProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$getRepoInfosHash,
+          dependencies: GetRepoInfosFamily._dependencies,
+          allTransitiveDependencies:
+              GetRepoInfosFamily._allTransitiveDependencies,
+          jsonUrl: jsonUrl,
+        );
 
   GetRepoInfosProvider._internal(
     super._createNotifier, {
@@ -139,8 +150,7 @@ mixin GetRepoInfosRef on AutoDisposeFutureProviderRef<Repo?> {
 }
 
 class _GetRepoInfosProviderElement
-    extends AutoDisposeFutureProviderElement<Repo?>
-    with GetRepoInfosRef {
+    extends AutoDisposeFutureProviderElement<Repo?> with GetRepoInfosRef {
   _GetRepoInfosProviderElement(super.provider);
 
   @override
@@ -154,14 +164,14 @@ String _$onlyIncludePinnedSourceStateHash() =>
 @ProviderFor(OnlyIncludePinnedSourceState)
 final onlyIncludePinnedSourceStateProvider =
     AutoDisposeNotifierProvider<OnlyIncludePinnedSourceState, bool>.internal(
-      OnlyIncludePinnedSourceState.new,
-      name: r'onlyIncludePinnedSourceStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$onlyIncludePinnedSourceStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  OnlyIncludePinnedSourceState.new,
+  name: r'onlyIncludePinnedSourceStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$onlyIncludePinnedSourceStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$OnlyIncludePinnedSourceState = AutoDisposeNotifier<bool>;
 String _$extensionsRepoStateHash() =>
@@ -171,7 +181,9 @@ abstract class _$ExtensionsRepoState
     extends BuildlessAutoDisposeNotifier<List<Repo>> {
   late final ItemType itemType;
 
-  List<Repo> build(ItemType itemType);
+  List<Repo> build(
+    ItemType itemType,
+  );
 }
 
 /// See also [ExtensionsRepoState].
@@ -184,15 +196,21 @@ class ExtensionsRepoStateFamily extends Family<List<Repo>> {
   const ExtensionsRepoStateFamily();
 
   /// See also [ExtensionsRepoState].
-  ExtensionsRepoStateProvider call(ItemType itemType) {
-    return ExtensionsRepoStateProvider(itemType);
+  ExtensionsRepoStateProvider call(
+    ItemType itemType,
+  ) {
+    return ExtensionsRepoStateProvider(
+      itemType,
+    );
   }
 
   @override
   ExtensionsRepoStateProvider getProviderOverride(
     covariant ExtensionsRepoStateProvider provider,
   ) {
-    return call(provider.itemType);
+    return call(
+      provider.itemType,
+    );
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -214,19 +232,21 @@ class ExtensionsRepoStateFamily extends Family<List<Repo>> {
 class ExtensionsRepoStateProvider
     extends AutoDisposeNotifierProviderImpl<ExtensionsRepoState, List<Repo>> {
   /// See also [ExtensionsRepoState].
-  ExtensionsRepoStateProvider(ItemType itemType)
-    : this._internal(
-        () => ExtensionsRepoState()..itemType = itemType,
-        from: extensionsRepoStateProvider,
-        name: r'extensionsRepoStateProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$extensionsRepoStateHash,
-        dependencies: ExtensionsRepoStateFamily._dependencies,
-        allTransitiveDependencies:
-            ExtensionsRepoStateFamily._allTransitiveDependencies,
-        itemType: itemType,
-      );
+  ExtensionsRepoStateProvider(
+    ItemType itemType,
+  ) : this._internal(
+          () => ExtensionsRepoState()..itemType = itemType,
+          from: extensionsRepoStateProvider,
+          name: r'extensionsRepoStateProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$extensionsRepoStateHash,
+          dependencies: ExtensionsRepoStateFamily._dependencies,
+          allTransitiveDependencies:
+              ExtensionsRepoStateFamily._allTransitiveDependencies,
+          itemType: itemType,
+        );
 
   ExtensionsRepoStateProvider._internal(
     super._createNotifier, {
@@ -241,8 +261,12 @@ class ExtensionsRepoStateProvider
   final ItemType itemType;
 
   @override
-  List<Repo> runNotifierBuild(covariant ExtensionsRepoState notifier) {
-    return notifier.build(itemType);
+  List<Repo> runNotifierBuild(
+    covariant ExtensionsRepoState notifier,
+  ) {
+    return notifier.build(
+      itemType,
+    );
   }
 
   @override
@@ -263,7 +287,7 @@ class ExtensionsRepoStateProvider
 
   @override
   AutoDisposeNotifierProviderElement<ExtensionsRepoState, List<Repo>>
-  createElement() {
+      createElement() {
     return _ExtensionsRepoStateProviderElement(this);
   }
 
@@ -304,14 +328,14 @@ String _$autoUpdateExtensionsStateHash() =>
 @ProviderFor(AutoUpdateExtensionsState)
 final autoUpdateExtensionsStateProvider =
     AutoDisposeNotifierProvider<AutoUpdateExtensionsState, bool>.internal(
-      AutoUpdateExtensionsState.new,
-      name: r'autoUpdateExtensionsStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$autoUpdateExtensionsStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  AutoUpdateExtensionsState.new,
+  name: r'autoUpdateExtensionsStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$autoUpdateExtensionsStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$AutoUpdateExtensionsState = AutoDisposeNotifier<bool>;
 String _$checkForExtensionsUpdateStateHash() =>
@@ -321,14 +345,14 @@ String _$checkForExtensionsUpdateStateHash() =>
 @ProviderFor(CheckForExtensionsUpdateState)
 final checkForExtensionsUpdateStateProvider =
     AutoDisposeNotifierProvider<CheckForExtensionsUpdateState, bool>.internal(
-      CheckForExtensionsUpdateState.new,
-      name: r'checkForExtensionsUpdateStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$checkForExtensionsUpdateStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  CheckForExtensionsUpdateState.new,
+  name: r'checkForExtensionsUpdateStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$checkForExtensionsUpdateStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$CheckForExtensionsUpdateState = AutoDisposeNotifier<bool>;
 // ignore_for_file: type=lint

@@ -12,14 +12,14 @@ String _$themeModeStateHash() => r'264bf4a814cec831e34d916f273b4db6513e583c';
 @ProviderFor(ThemeModeState)
 final themeModeStateProvider =
     AutoDisposeNotifierProvider<ThemeModeState, bool>.internal(
-      ThemeModeState.new,
-      name: r'themeModeStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$themeModeStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  ThemeModeState.new,
+  name: r'themeModeStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$themeModeStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$ThemeModeState = AutoDisposeNotifier<bool>;
 String _$followSystemThemeStateHash() =>
@@ -29,14 +29,14 @@ String _$followSystemThemeStateHash() =>
 @ProviderFor(FollowSystemThemeState)
 final followSystemThemeStateProvider =
     AutoDisposeNotifierProvider<FollowSystemThemeState, bool>.internal(
-      FollowSystemThemeState.new,
-      name: r'followSystemThemeStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$followSystemThemeStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  FollowSystemThemeState.new,
+  name: r'followSystemThemeStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$followSystemThemeStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$FollowSystemThemeState = AutoDisposeNotifier<bool>;
 // ignore_for_file: type=lint

@@ -6,7 +6,7 @@ part of 'kitsu.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$kitsuHash() => r'40d57c539caed9208081f3330472a75dbf9ff8f9';
+String _$kitsuHash() => r'59e556e6382198c1cbef094491d6329861ff2e75';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -33,7 +33,10 @@ abstract class _$Kitsu extends BuildlessAutoDisposeNotifier<void> {
   late final int syncId;
   late final ItemType? itemType;
 
-  void build({required int syncId, ItemType? itemType});
+  void build({
+    required int syncId,
+    ItemType? itemType,
+  });
 }
 
 /// See also [Kitsu].
@@ -46,13 +49,24 @@ class KitsuFamily extends Family<void> {
   const KitsuFamily();
 
   /// See also [Kitsu].
-  KitsuProvider call({required int syncId, ItemType? itemType}) {
-    return KitsuProvider(syncId: syncId, itemType: itemType);
+  KitsuProvider call({
+    required int syncId,
+    ItemType? itemType,
+  }) {
+    return KitsuProvider(
+      syncId: syncId,
+      itemType: itemType,
+    );
   }
 
   @override
-  KitsuProvider getProviderOverride(covariant KitsuProvider provider) {
-    return call(syncId: provider.syncId, itemType: provider.itemType);
+  KitsuProvider getProviderOverride(
+    covariant KitsuProvider provider,
+  ) {
+    return call(
+      syncId: provider.syncId,
+      itemType: provider.itemType,
+    );
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -73,21 +87,24 @@ class KitsuFamily extends Family<void> {
 /// See also [Kitsu].
 class KitsuProvider extends AutoDisposeNotifierProviderImpl<Kitsu, void> {
   /// See also [Kitsu].
-  KitsuProvider({required int syncId, ItemType? itemType})
-    : this._internal(
-        () => Kitsu()
-          ..syncId = syncId
-          ..itemType = itemType,
-        from: kitsuProvider,
-        name: r'kitsuProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$kitsuHash,
-        dependencies: KitsuFamily._dependencies,
-        allTransitiveDependencies: KitsuFamily._allTransitiveDependencies,
-        syncId: syncId,
-        itemType: itemType,
-      );
+  KitsuProvider({
+    required int syncId,
+    ItemType? itemType,
+  }) : this._internal(
+          () => Kitsu()
+            ..syncId = syncId
+            ..itemType = itemType,
+          from: kitsuProvider,
+          name: r'kitsuProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$kitsuHash,
+          dependencies: KitsuFamily._dependencies,
+          allTransitiveDependencies: KitsuFamily._allTransitiveDependencies,
+          syncId: syncId,
+          itemType: itemType,
+        );
 
   KitsuProvider._internal(
     super._createNotifier, {
@@ -104,8 +121,13 @@ class KitsuProvider extends AutoDisposeNotifierProviderImpl<Kitsu, void> {
   final ItemType? itemType;
 
   @override
-  void runNotifierBuild(covariant Kitsu notifier) {
-    return notifier.build(syncId: syncId, itemType: itemType);
+  void runNotifierBuild(
+    covariant Kitsu notifier,
+  ) {
+    return notifier.build(
+      syncId: syncId,
+      itemType: itemType,
+    );
   }
 
   @override
@@ -160,8 +182,7 @@ mixin KitsuRef on AutoDisposeNotifierProviderRef<void> {
 }
 
 class _KitsuProviderElement
-    extends AutoDisposeNotifierProviderElement<Kitsu, void>
-    with KitsuRef {
+    extends AutoDisposeNotifierProviderElement<Kitsu, void> with KitsuRef {
   _KitsuProviderElement(super.provider);
 
   @override
@@ -169,6 +190,5 @@ class _KitsuProviderElement
   @override
   ItemType? get itemType => (origin as KitsuProvider).itemType;
 }
-
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

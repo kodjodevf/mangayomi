@@ -13,14 +13,14 @@ String _$defaultReadingModeStateHash() =>
 @ProviderFor(DefaultReadingModeState)
 final defaultReadingModeStateProvider =
     AutoDisposeNotifierProvider<DefaultReadingModeState, ReaderMode>.internal(
-      DefaultReadingModeState.new,
-      name: r'defaultReadingModeStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$defaultReadingModeStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  DefaultReadingModeState.new,
+  name: r'defaultReadingModeStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$defaultReadingModeStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$DefaultReadingModeState = AutoDisposeNotifier<ReaderMode>;
 String _$animatePageTransitionsStateHash() =>
@@ -30,14 +30,14 @@ String _$animatePageTransitionsStateHash() =>
 @ProviderFor(AnimatePageTransitionsState)
 final animatePageTransitionsStateProvider =
     AutoDisposeNotifierProvider<AnimatePageTransitionsState, bool>.internal(
-      AnimatePageTransitionsState.new,
-      name: r'animatePageTransitionsStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$animatePageTransitionsStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  AnimatePageTransitionsState.new,
+  name: r'animatePageTransitionsStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$animatePageTransitionsStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$AnimatePageTransitionsState = AutoDisposeNotifier<bool>;
 String _$doubleTapAnimationSpeedStateHash() =>
@@ -47,14 +47,14 @@ String _$doubleTapAnimationSpeedStateHash() =>
 @ProviderFor(DoubleTapAnimationSpeedState)
 final doubleTapAnimationSpeedStateProvider =
     AutoDisposeNotifierProvider<DoubleTapAnimationSpeedState, int>.internal(
-      DoubleTapAnimationSpeedState.new,
-      name: r'doubleTapAnimationSpeedStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$doubleTapAnimationSpeedStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  DoubleTapAnimationSpeedState.new,
+  name: r'doubleTapAnimationSpeedStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$doubleTapAnimationSpeedStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$DoubleTapAnimationSpeedState = AutoDisposeNotifier<int>;
 String _$cropBordersStateHash() => r'65d636df7bebd9fb15b3915c1044c61f3479e806';
@@ -63,14 +63,14 @@ String _$cropBordersStateHash() => r'65d636df7bebd9fb15b3915c1044c61f3479e806';
 @ProviderFor(CropBordersState)
 final cropBordersStateProvider =
     AutoDisposeNotifierProvider<CropBordersState, bool>.internal(
-      CropBordersState.new,
-      name: r'cropBordersStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$cropBordersStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  CropBordersState.new,
+  name: r'cropBordersStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$cropBordersStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$CropBordersState = AutoDisposeNotifier<bool>;
 String _$scaleTypeStateHash() => r'5e6943ab426e9f0bdfe16685a037f6def3a02ddf';
@@ -79,14 +79,14 @@ String _$scaleTypeStateHash() => r'5e6943ab426e9f0bdfe16685a037f6def3a02ddf';
 @ProviderFor(ScaleTypeState)
 final scaleTypeStateProvider =
     AutoDisposeNotifierProvider<ScaleTypeState, ScaleType>.internal(
-      ScaleTypeState.new,
-      name: r'scaleTypeStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$scaleTypeStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  ScaleTypeState.new,
+  name: r'scaleTypeStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$scaleTypeStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$ScaleTypeState = AutoDisposeNotifier<ScaleType>;
 String _$pagePreloadAmountStateHash() =>
@@ -96,14 +96,14 @@ String _$pagePreloadAmountStateHash() =>
 @ProviderFor(PagePreloadAmountState)
 final pagePreloadAmountStateProvider =
     AutoDisposeNotifierProvider<PagePreloadAmountState, int>.internal(
-      PagePreloadAmountState.new,
-      name: r'pagePreloadAmountStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$pagePreloadAmountStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  PagePreloadAmountState.new,
+  name: r'pagePreloadAmountStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$pagePreloadAmountStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$PagePreloadAmountState = AutoDisposeNotifier<int>;
 String _$backgroundColorStateHash() =>
@@ -113,14 +113,14 @@ String _$backgroundColorStateHash() =>
 @ProviderFor(BackgroundColorState)
 final backgroundColorStateProvider =
     AutoDisposeNotifierProvider<BackgroundColorState, BackgroundColor>.internal(
-      BackgroundColorState.new,
-      name: r'backgroundColorStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$backgroundColorStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  BackgroundColorState.new,
+  name: r'backgroundColorStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$backgroundColorStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$BackgroundColorState = AutoDisposeNotifier<BackgroundColor>;
 String _$usePageTapZonesStateHash() =>
@@ -130,14 +130,14 @@ String _$usePageTapZonesStateHash() =>
 @ProviderFor(UsePageTapZonesState)
 final usePageTapZonesStateProvider =
     AutoDisposeNotifierProvider<UsePageTapZonesState, bool>.internal(
-      UsePageTapZonesState.new,
-      name: r'usePageTapZonesStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$usePageTapZonesStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  UsePageTapZonesState.new,
+  name: r'usePageTapZonesStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$usePageTapZonesStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$UsePageTapZonesState = AutoDisposeNotifier<bool>;
 String _$fullScreenReaderStateHash() =>
@@ -147,14 +147,14 @@ String _$fullScreenReaderStateHash() =>
 @ProviderFor(FullScreenReaderState)
 final fullScreenReaderStateProvider =
     AutoDisposeNotifierProvider<FullScreenReaderState, bool>.internal(
-      FullScreenReaderState.new,
-      name: r'fullScreenReaderStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$fullScreenReaderStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  FullScreenReaderState.new,
+  name: r'fullScreenReaderStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$fullScreenReaderStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$FullScreenReaderState = AutoDisposeNotifier<bool>;
 String _$navigationOrderStateHash() =>
@@ -164,14 +164,14 @@ String _$navigationOrderStateHash() =>
 @ProviderFor(NavigationOrderState)
 final navigationOrderStateProvider =
     AutoDisposeNotifierProvider<NavigationOrderState, List<String>>.internal(
-      NavigationOrderState.new,
-      name: r'navigationOrderStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$navigationOrderStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  NavigationOrderState.new,
+  name: r'navigationOrderStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$navigationOrderStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$NavigationOrderState = AutoDisposeNotifier<List<String>>;
 String _$hideItemsStateHash() => r'b4a467e66f6a1f9b36e4b201a10b771e0dae6a80';
@@ -180,14 +180,14 @@ String _$hideItemsStateHash() => r'b4a467e66f6a1f9b36e4b201a10b771e0dae6a80';
 @ProviderFor(HideItemsState)
 final hideItemsStateProvider =
     AutoDisposeNotifierProvider<HideItemsState, List<String>>.internal(
-      HideItemsState.new,
-      name: r'hideItemsStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$hideItemsStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  HideItemsState.new,
+  name: r'hideItemsStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$hideItemsStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$HideItemsState = AutoDisposeNotifier<List<String>>;
 String _$novelFontSizeStateHash() =>
@@ -197,14 +197,14 @@ String _$novelFontSizeStateHash() =>
 @ProviderFor(NovelFontSizeState)
 final novelFontSizeStateProvider =
     AutoDisposeNotifierProvider<NovelFontSizeState, int>.internal(
-      NovelFontSizeState.new,
-      name: r'novelFontSizeStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$novelFontSizeStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  NovelFontSizeState.new,
+  name: r'novelFontSizeStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$novelFontSizeStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$NovelFontSizeState = AutoDisposeNotifier<int>;
 String _$novelTextAlignStateHash() =>
@@ -214,14 +214,14 @@ String _$novelTextAlignStateHash() =>
 @ProviderFor(NovelTextAlignState)
 final novelTextAlignStateProvider =
     AutoDisposeNotifierProvider<NovelTextAlignState, NovelTextAlign>.internal(
-      NovelTextAlignState.new,
-      name: r'novelTextAlignStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$novelTextAlignStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+  NovelTextAlignState.new,
+  name: r'novelTextAlignStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$novelTextAlignStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 typedef _$NovelTextAlignState = AutoDisposeNotifier<NovelTextAlign>;
 // ignore_for_file: type=lint

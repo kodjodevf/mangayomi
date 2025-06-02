@@ -110,14 +110,11 @@ Future<void> customDraggableTabBar({
         curve: Curves.linearToEaseOut,
         controller: controller,
         levels: widgetsHeight
-            .map((e) => e["height"])
-            .map((e) => DraggableMenuLevel(height: e))
+            .map((e) => DraggableMenuLevel(height: e["height"]))
             .toList(),
         customUi: Consumer(
           builder: (context, ref, child) {
-            final location = ref.watch(
-              routerCurrentLocationStateProvider(context),
-            );
+            final location = ref.watch(routerCurrentLocationStateProvider);
             final width = context.isTablet && !fullWidth
                 ? switch (location) {
                     null => 100,

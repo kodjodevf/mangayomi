@@ -556,7 +556,7 @@ class _MangaChapterPageGalleryState
                                     onFailedToLoadImage: (value) {
                                       // Handle failed image loading
                                       if (_failedToLoadImage.value != value &&
-                                          mounted) {
+                                          context.mounted) {
                                         _failedToLoadImage.value = value;
                                       }
                                     },
@@ -956,12 +956,15 @@ class _MangaChapterPageGalleryState
           ? (_uChapDataPreload.length / 2).ceil() + 1
           : _uChapDataPreload.length;
       if (_currentIndex! >= 0 && _currentIndex! < pagesLength) {
+        try {
+          final idx = _uChapDataPreload[_currentIndex!].index;
+          if (idx != null) {
+            _readerController.setPageIndex(_geCurrentIndex(idx), false);
+          }
+        } catch (_) {}
+
         if (_readerController.chapter.id !=
             _uChapDataPreload[_currentIndex!].chapter!.id) {
-          final ind = _uChapDataPreload[_currentIndex! - 1].index;
-          if (ind != null) {
-            _readerController.setPageIndex(_geCurrentIndex(ind), false);
-          }
           if (mounted) {
             setState(() {
               _readerController = ref.read(
@@ -1129,14 +1132,11 @@ class _MangaChapterPageGalleryState
       _precacheImages(index + i);
       _precacheImages(index - i);
     }
-
+    final idx = _uChapDataPreload[_currentIndex!].index;
+    if (idx != null) {
+      _readerController.setPageIndex(_geCurrentIndex(idx), false);
+    }
     if (_readerController.chapter.id != _uChapDataPreload[index].chapter!.id) {
-      if (_uChapDataPreload[_currentIndex!].index != null) {
-        _readerController.setPageIndex(
-          _geCurrentIndex(_uChapDataPreload[_currentIndex!].index!),
-          false,
-        );
-      }
       if (mounted) {
         setState(() {
           _readerController = ref.read(
