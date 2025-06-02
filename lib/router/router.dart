@@ -96,6 +96,10 @@ class RouterCurrentLocationState extends _$RouterCurrentLocationState {
       });
     });
   }
+
+  void refresh() {
+    _listener();
+  }
 }
 
 class RouterNotifier extends ChangeNotifier {
