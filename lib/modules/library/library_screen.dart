@@ -491,14 +491,16 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                       }
                       return Consumer(
                         builder: (context, ref, child) {
-                          bool reverse = ref
-                              .watch(
-                                sortLibraryMangaStateProvider(
-                                  itemType: widget.itemType,
-                                  settings: settings,
-                                ),
-                              )
-                              .reverse!;
+                          bool reverse =
+                              ref
+                                  .watch(
+                                    sortLibraryMangaStateProvider(
+                                      itemType: widget.itemType,
+                                      settings: settings,
+                                    ),
+                                  )
+                                  .reverse ??
+                              false;
                           final continueReaderBtn = ref.watch(
                             libraryShowContinueReadingButtonStateProvider(
                               itemType: widget.itemType,
@@ -584,7 +586,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                             unreadFilterType: unreadFilterType,
                             startedFilterType: startedFilterType,
                             bookmarkedFilterType: bookmarkedFilterType,
-                            sortType: sortType!,
+                            sortType: sortType ?? 0,
                           );
                           return Scaffold(
                             appBar: _appBar(
@@ -979,7 +981,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
           unreadFilterType: unreadFilterType,
           startedFilterType: startedFilterType,
           bookmarkedFilterType: bookmarkedFilterType,
-          sortType: sortType!,
+          sortType: sortType ?? 0,
         );
         if (entries.isNotEmpty) {
           final entriesManga = reverse ? entries.reversed.toList() : entries;
