@@ -110,17 +110,19 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                           mangaM: entry,
                           source: entry.source!,
                         );
-                        ref.invalidate(
-                          getAllMangaWithoutCategoriesStreamProvider(
-                            itemType: widget.itemType,
-                          ),
-                        );
-                        ref.invalidate(
-                          getAllMangaStreamProvider(
-                            categoryId: null,
-                            itemType: widget.itemType,
-                          ),
-                        );
+                        if (context.mounted) {
+                          ref.invalidate(
+                            getAllMangaWithoutCategoriesStreamProvider(
+                              itemType: widget.itemType,
+                            ),
+                          );
+                          ref.invalidate(
+                            getAllMangaStreamProvider(
+                              categoryId: null,
+                              itemType: widget.itemType,
+                            ),
+                          );
+                        }
                       }
                     },
                     onLongPress: () {

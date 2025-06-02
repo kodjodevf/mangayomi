@@ -44,11 +44,17 @@ class DoBackUpFamily extends Family<AsyncValue<void>> {
     required String path,
     required BuildContext? context,
   }) {
-    return DoBackUpProvider(list: list, path: path, context: context);
+    return DoBackUpProvider(
+      list: list,
+      path: path,
+      context: context,
+    );
   }
 
   @override
-  DoBackUpProvider getProviderOverride(covariant DoBackUpProvider provider) {
+  DoBackUpProvider getProviderOverride(
+    covariant DoBackUpProvider provider,
+  ) {
     return call(
       list: provider.list,
       path: provider.path,
@@ -79,23 +85,24 @@ class DoBackUpProvider extends AutoDisposeFutureProvider<void> {
     required String path,
     required BuildContext? context,
   }) : this._internal(
-         (ref) => doBackUp(
-           ref as DoBackUpRef,
-           list: list,
-           path: path,
-           context: context,
-         ),
-         from: doBackUpProvider,
-         name: r'doBackUpProvider',
-         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-             ? null
-             : _$doBackUpHash,
-         dependencies: DoBackUpFamily._dependencies,
-         allTransitiveDependencies: DoBackUpFamily._allTransitiveDependencies,
-         list: list,
-         path: path,
-         context: context,
-       );
+          (ref) => doBackUp(
+            ref as DoBackUpRef,
+            list: list,
+            path: path,
+            context: context,
+          ),
+          from: doBackUpProvider,
+          name: r'doBackUpProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$doBackUpHash,
+          dependencies: DoBackUpFamily._dependencies,
+          allTransitiveDependencies: DoBackUpFamily._allTransitiveDependencies,
+          list: list,
+          path: path,
+          context: context,
+        );
 
   DoBackUpProvider._internal(
     super._createNotifier, {
@@ -114,7 +121,9 @@ class DoBackUpProvider extends AutoDisposeFutureProvider<void> {
   final BuildContext? context;
 
   @override
-  Override overrideWith(FutureOr<void> Function(DoBackUpRef provider) create) {
+  Override overrideWith(
+    FutureOr<void> Function(DoBackUpRef provider) create,
+  ) {
     return ProviderOverride(
       origin: this,
       override: DoBackUpProvider._internal(
@@ -179,6 +188,5 @@ class _DoBackUpProviderElement extends AutoDisposeFutureProviderElement<void>
   @override
   BuildContext? get context => (origin as DoBackUpProvider).context;
 }
-
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

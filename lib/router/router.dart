@@ -70,7 +70,7 @@ GoRouter router(Ref ref) {
 class RouterCurrentLocationState extends _$RouterCurrentLocationState {
   bool _didSubscribe = false;
   @override
-  String? build(BuildContext context) {
+  String? build() {
     // Delay listener‐registration until after the first frame.
     if (!_didSubscribe) {
       _didSubscribe = true;
@@ -95,6 +95,10 @@ class RouterCurrentLocationState extends _$RouterCurrentLocationState {
         state = matchList.uri.toString();
       });
     });
+  }
+
+  void refresh() {
+    _listener();
   }
 }
 

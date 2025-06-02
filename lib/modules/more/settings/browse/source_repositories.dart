@@ -208,6 +208,7 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
+          bool isLoading = false;
           final controller = TextEditingController();
           showDialog(
             context: context,
@@ -269,62 +270,70 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                               child: Text(l10n.cancel),
                             ),
                             const SizedBox(width: 15),
-                            TextButton(
-                              onPressed:
-                                  controller.text.isEmpty ||
-                                      !controller.text.endsWith(".json")
-                                  ? null
-                                  : () async {
-                                      try {
-                                        final mangaRepos = ref
-                                            .read(
-                                              extensionsRepoStateProvider(
-                                                widget.itemType,
-                                              ),
-                                            )
-                                            .toList();
-                                        final repo = await ref.read(
-                                          getRepoInfosProvider(
-                                            jsonUrl: controller.text,
-                                          ).future,
-                                        );
-                                        if (repo == null) {
-                                          botToast(l10n.unsupported_repo);
-                                          return;
-                                        }
-                                        mangaRepos.add(repo);
-                                        ref
-                                            .read(
-                                              extensionsRepoStateProvider(
-                                                widget.itemType,
-                                              ).notifier,
-                                            )
-                                            .set(mangaRepos);
-                                        ref.invalidate(
-                                          extensionsRepoStateProvider(
-                                            widget.itemType,
-                                          ),
-                                        );
-                                      } catch (e, s) {
-                                        botToast('$e\n$s');
-                                      }
-
-                                      if (context.mounted) {
-                                        Navigator.pop(context);
-                                      }
-                                    },
-                              child: Text(
-                                l10n.add,
-                                style: TextStyle(
-                                  color:
+                            StatefulBuilder(
+                              builder: (context, setState) {
+                                return TextButton(
+                                  onPressed:
                                       controller.text.isEmpty ||
                                           !controller.text.endsWith(".json")
-                                      ? Theme.of(
-                                          context,
-                                        ).primaryColor.withValues(alpha: 0.2)
-                                      : null,
-                                ),
-                              ),
+                                      ? null
+                                      : () async {
+                                          setState(() => isLoading = true);
+                                          try {
+                                            final mangaRepos = ref
+                                                .read(
+                                                  extensionsRepoStateProvider(
+                                                    widget.itemType,
+                                                  ),
+                                                )
+                                                .toList();
+                                            final repo = await ref.read(
+                                              getRepoInfosProvider(
+                                                jsonUrl: controller.text,
+                                              ).future,
+                                            );
+                                            if (repo == null) {
+                                              botToast(l10n.unsupported_repo);
+                                              return;
+                                            }
+                                            mangaRepos.add(repo);
+                                            ref
+                                                .read(
+                                                  extensionsRepoStateProvider(
+                                                    widget.itemType,
+                                                  ).notifier,
+                                                )
+                                                .set(mangaRepos);
+                                          } catch (e, s) {
+                                            setState(() => isLoading = false);
+                                            botToast('$e\n$s');
+                                          }
+
+                                          if (context.mounted) {
+                                            Navigator.pop(context);
+                                          }
+                                        },
+                                  child: isLoading
+                                      ? SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(),
+                                        )
+                                      : Text(
+                                          l10n.add,
+                                          style: TextStyle(
+                                            color:
+                                                controller.text.isEmpty ||
+                                                    !controller.text.endsWith(
+                                                      ".json",
+                                                    )
+                                                ? Theme.of(context).primaryColor
+                                                      .withValues(alpha: 0.2)
+                                                : null,
+                                          ),
+                                        ),
+                                );
+                              },
                             ),
                           ],
                         ),

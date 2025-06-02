@@ -368,11 +368,10 @@ class ReaderController extends _$ReaderController {
     final isRead =
         (getReaderMode() == ReaderMode.verticalContinuous ||
             getReaderMode() == ReaderMode.webtoon)
-        ? ((newIndex + 1) == getPageLength([]) - 1)
-              ? ((newIndex + 1) == getPageLength([]) - 1)
-              : (newIndex + 1) == getPageLength([])
-        : (newIndex + 1) == getPageLength([]);
-
+        ? ((newIndex + 2) == getPageLength([]) - 1)
+              ? ((newIndex + 2) == getPageLength([]) - 1)
+              : (newIndex + 2) == getPageLength([])
+        : (newIndex + 2) == getPageLength([]);
     if (isRead || save) {
       List<ChapterPageIndex>? chapterPageIndexs = [];
       for (var chapterPageIndex

@@ -216,7 +216,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
                             ),
                             const SizedBox(width: 15),
                             TextButton(
-                              onPressed: () => clearUpdates(hideItems),
+                              onPressed: () => clearUpdates(hideItems, context),
                               child: Text(l10n.ok),
                             ),
                           ],
@@ -296,7 +296,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
     );
   }
 
-  void clearUpdates(List<String> hideItems) {
+  void clearUpdates(List<String> hideItems, BuildContext context) {
     List<Update> updates = isar.updates
         .filter()
         .idIsNotNull()
