@@ -21,7 +21,10 @@ class DartExtensionService implements ExtensionService {
     final interpreter = D4rt();
     RegistrerBridge.registerBridge(interpreter);
 
-    interpreter.execute(source: source.sourceCode!, args: source.toMSource());
+    interpreter.execute(
+      source: source.sourceCode!.replaceAll('Client(source)', 'Client()'),
+      args: source.toMSource(),
+    );
     return interpreter;
   }
 
@@ -65,13 +68,9 @@ class DartExtensionService implements ExtensionService {
 
   @override
   Future<MPages> getPopular(int page) async {
-    try {
-      final interpreter = _executeLib();
-      final result = await interpreter.invoke('getPopular', [page]);
-      return result as MPages;
-    } catch (e) {
-      rethrow;
-    }
+    final interpreter = _executeLib();
+    final result = await interpreter.invoke('getPopular', [page]);
+    return result as MPages;
   }
 
   @override
