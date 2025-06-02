@@ -41,15 +41,12 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   Timer? _backupTimer;
   Timer? _syncTimer;
 
-  // Cache pour éviter les recalculs
   late final String _defaultLocation;
   late final List<String> _navigationOrder;
   late final int _autoSyncFrequency;
 
-  // Mémorisation des labels pour éviter les recalculs
   static final Map<String, String> _hyphenatedLabelsCache = {};
 
-  // Cache pour les destinations de navigation
   final Map<String, List<NavigationRailDestination>> _desktopDestinationsCache =
       {};
   final Map<String, List<Widget>> _mobileDestinationsCache = {};
@@ -77,7 +74,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   void initState() {
     super.initState();
 
-    // Initialisation des valeurs cachées pour éviter les recalculs
     _navigationOrder = ref.read(navigationOrderStateProvider);
     _autoSyncFrequency = ref
         .read(synchingProvider(syncId: 1))
@@ -150,6 +146,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     super.dispose();
   }
 
+  int currentIndex = 0;
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -168,7 +165,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                   .where((nav) => !hideItems.contains(nav))
                   .toList();
 
-              int currentIndex = 0;
               int currentIdx = dest.indexOf(location ?? _defaultLocation);
               if (currentIdx != -1) {
                 currentIndex = currentIdx;
@@ -418,7 +414,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   }
 }
 
-// Widgets optimisés séparés pour éviter les rebuilds inutiles
 class _IncognitoModeBar extends StatelessWidget {
   const _IncognitoModeBar({required this.incognitoMode, required this.l10n});
 
@@ -605,7 +600,6 @@ class _MobileBottomNavigation extends StatelessWidget {
   }
 }
 
-// Widgets Badge optimisés avec cache et debouncing
 class _ExtensionBadgeWidget extends ConsumerWidget {
   const _ExtensionBadgeWidget({required this.icon, required this.ref});
 
