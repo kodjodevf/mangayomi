@@ -149,19 +149,46 @@ class MyAnimeList extends _$MyAnimeList {
     );
   }
 
-  Future<List<TrackSearch>> getGlobalData() async {
+  Future<List<TrackSearch>> getGlobalData(bool isManga) async {
     final accessToken = await _getAccessToken();
-    final url = Uri.parse(
-      '$baseApiUrl/anime/ranking?ranking_type=airing&limit=15',
+    final item = isManga ? "manga" : "anime";
+    final contentUnit = isManga ? "num_chapters" : "num_episodes";
+    final url = Uri.parse('$baseApiUrl/$item/ranking').replace(
+      queryParameters: {
+        'ranking_type': 'airing',
+        'limit': '15',
+        'fields':
+            'id,title,synopsis,$contentUnit,main_picture,status,media_type,start_date,mean',
+      },
     );
     final result = await _makeGetRequest(url, accessToken);
     final res = jsonDecode(result.body) as Map<String, dynamic>;
 
-    List<int> mangaIds = res['data'] == null
+    return res['data'] == null
         ? []
-        : (res['data'] as List).map((e) => e['node']["id"] as int).toList();
-
-    return [];
+        : (res['data'] as List)
+              .map(
+                (e) => TrackSearch(
+                  mediaId: e["node"]["id"],
+                  summary: e["node"]["synopsis"] ?? "",
+                  totalChapter: e["node"][contentUnit],
+                  coverUrl: e["node"]["main_picture"]["large"] ?? "",
+                  title: e["node"]["title"],
+                  score: e["node"]["mean"],
+                  startDate: e["node"]["start_date"] ?? "",
+                  publishingType: e["node"]["media_type"].toString().replaceAll(
+                    "_",
+                    " ",
+                  ),
+                  publishingStatus: e["node"]["status"].toString().replaceAll(
+                    "_",
+                    " ",
+                  ),
+                  trackingUrl:
+                      "https://myanimelist.net/$item/${e["node"]["id"]}",
+                ),
+              )
+              .toList();
   }
 
   String _convertToIsoDate(int? epochTime) {

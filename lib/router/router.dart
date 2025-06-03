@@ -18,6 +18,7 @@ import 'package:mangayomi/modules/more/settings/browse/source_repositories.dart'
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/more/statistics/statistics_screen.dart';
 import 'package:mangayomi/modules/novel/novel_reader_view.dart';
+import 'package:mangayomi/modules/tracker_library/tracker_library_screen.dart';
 import 'package:mangayomi/modules/updates/updates_screen.dart';
 import 'package:mangayomi/modules/more/categories/categories_screen.dart';
 import 'package:mangayomi/modules/more/settings/downloads/downloads_screen.dart';
@@ -124,6 +125,27 @@ class RouterNotifier extends ChangeNotifier {
         ),
         _genericRoute(name: "history", child: const HistoryScreen()),
         _genericRoute(name: "updates", child: const UpdatesScreen()),
+        _genericRoute<String?>(
+          name: "trackerLibrary/anilist",
+          builder: (id) => TrackerLibraryScreen(
+            trackerProvider: TrackerProviders.anilist,
+            presetInput: id,
+          ),
+        ),
+        _genericRoute<String?>(
+          name: "trackerLibrary/kitsu",
+          builder: (id) => TrackerLibraryScreen(
+            trackerProvider: TrackerProviders.kitsu,
+            presetInput: id,
+          ),
+        ),
+        _genericRoute<String?>(
+          name: "trackerLibrary/mal",
+          builder: (id) => TrackerLibraryScreen(
+            trackerProvider: TrackerProviders.myAnimeList,
+            presetInput: id,
+          ),
+        ),
         _genericRoute(name: "browse", child: const BrowseScreen()),
         _genericRoute(name: "more", child: const MoreScreen()),
       ],
