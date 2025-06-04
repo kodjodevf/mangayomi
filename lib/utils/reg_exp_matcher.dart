@@ -38,5 +38,5 @@ String regCustomMatcher(String input, String source, int group) {
 }
 
 String padIndex(int index) {
-  return index.toString().padLeft(3, "0");
+  return (index + 1).toString().padLeft(3, "0");
 }

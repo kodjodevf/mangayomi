@@ -281,7 +281,7 @@ Future<void> downloadChapter(
 
         if (itemType == ItemType.manga) {
           final file = File(
-            p.join(chapterDirectory.path, "${padIndex(index + 1)}.jpg"),
+            p.join(chapterDirectory.path, "${padIndex(index)}.jpg"),
           );
           if (!file.existsSync()) {
             pages.add(
@@ -290,7 +290,7 @@ Future<void> downloadChapter(
                 headers: pageHeaders,
                 fileName: p.join(
                   chapterDirectory.path,
-                  "${padIndex(index + 1)}.jpg",
+                  "${padIndex(index)}.jpg",
                 ),
               ),
             );

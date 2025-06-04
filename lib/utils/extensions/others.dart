@@ -12,6 +12,7 @@ import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as p;
 
 extension LetExtension<T> on T {
   R let<R>(R Function(T) block) {
@@ -49,7 +50,7 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
       imageBytes = archiveImage;
     } else if (isLocale!) {
       imageBytes = File(
-        '${directory!.path}${padIndex(index! + 1)}.jpg',
+        p.join(directory!.path, "${padIndex(index!)}.jpg"),
       ).readAsBytesSync();
     } else {
       File? cachedImage;
@@ -86,7 +87,10 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
                         ? ExtendedMemoryImageProvider(archiveImage)
                         : ExtendedFileImageProvider(
                             File(
-                              '${data.directory!.path}${padIndex(data.index! + 1)}.jpg',
+                              p.join(
+                                data.directory!.path,
+                                "${padIndex(data.index!)}.jpg",
+                              ),
                             ),
                           )
                   : CustomExtendedNetworkImageProvider(

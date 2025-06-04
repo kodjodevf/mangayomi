@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:path/path.dart' as p;
 import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/eval/javascript/http.dart';
 import 'package:mangayomi/main.dart';
@@ -93,10 +94,7 @@ Future<GetChapterPagesModel> getChapterPages(
     } else {
       for (var i = 0; i < pageUrls.length; i++) {
         archiveImages.add(null);
-        if (await File(
-          "${path!.path}"
-          "${padIndex(i + 1)}.jpg",
-        ).exists()) {
+        if (await File(p.join(path!.path, '${padIndex(i)}.jpg')).exists()) {
           isLocaleList.add(true);
         } else {
           isLocaleList.add(false);
