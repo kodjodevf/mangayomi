@@ -79,11 +79,13 @@ Future<GetChapterPagesModel> getChapterPages(
   }
 
   if (pageUrls.isNotEmpty || isLocalArchive) {
-    if (await File("${mangaDirectory!.path}${chapter.name}.cbz").exists() ||
+    if (await File(
+          p.join(mangaDirectory!.path, "${chapter.name}.cbz"),
+        ).exists() ||
         isLocalArchive) {
       final path = isLocalArchive
           ? chapter.archivePath
-          : "${mangaDirectory.path}${chapter.name}.cbz";
+          : p.join(mangaDirectory.path, "${chapter.name}.cbz");
       final local = await ref.watch(
         getArchiveDataFromFileProvider(path!).future,
       );

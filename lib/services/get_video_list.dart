@@ -9,6 +9,7 @@ import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path/path.dart' as p;
 part 'get_video_list.g.dart';
 
 @riverpod
@@ -21,8 +22,10 @@ Future<(List<Video>, bool, List<String>)> getVideoList(
   final isLocalArchive =
       episode.manga.value!.isLocalArchive! &&
       episode.manga.value!.source != "torrent";
-  final mp4animePath =
-      "${mangaDirectory!.path}${episode.name!.replaceForbiddenCharacters(' ')}.mp4";
+  final mp4animePath = p.join(
+    mangaDirectory!.path,
+    "${episode.name!.replaceForbiddenCharacters(' ')}.mp4",
+  );
   List<String> infoHashes = [];
   if (await File(mp4animePath).exists() || isLocalArchive) {
     final path = isLocalArchive ? episode.archivePath : mp4animePath;
