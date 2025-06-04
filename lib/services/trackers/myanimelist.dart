@@ -149,13 +149,16 @@ class MyAnimeList extends _$MyAnimeList {
     );
   }
 
-  Future<List<TrackSearch>> getGlobalData(bool isManga) async {
+  Future<List<TrackSearch>> fetchData({
+    bool isManga = true,
+    String rankingType = "airing", // bypopularity, tv, upcoming - all, manga, manhwa, manhua
+  }) async {
     final accessToken = await _getAccessToken();
     final item = isManga ? "manga" : "anime";
     final contentUnit = isManga ? "num_chapters" : "num_episodes";
     final url = Uri.parse('$baseApiUrl/$item/ranking').replace(
       queryParameters: {
-        'ranking_type': 'airing',
+        'ranking_type': rankingType,
         'limit': '15',
         'fields':
             'id,title,synopsis,$contentUnit,main_picture,status,media_type,start_date,mean',
