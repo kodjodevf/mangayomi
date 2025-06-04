@@ -23,7 +23,7 @@ final routerProvider = AutoDisposeProvider<GoRouter>.internal(
 // ignore: unused_element
 typedef RouterRef = AutoDisposeProviderRef<GoRouter>;
 String _$routerCurrentLocationStateHash() =>
-    r'3d04109aaeded1b2255b1f1d05abe2819fe694de';
+    r'e3248e9cbfd34a1c0576b28d9bcc01a07f644cb9';
 
 /// See also [RouterCurrentLocationState].
 @ProviderFor(RouterCurrentLocationState)

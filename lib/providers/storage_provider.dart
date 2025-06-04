@@ -107,8 +107,13 @@ class StorageProvider {
         : "Novel";
     final dir = await getDirectory();
     return Directory(
-      "${dir!.path}downloads/$itemTypePath/${manga.source} (${manga.lang!.toUpperCase()})/${manga.name!.replaceForbiddenCharacters('_')}/"
-          .fixSeparator,
+      path.join(
+        dir!.path,
+        'downloads',
+        itemTypePath,
+        '${manga.source} (${manga.lang!.toUpperCase()})',
+        manga.name!.replaceForbiddenCharacters('_'),
+      ),
     );
   }
 
@@ -121,8 +126,10 @@ class StorageProvider {
         ? "${chapter.scanlator!.replaceForbiddenCharacters('_')}_"
         : "";
     return Directory(
-      "${basedir!.path}$scanlator${chapter.name!.replaceForbiddenCharacters('_')}/"
-          .fixSeparator,
+      path.join(
+        basedir!.path,
+        scanlator + chapter.name!.replaceForbiddenCharacters('_').trim(),
+      ),
     );
   }
 
@@ -187,8 +194,4 @@ class StorageProvider {
 
     return isar;
   }
-}
-
-extension StringPathExtension on String {
-  String get fixSeparator => replaceAll("/", path.separator);
 }

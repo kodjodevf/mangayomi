@@ -960,6 +960,9 @@ class AppLocalizationsId extends AppLocalizations {
       'Akan secara otomatis memperbarui ekstensi ketika versi baru tersedia.';
 
   @override
+  String get check_for_app_updates => 'Periksa pembaruan aplikasi saat mulai';
+
+  @override
   String get reading_mode => 'Mode membaca';
 
   @override

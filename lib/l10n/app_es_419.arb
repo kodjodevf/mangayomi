@@ -221,6 +221,7 @@
     "check_for_extension_updates": "Buscar actualizaciones de extensión",
     "auto_extensions_updates": "Actualizaciones automáticas de extensión",
     "auto_extensions_updates_subtitle": "Actualizará automáticamente la extensión cuando haya una nueva versión disponible.",
+    "check_for_app_updates": "Buscar actualizaciones de la app al iniciar",
     "reading_mode": "Modo de lectura",
     "custom_filter": "Filtro personalizado",
     "background_color": "Color de fondo",

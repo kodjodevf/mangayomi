@@ -1926,6 +1926,12 @@ abstract class AppLocalizations {
   /// **'Will automatically update the extension when a new version is available.'**
   String get auto_extensions_updates_subtitle;
 
+  /// No description provided for @check_for_app_updates.
+  ///
+  /// In en, this message translates to:
+  /// **'Check for app updates on startup'**
+  String get check_for_app_updates;
+
   /// No description provided for @reading_mode.
   ///
   /// In en, this message translates to:

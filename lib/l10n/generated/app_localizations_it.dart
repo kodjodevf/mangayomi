@@ -963,6 +963,10 @@ class AppLocalizationsIt extends AppLocalizations {
       'Aggiorna automaticamente l\'estensione quando è disponibile una nuova versione.';
 
   @override
+  String get check_for_app_updates =>
+      'Controlla gli aggiornamenti dell\'app all\'avvio';
+
+  @override
   String get reading_mode => 'Modalità di lettura';
 
   @override

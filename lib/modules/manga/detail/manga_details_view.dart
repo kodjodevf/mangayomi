@@ -301,124 +301,112 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
   }
 
   _openCategory(Manga manga) {
+    final l10n = l10nLocalizations(context)!;
     List<int> categoryIds = [];
     showDialog(
       context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            final l10n = l10nLocalizations(context)!;
-            return AlertDialog(
-              title: Text(l10n.set_categories),
-              content: SizedBox(
-                width: context.width(0.8),
-                child: StreamBuilder(
-                  stream: isar.categorys
-                      .filter()
-                      .idIsNotNull()
-                      .and()
-                      .forItemTypeEqualTo(widget.manga.itemType)
-                      .watch(fireImmediately: true),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                      final entries = snapshot.data!;
-                      return SuperListView.builder(
-                        shrinkWrap: true,
-                        itemCount: entries.length,
-                        itemBuilder: (context, index) {
-                          return ListTileChapterFilter(
-                            label: entries[index].name!,
-                            onTap: () {
-                              setState(() {
-                                if (categoryIds.contains(entries[index].id)) {
-                                  categoryIds.remove(entries[index].id);
-                                } else {
-                                  categoryIds.add(entries[index].id!);
-                                }
-                              });
-                            },
-                            type: categoryIds.contains(entries[index].id)
-                                ? 1
-                                : 0,
-                          );
-                        },
-                      );
-                    }
-                    return Container();
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text(l10n.set_categories),
+          content: SizedBox(
+            width: context.width(0.8),
+            child: StreamBuilder(
+              stream: isar.categorys
+                  .filter()
+                  .idIsNotNull()
+                  .and()
+                  .forItemTypeEqualTo(manga.itemType)
+                  .watch(fireImmediately: true),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Container();
+                }
+                final entries = snapshot.data!;
+                return SuperListView.builder(
+                  shrinkWrap: true,
+                  itemCount: entries.length,
+                  itemBuilder: (context, index) {
+                    final category = entries[index];
+                    final selected = categoryIds.contains(category.id);
+                    return ListTileChapterFilter(
+                      label: category.name!,
+                      onTap: () {
+                        setState(() {
+                          selected
+                              ? categoryIds.remove(category.id)
+                              : categoryIds.add(category.id!);
+                        });
+                      },
+                      type: selected ? 1 : 0,
+                    );
                   },
+                );
+              },
+            ),
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    context.push(
+                      "/categories",
+                      extra: (
+                        true,
+                        manga.itemType == ItemType.manga
+                            ? 0
+                            : manga.itemType == ItemType.anime
+                            ? 1
+                            : 2,
+                      ),
+                    );
+                    Navigator.pop(context);
+                  },
+                  child: Text(l10n.edit),
                 ),
-              ),
-              actions: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TextButton(
-                      onPressed: () {
-                        context.push(
-                          "/categories",
-                          extra: (
-                            true,
-                            widget.manga.itemType == ItemType.manga
-                                ? 0
-                                : widget.manga.itemType == ItemType.anime
-                                ? 1
-                                : 2,
-                          ),
-                        );
-                        Navigator.pop(context);
-                      },
-                      child: Text(l10n.edit),
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(l10n.cancel),
                     ),
-                    Row(
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text(l10n.cancel),
-                        ),
-                        const SizedBox(width: 15),
-                        TextButton(
-                          onPressed: () {
-                            final model = widget.manga;
-                            isar.writeTxnSync(() {
-                              model.favorite = true;
-                              model.categories = categoryIds;
-                              model.dateAdded =
-                                  DateTime.now().millisecondsSinceEpoch;
-                              isar.mangas.putSync(model);
-                              ref
-                                  .read(synchingProvider(syncId: 1).notifier)
-                                  .addChangedPart(
-                                    ActionType.addItem,
-                                    model.id,
-                                    model.toJson(),
-                                    false,
-                                  );
-                              ref
-                                  .read(synchingProvider(syncId: 1).notifier)
-                                  .addChangedPart(
-                                    ActionType.updateItem,
-                                    model.id,
-                                    model.toJson(),
-                                    false,
-                                  );
-                            });
-                            if (mounted) {
-                              Navigator.pop(context);
-                            }
-                          },
-                          child: Text(l10n.ok),
-                        ),
-                      ],
+                    const SizedBox(width: 15),
+                    TextButton(
+                      onPressed: () {
+                        isar.writeTxnSync(() {
+                          manga.favorite = true;
+                          manga.categories = categoryIds;
+                          manga.dateAdded =
+                              DateTime.now().millisecondsSinceEpoch;
+                          isar.mangas.putSync(manga);
+                          final sync = ref.read(
+                            synchingProvider(syncId: 1).notifier,
+                          );
+                          sync.addChangedPart(
+                            ActionType.addItem,
+                            manga.id,
+                            manga.toJson(),
+                            false,
+                          );
+                          sync.addChangedPart(
+                            ActionType.updateItem,
+                            manga.id,
+                            manga.toJson(),
+                            false,
+                          );
+                        });
+                        if (mounted) Navigator.pop(context);
+                      },
+                      child: Text(l10n.ok),
                     ),
                   ],
                 ),
               ],
-            );
-          },
-        );
-      },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

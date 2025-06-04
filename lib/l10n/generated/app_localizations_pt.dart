@@ -961,6 +961,10 @@ class AppLocalizationsPt extends AppLocalizations {
       'Atualizará automaticamente a extensão quando uma nova versão estiver disponível.';
 
   @override
+  String get check_for_app_updates =>
+      'Verificar atualizações da aplicação ao iniciar';
+
+  @override
   String get reading_mode => 'Modo de leitura';
 
   @override
@@ -2478,6 +2482,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get auto_extensions_updates_subtitle =>
       'Atualizará automaticamente a extensão quando uma nova versão estiver disponível.';
+
+  @override
+  String get check_for_app_updates =>
+      'Verificar atualizações do app na inicialização';
 
   @override
   String get reading_mode => 'Modo de leitura';

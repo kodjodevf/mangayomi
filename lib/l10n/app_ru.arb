@@ -221,6 +221,7 @@
     "check_for_extension_updates": "Проверить обновления расширений",
     "auto_extensions_updates": "Автоматические обновления расширений",
     "auto_extensions_updates_subtitle": "Автоматически обновлять расширение при появлении новой версии.",
+    "check_for_app_updates": "Проверять обновления приложения при запуске",
     "reading_mode": "Режим чтения",
     "custom_filter": "Пользовательский фильтр",
     "background_color": "Цвет фона",

@@ -221,6 +221,7 @@
     "check_for_extension_updates": "Uzantı güncellemelerini kontrol et",
     "auto_extensions_updates": "Otomatik Uzantı Güncellemeleri",
     "auto_extensions_updates_subtitle": "Yeni bir sürümü mevcut olduğunda uzantıyı otomatik olarak günceller.",
+    "check_for_app_updates": "Uygulama başlatıldığında güncellemeleri kontrol et",
     "reading_mode": "Okuma Modu",
     "custom_filter": "Özel Filtre",
     "background_color": "Arka Plan Rengi",

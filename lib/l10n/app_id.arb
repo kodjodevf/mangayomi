@@ -221,6 +221,7 @@
     "check_for_extension_updates": "Periksa pembaruan ekstensi",
     "auto_extensions_updates": "Pembaruan ekstensi otomatis",
     "auto_extensions_updates_subtitle": "Akan secara otomatis memperbarui ekstensi ketika versi baru tersedia.",
+    "check_for_app_updates": "Periksa pembaruan aplikasi saat mulai",
     "reading_mode": "Mode membaca",
     "custom_filter": "Filter khusus",
     "background_color": "Warna latar belakang",

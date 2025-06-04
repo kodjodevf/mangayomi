@@ -224,6 +224,7 @@
   "check_for_extension_updates": "ตรวจสอบการอัพเดทส่วนขยาย",
   "auto_extensions_updates": "อัพเดทส่วนขยายอัตโนมัติ",
   "auto_extensions_updates_subtitle": "จะทำการอัพเดทส่วนขยายเมื่อมีเวอร์ชั่นใหม่พร้อมใช้งานโดยอัตโนมัติ",
+  "check_for_app_updates": "ตรวจสอบการอัปเดตแอปเมื่อเริ่มต้น",
   "reading_mode": "โหมดการอ่าน",
   "custom_filter": "ตัวกรองที่กำหนดเอง",
   "background_color": "สีพื้นหลัง",

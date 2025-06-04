@@ -961,6 +961,9 @@ class AppLocalizationsDe extends AppLocalizations {
       'Aktualisiert die Erweiterung automatisch, wenn eine neue Version verfügbar ist.';
 
   @override
+  String get check_for_app_updates => 'Beim Start nach App-Updates suchen';
+
+  @override
   String get reading_mode => 'Lesemodus';
 
   @override

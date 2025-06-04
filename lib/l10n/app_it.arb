@@ -221,6 +221,7 @@
     "check_for_extension_updates": "Verifica aggiornamenti estensione",
     "auto_extensions_updates": "Aggiornamenti automatici delle estensioni",
     "auto_extensions_updates_subtitle": "Aggiorna automaticamente l'estensione quando è disponibile una nuova versione.",
+    "check_for_app_updates": "Controlla gli aggiornamenti dell'app all'avvio",
     "reading_mode": "Modalità di lettura",
     "custom_filter": "Filtro personalizzato",
     "background_color": "Colore di sfondo",
