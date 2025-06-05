@@ -14,15 +14,15 @@
       "bundleIdentifier": "com.kodjodevf.mangayomi",
       "developerName": "Moustapha Kodjo Amadou",
       "subtitle": "Read manga, novels, and watch anime",
-      "version": "0.6.2",
-      "versionDate": "2025-06-02T11:47:44Z",
+      "version": "0.6.25",
+      "versionDate": "2025-06-05T14:39:03Z",
       "versionDescription": "",
-      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.2/Mangayomi-v0.6.2-ios.ipa",
+      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.25/Mangayomi-v0.6.25-ios.ipa",
       "localizedDescription": "Mangayomi is an open-source Flutter app for reading manga, novels, and watching anime across multiple platforms.",
       "iconURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/icons/icon_default.webp",
       "tintColor": "EF4444",
       "category": "entertainment",
-      "size": 58152938,
+      "size": 58152040,
       "screenshotURLs": [
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_0_default.webp",
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_1_default.webp",
@@ -30,9 +30,16 @@
       ],
       "versions": [
         {
+          "version": "0.6.25",
+          "date": "2025-06-05T14:39:03Z",
+          "localizedDescription": "",
+          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.25/Mangayomi-v0.6.25-ios.ipa",
+          "size": 58152040
+        },
+        {
           "version": "0.6.2",
           "date": "2025-06-02T11:47:44Z",
-          "localizedDescription": "",
+          "localizedDescription": "What's Changed\r\n\u2022 Fix inspector/crash issues & improve UX in extension, player, and UI by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/469\r\n\u2022 Apply System Theme After Backup Restore by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/471\r\n\u2022 Fix [Chapters not marked as finished with vertical continuous](https://github.com/kodjodevf/mangayomi/issues/474)\r\n\u2022 Fix [Leaving an extension in Browse resets to 1st tab](https://github.com/kodjodevf/mangayomi/issues/468)\r\n\u2022 Fix [Grey screen when accessing settings of dart extensions](https://github.com/kodjodevf/mangayomi/issues/467)\r\n\u2022 Fix [\"Cancel\" Button on Update Window Does Nothing](https://github.com/kodjodevf/mangayomi/issues/466)\r\n\u2022 Some optimisations\r\n\r\n\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.6.1...v0.6.2",
           "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.2/Mangayomi-v0.6.2-ios.ipa",
           "size": 58152938
         },
@@ -135,6 +142,17 @@
       "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
       "notify": true,
       "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.6.2"
+    },
+    {
+      "appID": "com.kodjodevf.mangayomi",
+      "title": "0.6.25 - 05 Jun",
+      "identifier": "release-0.6.25",
+      "caption": "Update for Mangayomi now available!",
+      "date": "2025-06-05T14:39:03Z",
+      "tintColor": "EF4444",
+      "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
+      "notify": true,
+      "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.6.25"
     }
   ]
 }
