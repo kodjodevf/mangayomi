@@ -149,9 +149,10 @@ class MyAnimeList extends _$MyAnimeList {
     );
   }
 
-  Future<List<TrackSearch>> fetchData({
+  Future<List<TrackSearch>> fetchGeneralData({
     bool isManga = true,
-    String rankingType = "airing", // bypopularity, tv, upcoming - all, manga, manhwa, manhua
+    String rankingType =
+        "airing", // bypopularity, tv, upcoming - all, manga, manhwa, manhua
   }) async {
     final accessToken = await _getAccessToken();
     final item = isManga ? "manga" : "anime";
@@ -189,6 +190,56 @@ class MyAnimeList extends _$MyAnimeList {
                   ),
                   trackingUrl:
                       "https://myanimelist.net/$item/${e["node"]["id"]}",
+                ),
+              )
+              .toList();
+  }
+
+  Future<List<TrackSearch>> fetchUserData({bool isManga = true}) async {
+    final accessToken = await _getAccessToken();
+    final item = isManga ? "mangalist" : "animelist";
+    final contentUnit = isManga ? "num_chapters" : "num_episodes";
+    final url = Uri.parse('$baseApiUrl/users/@me/$item').replace(
+      queryParameters: {
+        'sort': 'list_updated_at',
+        'limit': '1000',
+        'fields':
+            'id,title,synopsis,$contentUnit,main_picture,status,media_type,start_date,mean,list_status',
+      },
+    );
+    final result = await _makeGetRequest(url, accessToken);
+    final res = jsonDecode(result.body) as Map<String, dynamic>;
+
+    return res['data'] == null
+        ? []
+        : (res['data'] as List)
+              .map(
+                (e) => TrackSearch(
+                  mediaId: e["node"]["id"],
+                  summary: e["node"]["synopsis"] ?? "",
+                  totalChapter: e["node"][contentUnit],
+                  coverUrl: e["node"]["main_picture"]["large"] ?? "",
+                  title: e["node"]["title"],
+                  score: e["node"]["mean"],
+                  startDate: e["node"]["start_date"] ?? "",
+                  publishingType: e["node"]["media_type"].toString().replaceAll(
+                    "_",
+                    " ",
+                  ),
+                  publishingStatus: e["node"]["status"].toString().replaceAll(
+                    "_",
+                    " ",
+                  ),
+                  trackingUrl:
+                      "https://myanimelist.net/$item/${e["node"]["id"]}",
+                  startedReadingDate: e["list_status"]["start_date"],
+                  finishedReadingDate: e["list_status"]["finish_date"],
+                  lastChapterRead:
+                      e["list_status"][isManga
+                          ? "num_chapters_read"
+                          : "num_episodes_watched"],
+                  status:
+                      e["list_status"]["status"], // TODO map status enum correctly
                 ),
               )
               .toList();
