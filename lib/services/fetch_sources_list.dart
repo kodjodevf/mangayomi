@@ -42,7 +42,8 @@ Future<void> fetchSourcesList({
         (source) => source.id == id,
         orElse: () => Source(),
       );
-      if (matchingSource.id != null) {
+      if (matchingSource.id != null &&
+          matchingSource.sourceCodeUrl!.isNotEmpty) {
         await _updateSource(matchingSource, ref, repo, itemType);
       }
     } else {
