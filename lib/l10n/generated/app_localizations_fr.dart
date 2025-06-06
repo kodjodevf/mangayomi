@@ -1536,4 +1536,7 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get return_to_the_list_of_chapters =>
       'Retournez à la liste des chapitres';
+
+  @override
+  String get hwdec => 'Hardware Decoder';
 }

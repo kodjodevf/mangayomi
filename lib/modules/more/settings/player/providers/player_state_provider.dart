@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:mangayomi/main.dart';
@@ -178,6 +179,45 @@ class UseLibassState extends _$UseLibassState {
     state = value;
     isar.writeTxnSync(
       () => isar.settings.putSync(settings!..useLibass = value),
+    );
+  }
+}
+
+final hwdecs = {
+  "no": ["all"],
+  "auto": ["all"],
+  "d3d11va": ["windows"],
+  "d3d11va-copy": ["windows"],
+  "videotoolbox": ["ios"],
+  "videotoolbox-copy": ["ios"],
+  "nvdec": ["all"],
+  "nvdec-copy": ["all"],
+  "mediacodec": ["android"],
+  "mediacodec-copy": ["android"],
+  "crystalhd": ["all"],
+};
+
+@riverpod
+class HwdecModeState extends _$HwdecModeState {
+  @override
+  String build({bool rawValue = false}) {
+    final hwdecMode = isar.settings.getSync(227)!.hwdecMode ?? "auto";
+    if (rawValue) {
+      return hwdecMode;
+    }
+    final hwdecSupport = hwdecs[hwdecMode] ?? [];
+    if (!hwdecSupport.contains("all") &&
+        !hwdecSupport.contains(Platform.operatingSystem)) {
+      return Platform.isAndroid ? "auto-safe" : "auto";
+    }
+    return hwdecMode;
+  }
+
+  void set(String value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(settings!..hwdecMode = value),
     );
   }
 }

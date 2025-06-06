@@ -204,6 +204,8 @@ class Settings {
 
   bool? useLibass;
 
+  String? hwdecMode;
+
   int? libraryFilterNovelDownloadType;
 
   int? libraryFilterNovelUnreadType;
@@ -326,6 +328,7 @@ class Settings {
     this.animeGridSize,
     this.disableSectionType = SectionType.all,
     this.useLibass = true,
+    this.hwdecMode = "auto",
     this.libraryFilterNovelDownloadType = 0,
     this.libraryFilterNovelUnreadType = 0,
     this.libraryFilterNovelStartedType = 0,
@@ -509,6 +512,7 @@ class Settings {
     disableSectionType =
         SectionType.values[json['disableSectionType'] ?? SectionType.all.index];
     useLibass = json['useLibass'];
+    hwdecMode = json['hwdecMode'];
     libraryFilterNovelBookMarkedType = json['libraryFilterNovelBookMarkedType'];
     libraryFilterNovelDownloadType = json['libraryFilterNovelDownloadType'];
     libraryFilterNovelStartedType = json['libraryFilterNovelStartedType'];
@@ -666,6 +670,7 @@ class Settings {
     'animeGridSize': animeGridSize,
     'disableSectionType': disableSectionType.index,
     'useLibass': useLibass,
+    'hwdecMode': hwdecMode,
     'libraryFilterNovelBookMarkedType': libraryFilterNovelBookMarkedType,
     'libraryFilterNovelDownloadType': libraryFilterNovelDownloadType,
     'libraryFilterNovelStartedType': libraryFilterNovelStartedType,

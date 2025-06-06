@@ -2963,6 +2963,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Return to the list of chapters'**
   String get return_to_the_list_of_chapters;
+
+  /// No description provided for @hwdec.
+  ///
+  /// In en, this message translates to:
+  /// **'Hardware Decoder'**
+  String get hwdec;
 }
 
 class _AppLocalizationsDelegate

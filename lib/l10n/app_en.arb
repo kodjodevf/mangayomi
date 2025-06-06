@@ -473,7 +473,6 @@
   "continue_to_next_chapter": "Continue scrolling to read the next chapter",
   "no_next_chapter": "No next chapter",
   "you_have_finished_reading": "You have finished reading",
-  "return_to_the_list_of_chapters": "Return to the list of chapters"
-
-
+  "return_to_the_list_of_chapters": "Return to the list of chapters",
+  "hwdec": "Hardware Decoder"
 }
