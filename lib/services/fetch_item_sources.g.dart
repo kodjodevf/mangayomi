@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'fetch_anime_sources.dart';
+part of 'fetch_item_sources.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fetchAnimeSourcesListHash() =>
-    r'e7f673d37239c74f3403de3a234bbc1d6e171332';
+String _$fetchItemSourcesListHash() =>
+    r'16238be20517fddacf52a2694fbd50cafbfa7496';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -30,33 +30,36 @@ class _SystemHash {
   }
 }
 
-/// See also [fetchAnimeSourcesList].
-@ProviderFor(fetchAnimeSourcesList)
-const fetchAnimeSourcesListProvider = FetchAnimeSourcesListFamily();
+/// See also [fetchItemSourcesList].
+@ProviderFor(fetchItemSourcesList)
+const fetchItemSourcesListProvider = FetchItemSourcesListFamily();
 
-/// See also [fetchAnimeSourcesList].
-class FetchAnimeSourcesListFamily extends Family<AsyncValue<void>> {
-  /// See also [fetchAnimeSourcesList].
-  const FetchAnimeSourcesListFamily();
+/// See also [fetchItemSourcesList].
+class FetchItemSourcesListFamily extends Family<AsyncValue<void>> {
+  /// See also [fetchItemSourcesList].
+  const FetchItemSourcesListFamily();
 
-  /// See also [fetchAnimeSourcesList].
-  FetchAnimeSourcesListProvider call({
+  /// See also [fetchItemSourcesList].
+  FetchItemSourcesListProvider call({
     int? id,
     required bool reFresh,
+    required ItemType itemType,
   }) {
-    return FetchAnimeSourcesListProvider(
+    return FetchItemSourcesListProvider(
       id: id,
       reFresh: reFresh,
+      itemType: itemType,
     );
   }
 
   @override
-  FetchAnimeSourcesListProvider getProviderOverride(
-    covariant FetchAnimeSourcesListProvider provider,
+  FetchItemSourcesListProvider getProviderOverride(
+    covariant FetchItemSourcesListProvider provider,
   ) {
     return call(
       id: provider.id,
       reFresh: provider.reFresh,
+      itemType: provider.itemType,
     );
   }
 
@@ -72,35 +75,38 @@ class FetchAnimeSourcesListFamily extends Family<AsyncValue<void>> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'fetchAnimeSourcesListProvider';
+  String? get name => r'fetchItemSourcesListProvider';
 }
 
-/// See also [fetchAnimeSourcesList].
-class FetchAnimeSourcesListProvider extends FutureProvider<void> {
-  /// See also [fetchAnimeSourcesList].
-  FetchAnimeSourcesListProvider({
+/// See also [fetchItemSourcesList].
+class FetchItemSourcesListProvider extends FutureProvider<void> {
+  /// See also [fetchItemSourcesList].
+  FetchItemSourcesListProvider({
     int? id,
     required bool reFresh,
+    required ItemType itemType,
   }) : this._internal(
-          (ref) => fetchAnimeSourcesList(
-            ref as FetchAnimeSourcesListRef,
+          (ref) => fetchItemSourcesList(
+            ref as FetchItemSourcesListRef,
             id: id,
             reFresh: reFresh,
+            itemType: itemType,
           ),
-          from: fetchAnimeSourcesListProvider,
-          name: r'fetchAnimeSourcesListProvider',
+          from: fetchItemSourcesListProvider,
+          name: r'fetchItemSourcesListProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$fetchAnimeSourcesListHash,
-          dependencies: FetchAnimeSourcesListFamily._dependencies,
+                  : _$fetchItemSourcesListHash,
+          dependencies: FetchItemSourcesListFamily._dependencies,
           allTransitiveDependencies:
-              FetchAnimeSourcesListFamily._allTransitiveDependencies,
+              FetchItemSourcesListFamily._allTransitiveDependencies,
           id: id,
           reFresh: reFresh,
+          itemType: itemType,
         );
 
-  FetchAnimeSourcesListProvider._internal(
+  FetchItemSourcesListProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -109,19 +115,21 @@ class FetchAnimeSourcesListProvider extends FutureProvider<void> {
     required super.from,
     required this.id,
     required this.reFresh,
+    required this.itemType,
   }) : super.internal();
 
   final int? id;
   final bool reFresh;
+  final ItemType itemType;
 
   @override
   Override overrideWith(
-    FutureOr<void> Function(FetchAnimeSourcesListRef provider) create,
+    FutureOr<void> Function(FetchItemSourcesListRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: FetchAnimeSourcesListProvider._internal(
-        (ref) => create(ref as FetchAnimeSourcesListRef),
+      override: FetchItemSourcesListProvider._internal(
+        (ref) => create(ref as FetchItemSourcesListRef),
         from: from,
         name: null,
         dependencies: null,
@@ -129,20 +137,22 @@ class FetchAnimeSourcesListProvider extends FutureProvider<void> {
         debugGetCreateSourceHash: null,
         id: id,
         reFresh: reFresh,
+        itemType: itemType,
       ),
     );
   }
 
   @override
   FutureProviderElement<void> createElement() {
-    return _FetchAnimeSourcesListProviderElement(this);
+    return _FetchItemSourcesListProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is FetchAnimeSourcesListProvider &&
+    return other is FetchItemSourcesListProvider &&
         other.id == id &&
-        other.reFresh == reFresh;
+        other.reFresh == reFresh &&
+        other.itemType == itemType;
   }
 
   @override
@@ -150,6 +160,7 @@ class FetchAnimeSourcesListProvider extends FutureProvider<void> {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, id.hashCode);
     hash = _SystemHash.combine(hash, reFresh.hashCode);
+    hash = _SystemHash.combine(hash, itemType.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -157,22 +168,27 @@ class FetchAnimeSourcesListProvider extends FutureProvider<void> {
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin FetchAnimeSourcesListRef on FutureProviderRef<void> {
+mixin FetchItemSourcesListRef on FutureProviderRef<void> {
   /// The parameter `id` of this provider.
   int? get id;
 
   /// The parameter `reFresh` of this provider.
   bool get reFresh;
+
+  /// The parameter `itemType` of this provider.
+  ItemType get itemType;
 }
 
-class _FetchAnimeSourcesListProviderElement extends FutureProviderElement<void>
-    with FetchAnimeSourcesListRef {
-  _FetchAnimeSourcesListProviderElement(super.provider);
+class _FetchItemSourcesListProviderElement extends FutureProviderElement<void>
+    with FetchItemSourcesListRef {
+  _FetchItemSourcesListProviderElement(super.provider);
 
   @override
-  int? get id => (origin as FetchAnimeSourcesListProvider).id;
+  int? get id => (origin as FetchItemSourcesListProvider).id;
   @override
-  bool get reFresh => (origin as FetchAnimeSourcesListProvider).reFresh;
+  bool get reFresh => (origin as FetchItemSourcesListProvider).reFresh;
+  @override
+  ItemType get itemType => (origin as FetchItemSourcesListProvider).itemType;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

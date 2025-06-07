@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/services/fetch_anime_sources.dart';
-import 'package:mangayomi/services/fetch_manga_sources.dart';
+import 'package:mangayomi/services/fetch_item_sources.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/services/fetch_novel_sources.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -45,17 +42,11 @@ class _ExtensionListTileWidgetState
     setState(() => _isLoading = true);
 
     try {
-      final provider = switch (widget.source.itemType) {
-        ItemType.manga => fetchMangaSourcesListProvider(
-          id: widget.source.id,
-          reFresh: true,
-        ),
-        ItemType.anime => fetchAnimeSourcesListProvider(
-          id: widget.source.id,
-          reFresh: true,
-        ),
-        _ => fetchNovelSourcesListProvider(id: widget.source.id, reFresh: true),
-      };
+      final provider = fetchItemSourcesListProvider(
+        id: widget.source.id,
+        reFresh: true,
+        itemType: widget.source.itemType,
+      );
 
       if (!widget.source.isAdded!) ref.invalidate(provider);
       await ref.watch(provider.future);
