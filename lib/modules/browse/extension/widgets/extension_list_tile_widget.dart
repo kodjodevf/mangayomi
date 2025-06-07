@@ -45,28 +45,20 @@ class _ExtensionListTileWidgetState
     setState(() => _isLoading = true);
 
     try {
-      final future = switch (widget.source.itemType) {
-        ItemType.manga => ref.watch(
-          fetchMangaSourcesListProvider(
-            id: widget.source.id,
-            reFresh: true,
-          ).future,
+      final provider = switch (widget.source.itemType) {
+        ItemType.manga => fetchMangaSourcesListProvider(
+          id: widget.source.id,
+          reFresh: true,
         ),
-        ItemType.anime => ref.watch(
-          fetchAnimeSourcesListProvider(
-            id: widget.source.id,
-            reFresh: true,
-          ).future,
+        ItemType.anime => fetchAnimeSourcesListProvider(
+          id: widget.source.id,
+          reFresh: true,
         ),
-        _ => ref.watch(
-          fetchNovelSourcesListProvider(
-            id: widget.source.id,
-            reFresh: true,
-          ).future,
-        ),
+        _ => fetchNovelSourcesListProvider(id: widget.source.id, reFresh: true),
       };
 
-      await future;
+      if (!widget.source.isAdded!) ref.invalidate(provider);
+      await ref.watch(provider.future);
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
