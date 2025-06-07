@@ -5,9 +5,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/services/fetch_anime_sources.dart';
-import 'package:mangayomi/services/fetch_manga_sources.dart';
-import 'package:mangayomi/services/fetch_novel_sources.dart';
+import 'package:mangayomi/services/fetch_item_sources.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'browse_state_provider.g.dart';
@@ -57,17 +55,13 @@ class ExtensionsRepoState extends _$ExtensionsRepoState {
       a;
     });
     try {
-      final a = switch (itemType) {
-        ItemType.manga => ref.refresh(
-          fetchMangaSourcesListProvider(id: null, reFresh: false).future,
-        ),
-        ItemType.anime => ref.refresh(
-          fetchAnimeSourcesListProvider(id: null, reFresh: false).future,
-        ),
-        _ => ref.refresh(
-          fetchNovelSourcesListProvider(id: null, reFresh: false).future,
-        ),
-      };
+      final a = ref.refresh(
+        fetchItemSourcesListProvider(
+          id: null,
+          reFresh: false,
+          itemType: itemType,
+        ).future,
+      );
       Future.wait([a]);
     } catch (_) {}
   }

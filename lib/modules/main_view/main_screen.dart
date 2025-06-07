@@ -14,14 +14,12 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/loading_icon.dart';
-import 'package:mangayomi/services/fetch_anime_sources.dart';
-import 'package:mangayomi/services/fetch_manga_sources.dart';
+import 'package:mangayomi/services/fetch_item_sources.dart';
 import 'package:mangayomi/modules/main_view/providers/migration.dart';
 import 'package:mangayomi/modules/more/about/providers/check_for_update.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/auto_backup.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
-import 'package:mangayomi/services/fetch_novel_sources.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/services/sync_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -107,9 +105,15 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     Future.microtask(() {
       if (mounted) {
         ref.read(checkForUpdateProvider(context: context));
-        ref.read(fetchMangaSourcesListProvider(id: null, reFresh: false));
-        ref.read(fetchAnimeSourcesListProvider(id: null, reFresh: false));
-        ref.read(fetchNovelSourcesListProvider(id: null, reFresh: false));
+        for (var type in ItemType.values) {
+          ref.read(
+            FetchItemSourcesListProvider(
+              id: null,
+              reFresh: false,
+              itemType: type,
+            ),
+          );
+        }
       }
     });
   }

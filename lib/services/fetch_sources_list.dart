@@ -36,35 +36,34 @@ Future<void> fetchSourcesList({
       )
       .toList();
 
-  isar.writeTxnSync(() async {
-    if (id != null) {
-      final matchingSource = sourceList.firstWhere(
-        (source) => source.id == id,
-        orElse: () => Source(),
-      );
-      if (matchingSource.id != null) {
-        await _updateSource(matchingSource, ref, repo, itemType);
+  if (id != null) {
+    final matchingSource = sourceList.firstWhere(
+      (source) => source.id == id,
+      orElse: () => Source(),
+    );
+    if (matchingSource.id != null && matchingSource.sourceCodeUrl!.isNotEmpty) {
+      await _updateSource(matchingSource, ref, repo, itemType);
+    }
+  } else {
+    for (var source in sourceList) {
+      final existingSource = await isar.sources.get(source.id!);
+      if (existingSource == null) {
+        await _addNewSource(source, ref, repo, itemType);
+        continue;
       }
-    } else {
-      for (var source in sourceList) {
-        final existingSource = isar.sources.getSync(source.id!);
-        if (existingSource != null) {
-          if (existingSource.isAdded! &&
-              compareVersions(existingSource.version!, source.version!) < 0) {
-            if (ref.watch(autoUpdateExtensionsStateProvider)) {
-              await _updateSource(source, ref, repo, itemType);
-            } else {
-              isar.sources.putSync(
-                existingSource..versionLast = source.version,
-              );
-            }
-          }
-        } else {
-          _addNewSource(source, ref, repo, itemType);
-        }
+      final shouldUpdate =
+          existingSource.isAdded! &&
+          compareVersions(existingSource.version!, source.version!) < 0;
+      if (!shouldUpdate) continue;
+      if (ref.read(autoUpdateExtensionsStateProvider)) {
+        await _updateSource(source, ref, repo, itemType);
+      } else {
+        await isar.writeTxn(() async {
+          isar.sources.put(existingSource..versionLast = source.version);
+        });
       }
     }
-  });
+  }
 
   checkIfSourceIsObsolete(sourceList, repo!, itemType, ref);
 }
@@ -108,9 +107,7 @@ Future<void> _updateSource(
     ..notes = source.notes
     ..repo = repo;
 
-  isar.writeTxnSync(() {
-    isar.sources.putSync(updatedSource);
-  });
+  await isar.writeTxn(() async => isar.sources.put(updatedSource));
   ref
       .read(synchingProvider(syncId: 1).notifier)
       .addChangedPart(
@@ -121,7 +118,12 @@ Future<void> _updateSource(
       );
 }
 
-void _addNewSource(Source source, Ref ref, Repo? repo, ItemType itemType) {
+Future<void> _addNewSource(
+  Source source,
+  Ref ref,
+  Repo? repo,
+  ItemType itemType,
+) async {
   final newSource = Source()
     ..sourceCodeUrl = source.sourceCodeUrl
     ..id = source.id
@@ -145,27 +147,27 @@ void _addNewSource(Source source, Ref ref, Repo? repo, ItemType itemType) {
     ..isObsolete = false
     ..notes = source.notes
     ..repo = repo;
-  isar.sources.putSync(newSource);
+  await isar.writeTxn(() async => isar.sources.put(newSource));
   ref
       .read(synchingProvider(syncId: 1).notifier)
       .addChangedPart(ActionType.addExtension, null, newSource.toJson(), false);
 }
 
-void checkIfSourceIsObsolete(
+Future<void> checkIfSourceIsObsolete(
   List<Source> sourceList,
   Repo repo,
   ItemType itemType,
   Ref ref,
-) {
+) async {
   if (sourceList.isEmpty) return;
 
-  final sources = isar.sources
+  final sources = await isar.sources
       .filter()
       .idIsNotNull()
       .itemTypeEqualTo(itemType)
       .and()
       .isLocalEqualTo(false)
-      .findAllSync();
+      .findAll();
 
   if (sources.isEmpty) return;
 
@@ -176,7 +178,7 @@ void checkIfSourceIsObsolete(
 
   if (sourceIds.isEmpty) return;
 
-  isar.writeTxnSync(() {
+  await isar.writeTxn(() async {
     for (var source in sources) {
       final isNowObsolete =
           !sourceIds.contains(source.id) &&
@@ -184,7 +186,7 @@ void checkIfSourceIsObsolete(
 
       if (source.isObsolete != isNowObsolete) {
         source.isObsolete = isNowObsolete;
-        isar.sources.putSync(source);
+        await isar.sources.put(source);
 
         ref
             .read(synchingProvider(syncId: 1).notifier)

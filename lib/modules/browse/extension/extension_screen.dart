@@ -4,11 +4,9 @@ import 'package:mangayomi/modules/widgets/custom_sliver_grouped_list_view.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extensions_provider.dart';
-import 'package:mangayomi/services/fetch_anime_sources.dart';
-import 'package:mangayomi/services/fetch_manga_sources.dart';
+import 'package:mangayomi/services/fetch_item_sources.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/services/fetch_novel_sources.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/extension_list_tile_widget.dart';
@@ -30,48 +28,34 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
   final ScrollController controller = ScrollController();
   bool isUpdating = false;
   Future<void> _refreshSources() {
-    return switch (widget.itemType) {
-      ItemType.manga => ref.refresh(
-        fetchMangaSourcesListProvider(id: null, reFresh: true).future,
-      ),
-      ItemType.anime => ref.refresh(
-        fetchAnimeSourcesListProvider(id: null, reFresh: true).future,
-      ),
-      _ => ref.refresh(
-        fetchNovelSourcesListProvider(id: null, reFresh: true).future,
-      ),
-    };
+    return ref.refresh(
+      fetchItemSourcesListProvider(
+        id: null,
+        reFresh: true,
+        itemType: widget.itemType,
+      ).future,
+    );
   }
 
   Future<void> _updateSource(Source source) {
-    switch (source.itemType) {
-      case ItemType.manga:
-        return ref.read(
-          fetchMangaSourcesListProvider(id: source.id, reFresh: true).future,
-        );
-      case ItemType.anime:
-        return ref.read(
-          fetchAnimeSourcesListProvider(id: source.id, reFresh: true).future,
-        );
-      default:
-        return ref.read(
-          fetchNovelSourcesListProvider(id: source.id, reFresh: true).future,
-        );
-    }
+    return ref.read(
+      fetchItemSourcesListProvider(
+        id: source.id,
+        reFresh: true,
+        itemType: source.itemType,
+      ).future,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    switch (widget.itemType) {
-      case ItemType.manga:
-        ref.read(fetchMangaSourcesListProvider(id: null, reFresh: false));
-        break;
-      case ItemType.anime:
-        ref.read(fetchAnimeSourcesListProvider(id: null, reFresh: false));
-        break;
-      default:
-        ref.read(fetchNovelSourcesListProvider(id: null, reFresh: false));
-    }
+    ref.read(
+      fetchItemSourcesListProvider(
+        id: null,
+        reFresh: false,
+        itemType: widget.itemType,
+      ),
+    );
 
     final streamExtensions = ref.watch(
       getExtensionsStreamProvider(widget.itemType),
