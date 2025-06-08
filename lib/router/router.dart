@@ -123,8 +123,6 @@ class RouterNotifier extends ChangeNotifier {
           builder: (id) =>
               LibraryScreen(itemType: ItemType.novel, presetInput: id),
         ),
-        _genericRoute(name: "history", child: const HistoryScreen()),
-        _genericRoute(name: "updates", child: const UpdatesScreen()),
         _genericRoute<String?>(
           name: "trackerLibrary/anilist",
           builder: (id) => TrackerLibraryScreen(
@@ -146,6 +144,8 @@ class RouterNotifier extends ChangeNotifier {
             presetInput: id,
           ),
         ),
+        _genericRoute(name: "history", child: const HistoryScreen()),
+        _genericRoute(name: "updates", child: const UpdatesScreen()),
         _genericRoute(name: "browse", child: const BrowseScreen()),
         _genericRoute(name: "more", child: const MoreScreen()),
       ],

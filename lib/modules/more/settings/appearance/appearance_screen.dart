@@ -25,6 +25,9 @@ final navigationItems = {
   "/history": "History",
   "/browse": "Browse",
   "/more": "More",
+  "/trackerLibrary/anilist": "AL",
+  "/trackerLibrary/kitsu": "Kitsu",
+  "/trackerLibrary/mal": "MAL",
 };
 
 class SettingsSection extends StatelessWidget {

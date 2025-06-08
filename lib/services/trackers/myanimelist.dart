@@ -220,7 +220,9 @@ class MyAnimeList extends _$MyAnimeList {
                   totalChapter: e["node"][contentUnit],
                   coverUrl: e["node"]["main_picture"]["large"] ?? "",
                   title: e["node"]["title"],
-                  score: e["node"]["mean"],
+                  score: e["node"]["mean"] is double
+                      ? e["node"]["mean"]
+                      : (e["node"]["mean"] as int).toDouble(),
                   startDate: e["node"]["start_date"] ?? "",
                   publishingType: e["node"]["media_type"].toString().replaceAll(
                     "_",
@@ -232,8 +234,12 @@ class MyAnimeList extends _$MyAnimeList {
                   ),
                   trackingUrl:
                       "https://myanimelist.net/$item/${e["node"]["id"]}",
-                  startedReadingDate: e["list_status"]["start_date"],
-                  finishedReadingDate: e["list_status"]["finish_date"],
+                  startedReadingDate: _parseDate(
+                    e["list_status"]["start_date"],
+                  ),
+                  finishedReadingDate: _parseDate(
+                    e["list_status"]["finish_date"],
+                  ),
                   lastChapterRead:
                       e["list_status"][isManga
                           ? "num_chapters_read"
