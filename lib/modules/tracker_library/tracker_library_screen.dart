@@ -17,7 +17,10 @@ import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/models/track.dart';
+import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/models/update.dart';
+import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
 import 'package:mangayomi/modules/more/categories/providers/isar_providers.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
@@ -46,11 +49,16 @@ enum TrackerProviders {
   kitsu(syncId: 3),
   trakt(syncId: 4);
 
-  const TrackerProviders({
-    required this.syncId,
-  });
+  const TrackerProviders({required this.syncId});
 
   final int syncId;
+}
+
+class TrackLibrarySection {
+  String name;
+  Future<List<TrackSearch>?> Function() func;
+
+  TrackLibrarySection({required this.name, required this.func});
 }
 
 class TrackerLibraryScreen extends ConsumerStatefulWidget {
@@ -58,56 +66,109 @@ class TrackerLibraryScreen extends ConsumerStatefulWidget {
   const TrackerLibraryScreen({required this.trackerProvider, super.key});
 
   @override
-  ConsumerState<TrackerLibraryScreen> createState() => _TrackerLibraryScreenState();
+  ConsumerState<TrackerLibraryScreen> createState() =>
+      _TrackerLibraryScreenState();
 }
 
 class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
   @override
   Widget build(BuildContext context) {
+    final sections = [
+      TrackLibrarySection(
+        name: "Airing Anime",
+        func: fetchGeneralData(ItemType.anime),
+      ),
+      TrackLibrarySection(
+        name: "Popular Anime",
+        func: fetchGeneralData(ItemType.anime, rankingType: "bypopularity"),
+      ),
+      TrackLibrarySection(
+        name: "Upcoming Anime",
+        func: fetchGeneralData(ItemType.anime, rankingType: "upcoming"),
+      ),
+      TrackLibrarySection(
+        name: "Airing Manga",
+        func: fetchGeneralData(ItemType.manga),
+      ),
+      TrackLibrarySection(
+        name: "Popular Manga",
+        func: fetchGeneralData(ItemType.manga, rankingType: "bypopularity"),
+      ),
+      TrackLibrarySection(
+        name: "Upcoming Manga",
+        func: fetchGeneralData(ItemType.manga, rankingType: "upcoming"),
+      ),
+      TrackLibrarySection(
+        name: "Continue watching",
+        func: fetchUserData(ItemType.anime),
+      ),
+      TrackLibrarySection(
+        name: "Continue reading",
+        func: fetchUserData(ItemType.manga),
+      ),
+    ];
     final l10n = l10nLocalizations(context)!;
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.migrate)),
-      body: widget.manga.name != null && widget.manga.author != null
-          ? SuperListView.builder(
-              itemCount: sourceList.length,
-              extentPrecalculationPolicy: SuperPrecalculationPolicy(),
-              itemBuilder: (context, index) {
-                final source = sourceList[index];
-                return SizedBox(
-                  height: 260,
-                  child: MigrationSourceSearchScreen(
-                    query: widget.manga.name ?? widget.manga.author ?? "",
-                    manga: widget.manga,
-                    source: source,
-                  ),
-                );
-              },
-            )
-          : Container(),
+      body: SuperListView.builder(
+        itemCount: sections.length,
+        extentPrecalculationPolicy: SuperPrecalculationPolicy(),
+        itemBuilder: (context, index) {
+          final section = sections[index];
+          return SizedBox(
+            height: 260,
+            child: TrackerSectionScreen(
+              section: section,
+            ),
+          );
+        },
+      ),
     );
+  }
+
+  Future<List<TrackSearch>?> Function() fetchGeneralData(
+    ItemType itemType, {
+    String rankingType = "airing",
+  }) {
+    return () async => await ref
+        .read(
+          trackStateProvider(
+            track: Track(
+              syncId: widget.trackerProvider.syncId,
+              status: TrackStatus.completed,
+            ),
+            itemType: itemType,
+          ).notifier,
+        )
+        .fetchGeneralData(rankingType: rankingType);
+  }
+
+  Future<List<TrackSearch>?> Function() fetchUserData(ItemType itemType) {
+    return () async => await ref
+        .read(
+          trackStateProvider(
+            track: Track(
+              syncId: widget.trackerProvider.syncId,
+              status: TrackStatus.completed,
+            ),
+            itemType: itemType,
+          ).notifier,
+        )
+        .fetchUserData();
   }
 }
 
-class MigrationSourceSearchScreen extends StatefulWidget {
-  final String query;
-  final Manga manga;
+class TrackerSectionScreen extends StatefulWidget {
+  final TrackLibrarySection section;
 
-  final Source source;
-  const MigrationSourceSearchScreen({
-    super.key,
-    required this.query,
-    required this.manga,
-    required this.source,
-  });
+  const TrackerSectionScreen({super.key, required this.section});
 
   @override
-  State<MigrationSourceSearchScreen> createState() =>
-      _MigrationSourceSearchScreenState();
+  State<TrackerSectionScreen> createState() => _TrackerSectionScreenState();
 }
 
-class _MigrationSourceSearchScreenState
-    extends State<MigrationSourceSearchScreen> {
+class _TrackerSectionScreenState extends State<TrackerSectionScreen> {
   @override
   void initState() {
     super.initState();
@@ -116,16 +177,11 @@ class _MigrationSourceSearchScreenState
 
   String _errorMessage = "";
   bool _isLoading = true;
-  MPages? pages;
+  List<TrackSearch> tracks = [];
   _init() async {
     try {
       _errorMessage = "";
-      pages = await search(
-        source: widget.source,
-        page: 1,
-        query: widget.query,
-        filterList: [],
-      );
+      tracks = await widget.section.func() ?? [];
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -150,14 +206,7 @@ class _MigrationSourceSearchScreenState
         height: 260,
         child: Column(
           children: [
-            ListTile(
-              dense: true,
-              title: Text(widget.source.name!),
-              subtitle: Text(
-                completeLanguageName(widget.source.lang!),
-                style: const TextStyle(fontSize: 10),
-              ),
-            ),
+            ListTile(dense: true, title: Text(widget.section.name)),
             Flexible(
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())
@@ -166,12 +215,12 @@ class _MigrationSourceSearchScreenState
                         if (_errorMessage.isNotEmpty) {
                           return Center(child: Text(_errorMessage));
                         }
-                        if (pages!.list.isNotEmpty) {
+                        if (tracks.isNotEmpty) {
                           return SuperListView.builder(
                             extentPrecalculationPolicy:
                                 SuperPrecalculationPolicy(),
                             scrollDirection: Axis.horizontal,
-                            itemCount: pages!.list.length,
+                            itemCount: tracks.length,
                             itemBuilder: (context, index) {
                               return MigrationMangaGlobalImageCard(
                                 oldManga: widget.manga,

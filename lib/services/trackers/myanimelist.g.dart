@@ -6,7 +6,7 @@ part of 'myanimelist.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$myAnimeListHash() => r'a7d644ee61119350613a9cff2fbe87dbd2f98912';
+String _$myAnimeListHash() => r'ecf9947e37eb0485fcc015ce002d9a440a0ecee1';
 
 /// Copied from Dart SDK
 class _SystemHash {

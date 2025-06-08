@@ -238,8 +238,10 @@ class MyAnimeList extends _$MyAnimeList {
                       e["list_status"][isManga
                           ? "num_chapters_read"
                           : "num_episodes_watched"],
-                  status:
-                      e["list_status"]["status"], // TODO map status enum correctly
+                  status: fromMyAnimeListStatus(
+                    e["list_status"]["status"],
+                    isManga,
+                  ).name,
                 ),
               )
               .toList();
@@ -300,6 +302,19 @@ class MyAnimeList extends _$MyAnimeList {
       TrackStatus.planToRead when isManga => "plan_to_read",
       TrackStatus.planToWatch when !isManga => "plan_to_watch",
       _ => isManga ? "reading" : "plan_to_watch",
+    };
+  }
+
+  TrackStatus fromMyAnimeListStatus(String status, bool isManga) {
+    return switch (status) {
+      "reading" when isManga => TrackStatus.reading,
+      "watching" when !isManga => TrackStatus.watching,
+      "completed" => TrackStatus.completed,
+      "on_hold" => TrackStatus.onHold,
+      "dropped" => TrackStatus.dropped,
+      "plan_to_read" when isManga => TrackStatus.planToRead,
+      "plan_to_watch" when !isManga => TrackStatus.planToWatch,
+      _ => isManga ? TrackStatus.reading : TrackStatus.planToWatch,
     };
   }
 
