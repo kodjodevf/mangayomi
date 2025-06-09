@@ -1,0 +1,47 @@
+# Maintainer: saberr26 salahhachmi06@gmail.com
+
+pkgname=mangayomi-bin
+_pkgname=mangayomi
+pkgver=0.6.25
+pkgrel=1
+pkgdesc="A free and open source manga, manhwa and manhua reader for Android, Windows, Linux, and macOS."
+arch=('x86_64')
+url="https://github.com/kodjodevf/mangayomi"
+license=('GPL3')
+
+depends=('unzip')
+provides=("${_pkgname}")
+conflicts=("${_pkgname}")
+
+source=("${_pkgname}-${pkgver}.zip::https://github.com/kodjodevf/mangayomi/releases/download/v${pkgver}/Mangayomi-v${pkgver}-linux.zip")
+
+# The checksum has been generated for the source file.
+sha256sums=('1ee75a5a13dcf346425365bbb66e0980abddaa58d04713093e3ac4751468810a')
+
+package() {
+  # 1. Create the installation directory in /opt
+  install -d "${pkgdir}/opt/${_pkgname}"
+
+  # 2. Copy the application executable, data, and library files from the extracted zip.
+  # The zip file extracts its contents directly into the source directory.
+  cp -r "${srcdir}/mangayomi" "${srcdir}/data" "${srcdir}/lib" "${pkgdir}/opt/${_pkgname}/"
+
+  # 3. Create a symlink so you can run it from the terminal
+  install -d "${pkgdir}/usr/bin"
+  ln -s "/opt/${_pkgname}/mangayomi" "${pkgdir}/usr/bin/${_pkgname}"
+
+  # 4. Install the application icon for the .desktop file to use
+  install -Dm644 "${srcdir}/data/flutter_assets/assets/app_icons/icon.png" "${pkgdir}/usr/share/pixmaps/${_pkgname}.png"
+
+  # 5. Install the desktop entry
+  install -Dm644 /dev/stdin "${pkgdir}/usr/share/applications/${_pkgname}.desktop" <<EOF
+[Desktop Entry]
+Name=Mangayomi
+Comment=Manga, Manhwa, and Manhua Reader
+Exec=${_pkgname}
+Icon=${_pkgname}
+Terminal=false
+Type=Application
+Categories=Graphics;Viewer;
+EOF
+}
