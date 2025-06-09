@@ -1,4 +1,4 @@
-import 'dart:convert';
+/*import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
@@ -12,18 +12,18 @@ import 'package:mangayomi/modules/more/settings/track/myanimelist/model.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-part 'myanimelist.g.dart';
+part 'trakt.g.dart';
 
 @riverpod
-class MyAnimeList extends _$MyAnimeList {
+class Trakt extends _$Trakt {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
-  String baseOAuthUrl = 'https://myanimelist.net/v1/oauth2';
-  String baseApiUrl = 'https://api.myanimelist.net/v2';
+  String baseOAuthUrl = 'https://api.trakt.tv/oauth/authorize?response_type=code&client_id=%20&redirect_uri=%20&state=%20';
+  String baseApiUrl = 'https://api.trakt.tv';
   String codeVerifier = "";
   static final isDesktop = (Platform.isWindows || Platform.isLinux);
   String clientId = isDesktop
-      ? '39e9be346b4e7dbcc59a98357e2f8472'
-      : '0c9100ccd443ddb441a319a881180f7f';
+      ? '5520c7e24da0d8d73ec80315b61b9849483583b013cb7f296c6db723eb9886a1'
+      : '5520c7e24da0d8d73ec80315b61b9849483583b013cb7f296c6db723eb9886a1';
 
   @override
   void build({required int syncId, required ItemType? itemType}) {}
@@ -149,112 +149,6 @@ class MyAnimeList extends _$MyAnimeList {
     );
   }
 
-  Future<List<TrackSearch>> fetchGeneralData({
-    bool isManga = true,
-    String rankingType =
-        "airing", // bypopularity, tv, upcoming - all, manga, manhwa, manhua
-  }) async {
-    final accessToken = await _getAccessToken();
-    final item = isManga ? "manga" : "anime";
-    final contentUnit = isManga ? "num_chapters" : "num_episodes";
-    final url = Uri.parse('$baseApiUrl/$item/ranking').replace(
-      queryParameters: {
-        'ranking_type': rankingType,
-        'limit': '15',
-        'fields':
-            'id,title,synopsis,$contentUnit,main_picture,status,media_type,start_date,mean',
-      },
-    );
-    final result = await _makeGetRequest(url, accessToken);
-    final res = jsonDecode(result.body) as Map<String, dynamic>;
-
-    return res['data'] == null
-        ? []
-        : (res['data'] as List)
-              .map(
-                (e) => TrackSearch(
-                  mediaId: e["node"]["id"],
-                  summary: e["node"]["synopsis"] ?? "",
-                  totalChapter: e["node"][contentUnit],
-                  coverUrl: e["node"]["main_picture"]["large"] ?? "",
-                  title: e["node"]["title"],
-                  score: e["node"]["mean"],
-                  startDate: e["node"]["start_date"] ?? "",
-                  publishingType: e["node"]["media_type"].toString().replaceAll(
-                    "_",
-                    " ",
-                  ),
-                  publishingStatus: e["node"]["status"].toString().replaceAll(
-                    "_",
-                    " ",
-                  ),
-                  trackingUrl:
-                      "https://myanimelist.net/$item/${e["node"]["id"]}",
-                  syncId: syncId,
-                ),
-              )
-              .toList();
-  }
-
-  Future<List<TrackSearch>> fetchUserData({bool isManga = true}) async {
-    final accessToken = await _getAccessToken();
-    final item = isManga ? "mangalist" : "animelist";
-    final contentUnit = isManga ? "num_chapters" : "num_episodes";
-    final url = Uri.parse('$baseApiUrl/users/@me/$item').replace(
-      queryParameters: {
-        'sort': 'list_updated_at',
-        'limit': '1000',
-        'fields':
-            'id,title,synopsis,$contentUnit,main_picture,status,media_type,start_date,mean,list_status',
-      },
-    );
-    final result = await _makeGetRequest(url, accessToken);
-    final res = jsonDecode(result.body) as Map<String, dynamic>;
-
-    return res['data'] == null
-        ? []
-        : (res['data'] as List)
-              .map(
-                (e) => TrackSearch(
-                  mediaId: e["node"]["id"],
-                  summary: e["node"]["synopsis"] ?? "",
-                  totalChapter: e["node"][contentUnit],
-                  coverUrl: e["node"]["main_picture"]["large"] ?? "",
-                  title: e["node"]["title"],
-                  score: e["node"]["mean"] is double
-                      ? e["node"]["mean"]
-                      : (e["node"]["mean"] as int).toDouble(),
-                  startDate: e["node"]["start_date"] ?? "",
-                  publishingType: e["node"]["media_type"].toString().replaceAll(
-                    "_",
-                    " ",
-                  ),
-                  publishingStatus: e["node"]["status"].toString().replaceAll(
-                    "_",
-                    " ",
-                  ),
-                  trackingUrl:
-                      "https://myanimelist.net/$item/${e["node"]["id"]}",
-                  startedReadingDate: _parseDate(
-                    e["list_status"]["start_date"],
-                  ),
-                  finishedReadingDate: _parseDate(
-                    e["list_status"]["finish_date"],
-                  ),
-                  lastChapterRead:
-                      e["list_status"][isManga
-                          ? "num_chapters_read"
-                          : "num_episodes_watched"],
-                  status: fromMyAnimeListStatus(
-                    e["list_status"]["status"],
-                    isManga,
-                  ).name,
-                  syncId: syncId,
-                ),
-              )
-              .toList();
-  }
-
   String _convertToIsoDate(int? epochTime) {
     String date = "";
     try {
@@ -310,19 +204,6 @@ class MyAnimeList extends _$MyAnimeList {
       TrackStatus.planToRead when isManga => "plan_to_read",
       TrackStatus.planToWatch when !isManga => "plan_to_watch",
       _ => isManga ? "reading" : "plan_to_watch",
-    };
-  }
-
-  TrackStatus fromMyAnimeListStatus(String status, bool isManga) {
-    return switch (status) {
-      "reading" when isManga => TrackStatus.reading,
-      "watching" when !isManga => TrackStatus.watching,
-      "completed" => TrackStatus.completed,
-      "on_hold" => TrackStatus.onHold,
-      "dropped" => TrackStatus.dropped,
-      "plan_to_read" when isManga => TrackStatus.planToRead,
-      "plan_to_watch" when !isManga => TrackStatus.planToWatch,
-      _ => isManga ? TrackStatus.reading : TrackStatus.planToWatch,
     };
   }
 
@@ -431,3 +312,4 @@ class MyAnimeList extends _$MyAnimeList {
     );
   }
 }
+*/

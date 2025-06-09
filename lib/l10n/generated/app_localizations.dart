@@ -2969,6 +2969,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hardware Decoder'**
   String get hwdec;
+
+  /// No description provided for @track_library_add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to local library'**
+  String get track_library_add;
+
+  /// No description provided for @track_library_add_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Add tracked item to local library'**
+  String get track_library_add_confirm;
 }
 
 class _AppLocalizationsDelegate

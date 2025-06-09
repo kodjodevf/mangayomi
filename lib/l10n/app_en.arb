@@ -474,5 +474,7 @@
   "no_next_chapter": "No next chapter",
   "you_have_finished_reading": "You have finished reading",
   "return_to_the_list_of_chapters": "Return to the list of chapters",
-  "hwdec": "Hardware Decoder"
+  "hwdec": "Hardware Decoder",
+  "track_library_add": "Add to local library",
+  "track_library_add_confirm": "Add tracked item to local library"
 }

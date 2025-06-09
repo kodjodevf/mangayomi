@@ -6,7 +6,7 @@ part of 'track_state_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$trackStateHash() => r'4d31a8a939412cabd800f9747bff7a1ac0ef1996';
+String _$trackStateHash() => r'b10c02c2e50eb1f044a76560093a8dcf232487c5';
 
 /// Copied from Dart SDK
 class _SystemHash {
