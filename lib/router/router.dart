@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/track_preference.dart';
+import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/anime/anime_player_view.dart';
 import 'package:mangayomi/modules/browse/extension/edit_code.dart';
 import 'package:mangayomi/modules/browse/extension/extension_detail.dart';
@@ -229,6 +230,10 @@ class RouterNotifier extends ChangeNotifier {
     _genericRoute<Manga>(
       name: "migrate",
       builder: (manga) => MigrationScreen(manga: manga),
+    ),
+    _genericRoute<(Manga, TrackSearch)>(
+      name: "migrate/tracker",
+      builder: (data) => MigrationScreen(manga: data.$1, trackSearch: data.$2),
     ),
   ];
 

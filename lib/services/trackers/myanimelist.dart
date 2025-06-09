@@ -190,6 +190,7 @@ class MyAnimeList extends _$MyAnimeList {
                   ),
                   trackingUrl:
                       "https://myanimelist.net/$item/${e["node"]["id"]}",
+                  syncId: syncId,
                 ),
               )
               .toList();
@@ -248,6 +249,7 @@ class MyAnimeList extends _$MyAnimeList {
                     e["list_status"]["status"],
                     isManga,
                   ).name,
+                  syncId: syncId,
                 ),
               )
               .toList();

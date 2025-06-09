@@ -1532,4 +1532,10 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get return_to_the_list_of_chapters =>
       'Retournez à la liste des chapitres';
+
+  @override
+  String get track_library_add => 'Add to local library';
+
+  @override
+  String get track_library_add_confirm => 'Add tracked item to local library';
 }

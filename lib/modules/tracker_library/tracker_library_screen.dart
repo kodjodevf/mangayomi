@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -356,19 +355,22 @@ class _TrackerLibraryImageCardState
 
   void _pushMigrationScreen(BuildContext context) {
     context.push(
-      "/migrate",
-      extra: Manga(
-        name: widget.track.title,
-        itemType: widget.itemType,
-        source: null,
-        author: null,
-        artist: null,
-        genre: [],
-        imageUrl: null,
-        lang: null,
-        link: null,
-        status: Status.unknown,
-        description: null,
+      "/migrate/tracker",
+      extra: (
+        Manga(
+          name: widget.track.title,
+          itemType: widget.itemType,
+          source: null,
+          author: "",
+          artist: null,
+          genre: [],
+          imageUrl: null,
+          lang: null,
+          link: null,
+          status: Status.unknown,
+          description: null,
+        ),
+        widget.track,
       ),
     );
   }

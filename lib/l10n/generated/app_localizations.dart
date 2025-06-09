@@ -2957,6 +2957,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Return to the list of chapters'**
   String get return_to_the_list_of_chapters;
+
+  /// No description provided for @track_library_add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to local library'**
+  String get track_library_add;
+
+  /// No description provided for @track_library_add_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Add tracked item to local library'**
+  String get track_library_add_confirm;
 }
 
 class _AppLocalizationsDelegate
