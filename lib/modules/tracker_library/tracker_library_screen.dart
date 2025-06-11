@@ -58,48 +58,12 @@ class TrackerLibraryScreen extends ConsumerStatefulWidget {
 class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
   @override
   Widget build(BuildContext context) {
-    final sections = [
-      TrackLibrarySection(
-        name: "Airing Anime",
-        func: fetchGeneralData(ItemType.anime),
-        itemType: ItemType.anime,
-      ),
-      TrackLibrarySection(
-        name: "Popular Anime",
-        func: fetchGeneralData(ItemType.anime, rankingType: "bypopularity"),
-        itemType: ItemType.anime,
-      ),
-      TrackLibrarySection(
-        name: "Upcoming Anime",
-        func: fetchGeneralData(ItemType.anime, rankingType: "upcoming"),
-        itemType: ItemType.anime,
-      ),
-      TrackLibrarySection(
-        name: "Continue watching",
-        func: fetchUserData(ItemType.anime),
-        itemType: ItemType.anime,
-      ),
-      TrackLibrarySection(
-        name: "Popular Manga",
-        func: fetchGeneralData(ItemType.manga, rankingType: "bypopularity"),
-      ),
-      TrackLibrarySection(
-        name: "Top Manga",
-        func: fetchGeneralData(ItemType.manga, rankingType: "manga"),
-      ),
-      TrackLibrarySection(
-        name: "Top Manhwa",
-        func: fetchGeneralData(ItemType.manga, rankingType: "manhwa"),
-      ),
-      TrackLibrarySection(
-        name: "Top Manhua	",
-        func: fetchGeneralData(ItemType.manga, rankingType: "manhua"),
-      ),
-      TrackLibrarySection(
-        name: "Continue reading",
-        func: fetchUserData(ItemType.manga),
-      ),
-    ];
+    final sections = switch (widget.trackerProvider.syncId) {
+      1 => _sectionsMAL(),
+      2 => _sectionsAL(),
+      3 => _sectionsKitsu(),
+      _ => [],
+    };
 
     return Scaffold(
       appBar: AppBar(title: Text(widget.trackerProvider.name)),
@@ -120,7 +84,134 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
     );
   }
 
-  Future<List<TrackSearch>?> Function() fetchGeneralData(
+  List<TrackLibrarySection> _sectionsMAL() {
+    return [
+      TrackLibrarySection(
+        name: "Airing Anime",
+        func: _fetchGeneralData(ItemType.anime),
+        itemType: ItemType.anime,
+      ),
+      TrackLibrarySection(
+        name: "Popular Anime",
+        func: _fetchGeneralData(ItemType.anime, rankingType: "bypopularity"),
+        itemType: ItemType.anime,
+      ),
+      TrackLibrarySection(
+        name: "Upcoming Anime",
+        func: _fetchGeneralData(ItemType.anime, rankingType: "upcoming"),
+        itemType: ItemType.anime,
+      ),
+      TrackLibrarySection(
+        name: "Continue watching",
+        func: _fetchUserData(ItemType.anime),
+        itemType: ItemType.anime,
+      ),
+      TrackLibrarySection(
+        name: "Popular Manga",
+        func: _fetchGeneralData(ItemType.manga, rankingType: "bypopularity"),
+      ),
+      TrackLibrarySection(
+        name: "Top Manga",
+        func: _fetchGeneralData(ItemType.manga, rankingType: "manga"),
+      ),
+      TrackLibrarySection(
+        name: "Top Manhwa",
+        func: _fetchGeneralData(ItemType.manga, rankingType: "manhwa"),
+      ),
+      TrackLibrarySection(
+        name: "Top Manhua	",
+        func: _fetchGeneralData(ItemType.manga, rankingType: "manhua"),
+      ),
+      TrackLibrarySection(
+        name: "Continue reading",
+        func: _fetchUserData(ItemType.manga),
+      ),
+    ];
+  }
+
+  List<TrackLibrarySection> _sectionsKitsu() {
+    return [
+      TrackLibrarySection(
+        name: "Airing Anime",
+        func: _fetchGeneralData(ItemType.anime),
+        itemType: ItemType.anime,
+      ),
+      TrackLibrarySection(
+        name: "Popular Anime",
+        func: _fetchGeneralData(ItemType.anime, rankingType: "bypopularity"),
+        itemType: ItemType.anime,
+      ),
+      TrackLibrarySection(
+        name: "Upcoming Anime",
+        func: _fetchGeneralData(ItemType.anime, rankingType: "upcoming"),
+        itemType: ItemType.anime,
+      ),
+      TrackLibrarySection(
+        name: "Continue watching",
+        func: _fetchUserData(ItemType.anime),
+        itemType: ItemType.anime,
+      ),
+      TrackLibrarySection(
+        name: "Popular Manga",
+        func: _fetchGeneralData(ItemType.manga, rankingType: "bypopularity"),
+      ),
+      TrackLibrarySection(
+        name: "Top Manga",
+        func: _fetchGeneralData(ItemType.manga, rankingType: "manga"),
+      ),
+      TrackLibrarySection(
+        name: "Continue reading",
+        func: _fetchUserData(ItemType.manga),
+      ),
+    ];
+  }
+
+  List<TrackLibrarySection> _sectionsAL() {
+    return [
+      TrackLibrarySection(
+        name: "Airing Anime",
+        func: _fetchGeneralData(ItemType.anime),
+        itemType: ItemType.anime,
+      ),
+      TrackLibrarySection(
+        name: "Popular Anime",
+        func: _fetchGeneralData(ItemType.anime, rankingType: "bypopularity"),
+        itemType: ItemType.anime,
+      ),
+      TrackLibrarySection(
+        name: "Upcoming Anime",
+        func: _fetchGeneralData(ItemType.anime, rankingType: "upcoming"),
+        itemType: ItemType.anime,
+      ),
+      TrackLibrarySection(
+        name: "Continue watching",
+        func: _fetchUserData(ItemType.anime),
+        itemType: ItemType.anime,
+      ),
+      TrackLibrarySection(
+        name: "Popular Manga",
+        func: _fetchGeneralData(ItemType.manga, rankingType: "bypopularity"),
+      ),
+      TrackLibrarySection(
+        name: "Top Manga",
+        func: _fetchGeneralData(ItemType.manga, rankingType: "manga"),
+      ),
+      TrackLibrarySection(
+        name: "Top Manhwa",
+        func: _fetchGeneralData(ItemType.manga, rankingType: "manhwa"),
+      ),
+      TrackLibrarySection(
+        name: "Top Manhua	",
+        func: _fetchGeneralData(ItemType.manga, rankingType: "manhua"),
+      ),
+      TrackLibrarySection(
+        name: "Continue reading",
+        func: _fetchUserData(ItemType.manga),
+      ),
+    ];
+  }
+
+  Future<List<TrackSearch>?> Function() _fetchGeneralData(
     ItemType itemType, {
     String rankingType = "airing",
   }) {
@@ -137,7 +228,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
         .fetchGeneralData(rankingType: rankingType);
   }
 
-  Future<List<TrackSearch>?> Function() fetchUserData(ItemType itemType) {
+  Future<List<TrackSearch>?> Function() _fetchUserData(ItemType itemType) {
     return () async => await ref
         .read(
           trackStateProvider(

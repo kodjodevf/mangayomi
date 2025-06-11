@@ -172,6 +172,67 @@ class Kitsu extends _$Kitsu {
         .toList();
   }
 
+  Future<List<TrackSearch>> fetchGeneralData({
+    bool isManga = true,
+    String rankingType = "airing", // /anime?sort=-updatedAt
+  }) async {
+    final response = await http.get(Uri.parse("$_baseUrl/trending/anime"));
+    final data = json.decode(response.body);
+
+    final entries = List<Map<String, dynamic>>.from(
+      data['hits'],
+    ).where((element) => element["subtype"] != "novel").toList();
+    final totalChapter = isManga ? "chapterCount" : "episodeCount";
+    return entries
+        .map(
+          (jsonRes) => TrackSearch(
+            libraryId: jsonRes['id'],
+            syncId: syncId,
+            trackingUrl: _mediaUrl(isManga ? 'manga' : 'anime', jsonRes['id']),
+            mediaId: jsonRes['id'],
+            summary: jsonRes['synopsis'] ?? "",
+            totalChapter: (jsonRes[totalChapter] ?? 0),
+            coverUrl: jsonRes['posterImage']['original'] ?? "",
+            title: jsonRes['canonicalTitle'],
+            startDate: "",
+            publishingType: (jsonRes["subtype"] ?? ""),
+            publishingStatus: jsonRes['endDate'] == null
+                ? "Publishing"
+                : "Finished",
+          ),
+        )
+        .toList();
+  }
+
+  Future<List<TrackSearch>> fetchUserData({bool isManga = true}) async {
+    final response = await http.get(Uri.parse("$_baseUrl/trending/anime"));
+    final data = json.decode(response.body);
+
+    final entries = List<Map<String, dynamic>>.from(
+      data['hits'],
+    ).where((element) => element["subtype"] != "novel").toList();
+    final totalChapter = isManga ? "chapterCount" : "episodeCount";
+    return entries
+        .map(
+          (jsonRes) => TrackSearch(
+            libraryId: jsonRes['id'],
+            syncId: syncId,
+            trackingUrl: _mediaUrl(isManga ? 'manga' : 'anime', jsonRes['id']),
+            mediaId: jsonRes['id'],
+            summary: jsonRes['synopsis'] ?? "",
+            totalChapter: (jsonRes[totalChapter] ?? 0),
+            coverUrl: jsonRes['posterImage']['original'] ?? "",
+            title: jsonRes['canonicalTitle'],
+            startDate: "",
+            publishingType: (jsonRes["subtype"] ?? ""),
+            publishingStatus: jsonRes['endDate'] == null
+                ? "Publishing"
+                : "Finished",
+          ),
+        )
+        .toList();
+  }
+
   Future<Track?> findLibItem(Track track, bool isManga) async {
     final type = isManga ? "manga" : "anime";
     final userId = _getUserId();
