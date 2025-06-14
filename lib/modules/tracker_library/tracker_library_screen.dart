@@ -10,6 +10,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
+import 'package:mangayomi/modules/tracker_library/tracker_item_card.dart';
 import 'package:mangayomi/modules/widgets/bottom_text_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/cached_network.dart';
@@ -119,7 +120,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
         func: _fetchGeneralData(ItemType.manga, rankingType: "manhwa"),
       ),
       TrackLibrarySection(
-        name: "Top Manhua	",
+        name: "Top Manhua",
         func: _fetchGeneralData(ItemType.manga, rankingType: "manhua"),
       ),
       TrackLibrarySection(
@@ -201,7 +202,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
         func: _fetchGeneralData(ItemType.manga, rankingType: "manhwa"),
       ),
       TrackLibrarySection(
-        name: "Top Manhua	",
+        name: "Top Manhua",
         func: _fetchGeneralData(ItemType.manga, rankingType: "manhua"),
       ),
       TrackLibrarySection(
@@ -347,7 +348,7 @@ class _TrackerLibraryImageCardState
     super.build(context);
     final trackData = widget.track;
     return GestureDetector(
-      onTap: () => _pushMigrationScreen(context),
+      onTap: () => _showCard(context),
       child: StreamBuilder(
         stream: isar.mangas
             .filter()
@@ -444,25 +445,11 @@ class _TrackerLibraryImageCardState
     );
   }
 
-  void _pushMigrationScreen(BuildContext context) {
-    context.push(
-      "/migrate/tracker",
-      extra: (
-        Manga(
-          name: widget.track.title,
-          itemType: widget.itemType,
-          source: null,
-          author: "",
-          artist: null,
-          genre: [],
-          imageUrl: null,
-          lang: null,
-          link: null,
-          status: Status.unknown,
-          description: null,
-        ),
-        widget.track,
-      ),
+  void _showCard(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) =>
+          TrackerItemCard(track: widget.track, itemType: widget.itemType),
     );
   }
 
