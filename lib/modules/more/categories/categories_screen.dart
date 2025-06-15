@@ -284,32 +284,10 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                                     const SizedBox(width: 15),
                                                     TextButton(
                                                       onPressed: () async {
-                                                        await isar.writeTxn(
-                                                          () async {
-                                                            await isar.categorys
-                                                                .delete(
-                                                                  category.id!,
-                                                                );
-                                                          },
+                                                        await _removeCategory(
+                                                          category,
+                                                          context,
                                                         );
-                                                        await ref
-                                                            .read(
-                                                              synchingProvider(
-                                                                syncId: 1,
-                                                              ).notifier,
-                                                            )
-                                                            .addChangedPartAsync(
-                                                              ActionType
-                                                                  .removeCategory,
-                                                              category.id,
-                                                              "{}",
-                                                              true,
-                                                            );
-                                                        if (context.mounted) {
-                                                          Navigator.pop(
-                                                            context,
-                                                          );
-                                                        }
                                                       },
                                                       child: Text(l10n.ok),
                                                     ),
@@ -478,6 +456,41 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
         ),
       ),
     );
+  }
+
+  Future<void> _removeCategory(Category category, BuildContext context) async {
+    await isar.writeTxn(() async {
+      // All Items with this category
+      final allItems = await isar.mangas
+          .filter()
+          .categoriesElementEqualTo(category.id!)
+          .findAll();
+      // Remove the category ID from each item's category list
+      final updatedItems = allItems.map((manga) {
+        final cats = List<int>.from(manga.categories ?? []);
+        cats.remove(category.id!);
+        manga.categories = cats;
+        return manga;
+      }).toList();
+
+      // Save updated items back to the database
+      await isar.mangas.putAll(updatedItems);
+
+      // Delete category
+      await isar.categorys.delete(category.id!);
+    });
+
+    await ref
+        .read(synchingProvider(syncId: 1).notifier)
+        .addChangedPartAsync(
+          ActionType.removeCategory,
+          category.id,
+          "{}",
+          true,
+        );
+    if (context.mounted) {
+      Navigator.pop(context);
+    }
   }
 
   void _renameCategory(Category category) {

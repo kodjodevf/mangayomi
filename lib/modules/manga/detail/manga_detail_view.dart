@@ -1135,7 +1135,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
 
   void _openCategory(Manga manga) {
     final l10n = l10nLocalizations(context)!;
-    List<int> categoryIds = [];
+    List<int> categoryIds = List<int>.from(manga.categories ?? []);
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
@@ -1215,12 +1215,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                           isar.mangas.putSync(manga);
                           final sync = ref.read(
                             synchingProvider(syncId: 1).notifier,
-                          );
-                          sync.addChangedPart(
-                            ActionType.addItem,
-                            manga.id,
-                            manga.toJson(),
-                            false,
                           );
                           sync.addChangedPart(
                             ActionType.updateItem,

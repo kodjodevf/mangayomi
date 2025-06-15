@@ -178,27 +178,29 @@ Future<void> checkIfSourceIsObsolete(
 
   if (sourceIds.isEmpty) return;
 
-  await isar.writeTxn(() async {
-    for (var source in sources) {
-      final isNowObsolete =
-          !sourceIds.contains(source.id) &&
-          source.repo?.jsonUrl == repo.jsonUrl;
+  final toUpdate = <Source>[];
+  for (var source in sources) {
+    final isNowObsolete =
+        !sourceIds.contains(source.id) && source.repo?.jsonUrl == repo.jsonUrl;
 
-      if (source.isObsolete != isNowObsolete) {
-        source.isObsolete = isNowObsolete;
-        await isar.sources.put(source);
-
-        ref
-            .read(synchingProvider(syncId: 1).notifier)
-            .addChangedPart(
-              ActionType.updateExtension,
-              source.id,
-              source.toJson(),
-              false,
-            );
-      }
+    if (source.isObsolete != isNowObsolete) {
+      source.isObsolete = isNowObsolete;
+      toUpdate.add(source);
     }
-  });
+  }
+  if (toUpdate.isEmpty) return;
+
+  await isar.writeTxn(() => isar.sources.putAll(toUpdate));
+
+  final notifier = ref.read(synchingProvider(syncId: 1).notifier);
+  for (var source in toUpdate) {
+    notifier.addChangedPart(
+      ActionType.updateExtension,
+      source.id,
+      source.toJson(),
+      false,
+    );
+  }
 }
 
 int compareVersions(String version1, String version2) {
