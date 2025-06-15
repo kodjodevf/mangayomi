@@ -1208,10 +1208,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                     TextButton(
                       onPressed: () {
                         isar.writeTxnSync(() {
-                          manga.favorite = true;
                           manga.categories = categoryIds;
-                          manga.dateAdded =
-                              DateTime.now().millisecondsSinceEpoch;
                           isar.mangas.putSync(manga);
                           final sync = ref.read(
                             synchingProvider(syncId: 1).notifier,
