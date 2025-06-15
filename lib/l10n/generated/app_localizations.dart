@@ -2981,6 +2981,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add tracked item to local library'**
   String get track_library_add_confirm;
+
+  /// No description provided for @track_library_not_logged.
+  ///
+  /// In en, this message translates to:
+  /// **'Login to the corresponding tracker to use this feature!'**
+  String get track_library_not_logged;
 }
 
 class _AppLocalizationsDelegate

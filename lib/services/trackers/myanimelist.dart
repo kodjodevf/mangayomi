@@ -152,7 +152,7 @@ class MyAnimeList extends _$MyAnimeList {
   Future<List<TrackSearch>> fetchGeneralData({
     bool isManga = true,
     String rankingType =
-        "airing", // bypopularity, tv, upcoming - all, manga, manhwa, manhua
+        "airing",
   }) async {
     final accessToken = await _getAccessToken();
     final item = isManga ? "manga" : "anime";

@@ -1523,4 +1523,8 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get track_library_add_confirm => 'Add tracked item to local library';
+
+  @override
+  String get track_library_not_logged =>
+      'Login to the corresponding tracker to use this feature!';
 }

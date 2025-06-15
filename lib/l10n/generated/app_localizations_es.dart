@@ -1540,6 +1540,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get track_library_add_confirm => 'Add tracked item to local library';
+
+  @override
+  String get track_library_not_logged =>
+      'Login to the corresponding tracker to use this feature!';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).

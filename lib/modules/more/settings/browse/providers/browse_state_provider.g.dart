@@ -175,7 +175,7 @@ final onlyIncludePinnedSourceStateProvider =
 
 typedef _$OnlyIncludePinnedSourceState = AutoDisposeNotifier<bool>;
 String _$extensionsRepoStateHash() =>
-    r'9e59b257433ed7f999dd4800f6ecb8c13c8b2c6a';
+    r'3ea91c79a9bc24f086fce49de2c61a1e06bad1fe';
 
 abstract class _$ExtensionsRepoState
     extends BuildlessAutoDisposeNotifier<List<Repo>> {

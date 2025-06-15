@@ -476,5 +476,6 @@
   "return_to_the_list_of_chapters": "Return to the list of chapters",
   "hwdec": "Hardware Decoder",
   "track_library_add": "Add to local library",
-  "track_library_add_confirm": "Add tracked item to local library"
+  "track_library_add_confirm": "Add tracked item to local library",
+  "track_library_not_logged": "Login to the corresponding tracker to use this feature!"
 }
