@@ -149,6 +149,112 @@ class MyAnimeList extends _$MyAnimeList {
     );
   }
 
+  Future<List<TrackSearch>> fetchGeneralData({
+    bool isManga = true,
+    String rankingType =
+        "airing",
+  }) async {
+    final accessToken = await _getAccessToken();
+    final item = isManga ? "manga" : "anime";
+    final contentUnit = isManga ? "num_chapters" : "num_episodes";
+    final url = Uri.parse('$baseApiUrl/$item/ranking').replace(
+      queryParameters: {
+        'ranking_type': rankingType,
+        'limit': '15',
+        'fields':
+            'id,title,synopsis,$contentUnit,main_picture,status,media_type,start_date,mean',
+      },
+    );
+    final result = await _makeGetRequest(url, accessToken);
+    final res = jsonDecode(result.body) as Map<String, dynamic>;
+
+    return res['data'] == null
+        ? []
+        : (res['data'] as List)
+              .map(
+                (e) => TrackSearch(
+                  mediaId: e["node"]["id"],
+                  summary: e["node"]["synopsis"] ?? "",
+                  totalChapter: e["node"][contentUnit],
+                  coverUrl: e["node"]["main_picture"]["large"] ?? "",
+                  title: e["node"]["title"],
+                  score: e["node"]["mean"],
+                  startDate: e["node"]["start_date"] ?? "",
+                  publishingType: e["node"]["media_type"].toString().replaceAll(
+                    "_",
+                    " ",
+                  ),
+                  publishingStatus: e["node"]["status"].toString().replaceAll(
+                    "_",
+                    " ",
+                  ),
+                  trackingUrl:
+                      "https://myanimelist.net/$item/${e["node"]["id"]}",
+                  syncId: syncId,
+                ),
+              )
+              .toList();
+  }
+
+  Future<List<TrackSearch>> fetchUserData({bool isManga = true}) async {
+    final accessToken = await _getAccessToken();
+    final item = isManga ? "mangalist" : "animelist";
+    final contentUnit = isManga ? "num_chapters" : "num_episodes";
+    final url = Uri.parse('$baseApiUrl/users/@me/$item').replace(
+      queryParameters: {
+        'sort': 'list_updated_at',
+        'limit': '1000',
+        'fields':
+            'id,title,synopsis,$contentUnit,main_picture,status,media_type,start_date,mean,list_status',
+      },
+    );
+    final result = await _makeGetRequest(url, accessToken);
+    final res = jsonDecode(result.body) as Map<String, dynamic>;
+
+    return res['data'] == null
+        ? []
+        : (res['data'] as List)
+              .map(
+                (e) => TrackSearch(
+                  mediaId: e["node"]["id"],
+                  summary: e["node"]["synopsis"] ?? "",
+                  totalChapter: e["node"][contentUnit],
+                  coverUrl: e["node"]["main_picture"]["large"] ?? "",
+                  title: e["node"]["title"],
+                  score: e["node"]["mean"] is double
+                      ? e["node"]["mean"]
+                      : (e["node"]["mean"] as int).toDouble(),
+                  startDate: e["node"]["start_date"] ?? "",
+                  publishingType: e["node"]["media_type"].toString().replaceAll(
+                    "_",
+                    " ",
+                  ),
+                  publishingStatus: e["node"]["status"].toString().replaceAll(
+                    "_",
+                    " ",
+                  ),
+                  trackingUrl:
+                      "https://myanimelist.net/$item/${e["node"]["id"]}",
+                  startedReadingDate: _parseDate(
+                    e["list_status"]["start_date"],
+                  ),
+                  finishedReadingDate: _parseDate(
+                    e["list_status"]["finish_date"],
+                  ),
+                  lastChapterRead:
+                      e["list_status"][isManga
+                          ? "num_chapters_read"
+                          : "num_episodes_watched"],
+                  status: fromMyAnimeListStatus(
+                    e["list_status"]["status"],
+                    isManga,
+                  ).name,
+                  syncId: syncId,
+                ),
+              )
+              .toList();
+  }
+
   String _convertToIsoDate(int? epochTime) {
     String date = "";
     try {
@@ -204,6 +310,19 @@ class MyAnimeList extends _$MyAnimeList {
       TrackStatus.planToRead when isManga => "plan_to_read",
       TrackStatus.planToWatch when !isManga => "plan_to_watch",
       _ => isManga ? "reading" : "plan_to_watch",
+    };
+  }
+
+  TrackStatus fromMyAnimeListStatus(String status, bool isManga) {
+    return switch (status) {
+      "reading" when isManga => TrackStatus.reading,
+      "watching" when !isManga => TrackStatus.watching,
+      "completed" => TrackStatus.completed,
+      "on_hold" => TrackStatus.onHold,
+      "dropped" => TrackStatus.dropped,
+      "plan_to_read" when isManga => TrackStatus.planToRead,
+      "plan_to_watch" when !isManga => TrackStatus.planToWatch,
+      _ => isManga ? TrackStatus.reading : TrackStatus.planToWatch,
     };
   }
 

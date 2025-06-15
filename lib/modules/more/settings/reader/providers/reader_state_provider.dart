@@ -149,18 +149,31 @@ class FullScreenReaderState extends _$FullScreenReaderState {
 
 @riverpod
 class NavigationOrderState extends _$NavigationOrderState {
+  final items = [
+    '/MangaLibrary',
+    '/AnimeLibrary',
+    '/NovelLibrary',
+    '/updates',
+    '/history',
+    '/browse',
+    '/more',
+    '/trackerLibrary/anilist',
+    '/trackerLibrary/kitsu',
+    '/trackerLibrary/mal',
+  ];
+
   @override
   List<String> build() {
-    return isar.settings.getSync(227)!.navigationOrder ??
-        [
-          '/MangaLibrary',
-          '/AnimeLibrary',
-          '/NovelLibrary',
-          '/updates',
-          '/history',
-          '/browse',
-          '/more',
-        ];
+    return _checkMissingItems(
+      isar.settings.getSync(227)!.navigationOrder?.toList() ?? [],
+    );
+  }
+
+  List<String> _checkMissingItems(List<String> navigationOrder) {
+    navigationOrder.addAll(
+      items.where((e) => !navigationOrder.contains(e)).toList(),
+    );
+    return navigationOrder;
   }
 
   void set(List<String> values) {
@@ -176,7 +189,12 @@ class NavigationOrderState extends _$NavigationOrderState {
 class HideItemsState extends _$HideItemsState {
   @override
   List<String> build() {
-    return isar.settings.getSync(227)!.hideItems ?? [];
+    return isar.settings.getSync(227)!.hideItems ??
+        [
+          '/trackerLibrary/anilist',
+          '/trackerLibrary/kitsu',
+          '/trackerLibrary/mal',
+        ];
   }
 
   void set(List<String> values) {

@@ -138,4 +138,21 @@ class TrackState extends _$TrackState {
     final tracker = getNotifier(syncId);
     return await tracker.search(query, _isManga);
   }
+
+  Future<List<TrackSearch>?> fetchGeneralData({String? rankingType}) async {
+    final syncId = track!.syncId!;
+    final tracker = getNotifier(syncId);
+    return rankingType != null
+        ? await tracker.fetchGeneralData(
+            isManga: _isManga,
+            rankingType: rankingType,
+          )
+        : await tracker.fetchGeneralData(isManga: _isManga);
+  }
+
+  Future<List<TrackSearch>?> fetchUserData() async {
+    final syncId = track!.syncId!;
+    final tracker = getNotifier(syncId);
+    return await tracker.fetchUserData(isManga: _isManga);
+  }
 }
