@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
@@ -10,15 +9,14 @@ import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/custom_floating_action_btn.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
+import 'package:mangayomi/modules/widgets/category_selection_dialog.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/modules/manga/detail/manga_detail_view.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
-import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 import 'package:mangayomi/utils/extensions/chapter.dart';
-import 'package:super_sliver_list/super_sliver_list.dart';
 
 class MangaDetailsView extends ConsumerStatefulWidget {
   final Manga manga;
@@ -237,36 +235,40 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                   elevation: 0,
                 ),
                 onPressed: () {
+                  final model = widget.manga;
                   final checkCategoryList = isar.categorys
                       .filter()
                       .idIsNotNull()
                       .and()
-                      .forItemTypeEqualTo(widget.manga.itemType)
+                      .forItemTypeEqualTo(model.itemType)
                       .isNotEmptySync();
                   if (checkCategoryList) {
-                    _openCategory(widget.manga);
+                    showCategorySelectionDialog(
+                      context: context,
+                      ref: ref,
+                      itemType: model.itemType,
+                      singleManga: model,
+                    );
                   } else {
-                    final model = widget.manga;
                     isar.writeTxnSync(() {
                       model.favorite = true;
                       model.dateAdded = DateTime.now().millisecondsSinceEpoch;
                       isar.mangas.putSync(model);
-                      ref
-                          .read(synchingProvider(syncId: 1).notifier)
-                          .addChangedPart(
-                            ActionType.addItem,
-                            null,
-                            model.toJson(),
-                            false,
-                          );
-                      ref
-                          .read(synchingProvider(syncId: 1).notifier)
-                          .addChangedPart(
-                            ActionType.updateItem,
-                            model.id,
-                            model.toJson(),
-                            false,
-                          );
+                      final sync = ref.read(
+                        synchingProvider(syncId: 1).notifier,
+                      );
+                      sync.addChangedPart(
+                        ActionType.addItem,
+                        null,
+                        model.toJson(),
+                        false,
+                      );
+                      sync.addChangedPart(
+                        ActionType.updateItem,
+                        model.id,
+                        model.toJson(),
+                        false,
+                      );
                     });
                   }
                 },
@@ -296,116 +298,6 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
         sourceExist: widget.sourceExist,
         checkForUpdate: widget.checkForUpdate,
         itemType: widget.manga.itemType,
-      ),
-    );
-  }
-
-  _openCategory(Manga manga) {
-    final l10n = l10nLocalizations(context)!;
-    List<int> categoryIds = [];
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: Text(l10n.set_categories),
-          content: SizedBox(
-            width: context.width(0.8),
-            child: StreamBuilder(
-              stream: isar.categorys
-                  .filter()
-                  .idIsNotNull()
-                  .and()
-                  .forItemTypeEqualTo(manga.itemType)
-                  .watch(fireImmediately: true),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Container();
-                }
-                final entries = snapshot.data!;
-                return SuperListView.builder(
-                  shrinkWrap: true,
-                  itemCount: entries.length,
-                  itemBuilder: (context, index) {
-                    final category = entries[index];
-                    final selected = categoryIds.contains(category.id);
-                    return ListTileChapterFilter(
-                      label: category.name!,
-                      onTap: () {
-                        setState(() {
-                          selected
-                              ? categoryIds.remove(category.id)
-                              : categoryIds.add(category.id!);
-                        });
-                      },
-                      type: selected ? 1 : 0,
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    context.push(
-                      "/categories",
-                      extra: (
-                        true,
-                        manga.itemType == ItemType.manga
-                            ? 0
-                            : manga.itemType == ItemType.anime
-                            ? 1
-                            : 2,
-                      ),
-                    );
-                    Navigator.pop(context);
-                  },
-                  child: Text(l10n.edit),
-                ),
-                Row(
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: Text(l10n.cancel),
-                    ),
-                    const SizedBox(width: 15),
-                    TextButton(
-                      onPressed: () {
-                        isar.writeTxnSync(() {
-                          manga.favorite = true;
-                          manga.categories = categoryIds;
-                          manga.dateAdded =
-                              DateTime.now().millisecondsSinceEpoch;
-                          isar.mangas.putSync(manga);
-                          final sync = ref.read(
-                            synchingProvider(syncId: 1).notifier,
-                          );
-                          sync.addChangedPart(
-                            ActionType.addItem,
-                            manga.id,
-                            manga.toJson(),
-                            false,
-                          );
-                          sync.addChangedPart(
-                            ActionType.updateItem,
-                            manga.id,
-                            manga.toJson(),
-                            false,
-                          );
-                        });
-                        if (mounted) Navigator.pop(context);
-                      },
-                      child: Text(l10n.ok),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
       ),
     );
   }
