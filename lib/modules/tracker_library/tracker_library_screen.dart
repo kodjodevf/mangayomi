@@ -9,6 +9,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
+import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_item_card.dart';
 import 'package:mangayomi/modules/widgets/bottom_text_widget.dart';
@@ -57,6 +58,10 @@ class TrackerLibraryScreen extends ConsumerStatefulWidget {
 }
 
 class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
+  late final _textEditingController = TextEditingController();
+  late String _query = "";
+  late bool _isSearch = false;
+
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
@@ -66,9 +71,75 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
       3 => _sectionsKitsu(),
       _ => [],
     };
+    if (_isSearch && _query.isNotEmpty) {
+      sections.insert(
+        0,
+        TrackLibrarySection(
+          name: "Search results",
+          func: _fetchGeneralData(ItemType.anime),
+          itemType: ItemType.anime,
+        ),
+      );
+    }
 
     return Scaffold(
-      appBar: AppBar(title: Text(widget.trackerProvider.name)),
+      appBar: AppBar(
+        title: Text(widget.trackerProvider.name),
+        leading: !_isSearch ? null : Container(),
+        actions: [
+          _isSearch
+              ? SeachFormTextField(
+                  onFieldSubmitted: (submit) {
+                    setState(() {
+                      if (submit.isNotEmpty) {
+                        _query = submit;
+                      }
+                    });
+                  },
+                  onChanged: (value) {},
+                  onSuffixPressed: () {
+                    _textEditingController.clear();
+                    _query = "";
+                    setState(() {});
+                  },
+                  onPressed: () {
+                    setState(() {
+                      if (_textEditingController.text.isEmpty) {
+                        _isSearch = false;
+                        _query = "";
+                        _textEditingController.clear();
+                      } else {
+                        Navigator.pop(context);
+                      }
+                    });
+                  },
+                  controller: _textEditingController,
+                )
+              : IconButton(
+                  splashRadius: 20,
+                  onPressed: () {
+                    setState(() {
+                      _isSearch = true;
+                    });
+                  },
+                  icon: Icon(Icons.search, color: Theme.of(context).hintColor),
+                ),
+          IconButton(
+            splashRadius: 20,
+            onPressed: () {
+              // open dialog to switch between trackers / item types
+            },
+            icon: CircleAvatar(
+              radius: 14,
+              backgroundColor: Theme.of(context).primaryColorLight,
+              child: Image.asset(
+                "assets/trackers_icons/tracker_mal.webp",
+                height: 30,
+              ),
+            ),
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(15),
         child: StreamBuilder(
