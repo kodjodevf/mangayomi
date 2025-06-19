@@ -16,7 +16,7 @@
       "subtitle": "Read manga, novels, and watch anime",
       "version": "0.6.25",
       "versionDate": "2025-06-05T14:39:03Z",
-      "versionDescription": "",
+      "versionDescription": "What's Changed\r\n* Improve Detail View Categories, Add Update Switch, Fix Navigation Exception by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/477\r\n* fix file path handling\r\n* Fix indexing and path for downloaded chapter images and update padding logic\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.6.2...v0.6.25",
       "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.25/Mangayomi-v0.6.25-ios.ipa",
       "localizedDescription": "Mangayomi is an open-source Flutter app for reading manga, novels, and watching anime across multiple platforms.",
       "iconURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/icons/icon_default.webp",
@@ -32,7 +32,7 @@
         {
           "version": "0.6.25",
           "date": "2025-06-05T14:39:03Z",
-          "localizedDescription": "",
+          "localizedDescription": "What's Changed\r\n* Improve Detail View Categories, Add Update Switch, Fix Navigation Exception by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/477\r\n* fix file path handling\r\n* Fix indexing and path for downloaded chapter images and update padding logic\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.6.2...v0.6.25",
           "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.25/Mangayomi-v0.6.25-ios.ipa",
           "size": 58152040
         },

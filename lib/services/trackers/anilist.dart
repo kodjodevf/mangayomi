@@ -221,6 +221,136 @@ class Anilist extends _$Anilist {
       ..totalChapter = jsonRes['media'][contentUnit] as int? ?? 0;
   }
 
+  Future<List<TrackSearch>> fetchGeneralData({
+    bool isManga = true,
+    String rankingType =
+        "status: NOT_YET_RELEASED, sort: [POPULARITY_DESC, TRENDING_DESC]",
+  }) async {
+    final type = isManga ? "MANGA" : "ANIME";
+    final contentUnit = isManga ? "chapters" : "episodes";
+    final query =
+        '''
+    query {
+      Page(perPage: 50) {
+        media(type: $type, format_not_in: [NOVEL], $rankingType) {
+          id
+          title { userPreferred }
+          coverImage { large }
+          format
+          status
+          $contentUnit
+          description
+          startDate { year month day }
+          averageScore
+        }
+      }
+    }
+    ''';
+
+    final Map<String, dynamic> vars = {};
+
+    final data = await _executeGraphQL(query, vars);
+
+    final entries = List<Map<String, dynamic>>.from(
+      data['Page']['media'] as List,
+    );
+    return entries
+        .map(
+          (jsonRes) => TrackSearch(
+            libraryId: jsonRes['id'],
+            syncId: syncId,
+            trackingUrl: "",
+            mediaId: jsonRes['id'],
+            summary: jsonRes['description'] ?? "",
+            totalChapter: jsonRes[contentUnit] ?? 0,
+            coverUrl: jsonRes['coverImage']['large'] ?? "",
+            title: jsonRes['title']['userPreferred'],
+            startDate:
+                jsonRes["start_date"] ??
+                DateTime.fromMillisecondsSinceEpoch(
+                  parseDate(jsonRes, 'startDate'),
+                ).toString(),
+            publishingType: "",
+            publishingStatus: jsonRes['status'],
+            score: jsonRes["averageScore"] != null
+                ? jsonRes["averageScore"] * 1.0
+                : 0,
+          ),
+        )
+        .toList();
+  }
+
+  Future<List<TrackSearch>> fetchUserData({bool isManga = true}) async {
+    final userId = int.parse(
+      ref.watch(tracksProvider(syncId: syncId))!.username!,
+    );
+    final type = isManga ? "MANGA" : "ANIME";
+    final contentUnit = isManga ? "chapters" : "episodes";
+
+    final query =
+        '''
+    query(\$id: Int!) {
+      Page {
+        mediaList(userId: \$id, type: $type) {
+          id
+          status
+          scoreRaw: score(format: POINT_100)
+          progress
+          startedAt { year month day }
+          completedAt { year month day }
+          media {
+            id
+            title { userPreferred }
+            coverImage { large }
+            format
+            status
+            $contentUnit
+            description
+            startDate { year month day }
+            averageScore
+          }
+        }
+      }
+    }
+    ''';
+
+    final vars = {"id": userId};
+
+    final data = await _executeGraphQL(query, vars);
+
+    final entries = List<Map<String, dynamic>>.from(
+      data['Page']['mediaList'] as List,
+    );
+    return entries
+        .map(
+          (jsonRes) => TrackSearch(
+            libraryId: jsonRes['id'],
+            syncId: syncId,
+            trackingUrl: "",
+            mediaId: jsonRes['media']['id'],
+            summary: jsonRes['media']['description'] ?? "",
+            totalChapter: jsonRes['media'][contentUnit] ?? 0,
+            coverUrl: jsonRes['media']['coverImage']['large'] ?? "",
+            title: jsonRes['media']['title']['userPreferred'],
+            startDate:
+                jsonRes['media']["start_date"] ??
+                DateTime.fromMillisecondsSinceEpoch(
+                  parseDate(jsonRes['media'], 'startDate'),
+                ).toString(),
+            publishingType: "",
+            publishingStatus: jsonRes['media']['status'],
+            score: jsonRes['media']['averageScore'] != null
+                ? jsonRes['media']['averageScore'] * 1.0
+                : 0,
+            status: _getALTrackStatus(jsonRes['status'], isManga).name,
+            lastChapterRead: jsonRes['progress'] as int? ?? 0,
+            startedReadingDate: parseDate(jsonRes, 'startedAt'),
+            finishedReadingDate: parseDate(jsonRes, 'completedAt'),
+          ),
+        )
+        .toList();
+  }
+
   Future<Map<String, dynamic>> _executeGraphQL(
     String document,
     Map<String, dynamic> variables,

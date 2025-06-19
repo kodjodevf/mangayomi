@@ -158,7 +158,7 @@ final fullScreenReaderStateProvider =
 
 typedef _$FullScreenReaderState = AutoDisposeNotifier<bool>;
 String _$navigationOrderStateHash() =>
-    r'f1da55a7687995d136a6580d3f63f9b1b32a6ae8';
+    r'f300869743afaccfd47210115f341d25fec522bb';
 
 /// See also [NavigationOrderState].
 @ProviderFor(NavigationOrderState)
@@ -174,7 +174,7 @@ final navigationOrderStateProvider =
 );
 
 typedef _$NavigationOrderState = AutoDisposeNotifier<List<String>>;
-String _$hideItemsStateHash() => r'b4a467e66f6a1f9b36e4b201a10b771e0dae6a80';
+String _$hideItemsStateHash() => r'6844a05786f6c547a7cba261f742e82d871b6cb1';
 
 /// See also [HideItemsState].
 @ProviderFor(HideItemsState)

@@ -5,6 +5,7 @@ import 'package:app_links/app_links.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -117,6 +118,7 @@ class _MyAppState extends ConsumerState<MyApp> {
       routerDelegate: router.routerDelegate,
       routeInformationProvider: router.routeInformationProvider,
       title: 'MangaYomi',
+      scrollBehavior: AllowDesktopScrollBehavior(),
     );
   }
 
@@ -229,4 +231,12 @@ class _MyAppState extends ConsumerState<MyApp> {
     }
     return true;
   }
+}
+
+class AllowDesktopScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse,
+  };
 }
