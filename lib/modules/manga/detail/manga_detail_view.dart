@@ -26,6 +26,7 @@ import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provi
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
+import 'package:mangayomi/modules/widgets/category_selection_dialog.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -637,7 +638,12 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   widget.checkForUpdate(true);
                                   break;
                                 case 1:
-                                  _openCategory(widget.manga!);
+                                  showCategorySelectionDialog(
+                                    context: context,
+                                    ref: ref,
+                                    itemType: widget.manga!.itemType,
+                                    singleManga: widget.manga!,
+                                  );
                                   break;
                                 case 2:
                                   final source = getSource(
@@ -1130,110 +1136,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
           ),
         ),
       ],
-    );
-  }
-
-  void _openCategory(Manga manga) {
-    final l10n = l10nLocalizations(context)!;
-    List<int> categoryIds = List<int>.from(manga.categories ?? []);
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: Text(l10n.set_categories),
-          content: SizedBox(
-            width: context.width(0.8),
-            child: StreamBuilder(
-              stream: isar.categorys
-                  .filter()
-                  .idIsNotNull()
-                  .and()
-                  .forItemTypeEqualTo(manga.itemType)
-                  .watch(fireImmediately: true),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Container();
-                }
-                final entries = snapshot.data!;
-                return SuperListView.builder(
-                  shrinkWrap: true,
-                  itemCount: entries.length,
-                  itemBuilder: (context, index) {
-                    final category = entries[index];
-                    final selected = categoryIds.contains(category.id);
-                    return ListTileChapterFilter(
-                      label: category.name!,
-                      onTap: () {
-                        setState(() {
-                          selected
-                              ? categoryIds.remove(category.id)
-                              : categoryIds.add(category.id!);
-                        });
-                      },
-                      type: selected ? 1 : 0,
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  onPressed: () {
-                    context.push(
-                      "/categories",
-                      extra: (
-                        true,
-                        manga.itemType == ItemType.manga
-                            ? 0
-                            : manga.itemType == ItemType.anime
-                            ? 1
-                            : 2,
-                      ),
-                    );
-                    Navigator.pop(context);
-                  },
-                  child: Text(l10n.edit),
-                ),
-                Row(
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: Text(l10n.cancel),
-                    ),
-                    const SizedBox(width: 15),
-                    TextButton(
-                      onPressed: () {
-                        isar.writeTxnSync(() {
-                          manga.favorite = true;
-                          manga.categories = categoryIds;
-                          manga.dateAdded =
-                              DateTime.now().millisecondsSinceEpoch;
-                          isar.mangas.putSync(manga);
-                          final sync = ref.read(
-                            synchingProvider(syncId: 1).notifier,
-                          );
-                          sync.addChangedPart(
-                            ActionType.updateItem,
-                            manga.id,
-                            manga.toJson(),
-                            false,
-                          );
-                        });
-                        if (mounted) Navigator.pop(context);
-                      },
-                      child: Text(l10n.ok),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
     );
   }
 
