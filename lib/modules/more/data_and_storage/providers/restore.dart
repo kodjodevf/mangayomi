@@ -28,6 +28,7 @@ import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_pr
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
+import 'package:protobuf/protobuf.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'restore.g.dart';
@@ -382,7 +383,10 @@ void restoreTachiBkBackup(Ref ref, String path, BackupType bkType) {
   final content = GZipDecoder().decodeBytes(
     InputFileStream(path).toUint8List(),
   );
-  final backup = BackupMihon.fromBuffer(content);
+  final backup = BackupMihon.create();
+  backup.mergeFromCodedBufferReader(
+    CodedBufferReader(content, sizeLimit: 250 << 20),
+  );
   List<Category> cats = [];
   isar.writeTxnSync(() {
     isar.categorys.clearSync();
