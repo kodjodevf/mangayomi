@@ -329,39 +329,13 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         ),
       );
     }
-    if (dest.contains("/trackerLibrary/anilist")) {
-      destinations[dest.indexOf(
-        "/trackerLibrary/anilist",
-      )] = NavigationRailDestination(
+    if (dest.contains("/trackerLibrary")) {
+      destinations[dest.indexOf("/trackerLibrary")] = NavigationRailDestination(
         selectedIcon: const Icon(Icons.account_tree),
         icon: const Icon(Icons.account_tree_outlined),
         label: Padding(
           padding: const EdgeInsets.only(top: 5),
-          child: Text("AL"),
-        ),
-      );
-    }
-    if (dest.contains("/trackerLibrary/kitsu")) {
-      destinations[dest.indexOf(
-        "/trackerLibrary/kitsu",
-      )] = NavigationRailDestination(
-        selectedIcon: const Icon(Icons.account_tree),
-        icon: const Icon(Icons.account_tree_outlined),
-        label: Padding(
-          padding: const EdgeInsets.only(top: 5),
-          child: Text("Kitsu"),
-        ),
-      );
-    }
-    if (dest.contains("/trackerLibrary/mal")) {
-      destinations[dest.indexOf(
-        "/trackerLibrary/mal",
-      )] = NavigationRailDestination(
-        selectedIcon: const Icon(Icons.account_tree),
-        icon: const Icon(Icons.account_tree_outlined),
-        label: Padding(
-          padding: const EdgeInsets.only(top: 5),
-          child: Text("MAL"),
+          child: Text(l10n.tracking),
         ),
       );
     }
@@ -448,29 +422,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         label: l10n.more,
       );
     }
-    if (dest.contains("/trackerLibrary/anilist")) {
-      destinations[dest.indexOf(
-        "/trackerLibrary/anilist",
-      )] = NavigationDestination(
+    if (dest.contains("/trackerLibrary")) {
+      destinations[dest.indexOf("/trackerLibrary")] = NavigationDestination(
         selectedIcon: const Icon(Icons.account_tree),
         icon: const Icon(Icons.account_tree_outlined),
-        label: "AL",
-      );
-    }
-    if (dest.contains("/trackerLibrary/kitsu")) {
-      destinations[dest.indexOf(
-        "/trackerLibrary/kitsu",
-      )] = NavigationDestination(
-        selectedIcon: const Icon(Icons.account_tree),
-        icon: const Icon(Icons.account_tree_outlined),
-        label: "Kitsu",
-      );
-    }
-    if (dest.contains("/trackerLibrary/mal")) {
-      destinations[dest.indexOf("/trackerLibrary/mal")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.account_tree),
-        icon: const Icon(Icons.account_tree_outlined),
-        label: "MAL",
+        label: l10n.tracking,
       );
     }
 
@@ -592,9 +548,7 @@ class _TabletLayout extends StatelessWidget {
       '/updates',
       '/browse',
       '/more',
-      '/trackerLibrary/anilist',
-      '/trackerLibrary/kitsu',
-      '/trackerLibrary/mal',
+      '/trackerLibrary',
     };
 
     return (location == null || validLocations.contains(location)) ? 100 : 0;
@@ -662,9 +616,7 @@ class _MobileBottomNavigation extends StatelessWidget {
       '/updates',
       '/browse',
       '/more',
-      '/trackerLibrary/anilist',
-      '/trackerLibrary/kitsu',
-      '/trackerLibrary/mal',
+      '/trackerLibrary',
     };
 
     return (location == null || validLocations.contains(location)) ? null : 0;

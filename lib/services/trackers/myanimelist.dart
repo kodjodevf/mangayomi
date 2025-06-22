@@ -129,7 +129,7 @@ class MyAnimeList extends _$MyAnimeList {
     final url = Uri.parse('$baseApiUrl/$item/$id').replace(
       queryParameters: {
         'fields':
-            'id,title,synopsis,$contentUnit,main_picture,status,media_type,start_date',
+            'id,title,synopsis,$contentUnit,main_picture,status,media_type,start_date,mean',
       },
     );
 
@@ -146,6 +146,7 @@ class MyAnimeList extends _$MyAnimeList {
       publishingType: res["media_type"].toString().replaceAll("_", " "),
       publishingStatus: res["status"].toString().replaceAll("_", " "),
       trackingUrl: "https://myanimelist.net/$item/${res["id"]}",
+      score: res["mean"],
     );
   }
 

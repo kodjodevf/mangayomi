@@ -52,4 +52,38 @@ class TrackSearch {
     this.startDate = '',
     this.summary = '',
   });
+
+  TrackSearch.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    libraryId = json['libraryId'];
+    mediaId = json['mediaId'];
+    syncId = json['syncId'];
+    title = json['title'];
+    lastChapterRead = json['lastChapterRead'];
+    totalChapter = json['totalChapter'];
+    score = json['score'];
+    status = json['status'];
+    startedReadingDate = json['startedReadingDate'];
+    finishedReadingDate = json['finishedReadingDate'];
+    trackingUrl = json['trackingUrl'];
+    coverUrl = json['coverUrl'];
+    publishingStatus = json['publishingStatus'];
+  }
+
+  Map<String, dynamic> toJson() => {
+    'id': id, 
+    'libraryId': libraryId,
+    'mediaId': mediaId,
+    'syncId': syncId,
+    'title': title,
+    'lastChapterRead': lastChapterRead,
+    'totalChapter': totalChapter,
+    'score': score,
+    'status': status,
+    'startedReadingDate': startedReadingDate,
+    'finishedReadingDate': finishedReadingDate,
+    'trackingUrl': trackingUrl,
+    'coverUrl': coverUrl,
+    'publishingStatus': publishingStatus,
+  };
 }

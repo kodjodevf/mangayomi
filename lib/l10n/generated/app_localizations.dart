@@ -2987,6 +2987,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Login to the corresponding tracker to use this feature!'**
   String get track_library_not_logged;
+
+  /// No description provided for @track_library_switch.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to another tracker'**
+  String get track_library_switch;
 }
 
 class _AppLocalizationsDelegate
