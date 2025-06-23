@@ -295,7 +295,7 @@ class Anilist extends _$Anilist {
         '''
     query(\$id: Int!) {
       Page {
-        mediaList(userId: \$id, type: $type) {
+        mediaList(userId: \$id, type: $type, status: CURRENT) {
           id
           status
           scoreRaw: score(format: POINT_100)

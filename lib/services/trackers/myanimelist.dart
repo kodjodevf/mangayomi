@@ -152,8 +152,7 @@ class MyAnimeList extends _$MyAnimeList {
 
   Future<List<TrackSearch>> fetchGeneralData({
     bool isManga = true,
-    String rankingType =
-        "airing",
+    String rankingType = "airing",
   }) async {
     final accessToken = await _getAccessToken();
     final item = isManga ? "manga" : "anime";
@@ -179,7 +178,9 @@ class MyAnimeList extends _$MyAnimeList {
                   totalChapter: e["node"][contentUnit],
                   coverUrl: e["node"]["main_picture"]["large"] ?? "",
                   title: e["node"]["title"],
-                  score: e["node"]["mean"],
+                  score: e["node"]["mean"] is double
+                      ? e["node"]["mean"]
+                      : ((e["node"]["mean"] ?? 0) as int).toDouble(),
                   startDate: e["node"]["start_date"] ?? "",
                   publishingType: e["node"]["media_type"].toString().replaceAll(
                     "_",
@@ -224,7 +225,7 @@ class MyAnimeList extends _$MyAnimeList {
                   title: e["node"]["title"],
                   score: e["node"]["mean"] is double
                       ? e["node"]["mean"]
-                      : (e["node"]["mean"] as int).toDouble(),
+                      : ((e["node"]["mean"] ?? 0) as int).toDouble(),
                   startDate: e["node"]["start_date"] ?? "",
                   publishingType: e["node"]["media_type"].toString().replaceAll(
                     "_",
