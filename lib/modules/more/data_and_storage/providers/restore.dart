@@ -62,6 +62,8 @@ void doRestore(Ref ref, {required String path, required BuildContext context}) {
     }
   } catch (e, s) {
     botToast('$e\n$s');
+  } finally {
+    inputStream.close();
   }
 }
 
@@ -379,9 +381,9 @@ void restoreKotatsuBackup(Ref ref, Archive archive) {
 
 @riverpod
 void restoreTachiBkBackup(Ref ref, String path, BackupType bkType) {
-  final content = GZipDecoder().decodeBytes(
-    InputFileStream(path).toUint8List(),
-  );
+  final inputStream = InputFileStream(path);
+  final content = GZipDecoder().decodeBytes(inputStream.toUint8List());
+  inputStream.close();
   final backup = BackupMihon.fromBuffer(content);
   List<Category> cats = [];
   isar.writeTxnSync(() {
