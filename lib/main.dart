@@ -9,12 +9,15 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/storage_usage.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -57,6 +60,8 @@ void main(List<String> args) async {
     }
   }
   isar = await StorageProvider().initDB(null, inspector: kDebugMode);
+  await Hive.initFlutter();
+  Hive.registerAdapter(TrackSearchAdapter());
 
   runApp(const ProviderScope(child: MyApp()));
   unawaited(_postLaunchInit()); // Defer non-essential async operations

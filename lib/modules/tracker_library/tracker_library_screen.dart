@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/main.dart';
@@ -38,10 +39,12 @@ class TrackLibrarySection {
   String name;
   Future<List<TrackSearch>?> Function() func;
   ItemType itemType;
+  int syncId;
 
   TrackLibrarySection({
     required this.name,
     required this.func,
+    required this.syncId,
     this.itemType = ItemType.manga,
   });
 }
@@ -60,6 +63,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
   late String _query = "";
   late bool _isSearch = false;
   List<TrackLibrarySection> _sections = [];
+  List<TrackPreference> _preferences = [];
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +86,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
         0,
         TrackLibrarySection(
           name: "Search results",
+          syncId: trackerProvider.syncId,
           func: _fetchSearch(trackerProvider.syncId, _query, itemType),
           itemType: itemType,
         ),
@@ -131,7 +136,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
           IconButton(
             splashRadius: 20,
             onPressed: () {
-              _openSwitchDialog(l10n);
+              _openSwitchProviderDialog(l10n);
             },
             icon: CircleAvatar(
               radius: 14,
@@ -154,15 +159,12 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
         child: StreamBuilder(
-          stream: isar.trackPreferences
-              .filter()
-              .syncIdEqualTo(trackerProvider.syncId)
-              .watch(fireImmediately: true),
+          stream: isar.trackPreferences.filter().syncIdIsNotNull().watch(
+            fireImmediately: true,
+          ),
           builder: (context, snapshot) {
-            List<TrackPreference> entries = snapshot.hasData
-                ? snapshot.data ?? []
-                : [];
-            return entries.isNotEmpty
+            _preferences = snapshot.hasData ? snapshot.data ?? [] : [];
+            return _preferences.any((p) => p.syncId == trackerProvider.syncId)
                 ? SuperListView.builder(
                     itemCount: _sections.length,
                     extentPrecalculationPolicy: SuperPrecalculationPolicy(),
@@ -197,11 +199,13 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
         ? [
             TrackLibrarySection(
               name: "Airing Anime",
+              syncId: syncId,
               func: _fetchGeneralData(syncId, ItemType.anime),
               itemType: ItemType.anime,
             ),
             TrackLibrarySection(
               name: "Popular Anime",
+              syncId: syncId,
               func: _fetchGeneralData(
                 syncId,
                 ItemType.anime,
@@ -211,6 +215,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
             ),
             TrackLibrarySection(
               name: "Upcoming Anime",
+              syncId: syncId,
               func: _fetchGeneralData(
                 syncId,
                 ItemType.anime,
@@ -220,6 +225,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
             ),
             TrackLibrarySection(
               name: "Continue watching",
+              syncId: syncId,
               func: _fetchUserData(syncId, ItemType.anime),
               itemType: ItemType.anime,
             ),
@@ -227,6 +233,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
         : [
             TrackLibrarySection(
               name: "Popular Manga",
+              syncId: syncId,
               func: _fetchGeneralData(
                 syncId,
                 ItemType.manga,
@@ -235,6 +242,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
             ),
             TrackLibrarySection(
               name: "Top Manga",
+              syncId: syncId,
               func: _fetchGeneralData(
                 syncId,
                 ItemType.manga,
@@ -243,6 +251,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
             ),
             TrackLibrarySection(
               name: "Top Manhwa",
+              syncId: syncId,
               func: _fetchGeneralData(
                 syncId,
                 ItemType.manga,
@@ -251,6 +260,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
             ),
             TrackLibrarySection(
               name: "Top Manhua",
+              syncId: syncId,
               func: _fetchGeneralData(
                 syncId,
                 ItemType.manga,
@@ -259,6 +269,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
             ),
             TrackLibrarySection(
               name: "Continue reading",
+              syncId: syncId,
               func: _fetchUserData(syncId, ItemType.manga),
             ),
           ];
@@ -269,11 +280,13 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
         ? [
             TrackLibrarySection(
               name: "Popular Anime",
+              syncId: syncId,
               func: _fetchGeneralData(syncId, ItemType.anime),
               itemType: ItemType.anime,
             ),
             TrackLibrarySection(
               name: "Latest Anime",
+              syncId: syncId,
               func: _fetchGeneralData(
                 syncId,
                 ItemType.anime,
@@ -283,6 +296,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
             ),
             TrackLibrarySection(
               name: "Best Rated Anime",
+              syncId: syncId,
               func: _fetchGeneralData(
                 syncId,
                 ItemType.anime,
@@ -292,6 +306,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
             ),
             TrackLibrarySection(
               name: "Continue watching",
+              syncId: syncId,
               func: _fetchUserData(syncId, ItemType.anime),
               itemType: ItemType.anime,
             ),
@@ -299,10 +314,12 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
         : [
             TrackLibrarySection(
               name: "Popular Manga",
+              syncId: syncId,
               func: _fetchGeneralData(syncId, ItemType.manga),
             ),
             TrackLibrarySection(
               name: "Latest Manga",
+              syncId: syncId,
               func: _fetchGeneralData(
                 syncId,
                 ItemType.manga,
@@ -311,6 +328,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
             ),
             TrackLibrarySection(
               name: "Best Rated Manga",
+              syncId: syncId,
               func: _fetchGeneralData(
                 syncId,
                 ItemType.manga,
@@ -319,6 +337,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
             ),
             TrackLibrarySection(
               name: "Continue reading",
+              syncId: syncId,
               func: _fetchUserData(syncId, ItemType.manga),
             ),
           ];
@@ -329,11 +348,13 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
         ? [
             TrackLibrarySection(
               name: "Upcoming Anime",
+              syncId: syncId,
               func: _fetchGeneralData(syncId, ItemType.anime),
               itemType: ItemType.anime,
             ),
             TrackLibrarySection(
               name: "Popular Anime",
+              syncId: syncId,
               func: _fetchGeneralData(
                 syncId,
                 ItemType.anime,
@@ -343,6 +364,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
             ),
             TrackLibrarySection(
               name: "Trending Anime",
+              syncId: syncId,
               func: _fetchGeneralData(
                 syncId,
                 ItemType.anime,
@@ -352,6 +374,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
             ),
             TrackLibrarySection(
               name: "Latest Anime",
+              syncId: syncId,
               func: _fetchGeneralData(
                 syncId,
                 ItemType.anime,
@@ -362,6 +385,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
             ),
             TrackLibrarySection(
               name: "Continue watching",
+              syncId: syncId,
               func: _fetchUserData(syncId, ItemType.anime),
               itemType: ItemType.anime,
             ),
@@ -369,10 +393,12 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
         : [
             TrackLibrarySection(
               name: "Upcoming Manga",
+              syncId: syncId,
               func: _fetchGeneralData(syncId, ItemType.manga),
             ),
             TrackLibrarySection(
               name: "Popular Manga",
+              syncId: syncId,
               func: _fetchGeneralData(
                 syncId,
                 ItemType.manga,
@@ -381,6 +407,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
             ),
             TrackLibrarySection(
               name: "Trending Manga",
+              syncId: syncId,
               func: _fetchGeneralData(
                 syncId,
                 ItemType.manga,
@@ -389,6 +416,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
             ),
             TrackLibrarySection(
               name: "Latest Manga",
+              syncId: syncId,
               func: _fetchGeneralData(
                 syncId,
                 ItemType.manga,
@@ -398,6 +426,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
             ),
             TrackLibrarySection(
               name: "Continue reading",
+              syncId: syncId,
               func: _fetchUserData(syncId, ItemType.manga),
             ),
           ];
@@ -447,7 +476,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
         .fetchUserData();
   }
 
-  void _openSwitchDialog(AppLocalizations l10n) {
+  void _openSwitchProviderDialog(AppLocalizations l10n) {
     showDialog(
       context: context,
       builder: (ctx) {
@@ -456,12 +485,9 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
           content: SingleChildScrollView(
             child: Column(
               children: [
-                _getListile(l10n, TrackerProviders.myAnimeList.syncId, true),
-                _getListile(l10n, TrackerProviders.myAnimeList.syncId, false),
-                _getListile(l10n, TrackerProviders.anilist.syncId, true),
-                _getListile(l10n, TrackerProviders.anilist.syncId, false),
-                _getListile(l10n, TrackerProviders.kitsu.syncId, true),
-                _getListile(l10n, TrackerProviders.kitsu.syncId, false),
+                _getListile(l10n, TrackerProviders.myAnimeList.syncId),
+                _getListile(l10n, TrackerProviders.anilist.syncId),
+                _getListile(l10n, TrackerProviders.kitsu.syncId),
               ],
             ),
           ),
@@ -470,7 +496,27 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
     );
   }
 
-  Widget _getListile(AppLocalizations l10n, int syncId, bool isManga) {
+  void _openSwitchTypeDialog(AppLocalizations l10n, int syncId) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: Text(l10n.track_library_switch),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                _getListile(l10n, syncId, isManga: true),
+                _getListile(l10n, syncId, isManga: false),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _getListile(AppLocalizations l10n, int syncId, {bool? isManga}) {
+    final isLoggedIn = _preferences.any((p) => p.syncId == syncId);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: ListTile(
@@ -482,17 +528,32 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
           ),
           width: 60,
           height: 70,
-          child: Image.asset(trackInfos(syncId).$1, height: 30),
+          child: isManga == null
+              ? Image.asset(trackInfos(syncId).$1, height: 30)
+              : Icon(
+                  isManga ? Icons.collections_bookmark : Icons.video_collection,
+                  size: 30,
+                ),
         ),
         title: Text(
-          "${trackInfos(syncId).$2} | ${isManga ? l10n.manga : l10n.anime}",
+          isManga == null
+              ? trackInfos(syncId).$2
+              : isManga
+              ? l10n.manga
+              : l10n.anime,
         ),
+        enabled: isLoggedIn,
         onTap: () {
-          ref.read(lastTrackerLibraryLocationStateProvider.notifier).set((
-            syncId,
-            isManga,
-          ));
-          context.pop();
+          if (isManga == null) {
+            context.pop();
+            _openSwitchTypeDialog(l10n, syncId);
+          } else {
+            ref.read(lastTrackerLibraryLocationStateProvider.notifier).set((
+              syncId,
+              isManga,
+            ));
+            context.pop();
+          }
         },
       ),
     );
@@ -562,9 +623,22 @@ class _TrackerSectionScreenState extends State<TrackerSectionScreen> {
   }
 
   _fetchData() async {
+    final box = await Hive.openBox("tracker_library");
+    final key = "${widget.section.syncId}-${widget.section.name}";
+    if (box.containsKey(key)) {
+      _errorMessage = "";
+      _tracks = box.get(key);
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+      return;
+    }
     try {
       _errorMessage = "";
       _tracks = await widget.section.func() ?? [];
+      box.put(key, _tracks);
       if (mounted) {
         setState(() {
           _isLoading = false;

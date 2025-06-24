@@ -1,36 +1,57 @@
+import 'package:hive/hive.dart';
+part 'track_search.g.dart';
+
+@HiveType(typeId: 0, adapterName: "TrackSearchAdapter")
 class TrackSearch {
+  @HiveField(0)
   int? id;
 
+  @HiveField(1)
   int? libraryId;
 
+  @HiveField(2)
   int? mediaId;
 
+  @HiveField(3)
   int? syncId;
 
+  @HiveField(4)
   String? title;
 
+  @HiveField(5)
   int? lastChapterRead;
 
+  @HiveField(6)
   int? totalChapter;
 
+  @HiveField(7)
   double? score;
 
+  @HiveField(8)
   String? status;
 
+  @HiveField(9)
   int? startedReadingDate;
 
+  @HiveField(10)
   int? finishedReadingDate;
 
+  @HiveField(11)
   String? trackingUrl;
 
+  @HiveField(12)
   String? coverUrl;
 
+  @HiveField(13)
   String? summary;
 
+  @HiveField(14)
   String? publishingStatus;
 
+  @HiveField(15)
   String? publishingType;
 
+  @HiveField(16)
   String? startDate;
 
   TrackSearch({
