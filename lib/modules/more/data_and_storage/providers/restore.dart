@@ -28,6 +28,7 @@ import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_pr
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
+import 'package:protobuf/protobuf.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'restore.g.dart';
