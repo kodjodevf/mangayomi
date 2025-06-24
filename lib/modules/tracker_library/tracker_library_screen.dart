@@ -40,12 +40,14 @@ class TrackLibrarySection {
   Future<List<TrackSearch>?> Function() func;
   ItemType itemType;
   int syncId;
+  bool isSearch;
 
   TrackLibrarySection({
     required this.name,
     required this.func,
     required this.syncId,
     this.itemType = ItemType.manga,
+    this.isSearch = false,
   });
 }
 
@@ -89,6 +91,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
           syncId: trackerProvider.syncId,
           func: _fetchSearch(trackerProvider.syncId, _query, itemType),
           itemType: itemType,
+          isSearch: true,
         ),
       );
     }
@@ -135,6 +138,14 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
                 ),
           IconButton(
             splashRadius: 20,
+            onPressed: () async => await _resetData(trackerProvider, itemType),
+            icon: Icon(
+              Icons.refresh_outlined,
+              color: Theme.of(context).hintColor,
+            ),
+          ),
+          IconButton(
+            splashRadius: 20,
             onPressed: () {
               _openSwitchProviderDialog(l10n);
             },
@@ -165,19 +176,24 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
           builder: (context, snapshot) {
             _preferences = snapshot.hasData ? snapshot.data ?? [] : [];
             return _preferences.any((p) => p.syncId == trackerProvider.syncId)
-                ? SuperListView.builder(
-                    itemCount: _sections.length,
-                    extentPrecalculationPolicy: SuperPrecalculationPolicy(),
-                    itemBuilder: (context, index) {
-                      final section = _sections[index];
-                      return SizedBox(
-                        height: 260,
-                        child: TrackerSectionScreen(
-                          key: Key(section.name),
-                          section: section,
-                        ),
-                      );
+                ? RefreshIndicator(
+                    onRefresh: () async {
+                      await _resetData(trackerProvider, itemType);
                     },
+                    child: SuperListView.builder(
+                      itemCount: _sections.length,
+                      extentPrecalculationPolicy: SuperPrecalculationPolicy(),
+                      itemBuilder: (context, index) {
+                        final section = _sections[index];
+                        return SizedBox(
+                          height: 260,
+                          child: TrackerSectionScreen(
+                            key: ValueKey(section.name),
+                            section: section,
+                          ),
+                        );
+                      },
+                    ),
                   )
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -192,6 +208,20 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _resetData(
+    TrackerProviders trackerProvider,
+    ItemType itemType,
+  ) async {
+    final box = await Hive.openBox("tracker_library");
+    final keys = box.keys.where(
+      (e) => (e as String).startsWith(
+        "${trackerProvider.syncId}-${itemType.name}-",
+      ),
+    );
+    await box.deleteAll(keys);
+    setState(() {});
   }
 
   List<TrackLibrarySection> _sectionsMAL(int syncId, ItemType itemType) {
@@ -581,6 +611,12 @@ class _TrackerSectionScreenState extends State<TrackerSectionScreen> {
   }
 
   @override
+  void didUpdateWidget(covariant TrackerSectionScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _fetchData();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
 
@@ -624,8 +660,9 @@ class _TrackerSectionScreenState extends State<TrackerSectionScreen> {
 
   _fetchData() async {
     final box = await Hive.openBox("tracker_library");
-    final key = "${widget.section.syncId}-${widget.section.name}";
-    if (box.containsKey(key)) {
+    final key =
+        "${widget.section.syncId}-${widget.section.itemType.name}-${widget.section.name}";
+    if (!widget.section.isSearch && box.containsKey(key)) {
       _errorMessage = "";
       _tracks = box.get(key);
       if (mounted) {
