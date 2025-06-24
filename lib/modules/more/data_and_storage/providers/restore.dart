@@ -385,7 +385,10 @@ void restoreTachiBkBackup(Ref ref, String path, BackupType bkType) {
   final inputStream = InputFileStream(path);
   final content = GZipDecoder().decodeBytes(inputStream.toUint8List());
   inputStream.close();
-  final backup = BackupMihon.fromBuffer(content);
+  final backup = BackupMihon.create();
+  backup.mergeFromCodedBufferReader(
+    CodedBufferReader(content, sizeLimit: 250 << 20),
+  );
   List<Category> cats = [];
   isar.writeTxnSync(() {
     isar.categorys.clearSync();
