@@ -123,7 +123,7 @@ class _MyAppState extends ConsumerState<MyApp> {
       routerDelegate: router.routerDelegate,
       routeInformationProvider: router.routeInformationProvider,
       title: 'MangaYomi',
-      scrollBehavior: AllowDesktopScrollBehavior(),
+      scrollBehavior: AllowScrollBehavior(),
     );
   }
 
@@ -238,10 +238,21 @@ class _MyAppState extends ConsumerState<MyApp> {
   }
 }
 
-class AllowDesktopScrollBehavior extends MaterialScrollBehavior {
+class AllowScrollBehavior extends MaterialScrollBehavior {
+  // This allows the scrollable widgets to be scrolled with touch, mouse, stylus,
+  // inverted stylus, trackpad, and unknown pointer devices.
+  // This is useful for accessibility purposes, such as when using VoiceAccess,
+  // which sends pointer events with unknown type when scrolling scrollables.
+  // This is also useful for desktop platforms, where touch, stylus, and trackpad
+  // interactions are common, and we want to ensure a consistent scrolling experience
+  // across all devices.
   @override
   Set<PointerDeviceKind> get dragDevices => {
     PointerDeviceKind.touch,
     PointerDeviceKind.mouse,
+    PointerDeviceKind.stylus,
+    PointerDeviceKind.invertedStylus,
+    PointerDeviceKind.trackpad,
+    PointerDeviceKind.unknown,
   };
 }
