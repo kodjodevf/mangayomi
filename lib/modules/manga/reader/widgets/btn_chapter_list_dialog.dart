@@ -15,6 +15,7 @@ Widget btnToShowChapterListDialog(
   String title,
   Chapter chapter, {
   void Function(bool)? onChanged,
+  Color? iconColor,
 }) {
   return IconButton(
     onPressed: () async {
@@ -33,7 +34,7 @@ Widget btnToShowChapterListDialog(
       );
       onChanged?.call(true);
     },
-    icon: const Icon(Icons.format_list_numbered_outlined),
+    icon: Icon(Icons.format_list_numbered_outlined, color: iconColor),
   );
 }
 

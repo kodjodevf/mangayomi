@@ -1133,6 +1133,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                         _player.pause();
                       }
                     },
+                    iconColor: Colors.white,
                   ),
                   btnToShowShareScreenshot(
                     widget.episode,
@@ -1539,7 +1540,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         );
         onChanged?.call(true);
       },
-      icon: Icon(Icons.adaptive.share),
+      icon: Icon(Icons.adaptive.share, color: Colors.white),
     );
   }
 
