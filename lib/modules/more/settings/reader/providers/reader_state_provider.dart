@@ -157,9 +157,7 @@ class NavigationOrderState extends _$NavigationOrderState {
     '/history',
     '/browse',
     '/more',
-    '/trackerLibrary/anilist',
-    '/trackerLibrary/kitsu',
-    '/trackerLibrary/mal',
+    '/trackerLibrary',
   ];
 
   @override
@@ -189,12 +187,7 @@ class NavigationOrderState extends _$NavigationOrderState {
 class HideItemsState extends _$HideItemsState {
   @override
   List<String> build() {
-    return isar.settings.getSync(227)!.hideItems ??
-        [
-          '/trackerLibrary/anilist',
-          '/trackerLibrary/kitsu',
-          '/trackerLibrary/mal',
-        ];
+    return isar.settings.getSync(227)!.hideItems ?? ['/trackerLibrary'];
   }
 
   void set(List<String> values) {

@@ -167,6 +167,9 @@ class Kitsu extends _$Kitsu {
             publishingStatus: jsonRes['endDate'] == null
                 ? "Publishing"
                 : "Finished",
+            score: jsonRes['averageRating'] is String
+                ? double.parse(jsonRes['averageRating'])
+                : jsonRes['averageRating'],
           ),
         )
         .toList();

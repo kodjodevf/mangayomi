@@ -129,7 +129,7 @@ class MyAnimeList extends _$MyAnimeList {
     final url = Uri.parse('$baseApiUrl/$item/$id').replace(
       queryParameters: {
         'fields':
-            'id,title,synopsis,$contentUnit,main_picture,status,media_type,start_date',
+            'id,title,synopsis,$contentUnit,main_picture,status,media_type,start_date,mean',
       },
     );
 
@@ -146,13 +146,13 @@ class MyAnimeList extends _$MyAnimeList {
       publishingType: res["media_type"].toString().replaceAll("_", " "),
       publishingStatus: res["status"].toString().replaceAll("_", " "),
       trackingUrl: "https://myanimelist.net/$item/${res["id"]}",
+      score: res["mean"],
     );
   }
 
   Future<List<TrackSearch>> fetchGeneralData({
     bool isManga = true,
-    String rankingType =
-        "airing",
+    String rankingType = "airing",
   }) async {
     final accessToken = await _getAccessToken();
     final item = isManga ? "manga" : "anime";
@@ -178,7 +178,9 @@ class MyAnimeList extends _$MyAnimeList {
                   totalChapter: e["node"][contentUnit],
                   coverUrl: e["node"]["main_picture"]["large"] ?? "",
                   title: e["node"]["title"],
-                  score: e["node"]["mean"],
+                  score: e["node"]["mean"] is double
+                      ? e["node"]["mean"]
+                      : ((e["node"]["mean"] ?? 0) as int).toDouble(),
                   startDate: e["node"]["start_date"] ?? "",
                   publishingType: e["node"]["media_type"].toString().replaceAll(
                     "_",
@@ -223,7 +225,7 @@ class MyAnimeList extends _$MyAnimeList {
                   title: e["node"]["title"],
                   score: e["node"]["mean"] is double
                       ? e["node"]["mean"]
-                      : (e["node"]["mean"] as int).toDouble(),
+                      : ((e["node"]["mean"] ?? 0) as int).toDouble(),
                   startDate: e["node"]["start_date"] ?? "",
                   publishingType: e["node"]["media_type"].toString().replaceAll(
                     "_",

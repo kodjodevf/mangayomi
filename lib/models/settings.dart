@@ -242,6 +242,8 @@ class Settings {
 
   bool? clearChapterCacheOnAppLaunch;
 
+  String? lastTrackerLibraryLocation;
+
   Settings({
     this.id = 227,
     this.displayType = DisplayType.compactGrid,
@@ -349,6 +351,7 @@ class Settings {
     this.mangaExtensionsRepo,
     this.animeExtensionsRepo,
     this.novelExtensionsRepo,
+    this.lastTrackerLibraryLocation,
   });
 
   Settings.fromJson(Map<String, dynamic> json) {
@@ -562,6 +565,7 @@ class Settings {
                 .map((e) => Repo.fromJson(e))
                 .toList();
     }
+    lastTrackerLibraryLocation = json['lastTrackerLibraryLocation'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -692,6 +696,7 @@ class Settings {
     'mangaExtensionsRepo': mangaExtensionsRepo?.map((e) => e.toJson()).toList(),
     'animeExtensionsRepo': animeExtensionsRepo?.map((e) => e.toJson()).toList(),
     'novelExtensionsRepo': novelExtensionsRepo?.map((e) => e.toJson()).toList(),
+    'lastTrackerLibraryLocation': lastTrackerLibraryLocation,
   };
 }
 

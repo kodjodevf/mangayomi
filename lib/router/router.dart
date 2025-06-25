@@ -125,25 +125,8 @@ class RouterNotifier extends ChangeNotifier {
               LibraryScreen(itemType: ItemType.novel, presetInput: id),
         ),
         _genericRoute<String?>(
-          name: "trackerLibrary/anilist",
-          builder: (id) => TrackerLibraryScreen(
-            trackerProvider: TrackerProviders.anilist,
-            presetInput: id,
-          ),
-        ),
-        _genericRoute<String?>(
-          name: "trackerLibrary/kitsu",
-          builder: (id) => TrackerLibraryScreen(
-            trackerProvider: TrackerProviders.kitsu,
-            presetInput: id,
-          ),
-        ),
-        _genericRoute<String?>(
-          name: "trackerLibrary/mal",
-          builder: (id) => TrackerLibraryScreen(
-            trackerProvider: TrackerProviders.myAnimeList,
-            presetInput: id,
-          ),
+          name: "trackerLibrary",
+          builder: (id) => TrackerLibraryScreen(presetInput: id),
         ),
         _genericRoute(name: "history", child: const HistoryScreen()),
         _genericRoute(name: "updates", child: const UpdatesScreen()),

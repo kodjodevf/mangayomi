@@ -1538,4 +1538,7 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get track_library_not_logged =>
       'Login to the corresponding tracker to use this feature!';
+
+  @override
+  String get track_library_switch => 'Switch to another tracker';
 }

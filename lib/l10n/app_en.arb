@@ -477,5 +477,6 @@
   "hwdec": "Hardware Decoder",
   "track_library_add": "Add to local library",
   "track_library_add_confirm": "Add tracked item to local library",
-  "track_library_not_logged": "Login to the corresponding tracker to use this feature!"
+  "track_library_not_logged": "Login to the corresponding tracker to use this feature!",
+  "track_library_switch": "Switch to another tracker"
 }

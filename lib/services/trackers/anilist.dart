@@ -130,6 +130,7 @@ class Anilist extends _$Anilist {
           $contentUnit
           description
           startDate { year month day }
+          averageScore
         }
       }
     }
@@ -160,6 +161,9 @@ class Anilist extends _$Anilist {
                 ).toString(),
             publishingType: "",
             publishingStatus: jsonRes['status'],
+            score: jsonRes["averageScore"] != null
+                ? jsonRes["averageScore"] * 1.0
+                : 0,
           ),
         )
         .toList();
@@ -291,7 +295,7 @@ class Anilist extends _$Anilist {
         '''
     query(\$id: Int!) {
       Page {
-        mediaList(userId: \$id, type: $type) {
+        mediaList(userId: \$id, type: $type, status: CURRENT) {
           id
           status
           scoreRaw: score(format: POINT_100)

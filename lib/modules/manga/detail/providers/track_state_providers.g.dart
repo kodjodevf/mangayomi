@@ -193,5 +193,23 @@ class _TrackStateProviderElement
   @override
   ItemType? get itemType => (origin as TrackStateProvider).itemType;
 }
+
+String _$lastTrackerLibraryLocationStateHash() =>
+    r'f1e13ed88277e26123c2384fbfd4992678ad498a';
+
+/// See also [LastTrackerLibraryLocationState].
+@ProviderFor(LastTrackerLibraryLocationState)
+final lastTrackerLibraryLocationStateProvider = AutoDisposeNotifierProvider<
+    LastTrackerLibraryLocationState, (int, bool)>.internal(
+  LastTrackerLibraryLocationState.new,
+  name: r'lastTrackerLibraryLocationStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$lastTrackerLibraryLocationStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$LastTrackerLibraryLocationState = AutoDisposeNotifier<(int, bool)>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
