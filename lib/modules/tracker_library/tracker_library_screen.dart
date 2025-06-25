@@ -663,14 +663,17 @@ class _TrackerSectionScreenState extends State<TrackerSectionScreen> {
     final key =
         "${widget.section.syncId}-${widget.section.itemType.name}-${widget.section.name}";
     if (!widget.section.isSearch && box.containsKey(key)) {
-      _errorMessage = "";
-      _tracks = box.get(key);
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
+      final temp = box.get(key);
+      if (temp is List<TrackSearch>) {
+        _errorMessage = "";
+        _tracks = temp;
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+        return;
       }
-      return;
     }
     try {
       _errorMessage = "";
@@ -717,10 +720,11 @@ class _TrackerLibraryImageCardState
     return GestureDetector(
       onTap: () => _showCard(context),
       child: StreamBuilder(
-        stream: isar.mangas
+        stream: isar.tracks
             .filter()
+            .mangaIdIsNotNull()
+            .mediaIdEqualTo(trackData.mediaId)
             .itemTypeEqualTo(widget.itemType)
-            .nameEqualTo(trackData.title)
             .watch(fireImmediately: true),
         builder: (context, snapshot) {
           final hasData = snapshot.hasData && snapshot.data!.isNotEmpty;
@@ -734,28 +738,12 @@ class _TrackerLibraryImageCardState
                     children: [
                       Builder(
                         builder: (context) {
-                          if (hasData &&
-                              snapshot.data!.first.customCoverImage != null) {
-                            return Image.memory(
-                              snapshot.data!.first.customCoverImage
-                                  as Uint8List,
-                            );
-                          }
                           return ClipRRect(
                             borderRadius: BorderRadius.circular(5),
                             child: Stack(
                               children: [
                                 cachedNetworkImage(
-                                  imageUrl: toImgUrl(
-                                    hasData
-                                        ? snapshot
-                                                  .data!
-                                                  .first
-                                                  .customCoverFromTracker ??
-                                              snapshot.data!.first.imageUrl ??
-                                              ""
-                                        : trackData.coverUrl ?? "",
-                                  ),
+                                  imageUrl: toImgUrl(trackData.coverUrl ?? ""),
                                   width: 110,
                                   height: 150,
                                   fit: BoxFit.cover,
@@ -783,6 +771,9 @@ class _TrackerLibraryImageCardState
                                         ),
                                         TextSpan(
                                           text: " ${trackData.score ?? "?"}",
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -806,11 +797,9 @@ class _TrackerLibraryImageCardState
                 Container(
                   width: 110,
                   height: 150,
-                  color: hasData && snapshot.data!.first.favorite!
-                      ? Colors.black.withValues(alpha: 0.7)
-                      : null,
+                  color: hasData ? Colors.black.withValues(alpha: 0.7) : null,
                 ),
-                if (hasData && snapshot.data!.first.favorite!)
+                if (hasData)
                   Positioned(
                     top: 0,
                     left: 0,
