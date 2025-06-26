@@ -70,14 +70,6 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
   }
 
   @override
-  initState() {
-    super.initState();
-    if (_isDesktop) {
-      setFullScreen(value: ref.read(fullScreenPlayerStateProvider));
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     final defaultSubtitleLang = ref.watch(defaultSubtitleLangStateProvider);
     final serversData = ref.watch(getVideoListProvider(episode: episode));
@@ -315,6 +307,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   @override
   void initState() {
     super.initState();
+    if (_isDesktop) {
+      setFullScreen(value: ref.read(fullScreenPlayerStateProvider));
+    }
     _currentPositionSub;
     _currentTotalDurationSub;
     _completed;
