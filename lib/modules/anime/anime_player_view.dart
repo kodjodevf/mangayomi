@@ -167,6 +167,8 @@ class AnimeStreamPage extends riv.ConsumerStatefulWidget {
   riv.ConsumerState<AnimeStreamPage> createState() => _AnimeStreamPageState();
 }
 
+enum _AniSkipPhase { none, opening, ending }
+
 class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     with TickerProviderStateMixin {
   late final GlobalKey<VideoState> _key = GlobalKey<VideoState>();
@@ -204,8 +206,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   final ValueNotifier<bool> _isCompleted = ValueNotifier(false);
   final ValueNotifier<Duration?> _tempPosition = ValueNotifier(null);
   final ValueNotifier<BoxFit> _fit = ValueNotifier(BoxFit.contain);
-  final ValueNotifier<bool> _showAniSkipOpeningButton = ValueNotifier(false);
-  final ValueNotifier<bool> _showAniSkipEndingButton = ValueNotifier(false);
+  late final ValueNotifier<_AniSkipPhase> _skipPhase = ValueNotifier(
+    _AniSkipPhase.none,
+  );
+  late final StreamSubscription<Duration> _skipPhaseSub;
   Results? _openingResult;
   Results? _endingResult;
   bool _hasOpeningSkip = false;
@@ -285,7 +289,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
 
   void _setCurrentAudSub() {
     _initSubtitleAndAudio = true;
-    _currentPositionSub = _player.stream.position.listen((position) async {
+    _currentPositionSub = _player.stream.position.listen((position) {
       _isCompleted.value =
           _player.state.duration.inSeconds - _currentPosition.value.inSeconds <=
           10;
@@ -299,8 +303,25 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
           final audio = _player.state.track.audio;
           _player.setAudioTrack(audio);
         } catch (_) {}
+        _initSubtitleAndAudio = false;
       }
-      _initSubtitleAndAudio = false;
+    });
+  }
+
+  void _setSkipPhaseListener() {
+    _skipPhaseSub = _player.stream.position.listen((position) {
+      final secs = position.inSeconds;
+      if (_hasOpeningSkip &&
+          secs >= _openingResult!.interval!.startTime!.ceil() &&
+          secs < _openingResult!.interval!.endTime!.toInt()) {
+        _skipPhase.value = _AniSkipPhase.opening;
+      } else if (_hasEndingSkip &&
+          secs >= _endingResult!.interval!.startTime!.ceil() &&
+          secs < _endingResult!.interval!.endTime!.toInt()) {
+        _skipPhase.value = _AniSkipPhase.ending;
+      } else {
+        _skipPhase.value = _AniSkipPhase.none;
+      }
     });
   }
 
@@ -363,25 +384,22 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     }
   }
 
-  void _initAniSkip() async {
+  Future<void> _initAniSkip() async {
     await _player.stream.buffer.first;
     _streamController.getAniSkipResults((result) {
       final openingRes = result
           .where((element) => element.skipType == "op")
           .toList();
       _hasOpeningSkip = openingRes.isNotEmpty;
-      if (_hasOpeningSkip) {
-        _openingResult = openingRes.first;
-      }
+      if (_hasOpeningSkip) _openingResult = openingRes.first;
       final endingRes = result
           .where((element) => element.skipType == "ed")
           .toList();
       _hasEndingSkip = endingRes.isNotEmpty;
-      if (_hasEndingSkip) {
-        _endingResult = endingRes.first;
-      }
+      if (_hasEndingSkip) _endingResult = endingRes.first;
       if (mounted) {
         setState(() {});
+        _setSkipPhaseListener();
       }
     });
   }
@@ -396,6 +414,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     if (!_isDesktop) {
       _setLandscapeMode(false);
     }
+    _skipPhaseSub.cancel();
+    _skipPhase.dispose();
     super.dispose();
   }
 
@@ -1260,69 +1280,22 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
           Positioned(
             right: 0,
             bottom: 80,
-            child: ValueListenableBuilder(
-              valueListenable: _currentPosition,
-              builder: (context, value, child) {
-                if (_hasOpeningSkip) {
-                  if (_openingResult!.interval!.startTime!.ceil() <=
-                          value.inSeconds &&
-                      _openingResult!.interval!.endTime!.toInt() >
-                          value.inSeconds) {
-                    _showAniSkipOpeningButton.value = true;
-                    _showAniSkipEndingButton.value = false;
-                  } else {
-                    _showAniSkipOpeningButton.value = false;
-                  }
-                }
-                if (_hasEndingSkip) {
-                  if (_endingResult!.interval!.startTime!.ceil() <=
-                          value.inSeconds &&
-                      _endingResult!.interval!.endTime!.toInt() >
-                          value.inSeconds) {
-                    _showAniSkipEndingButton.value = true;
-                    _showAniSkipOpeningButton.value = false;
-                  }
-                } else {
-                  _showAniSkipEndingButton.value = false;
-                }
-                return Consumer(
-                  builder: (context, ref, _) {
-                    return ValueListenableBuilder(
-                      valueListenable: _showAniSkipOpeningButton,
-                      builder: (context, showAniSkipOpENINGButton, child) {
-                        return ValueListenableBuilder(
-                          valueListenable: _showAniSkipEndingButton,
-                          builder: (context, showAniSkipENDINGButton, child) {
-                            return showAniSkipOpENINGButton
-                                ? Container(
-                                    key: const Key('skip_opening'),
-                                    child: AniSkipCountDownButton(
-                                      active: enableAniSkip,
-                                      autoSkip: enableAutoSkip,
-                                      timeoutLength: aniSkipTimeoutLength,
-                                      skipTypeText: context.l10n.skip_opening,
-                                      player: _player,
-                                      aniSkipResult: _openingResult,
-                                    ),
-                                  )
-                                : showAniSkipENDINGButton
-                                ? Container(
-                                    key: const Key('skip_ending'),
-                                    child: AniSkipCountDownButton(
-                                      active: enableAniSkip,
-                                      autoSkip: enableAutoSkip,
-                                      timeoutLength: aniSkipTimeoutLength,
-                                      skipTypeText: context.l10n.skip_ending,
-                                      player: _player,
-                                      aniSkipResult: _endingResult,
-                                    ),
-                                  )
-                                : const SizedBox.shrink();
-                          },
-                        );
-                      },
-                    );
-                  },
+            child: ValueListenableBuilder<_AniSkipPhase>(
+              valueListenable: _skipPhase,
+              builder: (context, phase, _) {
+                if (phase == _AniSkipPhase.none) return const SizedBox.shrink();
+                final isOpening = phase == _AniSkipPhase.opening;
+                final result = isOpening ? _openingResult! : _endingResult!;
+                return AniSkipCountDownButton(
+                  key: Key(isOpening ? 'skip_opening' : 'skip_ending'),
+                  active: true,
+                  autoSkip: enableAutoSkip,
+                  timeoutLength: aniSkipTimeoutLength,
+                  skipTypeText: isOpening
+                      ? context.l10n.skip_opening
+                      : context.l10n.skip_ending,
+                  player: _player,
+                  aniSkipResult: result,
                 );
               },
             ),
