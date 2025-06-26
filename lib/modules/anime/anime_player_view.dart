@@ -335,7 +335,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         });
       }
       _setPlaybackSpeed(ref.read(defaultPlayBackSpeedStateProvider));
-      _initAniSkip();
+      if (ref.read(enableAniSkipStateProvider)) _initAniSkip();
     });
   }
 
