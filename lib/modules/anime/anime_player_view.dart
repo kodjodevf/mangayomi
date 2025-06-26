@@ -209,7 +209,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   late final ValueNotifier<_AniSkipPhase> _skipPhase = ValueNotifier(
     _AniSkipPhase.none,
   );
-  late final StreamSubscription<Duration> _skipPhaseSub;
   Results? _openingResult;
   Results? _endingResult;
   bool _hasOpeningSkip = false;
@@ -217,46 +216,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   bool _initSubtitleAndAudio = true;
   bool _includeSubtitles = false;
 
-  late StreamSubscription<Duration> _currentPositionSub = _player
-      .stream
-      .position
-      .listen((position) async {
-        _isCompleted.value =
-            _player.state.duration.inSeconds -
-                _currentPosition.value.inSeconds <=
-            10;
-        _currentPosition.value = position;
-
-        if (_firstVid.subtitles?.isNotEmpty ?? false) {
-          if (_initSubtitleAndAudio) {
-            try {
-              final defaultTrack = _firstVid.subtitles!.firstWhere(
-                (sub) => sub.label == widget.defaultSubtitle,
-                orElse: () => _firstVid.subtitles!.first,
-              );
-              final file = defaultTrack.file ?? "";
-              final label = defaultTrack.label;
-              _player.setSubtitleTrack(
-                file.startsWith("http")
-                    ? SubtitleTrack.uri(file, title: label, language: label)
-                    : SubtitleTrack.data(file, title: label, language: label),
-              );
-            } catch (_) {}
-            try {
-              if (_firstVid.audios?.isNotEmpty ?? false) {
-                _player.setAudioTrack(
-                  AudioTrack.uri(
-                    _firstVid.audios!.first.file ?? "",
-                    title: _firstVid.audios!.first.label,
-                    language: _firstVid.audios!.first.label,
-                  ),
-                );
-              }
-            } catch (_) {}
-          }
-          _initSubtitleAndAudio = false;
-        }
-      });
+  late final StreamSubscription<Duration> _currentPositionSub;
 
   late final StreamSubscription<Duration> _currentTotalDurationSub = _player
       .stream
@@ -287,42 +247,59 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     }
   }
 
-  void _setCurrentAudSub() {
-    _initSubtitleAndAudio = true;
-    _currentPositionSub = _player.stream.position.listen((position) {
-      _isCompleted.value =
-          _player.state.duration.inSeconds - _currentPosition.value.inSeconds <=
-          10;
-      _currentPosition.value = position;
-      if (_initSubtitleAndAudio) {
-        final subtitle = _player.state.track.subtitle;
-        try {
-          _player.setSubtitleTrack(subtitle);
-        } catch (_) {}
-        try {
-          final audio = _player.state.track.audio;
-          _player.setAudioTrack(audio);
-        } catch (_) {}
-        _initSubtitleAndAudio = false;
-      }
-    });
+  void _unifiedPositionHandler(Duration position) {
+    final currentSecs = position.inSeconds;
+    _setCurrentAudSub(position, currentSecs);
+    _setSkipPhase(currentSecs);
   }
 
-  void _setSkipPhaseListener() {
-    _skipPhaseSub = _player.stream.position.listen((position) {
-      final secs = position.inSeconds;
-      if (_hasOpeningSkip &&
-          secs >= _openingResult!.interval!.startTime!.ceil() &&
-          secs < _openingResult!.interval!.endTime!.toInt()) {
-        _skipPhase.value = _AniSkipPhase.opening;
-      } else if (_hasEndingSkip &&
-          secs >= _endingResult!.interval!.startTime!.ceil() &&
-          secs < _endingResult!.interval!.endTime!.toInt()) {
-        _skipPhase.value = _AniSkipPhase.ending;
-      } else {
-        _skipPhase.value = _AniSkipPhase.none;
+  void _setCurrentAudSub(Duration position, int secs) {
+    final totalSecs = _player.state.duration.inSeconds;
+    _isCompleted.value = (totalSecs - secs) <= 10;
+    _currentPosition.value = position;
+    if (_initSubtitleAndAudio) {
+      _initSubtitleAndAudio = false;
+      if (_firstVid.subtitles?.isNotEmpty ?? false) {
+        try {
+          final defaultTrack = _firstVid.subtitles!.firstWhere(
+            (sub) => sub.label == widget.defaultSubtitle,
+            orElse: () => _firstVid.subtitles!.first,
+          );
+          final file = defaultTrack.file ?? "";
+          final label = defaultTrack.label;
+          final track = file.startsWith("http")
+              ? SubtitleTrack.uri(file, title: label, language: label)
+              : SubtitleTrack.data(file, title: label, language: label);
+          _player.setSubtitleTrack(track);
+        } catch (_) {}
+        if (_firstVid.audios?.isNotEmpty ?? false) {
+          try {
+            final at = _firstVid.audios!.first;
+            _player.setAudioTrack(
+              AudioTrack.uri(
+                at.file ?? "",
+                title: at.label,
+                language: at.label,
+              ),
+            );
+          } catch (_) {}
+        }
       }
-    });
+    }
+  }
+
+  void _setSkipPhase(int secs) {
+    if (_hasOpeningSkip &&
+        secs >= _openingResult!.interval!.startTime!.ceil() &&
+        secs < _openingResult!.interval!.endTime!.toInt()) {
+      _skipPhase.value = _AniSkipPhase.opening;
+    } else if (_hasEndingSkip &&
+        secs >= _endingResult!.interval!.startTime!.ceil() &&
+        secs < _endingResult!.interval!.endTime!.toInt()) {
+      _skipPhase.value = _AniSkipPhase.ending;
+    } else {
+      _skipPhase.value = _AniSkipPhase.none;
+    }
   }
 
   @override
@@ -331,9 +308,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     if (_isDesktop) {
       setFullScreen(value: ref.read(fullScreenPlayerStateProvider));
     }
-    _currentPositionSub;
-    _currentTotalDurationSub;
-    _completed;
+    _currentPositionSub = _player.stream.position.listen(
+      _unifiedPositionHandler,
+    );
     _loadAndroidFont().then((_) {
       _player.open(
         Media(
@@ -399,7 +376,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       if (_hasEndingSkip) _endingResult = endingRes.first;
       if (mounted) {
         setState(() {});
-        _setSkipPhaseListener();
       }
     });
   }
@@ -414,7 +390,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     if (!_isDesktop) {
       _setLandscapeMode(false);
     }
-    _skipPhaseSub.cancel();
     _skipPhase.dispose();
     super.dispose();
   }
@@ -522,7 +497,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   ),
                 );
               }
-              _setCurrentAudSub();
+              _initSubtitleAndAudio = true;
               Navigator.pop(context);
             },
           );
