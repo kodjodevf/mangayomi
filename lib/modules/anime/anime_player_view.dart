@@ -1260,39 +1260,33 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
           child: ValueListenableBuilder(
             valueListenable: _currentPosition,
             builder: (context, value, child) {
-              if (_hasOpeningSkip || _hasEndingSkip) {
-                if (_hasOpeningSkip) {
-                  if (_openingResult!.interval!.startTime!.ceil() <=
-                          value.inSeconds &&
-                      _openingResult!.interval!.endTime!.toInt() >
-                          value.inSeconds) {
-                    _showAniSkipOpeningButton.value = true;
-                    _showAniSkipEndingButton.value = false;
-                  } else {
-                    _showAniSkipOpeningButton.value = false;
-                  }
-                }
-                if (_hasEndingSkip) {
-                  if (_endingResult!.interval!.startTime!.ceil() <=
-                          value.inSeconds &&
-                      _endingResult!.interval!.endTime!.toInt() >
-                          value.inSeconds) {
-                    _showAniSkipEndingButton.value = true;
-                    _showAniSkipOpeningButton.value = false;
-                  }
-                } else {
+              if (_hasOpeningSkip) {
+                if (_openingResult!.interval!.startTime!.ceil() <=
+                        value.inSeconds &&
+                    _openingResult!.interval!.endTime!.toInt() >
+                        value.inSeconds) {
+                  _showAniSkipOpeningButton.value = true;
                   _showAniSkipEndingButton.value = false;
+                } else {
+                  _showAniSkipOpeningButton.value = false;
                 }
+              }
+              if (_hasEndingSkip) {
+                if (_endingResult!.interval!.startTime!.ceil() <=
+                        value.inSeconds &&
+                    _endingResult!.interval!.endTime!.toInt() >
+                        value.inSeconds) {
+                  _showAniSkipEndingButton.value = true;
+                  _showAniSkipOpeningButton.value = false;
+                }
+              } else {
+                _showAniSkipEndingButton.value = false;
               }
               return Consumer(
                 builder: (context, ref, _) {
-                  late final enableAniSkip = ref.watch(
-                    enableAniSkipStateProvider,
-                  );
-                  late final enableAutoSkip = ref.watch(
-                    enableAutoSkipStateProvider,
-                  );
-                  late final aniSkipTimeoutLength = ref.watch(
+                  final enableAniSkip = ref.read(enableAniSkipStateProvider);
+                  final enableAutoSkip = ref.read(enableAutoSkipStateProvider);
+                  final aniSkipTimeoutLength = ref.read(
                     aniSkipTimeoutLengthStateProvider,
                   );
                   return ValueListenableBuilder(
