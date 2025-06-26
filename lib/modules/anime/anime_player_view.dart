@@ -37,7 +37,6 @@ import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as path;
 import 'package:share_plus/share_plus.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
@@ -349,7 +348,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     if (Platform.isAndroid && useLibass) {
       try {
         final subDir = await getApplicationDocumentsDirectory();
-        final fontPath = path.join(subDir.path, 'subfont.ttf');
+        final fontPath = p.join(subDir.path, 'subfont.ttf');
         final data = await rootBundle.load('assets/fonts/subfont.ttf');
         final bytes = data.buffer.asInt8List(
           data.offsetInBytes,
