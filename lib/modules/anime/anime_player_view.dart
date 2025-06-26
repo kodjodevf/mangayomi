@@ -1209,6 +1209,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   Widget _videoPlayer(BuildContext context) {
     final fit = _fit.value;
     _resize(fit);
+    final enableAniSkip = ref.read(enableAniSkipStateProvider);
+    final enableAutoSkip = ref.read(enableAutoSkipStateProvider);
+    final aniSkipTimeoutLength = ref.read(aniSkipTimeoutLengthStateProvider);
+    final skipIntroLength = ref.read(defaultSkipIntroLengthStateProvider);
     return Stack(
       children: [
         Video(
@@ -1235,9 +1239,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   doubleSpeed: (value) {
                     _isDoubleSpeed.value = value ?? false;
                   },
-                  defaultSkipIntroLength: ref.watch(
-                    defaultSkipIntroLengthStateProvider,
-                  ),
+                  defaultSkipIntroLength: skipIntroLength,
                 )
               : MobileControllerWidget(
                   videoController: _controller,
@@ -1254,81 +1256,77 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
           height: context.height(1),
           resumeUponEnteringForegroundMode: true,
         ),
-        Positioned(
-          right: 0,
-          bottom: 80,
-          child: ValueListenableBuilder(
-            valueListenable: _currentPosition,
-            builder: (context, value, child) {
-              if (_hasOpeningSkip) {
-                if (_openingResult!.interval!.startTime!.ceil() <=
-                        value.inSeconds &&
-                    _openingResult!.interval!.endTime!.toInt() >
-                        value.inSeconds) {
-                  _showAniSkipOpeningButton.value = true;
-                  _showAniSkipEndingButton.value = false;
+        if (enableAniSkip && (_hasOpeningSkip || _hasEndingSkip))
+          Positioned(
+            right: 0,
+            bottom: 80,
+            child: ValueListenableBuilder(
+              valueListenable: _currentPosition,
+              builder: (context, value, child) {
+                if (_hasOpeningSkip) {
+                  if (_openingResult!.interval!.startTime!.ceil() <=
+                          value.inSeconds &&
+                      _openingResult!.interval!.endTime!.toInt() >
+                          value.inSeconds) {
+                    _showAniSkipOpeningButton.value = true;
+                    _showAniSkipEndingButton.value = false;
+                  } else {
+                    _showAniSkipOpeningButton.value = false;
+                  }
+                }
+                if (_hasEndingSkip) {
+                  if (_endingResult!.interval!.startTime!.ceil() <=
+                          value.inSeconds &&
+                      _endingResult!.interval!.endTime!.toInt() >
+                          value.inSeconds) {
+                    _showAniSkipEndingButton.value = true;
+                    _showAniSkipOpeningButton.value = false;
+                  }
                 } else {
-                  _showAniSkipOpeningButton.value = false;
+                  _showAniSkipEndingButton.value = false;
                 }
-              }
-              if (_hasEndingSkip) {
-                if (_endingResult!.interval!.startTime!.ceil() <=
-                        value.inSeconds &&
-                    _endingResult!.interval!.endTime!.toInt() >
-                        value.inSeconds) {
-                  _showAniSkipEndingButton.value = true;
-                  _showAniSkipOpeningButton.value = false;
-                }
-              } else {
-                _showAniSkipEndingButton.value = false;
-              }
-              return Consumer(
-                builder: (context, ref, _) {
-                  final enableAniSkip = ref.read(enableAniSkipStateProvider);
-                  final enableAutoSkip = ref.read(enableAutoSkipStateProvider);
-                  final aniSkipTimeoutLength = ref.read(
-                    aniSkipTimeoutLengthStateProvider,
-                  );
-                  return ValueListenableBuilder(
-                    valueListenable: _showAniSkipOpeningButton,
-                    builder: (context, showAniSkipOpENINGButton, child) {
-                      return ValueListenableBuilder(
-                        valueListenable: _showAniSkipEndingButton,
-                        builder: (context, showAniSkipENDINGButton, child) {
-                          return showAniSkipOpENINGButton
-                              ? Container(
-                                  key: const Key('skip_opening'),
-                                  child: AniSkipCountDownButton(
-                                    active: enableAniSkip,
-                                    autoSkip: enableAutoSkip,
-                                    timeoutLength: aniSkipTimeoutLength,
-                                    skipTypeText: context.l10n.skip_opening,
-                                    player: _player,
-                                    aniSkipResult: _openingResult,
-                                  ),
-                                )
-                              : showAniSkipENDINGButton
-                              ? Container(
-                                  key: const Key('skip_ending'),
-                                  child: AniSkipCountDownButton(
-                                    active: enableAniSkip,
-                                    autoSkip: enableAutoSkip,
-                                    timeoutLength: aniSkipTimeoutLength,
-                                    skipTypeText: context.l10n.skip_ending,
-                                    player: _player,
-                                    aniSkipResult: _endingResult,
-                                  ),
-                                )
-                              : const SizedBox.shrink();
-                        },
-                      );
-                    },
-                  );
-                },
-              );
-            },
+                return Consumer(
+                  builder: (context, ref, _) {
+                    return ValueListenableBuilder(
+                      valueListenable: _showAniSkipOpeningButton,
+                      builder: (context, showAniSkipOpENINGButton, child) {
+                        return ValueListenableBuilder(
+                          valueListenable: _showAniSkipEndingButton,
+                          builder: (context, showAniSkipENDINGButton, child) {
+                            return showAniSkipOpENINGButton
+                                ? Container(
+                                    key: const Key('skip_opening'),
+                                    child: AniSkipCountDownButton(
+                                      active: enableAniSkip,
+                                      autoSkip: enableAutoSkip,
+                                      timeoutLength: aniSkipTimeoutLength,
+                                      skipTypeText: context.l10n.skip_opening,
+                                      player: _player,
+                                      aniSkipResult: _openingResult,
+                                    ),
+                                  )
+                                : showAniSkipENDINGButton
+                                ? Container(
+                                    key: const Key('skip_ending'),
+                                    child: AniSkipCountDownButton(
+                                      active: enableAniSkip,
+                                      autoSkip: enableAutoSkip,
+                                      timeoutLength: aniSkipTimeoutLength,
+                                      skipTypeText: context.l10n.skip_ending,
+                                      player: _player,
+                                      aniSkipResult: _endingResult,
+                                    ),
+                                  )
+                                : const SizedBox.shrink();
+                          },
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+            ),
           ),
-        ),
       ],
     );
   }
