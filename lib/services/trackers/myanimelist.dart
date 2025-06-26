@@ -202,8 +202,10 @@ class MyAnimeList extends _$MyAnimeList {
     final accessToken = await _getAccessToken();
     final item = isManga ? "mangalist" : "animelist";
     final contentUnit = isManga ? "num_chapters" : "num_episodes";
+    final currentStatus = isManga ? "reading" : "watching";
     final url = Uri.parse('$baseApiUrl/users/@me/$item').replace(
       queryParameters: {
+        'status': currentStatus,
         'sort': 'list_updated_at',
         'limit': '1000',
         'fields':
