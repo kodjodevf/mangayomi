@@ -167,6 +167,7 @@ class AnimeStreamPage extends riv.ConsumerStatefulWidget {
 enum _AniSkipPhase { none, opening, ending }
 
 /// When the user first opens a video (on Desktop).
+/// Only used for fullscreen/windowed behavior.
 bool _firstTime = true;
 
 class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
