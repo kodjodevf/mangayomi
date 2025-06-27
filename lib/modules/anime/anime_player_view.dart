@@ -56,9 +56,6 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
   bool desktopFullScreenPlayer = false;
   @override
   void dispose() {
-    if (_isDesktop) {
-      setFullScreen(value: desktopFullScreenPlayer);
-    }
     for (var infoHash in _infoHashList) {
       MTorrentServer().removeTorrent(infoHash);
     }
@@ -169,6 +166,9 @@ class AnimeStreamPage extends riv.ConsumerStatefulWidget {
 
 enum _AniSkipPhase { none, opening, ending }
 
+/// When the user first opens a video (on Desktop).
+bool _firstTime = true;
+
 class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     with TickerProviderStateMixin {
   late final GlobalKey<VideoState> _key = GlobalKey<VideoState>();
@@ -196,7 +196,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     ),
   );
   final ValueNotifier<double> _playbackSpeed = ValueNotifier(1.0);
-  final ValueNotifier<bool> _enterFullScreen = ValueNotifier(false);
   final ValueNotifier<bool> _isDoubleSpeed = ValueNotifier(false);
   late final ValueNotifier<Duration> _currentPosition = ValueNotifier(
     _streamController.geTCurrentPosition(),
@@ -235,13 +234,16 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
           }
         }
         // If the last episode of an Anime has ended, exit fullscreen mode
-        if (!hasNextEpisode && val && _isDesktop && !_enterFullScreen.value) {
+        final isFullScreen = ref.read(fullscreenProvider);
+        if (!hasNextEpisode && val && _isDesktop && isFullScreen) {
           setFullScreen(value: false);
+          ref.read(fullscreenProvider.notifier).state = false;
+          widget.desktopFullScreenPlayer.call(false);
         }
       });
 
   void pushToNewEpisode(BuildContext context, Chapter episode) {
-    widget.desktopFullScreenPlayer.call(true);
+    widget.desktopFullScreenPlayer.call(ref.read(fullscreenProvider));
     if (context.mounted) {
       pushReplacementMangaReaderView(context: context, chapter: episode);
     }
@@ -305,12 +307,24 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   @override
   void initState() {
     super.initState();
-    if (_isDesktop) {
-      setFullScreen(value: ref.read(fullScreenPlayerStateProvider));
+    // If player is being launched the first time,
+    // use global "Use Fullscreen" setting.
+    // Else (if user already watches an episode and just changes it),
+    // stay in the same mode, the user left it in.
+    if (_isDesktop && _firstTime) {
+      final globalFullscreen = ref.read(fullScreenPlayerStateProvider);
+      setFullScreen(value: globalFullscreen);
+      Future.microtask(() {
+        ref.read(fullscreenProvider.notifier).state = globalFullscreen;
+        widget.desktopFullScreenPlayer.call(globalFullscreen);
+      });
+      _firstTime = false;
     }
     _currentPositionSub = _player.stream.position.listen(
       _unifiedPositionHandler,
     );
+    _completed;
+    _currentTotalDurationSub;
     _loadAndroidFont().then((_) {
       _player.open(
         Media(
@@ -979,6 +993,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
 
   /// helper method for _mobileBottomButtonBar() and _desktopBottomButtonBar()
   Widget _buildSettingsButtons(BuildContext context) {
+    final isFullscreen = ref.watch(fullscreenProvider);
     return Row(
       children: [
         IconButton(
@@ -1009,20 +1024,19 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
           },
         ),
         if (_isDesktop)
-          CustomMaterialDesktopFullscreenButton(controller: _controller)
+          CustomMaterialDesktopFullscreenButton(
+            controller: _controller,
+            desktopFullScreenPlayer: widget.desktopFullScreenPlayer,
+          )
         else
-          ValueListenableBuilder<bool>(
-            valueListenable: _enterFullScreen,
-            builder: (context, snapshot, _) {
-              return IconButton(
-                onPressed: () {
-                  _setLandscapeMode(!snapshot);
-                  _enterFullScreen.value = !snapshot;
-                },
-                icon: Icon(snapshot ? Icons.fullscreen_exit : Icons.fullscreen),
-                iconSize: 25,
-                color: Colors.white,
-              );
+          IconButton(
+            icon: Icon(isFullscreen ? Icons.fullscreen_exit : Icons.fullscreen),
+            iconSize: 25,
+            color: Colors.white,
+            onPressed: () {
+              _setLandscapeMode(!isFullscreen);
+              ref.read(fullscreenProvider.notifier).state = !isFullscreen;
+              widget.desktopFullScreenPlayer.call(!isFullscreen);
             },
           ),
       ],
@@ -1030,163 +1044,158 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   }
 
   Widget _topButtonBar(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: _enterFullScreen,
-      builder: (context, fullScreen, _) {
-        return Padding(
-          padding: EdgeInsets.only(
-            top: !_isDesktop && !fullScreen
-                ? MediaQuery.of(context).padding.top
-                : 0,
+    final fullScreen = ref.watch(fullscreenProvider);
+    return Padding(
+      padding: EdgeInsets.only(
+        top: !_isDesktop && !fullScreen
+            ? MediaQuery.of(context).padding.top
+            : 0,
+      ),
+      child: Row(
+        children: [
+          BackButton(
+            color: Colors.white,
+            onPressed: () {
+              if (_isDesktop && fullScreen) {
+                setFullScreen(value: !fullScreen);
+                ref.read(fullscreenProvider.notifier).state = !fullScreen;
+                widget.desktopFullScreenPlayer.call(!fullScreen);
+              } else {
+                SystemChrome.setEnabledSystemUIMode(
+                  SystemUiMode.manual,
+                  overlays: SystemUiOverlay.values,
+                );
+              }
+              if (mounted) {
+                // Set variable to true, so the player uses the global
+                // "Use Fullscreen" setting again.
+                _firstTime = true;
+                Navigator.pop(context);
+              }
+            },
           ),
-          child: Row(
+          Flexible(
+            child: ListTile(
+              dense: true,
+              title: SizedBox(
+                width: context.width(0.8),
+                child: Text(
+                  widget.episode.manga.value!.name!,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              subtitle: SizedBox(
+                width: context.width(0.8),
+                child: Text(
+                  widget.episode.name!,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white.withValues(alpha: 0.7),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+          ),
+          Flexible(
+            fit: FlexFit.tight,
+            child: ValueListenableBuilder<bool>(
+              valueListenable: _isDoubleSpeed,
+              builder: (context, snapshot, _) {
+                return Text.rich(
+                  TextSpan(
+                    children: snapshot
+                        ? [
+                            WidgetSpan(child: Icon(Icons.fast_forward)),
+                            TextSpan(text: " 2X"),
+                          ]
+                        : [],
+                  ),
+                );
+              },
+            ),
+          ),
+          Row(
             children: [
-              BackButton(
-                color: Colors.white,
-                onPressed: () async {
-                  if (_isDesktop) {
-                    if (fullScreen) {
-                      setFullScreen(value: false);
-                    } else {
-                      if (mounted) {
-                        Navigator.pop(context);
-                      }
-                    }
+              btnToShowChapterListDialog(
+                context,
+                context.l10n.episodes,
+                widget.episode,
+                onChanged: (v) {
+                  if (v) {
+                    _player.play();
                   } else {
-                    SystemChrome.setEnabledSystemUIMode(
-                      SystemUiMode.manual,
-                      overlays: SystemUiOverlay.values,
-                    );
-                    if (mounted) {
-                      Navigator.pop(context);
-                    }
+                    _player.pause();
+                  }
+                },
+                iconColor: Colors.white,
+              ),
+              btnToShowShareScreenshot(
+                widget.episode,
+                onChanged: (v) {
+                  if (v) {
+                    _player.play();
+                  } else {
+                    _player.pause();
                   }
                 },
               ),
-              Flexible(
-                child: ListTile(
-                  dense: true,
-                  title: SizedBox(
-                    width: context.width(0.8),
-                    child: Text(
-                      widget.episode.manga.value!.name!,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  subtitle: SizedBox(
-                    width: context.width(0.8),
-                    child: Text(
-                      widget.episode.name!,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.white.withValues(alpha: 0.7),
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ),
-              ),
-              Flexible(
-                fit: FlexFit.tight,
-                child: ValueListenableBuilder<bool>(
-                  valueListenable: _isDoubleSpeed,
-                  builder: (context, snapshot, _) {
-                    return Text.rich(
-                      TextSpan(
-                        children: snapshot
-                            ? [
-                                WidgetSpan(child: Icon(Icons.fast_forward)),
-                                TextSpan(text: " 2X"),
-                              ]
-                            : [],
-                      ),
-                    );
-                  },
-                ),
-              ),
-              Row(
-                children: [
-                  btnToShowChapterListDialog(
-                    context,
-                    context.l10n.episodes,
-                    widget.episode,
-                    onChanged: (v) {
-                      if (v) {
-                        _player.play();
-                      } else {
-                        _player.pause();
-                      }
-                    },
-                    iconColor: Colors.white,
-                  ),
-                  btnToShowShareScreenshot(
-                    widget.episode,
-                    onChanged: (v) {
-                      if (v) {
-                        _player.play();
-                      } else {
-                        _player.pause();
-                      }
-                    },
-                  ),
-                  // IconButton(
-                  //     onPressed: () {
-                  //       showDialog(
-                  //           context: context,
-                  //           builder: (context) {
-                  //             return AlertDialog(
-                  //               scrollable: true,
-                  //               title: Text("Player Settings"),
-                  //               content: SizedBox(
-                  //                 width: context.width(0.8),
-                  //                 child: Column(
-                  //                   crossAxisAlignment:
-                  //                       CrossAxisAlignment.start,
-                  //                   children: [
-                  //                     SwitchListTile(
-                  //                         value: false,
-                  //                         title: Text(
-                  //                           "Enable Volume and Brightness Gestures",
-                  //                           style: TextStyle(
-                  //                               color: Theme.of(context)
-                  //                                   .textTheme
-                  //                                   .bodyLarge!
-                  //                                   .color!
-                  //                                   .withValues(alpha: 0.9),
-                  //                               fontSize: 14),
-                  //                         ),
-                  //                         onChanged: (value) {}),
-                  //                     SwitchListTile(
-                  //                         value: false,
-                  //                         title: Text(
-                  //                           "Enable Horizonal Seek Gestures",
-                  //                           style: TextStyle(
-                  //                               color: Theme.of(context)
-                  //                                   .textTheme
-                  //                                   .bodyLarge!
-                  //                                   .color!
-                  //                                   .withValues(alpha: 0.9),
-                  //                               fontSize: 14),
-                  //                         ),
-                  //                         onChanged: (value) {}),
-                  //                   ],
-                  //                 ),
-                  //               ),
-                  //             );
-                  //           });
-                  //     },
-                  //     icon: Icon(Icons.adaptive.more))
-                ],
-              ),
+              // IconButton(
+              //     onPressed: () {
+              //       showDialog(
+              //           context: context,
+              //           builder: (context) {
+              //             return AlertDialog(
+              //               scrollable: true,
+              //               title: Text("Player Settings"),
+              //               content: SizedBox(
+              //                 width: context.width(0.8),
+              //                 child: Column(
+              //                   crossAxisAlignment:
+              //                       CrossAxisAlignment.start,
+              //                   children: [
+              //                     SwitchListTile(
+              //                         value: false,
+              //                         title: Text(
+              //                           "Enable Volume and Brightness Gestures",
+              //                           style: TextStyle(
+              //                               color: Theme.of(context)
+              //                                   .textTheme
+              //                                   .bodyLarge!
+              //                                   .color!
+              //                                   .withValues(alpha: 0.9),
+              //                               fontSize: 14),
+              //                         ),
+              //                         onChanged: (value) {}),
+              //                     SwitchListTile(
+              //                         value: false,
+              //                         title: Text(
+              //                           "Enable Horizonal Seek Gestures",
+              //                           style: TextStyle(
+              //                               color: Theme.of(context)
+              //                                   .textTheme
+              //                                   .bodyLarge!
+              //                                   .color!
+              //                                   .withValues(alpha: 0.9),
+              //                               fontSize: 14),
+              //                         ),
+              //                         onChanged: (value) {}),
+              //                   ],
+              //                 ),
+              //               ),
+              //             );
+              //           });
+              //     },
+              //     icon: Icon(Icons.adaptive.more))
             ],
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 
@@ -1235,6 +1244,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                     _isDoubleSpeed.value = value ?? false;
                   },
                   defaultSkipIntroLength: skipIntroLength,
+                  desktopFullScreenPlayer: widget.desktopFullScreenPlayer,
                 )
               : MobileControllerWidget(
                   videoController: _controller,

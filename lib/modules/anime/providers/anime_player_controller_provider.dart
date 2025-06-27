@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/changed.dart';
@@ -13,6 +14,8 @@ import 'package:mangayomi/services/aniskip.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'anime_player_controller_provider.g.dart';
+
+final fullscreenProvider = StateProvider<bool>((ref) => false);
 
 @riverpod
 class AnimeStreamController extends _$AnimeStreamController {
