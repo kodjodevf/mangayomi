@@ -37,7 +37,6 @@ import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as path;
 import 'package:share_plus/share_plus.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
@@ -57,9 +56,6 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
   bool desktopFullScreenPlayer = false;
   @override
   void dispose() {
-    if (_isDesktop) {
-      setFullScreen(value: desktopFullScreenPlayer);
-    }
     for (var infoHash in _infoHashList) {
       MTorrentServer().removeTorrent(infoHash);
     }
@@ -68,14 +64,6 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
       overlays: SystemUiOverlay.values,
     );
     super.dispose();
-  }
-
-  @override
-  initState() {
-    super.initState();
-    if (_isDesktop) {
-      setFullScreen(value: ref.read(fullScreenPlayerStateProvider));
-    }
   }
 
   @override
@@ -176,6 +164,12 @@ class AnimeStreamPage extends riv.ConsumerStatefulWidget {
   riv.ConsumerState<AnimeStreamPage> createState() => _AnimeStreamPageState();
 }
 
+enum _AniSkipPhase { none, opening, ending }
+
+/// When the user first opens a video (on Desktop).
+/// Only used for fullscreen/windowed behavior.
+bool _firstTime = true;
+
 class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     with TickerProviderStateMixin {
   late final GlobalKey<VideoState> _key = GlobalKey<VideoState>();
@@ -203,7 +197,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     ),
   );
   final ValueNotifier<double> _playbackSpeed = ValueNotifier(1.0);
-  final ValueNotifier<bool> _enterFullScreen = ValueNotifier(false);
   final ValueNotifier<bool> _isDoubleSpeed = ValueNotifier(false);
   late final ValueNotifier<Duration> _currentPosition = ValueNotifier(
     _streamController.geTCurrentPosition(),
@@ -213,8 +206,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   final ValueNotifier<bool> _isCompleted = ValueNotifier(false);
   final ValueNotifier<Duration?> _tempPosition = ValueNotifier(null);
   final ValueNotifier<BoxFit> _fit = ValueNotifier(BoxFit.contain);
-  final ValueNotifier<bool> _showAniSkipOpeningButton = ValueNotifier(false);
-  final ValueNotifier<bool> _showAniSkipEndingButton = ValueNotifier(false);
+  late final ValueNotifier<_AniSkipPhase> _skipPhase = ValueNotifier(
+    _AniSkipPhase.none,
+  );
   Results? _openingResult;
   Results? _endingResult;
   bool _hasOpeningSkip = false;
@@ -222,46 +216,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   bool _initSubtitleAndAudio = true;
   bool _includeSubtitles = false;
 
-  late StreamSubscription<Duration> _currentPositionSub = _player
-      .stream
-      .position
-      .listen((position) async {
-        _isCompleted.value =
-            _player.state.duration.inSeconds -
-                _currentPosition.value.inSeconds <=
-            10;
-        _currentPosition.value = position;
-
-        if (_firstVid.subtitles?.isNotEmpty ?? false) {
-          if (_initSubtitleAndAudio) {
-            try {
-              final defaultTrack = _firstVid.subtitles!.firstWhere(
-                (sub) => sub.label == widget.defaultSubtitle,
-                orElse: () => _firstVid.subtitles!.first,
-              );
-              final file = defaultTrack.file ?? "";
-              final label = defaultTrack.label;
-              _player.setSubtitleTrack(
-                file.startsWith("http")
-                    ? SubtitleTrack.uri(file, title: label, language: label)
-                    : SubtitleTrack.data(file, title: label, language: label),
-              );
-            } catch (_) {}
-            try {
-              if (_firstVid.audios?.isNotEmpty ?? false) {
-                _player.setAudioTrack(
-                  AudioTrack.uri(
-                    _firstVid.audios!.first.file ?? "",
-                    title: _firstVid.audios!.first.label,
-                    language: _firstVid.audios!.first.label,
-                  ),
-                );
-              }
-            } catch (_) {}
-          }
-          _initSubtitleAndAudio = false;
-        }
-      });
+  late final StreamSubscription<Duration> _currentPositionSub;
 
   late final StreamSubscription<Duration> _currentTotalDurationSub = _player
       .stream
@@ -280,45 +235,99 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
           }
         }
         // If the last episode of an Anime has ended, exit fullscreen mode
-        if (!hasNextEpisode && val && _isDesktop && !_enterFullScreen.value) {
+        final isFullScreen = ref.read(fullscreenProvider);
+        if (!hasNextEpisode && val && _isDesktop && isFullScreen) {
           setFullScreen(value: false);
+          ref.read(fullscreenProvider.notifier).state = false;
+          widget.desktopFullScreenPlayer.call(false);
         }
       });
 
   void pushToNewEpisode(BuildContext context, Chapter episode) {
-    widget.desktopFullScreenPlayer.call(true);
+    widget.desktopFullScreenPlayer.call(ref.read(fullscreenProvider));
     if (context.mounted) {
       pushReplacementMangaReaderView(context: context, chapter: episode);
     }
   }
 
-  void _setCurrentAudSub() {
-    _initSubtitleAndAudio = true;
-    _currentPositionSub = _player.stream.position.listen((position) async {
-      _isCompleted.value =
-          _player.state.duration.inSeconds - _currentPosition.value.inSeconds <=
-          10;
-      _currentPosition.value = position;
-      if (_initSubtitleAndAudio) {
-        final subtitle = _player.state.track.subtitle;
-        try {
-          _player.setSubtitleTrack(subtitle);
-        } catch (_) {}
-        try {
-          final audio = _player.state.track.audio;
-          _player.setAudioTrack(audio);
-        } catch (_) {}
-      }
+  void _unifiedPositionHandler(Duration position) {
+    final currentSecs = position.inSeconds;
+    _setCurrentAudSub(position, currentSecs);
+    _setSkipPhase(currentSecs);
+  }
+
+  void _setCurrentAudSub(Duration position, int secs) {
+    final totalSecs = _player.state.duration.inSeconds;
+    _isCompleted.value = (totalSecs - secs) <= 10;
+    _currentPosition.value = position;
+    if (_initSubtitleAndAudio) {
       _initSubtitleAndAudio = false;
-    });
+      if (_firstVid.subtitles?.isNotEmpty ?? false) {
+        try {
+          final defaultTrack = _firstVid.subtitles!.firstWhere(
+            (sub) => sub.label == widget.defaultSubtitle,
+            orElse: () => _firstVid.subtitles!.first,
+          );
+          final file = defaultTrack.file ?? "";
+          final label = defaultTrack.label;
+          final track = file.startsWith("http")
+              ? SubtitleTrack.uri(file, title: label, language: label)
+              : SubtitleTrack.data(file, title: label, language: label);
+          _player.setSubtitleTrack(track);
+        } catch (_) {}
+        if (_firstVid.audios?.isNotEmpty ?? false) {
+          try {
+            final at = _firstVid.audios!.first;
+            _player.setAudioTrack(
+              AudioTrack.uri(
+                at.file ?? "",
+                title: at.label,
+                language: at.label,
+              ),
+            );
+          } catch (_) {}
+        }
+      }
+    }
+  }
+
+  void _setSkipPhase(int secs) {
+    _AniSkipPhase newPhase;
+    if (_hasOpeningSkip &&
+        secs >= _openingResult!.interval!.startTime!.ceil() &&
+        secs < _openingResult!.interval!.endTime!.toInt()) {
+      newPhase = _AniSkipPhase.opening;
+    } else if (_hasEndingSkip &&
+        secs >= _endingResult!.interval!.startTime!.ceil() &&
+        secs < _endingResult!.interval!.endTime!.toInt()) {
+      newPhase = _AniSkipPhase.ending;
+    } else {
+      newPhase = _AniSkipPhase.none;
+    }
+    if (_skipPhase.value != newPhase) _skipPhase.value = newPhase;
   }
 
   @override
   void initState() {
     super.initState();
-    _currentPositionSub;
-    _currentTotalDurationSub;
+    // If player is being launched the first time,
+    // use global "Use Fullscreen" setting.
+    // Else (if user already watches an episode and just changes it),
+    // stay in the same mode, the user left it in.
+    if (_isDesktop && _firstTime) {
+      final globalFullscreen = ref.read(fullScreenPlayerStateProvider);
+      setFullScreen(value: globalFullscreen);
+      Future.microtask(() {
+        ref.read(fullscreenProvider.notifier).state = globalFullscreen;
+        widget.desktopFullScreenPlayer.call(globalFullscreen);
+      });
+      _firstTime = false;
+    }
+    _currentPositionSub = _player.stream.position.listen(
+      _unifiedPositionHandler,
+    );
     _completed;
+    _currentTotalDurationSub;
     _loadAndroidFont().then((_) {
       _player.open(
         Media(
@@ -341,7 +350,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         });
       }
       _setPlaybackSpeed(ref.read(defaultPlayBackSpeedStateProvider));
-      _initAniSkip();
+      if (ref.read(enableAniSkipStateProvider)) _initAniSkip();
     });
   }
 
@@ -349,7 +358,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     if (Platform.isAndroid && useLibass) {
       try {
         final subDir = await getApplicationDocumentsDirectory();
-        final fontPath = path.join(subDir.path, 'subfont.ttf');
+        final fontPath = p.join(subDir.path, 'subfont.ttf');
         final data = await rootBundle.load('assets/fonts/subfont.ttf');
         final bytes = data.buffer.asInt8List(
           data.offsetInBytes,
@@ -369,23 +378,19 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     }
   }
 
-  void _initAniSkip() async {
+  Future<void> _initAniSkip() async {
     await _player.stream.buffer.first;
     _streamController.getAniSkipResults((result) {
       final openingRes = result
           .where((element) => element.skipType == "op")
           .toList();
       _hasOpeningSkip = openingRes.isNotEmpty;
-      if (_hasOpeningSkip) {
-        _openingResult = openingRes.first;
-      }
+      if (_hasOpeningSkip) _openingResult = openingRes.first;
       final endingRes = result
           .where((element) => element.skipType == "ed")
           .toList();
       _hasEndingSkip = endingRes.isNotEmpty;
-      if (_hasEndingSkip) {
-        _endingResult = endingRes.first;
-      }
+      if (_hasEndingSkip) _endingResult = endingRes.first;
       if (mounted) {
         setState(() {});
       }
@@ -402,6 +407,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     if (!_isDesktop) {
       _setLandscapeMode(false);
     }
+    _skipPhase.dispose();
     super.dispose();
   }
 
@@ -508,7 +514,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   ),
                 );
               }
-              _setCurrentAudSub();
+              _initSubtitleAndAudio = true;
               Navigator.pop(context);
             },
           );
@@ -990,6 +996,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
 
   /// helper method for _mobileBottomButtonBar() and _desktopBottomButtonBar()
   Widget _buildSettingsButtons(BuildContext context) {
+    final isFullscreen = ref.watch(fullscreenProvider);
     return Row(
       children: [
         IconButton(
@@ -1020,20 +1027,19 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
           },
         ),
         if (_isDesktop)
-          CustomMaterialDesktopFullscreenButton(controller: _controller)
+          CustomMaterialDesktopFullscreenButton(
+            controller: _controller,
+            desktopFullScreenPlayer: widget.desktopFullScreenPlayer,
+          )
         else
-          ValueListenableBuilder<bool>(
-            valueListenable: _enterFullScreen,
-            builder: (context, snapshot, _) {
-              return IconButton(
-                onPressed: () {
-                  _setLandscapeMode(!snapshot);
-                  _enterFullScreen.value = !snapshot;
-                },
-                icon: Icon(snapshot ? Icons.fullscreen_exit : Icons.fullscreen),
-                iconSize: 25,
-                color: Colors.white,
-              );
+          IconButton(
+            icon: Icon(isFullscreen ? Icons.fullscreen_exit : Icons.fullscreen),
+            iconSize: 25,
+            color: Colors.white,
+            onPressed: () {
+              _setLandscapeMode(!isFullscreen);
+              ref.read(fullscreenProvider.notifier).state = !isFullscreen;
+              widget.desktopFullScreenPlayer.call(!isFullscreen);
             },
           ),
       ],
@@ -1041,163 +1047,158 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   }
 
   Widget _topButtonBar(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: _enterFullScreen,
-      builder: (context, fullScreen, _) {
-        return Padding(
-          padding: EdgeInsets.only(
-            top: !_isDesktop && !fullScreen
-                ? MediaQuery.of(context).padding.top
-                : 0,
+    final fullScreen = ref.watch(fullscreenProvider);
+    return Padding(
+      padding: EdgeInsets.only(
+        top: !_isDesktop && !fullScreen
+            ? MediaQuery.of(context).padding.top
+            : 0,
+      ),
+      child: Row(
+        children: [
+          BackButton(
+            color: Colors.white,
+            onPressed: () {
+              if (_isDesktop && fullScreen) {
+                setFullScreen(value: !fullScreen);
+                ref.read(fullscreenProvider.notifier).state = !fullScreen;
+                widget.desktopFullScreenPlayer.call(!fullScreen);
+              } else {
+                SystemChrome.setEnabledSystemUIMode(
+                  SystemUiMode.manual,
+                  overlays: SystemUiOverlay.values,
+                );
+              }
+              if (mounted) {
+                // Set variable to true, so the player uses the global
+                // "Use Fullscreen" setting again.
+                _firstTime = true;
+                Navigator.pop(context);
+              }
+            },
           ),
-          child: Row(
+          Flexible(
+            child: ListTile(
+              dense: true,
+              title: SizedBox(
+                width: context.width(0.8),
+                child: Text(
+                  widget.episode.manga.value!.name!,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              subtitle: SizedBox(
+                width: context.width(0.8),
+                child: Text(
+                  widget.episode.name!,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.white.withValues(alpha: 0.7),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+          ),
+          Flexible(
+            fit: FlexFit.tight,
+            child: ValueListenableBuilder<bool>(
+              valueListenable: _isDoubleSpeed,
+              builder: (context, snapshot, _) {
+                return Text.rich(
+                  TextSpan(
+                    children: snapshot
+                        ? [
+                            WidgetSpan(child: Icon(Icons.fast_forward)),
+                            TextSpan(text: " 2X"),
+                          ]
+                        : [],
+                  ),
+                );
+              },
+            ),
+          ),
+          Row(
             children: [
-              BackButton(
-                color: Colors.white,
-                onPressed: () async {
-                  if (_isDesktop) {
-                    if (fullScreen) {
-                      setFullScreen(value: false);
-                    } else {
-                      if (mounted) {
-                        Navigator.pop(context);
-                      }
-                    }
+              btnToShowChapterListDialog(
+                context,
+                context.l10n.episodes,
+                widget.episode,
+                onChanged: (v) {
+                  if (v) {
+                    _player.play();
                   } else {
-                    SystemChrome.setEnabledSystemUIMode(
-                      SystemUiMode.manual,
-                      overlays: SystemUiOverlay.values,
-                    );
-                    if (mounted) {
-                      Navigator.pop(context);
-                    }
+                    _player.pause();
+                  }
+                },
+                iconColor: Colors.white,
+              ),
+              btnToShowShareScreenshot(
+                widget.episode,
+                onChanged: (v) {
+                  if (v) {
+                    _player.play();
+                  } else {
+                    _player.pause();
                   }
                 },
               ),
-              Flexible(
-                child: ListTile(
-                  dense: true,
-                  title: SizedBox(
-                    width: context.width(0.8),
-                    child: Text(
-                      widget.episode.manga.value!.name!,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  subtitle: SizedBox(
-                    width: context.width(0.8),
-                    child: Text(
-                      widget.episode.name!,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.white.withValues(alpha: 0.7),
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ),
-              ),
-              Flexible(
-                fit: FlexFit.tight,
-                child: ValueListenableBuilder<bool>(
-                  valueListenable: _isDoubleSpeed,
-                  builder: (context, snapshot, _) {
-                    return Text.rich(
-                      TextSpan(
-                        children: snapshot
-                            ? [
-                                WidgetSpan(child: Icon(Icons.fast_forward)),
-                                TextSpan(text: " 2X"),
-                              ]
-                            : [],
-                      ),
-                    );
-                  },
-                ),
-              ),
-              Row(
-                children: [
-                  btnToShowChapterListDialog(
-                    context,
-                    context.l10n.episodes,
-                    widget.episode,
-                    onChanged: (v) {
-                      if (v) {
-                        _player.play();
-                      } else {
-                        _player.pause();
-                      }
-                    },
-                    iconColor: Colors.white,
-                  ),
-                  btnToShowShareScreenshot(
-                    widget.episode,
-                    onChanged: (v) {
-                      if (v) {
-                        _player.play();
-                      } else {
-                        _player.pause();
-                      }
-                    },
-                  ),
-                  // IconButton(
-                  //     onPressed: () {
-                  //       showDialog(
-                  //           context: context,
-                  //           builder: (context) {
-                  //             return AlertDialog(
-                  //               scrollable: true,
-                  //               title: Text("Player Settings"),
-                  //               content: SizedBox(
-                  //                 width: context.width(0.8),
-                  //                 child: Column(
-                  //                   crossAxisAlignment:
-                  //                       CrossAxisAlignment.start,
-                  //                   children: [
-                  //                     SwitchListTile(
-                  //                         value: false,
-                  //                         title: Text(
-                  //                           "Enable Volume and Brightness Gestures",
-                  //                           style: TextStyle(
-                  //                               color: Theme.of(context)
-                  //                                   .textTheme
-                  //                                   .bodyLarge!
-                  //                                   .color!
-                  //                                   .withValues(alpha: 0.9),
-                  //                               fontSize: 14),
-                  //                         ),
-                  //                         onChanged: (value) {}),
-                  //                     SwitchListTile(
-                  //                         value: false,
-                  //                         title: Text(
-                  //                           "Enable Horizonal Seek Gestures",
-                  //                           style: TextStyle(
-                  //                               color: Theme.of(context)
-                  //                                   .textTheme
-                  //                                   .bodyLarge!
-                  //                                   .color!
-                  //                                   .withValues(alpha: 0.9),
-                  //                               fontSize: 14),
-                  //                         ),
-                  //                         onChanged: (value) {}),
-                  //                   ],
-                  //                 ),
-                  //               ),
-                  //             );
-                  //           });
-                  //     },
-                  //     icon: Icon(Icons.adaptive.more))
-                ],
-              ),
+              // IconButton(
+              //     onPressed: () {
+              //       showDialog(
+              //           context: context,
+              //           builder: (context) {
+              //             return AlertDialog(
+              //               scrollable: true,
+              //               title: Text("Player Settings"),
+              //               content: SizedBox(
+              //                 width: context.width(0.8),
+              //                 child: Column(
+              //                   crossAxisAlignment:
+              //                       CrossAxisAlignment.start,
+              //                   children: [
+              //                     SwitchListTile(
+              //                         value: false,
+              //                         title: Text(
+              //                           "Enable Volume and Brightness Gestures",
+              //                           style: TextStyle(
+              //                               color: Theme.of(context)
+              //                                   .textTheme
+              //                                   .bodyLarge!
+              //                                   .color!
+              //                                   .withValues(alpha: 0.9),
+              //                               fontSize: 14),
+              //                         ),
+              //                         onChanged: (value) {}),
+              //                     SwitchListTile(
+              //                         value: false,
+              //                         title: Text(
+              //                           "Enable Horizonal Seek Gestures",
+              //                           style: TextStyle(
+              //                               color: Theme.of(context)
+              //                                   .textTheme
+              //                                   .bodyLarge!
+              //                                   .color!
+              //                                   .withValues(alpha: 0.9),
+              //                               fontSize: 14),
+              //                         ),
+              //                         onChanged: (value) {}),
+              //                   ],
+              //                 ),
+              //               ),
+              //             );
+              //           });
+              //     },
+              //     icon: Icon(Icons.adaptive.more))
             ],
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 
@@ -1215,6 +1216,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   Widget _videoPlayer(BuildContext context) {
     final fit = _fit.value;
     _resize(fit);
+    final enableAniSkip = ref.read(enableAniSkipStateProvider);
+    final enableAutoSkip = ref.read(enableAutoSkipStateProvider);
+    final aniSkipTimeoutLength = ref.read(aniSkipTimeoutLengthStateProvider);
+    final skipIntroLength = ref.read(defaultSkipIntroLengthStateProvider);
     return Stack(
       children: [
         Video(
@@ -1241,9 +1246,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   doubleSpeed: (value) {
                     _isDoubleSpeed.value = value ?? false;
                   },
-                  defaultSkipIntroLength: ref.watch(
-                    defaultSkipIntroLengthStateProvider,
-                  ),
+                  defaultSkipIntroLength: skipIntroLength,
+                  desktopFullScreenPlayer: widget.desktopFullScreenPlayer,
                 )
               : MobileControllerWidget(
                   videoController: _controller,
@@ -1260,87 +1264,30 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
           height: context.height(1),
           resumeUponEnteringForegroundMode: true,
         ),
-        Positioned(
-          right: 0,
-          bottom: 80,
-          child: ValueListenableBuilder(
-            valueListenable: _currentPosition,
-            builder: (context, value, child) {
-              if (_hasOpeningSkip || _hasEndingSkip) {
-                if (_hasOpeningSkip) {
-                  if (_openingResult!.interval!.startTime!.ceil() <=
-                          value.inSeconds &&
-                      _openingResult!.interval!.endTime!.toInt() >
-                          value.inSeconds) {
-                    _showAniSkipOpeningButton.value = true;
-                    _showAniSkipEndingButton.value = false;
-                  } else {
-                    _showAniSkipOpeningButton.value = false;
-                  }
-                }
-                if (_hasEndingSkip) {
-                  if (_endingResult!.interval!.startTime!.ceil() <=
-                          value.inSeconds &&
-                      _endingResult!.interval!.endTime!.toInt() >
-                          value.inSeconds) {
-                    _showAniSkipEndingButton.value = true;
-                    _showAniSkipOpeningButton.value = false;
-                  }
-                } else {
-                  _showAniSkipEndingButton.value = false;
-                }
-              }
-              return Consumer(
-                builder: (context, ref, _) {
-                  late final enableAniSkip = ref.watch(
-                    enableAniSkipStateProvider,
-                  );
-                  late final enableAutoSkip = ref.watch(
-                    enableAutoSkipStateProvider,
-                  );
-                  late final aniSkipTimeoutLength = ref.watch(
-                    aniSkipTimeoutLengthStateProvider,
-                  );
-                  return ValueListenableBuilder(
-                    valueListenable: _showAniSkipOpeningButton,
-                    builder: (context, showAniSkipOpENINGButton, child) {
-                      return ValueListenableBuilder(
-                        valueListenable: _showAniSkipEndingButton,
-                        builder: (context, showAniSkipENDINGButton, child) {
-                          return showAniSkipOpENINGButton
-                              ? Container(
-                                  key: const Key('skip_opening'),
-                                  child: AniSkipCountDownButton(
-                                    active: enableAniSkip,
-                                    autoSkip: enableAutoSkip,
-                                    timeoutLength: aniSkipTimeoutLength,
-                                    skipTypeText: context.l10n.skip_opening,
-                                    player: _player,
-                                    aniSkipResult: _openingResult,
-                                  ),
-                                )
-                              : showAniSkipENDINGButton
-                              ? Container(
-                                  key: const Key('skip_ending'),
-                                  child: AniSkipCountDownButton(
-                                    active: enableAniSkip,
-                                    autoSkip: enableAutoSkip,
-                                    timeoutLength: aniSkipTimeoutLength,
-                                    skipTypeText: context.l10n.skip_ending,
-                                    player: _player,
-                                    aniSkipResult: _endingResult,
-                                  ),
-                                )
-                              : const SizedBox.shrink();
-                        },
-                      );
-                    },
-                  );
-                },
-              );
-            },
+        if (enableAniSkip && (_hasOpeningSkip || _hasEndingSkip))
+          Positioned(
+            right: 0,
+            bottom: 80,
+            child: ValueListenableBuilder<_AniSkipPhase>(
+              valueListenable: _skipPhase,
+              builder: (context, phase, _) {
+                if (phase == _AniSkipPhase.none) return const SizedBox.shrink();
+                final isOpening = phase == _AniSkipPhase.opening;
+                final result = isOpening ? _openingResult! : _endingResult!;
+                return AniSkipCountDownButton(
+                  key: Key(isOpening ? 'skip_opening' : 'skip_ending'),
+                  active: true,
+                  autoSkip: enableAutoSkip,
+                  timeoutLength: aniSkipTimeoutLength,
+                  skipTypeText: isOpening
+                      ? context.l10n.skip_opening
+                      : context.l10n.skip_ending,
+                  player: _player,
+                  aniSkipResult: result,
+                );
+              },
+            ),
           ),
-        ),
       ],
     );
   }
