@@ -291,17 +291,19 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   }
 
   void _setSkipPhase(int secs) {
+    _AniSkipPhase newPhase;
     if (_hasOpeningSkip &&
         secs >= _openingResult!.interval!.startTime!.ceil() &&
         secs < _openingResult!.interval!.endTime!.toInt()) {
-      _skipPhase.value = _AniSkipPhase.opening;
+      newPhase = _AniSkipPhase.opening;
     } else if (_hasEndingSkip &&
         secs >= _endingResult!.interval!.startTime!.ceil() &&
         secs < _endingResult!.interval!.endTime!.toInt()) {
-      _skipPhase.value = _AniSkipPhase.ending;
+      newPhase = _AniSkipPhase.ending;
     } else {
-      _skipPhase.value = _AniSkipPhase.none;
+      newPhase = _AniSkipPhase.none;
     }
+    if (_skipPhase.value != newPhase) _skipPhase.value = newPhase;
   }
 
   @override
