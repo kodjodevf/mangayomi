@@ -228,6 +228,12 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
     return itemType == ItemType.anime
         ? [
             TrackLibrarySection(
+              name: "Continue watching",
+              syncId: syncId,
+              func: _fetchUserData(syncId, ItemType.anime),
+              itemType: ItemType.anime,
+            ),
+            TrackLibrarySection(
               name: "Airing Anime",
               syncId: syncId,
               func: _fetchGeneralData(syncId, ItemType.anime),
@@ -253,14 +259,13 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
               ),
               itemType: ItemType.anime,
             ),
-            TrackLibrarySection(
-              name: "Continue watching",
-              syncId: syncId,
-              func: _fetchUserData(syncId, ItemType.anime),
-              itemType: ItemType.anime,
-            ),
           ]
         : [
+            TrackLibrarySection(
+              name: "Continue reading",
+              syncId: syncId,
+              func: _fetchUserData(syncId, ItemType.manga),
+            ),
             TrackLibrarySection(
               name: "Popular Manga",
               syncId: syncId,
@@ -297,17 +302,18 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
                 rankingType: "manhua",
               ),
             ),
-            TrackLibrarySection(
-              name: "Continue reading",
-              syncId: syncId,
-              func: _fetchUserData(syncId, ItemType.manga),
-            ),
           ];
   }
 
   List<TrackLibrarySection> _sectionsKitsu(int syncId, ItemType itemType) {
     return itemType == ItemType.anime
         ? [
+            TrackLibrarySection(
+              name: "Continue watching",
+              syncId: syncId,
+              func: _fetchUserData(syncId, ItemType.anime),
+              itemType: ItemType.anime,
+            ),
             TrackLibrarySection(
               name: "Popular Anime",
               syncId: syncId,
@@ -334,14 +340,13 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
               ),
               itemType: ItemType.anime,
             ),
-            TrackLibrarySection(
-              name: "Continue watching",
-              syncId: syncId,
-              func: _fetchUserData(syncId, ItemType.anime),
-              itemType: ItemType.anime,
-            ),
           ]
         : [
+            TrackLibrarySection(
+              name: "Continue reading",
+              syncId: syncId,
+              func: _fetchUserData(syncId, ItemType.manga),
+            ),
             TrackLibrarySection(
               name: "Popular Manga",
               syncId: syncId,
@@ -365,17 +370,18 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
                 rankingType: "-averageRating",
               ),
             ),
-            TrackLibrarySection(
-              name: "Continue reading",
-              syncId: syncId,
-              func: _fetchUserData(syncId, ItemType.manga),
-            ),
           ];
   }
 
   List<TrackLibrarySection> _sectionsAL(int syncId, ItemType itemType) {
     return itemType == ItemType.anime
         ? [
+            TrackLibrarySection(
+              name: "Continue watching",
+              syncId: syncId,
+              func: _fetchUserData(syncId, ItemType.anime),
+              itemType: ItemType.anime,
+            ),
             TrackLibrarySection(
               name: "Upcoming Anime",
               syncId: syncId,
@@ -413,14 +419,13 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
               ),
               itemType: ItemType.anime,
             ),
-            TrackLibrarySection(
-              name: "Continue watching",
-              syncId: syncId,
-              func: _fetchUserData(syncId, ItemType.anime),
-              itemType: ItemType.anime,
-            ),
           ]
         : [
+            TrackLibrarySection(
+              name: "Continue reading",
+              syncId: syncId,
+              func: _fetchUserData(syncId, ItemType.manga),
+            ),
             TrackLibrarySection(
               name: "Upcoming Manga",
               syncId: syncId,
@@ -453,11 +458,6 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
                 rankingType:
                     "sort: [UPDATED_AT_DESC, POPULARITY_DESC], status: RELEASING",
               ),
-            ),
-            TrackLibrarySection(
-              name: "Continue reading",
-              syncId: syncId,
-              func: _fetchUserData(syncId, ItemType.manga),
             ),
           ];
   }

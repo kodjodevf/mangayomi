@@ -206,6 +206,7 @@ class MyAnimeList extends _$MyAnimeList {
     final url = Uri.parse('$baseApiUrl/users/@me/$item').replace(
       queryParameters: {
         'status': currentStatus,
+        utf8.decode([110, 115, 102, 119]): 'true',
         'sort': 'list_updated_at',
         'limit': '1000',
         'fields':

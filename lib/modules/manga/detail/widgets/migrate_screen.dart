@@ -68,6 +68,7 @@ class _MigrationScreenScreenState extends ConsumerState<MigrationScreen> {
     final query = _query.isNotEmpty
         ? _query
         : widget.manga.name ?? widget.manga.author ?? "";
+    _textEditingController.text = query;
 
     return Scaffold(
       appBar: AppBar(
