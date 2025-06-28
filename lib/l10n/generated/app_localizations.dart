@@ -2993,6 +2993,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Switch to another tracker'**
   String get track_library_switch;
+
+  /// No description provided for @go_back.
+  ///
+  /// In en, this message translates to:
+  /// **'Go back'**
+  String get go_back;
 }
 
 class _AppLocalizationsDelegate

@@ -13,10 +13,12 @@ import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/models/update.dart';
+import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
 import 'package:mangayomi/modules/manga/detail/providers/isar_providers.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
+import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/models/source.dart';
@@ -41,25 +43,69 @@ class MigrationScreen extends ConsumerStatefulWidget {
 }
 
 class _MigrationScreenScreenState extends ConsumerState<MigrationScreen> {
-  late final List<Source> sourceList = isar.sources
-      .filter()
-      .idIsNotNull()
-      .and()
-      .isAddedEqualTo(true)
-      .and()
-      .itemTypeEqualTo(widget.manga.itemType)
-      .findAllSync();
+  String _query = "";
+  final _textEditingController = TextEditingController();
+  late final List<Source> sourceList =
+      ref.watch(onlyIncludePinnedSourceStateProvider)
+      ? isar.sources
+            .filter()
+            .isPinnedEqualTo(true)
+            .and()
+            .itemTypeEqualTo(widget.manga.itemType)
+            .findAllSync()
+      : isar.sources
+            .filter()
+            .idIsNotNull()
+            .and()
+            .isAddedEqualTo(true)
+            .and()
+            .itemTypeEqualTo(widget.manga.itemType)
+            .findAllSync();
+
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
+    final query = _query.isNotEmpty
+        ? _query
+        : widget.manga.name ?? widget.manga.author ?? "";
+    _textEditingController.text = query;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
           widget.trackSearch == null ? l10n.migrate : l10n.track_library_add,
         ),
+        leading: Container(),
+        actions: [
+          SeachFormTextField(
+            onChanged: (value) {},
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            onFieldSubmitted: (value) async {
+              if (!(_query == _textEditingController.text)) {
+                setState(() {
+                  _query = "";
+                });
+                await Future.delayed(const Duration(milliseconds: 10));
+                setState(() {
+                  _query = value;
+                });
+              }
+            },
+            onSuffixPressed: () {
+              _textEditingController.clear();
+              setState(() {
+                _query = "";
+              });
+            },
+            controller: _textEditingController,
+          ),
+        ],
       ),
-      body: widget.manga.name != null && widget.manga.author != null
+      body:
+          _query.isNotEmpty ||
+              (widget.manga.name != null && widget.manga.author != null)
           ? SuperListView.builder(
               itemCount: sourceList.length,
               extentPrecalculationPolicy: SuperPrecalculationPolicy(),
@@ -68,7 +114,8 @@ class _MigrationScreenScreenState extends ConsumerState<MigrationScreen> {
                 return SizedBox(
                   height: 260,
                   child: MigrationSourceSearchScreen(
-                    query: widget.manga.name ?? widget.manga.author ?? "",
+                    key: ValueKey(query),
+                    query: query,
                     manga: widget.manga,
                     source: source,
                     trackSearch: widget.trackSearch,

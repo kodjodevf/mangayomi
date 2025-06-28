@@ -467,5 +467,17 @@
     "sources_cleared": "Quellen gelöscht!",
     "add_repo": "Repository hinzufügen?",
     "extension_notes": "Hinweis: {notes}",
-    "unsupported_repo": "Du hast gerade versucht, ein ungültiges Repository hinzuzufügen. Bitte schau mal beim Discord Server vorbei!"
+    "unsupported_repo": "Du hast gerade versucht, ein ungültiges Repository hinzuzufügen. Bitte schau mal beim Discord Server vorbei!",
+    "end_of_chapter": "Ende des Kapitels",
+    "chapter_completed": "Kapitel abgeschlossen",
+    "continue_to_next_chapter": "Scrolle weiter, um an das nächste Kapitel zu gelangen",
+    "no_next_chapter": "Keine weiteren Kapiteln",
+    "you_have_finished_reading": "Du hast es fertig gelesen",
+    "return_to_the_list_of_chapters": "Gehe zur Auflistung der Kapiteln",
+    "hwdec": "Hardware Decoder",
+    "track_library_add": "Zur lokalen Bibliothek hinzufügen",
+    "track_library_add_confirm": "Eintrag zur lokalen Bibliothek hinzufügen",
+    "track_library_not_logged": "Du musst dich zuerst beim entsprechenden Tracker anmelden, bevor du diese Funktion nutzen kannst!",
+    "track_library_switch": "Zu einen anderen Tracker wechseln",
+    "go_back": "Zurück"
 }

@@ -1547,6 +1547,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get track_library_switch => 'Switch to another tracker';
+
+  @override
+  String get go_back => 'Go back';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).

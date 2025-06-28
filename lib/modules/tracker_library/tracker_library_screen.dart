@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -15,12 +14,10 @@ import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
-import 'package:mangayomi/modules/tracker_library/tracker_item_card.dart';
-import 'package:mangayomi/modules/widgets/bottom_text_widget.dart';
+import 'package:mangayomi/modules/tracker_library/tracker_library_section.dart';
+import 'package:mangayomi/modules/tracker_library/tracker_section_screen.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/constant.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
 enum TrackerProviders {
@@ -33,22 +30,6 @@ enum TrackerProviders {
 
   final int syncId;
   final String name;
-}
-
-class TrackLibrarySection {
-  String name;
-  Future<List<TrackSearch>?> Function() func;
-  ItemType itemType;
-  int syncId;
-  bool isSearch;
-
-  TrackLibrarySection({
-    required this.name,
-    required this.func,
-    required this.syncId,
-    this.itemType = ItemType.manga,
-    this.isSearch = false,
-  });
 }
 
 class TrackerLibraryScreen extends ConsumerStatefulWidget {
@@ -228,6 +209,12 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
     return itemType == ItemType.anime
         ? [
             TrackLibrarySection(
+              name: "Continue watching",
+              syncId: syncId,
+              func: _fetchUserData(syncId, ItemType.anime),
+              itemType: ItemType.anime,
+            ),
+            TrackLibrarySection(
               name: "Airing Anime",
               syncId: syncId,
               func: _fetchGeneralData(syncId, ItemType.anime),
@@ -253,14 +240,13 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
               ),
               itemType: ItemType.anime,
             ),
-            TrackLibrarySection(
-              name: "Continue watching",
-              syncId: syncId,
-              func: _fetchUserData(syncId, ItemType.anime),
-              itemType: ItemType.anime,
-            ),
           ]
         : [
+            TrackLibrarySection(
+              name: "Continue reading",
+              syncId: syncId,
+              func: _fetchUserData(syncId, ItemType.manga),
+            ),
             TrackLibrarySection(
               name: "Popular Manga",
               syncId: syncId,
@@ -297,17 +283,18 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
                 rankingType: "manhua",
               ),
             ),
-            TrackLibrarySection(
-              name: "Continue reading",
-              syncId: syncId,
-              func: _fetchUserData(syncId, ItemType.manga),
-            ),
           ];
   }
 
   List<TrackLibrarySection> _sectionsKitsu(int syncId, ItemType itemType) {
     return itemType == ItemType.anime
         ? [
+            TrackLibrarySection(
+              name: "Continue watching",
+              syncId: syncId,
+              func: _fetchUserData(syncId, ItemType.anime),
+              itemType: ItemType.anime,
+            ),
             TrackLibrarySection(
               name: "Popular Anime",
               syncId: syncId,
@@ -334,14 +321,13 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
               ),
               itemType: ItemType.anime,
             ),
-            TrackLibrarySection(
-              name: "Continue watching",
-              syncId: syncId,
-              func: _fetchUserData(syncId, ItemType.anime),
-              itemType: ItemType.anime,
-            ),
           ]
         : [
+            TrackLibrarySection(
+              name: "Continue reading",
+              syncId: syncId,
+              func: _fetchUserData(syncId, ItemType.manga),
+            ),
             TrackLibrarySection(
               name: "Popular Manga",
               syncId: syncId,
@@ -365,17 +351,18 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
                 rankingType: "-averageRating",
               ),
             ),
-            TrackLibrarySection(
-              name: "Continue reading",
-              syncId: syncId,
-              func: _fetchUserData(syncId, ItemType.manga),
-            ),
           ];
   }
 
   List<TrackLibrarySection> _sectionsAL(int syncId, ItemType itemType) {
     return itemType == ItemType.anime
         ? [
+            TrackLibrarySection(
+              name: "Continue watching",
+              syncId: syncId,
+              func: _fetchUserData(syncId, ItemType.anime),
+              itemType: ItemType.anime,
+            ),
             TrackLibrarySection(
               name: "Upcoming Anime",
               syncId: syncId,
@@ -413,14 +400,13 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
               ),
               itemType: ItemType.anime,
             ),
-            TrackLibrarySection(
-              name: "Continue watching",
-              syncId: syncId,
-              func: _fetchUserData(syncId, ItemType.anime),
-              itemType: ItemType.anime,
-            ),
           ]
         : [
+            TrackLibrarySection(
+              name: "Continue reading",
+              syncId: syncId,
+              func: _fetchUserData(syncId, ItemType.manga),
+            ),
             TrackLibrarySection(
               name: "Upcoming Manga",
               syncId: syncId,
@@ -453,11 +439,6 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
                 rankingType:
                     "sort: [UPDATED_AT_DESC, POPULARITY_DESC], status: RELEASING",
               ),
-            ),
-            TrackLibrarySection(
-              name: "Continue reading",
-              syncId: syncId,
-              func: _fetchUserData(syncId, ItemType.manga),
             ),
           ];
   }
@@ -587,264 +568,5 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
         },
       ),
     );
-  }
-}
-
-class TrackerSectionScreen extends StatefulWidget {
-  final TrackLibrarySection section;
-
-  const TrackerSectionScreen({super.key, required this.section});
-
-  @override
-  State<TrackerSectionScreen> createState() => _TrackerSectionScreenState();
-}
-
-class _TrackerSectionScreenState extends State<TrackerSectionScreen> {
-  String _errorMessage = "";
-  bool _isLoading = true;
-  List<TrackSearch> _tracks = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchData();
-  }
-
-  @override
-  void didUpdateWidget(covariant TrackerSectionScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _fetchData();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = l10nLocalizations(context)!;
-
-    return Scaffold(
-      body: SizedBox(
-        height: 260,
-        child: Column(
-          children: [
-            ListTile(dense: true, title: Text(widget.section.name)),
-            Flexible(
-              child: _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : Builder(
-                      builder: (context) {
-                        if (_errorMessage.isNotEmpty) {
-                          return Center(child: Text(_errorMessage));
-                        }
-                        if (_tracks.isNotEmpty) {
-                          return SuperListView.builder(
-                            extentPrecalculationPolicy:
-                                SuperPrecalculationPolicy(),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: _tracks.length,
-                            itemBuilder: (context, index) {
-                              return TrackerLibraryImageCard(
-                                track: _tracks[index],
-                                itemType: widget.section.itemType,
-                              );
-                            },
-                          );
-                        }
-                        return Center(child: Text(l10n.no_result));
-                      },
-                    ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  _fetchData() async {
-    final box = await Hive.openBox("tracker_library");
-    final key =
-        "${widget.section.syncId}-${widget.section.itemType.name}-${widget.section.name}";
-    if (!widget.section.isSearch && box.containsKey(key)) {
-      _errorMessage = "";
-      _tracks = box.get(key);
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-      return;
-    }
-    try {
-      _errorMessage = "";
-      _tracks = await widget.section.func() ?? [];
-      box.put(key, _tracks);
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _errorMessage = e.toString();
-          _isLoading = false;
-        });
-      }
-    }
-  }
-}
-
-class TrackerLibraryImageCard extends ConsumerStatefulWidget {
-  final TrackSearch track;
-  final ItemType itemType;
-
-  const TrackerLibraryImageCard({
-    super.key,
-    required this.track,
-    required this.itemType,
-  });
-
-  @override
-  ConsumerState<TrackerLibraryImageCard> createState() =>
-      _TrackerLibraryImageCardState();
-}
-
-class _TrackerLibraryImageCardState
-    extends ConsumerState<TrackerLibraryImageCard>
-    with AutomaticKeepAliveClientMixin<TrackerLibraryImageCard> {
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    final trackData = widget.track;
-    return GestureDetector(
-      onTap: () => _showCard(context),
-      child: StreamBuilder(
-        stream: isar.mangas
-            .filter()
-            .itemTypeEqualTo(widget.itemType)
-            .nameEqualTo(trackData.title)
-            .watch(fireImmediately: true),
-        builder: (context, snapshot) {
-          final hasData = snapshot.hasData && snapshot.data!.isNotEmpty;
-          return Padding(
-            padding: const EdgeInsets.only(left: 10),
-            child: Stack(
-              children: [
-                SizedBox(
-                  width: 110,
-                  child: Column(
-                    children: [
-                      Builder(
-                        builder: (context) {
-                          if (hasData &&
-                              snapshot.data!.first.customCoverImage != null) {
-                            return Image.memory(
-                              snapshot.data!.first.customCoverImage
-                                  as Uint8List,
-                            );
-                          }
-                          return ClipRRect(
-                            borderRadius: BorderRadius.circular(5),
-                            child: Stack(
-                              children: [
-                                cachedNetworkImage(
-                                  imageUrl: toImgUrl(
-                                    hasData
-                                        ? snapshot
-                                                  .data!
-                                                  .first
-                                                  .customCoverFromTracker ??
-                                              snapshot.data!.first.imageUrl ??
-                                              ""
-                                        : trackData.coverUrl ?? "",
-                                  ),
-                                  width: 110,
-                                  height: 150,
-                                  fit: BoxFit.cover,
-                                ),
-                                Positioned(
-                                  top: 0,
-                                  right: 0,
-                                  child: Text.rich(
-                                    TextSpan(
-                                      style: TextStyle(
-                                        background: Paint()
-                                          ..color = Theme.of(context)
-                                              .scaffoldBackgroundColor
-                                              .withValues(alpha: 0.75)
-                                          ..strokeWidth = 20.0
-                                          ..strokeJoin = StrokeJoin.round
-                                          ..style = PaintingStyle.stroke,
-                                      ),
-                                      children: [
-                                        WidgetSpan(
-                                          child: Icon(
-                                            Icons.star,
-                                            color: context.primaryColor,
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: " ${trackData.score ?? "?"}",
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                      BottomTextWidget(
-                        fontSize: 12.0,
-                        text: trackData.title!,
-                        isLoading: true,
-                        textColor: Theme.of(context).textTheme.bodyLarge!.color,
-                        isComfortableGrid: true,
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: 110,
-                  height: 150,
-                  color: hasData && snapshot.data!.first.favorite!
-                      ? Colors.black.withValues(alpha: 0.7)
-                      : null,
-                ),
-                if (hasData && snapshot.data!.first.favorite!)
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    child: Padding(
-                      padding: const EdgeInsets.all(4),
-                      child: Icon(
-                        Icons.collections_bookmark,
-                        color: context.primaryColor,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  void _showCard(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) =>
-          TrackerItemCard(track: widget.track, itemType: widget.itemType),
-    );
-  }
-
-  @override
-  bool get wantKeepAlive => true;
-}
-
-class SuperPrecalculationPolicy extends ExtentPrecalculationPolicy {
-  @override
-  bool shouldPrecalculateExtents(ExtentPrecalculationContext context) {
-    return context.numberOfItems < 100;
   }
 }
