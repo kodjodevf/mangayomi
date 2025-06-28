@@ -55,7 +55,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 @riverpod
 GoRouter router(Ref ref) {
   final router = RouterNotifier();
-  final hiddenItems = ref.watch(hideItemsStateProvider);
+  final hiddenItems = ref.read(hideItemsStateProvider);
   final initLocation = ref
       .watch(navigationOrderStateProvider)
       .where((e) => !hiddenItems.contains(e))
