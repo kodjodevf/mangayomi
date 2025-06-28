@@ -172,10 +172,10 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               final dest = !context.isTablet && isLibSwitch
                   ? [
                       "_disableLibSwitch",
-                      "/MangaLibrary",
-                      "/AnimeLibrary",
-                      "/NovelLibrary",
-                    ]
+                      ...navigationOrder.where(
+                        (nav) => libLocationRegex.hasMatch(nav),
+                      ),
+                    ].where((nav) => !hideItems.contains(nav)).toList()
                   : navigationOrder
                         .where((nav) => !hideItems.contains(nav))
                         .map((nav) {
