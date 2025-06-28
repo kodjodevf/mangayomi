@@ -147,6 +147,7 @@ class MyAnimeList extends _$MyAnimeList {
       publishingStatus: res["status"].toString().replaceAll("_", " "),
       trackingUrl: "https://myanimelist.net/$item/${res["id"]}",
       score: res["mean"],
+      syncId: syncId,
     );
   }
 

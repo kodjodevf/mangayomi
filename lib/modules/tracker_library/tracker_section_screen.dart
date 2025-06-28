@@ -78,18 +78,8 @@ class _TrackerSectionScreenState extends State<TrackerSectionScreen> {
     final box = await Hive.openBox("tracker_library");
     final key =
         "${widget.section.syncId}-${widget.section.itemType.name}-${widget.section.name}";
-    if (!widget.section.isSearch && box.containsKey(key)) {
-      final temp = box.get(key);
-      if (temp is List<TrackSearch>) {
-        _errorMessage = "";
-        _tracks = temp;
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
-        return;
-      }
+    if (_checkCache(box, key)) {
+      return;
     }
     try {
       _errorMessage = "";
@@ -108,6 +98,23 @@ class _TrackerSectionScreenState extends State<TrackerSectionScreen> {
         });
       }
     }
+  }
+
+  bool _checkCache(Box<dynamic> box, String key) {
+    if (!widget.section.isSearch && box.containsKey(key)) {
+      final temp = box.get(key);
+      if (temp is List<TrackSearch>) {
+        _errorMessage = "";
+        _tracks = temp;
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+        return true;
+      }
+    }
+    return false;
   }
 }
 
