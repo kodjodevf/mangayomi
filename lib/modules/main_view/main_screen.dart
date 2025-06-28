@@ -419,7 +419,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       destinations[dest.indexOf("_disableLibSwitch")] = NavigationDestination(
         selectedIcon: const Icon(Icons.arrow_back),
         icon: const Icon(Icons.arrow_back),
-        label: "",
+        label: l10n.go_back,
       );
     }
     if (dest.contains("_enableLibSwitch")) {
