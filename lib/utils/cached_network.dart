@@ -20,7 +20,7 @@ Widget cachedNetworkImage({
     height: height,
     fit: fit,
     filterQuality: FilterQuality.medium,
-    mode: ExtendedImageMode.gesture,
+    mode: ExtendedImageMode.none,
     handleLoadingProgress: true,
     loadStateChanged: (state) {
       if (state.extendedImageLoadState == LoadState.failed) {
@@ -53,7 +53,7 @@ Widget cachedCompressedNetworkImage({
     height: height,
     fit: fit,
     filterQuality: FilterQuality.medium,
-    mode: ExtendedImageMode.gesture,
+    mode: ExtendedImageMode.none,
     handleLoadingProgress: true,
     clearMemoryCacheWhenDispose: true,
     loadStateChanged: (state) {
