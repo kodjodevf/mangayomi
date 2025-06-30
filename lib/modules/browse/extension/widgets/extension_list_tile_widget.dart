@@ -130,6 +130,14 @@ class _ExtensionListTileWidgetState
             widget.source.version!,
             style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 12),
           ),
+          if (widget.source.repo?.name != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Text(
+                "- ${widget.source.repo!.name!}",
+                style: TextStyle(fontSize: 12),
+              ),
+            ),
           if (widget.source.isObsolete ?? false)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
