@@ -145,7 +145,7 @@ class Kitsu extends _$Kitsu {
             'query=${Uri.encodeComponent(search)}${_algoliaFilter(isManga)}',
       }),
     );
-    final data = json.decode(response.body);
+    final data = json.decode(utf8.decode(response.bodyBytes));
 
     final entries = List<Map<String, dynamic>>.from(
       data['hits'],
@@ -182,7 +182,7 @@ class Kitsu extends _$Kitsu {
     final response = await http.get(
       Uri.parse("$_baseUrl${isManga ? "manga" : "anime"}?sort=$rankingType"),
     );
-    final data = json.decode(response.body);
+    final data = json.decode(utf8.decode(response.bodyBytes));
 
     final entries = List<Map<String, dynamic>>.from(
       data['data'],
@@ -230,7 +230,7 @@ class Kitsu extends _$Kitsu {
       ),
       accessToken,
     );
-    final data = json.decode(response.body);
+    final data = json.decode(utf8.decode(response.bodyBytes));
 
     final totalChapter = type == 'manga' ? "chapterCount" : "episodeCount";
 

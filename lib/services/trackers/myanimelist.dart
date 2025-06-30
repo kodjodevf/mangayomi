@@ -147,6 +147,7 @@ class MyAnimeList extends _$MyAnimeList {
       publishingStatus: res["status"].toString().replaceAll("_", " "),
       trackingUrl: "https://myanimelist.net/$item/${res["id"]}",
       score: res["mean"],
+      syncId: syncId,
     );
   }
 
@@ -202,8 +203,11 @@ class MyAnimeList extends _$MyAnimeList {
     final accessToken = await _getAccessToken();
     final item = isManga ? "mangalist" : "animelist";
     final contentUnit = isManga ? "num_chapters" : "num_episodes";
+    final currentStatus = isManga ? "reading" : "watching";
     final url = Uri.parse('$baseApiUrl/users/@me/$item').replace(
       queryParameters: {
+        'status': currentStatus,
+        utf8.decode([110, 115, 102, 119]): 'true',
         'sort': 'list_updated_at',
         'limit': '1000',
         'fields':
