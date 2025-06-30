@@ -193,7 +193,7 @@ class AnimeStreamController extends _$AnimeStreamController {
   }) {
     if (episode.isRead!) return;
     if (incognitoMode) return;
-    final markEpisodeAsSeenType = ref.watch(markEpisodeAsSeenTypeStateProvider);
+    final markEpisodeAsSeenType = ref.read(markEpisodeAsSeenTypeStateProvider);
     final isWatch =
         totalDuration != null &&
             totalDuration != Duration.zero &&
@@ -249,22 +249,20 @@ class AnimeStreamController extends _$AnimeStreamController {
     Function(List<Results>) result,
   ) async {
     await Future.delayed(const Duration(milliseconds: 300));
-    if (ref.watch(enableAniSkipStateProvider)) {
-      final id = _getTrackId();
-      if (id != null) {
-        final res = await ref
-            .read(aniSkipProvider.notifier)
-            .getResult(
-              id,
-              ChapterRecognition().parseChapterNumber(
-                episode.manga.value!.name!,
-                episode.name!,
-              ),
-              0,
-            );
-        result.call(res ?? []);
-        return res;
-      }
+    final id = _getTrackId();
+    if (id != null) {
+      final res = await ref
+          .read(aniSkipProvider.notifier)
+          .getResult(
+            id,
+            ChapterRecognition().parseChapterNumber(
+              episode.manga.value!.name!,
+              episode.name!,
+            ),
+            0,
+          );
+      result.call(res ?? []);
+      return res;
     }
     return null;
   }
