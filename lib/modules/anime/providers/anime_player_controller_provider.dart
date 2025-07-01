@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/changed.dart';
@@ -13,6 +14,8 @@ import 'package:mangayomi/services/aniskip.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'anime_player_controller_provider.g.dart';
+
+final fullscreenProvider = StateProvider<bool>((ref) => false);
 
 @riverpod
 class AnimeStreamController extends _$AnimeStreamController {
@@ -190,7 +193,7 @@ class AnimeStreamController extends _$AnimeStreamController {
   }) {
     if (episode.isRead!) return;
     if (incognitoMode) return;
-    final markEpisodeAsSeenType = ref.watch(markEpisodeAsSeenTypeStateProvider);
+    final markEpisodeAsSeenType = ref.read(markEpisodeAsSeenTypeStateProvider);
     final isWatch =
         totalDuration != null &&
             totalDuration != Duration.zero &&
@@ -246,22 +249,20 @@ class AnimeStreamController extends _$AnimeStreamController {
     Function(List<Results>) result,
   ) async {
     await Future.delayed(const Duration(milliseconds: 300));
-    if (ref.watch(enableAniSkipStateProvider)) {
-      final id = _getTrackId();
-      if (id != null) {
-        final res = await ref
-            .read(aniSkipProvider.notifier)
-            .getResult(
-              id,
-              ChapterRecognition().parseChapterNumber(
-                episode.manga.value!.name!,
-                episode.name!,
-              ),
-              0,
-            );
-        result.call(res ?? []);
-        return res;
-      }
+    final id = _getTrackId();
+    if (id != null) {
+      final res = await ref
+          .read(aniSkipProvider.notifier)
+          .getResult(
+            id,
+            ChapterRecognition().parseChapterNumber(
+              episode.manga.value!.name!,
+              episode.name!,
+            ),
+            0,
+          );
+      result.call(res ?? []);
+      return res;
     }
     return null;
   }
