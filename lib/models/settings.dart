@@ -244,6 +244,8 @@ class Settings {
 
   String? lastTrackerLibraryLocation;
 
+  bool? mergeLibraryNavMobile;
+
   Settings({
     this.id = 227,
     this.displayType = DisplayType.compactGrid,
@@ -352,6 +354,7 @@ class Settings {
     this.animeExtensionsRepo,
     this.novelExtensionsRepo,
     this.lastTrackerLibraryLocation,
+    this.mergeLibraryNavMobile = false,
   });
 
   Settings.fromJson(Map<String, dynamic> json) {
@@ -566,6 +569,7 @@ class Settings {
                 .toList();
     }
     lastTrackerLibraryLocation = json['lastTrackerLibraryLocation'];
+    mergeLibraryNavMobile = json['mergeLibraryNavMobile'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -697,6 +701,7 @@ class Settings {
     'animeExtensionsRepo': animeExtensionsRepo?.map((e) => e.toJson()).toList(),
     'novelExtensionsRepo': novelExtensionsRepo?.map((e) => e.toJson()).toList(),
     'lastTrackerLibraryLocation': lastTrackerLibraryLocation,
+    'mergeLibraryNavMobile': mergeLibraryNavMobile,
   };
 }
 
