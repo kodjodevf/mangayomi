@@ -160,6 +160,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     final route = GoRouter.of(context);
     final navigationOrder = ref.watch(navigationOrderStateProvider);
     final hideItems = ref.watch(hideItemsStateProvider);
+    final mergeLibraryNavMobile = ref.watch(mergeLibraryNavMobileStateProvider);
     final location = ref.watch(routerCurrentLocationStateProvider);
 
     return ref
@@ -169,7 +170,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
             builder: (context, ref, child) {
               final isReadingScreen = _isReadingScreen(location);
               bool uniqueSwitch = false;
-              final dest = !context.isTablet && isLibSwitch
+              List<String> dest = !context.isTablet && isLibSwitch
                   ? [
                       "_disableLibSwitch",
                       ...navigationOrder.where(
@@ -178,22 +179,25 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                     ].where((nav) => !hideItems.contains(nav)).toList()
                   : navigationOrder
                         .where((nav) => !hideItems.contains(nav))
-                        .map((nav) {
-                          if (!context.isTablet &&
-                              !isLibSwitch &&
-                              [
-                                "/MangaLibrary",
-                                "/AnimeLibrary",
-                                "/NovelLibrary",
-                              ].contains(nav)) {
-                            if (uniqueSwitch) return null;
-                            uniqueSwitch = true;
-                            return "_enableLibSwitch";
-                          }
-                          return nav;
-                        })
-                        .nonNulls
                         .toList();
+
+              if (mergeLibraryNavMobile && !context.isTablet && !isLibSwitch) {
+                dest = dest
+                    .map((nav) {
+                      if ([
+                        "/MangaLibrary",
+                        "/AnimeLibrary",
+                        "/NovelLibrary",
+                      ].contains(nav)) {
+                        if (uniqueSwitch) return null;
+                        uniqueSwitch = true;
+                        return "_enableLibSwitch";
+                      }
+                      return nav;
+                    })
+                    .nonNulls
+                    .toList();
+              }
 
               if (isLibSwitch &&
                   (currentIndex >= dest.length ||
@@ -201,7 +205,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                 currentIndex = 0;
               } else {
                 String? libLocation;
-                if (!context.isTablet && !isLibSwitch) {
+                if (mergeLibraryNavMobile &&
+                    !context.isTablet &&
+                    !isLibSwitch) {
                   libLocation = location?.replaceAll(
                     libLocationRegex,
                     "_enableLibSwitch",

@@ -1547,6 +1547,9 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get go_back => 'Go back';
+
+  @override
+  String get merge_library_nav_mobile => 'Merge library navigation on mobile';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).

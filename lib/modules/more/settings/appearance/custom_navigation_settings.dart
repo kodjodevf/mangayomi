@@ -19,11 +19,28 @@ class _CustomNavigationSettingsState
     final l10n = context.l10n;
     final navigationOrder = ref.watch(navigationOrderStateProvider);
     final hideItems = ref.watch(hideItemsStateProvider);
+    final mergeLibraryNavMobile = ref.watch(mergeLibraryNavMobileStateProvider);
     return Scaffold(
       appBar: AppBar(title: Text(l10n.reorder_navigation)),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: ReorderableListView.builder(
+          header: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Stack(
+              children: [
+                SwitchListTile(
+                  value: mergeLibraryNavMobile,
+                  title: Text(context.l10n.merge_library_nav_mobile),
+                  onChanged: (value) {
+                    ref
+                        .read(mergeLibraryNavMobileStateProvider.notifier)
+                        .set(value);
+                  },
+                ),
+              ],
+            ),
+          ),
           buildDefaultDragHandles: false,
           itemCount: navigationOrder.length,
           itemBuilder: (context, index) {

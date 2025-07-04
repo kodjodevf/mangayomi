@@ -2999,6 +2999,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Go back'**
   String get go_back;
+
+  /// No description provided for @merge_library_nav_mobile.
+  ///
+  /// In en, this message translates to:
+  /// **'Merge library navigation on mobile'**
+  String get merge_library_nav_mobile;
 }
 
 class _AppLocalizationsDelegate

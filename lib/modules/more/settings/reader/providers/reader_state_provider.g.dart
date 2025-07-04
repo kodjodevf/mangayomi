@@ -190,6 +190,23 @@ final hideItemsStateProvider =
 );
 
 typedef _$HideItemsState = AutoDisposeNotifier<List<String>>;
+String _$mergeLibraryNavMobileStateHash() =>
+    r'a69f669b69d036835128b2b922ed7da37877aaa8';
+
+/// See also [MergeLibraryNavMobileState].
+@ProviderFor(MergeLibraryNavMobileState)
+final mergeLibraryNavMobileStateProvider =
+    AutoDisposeNotifierProvider<MergeLibraryNavMobileState, bool>.internal(
+  MergeLibraryNavMobileState.new,
+  name: r'mergeLibraryNavMobileStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$mergeLibraryNavMobileStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$MergeLibraryNavMobileState = AutoDisposeNotifier<bool>;
 String _$novelFontSizeStateHash() =>
     r'fd104e358203d3f86e14d933518f2dbd067cec13';
 

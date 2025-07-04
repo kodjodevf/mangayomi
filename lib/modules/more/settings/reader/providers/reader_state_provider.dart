@@ -200,6 +200,22 @@ class HideItemsState extends _$HideItemsState {
 }
 
 @riverpod
+class MergeLibraryNavMobileState extends _$MergeLibraryNavMobileState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.mergeLibraryNavMobile ?? false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(settings!..mergeLibraryNavMobile = value),
+    );
+  }
+}
+
+@riverpod
 class NovelFontSizeState extends _$NovelFontSizeState {
   @override
   int build() {

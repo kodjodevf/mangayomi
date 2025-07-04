@@ -1546,4 +1546,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get go_back => 'Zurück';
+
+  @override
+  String get merge_library_nav_mobile => 'Merge library navigation on mobile';
 }
