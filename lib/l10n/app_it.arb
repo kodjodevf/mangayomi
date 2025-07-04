@@ -428,8 +428,6 @@
     "sync_auto": "Sincronizzazione automatica",
     "sync_auto_warning": "La sincronizzazione automatica è attualmente una funzione sperimentale!",
     "sync_auto_off": "Disattivato",
-    "sync_auto_30_seconds": "Ogni 30 secondi",
-    "sync_auto_1_minute": "Ogni 1 minuto",
     "sync_auto_5_minutes": "Ogni 5 minuti",
     "sync_auto_10_minutes": "Ogni 10 minuti",
     "sync_auto_30_minutes": "Ogni 30 minuti",

@@ -12,12 +12,15 @@ class Category {
   bool? hide;
   @enumerated
   late ItemType forItemType;
+  int? updatedAt;
+
   Category({
     this.id = Isar.autoIncrement,
     required this.name,
     required this.forItemType,
     this.pos,
     this.hide,
+    this.updatedAt = 0,
   });
 
   Category.fromJson(Map<String, dynamic> json) {
@@ -26,6 +29,7 @@ class Category {
     forItemType = ItemType.values[json['forItemType'] ?? 0];
     pos = json['pos'];
     hide = json['hide'];
+    updatedAt = json['updatedAt'];
   }
 
   Category.fromJsonV1(Map<String, dynamic> json) {
@@ -44,5 +48,6 @@ class Category {
     'forItemType': forItemType.index,
     'pos': pos,
     'hide': hide,
+    'updatedAt': updatedAt,
   };
 }

@@ -118,6 +118,11 @@ const MangaSchema = CollectionSchema(
       name: r'status',
       type: IsarType.byte,
       enumMap: _MangastatusEnumValueMap,
+    ),
+    r'updatedAt': PropertySchema(
+      id: 20,
+      name: r'updatedAt',
+      type: IsarType.long,
     )
   },
   estimateSize: _mangaEstimateSize,
@@ -255,6 +260,7 @@ void _mangaSerialize(
   writer.writeString(offsets[17], object.name);
   writer.writeString(offsets[18], object.source);
   writer.writeByte(offsets[19], object.status.index);
+  writer.writeLong(offsets[20], object.updatedAt);
 }
 
 Manga _mangaDeserialize(
@@ -287,6 +293,7 @@ Manga _mangaDeserialize(
     source: reader.readStringOrNull(offsets[18]),
     status: _MangastatusValueEnumMap[reader.readByteOrNull(offsets[19])] ??
         Status.ongoing,
+    updatedAt: reader.readLongOrNull(offsets[20]),
   );
   return object;
 }
@@ -340,6 +347,8 @@ P _mangaDeserializeProp<P>(
     case 19:
       return (_MangastatusValueEnumMap[reader.readByteOrNull(offset)] ??
           Status.ongoing) as P;
+    case 20:
+      return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -2779,6 +2788,75 @@ extension MangaQueryFilter on QueryBuilder<Manga, Manga, QFilterCondition> {
       ));
     });
   }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> updatedAtIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'updatedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> updatedAtIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'updatedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> updatedAtEqualTo(
+      int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> updatedAtGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> updatedAtLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> updatedAtBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'updatedAt',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
 }
 
 extension MangaQueryObject on QueryBuilder<Manga, Manga, QFilterCondition> {}
@@ -3045,6 +3123,18 @@ extension MangaQuerySortBy on QueryBuilder<Manga, Manga, QSortBy> {
       return query.addSortBy(r'status', Sort.desc);
     });
   }
+
+  QueryBuilder<Manga, Manga, QAfterSortBy> sortByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterSortBy> sortByUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.desc);
+    });
+  }
 }
 
 extension MangaQuerySortThenBy on QueryBuilder<Manga, Manga, QSortThenBy> {
@@ -3263,6 +3353,18 @@ extension MangaQuerySortThenBy on QueryBuilder<Manga, Manga, QSortThenBy> {
       return query.addSortBy(r'status', Sort.desc);
     });
   }
+
+  QueryBuilder<Manga, Manga, QAfterSortBy> thenByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterSortBy> thenByUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.desc);
+    });
+  }
 }
 
 extension MangaQueryWhereDistinct on QueryBuilder<Manga, Manga, QDistinct> {
@@ -3395,6 +3497,12 @@ extension MangaQueryWhereDistinct on QueryBuilder<Manga, Manga, QDistinct> {
       return query.addDistinctBy(r'status');
     });
   }
+
+  QueryBuilder<Manga, Manga, QDistinct> distinctByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'updatedAt');
+    });
+  }
 }
 
 extension MangaQueryProperty on QueryBuilder<Manga, Manga, QQueryProperty> {
@@ -3522,6 +3630,12 @@ extension MangaQueryProperty on QueryBuilder<Manga, Manga, QQueryProperty> {
   QueryBuilder<Manga, Status, QQueryOperations> statusProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'status');
+    });
+  }
+
+  QueryBuilder<Manga, int?, QQueryOperations> updatedAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'updatedAt');
     });
   }
 }

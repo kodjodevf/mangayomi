@@ -5,12 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/manga/detail/manga_detail_main.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -320,10 +318,9 @@ Future<void> pushToMangaReaderDetail({
         .isEmptySync();
     if (empty) {
       isar.writeTxnSync(() {
-        isar.mangas.putSync(manga);
-        ref
-            .read(synchingProvider(syncId: 1).notifier)
-            .addChangedPart(ActionType.addItem, null, manga.toJson(), false);
+        isar.mangas.putSync(
+          manga..updatedAt = DateTime.now().millisecondsSinceEpoch,
+        );
       });
     }
 
@@ -390,15 +387,11 @@ Future<void> pushToMangaReaderDetail({
   } else {
     final getManga = isar.mangas.filter().idEqualTo(mangaId).findFirstSync()!;
     isar.writeTxnSync(() {
-      isar.mangas.putSync(getManga..favorite = !getManga.favorite!);
-      ref
-          .read(synchingProvider(syncId: 1).notifier)
-          .addChangedPart(
-            ActionType.updateItem,
-            getManga.id,
-            getManga.toJson(),
-            false,
-          );
+      isar.mangas.putSync(
+        getManga
+          ..favorite = !getManga.favorite!
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      );
     });
   }
 }

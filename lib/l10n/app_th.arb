@@ -431,8 +431,6 @@
   "sync_auto": "การซิงค์อัตโนมัติ",
   "sync_auto_warning": "การซิงค์อัตโนมัติเป็นฟีเจอร์ทดลองในขณะนี้!",
   "sync_auto_off": "ปิด",
-  "sync_auto_30_seconds": "ทุก 30 วินาที",
-  "sync_auto_1_minute": "ทุก 1 นาที",
   "sync_auto_5_minutes": "ทุก 5 นาที",
   "sync_auto_10_minutes": "ทุก 10 นาที",
   "sync_auto_30_minutes": "ทุก 30 นาที",

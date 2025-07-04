@@ -44,22 +44,9 @@ class Tracks extends _$Tracks {
       isar.tracks.putSync(
         track
           ..syncId = syncId
-          ..itemType = itemType,
+          ..itemType = itemType
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       );
-      if (tra.isEmpty) {
-        ref
-            .read(synchingProvider(syncId: 1).notifier)
-            .addChangedPart(ActionType.addTrack, null, track.toJson(), false);
-      } else {
-        ref
-            .read(synchingProvider(syncId: 1).notifier)
-            .addChangedPart(
-              ActionType.updateTrack,
-              track.id,
-              track.toJson(),
-              false,
-            );
-      }
     });
   }
 

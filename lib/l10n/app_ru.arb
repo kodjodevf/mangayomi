@@ -428,8 +428,6 @@
     "sync_auto": "Автосинхронизация",
     "sync_auto_warning": "Автосинхронизация в настоящее время является экспериментальной функцией!",
     "sync_auto_off": "Выключено",
-    "sync_auto_30_seconds": "Каждые 30 секунд",
-    "sync_auto_1_minute": "Каждую минуту",
     "sync_auto_5_minutes": "Каждые 5 минут",
     "sync_auto_10_minutes": "Каждые 10 минут",
     "sync_auto_30_minutes": "Каждые 30 минут",

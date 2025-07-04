@@ -428,8 +428,6 @@
     "sync_auto": "Otomatik senkronizasyon",
     "sync_auto_warning": "Otomatik senkronizasyon şu anda deneysel bir özelliktir!",
     "sync_auto_off": "Kapalı",
-    "sync_auto_30_seconds": "Her 30 saniyede bir",
-    "sync_auto_1_minute": "Her 1 dakikada bir",
     "sync_auto_5_minutes": "Her 5 dakikada bir",
     "sync_auto_10_minutes": "Her 10 dakikada bir",
     "sync_auto_30_minutes": "Her 30 dakikada bir",

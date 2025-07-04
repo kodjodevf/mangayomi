@@ -244,8 +244,6 @@
   "sync_auto": "Auto Sync",
   "sync_auto_warning": "Auto Sync is currently an experimental feature!",
   "sync_auto_off": "Off",
-  "sync_auto_30_seconds": "Every 30 seconds",
-  "sync_auto_1_minute": "Every 1 minute",
   "sync_auto_5_minutes": "Every 5 minutes",
   "sync_auto_10_minutes": "Every 10 minutes",
   "sync_auto_30_minutes": "Every 30 minutes",

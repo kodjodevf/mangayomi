@@ -4,12 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
-import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/modules/library/widgets/list_tile_manga_category.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
@@ -135,8 +133,9 @@ void showCategorySelectionDialog({
                         if (isBulk) {
                           for (var manga in bulkMangas) {
                             manga.categories = categoryIds;
+                            manga.updatedAt =
+                                DateTime.now().millisecondsSinceEpoch;
                             isar.mangas.putSync(manga);
-                            _syncManga(manga, isFavorite, ref);
                           }
                         } else {
                           if (!isFavorite) {
@@ -145,8 +144,9 @@ void showCategorySelectionDialog({
                                 DateTime.now().millisecondsSinceEpoch;
                           }
                           singleManga.categories = categoryIds;
+                          singleManga.updatedAt =
+                              DateTime.now().millisecondsSinceEpoch;
                           isar.mangas.putSync(singleManga);
-                          _syncManga(singleManga, isFavorite, ref);
                         }
                         if (isBulk) {
                           ref.read(mangasListStateProvider.notifier).clear();
@@ -166,13 +166,4 @@ void showCategorySelectionDialog({
       ),
     ),
   );
-}
-
-void _syncManga(Manga manga, bool isFavorite, WidgetRef ref) {
-  final sync = ref.read(synchingProvider(syncId: 1).notifier);
-  if (isFavorite) {
-    sync.addChangedPart(ActionType.updateItem, manga.id, manga.toJson(), false);
-  } else {
-    sync.addChangedPart(ActionType.addItem, manga.id, manga.toJson(), false);
-  }
 }

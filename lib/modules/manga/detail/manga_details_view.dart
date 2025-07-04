@@ -3,12 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
-import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/custom_floating_action_btn.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/category_selection_dialog.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -205,15 +203,8 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                     isar.writeTxnSync(() {
                       model.favorite = false;
                       model.dateAdded = 0;
+                      model.updatedAt = DateTime.now().millisecondsSinceEpoch;
                       isar.mangas.putSync(model);
-                      ref
-                          .read(synchingProvider(syncId: 1).notifier)
-                          .addChangedPart(
-                            ActionType.updateItem,
-                            model.id,
-                            model.toJson(),
-                            false,
-                          );
                     });
                   },
                   child: Column(
@@ -253,22 +244,8 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                     isar.writeTxnSync(() {
                       model.favorite = true;
                       model.dateAdded = DateTime.now().millisecondsSinceEpoch;
+                      model.updatedAt = DateTime.now().millisecondsSinceEpoch;
                       isar.mangas.putSync(model);
-                      final sync = ref.read(
-                        synchingProvider(syncId: 1).notifier,
-                      );
-                      sync.addChangedPart(
-                        ActionType.addItem,
-                        null,
-                        model.toJson(),
-                        false,
-                      );
-                      sync.addChangedPart(
-                        ActionType.updateItem,
-                        model.id,
-                        model.toJson(),
-                        false,
-                      );
                     });
                   }
                 },

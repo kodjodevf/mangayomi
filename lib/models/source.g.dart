@@ -160,13 +160,18 @@ const SourceSchema = CollectionSchema(
       name: r'typeSource',
       type: IsarType.string,
     ),
-    r'version': PropertySchema(
+    r'updatedAt': PropertySchema(
       id: 28,
+      name: r'updatedAt',
+      type: IsarType.long,
+    ),
+    r'version': PropertySchema(
+      id: 29,
       name: r'version',
       type: IsarType.string,
     ),
     r'versionLast': PropertySchema(
-      id: 29,
+      id: 30,
       name: r'versionLast',
       type: IsarType.string,
     )
@@ -336,8 +341,9 @@ void _sourceSerialize(
   writer.writeByte(offsets[25], object.sourceCodeLanguage.index);
   writer.writeString(offsets[26], object.sourceCodeUrl);
   writer.writeString(offsets[27], object.typeSource);
-  writer.writeString(offsets[28], object.version);
-  writer.writeString(offsets[29], object.versionLast);
+  writer.writeLong(offsets[28], object.updatedAt);
+  writer.writeString(offsets[29], object.version);
+  writer.writeString(offsets[30], object.versionLast);
 }
 
 Source _sourceDeserialize(
@@ -379,8 +385,9 @@ Source _sourceDeserialize(
     sourceCode: reader.readStringOrNull(offsets[24]),
     sourceCodeUrl: reader.readStringOrNull(offsets[26]),
     typeSource: reader.readStringOrNull(offsets[27]),
-    version: reader.readStringOrNull(offsets[28]),
-    versionLast: reader.readStringOrNull(offsets[29]),
+    updatedAt: reader.readLongOrNull(offsets[28]),
+    version: reader.readStringOrNull(offsets[29]),
+    versionLast: reader.readStringOrNull(offsets[30]),
   );
   object.sourceCodeLanguage = _SourcesourceCodeLanguageValueEnumMap[
           reader.readByteOrNull(offsets[25])] ??
@@ -459,8 +466,10 @@ P _sourceDeserializeProp<P>(
     case 27:
       return (reader.readStringOrNull(offset)) as P;
     case 28:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 29:
+      return (reader.readStringOrNull(offset)) as P;
+    case 30:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -3089,6 +3098,75 @@ extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterFilterCondition> updatedAtIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'updatedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> updatedAtIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'updatedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> updatedAtEqualTo(
+      int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> updatedAtGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> updatedAtLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> updatedAtBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'updatedAt',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterFilterCondition> versionIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -3718,6 +3796,18 @@ extension SourceQuerySortBy on QueryBuilder<Source, Source, QSortBy> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterSortBy> sortByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> sortByUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.desc);
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterSortBy> sortByVersion() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'version', Sort.asc);
@@ -4080,6 +4170,18 @@ extension SourceQuerySortThenBy on QueryBuilder<Source, Source, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterSortBy> thenByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> thenByUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.desc);
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterSortBy> thenByVersion() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'version', Sort.asc);
@@ -4285,6 +4387,12 @@ extension SourceQueryWhereDistinct on QueryBuilder<Source, Source, QDistinct> {
     });
   }
 
+  QueryBuilder<Source, Source, QDistinct> distinctByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'updatedAt');
+    });
+  }
+
   QueryBuilder<Source, Source, QDistinct> distinctByVersion(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -4473,6 +4581,12 @@ extension SourceQueryProperty on QueryBuilder<Source, Source, QQueryProperty> {
   QueryBuilder<Source, String?, QQueryOperations> typeSourceProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'typeSource');
+    });
+  }
+
+  QueryBuilder<Source, int?, QQueryOperations> updatedAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'updatedAt');
     });
   }
 

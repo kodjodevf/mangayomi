@@ -428,8 +428,6 @@
     "sync_auto": "Sinkronisasi otomatis",
     "sync_auto_warning": "Sinkronisasi otomatis saat ini adalah fitur eksperimental!",
     "sync_auto_off": "Mati",
-    "sync_auto_30_seconds": "Setiap 30 detik",
-    "sync_auto_1_minute": "Setiap 1 menit",
     "sync_auto_5_minutes": "Setiap 5 menit",
     "sync_auto_10_minutes": "Setiap 10 menit",
     "sync_auto_30_minutes": "Setiap 30 menit",

@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
@@ -233,15 +231,11 @@ class _CreateExtensionState extends State<CreateExtension> {
                                   ? _dartTemplate
                                   : _jsSample(source);
                             isar.writeTxnSync(() {
-                              isar.sources.putSync(source);
-                              ref
-                                  .read(synchingProvider(syncId: 1).notifier)
-                                  .addChangedPart(
-                                    ActionType.addExtension,
-                                    source.id,
-                                    source.toJson(),
-                                    false,
-                                  );
+                              isar.sources.putSync(
+                                source
+                                  ..updatedAt =
+                                      DateTime.now().millisecondsSinceEpoch,
+                              );
                             });
                             Navigator.pop(context);
                             botToast("Source created successfully");

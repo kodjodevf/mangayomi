@@ -433,8 +433,6 @@
     "sync_auto": "自动同步",
     "sync_auto_warning": "自动同步目前是实验性功能！",
     "sync_auto_off": "关闭",
-    "sync_auto_30_seconds": "每30秒",
-    "sync_auto_1_minute": "每1分钟",
     "sync_auto_5_minutes": "每5分钟",
     "sync_auto_10_minutes": "每10分钟",
     "sync_auto_30_minutes": "每30分钟",

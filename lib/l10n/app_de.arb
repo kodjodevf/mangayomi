@@ -243,8 +243,6 @@
     "sync_auto": "Auto Sync",
     "sync_auto_warning": "Auto Sync ist derzeit ein experimentelles Feature!",
     "sync_auto_off": "Aus",
-    "sync_auto_30_seconds": "Alle 30 Sekunden",
-    "sync_auto_1_minute": "Jede Minute",
     "sync_auto_5_minutes": "Alle 5 Minuten",
     "sync_auto_10_minutes": "Alle 10 Minuten",
     "sync_auto_30_minutes": "Alle 30 Minuten",

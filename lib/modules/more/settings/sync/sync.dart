@@ -25,8 +25,6 @@ class SyncScreen extends ConsumerWidget {
     final l10n = l10nLocalizations(context)!;
     final autoSyncOptions = {
       l10n.sync_auto_off: 0,
-      l10n.sync_auto_30_seconds: 30,
-      l10n.sync_auto_1_minute: 60,
       l10n.sync_auto_5_minutes: 300,
       l10n.sync_auto_10_minutes: 600,
       l10n.sync_auto_30_minutes: 1800,
@@ -542,66 +540,37 @@ class SyncScreen extends ConsumerWidget {
                 const SizedBox(height: 40),
                 buildChangedItemWidget(
                   l10n.sync_pending_manga,
-                  changedParts.getChangedParts([
-                    ActionType.addItem,
-                    ActionType.removeItem,
-                    ActionType.updateItem,
-                  ]),
+                  changedParts.getChangedParts([ActionType.removeItem]),
                 ),
                 const SizedBox(height: 15),
                 buildChangedItemWidget(
                   l10n.sync_pending_chapter,
-                  changedParts.getChangedParts([
-                    ActionType.addChapter,
-                    ActionType.removeChapter,
-                    ActionType.updateChapter,
-                  ]),
+                  changedParts.getChangedParts([ActionType.removeChapter]),
                 ),
                 const SizedBox(height: 15),
                 buildChangedItemWidget(
                   l10n.sync_pending_category,
-                  changedParts.getChangedParts([
-                    ActionType.addCategory,
-                    ActionType.removeCategory,
-                    ActionType.renameCategory,
-                  ]),
+                  changedParts.getChangedParts([ActionType.removeCategory]),
                 ),
                 const SizedBox(height: 15),
                 buildChangedItemWidget(
                   l10n.sync_pending_history,
-                  changedParts.getChangedParts([
-                    ActionType.addHistory,
-                    ActionType.clearHistory,
-                    ActionType.removeHistory,
-                    ActionType.updateHistory,
-                  ]),
+                  changedParts.getChangedParts([ActionType.removeHistory]),
                 ),
                 const SizedBox(height: 15),
                 buildChangedItemWidget(
                   l10n.sync_pending_update,
-                  changedParts.getChangedParts([
-                    ActionType.addUpdate,
-                    ActionType.clearUpdates,
-                  ]),
+                  changedParts.getChangedParts([ActionType.removeUpdate]),
                 ),
                 const SizedBox(height: 15),
                 buildChangedItemWidget(
                   l10n.sync_pending_extension,
-                  changedParts.getChangedParts([
-                    ActionType.addExtension,
-                    ActionType.clearExtension,
-                    ActionType.removeExtension,
-                    ActionType.updateExtension,
-                  ]),
+                  changedParts.getChangedParts([ActionType.removeExtension]),
                 ),
                 const SizedBox(height: 15),
                 buildChangedItemWidget(
                   l10n.sync_pending_track,
-                  changedParts.getChangedParts([
-                    ActionType.addTrack,
-                    ActionType.removeTrack,
-                    ActionType.updateTrack,
-                  ]),
+                  changedParts.getChangedParts([ActionType.removeTrack]),
                 ),
                 const SizedBox(height: 20),
                 Padding(

@@ -7,7 +7,7 @@ part of 'add_torrent.dart';
 // **************************************************************************
 
 String _$addTorrentFromUrlOrFromFileHash() =>
-    r'd12f901b675ecbf4a29c496cf99da17f219745f7';
+    r'ca841c87c01dd9e9254b99b3223ac67d775ba5b2';
 
 /// Copied from Dart SDK
 class _SystemHash {

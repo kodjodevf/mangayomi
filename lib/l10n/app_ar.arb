@@ -428,8 +428,6 @@
     "sync_auto": "المزامنة التلقائية",
     "sync_auto_warning": "المزامنة التلقائية هي ميزة تجريبية حاليًا!",
     "sync_auto_off": "إيقاف",
-    "sync_auto_30_seconds": "كل 30 ثانية",
-    "sync_auto_1_minute": "كل دقيقة",
     "sync_auto_5_minutes": "كل 5 دقائق",
     "sync_auto_10_minutes": "كل 10 دقائق",
     "sync_auto_30_minutes": "كل 30 دقيقة",
