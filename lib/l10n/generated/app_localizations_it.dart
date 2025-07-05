@@ -649,16 +649,16 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get syncing_subtitle =>
-      'Sincronizza i tuoi progressi su più dispositivi tramite un server \nospitato autonomamente. Assicurati di caricare prima se è la \ntua prima sincronizzazione o di scaricare prima di utilizzare la \nsincronizzazione (automatica) su questo dispositivo!';
+      'Sincronizza i tuoi progressi su più dispositivi tramite un server discord auto-ospitato. Per maggiori informazioni, visita il nostro server discord!';
 
   @override
-  String get last_sync => 'Ultima sincronizzazione: ';
+  String get last_sync_manga => 'Ultima sincronizzazione del manga a:';
 
   @override
-  String get last_upload => 'Ultimo caricamento: ';
+  String get last_sync_history => 'Ultima storia sincronizzata a:';
 
   @override
-  String get last_download => 'Ultimo download: ';
+  String get last_sync_update => 'Ultimo aggiornamento: sincronizzazione a:';
 
   @override
   String get sync_server => 'Indirizzo del server di sincronizzazione';
@@ -667,105 +667,19 @@ class AppLocalizationsIt extends AppLocalizations {
   String get sync_login_invalid_creds => 'Email o password non validi';
 
   @override
-  String get sync_checking => 'Verifica sincronizzazione...';
+  String get sync_starting => 'Avvio della sincronizzazione...';
 
   @override
-  String get sync_uploading => 'Caricamento iniziato...';
+  String get sync_finished => 'Sincronizzazione terminata';
 
   @override
-  String get sync_downloading => 'Download iniziato...';
-
-  @override
-  String get sync_upload_finished => 'Caricamento completato';
-
-  @override
-  String get sync_download_finished => 'Download completato';
-
-  @override
-  String get sync_up_to_date => 'Sincronizzazione aggiornata';
-
-  @override
-  String get sync_upload_failed => 'Caricamento fallito';
-
-  @override
-  String get sync_download_failed => 'Download fallito';
+  String get sync_failed => 'Sincronizzazione fallita';
 
   @override
   String get sync_button_sync => 'Sincronizza progressi';
 
   @override
-  String get sync_button_snapshot => 'Crea istantanea';
-
-  @override
-  String get sync_button_upload => 'Caricamento completo';
-
-  @override
-  String get sync_button_download => 'Download completo';
-
-  @override
-  String get sync_confirm_snapshot =>
-      'Richiedi al server di creare un backup remoto!';
-
-  @override
-  String get sync_confirm_upload =>
-      'Un caricamento completo sostituirà completamente i dati remoti con quelli attuali!';
-
-  @override
-  String get sync_confirm_download =>
-      'Un download completo sostituirà completamente i tuoi dati attuali con quelli remoti!';
-
-  @override
   String get sync_on => 'Abilita sincronizzazione';
-
-  @override
-  String get sync_pending_manga => 'Modifiche in sospeso per i manga';
-
-  @override
-  String get sync_pending_category => 'Modifiche in sospeso per le categorie';
-
-  @override
-  String get sync_pending_chapter => 'Modifiche in sospeso per i capitoli';
-
-  @override
-  String get sync_pending_history => 'Modifiche in sospeso per la cronologia';
-
-  @override
-  String get sync_pending_update =>
-      'Modifiche in sospeso per gli aggiornamenti';
-
-  @override
-  String get sync_pending_extension => 'Modifiche in sospeso per le estensioni';
-
-  @override
-  String get sync_pending_track => 'Modifiche in sospeso per il tracciamento';
-
-  @override
-  String get sync_snapshot_creating => 'Creazione dell\'istantanea...';
-
-  @override
-  String get sync_snapshot_created => 'Istantanea creata!';
-
-  @override
-  String get sync_snapshot_deleting => 'Eliminazione dell\'istantanea...';
-
-  @override
-  String get sync_snapshot_deleted => 'Istantanea eliminata!';
-
-  @override
-  String get sync_snapshot_no_data =>
-      'Nessun dato per creare un\'istantanea! Esegui prima un caricamento completo!';
-
-  @override
-  String get sync_browse_snapshots => 'Esplora vecchi backup';
-
-  @override
-  String get sync_snapshots => 'Istantanee';
-
-  @override
-  String get sync_load_snapshot => 'Carica istantanea';
-
-  @override
-  String get sync_delete_snapshot => 'Elimina istantanea';
 
   @override
   String get sync_auto => 'Sincronizzazione automatica';
@@ -776,12 +690,6 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get sync_auto_off => 'Disattivato';
-
-  @override
-  String get sync_auto_30_seconds => 'Ogni 30 secondi';
-
-  @override
-  String get sync_auto_1_minute => 'Ogni 1 minuto';
 
   @override
   String get sync_auto_5_minutes => 'Ogni 5 minuti';

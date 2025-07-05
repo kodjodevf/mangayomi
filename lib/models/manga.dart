@@ -125,7 +125,7 @@ class Manga {
     'source': source,
     'status': status.index,
     'customCoverFromTracker': customCoverFromTracker,
-    'updatedAt': updatedAt,
+    'updatedAt': updatedAt ?? 0,
   };
 }
 

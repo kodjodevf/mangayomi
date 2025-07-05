@@ -49,6 +49,6 @@ class History {
     'id': id,
     'itemType': itemType.index,
     'mangaId': mangaId,
-    'updatedAt': updatedAt,
+    'updatedAt': updatedAt ?? 0,
   };
 }

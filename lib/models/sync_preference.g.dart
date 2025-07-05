@@ -32,19 +32,19 @@ const SyncPreferenceSchema = CollectionSchema(
       name: r'email',
       type: IsarType.string,
     ),
-    r'lastDownload': PropertySchema(
+    r'lastSyncHistory': PropertySchema(
       id: 3,
-      name: r'lastDownload',
+      name: r'lastSyncHistory',
       type: IsarType.long,
     ),
-    r'lastSync': PropertySchema(
+    r'lastSyncManga': PropertySchema(
       id: 4,
-      name: r'lastSync',
+      name: r'lastSyncManga',
       type: IsarType.long,
     ),
-    r'lastUpload': PropertySchema(
+    r'lastSyncUpdate': PropertySchema(
       id: 5,
-      name: r'lastUpload',
+      name: r'lastSyncUpdate',
       type: IsarType.long,
     ),
     r'server': PropertySchema(
@@ -108,9 +108,9 @@ void _syncPreferenceSerialize(
   writer.writeString(offsets[0], object.authToken);
   writer.writeLong(offsets[1], object.autoSyncFrequency);
   writer.writeString(offsets[2], object.email);
-  writer.writeLong(offsets[3], object.lastDownload);
-  writer.writeLong(offsets[4], object.lastSync);
-  writer.writeLong(offsets[5], object.lastUpload);
+  writer.writeLong(offsets[3], object.lastSyncHistory);
+  writer.writeLong(offsets[4], object.lastSyncManga);
+  writer.writeLong(offsets[5], object.lastSyncUpdate);
   writer.writeString(offsets[6], object.server);
   writer.writeBool(offsets[7], object.syncOn);
 }
@@ -125,9 +125,9 @@ SyncPreference _syncPreferenceDeserialize(
     authToken: reader.readStringOrNull(offsets[0]),
     autoSyncFrequency: reader.readLongOrNull(offsets[1]) ?? 0,
     email: reader.readStringOrNull(offsets[2]),
-    lastDownload: reader.readLongOrNull(offsets[3]),
-    lastSync: reader.readLongOrNull(offsets[4]),
-    lastUpload: reader.readLongOrNull(offsets[5]),
+    lastSyncHistory: reader.readLongOrNull(offsets[3]),
+    lastSyncManga: reader.readLongOrNull(offsets[4]),
+    lastSyncUpdate: reader.readLongOrNull(offsets[5]),
     server: reader.readStringOrNull(offsets[6]),
     syncId: id,
     syncOn: reader.readBoolOrNull(offsets[7]) ?? false,
@@ -622,63 +622,63 @@ extension SyncPreferenceQueryFilter
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
-      lastDownloadIsNull() {
+      lastSyncHistoryIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'lastDownload',
+        property: r'lastSyncHistory',
       ));
     });
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
-      lastDownloadIsNotNull() {
+      lastSyncHistoryIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'lastDownload',
+        property: r'lastSyncHistory',
       ));
     });
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
-      lastDownloadEqualTo(int? value) {
+      lastSyncHistoryEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'lastDownload',
+        property: r'lastSyncHistory',
         value: value,
       ));
     });
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
-      lastDownloadGreaterThan(
+      lastSyncHistoryGreaterThan(
     int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'lastDownload',
+        property: r'lastSyncHistory',
         value: value,
       ));
     });
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
-      lastDownloadLessThan(
+      lastSyncHistoryLessThan(
     int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'lastDownload',
+        property: r'lastSyncHistory',
         value: value,
       ));
     });
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
-      lastDownloadBetween(
+      lastSyncHistoryBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
@@ -686,7 +686,7 @@ extension SyncPreferenceQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'lastDownload',
+        property: r'lastSyncHistory',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -696,63 +696,63 @@ extension SyncPreferenceQueryFilter
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
-      lastSyncIsNull() {
+      lastSyncMangaIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'lastSync',
+        property: r'lastSyncManga',
       ));
     });
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
-      lastSyncIsNotNull() {
+      lastSyncMangaIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'lastSync',
+        property: r'lastSyncManga',
       ));
     });
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
-      lastSyncEqualTo(int? value) {
+      lastSyncMangaEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'lastSync',
+        property: r'lastSyncManga',
         value: value,
       ));
     });
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
-      lastSyncGreaterThan(
+      lastSyncMangaGreaterThan(
     int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'lastSync',
+        property: r'lastSyncManga',
         value: value,
       ));
     });
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
-      lastSyncLessThan(
+      lastSyncMangaLessThan(
     int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'lastSync',
+        property: r'lastSyncManga',
         value: value,
       ));
     });
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
-      lastSyncBetween(
+      lastSyncMangaBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
@@ -760,7 +760,7 @@ extension SyncPreferenceQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'lastSync',
+        property: r'lastSyncManga',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -770,63 +770,63 @@ extension SyncPreferenceQueryFilter
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
-      lastUploadIsNull() {
+      lastSyncUpdateIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'lastUpload',
+        property: r'lastSyncUpdate',
       ));
     });
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
-      lastUploadIsNotNull() {
+      lastSyncUpdateIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'lastUpload',
+        property: r'lastSyncUpdate',
       ));
     });
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
-      lastUploadEqualTo(int? value) {
+      lastSyncUpdateEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'lastUpload',
+        property: r'lastSyncUpdate',
         value: value,
       ));
     });
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
-      lastUploadGreaterThan(
+      lastSyncUpdateGreaterThan(
     int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'lastUpload',
+        property: r'lastSyncUpdate',
         value: value,
       ));
     });
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
-      lastUploadLessThan(
+      lastSyncUpdateLessThan(
     int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'lastUpload',
+        property: r'lastSyncUpdate',
         value: value,
       ));
     });
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
-      lastUploadBetween(
+      lastSyncUpdateBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
@@ -834,7 +834,7 @@ extension SyncPreferenceQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'lastUpload',
+        property: r'lastSyncUpdate',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -1130,43 +1130,44 @@ extension SyncPreferenceQuerySortBy
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
-      sortByLastDownload() {
+      sortByLastSyncHistory() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'lastDownload', Sort.asc);
+      return query.addSortBy(r'lastSyncHistory', Sort.asc);
     });
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
-      sortByLastDownloadDesc() {
+      sortByLastSyncHistoryDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'lastDownload', Sort.desc);
-    });
-  }
-
-  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy> sortByLastSync() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'lastSync', Sort.asc);
+      return query.addSortBy(r'lastSyncHistory', Sort.desc);
     });
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
-      sortByLastSyncDesc() {
+      sortByLastSyncManga() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'lastSync', Sort.desc);
+      return query.addSortBy(r'lastSyncManga', Sort.asc);
     });
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
-      sortByLastUpload() {
+      sortByLastSyncMangaDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'lastUpload', Sort.asc);
+      return query.addSortBy(r'lastSyncManga', Sort.desc);
     });
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
-      sortByLastUploadDesc() {
+      sortByLastSyncUpdate() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'lastUpload', Sort.desc);
+      return query.addSortBy(r'lastSyncUpdate', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+      sortByLastSyncUpdateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastSyncUpdate', Sort.desc);
     });
   }
 
@@ -1239,43 +1240,44 @@ extension SyncPreferenceQuerySortThenBy
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
-      thenByLastDownload() {
+      thenByLastSyncHistory() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'lastDownload', Sort.asc);
+      return query.addSortBy(r'lastSyncHistory', Sort.asc);
     });
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
-      thenByLastDownloadDesc() {
+      thenByLastSyncHistoryDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'lastDownload', Sort.desc);
-    });
-  }
-
-  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy> thenByLastSync() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'lastSync', Sort.asc);
+      return query.addSortBy(r'lastSyncHistory', Sort.desc);
     });
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
-      thenByLastSyncDesc() {
+      thenByLastSyncManga() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'lastSync', Sort.desc);
+      return query.addSortBy(r'lastSyncManga', Sort.asc);
     });
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
-      thenByLastUpload() {
+      thenByLastSyncMangaDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'lastUpload', Sort.asc);
+      return query.addSortBy(r'lastSyncManga', Sort.desc);
     });
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
-      thenByLastUploadDesc() {
+      thenByLastSyncUpdate() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'lastUpload', Sort.desc);
+      return query.addSortBy(r'lastSyncUpdate', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+      thenByLastSyncUpdateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastSyncUpdate', Sort.desc);
     });
   }
 
@@ -1343,22 +1345,23 @@ extension SyncPreferenceQueryWhereDistinct
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QDistinct>
-      distinctByLastDownload() {
+      distinctByLastSyncHistory() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'lastDownload');
-    });
-  }
-
-  QueryBuilder<SyncPreference, SyncPreference, QDistinct> distinctByLastSync() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'lastSync');
+      return query.addDistinctBy(r'lastSyncHistory');
     });
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QDistinct>
-      distinctByLastUpload() {
+      distinctByLastSyncManga() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'lastUpload');
+      return query.addDistinctBy(r'lastSyncManga');
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QDistinct>
+      distinctByLastSyncUpdate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'lastSyncUpdate');
     });
   }
 
@@ -1403,21 +1406,23 @@ extension SyncPreferenceQueryProperty
     });
   }
 
-  QueryBuilder<SyncPreference, int?, QQueryOperations> lastDownloadProperty() {
+  QueryBuilder<SyncPreference, int?, QQueryOperations>
+      lastSyncHistoryProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'lastDownload');
+      return query.addPropertyName(r'lastSyncHistory');
     });
   }
 
-  QueryBuilder<SyncPreference, int?, QQueryOperations> lastSyncProperty() {
+  QueryBuilder<SyncPreference, int?, QQueryOperations> lastSyncMangaProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'lastSync');
+      return query.addPropertyName(r'lastSyncManga');
     });
   }
 
-  QueryBuilder<SyncPreference, int?, QQueryOperations> lastUploadProperty() {
+  QueryBuilder<SyncPreference, int?, QQueryOperations>
+      lastSyncUpdateProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'lastUpload');
+      return query.addPropertyName(r'lastSyncUpdate');
     });
   }
 

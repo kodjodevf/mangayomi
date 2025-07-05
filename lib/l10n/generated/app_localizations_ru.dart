@@ -650,16 +650,16 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get syncing_subtitle =>
-      'Синхронизируйте ваш прогресс на нескольких устройствах через собственный сервер. Убедитесь, что вы сначала загрузили, если это ваш первый раз синхронизации, или скачайте перед использованием (авто) синхронизации на этом устройстве!';
+      'Синхронизируйте свой прогресс на нескольких устройствах через собственный \nserver. Загляните на наш сервер discord для получения дополнительной информации!';
 
   @override
-  String get last_sync => 'Последняя синхронизация: ';
+  String get last_sync_manga => 'Последняя синхронизация манги:';
 
   @override
-  String get last_upload => 'Последняя загрузка: ';
+  String get last_sync_history => 'Последняя история синхронизирована на:';
 
   @override
-  String get last_download => 'Последнее скачивание: ';
+  String get last_sync_update => 'Последнее обновление синхронизировано на:';
 
   @override
   String get sync_server => 'Адрес сервера синхронизации';
@@ -669,104 +669,19 @@ class AppLocalizationsRu extends AppLocalizations {
       'Неверный адрес электронной почты или пароль';
 
   @override
-  String get sync_checking => 'Проверка синхронизации...';
+  String get sync_starting => 'Начало синхронизации...';
 
   @override
-  String get sync_uploading => 'Загрузка началась...';
+  String get sync_finished => 'Синхронизация завершена';
 
   @override
-  String get sync_downloading => 'Скачивание началось...';
-
-  @override
-  String get sync_upload_finished => 'Загрузка завершена';
-
-  @override
-  String get sync_download_finished => 'Скачивание завершено';
-
-  @override
-  String get sync_up_to_date => 'Синхронизация актуальна';
-
-  @override
-  String get sync_upload_failed => 'Ошибка загрузки';
-
-  @override
-  String get sync_download_failed => 'Ошибка скачивания';
+  String get sync_failed => 'Не удалось синхронизировать';
 
   @override
   String get sync_button_sync => 'Синхронизировать прогресс';
 
   @override
-  String get sync_button_snapshot => 'Создать снимок';
-
-  @override
-  String get sync_button_upload => 'Полная загрузка';
-
-  @override
-  String get sync_button_download => 'Полное скачивание';
-
-  @override
-  String get sync_confirm_snapshot =>
-      'Запросите у сервера создание удаленной резервной копии!';
-
-  @override
-  String get sync_confirm_upload =>
-      'Полная загрузка полностью заменит удаленные данные на ваши текущие!';
-
-  @override
-  String get sync_confirm_download =>
-      'Полное скачивание полностью заменит ваши текущие данные на удаленные!';
-
-  @override
   String get sync_on => 'Включить синхронизацию';
-
-  @override
-  String get sync_pending_manga => 'Ожидающие изменения манги';
-
-  @override
-  String get sync_pending_category => 'Ожидающие изменения категорий';
-
-  @override
-  String get sync_pending_chapter => 'Ожидающие изменения глав';
-
-  @override
-  String get sync_pending_history => 'Ожидающие изменения истории';
-
-  @override
-  String get sync_pending_update => 'Ожидающие изменения обновлений';
-
-  @override
-  String get sync_pending_extension => 'Ожидающие изменения расширений';
-
-  @override
-  String get sync_pending_track => 'Ожидающие изменения трекинга';
-
-  @override
-  String get sync_snapshot_creating => 'Создание снимка...';
-
-  @override
-  String get sync_snapshot_created => 'Снимок создан!';
-
-  @override
-  String get sync_snapshot_deleting => 'Удаление снимка...';
-
-  @override
-  String get sync_snapshot_deleted => 'Снимок удален!';
-
-  @override
-  String get sync_snapshot_no_data =>
-      'Нет данных для создания снимка! Сначала выполните полную загрузку!';
-
-  @override
-  String get sync_browse_snapshots => 'Просмотр старых резервных копий';
-
-  @override
-  String get sync_snapshots => 'Снимки';
-
-  @override
-  String get sync_load_snapshot => 'Загрузить снимок';
-
-  @override
-  String get sync_delete_snapshot => 'Удалить снимок';
 
   @override
   String get sync_auto => 'Автосинхронизация';
@@ -777,12 +692,6 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get sync_auto_off => 'Выключено';
-
-  @override
-  String get sync_auto_30_seconds => 'Каждые 30 секунд';
-
-  @override
-  String get sync_auto_1_minute => 'Каждую минуту';
 
   @override
   String get sync_auto_5_minutes => 'Каждые 5 минут';

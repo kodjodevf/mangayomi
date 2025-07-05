@@ -644,16 +644,16 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get syncing_subtitle =>
-      'قم بمزامنة تقدمك عبر أجهزة متعددة باستخدام خادم مستضاف ذاتيًا.\nتأكد من التحميل أولاً إذا كانت هذه هي المرة الأولى التي تقوم فيها بالمزامنة\nأو قم بالتنزيل قبل استخدام المزامنة (التلقائية) على هذا الجهاز!';
+      'قم بمزامنة تقدمك عبر أجهزة متعددة عبر خادم مستضاف ذاتيًا. اطّلع على خادم الخلاف الخاص بنا لمزيد من المعلومات!';
 
   @override
-  String get last_sync => 'آخر مزامنة في: ';
+  String get last_sync_manga => 'آخر مزامنة مانغا في:';
 
   @override
-  String get last_upload => 'آخر تحميل في: ';
+  String get last_sync_history => 'آخر مزامنة للتاريخ في:';
 
   @override
-  String get last_download => 'آخر تنزيل في: ';
+  String get last_sync_update => 'آخر مزامنة تحديث في:';
 
   @override
   String get sync_server => 'عنوان خادم المزامنة';
@@ -662,104 +662,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sync_login_invalid_creds => 'بريد إلكتروني أو كلمة مرور غير صحيحة';
 
   @override
-  String get sync_checking => 'جارٍ التحقق من المزامنة...';
+  String get sync_starting => 'بدء المزامنة...';
 
   @override
-  String get sync_uploading => 'بدأ التحميل...';
+  String get sync_finished => 'تم الانتهاء من المزامنة';
 
   @override
-  String get sync_downloading => 'بدأ التنزيل...';
-
-  @override
-  String get sync_upload_finished => 'اكتمل التحميل';
-
-  @override
-  String get sync_download_finished => 'اكتمل التنزيل';
-
-  @override
-  String get sync_up_to_date => 'المزامنة محدثة';
-
-  @override
-  String get sync_upload_failed => 'فشل التحميل';
-
-  @override
-  String get sync_download_failed => 'فشل التنزيل';
+  String get sync_failed => 'فشل المزامنة';
 
   @override
   String get sync_button_sync => 'مزامنة التقدم';
 
   @override
-  String get sync_button_snapshot => 'إنشاء لقطة';
-
-  @override
-  String get sync_button_upload => 'تحميل كامل';
-
-  @override
-  String get sync_button_download => 'تنزيل كامل';
-
-  @override
-  String get sync_confirm_snapshot =>
-      'اطلب من الخادم إنشاء نسخة احتياطية عن بُعد!';
-
-  @override
-  String get sync_confirm_upload =>
-      'التحميل الكامل سيستبدل البيانات الحالية على الخادم ببياناتك الحالية!';
-
-  @override
-  String get sync_confirm_download =>
-      'التنزيل الكامل سيستبدل بياناتك الحالية بالبيانات الموجودة على الخادم!';
-
-  @override
   String get sync_on => 'تمكين المزامنة';
-
-  @override
-  String get sync_pending_manga => 'تغييرات المانجا معلقة';
-
-  @override
-  String get sync_pending_category => 'تغييرات الفئة معلقة';
-
-  @override
-  String get sync_pending_chapter => 'تغييرات الفصل معلقة';
-
-  @override
-  String get sync_pending_history => 'تغييرات السجل معلقة';
-
-  @override
-  String get sync_pending_update => 'تغييرات التحديث معلقة';
-
-  @override
-  String get sync_pending_extension => 'تغييرات الامتداد معلقة';
-
-  @override
-  String get sync_pending_track => 'تغييرات التتبع معلقة';
-
-  @override
-  String get sync_snapshot_creating => 'جارٍ إنشاء لقطة...';
-
-  @override
-  String get sync_snapshot_created => 'تم إنشاء اللقطة!';
-
-  @override
-  String get sync_snapshot_deleting => 'جارٍ حذف اللقطة...';
-
-  @override
-  String get sync_snapshot_deleted => 'تم حذف اللقطة!';
-
-  @override
-  String get sync_snapshot_no_data =>
-      'لا توجد بيانات لإنشاء لقطة! قم بتحميل كامل أولاً!';
-
-  @override
-  String get sync_browse_snapshots => 'تصفح النسخ الاحتياطية القديمة';
-
-  @override
-  String get sync_snapshots => 'اللقطات';
-
-  @override
-  String get sync_load_snapshot => 'تحميل لقطة';
-
-  @override
-  String get sync_delete_snapshot => 'حذف لقطة';
 
   @override
   String get sync_auto => 'المزامنة التلقائية';
@@ -769,12 +684,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get sync_auto_off => 'إيقاف';
-
-  @override
-  String get sync_auto_30_seconds => 'كل 30 ثانية';
-
-  @override
-  String get sync_auto_1_minute => 'كل دقيقة';
 
   @override
   String get sync_auto_5_minutes => 'كل 5 دقائق';

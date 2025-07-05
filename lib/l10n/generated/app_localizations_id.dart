@@ -649,16 +649,16 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get syncing_subtitle =>
-      'Sinkronkan progres Anda di beberapa perangkat melalui server \nself-hosted. Pastikan untuk mengunggah terlebih dahulu jika ini \nadalah pertama kalinya Anda menyinkronkan, atau unduh sebelum menggunakan sinkronisasi (otomatis) di perangkat ini!';
+      'Sinkronkan kemajuan Anda di beberapa perangkat melalui \nserver yang dihosting sendiri. Lihat server discord kami untuk info lebih lanjut!';
 
   @override
-  String get last_sync => 'Sinkronisasi terakhir pada: ';
+  String get last_sync_manga => 'Sinkronisasi manga terakhir di:';
 
   @override
-  String get last_upload => 'Unggahan terakhir pada: ';
+  String get last_sync_history => 'Sinkronisasi riwayat terakhir pada:';
 
   @override
-  String get last_download => 'Unduhan terakhir pada: ';
+  String get last_sync_update => 'Sinkronisasi pembaruan terakhir pada:';
 
   @override
   String get sync_server => 'Alamat Server Sinkronisasi';
@@ -667,104 +667,19 @@ class AppLocalizationsId extends AppLocalizations {
   String get sync_login_invalid_creds => 'Email atau kata sandi tidak valid';
 
   @override
-  String get sync_checking => 'Memeriksa sinkronisasi...';
+  String get sync_starting => 'Memulai sinkronisasi...';
 
   @override
-  String get sync_uploading => 'Unggahan dimulai...';
+  String get sync_finished => 'Sinkronisasi selesai';
 
   @override
-  String get sync_downloading => 'Unduhan dimulai...';
-
-  @override
-  String get sync_upload_finished => 'Unggahan selesai';
-
-  @override
-  String get sync_download_finished => 'Unduhan selesai';
-
-  @override
-  String get sync_up_to_date => 'Sinkronisasi terkini';
-
-  @override
-  String get sync_upload_failed => 'Unggahan gagal';
-
-  @override
-  String get sync_download_failed => 'Unduhan gagal';
+  String get sync_failed => 'Sinkronisasi gagal';
 
   @override
   String get sync_button_sync => 'Sinkronkan progres';
 
   @override
-  String get sync_button_snapshot => 'Buat snapshot';
-
-  @override
-  String get sync_button_upload => 'Unggah penuh';
-
-  @override
-  String get sync_button_download => 'Unduh penuh';
-
-  @override
-  String get sync_confirm_snapshot =>
-      'Minta server untuk membuat salinan cadangan jarak jauh!';
-
-  @override
-  String get sync_confirm_upload =>
-      'Unggahan penuh akan sepenuhnya menggantikan data jarak jauh dengan data Anda saat ini!';
-
-  @override
-  String get sync_confirm_download =>
-      'Unduhan penuh akan sepenuhnya menggantikan data Anda saat ini dengan data jarak jauh!';
-
-  @override
   String get sync_on => 'Aktifkan sinkronisasi';
-
-  @override
-  String get sync_pending_manga => 'Perubahan manga tertunda';
-
-  @override
-  String get sync_pending_category => 'Perubahan kategori tertunda';
-
-  @override
-  String get sync_pending_chapter => 'Perubahan bab tertunda';
-
-  @override
-  String get sync_pending_history => 'Perubahan riwayat tertunda';
-
-  @override
-  String get sync_pending_update => 'Perubahan pembaruan tertunda';
-
-  @override
-  String get sync_pending_extension => 'Perubahan ekstensi tertunda';
-
-  @override
-  String get sync_pending_track => 'Perubahan pelacakan tertunda';
-
-  @override
-  String get sync_snapshot_creating => 'Membuat snapshot...';
-
-  @override
-  String get sync_snapshot_created => 'Snapshot dibuat!';
-
-  @override
-  String get sync_snapshot_deleting => 'Menghapus snapshot...';
-
-  @override
-  String get sync_snapshot_deleted => 'Snapshot dihapus!';
-
-  @override
-  String get sync_snapshot_no_data =>
-      'Tidak ada data untuk membuat snapshot! Lakukan unggahan penuh terlebih dahulu!';
-
-  @override
-  String get sync_browse_snapshots => 'Jelajahi cadangan lama';
-
-  @override
-  String get sync_snapshots => 'Snapshot';
-
-  @override
-  String get sync_load_snapshot => 'Muat snapshot';
-
-  @override
-  String get sync_delete_snapshot => 'Hapus snapshot';
 
   @override
   String get sync_auto => 'Sinkronisasi otomatis';
@@ -775,12 +690,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get sync_auto_off => 'Mati';
-
-  @override
-  String get sync_auto_30_seconds => 'Setiap 30 detik';
-
-  @override
-  String get sync_auto_1_minute => 'Setiap 1 menit';
 
   @override
   String get sync_auto_5_minutes => 'Setiap 5 menit';

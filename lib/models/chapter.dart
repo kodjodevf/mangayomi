@@ -69,6 +69,6 @@ class Chapter {
     'name': name,
     'scanlator': scanlator,
     'url': url,
-    'updatedAt': updatedAt,
+    'updatedAt': updatedAt ?? 0,
   };
 }

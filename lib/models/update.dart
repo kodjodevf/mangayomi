@@ -38,6 +38,6 @@ class Update {
     'mangaId': mangaId,
     'chapterName': chapterName,
     'date': date,
-    'updatedAt': updatedAt,
+    'updatedAt': updatedAt ?? 0,
   };
 }

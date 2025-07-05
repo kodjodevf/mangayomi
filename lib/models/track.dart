@@ -90,7 +90,7 @@ class Track {
     'totalChapter': totalChapter,
     'trackingUrl': trackingUrl,
     'isManga': isManga,
-    'updatedAt': updatedAt,
+    'updatedAt': updatedAt ?? 0,
   };
 }
 

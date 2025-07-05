@@ -170,7 +170,7 @@ class Source {
     'isLocal': isLocal,
     'notes': notes,
     'repo': repo?.toJson(),
-    'updatedAt': updatedAt,
+    'updatedAt': updatedAt ?? 0,
   };
 
   bool get isTorrent => (typeSource?.toLowerCase() ?? "") == "torrent";

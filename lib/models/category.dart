@@ -48,6 +48,6 @@ class Category {
     'forItemType': forItemType.index,
     'pos': pos,
     'hide': hide,
-    'updatedAt': updatedAt,
+    'updatedAt': updatedAt ?? 0,
   };
 }
