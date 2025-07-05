@@ -191,7 +191,9 @@ class SyncServer extends _$SyncServer {
           in await isar.categorys.filter().idIsNotNull().findAll()) {
         final temp = categories.firstWhereOrNull((e) => e.id == category.id);
         if (temp != null) {
-          await isar.categorys.put(category);
+          if ((category.updatedAt ?? 0) < (temp.updatedAt ?? 1)) {
+            await isar.categorys.put(temp);
+          }
           categories.remove(temp);
         } else {
           await isar.categorys.delete(category.id!);
@@ -215,7 +217,9 @@ class SyncServer extends _$SyncServer {
       for (var manga in await isar.mangas.filter().idIsNotNull().findAll()) {
         final temp = mangas.firstWhereOrNull((e) => e.id == manga.id);
         if (temp != null) {
-          await isar.mangas.put(manga);
+          if ((manga.updatedAt ?? 0) < (temp.updatedAt ?? 1)) {
+            await isar.mangas.put(temp);
+          }
           mangas.remove(temp);
         } else {
           await isar.mangas.delete(manga.id!);
@@ -243,9 +247,10 @@ class SyncServer extends _$SyncServer {
         final temp = chapters.firstWhereOrNull((e) => e.id == chapter.id);
         if (temp != null) {
           final manga = await isar.mangas.get(temp.mangaId!);
-          if (manga != null) {
-            await isar.chapters.put(chapter..manga.value = manga);
-            await chapter.manga.save();
+          if (manga != null &&
+              (chapter.updatedAt ?? 0) < (temp.updatedAt ?? 1)) {
+            await isar.chapters.put(temp..manga.value = manga);
+            await temp.manga.save();
           }
           chapters.remove(temp);
         } else {
@@ -274,7 +279,9 @@ class SyncServer extends _$SyncServer {
       for (var track in await isar.tracks.filter().idIsNotNull().findAll()) {
         final temp = tracks.firstWhereOrNull((e) => e.id == track.id);
         if (temp != null) {
-          await isar.tracks.put(track);
+          if ((track.updatedAt ?? 0) < (temp.updatedAt ?? 1)) {
+            await isar.tracks.put(temp);
+          }
           tracks.remove(temp);
         } else {
           await isar.tracks.delete(track.id!);
@@ -302,9 +309,10 @@ class SyncServer extends _$SyncServer {
         final temp = histories.firstWhereOrNull((e) => e.id == history.id);
         if (temp != null) {
           final chapter = await isar.chapters.get(temp.chapterId!);
-          if (chapter != null) {
-            await isar.historys.put(history..chapter.value = chapter);
-            await history.chapter.save();
+          if (chapter != null &&
+              (history.updatedAt ?? 0) < (temp.updatedAt ?? 1)) {
+            await isar.historys.put(temp..chapter.value = chapter);
+            await temp.chapter.save();
           }
           histories.remove(temp);
         } else {
@@ -340,9 +348,10 @@ class SyncServer extends _$SyncServer {
               .mangaIdEqualTo(temp.mangaId)
               .nameEqualTo(temp.chapterName)
               .findFirst();
-          if (chapter != null) {
-            await isar.updates.put(update..chapter.value = chapter);
-            await update.chapter.save();
+          if (chapter != null &&
+              (update.updatedAt ?? 0) < (temp.updatedAt ?? 1)) {
+            await isar.updates.put(temp..chapter.value = chapter);
+            await temp.chapter.save();
           }
           updates.remove(temp);
         } else {
