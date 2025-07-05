@@ -10,11 +10,11 @@ class SyncPreference {
 
   String? authToken;
 
-  int? lastSync;
+  int? lastSyncManga;
 
-  int? lastUpload;
+  int? lastSyncHistory;
 
-  int? lastDownload;
+  int? lastSyncUpdate;
 
   String? server;
 
@@ -26,9 +26,9 @@ class SyncPreference {
     this.syncId,
     this.email,
     this.authToken,
-    this.lastSync,
-    this.lastUpload,
-    this.lastDownload,
+    this.lastSyncManga,
+    this.lastSyncHistory,
+    this.lastSyncUpdate,
     this.server,
     this.syncOn = false,
     this.autoSyncFrequency = 0,
@@ -38,9 +38,9 @@ class SyncPreference {
     syncId = json['syncId'];
     email = json['email'];
     authToken = json['authToken'];
-    lastSync = json['lastSync'];
-    lastUpload = json['lastUpload'];
-    lastDownload = json['lastDownload'];
+    lastSyncManga = json['lastSyncManga'];
+    lastSyncHistory = json['lastSyncHistory'];
+    lastSyncUpdate = json['lastSyncUpdate'];
     server = json['server'];
     syncOn = json['syncOn'] ?? false;
     syncOn = json['autoSyncFrequency'] ?? 0;
@@ -50,9 +50,9 @@ class SyncPreference {
     'syncId': syncId,
     'email': email,
     'authToken': authToken,
-    'lastSync': lastSync,
-    'lastUpload': lastUpload,
-    'lastDownload': lastDownload,
+    'lastSyncManga': lastSyncManga,
+    'lastSyncHistory': lastSyncHistory,
+    'lastSyncUpdate': lastSyncUpdate,
     'syncOn': syncOn,
     'autoSyncFrequency': autoSyncFrequency,
   };

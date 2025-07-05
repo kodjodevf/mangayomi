@@ -475,12 +475,23 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
       await isar.historys.delete(deleteId!);
       for (var chapter in chapters) {
         await isar.chapters.delete(chapter.id!);
+        await ref
+            .read(synchingProvider(syncId: 1).notifier)
+            .addChangedPartAsync(
+              ActionType.removeChapter,
+              chapter.id,
+              "{}",
+              false,
+            );
       }
       await isar.mangas.delete(manga.id!);
+      await ref
+          .read(synchingProvider(syncId: 1).notifier)
+          .addChangedPartAsync(ActionType.removeHistory, deleteId, "{}", false);
+      await ref
+          .read(synchingProvider(syncId: 1).notifier)
+          .addChangedPartAsync(ActionType.removeItem, manga.id, "{}", false);
     });
-    await ref
-        .read(synchingProvider(syncId: 1).notifier)
-        .addChangedPartAsync(ActionType.removeItem, manga.id, "{}", true);
     if (context.mounted) {
       Navigator.pop(context);
     }

@@ -226,14 +226,6 @@ void _showClearAllSourcesDialog(BuildContext context, dynamic l10n) {
                   onPressed: () {
                     isar.writeTxnSync(() {
                       isar.sources.clearSync();
-                      ref
-                          .read(synchingProvider(syncId: 1).notifier)
-                          .addChangedPart(
-                            ActionType.clearHistory,
-                            null,
-                            "{}",
-                            false,
-                          );
                     });
 
                     Navigator.pop(ctx);
@@ -275,6 +267,9 @@ void _showCleanNonLibraryDialog(BuildContext context, dynamic l10n) {
                         .filter()
                         .favoriteEqualTo(false)
                         .findAllSync();
+                    final provider = ref.read(
+                      synchingProvider(syncId: 1).notifier,
+                    );
                     isar.writeTxnSync(() {
                       for (var manga in mangasList) {
                         final histories = isar.historys
@@ -283,25 +278,44 @@ void _showCleanNonLibraryDialog(BuildContext context, dynamic l10n) {
                             .findAllSync();
                         for (var history in histories) {
                           isar.historys.deleteSync(history.id!);
+                          provider.addChangedPart(
+                            ActionType.removeHistory,
+                            history.id,
+                            "{}",
+                            false,
+                          );
                         }
 
                         for (var chapter in manga.chapters) {
-                          isar.updates
+                          final updates = isar.updates
                               .filter()
                               .mangaIdEqualTo(chapter.mangaId)
                               .chapterNameEqualTo(chapter.name)
-                              .deleteAllSync();
-                          isar.chapters.deleteSync(chapter.id!);
-                        }
-                        isar.mangas.deleteSync(manga.id!);
-                        ref
-                            .read(synchingProvider(syncId: 1).notifier)
-                            .addChangedPart(
-                              ActionType.removeItem,
-                              manga.id,
+                              .findAllSync();
+                          for (var update in updates) {
+                            isar.updates.deleteSync(update.id!);
+                            provider.addChangedPart(
+                              ActionType.removeUpdate,
+                              update.id,
                               "{}",
                               false,
                             );
+                          }
+                          isar.chapters.deleteSync(chapter.id!);
+                          provider.addChangedPart(
+                            ActionType.removeChapter,
+                            chapter.id,
+                            "{}",
+                            false,
+                          );
+                        }
+                        isar.mangas.deleteSync(manga.id!);
+                        provider.addChangedPart(
+                          ActionType.removeItem,
+                          manga.id,
+                          "{}",
+                          false,
+                        );
                       }
                     });
 

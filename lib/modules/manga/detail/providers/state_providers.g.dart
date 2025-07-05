@@ -816,7 +816,7 @@ class _ChapterFilterResultStateProviderElement
 }
 
 String _$chapterSetIsBookmarkStateHash() =>
-    r'9b4359e87f6083323cc49d20bedde0ce0f61d9b3';
+    r'7879f0a8052b1e46d32d5aaad43d1efa14bcb19d';
 
 abstract class _$ChapterSetIsBookmarkState
     extends BuildlessAutoDisposeNotifier<void> {
@@ -963,7 +963,7 @@ class _ChapterSetIsBookmarkStateProviderElement
 }
 
 String _$chapterSetIsReadStateHash() =>
-    r'9cfd45df3f359a43140c023a584b52f8c81cbace';
+    r'80eae3d196cf0932c1e61bae37aebe563d66d6de';
 
 abstract class _$ChapterSetIsReadState
     extends BuildlessAutoDisposeNotifier<void> {

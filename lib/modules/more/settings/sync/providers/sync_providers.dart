@@ -31,21 +31,21 @@ class Synching extends _$Synching {
     ref.invalidate(syncServerProvider(syncId: syncId!));
   }
 
-  void setLastUpload(int timestamp) {
+  void setLastSyncManga(int timestamp) {
     isar.writeTxnSync(() {
-      isar.syncPreferences.putSync(state..lastUpload = timestamp);
+      isar.syncPreferences.putSync(state..lastSyncManga = timestamp);
     });
   }
 
-  void setLastDownload(int timestamp) {
+  void setLastSyncHistory(int timestamp) {
     isar.writeTxnSync(() {
-      isar.syncPreferences.putSync(state..lastDownload = timestamp);
+      isar.syncPreferences.putSync(state..lastSyncHistory = timestamp);
     });
   }
 
-  void setLastSync(int timestamp) {
+  void setLastSyncUpdate(int timestamp) {
     isar.writeTxnSync(() {
-      isar.syncPreferences.putSync(state..lastSync = timestamp);
+      isar.syncPreferences.putSync(state..lastSyncUpdate = timestamp);
     });
   }
 
@@ -190,17 +190,23 @@ class Synching extends _$Synching {
     }
   }
 
-  void clearChangedParts(List<ActionType> actions) {
+  Future<void> clearChangedParts(List<ActionType> actions, bool txn) async {
     var temp = isar.changedParts.filter().idIsNotNull().and().actionTypeEqualTo(
       actions.first,
     );
     for (ActionType action in actions.skip(1)) {
       temp = temp.or().actionTypeEqualTo(action);
     }
-    final changedParts = temp.findAllSync().map((cp) => cp.id as Id).toList();
-    isar.writeTxnSync(() {
-      isar.changedParts.deleteAllSync(changedParts);
-    });
+    final changedParts = (await temp.findAll())
+        .map((cp) => cp.id as Id)
+        .toList();
+    if (txn) {
+      await isar.writeTxn(() async {
+        await isar.changedParts.deleteAll(changedParts);
+      });
+    } else {
+      await isar.changedParts.deleteAll(changedParts);
+    }
   }
 
   void clearAllChangedParts(bool txn) {

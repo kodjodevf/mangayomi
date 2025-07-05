@@ -1,11 +1,9 @@
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/services/get_detail.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -57,21 +55,14 @@ Future<dynamic> updateMangaDetail(
       ..source = manga.source
       ..lang = manga.lang
       ..itemType = source.itemType
-      ..lastUpdate = DateTime.now().millisecondsSinceEpoch;
+      ..lastUpdate = DateTime.now().millisecondsSinceEpoch
+      ..updatedAt = DateTime.now().millisecondsSinceEpoch;
     final checkManga = isar.mangas.getSync(mangaId);
     if (checkManga!.chapters.isNotEmpty && isInit) {
       return;
     }
     isar.writeTxnSync(() {
       isar.mangas.putSync(manga);
-      ref
-          .read(synchingProvider(syncId: 1).notifier)
-          .addChangedPart(
-            ActionType.updateItem,
-            manga.id,
-            manga.toJson(),
-            false,
-          );
       manga.lastUpdate = DateTime.now().millisecondsSinceEpoch;
 
       List<Chapter> chapters = [];
@@ -89,6 +80,7 @@ Future<dynamic> updateMangaDetail(
                 : chaps[i].dateUpload.toString(),
             scanlator: chaps[i].scanlator ?? '',
             mangaId: mangaId,
+            updatedAt: DateTime.now().millisecondsSinceEpoch,
           )..manga.value = manga;
           chapters.add(chapter);
         }
@@ -97,30 +89,15 @@ Future<dynamic> updateMangaDetail(
         for (var chap in chapters.reversed.toList()) {
           isar.chapters.putSync(chap);
           chap.manga.saveSync();
-          ref
-              .read(synchingProvider(syncId: 1).notifier)
-              .addChangedPart(
-                ActionType.addChapter,
-                chap.id,
-                chap.toJson(),
-                false,
-              );
           if (manga.chapters.isNotEmpty) {
             final update = Update(
               mangaId: mangaId,
               chapterName: chap.name,
               date: DateTime.now().millisecondsSinceEpoch.toString(),
+              updatedAt: DateTime.now().millisecondsSinceEpoch,
             )..chapter.value = chap;
             isar.updates.putSync(update);
             update.chapter.saveSync();
-            ref
-                .read(synchingProvider(syncId: 1).notifier)
-                .addChangedPart(
-                  ActionType.addUpdate,
-                  update.id,
-                  update.toJson(),
-                  false,
-                );
           }
         }
       }
@@ -134,33 +111,12 @@ Future<dynamic> updateMangaDetail(
         for (var i = 0; i < oldChapers.length; i++) {
           final oldChap = oldChapers[i];
           final newChap = chaps[i];
-          final hasChanged =
-              oldChap.name != newChap.name ||
-              oldChap.url != newChap.url ||
-              oldChap.scanlator != newChap.scanlator;
           oldChap.name = newChap.name;
           oldChap.url = newChap.url;
           oldChap.scanlator = newChap.scanlator;
+          oldChap.updatedAt = DateTime.now().millisecondsSinceEpoch;
           isar.chapters.putSync(oldChap);
           oldChap.manga.saveSync();
-          if (hasChanged) {
-            ref
-                .read(synchingProvider(syncId: 1).notifier)
-                .addChangedPart(
-                  ActionType.updateItem,
-                  manga.id,
-                  manga.toJson(),
-                  false,
-                );
-            ref
-                .read(synchingProvider(syncId: 1).notifier)
-                .addChangedPart(
-                  ActionType.updateChapter,
-                  oldChap.id,
-                  oldChap.toJson(),
-                  false,
-                );
-          }
         }
       }
     });

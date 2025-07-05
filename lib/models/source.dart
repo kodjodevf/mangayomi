@@ -69,6 +69,8 @@ class Source {
 
   Repo? repo;
 
+  int? updatedAt;
+
   Source({
     this.id = 0,
     this.name = '',
@@ -99,6 +101,7 @@ class Source {
     this.isObsolete = false,
     this.notes = '',
     this.repo,
+    this.updatedAt = 0,
   });
 
   Source.fromJson(Map<String, dynamic> json) {
@@ -133,6 +136,7 @@ class Source {
         SourceCodeLanguage.values[json['sourceCodeLanguage'] ?? 0];
     notes = json['notes'] ?? "";
     repo = json['repo'] != null ? Repo.fromJson(json['repo']) : null;
+    updatedAt = json['updatedAt'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -166,6 +170,7 @@ class Source {
     'isLocal': isLocal,
     'notes': notes,
     'repo': repo?.toJson(),
+    'updatedAt': updatedAt ?? 0,
   };
 
   bool get isTorrent => (typeSource?.toLowerCase() ?? "") == "torrent";

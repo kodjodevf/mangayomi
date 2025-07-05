@@ -1,12 +1,10 @@
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'novel_reader_controller_provider.g.dart';
 
@@ -34,15 +32,8 @@ class NovelReaderController extends _$NovelReaderController {
     isar.writeTxnSync(() {
       Manga? manga = chapter.manga.value;
       manga!.lastRead = DateTime.now().millisecondsSinceEpoch;
+      manga.updatedAt = DateTime.now().millisecondsSinceEpoch;
       isar.mangas.putSync(manga);
-      ref
-          .read(synchingProvider(syncId: 1).notifier)
-          .addChangedPart(
-            ActionType.updateItem,
-            manga.id,
-            manga.toJson(),
-            false,
-          );
     });
     History? history;
 
@@ -69,27 +60,9 @@ class NovelReaderController extends _$NovelReaderController {
             ..date = DateTime.now().millisecondsSinceEpoch.toString();
     }
     isar.writeTxnSync(() {
-      isar.historys.putSync(history!);
+      history!.updatedAt = DateTime.now().millisecondsSinceEpoch;
+      isar.historys.putSync(history);
       history.chapter.saveSync();
-      if (empty) {
-        ref
-            .read(synchingProvider(syncId: 1).notifier)
-            .addChangedPart(
-              ActionType.addHistory,
-              null,
-              history.toJson(),
-              false,
-            );
-      } else {
-        ref
-            .read(synchingProvider(syncId: 1).notifier)
-            .addChangedPart(
-              ActionType.updateHistory,
-              history.id,
-              history.toJson(),
-              false,
-            );
-      }
     });
   }
 
@@ -102,15 +75,8 @@ class NovelReaderController extends _$NovelReaderController {
         ch.isRead = isRead;
         ch.lastPageRead = (maxOffset != 0 ? newOffset / maxOffset : 0)
             .toString();
+        ch.updatedAt = DateTime.now().millisecondsSinceEpoch;
         isar.chapters.putSync(ch);
-        ref
-            .read(synchingProvider(syncId: 1).notifier)
-            .addChangedPart(
-              ActionType.updateChapter,
-              chapter.id,
-              chapter.toJson(),
-              false,
-            );
       });
     }
   }
@@ -121,15 +87,8 @@ class NovelReaderController extends _$NovelReaderController {
     final chap = chapter;
     isar.writeTxnSync(() {
       chap.isBookmarked = !isBookmarked;
+      chap.updatedAt = DateTime.now().millisecondsSinceEpoch;
       isar.chapters.putSync(chap);
-      ref
-          .read(synchingProvider(syncId: 1).notifier)
-          .addChangedPart(
-            ActionType.updateChapter,
-            chapter.id,
-            chapter.toJson(),
-            false,
-          );
     });
   }
 

@@ -88,6 +88,11 @@ const TrackSchema = CollectionSchema(
       id: 13,
       name: r'trackingUrl',
       type: IsarType.string,
+    ),
+    r'updatedAt': PropertySchema(
+      id: 14,
+      name: r'updatedAt',
+      type: IsarType.long,
     )
   },
   estimateSize: _trackEstimateSize,
@@ -145,6 +150,7 @@ void _trackSerialize(
   writer.writeString(offsets[11], object.title);
   writer.writeLong(offsets[12], object.totalChapter);
   writer.writeString(offsets[13], object.trackingUrl);
+  writer.writeLong(offsets[14], object.updatedAt);
 }
 
 Track _trackDeserialize(
@@ -171,6 +177,7 @@ Track _trackDeserialize(
     title: reader.readStringOrNull(offsets[11]),
     totalChapter: reader.readLongOrNull(offsets[12]),
     trackingUrl: reader.readStringOrNull(offsets[13]),
+    updatedAt: reader.readLongOrNull(offsets[14]),
   );
   return object;
 }
@@ -212,6 +219,8 @@ P _trackDeserializeProp<P>(
       return (reader.readLongOrNull(offset)) as P;
     case 13:
       return (reader.readStringOrNull(offset)) as P;
+    case 14:
+      return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -1449,6 +1458,75 @@ extension TrackQueryFilter on QueryBuilder<Track, Track, QFilterCondition> {
       ));
     });
   }
+
+  QueryBuilder<Track, Track, QAfterFilterCondition> updatedAtIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'updatedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterFilterCondition> updatedAtIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'updatedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterFilterCondition> updatedAtEqualTo(
+      int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterFilterCondition> updatedAtGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterFilterCondition> updatedAtLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterFilterCondition> updatedAtBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'updatedAt',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
 }
 
 extension TrackQueryObject on QueryBuilder<Track, Track, QFilterCondition> {}
@@ -1621,6 +1699,18 @@ extension TrackQuerySortBy on QueryBuilder<Track, Track, QSortBy> {
   QueryBuilder<Track, Track, QAfterSortBy> sortByTrackingUrlDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'trackingUrl', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterSortBy> sortByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterSortBy> sortByUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.desc);
     });
   }
 }
@@ -1805,6 +1895,18 @@ extension TrackQuerySortThenBy on QueryBuilder<Track, Track, QSortThenBy> {
       return query.addSortBy(r'trackingUrl', Sort.desc);
     });
   }
+
+  QueryBuilder<Track, Track, QAfterSortBy> thenByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterSortBy> thenByUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.desc);
+    });
+  }
 }
 
 extension TrackQueryWhereDistinct on QueryBuilder<Track, Track, QDistinct> {
@@ -1891,6 +1993,12 @@ extension TrackQueryWhereDistinct on QueryBuilder<Track, Track, QDistinct> {
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'trackingUrl', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Track, Track, QDistinct> distinctByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'updatedAt');
     });
   }
 }
@@ -1983,6 +2091,12 @@ extension TrackQueryProperty on QueryBuilder<Track, Track, QQueryProperty> {
   QueryBuilder<Track, String?, QQueryOperations> trackingUrlProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'trackingUrl');
+    });
+  }
+
+  QueryBuilder<Track, int?, QQueryOperations> updatedAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'updatedAt');
     });
   }
 }

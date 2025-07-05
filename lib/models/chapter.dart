@@ -26,6 +26,8 @@ class Chapter {
   ///Only for local archive Comic
   String? archivePath;
 
+  int? updatedAt;
+
   final manga = IsarLink<Manga>();
 
   Chapter({
@@ -39,6 +41,7 @@ class Chapter {
     this.isRead = false,
     this.lastPageRead = '',
     this.archivePath = '',
+    this.updatedAt = 0,
   });
 
   Chapter.fromJson(Map<String, dynamic> json) {
@@ -52,6 +55,7 @@ class Chapter {
     name = json['name'];
     scanlator = json['scanlator'];
     url = json['url'];
+    updatedAt = json['updatedAt'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -65,5 +69,6 @@ class Chapter {
     'name': name,
     'scanlator': scanlator,
     'url': url,
+    'updatedAt': updatedAt ?? 0,
   };
 }

@@ -10,12 +10,14 @@ class SyncListile extends ConsumerWidget {
   final int id;
   final SyncPreference preference;
   final String? text;
+  final bool enabled;
   const SyncListile({
     super.key,
     required this.onTap,
     required this.id,
     required this.preference,
     this.text,
+    this.enabled = true,
   });
 
   @override
@@ -38,6 +40,7 @@ class SyncListile extends ConsumerWidget {
         trailing: (isLogged
             ? const Icon(Icons.check, size: 30, color: Colors.green)
             : null),
+        enabled: enabled,
         onTap: isLogged
             ? () {
                 showDialog(

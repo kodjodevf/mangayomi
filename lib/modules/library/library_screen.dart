@@ -1152,46 +1152,58 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                               isar.writeTxnSync(() {
                                 for (var manga in mangasList) {
                                   if (manga.isLocalArchive ?? false) {
+                                    final provider = ref.read(
+                                      synchingProvider(syncId: 1).notifier,
+                                    );
                                     final histories = isar.historys
                                         .filter()
                                         .mangaIdEqualTo(manga.id)
                                         .findAllSync();
                                     for (var history in histories) {
                                       isar.historys.deleteSync(history.id!);
+                                      provider.addChangedPart(
+                                        ActionType.removeHistory,
+                                        history.id,
+                                        "{}",
+                                        false,
+                                      );
                                     }
 
                                     for (var chapter in manga.chapters) {
-                                      isar.updates
+                                      final updates = isar.updates
                                           .filter()
                                           .mangaIdEqualTo(chapter.mangaId)
                                           .chapterNameEqualTo(chapter.name)
-                                          .deleteAllSync();
-                                      isar.chapters.deleteSync(chapter.id!);
-                                    }
-                                    isar.mangas.deleteSync(manga.id!);
-                                    ref
-                                        .read(
-                                          synchingProvider(syncId: 1).notifier,
-                                        )
-                                        .addChangedPart(
-                                          ActionType.removeItem,
-                                          manga.id,
+                                          .findAllSync();
+                                      for (var update in updates) {
+                                        isar.updates.deleteSync(update.id!);
+                                        provider.addChangedPart(
+                                          ActionType.removeUpdate,
+                                          update.id,
                                           "{}",
                                           false,
                                         );
+                                      }
+                                      isar.chapters.deleteSync(chapter.id!);
+                                      provider.addChangedPart(
+                                        ActionType.removeChapter,
+                                        chapter.id,
+                                        "{}",
+                                        false,
+                                      );
+                                    }
+                                    isar.mangas.deleteSync(manga.id!);
+                                    provider.addChangedPart(
+                                      ActionType.removeItem,
+                                      manga.id,
+                                      "{}",
+                                      false,
+                                    );
                                   } else {
                                     manga.favorite = false;
+                                    manga.updatedAt =
+                                        DateTime.now().millisecondsSinceEpoch;
                                     isar.mangas.putSync(manga);
-                                    ref
-                                        .read(
-                                          synchingProvider(syncId: 1).notifier,
-                                        )
-                                        .addChangedPart(
-                                          ActionType.updateItem,
-                                          manga.id,
-                                          manga.toJson(),
-                                          false,
-                                        );
                                   }
                                 }
                               });

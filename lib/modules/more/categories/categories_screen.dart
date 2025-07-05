@@ -236,18 +236,10 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                   onPressed: () {
                                     isar.writeTxnSync(() async {
                                       category.hide = !(category.hide ?? false);
+                                      category.updatedAt =
+                                          DateTime.now().millisecondsSinceEpoch;
                                       isar.categorys.putSync(category);
                                     });
-                                    ref
-                                        .read(
-                                          synchingProvider(syncId: 1).notifier,
-                                        )
-                                        .addChangedPartAsync(
-                                          ActionType.renameCategory,
-                                          category.id,
-                                          category.toJson(),
-                                          true,
-                                        );
                                   },
                                   icon: Icon(
                                     !(category.hide ?? false)
@@ -394,6 +386,8 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                       final category = Category(
                                         forItemType: widget.itemType,
                                         name: controller.text,
+                                        updatedAt: DateTime.now()
+                                            .millisecondsSinceEpoch,
                                       );
                                       isar.writeTxnSync(() {
                                         isar.categorys.putSync(
@@ -410,18 +404,6 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                         }
                                       });
 
-                                      await ref
-                                          .read(
-                                            synchingProvider(
-                                              syncId: 1,
-                                            ).notifier,
-                                          )
-                                          .addChangedPartAsync(
-                                            ActionType.addCategory,
-                                            category.id,
-                                            category.toJson(),
-                                            true,
-                                          );
                                       if (context.mounted) {
                                         Navigator.pop(context);
                                       }
@@ -540,16 +522,10 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                           : () async {
                               await isar.writeTxn(() async {
                                 category.name = controller.text;
+                                category.updatedAt =
+                                    DateTime.now().millisecondsSinceEpoch;
                                 await isar.categorys.put(category);
                               });
-                              await ref
-                                  .read(synchingProvider(syncId: 1).notifier)
-                                  .addChangedPartAsync(
-                                    ActionType.renameCategory,
-                                    category.id,
-                                    category.toJson(),
-                                    true,
-                                  );
                               if (context.mounted) {
                                 Navigator.pop(context);
                               }
