@@ -37,6 +37,8 @@ class Track {
   @enumerated
   late ItemType itemType;
 
+  int? updatedAt;
+
   Track({
     this.id = Isar.autoIncrement,
     this.libraryId,
@@ -53,6 +55,7 @@ class Track {
     this.trackingUrl,
     this.isManga,
     this.itemType = ItemType.manga,
+    this.updatedAt = 0,
   });
   Track.fromJson(Map<String, dynamic> json) {
     finishedReadingDate = json['finishedReadingDate'];
@@ -69,6 +72,10 @@ class Track {
     totalChapter = json['totalChapter'];
     trackingUrl = json['trackingUrl'];
     isManga = json['isManga'];
+    if (json['itemType'] != null || isManga != null) {
+      itemType = ItemType.values[json['itemType'] ?? (isManga! ? 0 : 1)];
+    }
+    updatedAt = json['updatedAt'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -86,6 +93,8 @@ class Track {
     'totalChapter': totalChapter,
     'trackingUrl': trackingUrl,
     'isManga': isManga,
+    'itemType': itemType.index,
+    'updatedAt': updatedAt ?? 0,
   };
 }
 

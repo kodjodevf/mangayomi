@@ -571,18 +571,11 @@ class _MigrationMangaGlobalImageCardState
                               favorite: true,
                               categories: categoryIds,
                               dateAdded: DateTime.now().millisecondsSinceEpoch,
+                              updatedAt: DateTime.now().millisecondsSinceEpoch,
                             );
                             int mangaId = -1;
                             isar.writeTxnSync(() {
                               mangaId = isar.mangas.putSync(manga);
-                              ref
-                                  .read(synchingProvider(syncId: 1).notifier)
-                                  .addChangedPart(
-                                    ActionType.addItem,
-                                    manga.id,
-                                    manga.toJson(),
-                                    false,
-                                  );
                             });
                             if (mangaId != -1) {
                               await ref
@@ -659,15 +652,8 @@ class _MigrationMangaGlobalImageCardState
       widget.oldManga.status = preview.status ?? widget.oldManga.status;
       widget.oldManga.description = preview.description;
       widget.oldManga.genre = preview.genre;
+      widget.oldManga.updatedAt = DateTime.now().millisecondsSinceEpoch;
       isar.mangas.putSync(widget.oldManga);
-      ref
-          .read(synchingProvider(syncId: 1).notifier)
-          .addChangedPart(
-            ActionType.updateItem,
-            widget.oldManga.id,
-            widget.oldManga.toJson(),
-            false,
-          );
     });
     await ref.read(
       updateMangaDetailProvider(

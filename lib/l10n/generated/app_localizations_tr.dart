@@ -646,16 +646,16 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get syncing_subtitle =>
-      'Birden fazla cihazda ilerlemenizi kendinize ait bir \n sunucu üzerinden senkronize edin. İlk kez senkronize ediyorsanız, önce yüklediğinizden emin olun veya bu cihazda (otomatik) senkronize kullanmadan önce indirin!';
+      'İlerlemenizi kendi barındırdığınız bir \nserver aracılığıyla birden fazla cihaz arasında senkronize edin. Daha fazla bilgi için discord sunucumuza göz atın!';
 
   @override
-  String get last_sync => 'Son senkronizasyon zamanı: ';
+  String get last_sync_manga => 'Son manga senkronizasyonu:';
 
   @override
-  String get last_upload => 'Son yükleme zamanı: ';
+  String get last_sync_history => 'Son tarih senkronizasyonu:';
 
   @override
-  String get last_download => 'Son indirme zamanı: ';
+  String get last_sync_update => 'Son güncelleme senkronizasyonu:';
 
   @override
   String get sync_server => 'Senkronizasyon Sunucu Adresi';
@@ -664,104 +664,19 @@ class AppLocalizationsTr extends AppLocalizations {
   String get sync_login_invalid_creds => 'Geçersiz e-posta veya şifre';
 
   @override
-  String get sync_checking => 'Senkronizasyon kontrol ediliyor...';
+  String get sync_starting => 'Senkronizasyonu başlatıyorum.';
 
   @override
-  String get sync_uploading => 'Yükleme başladı...';
+  String get sync_finished => 'Senkronizasyon tamamlandı';
 
   @override
-  String get sync_downloading => 'İndirme başladı...';
-
-  @override
-  String get sync_upload_finished => 'Yükleme tamamlandı';
-
-  @override
-  String get sync_download_finished => 'İndirme tamamlandı';
-
-  @override
-  String get sync_up_to_date => 'Senkronizasyon güncel';
-
-  @override
-  String get sync_upload_failed => 'Yükleme başarısız oldu';
-
-  @override
-  String get sync_download_failed => 'İndirme başarısız oldu';
+  String get sync_failed => 'Senkronizasyon başarısız';
 
   @override
   String get sync_button_sync => 'İlerlemeyi senkronize et';
 
   @override
-  String get sync_button_snapshot => 'Anlık görüntü oluştur';
-
-  @override
-  String get sync_button_upload => 'Tam yükleme';
-
-  @override
-  String get sync_button_download => 'Tam indirme';
-
-  @override
-  String get sync_confirm_snapshot =>
-      'Sunucudan uzak bir yedek oluşturmasını isteyin!';
-
-  @override
-  String get sync_confirm_upload =>
-      'Tam yükleme, uzak veriyi tamamen mevcut verinizle değiştirecektir!';
-
-  @override
-  String get sync_confirm_download =>
-      'Tam indirme, mevcut verinizi uzak verilerle tamamen değiştirecektir!';
-
-  @override
   String get sync_on => 'Senkronizasyonu etkinleştir';
-
-  @override
-  String get sync_pending_manga => 'Bekleyen manga değişiklikleri';
-
-  @override
-  String get sync_pending_category => 'Bekleyen kategori değişiklikleri';
-
-  @override
-  String get sync_pending_chapter => 'Bekleyen bölüm değişiklikleri';
-
-  @override
-  String get sync_pending_history => 'Bekleyen geçmiş değişiklikleri';
-
-  @override
-  String get sync_pending_update => 'Bekleyen güncelleme değişiklikleri';
-
-  @override
-  String get sync_pending_extension => 'Bekleyen uzantı değişiklikleri';
-
-  @override
-  String get sync_pending_track => 'Bekleyen izleme değişiklikleri';
-
-  @override
-  String get sync_snapshot_creating => 'Anlık görüntü oluşturuluyor...';
-
-  @override
-  String get sync_snapshot_created => 'Anlık görüntü oluşturuldu!';
-
-  @override
-  String get sync_snapshot_deleting => 'Anlık görüntü siliniyor...';
-
-  @override
-  String get sync_snapshot_deleted => 'Anlık görüntü silindi!';
-
-  @override
-  String get sync_snapshot_no_data =>
-      'Anlık görüntü oluşturmak için veri yok! Önce tam yükleme yapın!';
-
-  @override
-  String get sync_browse_snapshots => 'Eski yedekleri gözden geçir';
-
-  @override
-  String get sync_snapshots => 'Anlık görüntüler';
-
-  @override
-  String get sync_load_snapshot => 'Anlık görüntüyü yükle';
-
-  @override
-  String get sync_delete_snapshot => 'Anlık görüntüyü sil';
 
   @override
   String get sync_auto => 'Otomatik senkronizasyon';
@@ -772,12 +687,6 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get sync_auto_off => 'Kapalı';
-
-  @override
-  String get sync_auto_30_seconds => 'Her 30 saniyede bir';
-
-  @override
-  String get sync_auto_1_minute => 'Her 1 dakikada bir';
 
   @override
   String get sync_auto_5_minutes => 'Her 5 dakikada bir';

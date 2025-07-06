@@ -302,20 +302,10 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                                           widget.source
                                             ..sourceCode = ""
                                             ..isAdded = false
-                                            ..isPinned = false,
+                                            ..isPinned = false
+                                            ..updatedAt = DateTime.now()
+                                                .millisecondsSinceEpoch,
                                         );
-                                        ref
-                                            .read(
-                                              synchingProvider(
-                                                syncId: 1,
-                                              ).notifier,
-                                            )
-                                            .addChangedPart(
-                                              ActionType.updateExtension,
-                                              source.id,
-                                              source.toJson(),
-                                              false,
-                                            );
                                       }
                                       isar.sourcePreferences.deleteAllSync(
                                         sourcePrefsIds,

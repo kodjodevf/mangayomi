@@ -1,7 +1,9 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/custom_sliver_grouped_list_view.dart';
 
 import 'package:isar/isar.dart';
@@ -309,6 +311,9 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
     isar.writeTxnSync(() {
       for (var update in updates) {
         isar.updates.deleteSync(update.id!);
+        ref
+            .read(synchingProvider(syncId: 1).notifier)
+            .addChangedPart(ActionType.removeUpdate, update.id, "{}", false);
       }
     });
     if (mounted) {

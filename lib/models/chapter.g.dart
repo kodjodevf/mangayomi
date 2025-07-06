@@ -57,8 +57,13 @@ const ChapterSchema = CollectionSchema(
       name: r'scanlator',
       type: IsarType.string,
     ),
-    r'url': PropertySchema(
+    r'updatedAt': PropertySchema(
       id: 8,
+      name: r'updatedAt',
+      type: IsarType.long,
+    ),
+    r'url': PropertySchema(
+      id: 9,
       name: r'url',
       type: IsarType.string,
     )
@@ -143,7 +148,8 @@ void _chapterSerialize(
   writer.writeLong(offsets[5], object.mangaId);
   writer.writeString(offsets[6], object.name);
   writer.writeString(offsets[7], object.scanlator);
-  writer.writeString(offsets[8], object.url);
+  writer.writeLong(offsets[8], object.updatedAt);
+  writer.writeString(offsets[9], object.url);
 }
 
 Chapter _chapterDeserialize(
@@ -162,7 +168,8 @@ Chapter _chapterDeserialize(
     mangaId: reader.readLongOrNull(offsets[5]),
     name: reader.readStringOrNull(offsets[6]),
     scanlator: reader.readStringOrNull(offsets[7]),
-    url: reader.readStringOrNull(offsets[8]),
+    updatedAt: reader.readLongOrNull(offsets[8]),
+    url: reader.readStringOrNull(offsets[9]),
   );
   return object;
 }
@@ -191,6 +198,8 @@ P _chapterDeserializeProp<P>(
     case 7:
       return (reader.readStringOrNull(offset)) as P;
     case 8:
+      return (reader.readLongOrNull(offset)) as P;
+    case 9:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1210,6 +1219,75 @@ extension ChapterQueryFilter
     });
   }
 
+  QueryBuilder<Chapter, Chapter, QAfterFilterCondition> updatedAtIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'updatedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterFilterCondition> updatedAtIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'updatedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterFilterCondition> updatedAtEqualTo(
+      int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterFilterCondition> updatedAtGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterFilterCondition> updatedAtLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterFilterCondition> updatedAtBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'updatedAt',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<Chapter, Chapter, QAfterFilterCondition> urlIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -1473,6 +1551,18 @@ extension ChapterQuerySortBy on QueryBuilder<Chapter, Chapter, QSortBy> {
     });
   }
 
+  QueryBuilder<Chapter, Chapter, QAfterSortBy> sortByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterSortBy> sortByUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.desc);
+    });
+  }
+
   QueryBuilder<Chapter, Chapter, QAfterSortBy> sortByUrl() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'url', Sort.asc);
@@ -1596,6 +1686,18 @@ extension ChapterQuerySortThenBy
     });
   }
 
+  QueryBuilder<Chapter, Chapter, QAfterSortBy> thenByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterSortBy> thenByUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.desc);
+    });
+  }
+
   QueryBuilder<Chapter, Chapter, QAfterSortBy> thenByUrl() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'url', Sort.asc);
@@ -1664,6 +1766,12 @@ extension ChapterQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Chapter, Chapter, QDistinct> distinctByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'updatedAt');
+    });
+  }
+
   QueryBuilder<Chapter, Chapter, QDistinct> distinctByUrl(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1725,6 +1833,12 @@ extension ChapterQueryProperty
   QueryBuilder<Chapter, String?, QQueryOperations> scanlatorProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'scanlator');
+    });
+  }
+
+  QueryBuilder<Chapter, int?, QQueryOperations> updatedAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'updatedAt');
     });
   }
 

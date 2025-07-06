@@ -3,12 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -105,17 +103,10 @@ Future<void> _updateSource(
     ..additionalParams = source.additionalParams ?? ""
     ..isObsolete = false
     ..notes = source.notes
-    ..repo = repo;
+    ..repo = repo
+    ..updatedAt = DateTime.now().millisecondsSinceEpoch;
 
   await isar.writeTxn(() async => isar.sources.put(updatedSource));
-  ref
-      .read(synchingProvider(syncId: 1).notifier)
-      .addChangedPart(
-        ActionType.updateExtension,
-        updatedSource.id,
-        updatedSource.toJson(),
-        false,
-      );
 }
 
 Future<void> _addNewSource(
@@ -146,11 +137,9 @@ Future<void> _addNewSource(
     ..appMinVerReq = source.appMinVerReq
     ..isObsolete = false
     ..notes = source.notes
-    ..repo = repo;
+    ..repo = repo
+    ..updatedAt = DateTime.now().millisecondsSinceEpoch;
   await isar.writeTxn(() async => isar.sources.put(newSource));
-  ref
-      .read(synchingProvider(syncId: 1).notifier)
-      .addChangedPart(ActionType.addExtension, null, newSource.toJson(), false);
 }
 
 Future<void> checkIfSourceIsObsolete(
@@ -185,22 +174,13 @@ Future<void> checkIfSourceIsObsolete(
 
     if (source.isObsolete != isNowObsolete) {
       source.isObsolete = isNowObsolete;
+      source.updatedAt = DateTime.now().millisecondsSinceEpoch;
       toUpdate.add(source);
     }
   }
   if (toUpdate.isEmpty) return;
 
   await isar.writeTxn(() => isar.sources.putAll(toUpdate));
-
-  final notifier = ref.read(synchingProvider(syncId: 1).notifier);
-  for (var source in toUpdate) {
-    notifier.addChangedPart(
-      ActionType.updateExtension,
-      source.id,
-      source.toJson(),
-      false,
-    );
-  }
 }
 
 int compareVersions(String version1, String version2) {

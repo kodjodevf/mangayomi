@@ -31,6 +31,11 @@ const UpdateSchema = CollectionSchema(
       id: 2,
       name: r'mangaId',
       type: IsarType.long,
+    ),
+    r'updatedAt': PropertySchema(
+      id: 3,
+      name: r'updatedAt',
+      type: IsarType.long,
     )
   },
   estimateSize: _updateEstimateSize,
@@ -84,6 +89,7 @@ void _updateSerialize(
   writer.writeString(offsets[0], object.chapterName);
   writer.writeString(offsets[1], object.date);
   writer.writeLong(offsets[2], object.mangaId);
+  writer.writeLong(offsets[3], object.updatedAt);
 }
 
 Update _updateDeserialize(
@@ -97,6 +103,7 @@ Update _updateDeserialize(
     date: reader.readStringOrNull(offsets[1]),
     id: id,
     mangaId: reader.readLongOrNull(offsets[2]),
+    updatedAt: reader.readLongOrNull(offsets[3]),
   );
   return object;
 }
@@ -113,6 +120,8 @@ P _updateDeserializeProp<P>(
     case 1:
       return (reader.readStringOrNull(offset)) as P;
     case 2:
+      return (reader.readLongOrNull(offset)) as P;
+    case 3:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -635,6 +644,75 @@ extension UpdateQueryFilter on QueryBuilder<Update, Update, QFilterCondition> {
       ));
     });
   }
+
+  QueryBuilder<Update, Update, QAfterFilterCondition> updatedAtIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'updatedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<Update, Update, QAfterFilterCondition> updatedAtIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'updatedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<Update, Update, QAfterFilterCondition> updatedAtEqualTo(
+      int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Update, Update, QAfterFilterCondition> updatedAtGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Update, Update, QAfterFilterCondition> updatedAtLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Update, Update, QAfterFilterCondition> updatedAtBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'updatedAt',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
 }
 
 extension UpdateQueryObject on QueryBuilder<Update, Update, QFilterCondition> {}
@@ -690,6 +768,18 @@ extension UpdateQuerySortBy on QueryBuilder<Update, Update, QSortBy> {
       return query.addSortBy(r'mangaId', Sort.desc);
     });
   }
+
+  QueryBuilder<Update, Update, QAfterSortBy> sortByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Update, Update, QAfterSortBy> sortByUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.desc);
+    });
+  }
 }
 
 extension UpdateQuerySortThenBy on QueryBuilder<Update, Update, QSortThenBy> {
@@ -740,6 +830,18 @@ extension UpdateQuerySortThenBy on QueryBuilder<Update, Update, QSortThenBy> {
       return query.addSortBy(r'mangaId', Sort.desc);
     });
   }
+
+  QueryBuilder<Update, Update, QAfterSortBy> thenByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Update, Update, QAfterSortBy> thenByUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.desc);
+    });
+  }
 }
 
 extension UpdateQueryWhereDistinct on QueryBuilder<Update, Update, QDistinct> {
@@ -760,6 +862,12 @@ extension UpdateQueryWhereDistinct on QueryBuilder<Update, Update, QDistinct> {
   QueryBuilder<Update, Update, QDistinct> distinctByMangaId() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'mangaId');
+    });
+  }
+
+  QueryBuilder<Update, Update, QDistinct> distinctByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'updatedAt');
     });
   }
 }
@@ -786,6 +894,12 @@ extension UpdateQueryProperty on QueryBuilder<Update, Update, QQueryProperty> {
   QueryBuilder<Update, int?, QQueryOperations> mangaIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'mangaId');
+    });
+  }
+
+  QueryBuilder<Update, int?, QQueryOperations> updatedAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'updatedAt');
     });
   }
 }

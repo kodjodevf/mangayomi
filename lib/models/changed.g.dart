@@ -84,7 +84,7 @@ ChangedPart _changedPartDeserialize(
   final object = ChangedPart(
     actionType:
         _ChangedPartactionTypeValueEnumMap[reader.readByteOrNull(offsets[0])] ??
-            ActionType.addItem,
+            ActionType.removeItem,
     clientDate: reader.readLong(offsets[1]),
     data: reader.readString(offsets[2]),
     id: id,
@@ -103,7 +103,7 @@ P _changedPartDeserializeProp<P>(
     case 0:
       return (_ChangedPartactionTypeValueEnumMap[
               reader.readByteOrNull(offset)] ??
-          ActionType.addItem) as P;
+          ActionType.removeItem) as P;
     case 1:
       return (reader.readLong(offset)) as P;
     case 2:
@@ -116,52 +116,22 @@ P _changedPartDeserializeProp<P>(
 }
 
 const _ChangedPartactionTypeEnumValueMap = {
-  'addItem': 0,
-  'removeItem': 1,
-  'updateItem': 2,
-  'addCategory': 3,
-  'removeCategory': 4,
-  'renameCategory': 5,
-  'addChapter': 6,
-  'removeChapter': 7,
-  'updateChapter': 8,
-  'clearHistory': 9,
-  'addHistory': 10,
-  'removeHistory': 11,
-  'updateHistory': 12,
-  'clearUpdates': 13,
-  'addUpdate': 14,
-  'clearExtension': 15,
-  'addExtension': 16,
-  'removeExtension': 17,
-  'updateExtension': 18,
-  'addTrack': 19,
-  'removeTrack': 20,
-  'updateTrack': 21,
+  'removeItem': 0,
+  'removeCategory': 1,
+  'removeChapter': 2,
+  'removeHistory': 3,
+  'removeUpdate': 4,
+  'removeExtension': 5,
+  'removeTrack': 6,
 };
 const _ChangedPartactionTypeValueEnumMap = {
-  0: ActionType.addItem,
-  1: ActionType.removeItem,
-  2: ActionType.updateItem,
-  3: ActionType.addCategory,
-  4: ActionType.removeCategory,
-  5: ActionType.renameCategory,
-  6: ActionType.addChapter,
-  7: ActionType.removeChapter,
-  8: ActionType.updateChapter,
-  9: ActionType.clearHistory,
-  10: ActionType.addHistory,
-  11: ActionType.removeHistory,
-  12: ActionType.updateHistory,
-  13: ActionType.clearUpdates,
-  14: ActionType.addUpdate,
-  15: ActionType.clearExtension,
-  16: ActionType.addExtension,
-  17: ActionType.removeExtension,
-  18: ActionType.updateExtension,
-  19: ActionType.addTrack,
-  20: ActionType.removeTrack,
-  21: ActionType.updateTrack,
+  0: ActionType.removeItem,
+  1: ActionType.removeCategory,
+  2: ActionType.removeChapter,
+  3: ActionType.removeHistory,
+  4: ActionType.removeUpdate,
+  5: ActionType.removeExtension,
+  6: ActionType.removeTrack,
 };
 
 Id _changedPartGetId(ChangedPart object) {

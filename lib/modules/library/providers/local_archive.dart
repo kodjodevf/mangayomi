@@ -1,12 +1,10 @@
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/manga/archive_reader/models/models.dart';
 import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'local_archive.g.dart';
@@ -45,11 +43,8 @@ Future importArchivesFromFile(
           description: '',
           isLocalArchive: true,
           artist: '',
+          updatedAt: dateNow,
         );
-
-    ref
-        .read(synchingProvider(syncId: 1).notifier)
-        .addChangedPart(ActionType.addItem, null, manga.toJson(), true);
 
     for (var file in result.files.reversed.toList()) {
       (String, LocalExtensionType, Uint8List, String)? data =
@@ -68,17 +63,10 @@ Future importArchivesFromFile(
           name: itemType == ItemType.manga ? data!.$1 : name,
           archivePath: itemType == ItemType.manga ? data!.$4 : file.path,
           mangaId: manga.id,
+          updatedAt: DateTime.now().millisecondsSinceEpoch,
         )..manga.value = manga;
         isar.chapters.putSync(chapters);
         chapters.manga.saveSync();
-        ref
-            .read(synchingProvider(syncId: 1).notifier)
-            .addChangedPart(
-              ActionType.addChapter,
-              null,
-              chapters.toJson(),
-              false,
-            );
       });
     }
   }

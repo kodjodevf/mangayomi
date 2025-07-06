@@ -1393,21 +1393,11 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                                                 isar.writeTxnSync(() {
                                                   isar.mangas.putSync(
                                                     manga
+                                                      ..updatedAt = DateTime.now()
+                                                          .millisecondsSinceEpoch
                                                       ..customCoverImage =
                                                           imageBytes,
                                                   );
-                                                  ref
-                                                      .read(
-                                                        synchingProvider(
-                                                          syncId: 1,
-                                                        ).notifier,
-                                                      )
-                                                      .addChangedPart(
-                                                        ActionType.updateItem,
-                                                        manga.id,
-                                                        manga.toJson(),
-                                                        false,
-                                                      );
                                                 });
                                                 if (context.mounted) {
                                                   Navigator.pop(context, "ok");

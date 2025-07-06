@@ -42,6 +42,11 @@ const CategorySchema = CollectionSchema(
       id: 4,
       name: r'pos',
       type: IsarType.long,
+    ),
+    r'updatedAt': PropertySchema(
+      id: 5,
+      name: r'updatedAt',
+      type: IsarType.long,
     )
   },
   estimateSize: _categoryEstimateSize,
@@ -84,6 +89,7 @@ void _categorySerialize(
   writer.writeBool(offsets[2], object.hide);
   writer.writeString(offsets[3], object.name);
   writer.writeLong(offsets[4], object.pos);
+  writer.writeLong(offsets[5], object.updatedAt);
 }
 
 Category _categoryDeserialize(
@@ -100,6 +106,7 @@ Category _categoryDeserialize(
     id: id,
     name: reader.readStringOrNull(offsets[3]),
     pos: reader.readLongOrNull(offsets[4]),
+    updatedAt: reader.readLongOrNull(offsets[5]),
   );
   object.forManga = reader.readBoolOrNull(offsets[1]);
   return object;
@@ -122,6 +129,8 @@ P _categoryDeserializeProp<P>(
     case 3:
       return (reader.readStringOrNull(offset)) as P;
     case 4:
+      return (reader.readLongOrNull(offset)) as P;
+    case 5:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -616,6 +625,75 @@ extension CategoryQueryFilter
       ));
     });
   }
+
+  QueryBuilder<Category, Category, QAfterFilterCondition> updatedAtIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'updatedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterFilterCondition> updatedAtIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'updatedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterFilterCondition> updatedAtEqualTo(
+      int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterFilterCondition> updatedAtGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterFilterCondition> updatedAtLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterFilterCondition> updatedAtBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'updatedAt',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
 }
 
 extension CategoryQueryObject
@@ -682,6 +760,18 @@ extension CategoryQuerySortBy on QueryBuilder<Category, Category, QSortBy> {
   QueryBuilder<Category, Category, QAfterSortBy> sortByPosDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'pos', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterSortBy> sortByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterSortBy> sortByUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.desc);
     });
   }
 }
@@ -759,6 +849,18 @@ extension CategoryQuerySortThenBy
       return query.addSortBy(r'pos', Sort.desc);
     });
   }
+
+  QueryBuilder<Category, Category, QAfterSortBy> thenByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterSortBy> thenByUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.desc);
+    });
+  }
 }
 
 extension CategoryQueryWhereDistinct
@@ -791,6 +893,12 @@ extension CategoryQueryWhereDistinct
   QueryBuilder<Category, Category, QDistinct> distinctByPos() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'pos');
+    });
+  }
+
+  QueryBuilder<Category, Category, QDistinct> distinctByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'updatedAt');
     });
   }
 }
@@ -830,6 +938,12 @@ extension CategoryQueryProperty
   QueryBuilder<Category, int?, QQueryOperations> posProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'pos');
+    });
+  }
+
+  QueryBuilder<Category, int?, QQueryOperations> updatedAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'updatedAt');
     });
   }
 }

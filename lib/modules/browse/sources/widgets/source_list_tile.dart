@@ -3,10 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -35,16 +33,10 @@ class SourceListTile extends StatelessWidget {
           isar.writeTxnSync(() {
             for (var src in sources) {
               isar.sources.putSync(
-                src..lastUsed = src.id == source.id ? true : false,
+                src
+                  ..lastUsed = src.id == source.id ? true : false
+                  ..updatedAt = DateTime.now().millisecondsSinceEpoch,
               );
-              ref
-                  .read(synchingProvider(syncId: 1).notifier)
-                  .addChangedPart(
-                    ActionType.updateExtension,
-                    src.id,
-                    src.toJson(),
-                    false,
-                  );
             }
           });
           context.push('/mangaHome', extra: (source, false));
@@ -109,17 +101,11 @@ class SourceListTile extends StatelessWidget {
                 onPressed: () {
                   isar.writeTxnSync(
                     () => isar.sources.putSync(
-                      source..isPinned = !source.isPinned!,
+                      source
+                        ..isPinned = !source.isPinned!
+                        ..updatedAt = DateTime.now().millisecondsSinceEpoch,
                     ),
                   );
-                  ref
-                      .read(synchingProvider(syncId: 1).notifier)
-                      .addChangedPart(
-                        ActionType.updateExtension,
-                        source.id,
-                        source.toJson(),
-                        false,
-                      );
                 },
                 icon: Icon(
                   Icons.push_pin_outlined,
