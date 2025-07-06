@@ -50,6 +50,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   final Map<String, List<NavigationRailDestination>> _desktopDestinationsCache =
       {};
   final Map<String, List<Widget>> _mobileDestinationsCache = {};
+  void _clearCache() {
+    _hyphenatedLabelsCache.clear();
+    _desktopDestinationsCache.clear();
+    _mobileDestinationsCache.clear();
+  }
 
   String getHyphenatedUpdatesLabel(String languageCode, String defaultLabel) {
     final cacheKey = '$languageCode:$defaultLabel';
@@ -156,6 +161,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   bool isLibSwitch = false;
   @override
   Widget build(BuildContext context) {
+    ref.listen<Locale>(l10nLocaleStateProvider, (previous, next) {
+      _clearCache();
+      setState(() {});
+    });
+
     final l10n = context.l10n;
     final route = GoRouter.of(context);
     final navigationOrder = ref.watch(navigationOrderStateProvider);
