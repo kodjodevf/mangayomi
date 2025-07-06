@@ -173,7 +173,7 @@ class SyncScreen extends ConsumerWidget {
                 SyncListile(
                   enabled: syncPreference.syncOn,
                   onTap: () async {
-                    _showDialogLogin(context, ref);
+                    _showDialogLogin(context, ref, syncPreference);
                   },
                   id: 1,
                   preference: syncPreference,
@@ -276,9 +276,9 @@ class SyncScreen extends ConsumerWidget {
   }
 }
 
-void _showDialogLogin(BuildContext context, WidgetRef ref) {
-  final serverController = TextEditingController();
-  final emailController = TextEditingController();
+void _showDialogLogin(BuildContext context, WidgetRef ref, SyncPreference syncPreference) {
+  final serverController = TextEditingController(text: syncPreference.server);
+  final emailController = TextEditingController(text: syncPreference.email);
   final passwordController = TextEditingController();
   String server = "";
   String email = "";

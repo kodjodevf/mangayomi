@@ -15,9 +15,14 @@ class Synching extends _$Synching {
     return isar.syncPreferences.getSync(syncId!) ?? SyncPreference(syncId: 1);
   }
 
-  void login(SyncPreference syncPreference) {
+  void login(String server, String email, String authToken) {
     isar.writeTxnSync(() {
-      isar.syncPreferences.putSync(syncPreference);
+      isar.syncPreferences.putSync(
+        state
+          ..server = server
+          ..email = email
+          ..authToken = authToken,
+      );
     });
     ref.invalidateSelf();
     ref.invalidate(syncServerProvider(syncId: syncId!));

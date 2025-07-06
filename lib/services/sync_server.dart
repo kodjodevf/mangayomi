@@ -7,7 +7,6 @@ import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/models/sync_preference.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
@@ -52,14 +51,7 @@ class SyncServer extends _$SyncServer {
       final authToken = cookieHeader!.substring(startIdx + 3, endIdx);
       ref
           .read(synchingProvider(syncId: syncId).notifier)
-          .login(
-            SyncPreference(
-              syncId: syncId,
-              email: username,
-              server: server,
-              authToken: authToken,
-            ),
-          );
+          .login(server, username, authToken);
       botToast(l10n.sync_logged);
       return (true, "");
     } catch (e) {
@@ -69,7 +61,7 @@ class SyncServer extends _$SyncServer {
 
   Future<void> startSync(AppLocalizations l10n, bool silent) async {
     if (!silent) {
-      botToast(l10n.sync_starting, second: 2);
+      botToast(l10n.sync_starting, second: 500);
     }
     try {
       final syncNotifier = ref.read(synchingProvider(syncId: syncId).notifier);
@@ -96,6 +88,7 @@ class SyncServer extends _$SyncServer {
       }
     } catch (error) {
       botToast(error.toString(), second: 5);
+      rethrow;
     }
   }
 

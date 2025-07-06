@@ -72,6 +72,9 @@ class Track {
     totalChapter = json['totalChapter'];
     trackingUrl = json['trackingUrl'];
     isManga = json['isManga'];
+    if (json['itemType'] != null || isManga != null) {
+      itemType = ItemType.values[json['itemType'] ?? (isManga! ? 0 : 1)];
+    }
     updatedAt = json['updatedAt'];
   }
 
@@ -90,6 +93,7 @@ class Track {
     'totalChapter': totalChapter,
     'trackingUrl': trackingUrl,
     'isManga': isManga,
+    'itemType': itemType.index,
     'updatedAt': updatedAt ?? 0,
   };
 }
