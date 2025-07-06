@@ -216,11 +216,7 @@ Future<void> downloadChapter(
     });
   } else if (itemType == ItemType.novel && chapter.url != null) {
     final cookie = MClient.getCookiesPref(chapter.url!);
-    final headers = itemType == ItemType.manga
-        ? ref.read(headersProvider(source: manga.source!, lang: manga.lang!))
-        : itemType == ItemType.anime
-        ? videoHeader
-        : htmlHeader;
+    final headers = htmlHeader;
     if (cookie.isNotEmpty) {
       final userAgent = isar.settings.getSync(227)!.userAgent!;
       headers.addAll(cookie);
