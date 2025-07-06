@@ -806,23 +806,28 @@ class MangasSetIsReadState extends _$MangasSetIsReadState {
   void build({required List<int> mangaIds}) {}
 
   void set() {
+    final allChapters = <Chapter>[];
+    final allMangas = <Manga>[];
     for (var mangaid in mangaIds) {
       final manga = isar.mangas.getSync(mangaid)!;
       final chapters = manga.chapters;
       if (chapters.isNotEmpty) {
         chapters.last.updateTrackChapterRead(ref);
-        isar.writeTxnSync(() {
-          for (var chapter in chapters) {
-            chapter.isRead = true;
-            chapter.lastPageRead = "1";
-            chapter.updatedAt = DateTime.now().millisecondsSinceEpoch;
-            isar.chapters.putSync(chapter..manga.value = manga);
-            chapter.manga.saveSync();
-          }
-          isar.mangas.putSync(manga);
-        });
+        for (var chapter in chapters) {
+          chapter.isRead = true;
+          chapter.lastPageRead = "1";
+          chapter.updatedAt = DateTime.now().millisecondsSinceEpoch;
+          chapter.manga.value = manga;
+          allChapters.add(chapter);
+        }
+        allMangas.add(manga);
       }
     }
+
+    isar.writeTxnSync(() {
+      isar.chapters.putAllSync(allChapters);
+      isar.mangas.putAllSync(allMangas);
+    });
 
     ref.read(isLongPressedMangaStateProvider.notifier).update(false);
     ref.read(mangasListStateProvider.notifier).clear();
@@ -835,19 +840,23 @@ class MangasSetUnReadState extends _$MangasSetUnReadState {
   void build({required List<int> mangaIds}) {}
 
   void set() {
+    final allChapters = <Chapter>[];
+    final allMangas = <Manga>[];
     for (var mangaid in mangaIds) {
       final manga = isar.mangas.getSync(mangaid)!;
-      final chapters = manga.chapters;
-      isar.writeTxnSync(() {
-        for (var chapter in chapters) {
-          chapter.isRead = false;
-          chapter.updatedAt = DateTime.now().millisecondsSinceEpoch;
-          isar.chapters.putSync(chapter..manga.value = manga);
-          chapter.manga.saveSync();
-        }
-        isar.mangas.putSync(manga);
-      });
+      for (var chapter in manga.chapters) {
+        chapter.isRead = false;
+        chapter.updatedAt = DateTime.now().millisecondsSinceEpoch;
+        chapter.manga.value = manga;
+        allChapters.add(chapter);
+      }
+      allMangas.add(manga);
     }
+
+    isar.writeTxnSync(() {
+      isar.chapters.putAllSync(allChapters);
+      isar.mangas.putAllSync(allMangas);
+    });
 
     ref.read(isLongPressedMangaStateProvider.notifier).update(false);
     ref.read(mangasListStateProvider.notifier).clear();
