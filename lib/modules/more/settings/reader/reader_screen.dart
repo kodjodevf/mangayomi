@@ -224,52 +224,62 @@ class ReaderScreen extends ConsumerWidget {
             ),
             ListTile(
               onTap: () {
-                List<int> numbers = [4, 6, 8, 10, 12, 14, 16, 18, 20];
                 showDialog(
                   context: context,
                   builder: (context) {
+                    int tempAmount = pagePreloadAmount;
                     return AlertDialog(
                       title: Text(context.l10n.page_preload_amount),
                       content: SizedBox(
                         width: context.width(0.8),
-                        child: SuperListView.builder(
-                          shrinkWrap: true,
-                          itemCount: numbers.length,
-                          itemBuilder: (context, index) {
-                            return RadioListTile(
-                              dense: true,
-                              contentPadding: const EdgeInsets.all(0),
-                              value: numbers[index],
-                              groupValue: pagePreloadAmount,
-                              onChanged: (value) {
-                                ref
-                                    .read(
-                                      pagePreloadAmountStateProvider.notifier,
-                                    )
-                                    .set(value!);
-                                Navigator.pop(context);
-                              },
-                              title: Row(
-                                children: [Text(numbers[index].toString())],
-                              ),
+                        child: StatefulBuilder(
+                          builder: (context, setState) {
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  tempAmount.toString(),
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Slider(
+                                  value: tempAmount.toDouble(),
+                                  min: 1,
+                                  max: 20,
+                                  // divisions: 19, // makes the slider a bit sluggish
+                                  // label: tempAmount.toString(), // value indicator balloon. Redundant because of the Text widget above
+                                  onChanged: (double newVal) {
+                                    setState(() {
+                                      tempAmount = newVal.round();
+                                    });
+                                  },
+                                ),
+                              ],
                             );
                           },
                         ),
                       ),
                       actions: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            TextButton(
-                              onPressed: () async {
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                context.l10n.cancel,
-                                style: TextStyle(color: context.primaryColor),
-                              ),
-                            ),
-                          ],
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text(
+                            context.l10n.cancel,
+                            style: TextStyle(color: context.primaryColor),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            ref
+                                .read(pagePreloadAmountStateProvider.notifier)
+                                .set(tempAmount);
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            context.l10n.ok,
+                            style: TextStyle(color: context.primaryColor),
+                          ),
                         ),
                       ],
                     );
