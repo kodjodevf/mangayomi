@@ -22,22 +22,42 @@ List<String> _convertToCBZ((String, String, String, List<String>) datas) {
   final imagesPaths = pageList.where((path) => path.endsWith('.jpg')).toList()
     ..sort();
 
-  if (imagesPaths.isNotEmpty) {
-    final archive = Archive();
-    final cbzPath = path.join(mangaDir, "$chapterName.cbz");
+  if (imagesPaths.isEmpty) return imagesPaths;
 
-    for (var imagePath in imagesPaths) {
-      final file = File(imagePath);
-      if (file.existsSync()) {
-        final bytes = file.readAsBytesSync();
-        final fileName = path.basename(imagePath);
-        archive.add(ArchiveFile.bytes(fileName, bytes));
-      }
+  final archive = Archive();
+  final cbzPath = path.join(mangaDir, "$chapterName.cbz");
+  final List<String> missingFiles = [];
+  final List<String> includedFiles = [];
+
+  for (var imagePath in imagesPaths) {
+    final file = File(imagePath);
+    if (!file.existsSync()) {
+      missingFiles.add(imagePath);
+      continue;
     }
+    final bytes = file.readAsBytesSync();
+    final fileName = path.basename(imagePath);
+    archive.add(ArchiveFile.bytes(fileName, bytes));
+    includedFiles.add(imagePath);
+  }
+  try {
     final cbzData = ZipEncoder().encode(archive);
     File(cbzPath).writeAsBytesSync(cbzData);
+  } catch (e) {
+    if (File(cbzPath).existsSync()) File(cbzPath).deleteSync();
+    throw FileSystemException("Failed to create/write CBZ file: $e", cbzPath);
+  }
+  try {
     Directory(chapterDir).deleteSync(recursive: true);
+  } catch (e) {
+    throw FileSystemException("Failed to delete chapter directory", chapterDir);
+  }
+  if (missingFiles.isNotEmpty) {
+    final missingListStr = missingFiles.join(", ");
+    throw Exception(
+      "CBZ created, but the following pages were missing and not included: $missingListStr",
+    );
   }
 
-  return imagesPaths;
+  return includedFiles;
 }

@@ -96,8 +96,9 @@ Future<void> downloadChapter(
   M3u8Downloader? m3u8Downloader;
 
   Future<void> processConvert() async {
-    if (ref.watch(saveAsCBZArchiveStateProvider)) {
-      await ref.watch(
+    if (!ref.read(saveAsCBZArchiveStateProvider)) return;
+    try {
+      await ref.read(
         convertToCBZProvider(
           chapterDirectory.path,
           mangaMainDirectory!.path,
@@ -105,6 +106,8 @@ Future<void> downloadChapter(
           pages.map((e) => e.fileName!).toList(),
         ).future,
       );
+    } catch (error) {
+      botToast("Failed to create CBZ: $error");
     }
   }
 
