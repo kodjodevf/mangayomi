@@ -205,7 +205,7 @@ class _MangaChapterPageGalleryState
 
   final double _horizontalScaleValue = 1.0;
 
-  late int pagePreloadAmount = ref.watch(pagePreloadAmountStateProvider);
+  late int pagePreloadAmount = ref.read(pagePreloadAmountStateProvider);
   late bool _isBookmarked = _readerController.getChapterBookmarked();
 
   final _currentReaderMode = StateProvider<ReaderMode?>((ref) => null);

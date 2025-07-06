@@ -55,7 +55,7 @@ Future<void> downloadChapter(
   bool? useWifi,
   VoidCallback? callback,
 }) async {
-  bool onlyOnWifi = useWifi ?? ref.watch(onlyOnWifiStateProvider);
+  bool onlyOnWifi = useWifi ?? ref.read(onlyOnWifiStateProvider);
   final connectivity = await Connectivity().checkConnectivity();
   final isOnWifi =
       connectivity.contains(ConnectivityResult.wifi) ||
@@ -214,7 +214,7 @@ Future<void> downloadChapter(
   } else if (itemType == ItemType.novel && chapter.url != null) {
     final cookie = MClient.getCookiesPref(chapter.url!);
     final headers = itemType == ItemType.manga
-        ? ref.watch(headersProvider(source: manga.source!, lang: manga.lang!))
+        ? ref.read(headersProvider(source: manga.source!, lang: manga.lang!))
         : itemType == ItemType.anime
         ? videoHeader
         : htmlHeader;
@@ -245,7 +245,7 @@ Future<void> downloadChapter(
         await File(
           p.join(mangaMainDirectory!.path, "${chapter.name}.cbz"),
         ).exists() &&
-        ref.watch(saveAsCBZArchiveStateProvider);
+        ref.read(saveAsCBZArchiveStateProvider);
     bool mp4FileExist = await File(
       p.join(mangaMainDirectory.path, "$chapterName.mp4"),
     ).exists();
@@ -265,7 +265,7 @@ Future<void> downloadChapter(
         final page = pageUrls[index];
         final cookie = MClient.getCookiesPref(page.url);
         final headers = itemType == ItemType.manga
-            ? ref.watch(
+            ? ref.read(
                 headersProvider(source: manga.source!, lang: manga.lang!),
               )
             : itemType == ItemType.anime

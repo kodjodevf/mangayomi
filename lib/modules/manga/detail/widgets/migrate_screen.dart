@@ -46,7 +46,7 @@ class _MigrationScreenScreenState extends ConsumerState<MigrationScreen> {
   String _query = "";
   final _textEditingController = TextEditingController();
   late final List<Source> sourceList =
-      ref.watch(onlyIncludePinnedSourceStateProvider)
+      ref.read(onlyIncludePinnedSourceStateProvider)
       ? isar.sources
             .filter()
             .isPinnedEqualTo(true)
