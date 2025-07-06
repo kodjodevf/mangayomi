@@ -2551,7 +2551,7 @@ final isLongPressedMangaStateProvider =
 
 typedef _$IsLongPressedMangaState = AutoDisposeNotifier<bool>;
 String _$mangasSetIsReadStateHash() =>
-    r'a973367ebc8a41ae36c1c5fc012755b13de81dc6';
+    r'8f4f7f22ea8e82cf2370fb997033e1a4ec03168f';
 
 abstract class _$MangasSetIsReadState
     extends BuildlessAutoDisposeNotifier<void> {
@@ -2698,7 +2698,7 @@ class _MangasSetIsReadStateProviderElement
 }
 
 String _$mangasSetUnReadStateHash() =>
-    r'2e8f4f0eaf916c2e51013be08a943999fa554ae6';
+    r'09ddd287b110fd76494f9f56bd5cf76f58936f1f';
 
 abstract class _$MangasSetUnReadState
     extends BuildlessAutoDisposeNotifier<void> {
