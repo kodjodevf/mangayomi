@@ -48,7 +48,7 @@ Future<GetChapterPagesModel> getChapterPages(
   final isarPageUrls = chapterPageUrlsList
       .where((element) => element.chapterId == chapter.id)
       .firstOrNull;
-  final incognitoMode = ref.watch(incognitoModeStateProvider);
+  final incognitoMode = ref.read(incognitoModeStateProvider);
   final storageProvider = StorageProvider();
   final mangaDirectory = await storageProvider.getMangaMainDirectory(chapter);
   path = await storageProvider.getMangaChapterDirectory(
@@ -86,7 +86,7 @@ Future<GetChapterPagesModel> getChapterPages(
       final path = isLocalArchive
           ? chapter.archivePath
           : p.join(mangaDirectory.path, "${chapter.name}.cbz");
-      final local = await ref.watch(
+      final local = await ref.read(
         getArchiveDataFromFileProvider(path!).future,
       );
       for (var image in local.images!) {
@@ -127,11 +127,9 @@ Future<GetChapterPagesModel> getChapterPages(
               ? chapterPageHeaders.map((e) => e.toString()).toList()
               : null,
       );
-      isar.writeTxnSync(
-        () => isar.settings.putSync(
-          settings..chapterPageUrlsList = chapterPageUrls,
-        ),
-      );
+      isar.writeTxnSync(() {
+        isar.settings.putSync(settings..chapterPageUrlsList = chapterPageUrls);
+      });
     }
     for (var i = 0; i < pageUrls.length; i++) {
       uChapDataPreloadp.add(
