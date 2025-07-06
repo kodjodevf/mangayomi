@@ -819,6 +819,7 @@ class MangasSetIsReadState extends _$MangasSetIsReadState {
             isar.chapters.putSync(chapter..manga.value = manga);
             chapter.manga.saveSync();
           }
+          isar.mangas.putSync(manga);
         });
       }
     }
@@ -844,6 +845,7 @@ class MangasSetUnReadState extends _$MangasSetUnReadState {
           isar.chapters.putSync(chapter..manga.value = manga);
           chapter.manga.saveSync();
         }
+        isar.mangas.putSync(manga);
       });
     }
 
