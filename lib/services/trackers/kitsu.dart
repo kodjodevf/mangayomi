@@ -345,7 +345,7 @@ class Kitsu extends _$Kitsu {
   }
 
   String _getAccessToken() {
-    final track = ref.watch(tracksProvider(syncId: syncId));
+    final track = ref.read(tracksProvider(syncId: syncId));
     final mAKOAuth = OAuth.fromJson(
       jsonDecode(track!.oAuth!) as Map<String, dynamic>,
     );
@@ -359,7 +359,7 @@ class Kitsu extends _$Kitsu {
   }
 
   String _getUserId() {
-    final track = ref.watch(tracksProvider(syncId: syncId));
+    final track = ref.read(tracksProvider(syncId: syncId));
     return track!.username!;
   }
 

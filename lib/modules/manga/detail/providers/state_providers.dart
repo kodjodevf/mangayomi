@@ -298,15 +298,15 @@ class ChapterSetIsBookmarkState extends _$ChapterSetIsBookmarkState {
   void build({required Manga manga}) {}
 
   set() {
+    final allChapters = <Chapter>[];
     final chapters = ref.watch(chaptersListStateProvider);
-    isar.writeTxnSync(() {
-      for (var chapter in chapters) {
-        chapter.isBookmarked = !chapter.isBookmarked!;
-        chapter.updatedAt = DateTime.now().millisecondsSinceEpoch;
-        isar.chapters.putSync(chapter..manga.value = manga);
-        chapter.manga.saveSync();
-      }
-    });
+    for (var chapter in chapters) {
+      chapter.isBookmarked = !chapter.isBookmarked!;
+      chapter.updatedAt = DateTime.now().millisecondsSinceEpoch;
+      chapter.manga.value = manga;
+      allChapters.add(chapter);
+    }
+    isar.writeTxnSync(() => isar.chapters.putAllSync(allChapters));
     ref.read(isLongPressedStateProvider.notifier).update(false);
     ref.read(chaptersListStateProvider.notifier).clear();
   }
@@ -318,15 +318,15 @@ class ChapterSetIsReadState extends _$ChapterSetIsReadState {
   void build({required Manga manga}) {}
 
   set() {
+    final allChapters = <Chapter>[];
     final chapters = ref.watch(chaptersListStateProvider);
-    isar.writeTxnSync(() {
-      for (var chapter in chapters) {
-        chapter.isRead = !chapter.isRead!;
-        chapter.updatedAt = DateTime.now().millisecondsSinceEpoch;
-        isar.chapters.putSync(chapter..manga.value = manga);
-        chapter.manga.saveSync();
-      }
-    });
+    for (var chapter in chapters) {
+      chapter.isRead = !chapter.isRead!;
+      chapter.updatedAt = DateTime.now().millisecondsSinceEpoch;
+      chapter.manga.value = manga;
+      allChapters.add(chapter);
+    }
+    isar.writeTxnSync(() => isar.chapters.putAllSync(allChapters));
     ref.read(isLongPressedStateProvider.notifier).update(false);
     ref.read(chaptersListStateProvider.notifier).clear();
   }

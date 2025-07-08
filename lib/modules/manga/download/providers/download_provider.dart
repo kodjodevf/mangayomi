@@ -55,7 +55,7 @@ Future<void> downloadChapter(
   bool? useWifi,
   VoidCallback? callback,
 }) async {
-  bool onlyOnWifi = useWifi ?? ref.watch(onlyOnWifiStateProvider);
+  bool onlyOnWifi = useWifi ?? ref.read(onlyOnWifiStateProvider);
   final connectivity = await Connectivity().checkConnectivity();
   final isOnWifi =
       connectivity.contains(ConnectivityResult.wifi) ||
@@ -96,8 +96,9 @@ Future<void> downloadChapter(
   M3u8Downloader? m3u8Downloader;
 
   Future<void> processConvert() async {
-    if (ref.watch(saveAsCBZArchiveStateProvider)) {
-      await ref.watch(
+    if (!ref.read(saveAsCBZArchiveStateProvider)) return;
+    try {
+      await ref.read(
         convertToCBZProvider(
           chapterDirectory.path,
           mangaMainDirectory!.path,
@@ -105,6 +106,8 @@ Future<void> downloadChapter(
           pages.map((e) => e.fileName!).toList(),
         ).future,
       );
+    } catch (error) {
+      botToast("Failed to create CBZ: $error");
     }
   }
 
@@ -213,11 +216,7 @@ Future<void> downloadChapter(
     });
   } else if (itemType == ItemType.novel && chapter.url != null) {
     final cookie = MClient.getCookiesPref(chapter.url!);
-    final headers = itemType == ItemType.manga
-        ? ref.watch(headersProvider(source: manga.source!, lang: manga.lang!))
-        : itemType == ItemType.anime
-        ? videoHeader
-        : htmlHeader;
+    final headers = htmlHeader;
     if (cookie.isNotEmpty) {
       final userAgent = isar.settings.getSync(227)!.userAgent!;
       headers.addAll(cookie);
@@ -245,7 +244,7 @@ Future<void> downloadChapter(
         await File(
           p.join(mangaMainDirectory!.path, "${chapter.name}.cbz"),
         ).exists() &&
-        ref.watch(saveAsCBZArchiveStateProvider);
+        ref.read(saveAsCBZArchiveStateProvider);
     bool mp4FileExist = await File(
       p.join(mangaMainDirectory.path, "$chapterName.mp4"),
     ).exists();
@@ -265,7 +264,7 @@ Future<void> downloadChapter(
         final page = pageUrls[index];
         final cookie = MClient.getCookiesPref(page.url);
         final headers = itemType == ItemType.manga
-            ? ref.watch(
+            ? ref.read(
                 headersProvider(source: manga.source!, lang: manga.lang!),
               )
             : itemType == ItemType.anime

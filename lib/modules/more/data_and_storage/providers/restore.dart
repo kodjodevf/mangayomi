@@ -233,16 +233,10 @@ void restoreBackup(Ref ref, Map<String, dynamic> backup, {bool full = true}) {
             isar.trackPreferences.clearSync();
             isar.trackPreferences.putAllSync(trackPreferences);
           }
-        }
-
-        if (full) {
           isar.sources.clearSync();
           if (extensions != null) {
             isar.sources.putAllSync(extensions);
           }
-        }
-
-        if (full) {
           isar.sourcePreferences.clearSync();
           if (sourcesPrefs != null) {
             isar.sourcePreferences.putAllSync(sourcesPrefs);
@@ -251,22 +245,7 @@ void restoreBackup(Ref ref, Map<String, dynamic> backup, {bool full = true}) {
           if (settings != null) {
             isar.settings.putAllSync(settings);
           }
-        }
-        if (full) {
-          ref
-              .read(synchingProvider(syncId: 1).notifier)
-              .clearAllChangedParts(false);
-          ref.invalidate(followSystemThemeStateProvider);
-          ref.invalidate(themeModeStateProvider);
-          ref.invalidate(blendLevelStateProvider);
-          ref.invalidate(flexSchemeColorStateProvider);
-          ref.invalidate(pureBlackDarkModeStateProvider);
-          ref.invalidate(l10nLocaleStateProvider);
-          ref.invalidate(navigationOrderStateProvider);
-          ref.invalidate(hideItemsStateProvider);
-          ref.invalidate(extensionsRepoStateProvider(ItemType.manga));
-          ref.invalidate(extensionsRepoStateProvider(ItemType.anime));
-          ref.invalidate(extensionsRepoStateProvider(ItemType.novel));
+          _invalidateCommonState(ref);
           ref.read(routerCurrentLocationStateProvider.notifier).refresh();
         }
       });
@@ -361,19 +340,7 @@ void restoreKotatsuBackup(Ref ref, Archive archive) {
       isar.updates.clearSync();
       isar.tracks.clearSync();
       isar.trackPreferences.clearSync();
-      ref
-          .read(synchingProvider(syncId: 1).notifier)
-          .clearAllChangedParts(false);
-      ref.invalidate(themeModeStateProvider);
-      ref.invalidate(blendLevelStateProvider);
-      ref.invalidate(flexSchemeColorStateProvider);
-      ref.invalidate(pureBlackDarkModeStateProvider);
-      ref.invalidate(l10nLocaleStateProvider);
-      ref.invalidate(navigationOrderStateProvider);
-      ref.invalidate(hideItemsStateProvider);
-      ref.invalidate(extensionsRepoStateProvider(ItemType.manga));
-      ref.invalidate(extensionsRepoStateProvider(ItemType.anime));
-      ref.invalidate(extensionsRepoStateProvider(ItemType.novel));
+      _invalidateCommonState(ref);
     });
   } catch (e) {
     rethrow;
@@ -548,18 +515,23 @@ void restoreTachiBkBackup(Ref ref, String path, BackupType bkType) {
     isar.updates.clearSync();
     isar.tracks.clearSync();
     isar.trackPreferences.clearSync();
-    ref.read(synchingProvider(syncId: 1).notifier).clearAllChangedParts(false);
-    ref.invalidate(themeModeStateProvider);
-    ref.invalidate(blendLevelStateProvider);
-    ref.invalidate(flexSchemeColorStateProvider);
-    ref.invalidate(pureBlackDarkModeStateProvider);
-    ref.invalidate(l10nLocaleStateProvider);
-    ref.invalidate(navigationOrderStateProvider);
-    ref.invalidate(hideItemsStateProvider);
-    ref.invalidate(extensionsRepoStateProvider(ItemType.manga));
-    ref.invalidate(extensionsRepoStateProvider(ItemType.anime));
-    ref.invalidate(extensionsRepoStateProvider(ItemType.novel));
+    _invalidateCommonState(ref);
   });
+}
+
+void _invalidateCommonState(Ref ref) {
+  ref.read(synchingProvider(syncId: 1).notifier).clearAllChangedParts(false);
+  ref.invalidate(followSystemThemeStateProvider);
+  ref.invalidate(themeModeStateProvider);
+  ref.invalidate(blendLevelStateProvider);
+  ref.invalidate(flexSchemeColorStateProvider);
+  ref.invalidate(pureBlackDarkModeStateProvider);
+  ref.invalidate(l10nLocaleStateProvider);
+  ref.invalidate(navigationOrderStateProvider);
+  ref.invalidate(hideItemsStateProvider);
+  ref.invalidate(extensionsRepoStateProvider(ItemType.manga));
+  ref.invalidate(extensionsRepoStateProvider(ItemType.anime));
+  ref.invalidate(extensionsRepoStateProvider(ItemType.novel));
 }
 
 Status _convertStatusFromTachiBk(int idx) {

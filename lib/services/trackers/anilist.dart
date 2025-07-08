@@ -171,7 +171,7 @@ class Anilist extends _$Anilist {
 
   Future<Track?> findLibItem(Track track, bool isManga) async {
     final userId = int.parse(
-      ref.watch(tracksProvider(syncId: syncId))!.username!,
+      ref.read(tracksProvider(syncId: syncId))!.username!,
     );
     final type = isManga ? "MANGA" : "ANIME";
     final typeVar = isManga ? "manga_id" : "anime_id";
@@ -286,7 +286,7 @@ class Anilist extends _$Anilist {
 
   Future<List<TrackSearch>> fetchUserData({bool isManga = true}) async {
     final userId = int.parse(
-      ref.watch(tracksProvider(syncId: syncId))!.username!,
+      ref.read(tracksProvider(syncId: syncId))!.username!,
     );
     final type = isManga ? "MANGA" : "ANIME";
     final contentUnit = isManga ? "chapters" : "episodes";
@@ -405,7 +405,7 @@ class Anilist extends _$Anilist {
   }
 
   Future<String> _getAccessToken() async {
-    final track = ref.watch(tracksProvider(syncId: syncId));
+    final track = ref.read(tracksProvider(syncId: syncId));
     final mALOAuth = OAuth.fromJson(
       jsonDecode(track!.oAuth!) as Map<String, dynamic>,
     );

@@ -173,7 +173,7 @@ class _DoRestoreProviderElement extends AutoDisposeProviderElement<void>
   BuildContext get context => (origin as DoRestoreProvider).context;
 }
 
-String _$restoreBackupHash() => r'd4226539077680dac8826ee9b36efff9b07e2ed8';
+String _$restoreBackupHash() => r'2f440cfc5359e15bfd3887d27b38ecaf881404c6';
 
 /// See also [restoreBackup].
 @ProviderFor(restoreBackup)
@@ -321,7 +321,7 @@ class _RestoreBackupProviderElement extends AutoDisposeProviderElement<void>
 }
 
 String _$restoreKotatsuBackupHash() =>
-    r'e2c10fb6d17ab8f44ee429712cce4aa5a9298bc0';
+    r'e927f6a196a0349285fecbd84f30c2a9125998b2';
 
 /// See also [restoreKotatsuBackup].
 @ProviderFor(restoreKotatsuBackup)
@@ -452,7 +452,7 @@ class _RestoreKotatsuBackupProviderElement
 }
 
 String _$restoreTachiBkBackupHash() =>
-    r'8d3228c7bf7e1e33b3cebea6bd769f39fcbe2b30';
+    r'ae971c2630393df773eb1d64214b4daefb080b95';
 
 /// See also [restoreTachiBkBackup].
 @ProviderFor(restoreTachiBkBackup)

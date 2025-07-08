@@ -58,7 +58,7 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
         builder: (context, ref, child) {
           final chaptersList = ref.watch(chaptersListttStateProvider);
           final isExtended = ref.watch(isExtendedStateProvider);
-          return ref.watch(isLongPressedStateProvider) == true
+          return ref.watch(isLongPressedStateProvider)
               ? Container()
               : chaptersList.isNotEmpty &&
                     chaptersList

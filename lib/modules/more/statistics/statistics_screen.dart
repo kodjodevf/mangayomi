@@ -15,7 +15,7 @@ class StatisticsScreen extends ConsumerStatefulWidget {
 
 class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     with SingleTickerProviderStateMixin {
-  late final hideItems = ref.watch(hideItemsStateProvider);
+  late final hideItems = ref.read(hideItemsStateProvider);
   late TabController _tabController;
 
   late final _tabList = [

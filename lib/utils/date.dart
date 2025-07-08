@@ -16,8 +16,8 @@ String dateFormat(
 }) {
   final l10n = l10nLocalizations(context)!;
   final locale = currentLocale(context);
-  final relativeTimestamps = ref.watch(relativeTimesTampsStateProvider);
-  final dateFrmt = ref.watch(dateFormatStateProvider);
+  final relativeTimestamps = ref.read(relativeTimesTampsStateProvider);
+  final dateFrmt = ref.read(dateFormatStateProvider);
   final dateTime = stringDate != null
       ? DateTime.parse(stringDate)
       : DateTime.fromMillisecondsSinceEpoch(int.parse(timestamp!));

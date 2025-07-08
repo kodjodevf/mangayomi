@@ -65,7 +65,7 @@ class MyAnimeList extends _$MyAnimeList {
   }
 
   Future<String> _getAccessToken() async {
-    final track = ref.watch(tracksProvider(syncId: syncId));
+    final track = ref.read(tracksProvider(syncId: syncId));
     final mALOAuth = OAuth.fromJson(
       jsonDecode(track!.oAuth!) as Map<String, dynamic>,
     );

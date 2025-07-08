@@ -103,26 +103,7 @@ class Synching extends _$Synching {
         .actionTypeEqualTo(action)
         .isarIdEqualTo(isarId)
         .findFirstSync();
-    if (writeTxn) {
-      isar.writeTxnSync(() {
-        if (changedPart != null) {
-          isar.changedParts.putSync(
-            changedPart
-              ..data = jsonEncode(data)
-              ..clientDate = DateTime.now().millisecondsSinceEpoch,
-          );
-        } else {
-          isar.changedParts.putSync(
-            ChangedPart(
-              actionType: action,
-              isarId: isarId,
-              data: jsonEncode(data),
-              clientDate: DateTime.now().millisecondsSinceEpoch,
-            ),
-          );
-        }
-      });
-    } else {
+    void putChangedPart() {
       if (changedPart != null) {
         isar.changedParts.putSync(
           changedPart
@@ -139,6 +120,12 @@ class Synching extends _$Synching {
           ),
         );
       }
+    }
+
+    if (writeTxn) {
+      isar.writeTxnSync(putChangedPart);
+    } else {
+      putChangedPart();
     }
   }
 
@@ -156,26 +143,7 @@ class Synching extends _$Synching {
         .actionTypeEqualTo(action)
         .isarIdEqualTo(isarId)
         .findFirstSync();
-    if (writeTxn) {
-      await isar.writeTxn(() async {
-        if (changedPart != null) {
-          await isar.changedParts.put(
-            changedPart
-              ..data = jsonEncode(data)
-              ..clientDate = DateTime.now().millisecondsSinceEpoch,
-          );
-        } else {
-          await isar.changedParts.put(
-            ChangedPart(
-              actionType: action,
-              isarId: isarId,
-              data: jsonEncode(data),
-              clientDate: DateTime.now().millisecondsSinceEpoch,
-            ),
-          );
-        }
-      });
-    } else {
+    Future<void> putChangedPart() async {
       if (changedPart != null) {
         await isar.changedParts.put(
           changedPart
@@ -192,6 +160,12 @@ class Synching extends _$Synching {
           ),
         );
       }
+    }
+
+    if (writeTxn) {
+      await isar.writeTxn(putChangedPart);
+    } else {
+      await putChangedPart();
     }
   }
 
@@ -216,9 +190,7 @@ class Synching extends _$Synching {
 
   void clearAllChangedParts(bool txn) {
     if (txn) {
-      isar.writeTxnSync(() {
-        isar.changedParts.clearSync();
-      });
+      isar.writeTxnSync(() => isar.changedParts.clearSync());
     } else {
       isar.changedParts.clearSync();
     }
