@@ -1541,7 +1541,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                   ),
               ],
             ),
-            if (!isLocalArchive) _actionFavouriteAndWebview(),
+            isLocalArchive ? _action() : _actionFavouriteAndWebview(),
             Container(
               color: Theme.of(context).scaffoldBackgroundColor,
               child: Column(
@@ -1852,74 +1852,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
           Expanded(
             child: widget.itemType == ItemType.novel
                 ? SizedBox.shrink()
-                : StreamBuilder(
-                    stream: isar.trackPreferences
-                        .filter()
-                        .syncIdIsNotNull()
-                        .watch(fireImmediately: true),
-                    builder: (context, snapshot) {
-                      List<TrackPreference>? entries = snapshot.hasData
-                          ? snapshot.data!
-                          : [];
-                      if (entries.isEmpty) {
-                        return Container();
-                      }
-                      return SizedBox(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(
-                              context,
-                            ).scaffoldBackgroundColor,
-                            elevation: 0,
-                          ),
-                          onPressed: () {
-                            _trackingDraggableMenu(entries);
-                          },
-                          child: StreamBuilder(
-                            stream: isar.tracks
-                                .filter()
-                                .idIsNotNull()
-                                .mangaIdEqualTo(widget.manga!.id!)
-                                .watch(fireImmediately: true),
-                            builder: (context, snapshot) {
-                              final l10n = l10nLocalizations(context)!;
-                              List<Track>? trackRes = snapshot.hasData
-                                  ? snapshot.data
-                                  : [];
-                              bool isNotEmpty = trackRes!.isNotEmpty;
-                              Color color = isNotEmpty
-                                  ? context.primaryColor
-                                  : context.secondaryColor;
-                              return Column(
-                                children: [
-                                  Icon(
-                                    isNotEmpty
-                                        ? Icons.done_rounded
-                                        : Icons.sync_outlined,
-                                    size: 20,
-                                    color: color,
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    isNotEmpty
-                                        ? trackRes.length == 1
-                                              ? l10n.one_tracker
-                                              : l10n.n_tracker(trackRes.length)
-                                        : l10n.tracking,
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: color,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                : _action(),
           ),
           Expanded(
             child: SizedBox(
@@ -1963,6 +1896,66 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
           ),
         ],
       ),
+    );
+  }
+
+  /// Tracker button
+  Widget _action() {
+    return StreamBuilder(
+      stream: isar.trackPreferences.filter().syncIdIsNotNull().watch(
+        fireImmediately: true,
+      ),
+      builder: (context, snapshot) {
+        List<TrackPreference>? entries = snapshot.hasData ? snapshot.data! : [];
+        if (entries.isEmpty) {
+          return Container();
+        }
+        return SizedBox(
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              elevation: 0,
+            ),
+            onPressed: () {
+              _trackingDraggableMenu(entries);
+            },
+            child: StreamBuilder(
+              stream: isar.tracks
+                  .filter()
+                  .idIsNotNull()
+                  .mangaIdEqualTo(widget.manga!.id!)
+                  .watch(fireImmediately: true),
+              builder: (context, snapshot) {
+                final l10n = l10nLocalizations(context)!;
+                List<Track>? trackRes = snapshot.hasData ? snapshot.data : [];
+                bool isNotEmpty = trackRes!.isNotEmpty;
+                Color color = isNotEmpty
+                    ? context.primaryColor
+                    : context.secondaryColor;
+                return Column(
+                  children: [
+                    Icon(
+                      isNotEmpty ? Icons.done_rounded : Icons.sync_outlined,
+                      size: 20,
+                      color: color,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      isNotEmpty
+                          ? trackRes.length == 1
+                                ? l10n.one_tracker
+                                : l10n.n_tracker(trackRes.length)
+                          : l10n.tracking,
+                      style: TextStyle(fontSize: 11, color: color),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 
