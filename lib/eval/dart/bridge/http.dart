@@ -79,6 +79,7 @@ class HttpBridge {
   final baseRequestBridgedClass = BridgedClassDefinition(
     nativeType: BaseRequest,
     name: 'BaseRequest',
+    nativeNames: ['Request'],
     constructors: {
       '': (visitor, positionalArgs, namedArgs) {
         return BaseRequest;
