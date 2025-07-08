@@ -37,7 +37,9 @@ import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_sort_list_tile_widget.dart';
 import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
+import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/global_style.dart';
+import 'package:path/path.dart' as p;
 
 class LibraryScreen extends ConsumerStatefulWidget {
   final ItemType itemType;
@@ -1148,57 +1150,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                         const SizedBox(width: 15),
                         TextButton(
                           onPressed: () async {
+                            // From Library
                             if (fromLibList.isNotEmpty) {
                               isar.writeTxnSync(() {
                                 for (var manga in mangasList) {
                                   if (manga.isLocalArchive ?? false) {
-                                    final provider = ref.read(
-                                      synchingProvider(syncId: 1).notifier,
-                                    );
-                                    final histories = isar.historys
-                                        .filter()
-                                        .mangaIdEqualTo(manga.id)
-                                        .findAllSync();
-                                    for (var history in histories) {
-                                      isar.historys.deleteSync(history.id!);
-                                      provider.addChangedPart(
-                                        ActionType.removeHistory,
-                                        history.id,
-                                        "{}",
-                                        false,
-                                      );
-                                    }
-
-                                    for (var chapter in manga.chapters) {
-                                      final updates = isar.updates
-                                          .filter()
-                                          .mangaIdEqualTo(chapter.mangaId)
-                                          .chapterNameEqualTo(chapter.name)
-                                          .findAllSync();
-                                      for (var update in updates) {
-                                        isar.updates.deleteSync(update.id!);
-                                        provider.addChangedPart(
-                                          ActionType.removeUpdate,
-                                          update.id,
-                                          "{}",
-                                          false,
-                                        );
-                                      }
-                                      isar.chapters.deleteSync(chapter.id!);
-                                      provider.addChangedPart(
-                                        ActionType.removeChapter,
-                                        chapter.id,
-                                        "{}",
-                                        false,
-                                      );
-                                    }
-                                    isar.mangas.deleteSync(manga.id!);
-                                    provider.addChangedPart(
-                                      ActionType.removeItem,
-                                      manga.id,
-                                      "{}",
-                                      false,
-                                    );
+                                    _removeImport(ref, manga);
                                   } else {
                                     manga.favorite = false;
                                     manga.updatedAt =
@@ -1208,59 +1165,34 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                 }
                               });
                             }
+                            // Downloaded Chapters
                             if (downloadedChapsList.isNotEmpty) {
-                              isar.writeTxnSync(() async {
-                                for (var manga in mangasList) {
-                                  if (manga.isLocalArchive ?? false) {
-                                    for (var chapter in manga.chapters) {
-                                      try {
-                                        final storageProvider =
-                                            StorageProvider();
-                                        final mangaDir = await storageProvider
-                                            .getMangaMainDirectory(chapter);
-                                        final path = await storageProvider
-                                            .getMangaChapterDirectory(
-                                              chapter,
-                                              mangaMainDirectory: mangaDir,
-                                            );
-
-                                        try {
-                                          try {
-                                            if (File(
-                                              "${mangaDir!.path}${chapter.name}.cbz",
-                                            ).existsSync()) {
-                                              File(
-                                                "${mangaDir.path}${chapter.name}.cbz",
-                                              ).deleteSync();
-                                            }
-                                          } catch (_) {}
-                                          try {
-                                            if (File(
-                                              "${mangaDir!.path}${chapter.name}.mp4",
-                                            ).existsSync()) {
-                                              File(
-                                                "${mangaDir.path}${chapter.name}.mp4",
-                                              ).deleteSync();
-                                            }
-                                          } catch (_) {}
-                                          path!.deleteSync(recursive: true);
-                                        } catch (_) {}
-                                        isar.writeTxnSync(() {
-                                          final download = isar.downloads
-                                              .filter()
-                                              .idEqualTo(chapter.id!)
-                                              .findAllSync();
-                                          if (download.isNotEmpty) {
-                                            isar.downloads.deleteSync(
-                                              download.first.id!,
-                                            );
-                                          }
-                                        });
-                                      } catch (_) {}
-                                    }
+                              for (var manga in mangasList) {
+                                String mangaDirectory = "";
+                                if (manga.isLocalArchive ?? false) {
+                                  mangaDirectory = _deleteImport(
+                                    manga,
+                                    mangaDirectory,
+                                  );
+                                  // Also remove item from library
+                                  // else it has 0 chapters/episodes
+                                  // and when opened, shows exception
+                                  // "Null check operator"
+                                  _removeImport(ref, manga);
+                                } else {
+                                  mangaDirectory = await _deleteDownload(
+                                    manga,
+                                    mangaDirectory,
+                                  );
+                                }
+                                if (mangaDirectory.isNotEmpty) {
+                                  final path = Directory(mangaDirectory);
+                                  if (path.existsSync() &&
+                                      path.listSync().isEmpty) {
+                                    path.deleteSync(recursive: true);
                                   }
                                 }
-                              });
+                              }
                             }
 
                             ref.read(mangasListStateProvider.notifier).clear();
@@ -1283,6 +1215,122 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
         );
       },
     );
+  }
+
+  /// helper method to remove the library entry of an imported item
+  /// does not remove from the device itself.
+  void _removeImport(WidgetRef ref, Manga manga) {
+    final provider = ref.read(synchingProvider(syncId: 1).notifier);
+    final histories = isar.historys
+        .filter()
+        .mangaIdEqualTo(manga.id)
+        .findAllSync();
+    for (var history in histories) {
+      isar.historys.deleteSync(history.id!);
+      provider.addChangedPart(
+        ActionType.removeHistory,
+        history.id,
+        "{}",
+        false,
+      );
+    }
+
+    for (var chapter in manga.chapters) {
+      final updates = isar.updates
+          .filter()
+          .mangaIdEqualTo(chapter.mangaId)
+          .chapterNameEqualTo(chapter.name)
+          .findAllSync();
+      for (var update in updates) {
+        isar.updates.deleteSync(update.id!);
+        provider.addChangedPart(
+          ActionType.removeUpdate,
+          update.id,
+          "{}",
+          false,
+        );
+      }
+      isar.chapters.deleteSync(chapter.id!);
+      provider.addChangedPart(
+        ActionType.removeChapter,
+        chapter.id,
+        "{}",
+        false,
+      );
+    }
+    isar.mangas.deleteSync(manga.id!);
+    provider.addChangedPart(ActionType.removeItem, manga.id, "{}", false);
+  }
+
+  /// helper method to delete imported mangas/animes
+  String _deleteImport(Manga manga, String mangaDirectory) {
+    for (var chapter in manga.chapters) {
+      final path = chapter.archivePath;
+      if (path == null) continue;
+      final chapterFile = File(path);
+      if (mangaDirectory.isEmpty) {
+        mangaDirectory = p.dirname(path);
+      }
+
+      try {
+        if (chapterFile.existsSync()) {
+          chapterFile.deleteSync();
+        }
+      } catch (_) {}
+    }
+    return mangaDirectory;
+  }
+
+  /// helper method to delete downloaded mangas/animes
+  Future<String> _deleteDownload(Manga manga, String mangaDirectory) async {
+    final storageProvider = StorageProvider();
+    Directory? mangaDir;
+    final idsToDelete = <int>{};
+    final downloadedIds = (await isar.downloads.where().idProperty().findAll())
+        .toSet();
+
+    if (downloadedIds.isEmpty) return mangaDirectory;
+
+    for (var chapter in manga.chapters) {
+      if (chapter.id == null || !downloadedIds.contains(chapter.id)) continue;
+
+      mangaDir ??= await storageProvider.getMangaMainDirectory(chapter);
+      final chapterDir = await storageProvider.getMangaChapterDirectory(
+        chapter,
+        mangaMainDirectory: mangaDir,
+      );
+      File? file;
+
+      if (mangaDirectory.isEmpty) mangaDirectory = mangaDir!.path;
+      if (manga.itemType == ItemType.manga) {
+        // ref: download_page_widget.dart
+        file = File(p.join(mangaDir!.path, "${chapter.name}.cbz"));
+      } else if (manga.itemType == ItemType.anime) {
+        // ref: download_page_widget.dart
+        file = File(
+          p.join(
+            mangaDir!.path,
+            "${chapter.name!.replaceForbiddenCharacters(' ')}.mp4",
+          ),
+        );
+      }
+
+      try {
+        if (file != null && file.existsSync()) {
+          file.deleteSync();
+        }
+        if (chapterDir!.existsSync()) {
+          chapterDir.deleteSync(recursive: true);
+        }
+      } catch (_) {}
+      idsToDelete.add(chapter.id!);
+    }
+    if (idsToDelete.isNotEmpty) {
+      isar.writeTxnSync(() {
+        isar.downloads.deleteAllSync(idsToDelete.toList());
+      });
+    }
+    return mangaDirectory;
   }
 
   void _showDraggableMenu(Settings settings) {

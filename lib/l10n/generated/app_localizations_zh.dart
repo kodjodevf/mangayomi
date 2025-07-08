@@ -66,6 +66,28 @@ class AppLocalizationsZh extends AppLocalizations {
   String get last_update_check => '最后更新检查';
 
   @override
+  String last_entry_delete_warning(
+    num count,
+    Object entryType,
+    Object entryTypePlural,
+    Object mediaType,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '你正在从你的库中删除此$mediaType的全部$count$entryTypePlural。',
+      one: '你正在从你的库中删除此$mediaType的唯一$entryType。',
+    );
+    return '$_temp0\n这也会将整个$mediaType从你的库中移除。\n\n注意：文件本身不会被删除。';
+  }
+
+  @override
+  String get chapter => '章节';
+
+  @override
+  String get episode => '剧集';
+
+  @override
   String get unread_count => '未读计数';
 
   @override

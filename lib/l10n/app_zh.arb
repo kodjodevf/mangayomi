@@ -20,6 +20,17 @@
     "alphabetically": "按字母顺序",
     "last_read": "最后阅读",
     "last_update_check": "最后更新检查",
+    "last_entry_delete_warning": "{count, plural, =1{你正在从你的库中删除此{mediaType}的唯一{entryType}。} other{你正在从你的库中删除此{mediaType}的全部{count}{entryTypePlural}。}}\n这也会将整个{mediaType}从你的库中移除。\n\n注意：文件本身不会被删除。",
+    "@last_entry_delete_warning": {
+      "placeholders": {
+        "count": {},
+        "entryType": {},
+        "entryTypePlural": {},
+        "mediaType": {}
+      }
+    },
+    "chapter": "章节",
+    "episode": "剧集",
     "unread_count": "未读计数",
     "latest_chapter": "最新章节",
     "date_added": "添加日期",

@@ -66,6 +66,30 @@ class AppLocalizationsFr extends AppLocalizations {
   String get last_update_check => 'Dernière mise à jour';
 
   @override
+  String last_entry_delete_warning(
+    num count,
+    Object entryType,
+    Object entryTypePlural,
+    Object mediaType,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Tu es en train de supprimer les $count $entryTypePlural de ce $mediaType de ta bibliothèque.',
+      one:
+          'Tu es en train de supprimer le seul $entryType de ce $mediaType de ta bibliothèque.',
+    );
+    return '$_temp0\nÇa va aussi supprimer tout le $mediaType de ta bibliothèque.\n\nNote : Les fichiers ne seront pas supprimés.';
+  }
+
+  @override
+  String get chapter => 'chapitre';
+
+  @override
+  String get episode => 'épisode';
+
+  @override
   String get unread_count => 'Nombre de non-lus';
 
   @override

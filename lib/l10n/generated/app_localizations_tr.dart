@@ -66,6 +66,29 @@ class AppLocalizationsTr extends AppLocalizations {
   String get last_update_check => 'Son Güncelleme Kontrolü';
 
   @override
+  String last_entry_delete_warning(
+    num count,
+    Object entryType,
+    Object entryTypePlural,
+    Object mediaType,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Kitaplığından bu $mediaType’nin tüm $count $entryTypePlural’ini siliyorsun.',
+      one: 'Kitaplığından bu $mediaType’nin tek $entryType’ünü siliyorsun.',
+    );
+    return '$_temp0\nBu işlem $mediaType’nin tamamını da kütüphanenden kaldıracak.\n\nNot: Dosyalar silinmeyecek.';
+  }
+
+  @override
+  String get chapter => 'bölüm';
+
+  @override
+  String get episode => 'bölüm';
+
+  @override
   String get unread_count => 'Okunmamış Sayısı';
 
   @override

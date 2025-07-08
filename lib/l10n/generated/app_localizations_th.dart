@@ -66,6 +66,29 @@ class AppLocalizationsTh extends AppLocalizations {
   String get last_update_check => 'ตรวจการอัพเดท';
 
   @override
+  String last_entry_delete_warning(
+    num count,
+    Object entryType,
+    Object entryTypePlural,
+    Object mediaType,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'คุณกำลังลบทั้งหมด $count $entryTypePluralของ$mediaTypeนี้ออกจากคลังของคุณ',
+      one: 'คุณกำลังลบ$entryTypeเดียวของ$mediaTypeนี้ออกจากคลังของคุณ',
+    );
+    return '$_temp0\nสิ่งนี้จะลบ$mediaTypeทั้งหมดออกจากคลังของคุณด้วย\n\nหมายเหตุ: ไฟล์จะไม่ถูกลบ';
+  }
+
+  @override
+  String get chapter => 'บท';
+
+  @override
+  String get episode => 'ตอน';
+
+  @override
   String get unread_count => 'ที่ยังไม่อ่าน';
 
   @override

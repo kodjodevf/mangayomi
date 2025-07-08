@@ -17,6 +17,17 @@
     "alphabetically": "Alfabetik Olarak",
     "last_read": "Son Okunan",
     "last_update_check": "Son Güncelleme Kontrolü",
+    "last_entry_delete_warning": "{count, plural, =1{Kitaplığından bu {mediaType}’nin tek {entryType}’ünü siliyorsun.} other{Kitaplığından bu {mediaType}’nin tüm {count} {entryTypePlural}’ini siliyorsun.}}\nBu işlem {mediaType}’nin tamamını da kütüphanenden kaldıracak.\n\nNot: Dosyalar silinmeyecek.",
+    "@last_entry_delete_warning": {
+        "placeholders": {
+            "count": {},
+            "entryType": {},
+            "entryTypePlural": {},
+            "mediaType": {}
+        }
+    },
+    "chapter": "bölüm",
+    "episode": "bölüm",
     "unread_count": "Okunmamış Sayısı",
     "latest_chapter": "Son Bölüm",
     "date_added": "Eklenme Tarihi",
