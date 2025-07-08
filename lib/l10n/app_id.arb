@@ -17,6 +17,17 @@
     "alphabetically": "Secara Abjad",
     "last_read": "Bacaan Terakhir",
     "last_update_check": "Pemeriksaan Pembaruan Terakhir",
+    "last_entry_delete_warning": "{count, plural, =1{Kamu sedang menghapus satu-satunya {entryType} dari {mediaType} ini di perpustakaan kamu.} other{Kamu sedang menghapus semua {count} {entryTypePlural} dari {mediaType} ini di perpustakaan kamu.}}\nIni juga akan menghapus seluruh {mediaType} dari perpustakaanmu.\n\nCatatan: File-nya sendiri tidak akan dihapus.",
+    "@last_entry_delete_warning": {
+        "placeholders": {
+            "count": {},
+            "entryType": {},
+            "entryTypePlural": {},
+            "mediaType": {}
+        }
+    },
+    "chapter": "bab",
+    "episode": "episode",   
     "unread_count": "Jumlah Belum Dibaca",
     "latest_chapter": "Bab Terbaru",
     "date_added": "Tanggal Ditambahkan",

@@ -20,6 +20,17 @@
   "alphabetically": "ตามตัวอักษร",
   "last_read": "อ่านล่าสุด",
   "last_update_check": "ตรวจการอัพเดท",
+  "last_entry_delete_warning": "{count, plural, =1{คุณกำลังลบ{entryType}เดียวของ{mediaType}นี้ออกจากคลังของคุณ} other{คุณกำลังลบทั้งหมด {count} {entryTypePlural}ของ{mediaType}นี้ออกจากคลังของคุณ}}\nสิ่งนี้จะลบ{mediaType}ทั้งหมดออกจากคลังของคุณด้วย\n\nหมายเหตุ: ไฟล์จะไม่ถูกลบ",
+  "@last_entry_delete_warning": {
+    "placeholders": {
+      "count": {},
+      "entryType": {},
+      "entryTypePlural": {},
+      "mediaType": {}
+    }
+  },
+  "chapter": "บท",
+  "episode": "ตอน",
   "unread_count": "ที่ยังไม่อ่าน",
   "latest_chapter": "ตอนล่าสุด",
   "date_added": "วันที่เพิ่ม",

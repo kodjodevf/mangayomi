@@ -19,6 +19,17 @@
     "last_read": "Zuletzt gelesen",
     "last_watched": "Zuletzt angeschaut",
     "last_update_check": "Letzte Aktualisierungsprüfung",
+    "last_entry_delete_warning": "{count, plural, =1{Du löschst das einzige {entryType} dieses {mediaType}s aus deiner Bibliothek.} other{Du löschst alle {count} {entryTypePlural} dieses {mediaType}s aus deiner Bibliothek.}}\nDadurch wird auch der ganze {mediaType} aus deiner Bibliothek entfernt.\n\nHinweis: Die Dateien selbst werden nicht gelöscht.",
+    "@last_entry_delete_warning": {
+        "placeholders": {
+            "count": {},
+            "entryType": {},
+            "entryTypePlural": {},
+            "mediaType": {}
+        }
+    },
+    "chapter": "Kapitel",
+    "episode": "Episode",
     "unread_count": "Ungelesene Anzahl",
     "unwatched_count": "Ungesehene Anzahl",
     "latest_chapter": "Letztes Kapitel",

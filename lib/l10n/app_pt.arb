@@ -17,6 +17,17 @@
     "alphabetically": "Alfabeticamente",
     "last_read": "Última leitura",
     "last_update_check": "Última verificação de atualização",
+    "last_entry_delete_warning": "{count, plural, =1{Estás a eliminar o único {entryType} deste {mediaType} da tua biblioteca.} other{Estás a eliminar todos os {count} {entryTypePlural} deste {mediaType} da tua biblioteca.}}\nIsto vai também remover todo o {mediaType} da tua biblioteca.\n\nNota: Os ficheiros em si não vão ser eliminados.",
+    "@last_entry_delete_warning": {
+      "placeholders": {
+        "count": {},
+        "entryType": {},
+        "entryTypePlural": {},
+        "mediaType": {}
+      }
+    },
+    "chapter": "capítulo",
+    "episode": "episódio",
     "unread_count": "Contagem de não lidos",
     "latest_chapter": "Último capítulo",
     "date_added": "Data de adição",

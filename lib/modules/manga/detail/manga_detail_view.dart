@@ -1045,11 +1045,56 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               shadowColor: Colors.transparent,
                             ),
                             onPressed: () {
+                              final selectedChapters = ref.watch(
+                                chaptersListStateProvider,
+                              );
+                              final totalChapters =
+                                  widget.manga!.chapters.length;
+                              final isLastChapters =
+                                  selectedChapters.length == totalChapters;
+                              final isAnime = widget.itemType == ItemType.anime;
+                              final entryType = isAnime
+                                  ? l10n.episode
+                                  : l10n.chapter;
+                              final pluralEntryType = isAnime
+                                  ? l10n.episodes
+                                  : l10n.chapters;
+                              final mediaType = isAnime
+                                  ? l10n.anime
+                                  : l10n.manga;
+                              final warningMessage = l10n
+                                  .last_entry_delete_warning(
+                                    totalChapters,
+                                    entryType,
+                                    pluralEntryType,
+                                    mediaType,
+                                  );
                               showDialog(
                                 context: context,
                                 builder: (context) {
                                   return AlertDialog(
                                     title: Text(l10n.delete_chapters),
+                                    content: isLastChapters
+                                        ? Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const Icon(
+                                                Icons.warning_amber_rounded,
+                                                color: Colors.orange,
+                                              ),
+                                              const SizedBox(width: 12),
+                                              Expanded(
+                                                child: Text(
+                                                  warningMessage,
+                                                  style: TextStyle(
+                                                    color: Colors.red,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : null,
                                     actions: [
                                       Row(
                                         mainAxisAlignment:
@@ -1064,15 +1109,19 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                           const SizedBox(width: 15),
                                           TextButton(
                                             onPressed: () async {
-                                              isar.writeTxnSync(() {
-                                                for (var chapter in ref.watch(
-                                                  chaptersListStateProvider,
-                                                )) {
-                                                  isar.chapters.deleteSync(
-                                                    chapter.id!,
-                                                  );
-                                                }
+                                              final navigator = Navigator.of(
+                                                context,
+                                              );
+                                              await isar.writeTxn(() async {
+                                                final idsToDelete =
+                                                    selectedChapters
+                                                        .map((c) => c.id!)
+                                                        .toList();
+                                                await isar.chapters.deleteAll(
+                                                  idsToDelete,
+                                                );
                                               });
+                                              if (!mounted) return;
                                               ref
                                                   .read(
                                                     isLongPressedStateProvider
@@ -1085,8 +1134,21 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                         .notifier,
                                                   )
                                                   .clear();
-                                              if (mounted) {
-                                                Navigator.pop(context);
+                                              navigator.pop();
+                                              if (isLastChapters) {
+                                                navigator.pop();
+                                                Future.delayed(
+                                                  const Duration(
+                                                    milliseconds: 350,
+                                                  ),
+                                                  () {
+                                                    isar.writeTxn(
+                                                      () => isar.mangas.delete(
+                                                        widget.manga!.id!,
+                                                      ),
+                                                    );
+                                                  },
+                                                );
                                               }
                                             },
                                             child: Text(l10n.delete),

@@ -17,6 +17,17 @@
     "alphabetically": "أبجدياً",
     "last_read": "آخر قراءة",
     "last_update_check": "آخر فحص للتحديثات",
+    "last_entry_delete_warning": "{count, plural, =1{أنت بتحذف الـ{entryType} الوحيد من هذا الـ{mediaType} من المكتبة.} other{أنت بتحذف كل الـ{count} {entryTypePlural} من هذا الـ{mediaType} من المكتبة.}}\nهذا كمان هيشيل الـ{mediaType} بالكامل من مكتبتك.\n\nملاحظة: الملفات نفسها مش هتتحذف.",
+    "@last_entry_delete_warning": {
+        "placeholders": {
+            "count": {},
+            "entryType": {},
+            "entryTypePlural": {},
+            "mediaType": {}
+        }
+    },
+    "chapter": "فصل",
+    "episode": "حلقة",
     "unread_count": "عدد غير المقروء",
     "latest_chapter": "أحدث فصل",
     "date_added": "تاريخ الإضافة",

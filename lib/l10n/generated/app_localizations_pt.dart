@@ -66,6 +66,30 @@ class AppLocalizationsPt extends AppLocalizations {
   String get last_update_check => 'Última verificação de atualização';
 
   @override
+  String last_entry_delete_warning(
+    num count,
+    Object entryType,
+    Object entryTypePlural,
+    Object mediaType,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Estás a eliminar todos os $count $entryTypePlural deste $mediaType da tua biblioteca.',
+      one:
+          'Estás a eliminar o único $entryType deste $mediaType da tua biblioteca.',
+    );
+    return '$_temp0\nIsto vai também remover todo o $mediaType da tua biblioteca.\n\nNota: Os ficheiros em si não vão ser eliminados.';
+  }
+
+  @override
+  String get chapter => 'capítulo';
+
+  @override
+  String get episode => 'episódio';
+
+  @override
   String get unread_count => 'Contagem de não lidos';
 
   @override
@@ -1521,6 +1545,30 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get last_update_check => 'Última verificação de atualização';
+
+  @override
+  String last_entry_delete_warning(
+    num count,
+    Object entryType,
+    Object entryTypePlural,
+    Object mediaType,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Você está deletando todos os $count $entryTypePlural deste $mediaType da sua biblioteca.',
+      one:
+          'Você está deletando o único $entryType deste $mediaType da sua biblioteca.',
+    );
+    return '$_temp0\nIsso também vai remover todo o $mediaType da sua biblioteca.\n\nObs: Os arquivos em si não serão deletados.';
+  }
+
+  @override
+  String get chapter => 'capítulo';
+
+  @override
+  String get episode => 'episódio';
 
   @override
   String get unread_count => 'Contagem de não lidos';

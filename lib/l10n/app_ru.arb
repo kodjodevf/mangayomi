@@ -17,6 +17,17 @@
     "alphabetically": "По алфавиту",
     "last_read": "Последнее чтение",
     "last_update_check": "Последняя проверка обновлений",
+    "last_entry_delete_warning": "{count, plural, =1{Ты удаляешь единственный {entryType} этого {mediaType} из библиотеки.} other{Ты удаляешь все {count} {entryTypePlural} этого {mediaType} из библиотеки.}}\nЭто также удалит весь {mediaType} из твоей библиотеки.\n\nПримечание: Сами файлы удалены не будут.",
+    "@last_entry_delete_warning": {
+        "placeholders": {
+            "count": {},
+            "entryType": {},
+            "entryTypePlural": {},
+            "mediaType": {}
+        }
+    },
+    "chapter": "глава",
+    "episode": "эпизод",
     "unread_count": "Количество непрочитанных",
     "latest_chapter": "Последняя глава",
     "date_added": "Дата добавления",

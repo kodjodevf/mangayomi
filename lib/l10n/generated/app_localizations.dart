@@ -234,6 +234,29 @@ abstract class AppLocalizations {
   /// **'Last update check'**
   String get last_update_check;
 
+  /// Warning when deleting all entries (chapters/episodes) of a manga/anime.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{You are deleting the only {entryType} of this {mediaType} from the library.} other{You are deleting all {count} {entryTypePlural} of this {mediaType} from the library.}}\nThis will also remove the whole {mediaType} from your library.\n\nNote: The files themselves will not be deleted.'**
+  String last_entry_delete_warning(
+    num count,
+    Object entryType,
+    Object entryTypePlural,
+    Object mediaType,
+  );
+
+  /// No description provided for @chapter.
+  ///
+  /// In en, this message translates to:
+  /// **'chapter'**
+  String get chapter;
+
+  /// No description provided for @episode.
+  ///
+  /// In en, this message translates to:
+  /// **'episode'**
+  String get episode;
+
   /// No description provided for @unread_count.
   ///
   /// In en, this message translates to:
