@@ -48,7 +48,7 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
     Uint8List? imageBytes;
     if (archiveImage != null) {
       imageBytes = archiveImage;
-    } else if (isLocale!) {
+    } else if (isLocale == true && directory != null && index != null) {
       imageBytes = File(
         p.join(directory!.path, "${padIndex(index!)}.jpg"),
       ).readAsBytesSync();
@@ -56,10 +56,10 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
       File? cachedImage;
       if (pageUrl != null) {
         cachedImage = await _getCachedImageFile(pageUrl!.url);
-      }
-      if (cachedImage == null) {
-        await Future.delayed(const Duration(seconds: 3));
-        cachedImage = await _getCachedImageFile(pageUrl!.url);
+        if (cachedImage == null) {
+          await Future.delayed(const Duration(seconds: 3));
+          cachedImage = await _getCachedImageFile(pageUrl!.url);
+        }
       }
       imageBytes = cachedImage?.readAsBytesSync();
     }
