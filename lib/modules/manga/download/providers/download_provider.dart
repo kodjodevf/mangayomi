@@ -10,6 +10,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/modules/manga/download/providers/convert_to_cbz.dart';
 import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -75,7 +76,7 @@ Future<void> downloadChapter(
   final mangaMainDirectory = await storageProvider.getMangaMainDirectory(
     chapter,
   );
-
+  List<Track>? subtitles;
   bool isOk = false;
   final manga = chapter.manga.value!;
   final chapterName = chapter.name!.replaceForbiddenCharacters(' ');
@@ -199,11 +200,13 @@ Future<void> downloadChapter(
       hasM3U8File = nonM3U8File ? false : m3u8Urls.isNotEmpty;
       final videosUrls = nonM3U8File ? nonM3u8Urls : m3u8Urls;
       if (videosUrls.isNotEmpty) {
+        subtitles = videosUrls.first.subtitles;
         if (hasM3U8File) {
           m3u8Downloader = M3u8Downloader(
             m3u8Url: videosUrls.first.url,
             downloadDir: chapterDirectory.path,
             headers: videosUrls.first.headers ?? {},
+            subtitles: subtitles,
             fileName: p.join(mangaMainDirectory!.path, "$chapterName.mp4"),
             chapter: chapter,
           );
@@ -339,7 +342,12 @@ Future<void> downloadChapter(
       });
     } else {
       savePageUrls();
-      await MDownloader(chapter: chapter, pageUrls: pages).download((progress) {
+      await MDownloader(
+        chapter: chapter,
+        pageUrls: pages,
+        subtitles: subtitles,
+        subDownloadDir: chapterDirectory.path,
+      ).download((progress) {
         setProgress(progress);
       });
     }

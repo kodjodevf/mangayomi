@@ -28,9 +28,28 @@ Future<(List<Video>, bool, List<String>)> getVideoList(
   );
   List<String> infoHashes = [];
   if (await File(mp4animePath).exists() || isLocalArchive) {
+    final chapterDirectory = (await storageProvider.getMangaChapterDirectory(
+      episode,
+      mangaMainDirectory: mangaDirectory,
+    ))!;
     final path = isLocalArchive ? episode.archivePath : mp4animePath;
+    final subtitlesDir = Directory(
+      p.join('${chapterDirectory.path}_subtitles'),
+    );
+    List<Track> subtitles = [];
+    if (subtitlesDir.existsSync()) {
+      for (var element in subtitlesDir.listSync()) {
+        if (element is File) {
+          final subtitle = Track(
+            label: element.uri.pathSegments.last.replaceAll('.srt', ''),
+            file: element.uri.toString(),
+          );
+          subtitles.add(subtitle);
+        }
+      }
+    }
     return (
-      [Video(path!, episode.name!, path, subtitles: [])],
+      [Video(path!, episode.name!, path, subtitles: subtitles)],
       true,
       infoHashes,
     );

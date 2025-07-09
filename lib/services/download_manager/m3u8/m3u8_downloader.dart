@@ -6,6 +6,7 @@ import 'dart:isolate';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/http/rhttp/src/model/settings.dart';
 import 'package:mangayomi/services/download_manager/m3u8/models/download.dart';
@@ -25,6 +26,7 @@ class M3u8Downloader {
   final String fileName;
   final int concurrentDownloads;
   final Chapter chapter;
+  final List<Track>? subtitles;
   Isolate? _isolate;
   ReceivePort? _receivePort;
   static var httpClient = MClient.httpClient(
@@ -40,6 +42,7 @@ class M3u8Downloader {
     this.headers,
     required this.chapter,
     this.concurrentDownloads = 2,
+    required this.subtitles,
   });
 
   void _log(String message) {
@@ -139,6 +142,26 @@ class M3u8Downloader {
         mediaSequence,
         onProgress,
       );
+      for (var element in subtitles ?? <Track>[]) {
+        final subtitleFile = File(
+          path.join('${downloadDir}_subtitles', '${element.label}.srt'),
+        );
+        if (subtitleFile.existsSync()) {
+          _log('Subtitle file already exists: ${element.label}');
+          continue;
+        }
+        _log('Downloading subtitle file: ${element.label}');
+        subtitleFile.createSync(recursive: true);
+        final response = await _withRetry(
+          () => httpClient.get(Uri.parse(element.file ?? ''), headers: headers),
+        );
+        if (response.statusCode != 200) {
+          _log('Warning: Failed to download subtitle file: ${element.label}');
+          continue;
+        }
+        _log('Subtitle file downloaded: ${element.label}');
+        await subtitleFile.writeAsBytes(response.bodyBytes);
+      }
     } catch (e) {
       throw M3u8DownloaderException('Download failed', e);
     } finally {

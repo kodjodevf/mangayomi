@@ -8,16 +8,20 @@ import 'package:http/http.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/page.dart';
+import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/http/rhttp/src/model/settings.dart';
 import 'package:mangayomi/services/download_manager/m3u8/m3u8_downloader.dart';
 import 'package:mangayomi/services/download_manager/m3u8/models/download.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
+import 'package:path/path.dart' as path;
 
 class MDownloader {
   List<PageUrl> pageUrls;
   final int concurrentDownloads;
   final Chapter chapter;
+  final List<Track>? subtitles;
+  final String? subDownloadDir;
   Isolate? _isolate;
   ReceivePort? _receivePort;
   static var httpClient = MClient.httpClient(
@@ -29,6 +33,8 @@ class MDownloader {
   MDownloader({
     required this.chapter,
     required this.pageUrls,
+    required this.subtitles,
+    required this.subDownloadDir,
     this.concurrentDownloads = 2,
   });
 
@@ -76,6 +82,27 @@ class MDownloader {
   Future<void> download(void Function(DownloadProgress) onProgress) async {
     try {
       await _downloadFilesWithProgress(pageUrls, onProgress);
+      for (var element in subtitles ?? <Track>[]) {
+        final subtitleFile = File(
+          path.join('${subDownloadDir}_subtitles', '${element.label}.srt'),
+        );
+        if (subtitleFile.existsSync()) {
+          _log('Subtitle file already exists: ${element.label}');
+          continue;
+        }
+        _log('Downloading subtitle file: ${element.label}');
+        subtitleFile.createSync(recursive: true);
+        final response = await _withRetryStatic(
+          () => httpClient.get(Uri.parse(element.file ?? '')),
+          3,
+        );
+        if (response.statusCode != 200) {
+          _log('Warning: Failed to download subtitle file: ${element.label}');
+          continue;
+        }
+        _log('Subtitle file downloaded: ${element.label}');
+        await subtitleFile.writeAsBytes(response.bodyBytes);
+      }
     } catch (e) {
       throw MDownloaderException('Download failed', e);
     } finally {

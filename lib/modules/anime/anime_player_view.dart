@@ -268,7 +268,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
           );
           final file = defaultTrack.file ?? "";
           final label = defaultTrack.label;
-          final track = file.startsWith("http")
+          final track = (file.startsWith("http") || file.startsWith("file"))
               ? SubtitleTrack.uri(file, title: label, language: label)
               : SubtitleTrack.data(file, title: label, language: label);
           _player.setSubtitleTrack(track);
