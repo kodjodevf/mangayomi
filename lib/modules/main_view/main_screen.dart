@@ -83,7 +83,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     _autoSyncFrequency = ref
         .read(synchingProvider(syncId: 1))
         .autoSyncFrequency;
-    _defaultLocation = _navigationOrder.first;
+    final hiddenItems = ref.read(hideItemsStateProvider);
+
+    _defaultLocation = _navigationOrder
+        .where((e) => !hiddenItems.contains(e))
+        .first;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
