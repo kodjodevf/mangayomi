@@ -355,5 +355,13 @@ class FilterBridge {
       checkBoxFilterBridgedClass,
       'package:mangayomi/bridge_lib.dart',
     );
+    interpreter.registerBridgedClass(
+      sortStateBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
+    interpreter.registerBridgedClass(
+      headerFilterBridgedClass,
+      'package:mangayomi/bridge_lib.dart',
+    );
   }
 }
