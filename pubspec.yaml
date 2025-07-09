@@ -1,10 +1,10 @@
 name: mangayomi
 description: Free and open source manga reader and anime streaming cross-plateform app inspired by Tachiyomi and Aniyomi.
 publish_to: "none"
-version: 0.6.25+84
+version: 0.6.3+85
 
 environment:
-  sdk: ^3.8.0
+  sdk: ^3.8.1
 
 dependencies:
   flutter:
@@ -146,10 +146,11 @@ inno_bundle:
   name: Mangayomi
   url: https://github.com/kodjodevf/mangayomi/
   support_url: https://github.com/kodjodevf/mangayomi/
-  updates_url: https://github.com/kodjodevf/mangayomi/
+  updates_url: https://github.com/kodjodevf/mangayomi/releases/
   languages:
     - english
     - french
     - german
   admin: false
+  version: 0.6.3
 
