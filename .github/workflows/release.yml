@@ -214,15 +214,22 @@ jobs:
 
       - name: build windows exe
         run: |
-            dart run inno_bundle:build --release --app-version ${{ github.ref_name }}
+            dart run inno_bundle:build --release
 
       - name: build windows zip
         run: |
-          cd build/windows/x64/installer/Release
-          Rename-Item -Path "*-Installer.exe" -NewName "Mangayomi-${{ github.ref_name }}-windows.exe"
-          cd ../../runner/Release
-          Compress-Archive -Path * -DestinationPath Mangayomi-Windows.zip
-          Rename-Item -Path "Mangayomi-*.zip" -NewName "Mangayomi-${{ github.ref_name }}-windows.zip"
+          # Rename the installer .exe
+          $installer = Get-ChildItem "build/windows/x64/installer/Release/*-Installer.exe"
+          Rename-Item -Path $installer.FullName -NewName "Mangayomi-${{ github.ref_name }}-windows.exe"
+
+          # Go to runner output dir
+          Set-Location -Path "build/windows/x64/runner/Release"
+
+          # Create zip
+          Compress-Archive -Path * -DestinationPath "Mangayomi-Windows.zip"
+
+          # Rename zip
+          Rename-Item -Path "Mangayomi-Windows.zip" -NewName "Mangayomi-${{ github.ref_name }}-windows.zip"
 
       - name: upload artifact windows exe_zip
         uses: actions/upload-artifact@v4
