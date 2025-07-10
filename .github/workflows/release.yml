@@ -294,14 +294,7 @@ jobs:
           cp assets/app_icons/icon-red.png AppDir/usr/share/icons/hicolor/256x256/apps/mangayomi.png
           cp assets/app_icons/icon-red.png AppDir/mangayomi.png
           # Create desktop file in AppDir root
-          cat <<EOF > AppDir/mangayomi.desktop
-          [Desktop Entry]
-          Name=mangayomi
-          Exec=usr/bin/mangayomi
-          Icon=mangayomi
-          Type=Application
-          Categories=AudioVideo;
-          EOF
+          cp linux/mangayomi.desktop AppDir/mangayomi.desktop
           # Create AppRun file
           cat <<EOF > AppDir/AppRun
           #!/bin/sh
@@ -324,6 +317,7 @@ jobs:
           tar czf rpm_build/SOURCES/mangayomi-${VERSION}.tar.gz -C rpm_build/SOURCES mangayomi-${VERSION}
           mkdir -p rpm_build/SOURCES/usr/share/icons/hicolor/256x256/apps
           cp assets/app_icons/icon-red.png rpm_build/SOURCES/usr/share/icons/hicolor/256x256/apps/mangayomi.png
+          cp linux/mangayomi.desktop rpm_build/SOURCES/
           # RPM Spec File
           cat <<EOF > rpm_build/SPECS/mangayomi.spec
           Name: mangayomi
@@ -346,14 +340,8 @@ jobs:
           mkdir -p %{buildroot}/usr/share/icons/hicolor/256x256/apps
           cp -r * %{buildroot}/usr/bin/
           cp -r %{_sourcedir}/usr/share/* %{buildroot}/usr/share/
-          cat <<EOL > %{buildroot}/usr/share/applications/mangayomi.desktop
-          [Desktop Entry]
-          Name=mangayomi
-          Exec=/usr/bin/mangayomi
-          Icon=mangayomi
-          Type=Application
-          Categories=AudioVideo;
-          EOL
+          cp %{_sourcedir}/mangayomi.desktop %{buildroot}/usr/share/applications/mangayomi.desktop
+          
           %files
           /usr/bin/*
           /usr/share/applications/mangayomi.desktop

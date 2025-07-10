@@ -1,0 +1,25 @@
+[Desktop Entry]
+Type=Application
+Name=Mangayomi
+Icon=mangayomi
+Exec=/usr/bin/mangayomi
+Categories=AudioVideo;
+Keywords=Manga;Anime;BitTorrent;
+StartupNotify=true
+Comment=Read manga, light novels and watch anime
+Comment[ar]=اقرأ المانغا والروايات الخفيفة وشاهد الأنمي
+Comment[de]=Manga und Light Novels lesen und Anime schauen
+Comment[es]=Leer manga, novelas ligeras y ver anime
+Comment[es_419]=Leer manga, novelas ligeras y ver anime
+Comment[fr]=Lire des mangas, des light novels et regarder des animés
+Comment[id]=Membaca manga, light novel, dan menonton anime
+Comment[it]=Leggi manga, light novel e guarda anime
+Comment[pt]=Ler manga, light novels e assistir anime
+Comment[pt_BR]=Ler mangá, light novels e assistir animes
+Comment[ru]=Читать мангу и лайт-новеллы, смотреть аниме
+Comment[th]=อ่านมังงะ ไลท์โนเวล และดูอนิเมะ
+Comment[tr]=Manga ve light novel oku, anime izle
+Comment[zh]=阅读漫画、轻小说和观看动漫
+
+# Used for proper icon matching in X11 (ignored on Wayland)
+StartupWMClass=Mangayomi
