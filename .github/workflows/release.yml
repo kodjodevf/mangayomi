@@ -318,15 +318,16 @@ jobs:
 
       - name: Create RPM Package
         run: |
+          VERSION=${GITHUB_REF_NAME#v} # Strip the "v" from tag like v0.6.3 → 0.6.3
           mkdir -p rpm_build/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-          cp -r build/linux/x64/release/bundle rpm_build/SOURCES/mangayomi-1.0.0
-          tar czf rpm_build/SOURCES/mangayomi-1.0.0.tar.gz -C rpm_build/SOURCES mangayomi-1.0.0
+          cp -r build/linux/x64/release/bundle rpm_build/SOURCES/mangayomi-${VERSION}
+          tar czf rpm_build/SOURCES/mangayomi-${VERSION}.tar.gz -C rpm_build/SOURCES mangayomi-${VERSION}
           mkdir -p rpm_build/SOURCES/usr/share/icons/hicolor/256x256/apps
           cp assets/app_icons/icon-red.png rpm_build/SOURCES/usr/share/icons/hicolor/256x256/apps/mangayomi.png
           # RPM Spec File
           cat <<EOF > rpm_build/SPECS/mangayomi.spec
           Name: mangayomi
-          Version: 1.0.0
+          Version: ${VERSION}
           Release: 1%{?dist}
           Summary: Mangayomi is an open-source Flutter app for reading manga, novels, and watching animes across multiple platforms
           License: MIT
