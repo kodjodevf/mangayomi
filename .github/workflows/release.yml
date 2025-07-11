@@ -319,7 +319,7 @@ jobs:
 
       - name: Create RPM Package
         run: |
-          VERSION=${GITHUB_REF_NAME#v} # Strip the "v" from tag like v0.6.3 → 0.6.3
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //; s/+.*//')
           mkdir -p rpm_build/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
           cp -r build/linux/x64/release/bundle rpm_build/SOURCES/mangayomi-${VERSION}
           tar czf rpm_build/SOURCES/mangayomi-${VERSION}.tar.gz -C rpm_build/SOURCES mangayomi-${VERSION}
