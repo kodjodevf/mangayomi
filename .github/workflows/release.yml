@@ -412,8 +412,17 @@ jobs:
       - name: Build deb package
         run: fastforge package --platform linux --targets deb
 
-      - name: Move deb file
-        run: mv $(find dist -type f -name "mangayomi*.deb") dist/Mangayomi-${{ github.ref_name }}-linux.deb
+      - name: Inject custom .desktop file into .deb
+        run: |
+          mkdir extracted_deb
+          dpkg-deb -R "$(find dist -name '*.deb' | head -n 1)" extracted_deb
+          # Replace desktop file
+          cp -f linux/mangayomi.desktop extracted_deb/usr/share/applications/mangayomi.desktop
+          # Set correct permissions
+          chmod 644 extracted_deb/usr/share/applications/mangayomi.desktop
+          # Repack the .deb
+          sudo apt-get install -y fakeroot
+          fakeroot dpkg-deb -b extracted_deb dist/Mangayomi-${{ github.ref_name }}-linux.deb
 
       - name: upload artifact linux deb
         uses: actions/upload-artifact@v4
