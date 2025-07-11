@@ -212,20 +212,24 @@ jobs:
       - name: Enable inno_bundle
         run: dart pub global activate inno_bundle
 
-      - name: Update PATH
-        run: echo 'export PATH="$PATH:$HOME/.pub-cache/bin"' >> ~/.bashrc
-
       - name: build windows exe
         run: |
-            dart run inno_bundle:build --release --app-version ${{ github.ref_name }}
+            dart run inno_bundle:build --release
 
       - name: build windows zip
         run: |
-          cd build/windows/x64/installer/Release
-          Rename-Item -Path "*-Installer.exe" -NewName "Mangayomi-${{ github.ref_name }}-windows.exe"
-          cd ../../runner/Release
-          Compress-Archive -Path * -DestinationPath Mangayomi-Windows.zip
-          Rename-Item -Path "Mangayomi-*.zip" -NewName "Mangayomi-${{ github.ref_name }}-windows.zip"
+          # Rename the installer .exe
+          $installer = Get-ChildItem "build/windows/x64/installer/Release/*-Installer.exe"
+          Rename-Item -Path $installer.FullName -NewName "Mangayomi-${{ github.ref_name }}-windows.exe"
+
+          # Go to runner output dir
+          Set-Location -Path "build/windows/x64/runner/Release"
+
+          # Create zip
+          Compress-Archive -Path * -DestinationPath "Mangayomi-Windows.zip"
+
+          # Rename zip
+          Rename-Item -Path "Mangayomi-Windows.zip" -NewName "Mangayomi-${{ github.ref_name }}-windows.zip"
 
       - name: upload artifact windows exe_zip
         uses: actions/upload-artifact@v4
@@ -254,10 +258,9 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install webkit2gtk-4.1 clang cmake ninja-build pkg-config libgtk-3-dev mpv libmpv-dev dpkg-dev libblkid-dev liblzma-dev fuse rpm
-          wget -O appimagetool "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
-          chmod +x appimagetool
-          sudo mv appimagetool /usr/local/bin/
+          sudo apt-get install webkit2gtk-4.1 clang cmake ninja-build pkg-config libgtk-3-dev mpv libmpv-dev dpkg-dev libblkid-dev liblzma-dev fuse rpm imagemagick
+          wget -O /usr/local/bin/linuxdeploy "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
+          chmod +x /usr/local/bin/linuxdeploy
 
       - name: setup flutter
         uses: subosito/flutter-action@v2
@@ -291,42 +294,42 @@ jobs:
           mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
           # Copy built files
           cp -r build/linux/x64/release/bundle/* AppDir/usr/bin/
-          cp assets/app_icons/icon-red.png AppDir/usr/share/icons/hicolor/256x256/apps/mangayomi.png
-          cp assets/app_icons/icon-red.png AppDir/mangayomi.png
+          convert -resize 256x256 assets/app_icons/icon-red.png AppDir/usr/share/icons/hicolor/256x256/apps/mangayomi.png
+          convert -resize 512x512 assets/app_icons/icon-red.png AppDir/mangayomi.png
           # Create desktop file in AppDir root
-          cat <<EOF > AppDir/mangayomi.desktop
-          [Desktop Entry]
-          Name=mangayomi
-          Exec=usr/bin/mangayomi
-          Icon=mangayomi
-          Type=Application
-          Categories=AudioVideo;
-          EOF
+          cp linux/mangayomi.desktop AppDir/mangayomi.desktop
           # Create AppRun file
           cat <<EOF > AppDir/AppRun
           #!/bin/sh
           SELF=\$(readlink -f "\$0")
           HERE=\${SELF%/*}
           export PATH="\${HERE}/usr/bin/:\${PATH}"
-          export LD_LIBRARY_PATH="\${HERE}/usr/lib/:\${LD_LIBRARY_PATH}"
+          export LD_LIBRARY_PATH="\${HERE}/usr/lib/:\${HERE}/usr/bin/lib/:\${LD_LIBRARY_PATH}"
           exec "\${HERE}/usr/bin/mangayomi" "\$@"
           EOF
           chmod +x AppDir/AppRun
           # Make AppImage
-          /usr/local/bin/appimagetool AppDir
+          /usr/local/bin/linuxdeploy \
+            --appdir AppDir \
+            --desktop-file AppDir/mangayomi.desktop \
+            --icon-file AppDir/mangayomi.png \
+            --executable AppDir/usr/bin/mangayomi \
+            --output appimage
           mv $(find . -type f -name "*.AppImage") build/linux/x64/release/Mangayomi-${{ github.ref_name }}-linux.AppImage
 
       - name: Create RPM Package
         run: |
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //; s/+.*//')
           mkdir -p rpm_build/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-          cp -r build/linux/x64/release/bundle rpm_build/SOURCES/mangayomi-1.0.0
-          tar czf rpm_build/SOURCES/mangayomi-1.0.0.tar.gz -C rpm_build/SOURCES mangayomi-1.0.0
+          cp -r build/linux/x64/release/bundle rpm_build/SOURCES/mangayomi-${VERSION}
+          tar czf rpm_build/SOURCES/mangayomi-${VERSION}.tar.gz -C rpm_build/SOURCES mangayomi-${VERSION}
           mkdir -p rpm_build/SOURCES/usr/share/icons/hicolor/256x256/apps
           cp assets/app_icons/icon-red.png rpm_build/SOURCES/usr/share/icons/hicolor/256x256/apps/mangayomi.png
+          cp linux/mangayomi.desktop rpm_build/SOURCES/
           # RPM Spec File
           cat <<EOF > rpm_build/SPECS/mangayomi.spec
           Name: mangayomi
-          Version: 1.0.0
+          Version: ${VERSION}
           Release: 1%{?dist}
           Summary: Mangayomi is an open-source Flutter app for reading manga, novels, and watching animes across multiple platforms
           License: MIT
@@ -345,14 +348,8 @@ jobs:
           mkdir -p %{buildroot}/usr/share/icons/hicolor/256x256/apps
           cp -r * %{buildroot}/usr/bin/
           cp -r %{_sourcedir}/usr/share/* %{buildroot}/usr/share/
-          cat <<EOL > %{buildroot}/usr/share/applications/mangayomi.desktop
-          [Desktop Entry]
-          Name=mangayomi
-          Exec=/usr/bin/mangayomi
-          Icon=mangayomi
-          Type=Application
-          Categories=AudioVideo;
-          EOL
+          cp %{_sourcedir}/mangayomi.desktop %{buildroot}/usr/share/applications/mangayomi.desktop
+          
           %files
           /usr/bin/*
           /usr/share/applications/mangayomi.desktop
@@ -406,17 +403,26 @@ jobs:
       - name: flutter pub get
         run: flutter pub get
 
-      - name: Enable dart_distributor
-        run: dart pub global activate flutter_distributor
+      - name: Enable fastforge
+        run: dart pub global activate fastforge
 
       - name: Update PATH
-        run: echo 'export PATH="$PATH:$HOME/.pub-cache/bin"' >> ~/.bashrc
+        run: echo "PATH=${HOME}/.pub-cache/bin:${PATH}" >> $GITHUB_ENV
 
       - name: Build deb package
-        run: flutter_distributor package --platform linux --targets deb
+        run: fastforge package --platform linux --targets deb
 
-      - name: Move deb file
-        run: mv $(find dist -type f -name "mangayomi*.deb") dist/Mangayomi-${{ github.ref_name }}-linux.deb
+      - name: Inject custom .desktop file into .deb
+        run: |
+          mkdir extracted_deb
+          dpkg-deb -R "$(find dist -name '*.deb' | head -n 1)" extracted_deb
+          # Replace desktop file
+          cp -f linux/mangayomi.desktop extracted_deb/usr/share/applications/mangayomi.desktop
+          # Set correct permissions
+          chmod 644 extracted_deb/usr/share/applications/mangayomi.desktop
+          # Repack the .deb
+          sudo apt-get install -y fakeroot
+          fakeroot dpkg-deb -b extracted_deb dist/Mangayomi-${{ github.ref_name }}-linux.deb
 
       - name: upload artifact linux deb
         uses: actions/upload-artifact@v4

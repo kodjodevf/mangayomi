@@ -10,7 +10,11 @@ priority: optional
 
 section: x11
 
-installed_size: 30600
+installed_size: 109400
+
+depencencies:
+  - libwebkit2gtk-4.1-0
+  - libmpv2
 
 essential: false
 
