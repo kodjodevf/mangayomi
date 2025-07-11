@@ -399,14 +399,14 @@ jobs:
       - name: flutter pub get
         run: flutter pub get
 
-      - name: Enable dart_distributor
-        run: dart pub global activate flutter_distributor
+      - name: Enable fastforge
+        run: dart pub global activate fastforge
 
       - name: Update PATH
-        run: echo 'export PATH="$PATH:$HOME/.pub-cache/bin"' >> ~/.bashrc
+        run: echo "PATH=${HOME}/.pub-cache/bin:${PATH}" >> $GITHUB_ENV
 
       - name: Build deb package
-        run: flutter_distributor package --platform linux --targets deb
+        run: fastforge package --platform linux --targets deb
 
       - name: Move deb file
         run: mv $(find dist -type f -name "mangayomi*.deb") dist/Mangayomi-${{ github.ref_name }}-linux.deb
