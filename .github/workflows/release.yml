@@ -258,10 +258,9 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install webkit2gtk-4.1 clang cmake ninja-build pkg-config libgtk-3-dev mpv libmpv-dev dpkg-dev libblkid-dev liblzma-dev fuse rpm
-          wget -O appimagetool "https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage"
-          chmod +x appimagetool
-          sudo mv appimagetool /usr/local/bin/
+          sudo apt-get install webkit2gtk-4.1 clang cmake ninja-build pkg-config libgtk-3-dev mpv libmpv-dev dpkg-dev libblkid-dev liblzma-dev fuse rpm imagemagick
+          wget -O /usr/local/bin/linuxdeploy "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
+          chmod +x /usr/local/bin/linuxdeploy
 
       - name: setup flutter
         uses: subosito/flutter-action@v2
@@ -295,8 +294,8 @@ jobs:
           mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
           # Copy built files
           cp -r build/linux/x64/release/bundle/* AppDir/usr/bin/
-          cp assets/app_icons/icon-red.png AppDir/usr/share/icons/hicolor/256x256/apps/mangayomi.png
-          cp assets/app_icons/icon-red.png AppDir/mangayomi.png
+          convert -resize 256x256 assets/app_icons/icon-red.png AppDir/usr/share/icons/hicolor/256x256/apps/mangayomi.png
+          convert -resize 512x512 assets/app_icons/icon-red.png AppDir/mangayomi.png
           # Create desktop file in AppDir root
           cp linux/mangayomi.desktop AppDir/mangayomi.desktop
           # Create AppRun file
@@ -305,12 +304,17 @@ jobs:
           SELF=\$(readlink -f "\$0")
           HERE=\${SELF%/*}
           export PATH="\${HERE}/usr/bin/:\${PATH}"
-          export LD_LIBRARY_PATH="\${HERE}/usr/lib/:\${LD_LIBRARY_PATH}"
+          export LD_LIBRARY_PATH="\${HERE}/usr/lib/:\${HERE}/usr/bin/lib/:\${LD_LIBRARY_PATH}"
           exec "\${HERE}/usr/bin/mangayomi" "\$@"
           EOF
           chmod +x AppDir/AppRun
           # Make AppImage
-          /usr/local/bin/appimagetool AppDir
+          /usr/local/bin/linuxdeploy \
+            --appdir AppDir \
+            --desktop-file AppDir/mangayomi.desktop \
+            --icon-file AppDir/mangayomi.png \
+            --executable AppDir/usr/bin/mangayomi \
+            --output appimage
           mv $(find . -type f -name "*.AppImage") build/linux/x64/release/Mangayomi-${{ github.ref_name }}-linux.AppImage
 
       - name: Create RPM Package
