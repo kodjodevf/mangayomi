@@ -71,6 +71,13 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     }
   }
 
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    tabBarController?.dispose();
+    super.dispose();
+  }
+
   Future<void> _updateLibrary(List<Manga> mangaList) async {
     bool isDark = ref.read(themeModeStateProvider);
     botToast(

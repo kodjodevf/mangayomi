@@ -52,6 +52,12 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
     await StorageProvider().requestPermission();
   }
 
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    super.dispose();
+  }
+
   final _textEditingController = TextEditingController();
   bool _isSearch = false;
   @override

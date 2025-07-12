@@ -114,6 +114,12 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
     return mangaRes;
   }
 
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    super.dispose();
+  }
+
   late final _textEditingController = TextEditingController(text: widget.query);
   late String _query = widget.query;
   late bool _isSearch = widget.isSearch;

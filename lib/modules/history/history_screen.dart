@@ -51,6 +51,12 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
     _tabBarController.addListener(tabListener);
   }
 
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    super.dispose();
+  }
+
   final _textEditingController = TextEditingController();
   bool _isSearch = false;
   List<History> entriesData = [];

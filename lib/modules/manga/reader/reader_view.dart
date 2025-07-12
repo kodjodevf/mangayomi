@@ -144,7 +144,15 @@ class _MangaChapterPageGalleryState
 
     _rebuildDetail.close();
     _doubleClickAnimationController.dispose();
+    _scaleAnimationController.dispose();
+    _failedToLoadImage.dispose();
     _autoScroll.value = false;
+    _autoScroll.dispose();
+    _autoScrollPage.dispose();
+    _itemPositionsListener.itemPositions.removeListener(_readProgressListener);
+    _photoViewController.dispose();
+    _photoViewScaleStateController.dispose();
+    _extendedController.dispose();
     clearGestureDetailsCache();
     if (isDesktop) {
       setFullScreen(value: false);

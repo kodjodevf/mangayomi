@@ -402,10 +402,19 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     _currentPositionSub.cancel();
     _currentTotalDurationSub.cancel();
     _completed.cancel();
+    _video.dispose();
+    _playbackSpeed.dispose();
+    _isDoubleSpeed.dispose();
+    _currentTotalDuration.dispose();
+    _showFitLabel.dispose();
+    _isCompleted.dispose();
+    _tempPosition.dispose();
+    _fit.dispose();
     if (!_isDesktop) {
       _setLandscapeMode(false);
     }
     _skipPhase.dispose();
+    _currentPosition.dispose();
     super.dispose();
   }
 
@@ -490,7 +499,12 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
               selected,
             ),
             onTap: () async {
+              if (_video.value?.videoTrack?.id == quality.videoTrack?.id) {
+                Navigator.pop(context);
+                return;
+              }
               _video.value = quality;
+              _player.stop();
               if (quality.isLocal) {
                 if (widget.isLocal) {
                   _player.setVideoTrack(quality.videoTrack!);

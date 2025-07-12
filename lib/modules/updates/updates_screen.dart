@@ -113,6 +113,13 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
   }
 
   @override
+  void dispose() {
+    _textEditingController.dispose();
+    _tabBarController.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     _tabBarController = TabController(length: tabs, vsync: this);
