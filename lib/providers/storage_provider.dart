@@ -136,7 +136,9 @@ class StorageProvider {
   Future<Directory?> getDatabaseDirectory() async {
     final dir = await getApplicationDocumentsDirectory();
     if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
-      return dir;
+      String dbDir = path.join(dir.path, 'databases');
+      await Directory(dbDir).create(recursive: true);
+      return Directory(dbDir);
     } else {
       String dbDir = path.join(dir.path, 'Mangayomi', 'databases');
       await Directory(dbDir).create(recursive: true);
