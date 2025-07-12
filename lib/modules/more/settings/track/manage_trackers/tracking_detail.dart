@@ -24,7 +24,12 @@ class _TrackingDetailState extends State<TrackingDetail>
   void initState() {
     super.initState();
     _tabBarController = TabController(length: 2, vsync: this);
-    _tabBarController.animateTo(0);
+  }
+
+  @override
+  void dispose() {
+    _tabBarController.dispose();
+    super.dispose();
   }
 
   @override

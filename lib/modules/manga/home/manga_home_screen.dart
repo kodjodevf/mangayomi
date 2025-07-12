@@ -116,6 +116,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
     _textEditingController.dispose();
     super.dispose();
   }

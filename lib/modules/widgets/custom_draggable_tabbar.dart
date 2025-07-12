@@ -212,4 +212,5 @@ Future<void> customDraggableTabBar({
       ),
     );
   }
+  tabBarController.dispose();
 }

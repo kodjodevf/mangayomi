@@ -60,6 +60,12 @@ class _ChapterListWidgetState extends State<ChapterListWidget> {
     _jumpTo();
   }
 
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   Future<void> _jumpTo() async {
     await Future.delayed(const Duration(milliseconds: 5));
     controller.jumpTo(
