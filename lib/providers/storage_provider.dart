@@ -56,6 +56,7 @@ class StorageProvider {
       directory = Directory("/storage/emulated/0/Mangayomi/");
     } else {
       final dir = await getApplicationDocumentsDirectory();
+      if (Platform.isIOS || Platform.isMacOS) return dir;
       directory = Directory(path.join(dir.path, 'Mangayomi'));
     }
     return directory;
@@ -92,6 +93,7 @@ class StorageProvider {
     } else {
       final dir = await getApplicationDocumentsDirectory();
       final p = dPath.isEmpty ? dir.path : dPath;
+      if (Platform.isIOS || Platform.isMacOS) return Directory(p);
       directory = Directory(path.join(p, 'Mangayomi'));
     }
     return directory;
