@@ -34,8 +34,8 @@ class StorageProvider {
   }
 
   Future<void> deleteBtDirectory() async {
-    final d = await getBtDirectory();
-    await Directory(d!.path).delete(recursive: true);
+    final btDir = Directory(await _btDirectoryPath());
+    if (await btDir.exists()) await btDir.delete(recursive: true);
   }
 
   Future<void> deleteTmpDirectory() async {
@@ -56,10 +56,14 @@ class StorageProvider {
   }
 
   Future<Directory?> getBtDirectory() async {
-    final defaultDirectory = await getDefaultDirectory();
-    String dbDir = path.join(defaultDirectory!.path, 'torrents');
+    String dbDir = await _btDirectoryPath();
     await Directory(dbDir).create(recursive: true);
     return Directory(dbDir);
+  }
+
+  Future<String> _btDirectoryPath() async {
+    final defaultDirectory = await getDefaultDirectory();
+    return path.join(defaultDirectory!.path, 'torrents');
   }
 
   Future<Directory?> getTmpDirectory() async {
