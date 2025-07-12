@@ -146,7 +146,7 @@ class MyAnimeList extends _$MyAnimeList {
       publishingType: res["media_type"].toString().replaceAll("_", " "),
       publishingStatus: res["status"].toString().replaceAll("_", " "),
       trackingUrl: "https://myanimelist.net/$item/${res["id"]}",
-      score: res["mean"],
+      score: (res["mean"] as num?)?.toDouble(),
       syncId: syncId,
     );
   }
@@ -171,32 +171,23 @@ class MyAnimeList extends _$MyAnimeList {
 
     return res['data'] == null
         ? []
-        : (res['data'] as List)
-              .map(
-                (e) => TrackSearch(
-                  mediaId: e["node"]["id"],
-                  summary: e["node"]["synopsis"] ?? "",
-                  totalChapter: e["node"][contentUnit],
-                  coverUrl: e["node"]["main_picture"]["large"] ?? "",
-                  title: e["node"]["title"],
-                  score: e["node"]["mean"] is double
-                      ? e["node"]["mean"]
-                      : ((e["node"]["mean"] ?? 0) as int).toDouble(),
-                  startDate: e["node"]["start_date"] ?? "",
-                  publishingType: e["node"]["media_type"].toString().replaceAll(
-                    "_",
-                    " ",
-                  ),
-                  publishingStatus: e["node"]["status"].toString().replaceAll(
-                    "_",
-                    " ",
-                  ),
-                  trackingUrl:
-                      "https://myanimelist.net/$item/${e["node"]["id"]}",
-                  syncId: syncId,
-                ),
-              )
-              .toList();
+        : (res['data'] as List).map((e) {
+            final node = e["node"] as Map<String, dynamic>;
+            String clean(String? s) => (s ?? '').replaceAll('_', ' ');
+            return TrackSearch(
+              mediaId: node["id"],
+              summary: node["synopsis"] ?? "",
+              totalChapter: node[contentUnit],
+              coverUrl: node["main_picture"]["large"] ?? "",
+              title: node["title"],
+              score: (node["mean"] as num?)?.toDouble(),
+              startDate: node["start_date"] ?? "",
+              publishingType: clean(node["media_type"].toString()),
+              publishingStatus: clean(node["status"].toString()),
+              trackingUrl: "https://myanimelist.net/$item/${node["id"]}",
+              syncId: syncId,
+            );
+          }).toList();
   }
 
   Future<List<TrackSearch>> fetchUserData({bool isManga = true}) async {
@@ -219,46 +210,31 @@ class MyAnimeList extends _$MyAnimeList {
 
     return res['data'] == null
         ? []
-        : (res['data'] as List)
-              .map(
-                (e) => TrackSearch(
-                  mediaId: e["node"]["id"],
-                  summary: e["node"]["synopsis"] ?? "",
-                  totalChapter: e["node"][contentUnit],
-                  coverUrl: e["node"]["main_picture"]["large"] ?? "",
-                  title: e["node"]["title"],
-                  score: e["node"]["mean"] is double
-                      ? e["node"]["mean"]
-                      : ((e["node"]["mean"] ?? 0) as int).toDouble(),
-                  startDate: e["node"]["start_date"] ?? "",
-                  publishingType: e["node"]["media_type"].toString().replaceAll(
-                    "_",
-                    " ",
-                  ),
-                  publishingStatus: e["node"]["status"].toString().replaceAll(
-                    "_",
-                    " ",
-                  ),
-                  trackingUrl:
-                      "https://myanimelist.net/$item/${e["node"]["id"]}",
-                  startedReadingDate: _parseDate(
-                    e["list_status"]["start_date"],
-                  ),
-                  finishedReadingDate: _parseDate(
-                    e["list_status"]["finish_date"],
-                  ),
-                  lastChapterRead:
-                      e["list_status"][isManga
-                          ? "num_chapters_read"
-                          : "num_episodes_watched"],
-                  status: fromMyAnimeListStatus(
-                    e["list_status"]["status"],
-                    isManga,
-                  ).name,
-                  syncId: syncId,
-                ),
-              )
-              .toList();
+        : (res['data'] as List).map((e) {
+            final node = e["node"] as Map<String, dynamic>;
+            final listStatus = e["list_status"] as Map<String, dynamic>;
+            String clean(String? s) => (s ?? '').replaceAll('_', ' ');
+            return TrackSearch(
+              mediaId: node["id"],
+              summary: node["synopsis"] ?? "",
+              totalChapter: node[contentUnit],
+              coverUrl: node["main_picture"]["large"] ?? "",
+              title: node["title"],
+              score: (node["mean"] as num?)?.toDouble(),
+              startDate: node["start_date"] ?? "",
+              publishingType: clean(node["media_type"].toString()),
+              publishingStatus: clean(node["status"].toString()),
+              trackingUrl: "https://myanimelist.net/$item/${node["id"]}",
+              startedReadingDate: _parseDate(listStatus["start_date"]),
+              finishedReadingDate: _parseDate(listStatus["finish_date"]),
+              lastChapterRead:
+                  listStatus[isManga
+                      ? "num_chapters_read"
+                      : "num_episodes_watched"],
+              status: fromMyAnimeListStatus(listStatus["status"], isManga).name,
+              syncId: syncId,
+            );
+          }).toList();
   }
 
   String _convertToIsoDate(int? epochTime) {
