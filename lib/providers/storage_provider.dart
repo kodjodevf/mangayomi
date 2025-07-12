@@ -39,8 +39,8 @@ class StorageProvider {
   }
 
   Future<void> deleteTmpDirectory() async {
-    final d = await getTmpDirectory();
-    await Directory(d!.path).delete(recursive: true);
+    final tmpDir = Directory(await _tempDirectoryPath());
+    if (await tmpDir.exists()) await tmpDir.delete(recursive: true);
   }
 
   Future<Directory?> getDefaultDirectory() async {
@@ -63,10 +63,14 @@ class StorageProvider {
   }
 
   Future<Directory?> getTmpDirectory() async {
+    String tmpPath = await _tempDirectoryPath();
+    await Directory(tmpPath).create(recursive: true);
+    return Directory(tmpPath);
+  }
+
+  Future<String> _tempDirectoryPath() async {
     final defaultDirectory = await getDirectory();
-    String dbDir = path.join(defaultDirectory!.path, 'tmp');
-    await Directory(dbDir).create(recursive: true);
-    return Directory(dbDir);
+    return path.join(defaultDirectory!.path, 'tmp');
   }
 
   Future<Directory?> getIosBackupDirectory() async {
