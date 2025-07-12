@@ -152,7 +152,7 @@ class StorageProvider {
     return Directory(gPath);
   }
 
-  Future<Isar> initDB(String? path, {bool? inspector = false}) async {
+  Future<Isar> initDB(String? path, {bool inspector = false}) async {
     Directory? dir;
     if (path == null) {
       dir = await getDatabaseDirectory();
@@ -179,7 +179,7 @@ class StorageProvider {
       ],
       directory: dir!.path,
       name: "mangayomiDb",
-      inspector: inspector!,
+      inspector: inspector,
     );
 
     final settings = await isar.settings.filter().idEqualTo(227).findFirst();
