@@ -23,21 +23,14 @@ import 'package:path/path.dart' as path;
 class StorageProvider {
   static bool _hasPermission = false;
   Future<bool> requestPermission() async {
-    if (_hasPermission) return true;
-    if (Platform.isAndroid) {
-      Permission permission = Permission.manageExternalStorage;
-      if (await permission.isGranted) {
-        return true;
-      } else {
-        final result = await permission.request();
-        if (result == PermissionStatus.granted) {
-          _hasPermission = true;
-          return true;
-        }
-        return false;
-      }
+    if (_hasPermission || !Platform.isAndroid) return true;
+    Permission permission = Permission.manageExternalStorage;
+    if (await permission.isGranted) return true;
+    if (await permission.request().isGranted) {
+      _hasPermission = true;
+      return true;
     }
-    return true;
+    return false;
   }
 
   Future<void> deleteBtDirectory() async {
@@ -191,9 +184,7 @@ class StorageProvider {
 
     final settings = await isar.settings.filter().idEqualTo(227).findFirst();
     if (settings == null) {
-      await isar.writeTxn(() async {
-        isar.settings.put(Settings());
-      });
+      await isar.writeTxn(() async => isar.settings.put(Settings()));
     }
 
     return isar;
