@@ -56,22 +56,22 @@ class StorageProvider {
   }
 
   Future<Directory?> getBtDirectory() async {
-    final gefaultDirectory = await getDefaultDirectory();
-    String dbDir = path.join(gefaultDirectory!.path, 'torrents');
+    final defaultDirectory = await getDefaultDirectory();
+    String dbDir = path.join(defaultDirectory!.path, 'torrents');
     await Directory(dbDir).create(recursive: true);
     return Directory(dbDir);
   }
 
   Future<Directory?> getTmpDirectory() async {
-    final gefaultDirectory = await getDirectory();
-    String dbDir = path.join(gefaultDirectory!.path, 'tmp');
+    final defaultDirectory = await getDirectory();
+    String dbDir = path.join(defaultDirectory!.path, 'tmp');
     await Directory(dbDir).create(recursive: true);
     return Directory(dbDir);
   }
 
   Future<Directory?> getIosBackupDirectory() async {
-    final gefaultDirectory = await getDefaultDirectory();
-    String dbDir = path.join(gefaultDirectory!.path, 'backup');
+    final defaultDirectory = await getDefaultDirectory();
+    String dbDir = path.join(defaultDirectory!.path, 'backup');
     await Directory(dbDir).create(recursive: true);
     return Directory(dbDir);
   }
