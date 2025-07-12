@@ -59,7 +59,11 @@ void main(List<String> args) async {
     }
   }
   isar = await StorageProvider().initDB(null, inspector: kDebugMode);
-  await Hive.initFlutter();
+  if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
+    await Hive.initFlutter("databases");
+  } else {
+    await Hive.initFlutter(p.join("Mangayomi", "databases"));
+  }
   Hive.registerAdapter(TrackSearchAdapter());
 
   runApp(const ProviderScope(child: MyApp()));

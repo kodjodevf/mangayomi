@@ -23,31 +23,24 @@ import 'package:path/path.dart' as path;
 class StorageProvider {
   static bool _hasPermission = false;
   Future<bool> requestPermission() async {
-    if (_hasPermission) return true;
-    if (Platform.isAndroid) {
-      Permission permission = Permission.manageExternalStorage;
-      if (await permission.isGranted) {
-        return true;
-      } else {
-        final result = await permission.request();
-        if (result == PermissionStatus.granted) {
-          _hasPermission = true;
-          return true;
-        }
-        return false;
-      }
+    if (_hasPermission || !Platform.isAndroid) return true;
+    Permission permission = Permission.manageExternalStorage;
+    if (await permission.isGranted) return true;
+    if (await permission.request().isGranted) {
+      _hasPermission = true;
+      return true;
     }
-    return true;
+    return false;
   }
 
   Future<void> deleteBtDirectory() async {
-    final d = await getBtDirectory();
-    await Directory(d!.path).delete(recursive: true);
+    final btDir = Directory(await _btDirectoryPath());
+    if (await btDir.exists()) await btDir.delete(recursive: true);
   }
 
   Future<void> deleteTmpDirectory() async {
-    final d = await getTmpDirectory();
-    await Directory(d!.path).delete(recursive: true);
+    final tmpDir = Directory(await _tempDirectoryPath());
+    if (await tmpDir.exists()) await tmpDir.delete(recursive: true);
   }
 
   Future<Directory?> getDefaultDirectory() async {
@@ -56,28 +49,37 @@ class StorageProvider {
       directory = Directory("/storage/emulated/0/Mangayomi/");
     } else {
       final dir = await getApplicationDocumentsDirectory();
+      if (Platform.isIOS || Platform.isMacOS) return dir;
       directory = Directory(path.join(dir.path, 'Mangayomi'));
     }
     return directory;
   }
 
   Future<Directory?> getBtDirectory() async {
-    final gefaultDirectory = await getDefaultDirectory();
-    String dbDir = path.join(gefaultDirectory!.path, 'torrents');
+    String dbDir = await _btDirectoryPath();
     await Directory(dbDir).create(recursive: true);
     return Directory(dbDir);
+  }
+
+  Future<String> _btDirectoryPath() async {
+    final defaultDirectory = await getDefaultDirectory();
+    return path.join(defaultDirectory!.path, 'torrents');
   }
 
   Future<Directory?> getTmpDirectory() async {
-    final gefaultDirectory = await getDirectory();
-    String dbDir = path.join(gefaultDirectory!.path, 'tmp');
-    await Directory(dbDir).create(recursive: true);
-    return Directory(dbDir);
+    String tmpPath = await _tempDirectoryPath();
+    await Directory(tmpPath).create(recursive: true);
+    return Directory(tmpPath);
+  }
+
+  Future<String> _tempDirectoryPath() async {
+    final defaultDirectory = await getDirectory();
+    return path.join(defaultDirectory!.path, 'tmp');
   }
 
   Future<Directory?> getIosBackupDirectory() async {
-    final gefaultDirectory = await getDefaultDirectory();
-    String dbDir = path.join(gefaultDirectory!.path, 'backup');
+    final defaultDirectory = await getDefaultDirectory();
+    String dbDir = path.join(defaultDirectory!.path, 'backup');
     await Directory(dbDir).create(recursive: true);
     return Directory(dbDir);
   }
@@ -92,6 +94,7 @@ class StorageProvider {
     } else {
       final dir = await getApplicationDocumentsDirectory();
       final p = dPath.isEmpty ? dir.path : dPath;
+      if (Platform.isIOS || Platform.isMacOS) return Directory(p);
       directory = Directory(path.join(p, 'Mangayomi'));
     }
     return directory;
@@ -136,7 +139,9 @@ class StorageProvider {
   Future<Directory?> getDatabaseDirectory() async {
     final dir = await getApplicationDocumentsDirectory();
     if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
-      return dir;
+      String dbDir = path.join(dir.path, 'databases');
+      await Directory(dbDir).create(recursive: true);
+      return Directory(dbDir);
     } else {
       String dbDir = path.join(dir.path, 'Mangayomi', 'databases');
       await Directory(dbDir).create(recursive: true);
@@ -155,7 +160,7 @@ class StorageProvider {
     return Directory(gPath);
   }
 
-  Future<Isar> initDB(String? path, {bool? inspector = false}) async {
+  Future<Isar> initDB(String? path, {bool inspector = false}) async {
     Directory? dir;
     if (path == null) {
       dir = await getDatabaseDirectory();
@@ -182,14 +187,12 @@ class StorageProvider {
       ],
       directory: dir!.path,
       name: "mangayomiDb",
-      inspector: inspector!,
+      inspector: inspector,
     );
 
     final settings = await isar.settings.filter().idEqualTo(227).findFirst();
     if (settings == null) {
-      await isar.writeTxn(() async {
-        isar.settings.put(Settings());
-      });
+      await isar.writeTxn(() async => isar.settings.put(Settings()));
     }
 
     return isar;
