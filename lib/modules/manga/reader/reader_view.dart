@@ -126,7 +126,7 @@ class MangaChapterPageGallery extends ConsumerStatefulWidget {
 
 class _MangaChapterPageGalleryState
     extends ConsumerState<MangaChapterPageGallery>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   late AnimationController _scaleAnimationController;
   late Animation<double> _animation;
   late ReaderController _readerController = ref.read(
@@ -136,6 +136,7 @@ class _MangaChapterPageGalleryState
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _readerController.setMangaHistoryUpdate();
     final index = _uChapDataPreload[_currentIndex!].index;
     if (index != null) {
@@ -155,6 +156,17 @@ class _MangaChapterPageGalleryState
       );
     }
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      final index = _uChapDataPreload[_currentIndex!].index;
+      if (index != null) {
+        _readerController.setPageIndex(_geCurrentIndex(index), true);
+      }
+    }
   }
 
   late final _autoScroll = ValueNotifier(
@@ -201,6 +213,7 @@ class _MangaChapterPageGalleryState
     _animation.addListener(() => _photoViewController.scale = _animation.value);
     _itemPositionsListener.itemPositions.addListener(_readProgressListener);
     _initCurrentIndex();
+    WidgetsBinding.instance.addObserver(this);
   }
 
   final double _horizontalScaleValue = 1.0;
