@@ -1103,24 +1103,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
               ),
             ),
           ),
-          Flexible(
-            fit: FlexFit.tight,
-            child: ValueListenableBuilder<bool>(
-              valueListenable: _isDoubleSpeed,
-              builder: (context, snapshot, _) {
-                return Text.rich(
-                  TextSpan(
-                    children: snapshot
-                        ? [
-                            WidgetSpan(child: Icon(Icons.fast_forward)),
-                            TextSpan(text: " 2X"),
-                          ]
-                        : [],
-                  ),
-                );
-              },
-            ),
-          ),
           Row(
             children: [
               btnToShowChapterListDialog(
@@ -1261,6 +1243,46 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
           width: context.width(1),
           height: context.height(1),
           resumeUponEnteringForegroundMode: true,
+        ),
+        Stack(
+          alignment: AlignmentDirectional.center,
+          children: [
+            Positioned(
+              top: 30,
+              child: ValueListenableBuilder<bool>(
+                valueListenable: _isDoubleSpeed,
+                builder: (context, snapshot, _) {
+                  return Text.rich(
+                    textAlign: TextAlign.center,
+                    TextSpan(
+                      style: TextStyle(
+                        background: Paint()
+                          ..color = Theme.of(context).scaffoldBackgroundColor
+                          ..strokeWidth = 30.0
+                          ..strokeJoin = StrokeJoin.round
+                          ..style = PaintingStyle.stroke,
+                      ),
+                      children: snapshot
+                          ? [
+                              TextSpan(
+                                text: " 2X ",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              WidgetSpan(
+                                alignment: PlaceholderAlignment.middle,
+                                child: Icon(Icons.fast_forward),
+                              ),
+                            ]
+                          : [],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
         if (enableAniSkip && (_hasOpeningSkip || _hasEndingSkip))
           Positioned(
