@@ -258,7 +258,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install webkit2gtk-4.1 clang cmake ninja-build pkg-config libgtk-3-dev mpv libmpv-dev dpkg-dev libblkid-dev liblzma-dev fuse rpm imagemagick
+          sudo apt-get install webkit2gtk-4.1 clang cmake ninja-build pkg-config libgtk-3-dev mpv libmpv-dev dpkg-dev libblkid-dev liblzma-dev fuse rpm
           wget -O /usr/local/bin/linuxdeploy "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
           chmod +x /usr/local/bin/linuxdeploy
 
@@ -291,11 +291,10 @@ jobs:
           # Create fresh AppDir structure
           rm -rf AppDir
           mkdir -p AppDir/usr/bin
-          mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
+          mkdir -p AppDir/usr/share/icons/hicolor
           # Copy built files
           cp -r build/linux/x64/release/bundle/* AppDir/usr/bin/
-          convert -resize 256x256 assets/app_icons/icon-red.png AppDir/usr/share/icons/hicolor/256x256/apps/mangayomi.png
-          convert -resize 512x512 assets/app_icons/icon-red.png AppDir/mangayomi.png
+          cp -rL linux/packaging/appimage/icons/hicolor/* AppDir/usr/share/icons/hicolor
           # Create desktop file in AppDir root
           cp linux/mangayomi.desktop AppDir/mangayomi.desktop
           # Create AppRun file
@@ -312,7 +311,7 @@ jobs:
           /usr/local/bin/linuxdeploy \
             --appdir AppDir \
             --desktop-file AppDir/mangayomi.desktop \
-            --icon-file AppDir/mangayomi.png \
+            --icon-file AppDir/usr/share/icons/hicolor/512x512/apps/mangayomi.png \
             --executable AppDir/usr/bin/mangayomi \
             --output appimage
           mv $(find . -type f -name "*.AppImage") build/linux/x64/release/Mangayomi-${{ github.ref_name }}-linux.AppImage
@@ -421,7 +420,6 @@ jobs:
           # Set correct permissions
           chmod 644 extracted_deb/usr/share/applications/mangayomi.desktop
           # Repack the .deb
-          sudo apt-get install -y fakeroot
           fakeroot dpkg-deb -b extracted_deb dist/Mangayomi-${{ github.ref_name }}-linux.deb
 
       - name: upload artifact linux deb
