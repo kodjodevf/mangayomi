@@ -58,17 +58,20 @@ void main(List<String> args) async {
       );
     }
   }
-  isar = await StorageProvider().initDB(null, inspector: kDebugMode);
-  await Hive.initFlutter();
-  Hive.registerAdapter(TrackSearchAdapter());
-
+  final storage = StorageProvider();
+  await storage.requestPermission();
+  isar = await storage.initDB(null, inspector: kDebugMode);
   runApp(const ProviderScope(child: MyApp()));
-  unawaited(_postLaunchInit()); // Defer non-essential async operations
+  unawaited(_postLaunchInit(storage)); // Defer non-essential async operations
 }
 
-Future<void> _postLaunchInit() async {
-  await StorageProvider().requestPermission();
-  await StorageProvider().deleteBtDirectory();
+Future<void> _postLaunchInit(StorageProvider storage) async {
+  final hivePath = (Platform.isIOS || Platform.isMacOS || Platform.isAndroid)
+      ? "databases"
+      : p.join("Mangayomi", "databases");
+  await Hive.initFlutter(hivePath);
+  Hive.registerAdapter(TrackSearchAdapter());
+  await storage.deleteBtDirectory();
 }
 
 class MyApp extends ConsumerStatefulWidget {
