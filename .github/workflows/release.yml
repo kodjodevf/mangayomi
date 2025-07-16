@@ -291,10 +291,10 @@ jobs:
           # Create fresh AppDir structure
           rm -rf AppDir
           mkdir -p AppDir/usr/bin
-          mkdir -p AppDir/usr/share/icons/hicolor
+          mkdir -p AppDir/usr/share/icons
           # Copy built files
           cp -r build/linux/x64/release/bundle/* AppDir/usr/bin/
-          cp -rL linux/packaging/appimage/icons/hicolor/* AppDir/usr/share/icons/hicolor
+          cp -rL linux/packaging/icons/* AppDir/usr/share/icons
           # Create desktop file in AppDir root
           cp linux/mangayomi.desktop AppDir/mangayomi.desktop
           # Create AppRun file
@@ -322,8 +322,8 @@ jobs:
           mkdir -p rpm_build/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
           cp -r build/linux/x64/release/bundle rpm_build/SOURCES/mangayomi-${VERSION}
           tar czf rpm_build/SOURCES/mangayomi-${VERSION}.tar.gz -C rpm_build/SOURCES mangayomi-${VERSION}
-          mkdir -p rpm_build/SOURCES/usr/share/icons/hicolor/256x256/apps
-          cp assets/app_icons/icon-red.png rpm_build/SOURCES/usr/share/icons/hicolor/256x256/apps/mangayomi.png
+          mkdir -p rpm_build/SOURCES/usr/share/icons
+          cp -rL linux/packaging/icons/* rpm_build/SOURCES/usr/share/icons
           cp linux/mangayomi.desktop rpm_build/SOURCES/
           # RPM Spec File
           cat <<EOF > rpm_build/SPECS/mangayomi.spec
@@ -417,6 +417,8 @@ jobs:
           dpkg-deb -R "$(find dist -name '*.deb' | head -n 1)" extracted_deb
           # Replace desktop file
           cp -f linux/mangayomi.desktop extracted_deb/usr/share/applications/mangayomi.desktop
+          # copy all icon sizes
+          cp -rLf linux/packaging/icons/* extracted_deb/usr/share/icons
           # Set correct permissions
           chmod 644 extracted_deb/usr/share/applications/mangayomi.desktop
           # Repack the .deb
