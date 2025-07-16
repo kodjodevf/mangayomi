@@ -60,9 +60,12 @@ Future<void> customDraggableTabBar({
     );
   }
 
-  tabBarController.addListener(() {
-    if (tabBarController.indexIsChanging) return;
+  tabBarController.animation!.addListener(() {
+    final currentIndex = tabBarController.animation!.value.round();
     index = tabBarController.index;
+    if (index != currentIndex) {
+      index = currentIndex;
+    }
     refresh();
   });
 
