@@ -352,7 +352,12 @@ jobs:
           %files
           /usr/bin/*
           /usr/share/applications/mangayomi.desktop
+          /usr/share/icons/hicolor/16x16/apps/mangayomi.png
+          /usr/share/icons/hicolor/32x32/apps/mangayomi.png
+          /usr/share/icons/hicolor/64x64/apps/mangayomi.png
+          /usr/share/icons/hicolor/128x128/apps/mangayomi.png
           /usr/share/icons/hicolor/256x256/apps/mangayomi.png
+          /usr/share/icons/hicolor/512x512/apps/mangayomi.png
           EOF
 
           rpmbuild --define "_topdir $(pwd)/rpm_build" -ba rpm_build/SPECS/mangayomi.spec
