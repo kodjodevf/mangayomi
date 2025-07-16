@@ -7,6 +7,7 @@ import 'package:extended_image_library/src/platform.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http_client_helper/http_client_helper.dart';
+import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -194,6 +195,7 @@ class CustomExtendedNetworkImageProvider
       ),
     );
     Uint8List? data;
+    await StorageProvider().createDirectorySafely(cacheImagesDirectory.path);
     final File cacheFile = File(join(cacheImagesDirectory.path, md5Key));
     // exist, try to find cache image file
     if (cacheFile.existsSync()) {
@@ -208,8 +210,6 @@ class CustomExtendedNetworkImageProvider
       } else {
         data = await cacheFile.readAsBytes();
       }
-    } else if (!cacheImagesDirectory.existsSync()) {
-      await cacheImagesDirectory.create(recursive: true);
     }
     // load from network
     if (data == null) {

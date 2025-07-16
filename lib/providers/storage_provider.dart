@@ -1,5 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
@@ -21,13 +22,15 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:path/path.dart' as path;
 
 class StorageProvider {
-  static bool _hasPermission = false;
+  static final StorageProvider _instance = StorageProvider._internal();
+  StorageProvider._internal();
+  factory StorageProvider() => _instance;
+
   Future<bool> requestPermission() async {
-    if (_hasPermission || !Platform.isAndroid) return true;
+    if (!Platform.isAndroid) return true;
     Permission permission = Permission.manageExternalStorage;
     if (await permission.isGranted) return true;
     if (await permission.request().isGranted) {
-      _hasPermission = true;
       return true;
     }
     return false;
@@ -46,9 +49,13 @@ class StorageProvider {
   Future<Directory?> getDefaultDirectory() async {
     Directory? directory;
     if (Platform.isAndroid) {
-      directory = Directory("/storage/emulated/0/Mangayomi/");
+      final dir = await getExternalStorageDirectory();
+      directory = Directory(path.join(dir!.path, 'Mangayomi'));
     } else {
       final dir = await getApplicationDocumentsDirectory();
+      // The documents dir in iOS and macOS is already named "Mangayomi".
+      // Appending "Mangayomi" to the documents dir would create
+      // unnecessarily nested Mangayomi/Mangayomi/ folder.
       if (Platform.isIOS || Platform.isMacOS) return dir;
       directory = Directory(path.join(dir.path, 'Mangayomi'));
     }
@@ -56,8 +63,8 @@ class StorageProvider {
   }
 
   Future<Directory?> getBtDirectory() async {
-    String dbDir = await _btDirectoryPath();
-    await Directory(dbDir).create(recursive: true);
+    final dbDir = await _btDirectoryPath();
+    await createDirectorySafely(dbDir);
     return Directory(dbDir);
   }
 
@@ -67,8 +74,8 @@ class StorageProvider {
   }
 
   Future<Directory?> getTmpDirectory() async {
-    String tmpPath = await _tempDirectoryPath();
-    await Directory(tmpPath).create(recursive: true);
+    final tmpPath = await _tempDirectoryPath();
+    await createDirectorySafely(tmpPath);
     return Directory(tmpPath);
   }
 
@@ -80,20 +87,30 @@ class StorageProvider {
   Future<Directory?> getIosBackupDirectory() async {
     final defaultDirectory = await getDefaultDirectory();
     String dbDir = path.join(defaultDirectory!.path, 'backup');
-    await Directory(dbDir).create(recursive: true);
+    await createDirectorySafely(dbDir);
     return Directory(dbDir);
   }
 
   Future<Directory?> getDirectory() async {
     Directory? directory;
-    String dPath = isar.settings.getSync(227)!.downloadLocation ?? "";
+    String dPath = "";
+    try {
+      final setting = isar.settings.getSync(227);
+      dPath = setting?.downloadLocation ?? "";
+    } catch (e) {
+      debugPrint("Could not get downloadLocation from Isar settings: $e");
+    }
     if (Platform.isAndroid) {
+      final dir = await getExternalStorageDirectory();
       directory = Directory(
-        dPath.isEmpty ? "/storage/emulated/0/Mangayomi/" : "$dPath/",
+        dPath.isEmpty ? path.join(dir!.path, 'Mangayomi') : "$dPath/",
       );
     } else {
       final dir = await getApplicationDocumentsDirectory();
       final p = dPath.isEmpty ? dir.path : dPath;
+      // The documents dir in iOS and macOS is already named "Mangayomi".
+      // Appending "Mangayomi" to the documents dir would create
+      // unnecessarily nested Mangayomi/Mangayomi/ folder.
       if (Platform.isIOS || Platform.isMacOS) return Directory(p);
       directory = Directory(path.join(p, 'Mangayomi'));
     }
@@ -138,26 +155,46 @@ class StorageProvider {
 
   Future<Directory?> getDatabaseDirectory() async {
     final dir = await getApplicationDocumentsDirectory();
+    String dbDir;
     if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
-      String dbDir = path.join(dir.path, 'databases');
-      await Directory(dbDir).create(recursive: true);
-      return Directory(dbDir);
+      // The documents dir in iOS and macOS is already named "Mangayomi".
+      // Appending "Mangayomi" to the documents dir would create
+      // unnecessarily nested Mangayomi/Mangayomi/ folder.
+      dbDir = path.join(dir.path, 'databases');
     } else {
-      String dbDir = path.join(dir.path, 'Mangayomi', 'databases');
-      await Directory(dbDir).create(recursive: true);
-      return Directory(dbDir);
+      dbDir = path.join(dir.path, 'Mangayomi', 'databases');
     }
+    await createDirectorySafely(dbDir);
+    return Directory(dbDir);
   }
 
   Future<Directory?> getGalleryDirectory() async {
-    String gPath = (await getDirectory())!.path;
+    String gPath;
     if (Platform.isAndroid) {
-      gPath = "/storage/emulated/0/Pictures/Mangayomi/";
+      final dir = await getExternalStorageDirectory();
+      gPath = path.join(dir!.path, 'Mangayomi', 'Pictures');
     } else {
-      gPath = path.join(gPath, 'Pictures');
+      gPath = path.join((await getDirectory())!.path, 'Pictures');
     }
-    await Directory(gPath).create(recursive: true);
+    await createDirectorySafely(gPath);
     return Directory(gPath);
+  }
+
+  Future<void> createDirectorySafely(String dirPath) async {
+    final dir = Directory(dirPath);
+    try {
+      await dir.create(recursive: true);
+    } catch (_) {
+      if (await requestPermission()) {
+        try {
+          await dir.create(recursive: true);
+        } catch (e) {
+          debugPrint('Initial directory creation failed for $dirPath: $e');
+        }
+      } else {
+        debugPrint('Permission denied. Cannot create: $dirPath');
+      }
+    }
   }
 
   Future<Isar> initDB(String? path, {bool inspector = false}) async {
@@ -189,10 +226,27 @@ class StorageProvider {
       name: "mangayomiDb",
       inspector: inspector,
     );
-
-    final settings = await isar.settings.filter().idEqualTo(227).findFirst();
-    if (settings == null) {
-      await isar.writeTxn(() async => isar.settings.put(Settings()));
+    try {
+      final settings = await isar.settings.filter().idEqualTo(227).findFirst();
+      if (settings == null) {
+        await isar.writeTxn(() async => isar.settings.put(Settings()));
+      }
+    } catch (_) {
+      if (await requestPermission()) {
+        try {
+          final settings = await isar.settings
+              .filter()
+              .idEqualTo(227)
+              .findFirst();
+          if (settings == null) {
+            await isar.writeTxn(() async => isar.settings.put(Settings()));
+          }
+        } catch (e) {
+          debugPrint("Failed after retry with permission: $e");
+        }
+      } else {
+        debugPrint("Permission denied during Database init fallback.");
+      }
     }
 
     return isar;

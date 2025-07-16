@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/video.dart';
+import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/http/rhttp/src/model/settings.dart';
 import 'package:mangayomi/services/download_manager/m3u8/models/download.dart';
@@ -122,21 +123,18 @@ class M3u8Downloader {
   }
 
   Future<void> download(void Function(DownloadProgress) onProgress) async {
-    final tempDir = Directory(path.join(downloadDir, 'temp'));
+    final tempDir = path.join(downloadDir, 'temp');
+    await StorageProvider().createDirectorySafely(tempDir);
 
     try {
-      await tempDir.create(recursive: true);
       final (tsList, key, iv, mediaSequence) = await _getTsList();
 
-      final tsListToDownload = await _filterExistingSegments(
-        tsList,
-        tempDir.path,
-      );
+      final tsListToDownload = await _filterExistingSegments(tsList, tempDir);
       _log('Downloading ${tsListToDownload.length} segments...');
 
       await _downloadSegmentsWithProgress(
         tsListToDownload,
-        tempDir.path,
+        tempDir,
         key,
         iv,
         mediaSequence,
