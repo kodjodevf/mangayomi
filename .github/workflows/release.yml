@@ -52,7 +52,7 @@ jobs:
         uses: seanmiddleditch/gha-setup-ninja@master
 
       - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen' --locked
+        run: cargo install 'flutter_rust_bridge_codegen'
 
       - name: Setup Android keystore
         run: |
@@ -105,7 +105,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen' --locked
+        run: cargo install 'flutter_rust_bridge_codegen'
 
       - name: flutter pub get
         run: flutter pub get
@@ -161,7 +161,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen' --locked
+        run: cargo install 'flutter_rust_bridge_codegen'
 
       - name: flutter pub get
         run: flutter pub get
@@ -204,7 +204,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen' --locked
+        run: cargo install 'flutter_rust_bridge_codegen'
 
       - name: flutter pub get
         run: flutter pub get
@@ -271,7 +271,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen' --locked
+        run: cargo install 'flutter_rust_bridge_codegen'
 
       - name: flutter pub get
         run: flutter pub get
@@ -398,7 +398,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen' --locked
+        run: cargo install 'flutter_rust_bridge_codegen'
 
       - name: flutter pub get
         run: flutter pub get
