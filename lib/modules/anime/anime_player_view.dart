@@ -213,6 +213,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   bool _hasEndingSkip = false;
   bool _initSubtitleAndAudio = true;
   bool _includeSubtitles = false;
+  int lastRpcTimestampUpdate = DateTime.now().millisecondsSinceEpoch;
 
   late final StreamSubscription<Duration> _currentPositionSub;
 
@@ -221,6 +222,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       .duration
       .listen((duration) {
         _currentTotalDuration.value = duration;
+        discordRpc.startChapterTimestamp(
+          _currentPosition.value.inMilliseconds,
+          duration.inMilliseconds,
+        );
       });
 
   bool get hasNextEpisode => _streamController.getEpisodeIndex().$1 != 0;
@@ -305,6 +310,14 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     if (_skipPhase.value != newPhase) _skipPhase.value = newPhase;
   }
 
+  void _updateRpcTimestamp() {
+    final now = DateTime.now().millisecondsSinceEpoch;
+    if (lastRpcTimestampUpdate + 10000 < now) {
+      discordRpc.updateChapterTimestamp(_currentPosition.value.inMilliseconds);
+      lastRpcTimestampUpdate = now;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -350,6 +363,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       _setPlaybackSpeed(ref.read(defaultPlayBackSpeedStateProvider));
       if (ref.read(enableAniSkipStateProvider)) _initAniSkip();
     });
+    discordRpc.showChapterDetails(ref, widget.episode);
+    _currentPosition.addListener(_updateRpcTimestamp);
   }
 
   Future<void> _loadAndroidFont() async {
@@ -397,6 +412,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
 
   @override
   void dispose() {
+    _currentPosition.removeListener(_updateRpcTimestamp);
     _setCurrentPosition(true);
     _player.dispose();
     _currentPositionSub.cancel();
@@ -406,6 +422,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       _setLandscapeMode(false);
     }
     _skipPhase.dispose();
+    discordRpc.showIdleText();
+    discordRpc.showOriginalTimestamp();
     super.dispose();
   }
 

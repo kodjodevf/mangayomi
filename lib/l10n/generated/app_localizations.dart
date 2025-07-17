@@ -2854,6 +2854,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Merge library navigation on mobile'**
   String get merge_library_nav_mobile;
+
+  /// No description provided for @enable_discord_rpc.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Discord RPC'**
+  String get enable_discord_rpc;
+
+  /// No description provided for @hide_discord_rpc_incognito.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide Discord RPC while in Incognito'**
+  String get hide_discord_rpc_incognito;
+
+  /// No description provided for @rpc_show_reading_watching_progress.
+  ///
+  /// In en, this message translates to:
+  /// **'Show current chapter in Discord (requires a restart)'**
+  String get rpc_show_reading_watching_progress;
+
+  /// No description provided for @rpc_show_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Show current title in Discord'**
+  String get rpc_show_title;
+
+  /// No description provided for @rpc_show_cover_image.
+  ///
+  /// In en, this message translates to:
+  /// **'Show current cover image in Discord'**
+  String get rpc_show_cover_image;
 }
 
 class _AppLocalizationsDelegate
