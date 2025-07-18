@@ -144,181 +144,176 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
       });
     }
     final l10n = l10nLocalizations(context)!;
-    return DefaultTabController(
-      animationDuration: Duration.zero,
-      length: newTabs,
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          title: _isSearch
-              ? null
-              : Text(
-                  l10n.updates,
-                  style: TextStyle(color: Theme.of(context).hintColor),
-                ),
-          actions: [
-            _isSearch
-                ? SeachFormTextField(
-                    onChanged: (value) {
-                      setState(() {});
-                    },
-                    onSuffixPressed: () {
-                      _textEditingController.clear();
-                      setState(() {});
-                    },
-                    onPressed: () {
-                      setState(() {
-                        _isSearch = false;
-                      });
-                      _textEditingController.clear();
-                    },
-                    controller: _textEditingController,
-                  )
-                : IconButton(
-                    splashRadius: 20,
-                    onPressed: () {
-                      setState(() {
-                        _isSearch = true;
-                      });
-                    },
-                    icon: Icon(
-                      Icons.search_outlined,
-                      color: Theme.of(context).hintColor,
-                    ),
-                  ),
-            IconButton(
-              splashRadius: 20,
-              onPressed: () {
-                _updateLibrary();
-              },
-              icon: Icon(
-                Icons.refresh_outlined,
-                color: Theme.of(context).hintColor,
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        title: _isSearch
+            ? null
+            : Text(
+                l10n.updates,
+                style: TextStyle(color: Theme.of(context).hintColor),
               ),
-            ),
-            IconButton(
-              splashRadius: 20,
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text(l10n.remove_everything),
-                      content: Text(l10n.remove_all_update_msg),
-                      actions: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text(l10n.cancel),
-                            ),
-                            const SizedBox(width: 15),
-                            TextButton(
-                              onPressed: () => clearUpdates(hideItems, context),
-                              child: Text(l10n.ok),
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
+        actions: [
+          _isSearch
+              ? SeachFormTextField(
+                  onChanged: (value) {
+                    setState(() {});
                   },
-                );
-              },
-              icon: Icon(
-                Icons.delete_sweep_outlined,
-                color: Theme.of(context).hintColor,
-              ),
+                  onSuffixPressed: () {
+                    _textEditingController.clear();
+                    setState(() {});
+                  },
+                  onPressed: () {
+                    setState(() {
+                      _isSearch = false;
+                    });
+                    _textEditingController.clear();
+                  },
+                  controller: _textEditingController,
+                )
+              : IconButton(
+                  splashRadius: 20,
+                  onPressed: () {
+                    setState(() {
+                      _isSearch = true;
+                    });
+                  },
+                  icon: Icon(
+                    Icons.search_outlined,
+                    color: Theme.of(context).hintColor,
+                  ),
+                ),
+          IconButton(
+            splashRadius: 20,
+            onPressed: () {
+              _updateLibrary();
+            },
+            icon: Icon(
+              Icons.refresh_outlined,
+              color: Theme.of(context).hintColor,
             ),
+          ),
+          IconButton(
+            splashRadius: 20,
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text(l10n.remove_everything),
+                    content: Text(l10n.remove_all_update_msg),
+                    actions: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(l10n.cancel),
+                          ),
+                          const SizedBox(width: 15),
+                          TextButton(
+                            onPressed: () async {
+                              if (mounted) Navigator.pop(context);
+                              await _clearUpdates(hideItems);
+                            },
+                            child: Text(l10n.ok),
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            icon: Icon(
+              Icons.delete_sweep_outlined,
+              color: Theme.of(context).hintColor,
+            ),
+          ),
+        ],
+        bottom: TabBar(
+          indicatorSize: TabBarIndicatorSize.tab,
+          controller: _tabBarController,
+          tabs: [
+            if (!hideItems.contains("/MangaLibrary"))
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Tab(text: l10n.manga),
+                  const SizedBox(width: 8),
+                  _updateNumbers(ref, ItemType.manga),
+                ],
+              ),
+            if (!hideItems.contains("/AnimeLibrary"))
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Tab(text: l10n.anime),
+                  const SizedBox(width: 8),
+                  _updateNumbers(ref, ItemType.anime),
+                ],
+              ),
+            if (!hideItems.contains("/NovelLibrary"))
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Tab(text: l10n.novel),
+                  const SizedBox(width: 8),
+                  _updateNumbers(ref, ItemType.novel),
+                ],
+              ),
           ],
-          bottom: TabBar(
-            indicatorSize: TabBarIndicatorSize.tab,
-            controller: _tabBarController,
-            tabs: [
-              if (!hideItems.contains("/MangaLibrary"))
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Tab(text: l10n.manga),
-                    const SizedBox(width: 8),
-                    _updateNumbers(ref, ItemType.manga),
-                  ],
-                ),
-              if (!hideItems.contains("/AnimeLibrary"))
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Tab(text: l10n.anime),
-                    const SizedBox(width: 8),
-                    _updateNumbers(ref, ItemType.anime),
-                  ],
-                ),
-              if (!hideItems.contains("/NovelLibrary"))
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Tab(text: l10n.novel),
-                    const SizedBox(width: 8),
-                    _updateNumbers(ref, ItemType.novel),
-                  ],
-                ),
-            ],
-          ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.only(top: 10),
-          child: TabBarView(
-            controller: _tabBarController,
-            children: [
-              if (!hideItems.contains("/MangaLibrary"))
-                UpdateTab(
-                  itemType: ItemType.manga,
-                  query: _textEditingController.text,
-                  isLoading: _isLoading,
-                ),
-              if (!hideItems.contains("/AnimeLibrary"))
-                UpdateTab(
-                  itemType: ItemType.anime,
-                  query: _textEditingController.text,
-                  isLoading: _isLoading,
-                ),
-              if (!hideItems.contains("/NovelLibrary"))
-                UpdateTab(
-                  itemType: ItemType.novel,
-                  query: _textEditingController.text,
-                  isLoading: _isLoading,
-                ),
-            ],
-          ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.only(top: 10),
+        child: TabBarView(
+          controller: _tabBarController,
+          children: [
+            if (!hideItems.contains("/MangaLibrary"))
+              UpdateTab(
+                itemType: ItemType.manga,
+                query: _textEditingController.text,
+                isLoading: _isLoading,
+              ),
+            if (!hideItems.contains("/AnimeLibrary"))
+              UpdateTab(
+                itemType: ItemType.anime,
+                query: _textEditingController.text,
+                isLoading: _isLoading,
+              ),
+            if (!hideItems.contains("/NovelLibrary"))
+              UpdateTab(
+                itemType: ItemType.novel,
+                query: _textEditingController.text,
+                isLoading: _isLoading,
+              ),
+          ],
         ),
       ),
     );
   }
 
-  void clearUpdates(List<String> hideItems, BuildContext context) {
-    List<Update> updates = isar.updates
+  Future<void> _clearUpdates(List<String> hideItems) async {
+    List<Update> updates = await isar.updates
         .filter()
         .idIsNotNull()
         .chapter(
           (q) =>
               q.manga((q) => q.itemTypeEqualTo(getCurrentItemType(hideItems))),
         )
-        .findAllSync()
-        .toList();
-    isar.writeTxnSync(() {
-      for (var update in updates) {
-        isar.updates.deleteSync(update.id!);
-        ref
-            .read(synchingProvider(syncId: 1).notifier)
-            .addChangedPart(ActionType.removeUpdate, update.id, "{}", false);
-      }
-    });
-    if (mounted) {
-      Navigator.pop(context);
+        .findAll();
+    final idsToDelete = <Id>[];
+    for (var update in updates) {
+      idsToDelete.add(update.id!);
+      ref
+          .read(synchingProvider(syncId: 1).notifier)
+          .addChangedPart(ActionType.removeUpdate, update.id, "{}", false);
     }
+    await isar.writeTxn(() => isar.updates.deleteAll(idsToDelete));
   }
 
   ItemType getCurrentItemType(List<String> hideItems) {
@@ -347,9 +342,14 @@ class UpdateTab extends ConsumerStatefulWidget {
   ConsumerState<UpdateTab> createState() => _UpdateTabState();
 }
 
-class _UpdateTabState extends ConsumerState<UpdateTab> {
+class _UpdateTabState extends ConsumerState<UpdateTab>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final l10n = l10nLocalizations(context)!;
     final update = ref.watch(
       getAllUpdateStreamProvider(
@@ -357,105 +357,103 @@ class _UpdateTabState extends ConsumerState<UpdateTab> {
         search: widget.query,
       ),
     );
-    return Scaffold(
-      body: Stack(
-        children: [
-          update.when(
-            data: (entries) {
-              final lastUpdatedList = entries
-                  .map((e) => e.chapter.value!.manga.value!.lastUpdate!)
-                  .toList();
-              lastUpdatedList.sort((a, b) => b.compareTo(a));
-              final lastUpdated = lastUpdatedList.firstOrNull;
-              if (entries.isNotEmpty) {
-                return CustomScrollView(
-                  slivers: [
-                    if (lastUpdated != null)
-                      SliverPadding(
-                        padding: const EdgeInsets.only(
-                          left: 10,
-                          right: 10,
-                          top: 10,
-                          bottom: 20,
-                        ),
-                        sliver: SliverList(
-                          delegate: SliverChildListDelegate.fixed([
-                            Text(
-                              l10n.library_last_updated(
-                                dateFormat(
-                                  lastUpdated.toString(),
-                                  ref: ref,
-                                  context: context,
-                                  showHOURorMINUTE: true,
-                                ),
-                              ),
-                              style: TextStyle(
-                                fontStyle: FontStyle.italic,
-                                color: context.secondaryColor,
-                              ),
-                            ),
-                          ]),
-                        ),
+    return Stack(
+      children: [
+        update.when(
+          data: (entries) {
+            final lastUpdatedList = entries
+                .map((e) => e.chapter.value!.manga.value!.lastUpdate!)
+                .toList();
+            lastUpdatedList.sort((a, b) => b.compareTo(a));
+            final lastUpdated = lastUpdatedList.firstOrNull;
+            if (entries.isNotEmpty) {
+              return CustomScrollView(
+                slivers: [
+                  if (lastUpdated != null)
+                    SliverPadding(
+                      padding: const EdgeInsets.only(
+                        left: 10,
+                        right: 10,
+                        top: 10,
+                        bottom: 20,
                       ),
-                    CustomSliverGroupedListView<Update, String>(
-                      elements: entries,
-                      groupBy: (element) => dateFormat(
-                        element.date!,
-                        context: context,
-                        ref: ref,
-                        forHistoryValue: true,
-                        useRelativeTimesTamps: false,
-                      ),
-                      groupSeparatorBuilder: (String groupByValue) => Padding(
-                        padding: const EdgeInsets.only(bottom: 8, left: 12),
-                        child: Row(
-                          children: [
-                            Text(
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate.fixed([
+                          Text(
+                            l10n.library_last_updated(
                               dateFormat(
-                                null,
-                                context: context,
-                                stringDate: groupByValue,
+                                lastUpdated.toString(),
                                 ref: ref,
+                                context: context,
+                                showHOURorMINUTE: true,
                               ),
                             ),
-                          ],
-                        ),
+                            style: TextStyle(
+                              fontStyle: FontStyle.italic,
+                              color: context.secondaryColor,
+                            ),
+                          ),
+                        ]),
                       ),
-                      itemBuilder: (context, element) {
-                        final chapter = element.chapter.value!;
-                        return UpdateChapterListTileWidget(
-                          chapter: chapter,
-                          sourceExist: true,
-                        );
-                      },
-                      itemComparator: (item1, item2) =>
-                          item1.date!.compareTo(item2.date!),
-                      order: GroupedListOrder.DESC,
                     ),
-                  ],
-                );
-              }
-              return Center(child: Text(l10n.no_recent_updates));
-            },
-            error: (Object error, StackTrace stackTrace) {
-              return ErrorText(error);
-            },
-            loading: () {
-              return const ProgressCenter();
-            },
-          ),
-          if (widget.isLoading)
-            const Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Padding(
-                padding: EdgeInsets.only(top: 40),
-                child: Center(child: RefreshProgressIndicator()),
-              ),
+                  CustomSliverGroupedListView<Update, String>(
+                    elements: entries,
+                    groupBy: (element) => dateFormat(
+                      element.date!,
+                      context: context,
+                      ref: ref,
+                      forHistoryValue: true,
+                      useRelativeTimesTamps: false,
+                    ),
+                    groupSeparatorBuilder: (String groupByValue) => Padding(
+                      padding: const EdgeInsets.only(bottom: 8, left: 12),
+                      child: Row(
+                        children: [
+                          Text(
+                            dateFormat(
+                              null,
+                              context: context,
+                              stringDate: groupByValue,
+                              ref: ref,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    itemBuilder: (context, element) {
+                      final chapter = element.chapter.value!;
+                      return UpdateChapterListTileWidget(
+                        chapter: chapter,
+                        sourceExist: true,
+                      );
+                    },
+                    itemComparator: (item1, item2) =>
+                        item1.date!.compareTo(item2.date!),
+                    order: GroupedListOrder.DESC,
+                  ),
+                ],
+              );
+            }
+            return Center(child: Text(l10n.no_recent_updates));
+          },
+          error: (Object error, StackTrace stackTrace) {
+            return ErrorText(error);
+          },
+          loading: () {
+            return const ProgressCenter();
+          },
+        ),
+        if (widget.isLoading)
+          const Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Padding(
+              padding: EdgeInsets.only(top: 40),
+              child: Center(child: RefreshProgressIndicator()),
             ),
-        ],
-      ),
+          ),
+      ],
     );
   }
 }
