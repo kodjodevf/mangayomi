@@ -125,7 +125,7 @@ jobs:
         env:
           P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
         run: |
-          flutter build ios --release --no-codesign
+          flutter build ios --release --no-codesign --verbose
           mkdir -p build/ios/iphoneos/Payload
           ln -s ../Runner.app build/ios/iphoneos/Payload/Runner.app
           ./zsign -f -k ./certificate.p12 -p "$P12_PASSWORD" -m ./profile.mobileprovision ./build/ios/iphoneos/Payload/Runner.app
@@ -171,7 +171,7 @@ jobs:
           cd macos
           pod update
           cd ..
-          flutter build macos --release
+          flutter build macos --release --verbose
           brew install create-dmg 
           create-dmg --volname Mangayomi-${{ github.ref_name }}-macos --window-pos 200 120 --window-size 800 450 --icon-size 100 --app-drop-link 600 185 Mangayomi-${{ github.ref_name }}-macos.dmg build/macos/Build/Products/Release/Mangayomi.app
 
@@ -277,7 +277,7 @@ jobs:
         run: flutter pub get
 
       - name: build linux
-        run: flutter build linux --release
+        run: flutter build linux --release --verbose
 
       - name: Zip
         uses: thedoctor0/zip-release@master
