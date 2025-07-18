@@ -88,11 +88,6 @@ jobs:
       contents: write
     runs-on: macos-latest
     steps:
-      - name: Set git to use LF
-        run: |
-          git config --global core.autocrlf false
-          git config --global core.eol lf
-
       # Checkout branch
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -154,11 +149,6 @@ jobs:
       contents: write
     runs-on: macos-latest
     steps:
-      - name: Set git to use LF
-        run: |
-          git config --global core.autocrlf false
-          git config --global core.eol lf
-
       - name: checkout branch
         uses: actions/checkout@v4
 
@@ -262,11 +252,6 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
-      - name: Set git to use LF
-        run: |
-          git config --global core.autocrlf false
-          git config --global core.eol lf
-
       - name: checkout branch
         uses: actions/checkout@v4
 
@@ -396,11 +381,6 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
-      - name: Set git to use LF
-        run: |
-          git config --global core.autocrlf false
-          git config --global core.eol lf
-
       - name: checkout branch
         uses: actions/checkout@v4
 
