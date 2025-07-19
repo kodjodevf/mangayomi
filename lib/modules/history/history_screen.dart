@@ -33,6 +33,7 @@ class HistoryScreen extends ConsumerStatefulWidget {
 
 class _HistoryScreenState extends ConsumerState<HistoryScreen>
     with TickerProviderStateMixin {
+  final _textEditingController = TextEditingController();
   late TabController _tabBarController;
   int tabs = 3;
 
@@ -51,7 +52,13 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
     _tabBarController.addListener(tabListener);
   }
 
-  final _textEditingController = TextEditingController();
+  @override
+  void dispose() {
+    _tabBarController.dispose();
+    _textEditingController.dispose();
+    super.dispose();
+  }
+
   bool _isSearch = false;
   List<History> entriesData = [];
   @override

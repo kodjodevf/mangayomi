@@ -59,6 +59,13 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
   }
 
   late final _controller = TextEditingController(text: query);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   bool _isLoading = true;
   @override
   Widget build(BuildContext context) {

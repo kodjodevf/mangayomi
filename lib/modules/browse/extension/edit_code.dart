@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:json_view/json_view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -59,13 +61,14 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
     [],
   );
   late final _logStreamController = Logger.logStreamController;
+  late final StreamSubscription _logSubscription;
   final _scrollController = ScrollController();
   @override
   void initState() {
     super.initState();
     _controller.text = source?.sourceCode ?? "";
     useLogger = true;
-    _logStreamController.stream.asBroadcastStream().listen((event) async {
+    _logSubscription = _logStreamController.stream.listen((event) async {
       _logsNotifier.value.add(event);
       try {
         await Future.delayed(const Duration(milliseconds: 5));
@@ -133,11 +136,12 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
 
   @override
   void dispose() {
-    super.dispose();
+    _logSubscription.cancel();
     _logsNotifier.value.clear();
     _scrollController.dispose();
     _controller.dispose();
     useLogger = false;
+    super.dispose();
   }
 
   @override

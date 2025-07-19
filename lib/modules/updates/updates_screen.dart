@@ -34,8 +34,9 @@ class UpdatesScreen extends ConsumerStatefulWidget {
 class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
     with TickerProviderStateMixin {
   late TabController _tabBarController;
+  late final List<String> _tabList;
+  late final List<String> hideItems;
   bool _isLoading = false;
-  int tabs = 3;
   Future<void> _updateLibrary() async {
     setState(() {
       _isLoading = true;
@@ -92,13 +93,6 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
         );
       }
     }
-    await Future.doWhile(() async {
-      await Future.delayed(const Duration(seconds: 1));
-      if (mangaList.length == numbers) {
-        return false;
-      }
-      return true;
-    });
     BotToast.cleanAll();
     setState(() {
       _isLoading = false;
@@ -113,10 +107,22 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
   }
 
   @override
+  void dispose() {
+    _textEditingController.dispose();
+    _tabBarController.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
-    _tabBarController = TabController(length: tabs, vsync: this);
-    _tabBarController.animateTo(0);
+    hideItems = ref.read(hideItemsStateProvider);
+    _tabList = [
+      if (!hideItems.contains("/MangaLibrary")) "/MangaLibrary",
+      if (!hideItems.contains("/AnimeLibrary")) "/AnimeLibrary",
+      if (!hideItems.contains("/NovelLibrary")) "/NovelLibrary",
+    ];
+    _tabBarController = TabController(length: _tabList.length, vsync: this);
     _tabBarController.addListener(tabListener);
   }
 
@@ -125,174 +131,152 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
   List<History> entriesData = [];
   @override
   Widget build(BuildContext context) {
-    int newTabs = 0;
-    final hideItems = ref.watch(hideItemsStateProvider);
-    if (!hideItems.contains("/MangaLibrary")) newTabs++;
-    if (!hideItems.contains("/AnimeLibrary")) newTabs++;
-    if (!hideItems.contains("/NovelLibrary")) newTabs++;
-    if (newTabs == 0) {
-      return SizedBox.shrink();
-    }
-    if (tabs != newTabs) {
-      _tabBarController.removeListener(tabListener);
-      _tabBarController.dispose();
-      _tabBarController = TabController(length: newTabs, vsync: this);
-      _tabBarController.animateTo(0);
-      _tabBarController.addListener(tabListener);
-      setState(() {
-        tabs = newTabs;
-      });
-    }
     final l10n = l10nLocalizations(context)!;
-    return DefaultTabController(
-      animationDuration: Duration.zero,
-      length: newTabs,
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          title: _isSearch
-              ? null
-              : Text(
-                  l10n.updates,
-                  style: TextStyle(color: Theme.of(context).hintColor),
-                ),
-          actions: [
-            _isSearch
-                ? SeachFormTextField(
-                    onChanged: (value) {
-                      setState(() {});
-                    },
-                    onSuffixPressed: () {
-                      _textEditingController.clear();
-                      setState(() {});
-                    },
-                    onPressed: () {
-                      setState(() {
-                        _isSearch = false;
-                      });
-                      _textEditingController.clear();
-                    },
-                    controller: _textEditingController,
-                  )
-                : IconButton(
-                    splashRadius: 20,
-                    onPressed: () {
-                      setState(() {
-                        _isSearch = true;
-                      });
-                    },
-                    icon: Icon(
-                      Icons.search_outlined,
-                      color: Theme.of(context).hintColor,
-                    ),
-                  ),
-            IconButton(
-              splashRadius: 20,
-              onPressed: () {
-                _updateLibrary();
-              },
-              icon: Icon(
-                Icons.refresh_outlined,
-                color: Theme.of(context).hintColor,
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        title: _isSearch
+            ? null
+            : Text(
+                l10n.updates,
+                style: TextStyle(color: Theme.of(context).hintColor),
               ),
-            ),
-            IconButton(
-              splashRadius: 20,
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text(l10n.remove_everything),
-                      content: Text(l10n.remove_all_update_msg),
-                      actions: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text(l10n.cancel),
-                            ),
-                            const SizedBox(width: 15),
-                            TextButton(
-                              onPressed: () => clearUpdates(hideItems, context),
-                              child: Text(l10n.ok),
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
+        actions: [
+          _isSearch
+              ? SeachFormTextField(
+                  onChanged: (value) {
+                    setState(() {});
                   },
-                );
-              },
-              icon: Icon(
-                Icons.delete_sweep_outlined,
-                color: Theme.of(context).hintColor,
-              ),
+                  onSuffixPressed: () {
+                    _textEditingController.clear();
+                    setState(() {});
+                  },
+                  onPressed: () {
+                    setState(() {
+                      _isSearch = false;
+                    });
+                    _textEditingController.clear();
+                  },
+                  controller: _textEditingController,
+                )
+              : IconButton(
+                  splashRadius: 20,
+                  onPressed: () {
+                    setState(() {
+                      _isSearch = true;
+                    });
+                  },
+                  icon: Icon(
+                    Icons.search_outlined,
+                    color: Theme.of(context).hintColor,
+                  ),
+                ),
+          IconButton(
+            splashRadius: 20,
+            onPressed: () {
+              _updateLibrary();
+            },
+            icon: Icon(
+              Icons.refresh_outlined,
+              color: Theme.of(context).hintColor,
             ),
+          ),
+          IconButton(
+            splashRadius: 20,
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text(l10n.remove_everything),
+                    content: Text(l10n.remove_all_update_msg),
+                    actions: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(l10n.cancel),
+                          ),
+                          const SizedBox(width: 15),
+                          TextButton(
+                            onPressed: () => clearUpdates(hideItems, context),
+                            child: Text(l10n.ok),
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            icon: Icon(
+              Icons.delete_sweep_outlined,
+              color: Theme.of(context).hintColor,
+            ),
+          ),
+        ],
+        bottom: TabBar(
+          indicatorSize: TabBarIndicatorSize.tab,
+          controller: _tabBarController,
+          tabs: [
+            if (!hideItems.contains("/MangaLibrary"))
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Tab(text: l10n.manga),
+                  const SizedBox(width: 8),
+                  _updateNumbers(ref, ItemType.manga),
+                ],
+              ),
+            if (!hideItems.contains("/AnimeLibrary"))
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Tab(text: l10n.anime),
+                  const SizedBox(width: 8),
+                  _updateNumbers(ref, ItemType.anime),
+                ],
+              ),
+            if (!hideItems.contains("/NovelLibrary"))
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Tab(text: l10n.novel),
+                  const SizedBox(width: 8),
+                  _updateNumbers(ref, ItemType.novel),
+                ],
+              ),
           ],
-          bottom: TabBar(
-            indicatorSize: TabBarIndicatorSize.tab,
-            controller: _tabBarController,
-            tabs: [
-              if (!hideItems.contains("/MangaLibrary"))
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Tab(text: l10n.manga),
-                    const SizedBox(width: 8),
-                    _updateNumbers(ref, ItemType.manga),
-                  ],
-                ),
-              if (!hideItems.contains("/AnimeLibrary"))
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Tab(text: l10n.anime),
-                    const SizedBox(width: 8),
-                    _updateNumbers(ref, ItemType.anime),
-                  ],
-                ),
-              if (!hideItems.contains("/NovelLibrary"))
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Tab(text: l10n.novel),
-                    const SizedBox(width: 8),
-                    _updateNumbers(ref, ItemType.novel),
-                  ],
-                ),
-            ],
-          ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.only(top: 10),
-          child: TabBarView(
-            controller: _tabBarController,
-            children: [
-              if (!hideItems.contains("/MangaLibrary"))
-                UpdateTab(
-                  itemType: ItemType.manga,
-                  query: _textEditingController.text,
-                  isLoading: _isLoading,
-                ),
-              if (!hideItems.contains("/AnimeLibrary"))
-                UpdateTab(
-                  itemType: ItemType.anime,
-                  query: _textEditingController.text,
-                  isLoading: _isLoading,
-                ),
-              if (!hideItems.contains("/NovelLibrary"))
-                UpdateTab(
-                  itemType: ItemType.novel,
-                  query: _textEditingController.text,
-                  isLoading: _isLoading,
-                ),
-            ],
-          ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.only(top: 10),
+        child: TabBarView(
+          controller: _tabBarController,
+          children: [
+            if (!hideItems.contains("/MangaLibrary"))
+              UpdateTab(
+                itemType: ItemType.manga,
+                query: _textEditingController.text,
+                isLoading: _isLoading,
+              ),
+            if (!hideItems.contains("/AnimeLibrary"))
+              UpdateTab(
+                itemType: ItemType.anime,
+                query: _textEditingController.text,
+                isLoading: _isLoading,
+              ),
+            if (!hideItems.contains("/NovelLibrary"))
+              UpdateTab(
+                itemType: ItemType.novel,
+                query: _textEditingController.text,
+                isLoading: _isLoading,
+              ),
+          ],
         ),
       ),
     );

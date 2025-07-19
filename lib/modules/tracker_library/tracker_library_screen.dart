@@ -49,6 +49,12 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
   List<TrackPreference> _preferences = [];
 
   @override
+  void dispose() {
+    _textEditingController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
     final lastLocation = ref.watch(lastTrackerLibraryLocationStateProvider);

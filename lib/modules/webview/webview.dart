@@ -38,6 +38,17 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
     }
   }
 
+  @override
+  void dispose() {
+    if (Platform.isLinux) {
+      _desktopWebview?.close();
+    } else {
+      if (browser.isOpened()) browser.close();
+      browser.dispose();
+    }
+    super.dispose();
+  }
+
   Webview? _desktopWebview;
   _runWebViewDesktop() async {
     if (Platform.isLinux) {

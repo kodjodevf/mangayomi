@@ -35,7 +35,7 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
   String query = "";
   final _textEditingController = TextEditingController();
   late final List<Source> sourceList =
-      ref.watch(onlyIncludePinnedSourceStateProvider)
+      ref.read(onlyIncludePinnedSourceStateProvider)
       ? isar.sources
             .filter()
             .isPinnedEqualTo(true)
@@ -96,6 +96,12 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
             )
           : Container(),
     );
+  }
+
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    super.dispose();
   }
 }
 
