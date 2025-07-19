@@ -126,34 +126,10 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                       }
                     },
                     onLongPress: () {
-                      if (!isLongPressed) {
-                        ref
-                            .read(mangasListStateProvider.notifier)
-                            .update(entry);
-
-                        ref
-                            .read(isLongPressedMangaStateProvider.notifier)
-                            .update(!isLongPressed);
-                      } else {
-                        ref
-                            .read(mangasListStateProvider.notifier)
-                            .update(entry);
-                      }
+                      _handleLongOrSecondaryTap(isLongPressed, ref, entry);
                     },
                     onSecondaryTap: () {
-                      if (!isLongPressed) {
-                        ref
-                            .read(mangasListStateProvider.notifier)
-                            .update(entry);
-
-                        ref
-                            .read(isLongPressedMangaStateProvider.notifier)
-                            .update(!isLongPressed);
-                      } else {
-                        ref
-                            .read(mangasListStateProvider.notifier)
-                            .update(entry);
-                      }
+                      _handleLongOrSecondaryTap(isLongPressed, ref, entry);
                     },
                     children: [
                       Stack(
@@ -445,5 +421,18 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
         );
       },
     );
+  }
+
+  void _handleLongOrSecondaryTap(
+    bool isLongPressed,
+    WidgetRef ref,
+    Manga entry,
+  ) {
+    if (!isLongPressed) {
+      ref.read(mangasListStateProvider.notifier).update(entry);
+      ref.read(isLongPressedMangaStateProvider.notifier).update(!isLongPressed);
+    } else {
+      ref.read(mangasListStateProvider.notifier).update(entry);
+    }
   }
 }

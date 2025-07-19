@@ -105,6 +105,7 @@ class _MigrationScreenScreenState extends ConsumerState<MigrationScreen> {
               });
             },
             controller: _textEditingController,
+            autofocus: false,
           ),
         ],
       ),

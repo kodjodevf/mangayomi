@@ -49,7 +49,7 @@ class _DesktopControllerWidgetState
   bool visible = true;
   bool cursorVisible = true;
   Duration controlsTransitionDuration = const Duration(milliseconds: 300);
-  Color backdropColor = const Color(0x66000000);
+  // Color backdropColor = const Color(0x66000000);
   Timer? _timer;
 
   int swipeDuration = 0; // Duration to seek in video
@@ -63,6 +63,7 @@ class _DesktopControllerWidgetState
 
   final List<StreamSubscription> subscriptions = [];
   DateTime last = DateTime.now();
+  Timer? _tapTimer;
 
   @override
   void setState(VoidCallback fn) {
@@ -98,6 +99,9 @@ class _DesktopControllerWidgetState
     for (final subscription in subscriptions) {
       subscription.cancel();
     }
+    subscriptions.clear();
+    _timer?.cancel();
+    _tapTimer?.cancel();
     super.dispose();
   }
 
@@ -146,8 +150,8 @@ class _DesktopControllerWidgetState
     _timer?.cancel();
   }
 
-  final bool modifyVolumeOnScroll = true;
-  final bool toggleFullscreenOnDoublePress = true;
+  final bool modifyVolumeOnScroll = true; // TODO. The variable is never changed
+  final bool toggleFullscreenOnDoublePress = true; // TODO. variable not changed
   @override
   Widget build(BuildContext context) {
     return CallbackShortcuts(
@@ -250,6 +254,14 @@ class _DesktopControllerWidgetState
                     }
                   : null,
               child: GestureDetector(
+                onTap: () {
+                  // use own timer with onTapUp instead of onDoubleTap.
+                  // onDoubleTap uses 300ms which feels laggy when pausing
+                  // https://github.com/flutter/flutter/blob/master/packages/flutter/lib/src/gestures/constants.dart#L35
+                  _tapTimer = Timer(const Duration(milliseconds: 100), () {
+                    widget.videoController.player.playOrPause();
+                  });
+                },
                 onLongPressStart: (e) {
                   previousPlaybackSpeed =
                       widget.videoController.player.state.rate;
@@ -274,6 +286,8 @@ class _DesktopControllerWidgetState
                         final difference = now.difference(last);
                         last = now;
                         if (difference < const Duration(milliseconds: 400)) {
+                          _tapTimer?.cancel();
+                          _tapTimer = null;
                           final fullScreen = widget.desktopFullScreenPlayer;
                           await _changeFullScreen(ref, fullScreen);
                         }
