@@ -153,7 +153,7 @@ class CustomExtendedNetworkImageProvider
         }
       } catch (e) {
         if (kDebugMode) {
-          print(e);
+          debugPrint(e);
         }
       }
     }
@@ -166,7 +166,7 @@ class CustomExtendedNetworkImageProvider
         }
       } catch (e) {
         if (kDebugMode) {
-          print(e);
+          debugPrint(e);
         }
       }
     }
@@ -249,7 +249,7 @@ class CustomExtendedNetworkImageProvider
             );
           } catch (e) {
             if (kDebugMode) {
-              print(e);
+              debugPrint(e);
             }
           }
         }
@@ -266,12 +266,12 @@ class CustomExtendedNetworkImageProvider
       return Uint8List.fromList(bytes);
     } on OperationCanceledError catch (_) {
       if (kDebugMode) {
-        print('User cancel request $url.');
+        debugPrint('User cancel request $url.');
       }
       return Future<Uint8List>.error(StateError('User cancel request $url.'));
     } catch (e) {
       if (kDebugMode) {
-        print(e);
+        debugPrint(e);
       }
     } finally {
       await chunkEvents?.close();
