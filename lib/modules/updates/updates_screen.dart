@@ -11,7 +11,6 @@ import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/update.dart';
-import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
@@ -128,7 +127,6 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
 
   final _textEditingController = TextEditingController();
   bool _isSearch = false;
-  List<History> entriesData = [];
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;

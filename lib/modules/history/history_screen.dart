@@ -64,7 +64,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
   }
 
   bool _isSearch = false;
-  // List<History> entriesData = [];
+  // List<History> _entriesData = []; // TODO. The variable is never used/modified
   @override
   Widget build(BuildContext context) {
     final hideItems = ref.watch(hideItemsStateProvider);
