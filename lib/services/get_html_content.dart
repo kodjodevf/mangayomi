@@ -11,7 +11,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'get_html_content.g.dart';
 
 @riverpod
-Future<String> getHtmlContent(Ref ref, {required Chapter chapter}) async {
+Future<(String, EpubBook?)> getHtmlContent(
+  Ref ref, {
+  required Chapter chapter,
+}) async {
   if (!chapter.manga.isLoaded) {
     chapter.manga.loadSync();
   }
@@ -25,9 +28,9 @@ Future<String> getHtmlContent(Ref ref, {required Chapter chapter}) async {
             ? element.Title == chapter.name
             : "Book" == chapter.name,
       ).firstOrNull;
-      return _buildHtml(tempChapter?.HtmlContent ?? "No content");
+      return (_buildHtml(tempChapter?.HtmlContent ?? "No content"), book);
     }
-    return _buildHtml("Local epub file not found!");
+    return (_buildHtml("Local epub file not found!"), null);
   }
   final storageProvider = StorageProvider();
   final mangaDirectory = await storageProvider.getMangaMainDirectory(chapter);
@@ -52,7 +55,7 @@ Future<String> getHtmlContent(Ref ref, {required Chapter chapter}) async {
       source!,
     ).getHtmlContent(chapter.manga.value!.name!, chapter.url!);
   }
-  return _buildHtml(html.substring(1, html.length - 1));
+  return (_buildHtml(html.substring(1, html.length - 1)), null);
 }
 
 String _buildHtml(String input) {

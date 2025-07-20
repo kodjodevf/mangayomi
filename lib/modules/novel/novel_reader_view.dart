@@ -39,21 +39,17 @@ class NovelReaderView extends ConsumerWidget {
   late final Chapter chapter = isar.chapters.getSync(chapterId)!;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final htmlContent = ref.watch(getHtmlContentProvider(chapter: chapter));
+    final result = ref.watch(getHtmlContentProvider(chapter: chapter));
 
-    return NovelWebView(chapter: chapter, htmlContent: htmlContent);
+    return NovelWebView(chapter: chapter, result: result);
   }
 }
 
 class NovelWebView extends ConsumerStatefulWidget {
-  const NovelWebView({
-    super.key,
-    required this.chapter,
-    required this.htmlContent,
-  });
+  const NovelWebView({super.key, required this.chapter, required this.result});
 
   final Chapter chapter;
-  final AsyncValue<String> htmlContent;
+  final AsyncValue<(String, EpubBook?)> result;
 
   @override
   ConsumerState createState() {
@@ -117,13 +113,6 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
         fontSize = initFontSize;
       });
     });
-    if (widget.chapter.archivePath != null) {
-      final htmlFile = File(chapter.archivePath!);
-      if (htmlFile.existsSync()) {
-        final bytes = htmlFile.readAsBytesSync();
-        EpubReader.readBook(bytes).then((book) => epubBook = book);
-      }
-    }
   }
 
   late bool _isBookmarked = _readerController.getChapterBookmarked();
@@ -217,8 +206,9 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
               children: [
                 Row(
                   children: [
-                    widget.htmlContent.when(
-                      data: (htmlContent) {
+                    widget.result.when(
+                      data: (data) {
+                        epubBook = data.$2;
                         Future.delayed(const Duration(milliseconds: 1000), () {
                           if (!scrolled && _scrollController.hasClients) {
                             _scrollController.animateTo(
@@ -244,7 +234,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                 physics: const BouncingScrollPhysics(),
                                 slivers: [
                                   HtmlWidget(
-                                    htmlContent,
+                                    data.$1,
                                     customWidgetBuilder: (element) =>
                                         _buildCustomWidgets(element),
                                     customStylesBuilder: (element) {
