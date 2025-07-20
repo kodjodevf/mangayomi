@@ -83,6 +83,12 @@ class _DoubleColummViewState extends State<DoubleColummView>
     });
   }
 
+  @override
+  void dispose() {
+    _scaleAnimationController.dispose();
+    super.dispose();
+  }
+
   void _toggleScale(Offset tapPosition) {
     if (mounted) {
       setState(() {

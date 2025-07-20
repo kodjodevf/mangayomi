@@ -34,8 +34,9 @@ class UpdatesScreen extends ConsumerStatefulWidget {
 class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
     with TickerProviderStateMixin {
   late TabController _tabBarController;
+  late final List<String> _tabList;
+  late final List<String> hideItems;
   bool _isLoading = false;
-  int tabs = 3;
   Future<void> _updateLibrary() async {
     setState(() {
       _isLoading = true;
@@ -92,13 +93,6 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
         );
       }
     }
-    await Future.doWhile(() async {
-      await Future.delayed(const Duration(seconds: 1));
-      if (mangaList.length == numbers) {
-        return false;
-      }
-      return true;
-    });
     BotToast.cleanAll();
     setState(() {
       _isLoading = false;
@@ -113,10 +107,22 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
   }
 
   @override
+  void dispose() {
+    _textEditingController.dispose();
+    _tabBarController.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
-    _tabBarController = TabController(length: tabs, vsync: this);
-    _tabBarController.animateTo(0);
+    hideItems = ref.read(hideItemsStateProvider);
+    _tabList = [
+      if (!hideItems.contains("/MangaLibrary")) "/MangaLibrary",
+      if (!hideItems.contains("/AnimeLibrary")) "/AnimeLibrary",
+      if (!hideItems.contains("/NovelLibrary")) "/NovelLibrary",
+    ];
+    _tabBarController = TabController(length: _tabList.length, vsync: this);
     _tabBarController.addListener(tabListener);
   }
 
@@ -125,24 +131,6 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
   List<History> entriesData = [];
   @override
   Widget build(BuildContext context) {
-    int newTabs = 0;
-    final hideItems = ref.watch(hideItemsStateProvider);
-    if (!hideItems.contains("/MangaLibrary")) newTabs++;
-    if (!hideItems.contains("/AnimeLibrary")) newTabs++;
-    if (!hideItems.contains("/NovelLibrary")) newTabs++;
-    if (newTabs == 0) {
-      return SizedBox.shrink();
-    }
-    if (tabs != newTabs) {
-      _tabBarController.removeListener(tabListener);
-      _tabBarController.dispose();
-      _tabBarController = TabController(length: newTabs, vsync: this);
-      _tabBarController.animateTo(0);
-      _tabBarController.addListener(tabListener);
-      setState(() {
-        tabs = newTabs;
-      });
-    }
     final l10n = l10nLocalizations(context)!;
     return Scaffold(
       appBar: AppBar(

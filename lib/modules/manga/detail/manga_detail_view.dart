@@ -89,9 +89,15 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
       });
   }
 
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   final offetProvider = StateProvider((ref) => 0.0);
   bool _expanded = false;
-  ScrollController _scrollController = ScrollController();
+  late final ScrollController _scrollController;
   late final isLocalArchive = widget.manga!.isLocalArchive ?? false;
   @override
   Widget build(BuildContext context) {

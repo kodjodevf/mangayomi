@@ -30,6 +30,12 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
   late StreamSubscription<List<int>>? _subscription;
 
   @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
     final updateAvailable = widget.updateAvailable;
