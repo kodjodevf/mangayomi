@@ -2085,6 +2085,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
 
 void _importLocal(BuildContext context, ItemType itemType) {
   final l10n = l10nLocalizations(context)!;
+  final filesText = switch (itemType) {
+    ItemType.manga => ".zip, .cbz",
+    ItemType.anime => ".mp4, .mkv, .avi, and more",
+    ItemType.novel => ".epub",
+  };
   bool isLoading = false;
   showDialog(
     context: context,
@@ -2133,7 +2138,7 @@ void _importLocal(BuildContext context, ItemType itemType) {
                                   children: [
                                     const Icon(Icons.archive_outlined),
                                     Text(
-                                      "${l10n.import_files} ( ${itemType == ItemType.manga ? ".zip, .cbz" : ".mp4, .mkv, .avi, and more"} )",
+                                      "${l10n.import_files} ( $filesText )",
                                       style: TextStyle(
                                         color: Theme.of(
                                           context,

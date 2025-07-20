@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
+import 'package:epubx/epubx.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -17,6 +19,7 @@ import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_pr
 import 'package:mangayomi/modules/novel/novel_reader_controller_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_html_content.dart';
+import 'package:mangayomi/utils/extensions/dom_extensions.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/services/get_chapter_pages.dart';
@@ -25,6 +28,8 @@ import 'package:mangayomi/utils/global_style.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:html/dom.dart' as dom;
+import 'package:flutter/widgets.dart' as widgets;
 
 typedef DoubleClickAnimationListener = void Function();
 
@@ -98,6 +103,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   }
 
   late Chapter chapter = widget.chapter;
+  EpubBook? epubBook;
 
   final StreamController<double> _rebuildDetail =
       StreamController<double>.broadcast();
@@ -111,6 +117,13 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
         fontSize = initFontSize;
       });
     });
+    if (widget.chapter.archivePath != null) {
+      final htmlFile = File(chapter.archivePath!);
+      if (htmlFile.existsSync()) {
+        final bytes = htmlFile.readAsBytesSync();
+        EpubReader.readBook(bytes).then((book) => epubBook = book);
+      }
+    }
   }
 
   late bool _isBookmarked = _readerController.getChapterBookmarked();
@@ -221,48 +234,48 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                           child: Scrollbar(
                             controller: _scrollController,
                             interactive: true,
-                            child: SingleChildScrollView(
-                              controller: _scrollController,
-                              physics: const BouncingScrollPhysics(),
-                              child: GestureDetector(
-                                behavior: HitTestBehavior.translucent,
-                                onTap: () {
-                                  _isViewFunction();
-                                },
-                                child: Column(
-                                  children: [
-                                    HtmlWidget(
-                                      htmlContent,
-                                      customStylesBuilder: (element) {
-                                        switch (backgroundColor) {
-                                          case BackgroundColor.black:
-                                            return {
-                                              'background-color': 'black',
-                                            };
-                                          default:
-                                            return {
-                                              'background-color': '#F0F0F0',
-                                            };
-                                        }
-                                      },
-                                      onTapUrl: (url) {
-                                        context.push(
-                                          "/mangawebview",
-                                          extra: {'url': url, 'title': url},
-                                        );
-                                        return true;
-                                      },
-                                      renderMode: RenderMode.column,
-                                      textStyle: TextStyle(
-                                        color:
-                                            backgroundColor ==
-                                                BackgroundColor.white
-                                            ? Colors.black
-                                            : Colors.white,
-                                        fontSize: fontSize.toDouble(),
-                                      ),
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.translucent,
+                              onTap: () {
+                                _isViewFunction();
+                              },
+                              child: CustomScrollView(
+                                controller: _scrollController,
+                                physics: const BouncingScrollPhysics(),
+                                slivers: [
+                                  HtmlWidget(
+                                    htmlContent,
+                                    customWidgetBuilder: (element) =>
+                                        _buildCustomWidgets(element),
+                                    customStylesBuilder: (element) {
+                                      switch (backgroundColor) {
+                                        case BackgroundColor.black:
+                                          return {'background-color': 'black'};
+                                        default:
+                                          return {
+                                            'background-color': '#F0F0F0',
+                                          };
+                                      }
+                                    },
+                                    onTapUrl: (url) {
+                                      context.push(
+                                        "/mangawebview",
+                                        extra: {'url': url, 'title': url},
+                                      );
+                                      return true;
+                                    },
+                                    renderMode: RenderMode.sliverList,
+                                    textStyle: TextStyle(
+                                      color:
+                                          backgroundColor ==
+                                              BackgroundColor.white
+                                          ? Colors.black
+                                          : Colors.white,
+                                      fontSize: fontSize.toDouble(),
                                     ),
-                                    Center(
+                                  ),
+                                  SliverToBoxAdapter(
+                                    child: Center(
                                       heightFactor: 2,
                                       child: Row(
                                         mainAxisAlignment:
@@ -308,8 +321,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                         ],
                                       ),
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
@@ -732,6 +745,26 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
       }
     }
+  }
+
+  Widget? _buildCustomWidgets(dom.Element element) {
+    if (element.localName == "img" &&
+        element.getSrc != null &&
+        epubBook != null) {
+      final fileName = element.getSrc!.split("/").last;
+      final image = epubBook!.Content!.Images!.entries
+          .firstWhereOrNull((img) => img.key.endsWith(fileName))
+          ?.value
+          .Content;
+      return image != null
+          ? widgets.Image(
+              errorBuilder: (context, error, stackTrace) => Text("❌"),
+              fit: BoxFit.scaleDown,
+              image: MemoryImage(image as Uint8List) as ImageProvider,
+            )
+          : null;
+    }
+    return null;
   }
 }
 
