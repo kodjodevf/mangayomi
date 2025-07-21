@@ -71,7 +71,11 @@ Future<(List<Video>, bool, List<String>)> getVideoList(
       return (videos, false, [infohash ?? ""]);
     }
 
-    list = await getExtensionService(source!).getVideoList(episode.url!);
+    try {
+      list = await getExtensionService(source!).getVideoList(episode.url!);
+    } catch (e) {
+      list = [Video(episode.url!, episode.name!, episode.url!)];
+    }
 
     for (var v in list) {
       final (videos, infohash) = await MTorrentServer().getTorrentPlaylist(

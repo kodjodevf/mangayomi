@@ -101,6 +101,7 @@ class CustomSeekBarState extends State<CustomSeekBar> {
                       milliseconds: value.toInt() - position.inMilliseconds,
                     ),
                   );
+                  widget.player.seek(Duration(milliseconds: value.toInt()));
                   if (mounted) {
                     setState(() {
                       tempPosition = Duration(milliseconds: value.toInt());

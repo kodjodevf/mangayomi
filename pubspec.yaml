@@ -94,6 +94,10 @@ dependencies:
   d4rt: 0.0.9
   hive: ^2.2.3
   hive_flutter: ^1.1.0
+  flutter_discord_rpc_fork:
+    git:
+      url: https://github.com/Schnitzel5/flutter-discord-rpc.git
+      ref: main
 
 dependency_overrides:
   ffi: ^2.1.3

@@ -26,6 +26,7 @@ import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
+import 'package:mangayomi/utils/discord_rpc.dart';
 import 'package:mangayomi/utils/url_protocol/api.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_provider.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
@@ -35,6 +36,7 @@ import 'package:window_manager/window_manager.dart';
 import 'package:path/path.dart' as p;
 
 late Isar isar;
+late DiscordRPC discordRpc;
 WebViewEnvironment? webViewEnvironment;
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -71,6 +73,8 @@ Future<void> _postLaunchInit(StorageProvider storage) async {
       : p.join("Mangayomi", "databases");
   await Hive.initFlutter(hivePath);
   Hive.registerAdapter(TrackSearchAdapter());
+  discordRpc = DiscordRPC(applicationId: "1395040506677039157");
+  await discordRpc.initialize();
   await storage.deleteBtDirectory();
 }
 
@@ -132,6 +136,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   void dispose() {
     _linkSubscription?.cancel();
+    discordRpc.destroy();
     super.dispose();
   }
 

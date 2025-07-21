@@ -15,17 +15,19 @@ class StatisticsScreen extends ConsumerStatefulWidget {
 
 class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     with SingleTickerProviderStateMixin {
-  late final hideItems = ref.read(hideItemsStateProvider);
+  late final List<String> hideItems;
   late TabController _tabController;
+  late final List<String> _tabList;
 
-  late final _tabList = [
-    if (!hideItems.contains("/MangaLibrary")) 'manga',
-    if (!hideItems.contains("/AnimeLibrary")) 'anime',
-    if (!hideItems.contains("/NovelLibrary")) 'novel',
-  ];
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
+    hideItems = ref.read(hideItemsStateProvider);
+    _tabList = [
+      if (!hideItems.contains("/MangaLibrary")) "/MangaLibrary",
+      if (!hideItems.contains("/AnimeLibrary")) "/AnimeLibrary",
+      if (!hideItems.contains("/NovelLibrary")) "/NovelLibrary",
+    ];
     _tabController = TabController(length: _tabList.length, vsync: this);
   }
 
@@ -38,7 +40,10 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
   @override
   Widget build(BuildContext context) {
     if (_tabList.isEmpty) {
-      return SizedBox.shrink();
+      return Scaffold(
+        appBar: AppBar(title: Text(context.l10n.statistics)),
+        body: Center(child: Text("EMPTY\nMPTY\nMTY\nMT\n\n")),
+      );
     }
     final l10n = context.l10n;
     return Scaffold(
@@ -46,23 +51,24 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
         title: Text(l10n.statistics),
         bottom: TabBar(
           controller: _tabController,
-          tabs: [
-            if (!hideItems.contains("/MangaLibrary")) Tab(text: "Manga"),
-            if (!hideItems.contains("/AnimeLibrary")) Tab(text: "Anime"),
-            if (!hideItems.contains("/NovelLibrary")) Tab(text: "Novel"),
-          ],
+          tabs: _tabList.map((route) {
+            if (route == "/MangaLibrary") return Tab(text: l10n.manga);
+            if (route == "/AnimeLibrary") return Tab(text: l10n.anime);
+            return Tab(text: l10n.novel);
+          }).toList(),
         ),
       ),
       body: TabBarView(
         controller: _tabController,
-        children: [
-          if (!hideItems.contains("/MangaLibrary"))
-            _buildStatisticsTab(itemType: ItemType.manga),
-          if (!hideItems.contains("/AnimeLibrary"))
-            _buildStatisticsTab(itemType: ItemType.anime),
-          if (!hideItems.contains("/NovelLibrary"))
-            _buildStatisticsTab(itemType: ItemType.novel),
-        ],
+        children: _tabList.map((route) {
+          if (route == "/MangaLibrary") {
+            return _buildStatisticsTab(itemType: ItemType.manga);
+          }
+          if (route == "/AnimeLibrary") {
+            return _buildStatisticsTab(itemType: ItemType.anime);
+          }
+          return _buildStatisticsTab(itemType: ItemType.novel);
+        }).toList(),
       ),
     );
   }

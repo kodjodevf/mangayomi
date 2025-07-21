@@ -37,6 +37,12 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
     );
   }
 
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   Future<void> _updateSource(Source source) {
     return ref.read(
       fetchItemSourcesListProvider(

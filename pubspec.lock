@@ -549,6 +549,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.4.1"
+  flutter_discord_rpc_fork:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: main
+      resolved-ref: "67e99dd4547bdba15a49d53ab61f50397b194804"
+      url: "https://github.com/Schnitzel5/flutter-discord-rpc.git"
+    source: git
+    version: "1.0.4"
   flutter_inappwebview:
     dependency: "direct main"
     description:

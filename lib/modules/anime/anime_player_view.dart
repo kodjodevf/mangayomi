@@ -169,7 +169,7 @@ enum _AniSkipPhase { none, opening, ending }
 bool _firstTime = true;
 
 class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   late final GlobalKey<VideoState> _key = GlobalKey<VideoState>();
   late final useLibass = ref.read(useLibassStateProvider);
   late final Player _player = Player(
@@ -213,6 +213,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   bool _hasEndingSkip = false;
   bool _initSubtitleAndAudio = true;
   bool _includeSubtitles = false;
+  int lastRpcTimestampUpdate = DateTime.now().millisecondsSinceEpoch;
 
   late final StreamSubscription<Duration> _currentPositionSub;
 
@@ -221,6 +222,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       .duration
       .listen((duration) {
         _currentTotalDuration.value = duration;
+        discordRpc.startChapterTimestamp(
+          _currentPosition.value.inMilliseconds,
+          duration.inMilliseconds,
+        );
       });
 
   bool get hasNextEpisode => _streamController.getEpisodeIndex().$1 != 0;
@@ -305,6 +310,14 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     if (_skipPhase.value != newPhase) _skipPhase.value = newPhase;
   }
 
+  void _updateRpcTimestamp() {
+    final now = DateTime.now().millisecondsSinceEpoch;
+    if (lastRpcTimestampUpdate + 10000 < now) {
+      discordRpc.updateChapterTimestamp(_currentPosition.value.inMilliseconds);
+      lastRpcTimestampUpdate = now;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -327,29 +340,38 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     _completed;
     _currentTotalDurationSub;
     _loadAndroidFont().then((_) {
-      _player.open(
-        Media(
-          _video.value!.videoTrack!.id,
-          httpHeaders: _video.value!.headers,
-          start: _streamController.geTCurrentPosition(),
-        ),
-      );
+      _openMedia(_video.value!, _streamController.geTCurrentPosition());
       if (widget.isTorrent) {
         Future.delayed(const Duration(seconds: 10)).then((_) {
           if (mounted) {
-            _player.open(
-              Media(
-                _video.value!.videoTrack!.id,
-                httpHeaders: _video.value!.headers,
-                start: _streamController.geTCurrentPosition(),
-              ),
-            );
+            _openMedia(_video.value!, _streamController.geTCurrentPosition());
           }
         });
       }
       _setPlaybackSpeed(ref.read(defaultPlayBackSpeedStateProvider));
       if (ref.read(enableAniSkipStateProvider)) _initAniSkip();
     });
+    discordRpc.showChapterDetails(ref, widget.episode);
+    _currentPosition.addListener(_updateRpcTimestamp);
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      _setCurrentPosition(true);
+    }
+  }
+
+  Future<void> _openMedia(VideoPrefs prefs, [Duration? position]) {
+    return _player.open(
+      Media(
+        prefs.videoTrack!.id,
+        httpHeaders: prefs.headers,
+        start: position ?? _currentPosition.value,
+      ),
+    );
   }
 
   Future<void> _loadAndroidFont() async {
@@ -397,15 +419,28 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
 
   @override
   void dispose() {
+    _currentPosition.removeListener(_updateRpcTimestamp);
+    WidgetsBinding.instance.removeObserver(this);
     _setCurrentPosition(true);
     _player.dispose();
     _currentPositionSub.cancel();
     _currentTotalDurationSub.cancel();
     _completed.cancel();
+    _video.dispose();
+    _playbackSpeed.dispose();
+    _isDoubleSpeed.dispose();
+    _currentTotalDuration.dispose();
+    _showFitLabel.dispose();
+    _isCompleted.dispose();
+    _tempPosition.dispose();
+    _fit.dispose();
     if (!_isDesktop) {
       _setLandscapeMode(false);
     }
     _skipPhase.dispose();
+    discordRpc.showIdleText();
+    discordRpc.showOriginalTimestamp();
+    _currentPosition.dispose();
     super.dispose();
   }
 
@@ -490,27 +525,20 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
               selected,
             ),
             onTap: () async {
+              if (_video.value?.videoTrack?.id == quality.videoTrack?.id) {
+                Navigator.pop(context);
+                return;
+              }
               _video.value = quality;
+              _player.stop();
               if (quality.isLocal) {
                 if (widget.isLocal) {
                   _player.setVideoTrack(quality.videoTrack!);
                 } else {
-                  _player.open(
-                    Media(
-                      quality.videoTrack!.id,
-                      httpHeaders: quality.headers,
-                      start: _currentPosition.value,
-                    ),
-                  );
+                  _openMedia(quality);
                 }
               } else {
-                _player.open(
-                  Media(
-                    quality.videoTrack!.id,
-                    httpHeaders: quality.headers,
-                    start: _currentPosition.value,
-                  ),
-                );
+                _openMedia(quality);
               }
               _initSubtitleAndAudio = true;
               Navigator.pop(context);
@@ -1103,24 +1131,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
               ),
             ),
           ),
-          Flexible(
-            fit: FlexFit.tight,
-            child: ValueListenableBuilder<bool>(
-              valueListenable: _isDoubleSpeed,
-              builder: (context, snapshot, _) {
-                return Text.rich(
-                  TextSpan(
-                    children: snapshot
-                        ? [
-                            WidgetSpan(child: Icon(Icons.fast_forward)),
-                            TextSpan(text: " 2X"),
-                          ]
-                        : [],
-                  ),
-                );
-              },
-            ),
-          ),
           Row(
             children: [
               btnToShowChapterListDialog(
@@ -1261,6 +1271,46 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
           width: context.width(1),
           height: context.height(1),
           resumeUponEnteringForegroundMode: true,
+        ),
+        Stack(
+          alignment: AlignmentDirectional.center,
+          children: [
+            Positioned(
+              top: 30,
+              child: ValueListenableBuilder<bool>(
+                valueListenable: _isDoubleSpeed,
+                builder: (context, snapshot, _) {
+                  return Text.rich(
+                    textAlign: TextAlign.center,
+                    TextSpan(
+                      style: TextStyle(
+                        background: Paint()
+                          ..color = Theme.of(context).scaffoldBackgroundColor
+                          ..strokeWidth = 30.0
+                          ..strokeJoin = StrokeJoin.round
+                          ..style = PaintingStyle.stroke,
+                      ),
+                      children: snapshot
+                          ? [
+                              TextSpan(
+                                text: " 2X ",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              WidgetSpan(
+                                alignment: PlaceholderAlignment.middle,
+                                child: Icon(Icons.fast_forward),
+                              ),
+                            ]
+                          : [],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
         if (enableAniSkip && (_hasOpeningSkip || _hasEndingSkip))
           Positioned(

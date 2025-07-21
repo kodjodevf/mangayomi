@@ -246,6 +246,16 @@ class Settings {
 
   bool? mergeLibraryNavMobile;
 
+  bool? enableDiscordRpc;
+
+  bool? hideDiscordRpcInIncognito;
+
+  bool? rpcShowReadingWatchingProgress;
+
+  bool? rpcShowTitle;
+
+  bool? rpcShowCoverImage;
+
   Settings({
     this.id = 227,
     this.displayType = DisplayType.compactGrid,
@@ -355,6 +365,11 @@ class Settings {
     this.novelExtensionsRepo,
     this.lastTrackerLibraryLocation,
     this.mergeLibraryNavMobile = false,
+    this.enableDiscordRpc = true,
+    this.hideDiscordRpcInIncognito = true,
+    this.rpcShowReadingWatchingProgress = true,
+    this.rpcShowTitle = true,
+    this.rpcShowCoverImage = true,
   });
 
   Settings.fromJson(Map<String, dynamic> json) {
@@ -570,6 +585,11 @@ class Settings {
     }
     lastTrackerLibraryLocation = json['lastTrackerLibraryLocation'];
     mergeLibraryNavMobile = json['mergeLibraryNavMobile'];
+    enableDiscordRpc = json['enableDiscordRpc'];
+    hideDiscordRpcInIncognito = json['hideDiscordRpcInIncognito'];
+    rpcShowReadingWatchingProgress = json['rpcShowReadingWatchingProgress'];
+    rpcShowTitle = json['rpcShowTitle'];
+    rpcShowCoverImage = json['rpcShowCoverImage'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -702,6 +722,11 @@ class Settings {
     'novelExtensionsRepo': novelExtensionsRepo?.map((e) => e.toJson()).toList(),
     'lastTrackerLibraryLocation': lastTrackerLibraryLocation,
     'mergeLibraryNavMobile': mergeLibraryNavMobile,
+    'enableDiscordRpc': enableDiscordRpc,
+    'hideDiscordRpcInIncognito': hideDiscordRpcInIncognito,
+    'rpcShowReadingWatchingProgress': rpcShowReadingWatchingProgress,
+    'rpcShowTitle': rpcShowTitle,
+    'rpcShowCoverImage': rpcShowCoverImage,
   };
 }
 

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:draggable_menu/draggable_menu.dart';
 import 'package:flutter/material.dart';
@@ -64,10 +65,8 @@ Future<void> customDraggableTabBar({
     index = tabBarController.index;
     if (index != currentIndex) {
       index = currentIndex;
-      refresh();
-    } else {
-      refresh();
     }
+    refresh();
   });
 
   await showDialog(
@@ -79,10 +78,7 @@ Future<void> customDraggableTabBar({
             for (var i = 0; i < children.length; i++) ...[
               MeasureWidgetSize(
                 onCalculateSize: (size) {
-                  final additionnalHeight = ((List.generate(
-                    10000,
-                    (index) => index * 0.0001,
-                  ))..shuffle()).first;
+                  final additionnalHeight = Random().nextDouble() * 0.01;
                   double newHeight = size!.height + 52.0 + additionnalHeight;
                   if (!(newHeight <= maxHeight)) {
                     newHeight = maxHeight + additionnalHeight;
@@ -212,4 +208,5 @@ Future<void> customDraggableTabBar({
       ),
     );
   }
+  tabBarController.dispose();
 }

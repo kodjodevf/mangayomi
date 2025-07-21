@@ -6,7 +6,7 @@ part of 'get_html_content.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getHtmlContentHash() => r'6bdc17222f959cb5f91b56027d4f98e26571175d';
+String _$getHtmlContentHash() => r'19e6959d8fceb065b19c6c6d38cd1b5132a8ba94';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -34,7 +34,7 @@ class _SystemHash {
 const getHtmlContentProvider = GetHtmlContentFamily();
 
 /// See also [getHtmlContent].
-class GetHtmlContentFamily extends Family<AsyncValue<String>> {
+class GetHtmlContentFamily extends Family<AsyncValue<(String, EpubBook?)>> {
   /// See also [getHtmlContent].
   const GetHtmlContentFamily();
 
@@ -72,7 +72,8 @@ class GetHtmlContentFamily extends Family<AsyncValue<String>> {
 }
 
 /// See also [getHtmlContent].
-class GetHtmlContentProvider extends AutoDisposeFutureProvider<String> {
+class GetHtmlContentProvider
+    extends AutoDisposeFutureProvider<(String, EpubBook?)> {
   /// See also [getHtmlContent].
   GetHtmlContentProvider({
     required Chapter chapter,
@@ -107,7 +108,7 @@ class GetHtmlContentProvider extends AutoDisposeFutureProvider<String> {
 
   @override
   Override overrideWith(
-    FutureOr<String> Function(GetHtmlContentRef provider) create,
+    FutureOr<(String, EpubBook?)> Function(GetHtmlContentRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -124,7 +125,7 @@ class GetHtmlContentProvider extends AutoDisposeFutureProvider<String> {
   }
 
   @override
-  AutoDisposeFutureProviderElement<String> createElement() {
+  AutoDisposeFutureProviderElement<(String, EpubBook?)> createElement() {
     return _GetHtmlContentProviderElement(this);
   }
 
@@ -144,13 +145,14 @@ class GetHtmlContentProvider extends AutoDisposeFutureProvider<String> {
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin GetHtmlContentRef on AutoDisposeFutureProviderRef<String> {
+mixin GetHtmlContentRef on AutoDisposeFutureProviderRef<(String, EpubBook?)> {
   /// The parameter `chapter` of this provider.
   Chapter get chapter;
 }
 
 class _GetHtmlContentProviderElement
-    extends AutoDisposeFutureProviderElement<String> with GetHtmlContentRef {
+    extends AutoDisposeFutureProviderElement<(String, EpubBook?)>
+    with GetHtmlContentRef {
   _GetHtmlContentProviderElement(super.provider);
 
   @override

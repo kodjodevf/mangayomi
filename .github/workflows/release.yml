@@ -52,7 +52,7 @@ jobs:
         uses: seanmiddleditch/gha-setup-ninja@master
 
       - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen' --locked
+        run: cargo install 'flutter_rust_bridge_codegen'
 
       - name: Setup Android keystore
         run: |
@@ -105,7 +105,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen' --locked
+        run: cargo install 'flutter_rust_bridge_codegen'
 
       - name: flutter pub get
         run: flutter pub get
@@ -125,7 +125,7 @@ jobs:
         env:
           P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
         run: |
-          flutter build ios --release --no-codesign
+          flutter build ios --release --no-codesign --verbose
           mkdir -p build/ios/iphoneos/Payload
           ln -s ../Runner.app build/ios/iphoneos/Payload/Runner.app
           ./zsign -f -k ./certificate.p12 -p "$P12_PASSWORD" -m ./profile.mobileprovision ./build/ios/iphoneos/Payload/Runner.app
@@ -161,7 +161,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen' --locked
+        run: cargo install 'flutter_rust_bridge_codegen'
 
       - name: flutter pub get
         run: flutter pub get
@@ -171,7 +171,7 @@ jobs:
           cd macos
           pod update
           cd ..
-          flutter build macos --release
+          flutter build macos --release --verbose
           brew install create-dmg 
           create-dmg --volname Mangayomi-${{ github.ref_name }}-macos --window-pos 200 120 --window-size 800 450 --icon-size 100 --app-drop-link 600 185 Mangayomi-${{ github.ref_name }}-macos.dmg build/macos/Build/Products/Release/Mangayomi.app
 
@@ -204,7 +204,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen' --locked
+        run: cargo install 'flutter_rust_bridge_codegen'
 
       - name: flutter pub get
         run: flutter pub get
@@ -258,7 +258,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install webkit2gtk-4.1 clang cmake ninja-build pkg-config libgtk-3-dev mpv libmpv-dev dpkg-dev libblkid-dev liblzma-dev fuse rpm imagemagick
+          sudo apt-get install webkit2gtk-4.1 clang cmake ninja-build pkg-config libgtk-3-dev mpv libmpv-dev dpkg-dev libblkid-dev liblzma-dev fuse rpm
           wget -O /usr/local/bin/linuxdeploy "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
           chmod +x /usr/local/bin/linuxdeploy
 
@@ -271,13 +271,13 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen' --locked
+        run: cargo install 'flutter_rust_bridge_codegen'
 
       - name: flutter pub get
         run: flutter pub get
 
       - name: build linux
-        run: flutter build linux --release
+        run: flutter build linux --release --verbose
 
       - name: Zip
         uses: thedoctor0/zip-release@master
@@ -291,11 +291,10 @@ jobs:
           # Create fresh AppDir structure
           rm -rf AppDir
           mkdir -p AppDir/usr/bin
-          mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
+          mkdir -p AppDir/usr/share/icons
           # Copy built files
           cp -r build/linux/x64/release/bundle/* AppDir/usr/bin/
-          convert -resize 256x256 assets/app_icons/icon-red.png AppDir/usr/share/icons/hicolor/256x256/apps/mangayomi.png
-          convert -resize 512x512 assets/app_icons/icon-red.png AppDir/mangayomi.png
+          cp -rL linux/packaging/icons/* AppDir/usr/share/icons
           # Create desktop file in AppDir root
           cp linux/mangayomi.desktop AppDir/mangayomi.desktop
           # Create AppRun file
@@ -312,7 +311,7 @@ jobs:
           /usr/local/bin/linuxdeploy \
             --appdir AppDir \
             --desktop-file AppDir/mangayomi.desktop \
-            --icon-file AppDir/mangayomi.png \
+            --icon-file AppDir/usr/share/icons/hicolor/512x512/apps/mangayomi.png \
             --executable AppDir/usr/bin/mangayomi \
             --output appimage
           mv $(find . -type f -name "*.AppImage") build/linux/x64/release/Mangayomi-${{ github.ref_name }}-linux.AppImage
@@ -323,8 +322,8 @@ jobs:
           mkdir -p rpm_build/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
           cp -r build/linux/x64/release/bundle rpm_build/SOURCES/mangayomi-${VERSION}
           tar czf rpm_build/SOURCES/mangayomi-${VERSION}.tar.gz -C rpm_build/SOURCES mangayomi-${VERSION}
-          mkdir -p rpm_build/SOURCES/usr/share/icons/hicolor/256x256/apps
-          cp assets/app_icons/icon-red.png rpm_build/SOURCES/usr/share/icons/hicolor/256x256/apps/mangayomi.png
+          mkdir -p rpm_build/SOURCES/usr/share/icons
+          cp -rL linux/packaging/icons/* rpm_build/SOURCES/usr/share/icons
           cp linux/mangayomi.desktop rpm_build/SOURCES/
           # RPM Spec File
           cat <<EOF > rpm_build/SPECS/mangayomi.spec
@@ -353,7 +352,12 @@ jobs:
           %files
           /usr/bin/*
           /usr/share/applications/mangayomi.desktop
+          /usr/share/icons/hicolor/16x16/apps/mangayomi.png
+          /usr/share/icons/hicolor/32x32/apps/mangayomi.png
+          /usr/share/icons/hicolor/64x64/apps/mangayomi.png
+          /usr/share/icons/hicolor/128x128/apps/mangayomi.png
           /usr/share/icons/hicolor/256x256/apps/mangayomi.png
+          /usr/share/icons/hicolor/512x512/apps/mangayomi.png
           EOF
 
           rpmbuild --define "_topdir $(pwd)/rpm_build" -ba rpm_build/SPECS/mangayomi.spec
@@ -398,7 +402,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen' --locked
+        run: cargo install 'flutter_rust_bridge_codegen'
 
       - name: flutter pub get
         run: flutter pub get
@@ -418,10 +422,11 @@ jobs:
           dpkg-deb -R "$(find dist -name '*.deb' | head -n 1)" extracted_deb
           # Replace desktop file
           cp -f linux/mangayomi.desktop extracted_deb/usr/share/applications/mangayomi.desktop
+          # copy all icon sizes
+          cp -rLf linux/packaging/icons/* extracted_deb/usr/share/icons
           # Set correct permissions
           chmod 644 extracted_deb/usr/share/applications/mangayomi.desktop
           # Repack the .deb
-          sudo apt-get install -y fakeroot
           fakeroot dpkg-deb -b extracted_deb dist/Mangayomi-${{ github.ref_name }}-linux.deb
 
       - name: upload artifact linux deb

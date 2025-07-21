@@ -71,6 +71,13 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     }
   }
 
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    tabBarController?.dispose();
+    super.dispose();
+  }
+
   Future<void> _updateLibrary(List<Manga> mangaList) async {
     bool isDark = ref.read(themeModeStateProvider);
     botToast(
@@ -1178,7 +1185,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                   // else it has 0 chapters/episodes
                                   // and when opened, shows exception
                                   // "Null check operator"
-                                  _removeImport(ref, manga);
+                                  isar.writeTxnSync(() {
+                                    _removeImport(ref, manga);
+                                  });
                                 } else {
                                   mangaDirectory = await _deleteDownload(
                                     manga,
@@ -2078,6 +2087,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
 
 void _importLocal(BuildContext context, ItemType itemType) {
   final l10n = l10nLocalizations(context)!;
+  final filesText = switch (itemType) {
+    ItemType.manga => ".zip, .cbz",
+    ItemType.anime => ".mp4, .mkv, .avi, and more",
+    ItemType.novel => ".epub",
+  };
   bool isLoading = false;
   showDialog(
     context: context,
@@ -2126,7 +2140,7 @@ void _importLocal(BuildContext context, ItemType itemType) {
                                   children: [
                                     const Icon(Icons.archive_outlined),
                                     Text(
-                                      "${l10n.import_files} ( ${itemType == ItemType.manga ? ".zip, .cbz" : ".mp4, .mkv, .avi, and more"} )",
+                                      "${l10n.import_files} ( $filesText )",
                                       style: TextStyle(
                                         color: Theme.of(
                                           context,

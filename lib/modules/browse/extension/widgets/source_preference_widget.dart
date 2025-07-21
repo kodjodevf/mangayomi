@@ -298,6 +298,13 @@ class EditTextDialogWidget extends StatefulWidget {
 
 class _EditTextDialogWidgetState extends State<EditTextDialogWidget> {
   late final _controller = TextEditingController(text: widget.text);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
