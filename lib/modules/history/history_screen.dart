@@ -35,7 +35,6 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
     with TickerProviderStateMixin {
   final _textEditingController = TextEditingController();
   late TabController _tabBarController;
-  int tabs = 3;
 
   void tabListener() {
     setState(() {
@@ -47,8 +46,13 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
   @override
   void initState() {
     super.initState();
-    _tabBarController = TabController(length: tabs, vsync: this);
-    _tabBarController.animateTo(0);
+    final hideItems = ref.read(hideItemsStateProvider);
+    final tabCount = [
+      if (!hideItems.contains("/MangaLibrary")) "/MangaLibrary",
+      if (!hideItems.contains("/AnimeLibrary")) "/AnimeLibrary",
+      if (!hideItems.contains("/NovelLibrary")) "/NovelLibrary",
+    ].length;
+    _tabBarController = TabController(length: tabCount, vsync: this);
     _tabBarController.addListener(tabListener);
   }
 
@@ -60,164 +64,132 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
   }
 
   bool _isSearch = false;
-  List<History> entriesData = [];
+  // List<History> _entriesData = []; // TODO. The variable is never used/modified
   @override
   Widget build(BuildContext context) {
-    int newTabs = 0;
     final hideItems = ref.watch(hideItemsStateProvider);
-
-    if (!hideItems.contains("/MangaLibrary")) newTabs++;
-    if (!hideItems.contains("/AnimeLibrary")) newTabs++;
-    if (!hideItems.contains("/NovelLibrary")) newTabs++;
-    if (newTabs == 0) {
-      return SizedBox.shrink();
-    }
-    if (tabs != newTabs) {
-      _tabBarController.removeListener(tabListener);
-      _tabBarController.dispose();
-      _tabBarController = TabController(length: newTabs, vsync: this);
-      _tabBarController.animateTo(0);
-      _tabBarController.addListener(tabListener);
-      setState(() {
-        tabs = newTabs;
-      });
-    }
     final l10n = l10nLocalizations(context)!;
-    return DefaultTabController(
-      animationDuration: Duration.zero,
-      length: newTabs,
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          title: _isSearch
-              ? null
-              : Text(
-                  l10n.history,
-                  style: TextStyle(color: Theme.of(context).hintColor),
-                ),
-          actions: [
-            _isSearch
-                ? SeachFormTextField(
-                    onChanged: (value) {
-                      setState(() {});
-                    },
-                    onSuffixPressed: () {
-                      _textEditingController.clear();
-                      setState(() {});
-                    },
-                    onPressed: () {
-                      setState(() {
-                        _isSearch = false;
-                      });
-                      _textEditingController.clear();
-                    },
-                    controller: _textEditingController,
-                  )
-                : IconButton(
-                    splashRadius: 20,
-                    onPressed: () {
-                      setState(() {
-                        _isSearch = true;
-                      });
-                    },
-                    icon: Icon(
-                      Icons.search,
-                      color: Theme.of(context).hintColor,
-                    ),
-                  ),
-            IconButton(
-              splashRadius: 20,
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text(l10n.remove_everything),
-                      content: Text(l10n.remove_everything_msg),
-                      actions: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text(l10n.cancel),
-                            ),
-                            const SizedBox(width: 15),
-                            TextButton(
-                              onPressed: () => clearHistory(hideItems),
-                              child: Text(l10n.ok),
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-              icon: Icon(
-                Icons.delete_sweep_outlined,
-                color: Theme.of(context).hintColor,
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        title: _isSearch
+            ? null
+            : Text(
+                l10n.history,
+                style: TextStyle(color: Theme.of(context).hintColor),
               ),
+        actions: [
+          _isSearch
+              ? SeachFormTextField(
+                  onChanged: (value) {
+                    setState(() {});
+                  },
+                  onSuffixPressed: () {
+                    _textEditingController.clear();
+                    setState(() {});
+                  },
+                  onPressed: () {
+                    setState(() {
+                      _isSearch = false;
+                    });
+                    _textEditingController.clear();
+                  },
+                  controller: _textEditingController,
+                )
+              : IconButton(
+                  splashRadius: 20,
+                  onPressed: () {
+                    setState(() {
+                      _isSearch = true;
+                    });
+                  },
+                  icon: Icon(Icons.search, color: Theme.of(context).hintColor),
+                ),
+          IconButton(
+            splashRadius: 20,
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text(l10n.remove_everything),
+                    content: Text(l10n.remove_everything_msg),
+                    actions: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(l10n.cancel),
+                          ),
+                          const SizedBox(width: 15),
+                          TextButton(
+                            onPressed: () async {
+                              if (mounted) Navigator.pop(context);
+                              await _clearHistory(hideItems);
+                            },
+                            child: Text(l10n.ok),
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            icon: Icon(
+              Icons.delete_sweep_outlined,
+              color: Theme.of(context).hintColor,
             ),
+          ),
+        ],
+        bottom: TabBar(
+          indicatorSize: TabBarIndicatorSize.tab,
+          controller: _tabBarController,
+          tabs: [
+            if (!hideItems.contains("/MangaLibrary")) Tab(text: l10n.manga),
+            if (!hideItems.contains("/AnimeLibrary")) Tab(text: l10n.anime),
+            if (!hideItems.contains("/NovelLibrary")) Tab(text: l10n.novel),
           ],
-          bottom: TabBar(
-            indicatorSize: TabBarIndicatorSize.tab,
-            controller: _tabBarController,
-            tabs: [
-              if (!hideItems.contains("/MangaLibrary")) Tab(text: l10n.manga),
-              if (!hideItems.contains("/AnimeLibrary")) Tab(text: l10n.anime),
-              if (!hideItems.contains("/NovelLibrary")) Tab(text: l10n.novel),
-            ],
-          ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.only(top: 10),
-          child: TabBarView(
-            controller: _tabBarController,
-            children: [
-              if (!hideItems.contains("/MangaLibrary"))
-                HistoryTab(
-                  itemType: ItemType.manga,
-                  query: _textEditingController.text,
-                ),
-              if (!hideItems.contains("/AnimeLibrary"))
-                HistoryTab(
-                  itemType: ItemType.anime,
-                  query: _textEditingController.text,
-                ),
-              if (!hideItems.contains("/NovelLibrary"))
-                HistoryTab(
-                  itemType: ItemType.novel,
-                  query: _textEditingController.text,
-                ),
-            ],
-          ),
-        ),
+      ),
+      body: TabBarView(
+        controller: _tabBarController,
+        children: [
+          if (!hideItems.contains("/MangaLibrary"))
+            HistoryTab(
+              itemType: ItemType.manga,
+              query: _textEditingController.text,
+            ),
+          if (!hideItems.contains("/AnimeLibrary"))
+            HistoryTab(
+              itemType: ItemType.anime,
+              query: _textEditingController.text,
+            ),
+          if (!hideItems.contains("/NovelLibrary"))
+            HistoryTab(
+              itemType: ItemType.novel,
+              query: _textEditingController.text,
+            ),
+        ],
       ),
     );
   }
 
-  void clearHistory(List<String> hideItems) {
-    List<History> histories = isar.historys
+  Future<void> _clearHistory(List<String> hideItems) async {
+    List<History> histories = await isar.historys
         .filter()
         .idIsNotNull()
         .chapter(
           (q) =>
               q.manga((q) => q.itemTypeEqualTo(getCurrentItemType(hideItems))),
         )
-        .findAllSync()
-        .toList();
-    isar.writeTxnSync(() {
-      for (var history in histories) {
-        isar.historys.deleteSync(history.id!);
-      }
-    });
-    if (mounted) {
-      Navigator.pop(context);
-    }
+        .findAll();
+    final List<Id> idsToDelete = histories.map((h) => h.id!).toList();
+    await isar.writeTxn(() => isar.historys.deleteAll(idsToDelete));
   }
 
   ItemType getCurrentItemType(List<String> hideItems) {
@@ -240,9 +212,13 @@ class HistoryTab extends ConsumerStatefulWidget {
   ConsumerState<HistoryTab> createState() => _HistoryTabState();
 }
 
-class _HistoryTabState extends ConsumerState<HistoryTab> {
+class _HistoryTabState extends ConsumerState<HistoryTab>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final l10n = l10nLocalizations(context)!;
     final history = ref.watch(
       getAllHistoryStreamProvider(
@@ -250,182 +226,179 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
         search: widget.query,
       ),
     );
-    return Scaffold(
-      body: history.when(
-        data: (entries) {
-          if (entries.isNotEmpty) {
-            return CustomScrollView(
-              slivers: [
-                CustomSliverGroupedListView<History, String>(
-                  elements: entries,
-                  groupBy: (element) => dateFormat(
-                    element.date!,
-                    context: context,
-                    ref: ref,
-                    forHistoryValue: true,
-                    useRelativeTimesTamps: false,
-                  ),
-                  groupSeparatorBuilder: (String groupByValue) => Padding(
-                    padding: const EdgeInsets.only(bottom: 8, left: 12),
-                    child: Row(
-                      children: [
-                        Text(
-                          dateFormat(
-                            null,
-                            context: context,
-                            stringDate: groupByValue,
-                            ref: ref,
-                          ),
+    return history.when(
+      data: (entries) {
+        if (entries.isNotEmpty) {
+          return CustomScrollView(
+            slivers: [
+              CustomSliverGroupedListView<History, String>(
+                elements: entries,
+                groupBy: (element) => dateFormat(
+                  element.date!,
+                  context: context,
+                  ref: ref,
+                  forHistoryValue: true,
+                  useRelativeTimesTamps: false,
+                ),
+                groupSeparatorBuilder: (String groupByValue) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8, left: 12),
+                  child: Row(
+                    children: [
+                      Text(
+                        dateFormat(
+                          null,
+                          context: context,
+                          stringDate: groupByValue,
+                          ref: ref,
                         ),
-                      ],
-                    ),
-                  ),
-                  itemBuilder: (context, History element) {
-                    final manga = element.chapter.value!.manga.value!;
-                    final chapter = element.chapter.value!;
-                    return ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.all(0),
-                        backgroundColor: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(0),
-                        ),
-                        elevation: 0,
-                        shadowColor: Colors.transparent,
                       ),
-                      onPressed: () async {
-                        await chapter.pushToReaderView(context);
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        child: SizedBox(
-                          height: 105,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: 60,
-                                height: 90,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.all(0),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(7),
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    context.push(
-                                      '/manga-reader/detail',
-                                      extra: manga.id,
-                                    );
-                                  },
-                                  child: ClipRRect(
+                    ],
+                  ),
+                ),
+                itemBuilder: (context, History element) {
+                  final chapter = element.chapter.value!;
+                  final manga = chapter.manga.value!;
+                  return ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.all(0),
+                      backgroundColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0),
+                      ),
+                      elevation: 0,
+                      shadowColor: Colors.transparent,
+                    ),
+                    onPressed: () async {
+                      await chapter.pushToReaderView(context);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: SizedBox(
+                        height: 105,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 60,
+                              height: 90,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.all(0),
+                                  shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(7),
-                                    child: getCoverImage(manga),
                                   ),
                                 ),
+                                onPressed: () {
+                                  context.push(
+                                    '/manga-reader/detail',
+                                    extra: manga.id,
+                                  );
+                                },
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(7),
+                                  child: _getCoverImage(manga),
+                                ),
                               ),
-                              Flexible(
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Container(
-                                        color: Colors.transparent,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                manga.name!,
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Theme.of(
-                                                    context,
-                                                  ).textTheme.bodyLarge!.color,
-                                                  fontWeight: FontWeight.bold,
+                            ),
+                            Flexible(
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      color: Colors.transparent,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              manga.name!,
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Theme.of(
+                                                  context,
+                                                ).textTheme.bodyLarge!.color,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              textAlign: TextAlign.start,
+                                            ),
+                                            Wrap(
+                                              crossAxisAlignment:
+                                                  WrapCrossAlignment.end,
+                                              children: [
+                                                Text(
+                                                  chapter.name!,
+                                                  style: TextStyle(
+                                                    fontSize: 11,
+                                                    color: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyLarge!
+                                                        .color,
+                                                  ),
                                                 ),
-                                                textAlign: TextAlign.start,
-                                              ),
-                                              Wrap(
-                                                crossAxisAlignment:
-                                                    WrapCrossAlignment.end,
-                                                children: [
-                                                  Text(
-                                                    chapter.name!,
-                                                    style: TextStyle(
-                                                      fontSize: 11,
-                                                      color: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyLarge!
-                                                          .color,
-                                                    ),
+                                                Text(
+                                                  " - ${dateFormatHour(element.date!, context)}",
+                                                  style: TextStyle(
+                                                    fontSize: 11,
+                                                    color: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyLarge!
+                                                        .color,
+                                                    fontWeight: FontWeight.w400,
                                                   ),
-                                                  Text(
-                                                    " - ${dateFormatHour(element.date!, context)}",
-                                                    style: TextStyle(
-                                                      fontSize: 11,
-                                                      color: Theme.of(context)
-                                                          .textTheme
-                                                          .bodyLarge!
-                                                          .color,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
-                                    IconButton(
-                                      onPressed: () => openDeleteDialog(
-                                        l10n,
-                                        manga,
-                                        element.id,
-                                      ),
-                                      icon: Icon(
-                                        Icons.delete_outline,
-                                        size: 25,
-                                        color: Theme.of(
-                                          context,
-                                        ).textTheme.bodyLarge!.color,
-                                      ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () => _openDeleteDialog(
+                                      l10n,
+                                      manga,
+                                      element.id,
                                     ),
-                                  ],
-                                ),
+                                    icon: Icon(
+                                      Icons.delete_outline,
+                                      size: 25,
+                                      color: Theme.of(
+                                        context,
+                                      ).textTheme.bodyLarge!.color,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                    );
-                  },
-                  itemComparator: (item1, item2) =>
-                      item1.date!.compareTo(item2.date!),
-                  order: GroupedListOrder.DESC,
-                ),
-              ],
-            );
-          }
-          return Center(child: Text(l10n.nothing_read_recently));
-        },
-        error: (Object error, StackTrace stackTrace) {
-          return ErrorText(error);
-        },
-        loading: () {
-          return const ProgressCenter();
-        },
-      ),
+                    ),
+                  );
+                },
+                itemComparator: (item1, item2) =>
+                    item1.date!.compareTo(item2.date!),
+                order: GroupedListOrder.DESC,
+              ),
+            ],
+          );
+        }
+        return Center(child: Text(l10n.nothing_read_recently));
+      },
+      error: (Object error, StackTrace stackTrace) {
+        return ErrorText(error);
+      },
+      loading: () {
+        return const ProgressCenter();
+      },
     );
   }
 
-  Widget getCoverImage(Manga manga) {
+  Widget _getCoverImage(Manga manga) {
     return manga.customCoverImage != null
         ? Image.memory(manga.customCoverImage as Uint8List)
         : cachedCompressedNetworkImage(
@@ -441,7 +414,7 @@ class _HistoryTabState extends ConsumerState<HistoryTab> {
           );
   }
 
-  void openDeleteDialog(AppLocalizations l10n, Manga manga, int? deleteId) {
+  void _openDeleteDialog(AppLocalizations l10n, Manga manga, int? deleteId) {
     showDialog(
       context: context,
       builder: (context) {
