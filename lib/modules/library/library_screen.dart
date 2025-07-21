@@ -1185,7 +1185,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                   // else it has 0 chapters/episodes
                                   // and when opened, shows exception
                                   // "Null check operator"
-                                  _removeImport(ref, manga);
+                                  isar.writeTxnSync(() {
+                                    _removeImport(ref, manga);
+                                  });
                                 } else {
                                   mangaDirectory = await _deleteDownload(
                                     manga,

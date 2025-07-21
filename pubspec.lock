@@ -552,10 +552,11 @@ packages:
   flutter_discord_rpc_fork:
     dependency: "direct main"
     description:
-      name: flutter_discord_rpc_fork
-      sha256: a32b3d5871af591ec73b65feb2818f3e3d4e05d46b9903c6f117b03865a86282
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: main
+      resolved-ref: "67e99dd4547bdba15a49d53ab61f50397b194804"
+      url: "https://github.com/Schnitzel5/flutter-discord-rpc.git"
+    source: git
     version: "1.0.4"
   flutter_inappwebview:
     dependency: "direct main"
