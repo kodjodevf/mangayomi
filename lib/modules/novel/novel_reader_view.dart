@@ -467,7 +467,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
           _readerController.getChapterIndex().$2,
         );
     bool hasNextChapter = _readerController.getChapterIndex().$1 != 0;
-    final novelTextAlign = ref.watch(novelTextAlignStateProvider);
+    // final novelTextAlign = ref.watch(novelTextAlignStateProvider); // TODO. The variable is never used/modified
 
     return Positioned(
       bottom: 0,
