@@ -72,8 +72,11 @@ class UpdateProgressAfterReadingState
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () =>
-          isar.settings.putSync(settings!..updateProgressAfterReading = value),
+      () => isar.settings.putSync(
+        settings!
+          ..updateProgressAfterReading = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }

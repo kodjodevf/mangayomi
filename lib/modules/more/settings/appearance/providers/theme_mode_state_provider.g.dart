@@ -6,7 +6,7 @@ part of 'theme_mode_state_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$themeModeStateHash() => r'264bf4a814cec831e34d916f273b4db6513e583c';
+String _$themeModeStateHash() => r'f1a29fab544a04b3f1d9c269e08f5b83ec51e0c3';
 
 /// See also [ThemeModeState].
 @ProviderFor(ThemeModeState)
@@ -23,7 +23,7 @@ final themeModeStateProvider =
 
 typedef _$ThemeModeState = AutoDisposeNotifier<bool>;
 String _$followSystemThemeStateHash() =>
-    r'a2d5e573e05364c3c89abe81f25c7f39b0ae91e2';
+    r'07837fff5d56fb0b15b555d203af2bbe94e138f8';
 
 /// See also [FollowSystemThemeState].
 @ProviderFor(FollowSystemThemeState)

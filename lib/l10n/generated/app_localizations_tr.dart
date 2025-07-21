@@ -1492,4 +1492,13 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get rpc_show_cover_image => 'Show current cover image in Discord';
+
+  @override
+  String get sync_enable_histories => 'Sync history data';
+
+  @override
+  String get sync_enable_updates => 'Sync update data';
+
+  @override
+  String get sync_enable_settings => 'Sync settings';
 }

@@ -32,7 +32,11 @@ class ThemeModeState extends _$ThemeModeState {
           settings.flexSchemeColorIndex!,
         );
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings..themeIsDark = state),
+      () => isar.settings.putSync(
+        settings
+          ..themeIsDark = state
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 
@@ -46,7 +50,11 @@ class ThemeModeState extends _$ThemeModeState {
           settings.flexSchemeColorIndex!,
         );
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings..themeIsDark = state),
+      () => isar.settings.putSync(
+        settings
+          ..themeIsDark = state
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -70,7 +78,11 @@ class FollowSystemThemeState extends _$FollowSystemThemeState {
       }
     }
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..followSystemTheme = value),
+      () => isar.settings.putSync(
+        settings!
+          ..followSystemTheme = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }

@@ -7,9 +7,16 @@ import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/update.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/blend_level_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'dart:convert';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -23,6 +30,7 @@ class SyncServer extends _$SyncServer {
   final String _syncMangaUrl = '/sync/manga';
   final String _syncHistoryUrl = '/sync/histories';
   final String _syncUpdateUrl = '/sync/updates';
+  final String _syncSettingsUrl = '/sync/settings';
 
   @override
   void build({required int syncId}) {}
@@ -64,6 +72,7 @@ class SyncServer extends _$SyncServer {
       botToast(l10n.sync_starting, second: 500);
     }
     try {
+      final syncPreference = ref.read(synchingProvider(syncId: syncId));
       final syncNotifier = ref.read(synchingProvider(syncId: syncId).notifier);
 
       final resultManga = await _syncManga(l10n, syncNotifier);
@@ -71,15 +80,26 @@ class SyncServer extends _$SyncServer {
         botToast(l10n.sync_failed, second: 5);
         return;
       }
-      final resultHistory = await _syncHistory(l10n, syncNotifier);
-      if (!resultHistory) {
-        botToast(l10n.sync_failed, second: 5);
-        return;
+      if (syncPreference.syncHistories) {
+        final resultHistory = await _syncHistory(l10n, syncNotifier);
+        if (!resultHistory) {
+          botToast(l10n.sync_failed, second: 5);
+          return;
+        }
       }
-      final resultUpdate = await _syncUpdate(l10n, syncNotifier);
-      if (!resultUpdate) {
-        botToast(l10n.sync_failed, second: 5);
-        return;
+      if (syncPreference.syncUpdates) {
+        final resultUpdate = await _syncUpdate(l10n, syncNotifier);
+        if (!resultUpdate) {
+          botToast(l10n.sync_failed, second: 5);
+          return;
+        }
+      }
+      if (syncPreference.syncSettings) {
+        final resultSettings = await _syncSettings(l10n);
+        if (!resultSettings) {
+          botToast(l10n.sync_failed, second: 5);
+          return;
+        }
       }
 
       ref.invalidate(synchingProvider(syncId: syncId));
@@ -88,7 +108,6 @@ class SyncServer extends _$SyncServer {
       }
     } catch (error) {
       botToast(error.toString(), second: 5);
-      rethrow;
     }
   }
 
@@ -166,6 +185,28 @@ class SyncServer extends _$SyncServer {
     await _upsertUpdates(jsonData, syncNotifier);
 
     syncNotifier.setLastSyncUpdate(DateTime.now().millisecondsSinceEpoch);
+
+    return true;
+  }
+
+  Future<bool> _syncSettings(AppLocalizations l10n) async {
+    final settingsData = _getSettingsData();
+    final accessToken = _getAccessToken();
+    var response = await http.post(
+      Uri.parse('${_getServer()}$_syncSettingsUrl'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': 'id=$accessToken',
+      },
+      body: settingsData,
+    );
+    if (response.statusCode != 200) {
+      botToast(l10n.sync_failed, second: 5);
+      return false;
+    }
+
+    final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+    await _upsertSettings(jsonData);
 
     return true;
   }
@@ -366,6 +407,23 @@ class SyncServer extends _$SyncServer {
     });
   }
 
+  Future<void> _upsertSettings(Map<String, dynamic> jsonData) async {
+    final oldSettings = isar.settings.getSync(227)!;
+    final settings = Settings.fromJson(jsonData["settings"]);
+    await isar.writeTxn(() async {
+      await isar.settings.put(settings..cookiesList = oldSettings.cookiesList);
+      ref.invalidate(followSystemThemeStateProvider);
+      ref.invalidate(themeModeStateProvider);
+      ref.invalidate(blendLevelStateProvider);
+      ref.invalidate(flexSchemeColorStateProvider);
+      ref.invalidate(pureBlackDarkModeStateProvider);
+      ref.invalidate(l10nLocaleStateProvider);
+      ref.invalidate(extensionsRepoStateProvider(ItemType.manga));
+      ref.invalidate(extensionsRepoStateProvider(ItemType.anime));
+      ref.invalidate(extensionsRepoStateProvider(ItemType.novel));
+    });
+  }
+
   String _getMangaData() {
     Map<String, dynamic> data = {};
     data["categories"] = _getCategories();
@@ -393,6 +451,12 @@ class SyncServer extends _$SyncServer {
     return jsonEncode(data);
   }
 
+  String _getSettingsData() {
+    Map<String, dynamic> data = {};
+    data["settings"] = isar.settings.getSync(227)!..updatedAt ??= DateTime.now().millisecondsSinceEpoch..cookiesList = [];
+    return jsonEncode(data);
+  }
+
   List<int> _getDeletedObjects(ActionType actionType) {
     return ref
         .read(synchingProvider(syncId: syncId).notifier)
@@ -407,7 +471,7 @@ class SyncServer extends _$SyncServer {
         .filter()
         .idIsNotNull()
         .findAllSync()
-        .map((e) => e.toJson())
+        .map((e) => (e..customCoverImage = null).toJson())
         .toList();
   }
 

@@ -28,7 +28,8 @@ class L10nLocaleState extends _$L10nLocaleState {
           ..locale = L10nLocale(
             languageCode: locale.languageCode,
             countryCode: locale.countryCode,
-          ),
+          )
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       );
     });
     state = locale;

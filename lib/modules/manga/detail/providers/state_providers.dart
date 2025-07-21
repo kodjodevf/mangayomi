@@ -103,7 +103,11 @@ class SortChapterState extends _$SortChapterState {
     }
     sortChapterList.add(value);
     isar.writeTxnSync(() {
-      isar.settings.putSync(settings..sortChapterList = sortChapterList);
+      isar.settings.putSync(
+        settings
+          ..sortChapterList = sortChapterList
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      );
     });
 
     state = value;
@@ -152,7 +156,9 @@ class ChapterFilterDownloadedState extends _$ChapterFilterDownloadedState {
     chapterFilterDownloadedList.add(value);
     isar.writeTxnSync(() {
       isar.settings.putSync(
-        settings..chapterFilterDownloadedList = chapterFilterDownloadedList,
+        settings
+          ..chapterFilterDownloadedList = chapterFilterDownloadedList
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       );
     });
 
@@ -203,7 +209,9 @@ class ChapterFilterUnreadState extends _$ChapterFilterUnreadState {
     chapterFilterUnreadList.add(value);
     isar.writeTxnSync(() {
       isar.settings.putSync(
-        settings..chapterFilterUnreadList = chapterFilterUnreadList,
+        settings
+          ..chapterFilterUnreadList = chapterFilterUnreadList
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       );
     });
     state = type;
@@ -253,7 +261,9 @@ class ChapterFilterBookmarkedState extends _$ChapterFilterBookmarkedState {
     chapterFilterBookmarkedList.add(value);
     isar.writeTxnSync(() {
       isar.settings.putSync(
-        settings..chapterFilterBookmarkedList = chapterFilterBookmarkedList,
+        settings
+          ..chapterFilterBookmarkedList = chapterFilterBookmarkedList
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       );
     });
     state = type;
@@ -405,7 +415,9 @@ class ScanlatorsFilterState extends _$ScanlatorsFilterState {
     filterScanlatorList.add(value);
     isar.writeTxnSync(() {
       isar.settings.putSync(
-        settings..filterScanlatorList = filterScanlatorList,
+        settings
+          ..filterScanlatorList = filterScanlatorList
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       );
     });
     state = (_getScanlators(), _getFilterScanlator()!, filterScanlators);

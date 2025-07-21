@@ -29,7 +29,8 @@ class DefaultSubtitleLangState extends _$DefaultSubtitleLangState {
           ..defaultSubtitleLang = L10nLocale(
             languageCode: locale.languageCode,
             countryCode: locale.countryCode,
-          ),
+          )
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       );
     });
     state = locale;
@@ -47,7 +48,11 @@ class MarkEpisodeAsSeenTypeState extends _$MarkEpisodeAsSeenTypeState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..markEpisodeAsSeenType = value),
+      () => isar.settings.putSync(
+        settings!
+          ..markEpisodeAsSeenType = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -63,7 +68,11 @@ class DefaultSkipIntroLengthState extends _$DefaultSkipIntroLengthState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..defaultSkipIntroLength = value),
+      () => isar.settings.putSync(
+        settings!
+          ..defaultSkipIntroLength = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -81,7 +90,9 @@ class DefaultDoubleTapToSkipLengthState
     state = value;
     isar.writeTxnSync(
       () => isar.settings.putSync(
-        settings!..defaultDoubleTapToSkipLength = value,
+        settings!
+          ..defaultDoubleTapToSkipLength = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       ),
     );
   }
@@ -98,7 +109,11 @@ class DefaultPlayBackSpeedState extends _$DefaultPlayBackSpeedState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..defaultPlayBackSpeed = value),
+      () => isar.settings.putSync(
+        settings!
+          ..defaultPlayBackSpeed = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -114,7 +129,11 @@ class FullScreenPlayerState extends _$FullScreenPlayerState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..fullScreenPlayer = value),
+      () => isar.settings.putSync(
+        settings!
+          ..fullScreenPlayer = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -130,7 +149,11 @@ class EnableAniSkipState extends _$EnableAniSkipState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..enableAniSkip = value),
+      () => isar.settings.putSync(
+        settings!
+          ..enableAniSkip = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -146,7 +169,11 @@ class EnableAutoSkipState extends _$EnableAutoSkipState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..enableAutoSkip = value),
+      () => isar.settings.putSync(
+        settings!
+          ..enableAutoSkip = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -162,7 +189,11 @@ class AniSkipTimeoutLengthState extends _$AniSkipTimeoutLengthState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..aniSkipTimeoutLength = value),
+      () => isar.settings.putSync(
+        settings!
+          ..aniSkipTimeoutLength = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -178,7 +209,11 @@ class UseLibassState extends _$UseLibassState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..useLibass = value),
+      () => isar.settings.putSync(
+        settings!
+          ..useLibass = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -217,7 +252,11 @@ class HwdecModeState extends _$HwdecModeState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..hwdecMode = value),
+      () => isar.settings.putSync(
+        settings!
+          ..hwdecMode = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }

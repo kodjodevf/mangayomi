@@ -53,7 +53,10 @@ class AboutScreen extends ConsumerWidget {
                           isar.writeTxnSync(() {
                             final settings = isar.settings.getSync(227);
                             isar.settings.putSync(
-                              settings!..checkForAppUpdates = value,
+                              settings!
+                                ..checkForAppUpdates = value
+                                ..updatedAt =
+                                    DateTime.now().millisecondsSinceEpoch,
                             );
                           });
                           ref.invalidate(checkForAppUpdatesProvider);

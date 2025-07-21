@@ -14,7 +14,11 @@ class PureBlackDarkModeState extends _$PureBlackDarkModeState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..pureBlackDarkMode = value),
+      () => isar.settings.putSync(
+        settings!
+          ..pureBlackDarkMode = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }

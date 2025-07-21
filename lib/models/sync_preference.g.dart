@@ -52,9 +52,24 @@ const SyncPreferenceSchema = CollectionSchema(
       name: r'server',
       type: IsarType.string,
     ),
-    r'syncOn': PropertySchema(
+    r'syncHistories': PropertySchema(
       id: 7,
+      name: r'syncHistories',
+      type: IsarType.bool,
+    ),
+    r'syncOn': PropertySchema(
+      id: 8,
       name: r'syncOn',
+      type: IsarType.bool,
+    ),
+    r'syncSettings': PropertySchema(
+      id: 9,
+      name: r'syncSettings',
+      type: IsarType.bool,
+    ),
+    r'syncUpdates': PropertySchema(
+      id: 10,
+      name: r'syncUpdates',
       type: IsarType.bool,
     )
   },
@@ -112,7 +127,10 @@ void _syncPreferenceSerialize(
   writer.writeLong(offsets[4], object.lastSyncManga);
   writer.writeLong(offsets[5], object.lastSyncUpdate);
   writer.writeString(offsets[6], object.server);
-  writer.writeBool(offsets[7], object.syncOn);
+  writer.writeBool(offsets[7], object.syncHistories);
+  writer.writeBool(offsets[8], object.syncOn);
+  writer.writeBool(offsets[9], object.syncSettings);
+  writer.writeBool(offsets[10], object.syncUpdates);
 }
 
 SyncPreference _syncPreferenceDeserialize(
@@ -130,8 +148,11 @@ SyncPreference _syncPreferenceDeserialize(
     lastSyncUpdate: reader.readLongOrNull(offsets[5]),
     server: reader.readStringOrNull(offsets[6]),
     syncId: id,
-    syncOn: reader.readBoolOrNull(offsets[7]) ?? false,
+    syncOn: reader.readBoolOrNull(offsets[8]) ?? false,
   );
+  object.syncHistories = reader.readBool(offsets[7]);
+  object.syncSettings = reader.readBool(offsets[9]);
+  object.syncUpdates = reader.readBool(offsets[10]);
   return object;
 }
 
@@ -157,7 +178,13 @@ P _syncPreferenceDeserializeProp<P>(
     case 6:
       return (reader.readStringOrNull(offset)) as P;
     case 7:
+      return (reader.readBool(offset)) as P;
+    case 8:
       return (reader.readBoolOrNull(offset) ?? false) as P;
+    case 9:
+      return (reader.readBool(offset)) as P;
+    case 10:
+      return (reader.readBool(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -998,6 +1025,16 @@ extension SyncPreferenceQueryFilter
   }
 
   QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+      syncHistoriesEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'syncHistories',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
       syncIdIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -1076,6 +1113,26 @@ extension SyncPreferenceQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'syncOn',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+      syncSettingsEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'syncSettings',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterFilterCondition>
+      syncUpdatesEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'syncUpdates',
         value: value,
       ));
     });
@@ -1184,6 +1241,20 @@ extension SyncPreferenceQuerySortBy
     });
   }
 
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+      sortBySyncHistories() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncHistories', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+      sortBySyncHistoriesDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncHistories', Sort.desc);
+    });
+  }
+
   QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy> sortBySyncOn() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'syncOn', Sort.asc);
@@ -1194,6 +1265,34 @@ extension SyncPreferenceQuerySortBy
       sortBySyncOnDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'syncOn', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+      sortBySyncSettings() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncSettings', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+      sortBySyncSettingsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncSettings', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+      sortBySyncUpdates() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncUpdates', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+      sortBySyncUpdatesDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncUpdates', Sort.desc);
     });
   }
 }
@@ -1294,6 +1393,20 @@ extension SyncPreferenceQuerySortThenBy
     });
   }
 
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+      thenBySyncHistories() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncHistories', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+      thenBySyncHistoriesDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncHistories', Sort.desc);
+    });
+  }
+
   QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy> thenBySyncId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'syncId', Sort.asc);
@@ -1317,6 +1430,34 @@ extension SyncPreferenceQuerySortThenBy
       thenBySyncOnDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'syncOn', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+      thenBySyncSettings() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncSettings', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+      thenBySyncSettingsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncSettings', Sort.desc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+      thenBySyncUpdates() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncUpdates', Sort.asc);
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QAfterSortBy>
+      thenBySyncUpdatesDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncUpdates', Sort.desc);
     });
   }
 }
@@ -1372,9 +1513,30 @@ extension SyncPreferenceQueryWhereDistinct
     });
   }
 
+  QueryBuilder<SyncPreference, SyncPreference, QDistinct>
+      distinctBySyncHistories() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'syncHistories');
+    });
+  }
+
   QueryBuilder<SyncPreference, SyncPreference, QDistinct> distinctBySyncOn() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'syncOn');
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QDistinct>
+      distinctBySyncSettings() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'syncSettings');
+    });
+  }
+
+  QueryBuilder<SyncPreference, SyncPreference, QDistinct>
+      distinctBySyncUpdates() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'syncUpdates');
     });
   }
 }
@@ -1432,9 +1594,27 @@ extension SyncPreferenceQueryProperty
     });
   }
 
+  QueryBuilder<SyncPreference, bool, QQueryOperations> syncHistoriesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'syncHistories');
+    });
+  }
+
   QueryBuilder<SyncPreference, bool, QQueryOperations> syncOnProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'syncOn');
+    });
+  }
+
+  QueryBuilder<SyncPreference, bool, QQueryOperations> syncSettingsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'syncSettings');
+    });
+  }
+
+  QueryBuilder<SyncPreference, bool, QQueryOperations> syncUpdatesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'syncUpdates');
     });
   }
 }

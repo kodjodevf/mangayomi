@@ -52,7 +52,9 @@ class LibraryDisplayTypeState extends _$LibraryDisplayTypeState {
     }
 
     isar.writeTxnSync(() {
-      isar.settings.putSync(appSettings);
+      isar.settings.putSync(
+        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      );
     });
   }
 }
@@ -92,7 +94,9 @@ class LibraryGridSizeState extends _$LibraryGridSizeState {
       }
 
       isar.writeTxnSync(() {
-        isar.settings.putSync(appSettings);
+        isar.settings.putSync(
+          appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
+        );
       });
     }
   }
@@ -134,7 +138,9 @@ class MangaFilterDownloadedState extends _$MangaFilterDownloadedState {
         appSettings = settings..libraryFilterNovelDownloadType = type;
     }
     isar.writeTxnSync(() {
-      isar.settings.putSync(appSettings);
+      isar.settings.putSync(
+        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      );
     });
     state = type;
   }
@@ -186,7 +192,9 @@ class MangaFilterUnreadState extends _$MangaFilterUnreadState {
         appSettings = settings..libraryFilterNovelUnreadType = type;
     }
     isar.writeTxnSync(() {
-      isar.settings.putSync(appSettings);
+      isar.settings.putSync(
+        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      );
     });
     state = type;
   }
@@ -287,7 +295,9 @@ class MangaFilterStartedState extends _$MangaFilterStartedState {
         appSettings = settings..libraryFilterNovelStartedType = type;
     }
     isar.writeTxnSync(() {
-      isar.settings.putSync(appSettings);
+      isar.settings.putSync(
+        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      );
     });
     state = type;
   }
@@ -388,7 +398,9 @@ class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
         appSettings = settings..libraryFilterNovelBookMarkedType = type;
     }
     isar.writeTxnSync(() {
-      isar.settings.putSync(appSettings);
+      isar.settings.putSync(
+        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      );
     });
     state = type;
   }
@@ -524,7 +536,9 @@ class LibraryShowCategoryTabsState extends _$LibraryShowCategoryTabsState {
     }
     state = value;
     isar.writeTxnSync(() {
-      isar.settings.putSync(appSettings);
+      isar.settings.putSync(
+        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      );
     });
   }
 }
@@ -557,7 +571,9 @@ class LibraryDownloadedChaptersState extends _$LibraryDownloadedChaptersState {
     }
     state = value;
     isar.writeTxnSync(() {
-      isar.settings.putSync(appSettings);
+      isar.settings.putSync(
+        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      );
     });
   }
 }
@@ -590,7 +606,9 @@ class LibraryLanguageState extends _$LibraryLanguageState {
     }
     state = value;
     isar.writeTxnSync(() {
-      isar.settings.putSync(appSettings);
+      isar.settings.putSync(
+        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      );
     });
   }
 }
@@ -623,7 +641,9 @@ class LibraryLocalSourceState extends _$LibraryLocalSourceState {
     }
     state = value;
     isar.writeTxnSync(() {
-      isar.settings.putSync(appSettings);
+      isar.settings.putSync(
+        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      );
     });
   }
 }
@@ -656,7 +676,9 @@ class LibraryShowNumbersOfItemsState extends _$LibraryShowNumbersOfItemsState {
     }
     state = value;
     isar.writeTxnSync(() {
-      isar.settings.putSync(appSettings);
+      isar.settings.putSync(
+        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      );
     });
   }
 }
@@ -690,7 +712,9 @@ class LibraryShowContinueReadingButtonState
     }
     state = value;
     isar.writeTxnSync(() {
-      isar.settings.putSync(appSettings);
+      isar.settings.putSync(
+        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      );
     });
   }
 }
@@ -729,7 +753,9 @@ class SortLibraryMangaState extends _$SortLibraryMangaState {
         appSettings = settings..sortLibraryNovel = value;
     }
     isar.writeTxnSync(() {
-      isar.settings.putSync(appSettings);
+      isar.settings.putSync(
+        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      );
     });
     state = value;
   }

@@ -22,6 +22,12 @@ class SyncPreference {
 
   int autoSyncFrequency = 0;
 
+  bool syncHistories = false;
+
+  bool syncUpdates = false;
+
+  bool syncSettings = false;
+
   SyncPreference({
     this.syncId,
     this.email,
@@ -43,7 +49,10 @@ class SyncPreference {
     lastSyncUpdate = json['lastSyncUpdate'];
     server = json['server'];
     syncOn = json['syncOn'] ?? false;
-    syncOn = json['autoSyncFrequency'] ?? 0;
+    autoSyncFrequency = json['autoSyncFrequency'] ?? 0;
+    syncHistories = json['syncHistories'] ?? false;
+    syncUpdates = json['syncUpdates'] ?? false;
+    syncSettings = json['syncSettings'] ?? false;
   }
 
   Map<String, dynamic> toJson() => {
@@ -55,5 +64,8 @@ class SyncPreference {
     'lastSyncUpdate': lastSyncUpdate,
     'syncOn': syncOn,
     'autoSyncFrequency': autoSyncFrequency,
+    'syncHistories': syncHistories,
+    'syncUpdates': syncUpdates,
+    'syncSettings': syncSettings,
   };
 }

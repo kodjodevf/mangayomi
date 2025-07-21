@@ -104,7 +104,9 @@ class ClearChapterCacheOnAppLaunchState
     state = value;
     isar.writeTxnSync(
       () => isar.settings.putSync(
-        settings!..clearChapterCacheOnAppLaunch = value,
+        settings!
+          ..clearChapterCacheOnAppLaunch = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       ),
     );
   }

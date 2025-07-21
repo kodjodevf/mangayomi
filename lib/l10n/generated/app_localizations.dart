@@ -2884,6 +2884,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show current cover image in Discord'**
   String get rpc_show_cover_image;
+
+  /// No description provided for @sync_enable_histories.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync history data'**
+  String get sync_enable_histories;
+
+  /// No description provided for @sync_enable_updates.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync update data'**
+  String get sync_enable_updates;
+
+  /// No description provided for @sync_enable_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync settings'**
+  String get sync_enable_settings;
 }
 
 class _AppLocalizationsDelegate

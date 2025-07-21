@@ -17,7 +17,11 @@ class OnlyOnWifiState extends _$OnlyOnWifiState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..downloadOnlyOnWifi = value),
+      () => isar.settings.putSync(
+        settings!
+          ..downloadOnlyOnWifi = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -33,7 +37,11 @@ class SaveAsCBZArchiveState extends _$SaveAsCBZArchiveState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..saveAsCBZArchive = value),
+      () => isar.settings.putSync(
+        settings!
+          ..saveAsCBZArchive = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -50,7 +58,11 @@ class DownloadLocationState extends _$DownloadLocationState {
     final settings = isar.settings.getSync(227);
     state = (path.join(_storageProvider!.path, 'downloads'), location);
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..downloadLocation = location),
+      () => isar.settings.putSync(
+        settings!
+          ..downloadLocation = location
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 
@@ -77,7 +89,11 @@ class ConcurrentDownloadsState extends _$ConcurrentDownloadsState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..concurrentDownloads = value),
+      () => isar.settings.putSync(
+        settings!
+          ..concurrentDownloads = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
