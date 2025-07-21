@@ -24,33 +24,38 @@ class CategoriesScreen extends ConsumerStatefulWidget {
 class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
     with TickerProviderStateMixin {
   late TabController _tabBarController;
-  int tabs = 3;
+  late final List<String> _tabList;
   @override
   void initState() {
     super.initState();
-    _tabBarController = TabController(length: tabs, vsync: this);
+    final hideItems = ref.read(hideItemsStateProvider);
+    _tabList = [
+      if (!hideItems.contains("/MangaLibrary")) "/MangaLibrary",
+      if (!hideItems.contains("/AnimeLibrary")) "/AnimeLibrary",
+      if (!hideItems.contains("/NovelLibrary")) "/NovelLibrary",
+    ];
+    _tabBarController = TabController(length: _tabList.length, vsync: this);
     _tabBarController.animateTo(widget.data.$2);
   }
 
   @override
+  void dispose() {
+    _tabBarController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    int newTabs = 0;
-    final hideItems = ref.watch(hideItemsStateProvider);
-    if (!hideItems.contains("/MangaLibrary")) newTabs++;
-    if (!hideItems.contains("/AnimeLibrary")) newTabs++;
-    if (!hideItems.contains("/NovelLibrary")) newTabs++;
-    if (tabs != newTabs) {
-      _tabBarController.dispose();
-      _tabBarController = TabController(length: newTabs, vsync: this);
-      _tabBarController.animateTo(0);
-      setState(() {
-        tabs = newTabs;
-      });
+    if (_tabList.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(title: Text(context.l10n.categories)),
+        body: Center(child: Text("EMPTY\nMPTY\nMTY\nMT\n\n")),
+      );
     }
     final l10n = l10nLocalizations(context)!;
     return DefaultTabController(
       animationDuration: Duration.zero,
-      length: newTabs,
+      length: _tabList.length,
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -62,23 +67,24 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
           bottom: TabBar(
             indicatorSize: TabBarIndicatorSize.label,
             controller: _tabBarController,
-            tabs: [
-              if (!hideItems.contains("/MangaLibrary")) Tab(text: l10n.manga),
-              if (!hideItems.contains("/AnimeLibrary")) Tab(text: l10n.anime),
-              if (!hideItems.contains("/NovelLibrary")) Tab(text: l10n.novel),
-            ],
+            tabs: _tabList.map((route) {
+              if (route == "/MangaLibrary") return Tab(text: l10n.manga);
+              if (route == "/AnimeLibrary") return Tab(text: l10n.anime);
+              return Tab(text: l10n.novel);
+            }).toList(),
           ),
         ),
         body: TabBarView(
           controller: _tabBarController,
-          children: [
-            if (!hideItems.contains("/MangaLibrary"))
-              CategoriesTab(itemType: ItemType.manga),
-            if (!hideItems.contains("/AnimeLibrary"))
-              CategoriesTab(itemType: ItemType.anime),
-            if (!hideItems.contains("/NovelLibrary"))
-              CategoriesTab(itemType: ItemType.novel),
-          ],
+          children: _tabList.map((route) {
+            if (route == "/MangaLibrary") {
+              return CategoriesTab(itemType: ItemType.manga);
+            }
+            if (route == "/AnimeLibrary") {
+              return CategoriesTab(itemType: ItemType.anime);
+            }
+            return CategoriesTab(itemType: ItemType.novel);
+          }).toList(),
         ),
       ),
     );

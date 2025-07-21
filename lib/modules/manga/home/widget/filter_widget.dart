@@ -182,6 +182,12 @@ class SeachFormTextFieldWidget extends StatefulWidget {
 }
 
 class _SeachFormTextFieldWidgetState extends State<SeachFormTextFieldWidget> {
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   late final _controller = TextEditingController(text: widget.text);
   @override
   Widget build(BuildContext context) {

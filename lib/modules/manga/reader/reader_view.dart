@@ -126,7 +126,7 @@ class MangaChapterPageGallery extends ConsumerStatefulWidget {
 
 class _MangaChapterPageGalleryState
     extends ConsumerState<MangaChapterPageGallery>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   late AnimationController _scaleAnimationController;
   late Animation<double> _animation;
   late ReaderController _readerController = ref.read(
@@ -136,6 +136,7 @@ class _MangaChapterPageGalleryState
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _readerController.setMangaHistoryUpdate();
     final index = _uChapDataPreload[_currentIndex!].index;
     if (index != null) {
@@ -144,7 +145,15 @@ class _MangaChapterPageGalleryState
 
     _rebuildDetail.close();
     _doubleClickAnimationController.dispose();
+    _scaleAnimationController.dispose();
+    _failedToLoadImage.dispose();
     _autoScroll.value = false;
+    _autoScroll.dispose();
+    _autoScrollPage.dispose();
+    _itemPositionsListener.itemPositions.removeListener(_readProgressListener);
+    _photoViewController.dispose();
+    _photoViewScaleStateController.dispose();
+    _extendedController.dispose();
     clearGestureDetailsCache();
     if (isDesktop) {
       setFullScreen(value: false);
@@ -156,6 +165,17 @@ class _MangaChapterPageGalleryState
     }
     discordRpc.showIdleText();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      final index = _uChapDataPreload[_currentIndex!].index;
+      if (index != null) {
+        _readerController.setPageIndex(_geCurrentIndex(index), true);
+      }
+    }
   }
 
   late final _autoScroll = ValueNotifier(
@@ -203,6 +223,7 @@ class _MangaChapterPageGalleryState
     _itemPositionsListener.itemPositions.addListener(_readProgressListener);
     _initCurrentIndex();
     discordRpc.showChapterDetails(ref, chapter);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   final double _horizontalScaleValue = 1.0;

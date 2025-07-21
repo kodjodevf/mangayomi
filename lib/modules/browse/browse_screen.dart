@@ -22,7 +22,8 @@ class BrowseScreen extends ConsumerStatefulWidget {
 
 class _BrowseScreenState extends ConsumerState<BrowseScreen>
     with TickerProviderStateMixin {
-  late final hideItems = ref.watch(hideItemsStateProvider);
+  late final hideItems = ref.read(hideItemsStateProvider);
+  final _textEditingController = TextEditingController();
   late TabController _tabBarController;
 
   late final _tabList = [
@@ -35,10 +36,9 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
   ];
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
     _tabBarController = TabController(length: _tabList.length, vsync: this);
-    _tabBarController.animateTo(0);
     _tabBarController.addListener(() {
       _chekPermission();
       setState(() {
@@ -52,7 +52,13 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
     await StorageProvider().requestPermission();
   }
 
-  final _textEditingController = TextEditingController();
+  @override
+  void dispose() {
+    _tabBarController.dispose();
+    _textEditingController.dispose();
+    super.dispose();
+  }
+
   bool _isSearch = false;
   @override
   Widget build(BuildContext context) {

@@ -51,6 +51,7 @@ class _MobileControllerWidgetState
   );
   final ValueNotifier<double> _brightnessValue = ValueNotifier(0.0);
   final ValueNotifier<bool> _brightnessIndicator = ValueNotifier(false);
+  StreamSubscription<double>? _brightnessSubscription;
   Timer? _brightnessTimer;
 
   final ValueNotifier<double> _volumeValue = ValueNotifier(0.0);
@@ -127,6 +128,15 @@ class _MobileControllerWidgetState
     for (final subscription in subscriptions) {
       subscription.cancel();
     }
+    _timer?.cancel();
+    _volumeTimer?.cancel();
+    _brightnessTimer?.cancel();
+    _volumeValue.dispose();
+    _volumeIndicator.dispose();
+    _brightnessValue.dispose();
+    _brightnessIndicator.dispose();
+    _brightnessSubscription?.cancel();
+    _volumeController.removeListener();
 
     // package:screen_brightness
     Future.microtask(() async {
@@ -134,7 +144,6 @@ class _MobileControllerWidgetState
         await ScreenBrightness.instance.resetApplicationScreenBrightness();
       } catch (_) {}
     });
-
     super.dispose();
   }
 
@@ -240,13 +249,14 @@ class _MobileControllerWidgetState
     Future.microtask(() async {
       try {
         _brightnessValue.value = await ScreenBrightness.instance.application;
-        ScreenBrightness.instance.onApplicationScreenBrightnessChanged.listen((
-          value,
-        ) {
-          if (mounted) {
-            _brightnessValue.value = value;
-          }
-        });
+        _brightnessSubscription = ScreenBrightness
+            .instance
+            .onApplicationScreenBrightnessChanged
+            .listen((value) {
+              if (mounted) {
+                _brightnessValue.value = value;
+              }
+            });
       } catch (_) {}
     });
   }
