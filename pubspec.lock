@@ -549,6 +549,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.4.1"
+  flutter_discord_rpc_fork:
+    dependency: "direct main"
+    description:
+      name: flutter_discord_rpc_fork
+      sha256: a32b3d5871af591ec73b65feb2818f3e3d4e05d46b9903c6f117b03865a86282
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.4"
   flutter_inappwebview:
     dependency: "direct main"
     description:

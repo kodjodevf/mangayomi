@@ -463,5 +463,10 @@
   "track_library_not_logged": "Login to the corresponding tracker to use this feature!",
   "track_library_switch": "Switch to another tracker",
   "go_back": "Go back",
-  "merge_library_nav_mobile": "Merge library navigation on mobile"
+  "merge_library_nav_mobile": "Merge library navigation on mobile",
+  "enable_discord_rpc": "Enable Discord RPC",
+  "hide_discord_rpc_incognito": "Hide Discord RPC while in Incognito",
+  "rpc_show_reading_watching_progress": "Show current chapter in Discord (requires a restart)",
+  "rpc_show_title": "Show current title in Discord",
+  "rpc_show_cover_image": "Show current cover image in Discord"
 }

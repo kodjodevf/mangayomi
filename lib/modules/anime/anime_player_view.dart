@@ -213,6 +213,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   bool _hasEndingSkip = false;
   bool _initSubtitleAndAudio = true;
   bool _includeSubtitles = false;
+  int lastRpcTimestampUpdate = DateTime.now().millisecondsSinceEpoch;
 
   late final StreamSubscription<Duration> _currentPositionSub;
 
@@ -221,6 +222,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       .duration
       .listen((duration) {
         _currentTotalDuration.value = duration;
+        discordRpc.startChapterTimestamp(
+          _currentPosition.value.inMilliseconds,
+          duration.inMilliseconds,
+        );
       });
 
   bool get hasNextEpisode => _streamController.getEpisodeIndex().$1 != 0;
@@ -305,6 +310,14 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     if (_skipPhase.value != newPhase) _skipPhase.value = newPhase;
   }
 
+  void _updateRpcTimestamp() {
+    final now = DateTime.now().millisecondsSinceEpoch;
+    if (lastRpcTimestampUpdate + 10000 < now) {
+      discordRpc.updateChapterTimestamp(_currentPosition.value.inMilliseconds);
+      lastRpcTimestampUpdate = now;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -338,6 +351,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       _setPlaybackSpeed(ref.read(defaultPlayBackSpeedStateProvider));
       if (ref.read(enableAniSkipStateProvider)) _initAniSkip();
     });
+    discordRpc.showChapterDetails(ref, widget.episode);
+    _currentPosition.addListener(_updateRpcTimestamp);
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -404,6 +419,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
 
   @override
   void dispose() {
+    _currentPosition.removeListener(_updateRpcTimestamp);
     WidgetsBinding.instance.removeObserver(this);
     _setCurrentPosition(true);
     _player.dispose();
@@ -422,6 +438,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       _setLandscapeMode(false);
     }
     _skipPhase.dispose();
+    discordRpc.showIdleText();
+    discordRpc.showOriginalTimestamp();
     _currentPosition.dispose();
     super.dispose();
   }
@@ -1113,24 +1131,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
               ),
             ),
           ),
-          Flexible(
-            fit: FlexFit.tight,
-            child: ValueListenableBuilder<bool>(
-              valueListenable: _isDoubleSpeed,
-              builder: (context, snapshot, _) {
-                return Text.rich(
-                  TextSpan(
-                    children: snapshot
-                        ? [
-                            WidgetSpan(child: Icon(Icons.fast_forward)),
-                            TextSpan(text: " 2X"),
-                          ]
-                        : [],
-                  ),
-                );
-              },
-            ),
-          ),
           Row(
             children: [
               btnToShowChapterListDialog(
@@ -1271,6 +1271,46 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
           width: context.width(1),
           height: context.height(1),
           resumeUponEnteringForegroundMode: true,
+        ),
+        Stack(
+          alignment: AlignmentDirectional.center,
+          children: [
+            Positioned(
+              top: 30,
+              child: ValueListenableBuilder<bool>(
+                valueListenable: _isDoubleSpeed,
+                builder: (context, snapshot, _) {
+                  return Text.rich(
+                    textAlign: TextAlign.center,
+                    TextSpan(
+                      style: TextStyle(
+                        background: Paint()
+                          ..color = Theme.of(context).scaffoldBackgroundColor
+                          ..strokeWidth = 30.0
+                          ..strokeJoin = StrokeJoin.round
+                          ..style = PaintingStyle.stroke,
+                      ),
+                      children: snapshot
+                          ? [
+                              TextSpan(
+                                text: " 2X ",
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              WidgetSpan(
+                                alignment: PlaceholderAlignment.middle,
+                                child: Icon(Icons.fast_forward),
+                              ),
+                            ]
+                          : [],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
         if (enableAniSkip && (_hasOpeningSkip || _hasEndingSkip))
           Positioned(

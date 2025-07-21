@@ -95,6 +95,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
         overlays: SystemUiOverlay.values,
       );
     }
+    discordRpc.showIdleText();
     super.dispose();
   }
 
@@ -113,6 +114,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
         fontSize = initFontSize;
       });
     });
+    discordRpc.showChapterDetails(ref, chapter);
   }
 
   late bool _isBookmarked = _readerController.getChapterBookmarked();
