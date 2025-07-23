@@ -371,7 +371,8 @@ Future<void> pushToMangaReaderDetail({
           ..sortChapterList = sortChapterList
           ..chapterFilterBookmarkedList = chapterFilterBookmarkedList
           ..chapterFilterDownloadedList = chapterFilterDownloadedList
-          ..chapterFilterUnreadList = chapterFilterUnreadList,
+          ..chapterFilterUnreadList = chapterFilterUnreadList
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       );
     });
   }

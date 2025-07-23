@@ -6,7 +6,7 @@ part of 'sync_server.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$syncServerHash() => r'2513418dc8cde9defca0ff778b8ea23fe1f59e9b';
+String _$syncServerHash() => r'97a778696e0cc8b8e4c706de50d60464bb7b2f03';
 
 /// Copied from Dart SDK
 class _SystemHash {

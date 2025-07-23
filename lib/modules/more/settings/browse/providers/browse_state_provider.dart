@@ -21,7 +21,11 @@ class OnlyIncludePinnedSourceState extends _$OnlyIncludePinnedSourceState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..onlyIncludePinnedSources = value),
+      () => isar.settings.putSync(
+        settings!
+          ..onlyIncludePinnedSources = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -45,12 +49,20 @@ class ExtensionsRepoState extends _$ExtensionsRepoState {
     isar.writeTxnSync(() {
       final a = switch (itemType) {
         ItemType.manga => isar.settings.putSync(
-          settings..mangaExtensionsRepo = value,
+          settings
+            ..mangaExtensionsRepo = value
+            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
         ),
         ItemType.anime => isar.settings.putSync(
-          settings..animeExtensionsRepo = value,
+          settings
+            ..animeExtensionsRepo = value
+            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
         ),
-        _ => isar.settings.putSync(settings..novelExtensionsRepo = value),
+        _ => isar.settings.putSync(
+          settings
+            ..novelExtensionsRepo = value
+            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+        ),
       };
       a;
     });
@@ -78,7 +90,11 @@ class AutoUpdateExtensionsState extends _$AutoUpdateExtensionsState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..autoExtensionsUpdates = value),
+      () => isar.settings.putSync(
+        settings!
+          ..autoExtensionsUpdates = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -94,7 +110,11 @@ class CheckForExtensionsUpdateState extends _$CheckForExtensionsUpdateState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..checkForExtensionUpdates = value),
+      () => isar.settings.putSync(
+        settings!
+          ..checkForExtensionUpdates = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }

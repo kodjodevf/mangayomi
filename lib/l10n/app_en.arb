@@ -468,5 +468,8 @@
   "hide_discord_rpc_incognito": "Hide Discord RPC while in Incognito",
   "rpc_show_reading_watching_progress": "Show current chapter in Discord (requires a restart)",
   "rpc_show_title": "Show current title in Discord",
-  "rpc_show_cover_image": "Show current cover image in Discord"
+  "rpc_show_cover_image": "Show current cover image in Discord",
+  "sync_enable_histories": "Sync history data",
+  "sync_enable_updates": "Sync update data",
+  "sync_enable_settings": "Sync settings"
 }

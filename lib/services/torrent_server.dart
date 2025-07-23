@@ -123,7 +123,9 @@ String get _baseUrl {
 void _setBtServerPort(int newPort) {
   isar.writeTxnSync(
     () => isar.settings.putSync(
-      isar.settings.getSync(227)!..btServerPort = newPort,
+      isar.settings.getSync(227)!
+        ..btServerPort = newPort
+        ..updatedAt = DateTime.now().millisecondsSinceEpoch,
     ),
   );
 }

@@ -98,7 +98,9 @@ class ReaderController extends _$ReaderController {
     );
     isar.writeTxnSync(
       () => isar.settings.putSync(
-        getIsarSetting()..autoScrollPages = autoScrollPagesList,
+        getIsarSetting()
+          ..autoScrollPages = autoScrollPagesList
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       ),
     );
   }
@@ -129,7 +131,9 @@ class ReaderController extends _$ReaderController {
     );
     isar.writeTxnSync(
       () => isar.settings.putSync(
-        getIsarSetting()..personalReaderModeList = personalReaderModeLists,
+        getIsarSetting()
+          ..personalReaderModeList = personalReaderModeLists
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       ),
     );
   }
@@ -148,7 +152,9 @@ class ReaderController extends _$ReaderController {
     );
     isar.writeTxnSync(
       () => isar.settings.putSync(
-        getIsarSetting()..personalPageModeList = personalPageModeLists,
+        getIsarSetting()
+          ..personalPageModeList = personalPageModeLists
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       ),
     );
   }
@@ -156,7 +162,11 @@ class ReaderController extends _$ReaderController {
   void setShowPageNumber(bool value) {
     if (!incognitoMode) {
       isar.writeTxnSync(
-        () => isar.settings.putSync(getIsarSetting()..showPagesNumber = value),
+        () => isar.settings.putSync(
+          getIsarSetting()
+            ..showPagesNumber = value
+            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+        ),
       );
     }
   }
@@ -354,7 +364,9 @@ class ReaderController extends _$ReaderController {
       final chap = chapter;
       isar.writeTxnSync(() {
         isar.settings.putSync(
-          getIsarSetting()..chapterPageIndexList = chapterPageIndexs,
+          getIsarSetting()
+            ..chapterPageIndexList = chapterPageIndexs
+            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
         );
         chap.isRead = isRead;
         chap.lastPageRead = isRead ? '1' : (newIndex + 1).toString();

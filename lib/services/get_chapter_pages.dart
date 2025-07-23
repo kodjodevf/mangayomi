@@ -128,7 +128,11 @@ Future<GetChapterPagesModel> getChapterPages(
               : null,
       );
       isar.writeTxnSync(() {
-        isar.settings.putSync(settings..chapterPageUrlsList = chapterPageUrls);
+        isar.settings.putSync(
+          settings
+            ..chapterPageUrlsList = chapterPageUrls
+            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+        );
       });
     }
     for (var i = 0; i < pageUrls.length; i++) {

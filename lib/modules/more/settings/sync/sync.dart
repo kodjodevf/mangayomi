@@ -16,10 +16,6 @@ class SyncScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final syncProvider = ref.watch(synchingProvider(syncId: 1));
-    final autoSyncFrequency = ref
-        .watch(synchingProvider(syncId: 1))
-        .autoSyncFrequency;
     final l10n = l10nLocalizations(context)!;
     final autoSyncOptions = {
       l10n.sync_auto_off: 0,
@@ -46,7 +42,7 @@ class SyncScreen extends ConsumerWidget {
             return Column(
               children: [
                 SwitchListTile(
-                  value: syncProvider.syncOn,
+                  value: syncPreference.syncOn,
                   title: Text(context.l10n.sync_on),
                   onChanged: (value) {
                     ref
@@ -81,7 +77,7 @@ class SyncScreen extends ConsumerWidget {
                                   dense: true,
                                   contentPadding: const EdgeInsets.all(0),
                                   value: optionValue,
-                                  groupValue: autoSyncFrequency,
+                                  groupValue: syncPreference.autoSyncFrequency,
                                   onChanged: (value) {
                                     ref
                                         .read(
@@ -120,7 +116,7 @@ class SyncScreen extends ConsumerWidget {
                   title: Text(l10n.sync_auto),
                   subtitle: Text(
                     autoSyncOptions.entries
-                        .where((o) => o.value == autoSyncFrequency)
+                        .where((o) => o.value == syncPreference.autoSyncFrequency)
                         .first
                         .key,
                     style: TextStyle(
@@ -150,6 +146,33 @@ class SyncScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
+                ),
+                SwitchListTile(
+                  value: syncPreference.syncHistories,
+                  title: Text(context.l10n.sync_enable_histories),
+                  onChanged: syncPreference.syncOn ? (value) {
+                    ref
+                        .read(SynchingProvider(syncId: 1).notifier)
+                        .setSyncHistories(value);
+                  } : null,
+                ),
+                SwitchListTile(
+                  value: syncPreference.syncUpdates,
+                  title: Text(context.l10n.sync_enable_updates),
+                  onChanged: syncPreference.syncOn ? (value) {
+                    ref
+                        .read(SynchingProvider(syncId: 1).notifier)
+                        .setSyncUpdates(value);
+                  } : null,
+                ),
+                SwitchListTile(
+                  value: syncPreference.syncSettings,
+                  title: Text(context.l10n.sync_enable_settings),
+                  onChanged: syncPreference.syncOn ? (value) {
+                    ref
+                        .read(SynchingProvider(syncId: 1).notifier)
+                        .setSyncSettings(value);
+                  } : null,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
@@ -267,6 +290,7 @@ class SyncScreen extends ConsumerWidget {
                     ),
                   ],
                 ),
+                const SizedBox(height: 20),
               ],
             );
           },
@@ -276,7 +300,11 @@ class SyncScreen extends ConsumerWidget {
   }
 }
 
-void _showDialogLogin(BuildContext context, WidgetRef ref, SyncPreference syncPreference) {
+void _showDialogLogin(
+  BuildContext context,
+  WidgetRef ref,
+  SyncPreference syncPreference,
+) {
   final serverController = TextEditingController(text: syncPreference.server);
   final emailController = TextEditingController(text: syncPreference.email);
   final passwordController = TextEditingController();

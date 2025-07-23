@@ -7,7 +7,7 @@ part of 'general_state_provider.dart';
 // **************************************************************************
 
 String _$enableDiscordRpcStateHash() =>
-    r'bc134787a33f362087befd5de85692812659faa0';
+    r'ab8ce3b29f5d94aedbc88dcb87c7c834648270f5';
 
 /// See also [EnableDiscordRpcState].
 @ProviderFor(EnableDiscordRpcState)
@@ -24,7 +24,7 @@ final enableDiscordRpcStateProvider =
 
 typedef _$EnableDiscordRpcState = AutoDisposeNotifier<bool>;
 String _$hideDiscordRpcInIncognitoStateHash() =>
-    r'8e45104c34b1255b7a3d4a6f182bf43be9e2b93d';
+    r'7404a6ef4ae0d831b755c455c51eb3cb7f18f64f';
 
 /// See also [HideDiscordRpcInIncognitoState].
 @ProviderFor(HideDiscordRpcInIncognitoState)
@@ -41,7 +41,7 @@ final hideDiscordRpcInIncognitoStateProvider =
 
 typedef _$HideDiscordRpcInIncognitoState = AutoDisposeNotifier<bool>;
 String _$rpcShowReadingWatchingProgressStateHash() =>
-    r'b4000c10234ce9070b44b535e9d10d16e6b7c0ec';
+    r'ce0582267191d4348cfe15f030d60e52c070163e';
 
 /// See also [RpcShowReadingWatchingProgressState].
 @ProviderFor(RpcShowReadingWatchingProgressState)
@@ -57,7 +57,7 @@ final rpcShowReadingWatchingProgressStateProvider = AutoDisposeNotifierProvider<
 );
 
 typedef _$RpcShowReadingWatchingProgressState = AutoDisposeNotifier<bool>;
-String _$rpcShowTitleStateHash() => r'9d7005af8968f61872fcc37979f5c54b745ffe65';
+String _$rpcShowTitleStateHash() => r'b784b58365a72b54cbe46b1582c97c2f9b8057a2';
 
 /// See also [RpcShowTitleState].
 @ProviderFor(RpcShowTitleState)
@@ -74,7 +74,7 @@ final rpcShowTitleStateProvider =
 
 typedef _$RpcShowTitleState = AutoDisposeNotifier<bool>;
 String _$rpcShowCoverImageStateHash() =>
-    r'6ce1c61be44c0a6315fbb51a45ac6e47c3e49b33';
+    r'85a460d188319f5410ed0d5b0cb201b03c9759e7';
 
 /// See also [RpcShowCoverImageState].
 @ProviderFor(RpcShowCoverImageState)

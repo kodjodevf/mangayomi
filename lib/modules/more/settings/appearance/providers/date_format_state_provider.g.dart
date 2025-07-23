@@ -6,7 +6,7 @@ part of 'date_format_state_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$dateFormatStateHash() => r'094aa68b09b654de97be6a59c6d593f30e3bdf79';
+String _$dateFormatStateHash() => r'9b11f72b8fa535b74873365618089dfca957e445';
 
 /// See also [DateFormatState].
 @ProviderFor(DateFormatState)
@@ -23,7 +23,7 @@ final dateFormatStateProvider =
 
 typedef _$DateFormatState = AutoDisposeNotifier<String>;
 String _$relativeTimesTampsStateHash() =>
-    r'e515ea30e71143ee60f86a02320e8b1f50b5a955';
+    r'fc39b88871e857dcd363c01df59de9ca174cb1d6';
 
 /// See also [RelativeTimesTampsState].
 @ProviderFor(RelativeTimesTampsState)

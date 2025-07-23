@@ -7,7 +7,7 @@ part of 'state_provider.dart';
 // **************************************************************************
 
 String _$mangaHomeDisplayTypeStateHash() =>
-    r'48582d80d07c966d5765f20ecc92947e9dd0881c';
+    r'6e91cef2e4a9925cab1a7a764ac6a0e741398fb2';
 
 /// See also [MangaHomeDisplayTypeState].
 @ProviderFor(MangaHomeDisplayTypeState)

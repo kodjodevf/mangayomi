@@ -158,7 +158,7 @@ class _GetRepoInfosProviderElement
 }
 
 String _$onlyIncludePinnedSourceStateHash() =>
-    r'77c4bff96e186c4bce0a5c312871ceec88a269d0';
+    r'b9f707348d5d0f7abfa8e615c1d2b35c6dbd57f3';
 
 /// See also [OnlyIncludePinnedSourceState].
 @ProviderFor(OnlyIncludePinnedSourceState)
@@ -175,7 +175,7 @@ final onlyIncludePinnedSourceStateProvider =
 
 typedef _$OnlyIncludePinnedSourceState = AutoDisposeNotifier<bool>;
 String _$extensionsRepoStateHash() =>
-    r'3ea91c79a9bc24f086fce49de2c61a1e06bad1fe';
+    r'5c23b8b7ecf83b253b76a2663a71c0c752e53a40';
 
 abstract class _$ExtensionsRepoState
     extends BuildlessAutoDisposeNotifier<List<Repo>> {
@@ -322,7 +322,7 @@ class _ExtensionsRepoStateProviderElement
 }
 
 String _$autoUpdateExtensionsStateHash() =>
-    r'30ce3c558504e005f9c85e2fc969ab7a581510cd';
+    r'0aa0006368f418e62a8dc9b5a427698f082f29a6';
 
 /// See also [AutoUpdateExtensionsState].
 @ProviderFor(AutoUpdateExtensionsState)
@@ -339,7 +339,7 @@ final autoUpdateExtensionsStateProvider =
 
 typedef _$AutoUpdateExtensionsState = AutoDisposeNotifier<bool>;
 String _$checkForExtensionsUpdateStateHash() =>
-    r'1b1f22a50e0862a7d643fbe0fcb5d563bd0169c2';
+    r'c700ecd686cce971b70b74b6086d4950157a3f13';
 
 /// See also [CheckForExtensionsUpdateState].
 @ProviderFor(CheckForExtensionsUpdateState)

@@ -55,7 +55,7 @@ final isExtendedStateProvider =
 );
 
 typedef _$IsExtendedState = AutoDisposeNotifier<bool>;
-String _$sortChapterStateHash() => r'0431856a60ee9dd4ff24b620b7b14d3572da8759';
+String _$sortChapterStateHash() => r'a6e547fd4badfa14ecb9270054c7e166dfc6e238';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -223,7 +223,7 @@ class _SortChapterStateProviderElement
 }
 
 String _$chapterFilterDownloadedStateHash() =>
-    r'974229e5af42122fbddb42e19fadb4eda82a7814';
+    r'1a4309b9dff1fd9d1dc0c09eab18629ee9fe8d66';
 
 abstract class _$ChapterFilterDownloadedState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -372,7 +372,7 @@ class _ChapterFilterDownloadedStateProviderElement
 }
 
 String _$chapterFilterUnreadStateHash() =>
-    r'7fba451c72c9636354b3fbca36fa33fa45bd943f';
+    r'95b34a7b0fd3282f8a2c0626c06ac251585fffec';
 
 abstract class _$ChapterFilterUnreadState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -520,7 +520,7 @@ class _ChapterFilterUnreadStateProviderElement
 }
 
 String _$chapterFilterBookmarkedStateHash() =>
-    r'd60b909cd01aa56a4797e7ab9e3613985edc231e';
+    r'639c257c1a77766438abf3b19cb61aa0eb7a8db6';
 
 abstract class _$ChapterFilterBookmarkedState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -1274,7 +1274,7 @@ final chaptersListttStateProvider =
 
 typedef _$ChaptersListttState = AutoDisposeNotifier<List<Chapter>>;
 String _$scanlatorsFilterStateHash() =>
-    r'32eb4315b75478fabcb8ca9eb3f13d289d806fa2';
+    r'8da89864801cd7620029d28cfb3f9bee3c67cba8';
 
 abstract class _$ScanlatorsFilterState extends BuildlessAutoDisposeNotifier<
     (List<String>, List<String>, List<String>)> {

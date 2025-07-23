@@ -119,7 +119,13 @@ class MClient {
     }
     if (ua.isNotEmpty) {
       final settings = await isar.settings.get(227);
-      await isar.writeTxn(() => isar.settings.put(settings!..userAgent = ua));
+      await isar.writeTxn(
+        () => isar.settings.put(
+          settings!
+            ..userAgent = ua
+            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+        ),
+      );
     }
   }
 
