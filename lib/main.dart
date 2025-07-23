@@ -36,7 +36,7 @@ import 'package:window_manager/window_manager.dart';
 import 'package:path/path.dart' as p;
 
 late Isar isar;
-late DiscordRPC discordRpc;
+DiscordRPC? discordRpc;
 WebViewEnvironment? webViewEnvironment;
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -63,8 +63,10 @@ void main(List<String> args) async {
   isar = await StorageProvider().initDB(null, inspector: kDebugMode);
   await Hive.initFlutter();
   Hive.registerAdapter(TrackSearchAdapter());
-  discordRpc = DiscordRPC(applicationId: "1395040506677039157");
-  await discordRpc.initialize();
+  if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
+    discordRpc = DiscordRPC(applicationId: "1395040506677039157");
+    await discordRpc?.initialize();
+  }
 
   runApp(const ProviderScope(child: MyApp()));
   unawaited(_postLaunchInit()); // Defer non-essential async operations
@@ -133,7 +135,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   void dispose() {
     _linkSubscription?.cancel();
-    discordRpc.destroy();
+    discordRpc?.destroy();
     super.dispose();
   }
 

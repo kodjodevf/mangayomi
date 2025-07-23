@@ -21,10 +21,10 @@ class IncognitoModeWidget extends ConsumerWidget {
       onTap: () {
         if (incognitoMode == true) {
           ref.read(incognitoModeStateProvider.notifier).setIncognitoMode(false);
-          if (hideDiscordRpcInIncognito) discordRpc.connect(ref);
+          if (hideDiscordRpcInIncognito) discordRpc?.connect(ref);
         } else {
           ref.read(incognitoModeStateProvider.notifier).setIncognitoMode(true);
-          if (hideDiscordRpcInIncognito) discordRpc.disconnect();
+          if (hideDiscordRpcInIncognito) discordRpc?.disconnect();
         }
       },
       icon: CupertinoIcons.eyeglasses,
@@ -36,9 +36,9 @@ class IncognitoModeWidget extends ConsumerWidget {
           ref.read(incognitoModeStateProvider.notifier).setIncognitoMode(value);
           if (hideDiscordRpcInIncognito) {
             if (value) {
-              discordRpc.disconnect();
+              discordRpc?.disconnect();
             } else {
-              discordRpc.connect(ref);
+              discordRpc?.connect(ref);
             }
           }
         },
