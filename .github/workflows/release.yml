@@ -280,7 +280,7 @@ jobs:
         run: flutter build linux --release --verbose
 
       - name: Zip
-        uses: thedoctor0/zip-release@master
+        uses: thedoctor0/zip-release@main
         with:
           type: "zip"
           filename: Mangayomi-${{ github.ref_name }}-linux.zip
@@ -288,6 +288,8 @@ jobs:
 
       - name: Create AppImage
         run: |
+          # Move Zip-file outside the bundle dir to avoid including it in the AppImage
+          mv build/linux/x64/release/bundle/Mangayomi-*.zip build/linux/x64/release/
           # Create fresh AppDir structure
           rm -rf AppDir
           mkdir -p AppDir/usr/bin
@@ -375,14 +377,14 @@ jobs:
         with:
           name: Mangayomi-${{ github.ref_name }}-linux-zip
           path: |
-            build/linux/x64/release/bundle/Mangayomi-*.zip
+            build/linux/x64/release/Mangayomi-*.zip
             build/linux/x64/release/Mangayomi-*.AppImage
             build/linux/x64/release/Mangayomi-*.rpm
       - name: release packages linux zip
         uses: ncipollo/release-action@v1
         with:
           artifacts: |
-            build/linux/x64/release/bundle/Mangayomi-*.zip
+            build/linux/x64/release/Mangayomi-*.zip
             build/linux/x64/release/Mangayomi-*.AppImage
             build/linux/x64/release/Mangayomi-*.rpm
           allowUpdates: true
