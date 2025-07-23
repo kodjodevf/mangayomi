@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:path/path.dart' as p;
 import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/eval/javascript/http.dart';
@@ -9,7 +10,6 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
-import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
