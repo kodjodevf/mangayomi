@@ -295,7 +295,13 @@ jobs:
           # Copy built files
           cp -r build/linux/x64/release/bundle/* AppDir/usr/bin/
           cp -rL linux/packaging/icons/* AppDir/usr/share/icons
-          # Create desktop file in AppDir root
+          # Scan AppDir/usr/bin/lib for existing libraries to exclude them from linuxdeploy packaging
+          EXCLUDE_LIBS=$(find AppDir/usr/bin/lib -type f -name "*.so*" -exec basename {} \; | sort -u)
+          # Add --exclude-library flag to each found library
+          for lib in $EXCLUDE_LIBS; do
+            EXCLUDE_ARGS+=" --exclude-library $lib"
+          done
+          # Copy desktop file to AppDir root
           cp linux/mangayomi.desktop AppDir/mangayomi.desktop
           # Create AppRun file
           cat <<EOF > AppDir/AppRun
@@ -303,7 +309,7 @@ jobs:
           SELF=\$(readlink -f "\$0")
           HERE=\${SELF%/*}
           export PATH="\${HERE}/usr/bin/:\${PATH}"
-          export LD_LIBRARY_PATH="\${HERE}/usr/lib/:\${HERE}/usr/bin/lib/:\${LD_LIBRARY_PATH}"
+          export LD_LIBRARY_PATH="\${HERE}/usr/bin/lib/:\${HERE}/usr/lib/:\${LD_LIBRARY_PATH}"
           exec "\${HERE}/usr/bin/mangayomi" "\$@"
           EOF
           chmod +x AppDir/AppRun
@@ -313,6 +319,7 @@ jobs:
             --desktop-file AppDir/mangayomi.desktop \
             --icon-file AppDir/usr/share/icons/hicolor/512x512/apps/mangayomi.png \
             --executable AppDir/usr/bin/mangayomi \
+            $EXCLUDE_ARGS \
             --output appimage
           mv $(find . -type f -name "*.AppImage") build/linux/x64/release/Mangayomi-${{ github.ref_name }}-linux.AppImage
 
