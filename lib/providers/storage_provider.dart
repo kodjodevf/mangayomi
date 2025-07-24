@@ -1,5 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
@@ -21,33 +22,28 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:path/path.dart' as path;
 
 class StorageProvider {
-  static bool _hasPermission = false;
+  static final StorageProvider _instance = StorageProvider._internal();
+  StorageProvider._internal();
+  factory StorageProvider() => _instance;
+
   Future<bool> requestPermission() async {
-    if (_hasPermission) return true;
-    if (Platform.isAndroid) {
-      Permission permission = Permission.manageExternalStorage;
-      if (await permission.isGranted) {
-        return true;
-      } else {
-        final result = await permission.request();
-        if (result == PermissionStatus.granted) {
-          _hasPermission = true;
-          return true;
-        }
-        return false;
-      }
+    if (!Platform.isAndroid) return true;
+    Permission permission = Permission.manageExternalStorage;
+    if (await permission.isGranted) return true;
+    if (await permission.request().isGranted) {
+      return true;
     }
-    return true;
+    return false;
   }
 
   Future<void> deleteBtDirectory() async {
-    final d = await getBtDirectory();
-    await Directory(d!.path).delete(recursive: true);
+    final btDir = Directory(await _btDirectoryPath());
+    if (await btDir.exists()) await btDir.delete(recursive: true);
   }
 
   Future<void> deleteTmpDirectory() async {
-    final d = await getTmpDirectory();
-    await Directory(d!.path).delete(recursive: true);
+    final tmpDir = Directory(await _tempDirectoryPath());
+    if (await tmpDir.exists()) await tmpDir.delete(recursive: true);
   }
 
   Future<Directory?> getDefaultDirectory() async {
@@ -56,35 +52,53 @@ class StorageProvider {
       directory = Directory("/storage/emulated/0/Mangayomi/");
     } else {
       final dir = await getApplicationDocumentsDirectory();
+      // The documents dir in iOS and macOS is already named "Mangayomi".
+      // Appending "Mangayomi" to the documents dir would create
+      // unnecessarily nested Mangayomi/Mangayomi/ folder.
+      if (Platform.isIOS || Platform.isMacOS) return dir;
       directory = Directory(path.join(dir.path, 'Mangayomi'));
     }
     return directory;
   }
 
   Future<Directory?> getBtDirectory() async {
-    final gefaultDirectory = await getDefaultDirectory();
-    String dbDir = path.join(gefaultDirectory!.path, 'torrents');
-    await Directory(dbDir).create(recursive: true);
+    final dbDir = await _btDirectoryPath();
+    await createDirectorySafely(dbDir);
     return Directory(dbDir);
+  }
+
+  Future<String> _btDirectoryPath() async {
+    final defaultDirectory = await getDefaultDirectory();
+    return path.join(defaultDirectory!.path, 'torrents');
   }
 
   Future<Directory?> getTmpDirectory() async {
-    final gefaultDirectory = await getDirectory();
-    String dbDir = path.join(gefaultDirectory!.path, 'tmp');
-    await Directory(dbDir).create(recursive: true);
-    return Directory(dbDir);
+    final tmpPath = await _tempDirectoryPath();
+    await createDirectorySafely(tmpPath);
+    return Directory(tmpPath);
+  }
+
+  Future<String> _tempDirectoryPath() async {
+    final defaultDirectory = await getDirectory();
+    return path.join(defaultDirectory!.path, 'tmp');
   }
 
   Future<Directory?> getIosBackupDirectory() async {
-    final gefaultDirectory = await getDefaultDirectory();
-    String dbDir = path.join(gefaultDirectory!.path, 'backup');
-    await Directory(dbDir).create(recursive: true);
+    final defaultDirectory = await getDefaultDirectory();
+    String dbDir = path.join(defaultDirectory!.path, 'backup');
+    await createDirectorySafely(dbDir);
     return Directory(dbDir);
   }
 
   Future<Directory?> getDirectory() async {
     Directory? directory;
-    String dPath = isar.settings.getSync(227)!.downloadLocation ?? "";
+    String dPath = "";
+    try {
+      final setting = isar.settings.getSync(227);
+      dPath = setting?.downloadLocation ?? "";
+    } catch (e) {
+      debugPrint("Could not get downloadLocation from Isar settings: $e");
+    }
     if (Platform.isAndroid) {
       directory = Directory(
         dPath.isEmpty ? "/storage/emulated/0/Mangayomi/" : "$dPath/",
@@ -92,6 +106,10 @@ class StorageProvider {
     } else {
       final dir = await getApplicationDocumentsDirectory();
       final p = dPath.isEmpty ? dir.path : dPath;
+      // The documents dir in iOS and macOS is already named "Mangayomi".
+      // Appending "Mangayomi" to the documents dir would create
+      // unnecessarily nested Mangayomi/Mangayomi/ folder.
+      if (Platform.isIOS || Platform.isMacOS) return Directory(p);
       directory = Directory(path.join(p, 'Mangayomi'));
     }
     return directory;
@@ -135,27 +153,48 @@ class StorageProvider {
 
   Future<Directory?> getDatabaseDirectory() async {
     final dir = await getApplicationDocumentsDirectory();
-    if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
-      return dir;
+    String dbDir;
+    if (Platform.isAndroid) return dir;
+    if (Platform.isIOS || Platform.isMacOS) {
+      // Put the database files inside /databases like on Windows, Linux
+      // So they are not just in the app folders root dir
+      dbDir = path.join(dir.path, 'databases');
     } else {
-      String dbDir = path.join(dir.path, 'Mangayomi', 'databases');
-      await Directory(dbDir).create(recursive: true);
-      return Directory(dbDir);
+      dbDir = path.join(dir.path, 'Mangayomi', 'databases');
     }
+    await createDirectorySafely(dbDir);
+    return Directory(dbDir);
   }
 
   Future<Directory?> getGalleryDirectory() async {
-    String gPath = (await getDirectory())!.path;
+    String gPath;
     if (Platform.isAndroid) {
       gPath = "/storage/emulated/0/Pictures/Mangayomi/";
     } else {
-      gPath = path.join(gPath, 'Pictures');
+      gPath = path.join((await getDirectory())!.path, 'Pictures');
     }
-    await Directory(gPath).create(recursive: true);
+    await createDirectorySafely(gPath);
     return Directory(gPath);
   }
 
-  Future<Isar> initDB(String? path, {bool? inspector = false}) async {
+  Future<void> createDirectorySafely(String dirPath) async {
+    final dir = Directory(dirPath);
+    try {
+      await dir.create(recursive: true);
+    } catch (_) {
+      if (await requestPermission()) {
+        try {
+          await dir.create(recursive: true);
+        } catch (e) {
+          debugPrint('Initial directory creation failed for $dirPath: $e');
+        }
+      } else {
+        debugPrint('Permission denied. Cannot create: $dirPath');
+      }
+    }
+  }
+
+  Future<Isar> initDB(String? path, {bool inspector = false}) async {
     Directory? dir;
     if (path == null) {
       dir = await getDatabaseDirectory();
@@ -182,14 +221,29 @@ class StorageProvider {
       ],
       directory: dir!.path,
       name: "mangayomiDb",
-      inspector: inspector!,
+      inspector: inspector,
     );
-
-    final settings = await isar.settings.filter().idEqualTo(227).findFirst();
-    if (settings == null) {
-      await isar.writeTxn(() async {
-        isar.settings.put(Settings());
-      });
+    try {
+      final settings = await isar.settings.filter().idEqualTo(227).findFirst();
+      if (settings == null) {
+        await isar.writeTxn(() async => isar.settings.put(Settings()));
+      }
+    } catch (_) {
+      if (await requestPermission()) {
+        try {
+          final settings = await isar.settings
+              .filter()
+              .idEqualTo(227)
+              .findFirst();
+          if (settings == null) {
+            await isar.writeTxn(() async => isar.settings.put(Settings()));
+          }
+        } catch (e) {
+          debugPrint("Failed after retry with permission: $e");
+        }
+      } else {
+        debugPrint("Permission denied during Database init fallback.");
+      }
     }
 
     return isar;

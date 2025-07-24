@@ -60,21 +60,24 @@ void main(List<String> args) async {
       );
     }
   }
-  isar = await StorageProvider().initDB(null, inspector: kDebugMode);
-  await Hive.initFlutter();
+  final storage = StorageProvider();
+  await storage.requestPermission();
+  isar = await storage.initDB(null, inspector: kDebugMode);
+  runApp(const ProviderScope(child: MyApp()));
+  unawaited(_postLaunchInit(storage)); // Defer non-essential async operations
+}
+
+Future<void> _postLaunchInit(StorageProvider storage) async {
+  final hivePath = (Platform.isIOS || Platform.isMacOS)
+      ? "databases"
+      : p.join("Mangayomi", "databases");
+  await Hive.initFlutter(Platform.isAndroid ? "" : hivePath);
   Hive.registerAdapter(TrackSearchAdapter());
   if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
     discordRpc = DiscordRPC(applicationId: "1395040506677039157");
     await discordRpc?.initialize();
   }
-
-  runApp(const ProviderScope(child: MyApp()));
-  unawaited(_postLaunchInit()); // Defer non-essential async operations
-}
-
-Future<void> _postLaunchInit() async {
-  await StorageProvider().requestPermission();
-  await StorageProvider().deleteBtDirectory();
+  await storage.deleteBtDirectory();
 }
 
 class MyApp extends ConsumerStatefulWidget {
