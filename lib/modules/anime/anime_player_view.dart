@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:ffi/ffi.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,6 +34,7 @@ import 'package:mangayomi/services/torrent_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:media_kit/generated/libmpv/bindings.dart' as generated;
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
 import 'package:path/path.dart' as p;
@@ -74,7 +78,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     return serversData.when(
       data: (data) {
-        final (videos, isLocal, infoHashList) = data;
+        final (videos, isLocal, infoHashList, mpvDirectory) = data;
         _infoHashList = infoHashList;
         if (videos.isEmpty && !(episode.manga.value!.isLocalArchive ?? false)) {
           return Scaffold(
@@ -102,6 +106,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
           desktopFullScreenPlayer: (value) {
             desktopFullScreenPlayer = value;
           },
+          mpvDirectory: mpvDirectory,
         );
       },
       error: (error, stackTrace) => Scaffold(
@@ -150,6 +155,7 @@ class AnimeStreamPage extends riv.ConsumerStatefulWidget {
   final String defaultSubtitle;
   final bool isLocal;
   final bool isTorrent;
+  final Directory? mpvDirectory;
   final void Function(bool) desktopFullScreenPlayer;
   const AnimeStreamPage({
     super.key,
@@ -159,6 +165,7 @@ class AnimeStreamPage extends riv.ConsumerStatefulWidget {
     required this.episode,
     required this.isTorrent,
     required this.desktopFullScreenPlayer,
+    required this.mpvDirectory,
   });
 
   @override
@@ -175,8 +182,15 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     with TickerProviderStateMixin, WidgetsBindingObserver {
   late final GlobalKey<VideoState> _key = GlobalKey<VideoState>();
   late final useLibass = ref.read(useLibassStateProvider);
+  late final useAnime4K = ref.read(useAnime4KStateProvider);
   late final Player _player = Player(
-    configuration: PlayerConfiguration(libass: useLibass),
+    configuration: PlayerConfiguration(
+      libass: useLibass,
+      config: true,
+      configDir: useAnime4K ? widget.mpvDirectory?.path ?? "" : "",
+      observeProperties: {},
+      eventHandler: _handleMpvEvents,
+    ),
   );
   late final hwdecMode = ref.read(hwdecModeStateProvider());
   late final VideoController _controller = VideoController(
@@ -248,6 +262,25 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
           widget.desktopFullScreenPlayer.call(false);
         }
       });
+
+  Future<void> _handleMpvEvents(Pointer<generated.mpv_event> event) async {
+    try {
+      if (event.ref.event_id ==
+          generated.mpv_event_id.MPV_EVENT_PROPERTY_CHANGE) {
+        final prop = event.ref.data.cast<generated.mpv_event_property>();
+        if (prop.ref.name.cast<Utf8>().toDartString() ==
+                "user-data/aniyomi/dummy_number" &&
+            prop.ref.format == generated.mpv_format.MPV_FORMAT_INT64) {
+          final number = prop.ref.data.cast<Int64>().value;
+          botToast("Dummy number: $number");
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint(e.toString());
+      }
+    }
+  }
 
   void pushToNewEpisode(BuildContext context, Chapter episode) {
     widget.desktopFullScreenPlayer.call(ref.read(fullscreenProvider));
@@ -1033,6 +1066,34 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
           onPressed: () => _videoSettingDraggableMenu(context),
           icon: const Icon(Icons.video_settings, color: Colors.white),
         ),
+        if (useAnime4K)
+          PopupMenuButton<String>(
+            tooltip: '', // Remove default tooltip "Show menu" for consistency
+            icon: const Icon(Icons.high_quality, color: Colors.white),
+            itemBuilder: (context) =>
+                [
+                      ("Anime4K: Mode A (Fast)", "CTRL+1"),
+                      ("Anime4K: Mode B (Fast)", "CTRL+2"),
+                      ("Anime4K: Mode C (Fast)", "CTRL+3"),
+                      ("Anime4K: Mode A+A (Fast)", "CTRL+4"),
+                      ("Anime4K: Mode B+B (Fast)", "CTRL+5"),
+                      ("Anime4K: Mode C+A (Fast)", "CTRL+6"),
+                      ("Clear GLSL shaders", "CTRL+0"),
+                    ]
+                    .map(
+                      (mode) => PopupMenuItem<String>(
+                        value: mode.$1,
+                        child: Text(mode.$1),
+                        onTap: () {
+                          (_player.platform as dynamic).command([
+                            "keydown",
+                            mode.$2,
+                          ]);
+                        },
+                      ),
+                    )
+                    .toList(),
+          ),
         PopupMenuButton<double>(
           tooltip: '', // Remove default tooltip "Show menu" for consistency
           icon: const Icon(Icons.speed, color: Colors.white),

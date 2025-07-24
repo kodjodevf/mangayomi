@@ -1513,4 +1513,14 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get sync_enable_settings => 'Sync settings';
+
+  @override
+  String get anime4K => 'Enable Anime4K';
+
+  @override
+  String get anime4K_info => 'Supports .js scripts under /mpv/scripts/';
+
+  @override
+  String get anime4K_download =>
+      'MPV config files are required!\nDownload now?';
 }

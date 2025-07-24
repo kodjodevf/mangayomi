@@ -218,6 +218,22 @@ class UseLibassState extends _$UseLibassState {
   }
 }
 
+@riverpod
+class UseAnime4KState extends _$UseAnime4KState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.useAnime4K ?? false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(settings!..useAnime4K = value),
+    );
+  }
+}
+
 final hwdecs = {
   "no": ["all"],
   "auto": ["all"],

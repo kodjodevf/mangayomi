@@ -35,7 +35,7 @@ const getVideoListProvider = GetVideoListFamily();
 
 /// See also [getVideoList].
 class GetVideoListFamily
-    extends Family<AsyncValue<(List<Video>, bool, List<String>)>> {
+    extends Family<AsyncValue<(List<Video>, bool, List<String>, Directory?)>> {
   /// See also [getVideoList].
   const GetVideoListFamily();
 
@@ -73,8 +73,8 @@ class GetVideoListFamily
 }
 
 /// See also [getVideoList].
-class GetVideoListProvider
-    extends AutoDisposeFutureProvider<(List<Video>, bool, List<String>)> {
+class GetVideoListProvider extends AutoDisposeFutureProvider<
+    (List<Video>, bool, List<String>, Directory?)> {
   /// See also [getVideoList].
   GetVideoListProvider({
     required Chapter episode,
@@ -109,7 +109,7 @@ class GetVideoListProvider
 
   @override
   Override overrideWith(
-    FutureOr<(List<Video>, bool, List<String>)> Function(
+    FutureOr<(List<Video>, bool, List<String>, Directory?)> Function(
             GetVideoListRef provider)
         create,
   ) {
@@ -128,8 +128,8 @@ class GetVideoListProvider
   }
 
   @override
-  AutoDisposeFutureProviderElement<(List<Video>, bool, List<String>)>
-      createElement() {
+  AutoDisposeFutureProviderElement<
+      (List<Video>, bool, List<String>, Directory?)> createElement() {
     return _GetVideoListProviderElement(this);
   }
 
@@ -149,15 +149,14 @@ class GetVideoListProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin GetVideoListRef
-    on AutoDisposeFutureProviderRef<(List<Video>, bool, List<String>)> {
+mixin GetVideoListRef on AutoDisposeFutureProviderRef<
+    (List<Video>, bool, List<String>, Directory?)> {
   /// The parameter `episode` of this provider.
   Chapter get episode;
 }
 
-class _GetVideoListProviderElement
-    extends AutoDisposeFutureProviderElement<(List<Video>, bool, List<String>)>
-    with GetVideoListRef {
+class _GetVideoListProviderElement extends AutoDisposeFutureProviderElement<
+    (List<Video>, bool, List<String>, Directory?)> with GetVideoListRef {
   _GetVideoListProviderElement(super.provider);
 
   @override

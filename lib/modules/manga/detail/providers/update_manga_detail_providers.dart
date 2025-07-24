@@ -81,6 +81,11 @@ Future<dynamic> updateMangaDetail(
             scanlator: chaps[i].scanlator ?? '',
             mangaId: mangaId,
             updatedAt: DateTime.now().millisecondsSinceEpoch,
+            isFiller: chaps[i].isFiller,
+            thumbnailUrl: chaps[i].thumbnailUrl,
+            description: chaps[i].description,
+            downloadSize: chaps[i].downloadSize,
+            duration: chaps[i].duration,
           )..manga.value = manga;
           chapters.add(chapter);
         }
@@ -115,6 +120,11 @@ Future<dynamic> updateMangaDetail(
           oldChap.url = newChap.url;
           oldChap.scanlator = newChap.scanlator;
           oldChap.updatedAt = DateTime.now().millisecondsSinceEpoch;
+          oldChap.isFiller = newChap.isFiller;
+          oldChap.thumbnailUrl = newChap.thumbnailUrl;
+          oldChap.description = newChap.description;
+          oldChap.downloadSize = newChap.downloadSize;
+          oldChap.duration = newChap.duration;
           isar.chapters.putSync(oldChap);
           oldChap.manga.saveSync();
         }

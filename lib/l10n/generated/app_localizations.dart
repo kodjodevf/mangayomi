@@ -2902,6 +2902,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sync settings'**
   String get sync_enable_settings;
+
+  /// No description provided for @anime4K.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Anime4K'**
+  String get anime4K;
+
+  /// No description provided for @anime4K_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Supports .js scripts under /mpv/scripts/'**
+  String get anime4K_info;
+
+  /// No description provided for @anime4K_download.
+  ///
+  /// In en, this message translates to:
+  /// **'MPV config files are required!\nDownload now?'**
+  String get anime4K_download;
 }
 
 class _AppLocalizationsDelegate
