@@ -215,6 +215,27 @@ class _DesktopControllerWidgetState
           final desktopFullScreenPlayer = widget.desktopFullScreenPlayer;
           await _changeFullScreen(ref, desktopFullScreenPlayer, value: false);
         },
+        const SingleActivator(LogicalKeyboardKey.digit0, control: true): () {
+          (widget.videoController.player.platform as dynamic).command(["keydown", "CTRL+0"]);
+        },
+        const SingleActivator(LogicalKeyboardKey.digit1, control: true): () {
+          (widget.videoController.player.platform as dynamic).command(["keydown", "CTRL+1"]);
+        },
+        const SingleActivator(LogicalKeyboardKey.digit2, control: true): () {
+          (widget.videoController.player.platform as dynamic).command(["keydown", "CTRL+2"]);
+        },
+        const SingleActivator(LogicalKeyboardKey.digit3, control: true): () {
+          (widget.videoController.player.platform as dynamic).command(["keydown", "CTRL+3"]);
+        },
+        const SingleActivator(LogicalKeyboardKey.digit4, control: true): () {
+          (widget.videoController.player.platform as dynamic).command(["keydown", "CTRL+4"]);
+        },
+        const SingleActivator(LogicalKeyboardKey.digit5, control: true): () {
+          (widget.videoController.player.platform as dynamic).command(["keydown", "CTRL+5"]);
+        },
+        const SingleActivator(LogicalKeyboardKey.digit6, control: true): () {
+          (widget.videoController.player.platform as dynamic).command(["keydown", "CTRL+6"]);
+        },
       },
       child: Stack(
         children: [

@@ -1486,4 +1486,14 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get rpc_show_cover_image => 'Show current cover image in Discord';
+
+  @override
+  String get anime4K => 'Enable Anime4K';
+
+  @override
+  String get anime4K_info => 'Supports .js scripts under /mpv/scripts/';
+
+  @override
+  String get anime4K_download =>
+      'MPV config files are required!\nDownload now?';
 }

@@ -623,18 +623,23 @@ const SettingsSchema = CollectionSchema(
       name: r'updateProgressAfterReading',
       type: IsarType.bool,
     ),
-    r'useLibass': PropertySchema(
+    r'useAnime4K': PropertySchema(
       id: 115,
+      name: r'useAnime4K',
+      type: IsarType.bool,
+    ),
+    r'useLibass': PropertySchema(
+      id: 116,
       name: r'useLibass',
       type: IsarType.bool,
     ),
     r'usePageTapZones': PropertySchema(
-      id: 116,
+      id: 117,
       name: r'usePageTapZones',
       type: IsarType.bool,
     ),
     r'userAgent': PropertySchema(
-      id: 117,
+      id: 118,
       name: r'userAgent',
       type: IsarType.string,
     )
@@ -1238,9 +1243,10 @@ void _settingsSerialize(
   writer.writeLong(offsets[112], object.startDatebackup);
   writer.writeBool(offsets[113], object.themeIsDark);
   writer.writeBool(offsets[114], object.updateProgressAfterReading);
-  writer.writeBool(offsets[115], object.useLibass);
-  writer.writeBool(offsets[116], object.usePageTapZones);
-  writer.writeString(offsets[117], object.userAgent);
+  writer.writeBool(offsets[115], object.useAnime4K);
+  writer.writeBool(offsets[116], object.useLibass);
+  writer.writeBool(offsets[117], object.usePageTapZones);
+  writer.writeString(offsets[118], object.userAgent);
 }
 
 Settings _settingsDeserialize(
@@ -1455,9 +1461,10 @@ Settings _settingsDeserialize(
     startDatebackup: reader.readLongOrNull(offsets[112]),
     themeIsDark: reader.readBoolOrNull(offsets[113]),
     updateProgressAfterReading: reader.readBoolOrNull(offsets[114]),
-    useLibass: reader.readBoolOrNull(offsets[115]),
-    usePageTapZones: reader.readBoolOrNull(offsets[116]),
-    userAgent: reader.readStringOrNull(offsets[117]),
+    useAnime4K: reader.readBoolOrNull(offsets[115]),
+    useLibass: reader.readBoolOrNull(offsets[116]),
+    usePageTapZones: reader.readBoolOrNull(offsets[117]),
+    userAgent: reader.readStringOrNull(offsets[118]),
   );
   object.chapterFilterBookmarkedList =
       reader.readObjectList<ChapterFilterBookmarked>(
@@ -1850,6 +1857,8 @@ P _settingsDeserializeProp<P>(
     case 116:
       return (reader.readBoolOrNull(offset)) as P;
     case 117:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 118:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -9504,6 +9513,33 @@ extension SettingsQueryFilter
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> useAnime4KIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'useAnime4K',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      useAnime4KIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'useAnime4K',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> useAnime4KEqualTo(
+      bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'useAnime4K',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterFilterCondition> useLibassIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -11113,6 +11149,18 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByUseAnime4K() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'useAnime4K', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByUseAnime4KDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'useAnime4K', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByUseLibass() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'useLibass', Sort.asc);
@@ -12358,6 +12406,18 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByUseAnime4K() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'useAnime4K', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByUseAnime4KDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'useAnime4K', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByUseLibass() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'useLibass', Sort.asc);
@@ -13013,6 +13073,12 @@ extension SettingsQueryWhereDistinct
       distinctByUpdateProgressAfterReading() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'updateProgressAfterReading');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctByUseAnime4K() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'useAnime4K');
     });
   }
 
@@ -13810,6 +13876,12 @@ extension SettingsQueryProperty
       updateProgressAfterReadingProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'updateProgressAfterReading');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations> useAnime4KProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'useAnime4K');
     });
   }
 

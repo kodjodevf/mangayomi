@@ -61,6 +61,13 @@ class StorageProvider {
     return directory;
   }
 
+  Future<Directory?> getMpvDirectory() async {
+    final defaultDirectory = await getDefaultDirectory();
+    String dbDir = path.join(defaultDirectory!.path, 'mpv');
+    await Directory(dbDir).create(recursive: true);
+    return Directory(dbDir);
+  }
+
   Future<Directory?> getBtDirectory() async {
     final gefaultDirectory = await getDefaultDirectory();
     String dbDir = path.join(gefaultDirectory!.path, 'torrents');
