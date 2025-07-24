@@ -156,9 +156,8 @@ class StorageProvider {
     String dbDir;
     if (Platform.isAndroid) return dir;
     if (Platform.isIOS || Platform.isMacOS) {
-      // The documents dir in iOS and macOS is already named "Mangayomi".
-      // Appending "Mangayomi" to the documents dir would create
-      // unnecessarily nested Mangayomi/Mangayomi/ folder.
+      // Put the database files inside /databases like on Windows, Linux
+      // So they are not just in the app folders root dir
       dbDir = path.join(dir.path, 'databases');
     } else {
       dbDir = path.join(dir.path, 'Mangayomi', 'databases');
