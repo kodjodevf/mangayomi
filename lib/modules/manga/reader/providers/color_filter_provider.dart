@@ -20,7 +20,11 @@ class CustomColorFilterState extends _$CustomColorFilterState {
       ..b = b;
     if (end) {
       isar.writeTxnSync(
-        () => isar.settings.putSync(settings!..customColorFilter = value),
+        () => isar.settings.putSync(
+          settings!
+            ..customColorFilter = value
+            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+        ),
       );
     }
     state = value;
@@ -38,7 +42,11 @@ class EnableCustomColorFilterState extends _$EnableCustomColorFilterState {
     final settings = isar.settings.getSync(227);
 
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..enableCustomColorFilter = value),
+      () => isar.settings.putSync(
+        settings!
+          ..enableCustomColorFilter = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
     state = value;
   }
@@ -55,7 +63,11 @@ class ColorFilterBlendModeState extends _$ColorFilterBlendModeState {
     final settings = isar.settings.getSync(227);
 
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..colorFilterBlendMode = value),
+      () => isar.settings.putSync(
+        settings!
+          ..colorFilterBlendMode = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
     state = value;
   }

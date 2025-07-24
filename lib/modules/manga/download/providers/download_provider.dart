@@ -172,7 +172,9 @@ Future<void> downloadChapter(
     );
     isar.writeTxnSync(
       () => isar.settings.putSync(
-        settings..chapterPageUrlsList = chapterPageUrls,
+        settings
+          ..chapterPageUrlsList = chapterPageUrls
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       ),
     );
   }

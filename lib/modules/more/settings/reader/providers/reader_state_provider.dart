@@ -14,7 +14,11 @@ class DefaultReadingModeState extends _$DefaultReadingModeState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..defaultReaderMode = value),
+      () => isar.settings.putSync(
+        settings!
+          ..defaultReaderMode = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -30,7 +34,11 @@ class AnimatePageTransitionsState extends _$AnimatePageTransitionsState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..animatePageTransitions = value),
+      () => isar.settings.putSync(
+        settings!
+          ..animatePageTransitions = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -46,7 +54,11 @@ class DoubleTapAnimationSpeedState extends _$DoubleTapAnimationSpeedState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..doubleTapAnimationSpeed = value),
+      () => isar.settings.putSync(
+        settings!
+          ..doubleTapAnimationSpeed = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -62,7 +74,11 @@ class CropBordersState extends _$CropBordersState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..cropBorders = value),
+      () => isar.settings.putSync(
+        settings!
+          ..cropBorders = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -78,7 +94,11 @@ class ScaleTypeState extends _$ScaleTypeState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..scaleType = value),
+      () => isar.settings.putSync(
+        settings!
+          ..scaleType = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -94,7 +114,11 @@ class PagePreloadAmountState extends _$PagePreloadAmountState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..pagePreloadAmount = value),
+      () => isar.settings.putSync(
+        settings!
+          ..pagePreloadAmount = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -110,7 +134,11 @@ class BackgroundColorState extends _$BackgroundColorState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..backgroundColor = value),
+      () => isar.settings.putSync(
+        settings!
+          ..backgroundColor = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -126,7 +154,11 @@ class UsePageTapZonesState extends _$UsePageTapZonesState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..usePageTapZones = value),
+      () => isar.settings.putSync(
+        settings!
+          ..usePageTapZones = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -142,7 +174,11 @@ class FullScreenReaderState extends _$FullScreenReaderState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..fullScreenReader = value),
+      () => isar.settings.putSync(
+        settings!
+          ..fullScreenReader = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -178,7 +214,11 @@ class NavigationOrderState extends _$NavigationOrderState {
     final settings = isar.settings.getSync(227);
     state = values;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..navigationOrder = values),
+      () => isar.settings.putSync(
+        settings!
+          ..navigationOrder = values
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -194,7 +234,11 @@ class HideItemsState extends _$HideItemsState {
     final settings = isar.settings.getSync(227);
     state = values;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..hideItems = values),
+      () => isar.settings.putSync(
+        settings!
+          ..hideItems = values
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -210,7 +254,11 @@ class MergeLibraryNavMobileState extends _$MergeLibraryNavMobileState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..mergeLibraryNavMobile = value),
+      () => isar.settings.putSync(
+        settings!
+          ..mergeLibraryNavMobile = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -226,7 +274,11 @@ class NovelFontSizeState extends _$NovelFontSizeState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..novelFontSize = value),
+      () => isar.settings.putSync(
+        settings!
+          ..novelFontSize = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -242,7 +294,11 @@ class NovelTextAlignState extends _$NovelTextAlignState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..novelTextAlign = value),
+      () => isar.settings.putSync(
+        settings!
+          ..novelTextAlign = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }

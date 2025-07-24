@@ -14,7 +14,11 @@ class EnableDiscordRpcState extends _$EnableDiscordRpcState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..enableDiscordRpc = value),
+      () => isar.settings.putSync(
+        settings!
+          ..enableDiscordRpc = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -30,7 +34,11 @@ class HideDiscordRpcInIncognitoState extends _$HideDiscordRpcInIncognitoState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..hideDiscordRpcInIncognito = value),
+      () => isar.settings.putSync(
+        settings!
+          ..hideDiscordRpcInIncognito = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -48,7 +56,9 @@ class RpcShowReadingWatchingProgressState
     state = value;
     isar.writeTxnSync(
       () => isar.settings.putSync(
-        settings!..rpcShowReadingWatchingProgress = value,
+        settings!
+          ..rpcShowReadingWatchingProgress = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       ),
     );
   }
@@ -65,7 +75,11 @@ class RpcShowTitleState extends _$RpcShowTitleState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..rpcShowTitle = value),
+      () => isar.settings.putSync(
+        settings!
+          ..rpcShowTitle = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }
@@ -81,7 +95,11 @@ class RpcShowCoverImageState extends _$RpcShowCoverImageState {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..rpcShowCoverImage = value),
+      () => isar.settings.putSync(
+        settings!
+          ..rpcShowCoverImage = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }

@@ -7,7 +7,7 @@ part of 'library_state_provider.dart';
 // **************************************************************************
 
 String _$libraryDisplayTypeStateHash() =>
-    r'bcc3757a2aec544a3282776536a14e50cfafd03d';
+    r'459a91429b3d1490347cae4bd062745c5e372f05';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -199,7 +199,7 @@ class _LibraryDisplayTypeStateProviderElement
 }
 
 String _$libraryGridSizeStateHash() =>
-    r'2b41e0dfd5fbc1b01ffc9ee4b5d3a99bce12df18';
+    r'288b58266426aae511454e120d76a7fde7d2899b';
 
 abstract class _$LibraryGridSizeState
     extends BuildlessAutoDisposeNotifier<int?> {
@@ -346,7 +346,7 @@ class _LibraryGridSizeStateProviderElement
 }
 
 String _$mangaFilterDownloadedStateHash() =>
-    r'455eb734a87b1d3be3e5684902734a9c8c98a330';
+    r'6d84bc7063be1734a0c267906a94e6b70e8b72fe';
 
 abstract class _$MangaFilterDownloadedState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -539,7 +539,7 @@ class _MangaFilterDownloadedStateProviderElement
 }
 
 String _$mangaFilterUnreadStateHash() =>
-    r'd48b9b0a5752befdab56601a1c8e2b36d797aeee';
+    r'bd96c9f42a40d0610788feda3bee5fb8662afe50';
 
 abstract class _$MangaFilterUnreadState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -730,7 +730,7 @@ class _MangaFilterUnreadStateProviderElement
 }
 
 String _$mangaFilterStartedStateHash() =>
-    r'fc6c919aa27bf338825cd8c252927ae78b8da36c';
+    r'7546110e32fe4eac49006ce3c721d8f72a2b3128';
 
 abstract class _$MangaFilterStartedState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -921,7 +921,7 @@ class _MangaFilterStartedStateProviderElement
 }
 
 String _$mangaFilterBookmarkedStateHash() =>
-    r'b013800ec4e42ede752c7cbcb00575678444e8b5';
+    r'77e5317ee6504667e001e43c549f0ee5abd3ed53';
 
 abstract class _$MangaFilterBookmarkedState
     extends BuildlessAutoDisposeNotifier<int> {
@@ -1305,7 +1305,7 @@ class _MangasFilterResultStateProviderElement
 }
 
 String _$libraryShowCategoryTabsStateHash() =>
-    r'f8136c8e7b343e50a4fd4884bc9874d888d08901';
+    r'0bdaf08a47247175aea9ca1fe515b6c347c27c61';
 
 abstract class _$LibraryShowCategoryTabsState
     extends BuildlessAutoDisposeNotifier<bool> {
@@ -1479,7 +1479,7 @@ class _LibraryShowCategoryTabsStateProviderElement
 }
 
 String _$libraryDownloadedChaptersStateHash() =>
-    r'1c93c624dfaa46ccd56de1841233d04fc63e18af';
+    r'ac9868c3cda2c6a9097d9c4c8a6fd0a78edffe26';
 
 abstract class _$LibraryDownloadedChaptersState
     extends BuildlessAutoDisposeNotifier<bool> {
@@ -1654,7 +1654,7 @@ class _LibraryDownloadedChaptersStateProviderElement
 }
 
 String _$libraryLanguageStateHash() =>
-    r'83045a8db5fbad972fc1b956bbc8225f97fc03b4';
+    r'3673dceb22d4220347f104efa31a2e5ecb0e5fb9';
 
 abstract class _$LibraryLanguageState
     extends BuildlessAutoDisposeNotifier<bool> {
@@ -1824,7 +1824,7 @@ class _LibraryLanguageStateProviderElement
 }
 
 String _$libraryLocalSourceStateHash() =>
-    r'f3a442394bd9ecbe9be574f6843b9aca4310bdf3';
+    r'4a1beb1f43cd4023f848f9d76731c3095236a148';
 
 abstract class _$LibraryLocalSourceState
     extends BuildlessAutoDisposeNotifier<bool> {
@@ -1994,7 +1994,7 @@ class _LibraryLocalSourceStateProviderElement
 }
 
 String _$libraryShowNumbersOfItemsStateHash() =>
-    r'8261b0ee660d36d284c53c45debfca7ceb7cbfd3';
+    r'040768e98505577b85e52b5e5f6ae6915de1b222';
 
 abstract class _$LibraryShowNumbersOfItemsState
     extends BuildlessAutoDisposeNotifier<bool> {
@@ -2169,7 +2169,7 @@ class _LibraryShowNumbersOfItemsStateProviderElement
 }
 
 String _$libraryShowContinueReadingButtonStateHash() =>
-    r'a346c04b41c448c145107f862bbfa86f119edba1';
+    r'e85d6a904a1aed27810aff85f55701da150a8a33';
 
 abstract class _$LibraryShowContinueReadingButtonState
     extends BuildlessAutoDisposeNotifier<bool> {
@@ -2347,7 +2347,7 @@ class _LibraryShowContinueReadingButtonStateProviderElement
 }
 
 String _$sortLibraryMangaStateHash() =>
-    r'5454965fd1c6c027e5a2dfc93c2570e800bf18c0';
+    r'9cf913f9ad66fa19fad1d8b86afdcf52d990c5ee';
 
 abstract class _$SortLibraryMangaState
     extends BuildlessAutoDisposeNotifier<SortLibraryManga> {

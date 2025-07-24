@@ -36,7 +36,7 @@ import 'package:window_manager/window_manager.dart';
 import 'package:path/path.dart' as p;
 
 late Isar isar;
-late DiscordRPC discordRpc;
+DiscordRPC? discordRpc;
 WebViewEnvironment? webViewEnvironment;
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -73,8 +73,10 @@ Future<void> _postLaunchInit(StorageProvider storage) async {
       : p.join("Mangayomi", "databases");
   await Hive.initFlutter(hivePath);
   Hive.registerAdapter(TrackSearchAdapter());
-  discordRpc = DiscordRPC(applicationId: "1395040506677039157");
-  await discordRpc.initialize();
+  if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
+    discordRpc = DiscordRPC(applicationId: "1395040506677039157");
+    await discordRpc?.initialize();
+  }
   await storage.deleteBtDirectory();
 }
 
@@ -136,7 +138,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   void dispose() {
     _linkSubscription?.cancel();
-    discordRpc.destroy();
+    discordRpc?.destroy();
     super.dispose();
   }
 

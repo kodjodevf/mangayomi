@@ -7,7 +7,7 @@ part of 'reader_state_provider.dart';
 // **************************************************************************
 
 String _$defaultReadingModeStateHash() =>
-    r'2fe1d264041dd115bcc1a8c5648d0062a19f4c44';
+    r'6125feb2aff79c017dc55ea2faa2591916af051a';
 
 /// See also [DefaultReadingModeState].
 @ProviderFor(DefaultReadingModeState)
@@ -24,7 +24,7 @@ final defaultReadingModeStateProvider =
 
 typedef _$DefaultReadingModeState = AutoDisposeNotifier<ReaderMode>;
 String _$animatePageTransitionsStateHash() =>
-    r'c8fdb2acb7a551c41a54c1aa14e378f6b1edd5c1';
+    r'b65e7a08d290f4ec6b9616eb70ce2830b51582e6';
 
 /// See also [AnimatePageTransitionsState].
 @ProviderFor(AnimatePageTransitionsState)
@@ -41,7 +41,7 @@ final animatePageTransitionsStateProvider =
 
 typedef _$AnimatePageTransitionsState = AutoDisposeNotifier<bool>;
 String _$doubleTapAnimationSpeedStateHash() =>
-    r'd88657a8a587a0a77b6230a7fe5b2c1b833afca8';
+    r'6b7b88dd088b7c8328960553b3a8fd17066030a6';
 
 /// See also [DoubleTapAnimationSpeedState].
 @ProviderFor(DoubleTapAnimationSpeedState)
@@ -57,7 +57,7 @@ final doubleTapAnimationSpeedStateProvider =
 );
 
 typedef _$DoubleTapAnimationSpeedState = AutoDisposeNotifier<int>;
-String _$cropBordersStateHash() => r'65d636df7bebd9fb15b3915c1044c61f3479e806';
+String _$cropBordersStateHash() => r'b8a38a59e240909f81a5faad44b54d3ced025de8';
 
 /// See also [CropBordersState].
 @ProviderFor(CropBordersState)
@@ -73,7 +73,7 @@ final cropBordersStateProvider =
 );
 
 typedef _$CropBordersState = AutoDisposeNotifier<bool>;
-String _$scaleTypeStateHash() => r'5e6943ab426e9f0bdfe16685a037f6def3a02ddf';
+String _$scaleTypeStateHash() => r'07f29cba7193242795134b6d37bb393210a191a1';
 
 /// See also [ScaleTypeState].
 @ProviderFor(ScaleTypeState)
@@ -90,7 +90,7 @@ final scaleTypeStateProvider =
 
 typedef _$ScaleTypeState = AutoDisposeNotifier<ScaleType>;
 String _$pagePreloadAmountStateHash() =>
-    r'f3b7f78ba1acc10631dc433298c49abe417f254e';
+    r'45e9810e73e93b7a88a1a3b876da73123024cc71';
 
 /// See also [PagePreloadAmountState].
 @ProviderFor(PagePreloadAmountState)
@@ -107,7 +107,7 @@ final pagePreloadAmountStateProvider =
 
 typedef _$PagePreloadAmountState = AutoDisposeNotifier<int>;
 String _$backgroundColorStateHash() =>
-    r'912db0bc09d8aafe20b8eb46ed2f07a9d5439aaa';
+    r'4abc4c6b95bf97fe50a3290da94cddf935fa96da';
 
 /// See also [BackgroundColorState].
 @ProviderFor(BackgroundColorState)
@@ -124,7 +124,7 @@ final backgroundColorStateProvider =
 
 typedef _$BackgroundColorState = AutoDisposeNotifier<BackgroundColor>;
 String _$usePageTapZonesStateHash() =>
-    r'476a7831ca38386e6cd9c83e7c8943f1f4ba20b7';
+    r'8bdfc5d257eeba63bb4f4ff3ceda766bcc58dc37';
 
 /// See also [UsePageTapZonesState].
 @ProviderFor(UsePageTapZonesState)
@@ -141,7 +141,7 @@ final usePageTapZonesStateProvider =
 
 typedef _$UsePageTapZonesState = AutoDisposeNotifier<bool>;
 String _$fullScreenReaderStateHash() =>
-    r'fe95b7d8cb6aee8910466f86bba97c854994b2d1';
+    r'6685d29e04c71975c3442a5299299e761ff72997';
 
 /// See also [FullScreenReaderState].
 @ProviderFor(FullScreenReaderState)
@@ -158,7 +158,7 @@ final fullScreenReaderStateProvider =
 
 typedef _$FullScreenReaderState = AutoDisposeNotifier<bool>;
 String _$navigationOrderStateHash() =>
-    r'15ad6f31d8c5f3acd8cd6f4e4131e7536914cfc6';
+    r'7b40ce1b52f02ebac46ed6d0d5ab9ff9590b6885';
 
 /// See also [NavigationOrderState].
 @ProviderFor(NavigationOrderState)
@@ -174,7 +174,7 @@ final navigationOrderStateProvider =
 );
 
 typedef _$NavigationOrderState = AutoDisposeNotifier<List<String>>;
-String _$hideItemsStateHash() => r'312605bf45a83d7628d9c1da0597bb151362052b';
+String _$hideItemsStateHash() => r'3e719a5dfb38c1510214f7bcd8dbd786a13c4566';
 
 /// See also [HideItemsState].
 @ProviderFor(HideItemsState)
@@ -191,7 +191,7 @@ final hideItemsStateProvider =
 
 typedef _$HideItemsState = AutoDisposeNotifier<List<String>>;
 String _$mergeLibraryNavMobileStateHash() =>
-    r'a69f669b69d036835128b2b922ed7da37877aaa8';
+    r'9b7979f6fb9082dd48a90447d44715628d312116';
 
 /// See also [MergeLibraryNavMobileState].
 @ProviderFor(MergeLibraryNavMobileState)
@@ -208,7 +208,7 @@ final mergeLibraryNavMobileStateProvider =
 
 typedef _$MergeLibraryNavMobileState = AutoDisposeNotifier<bool>;
 String _$novelFontSizeStateHash() =>
-    r'fd104e358203d3f86e14d933518f2dbd067cec13';
+    r'9e4fa59d8c6b06b36ce485671ee059f8c4a7445e';
 
 /// See also [NovelFontSizeState].
 @ProviderFor(NovelFontSizeState)
@@ -225,7 +225,7 @@ final novelFontSizeStateProvider =
 
 typedef _$NovelFontSizeState = AutoDisposeNotifier<int>;
 String _$novelTextAlignStateHash() =>
-    r'87664160c3962b96b8582a7581cf1e4ebb870363';
+    r'383ff78e9ce21503e163f13d5b87dd021aef6ab4';
 
 /// See also [NovelTextAlignState].
 @ProviderFor(NovelTextAlignState)

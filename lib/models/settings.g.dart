@@ -623,18 +623,23 @@ const SettingsSchema = CollectionSchema(
       name: r'updateProgressAfterReading',
       type: IsarType.bool,
     ),
-    r'useLibass': PropertySchema(
+    r'updatedAt': PropertySchema(
       id: 115,
+      name: r'updatedAt',
+      type: IsarType.long,
+    ),
+    r'useLibass': PropertySchema(
+      id: 116,
       name: r'useLibass',
       type: IsarType.bool,
     ),
     r'usePageTapZones': PropertySchema(
-      id: 116,
+      id: 117,
       name: r'usePageTapZones',
       type: IsarType.bool,
     ),
     r'userAgent': PropertySchema(
-      id: 117,
+      id: 118,
       name: r'userAgent',
       type: IsarType.string,
     )
@@ -1238,9 +1243,10 @@ void _settingsSerialize(
   writer.writeLong(offsets[112], object.startDatebackup);
   writer.writeBool(offsets[113], object.themeIsDark);
   writer.writeBool(offsets[114], object.updateProgressAfterReading);
-  writer.writeBool(offsets[115], object.useLibass);
-  writer.writeBool(offsets[116], object.usePageTapZones);
-  writer.writeString(offsets[117], object.userAgent);
+  writer.writeLong(offsets[115], object.updatedAt);
+  writer.writeBool(offsets[116], object.useLibass);
+  writer.writeBool(offsets[117], object.usePageTapZones);
+  writer.writeString(offsets[118], object.userAgent);
 }
 
 Settings _settingsDeserialize(
@@ -1455,9 +1461,10 @@ Settings _settingsDeserialize(
     startDatebackup: reader.readLongOrNull(offsets[112]),
     themeIsDark: reader.readBoolOrNull(offsets[113]),
     updateProgressAfterReading: reader.readBoolOrNull(offsets[114]),
-    useLibass: reader.readBoolOrNull(offsets[115]),
-    usePageTapZones: reader.readBoolOrNull(offsets[116]),
-    userAgent: reader.readStringOrNull(offsets[117]),
+    updatedAt: reader.readLongOrNull(offsets[115]),
+    useLibass: reader.readBoolOrNull(offsets[116]),
+    usePageTapZones: reader.readBoolOrNull(offsets[117]),
+    userAgent: reader.readStringOrNull(offsets[118]),
   );
   object.chapterFilterBookmarkedList =
       reader.readObjectList<ChapterFilterBookmarked>(
@@ -1846,10 +1853,12 @@ P _settingsDeserializeProp<P>(
     case 114:
       return (reader.readBoolOrNull(offset)) as P;
     case 115:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 116:
       return (reader.readBoolOrNull(offset)) as P;
     case 117:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 118:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -9504,6 +9513,75 @@ extension SettingsQueryFilter
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> updatedAtIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'updatedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> updatedAtIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'updatedAt',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> updatedAtEqualTo(
+      int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> updatedAtGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> updatedAtLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'updatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> updatedAtBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'updatedAt',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterFilterCondition> useLibassIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -11113,6 +11191,18 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByUseLibass() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'useLibass', Sort.asc);
@@ -12358,6 +12448,18 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'updatedAt', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByUseLibass() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'useLibass', Sort.asc);
@@ -13013,6 +13115,12 @@ extension SettingsQueryWhereDistinct
       distinctByUpdateProgressAfterReading() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'updateProgressAfterReading');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctByUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'updatedAt');
     });
   }
 
@@ -13810,6 +13918,12 @@ extension SettingsQueryProperty
       updateProgressAfterReadingProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'updateProgressAfterReading');
+    });
+  }
+
+  QueryBuilder<Settings, int?, QQueryOperations> updatedAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'updatedAt');
     });
   }
 

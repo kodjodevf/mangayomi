@@ -24,7 +24,7 @@ final totalChapterCacheSizeStateProvider =
 
 typedef _$TotalChapterCacheSizeState = AutoDisposeNotifier<String>;
 String _$clearChapterCacheOnAppLaunchStateHash() =>
-    r'6fdefd7a3bdc4309dd596dad43891c654ec2ba70';
+    r'1decadd07db6946a1daaa4ae90e0f082555fab78';
 
 /// See also [ClearChapterCacheOnAppLaunchState].
 @ProviderFor(ClearChapterCacheOnAppLaunchState)

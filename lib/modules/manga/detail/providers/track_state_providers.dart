@@ -178,7 +178,11 @@ class LastTrackerLibraryLocationState
     final val = "${value.$1},${value.$2}";
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..lastTrackerLibraryLocation = val),
+      () => isar.settings.putSync(
+        settings!
+          ..lastTrackerLibraryLocation = val
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
     );
   }
 }

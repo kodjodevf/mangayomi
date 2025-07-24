@@ -73,6 +73,27 @@ class Synching extends _$Synching {
     ref.invalidateSelf();
   }
 
+  void setSyncHistories(bool value) {
+    isar.writeTxnSync(() {
+      isar.syncPreferences.putSync(state..syncHistories = value);
+    });
+    ref.invalidateSelf();
+  }
+
+  void setSyncUpdates(bool value) {
+    isar.writeTxnSync(() {
+      isar.syncPreferences.putSync(state..syncUpdates = value);
+    });
+    ref.invalidateSelf();
+  }
+
+  void setSyncSettings(bool value) {
+    isar.writeTxnSync(() {
+      isar.syncPreferences.putSync(state..syncSettings = value);
+    });
+    ref.invalidateSelf();
+  }
+
   List<ChangedPart> getAllChangedParts() {
     return isar.changedParts.filter().idIsNotNull().findAllSync();
   }

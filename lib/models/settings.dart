@@ -8,6 +8,8 @@ part 'settings.g.dart';
 class Settings {
   Id? id;
 
+  int? updatedAt;
+
   @enumerated
   late DisplayType displayType;
 
@@ -258,6 +260,7 @@ class Settings {
 
   Settings({
     this.id = 227,
+    this.updatedAt = 0,
     this.displayType = DisplayType.compactGrid,
     this.libraryFilterMangasDownloadType = 0,
     this.libraryFilterMangasUnreadType = 0,
@@ -373,6 +376,7 @@ class Settings {
   });
 
   Settings.fromJson(Map<String, dynamic> json) {
+    updatedAt = json["updatedAt"];
     animatePageTransitions = json['animatePageTransitions'];
     animeDisplayType = DisplayType
         .values[json['animeDisplayType'] ?? DisplayType.compactGrid.index];
@@ -593,6 +597,7 @@ class Settings {
   }
 
   Map<String, dynamic> toJson() => {
+    'updatedAt': updatedAt,
     'animatePageTransitions': animatePageTransitions,
     'animeDisplayType': animeDisplayType.index,
     'animeLibraryDownloadedChapters': animeLibraryDownloadedChapters,

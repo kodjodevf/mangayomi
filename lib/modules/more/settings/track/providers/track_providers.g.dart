@@ -171,7 +171,7 @@ class _TracksProviderElement
 }
 
 String _$updateProgressAfterReadingStateHash() =>
-    r'ad615c0c03d376adf8bc4728aac4288e61facee5';
+    r'ff62bff97327d9c6b2c694fb20ca8df98e5107a0';
 
 /// See also [UpdateProgressAfterReadingState].
 @ProviderFor(UpdateProgressAfterReadingState)

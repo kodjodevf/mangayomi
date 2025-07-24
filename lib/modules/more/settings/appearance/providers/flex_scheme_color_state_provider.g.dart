@@ -7,7 +7,7 @@ part of 'flex_scheme_color_state_provider.dart';
 // **************************************************************************
 
 String _$flexSchemeColorStateHash() =>
-    r'5c535382cc52e144426fa36dc20ea614d6288f53';
+    r'0b484f5c16d099fd94e2150bf4a32d9e8338feb3';
 
 /// See also [FlexSchemeColorState].
 @ProviderFor(FlexSchemeColorState)

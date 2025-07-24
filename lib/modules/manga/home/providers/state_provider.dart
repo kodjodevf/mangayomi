@@ -17,7 +17,11 @@ class MangaHomeDisplayTypeState extends _$MangaHomeDisplayTypeState {
     state = displayType;
 
     isar.writeTxnSync(() {
-      isar.settings.putSync(settings..mangaHomeDisplayType = displayType);
+      isar.settings.putSync(
+        settings
+          ..mangaHomeDisplayType = displayType
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      );
     });
   }
 }

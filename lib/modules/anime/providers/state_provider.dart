@@ -20,7 +20,11 @@ class SubtitleSettingsState extends _$SubtitleSettingsState {
     state = value;
     if (end) {
       isar.writeTxnSync(
-        () => isar.settings.putSync(settings!..playerSubtitleSettings = value),
+        () => isar.settings.putSync(
+          settings!
+            ..playerSubtitleSettings = value
+            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+        ),
       );
     }
   }
@@ -39,7 +43,8 @@ class SubtitleSettingsState extends _$SubtitleSettingsState {
             fontSize: state.fontSize,
             useBold: state.useBold,
             useItalic: state.useItalic,
-          ),
+          )
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       ),
     );
   }
