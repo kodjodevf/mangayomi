@@ -49,8 +49,7 @@ class StorageProvider {
   Future<Directory?> getDefaultDirectory() async {
     Directory? directory;
     if (Platform.isAndroid) {
-      final dir = await getExternalStorageDirectory();
-      directory = Directory(path.join(dir!.path, 'Mangayomi'));
+      directory = Directory("/storage/emulated/0/Mangayomi/");
     } else {
       final dir = await getApplicationDocumentsDirectory();
       // The documents dir in iOS and macOS is already named "Mangayomi".
@@ -101,9 +100,8 @@ class StorageProvider {
       debugPrint("Could not get downloadLocation from Isar settings: $e");
     }
     if (Platform.isAndroid) {
-      final dir = await getExternalStorageDirectory();
       directory = Directory(
-        dPath.isEmpty ? path.join(dir!.path, 'Mangayomi') : "$dPath/",
+        dPath.isEmpty ? "/storage/emulated/0/Mangayomi/" : "$dPath/",
       );
     } else {
       final dir = await getApplicationDocumentsDirectory();
@@ -156,7 +154,8 @@ class StorageProvider {
   Future<Directory?> getDatabaseDirectory() async {
     final dir = await getApplicationDocumentsDirectory();
     String dbDir;
-    if (Platform.isAndroid || Platform.isIOS || Platform.isMacOS) {
+    if (Platform.isAndroid) return dir;
+    if (Platform.isIOS || Platform.isMacOS) {
       // The documents dir in iOS and macOS is already named "Mangayomi".
       // Appending "Mangayomi" to the documents dir would create
       // unnecessarily nested Mangayomi/Mangayomi/ folder.
@@ -171,8 +170,7 @@ class StorageProvider {
   Future<Directory?> getGalleryDirectory() async {
     String gPath;
     if (Platform.isAndroid) {
-      final dir = await getExternalStorageDirectory();
-      gPath = path.join(dir!.path, 'Mangayomi', 'Pictures');
+      gPath = "/storage/emulated/0/Pictures/Mangayomi/";
     } else {
       gPath = path.join((await getDirectory())!.path, 'Pictures');
     }

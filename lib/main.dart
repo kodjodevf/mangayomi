@@ -68,10 +68,10 @@ void main(List<String> args) async {
 }
 
 Future<void> _postLaunchInit(StorageProvider storage) async {
-  final hivePath = (Platform.isIOS || Platform.isMacOS || Platform.isAndroid)
+  final hivePath = (Platform.isIOS || Platform.isMacOS)
       ? "databases"
       : p.join("Mangayomi", "databases");
-  await Hive.initFlutter(hivePath);
+  await Hive.initFlutter(Platform.isAndroid ? "" : hivePath);
   Hive.registerAdapter(TrackSearchAdapter());
   if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
     discordRpc = DiscordRPC(applicationId: "1395040506677039157");
