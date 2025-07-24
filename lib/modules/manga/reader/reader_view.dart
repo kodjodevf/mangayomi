@@ -163,7 +163,7 @@ class _MangaChapterPageGalleryState
         overlays: SystemUiOverlay.values,
       );
     }
-    discordRpc.showIdleText();
+    discordRpc?.showIdleText();
     super.dispose();
   }
 
@@ -222,7 +222,7 @@ class _MangaChapterPageGalleryState
     _animation.addListener(() => _photoViewController.scale = _animation.value);
     _itemPositionsListener.itemPositions.addListener(_readProgressListener);
     _initCurrentIndex();
-    discordRpc.showChapterDetails(ref, chapter);
+    discordRpc?.showChapterDetails(ref, chapter);
     WidgetsBinding.instance.addObserver(this);
   }
 

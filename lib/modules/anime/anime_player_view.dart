@@ -222,7 +222,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       .duration
       .listen((duration) {
         _currentTotalDuration.value = duration;
-        discordRpc.startChapterTimestamp(
+        discordRpc?.startChapterTimestamp(
           _currentPosition.value.inMilliseconds,
           duration.inMilliseconds,
         );
@@ -313,7 +313,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   void _updateRpcTimestamp() {
     final now = DateTime.now().millisecondsSinceEpoch;
     if (lastRpcTimestampUpdate + 10000 < now) {
-      discordRpc.updateChapterTimestamp(_currentPosition.value.inMilliseconds);
+      discordRpc?.updateChapterTimestamp(_currentPosition.value.inMilliseconds);
       lastRpcTimestampUpdate = now;
     }
   }
@@ -351,7 +351,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       _setPlaybackSpeed(ref.read(defaultPlayBackSpeedStateProvider));
       if (ref.read(enableAniSkipStateProvider)) _initAniSkip();
     });
-    discordRpc.showChapterDetails(ref, widget.episode);
+    discordRpc?.showChapterDetails(ref, widget.episode);
     _currentPosition.addListener(_updateRpcTimestamp);
     WidgetsBinding.instance.addObserver(this);
   }
@@ -438,8 +438,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       _setLandscapeMode(false);
     }
     _skipPhase.dispose();
-    discordRpc.showIdleText();
-    discordRpc.showOriginalTimestamp();
+    discordRpc?.showIdleText();
+    discordRpc?.showOriginalTimestamp();
     _currentPosition.dispose();
     super.dispose();
   }

@@ -30,9 +30,9 @@ class GeneralScreen extends ConsumerWidget {
               onChanged: (value) {
                 ref.read(enableDiscordRpcStateProvider.notifier).set(value);
                 if (value) {
-                  discordRpc.connect(ref);
+                  discordRpc?.connect(ref);
                 } else {
-                  discordRpc.disconnect();
+                  discordRpc?.disconnect();
                 }
               },
             ),
