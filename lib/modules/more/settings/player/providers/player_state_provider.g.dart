@@ -175,6 +175,22 @@ final useLibassStateProvider =
 );
 
 typedef _$UseLibassState = AutoDisposeNotifier<bool>;
+String _$useAnime4KStateHash() => r'3902552d399794bf7c78d5f18adcf59f267b3cf6';
+
+/// See also [UseAnime4KState].
+@ProviderFor(UseAnime4KState)
+final useAnime4KStateProvider =
+    AutoDisposeNotifierProvider<UseAnime4KState, bool>.internal(
+  UseAnime4KState.new,
+  name: r'useAnime4KStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$useAnime4KStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$UseAnime4KState = AutoDisposeNotifier<bool>;
 String _$hwdecModeStateHash() => r'8186e3c5f3db0e952f629d56b2e580e546aed65e';
 
 /// Copied from Dart SDK

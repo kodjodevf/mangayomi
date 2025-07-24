@@ -471,7 +471,7 @@
   "rpc_show_cover_image": "Show current cover image in Discord",
   "sync_enable_histories": "Sync history data",
   "sync_enable_updates": "Sync update data",
-  "sync_enable_settings": "Sync settings"
+  "sync_enable_settings": "Sync settings",
   "anime4K": "Enable Anime4K",
   "anime4K_info": "Supports .js scripts under /mpv/scripts/",
   "anime4K_download": "MPV config files are required!\nDownload now?"
