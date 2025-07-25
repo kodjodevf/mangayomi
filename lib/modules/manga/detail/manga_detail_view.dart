@@ -1855,6 +1855,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
       child: Row(
         children: [
           Expanded(child: widget.action!),
+          Expanded(child: _smartUpdateDays()),
           Expanded(
             child: widget.itemType == ItemType.novel
                 ? SizedBox.shrink()
@@ -1901,6 +1902,33 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _smartUpdateDays() {
+    return SizedBox(
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          elevation: 0,
+        ),
+        onPressed: () {},
+        child: Column(
+          children: [
+            Icon(
+              Icons.hourglass_empty,
+              size: 20,
+              color: context.secondaryColor,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              "${widget.manga?.smartUpdateDays ?? "N/A"}",
+              style: TextStyle(fontSize: 11, color: context.secondaryColor),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

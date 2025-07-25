@@ -49,6 +49,9 @@ class Manga {
 
   String? customCoverFromTracker;
 
+  /// only update X days after `lastUpdate`
+  int? smartUpdateDays;
+
   int? updatedAt;
 
   @Backlink(to: "manga")
@@ -76,6 +79,7 @@ class Manga {
     this.isLocalArchive = false,
     this.customCoverImage,
     this.customCoverFromTracker,
+    this.smartUpdateDays,
     this.updatedAt = 0,
   });
 
@@ -101,6 +105,7 @@ class Manga {
     source = json['source'];
     status = Status.values[json['status']];
     customCoverFromTracker = json['customCoverFromTracker'];
+    smartUpdateDays = json['smartUpdateDays'];
     updatedAt = json['updatedAt'];
   }
 
@@ -125,6 +130,7 @@ class Manga {
     'source': source,
     'status': status.index,
     'customCoverFromTracker': customCoverFromTracker,
+    'smartUpdateDays': smartUpdateDays,
     'updatedAt': updatedAt ?? 0,
   };
 }

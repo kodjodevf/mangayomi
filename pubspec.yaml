@@ -41,6 +41,10 @@ dependencies:
   flutter_web_auth_2: ^3.1.2
   numberpicker: ^2.1.2
   encrypt: ^5.0.3
+  media_kit:
+    git:
+      url: https://github.com/Schnitzel5/media-kit.git
+      path: media_kit
   media_kit_video:
     git:
       url: https://github.com/Schnitzel5/media-kit.git

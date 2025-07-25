@@ -20,6 +20,21 @@ extension LetExtension<T> on T {
   }
 }
 
+extension MedianExtension on List<int> {
+  int median() {
+    var middle = length ~/ 2;
+    if (length % 2 == 1) {
+      return this[middle];
+    } else {
+      return ((this[middle - 1] + this[middle]) / 2).round();
+    }
+  }
+
+  int arithmeticMean() {
+    return isNotEmpty ? (reduce((e1, e2) => e1 + e2) / length).round() : 0;
+  }
+}
+
 extension ImageProviderExtension on ImageProvider {
   Future<Uint8List?> getBytes(
     BuildContext context, {

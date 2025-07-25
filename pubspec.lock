@@ -1160,7 +1160,7 @@ packages:
     source: hosted
     version: "0.5.3"
   media_kit:
-    dependency: transitive
+    dependency: "direct main"
     description:
       path: media_kit
       ref: HEAD

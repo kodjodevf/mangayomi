@@ -26,9 +26,9 @@ class PlayerScreen extends ConsumerStatefulWidget {
 class _PlayerScreenState extends ConsumerState<PlayerScreen> {
   int _total = 0;
   int _received = 0;
-  late http.StreamedResponse _response;
+  http.StreamedResponse? _response;
   final List<int> _bytes = [];
-  late StreamSubscription<List<int>>? _subscription;
+  StreamSubscription<List<int>>? _subscription;
 
   @override
   void dispose() {
@@ -661,8 +661,8 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                 ),
                               ),
                             );
-                            _total = _response.contentLength ?? 0;
-                            _subscription = _response.stream.listen((value) {
+                            _total = _response?.contentLength ?? 0;
+                            _subscription = _response?.stream.listen((value) {
                               setState(() {
                                 _bytes.addAll(value);
                                 _received += value.length;
