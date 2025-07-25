@@ -46,7 +46,8 @@ class MyAnimeList extends _$MyAnimeList {
       final mALOAuth = OAuth.fromJson(oAuth as Map<String, dynamic>)
         ..expiresIn = DateTime.now()
             .add(Duration(seconds: oAuth['expires_in']))
-            .millisecondsSinceEpoch;
+            .millisecondsSinceEpoch
+        ..clientId = clientId;
       final username = await _getUserName(mALOAuth.accessToken!);
       ref
           .read(tracksProvider(syncId: syncId).notifier)
