@@ -1517,4 +1517,9 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get anime4K_download =>
       'MPV config files are required!\nDownload now?';
+
+  @override
+  String n_days(Object n) {
+    return '$n days';
+  }
 }

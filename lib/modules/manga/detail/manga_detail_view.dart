@@ -1923,7 +1923,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             ),
             const SizedBox(height: 4),
             Text(
-              "${widget.manga?.smartUpdateDays ?? "N/A"}",
+              widget.manga?.smartUpdateDays != null
+                  ? context.l10n.n_days(widget.manga!.smartUpdateDays!)
+                  : "N/A",
               style: TextStyle(fontSize: 11, color: context.secondaryColor),
               textAlign: TextAlign.center,
             ),

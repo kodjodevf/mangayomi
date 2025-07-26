@@ -216,25 +216,46 @@ class _DesktopControllerWidgetState
           await _changeFullScreen(ref, desktopFullScreenPlayer, value: false);
         },
         const SingleActivator(LogicalKeyboardKey.digit0, control: true): () {
-          (widget.videoController.player.platform as dynamic).command(["keydown", "CTRL+0"]);
+          (widget.videoController.player.platform as dynamic).command([
+            "script-message",
+            "clear_anime",
+          ]);
         },
         const SingleActivator(LogicalKeyboardKey.digit1, control: true): () {
-          (widget.videoController.player.platform as dynamic).command(["keydown", "CTRL+1"]);
+          (widget.videoController.player.platform as dynamic).command([
+            "script-message",
+            "set_anime_a",
+          ]);
         },
         const SingleActivator(LogicalKeyboardKey.digit2, control: true): () {
-          (widget.videoController.player.platform as dynamic).command(["keydown", "CTRL+2"]);
+          (widget.videoController.player.platform as dynamic).command([
+            "script-message",
+            "set_anime_b",
+          ]);
         },
         const SingleActivator(LogicalKeyboardKey.digit3, control: true): () {
-          (widget.videoController.player.platform as dynamic).command(["keydown", "CTRL+3"]);
+          (widget.videoController.player.platform as dynamic).command([
+            "script-message",
+            "set_anime_c",
+          ]);
         },
         const SingleActivator(LogicalKeyboardKey.digit4, control: true): () {
-          (widget.videoController.player.platform as dynamic).command(["keydown", "CTRL+4"]);
+          (widget.videoController.player.platform as dynamic).command([
+            "script-message",
+            "set_anime_aa",
+          ]);
         },
         const SingleActivator(LogicalKeyboardKey.digit5, control: true): () {
-          (widget.videoController.player.platform as dynamic).command(["keydown", "CTRL+5"]);
+          (widget.videoController.player.platform as dynamic).command([
+            "script-message",
+            "set_anime_bb",
+          ]);
         },
         const SingleActivator(LogicalKeyboardKey.digit6, control: true): () {
-          (widget.videoController.player.platform as dynamic).command(["keydown", "CTRL+6"]);
+          (widget.videoController.player.platform as dynamic).command([
+            "script-message",
+            "set_anime_ca",
+          ]);
         },
       },
       child: Stack(

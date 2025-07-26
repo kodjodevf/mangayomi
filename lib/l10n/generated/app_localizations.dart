@@ -2920,6 +2920,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'MPV config files are required!\nDownload now?'**
   String get anime4K_download;
+
+  /// No description provided for @n_days.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} days'**
+  String n_days(Object n);
 }
 
 class _AppLocalizationsDelegate

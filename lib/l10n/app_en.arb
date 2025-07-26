@@ -474,5 +474,6 @@
   "sync_enable_settings": "Sync settings",
   "anime4K": "Enable Anime4K",
   "anime4K_info": "Supports .js scripts under /mpv/scripts/",
-  "anime4K_download": "MPV config files are required!\nDownload now?"
+  "anime4K_download": "MPV config files are required!\nDownload now?",
+  "n_days": "{n} days"
 }

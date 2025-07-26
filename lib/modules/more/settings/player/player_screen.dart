@@ -657,7 +657,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                               http.Request(
                                 'GET',
                                 Uri.parse(
-                                  "https://github.com/Tama47/Anime4K/releases/download/v4.0.1/GLSL_Windows_Low-end.zip",
+                                  "https://github.com/Schnitzel5/mangayomi/releases/download/v0.6.3-anime4k/mangayomi_mpv.zip",
                                 ),
                               ),
                             );
@@ -689,11 +689,18 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                   await mpvFile.writeAsBytes(file.content);
                                 } else if (file.name == "input.conf") {
                                   await inputFile.writeAsBytes(file.content);
-                                } else if (file.name.endsWith(".glsl")) {
+                                } else if (file.name.startsWith("shaders/") &&
+                                    file.name.endsWith(".glsl")) {
                                   final shaderFile = File(
                                     '$shadersDir/${file.name.split("/").last}',
                                   );
                                   await shaderFile.writeAsBytes(file.content);
+                                } else if (file.name.startsWith("scripts/") &&
+                                    file.name.endsWith(".js")) {
+                                  final scriptFile = File(
+                                    '$scriptsDir/${file.name.split("/").last}',
+                                  );
+                                  await scriptFile.writeAsBytes(file.content);
                                 }
                               }
                               _total = 0;

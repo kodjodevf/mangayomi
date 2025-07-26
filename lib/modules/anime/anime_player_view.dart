@@ -1072,13 +1072,23 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
             icon: const Icon(Icons.high_quality, color: Colors.white),
             itemBuilder: (context) =>
                 [
-                      ("Anime4K: Mode A (Fast)", "CTRL+1"),
-                      ("Anime4K: Mode B (Fast)", "CTRL+2"),
-                      ("Anime4K: Mode C (Fast)", "CTRL+3"),
-                      ("Anime4K: Mode A+A (Fast)", "CTRL+4"),
-                      ("Anime4K: Mode B+B (Fast)", "CTRL+5"),
-                      ("Anime4K: Mode C+A (Fast)", "CTRL+6"),
-                      ("Clear GLSL shaders", "CTRL+0"),
+                      ("Anime4K: Mode A (Fast)", "set_anime_a"),
+                      ("Anime4K: Mode B (Fast)", "set_anime_b"),
+                      ("Anime4K: Mode C (Fast)", "set_anime_c"),
+                      ("Anime4K: Mode A+A (Fast)", "set_anime_aa"),
+                      ("Anime4K: Mode B+B (Fast)", "set_anime_bb"),
+                      ("Anime4K: Mode C+A (Fast)", "set_anime_ca"),
+                      ("Anime4K: Mode A (HQ)", "set_anime_hq_a"),
+                      ("Anime4K: Mode B (HQ)", "set_anime_hq_b"),
+                      ("Anime4K: Mode C (HQ)", "set_anime_hq_c"),
+                      ("Anime4K: Mode A+A (HQ)", "set_anime_hq_aa"),
+                      ("Anime4K: Mode B+B (HQ)", "set_anime_hq_bb"),
+                      ("Anime4K: Mode C+A (HQ)", "set_anime_hq_ca"),
+                      ("AMD FSR", "set_fsr"),
+                      ("Luma Upscaling", "set_luma"),
+                      ("Qualcomm Snapdragon GSR", "set_snapdragon"),
+                      ("NVIDIA Image Scaling", "set_nvidia"),
+                      ("Clear GLSL shaders", "clear_anime"),
                     ]
                     .map(
                       (mode) => PopupMenuItem<String>(
@@ -1086,7 +1096,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                         child: Text(mode.$1),
                         onTap: () {
                           (_player.platform as dynamic).command([
-                            "keydown",
+                            "script-message",
                             mode.$2,
                           ]);
                         },
