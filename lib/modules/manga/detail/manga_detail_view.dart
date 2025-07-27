@@ -914,6 +914,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   chapter.updateTrackChapterRead(ref);
                                 }
                               }
+                              isar.mangas.putSync(widget.manga!);
                             });
                             ref
                                 .read(isLongPressedStateProvider.notifier)
@@ -963,6 +964,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     chapters[i].manga.saveSync();
                                   }
                                 }
+                                isar.mangas.putSync(widget.manga!);
                                 ref
                                     .read(isLongPressedStateProvider.notifier)
                                     .update(false);
