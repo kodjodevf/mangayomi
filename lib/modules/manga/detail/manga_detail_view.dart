@@ -858,16 +858,16 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             final chapters = ref.watch(
                               chaptersListStateProvider,
                             );
+                            final List<Chapter> updatedChapters = [];
+                            final now = DateTime.now().millisecondsSinceEpoch;
+                            for (var chapter in chapters) {
+                              chapter.isBookmarked = !chapter.isBookmarked!;
+                              chapter.updatedAt = now;
+                              chapter.manga.value = widget.manga;
+                              updatedChapters.add(chapter);
+                            }
                             isar.writeTxnSync(() {
-                              for (var chapter in chapters) {
-                                chapter.isBookmarked = !chapter.isBookmarked!;
-                                chapter.updatedAt =
-                                    DateTime.now().millisecondsSinceEpoch;
-                                isar.chapters.putSync(
-                                  chapter..manga.value = widget.manga,
-                                );
-                                chapter.manga.saveSync();
-                              }
+                              isar.chapters.putAllSync(updatedChapters);
                             });
                             ref
                                 .read(isLongPressedStateProvider.notifier)
