@@ -898,22 +898,22 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             final chapters = ref.watch(
                               chaptersListStateProvider,
                             );
-                            isar.writeTxnSync(() {
-                              for (var chapter in chapters) {
-                                chapter.isRead = !chapter.isRead!;
-                                if (!chapter.isRead!) {
-                                  chapter.lastPageRead = "1";
-                                }
-                                chapter.updatedAt =
-                                    DateTime.now().millisecondsSinceEpoch;
-                                isar.chapters.putSync(
-                                  chapter..manga.value = widget.manga,
-                                );
-                                chapter.manga.saveSync();
-                                if (chapter.isRead!) {
-                                  chapter.updateTrackChapterRead(ref);
-                                }
+                            final List<Chapter> updatedChapters = [];
+                            final now = DateTime.now().millisecondsSinceEpoch;
+                            for (var chapter in chapters) {
+                              chapter.isRead = !chapter.isRead!;
+                              if (!chapter.isRead!) {
+                                chapter.lastPageRead = "1";
                               }
+                              chapter.updatedAt = now;
+                              chapter.manga.value = widget.manga;
+                              updatedChapters.add(chapter);
+                              if (chapter.isRead!) {
+                                chapter.updateTrackChapterRead(ref);
+                              }
+                            }
+                            isar.writeTxnSync(() {
+                              isar.chapters.putAllSync(updatedChapters);
                               isar.mangas.putSync(widget.manga!);
                             });
                             ref
@@ -946,32 +946,33 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             ),
                             onPressed: () {
                               int index = chapters.indexOf(chap.first);
+                              final List<Chapter> updatedChapters = [];
+                              final now = DateTime.now().millisecondsSinceEpoch;
                               chapters[index + 1].updateTrackChapterRead(ref);
-                              isar.writeTxnSync(() {
-                                for (
-                                  var i = index + 1;
-                                  i < chapters.length;
-                                  i++
-                                ) {
-                                  if (!chapters[i].isRead!) {
-                                    chapters[i].isRead = true;
-                                    chapters[i].lastPageRead = "1";
-                                    chapters[i].updatedAt =
-                                        DateTime.now().millisecondsSinceEpoch;
-                                    isar.chapters.putSync(
-                                      chapters[i]..manga.value = widget.manga,
-                                    );
-                                    chapters[i].manga.saveSync();
-                                  }
+                              for (
+                                var i = index + 1;
+                                i < chapters.length;
+                                i++
+                              ) {
+                                final chapter = chapters[i];
+                                if (!chapter.isRead!) {
+                                  chapter.isRead = true;
+                                  chapter.lastPageRead = "1";
+                                  chapter.updatedAt = now;
+                                  chapter.manga.value = widget.manga;
+                                  updatedChapters.add(chapter);
                                 }
+                              }
+                              isar.writeTxnSync(() {
+                                isar.chapters.putAllSync(updatedChapters);
                                 isar.mangas.putSync(widget.manga!);
-                                ref
-                                    .read(isLongPressedStateProvider.notifier)
-                                    .update(false);
-                                ref
-                                    .read(chaptersListStateProvider.notifier)
-                                    .clear();
                               });
+                              ref
+                                  .read(isLongPressedStateProvider.notifier)
+                                  .update(false);
+                              ref
+                                  .read(chaptersListStateProvider.notifier)
+                                  .clear();
                             },
                             child: Stack(
                               children: [
