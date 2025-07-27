@@ -101,8 +101,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   late final isLocalArchive = widget.manga!.isLocalArchive ?? false;
   @override
   Widget build(BuildContext context) {
-    final isLongPressed = ref.watch(isLongPressedStateProvider);
-    final chapterNameList = ref.watch(chaptersListStateProvider);
     final scanlators = ref.watch(scanlatorsFilterStateProvider(widget.manga!));
     final reverse = ref
         .watch(sortChapterStateProvider(mangaId: widget.manga!.id!))
@@ -143,12 +141,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             filterScanlator: scanlators.$2,
           );
           ref.read(chaptersListttStateProvider.notifier).set(chapters);
-          return _buildWidget(
-            chapters: chapters,
-            reverse: reverse,
-            chapterList: chapterNameList,
-            isLongPressed: isLongPressed,
-          );
+          return _buildWidget(chapters: chapters, reverse: reverse);
         },
         error: (Object error, StackTrace stackTrace) {
           return ErrorText(error);
@@ -157,8 +150,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
           return _buildWidget(
             chapters: widget.manga!.chapters.toList().reversed.toList(),
             reverse: reverse,
-            chapterList: chapterNameList,
-            isLongPressed: isLongPressed,
           );
         },
       ),
@@ -267,9 +258,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   Widget _buildWidget({
     required List<Chapter> chapters,
     required bool reverse,
-    required List<Chapter> chapterList,
-    required bool isLongPressed,
   }) {
+    final chapterList = ref.watch(chaptersListStateProvider);
+    final isLongPressed = ref.watch(isLongPressedStateProvider);
     final checkCategoryList = isar.categorys
         .filter()
         .idIsNotNull()
@@ -367,7 +358,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                 final isNotFiltering = ref.watch(
                   chapterFilterResultStateProvider(manga: widget.manga!),
                 );
-                final isLongPressed = ref.watch(isLongPressedStateProvider);
                 return isLongPressed
                     ? Container(
                         color: Theme.of(context).scaffoldBackgroundColor,
@@ -830,6 +820,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
               bool checkReadBookmarked =
                   chap.isNotEmpty && chap.first.isRead! && getLength1;
               final l10n = l10nLocalizations(context)!;
+              final color = Theme.of(context).textTheme.bodyLarge!.color!;
               return AnimatedContainer(
                 curve: Curves.easeIn,
                 decoration: BoxDecoration(
@@ -880,7 +871,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             checkFirstBookmarked
                                 ? Icons.bookmark_remove_outlined
                                 : Icons.bookmark_add_outlined,
-                            color: Theme.of(context).textTheme.bodyLarge!.color,
+                            color: color,
                           ),
                         ),
                       ),
@@ -927,9 +918,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             checkReadBookmarked
                                 ? Icons.remove_done_sharp
                                 : Icons.done_all_sharp,
-                            color: Theme.of(
-                              context,
-                            ).textTheme.bodyLarge!.color!,
+                            color: color,
                           ),
                         ),
                       ),
@@ -976,21 +965,14 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             },
                             child: Stack(
                               children: [
-                                Icon(
-                                  Icons.done_outlined,
-                                  color: Theme.of(
-                                    context,
-                                  ).textTheme.bodyLarge!.color!,
-                                ),
+                                Icon(Icons.done_outlined, color: color),
                                 Positioned(
                                   bottom: 0,
                                   right: 0,
                                   child: Icon(
                                     Icons.arrow_downward_outlined,
                                     size: 11,
-                                    color: Theme.of(
-                                      context,
-                                    ).textTheme.bodyLarge!.color!,
+                                    color: color,
                                   ),
                                 ),
                               ],
@@ -1034,12 +1016,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   .read(chaptersListStateProvider.notifier)
                                   .clear();
                             },
-                            child: Icon(
-                              Icons.download_outlined,
-                              color: Theme.of(
-                                context,
-                              ).textTheme.bodyLarge!.color!,
-                            ),
+                            child: Icon(Icons.download_outlined, color: color),
                           ),
                         ),
                       ),
@@ -1171,9 +1148,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             },
                             child: Icon(
                               Icons.delete_outline_outlined,
-                              color: Theme.of(
-                                context,
-                              ).textTheme.bodyLarge!.color!,
+                              color: color,
                             ),
                           ),
                         ),
