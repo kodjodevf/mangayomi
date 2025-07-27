@@ -485,17 +485,27 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
             ),
             SwitchListTile(
               value: useAnime4K,
-              title: Text(context.l10n.anime4K),
+              title: Text(context.l10n.enable_mpv),
               subtitle: Text(
-                context.l10n.anime4K_info,
+                context.l10n.mpv_info,
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
               onChanged: (value) async {
-                if (value && !(await _checkAnime4K(context))) {
+                if (value && !(await _checkMpvConfig(context))) {
                   return;
                 }
                 ref.read(useAnime4KStateProvider.notifier).set(value);
               },
+            ),
+            ListTile(
+              onTap: () {
+                _checkMpvConfig(context, redownload: true);
+              },
+              title: Text(context.l10n.mpv_redownload),
+              subtitle: Text(
+                context.l10n.mpv_redownload_info,
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
+              ),
             ),
             SwitchListTile(
               value: fullScreenPlayer,
@@ -592,7 +602,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     );
   }
 
-  Future<bool> _checkAnime4K(BuildContext context) async {
+  Future<bool> _checkMpvConfig(
+    BuildContext context, {
+    bool redownload = false,
+  }) async {
     var status = await Permission.storage.status;
     if (!status.isGranted) {
       await Permission.storage.request();
@@ -601,9 +614,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     final dir = await provider.getMpvDirectory();
     final mpvFile = File('${dir!.path}/mpv.conf');
     final inputFile = File('${dir.path}/input.conf');
-    if (!(await mpvFile.exists()) &&
-        !(await inputFile.exists()) &&
-        context.mounted) {
+    final filesMissing =
+        !(await mpvFile.exists()) && !(await inputFile.exists());
+    if ((redownload || filesMissing) && context.mounted) {
       final res = await showDialog(
         context: context,
         builder: (context) {
@@ -611,7 +624,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
             content: SingleChildScrollView(
               child: Column(
                 children: [
-                  Text(context.l10n.anime4K_download),
+                  Text(context.l10n.mpv_download),
                   _total > 0
                       ? Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

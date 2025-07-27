@@ -472,8 +472,10 @@
   "sync_enable_histories": "Sync history data",
   "sync_enable_updates": "Sync update data",
   "sync_enable_settings": "Sync settings",
-  "anime4K": "Enable Anime4K",
-  "anime4K_info": "Supports .js scripts under /mpv/scripts/",
-  "anime4K_download": "MPV config files are required!\nDownload now?",
+  "enable_mpv": "Enable mpv shaders / scripts",
+  "mpv_info": "Supports .js scripts under mpv/scripts/",
+  "mpv_redownload": "Redownload mpv config files",
+  "mpv_redownload_info": "Replaces old config files with new one!",
+  "mpv_download": "MPV config files are required!\nDownload now?",
   "n_days": "{n} days"
 }

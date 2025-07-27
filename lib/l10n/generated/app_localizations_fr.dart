@@ -1515,14 +1515,19 @@ class AppLocalizationsFr extends AppLocalizations {
   String get sync_enable_settings => 'Sync settings';
 
   @override
-  String get anime4K => 'Enable Anime4K';
+  String get enable_mpv => 'Enable mpv shaders / scripts';
 
   @override
-  String get anime4K_info => 'Supports .js scripts under /mpv/scripts/';
+  String get mpv_info => 'Supports .js scripts under mpv/scripts/';
 
   @override
-  String get anime4K_download =>
-      'MPV config files are required!\nDownload now?';
+  String get mpv_redownload => 'Redownload mpv config files';
+
+  @override
+  String get mpv_redownload_info => 'Replaces old config files with new one!';
+
+  @override
+  String get mpv_download => 'MPV config files are required!\nDownload now?';
 
   @override
   String n_days(Object n) {

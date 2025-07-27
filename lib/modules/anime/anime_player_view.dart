@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
+import 'dart:math';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:ffi/ffi.dart';
 import 'package:file_picker/file_picker.dart';
@@ -188,7 +190,35 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       libass: useLibass,
       config: true,
       configDir: useAnime4K ? widget.mpvDirectory?.path ?? "" : "",
-      observeProperties: {},
+      observeProperties: {
+        "user-data/aniyomi/show_text": generated.mpv_format.MPV_FORMAT_NODE,
+        "user-data/aniyomi/toggle_ui": generated.mpv_format.MPV_FORMAT_NODE,
+        "user-data/aniyomi/show_panel": generated.mpv_format.MPV_FORMAT_NODE,
+        "user-data/aniyomi/software_keyboard":
+            generated.mpv_format.MPV_FORMAT_NODE,
+        "user-data/aniyomi/set_button_title":
+            generated.mpv_format.MPV_FORMAT_NODE,
+        "user-data/aniyomi/reset_button_title":
+            generated.mpv_format.MPV_FORMAT_NODE,
+        "user-data/aniyomi/toggle_button": generated.mpv_format.MPV_FORMAT_NODE,
+        "user-data/aniyomi/switch_episode":
+            generated.mpv_format.MPV_FORMAT_NODE,
+        "user-data/aniyomi/pause": generated.mpv_format.MPV_FORMAT_NODE,
+        "user-data/aniyomi/seek_by": generated.mpv_format.MPV_FORMAT_NODE,
+        "user-data/aniyomi/seek_to": generated.mpv_format.MPV_FORMAT_NODE,
+        "user-data/aniyomi/seek_by_with_text":
+            generated.mpv_format.MPV_FORMAT_NODE,
+        "user-data/aniyomi/seek_to_with_text":
+            generated.mpv_format.MPV_FORMAT_NODE,
+        "user-data/aniyomi/launch_int_picker":
+            generated.mpv_format.MPV_FORMAT_NODE,
+        "user-data/current-anime/intro-length":
+            generated.mpv_format.MPV_FORMAT_INT64,
+        "user-data/mangayomi/chapter_titles":
+            generated.mpv_format.MPV_FORMAT_NODE,
+        "user-data/mangayomi/current_chapter":
+            generated.mpv_format.MPV_FORMAT_INT64,
+      },
       eventHandler: _handleMpvEvents,
     ),
   );
@@ -221,6 +251,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   final ValueNotifier<bool> _isCompleted = ValueNotifier(false);
   final ValueNotifier<Duration?> _tempPosition = ValueNotifier(null);
   final ValueNotifier<BoxFit> _fit = ValueNotifier(BoxFit.contain);
+  final ValueNotifier<List<(String, int)>> _chapterMarks = ValueNotifier([]);
+  final ValueNotifier<int?> _currentChapterMark = ValueNotifier(null);
   late final ValueNotifier<_AniSkipPhase> _skipPhase = ValueNotifier(
     _AniSkipPhase.none,
   );
@@ -268,17 +300,52 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       if (event.ref.event_id ==
           generated.mpv_event_id.MPV_EVENT_PROPERTY_CHANGE) {
         final prop = event.ref.data.cast<generated.mpv_event_property>();
-        if (prop.ref.name.cast<Utf8>().toDartString() ==
-                "user-data/aniyomi/dummy_number" &&
+        final propName = prop.ref.name.cast<Utf8>().toDartString();
+        if (propName.startsWith("user-data/") &&
+            prop.ref.format == generated.mpv_format.MPV_FORMAT_NODE) {
+          final value = prop.ref.data.cast<generated.mpv_node>();
+          _handleMpvNodeEvents(propName, value);
+        } else if (propName.startsWith("user-data/") &&
             prop.ref.format == generated.mpv_format.MPV_FORMAT_INT64) {
-          final number = prop.ref.data.cast<Int64>().value;
-          botToast("Dummy number: $number");
+          final value = prop.ref.data.cast<Int64>().value;
+          _handleMpvNumberEvents(propName, value);
         }
       }
     } catch (e) {
       if (kDebugMode) {
         debugPrint(e.toString());
       }
+    }
+  }
+
+  Future<void> _handleMpvNodeEvents(
+    String propName,
+    Pointer<generated.mpv_node> value,
+  ) async {
+    switch (propName.substring(10)) {
+      case "aniyomi/show_text":
+        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
+          final text = value.ref.u.string.cast<Utf8>().toDartString();
+          botToast(text);
+        }
+        break;
+      case "mangayomi/chapter_titles":
+        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
+          final text = value.ref.u.string.cast<Utf8>().toDartString();
+          final data = jsonDecode(text) as List<dynamic>;
+          _chapterMarks.value = data
+              .map((e) => (e["title"] as String, (e["time"] as int) * 1000))
+              .toList();
+        }
+        break;
+    }
+  }
+
+  Future<void> _handleMpvNumberEvents(String propName, int value) async {
+    switch (propName.substring(10)) {
+      case "mangayomi/current_chapter":
+        _currentChapterMark.value = max(value, 0);
+        break;
     }
   }
 
@@ -893,6 +960,45 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     );
   }
 
+  Widget _chapterMarkWidget() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+      child: SizedBox(
+        height: 35,
+        child: ValueListenableBuilder(
+          valueListenable: _currentChapterMark,
+          builder: (context, value, child) => value != null
+              ? PopupMenuButton<int>(
+                  tooltip: '',
+                  itemBuilder: (context) => _chapterMarks.value
+                      .map(
+                        (mark) => PopupMenuItem<int>(
+                          value: mark.$2,
+                          child: Text(
+                            "${mark.$1} - ${Duration(milliseconds: mark.$2).label()}",
+                          ),
+                          onTap: () =>
+                              _player.seek(Duration(milliseconds: mark.$2)),
+                        ),
+                      )
+                      .toList(),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "${_chapterMarks.value[value].$1} - ${Duration(milliseconds: _chapterMarks.value[value].$2).label()}",
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                )
+              : Container(),
+        ),
+      ),
+    );
+  }
+
   Widget _mobileBottomButtonBar(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 30),
@@ -903,7 +1009,11 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [_seekToWidget(), _buildSettingsButtons(context)],
+              children: [
+                _seekToWidget(),
+                _chapterMarkWidget(),
+                _buildSettingsButtons(context),
+              ],
             ),
           ),
         ],
@@ -1047,6 +1157,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                         controller: _controller,
                       ),
                 ),
+                _chapterMarkWidget(),
               ],
             ),
             _buildSettingsButtons(context),
@@ -1330,6 +1441,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   },
                   defaultSkipIntroLength: skipIntroLength,
                   desktopFullScreenPlayer: widget.desktopFullScreenPlayer,
+                  chapterMarks: _chapterMarks,
                 )
               : MobileControllerWidget(
                   videoController: _controller,
@@ -1340,6 +1452,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
                   doubleSpeed: (value) {
                     _isDoubleSpeed.value = value ?? false;
                   },
+                  chapterMarks: _chapterMarks,
                 ),
           controller: _controller,
           width: context.width(1),

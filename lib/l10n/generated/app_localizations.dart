@@ -2903,23 +2903,35 @@ abstract class AppLocalizations {
   /// **'Sync settings'**
   String get sync_enable_settings;
 
-  /// No description provided for @anime4K.
+  /// No description provided for @enable_mpv.
   ///
   /// In en, this message translates to:
-  /// **'Enable Anime4K'**
-  String get anime4K;
+  /// **'Enable mpv shaders / scripts'**
+  String get enable_mpv;
 
-  /// No description provided for @anime4K_info.
+  /// No description provided for @mpv_info.
   ///
   /// In en, this message translates to:
-  /// **'Supports .js scripts under /mpv/scripts/'**
-  String get anime4K_info;
+  /// **'Supports .js scripts under mpv/scripts/'**
+  String get mpv_info;
 
-  /// No description provided for @anime4K_download.
+  /// No description provided for @mpv_redownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Redownload mpv config files'**
+  String get mpv_redownload;
+
+  /// No description provided for @mpv_redownload_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Replaces old config files with new one!'**
+  String get mpv_redownload_info;
+
+  /// No description provided for @mpv_download.
   ///
   /// In en, this message translates to:
   /// **'MPV config files are required!\nDownload now?'**
-  String get anime4K_download;
+  String get mpv_download;
 
   /// No description provided for @n_days.
   ///

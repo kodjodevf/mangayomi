@@ -24,6 +24,7 @@ class DesktopControllerWidget extends ConsumerStatefulWidget {
   final Widget seekToWidget;
   final int defaultSkipIntroLength;
   final void Function(bool) desktopFullScreenPlayer;
+  final ValueNotifier<List<(String, int)>> chapterMarks;
   const DesktopControllerWidget({
     super.key,
     required this.videoController,
@@ -36,6 +37,7 @@ class DesktopControllerWidget extends ConsumerStatefulWidget {
     required this.doubleSpeed,
     required this.defaultSkipIntroLength,
     required this.desktopFullScreenPlayer,
+    required this.chapterMarks,
   });
 
   @override
@@ -481,6 +483,7 @@ class _DesktopControllerWidgetState
                                             widget.tempDuration(null);
                                           },
                                           player: widget.videoController.player,
+                                          chapterMarks: widget.chapterMarks,
                                         ),
                                       ),
                                     ),
