@@ -258,7 +258,7 @@ class Settings {
 
   bool? rpcShowCoverImage;
 
-  bool? useAnime4K;
+  bool? useMpvConfig;
 
   Settings({
     this.id = 227,
@@ -375,7 +375,7 @@ class Settings {
     this.rpcShowReadingWatchingProgress = true,
     this.rpcShowTitle = true,
     this.rpcShowCoverImage = true,
-    this.useAnime4K = false,
+    this.useMpvConfig = false,
   });
 
   Settings.fromJson(Map<String, dynamic> json) {
@@ -597,7 +597,7 @@ class Settings {
     rpcShowReadingWatchingProgress = json['rpcShowReadingWatchingProgress'];
     rpcShowTitle = json['rpcShowTitle'];
     rpcShowCoverImage = json['rpcShowCoverImage'];
-    useAnime4K = json['useAnime4K'];
+    useMpvConfig = json['useMpvConfig'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -736,7 +736,7 @@ class Settings {
     'rpcShowReadingWatchingProgress': rpcShowReadingWatchingProgress,
     'rpcShowTitle': rpcShowTitle,
     'rpcShowCoverImage': rpcShowCoverImage,
-    'useAnime4K': useAnime4K,
+    'useMpvConfig': useMpvConfig,
   };
 }
 

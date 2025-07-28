@@ -16,6 +16,7 @@ import 'package:mangayomi/modules/more/data_and_storage/create_backup.dart';
 import 'package:mangayomi/modules/more/data_and_storage/data_and_storage.dart';
 import 'package:mangayomi/modules/more/settings/appearance/custom_navigation_settings.dart';
 import 'package:mangayomi/modules/more/settings/browse/source_repositories.dart';
+import 'package:mangayomi/modules/more/settings/player/custom_button_screen.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/more/statistics/statistics_screen.dart';
 import 'package:mangayomi/modules/novel/novel_reader_view.dart';
@@ -213,6 +214,10 @@ class RouterNotifier extends ChangeNotifier {
     _genericRoute(
       name: "customNavigationSettings",
       child: const CustomNavigationSettings(),
+    ),
+    _genericRoute(
+      name: "customButtonScreen",
+      child: const CustomButtonScreen(),
     ),
     _genericRoute<Manga>(
       name: "migrate",

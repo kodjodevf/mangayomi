@@ -6,6 +6,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/custom_button.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/history.dart';
@@ -176,6 +177,7 @@ class StorageProvider {
         ChangedPartSchema,
         ChapterSchema,
         CategorySchema,
+        CustomButtonSchema,
         UpdateSchema,
         HistorySchema,
         DownloadSchema,
@@ -196,6 +198,29 @@ class StorageProvider {
     if (settings == null) {
       await isar.writeTxn(() async {
         isar.settings.put(Settings());
+      });
+    }
+
+    final customButton = await isar.customButtons
+        .filter()
+        .idEqualTo(1)
+        .findFirst();
+    if (customButton == null) {
+      await isar.writeTxn(() async {
+        isar.customButtons.put(
+          CustomButton(
+            title: "+85 s",
+            codePress:
+                "var intro_length = mp.get_property_number(\"user-data/current-anime/intro-length\")\naniyomi.right_seek_by(intro_length)",
+            codeLongPress:
+                "aniyomi.int_picker(\"Change intro length\", \"%ds\", 0, 255, 1, \"user-data/current-anime/intro-length\")",
+            codeStartup:
+                "function update_button(_, length) {\n	if (!length || length == 0) {\n		aniyomi.hide_button()\n	} else {\n		aniyomi.show_button()\n	}\n	aniyomi.set_button_title(\"+\" + length + \" s\")",
+            isFavourite: true,
+            pos: 0,
+            updatedAt: DateTime.now().millisecondsSinceEpoch,
+          ),
+        );
       });
     }
 

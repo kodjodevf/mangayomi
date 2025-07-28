@@ -184,12 +184,12 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     with TickerProviderStateMixin, WidgetsBindingObserver {
   late final GlobalKey<VideoState> _key = GlobalKey<VideoState>();
   late final useLibass = ref.read(useLibassStateProvider);
-  late final useAnime4K = ref.read(useAnime4KStateProvider);
+  late final useMpvConfig = ref.read(useMpvConfigStateProvider);
   late final Player _player = Player(
     configuration: PlayerConfiguration(
       libass: useLibass,
       config: true,
-      configDir: useAnime4K ? widget.mpvDirectory?.path ?? "" : "",
+      configDir: useMpvConfig ? widget.mpvDirectory?.path ?? "" : "",
       observeProperties: {
         "user-data/aniyomi/show_text": generated.mpv_format.MPV_FORMAT_NODE,
         "user-data/aniyomi/toggle_ui": generated.mpv_format.MPV_FORMAT_NODE,
@@ -329,12 +329,84 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
           botToast(text);
         }
         break;
+      case "user-data/aniyomi/toggle_ui":
+        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
+          final text = value.ref.u.string.cast<Utf8>().toDartString();
+        }
+        break;
+      case "user-data/aniyomi/show_panel":
+        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
+          final text = value.ref.u.string.cast<Utf8>().toDartString();
+        }
+        break;
+      case "user-data/aniyomi/software_keyboard":
+        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
+          final text = value.ref.u.string.cast<Utf8>().toDartString();
+        }
+        break;
+      case "user-data/aniyomi/set_button_title":
+        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
+          final text = value.ref.u.string.cast<Utf8>().toDartString();
+        }
+        break;
+      case "user-data/aniyomi/reset_button_title":
+        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
+          final text = value.ref.u.string.cast<Utf8>().toDartString();
+        }
+        break;
+      case "user-data/aniyomi/toggle_button":
+        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
+          final text = value.ref.u.string.cast<Utf8>().toDartString();
+        }
+        break;
+      case "user-data/aniyomi/switch_episode":
+        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
+          final text = value.ref.u.string.cast<Utf8>().toDartString();
+        }
+        break;
+      case "user-data/aniyomi/pause":
+        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
+          final text = value.ref.u.string.cast<Utf8>().toDartString();
+        }
+        break;
+      case "user-data/aniyomi/seek_by":
+        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
+          final text = value.ref.u.string.cast<Utf8>().toDartString();
+        }
+        break;
+      case "user-data/aniyomi/seek_to":
+        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
+          final text = value.ref.u.string.cast<Utf8>().toDartString();
+        }
+        break;
+      case "user-data/aniyomi/seek_by_with_text":
+        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
+          final text = value.ref.u.string.cast<Utf8>().toDartString();
+        }
+        break;
+      case "user-data/aniyomi/seek_to_with_text":
+        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
+          final text = value.ref.u.string.cast<Utf8>().toDartString();
+        }
+        break;
+      case "user-data/aniyomi/launch_int_picker":
+        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
+          final text = value.ref.u.string.cast<Utf8>().toDartString();
+        }
+        break;
       case "mangayomi/chapter_titles":
         if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
           final text = value.ref.u.string.cast<Utf8>().toDartString();
           final data = jsonDecode(text) as List<dynamic>;
           _chapterMarks.value = data
-              .map((e) => (e["title"] as String, (e["time"] as int) * 1000))
+              .map(
+                (e) => (
+                  e["title"] as String,
+                  e["time"] is double
+                      ? (e["time"] as double).toInt() * 1000
+                      : (e["time"] as int) * 1000,
+                ),
+              )
               .toList();
         }
         break;
@@ -1177,7 +1249,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
           onPressed: () => _videoSettingDraggableMenu(context),
           icon: const Icon(Icons.video_settings, color: Colors.white),
         ),
-        if (useAnime4K)
+        if (useMpvConfig)
           PopupMenuButton<String>(
             tooltip: '', // Remove default tooltip "Show menu" for consistency
             icon: const Icon(Icons.high_quality, color: Colors.white),

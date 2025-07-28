@@ -219,17 +219,17 @@ class UseLibassState extends _$UseLibassState {
 }
 
 @riverpod
-class UseAnime4KState extends _$UseAnime4KState {
+class UseMpvConfigState extends _$UseMpvConfigState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.useAnime4K ?? false;
+    return isar.settings.getSync(227)!.useMpvConfig ?? false;
   }
 
   void set(bool value) {
     final settings = isar.settings.getSync(227);
     state = value;
     isar.writeTxnSync(
-      () => isar.settings.putSync(settings!..useAnime4K = value),
+      () => isar.settings.putSync(settings!..useMpvConfig = value),
     );
   }
 }

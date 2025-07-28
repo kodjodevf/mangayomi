@@ -2933,6 +2933,54 @@ abstract class AppLocalizations {
   /// **'MPV config files are required!\nDownload now?'**
   String get mpv_download;
 
+  /// No description provided for @custom_buttons.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom buttons'**
+  String get custom_buttons;
+
+  /// No description provided for @custom_buttons_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Execute Javascript code with custom buttons'**
+  String get custom_buttons_info;
+
+  /// No description provided for @custom_buttons_edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Add custom button'**
+  String get custom_buttons_edit;
+
+  /// No description provided for @custom_buttons_add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add custom button'**
+  String get custom_buttons_add;
+
+  /// No description provided for @custom_buttons_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Button text'**
+  String get custom_buttons_text;
+
+  /// No description provided for @custom_buttons_js_code.
+  ///
+  /// In en, this message translates to:
+  /// **'Javascript code'**
+  String get custom_buttons_js_code;
+
+  /// No description provided for @custom_buttons_js_code_long.
+  ///
+  /// In en, this message translates to:
+  /// **'Javascript code (on long press)'**
+  String get custom_buttons_js_code_long;
+
+  /// No description provided for @custom_buttons_startup.
+  ///
+  /// In en, this message translates to:
+  /// **'On startup'**
+  String get custom_buttons_startup;
+
   /// No description provided for @n_days.
   ///
   /// In en, this message translates to:

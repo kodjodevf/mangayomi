@@ -477,5 +477,14 @@
   "mpv_redownload": "Redownload mpv config files",
   "mpv_redownload_info": "Replaces old config files with new one!",
   "mpv_download": "MPV config files are required!\nDownload now?",
+  "custom_buttons": "Custom buttons",
+  "custom_buttons_info": "Execute Javascript code with custom buttons",
+  "custom_buttons_edit": "Edit custom buttons",
+  "custom_buttons_add": "Add custom button",
+  "custom_buttons_edit": "Add custom button",
+  "custom_buttons_text": "Button text",
+  "custom_buttons_js_code": "Javascript code",
+  "custom_buttons_js_code_long": "Javascript code (on long press)",
+  "custom_buttons_startup": "On startup",
   "n_days": "{n} days"
 }

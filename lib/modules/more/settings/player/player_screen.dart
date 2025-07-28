@@ -4,8 +4,10 @@ import 'dart:io';
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
+import 'package:mangayomi/modules/more/widgets/list_tile_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -51,7 +53,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     final enableAutoSkip = ref.watch(enableAutoSkipStateProvider);
     final aniSkipTimeoutLength = ref.watch(aniSkipTimeoutLengthStateProvider);
     final useLibass = ref.watch(useLibassStateProvider);
-    final useAnime4K = ref.watch(useAnime4KStateProvider);
+    final useMpvConfig = ref.watch(useMpvConfigStateProvider);
     final hwdecMode = ref.watch(hwdecModeStateProvider(rawValue: true));
 
     final fullScreenPlayer = ref.watch(fullScreenPlayerStateProvider);
@@ -484,7 +486,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
               ],
             ),
             SwitchListTile(
-              value: useAnime4K,
+              value: useMpvConfig,
               title: Text(context.l10n.enable_mpv),
               subtitle: Text(
                 context.l10n.mpv_info,
@@ -494,7 +496,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                 if (value && !(await _checkMpvConfig(context))) {
                   return;
                 }
-                ref.read(useAnime4KStateProvider.notifier).set(value);
+                ref.read(useMpvConfigStateProvider.notifier).set(value);
               },
             ),
             ListTile(
@@ -506,6 +508,14 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                 context.l10n.mpv_redownload_info,
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
+            ),
+            ListTileWidget(
+              onTap: () {
+                context.push("/customButtonScreen");
+              },
+              icon: Icons.terminal,
+              title: context.l10n.custom_buttons,
+              subtitle: context.l10n.custom_buttons_info,
             ),
             SwitchListTile(
               value: fullScreenPlayer,

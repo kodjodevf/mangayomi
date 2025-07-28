@@ -1524,6 +1524,31 @@ class AppLocalizationsDe extends AppLocalizations {
   String get mpv_download => 'MPV config files are required!\nDownload now?';
 
   @override
+  String get custom_buttons => 'Custom buttons';
+
+  @override
+  String get custom_buttons_info =>
+      'Execute Javascript code with custom buttons';
+
+  @override
+  String get custom_buttons_edit => 'Add custom button';
+
+  @override
+  String get custom_buttons_add => 'Add custom button';
+
+  @override
+  String get custom_buttons_text => 'Button text';
+
+  @override
+  String get custom_buttons_js_code => 'Javascript code';
+
+  @override
+  String get custom_buttons_js_code_long => 'Javascript code (on long press)';
+
+  @override
+  String get custom_buttons_startup => 'On startup';
+
+  @override
   String n_days(Object n) {
     return '$n days';
   }
