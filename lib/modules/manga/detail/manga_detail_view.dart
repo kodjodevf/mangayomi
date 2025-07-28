@@ -101,8 +101,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   late final isLocalArchive = widget.manga!.isLocalArchive ?? false;
   @override
   Widget build(BuildContext context) {
-    final isLongPressed = ref.watch(isLongPressedStateProvider);
-    final chapterNameList = ref.watch(chaptersListStateProvider);
     final scanlators = ref.watch(scanlatorsFilterStateProvider(widget.manga!));
     final reverse = ref
         .watch(sortChapterStateProvider(mangaId: widget.manga!.id!))
@@ -143,12 +141,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             filterScanlator: scanlators.$2,
           );
           ref.read(chaptersListttStateProvider.notifier).set(chapters);
-          return _buildWidget(
-            chapters: chapters,
-            reverse: reverse,
-            chapterList: chapterNameList,
-            isLongPressed: isLongPressed,
-          );
+          return _buildWidget(chapters: chapters, reverse: reverse);
         },
         error: (Object error, StackTrace stackTrace) {
           return ErrorText(error);
@@ -157,8 +150,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
           return _buildWidget(
             chapters: widget.manga!.chapters.toList().reversed.toList(),
             reverse: reverse,
-            chapterList: chapterNameList,
-            isLongPressed: isLongPressed,
           );
         },
       ),
@@ -267,9 +258,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   Widget _buildWidget({
     required List<Chapter> chapters,
     required bool reverse,
-    required List<Chapter> chapterList,
-    required bool isLongPressed,
   }) {
+    final chapterList = ref.watch(chaptersListStateProvider);
+    final isLongPressed = ref.watch(isLongPressedStateProvider);
     final checkCategoryList = isar.categorys
         .filter()
         .idIsNotNull()
@@ -367,7 +358,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                 final isNotFiltering = ref.watch(
                   chapterFilterResultStateProvider(manga: widget.manga!),
                 );
-                final isLongPressed = ref.watch(isLongPressedStateProvider);
                 return isLongPressed
                     ? Container(
                         color: Theme.of(context).scaffoldBackgroundColor,
@@ -830,6 +820,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
               bool checkReadBookmarked =
                   chap.isNotEmpty && chap.first.isRead! && getLength1;
               final l10n = l10nLocalizations(context)!;
+              final color = Theme.of(context).textTheme.bodyLarge!.color!;
               return AnimatedContainer(
                 curve: Curves.easeIn,
                 decoration: BoxDecoration(
@@ -858,16 +849,16 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             final chapters = ref.watch(
                               chaptersListStateProvider,
                             );
+                            final List<Chapter> updatedChapters = [];
+                            final now = DateTime.now().millisecondsSinceEpoch;
+                            for (var chapter in chapters) {
+                              chapter.isBookmarked = !chapter.isBookmarked!;
+                              chapter.updatedAt = now;
+                              chapter.manga.value = widget.manga;
+                              updatedChapters.add(chapter);
+                            }
                             isar.writeTxnSync(() {
-                              for (var chapter in chapters) {
-                                chapter.isBookmarked = !chapter.isBookmarked!;
-                                chapter.updatedAt =
-                                    DateTime.now().millisecondsSinceEpoch;
-                                isar.chapters.putSync(
-                                  chapter..manga.value = widget.manga,
-                                );
-                                chapter.manga.saveSync();
-                              }
+                              isar.chapters.putAllSync(updatedChapters);
                             });
                             ref
                                 .read(isLongPressedStateProvider.notifier)
@@ -880,7 +871,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             checkFirstBookmarked
                                 ? Icons.bookmark_remove_outlined
                                 : Icons.bookmark_add_outlined,
-                            color: Theme.of(context).textTheme.bodyLarge!.color,
+                            color: color,
                           ),
                         ),
                       ),
@@ -898,22 +889,23 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             final chapters = ref.watch(
                               chaptersListStateProvider,
                             );
-                            isar.writeTxnSync(() {
-                              for (var chapter in chapters) {
-                                chapter.isRead = !chapter.isRead!;
-                                if (!chapter.isRead!) {
-                                  chapter.lastPageRead = "1";
-                                }
-                                chapter.updatedAt =
-                                    DateTime.now().millisecondsSinceEpoch;
-                                isar.chapters.putSync(
-                                  chapter..manga.value = widget.manga,
-                                );
-                                chapter.manga.saveSync();
-                                if (chapter.isRead!) {
-                                  chapter.updateTrackChapterRead(ref);
-                                }
+                            final List<Chapter> updatedChapters = [];
+                            final now = DateTime.now().millisecondsSinceEpoch;
+                            for (var chapter in chapters) {
+                              chapter.isRead = !chapter.isRead!;
+                              if (!chapter.isRead!) {
+                                chapter.lastPageRead = "1";
                               }
+                              chapter.updatedAt = now;
+                              chapter.manga.value = widget.manga;
+                              updatedChapters.add(chapter);
+                              if (chapter.isRead!) {
+                                chapter.updateTrackChapterRead(ref);
+                              }
+                            }
+                            isar.writeTxnSync(() {
+                              isar.chapters.putAllSync(updatedChapters);
+                              isar.mangas.putSync(widget.manga!);
                             });
                             ref
                                 .read(isLongPressedStateProvider.notifier)
@@ -926,9 +918,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             checkReadBookmarked
                                 ? Icons.remove_done_sharp
                                 : Icons.done_all_sharp,
-                            color: Theme.of(
-                              context,
-                            ).textTheme.bodyLarge!.color!,
+                            color: color,
                           ),
                         ),
                       ),
@@ -945,49 +935,44 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             ),
                             onPressed: () {
                               int index = chapters.indexOf(chap.first);
+                              final List<Chapter> updatedChapters = [];
+                              final now = DateTime.now().millisecondsSinceEpoch;
                               chapters[index + 1].updateTrackChapterRead(ref);
-                              isar.writeTxnSync(() {
-                                for (
-                                  var i = index + 1;
-                                  i < chapters.length;
-                                  i++
-                                ) {
-                                  if (!chapters[i].isRead!) {
-                                    chapters[i].isRead = true;
-                                    chapters[i].lastPageRead = "1";
-                                    chapters[i].updatedAt =
-                                        DateTime.now().millisecondsSinceEpoch;
-                                    isar.chapters.putSync(
-                                      chapters[i]..manga.value = widget.manga,
-                                    );
-                                    chapters[i].manga.saveSync();
-                                  }
+                              for (
+                                var i = index + 1;
+                                i < chapters.length;
+                                i++
+                              ) {
+                                final chapter = chapters[i];
+                                if (!chapter.isRead!) {
+                                  chapter.isRead = true;
+                                  chapter.lastPageRead = "1";
+                                  chapter.updatedAt = now;
+                                  chapter.manga.value = widget.manga;
+                                  updatedChapters.add(chapter);
                                 }
-                                ref
-                                    .read(isLongPressedStateProvider.notifier)
-                                    .update(false);
-                                ref
-                                    .read(chaptersListStateProvider.notifier)
-                                    .clear();
+                              }
+                              isar.writeTxnSync(() {
+                                isar.chapters.putAllSync(updatedChapters);
+                                isar.mangas.putSync(widget.manga!);
                               });
+                              ref
+                                  .read(isLongPressedStateProvider.notifier)
+                                  .update(false);
+                              ref
+                                  .read(chaptersListStateProvider.notifier)
+                                  .clear();
                             },
                             child: Stack(
                               children: [
-                                Icon(
-                                  Icons.done_outlined,
-                                  color: Theme.of(
-                                    context,
-                                  ).textTheme.bodyLarge!.color!,
-                                ),
+                                Icon(Icons.done_outlined, color: color),
                                 Positioned(
                                   bottom: 0,
                                   right: 0,
                                   child: Icon(
                                     Icons.arrow_downward_outlined,
                                     size: 11,
-                                    color: Theme.of(
-                                      context,
-                                    ).textTheme.bodyLarge!.color!,
+                                    color: color,
                                   ),
                                 ),
                               ],
@@ -1031,12 +1016,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   .read(chaptersListStateProvider.notifier)
                                   .clear();
                             },
-                            child: Icon(
-                              Icons.download_outlined,
-                              color: Theme.of(
-                                context,
-                              ).textTheme.bodyLarge!.color!,
-                            ),
+                            child: Icon(Icons.download_outlined, color: color),
                           ),
                         ),
                       ),
@@ -1168,9 +1148,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             },
                             child: Icon(
                               Icons.delete_outline_outlined,
-                              color: Theme.of(
-                                context,
-                              ).textTheme.bodyLarge!.color!,
+                              color: color,
                             ),
                           ),
                         ),
