@@ -7,7 +7,7 @@ part of 'custom_buttons_provider.dart';
 // **************************************************************************
 
 String _$getCustomButtonsStreamHash() =>
-    r'463d2142793ffb5a905f6f90c3a756445be8b133';
+    r'476c26eb3d20e9e9eed2e1d8bb15fa74ce357ba3';
 
 /// See also [getCustomButtonsStream].
 @ProviderFor(getCustomButtonsStream)

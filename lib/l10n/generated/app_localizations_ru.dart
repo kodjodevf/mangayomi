@@ -1535,22 +1535,31 @@ class AppLocalizationsRu extends AppLocalizations {
       'Execute Javascript code with custom buttons';
 
   @override
-  String get custom_buttons_edit => 'Add custom button';
+  String get custom_buttons_edit => 'Edit custom buttons';
 
   @override
   String get custom_buttons_add => 'Add custom button';
 
   @override
+  String get custom_buttons_delete => 'Delete custom button';
+
+  @override
   String get custom_buttons_text => 'Button text';
+
+  @override
+  String get custom_buttons_text_req => 'Button text required';
 
   @override
   String get custom_buttons_js_code => 'Javascript code';
 
   @override
+  String get custom_buttons_js_code_req => 'Javascript code required';
+
+  @override
   String get custom_buttons_js_code_long => 'Javascript code (on long press)';
 
   @override
-  String get custom_buttons_startup => 'On startup';
+  String get custom_buttons_startup => 'Javascript code (on startup)';
 
   @override
   String n_days(Object n) {

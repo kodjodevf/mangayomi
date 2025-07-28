@@ -3,9 +3,9 @@ import 'dart:io';
 
 import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:http/http.dart' as http;
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:mangayomi/modules/more/widgets/list_tile_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -26,18 +26,6 @@ class PlayerScreen extends ConsumerStatefulWidget {
 }
 
 class _PlayerScreenState extends ConsumerState<PlayerScreen> {
-  int _total = 0;
-  int _received = 0;
-  http.StreamedResponse? _response;
-  final List<int> _bytes = [];
-  StreamSubscription<List<int>>? _subscription;
-
-  @override
-  void dispose() {
-    _subscription?.cancel();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final defaultSubtitleLang = ref.watch(defaultSubtitleLangStateProvider);
@@ -631,110 +619,51 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            content: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Text(context.l10n.mpv_download),
-                  _total > 0
-                      ? Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Flexible(
-                              child: LinearProgressIndicator(
-                                value: _total > 0
-                                    ? (_received * 1.0) / _total
-                                    : 0.0,
-                              ),
-                            ),
-                            Flexible(
-                              child: Text(
-                                '${(_received / 1048576.0).toStringAsFixed(2)}/${(_total / 1048576.0).toStringAsFixed(2)} MB',
-                              ),
-                            ),
-                          ],
-                        )
-                      : SizedBox.shrink(),
-                ],
-              ),
-            ),
+            content: Text(context.l10n.mpv_download),
             actions: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                    onPressed: () async {
-                      try {
-                        await _subscription?.cancel();
-                      } catch (_) {}
-                      if (context.mounted) {
-                        Navigator.pop(context);
-                      }
-                    },
+                    onPressed: () => Navigator.pop(context),
                     child: Text(context.l10n.cancel),
                   ),
                   const SizedBox(width: 15),
                   ElevatedButton(
-                    onPressed: _total == 0
-                        ? () async {
-                            _response = await http.Client().send(
-                              http.Request(
-                                'GET',
-                                Uri.parse(
-                                  "https://github.com/Schnitzel5/mangayomi/releases/download/v0.6.3-anime4k/mangayomi_mpv.zip",
-                                ),
-                              ),
-                            );
-                            _total = _response?.contentLength ?? 0;
-                            _subscription = _response?.stream.listen((value) {
-                              setState(() {
-                                _bytes.addAll(value);
-                                _received += value.length;
-                              });
-                            });
-                            _subscription?.onDone(() async {
-                              final archive = ZipDecoder().decodeBytes(_bytes);
-                              String shadersDir = path.join(
-                                dir.path,
-                                'shaders',
-                              );
-                              await Directory(
-                                shadersDir,
-                              ).create(recursive: true);
-                              String scriptsDir = path.join(
-                                dir.path,
-                                'scripts',
-                              );
-                              await Directory(
-                                scriptsDir,
-                              ).create(recursive: true);
-                              for (final file in archive.files) {
-                                if (file.name == "mpv.conf") {
-                                  await mpvFile.writeAsBytes(file.content);
-                                } else if (file.name == "input.conf") {
-                                  await inputFile.writeAsBytes(file.content);
-                                } else if (file.name.startsWith("shaders/") &&
-                                    file.name.endsWith(".glsl")) {
-                                  final shaderFile = File(
-                                    '$shadersDir/${file.name.split("/").last}',
-                                  );
-                                  await shaderFile.writeAsBytes(file.content);
-                                } else if (file.name.startsWith("scripts/") &&
-                                    file.name.endsWith(".js")) {
-                                  final scriptFile = File(
-                                    '$scriptsDir/${file.name.split("/").last}',
-                                  );
-                                  await scriptFile.writeAsBytes(file.content);
-                                }
-                              }
-                              _total = 0;
-                              _received = 0;
-                              _bytes.clear();
-                              if (context.mounted) {
-                                Navigator.pop(context, "ok");
-                              }
-                            });
-                          }
-                        : null,
+                    onPressed: () async {
+                      final bytes = await rootBundle.load(
+                        "assets/mangayomi_mpv.zip",
+                      );
+                      final archive = ZipDecoder().decodeBytes(
+                        bytes.buffer.asUint8List(),
+                      );
+                      String shadersDir = path.join(dir.path, 'shaders');
+                      await Directory(shadersDir).create(recursive: true);
+                      String scriptsDir = path.join(dir.path, 'scripts');
+                      await Directory(scriptsDir).create(recursive: true);
+                      for (final file in archive.files) {
+                        if (file.name == "mpv.conf") {
+                          await mpvFile.writeAsBytes(file.content);
+                        } else if (file.name == "input.conf") {
+                          await inputFile.writeAsBytes(file.content);
+                        } else if (file.name.startsWith("shaders/") &&
+                            file.name.endsWith(".glsl")) {
+                          final shaderFile = File(
+                            '$shadersDir/${file.name.split("/").last}',
+                          );
+                          await shaderFile.writeAsBytes(file.content);
+                        } else if (file.name.startsWith("scripts/") &&
+                            file.name.endsWith(".js")) {
+                          final scriptFile = File(
+                            '$scriptsDir/${file.name.split("/").last}',
+                          );
+                          await scriptFile.writeAsBytes(file.content);
+                        }
+                      }
+                      if (context.mounted) {
+                        Navigator.pop(context, "ok");
+                      }
+                    },
                     child: Text(context.l10n.download),
                   ),
                 ],

@@ -9,6 +9,7 @@ import 'package:mangayomi/modules/anime/providers/anime_player_controller_provid
 import 'package:mangayomi/modules/anime/widgets/custom_seekbar.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
+import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
 import 'package:window_manager/window_manager.dart';
@@ -218,43 +219,43 @@ class _DesktopControllerWidgetState
           await _changeFullScreen(ref, desktopFullScreenPlayer, value: false);
         },
         const SingleActivator(LogicalKeyboardKey.digit0, control: true): () {
-          (widget.videoController.player.platform as dynamic).command([
+          (widget.videoController.player.platform as NativePlayer).command([
             "script-message",
             "clear_anime",
           ]);
         },
         const SingleActivator(LogicalKeyboardKey.digit1, control: true): () {
-          (widget.videoController.player.platform as dynamic).command([
+          (widget.videoController.player.platform as NativePlayer).command([
             "script-message",
             "set_anime_a",
           ]);
         },
         const SingleActivator(LogicalKeyboardKey.digit2, control: true): () {
-          (widget.videoController.player.platform as dynamic).command([
+          (widget.videoController.player.platform as NativePlayer).command([
             "script-message",
             "set_anime_b",
           ]);
         },
         const SingleActivator(LogicalKeyboardKey.digit3, control: true): () {
-          (widget.videoController.player.platform as dynamic).command([
+          (widget.videoController.player.platform as NativePlayer).command([
             "script-message",
             "set_anime_c",
           ]);
         },
         const SingleActivator(LogicalKeyboardKey.digit4, control: true): () {
-          (widget.videoController.player.platform as dynamic).command([
+          (widget.videoController.player.platform as NativePlayer).command([
             "script-message",
             "set_anime_aa",
           ]);
         },
         const SingleActivator(LogicalKeyboardKey.digit5, control: true): () {
-          (widget.videoController.player.platform as dynamic).command([
+          (widget.videoController.player.platform as NativePlayer).command([
             "script-message",
             "set_anime_bb",
           ]);
         },
         const SingleActivator(LogicalKeyboardKey.digit6, control: true): () {
-          (widget.videoController.player.platform as dynamic).command([
+          (widget.videoController.player.platform as NativePlayer).command([
             "script-message",
             "set_anime_ca",
           ]);

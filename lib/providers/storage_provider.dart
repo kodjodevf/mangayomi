@@ -203,19 +203,28 @@ class StorageProvider {
 
     final customButton = await isar.customButtons
         .filter()
-        .idEqualTo(1)
+        .idIsNotNull()
         .findFirst();
     if (customButton == null) {
       await isar.writeTxn(() async {
-        isar.customButtons.put(
+        await isar.customButtons.put(
           CustomButton(
             title: "+85 s",
             codePress:
-                "var intro_length = mp.get_property_number(\"user-data/current-anime/intro-length\")\naniyomi.right_seek_by(intro_length)",
+                """var intro_length = mp.get_property_number("user-data/current-anime/intro-length")
+                   aniyomi.right_seek_by(intro_length)""",
             codeLongPress:
-                "aniyomi.int_picker(\"Change intro length\", \"%ds\", 0, 255, 1, \"user-data/current-anime/intro-length\")",
-            codeStartup:
-                "function update_button(_, length) {\n	if (!length || length == 0) {\n		aniyomi.hide_button()\n	} else {\n		aniyomi.show_button()\n	}\n	aniyomi.set_button_title(\"+\" + length + \" s\")",
+                """aniyomi.int_picker("Change intro length", "%ds", 0, 255, 1, "user-data/current-anime/intro-length")""",
+            codeStartup: """function update_button(_, length) {
+                	if (length && length == 0) {
+                  		aniyomi.hide_button()
+                	} else {
+                  		aniyomi.show_button()
+                	}
+                	aniyomi.set_button_title("+" + length + " s")
+                  if (\$isPrimary) {
+                      mp.observe_property("user-data/current-anime/intro-length", "number", update_button)
+                  }""",
             isFavourite: true,
             pos: 0,
             updatedAt: DateTime.now().millisecondsSinceEpoch,

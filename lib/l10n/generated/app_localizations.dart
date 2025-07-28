@@ -2948,7 +2948,7 @@ abstract class AppLocalizations {
   /// No description provided for @custom_buttons_edit.
   ///
   /// In en, this message translates to:
-  /// **'Add custom button'**
+  /// **'Edit custom buttons'**
   String get custom_buttons_edit;
 
   /// No description provided for @custom_buttons_add.
@@ -2957,17 +2957,35 @@ abstract class AppLocalizations {
   /// **'Add custom button'**
   String get custom_buttons_add;
 
+  /// No description provided for @custom_buttons_delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete custom button'**
+  String get custom_buttons_delete;
+
   /// No description provided for @custom_buttons_text.
   ///
   /// In en, this message translates to:
   /// **'Button text'**
   String get custom_buttons_text;
 
+  /// No description provided for @custom_buttons_text_req.
+  ///
+  /// In en, this message translates to:
+  /// **'Button text required'**
+  String get custom_buttons_text_req;
+
   /// No description provided for @custom_buttons_js_code.
   ///
   /// In en, this message translates to:
   /// **'Javascript code'**
   String get custom_buttons_js_code;
+
+  /// No description provided for @custom_buttons_js_code_req.
+  ///
+  /// In en, this message translates to:
+  /// **'Javascript code required'**
+  String get custom_buttons_js_code_req;
 
   /// No description provided for @custom_buttons_js_code_long.
   ///
@@ -2978,7 +2996,7 @@ abstract class AppLocalizations {
   /// No description provided for @custom_buttons_startup.
   ///
   /// In en, this message translates to:
-  /// **'On startup'**
+  /// **'Javascript code (on startup)'**
   String get custom_buttons_startup;
 
   /// No description provided for @n_days.

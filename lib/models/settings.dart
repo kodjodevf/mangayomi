@@ -375,7 +375,7 @@ class Settings {
     this.rpcShowReadingWatchingProgress = true,
     this.rpcShowTitle = true,
     this.rpcShowCoverImage = true,
-    this.useMpvConfig = false,
+    this.useMpvConfig = true,
   });
 
   Settings.fromJson(Map<String, dynamic> json) {
