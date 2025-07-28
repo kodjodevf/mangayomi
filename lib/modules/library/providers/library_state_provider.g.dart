@@ -2551,14 +2551,16 @@ final isLongPressedMangaStateProvider =
 
 typedef _$IsLongPressedMangaState = AutoDisposeNotifier<bool>;
 String _$mangasSetIsReadStateHash() =>
-    r'8f4f7f22ea8e82cf2370fb997033e1a4ec03168f';
+    r'0bc11e49fd33d7c76e86b005e6d30d7ac39bb5e2';
 
 abstract class _$MangasSetIsReadState
     extends BuildlessAutoDisposeNotifier<void> {
   late final List<int> mangaIds;
+  late final bool markAsRead;
 
   void build({
     required List<int> mangaIds,
+    required bool markAsRead,
   });
 }
 
@@ -2574,9 +2576,11 @@ class MangasSetIsReadStateFamily extends Family<void> {
   /// See also [MangasSetIsReadState].
   MangasSetIsReadStateProvider call({
     required List<int> mangaIds,
+    required bool markAsRead,
   }) {
     return MangasSetIsReadStateProvider(
       mangaIds: mangaIds,
+      markAsRead: markAsRead,
     );
   }
 
@@ -2586,6 +2590,7 @@ class MangasSetIsReadStateFamily extends Family<void> {
   ) {
     return call(
       mangaIds: provider.mangaIds,
+      markAsRead: provider.markAsRead,
     );
   }
 
@@ -2610,8 +2615,11 @@ class MangasSetIsReadStateProvider
   /// See also [MangasSetIsReadState].
   MangasSetIsReadStateProvider({
     required List<int> mangaIds,
+    required bool markAsRead,
   }) : this._internal(
-          () => MangasSetIsReadState()..mangaIds = mangaIds,
+          () => MangasSetIsReadState()
+            ..mangaIds = mangaIds
+            ..markAsRead = markAsRead,
           from: mangasSetIsReadStateProvider,
           name: r'mangasSetIsReadStateProvider',
           debugGetCreateSourceHash:
@@ -2622,6 +2630,7 @@ class MangasSetIsReadStateProvider
           allTransitiveDependencies:
               MangasSetIsReadStateFamily._allTransitiveDependencies,
           mangaIds: mangaIds,
+          markAsRead: markAsRead,
         );
 
   MangasSetIsReadStateProvider._internal(
@@ -2632,9 +2641,11 @@ class MangasSetIsReadStateProvider
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.mangaIds,
+    required this.markAsRead,
   }) : super.internal();
 
   final List<int> mangaIds;
+  final bool markAsRead;
 
   @override
   void runNotifierBuild(
@@ -2642,6 +2653,7 @@ class MangasSetIsReadStateProvider
   ) {
     return notifier.build(
       mangaIds: mangaIds,
+      markAsRead: markAsRead,
     );
   }
 
@@ -2650,13 +2662,16 @@ class MangasSetIsReadStateProvider
     return ProviderOverride(
       origin: this,
       override: MangasSetIsReadStateProvider._internal(
-        () => create()..mangaIds = mangaIds,
+        () => create()
+          ..mangaIds = mangaIds
+          ..markAsRead = markAsRead,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         mangaIds: mangaIds,
+        markAsRead: markAsRead,
       ),
     );
   }
@@ -2669,13 +2684,16 @@ class MangasSetIsReadStateProvider
 
   @override
   bool operator ==(Object other) {
-    return other is MangasSetIsReadStateProvider && other.mangaIds == mangaIds;
+    return other is MangasSetIsReadStateProvider &&
+        other.mangaIds == mangaIds &&
+        other.markAsRead == markAsRead;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, mangaIds.hashCode);
+    hash = _SystemHash.combine(hash, markAsRead.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -2686,6 +2704,9 @@ class MangasSetIsReadStateProvider
 mixin MangasSetIsReadStateRef on AutoDisposeNotifierProviderRef<void> {
   /// The parameter `mangaIds` of this provider.
   List<int> get mangaIds;
+
+  /// The parameter `markAsRead` of this provider.
+  bool get markAsRead;
 }
 
 class _MangasSetIsReadStateProviderElement
@@ -2695,153 +2716,8 @@ class _MangasSetIsReadStateProviderElement
 
   @override
   List<int> get mangaIds => (origin as MangasSetIsReadStateProvider).mangaIds;
-}
-
-String _$mangasSetUnReadStateHash() =>
-    r'09ddd287b110fd76494f9f56bd5cf76f58936f1f';
-
-abstract class _$MangasSetUnReadState
-    extends BuildlessAutoDisposeNotifier<void> {
-  late final List<int> mangaIds;
-
-  void build({
-    required List<int> mangaIds,
-  });
-}
-
-/// See also [MangasSetUnReadState].
-@ProviderFor(MangasSetUnReadState)
-const mangasSetUnReadStateProvider = MangasSetUnReadStateFamily();
-
-/// See also [MangasSetUnReadState].
-class MangasSetUnReadStateFamily extends Family<void> {
-  /// See also [MangasSetUnReadState].
-  const MangasSetUnReadStateFamily();
-
-  /// See also [MangasSetUnReadState].
-  MangasSetUnReadStateProvider call({
-    required List<int> mangaIds,
-  }) {
-    return MangasSetUnReadStateProvider(
-      mangaIds: mangaIds,
-    );
-  }
-
   @override
-  MangasSetUnReadStateProvider getProviderOverride(
-    covariant MangasSetUnReadStateProvider provider,
-  ) {
-    return call(
-      mangaIds: provider.mangaIds,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'mangasSetUnReadStateProvider';
-}
-
-/// See also [MangasSetUnReadState].
-class MangasSetUnReadStateProvider
-    extends AutoDisposeNotifierProviderImpl<MangasSetUnReadState, void> {
-  /// See also [MangasSetUnReadState].
-  MangasSetUnReadStateProvider({
-    required List<int> mangaIds,
-  }) : this._internal(
-          () => MangasSetUnReadState()..mangaIds = mangaIds,
-          from: mangasSetUnReadStateProvider,
-          name: r'mangasSetUnReadStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$mangasSetUnReadStateHash,
-          dependencies: MangasSetUnReadStateFamily._dependencies,
-          allTransitiveDependencies:
-              MangasSetUnReadStateFamily._allTransitiveDependencies,
-          mangaIds: mangaIds,
-        );
-
-  MangasSetUnReadStateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.mangaIds,
-  }) : super.internal();
-
-  final List<int> mangaIds;
-
-  @override
-  void runNotifierBuild(
-    covariant MangasSetUnReadState notifier,
-  ) {
-    return notifier.build(
-      mangaIds: mangaIds,
-    );
-  }
-
-  @override
-  Override overrideWith(MangasSetUnReadState Function() create) {
-    return ProviderOverride(
-      origin: this,
-      override: MangasSetUnReadStateProvider._internal(
-        () => create()..mangaIds = mangaIds,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        mangaIds: mangaIds,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeNotifierProviderElement<MangasSetUnReadState, void>
-      createElement() {
-    return _MangasSetUnReadStateProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is MangasSetUnReadStateProvider && other.mangaIds == mangaIds;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, mangaIds.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin MangasSetUnReadStateRef on AutoDisposeNotifierProviderRef<void> {
-  /// The parameter `mangaIds` of this provider.
-  List<int> get mangaIds;
-}
-
-class _MangasSetUnReadStateProviderElement
-    extends AutoDisposeNotifierProviderElement<MangasSetUnReadState, void>
-    with MangasSetUnReadStateRef {
-  _MangasSetUnReadStateProviderElement(super.provider);
-
-  @override
-  List<int> get mangaIds => (origin as MangasSetUnReadStateProvider).mangaIds;
+  bool get markAsRead => (origin as MangasSetIsReadStateProvider).markAsRead;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

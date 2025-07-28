@@ -618,6 +618,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                 .read(
                                   mangasSetIsReadStateProvider(
                                     mangaIds: mangaIds,
+                                    markAsRead: true,
                                   ).notifier,
                                 )
                                 .set();
@@ -649,8 +650,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                           onPressed: () {
                             ref
                                 .read(
-                                  mangasSetUnReadStateProvider(
+                                  mangasSetIsReadStateProvider(
                                     mangaIds: mangaIds,
+                                    markAsRead: false,
                                   ).notifier,
                                 )
                                 .set();
