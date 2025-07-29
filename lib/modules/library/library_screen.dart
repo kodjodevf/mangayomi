@@ -18,6 +18,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/modules/library/providers/add_torrent.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
+import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
 import 'package:mangayomi/modules/more/categories/providers/isar_providers.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
@@ -560,7 +561,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
               final mangaIds = ref.watch(mangasListStateProvider);
               final color = Theme.of(context).textTheme.bodyLarge!.color!;
               return BottomSelectBar(
-                isVisible: ref.watch(isLongPressedMangaStateProvider),
+                isVisible: ref.watch(isLongPressedStateProvider),
                 actions: [
                   BottomSelectButton(
                     icon: Icon(Icons.label_outline_rounded, color: color),
@@ -1133,7 +1134,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
 
                             ref.read(mangasListStateProvider.notifier).clear();
                             ref
-                                .read(isLongPressedMangaStateProvider.notifier)
+                                .read(isLongPressedStateProvider.notifier)
                                 .update(false);
                             if (mounted) {
                               Navigator.pop(context);
@@ -1786,7 +1787,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     int? categoryId,
     Settings settings,
   ) {
-    final isLongPressed = ref.watch(isLongPressedMangaStateProvider);
+    final isLongPressed = ref.watch(isLongPressedStateProvider);
     final mangaIdsList = ref.watch(mangasListStateProvider);
     final manga = categoryId == null
         ? ref.watch(
@@ -1815,7 +1816,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                       ref.read(mangasListStateProvider.notifier).clear();
 
                       ref
-                          .read(isLongPressedMangaStateProvider.notifier)
+                          .read(isLongPressedStateProvider.notifier)
                           .update(!isLongPressed);
                     },
                     icon: const Icon(Icons.clear),
@@ -1840,7 +1841,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                 .selectSome(manga);
                           }
                           ref
-                              .read(isLongPressedMangaStateProvider.notifier)
+                              .read(isLongPressedStateProvider.notifier)
                               .update(false);
                         } else {
                           for (var manga in data) {

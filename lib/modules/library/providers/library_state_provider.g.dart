@@ -2517,7 +2517,7 @@ class _SortLibraryMangaStateProviderElement
   Settings get settings => (origin as SortLibraryMangaStateProvider).settings;
 }
 
-String _$mangasListStateHash() => r'ad1cc419dfd3793bfc8c90f3ce8b7726561dd9ad';
+String _$mangasListStateHash() => r'bbd2e3600ec22a774b1774ae3c221815e52bfef6';
 
 /// See also [MangasListState].
 @ProviderFor(MangasListState)
@@ -2533,25 +2533,8 @@ final mangasListStateProvider =
 );
 
 typedef _$MangasListState = AutoDisposeNotifier<List<int>>;
-String _$isLongPressedMangaStateHash() =>
-    r'f77076b0335e92df26a75ea0c338d4214a330184';
-
-/// See also [IsLongPressedMangaState].
-@ProviderFor(IsLongPressedMangaState)
-final isLongPressedMangaStateProvider =
-    AutoDisposeNotifierProvider<IsLongPressedMangaState, bool>.internal(
-  IsLongPressedMangaState.new,
-  name: r'isLongPressedMangaStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$isLongPressedMangaStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$IsLongPressedMangaState = AutoDisposeNotifier<bool>;
 String _$mangasSetIsReadStateHash() =>
-    r'0bc11e49fd33d7c76e86b005e6d30d7ac39bb5e2';
+    r'2a1b1005e2ed5068d36188a3fb969d21b64bfef6';
 
 abstract class _$MangasSetIsReadState
     extends BuildlessAutoDisposeNotifier<void> {

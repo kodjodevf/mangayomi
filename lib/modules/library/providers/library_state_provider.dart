@@ -3,6 +3,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -785,7 +786,7 @@ class MangasListState extends _$MangasListState {
       newList.add(value.id!);
     }
     if (newList.isEmpty) {
-      ref.read(isLongPressedMangaStateProvider.notifier).update(false);
+      ref.read(isLongPressedStateProvider.notifier).update(false);
     }
     state = newList;
   }
@@ -811,18 +812,6 @@ class MangasListState extends _$MangasListState {
 
   void clear() {
     state = [];
-  }
-}
-
-@riverpod
-class IsLongPressedMangaState extends _$IsLongPressedMangaState {
-  @override
-  bool build() {
-    return false;
-  }
-
-  void update(bool value) {
-    state = value;
   }
 }
 
@@ -855,7 +844,7 @@ class MangasSetIsReadState extends _$MangasSetIsReadState {
       isar.mangas.putAllSync(allMangas);
     });
 
-    ref.read(isLongPressedMangaStateProvider.notifier).update(false);
+    ref.read(isLongPressedStateProvider.notifier).update(false);
     ref.read(mangasListStateProvider.notifier).clear();
   }
 }
