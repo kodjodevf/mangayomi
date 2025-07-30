@@ -1164,7 +1164,7 @@ packages:
     description:
       path: media_kit
       ref: HEAD
-      resolved-ref: "746465b7914fa524781813dc6e50ea87dcd686e5"
+      resolved-ref: a02ac2f7e6118cdab855ecacd194fa9ee6961a18
       url: "https://github.com/Schnitzel5/media-kit.git"
     source: git
     version: "1.2.0"
@@ -1221,7 +1221,7 @@ packages:
     description:
       path: media_kit_video
       ref: HEAD
-      resolved-ref: "746465b7914fa524781813dc6e50ea87dcd686e5"
+      resolved-ref: a02ac2f7e6118cdab855ecacd194fa9ee6961a18
       url: "https://github.com/Schnitzel5/media-kit.git"
     source: git
     version: "1.3.0"

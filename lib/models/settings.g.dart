@@ -79,574 +79,611 @@ const SettingsSchema = CollectionSchema(
       name: r'appFontFamily',
       type: IsarType.string,
     ),
-    r'autoBackupLocation': PropertySchema(
+    r'audioChannels': PropertySchema(
       id: 12,
+      name: r'audioChannels',
+      type: IsarType.byte,
+      enumMap: _SettingsaudioChannelsEnumValueMap,
+    ),
+    r'audioPreferredLanguages': PropertySchema(
+      id: 13,
+      name: r'audioPreferredLanguages',
+      type: IsarType.string,
+    ),
+    r'autoBackupLocation': PropertySchema(
+      id: 14,
       name: r'autoBackupLocation',
       type: IsarType.string,
     ),
     r'autoExtensionsUpdates': PropertySchema(
-      id: 13,
+      id: 15,
       name: r'autoExtensionsUpdates',
       type: IsarType.bool,
     ),
     r'autoScrollPages': PropertySchema(
-      id: 14,
+      id: 16,
       name: r'autoScrollPages',
       type: IsarType.objectList,
       target: r'AutoScrollPages',
     ),
     r'backgroundColor': PropertySchema(
-      id: 15,
+      id: 17,
       name: r'backgroundColor',
       type: IsarType.byte,
       enumMap: _SettingsbackgroundColorEnumValueMap,
     ),
     r'backupFrequency': PropertySchema(
-      id: 16,
+      id: 18,
       name: r'backupFrequency',
       type: IsarType.long,
     ),
     r'backupListOptions': PropertySchema(
-      id: 17,
+      id: 19,
       name: r'backupListOptions',
       type: IsarType.longList,
     ),
     r'btServerAddress': PropertySchema(
-      id: 18,
+      id: 20,
       name: r'btServerAddress',
       type: IsarType.string,
     ),
     r'btServerPort': PropertySchema(
-      id: 19,
+      id: 21,
       name: r'btServerPort',
       type: IsarType.long,
     ),
     r'chapterFilterBookmarkedList': PropertySchema(
-      id: 20,
+      id: 22,
       name: r'chapterFilterBookmarkedList',
       type: IsarType.objectList,
       target: r'ChapterFilterBookmarked',
     ),
     r'chapterFilterDownloadedList': PropertySchema(
-      id: 21,
+      id: 23,
       name: r'chapterFilterDownloadedList',
       type: IsarType.objectList,
       target: r'ChapterFilterDownloaded',
     ),
     r'chapterFilterUnreadList': PropertySchema(
-      id: 22,
+      id: 24,
       name: r'chapterFilterUnreadList',
       type: IsarType.objectList,
       target: r'ChapterFilterUnread',
     ),
     r'chapterPageIndexList': PropertySchema(
-      id: 23,
+      id: 25,
       name: r'chapterPageIndexList',
       type: IsarType.objectList,
       target: r'ChapterPageIndex',
     ),
     r'chapterPageUrlsList': PropertySchema(
-      id: 24,
+      id: 26,
       name: r'chapterPageUrlsList',
       type: IsarType.objectList,
       target: r'ChapterPageurls',
     ),
     r'checkForAppUpdates': PropertySchema(
-      id: 25,
+      id: 27,
       name: r'checkForAppUpdates',
       type: IsarType.bool,
     ),
     r'checkForExtensionUpdates': PropertySchema(
-      id: 26,
+      id: 28,
       name: r'checkForExtensionUpdates',
       type: IsarType.bool,
     ),
     r'clearChapterCacheOnAppLaunch': PropertySchema(
-      id: 27,
+      id: 29,
       name: r'clearChapterCacheOnAppLaunch',
       type: IsarType.bool,
     ),
     r'colorFilterBlendMode': PropertySchema(
-      id: 28,
+      id: 30,
       name: r'colorFilterBlendMode',
       type: IsarType.byte,
       enumMap: _SettingscolorFilterBlendModeEnumValueMap,
     ),
     r'concurrentDownloads': PropertySchema(
-      id: 29,
+      id: 31,
       name: r'concurrentDownloads',
       type: IsarType.long,
     ),
     r'cookiesList': PropertySchema(
-      id: 30,
+      id: 32,
       name: r'cookiesList',
       type: IsarType.objectList,
       target: r'MCookie',
     ),
     r'cropBorders': PropertySchema(
-      id: 31,
+      id: 33,
       name: r'cropBorders',
       type: IsarType.bool,
     ),
     r'customColorFilter': PropertySchema(
-      id: 32,
+      id: 34,
       name: r'customColorFilter',
       type: IsarType.object,
       target: r'CustomColorFilter',
     ),
     r'dateFormat': PropertySchema(
-      id: 33,
+      id: 35,
       name: r'dateFormat',
       type: IsarType.string,
     ),
+    r'debandingType': PropertySchema(
+      id: 36,
+      name: r'debandingType',
+      type: IsarType.byte,
+      enumMap: _SettingsdebandingTypeEnumValueMap,
+    ),
     r'defaultDoubleTapToSkipLength': PropertySchema(
-      id: 34,
+      id: 37,
       name: r'defaultDoubleTapToSkipLength',
       type: IsarType.long,
     ),
     r'defaultPlayBackSpeed': PropertySchema(
-      id: 35,
+      id: 38,
       name: r'defaultPlayBackSpeed',
       type: IsarType.double,
     ),
     r'defaultReaderMode': PropertySchema(
-      id: 36,
+      id: 39,
       name: r'defaultReaderMode',
       type: IsarType.byte,
       enumMap: _SettingsdefaultReaderModeEnumValueMap,
     ),
     r'defaultSkipIntroLength': PropertySchema(
-      id: 37,
+      id: 40,
       name: r'defaultSkipIntroLength',
       type: IsarType.long,
     ),
     r'defaultSubtitleLang': PropertySchema(
-      id: 38,
+      id: 41,
       name: r'defaultSubtitleLang',
       type: IsarType.object,
       target: r'L10nLocale',
     ),
     r'disableSectionType': PropertySchema(
-      id: 39,
+      id: 42,
       name: r'disableSectionType',
       type: IsarType.byte,
       enumMap: _SettingsdisableSectionTypeEnumValueMap,
     ),
     r'displayType': PropertySchema(
-      id: 40,
+      id: 43,
       name: r'displayType',
       type: IsarType.byte,
       enumMap: _SettingsdisplayTypeEnumValueMap,
     ),
     r'doubleTapAnimationSpeed': PropertySchema(
-      id: 41,
+      id: 44,
       name: r'doubleTapAnimationSpeed',
       type: IsarType.long,
     ),
     r'downloadLocation': PropertySchema(
-      id: 42,
+      id: 45,
       name: r'downloadLocation',
       type: IsarType.string,
     ),
     r'downloadOnlyOnWifi': PropertySchema(
-      id: 43,
+      id: 46,
       name: r'downloadOnlyOnWifi',
       type: IsarType.bool,
     ),
     r'enableAniSkip': PropertySchema(
-      id: 44,
+      id: 47,
       name: r'enableAniSkip',
       type: IsarType.bool,
     ),
+    r'enableAudioPitchCorrection': PropertySchema(
+      id: 48,
+      name: r'enableAudioPitchCorrection',
+      type: IsarType.bool,
+    ),
     r'enableAutoSkip': PropertySchema(
-      id: 45,
+      id: 49,
       name: r'enableAutoSkip',
       type: IsarType.bool,
     ),
     r'enableCustomColorFilter': PropertySchema(
-      id: 46,
+      id: 50,
       name: r'enableCustomColorFilter',
       type: IsarType.bool,
     ),
     r'enableDiscordRpc': PropertySchema(
-      id: 47,
+      id: 51,
       name: r'enableDiscordRpc',
       type: IsarType.bool,
     ),
+    r'enableGpuNext': PropertySchema(
+      id: 52,
+      name: r'enableGpuNext',
+      type: IsarType.bool,
+    ),
     r'filterScanlatorList': PropertySchema(
-      id: 48,
+      id: 53,
       name: r'filterScanlatorList',
       type: IsarType.objectList,
       target: r'FilterScanlator',
     ),
     r'flexColorSchemeBlendLevel': PropertySchema(
-      id: 49,
+      id: 54,
       name: r'flexColorSchemeBlendLevel',
       type: IsarType.double,
     ),
     r'flexSchemeColorIndex': PropertySchema(
-      id: 50,
+      id: 55,
       name: r'flexSchemeColorIndex',
       type: IsarType.long,
     ),
     r'followSystemTheme': PropertySchema(
-      id: 51,
+      id: 56,
       name: r'followSystemTheme',
       type: IsarType.bool,
     ),
     r'fullScreenPlayer': PropertySchema(
-      id: 52,
+      id: 57,
       name: r'fullScreenPlayer',
       type: IsarType.bool,
     ),
     r'fullScreenReader': PropertySchema(
-      id: 53,
+      id: 58,
       name: r'fullScreenReader',
       type: IsarType.bool,
     ),
     r'hideDiscordRpcInIncognito': PropertySchema(
-      id: 54,
+      id: 59,
       name: r'hideDiscordRpcInIncognito',
       type: IsarType.bool,
     ),
     r'hideItems': PropertySchema(
-      id: 55,
+      id: 60,
       name: r'hideItems',
       type: IsarType.stringList,
     ),
     r'hwdecMode': PropertySchema(
-      id: 56,
+      id: 61,
       name: r'hwdecMode',
       type: IsarType.string,
     ),
     r'incognitoMode': PropertySchema(
-      id: 57,
+      id: 62,
       name: r'incognitoMode',
       type: IsarType.bool,
     ),
     r'lastTrackerLibraryLocation': PropertySchema(
-      id: 58,
+      id: 63,
       name: r'lastTrackerLibraryLocation',
       type: IsarType.string,
     ),
     r'libraryDownloadedChapters': PropertySchema(
-      id: 59,
+      id: 64,
       name: r'libraryDownloadedChapters',
       type: IsarType.bool,
     ),
     r'libraryFilterAnimeBookMarkedType': PropertySchema(
-      id: 60,
+      id: 65,
       name: r'libraryFilterAnimeBookMarkedType',
       type: IsarType.long,
     ),
     r'libraryFilterAnimeDownloadType': PropertySchema(
-      id: 61,
+      id: 66,
       name: r'libraryFilterAnimeDownloadType',
       type: IsarType.long,
     ),
     r'libraryFilterAnimeStartedType': PropertySchema(
-      id: 62,
+      id: 67,
       name: r'libraryFilterAnimeStartedType',
       type: IsarType.long,
     ),
     r'libraryFilterAnimeUnreadType': PropertySchema(
-      id: 63,
+      id: 68,
       name: r'libraryFilterAnimeUnreadType',
       type: IsarType.long,
     ),
     r'libraryFilterMangasBookMarkedType': PropertySchema(
-      id: 64,
+      id: 69,
       name: r'libraryFilterMangasBookMarkedType',
       type: IsarType.long,
     ),
     r'libraryFilterMangasDownloadType': PropertySchema(
-      id: 65,
+      id: 70,
       name: r'libraryFilterMangasDownloadType',
       type: IsarType.long,
     ),
     r'libraryFilterMangasStartedType': PropertySchema(
-      id: 66,
+      id: 71,
       name: r'libraryFilterMangasStartedType',
       type: IsarType.long,
     ),
     r'libraryFilterMangasUnreadType': PropertySchema(
-      id: 67,
+      id: 72,
       name: r'libraryFilterMangasUnreadType',
       type: IsarType.long,
     ),
     r'libraryFilterNovelBookMarkedType': PropertySchema(
-      id: 68,
+      id: 73,
       name: r'libraryFilterNovelBookMarkedType',
       type: IsarType.long,
     ),
     r'libraryFilterNovelDownloadType': PropertySchema(
-      id: 69,
+      id: 74,
       name: r'libraryFilterNovelDownloadType',
       type: IsarType.long,
     ),
     r'libraryFilterNovelStartedType': PropertySchema(
-      id: 70,
+      id: 75,
       name: r'libraryFilterNovelStartedType',
       type: IsarType.long,
     ),
     r'libraryFilterNovelUnreadType': PropertySchema(
-      id: 71,
+      id: 76,
       name: r'libraryFilterNovelUnreadType',
       type: IsarType.long,
     ),
     r'libraryLocalSource': PropertySchema(
-      id: 72,
+      id: 77,
       name: r'libraryLocalSource',
       type: IsarType.bool,
     ),
     r'libraryShowCategoryTabs': PropertySchema(
-      id: 73,
+      id: 78,
       name: r'libraryShowCategoryTabs',
       type: IsarType.bool,
     ),
     r'libraryShowContinueReadingButton': PropertySchema(
-      id: 74,
+      id: 79,
       name: r'libraryShowContinueReadingButton',
       type: IsarType.bool,
     ),
     r'libraryShowLanguage': PropertySchema(
-      id: 75,
+      id: 80,
       name: r'libraryShowLanguage',
       type: IsarType.bool,
     ),
     r'libraryShowNumbersOfItems': PropertySchema(
-      id: 76,
+      id: 81,
       name: r'libraryShowNumbersOfItems',
       type: IsarType.bool,
     ),
     r'locale': PropertySchema(
-      id: 77,
+      id: 82,
       name: r'locale',
       type: IsarType.object,
       target: r'L10nLocale',
     ),
     r'mangaExtensionsRepo': PropertySchema(
-      id: 78,
+      id: 83,
       name: r'mangaExtensionsRepo',
       type: IsarType.objectList,
       target: r'Repo',
     ),
     r'mangaGridSize': PropertySchema(
-      id: 79,
+      id: 84,
       name: r'mangaGridSize',
       type: IsarType.long,
     ),
     r'mangaHomeDisplayType': PropertySchema(
-      id: 80,
+      id: 85,
       name: r'mangaHomeDisplayType',
       type: IsarType.byte,
       enumMap: _SettingsmangaHomeDisplayTypeEnumValueMap,
     ),
     r'markEpisodeAsSeenType': PropertySchema(
-      id: 81,
+      id: 86,
       name: r'markEpisodeAsSeenType',
       type: IsarType.long,
     ),
     r'mergeLibraryNavMobile': PropertySchema(
-      id: 82,
+      id: 87,
       name: r'mergeLibraryNavMobile',
       type: IsarType.bool,
     ),
     r'navigationOrder': PropertySchema(
-      id: 83,
+      id: 88,
       name: r'navigationOrder',
       type: IsarType.stringList,
     ),
     r'novelDisplayType': PropertySchema(
-      id: 84,
+      id: 89,
       name: r'novelDisplayType',
       type: IsarType.byte,
       enumMap: _SettingsnovelDisplayTypeEnumValueMap,
     ),
     r'novelExtensionsRepo': PropertySchema(
-      id: 85,
+      id: 90,
       name: r'novelExtensionsRepo',
       type: IsarType.objectList,
       target: r'Repo',
     ),
     r'novelFontSize': PropertySchema(
-      id: 86,
+      id: 91,
       name: r'novelFontSize',
       type: IsarType.long,
     ),
     r'novelGridSize': PropertySchema(
-      id: 87,
+      id: 92,
       name: r'novelGridSize',
       type: IsarType.long,
     ),
     r'novelLibraryDownloadedChapters': PropertySchema(
-      id: 88,
+      id: 93,
       name: r'novelLibraryDownloadedChapters',
       type: IsarType.bool,
     ),
     r'novelLibraryLocalSource': PropertySchema(
-      id: 89,
+      id: 94,
       name: r'novelLibraryLocalSource',
       type: IsarType.bool,
     ),
     r'novelLibraryShowCategoryTabs': PropertySchema(
-      id: 90,
+      id: 95,
       name: r'novelLibraryShowCategoryTabs',
       type: IsarType.bool,
     ),
     r'novelLibraryShowContinueReadingButton': PropertySchema(
-      id: 91,
+      id: 96,
       name: r'novelLibraryShowContinueReadingButton',
       type: IsarType.bool,
     ),
     r'novelLibraryShowLanguage': PropertySchema(
-      id: 92,
+      id: 97,
       name: r'novelLibraryShowLanguage',
       type: IsarType.bool,
     ),
     r'novelLibraryShowNumbersOfItems': PropertySchema(
-      id: 93,
+      id: 98,
       name: r'novelLibraryShowNumbersOfItems',
       type: IsarType.bool,
     ),
     r'novelTextAlign': PropertySchema(
-      id: 94,
+      id: 99,
       name: r'novelTextAlign',
       type: IsarType.byte,
       enumMap: _SettingsnovelTextAlignEnumValueMap,
     ),
     r'onlyIncludePinnedSources': PropertySchema(
-      id: 95,
+      id: 100,
       name: r'onlyIncludePinnedSources',
       type: IsarType.bool,
     ),
     r'pagePreloadAmount': PropertySchema(
-      id: 96,
+      id: 101,
       name: r'pagePreloadAmount',
       type: IsarType.long,
     ),
     r'personalPageModeList': PropertySchema(
-      id: 97,
+      id: 102,
       name: r'personalPageModeList',
       type: IsarType.objectList,
       target: r'PersonalPageMode',
     ),
     r'personalReaderModeList': PropertySchema(
-      id: 98,
+      id: 103,
       name: r'personalReaderModeList',
       type: IsarType.objectList,
       target: r'PersonalReaderMode',
     ),
     r'playerSubtitleSettings': PropertySchema(
-      id: 99,
+      id: 104,
       name: r'playerSubtitleSettings',
       type: IsarType.object,
       target: r'PlayerSubtitleSettings',
     ),
     r'pureBlackDarkMode': PropertySchema(
-      id: 100,
+      id: 105,
       name: r'pureBlackDarkMode',
       type: IsarType.bool,
     ),
     r'relativeTimesTamps': PropertySchema(
-      id: 101,
+      id: 106,
       name: r'relativeTimesTamps',
       type: IsarType.long,
     ),
     r'rpcShowCoverImage': PropertySchema(
-      id: 102,
+      id: 107,
       name: r'rpcShowCoverImage',
       type: IsarType.bool,
     ),
     r'rpcShowReadingWatchingProgress': PropertySchema(
-      id: 103,
+      id: 108,
       name: r'rpcShowReadingWatchingProgress',
       type: IsarType.bool,
     ),
     r'rpcShowTitle': PropertySchema(
-      id: 104,
+      id: 109,
       name: r'rpcShowTitle',
       type: IsarType.bool,
     ),
     r'saveAsCBZArchive': PropertySchema(
-      id: 105,
+      id: 110,
       name: r'saveAsCBZArchive',
       type: IsarType.bool,
     ),
     r'scaleType': PropertySchema(
-      id: 106,
+      id: 111,
       name: r'scaleType',
       type: IsarType.byte,
       enumMap: _SettingsscaleTypeEnumValueMap,
     ),
     r'showPagesNumber': PropertySchema(
-      id: 107,
+      id: 112,
       name: r'showPagesNumber',
       type: IsarType.bool,
     ),
     r'sortChapterList': PropertySchema(
-      id: 108,
+      id: 113,
       name: r'sortChapterList',
       type: IsarType.objectList,
       target: r'SortChapter',
     ),
     r'sortLibraryAnime': PropertySchema(
-      id: 109,
+      id: 114,
       name: r'sortLibraryAnime',
       type: IsarType.object,
       target: r'SortLibraryManga',
     ),
     r'sortLibraryManga': PropertySchema(
-      id: 110,
+      id: 115,
       name: r'sortLibraryManga',
       type: IsarType.object,
       target: r'SortLibraryManga',
     ),
     r'sortLibraryNovel': PropertySchema(
-      id: 111,
+      id: 116,
       name: r'sortLibraryNovel',
       type: IsarType.object,
       target: r'SortLibraryManga',
     ),
     r'startDatebackup': PropertySchema(
-      id: 112,
+      id: 117,
       name: r'startDatebackup',
       type: IsarType.long,
     ),
     r'themeIsDark': PropertySchema(
-      id: 113,
+      id: 118,
       name: r'themeIsDark',
       type: IsarType.bool,
     ),
     r'updateProgressAfterReading': PropertySchema(
-      id: 114,
+      id: 119,
       name: r'updateProgressAfterReading',
       type: IsarType.bool,
     ),
     r'updatedAt': PropertySchema(
-      id: 115,
+      id: 120,
       name: r'updatedAt',
       type: IsarType.long,
     ),
     r'useLibass': PropertySchema(
-      id: 116,
+      id: 121,
       name: r'useLibass',
       type: IsarType.bool,
     ),
     r'useMpvConfig': PropertySchema(
-      id: 117,
+      id: 122,
       name: r'useMpvConfig',
       type: IsarType.bool,
     ),
     r'usePageTapZones': PropertySchema(
-      id: 118,
+      id: 123,
       name: r'usePageTapZones',
       type: IsarType.bool,
     ),
+    r'useYUV420P': PropertySchema(
+      id: 124,
+      name: r'useYUV420P',
+      type: IsarType.bool,
+    ),
     r'userAgent': PropertySchema(
-      id: 119,
+      id: 125,
       name: r'userAgent',
       type: IsarType.string,
+    ),
+    r'volumeBoostCap': PropertySchema(
+      id: 126,
+      name: r'volumeBoostCap',
+      type: IsarType.long,
     )
   },
   estimateSize: _settingsEstimateSize,
@@ -708,6 +745,12 @@ int _settingsEstimateSize(
   }
   {
     final value = object.appFontFamily;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.audioPreferredLanguages;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
     }
@@ -1045,214 +1088,221 @@ void _settingsSerialize(
   writer.writeBool(offsets[9], object.animeLibraryShowLanguage);
   writer.writeBool(offsets[10], object.animeLibraryShowNumbersOfItems);
   writer.writeString(offsets[11], object.appFontFamily);
-  writer.writeString(offsets[12], object.autoBackupLocation);
-  writer.writeBool(offsets[13], object.autoExtensionsUpdates);
+  writer.writeByte(offsets[12], object.audioChannels.index);
+  writer.writeString(offsets[13], object.audioPreferredLanguages);
+  writer.writeString(offsets[14], object.autoBackupLocation);
+  writer.writeBool(offsets[15], object.autoExtensionsUpdates);
   writer.writeObjectList<AutoScrollPages>(
-    offsets[14],
+    offsets[16],
     allOffsets,
     AutoScrollPagesSchema.serialize,
     object.autoScrollPages,
   );
-  writer.writeByte(offsets[15], object.backgroundColor.index);
-  writer.writeLong(offsets[16], object.backupFrequency);
-  writer.writeLongList(offsets[17], object.backupListOptions);
-  writer.writeString(offsets[18], object.btServerAddress);
-  writer.writeLong(offsets[19], object.btServerPort);
+  writer.writeByte(offsets[17], object.backgroundColor.index);
+  writer.writeLong(offsets[18], object.backupFrequency);
+  writer.writeLongList(offsets[19], object.backupListOptions);
+  writer.writeString(offsets[20], object.btServerAddress);
+  writer.writeLong(offsets[21], object.btServerPort);
   writer.writeObjectList<ChapterFilterBookmarked>(
-    offsets[20],
+    offsets[22],
     allOffsets,
     ChapterFilterBookmarkedSchema.serialize,
     object.chapterFilterBookmarkedList,
   );
   writer.writeObjectList<ChapterFilterDownloaded>(
-    offsets[21],
+    offsets[23],
     allOffsets,
     ChapterFilterDownloadedSchema.serialize,
     object.chapterFilterDownloadedList,
   );
   writer.writeObjectList<ChapterFilterUnread>(
-    offsets[22],
+    offsets[24],
     allOffsets,
     ChapterFilterUnreadSchema.serialize,
     object.chapterFilterUnreadList,
   );
   writer.writeObjectList<ChapterPageIndex>(
-    offsets[23],
+    offsets[25],
     allOffsets,
     ChapterPageIndexSchema.serialize,
     object.chapterPageIndexList,
   );
   writer.writeObjectList<ChapterPageurls>(
-    offsets[24],
+    offsets[26],
     allOffsets,
     ChapterPageurlsSchema.serialize,
     object.chapterPageUrlsList,
   );
-  writer.writeBool(offsets[25], object.checkForAppUpdates);
-  writer.writeBool(offsets[26], object.checkForExtensionUpdates);
-  writer.writeBool(offsets[27], object.clearChapterCacheOnAppLaunch);
-  writer.writeByte(offsets[28], object.colorFilterBlendMode.index);
-  writer.writeLong(offsets[29], object.concurrentDownloads);
+  writer.writeBool(offsets[27], object.checkForAppUpdates);
+  writer.writeBool(offsets[28], object.checkForExtensionUpdates);
+  writer.writeBool(offsets[29], object.clearChapterCacheOnAppLaunch);
+  writer.writeByte(offsets[30], object.colorFilterBlendMode.index);
+  writer.writeLong(offsets[31], object.concurrentDownloads);
   writer.writeObjectList<MCookie>(
-    offsets[30],
+    offsets[32],
     allOffsets,
     MCookieSchema.serialize,
     object.cookiesList,
   );
-  writer.writeBool(offsets[31], object.cropBorders);
+  writer.writeBool(offsets[33], object.cropBorders);
   writer.writeObject<CustomColorFilter>(
-    offsets[32],
+    offsets[34],
     allOffsets,
     CustomColorFilterSchema.serialize,
     object.customColorFilter,
   );
-  writer.writeString(offsets[33], object.dateFormat);
-  writer.writeLong(offsets[34], object.defaultDoubleTapToSkipLength);
-  writer.writeDouble(offsets[35], object.defaultPlayBackSpeed);
-  writer.writeByte(offsets[36], object.defaultReaderMode.index);
-  writer.writeLong(offsets[37], object.defaultSkipIntroLength);
+  writer.writeString(offsets[35], object.dateFormat);
+  writer.writeByte(offsets[36], object.debandingType.index);
+  writer.writeLong(offsets[37], object.defaultDoubleTapToSkipLength);
+  writer.writeDouble(offsets[38], object.defaultPlayBackSpeed);
+  writer.writeByte(offsets[39], object.defaultReaderMode.index);
+  writer.writeLong(offsets[40], object.defaultSkipIntroLength);
   writer.writeObject<L10nLocale>(
-    offsets[38],
+    offsets[41],
     allOffsets,
     L10nLocaleSchema.serialize,
     object.defaultSubtitleLang,
   );
-  writer.writeByte(offsets[39], object.disableSectionType.index);
-  writer.writeByte(offsets[40], object.displayType.index);
-  writer.writeLong(offsets[41], object.doubleTapAnimationSpeed);
-  writer.writeString(offsets[42], object.downloadLocation);
-  writer.writeBool(offsets[43], object.downloadOnlyOnWifi);
-  writer.writeBool(offsets[44], object.enableAniSkip);
-  writer.writeBool(offsets[45], object.enableAutoSkip);
-  writer.writeBool(offsets[46], object.enableCustomColorFilter);
-  writer.writeBool(offsets[47], object.enableDiscordRpc);
+  writer.writeByte(offsets[42], object.disableSectionType.index);
+  writer.writeByte(offsets[43], object.displayType.index);
+  writer.writeLong(offsets[44], object.doubleTapAnimationSpeed);
+  writer.writeString(offsets[45], object.downloadLocation);
+  writer.writeBool(offsets[46], object.downloadOnlyOnWifi);
+  writer.writeBool(offsets[47], object.enableAniSkip);
+  writer.writeBool(offsets[48], object.enableAudioPitchCorrection);
+  writer.writeBool(offsets[49], object.enableAutoSkip);
+  writer.writeBool(offsets[50], object.enableCustomColorFilter);
+  writer.writeBool(offsets[51], object.enableDiscordRpc);
+  writer.writeBool(offsets[52], object.enableGpuNext);
   writer.writeObjectList<FilterScanlator>(
-    offsets[48],
+    offsets[53],
     allOffsets,
     FilterScanlatorSchema.serialize,
     object.filterScanlatorList,
   );
-  writer.writeDouble(offsets[49], object.flexColorSchemeBlendLevel);
-  writer.writeLong(offsets[50], object.flexSchemeColorIndex);
-  writer.writeBool(offsets[51], object.followSystemTheme);
-  writer.writeBool(offsets[52], object.fullScreenPlayer);
-  writer.writeBool(offsets[53], object.fullScreenReader);
-  writer.writeBool(offsets[54], object.hideDiscordRpcInIncognito);
-  writer.writeStringList(offsets[55], object.hideItems);
-  writer.writeString(offsets[56], object.hwdecMode);
-  writer.writeBool(offsets[57], object.incognitoMode);
-  writer.writeString(offsets[58], object.lastTrackerLibraryLocation);
-  writer.writeBool(offsets[59], object.libraryDownloadedChapters);
-  writer.writeLong(offsets[60], object.libraryFilterAnimeBookMarkedType);
-  writer.writeLong(offsets[61], object.libraryFilterAnimeDownloadType);
-  writer.writeLong(offsets[62], object.libraryFilterAnimeStartedType);
-  writer.writeLong(offsets[63], object.libraryFilterAnimeUnreadType);
-  writer.writeLong(offsets[64], object.libraryFilterMangasBookMarkedType);
-  writer.writeLong(offsets[65], object.libraryFilterMangasDownloadType);
-  writer.writeLong(offsets[66], object.libraryFilterMangasStartedType);
-  writer.writeLong(offsets[67], object.libraryFilterMangasUnreadType);
-  writer.writeLong(offsets[68], object.libraryFilterNovelBookMarkedType);
-  writer.writeLong(offsets[69], object.libraryFilterNovelDownloadType);
-  writer.writeLong(offsets[70], object.libraryFilterNovelStartedType);
-  writer.writeLong(offsets[71], object.libraryFilterNovelUnreadType);
-  writer.writeBool(offsets[72], object.libraryLocalSource);
-  writer.writeBool(offsets[73], object.libraryShowCategoryTabs);
-  writer.writeBool(offsets[74], object.libraryShowContinueReadingButton);
-  writer.writeBool(offsets[75], object.libraryShowLanguage);
-  writer.writeBool(offsets[76], object.libraryShowNumbersOfItems);
+  writer.writeDouble(offsets[54], object.flexColorSchemeBlendLevel);
+  writer.writeLong(offsets[55], object.flexSchemeColorIndex);
+  writer.writeBool(offsets[56], object.followSystemTheme);
+  writer.writeBool(offsets[57], object.fullScreenPlayer);
+  writer.writeBool(offsets[58], object.fullScreenReader);
+  writer.writeBool(offsets[59], object.hideDiscordRpcInIncognito);
+  writer.writeStringList(offsets[60], object.hideItems);
+  writer.writeString(offsets[61], object.hwdecMode);
+  writer.writeBool(offsets[62], object.incognitoMode);
+  writer.writeString(offsets[63], object.lastTrackerLibraryLocation);
+  writer.writeBool(offsets[64], object.libraryDownloadedChapters);
+  writer.writeLong(offsets[65], object.libraryFilterAnimeBookMarkedType);
+  writer.writeLong(offsets[66], object.libraryFilterAnimeDownloadType);
+  writer.writeLong(offsets[67], object.libraryFilterAnimeStartedType);
+  writer.writeLong(offsets[68], object.libraryFilterAnimeUnreadType);
+  writer.writeLong(offsets[69], object.libraryFilterMangasBookMarkedType);
+  writer.writeLong(offsets[70], object.libraryFilterMangasDownloadType);
+  writer.writeLong(offsets[71], object.libraryFilterMangasStartedType);
+  writer.writeLong(offsets[72], object.libraryFilterMangasUnreadType);
+  writer.writeLong(offsets[73], object.libraryFilterNovelBookMarkedType);
+  writer.writeLong(offsets[74], object.libraryFilterNovelDownloadType);
+  writer.writeLong(offsets[75], object.libraryFilterNovelStartedType);
+  writer.writeLong(offsets[76], object.libraryFilterNovelUnreadType);
+  writer.writeBool(offsets[77], object.libraryLocalSource);
+  writer.writeBool(offsets[78], object.libraryShowCategoryTabs);
+  writer.writeBool(offsets[79], object.libraryShowContinueReadingButton);
+  writer.writeBool(offsets[80], object.libraryShowLanguage);
+  writer.writeBool(offsets[81], object.libraryShowNumbersOfItems);
   writer.writeObject<L10nLocale>(
-    offsets[77],
+    offsets[82],
     allOffsets,
     L10nLocaleSchema.serialize,
     object.locale,
   );
   writer.writeObjectList<Repo>(
-    offsets[78],
+    offsets[83],
     allOffsets,
     RepoSchema.serialize,
     object.mangaExtensionsRepo,
   );
-  writer.writeLong(offsets[79], object.mangaGridSize);
-  writer.writeByte(offsets[80], object.mangaHomeDisplayType.index);
-  writer.writeLong(offsets[81], object.markEpisodeAsSeenType);
-  writer.writeBool(offsets[82], object.mergeLibraryNavMobile);
-  writer.writeStringList(offsets[83], object.navigationOrder);
-  writer.writeByte(offsets[84], object.novelDisplayType.index);
+  writer.writeLong(offsets[84], object.mangaGridSize);
+  writer.writeByte(offsets[85], object.mangaHomeDisplayType.index);
+  writer.writeLong(offsets[86], object.markEpisodeAsSeenType);
+  writer.writeBool(offsets[87], object.mergeLibraryNavMobile);
+  writer.writeStringList(offsets[88], object.navigationOrder);
+  writer.writeByte(offsets[89], object.novelDisplayType.index);
   writer.writeObjectList<Repo>(
-    offsets[85],
+    offsets[90],
     allOffsets,
     RepoSchema.serialize,
     object.novelExtensionsRepo,
   );
-  writer.writeLong(offsets[86], object.novelFontSize);
-  writer.writeLong(offsets[87], object.novelGridSize);
-  writer.writeBool(offsets[88], object.novelLibraryDownloadedChapters);
-  writer.writeBool(offsets[89], object.novelLibraryLocalSource);
-  writer.writeBool(offsets[90], object.novelLibraryShowCategoryTabs);
-  writer.writeBool(offsets[91], object.novelLibraryShowContinueReadingButton);
-  writer.writeBool(offsets[92], object.novelLibraryShowLanguage);
-  writer.writeBool(offsets[93], object.novelLibraryShowNumbersOfItems);
-  writer.writeByte(offsets[94], object.novelTextAlign.index);
-  writer.writeBool(offsets[95], object.onlyIncludePinnedSources);
-  writer.writeLong(offsets[96], object.pagePreloadAmount);
+  writer.writeLong(offsets[91], object.novelFontSize);
+  writer.writeLong(offsets[92], object.novelGridSize);
+  writer.writeBool(offsets[93], object.novelLibraryDownloadedChapters);
+  writer.writeBool(offsets[94], object.novelLibraryLocalSource);
+  writer.writeBool(offsets[95], object.novelLibraryShowCategoryTabs);
+  writer.writeBool(offsets[96], object.novelLibraryShowContinueReadingButton);
+  writer.writeBool(offsets[97], object.novelLibraryShowLanguage);
+  writer.writeBool(offsets[98], object.novelLibraryShowNumbersOfItems);
+  writer.writeByte(offsets[99], object.novelTextAlign.index);
+  writer.writeBool(offsets[100], object.onlyIncludePinnedSources);
+  writer.writeLong(offsets[101], object.pagePreloadAmount);
   writer.writeObjectList<PersonalPageMode>(
-    offsets[97],
+    offsets[102],
     allOffsets,
     PersonalPageModeSchema.serialize,
     object.personalPageModeList,
   );
   writer.writeObjectList<PersonalReaderMode>(
-    offsets[98],
+    offsets[103],
     allOffsets,
     PersonalReaderModeSchema.serialize,
     object.personalReaderModeList,
   );
   writer.writeObject<PlayerSubtitleSettings>(
-    offsets[99],
+    offsets[104],
     allOffsets,
     PlayerSubtitleSettingsSchema.serialize,
     object.playerSubtitleSettings,
   );
-  writer.writeBool(offsets[100], object.pureBlackDarkMode);
-  writer.writeLong(offsets[101], object.relativeTimesTamps);
-  writer.writeBool(offsets[102], object.rpcShowCoverImage);
-  writer.writeBool(offsets[103], object.rpcShowReadingWatchingProgress);
-  writer.writeBool(offsets[104], object.rpcShowTitle);
-  writer.writeBool(offsets[105], object.saveAsCBZArchive);
-  writer.writeByte(offsets[106], object.scaleType.index);
-  writer.writeBool(offsets[107], object.showPagesNumber);
+  writer.writeBool(offsets[105], object.pureBlackDarkMode);
+  writer.writeLong(offsets[106], object.relativeTimesTamps);
+  writer.writeBool(offsets[107], object.rpcShowCoverImage);
+  writer.writeBool(offsets[108], object.rpcShowReadingWatchingProgress);
+  writer.writeBool(offsets[109], object.rpcShowTitle);
+  writer.writeBool(offsets[110], object.saveAsCBZArchive);
+  writer.writeByte(offsets[111], object.scaleType.index);
+  writer.writeBool(offsets[112], object.showPagesNumber);
   writer.writeObjectList<SortChapter>(
-    offsets[108],
+    offsets[113],
     allOffsets,
     SortChapterSchema.serialize,
     object.sortChapterList,
   );
   writer.writeObject<SortLibraryManga>(
-    offsets[109],
+    offsets[114],
     allOffsets,
     SortLibraryMangaSchema.serialize,
     object.sortLibraryAnime,
   );
   writer.writeObject<SortLibraryManga>(
-    offsets[110],
+    offsets[115],
     allOffsets,
     SortLibraryMangaSchema.serialize,
     object.sortLibraryManga,
   );
   writer.writeObject<SortLibraryManga>(
-    offsets[111],
+    offsets[116],
     allOffsets,
     SortLibraryMangaSchema.serialize,
     object.sortLibraryNovel,
   );
-  writer.writeLong(offsets[112], object.startDatebackup);
-  writer.writeBool(offsets[113], object.themeIsDark);
-  writer.writeBool(offsets[114], object.updateProgressAfterReading);
-  writer.writeLong(offsets[115], object.updatedAt);
-  writer.writeBool(offsets[116], object.useLibass);
-  writer.writeBool(offsets[117], object.useMpvConfig);
-  writer.writeBool(offsets[118], object.usePageTapZones);
-  writer.writeString(offsets[119], object.userAgent);
+  writer.writeLong(offsets[117], object.startDatebackup);
+  writer.writeBool(offsets[118], object.themeIsDark);
+  writer.writeBool(offsets[119], object.updateProgressAfterReading);
+  writer.writeLong(offsets[120], object.updatedAt);
+  writer.writeBool(offsets[121], object.useLibass);
+  writer.writeBool(offsets[122], object.useMpvConfig);
+  writer.writeBool(offsets[123], object.usePageTapZones);
+  writer.writeBool(offsets[124], object.useYUV420P);
+  writer.writeString(offsets[125], object.userAgent);
+  writer.writeLong(offsets[126], object.volumeBoostCap);
 }
 
 Settings _settingsDeserialize(
@@ -1281,228 +1331,239 @@ Settings _settingsDeserialize(
     animeLibraryShowLanguage: reader.readBoolOrNull(offsets[9]),
     animeLibraryShowNumbersOfItems: reader.readBoolOrNull(offsets[10]),
     appFontFamily: reader.readStringOrNull(offsets[11]),
-    autoBackupLocation: reader.readStringOrNull(offsets[12]),
-    autoExtensionsUpdates: reader.readBoolOrNull(offsets[13]),
+    audioChannels: _SettingsaudioChannelsValueEnumMap[
+            reader.readByteOrNull(offsets[12])] ??
+        AudioChannel.autoSafe,
+    audioPreferredLanguages: reader.readStringOrNull(offsets[13]),
+    autoBackupLocation: reader.readStringOrNull(offsets[14]),
+    autoExtensionsUpdates: reader.readBoolOrNull(offsets[15]),
     autoScrollPages: reader.readObjectList<AutoScrollPages>(
-      offsets[14],
+      offsets[16],
       AutoScrollPagesSchema.deserialize,
       allOffsets,
       AutoScrollPages(),
     ),
     backgroundColor: _SettingsbackgroundColorValueEnumMap[
-            reader.readByteOrNull(offsets[15])] ??
+            reader.readByteOrNull(offsets[17])] ??
         BackgroundColor.black,
-    backupFrequency: reader.readLongOrNull(offsets[16]),
-    backupListOptions: reader.readLongList(offsets[17]),
-    btServerAddress: reader.readStringOrNull(offsets[18]),
-    btServerPort: reader.readLongOrNull(offsets[19]),
+    backupFrequency: reader.readLongOrNull(offsets[18]),
+    backupListOptions: reader.readLongList(offsets[19]),
+    btServerAddress: reader.readStringOrNull(offsets[20]),
+    btServerPort: reader.readLongOrNull(offsets[21]),
     chapterFilterDownloadedList: reader.readObjectList<ChapterFilterDownloaded>(
-      offsets[21],
+      offsets[23],
       ChapterFilterDownloadedSchema.deserialize,
       allOffsets,
       ChapterFilterDownloaded(),
     ),
     chapterPageIndexList: reader.readObjectList<ChapterPageIndex>(
-      offsets[23],
+      offsets[25],
       ChapterPageIndexSchema.deserialize,
       allOffsets,
       ChapterPageIndex(),
     ),
     chapterPageUrlsList: reader.readObjectList<ChapterPageurls>(
-      offsets[24],
+      offsets[26],
       ChapterPageurlsSchema.deserialize,
       allOffsets,
       ChapterPageurls(),
     ),
-    checkForAppUpdates: reader.readBoolOrNull(offsets[25]),
-    checkForExtensionUpdates: reader.readBoolOrNull(offsets[26]),
-    clearChapterCacheOnAppLaunch: reader.readBoolOrNull(offsets[27]),
+    checkForAppUpdates: reader.readBoolOrNull(offsets[27]),
+    checkForExtensionUpdates: reader.readBoolOrNull(offsets[28]),
+    clearChapterCacheOnAppLaunch: reader.readBoolOrNull(offsets[29]),
     colorFilterBlendMode: _SettingscolorFilterBlendModeValueEnumMap[
-            reader.readByteOrNull(offsets[28])] ??
+            reader.readByteOrNull(offsets[30])] ??
         ColorFilterBlendMode.none,
-    concurrentDownloads: reader.readLongOrNull(offsets[29]),
+    concurrentDownloads: reader.readLongOrNull(offsets[31]),
     cookiesList: reader.readObjectList<MCookie>(
-      offsets[30],
+      offsets[32],
       MCookieSchema.deserialize,
       allOffsets,
       MCookie(),
     ),
-    cropBorders: reader.readBoolOrNull(offsets[31]),
+    cropBorders: reader.readBoolOrNull(offsets[33]),
     customColorFilter: reader.readObjectOrNull<CustomColorFilter>(
-      offsets[32],
+      offsets[34],
       CustomColorFilterSchema.deserialize,
       allOffsets,
     ),
-    dateFormat: reader.readStringOrNull(offsets[33]),
-    defaultDoubleTapToSkipLength: reader.readLongOrNull(offsets[34]),
-    defaultPlayBackSpeed: reader.readDoubleOrNull(offsets[35]),
-    defaultReaderMode: _SettingsdefaultReaderModeValueEnumMap[
+    dateFormat: reader.readStringOrNull(offsets[35]),
+    debandingType: _SettingsdebandingTypeValueEnumMap[
             reader.readByteOrNull(offsets[36])] ??
-        ReaderMode.vertical,
-    defaultSkipIntroLength: reader.readLongOrNull(offsets[37]),
-    disableSectionType: _SettingsdisableSectionTypeValueEnumMap[
+        DebandingType.none,
+    defaultDoubleTapToSkipLength: reader.readLongOrNull(offsets[37]),
+    defaultPlayBackSpeed: reader.readDoubleOrNull(offsets[38]),
+    defaultReaderMode: _SettingsdefaultReaderModeValueEnumMap[
             reader.readByteOrNull(offsets[39])] ??
+        ReaderMode.vertical,
+    defaultSkipIntroLength: reader.readLongOrNull(offsets[40]),
+    disableSectionType: _SettingsdisableSectionTypeValueEnumMap[
+            reader.readByteOrNull(offsets[42])] ??
         SectionType.all,
     displayType:
-        _SettingsdisplayTypeValueEnumMap[reader.readByteOrNull(offsets[40])] ??
+        _SettingsdisplayTypeValueEnumMap[reader.readByteOrNull(offsets[43])] ??
             DisplayType.compactGrid,
-    doubleTapAnimationSpeed: reader.readLongOrNull(offsets[41]),
-    downloadLocation: reader.readStringOrNull(offsets[42]),
-    downloadOnlyOnWifi: reader.readBoolOrNull(offsets[43]),
-    enableAniSkip: reader.readBoolOrNull(offsets[44]),
-    enableAutoSkip: reader.readBoolOrNull(offsets[45]),
-    enableCustomColorFilter: reader.readBoolOrNull(offsets[46]),
-    enableDiscordRpc: reader.readBoolOrNull(offsets[47]),
-    flexColorSchemeBlendLevel: reader.readDoubleOrNull(offsets[49]),
-    flexSchemeColorIndex: reader.readLongOrNull(offsets[50]),
-    followSystemTheme: reader.readBoolOrNull(offsets[51]),
-    fullScreenPlayer: reader.readBoolOrNull(offsets[52]),
-    fullScreenReader: reader.readBoolOrNull(offsets[53]),
-    hideDiscordRpcInIncognito: reader.readBoolOrNull(offsets[54]),
-    hideItems: reader.readStringList(offsets[55]),
-    hwdecMode: reader.readStringOrNull(offsets[56]),
+    doubleTapAnimationSpeed: reader.readLongOrNull(offsets[44]),
+    downloadLocation: reader.readStringOrNull(offsets[45]),
+    downloadOnlyOnWifi: reader.readBoolOrNull(offsets[46]),
+    enableAniSkip: reader.readBoolOrNull(offsets[47]),
+    enableAudioPitchCorrection: reader.readBoolOrNull(offsets[48]),
+    enableAutoSkip: reader.readBoolOrNull(offsets[49]),
+    enableCustomColorFilter: reader.readBoolOrNull(offsets[50]),
+    enableDiscordRpc: reader.readBoolOrNull(offsets[51]),
+    enableGpuNext: reader.readBoolOrNull(offsets[52]),
+    flexColorSchemeBlendLevel: reader.readDoubleOrNull(offsets[54]),
+    flexSchemeColorIndex: reader.readLongOrNull(offsets[55]),
+    followSystemTheme: reader.readBoolOrNull(offsets[56]),
+    fullScreenPlayer: reader.readBoolOrNull(offsets[57]),
+    fullScreenReader: reader.readBoolOrNull(offsets[58]),
+    hideDiscordRpcInIncognito: reader.readBoolOrNull(offsets[59]),
+    hideItems: reader.readStringList(offsets[60]),
+    hwdecMode: reader.readStringOrNull(offsets[61]),
     id: id,
-    incognitoMode: reader.readBoolOrNull(offsets[57]),
-    lastTrackerLibraryLocation: reader.readStringOrNull(offsets[58]),
-    libraryDownloadedChapters: reader.readBoolOrNull(offsets[59]),
-    libraryFilterAnimeBookMarkedType: reader.readLongOrNull(offsets[60]),
-    libraryFilterAnimeDownloadType: reader.readLongOrNull(offsets[61]),
-    libraryFilterAnimeStartedType: reader.readLongOrNull(offsets[62]),
-    libraryFilterAnimeUnreadType: reader.readLongOrNull(offsets[63]),
-    libraryFilterMangasBookMarkedType: reader.readLongOrNull(offsets[64]),
-    libraryFilterMangasDownloadType: reader.readLongOrNull(offsets[65]),
-    libraryFilterMangasStartedType: reader.readLongOrNull(offsets[66]),
-    libraryFilterMangasUnreadType: reader.readLongOrNull(offsets[67]),
-    libraryFilterNovelBookMarkedType: reader.readLongOrNull(offsets[68]),
-    libraryFilterNovelDownloadType: reader.readLongOrNull(offsets[69]),
-    libraryFilterNovelStartedType: reader.readLongOrNull(offsets[70]),
-    libraryFilterNovelUnreadType: reader.readLongOrNull(offsets[71]),
-    libraryLocalSource: reader.readBoolOrNull(offsets[72]),
-    libraryShowCategoryTabs: reader.readBoolOrNull(offsets[73]),
-    libraryShowContinueReadingButton: reader.readBoolOrNull(offsets[74]),
-    libraryShowLanguage: reader.readBoolOrNull(offsets[75]),
-    libraryShowNumbersOfItems: reader.readBoolOrNull(offsets[76]),
+    incognitoMode: reader.readBoolOrNull(offsets[62]),
+    lastTrackerLibraryLocation: reader.readStringOrNull(offsets[63]),
+    libraryDownloadedChapters: reader.readBoolOrNull(offsets[64]),
+    libraryFilterAnimeBookMarkedType: reader.readLongOrNull(offsets[65]),
+    libraryFilterAnimeDownloadType: reader.readLongOrNull(offsets[66]),
+    libraryFilterAnimeStartedType: reader.readLongOrNull(offsets[67]),
+    libraryFilterAnimeUnreadType: reader.readLongOrNull(offsets[68]),
+    libraryFilterMangasBookMarkedType: reader.readLongOrNull(offsets[69]),
+    libraryFilterMangasDownloadType: reader.readLongOrNull(offsets[70]),
+    libraryFilterMangasStartedType: reader.readLongOrNull(offsets[71]),
+    libraryFilterMangasUnreadType: reader.readLongOrNull(offsets[72]),
+    libraryFilterNovelBookMarkedType: reader.readLongOrNull(offsets[73]),
+    libraryFilterNovelDownloadType: reader.readLongOrNull(offsets[74]),
+    libraryFilterNovelStartedType: reader.readLongOrNull(offsets[75]),
+    libraryFilterNovelUnreadType: reader.readLongOrNull(offsets[76]),
+    libraryLocalSource: reader.readBoolOrNull(offsets[77]),
+    libraryShowCategoryTabs: reader.readBoolOrNull(offsets[78]),
+    libraryShowContinueReadingButton: reader.readBoolOrNull(offsets[79]),
+    libraryShowLanguage: reader.readBoolOrNull(offsets[80]),
+    libraryShowNumbersOfItems: reader.readBoolOrNull(offsets[81]),
     mangaExtensionsRepo: reader.readObjectList<Repo>(
-      offsets[78],
+      offsets[83],
       RepoSchema.deserialize,
       allOffsets,
       Repo(),
     ),
-    mangaGridSize: reader.readLongOrNull(offsets[79]),
+    mangaGridSize: reader.readLongOrNull(offsets[84]),
     mangaHomeDisplayType: _SettingsmangaHomeDisplayTypeValueEnumMap[
-            reader.readByteOrNull(offsets[80])] ??
+            reader.readByteOrNull(offsets[85])] ??
         DisplayType.comfortableGrid,
-    markEpisodeAsSeenType: reader.readLongOrNull(offsets[81]),
-    mergeLibraryNavMobile: reader.readBoolOrNull(offsets[82]),
-    navigationOrder: reader.readStringList(offsets[83]),
+    markEpisodeAsSeenType: reader.readLongOrNull(offsets[86]),
+    mergeLibraryNavMobile: reader.readBoolOrNull(offsets[87]),
+    navigationOrder: reader.readStringList(offsets[88]),
     novelDisplayType: _SettingsnovelDisplayTypeValueEnumMap[
-            reader.readByteOrNull(offsets[84])] ??
+            reader.readByteOrNull(offsets[89])] ??
         DisplayType.comfortableGrid,
     novelExtensionsRepo: reader.readObjectList<Repo>(
-      offsets[85],
+      offsets[90],
       RepoSchema.deserialize,
       allOffsets,
       Repo(),
     ),
-    novelFontSize: reader.readLongOrNull(offsets[86]),
-    novelLibraryDownloadedChapters: reader.readBoolOrNull(offsets[88]),
-    novelLibraryLocalSource: reader.readBoolOrNull(offsets[89]),
-    novelLibraryShowCategoryTabs: reader.readBoolOrNull(offsets[90]),
-    novelLibraryShowContinueReadingButton: reader.readBoolOrNull(offsets[91]),
-    novelLibraryShowLanguage: reader.readBoolOrNull(offsets[92]),
-    novelLibraryShowNumbersOfItems: reader.readBoolOrNull(offsets[93]),
+    novelFontSize: reader.readLongOrNull(offsets[91]),
+    novelLibraryDownloadedChapters: reader.readBoolOrNull(offsets[93]),
+    novelLibraryLocalSource: reader.readBoolOrNull(offsets[94]),
+    novelLibraryShowCategoryTabs: reader.readBoolOrNull(offsets[95]),
+    novelLibraryShowContinueReadingButton: reader.readBoolOrNull(offsets[96]),
+    novelLibraryShowLanguage: reader.readBoolOrNull(offsets[97]),
+    novelLibraryShowNumbersOfItems: reader.readBoolOrNull(offsets[98]),
     novelTextAlign: _SettingsnovelTextAlignValueEnumMap[
-            reader.readByteOrNull(offsets[94])] ??
+            reader.readByteOrNull(offsets[99])] ??
         NovelTextAlign.left,
-    onlyIncludePinnedSources: reader.readBoolOrNull(offsets[95]),
-    pagePreloadAmount: reader.readLongOrNull(offsets[96]),
+    onlyIncludePinnedSources: reader.readBoolOrNull(offsets[100]),
+    pagePreloadAmount: reader.readLongOrNull(offsets[101]),
     personalPageModeList: reader.readObjectList<PersonalPageMode>(
-      offsets[97],
+      offsets[102],
       PersonalPageModeSchema.deserialize,
       allOffsets,
       PersonalPageMode(),
     ),
     personalReaderModeList: reader.readObjectList<PersonalReaderMode>(
-      offsets[98],
+      offsets[103],
       PersonalReaderModeSchema.deserialize,
       allOffsets,
       PersonalReaderMode(),
     ),
     playerSubtitleSettings: reader.readObjectOrNull<PlayerSubtitleSettings>(
-      offsets[99],
+      offsets[104],
       PlayerSubtitleSettingsSchema.deserialize,
       allOffsets,
     ),
-    pureBlackDarkMode: reader.readBoolOrNull(offsets[100]),
-    relativeTimesTamps: reader.readLongOrNull(offsets[101]),
-    rpcShowCoverImage: reader.readBoolOrNull(offsets[102]),
-    rpcShowReadingWatchingProgress: reader.readBoolOrNull(offsets[103]),
-    rpcShowTitle: reader.readBoolOrNull(offsets[104]),
-    saveAsCBZArchive: reader.readBoolOrNull(offsets[105]),
+    pureBlackDarkMode: reader.readBoolOrNull(offsets[105]),
+    relativeTimesTamps: reader.readLongOrNull(offsets[106]),
+    rpcShowCoverImage: reader.readBoolOrNull(offsets[107]),
+    rpcShowReadingWatchingProgress: reader.readBoolOrNull(offsets[108]),
+    rpcShowTitle: reader.readBoolOrNull(offsets[109]),
+    saveAsCBZArchive: reader.readBoolOrNull(offsets[110]),
     scaleType:
-        _SettingsscaleTypeValueEnumMap[reader.readByteOrNull(offsets[106])] ??
+        _SettingsscaleTypeValueEnumMap[reader.readByteOrNull(offsets[111])] ??
             ScaleType.fitScreen,
-    showPagesNumber: reader.readBoolOrNull(offsets[107]),
+    showPagesNumber: reader.readBoolOrNull(offsets[112]),
     sortChapterList: reader.readObjectList<SortChapter>(
-      offsets[108],
+      offsets[113],
       SortChapterSchema.deserialize,
       allOffsets,
       SortChapter(),
     ),
     sortLibraryAnime: reader.readObjectOrNull<SortLibraryManga>(
-      offsets[109],
+      offsets[114],
       SortLibraryMangaSchema.deserialize,
       allOffsets,
     ),
     sortLibraryManga: reader.readObjectOrNull<SortLibraryManga>(
-      offsets[110],
+      offsets[115],
       SortLibraryMangaSchema.deserialize,
       allOffsets,
     ),
     sortLibraryNovel: reader.readObjectOrNull<SortLibraryManga>(
-      offsets[111],
+      offsets[116],
       SortLibraryMangaSchema.deserialize,
       allOffsets,
     ),
-    startDatebackup: reader.readLongOrNull(offsets[112]),
-    themeIsDark: reader.readBoolOrNull(offsets[113]),
-    updateProgressAfterReading: reader.readBoolOrNull(offsets[114]),
-    updatedAt: reader.readLongOrNull(offsets[115]),
-    useLibass: reader.readBoolOrNull(offsets[116]),
-    useMpvConfig: reader.readBoolOrNull(offsets[117]),
-    usePageTapZones: reader.readBoolOrNull(offsets[118]),
-    userAgent: reader.readStringOrNull(offsets[119]),
+    startDatebackup: reader.readLongOrNull(offsets[117]),
+    themeIsDark: reader.readBoolOrNull(offsets[118]),
+    updateProgressAfterReading: reader.readBoolOrNull(offsets[119]),
+    updatedAt: reader.readLongOrNull(offsets[120]),
+    useLibass: reader.readBoolOrNull(offsets[121]),
+    useMpvConfig: reader.readBoolOrNull(offsets[122]),
+    usePageTapZones: reader.readBoolOrNull(offsets[123]),
+    useYUV420P: reader.readBoolOrNull(offsets[124]),
+    userAgent: reader.readStringOrNull(offsets[125]),
+    volumeBoostCap: reader.readLongOrNull(offsets[126]),
   );
   object.chapterFilterBookmarkedList =
       reader.readObjectList<ChapterFilterBookmarked>(
-    offsets[20],
+    offsets[22],
     ChapterFilterBookmarkedSchema.deserialize,
     allOffsets,
     ChapterFilterBookmarked(),
   );
   object.chapterFilterUnreadList = reader.readObjectList<ChapterFilterUnread>(
-    offsets[22],
+    offsets[24],
     ChapterFilterUnreadSchema.deserialize,
     allOffsets,
     ChapterFilterUnread(),
   );
   object.defaultSubtitleLang = reader.readObjectOrNull<L10nLocale>(
-    offsets[38],
+    offsets[41],
     L10nLocaleSchema.deserialize,
     allOffsets,
   );
   object.filterScanlatorList = reader.readObjectList<FilterScanlator>(
-    offsets[48],
+    offsets[53],
     FilterScanlatorSchema.deserialize,
     allOffsets,
     FilterScanlator(),
   );
   object.locale = reader.readObjectOrNull<L10nLocale>(
-    offsets[77],
+    offsets[82],
     L10nLocaleSchema.deserialize,
     allOffsets,
   );
-  object.novelGridSize = reader.readLongOrNull(offsets[87]);
+  object.novelGridSize = reader.readLongOrNull(offsets[92]);
   return object;
 }
 
@@ -1545,168 +1606,172 @@ P _settingsDeserializeProp<P>(
     case 11:
       return (reader.readStringOrNull(offset)) as P;
     case 12:
-      return (reader.readStringOrNull(offset)) as P;
+      return (_SettingsaudioChannelsValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          AudioChannel.autoSafe) as P;
     case 13:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 14:
+      return (reader.readStringOrNull(offset)) as P;
+    case 15:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 16:
       return (reader.readObjectList<AutoScrollPages>(
         offset,
         AutoScrollPagesSchema.deserialize,
         allOffsets,
         AutoScrollPages(),
       )) as P;
-    case 15:
+    case 17:
       return (_SettingsbackgroundColorValueEnumMap[
               reader.readByteOrNull(offset)] ??
           BackgroundColor.black) as P;
-    case 16:
-      return (reader.readLongOrNull(offset)) as P;
-    case 17:
-      return (reader.readLongList(offset)) as P;
     case 18:
-      return (reader.readStringOrNull(offset)) as P;
-    case 19:
       return (reader.readLongOrNull(offset)) as P;
+    case 19:
+      return (reader.readLongList(offset)) as P;
     case 20:
+      return (reader.readStringOrNull(offset)) as P;
+    case 21:
+      return (reader.readLongOrNull(offset)) as P;
+    case 22:
       return (reader.readObjectList<ChapterFilterBookmarked>(
         offset,
         ChapterFilterBookmarkedSchema.deserialize,
         allOffsets,
         ChapterFilterBookmarked(),
       )) as P;
-    case 21:
+    case 23:
       return (reader.readObjectList<ChapterFilterDownloaded>(
         offset,
         ChapterFilterDownloadedSchema.deserialize,
         allOffsets,
         ChapterFilterDownloaded(),
       )) as P;
-    case 22:
+    case 24:
       return (reader.readObjectList<ChapterFilterUnread>(
         offset,
         ChapterFilterUnreadSchema.deserialize,
         allOffsets,
         ChapterFilterUnread(),
       )) as P;
-    case 23:
+    case 25:
       return (reader.readObjectList<ChapterPageIndex>(
         offset,
         ChapterPageIndexSchema.deserialize,
         allOffsets,
         ChapterPageIndex(),
       )) as P;
-    case 24:
+    case 26:
       return (reader.readObjectList<ChapterPageurls>(
         offset,
         ChapterPageurlsSchema.deserialize,
         allOffsets,
         ChapterPageurls(),
       )) as P;
-    case 25:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 26:
-      return (reader.readBoolOrNull(offset)) as P;
     case 27:
       return (reader.readBoolOrNull(offset)) as P;
     case 28:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 29:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 30:
       return (_SettingscolorFilterBlendModeValueEnumMap[
               reader.readByteOrNull(offset)] ??
           ColorFilterBlendMode.none) as P;
-    case 29:
+    case 31:
       return (reader.readLongOrNull(offset)) as P;
-    case 30:
+    case 32:
       return (reader.readObjectList<MCookie>(
         offset,
         MCookieSchema.deserialize,
         allOffsets,
         MCookie(),
       )) as P;
-    case 31:
+    case 33:
       return (reader.readBoolOrNull(offset)) as P;
-    case 32:
+    case 34:
       return (reader.readObjectOrNull<CustomColorFilter>(
         offset,
         CustomColorFilterSchema.deserialize,
         allOffsets,
       )) as P;
-    case 33:
-      return (reader.readStringOrNull(offset)) as P;
-    case 34:
-      return (reader.readLongOrNull(offset)) as P;
     case 35:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 36:
-      return (_SettingsdefaultReaderModeValueEnumMap[
+      return (_SettingsdebandingTypeValueEnumMap[
               reader.readByteOrNull(offset)] ??
-          ReaderMode.vertical) as P;
+          DebandingType.none) as P;
     case 37:
       return (reader.readLongOrNull(offset)) as P;
     case 38:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 39:
+      return (_SettingsdefaultReaderModeValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          ReaderMode.vertical) as P;
+    case 40:
+      return (reader.readLongOrNull(offset)) as P;
+    case 41:
       return (reader.readObjectOrNull<L10nLocale>(
         offset,
         L10nLocaleSchema.deserialize,
         allOffsets,
       )) as P;
-    case 39:
+    case 42:
       return (_SettingsdisableSectionTypeValueEnumMap[
               reader.readByteOrNull(offset)] ??
           SectionType.all) as P;
-    case 40:
+    case 43:
       return (_SettingsdisplayTypeValueEnumMap[reader.readByteOrNull(offset)] ??
           DisplayType.compactGrid) as P;
-    case 41:
-      return (reader.readLongOrNull(offset)) as P;
-    case 42:
-      return (reader.readStringOrNull(offset)) as P;
-    case 43:
-      return (reader.readBoolOrNull(offset)) as P;
     case 44:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 45:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 46:
       return (reader.readBoolOrNull(offset)) as P;
     case 47:
       return (reader.readBoolOrNull(offset)) as P;
     case 48:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 49:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 50:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 51:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 52:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 53:
       return (reader.readObjectList<FilterScanlator>(
         offset,
         FilterScanlatorSchema.deserialize,
         allOffsets,
         FilterScanlator(),
       )) as P;
-    case 49:
-      return (reader.readDoubleOrNull(offset)) as P;
-    case 50:
-      return (reader.readLongOrNull(offset)) as P;
-    case 51:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 52:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 53:
-      return (reader.readBoolOrNull(offset)) as P;
     case 54:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 55:
-      return (reader.readStringList(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 56:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 57:
       return (reader.readBoolOrNull(offset)) as P;
     case 58:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 59:
       return (reader.readBoolOrNull(offset)) as P;
     case 60:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringList(offset)) as P;
     case 61:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 62:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 63:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 64:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 65:
       return (reader.readLongOrNull(offset)) as P;
     case 66:
@@ -1722,153 +1787,167 @@ P _settingsDeserializeProp<P>(
     case 71:
       return (reader.readLongOrNull(offset)) as P;
     case 72:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 73:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 74:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 75:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 76:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 77:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 78:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 79:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 80:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 81:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 82:
       return (reader.readObjectOrNull<L10nLocale>(
         offset,
         L10nLocaleSchema.deserialize,
         allOffsets,
       )) as P;
-    case 78:
+    case 83:
       return (reader.readObjectList<Repo>(
         offset,
         RepoSchema.deserialize,
         allOffsets,
         Repo(),
       )) as P;
-    case 79:
+    case 84:
       return (reader.readLongOrNull(offset)) as P;
-    case 80:
+    case 85:
       return (_SettingsmangaHomeDisplayTypeValueEnumMap[
               reader.readByteOrNull(offset)] ??
           DisplayType.comfortableGrid) as P;
-    case 81:
+    case 86:
       return (reader.readLongOrNull(offset)) as P;
-    case 82:
+    case 87:
       return (reader.readBoolOrNull(offset)) as P;
-    case 83:
+    case 88:
       return (reader.readStringList(offset)) as P;
-    case 84:
+    case 89:
       return (_SettingsnovelDisplayTypeValueEnumMap[
               reader.readByteOrNull(offset)] ??
           DisplayType.comfortableGrid) as P;
-    case 85:
+    case 90:
       return (reader.readObjectList<Repo>(
         offset,
         RepoSchema.deserialize,
         allOffsets,
         Repo(),
       )) as P;
-    case 86:
-      return (reader.readLongOrNull(offset)) as P;
-    case 87:
-      return (reader.readLongOrNull(offset)) as P;
-    case 88:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 89:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 90:
-      return (reader.readBoolOrNull(offset)) as P;
     case 91:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 92:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 93:
       return (reader.readBoolOrNull(offset)) as P;
     case 94:
-      return (_SettingsnovelTextAlignValueEnumMap[
-              reader.readByteOrNull(offset)] ??
-          NovelTextAlign.left) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 95:
       return (reader.readBoolOrNull(offset)) as P;
     case 96:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 97:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 98:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 99:
+      return (_SettingsnovelTextAlignValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          NovelTextAlign.left) as P;
+    case 100:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 101:
+      return (reader.readLongOrNull(offset)) as P;
+    case 102:
       return (reader.readObjectList<PersonalPageMode>(
         offset,
         PersonalPageModeSchema.deserialize,
         allOffsets,
         PersonalPageMode(),
       )) as P;
-    case 98:
+    case 103:
       return (reader.readObjectList<PersonalReaderMode>(
         offset,
         PersonalReaderModeSchema.deserialize,
         allOffsets,
         PersonalReaderMode(),
       )) as P;
-    case 99:
+    case 104:
       return (reader.readObjectOrNull<PlayerSubtitleSettings>(
         offset,
         PlayerSubtitleSettingsSchema.deserialize,
         allOffsets,
       )) as P;
-    case 100:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 101:
-      return (reader.readLongOrNull(offset)) as P;
-    case 102:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 103:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 104:
-      return (reader.readBoolOrNull(offset)) as P;
     case 105:
       return (reader.readBoolOrNull(offset)) as P;
     case 106:
-      return (_SettingsscaleTypeValueEnumMap[reader.readByteOrNull(offset)] ??
-          ScaleType.fitScreen) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 107:
       return (reader.readBoolOrNull(offset)) as P;
     case 108:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 109:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 110:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 111:
+      return (_SettingsscaleTypeValueEnumMap[reader.readByteOrNull(offset)] ??
+          ScaleType.fitScreen) as P;
+    case 112:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 113:
       return (reader.readObjectList<SortChapter>(
         offset,
         SortChapterSchema.deserialize,
         allOffsets,
         SortChapter(),
       )) as P;
-    case 109:
-      return (reader.readObjectOrNull<SortLibraryManga>(
-        offset,
-        SortLibraryMangaSchema.deserialize,
-        allOffsets,
-      )) as P;
-    case 110:
-      return (reader.readObjectOrNull<SortLibraryManga>(
-        offset,
-        SortLibraryMangaSchema.deserialize,
-        allOffsets,
-      )) as P;
-    case 111:
-      return (reader.readObjectOrNull<SortLibraryManga>(
-        offset,
-        SortLibraryMangaSchema.deserialize,
-        allOffsets,
-      )) as P;
-    case 112:
-      return (reader.readLongOrNull(offset)) as P;
-    case 113:
-      return (reader.readBoolOrNull(offset)) as P;
     case 114:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readObjectOrNull<SortLibraryManga>(
+        offset,
+        SortLibraryMangaSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 115:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readObjectOrNull<SortLibraryManga>(
+        offset,
+        SortLibraryMangaSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 116:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readObjectOrNull<SortLibraryManga>(
+        offset,
+        SortLibraryMangaSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 117:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 118:
       return (reader.readBoolOrNull(offset)) as P;
     case 119:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 120:
+      return (reader.readLongOrNull(offset)) as P;
+    case 121:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 122:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 123:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 124:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 125:
       return (reader.readStringOrNull(offset)) as P;
+    case 126:
+      return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -1885,6 +1964,20 @@ const _SettingsanimeDisplayTypeValueEnumMap = {
   1: DisplayType.comfortableGrid,
   2: DisplayType.coverOnlyGrid,
   3: DisplayType.list,
+};
+const _SettingsaudioChannelsEnumValueMap = {
+  'auto': 0,
+  'autoSafe': 1,
+  'mono': 2,
+  'stereo': 3,
+  'reverseStereo': 4,
+};
+const _SettingsaudioChannelsValueEnumMap = {
+  0: AudioChannel.auto,
+  1: AudioChannel.autoSafe,
+  2: AudioChannel.mono,
+  3: AudioChannel.stereo,
+  4: AudioChannel.reverseStereo,
 };
 const _SettingsbackgroundColorEnumValueMap = {
   'black': 0,
@@ -1927,6 +2020,16 @@ const _SettingscolorFilterBlendModeValueEnumMap = {
   10: ColorFilterBlendMode.softLight,
   11: ColorFilterBlendMode.plus,
   12: ColorFilterBlendMode.exclusion,
+};
+const _SettingsdebandingTypeEnumValueMap = {
+  'none': 0,
+  'cpu': 1,
+  'gpu': 2,
+};
+const _SettingsdebandingTypeValueEnumMap = {
+  0: DebandingType.none,
+  1: DebandingType.cpu,
+  2: DebandingType.gpu,
 };
 const _SettingsdefaultReaderModeEnumValueMap = {
   'vertical': 0,
@@ -2761,6 +2864,216 @@ extension SettingsQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'appFontFamily',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> audioChannelsEqualTo(
+      AudioChannel value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'audioChannels',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      audioChannelsGreaterThan(
+    AudioChannel value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'audioChannels',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> audioChannelsLessThan(
+    AudioChannel value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'audioChannels',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> audioChannelsBetween(
+    AudioChannel lower,
+    AudioChannel upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'audioChannels',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      audioPreferredLanguagesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'audioPreferredLanguages',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      audioPreferredLanguagesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'audioPreferredLanguages',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      audioPreferredLanguagesEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'audioPreferredLanguages',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      audioPreferredLanguagesGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'audioPreferredLanguages',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      audioPreferredLanguagesLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'audioPreferredLanguages',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      audioPreferredLanguagesBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'audioPreferredLanguages',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      audioPreferredLanguagesStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'audioPreferredLanguages',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      audioPreferredLanguagesEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'audioPreferredLanguages',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      audioPreferredLanguagesContains(String value,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'audioPreferredLanguages',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      audioPreferredLanguagesMatches(String pattern,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'audioPreferredLanguages',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      audioPreferredLanguagesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'audioPreferredLanguages',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      audioPreferredLanguagesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'audioPreferredLanguages',
         value: '',
       ));
     });
@@ -4620,6 +4933,60 @@ extension SettingsQueryFilter
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> debandingTypeEqualTo(
+      DebandingType value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'debandingType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      debandingTypeGreaterThan(
+    DebandingType value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'debandingType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> debandingTypeLessThan(
+    DebandingType value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'debandingType',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> debandingTypeBetween(
+    DebandingType lower,
+    DebandingType upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'debandingType',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterFilterCondition>
       defaultDoubleTapToSkipLengthIsNull() {
     return QueryBuilder.apply(this, (query) {
@@ -5321,6 +5688,34 @@ extension SettingsQueryFilter
   }
 
   QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      enableAudioPitchCorrectionIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'enableAudioPitchCorrection',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      enableAudioPitchCorrectionIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'enableAudioPitchCorrection',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      enableAudioPitchCorrectionEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'enableAudioPitchCorrection',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
       enableAutoSkipIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -5399,6 +5794,34 @@ extension SettingsQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'enableDiscordRpc',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      enableGpuNextIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'enableGpuNext',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      enableGpuNextIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'enableGpuNext',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> enableGpuNextEqualTo(
+      bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'enableGpuNext',
         value: value,
       ));
     });
@@ -9672,6 +10095,33 @@ extension SettingsQueryFilter
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> useYUV420PIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'useYUV420P',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      useYUV420PIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'useYUV420P',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> useYUV420PEqualTo(
+      bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'useYUV420P',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterFilterCondition> userAgentIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -9815,6 +10265,79 @@ extension SettingsQueryFilter
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'userAgent',
         value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      volumeBoostCapIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'volumeBoostCap',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      volumeBoostCapIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'volumeBoostCap',
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> volumeBoostCapEqualTo(
+      int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'volumeBoostCap',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      volumeBoostCapGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'volumeBoostCap',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+      volumeBoostCapLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'volumeBoostCap',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> volumeBoostCapBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'volumeBoostCap',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
       ));
     });
   }
@@ -10182,6 +10705,32 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByAudioChannels() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'audioChannels', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByAudioChannelsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'audioChannels', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByAudioPreferredLanguages() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'audioPreferredLanguages', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByAudioPreferredLanguagesDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'audioPreferredLanguages', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByAutoBackupLocation() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'autoBackupLocation', Sort.asc);
@@ -10347,6 +10896,18 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByDebandingType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'debandingType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByDebandingTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'debandingType', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy>
       sortByDefaultDoubleTapToSkipLength() {
     return QueryBuilder.apply(this, (query) {
@@ -10476,6 +11037,20 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByEnableAudioPitchCorrection() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'enableAudioPitchCorrection', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      sortByEnableAudioPitchCorrectionDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'enableAudioPitchCorrection', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByEnableAutoSkip() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'enableAutoSkip', Sort.asc);
@@ -10511,6 +11086,18 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByEnableDiscordRpcDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'enableDiscordRpc', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByEnableGpuNext() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'enableGpuNext', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByEnableGpuNextDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'enableGpuNext', Sort.desc);
     });
   }
 
@@ -11275,6 +11862,18 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByUseYUV420P() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'useYUV420P', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByUseYUV420PDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'useYUV420P', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByUserAgent() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'userAgent', Sort.asc);
@@ -11284,6 +11883,18 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByUserAgentDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'userAgent', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByVolumeBoostCap() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'volumeBoostCap', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByVolumeBoostCapDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'volumeBoostCap', Sort.desc);
     });
   }
 }
@@ -11436,6 +12047,32 @@ extension SettingsQuerySortThenBy
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByAppFontFamilyDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'appFontFamily', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByAudioChannels() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'audioChannels', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByAudioChannelsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'audioChannels', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByAudioPreferredLanguages() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'audioPreferredLanguages', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByAudioPreferredLanguagesDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'audioPreferredLanguages', Sort.desc);
     });
   }
 
@@ -11604,6 +12241,18 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByDebandingType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'debandingType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByDebandingTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'debandingType', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy>
       thenByDefaultDoubleTapToSkipLength() {
     return QueryBuilder.apply(this, (query) {
@@ -11733,6 +12382,20 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByEnableAudioPitchCorrection() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'enableAudioPitchCorrection', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+      thenByEnableAudioPitchCorrectionDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'enableAudioPitchCorrection', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByEnableAutoSkip() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'enableAutoSkip', Sort.asc);
@@ -11768,6 +12431,18 @@ extension SettingsQuerySortThenBy
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByEnableDiscordRpcDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'enableDiscordRpc', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByEnableGpuNext() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'enableGpuNext', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByEnableGpuNextDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'enableGpuNext', Sort.desc);
     });
   }
 
@@ -12544,6 +13219,18 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByUseYUV420P() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'useYUV420P', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByUseYUV420PDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'useYUV420P', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByUserAgent() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'userAgent', Sort.asc);
@@ -12553,6 +13240,18 @@ extension SettingsQuerySortThenBy
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByUserAgentDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'userAgent', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByVolumeBoostCap() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'volumeBoostCap', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByVolumeBoostCapDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'volumeBoostCap', Sort.desc);
     });
   }
 }
@@ -12630,6 +13329,20 @@ extension SettingsQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'appFontFamily',
+          caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctByAudioChannels() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'audioChannels');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctByAudioPreferredLanguages(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'audioPreferredLanguages',
           caseSensitive: caseSensitive);
     });
   }
@@ -12726,6 +13439,12 @@ extension SettingsQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Settings, Settings, QDistinct> distinctByDebandingType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'debandingType');
+    });
+  }
+
   QueryBuilder<Settings, Settings, QDistinct>
       distinctByDefaultDoubleTapToSkipLength() {
     return QueryBuilder.apply(this, (query) {
@@ -12791,6 +13510,13 @@ extension SettingsQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Settings, Settings, QDistinct>
+      distinctByEnableAudioPitchCorrection() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'enableAudioPitchCorrection');
+    });
+  }
+
   QueryBuilder<Settings, Settings, QDistinct> distinctByEnableAutoSkip() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'enableAutoSkip');
@@ -12807,6 +13533,12 @@ extension SettingsQueryWhereDistinct
   QueryBuilder<Settings, Settings, QDistinct> distinctByEnableDiscordRpc() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'enableDiscordRpc');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctByEnableGpuNext() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'enableGpuNext');
     });
   }
 
@@ -13202,10 +13934,22 @@ extension SettingsQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Settings, Settings, QDistinct> distinctByUseYUV420P() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'useYUV420P');
+    });
+  }
+
   QueryBuilder<Settings, Settings, QDistinct> distinctByUserAgent(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'userAgent', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctByVolumeBoostCap() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'volumeBoostCap');
     });
   }
 }
@@ -13297,6 +14041,20 @@ extension SettingsQueryProperty
   QueryBuilder<Settings, String?, QQueryOperations> appFontFamilyProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'appFontFamily');
+    });
+  }
+
+  QueryBuilder<Settings, AudioChannel, QQueryOperations>
+      audioChannelsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'audioChannels');
+    });
+  }
+
+  QueryBuilder<Settings, String?, QQueryOperations>
+      audioPreferredLanguagesProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'audioPreferredLanguages');
     });
   }
 
@@ -13447,6 +14205,13 @@ extension SettingsQueryProperty
     });
   }
 
+  QueryBuilder<Settings, DebandingType, QQueryOperations>
+      debandingTypeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'debandingType');
+    });
+  }
+
   QueryBuilder<Settings, int?, QQueryOperations>
       defaultDoubleTapToSkipLengthProperty() {
     return QueryBuilder.apply(this, (query) {
@@ -13520,6 +14285,13 @@ extension SettingsQueryProperty
     });
   }
 
+  QueryBuilder<Settings, bool?, QQueryOperations>
+      enableAudioPitchCorrectionProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'enableAudioPitchCorrection');
+    });
+  }
+
   QueryBuilder<Settings, bool?, QQueryOperations> enableAutoSkipProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'enableAutoSkip');
@@ -13536,6 +14308,12 @@ extension SettingsQueryProperty
   QueryBuilder<Settings, bool?, QQueryOperations> enableDiscordRpcProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'enableDiscordRpc');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations> enableGpuNextProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'enableGpuNext');
     });
   }
 
@@ -14011,9 +14789,21 @@ extension SettingsQueryProperty
     });
   }
 
+  QueryBuilder<Settings, bool?, QQueryOperations> useYUV420PProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'useYUV420P');
+    });
+  }
+
   QueryBuilder<Settings, String?, QQueryOperations> userAgentProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'userAgent');
+    });
+  }
+
+  QueryBuilder<Settings, int?, QQueryOperations> volumeBoostCapProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'volumeBoostCap');
     });
   }
 }

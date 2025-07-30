@@ -1,20 +1,10 @@
-import 'dart:async';
-import 'dart:io';
-
-import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
-import 'package:mangayomi/modules/more/widgets/list_tile_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:numberpicker/numberpicker.dart';
-import 'package:path/path.dart' as path;
-import 'package:permission_handler/permission_handler.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 
@@ -41,12 +31,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     final enableAutoSkip = ref.watch(enableAutoSkipStateProvider);
     final aniSkipTimeoutLength = ref.watch(aniSkipTimeoutLengthStateProvider);
     final useLibass = ref.watch(useLibassStateProvider);
-    final useMpvConfig = ref.watch(useMpvConfigStateProvider);
-    final hwdecMode = ref.watch(hwdecModeStateProvider(rawValue: true));
 
     final fullScreenPlayer = ref.watch(fullScreenPlayerStateProvider);
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.player)),
+      appBar: AppBar(title: Text(context.l10n.internal_player)),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -359,23 +347,6 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
-            ListTile(
-              title: Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.info_outline_rounded,
-                      color: context.secondaryColor,
-                    ),
-                  ],
-                ),
-              ),
-              subtitle: Text(
-                context.l10n.aniskip_requires_info,
-                style: TextStyle(fontSize: 11, color: context.secondaryColor),
-              ),
-            ),
             SwitchListTile(
               value: useLibass,
               title: Text(context.l10n.use_libass),
@@ -396,6 +367,26 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
               onExpansionChanged: (value) =>
                   ref.read(enableAniSkipStateProvider.notifier).set(value),
               children: [
+                ListTile(
+                  title: Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline_rounded,
+                          color: context.secondaryColor,
+                        ),
+                      ],
+                    ),
+                  ),
+                  subtitle: Text(
+                    context.l10n.aniskip_requires_info,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: context.secondaryColor,
+                    ),
+                  ),
+                ),
                 SwitchListTile(
                   value: enableAutoSkip,
                   title: Text(context.l10n.enable_auto_skip),
@@ -474,38 +465,6 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
               ],
             ),
             SwitchListTile(
-              value: useMpvConfig,
-              title: Text(context.l10n.enable_mpv),
-              subtitle: Text(
-                context.l10n.mpv_info,
-                style: TextStyle(fontSize: 11, color: context.secondaryColor),
-              ),
-              onChanged: (value) async {
-                if (value && !(await _checkMpvConfig(context))) {
-                  return;
-                }
-                ref.read(useMpvConfigStateProvider.notifier).set(value);
-              },
-            ),
-            ListTile(
-              onTap: () {
-                _checkMpvConfig(context, redownload: true);
-              },
-              title: Text(context.l10n.mpv_redownload),
-              subtitle: Text(
-                context.l10n.mpv_redownload_info,
-                style: TextStyle(fontSize: 11, color: context.secondaryColor),
-              ),
-            ),
-            ListTileWidget(
-              onTap: () {
-                context.push("/customButtonScreen");
-              },
-              icon: Icons.terminal,
-              title: context.l10n.custom_buttons,
-              subtitle: context.l10n.custom_buttons_info,
-            ),
-            SwitchListTile(
               value: fullScreenPlayer,
               title: Text(context.l10n.full_screen_player),
               subtitle: Text(
@@ -516,164 +475,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                 ref.read(fullScreenPlayerStateProvider.notifier).set(value);
               },
             ),
-            ListTile(
-              onTap: () {
-                final values = [
-                  ("no", ""),
-                  ("auto", ""),
-                  ("d3d11va", "(Windows 8+)"),
-                  ("d3d11va-copy", "(Windows 8+)"),
-                  ("videotoolbox", "(iOS 9.0+)"),
-                  ("videotoolbox-copy", "(iOS 9.0+)"),
-                  ("nvdec", "(CUDA)"),
-                  ("nvdec-copy", "(CUDA)"),
-                  ("mediacodec", "- HW (Android)"),
-                  ("mediacodec-copy", "- HW+ (Android)"),
-                  ("crystalhd", ""),
-                ];
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text(context.l10n.hwdec),
-                      content: SizedBox(
-                        width: context.width(0.8),
-                        child: SuperListView.builder(
-                          shrinkWrap: true,
-                          itemCount: values.length,
-                          itemBuilder: (context, index) {
-                            return RadioListTile(
-                              dense: true,
-                              contentPadding: const EdgeInsets.all(0),
-                              value: values[index].$1,
-                              groupValue: hwdecMode,
-                              onChanged: (value) {
-                                ref
-                                    .read(
-                                      hwdecModeStateProvider(
-                                        rawValue: true,
-                                      ).notifier,
-                                    )
-                                    .set(value!);
-                                Navigator.pop(context);
-                              },
-                              title: Row(
-                                children: [
-                                  Text(
-                                    "${values[index].$1} ${values[index].$2}",
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      actions: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            TextButton(
-                              onPressed: () async {
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                context.l10n.cancel,
-                                style: TextStyle(color: context.primaryColor),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-              title: Text(context.l10n.hwdec),
-              subtitle: Text(
-                hwdecMode,
-                style: TextStyle(fontSize: 11, color: context.secondaryColor),
-              ),
-            ),
           ],
         ),
       ),
     );
-  }
-
-  Future<bool> _checkMpvConfig(
-    BuildContext context, {
-    bool redownload = false,
-  }) async {
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      await Permission.storage.request();
-    }
-    final provider = StorageProvider();
-    final dir = await provider.getMpvDirectory();
-    final mpvFile = File('${dir!.path}/mpv.conf');
-    final inputFile = File('${dir.path}/input.conf');
-    final filesMissing =
-        !(await mpvFile.exists()) && !(await inputFile.exists());
-    if ((redownload || filesMissing) && context.mounted) {
-      final res = await showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            content: Text(context.l10n.mpv_download),
-            actions: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text(context.l10n.cancel),
-                  ),
-                  const SizedBox(width: 15),
-                  ElevatedButton(
-                    onPressed: () async {
-                      final bytes = await rootBundle.load(
-                        "assets/mangayomi_mpv.zip",
-                      );
-                      final archive = ZipDecoder().decodeBytes(
-                        bytes.buffer.asUint8List(),
-                      );
-                      String shadersDir = path.join(dir.path, 'shaders');
-                      await Directory(shadersDir).create(recursive: true);
-                      String scriptsDir = path.join(dir.path, 'scripts');
-                      await Directory(scriptsDir).create(recursive: true);
-                      for (final file in archive.files) {
-                        if (file.name == "mpv.conf") {
-                          await mpvFile.writeAsBytes(file.content);
-                        } else if (file.name == "input.conf") {
-                          await inputFile.writeAsBytes(file.content);
-                        } else if (file.name.startsWith("shaders/") &&
-                            file.name.endsWith(".glsl")) {
-                          final shaderFile = File(
-                            '$shadersDir/${file.name.split("/").last}',
-                          );
-                          await shaderFile.writeAsBytes(file.content);
-                        } else if (file.name.startsWith("scripts/") &&
-                            file.name.endsWith(".js")) {
-                          final scriptFile = File(
-                            '$scriptsDir/${file.name.split("/").last}',
-                          );
-                          await scriptFile.writeAsBytes(file.content);
-                        }
-                      }
-                      if (context.mounted) {
-                        Navigator.pop(context, "ok");
-                      }
-                    },
-                    child: Text(context.l10n.download),
-                  ),
-                ],
-              ),
-            ],
-          );
-        },
-      );
-      return res != null && res == "ok";
-    }
-    return context.mounted;
   }
 }

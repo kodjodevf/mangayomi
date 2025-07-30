@@ -260,6 +260,22 @@ class Settings {
 
   bool? useMpvConfig;
 
+  @enumerated
+  late DebandingType debandingType;
+
+  bool? enableGpuNext;
+
+  bool? useYUV420P;
+
+  String? audioPreferredLanguages;
+
+  bool? enableAudioPitchCorrection;
+
+  @enumerated
+  late AudioChannel audioChannels;
+
+  int? volumeBoostCap;
+
   Settings({
     this.id = 227,
     this.updatedAt = 0,
@@ -376,6 +392,13 @@ class Settings {
     this.rpcShowTitle = true,
     this.rpcShowCoverImage = true,
     this.useMpvConfig = true,
+    this.debandingType = DebandingType.none,
+    this.enableGpuNext = false,
+    this.useYUV420P = false,
+    this.audioPreferredLanguages,
+    this.enableAudioPitchCorrection,
+    this.audioChannels = AudioChannel.autoSafe,
+    this.volumeBoostCap,
   });
 
   Settings.fromJson(Map<String, dynamic> json) {
@@ -598,6 +621,15 @@ class Settings {
     rpcShowTitle = json['rpcShowTitle'];
     rpcShowCoverImage = json['rpcShowCoverImage'];
     useMpvConfig = json['useMpvConfig'];
+    debandingType =
+        DebandingType.values[json['debandingType'] ?? DebandingType.none.index];
+    enableGpuNext = json['enableGpuNext'];
+    useYUV420P = json['useYUV420P'];
+    audioPreferredLanguages = json['audioPreferredLanguages'];
+    enableAudioPitchCorrection = json['enableAudioPitchCorrection'];
+    audioChannels = AudioChannel
+        .values[json['audioChannels'] ?? AudioChannel.autoSafe.index];
+    volumeBoostCap = json['volumeBoostCap'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -737,7 +769,28 @@ class Settings {
     'rpcShowTitle': rpcShowTitle,
     'rpcShowCoverImage': rpcShowCoverImage,
     'useMpvConfig': useMpvConfig,
+    'debandingType': debandingType.index,
+    'enableGpuNext': enableGpuNext,
+    'useYUV420P': useYUV420P,
+    'audioPreferredLanguages': audioPreferredLanguages,
+    'enableAudioPitchCorrection': enableAudioPitchCorrection,
+    'audioChannels': audioChannels.index,
+    'volumeBoostCap': volumeBoostCap,
   };
+}
+
+enum DebandingType { none, cpu, gpu }
+
+enum AudioChannel {
+  auto(mpvName: "auto"),
+  autoSafe(mpvName: "auto-safe"),
+  mono(mpvName: "mono"),
+  stereo(mpvName: "stereo"),
+  reverseStereo(mpvName: "pan=[stereo|c0=c1|c1=c0]");
+
+  final String mpvName;
+
+  const AudioChannel({required this.mpvName});
 }
 
 enum SectionType { all, anime, manga }

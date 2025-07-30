@@ -2081,6 +2081,12 @@ abstract class AppLocalizations {
   /// **'Audio'**
   String get video_audio;
 
+  /// No description provided for @video_audio_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferred languages, pitch correction, audio channels'**
+  String get video_audio_info;
+
   /// No description provided for @player.
   ///
   /// In en, this message translates to:
@@ -2507,6 +2513,12 @@ abstract class AppLocalizations {
   /// **'Advanced'**
   String get advanced;
 
+  /// No description provided for @advanced_info.
+  ///
+  /// In en, this message translates to:
+  /// **'mpv config'**
+  String get advanced_info;
+
   /// No description provided for @use_native_http_client.
   ///
   /// In en, this message translates to:
@@ -2819,6 +2831,12 @@ abstract class AppLocalizations {
   /// **'Hardware Decoder'**
   String get hwdec;
 
+  /// No description provided for @track_library_navigate.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to existing local entry'**
+  String get track_library_navigate;
+
   /// No description provided for @track_library_add.
   ///
   /// In en, this message translates to:
@@ -3004,6 +3022,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{n} days'**
   String n_days(Object n);
+
+  /// No description provided for @decoder.
+  ///
+  /// In en, this message translates to:
+  /// **'Decoder'**
+  String get decoder;
+
+  /// No description provided for @decoder_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Hardware decoding, pixel format, debanding'**
+  String get decoder_info;
+
+  /// No description provided for @enable_gpu_next.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable gpu-next (Android only)'**
+  String get enable_gpu_next;
+
+  /// No description provided for @enable_gpu_next_info.
+  ///
+  /// In en, this message translates to:
+  /// **'A new video rendering backend'**
+  String get enable_gpu_next_info;
+
+  /// No description provided for @debanding.
+  ///
+  /// In en, this message translates to:
+  /// **'Debanding'**
+  String get debanding;
+
+  /// No description provided for @use_yuv420p.
+  ///
+  /// In en, this message translates to:
+  /// **'Use YUV420P pixel format'**
+  String get use_yuv420p;
+
+  /// No description provided for @use_yuv420p_info.
+  ///
+  /// In en, this message translates to:
+  /// **'May fix black screens on some video codecs, can also improve performance at the cost of quality'**
+  String get use_yuv420p_info;
+
+  /// No description provided for @audio_preferred_languages.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferred langauages'**
+  String get audio_preferred_languages;
+
+  /// No description provided for @audio_preferred_languages_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio langauage(s) to be selected by default on a video with multiple audio streams, 2/3-letter languages codes (e.g.: en, de, fr) work. Multiple values can be delimited by a comma.'**
+  String get audio_preferred_languages_info;
+
+  /// No description provided for @enable_audio_pitch_correction.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable audio pitch correction'**
+  String get enable_audio_pitch_correction;
+
+  /// No description provided for @enable_audio_pitch_correction_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Prevents the audio from becoming high-pitched at faster speeds and low-pitched at slower speeds'**
+  String get enable_audio_pitch_correction_info;
+
+  /// No description provided for @audio_channels.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio channels'**
+  String get audio_channels;
+
+  /// No description provided for @volume_boost_cap.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume boost cap'**
+  String get volume_boost_cap;
+
+  /// No description provided for @internal_player.
+  ///
+  /// In en, this message translates to:
+  /// **'Internal player'**
+  String get internal_player;
+
+  /// No description provided for @internal_player_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress, controls, orientation'**
+  String get internal_player_info;
+
+  /// No description provided for @subtitle_delay_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtitle delay'**
+  String get subtitle_delay_text;
+
+  /// No description provided for @subtitle_delay.
+  ///
+  /// In en, this message translates to:
+  /// **'Delay (ms)'**
+  String get subtitle_delay;
+
+  /// No description provided for @subtitle_speed.
+  ///
+  /// In en, this message translates to:
+  /// **'Speed'**
+  String get subtitle_speed;
 }
 
 class _AppLocalizationsDelegate

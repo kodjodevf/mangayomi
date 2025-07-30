@@ -1058,6 +1058,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get video_audio => 'Áudio';
 
   @override
+  String get video_audio_info =>
+      'Preferred languages, pitch correction, audio channels';
+
+  @override
   String get player => 'Jogador';
 
   @override
@@ -1284,6 +1288,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get advanced => 'Avançado';
 
   @override
+  String get advanced_info => 'mpv config';
+
+  @override
   String get use_native_http_client => 'Usar cliente HTTP nativo';
 
   @override
@@ -1466,6 +1473,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get hwdec => 'Hardware Decoder';
 
   @override
+  String get track_library_navigate => 'Go to existing local entry';
+
+  @override
   String get track_library_add => 'Add to local library';
 
   @override
@@ -1563,6 +1573,63 @@ class AppLocalizationsPt extends AppLocalizations {
   String n_days(Object n) {
     return '$n days';
   }
+
+  @override
+  String get decoder => 'Decoder';
+
+  @override
+  String get decoder_info => 'Hardware decoding, pixel format, debanding';
+
+  @override
+  String get enable_gpu_next => 'Enable gpu-next (Android only)';
+
+  @override
+  String get enable_gpu_next_info => 'A new video rendering backend';
+
+  @override
+  String get debanding => 'Debanding';
+
+  @override
+  String get use_yuv420p => 'Use YUV420P pixel format';
+
+  @override
+  String get use_yuv420p_info =>
+      'May fix black screens on some video codecs, can also improve performance at the cost of quality';
+
+  @override
+  String get audio_preferred_languages => 'Preferred langauages';
+
+  @override
+  String get audio_preferred_languages_info =>
+      'Audio langauage(s) to be selected by default on a video with multiple audio streams, 2/3-letter languages codes (e.g.: en, de, fr) work. Multiple values can be delimited by a comma.';
+
+  @override
+  String get enable_audio_pitch_correction => 'Enable audio pitch correction';
+
+  @override
+  String get enable_audio_pitch_correction_info =>
+      'Prevents the audio from becoming high-pitched at faster speeds and low-pitched at slower speeds';
+
+  @override
+  String get audio_channels => 'Audio channels';
+
+  @override
+  String get volume_boost_cap => 'Volume boost cap';
+
+  @override
+  String get internal_player => 'Internal player';
+
+  @override
+  String get internal_player_info => 'Progress, controls, orientation';
+
+  @override
+  String get subtitle_delay_text => 'Subtitle delay';
+
+  @override
+  String get subtitle_delay => 'Delay (ms)';
+
+  @override
+  String get subtitle_speed => 'Speed';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).

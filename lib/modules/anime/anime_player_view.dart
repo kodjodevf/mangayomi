@@ -17,6 +17,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/custom_button.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/video.dart' as vid;
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/aniskip_countdown_btn.dart';
@@ -28,6 +29,8 @@ import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_setting_widget.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/custom_buttons_provider.dart';
+import 'package:mangayomi/modules/more/settings/player/providers/player_audio_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/player/providers/player_decoder_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
@@ -191,11 +194,32 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   late final GlobalKey<VideoState> _key = GlobalKey<VideoState>();
   late final useLibass = ref.read(useLibassStateProvider);
   late final useMpvConfig = ref.read(useMpvConfigStateProvider);
+  late final useGpuNext = ref.read(useGpuNextStateProvider);
+  late final debandingType = ref.read(debandingStateProvider);
+  late final useYUV420P = ref.read(useYUV420PStateProvider);
+  late final audioPreferredLang = ref.read(audioPreferredLangStateProvider);
+  late final enableAudioPitchCorrection = ref.read(
+    enableAudioPitchCorrectionStateProvider,
+  );
+  late final audioChannel = ref.read(audioChannelStateProvider);
+  late final volumeBoostCap = ref.read(volumeBoostCapStateProvider);
   late final Player _player = Player(
     configuration: PlayerConfiguration(
       libass: useLibass,
       config: true,
       configDir: useMpvConfig ? widget.mpvDirectory?.path ?? "" : "",
+      options: {
+        if (debandingType == DebandingType.cpu) "vf": "gradfun=radius=12",
+        if (debandingType == DebandingType.gpu) "deband": "yes",
+        if (useYUV420P) "vf": "format=yuv420p",
+        "alang": audioPreferredLang,
+        if (enableAudioPitchCorrection) "audio-pitch-correction": "yes",
+        "volume-max": "${volumeBoostCap + 100}",
+        if (audioChannel != AudioChannel.reverseStereo)
+          "audio-channels": audioChannel.mpvName,
+        if (audioChannel == AudioChannel.reverseStereo)
+          "af": audioChannel.mpvName,
+      },
       observeProperties: {
         "user-data/aniyomi/show_text": generated.mpv_format.MPV_FORMAT_NODE,
         "user-data/aniyomi/toggle_ui": generated.mpv_format.MPV_FORMAT_NODE,
@@ -231,7 +255,14 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   late final hwdecMode = ref.read(hwdecModeStateProvider());
   late final VideoController _controller = VideoController(
     _player,
-    configuration: VideoControllerConfiguration(hwdec: hwdecMode),
+    configuration: VideoControllerConfiguration(
+      hwdec: hwdecMode,
+      vo: Platform.isAndroid
+          ? useGpuNext
+                ? "gpu-next"
+                : "gpu"
+          : "libmpv",
+    ),
   );
   late final _streamController = ref.read(
     animeStreamControllerProvider(episode: widget.episode).notifier,
@@ -261,6 +292,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   final ValueNotifier<int?> _currentChapterMark = ValueNotifier(null);
   final ValueNotifier<String> _selectedShader = ValueNotifier("");
   final ValueNotifier<ActiveCustomButton?> _customButton = ValueNotifier(null);
+  final ValueNotifier<List<CustomButton>?> _customButtons = ValueNotifier(null);
   late final ValueNotifier<_AniSkipPhase> _skipPhase = ValueNotifier(
     _AniSkipPhase.none,
   );
@@ -270,6 +302,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   bool _hasEndingSkip = false;
   bool _initSubtitleAndAudio = true;
   bool _includeSubtitles = false;
+  int _subDelay = 0;
+  final _subDelayController = TextEditingController(text: "0");
+  double _subSpeed = 1;
+  final _subSpeedController = TextEditingController(text: "1");
   int lastRpcTimestampUpdate = DateTime.now().millisecondsSinceEpoch;
 
   late final StreamSubscription<Duration> _currentPositionSub;
@@ -309,8 +345,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
           generated.mpv_event_id.MPV_EVENT_PROPERTY_CHANGE) {
         final prop = event.ref.data.cast<generated.mpv_event_property>();
         final propName = prop.ref.name.cast<Utf8>().toDartString();
-        if (propName.startsWith("user-data/")) {
-          print("DEBUG 00: $propName - ${prop.ref.format}");
+        if (kDebugMode) {
+          if (propName.startsWith("user-data/")) {
+            print("DEBUG 00: $propName - ${prop.ref.format}");
+          }
         }
         if (propName.startsWith("user-data/") &&
             prop.ref.format == generated.mpv_format.MPV_FORMAT_NODE) {
@@ -469,9 +507,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       case "aniyomi/seek_by":
         if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
           final text = value.ref.u.string.cast<Utf8>().toDartString();
-          final tt = await nativePlayer.getProperty(
-            "user-data/current-anime/intro-length",
-          );
           if (text.isEmpty) break;
           final data = int.parse(text.replaceAll("\"", ""));
           final pos = _currentPosition.value.inSeconds + data;
@@ -679,6 +714,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         "call_button_${primaryButton.id}_long",
       ]),
     );
+    _customButtons.value = customButtons;
   }
 
   void pushToNewEpisode(BuildContext context, Chapter episode) {
@@ -753,6 +789,47 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     }
   }
 
+  void _onSubDelayChanged() {
+    final nativePlayer = (_player.platform as NativePlayer);
+    final delayMs = int.tryParse(_subDelayController.text);
+    if (delayMs != null) {
+      final namePtr = "sub-delay".toNativeUtf8();
+      final valuePtr = calloc<Double>(1)..value = delayMs / 1000;
+      nativePlayer.mpv.mpv_set_property(
+        nativePlayer.ctx,
+        namePtr.cast(),
+        generated.mpv_format.MPV_FORMAT_DOUBLE,
+        valuePtr.cast(),
+      );
+      malloc.free(namePtr);
+      malloc.free(valuePtr);
+      _subDelay = delayMs;
+    }
+  }
+
+  void _onSubSpeedChanged() {
+    final nativePlayer = (_player.platform as NativePlayer);
+    final speed = double.tryParse(_subSpeedController.text);
+    if (speed != null) {
+      final namePtr = "sub-speed".toNativeUtf8();
+      final valuePtr = calloc<Double>(1)
+        ..value = speed < 0.1
+            ? 0.1
+            : speed > 10
+            ? 10
+            : speed;
+      nativePlayer.mpv.mpv_set_property(
+        nativePlayer.ctx,
+        namePtr.cast(),
+        generated.mpv_format.MPV_FORMAT_DOUBLE,
+        valuePtr.cast(),
+      );
+      malloc.free(namePtr);
+      malloc.free(valuePtr);
+      _subSpeed = speed;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -798,6 +875,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     _initCustomButton();
     discordRpc?.showChapterDetails(ref, widget.episode);
     _currentPosition.addListener(_updateRpcTimestamp);
+    _subDelayController.addListener(_onSubDelayChanged);
+    _subSpeedController.addListener(_onSubSpeedChanged);
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -886,6 +965,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     discordRpc?.showIdleText();
     discordRpc?.showOriginalTimestamp();
     _currentPosition.dispose();
+    _subDelayController.dispose();
+    _subSpeedController.dispose();
     super.dispose();
   }
 
@@ -1117,6 +1198,91 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
       child: Column(
         children: [
+          Row(
+            children: [
+              Text(context.l10n.subtitle_delay_text),
+              IconButton(
+                onPressed: () {
+                  _subDelay = 0;
+                  _subDelayController.value = TextEditingValue(
+                    text: "$_subDelay",
+                  );
+                  _subSpeed = 1;
+                  _subSpeedController.value = TextEditingValue(
+                    text: _subSpeed.toStringAsFixed(2),
+                  );
+                },
+                icon: const Icon(Icons.refresh),
+              ),
+            ],
+          ),
+          const SizedBox(height: 15),
+          Row(
+            children: [
+              IconButton(
+                onPressed: () {
+                  _subDelay -= 50;
+                  _subDelayController.value = TextEditingValue(
+                    text: "$_subDelay",
+                  );
+                },
+                icon: const Icon(Icons.remove_circle),
+              ),
+              Expanded(
+                child: TextFormField(
+                  controller: _subDelayController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    label: Text(context.l10n.subtitle_delay),
+                  ),
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  _subDelay += 50;
+                  _subDelayController.value = TextEditingValue(
+                    text: "$_subDelay",
+                  );
+                },
+                icon: const Icon(Icons.add_circle),
+              ),
+            ],
+          ),
+          const SizedBox(height: 15),
+          Row(
+            children: [
+              IconButton(
+                onPressed: () {
+                  _subSpeed -= 0.01;
+                  _subSpeedController.value = TextEditingValue(
+                    text: _subSpeed.toStringAsFixed(2),
+                  );
+                },
+                icon: const Icon(Icons.remove_circle),
+              ),
+              Expanded(
+                child: TextFormField(
+                  controller: _subSpeedController,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  decoration: InputDecoration(
+                    isDense: true,
+                    label: Text(context.l10n.subtitle_speed),
+                  ),
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  _subSpeed += 0.01;
+                  _subSpeedController.value = TextEditingValue(
+                    text: _subSpeed.toStringAsFixed(2),
+                  );
+                },
+                icon: const Icon(Icons.add_circle),
+              ),
+            ],
+          ),
+          const SizedBox(height: 15),
           ...videoSubtitleLast.toSet().toList().map((sub) {
             final title =
                 sub.title ??
@@ -1522,6 +1688,111 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     );
   }
 
+  List<Widget> _buildMpvSettingsButton(BuildContext context) {
+    return [
+      PopupMenuButton<String>(
+        tooltip: 'Shaders',
+        icon: const Icon(Icons.high_quality, color: Colors.white),
+        itemBuilder: (context) =>
+            [
+                  ("Anime4K: Mode A (Fast)", "set_anime_a"),
+                  ("Anime4K: Mode B (Fast)", "set_anime_b"),
+                  ("Anime4K: Mode C (Fast)", "set_anime_c"),
+                  ("Anime4K: Mode A+A (Fast)", "set_anime_aa"),
+                  ("Anime4K: Mode B+B (Fast)", "set_anime_bb"),
+                  ("Anime4K: Mode C+A (Fast)", "set_anime_ca"),
+                  ("Anime4K: Mode A (HQ)", "set_anime_hq_a"),
+                  ("Anime4K: Mode B (HQ)", "set_anime_hq_b"),
+                  ("Anime4K: Mode C (HQ)", "set_anime_hq_c"),
+                  ("Anime4K: Mode A+A (HQ)", "set_anime_hq_aa"),
+                  ("Anime4K: Mode B+B (HQ)", "set_anime_hq_bb"),
+                  ("Anime4K: Mode C+A (HQ)", "set_anime_hq_ca"),
+                  ("AMD FSR", "set_fsr"),
+                  ("Luma Upscaling", "set_luma"),
+                  ("Qualcomm Snapdragon GSR", "set_snapdragon"),
+                  ("NVIDIA Image Scaling", "set_nvidia"),
+                  ("Clear GLSL shaders", "clear_anime"),
+                ]
+                .map(
+                  (mode) => PopupMenuItem<String>(
+                    value: mode.$1,
+                    child: Text(
+                      mode.$1,
+                      style: TextStyle(
+                        fontWeight: _selectedShader.value == mode.$1
+                            ? FontWeight.w900
+                            : FontWeight.normal,
+                      ),
+                    ),
+                    onTap: () {
+                      (_player.platform as NativePlayer).command([
+                        "script-message",
+                        mode.$2,
+                      ]);
+                    },
+                  ),
+                )
+                .toList(),
+      ),
+      PopupMenuButton<String>(
+        tooltip: 'Stats',
+        icon: const Icon(Icons.memory, color: Colors.white),
+        itemBuilder: (context) =>
+            [
+                  ("Stats Toggle", "stats/display-stats-toggle"),
+                  ("Stats Page 1", "stats/display-page-1"),
+                  ("Stats Page 2", "stats/display-page-2"),
+                  ("Stats Page 3", "stats/display-page-3"),
+                  ("Stats Page 4", "stats/display-page-4"),
+                  ("Stats Page 5", "stats/display-page-5"),
+                ]
+                .map(
+                  (mode) => PopupMenuItem<String>(
+                    value: mode.$1,
+                    child: Text(
+                      mode.$1,
+                      style: TextStyle(
+                        fontWeight: _selectedShader.value == mode.$1
+                            ? FontWeight.w900
+                            : FontWeight.normal,
+                      ),
+                    ),
+                    onTap: () {
+                      (_player.platform as NativePlayer).command([
+                        "script-binding",
+                        mode.$2,
+                      ]);
+                    },
+                  ),
+                )
+                .toList(),
+      ),
+      ValueListenableBuilder(
+        valueListenable: _customButtons,
+        builder: (context, value, child) => value != null
+            ? PopupMenuButton<String>(
+                tooltip: context.l10n.custom_buttons,
+                icon: const Icon(Icons.terminal, color: Colors.white),
+                itemBuilder: (context) => value
+                    .map(
+                      (btn) => PopupMenuItem<String>(
+                        value: btn.title!,
+                        child: Text(btn.title!),
+                        onTap: () {
+                          (_player.platform as NativePlayer).command([
+                            "script-message",
+                            "call_button_${btn.id}",
+                          ]);
+                        },
+                      ),
+                    )
+                    .toList(),
+              )
+            : Container(),
+      ),
+    ];
+  }
+
   /// helper method for _mobileBottomButtonBar() and _desktopBottomButtonBar()
   Widget _buildSettingsButtons(BuildContext context) {
     final isFullscreen = ref.watch(fullscreenProvider);
@@ -1532,85 +1803,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           onPressed: () => _videoSettingDraggableMenu(context),
           icon: const Icon(Icons.video_settings, color: Colors.white),
         ),
-        if (useMpvConfig)
-          PopupMenuButton<String>(
-            tooltip: '', // Remove default tooltip "Show menu" for consistency
-            icon: const Icon(Icons.high_quality, color: Colors.white),
-            itemBuilder: (context) =>
-                [
-                      ("Anime4K: Mode A (Fast)", "set_anime_a"),
-                      ("Anime4K: Mode B (Fast)", "set_anime_b"),
-                      ("Anime4K: Mode C (Fast)", "set_anime_c"),
-                      ("Anime4K: Mode A+A (Fast)", "set_anime_aa"),
-                      ("Anime4K: Mode B+B (Fast)", "set_anime_bb"),
-                      ("Anime4K: Mode C+A (Fast)", "set_anime_ca"),
-                      ("Anime4K: Mode A (HQ)", "set_anime_hq_a"),
-                      ("Anime4K: Mode B (HQ)", "set_anime_hq_b"),
-                      ("Anime4K: Mode C (HQ)", "set_anime_hq_c"),
-                      ("Anime4K: Mode A+A (HQ)", "set_anime_hq_aa"),
-                      ("Anime4K: Mode B+B (HQ)", "set_anime_hq_bb"),
-                      ("Anime4K: Mode C+A (HQ)", "set_anime_hq_ca"),
-                      ("AMD FSR", "set_fsr"),
-                      ("Luma Upscaling", "set_luma"),
-                      ("Qualcomm Snapdragon GSR", "set_snapdragon"),
-                      ("NVIDIA Image Scaling", "set_nvidia"),
-                      ("Clear GLSL shaders", "clear_anime"),
-                    ]
-                    .map(
-                      (mode) => PopupMenuItem<String>(
-                        value: mode.$1,
-                        child: Text(
-                          mode.$1,
-                          style: TextStyle(
-                            fontWeight: _selectedShader.value == mode.$1
-                                ? FontWeight.w900
-                                : FontWeight.normal,
-                          ),
-                        ),
-                        onTap: () {
-                          (_player.platform as NativePlayer).command([
-                            "script-message",
-                            mode.$2,
-                          ]);
-                        },
-                      ),
-                    )
-                    .toList(),
-          ),
-        if (useMpvConfig)
-          PopupMenuButton<String>(
-            tooltip: '', // Remove default tooltip "Show menu" for consistency
-            icon: const Icon(Icons.terminal, color: Colors.white),
-            itemBuilder: (context) =>
-                [
-                      ("Stats Toggle", "stats/display-stats-toggle"),
-                      ("Stats Page 1", "stats/display-page-1"),
-                      ("Stats Page 2", "stats/display-page-2"),
-                      ("Stats Page 3", "stats/display-page-3"),
-                      ("Stats Page 4", "stats/display-page-4"),
-                      ("Stats Page 5", "stats/display-page-5"),
-                    ]
-                    .map(
-                      (mode) => PopupMenuItem<String>(
-                        value: mode.$1,
-                        child: Text(
-                          mode.$1,
-                          style: TextStyle(
-                            fontWeight: _selectedShader.value == mode.$1
-                                ? FontWeight.w900
-                                : FontWeight.normal,
-                          ),
-                        ),
-                        onTap: () {
-                          (_player.platform as NativePlayer).command([
-                            "script-binding",
-                            mode.$2,
-                          ]);
-                        },
-                      ),
-                    )
-                    .toList(),
-          ),
+        if (useMpvConfig) ..._buildMpvSettingsButton(context),
         PopupMenuButton<double>(
           tooltip: '', // Remove default tooltip "Show menu" for consistency
           icon: const Icon(Icons.speed, color: Colors.white),
