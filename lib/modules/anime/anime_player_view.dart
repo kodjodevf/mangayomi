@@ -396,7 +396,6 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       case "aniyomi/set_button_title":
         if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
           final text = value.ref.u.string.cast<Utf8>().toDartString();
-          print("DEBUG SET BUTTON TITLE: $text");
           if (text.isEmpty) break;
           final temp = _customButton.value;
           if (temp == null) break;
@@ -761,6 +760,15 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     // use global "Use Fullscreen" setting.
     // Else (if user already watches an episode and just changes it),
     // stay in the same mode, the user left it in.
+    try {
+      final defaultSkipIntroLength = ref.read(
+        defaultSkipIntroLengthStateProvider,
+      );
+      (_player.platform as NativePlayer).setProperty(
+        "user-data/current-anime/intro-length",
+        "$defaultSkipIntroLength",
+      );
+    } catch (_) {}
     if (_isDesktop && _firstTime) {
       final globalFullscreen = ref.read(fullScreenPlayerStateProvider);
       setFullScreen(value: globalFullscreen);
@@ -787,21 +795,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       _setPlaybackSpeed(ref.read(defaultPlayBackSpeedStateProvider));
       if (ref.read(enableAniSkipStateProvider)) _initAniSkip();
     });
-    final defaultSkipIntroLength = ref.read(
-      defaultSkipIntroLengthStateProvider,
-    );
-    (_player.platform as NativePlayer).setProperty(
-      "user-data/current-anime/intro-length",
-      "$defaultSkipIntroLength",
-    );
-    (_player.platform as NativePlayer).command([
-      "script-binding",
-      "stats/display-stats-toggle",
-    ]);
-    (_player.platform as NativePlayer).command([
-      "script-binding",
-      "stats/display-page-1",
-    ]);
     _initCustomButton();
     discordRpc?.showChapterDetails(ref, widget.episode);
     _currentPosition.addListener(_updateRpcTimestamp);
@@ -1577,6 +1570,40 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                         onTap: () {
                           (_player.platform as NativePlayer).command([
                             "script-message",
+                            mode.$2,
+                          ]);
+                        },
+                      ),
+                    )
+                    .toList(),
+          ),
+        if (useMpvConfig)
+          PopupMenuButton<String>(
+            tooltip: '', // Remove default tooltip "Show menu" for consistency
+            icon: const Icon(Icons.terminal, color: Colors.white),
+            itemBuilder: (context) =>
+                [
+                      ("Stats Toggle", "stats/display-stats-toggle"),
+                      ("Stats Page 1", "stats/display-page-1"),
+                      ("Stats Page 2", "stats/display-page-2"),
+                      ("Stats Page 3", "stats/display-page-3"),
+                      ("Stats Page 4", "stats/display-page-4"),
+                      ("Stats Page 5", "stats/display-page-5"),
+                    ]
+                    .map(
+                      (mode) => PopupMenuItem<String>(
+                        value: mode.$1,
+                        child: Text(
+                          mode.$1,
+                          style: TextStyle(
+                            fontWeight: _selectedShader.value == mode.$1
+                                ? FontWeight.w900
+                                : FontWeight.normal,
+                          ),
+                        ),
+                        onTap: () {
+                          (_player.platform as NativePlayer).command([
+                            "script-binding",
                             mode.$2,
                           ]);
                         },
