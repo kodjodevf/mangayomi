@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:app_links/app_links.dart';
+import 'package:archive/archive.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/foundation.dart';
@@ -31,9 +32,11 @@ import 'package:mangayomi/utils/url_protocol/api.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_provider.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:path/path.dart' as p;
+import 'package:flutter/services.dart' show rootBundle;
 
 late Isar isar;
 DiscordRPC? discordRpc;
@@ -94,6 +97,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     super.initState();
     initializeDateFormatting();
     _initDeepLinks();
+    _setupMpvConfig();
     unawaited(ref.read(scanLocalLibraryProvider.future));
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -241,6 +245,38 @@ class _MyAppState extends ConsumerState<MyApp> {
       }
     }
     return true;
+  }
+
+  Future<void> _setupMpvConfig() async {
+    final provider = StorageProvider();
+    final dir = await provider.getMpvDirectory();
+    final mpvFile = File('${dir!.path}/mpv.conf');
+    final inputFile = File('${dir.path}/input.conf');
+    final filesMissing =
+        !(await mpvFile.exists()) && !(await inputFile.exists());
+    if (filesMissing) {
+      final bytes = await rootBundle.load("assets/mangayomi_mpv.zip");
+      final archive = ZipDecoder().decodeBytes(bytes.buffer.asUint8List());
+      String shadersDir = path.join(dir.path, 'shaders');
+      await Directory(shadersDir).create(recursive: true);
+      String scriptsDir = path.join(dir.path, 'scripts');
+      await Directory(scriptsDir).create(recursive: true);
+      for (final file in archive.files) {
+        if (file.name == "mpv.conf") {
+          await mpvFile.writeAsBytes(file.content);
+        } else if (file.name == "input.conf") {
+          await inputFile.writeAsBytes(file.content);
+        } else if (file.name.startsWith("shaders/") &&
+            file.name.endsWith(".glsl")) {
+          final shaderFile = File('$shadersDir/${file.name.split("/").last}');
+          await shaderFile.writeAsBytes(file.content);
+        } else if (file.name.startsWith("scripts/") &&
+            file.name.endsWith(".js")) {
+          final scriptFile = File('$scriptsDir/${file.name.split("/").last}');
+          await scriptFile.writeAsBytes(file.content);
+        }
+      }
+    }
   }
 }
 

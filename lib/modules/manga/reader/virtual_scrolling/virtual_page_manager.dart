@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:mangayomi/modules/manga/reader/reader_view.dart' as reader;
+import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 
 /// Page loading states for virtual scrolling
 enum PageLoadState { notLoaded, loading, loaded, error, cached }
@@ -10,7 +10,7 @@ enum PageLoadState { notLoaded, loading, loaded, error, cached }
 /// Virtual page information for tracking state
 class VirtualPageInfo {
   final int index;
-  final reader.UChapDataPreload originalData;
+  final UChapDataPreload originalData;
   PageLoadState loadState;
   DateTime? lastAccessTime;
   Object? error;
@@ -56,7 +56,7 @@ class VirtualPageConfig {
 
 /// Manages virtual page loading and memory optimization
 class VirtualPageManager extends ChangeNotifier {
-  final List<reader.UChapDataPreload> _originalPages;
+  final List<UChapDataPreload> _originalPages;
   final VirtualPageConfig config;
   final Map<int, VirtualPageInfo> _pageInfoMap = {};
   final Set<int> _preloadQueue = {};
@@ -65,7 +65,7 @@ class VirtualPageManager extends ChangeNotifier {
   Timer? _cleanupTimer;
 
   VirtualPageManager({
-    required List<reader.UChapDataPreload> pages,
+    required List<UChapDataPreload> pages,
     this.config = const VirtualPageConfig(),
   }) : _originalPages = List.from(pages) {
     _initializePages();
@@ -108,7 +108,7 @@ class VirtualPageManager extends ChangeNotifier {
   }
 
   /// Get original page data
-  reader.UChapDataPreload? getOriginalPage(int index) {
+  UChapDataPreload? getOriginalPage(int index) {
     if (index < 0 || index >= _originalPages.length) return null;
     return _originalPages[index];
   }

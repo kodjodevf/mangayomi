@@ -6,6 +6,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/custom_button.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/history.dart';
@@ -59,6 +60,13 @@ class StorageProvider {
       directory = Directory(path.join(dir.path, 'Mangayomi'));
     }
     return directory;
+  }
+
+  Future<Directory?> getMpvDirectory() async {
+    final defaultDirectory = await getDefaultDirectory();
+    String dbDir = path.join(defaultDirectory!.path, 'mpv');
+    await Directory(dbDir).create(recursive: true);
+    return Directory(dbDir);
   }
 
   Future<Directory?> getBtDirectory() async {
@@ -169,6 +177,7 @@ class StorageProvider {
         ChangedPartSchema,
         ChapterSchema,
         CategorySchema,
+        CustomButtonSchema,
         UpdateSchema,
         HistorySchema,
         DownloadSchema,
@@ -189,6 +198,38 @@ class StorageProvider {
     if (settings == null) {
       await isar.writeTxn(() async {
         isar.settings.put(Settings());
+      });
+    }
+
+    final customButton = await isar.customButtons
+        .filter()
+        .idIsNotNull()
+        .findFirst();
+    if (customButton == null) {
+      await isar.writeTxn(() async {
+        await isar.customButtons.put(
+          CustomButton(
+            title: "+85 s",
+            codePress:
+                """var intro_length = mp.get_property_number("user-data/current-anime/intro-length")
+                   aniyomi.right_seek_by(intro_length)""",
+            codeLongPress:
+                """aniyomi.int_picker("Change intro length", "%ds", 0, 255, 1, "user-data/current-anime/intro-length")""",
+            codeStartup: """function update_button(_, length) {
+                	if (length && length == 0) {
+                  		aniyomi.hide_button()
+                	} else {
+                  		aniyomi.show_button()
+                	}
+                	aniyomi.set_button_title("+" + length + " s")
+                  if (\$isPrimary) {
+                      mp.observe_property("user-data/current-anime/intro-length", "number", update_button)
+                  }""",
+            isFavourite: true,
+            pos: 0,
+            updatedAt: DateTime.now().millisecondsSinceEpoch,
+          ),
+        );
       });
     }
 

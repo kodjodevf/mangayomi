@@ -33,18 +33,18 @@ class _TrackerLibraryImageCardState
   Widget build(BuildContext context) {
     super.build(context);
     final trackData = widget.track;
-    return GestureDetector(
-      onTap: () => _showCard(context),
-      child: StreamBuilder(
-        stream: isar.tracks
-            .filter()
-            .mangaIdIsNotNull()
-            .mediaIdEqualTo(trackData.mediaId)
-            .itemTypeEqualTo(widget.itemType)
-            .watch(fireImmediately: true),
-        builder: (context, snapshot) {
-          final hasData = snapshot.hasData && snapshot.data!.isNotEmpty;
-          return Padding(
+    return StreamBuilder(
+      stream: isar.tracks
+          .filter()
+          .mangaIdIsNotNull()
+          .mediaIdEqualTo(trackData.mediaId)
+          .itemTypeEqualTo(widget.itemType)
+          .watch(fireImmediately: true),
+      builder: (context, snapshot) {
+        final hasData = snapshot.hasData && snapshot.data!.isNotEmpty;
+        return GestureDetector(
+          onTap: () => _showCard(context, snapshot.data?.firstOrNull?.mangaId),
+          child: Padding(
             padding: const EdgeInsets.only(left: 10),
             child: Stack(
               children: [
@@ -129,17 +129,20 @@ class _TrackerLibraryImageCardState
                   ),
               ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
-  void _showCard(BuildContext context) {
+  void _showCard(BuildContext context, int? mangaId) {
     showDialog(
       context: context,
-      builder: (context) =>
-          TrackerItemCard(track: widget.track, itemType: widget.itemType),
+      builder: (context) => TrackerItemCard(
+        track: widget.track,
+        itemType: widget.itemType,
+        mangaId: mangaId,
+      ),
     );
   }
 

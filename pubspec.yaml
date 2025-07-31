@@ -41,12 +41,14 @@ dependencies:
   flutter_web_auth_2: ^3.1.2
   numberpicker: ^2.1.2
   encrypt: ^5.0.3
-  media_kit: ^1.2.0
+  media_kit:
+    git:
+      url: https://github.com/Schnitzel5/media-kit.git
+      path: media_kit
   media_kit_video:
     git:
-      url: https://github.com/media-kit/media-kit.git
+      url: https://github.com/Schnitzel5/media-kit.git
       path: media_kit_video
-      ref: aeb29faa8ea93a386ad1185b69fd6225fa331c74
   media_kit_libs_video: ^1.0.6
   crypto: ^3.0.6
   cupertino_icons: ^1.0.8
@@ -157,4 +159,3 @@ inno_bundle:
     - german
   admin: false
   version: 0.6.3
-

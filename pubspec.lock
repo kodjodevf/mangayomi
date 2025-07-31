@@ -1162,10 +1162,11 @@ packages:
   media_kit:
     dependency: "direct main"
     description:
-      name: media_kit
-      sha256: "48c10c3785df5d88f0eef970743f8c99b2e5da2b34b9d8f9876e598f62d9e776"
-      url: "https://pub.dev"
-    source: hosted
+      path: media_kit
+      ref: HEAD
+      resolved-ref: a02ac2f7e6118cdab855ecacd194fa9ee6961a18
+      url: "https://github.com/Schnitzel5/media-kit.git"
+    source: git
     version: "1.2.0"
   media_kit_libs_android_video:
     dependency: transitive
@@ -1219,9 +1220,9 @@ packages:
     dependency: "direct main"
     description:
       path: media_kit_video
-      ref: aeb29faa8ea93a386ad1185b69fd6225fa331c74
-      resolved-ref: aeb29faa8ea93a386ad1185b69fd6225fa331c74
-      url: "https://github.com/media-kit/media-kit.git"
+      ref: HEAD
+      resolved-ref: a02ac2f7e6118cdab855ecacd194fa9ee6961a18
+      url: "https://github.com/Schnitzel5/media-kit.git"
     source: git
     version: "1.3.0"
   meta:
@@ -2081,10 +2082,10 @@ packages:
     dependency: transitive
     description:
       name: volume_controller
-      sha256: e82fd689bb8e1fe8e64be3fa5946ff8699058f8cf9f4c1679acdba20cda7f5bd
+      sha256: d75039e69c0d90e7810bfd47e3eedf29ff8543ea7a10392792e81f9bded7edf5
       url: "https://pub.dev"
     source: hosted
-    version: "3.3.3"
+    version: "3.4.0"
   wakelock_plus:
     dependency: transitive
     description:
