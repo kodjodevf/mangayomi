@@ -9,7 +9,6 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:path/path.dart' as path;
-import 'package:permission_handler/permission_handler.dart';
 
 class PlayerAdvancedScreen extends ConsumerStatefulWidget {
   const PlayerAdvancedScreen({super.key});

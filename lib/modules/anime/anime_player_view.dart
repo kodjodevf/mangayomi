@@ -49,7 +49,6 @@ import 'package:numberpicker/numberpicker.dart';
 import 'package:path/path.dart' as p;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
