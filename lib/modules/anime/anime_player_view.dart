@@ -672,11 +672,10 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     final primaryButton =
         customButtons.firstWhereOrNull((e) => e.isFavourite ?? false) ??
         customButtons.first;
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      await Permission.storage.request();
-    }
     final provider = StorageProvider();
+    if (!(await provider.requestPermission())) {
+      return;
+    }
     final dir = await provider.getMpvDirectory();
     String scriptsDir = path.join(dir!.path, 'scripts');
     final mpvFile = File('$scriptsDir/init_custom_buttons.js');

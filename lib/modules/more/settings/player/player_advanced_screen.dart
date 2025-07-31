@@ -63,11 +63,10 @@ class _PlayerAdvancedScreenState extends ConsumerState<PlayerAdvancedScreen> {
     BuildContext context, {
     bool redownload = false,
   }) async {
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      await Permission.storage.request();
-    }
     final provider = StorageProvider();
+    if (!(await provider.requestPermission())) {
+      return false;
+    }
     final dir = await provider.getMpvDirectory();
     final mpvFile = File('${dir!.path}/mpv.conf');
     final inputFile = File('${dir.path}/input.conf');
