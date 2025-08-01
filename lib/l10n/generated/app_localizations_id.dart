@@ -1531,8 +1531,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get custom_buttons => 'Custom buttons';
 
   @override
-  String get custom_buttons_info =>
-      'Execute Javascript code with custom buttons';
+  String get custom_buttons_info => 'Execute lua code with custom buttons';
 
   @override
   String get custom_buttons_edit => 'Edit custom buttons';
@@ -1550,16 +1549,16 @@ class AppLocalizationsId extends AppLocalizations {
   String get custom_buttons_text_req => 'Button text required';
 
   @override
-  String get custom_buttons_js_code => 'Javascript code';
+  String get custom_buttons_js_code => 'lua code';
 
   @override
-  String get custom_buttons_js_code_req => 'Javascript code required';
+  String get custom_buttons_js_code_req => 'lua code required';
 
   @override
-  String get custom_buttons_js_code_long => 'Javascript code (on long press)';
+  String get custom_buttons_js_code_long => 'lua code (on long press)';
 
   @override
-  String get custom_buttons_startup => 'Javascript code (on startup)';
+  String get custom_buttons_startup => 'lua code (on startup)';
 
   @override
   String n_days(Object n) {

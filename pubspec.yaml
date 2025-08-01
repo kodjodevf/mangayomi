@@ -49,7 +49,10 @@ dependencies:
     git:
       url: https://github.com/Schnitzel5/media-kit.git
       path: media_kit_video
-  media_kit_libs_video: ^1.0.6
+  media_kit_libs_video:
+    git:
+      url: https://github.com/Schnitzel5/media-kit.git
+      path: libs/universal/media_kit_libs_video
   crypto: ^3.0.6
   cupertino_icons: ^1.0.8
   window_manager: ^0.4.3

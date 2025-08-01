@@ -211,20 +211,25 @@ class StorageProvider {
           CustomButton(
             title: "+85 s",
             codePress:
-                """var intro_length = mp.get_property_number("user-data/current-anime/intro-length")
+                """local intro_length = mp.get_property_number("user-data/current-anime/intro-length")
                    aniyomi.right_seek_by(intro_length)""",
             codeLongPress:
                 """aniyomi.int_picker("Change intro length", "%ds", 0, 255, 1, "user-data/current-anime/intro-length")""",
-            codeStartup: """function update_button(_, length) {
-                	if (length && length == 0) {
-                  		aniyomi.hide_button()
-                	} else {
-                  		aniyomi.show_button()
-                	}
-                	aniyomi.set_button_title("+" + length + " s")
-                  if (\$isPrimary) {
-                      mp.observe_property("user-data/current-anime/intro-length", "number", update_button)
-                  }""",
+            codeStartup: """function update_button(_, length)
+  if length ~= nil then
+    if length == 0 then
+	  aniyomi.hide_button()
+	  return
+	else
+	  aniyomi.show_button()
+	end
+    aniyomi.set_button_title("+" .. length .. " s")
+  end
+end
+
+if \$isPrimary then
+  mp.observe_property("user-data/current-anime/intro-length", "number", update_button)
+end""",
             isFavourite: true,
             pos: 0,
             updatedAt: DateTime.now().millisecondsSinceEpoch,

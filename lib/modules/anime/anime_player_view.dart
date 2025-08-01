@@ -639,9 +639,9 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
               .map(
                 (e) => (
                   e["title"] as String,
-                  e["time"] is double
-                      ? (e["time"] as double).toInt() * 1000
-                      : (e["time"] as int) * 1000,
+                  e["timestamp"] is double
+                      ? (e["timestamp"] as double).toInt() * 1000
+                      : (e["timestamp"] as int) * 1000,
                 ),
               )
               .toList();
@@ -677,20 +677,24 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     }
     final dir = await provider.getMpvDirectory();
     String scriptsDir = path.join(dir!.path, 'scripts');
-    final mpvFile = File('$scriptsDir/init_custom_buttons.js');
+    final mpvFile = File('$scriptsDir/init_custom_buttons.lua');
     final content = StringBuffer();
-    content.write("var aniyomi = require('./init_aniyomi_functions');");
+    content.writeln("""local lua_modules = mp.find_config_file('scripts')
+if lua_modules then
+  package.path = package.path .. ';' .. lua_modules .. '/?.lua;' .. lua_modules .. '/?/init.lua;' .. '\${scriptsDir()!!.filePath}' .. '/?.lua'
+end
+local aniyomi = require 'init_aniyomi_functions'""");
     for (final button in customButtons) {
-      content.write(
+      content.writeln(
         """
 ${button.getButtonStartup(primaryButton.id!).trim()}
-function button${button.id}() {
+function button${button.id}()
   ${button.getButtonPress(primaryButton.id!).trim()}
-}
+end
 mp.register_script_message('call_button_${button.id}', button${button.id})
-function button${button.id}long() {
+function button${button.id}long()
   ${button.getButtonLongPress(primaryButton.id!).trim()}
-}
+end
 mp.register_script_message('call_button_${button.id}_long', button${button.id}long)""",
       );
     }
