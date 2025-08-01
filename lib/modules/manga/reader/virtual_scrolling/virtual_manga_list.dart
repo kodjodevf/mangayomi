@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/modules/manga/reader/virtual_scrolling/virtual_page_manager.dart';
-import 'package:mangayomi/modules/manga/reader/reader_view.dart' as reader;
 import 'package:mangayomi/modules/manga/reader/image_view_vertical.dart';
 import 'package:mangayomi/modules/manga/reader/double_columm_view_vertical.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/transition_view_vertical.dart';
@@ -21,7 +21,7 @@ class VirtualMangaList extends ConsumerStatefulWidget {
   final double minCacheExtent;
   final int initialScrollIndex;
   final ScrollPhysics physics;
-  final Function(reader.UChapDataPreload data) onLongPressData;
+  final Function(UChapDataPreload data) onLongPressData;
   final Function(bool) onFailedToLoadImage;
   final BackgroundColor backgroundColor;
   final bool isDoublePageMode;
@@ -215,7 +215,7 @@ class _VirtualMangaListState extends ConsumerState<VirtualMangaList> {
     final int index1 = index * 2 - 1;
     final int index2 = index1 + 1;
 
-    final List<reader.UChapDataPreload?> datas = index == 0
+    final List<UChapDataPreload?> datas = index == 0
         ? [widget.pageManager.getOriginalPage(0), null]
         : [
             index1 < widget.pageManager.pageCount

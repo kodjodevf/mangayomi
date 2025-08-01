@@ -91,6 +91,7 @@ class DiscordRPC {
         : "Reading";
     final title = chapter.manga.value!.name;
     final chapterTitle = chapter.name;
+    final imageUrl = chapter.manga.value!.imageUrl;
     final rpcShowTitle = ref.read(rpcShowTitleStateProvider);
     final rpcShowCoverImage = ref.read(rpcShowCoverImageStateProvider);
     await updateActivity(
@@ -98,9 +99,10 @@ class DiscordRPC {
       state: rpcShowTitle && rpcShowReadingWatchingProgress
           ? chapterTitle
           : "-----",
-      assets: rpcShowCoverImage
+      assets:
+          rpcShowCoverImage && imageUrl != null && imageUrl.startsWith("http")
           ? RPCAssets(
-              largeImage: chapter.manga.value!.imageUrl,
+              largeImage: imageUrl,
               largeText: rpcShowTitle ? chapter.manga.value!.name : "-----",
               smallImage: "app-icon",
               smallText: "Mangayomi",
