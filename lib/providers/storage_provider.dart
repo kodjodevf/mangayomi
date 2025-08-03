@@ -211,8 +211,8 @@ class StorageProvider {
           CustomButton(
             title: "+85 s",
             codePress:
-                """local intro_length = mp.get_property_number("user-data/current-anime/intro-length")
-                   aniyomi.right_seek_by(intro_length)""",
+                """local intro_length = mp.get_property_native("user-data/current-anime/intro-length")
+aniyomi.right_seek_by(intro_length)""",
             codeLongPress:
                 """aniyomi.int_picker("Change intro length", "%ds", 0, 255, 1, "user-data/current-anime/intro-length")""",
             codeStartup: """function update_button(_, length)
