@@ -110,7 +110,8 @@ class _PlayerAdvancedScreenState extends ConsumerState<PlayerAdvancedScreen> {
                           );
                           await shaderFile.writeAsBytes(file.content);
                         } else if (file.name.startsWith("scripts/") &&
-                            file.name.endsWith(".js")) {
+                            (file.name.endsWith(".js") ||
+                                file.name.endsWith(".lua"))) {
                           final scriptFile = File(
                             '$scriptsDir/${file.name.split("/").last}',
                           );

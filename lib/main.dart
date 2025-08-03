@@ -271,7 +271,7 @@ class _MyAppState extends ConsumerState<MyApp> {
           final shaderFile = File('$shadersDir/${file.name.split("/").last}');
           await shaderFile.writeAsBytes(file.content);
         } else if (file.name.startsWith("scripts/") &&
-            file.name.endsWith(".js")) {
+            (file.name.endsWith(".js") || file.name.endsWith(".lua"))) {
           final scriptFile = File('$scriptsDir/${file.name.split("/").last}');
           await scriptFile.writeAsBytes(file.content);
         }
