@@ -1552,6 +1552,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get custom_buttons_add => 'Add custom button';
 
   @override
+  String get custom_buttons_added => 'Custom button added!';
+
+  @override
   String get custom_buttons_delete => 'Delete custom button';
 
   @override

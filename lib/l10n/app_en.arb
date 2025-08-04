@@ -484,6 +484,7 @@
   "custom_buttons_info": "Execute lua code with custom buttons",
   "custom_buttons_edit": "Edit custom buttons",
   "custom_buttons_add": "Add custom button",
+  "custom_buttons_added": "Custom button added!",
   "custom_buttons_delete": "Delete custom button",
   "custom_buttons_text": "Button text",
   "custom_buttons_text_req": "Button text required",

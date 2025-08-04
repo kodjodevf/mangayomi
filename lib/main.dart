@@ -14,6 +14,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
+import 'package:mangayomi/models/custom_button.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
@@ -145,7 +146,7 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   Future<void> _initDeepLinks() async {
     _appLinks = AppLinks();
-    _linkSubscription = _appLinks.uriLinkStream.listen((uri) {
+    _linkSubscription = _appLinks.uriLinkStream.listen((uri) async {
       if (uri == lastUri) return; // Debouncing Deep Links
       lastUri = uri;
       switch (uri.host) {
@@ -223,6 +224,62 @@ class _MyAppState extends ConsumerState<MyApp> {
               );
             },
           );
+          break;
+        case "add-button":
+          final buttonDataRaw = uri.queryParametersAll["button"];
+          final context = navigatorKey.currentContext;
+          if (context == null || !context.mounted || buttonDataRaw == null) {
+            return;
+          }
+          final l10n = context.l10n;
+          for (final buttonRaw in buttonDataRaw) {
+            final buttonData = jsonDecode(
+              utf8.decode(base64.decode(buttonRaw)),
+            );
+            if (buttonData is Map<String, dynamic>) {
+              final customButton = CustomButton.fromJson(buttonData);
+              await showDialog(
+                context: navigatorKey.currentContext!,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text(l10n.custom_buttons_add),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "${l10n.name}: ${customButton.title ?? 'Unknown'}",
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        child: Text(l10n.cancel),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                      FilledButton(
+                        child: Text(l10n.add),
+                        onPressed: () async {
+                          if (context.mounted) Navigator.of(context).pop();
+                          await isar.writeTxn(() async {
+                            await isar.customButtons.put(
+                              customButton
+                                ..pos = await isar.customButtons.count()
+                                ..isFavourite = false
+                                ..id = null
+                                ..updatedAt =
+                                    DateTime.now().millisecondsSinceEpoch,
+                            );
+                          });
+                          botToast(l10n.custom_buttons_added);
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            }
+          }
           break;
         default:
       }

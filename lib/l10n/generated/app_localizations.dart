@@ -2979,6 +2979,12 @@ abstract class AppLocalizations {
   /// **'Add custom button'**
   String get custom_buttons_add;
 
+  /// No description provided for @custom_buttons_added.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom button added!'**
+  String get custom_buttons_added;
+
   /// No description provided for @custom_buttons_delete.
   ///
   /// In en, this message translates to:
