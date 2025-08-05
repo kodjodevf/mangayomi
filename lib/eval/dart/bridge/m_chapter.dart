@@ -2,7 +2,7 @@ import 'package:d4rt/d4rt.dart';
 import 'package:mangayomi/eval/model/m_chapter.dart';
 
 class MChapterBridge {
-  final mChapterBridgedClass = BridgedClassDefinition(
+  final mChapterBridgedClass = BridgedClass(
     nativeType: MChapter,
     name: 'MChapter',
     constructors: {

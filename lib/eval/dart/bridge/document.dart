@@ -3,7 +3,7 @@ import 'package:html/dom.dart';
 import 'package:mangayomi/eval/model/document.dart';
 
 class MDocumentBridge {
-  final documentBridgedClass = BridgedClassDefinition(
+  final documentBridgedClass = BridgedClass(
     nativeType: MDocument,
     name: 'MDocument',
     constructors: {

@@ -2,7 +2,7 @@ import 'package:d4rt/d4rt.dart';
 import 'package:mangayomi/models/video.dart';
 
 class MTrackBridge {
-  final mTrackBridgedClass = BridgedClassDefinition(
+  final mTrackBridgedClass = BridgedClass(
     nativeType: Track,
     name: 'MTrack',
     constructors: {

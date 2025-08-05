@@ -2,7 +2,7 @@ import 'package:d4rt/d4rt.dart';
 import 'package:mangayomi/eval/model/m_source.dart';
 
 class MSourceBridge {
-  final mSourceBridgedClass = BridgedClassDefinition(
+  final mSourceBridgedClass = BridgedClass(
     nativeType: MSource,
     name: 'MSource',
     constructors: {
