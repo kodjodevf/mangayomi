@@ -314,10 +314,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
       .duration
       .listen((duration) {
         _currentTotalDuration.value = duration;
-        discordRpc?.startChapterTimestamp(
-          _currentPosition.value.inMilliseconds,
-          duration.inMilliseconds,
-        );
+        discordRpc?.updateChapterTimestamp(_currentPosition.value, duration);
       });
 
   bool get hasNextEpisode => _streamController.getEpisodeIndex().$1 != 0;
@@ -785,8 +782,13 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
 
   void _updateRpcTimestamp() {
     final now = DateTime.now().millisecondsSinceEpoch;
-    if (lastRpcTimestampUpdate + 10000 < now) {
-      discordRpc?.updateChapterTimestamp(_currentPosition.value.inMilliseconds);
+    if (lastRpcTimestampUpdate + 5000 < now) {
+      if (_currentTotalDuration.value != null) {
+        discordRpc?.updateChapterTimestamp(
+          _currentPosition.value,
+          _currentTotalDuration.value!,
+        );
+      }
       lastRpcTimestampUpdate = now;
     }
   }
