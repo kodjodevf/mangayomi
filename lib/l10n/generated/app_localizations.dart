@@ -3170,6 +3170,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'in {days} days'**
   String in_n_days(Object days);
+
+  /// No description provided for @clear_library.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear library'**
+  String get clear_library;
+
+  /// No description provided for @clear_library_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose to clear all manga, anime and/or novel entries'**
+  String get clear_library_desc;
+
+  /// No description provided for @clear_library_input.
+  ///
+  /// In en, this message translates to:
+  /// **'Type \'manga\', \'anime\' and/or \'novel\' (separated by a comma) to remove all related entries'**
+  String get clear_library_input;
 }
 
 class _AppLocalizationsDelegate

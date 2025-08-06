@@ -1656,4 +1656,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String in_n_days(Object days) {
     return 'in $days days';
   }
+
+  @override
+  String get clear_library => 'Clear library';
+
+  @override
+  String get clear_library_desc =>
+      'Choose to clear all manga, anime and/or novel entries';
+
+  @override
+  String get clear_library_input =>
+      'Type \'manga\', \'anime\' and/or \'novel\' (separated by a comma) to remove all related entries';
 }

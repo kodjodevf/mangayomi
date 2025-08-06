@@ -77,12 +77,15 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                                 color: context.secondaryColor,
                               ),
                               const SizedBox(width: 10),
-                              Text(
-                                l10n.calendar_info,
-                                softWrap: true,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: context.secondaryColor,
+                              Flexible(
+                                child: Text(
+                                  l10n.calendar_info,
+                                  softWrap: true,
+                                  overflow: TextOverflow.clip,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: context.secondaryColor,
+                                  ),
                                 ),
                               ),
                             ],
@@ -155,7 +158,9 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                         startingDayOfWeek: StartingDayOfWeek.monday,
                         calendarStyle: CalendarStyle(
                           outsideDaysVisible: true,
-                          weekendTextStyle: TextStyle(color: context.primaryColor),
+                          weekendTextStyle: TextStyle(
+                            color: context.primaryColor,
+                          ),
                         ),
                         onDaySelected: (selectedDay, focusedDay) =>
                             _onDaySelected(selectedDay, focusedDay, data),

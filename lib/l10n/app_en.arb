@@ -515,5 +515,8 @@
   "calendar_no_data": "No data yet.",
   "calendar_info": "The calendar is only able to predict the next chapter upload based on the older uploads. Some data might not be 100% accurate!",
   "in_n_day": "in {days} day",
-  "in_n_days": "in {days} days"
+  "in_n_days": "in {days} days",
+  "clear_library": "Clear library",
+  "clear_library_desc": "Choose to clear all manga, anime and/or novel entries",
+  "clear_library_input": "Type 'manga', 'anime' and/or 'novel' (separated by a comma) to remove all related entries"
 }
