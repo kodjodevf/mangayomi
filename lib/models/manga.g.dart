@@ -108,19 +108,24 @@ const MangaSchema = CollectionSchema(
       name: r'name',
       type: IsarType.string,
     ),
-    r'source': PropertySchema(
+    r'smartUpdateDays': PropertySchema(
       id: 18,
+      name: r'smartUpdateDays',
+      type: IsarType.long,
+    ),
+    r'source': PropertySchema(
+      id: 19,
       name: r'source',
       type: IsarType.string,
     ),
     r'status': PropertySchema(
-      id: 19,
+      id: 20,
       name: r'status',
       type: IsarType.byte,
       enumMap: _MangastatusEnumValueMap,
     ),
     r'updatedAt': PropertySchema(
-      id: 20,
+      id: 21,
       name: r'updatedAt',
       type: IsarType.long,
     )
@@ -258,9 +263,10 @@ void _mangaSerialize(
   writer.writeLong(offsets[15], object.lastUpdate);
   writer.writeString(offsets[16], object.link);
   writer.writeString(offsets[17], object.name);
-  writer.writeString(offsets[18], object.source);
-  writer.writeByte(offsets[19], object.status.index);
-  writer.writeLong(offsets[20], object.updatedAt);
+  writer.writeLong(offsets[18], object.smartUpdateDays);
+  writer.writeString(offsets[19], object.source);
+  writer.writeByte(offsets[20], object.status.index);
+  writer.writeLong(offsets[21], object.updatedAt);
 }
 
 Manga _mangaDeserialize(
@@ -290,10 +296,11 @@ Manga _mangaDeserialize(
     lastUpdate: reader.readLongOrNull(offsets[15]),
     link: reader.readStringOrNull(offsets[16]),
     name: reader.readStringOrNull(offsets[17]),
-    source: reader.readStringOrNull(offsets[18]),
-    status: _MangastatusValueEnumMap[reader.readByteOrNull(offsets[19])] ??
+    smartUpdateDays: reader.readLongOrNull(offsets[18]),
+    source: reader.readStringOrNull(offsets[19]),
+    status: _MangastatusValueEnumMap[reader.readByteOrNull(offsets[20])] ??
         Status.ongoing,
-    updatedAt: reader.readLongOrNull(offsets[20]),
+    updatedAt: reader.readLongOrNull(offsets[21]),
   );
   return object;
 }
@@ -343,11 +350,13 @@ P _mangaDeserializeProp<P>(
     case 17:
       return (reader.readStringOrNull(offset)) as P;
     case 18:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 19:
+      return (reader.readStringOrNull(offset)) as P;
+    case 20:
       return (_MangastatusValueEnumMap[reader.readByteOrNull(offset)] ??
           Status.ongoing) as P;
-    case 20:
+    case 21:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -2591,6 +2600,75 @@ extension MangaQueryFilter on QueryBuilder<Manga, Manga, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> smartUpdateDaysIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'smartUpdateDays',
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> smartUpdateDaysIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'smartUpdateDays',
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> smartUpdateDaysEqualTo(
+      int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'smartUpdateDays',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> smartUpdateDaysGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'smartUpdateDays',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> smartUpdateDaysLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'smartUpdateDays',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> smartUpdateDaysBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'smartUpdateDays',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<Manga, Manga, QAfterFilterCondition> sourceIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -3100,6 +3178,18 @@ extension MangaQuerySortBy on QueryBuilder<Manga, Manga, QSortBy> {
     });
   }
 
+  QueryBuilder<Manga, Manga, QAfterSortBy> sortBySmartUpdateDays() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'smartUpdateDays', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterSortBy> sortBySmartUpdateDaysDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'smartUpdateDays', Sort.desc);
+    });
+  }
+
   QueryBuilder<Manga, Manga, QAfterSortBy> sortBySource() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'source', Sort.asc);
@@ -3330,6 +3420,18 @@ extension MangaQuerySortThenBy on QueryBuilder<Manga, Manga, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Manga, Manga, QAfterSortBy> thenBySmartUpdateDays() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'smartUpdateDays', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterSortBy> thenBySmartUpdateDaysDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'smartUpdateDays', Sort.desc);
+    });
+  }
+
   QueryBuilder<Manga, Manga, QAfterSortBy> thenBySource() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'source', Sort.asc);
@@ -3485,6 +3587,12 @@ extension MangaQueryWhereDistinct on QueryBuilder<Manga, Manga, QDistinct> {
     });
   }
 
+  QueryBuilder<Manga, Manga, QDistinct> distinctBySmartUpdateDays() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'smartUpdateDays');
+    });
+  }
+
   QueryBuilder<Manga, Manga, QDistinct> distinctBySource(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -3618,6 +3726,12 @@ extension MangaQueryProperty on QueryBuilder<Manga, Manga, QQueryProperty> {
   QueryBuilder<Manga, String?, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
+    });
+  }
+
+  QueryBuilder<Manga, int?, QQueryOperations> smartUpdateDaysProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'smartUpdateDays');
     });
   }
 
