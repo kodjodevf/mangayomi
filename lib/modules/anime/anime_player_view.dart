@@ -211,7 +211,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         if (debandingType == DebandingType.cpu) "vf": "gradfun=radius=12",
         if (debandingType == DebandingType.gpu) "deband": "yes",
         if (useYUV420P) "vf": "format=yuv420p",
-        "alang": audioPreferredLang,
+        if (audioPreferredLang.isNotEmpty) "alang": audioPreferredLang,
         if (enableAudioPitchCorrection) "audio-pitch-correction": "yes",
         "volume-max": "${volumeBoostCap + 100}",
         if (audioChannel != AudioChannel.reverseStereo)

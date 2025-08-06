@@ -9,6 +9,7 @@ import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/custom_button.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/history.dart';
@@ -155,6 +156,9 @@ void restoreBackup(Ref ref, Map<String, dynamic> backup, {bool full = true}) {
       final updates = (backup["updates"] as List?)
           ?.map((e) => Update.fromJson(e))
           .toList();
+      final customButtons = (backup["customButtons"] as List?)
+          ?.map((e) => CustomButton.fromJson(e))
+          .toList();
 
       isar.writeTxnSync(() {
         isar.mangas.clearSync();
@@ -244,6 +248,10 @@ void restoreBackup(Ref ref, Map<String, dynamic> backup, {bool full = true}) {
           isar.settings.clearSync();
           if (settings != null) {
             isar.settings.putAllSync(settings);
+          }
+          isar.customButtons.clearSync();
+          if (customButtons != null) {
+            isar.customButtons.putAllSync(customButtons);
           }
           _invalidateCommonState(ref);
           ref.read(routerCurrentLocationStateProvider.notifier).refresh();
