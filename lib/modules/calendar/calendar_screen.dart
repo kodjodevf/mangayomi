@@ -16,7 +16,8 @@ import 'package:mangayomi/utils/headers.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarScreen extends ConsumerStatefulWidget {
-  const CalendarScreen({super.key});
+  final ItemType? itemType;
+  const CalendarScreen({super.key, this.itemType});
 
   @override
   ConsumerState<CalendarScreen> createState() => _CalendarScreenState();
@@ -32,6 +33,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   DateTime? _selectedDay;
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
+  late ItemType? itemType = widget.itemType ?? ItemType.manga;
 
   @override
   void initState() {
@@ -50,129 +52,169 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final locale = ref.watch(l10nLocaleStateProvider);
-    final data = ref.watch(getCalendarStreamProvider);
+    final data = ref.watch(getCalendarStreamProvider(itemType: itemType));
     return Scaffold(
       appBar: AppBar(title: Text(l10n.calendar)),
       body: data.when(
         data: (data) {
-          if (data.isEmpty) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(l10n.calendar_no_data, textAlign: TextAlign.center),
-              ),
-            );
-          }
           if (_selectedDay != null) {
             _selectedEntries.value = _getEntriesForDay(_selectedDay!, data);
           }
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Column(
-              children: [
-                ListTile(
-                  title: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 3),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.warning_amber_outlined,
-                          color: context.secondaryColor,
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          l10n.calendar_info,
-                          softWrap: true,
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: context.secondaryColor,
+            child: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      ListTile(
+                        title: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 3),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.warning_amber_outlined,
+                                color: context.secondaryColor,
+                              ),
+                              const SizedBox(width: 10),
+                              Text(
+                                l10n.calendar_info,
+                                softWrap: true,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: context.secondaryColor,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-                TableCalendar(
-                  firstDay: firstDay,
-                  lastDay: lastDay,
-                  focusedDay: _focusedDay,
-                  locale: locale.toLanguageTag(),
-                  selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                  rangeStartDay: _rangeStart,
-                  rangeEndDay: _rangeEnd,
-                  calendarFormat: _calendarFormat,
-                  rangeSelectionMode: _rangeSelectionMode,
-                  eventLoader: (day) => _getEntriesForDay(day, data),
-                  startingDayOfWeek: StartingDayOfWeek.monday,
-                  calendarStyle: const CalendarStyle(outsideDaysVisible: false),
-                  onDaySelected: (selectedDay, focusedDay) =>
-                      _onDaySelected(selectedDay, focusedDay, data),
-                  onRangeSelected: (start, end, focusedDay) =>
-                      _onRangeSelected(start, end, focusedDay, data),
-                  onFormatChanged: (format) {
-                    if (_calendarFormat != format) {
-                      setState(() {
-                        _calendarFormat = format;
-                      });
-                    }
-                  },
-                  onPageChanged: (focusedDay) {
-                    _focusedDay = focusedDay;
-                  },
-                ),
-                const SizedBox(height: 8.0),
-                Expanded(
-                  child: ValueListenableBuilder<List<Manga>>(
-                    valueListenable: _selectedEntries,
-                    builder: (context, value, _) {
-                      return CustomScrollView(
-                        slivers: [
-                          CustomSliverGroupedListView<Manga, String>(
-                            elements: value,
-                            groupBy: (element) {
-                              return dateFormat(
-                                _selectedDay?.millisecondsSinceEpoch
-                                        .toString() ??
-                                    DateTime.now()
-                                        .add(
-                                          Duration(
-                                            days: element.smartUpdateDays!,
-                                          ),
-                                        )
-                                        .millisecondsSinceEpoch
-                                        .toString(),
-                                context: context,
-                                ref: ref,
-                                forHistoryValue: true,
-                                useRelativeTimesTamps: false,
-                              );
-                            },
-                            groupSeparatorBuilder: (String groupByValue) => Padding(
-                              padding: const EdgeInsets.only(
-                                bottom: 8,
-                                left: 12,
-                              ),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "${dateFormat(null, context: context, stringDate: groupByValue, ref: ref, useRelativeTimesTamps: true, showInDaysFuture: true)} - ${dateFormat(null, context: context, stringDate: groupByValue, ref: ref, useRelativeTimesTamps: false)}",
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: SegmentedButton(
+                                emptySelectionAllowed: true,
+                                showSelectedIcon: false,
+                                style: TextButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                ),
+                                segments: [
+                                  ButtonSegment(
+                                    value: ItemType.manga.index,
+                                    label: Padding(
+                                      padding: const EdgeInsets.all(12),
+                                      child: Text(l10n.manga),
+                                    ),
+                                  ),
+                                  ButtonSegment(
+                                    value: ItemType.anime.index,
+                                    label: Padding(
+                                      padding: const EdgeInsets.all(12),
+                                      child: Text(l10n.anime),
+                                    ),
+                                  ),
+                                  ButtonSegment(
+                                    value: ItemType.novel.index,
+                                    label: Padding(
+                                      padding: const EdgeInsets.all(12),
+                                      child: Text(l10n.novel),
+                                    ),
                                   ),
                                 ],
+                                selected: {itemType?.index},
+                                onSelectionChanged: (newSelection) {
+                                  if (newSelection.isNotEmpty &&
+                                      newSelection.first != null) {
+                                    setState(() {
+                                      itemType =
+                                          ItemType.values[newSelection.first!];
+                                    });
+                                  }
+                                },
                               ),
                             ),
-                            itemBuilder: (context, element) {
-                              return CalendarListTileWidget(
-                                manga: element,
-                                selectedDay: _selectedDay,
-                              );
-                            },
-                            order: GroupedListOrder.ASC,
-                          ),
-                        ],
-                      );
-                    },
+                          ],
+                        ),
+                      ),
+                      TableCalendar(
+                        firstDay: firstDay,
+                        lastDay: lastDay,
+                        focusedDay: _focusedDay,
+                        locale: locale.toLanguageTag(),
+                        selectedDayPredicate: (day) =>
+                            isSameDay(_selectedDay, day),
+                        rangeStartDay: _rangeStart,
+                        rangeEndDay: _rangeEnd,
+                        calendarFormat: _calendarFormat,
+                        rangeSelectionMode: _rangeSelectionMode,
+                        eventLoader: (day) => _getEntriesForDay(day, data),
+                        startingDayOfWeek: StartingDayOfWeek.monday,
+                        calendarStyle: CalendarStyle(
+                          outsideDaysVisible: true,
+                          weekendTextStyle: TextStyle(color: context.primaryColor),
+                        ),
+                        onDaySelected: (selectedDay, focusedDay) =>
+                            _onDaySelected(selectedDay, focusedDay, data),
+                        onRangeSelected: (start, end, focusedDay) =>
+                            _onRangeSelected(start, end, focusedDay, data),
+                        onFormatChanged: (format) {
+                          if (_calendarFormat != format) {
+                            setState(() {
+                              _calendarFormat = format;
+                            });
+                          }
+                        },
+                        onPageChanged: (focusedDay) {
+                          _focusedDay = focusedDay;
+                        },
+                      ),
+                      const SizedBox(height: 15),
+                    ],
                   ),
                 ),
+                ValueListenableBuilder<List<Manga>>(
+                  valueListenable: _selectedEntries,
+                  builder: (context, value, _) {
+                    return CustomSliverGroupedListView<Manga, String>(
+                      elements: value,
+                      groupBy: (element) {
+                        return dateFormat(
+                          _selectedDay?.millisecondsSinceEpoch.toString() ??
+                              DateTime.now()
+                                  .add(Duration(days: element.smartUpdateDays!))
+                                  .millisecondsSinceEpoch
+                                  .toString(),
+                          context: context,
+                          ref: ref,
+                          forHistoryValue: true,
+                          useRelativeTimesTamps: false,
+                        );
+                      },
+                      groupSeparatorBuilder: (String groupByValue) => Padding(
+                        padding: const EdgeInsets.only(bottom: 8, left: 12),
+                        child: Row(
+                          children: [
+                            Text(
+                              "${dateFormat(null, context: context, stringDate: groupByValue, ref: ref, useRelativeTimesTamps: true, showInDaysFuture: true)} - ${dateFormat(null, context: context, stringDate: groupByValue, ref: ref, useRelativeTimesTamps: false)}",
+                            ),
+                          ],
+                        ),
+                      ),
+                      itemBuilder: (context, element) {
+                        return CalendarListTileWidget(
+                          manga: element,
+                          selectedDay: _selectedDay,
+                        );
+                      },
+                      order: GroupedListOrder.ASC,
+                    );
+                  },
+                ),
+                SliverToBoxAdapter(child: const SizedBox(height: 15)),
               ],
             ),
           );

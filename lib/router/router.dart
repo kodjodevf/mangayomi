@@ -234,7 +234,10 @@ class RouterNotifier extends ChangeNotifier {
       name: "playerAdvancedScreen",
       child: const PlayerAdvancedScreen(),
     ),
-    _genericRoute(name: "calendarScreen", child: const CalendarScreen()),
+    _genericRoute<ItemType?>(
+      name: "calendarScreen",
+      builder: (itemType) => CalendarScreen(itemType: itemType),
+    ),
     _genericRoute<Manga>(
       name: "migrate",
       builder: (manga) => MigrationScreen(manga: manga),

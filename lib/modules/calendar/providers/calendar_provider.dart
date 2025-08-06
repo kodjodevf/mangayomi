@@ -6,10 +6,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'calendar_provider.g.dart';
 
 @riverpod
-Stream<List<Manga>> getCalendarStream(Ref ref) async* {
+Stream<List<Manga>> getCalendarStream(
+  Ref ref, {
+  ItemType? itemType,
+}) async* {
   yield* isar.mangas
       .filter()
       .idIsNotNull()
+      .itemTypeEqualTo(itemType ?? ItemType.manga)
       .anyOf([
         Status.ongoing,
         Status.unknown,

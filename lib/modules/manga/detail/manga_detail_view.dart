@@ -1891,7 +1891,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           elevation: 0,
         ),
-        onPressed: () {},
+        onPressed: () =>
+            context.push("/calendarScreen", extra: widget.manga!.itemType),
         child: Column(
           children: [
             Icon(

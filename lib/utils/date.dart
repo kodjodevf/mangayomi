@@ -69,15 +69,15 @@ String dateFormat(
           date.isAfter(fiveDaysAgo) ||
           date.isAfter(sixDaysAgo) ||
           date.isAfter(aWeekAgo)) {
-        final difference = today.difference(date).inDays;
+        final difference = today.difference(date).inDays.abs();
         return switch (difference) {
           1 =>
             showInDaysFuture
-                ? l10n.in_n_day(difference.abs())
+                ? l10n.in_n_day(difference)
                 : l10n.n_day_ago(difference),
           != 7 =>
             showInDaysFuture
-                ? l10n.in_n_days(difference.abs())
+                ? l10n.in_n_days(difference)
                 : l10n.n_days_ago(difference),
           _ => l10n.a_week_ago,
         };
