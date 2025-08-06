@@ -254,7 +254,6 @@ void restoreBackup(Ref ref, Map<String, dynamic> backup, {bool full = true}) {
             isar.customButtons.putAllSync(customButtons);
           }
           _invalidateCommonState(ref);
-          ref.read(routerCurrentLocationStateProvider.notifier).refresh();
         }
       });
     } catch (e) {
@@ -540,6 +539,7 @@ void _invalidateCommonState(Ref ref) {
   ref.invalidate(extensionsRepoStateProvider(ItemType.manga));
   ref.invalidate(extensionsRepoStateProvider(ItemType.anime));
   ref.invalidate(extensionsRepoStateProvider(ItemType.novel));
+  ref.read(routerCurrentLocationStateProvider.notifier).refresh();
 }
 
 Status _convertStatusFromTachiBk(int idx) {
