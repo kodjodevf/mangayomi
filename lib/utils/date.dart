@@ -13,6 +13,7 @@ String dateFormat(
   bool useRelativeTimesTamps = true,
   String dateFormat = "",
   bool showHOURorMINUTE = false,
+  bool showInDaysFuture = false,
 }) {
   final l10n = l10nLocalizations(context)!;
   final locale = currentLocale(context);
@@ -70,8 +71,14 @@ String dateFormat(
           date.isAfter(aWeekAgo)) {
         final difference = today.difference(date).inDays;
         return switch (difference) {
-          1 => l10n.n_day_ago(difference),
-          != 7 => l10n.n_days_ago(difference),
+          1 =>
+            showInDaysFuture
+                ? l10n.in_n_day(difference.abs())
+                : l10n.n_day_ago(difference),
+          != 7 =>
+            showInDaysFuture
+                ? l10n.in_n_days(difference.abs())
+                : l10n.n_days_ago(difference),
           _ => l10n.a_week_ago,
         };
       }

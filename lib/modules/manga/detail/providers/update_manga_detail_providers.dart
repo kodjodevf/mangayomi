@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/main.dart';
@@ -147,9 +149,10 @@ Future<dynamic> updateMangaDetail(
         isar.mangas.putSync(
           manga
             ..id = mangaId
-            ..smartUpdateDays = median != 0
-                ? median
-                : daysBetweenUploads.arithmeticMean(),
+            ..smartUpdateDays = max(
+              median,
+              daysBetweenUploads.arithmeticMean(),
+            ),
         );
       }
     });

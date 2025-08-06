@@ -3140,6 +3140,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Speed'**
   String get subtitle_speed;
+
+  /// No description provided for @calendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get calendar;
+
+  /// No description provided for @calendar_no_data.
+  ///
+  /// In en, this message translates to:
+  /// **'No data yet.'**
+  String get calendar_no_data;
+
+  /// No description provided for @calendar_info.
+  ///
+  /// In en, this message translates to:
+  /// **'The calendar is only able to predict the next chapter upload based on the older uploads. Some data might not be 100% accurate!'**
+  String get calendar_info;
+
+  /// No description provided for @in_n_day.
+  ///
+  /// In en, this message translates to:
+  /// **'in {days} day'**
+  String in_n_day(Object days);
+
+  /// No description provided for @in_n_days.
+  ///
+  /// In en, this message translates to:
+  /// **'in {days} days'**
+  String in_n_days(Object days);
 }
 
 class _AppLocalizationsDelegate

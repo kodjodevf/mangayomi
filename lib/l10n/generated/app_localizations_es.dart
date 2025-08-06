@@ -1635,6 +1635,26 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get subtitle_speed => 'Speed';
+
+  @override
+  String get calendar => 'Calendar';
+
+  @override
+  String get calendar_no_data => 'No data yet.';
+
+  @override
+  String get calendar_info =>
+      'The calendar is only able to predict the next chapter upload based on the older uploads. Some data might not be 100% accurate!';
+
+  @override
+  String in_n_day(Object days) {
+    return 'in $days day';
+  }
+
+  @override
+  String in_n_days(Object days) {
+    return 'in $days days';
+  }
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).

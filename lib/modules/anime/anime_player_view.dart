@@ -252,17 +252,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     ),
   );
   late final hwdecMode = ref.read(hwdecModeStateProvider());
-  late final VideoController _controller = VideoController(
-    _player,
-    configuration: VideoControllerConfiguration(
-      hwdec: hwdecMode,
-      vo: Platform.isAndroid
-          ? useGpuNext
-                ? "gpu-next"
-                : "gpu"
-          : "libmpv",
-    ),
-  );
+  late final VideoController _controller;
   late final _streamController = ref.read(
     animeStreamControllerProvider(episode: widget.episode).notifier,
   );
@@ -846,6 +836,17 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   @override
   void initState() {
     super.initState();
+    _controller = VideoController(
+      _player,
+      configuration: VideoControllerConfiguration(
+        hwdec: hwdecMode,
+        vo: Platform.isAndroid
+            ? useGpuNext
+                  ? "gpu-next"
+                  : "gpu"
+            : "libmpv",
+      ),
+    );
     // If player is being launched the first time,
     // use global "Use Fullscreen" setting.
     // Else (if user already watches an episode and just changes it),

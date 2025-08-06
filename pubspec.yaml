@@ -103,6 +103,7 @@ dependencies:
     git:
       url: https://github.com/Schnitzel5/flutter-discord-rpc.git
       ref: main
+  table_calendar: ^3.2.0
 
 dependency_overrides:
   ffi: ^2.1.3
