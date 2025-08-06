@@ -373,7 +373,16 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
           final text = value.ref.u.string.cast<Utf8>().toDartString();
           if (text.isEmpty) break;
-          botToast(text);
+          botToast(
+            text,
+            alignY: -0.99,
+            second: 2,
+            dismissDirections: const [
+              DismissDirection.vertical,
+              DismissDirection.horizontal,
+            ],
+            showIcon: false,
+          );
           nativePlayer.setProperty("user-data/aniyomi/show_text", "");
         }
         break;
