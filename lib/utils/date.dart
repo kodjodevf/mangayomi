@@ -79,7 +79,7 @@ String dateFormat(
             showInDaysFuture
                 ? l10n.in_n_days(difference)
                 : l10n.n_days_ago(difference),
-          _ => l10n.a_week_ago,
+          _ => showInDaysFuture ? l10n.next_week : l10n.a_week_ago,
         };
       }
     }

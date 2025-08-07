@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
@@ -18,6 +20,8 @@ class PlayerScreen extends ConsumerStatefulWidget {
 class _PlayerScreenState extends ConsumerState<PlayerScreen> {
   @override
   Widget build(BuildContext context) {
+    final enablePiP = ref.watch(enablePiPStateProvider);
+    final enableAutoPiP = ref.watch(enableAutoPiPStateProvider);
     final defaultSubtitleLang = ref.watch(defaultSubtitleLangStateProvider);
     final markEpisodeAsSeenType = ref.watch(markEpisodeAsSeenTypeStateProvider);
     final defaultSkipIntroLength = ref.watch(
@@ -38,6 +42,22 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            if (Platform.isIOS)
+              SwitchListTile(
+                value: enablePiP,
+                title: Text(context.l10n.enable_pip),
+                onChanged: (value) {
+                  ref.read(enablePiPStateProvider.notifier).set(value);
+                },
+              ),
+            if (Platform.isIOS)
+              SwitchListTile(
+                value: enableAutoPiP,
+                title: Text(context.l10n.enable_auto_pip),
+                onChanged: (value) {
+                  ref.read(enableAutoPiPStateProvider.notifier).set(value);
+                },
+              ),
             ListTile(
               onTap: () {
                 showDialog(

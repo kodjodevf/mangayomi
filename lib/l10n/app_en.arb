@@ -145,6 +145,7 @@
   "today": "Today",
   "yesterday": "Yesterday",
   "a_week_ago": "A week ago",
+  "next_week": "Next week",
   "add_to_library": "Add to library",
   "completed": "Completed",
   "ongoing": "Ongoing",
@@ -518,5 +519,7 @@
   "in_n_days": "in {days} days",
   "clear_library": "Clear library",
   "clear_library_desc": "Choose to clear all manga, anime and/or novel entries",
-  "clear_library_input": "Type 'manga', 'anime' and/or 'novel' (separated by a comma) to remove all related entries"
+  "clear_library_input": "Type 'manga', 'anime' and/or 'novel' (separated by a comma) to remove all related entries",
+  "enable_pip": "Enable Picture-in-Picture (PiP)",
+  "enable_auto_pip": "Enter PiP automatically when moving out of app"
 }

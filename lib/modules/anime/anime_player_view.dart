@@ -852,6 +852,16 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     // Else (if user already watches an episode and just changes it),
     // stay in the same mode, the user left it in.
     try {
+      final enablePiP = ref.read(enablePiPStateProvider);
+      final enableAutoPiP = ref.read(enableAutoPiPStateProvider);
+
+      /// only available for iOS 15+
+      if (enablePiP && _controller.isPictureInPictureAvailable()) {
+        _controller.enablePictureInPicture();
+        if (enableAutoPiP) {
+          _controller.enableAutoPictureInPicture();
+        }
+      }
       final defaultSkipIntroLength = ref.read(
         defaultSkipIntroLengthStateProvider,
       );
@@ -1944,53 +1954,12 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                   }
                 },
               ),
-              // IconButton(
-              //     onPressed: () {
-              //       showDialog(
-              //           context: context,
-              //           builder: (context) {
-              //             return AlertDialog(
-              //               scrollable: true,
-              //               title: Text("Player Settings"),
-              //               content: SizedBox(
-              //                 width: context.width(0.8),
-              //                 child: Column(
-              //                   crossAxisAlignment:
-              //                       CrossAxisAlignment.start,
-              //                   children: [
-              //                     SwitchListTile(
-              //                         value: false,
-              //                         title: Text(
-              //                           "Enable Volume and Brightness Gestures",
-              //                           style: TextStyle(
-              //                               color: Theme.of(context)
-              //                                   .textTheme
-              //                                   .bodyLarge!
-              //                                   .color!
-              //                                   .withValues(alpha: 0.9),
-              //                               fontSize: 14),
-              //                         ),
-              //                         onChanged: (value) {}),
-              //                     SwitchListTile(
-              //                         value: false,
-              //                         title: Text(
-              //                           "Enable Horizonal Seek Gestures",
-              //                           style: TextStyle(
-              //                               color: Theme.of(context)
-              //                                   .textTheme
-              //                                   .bodyLarge!
-              //                                   .color!
-              //                                   .withValues(alpha: 0.9),
-              //                               fontSize: 14),
-              //                         ),
-              //                         onChanged: (value) {}),
-              //                   ],
-              //                 ),
-              //               ),
-              //             );
-              //           });
-              //     },
-              //     icon: Icon(Icons.adaptive.more))
+              if (_controller.isPictureInPictureAvailable())
+                IconButton(
+                  onPressed: () async =>
+                      await _controller.enterPictureInPicture(),
+                  icon: const Icon(Icons.featured_video_outlined),
+                ),
             ],
           ),
         ],

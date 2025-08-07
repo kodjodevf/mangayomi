@@ -945,6 +945,12 @@ abstract class AppLocalizations {
   /// **'A week ago'**
   String get a_week_ago;
 
+  /// No description provided for @next_week.
+  ///
+  /// In en, this message translates to:
+  /// **'Next week'**
+  String get next_week;
+
   /// No description provided for @add_to_library.
   ///
   /// In en, this message translates to:
@@ -3188,6 +3194,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Type \'manga\', \'anime\' and/or \'novel\' (separated by a comma) to remove all related entries'**
   String get clear_library_input;
+
+  /// No description provided for @enable_pip.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Picture-in-Picture (PiP)'**
+  String get enable_pip;
+
+  /// No description provided for @enable_auto_pip.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter PiP automatically when moving out of app'**
+  String get enable_auto_pip;
 }
 
 class _AppLocalizationsDelegate

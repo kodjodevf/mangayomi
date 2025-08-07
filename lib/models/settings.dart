@@ -276,6 +276,10 @@ class Settings {
 
   int? volumeBoostCap;
 
+  bool? enablePiP;
+
+  bool? enableAutoPiP;
+
   Settings({
     this.id = 227,
     this.updatedAt = 0,
@@ -399,6 +403,8 @@ class Settings {
     this.enableAudioPitchCorrection,
     this.audioChannels = AudioChannel.autoSafe,
     this.volumeBoostCap,
+    this.enablePiP = true,
+    this.enableAutoPiP = true,
   });
 
   Settings.fromJson(Map<String, dynamic> json) {
@@ -630,6 +636,8 @@ class Settings {
     audioChannels = AudioChannel
         .values[json['audioChannels'] ?? AudioChannel.autoSafe.index];
     volumeBoostCap = json['volumeBoostCap'];
+    enablePiP = json['enablePiP'];
+    enableAutoPiP = json['enableAutoPiP'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -776,6 +784,8 @@ class Settings {
     'enableAudioPitchCorrection': enableAudioPitchCorrection,
     'audioChannels': audioChannels.index,
     'volumeBoostCap': volumeBoostCap,
+    'enablePiP': enablePiP,
+    'enableAutoPiP': enableAutoPiP,
   };
 }
 

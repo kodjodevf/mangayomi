@@ -448,6 +448,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get a_week_ago => 'Hace una semana';
 
   @override
+  String get next_week => 'Next week';
+
+  @override
   String get add_to_library => 'Agregar a la biblioteca';
 
   @override
@@ -1666,6 +1669,13 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get clear_library_input =>
       'Type \'manga\', \'anime\' and/or \'novel\' (separated by a comma) to remove all related entries';
+
+  @override
+  String get enable_pip => 'Enable Picture-in-Picture (PiP)';
+
+  @override
+  String get enable_auto_pip =>
+      'Enter PiP automatically when moving out of app';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).

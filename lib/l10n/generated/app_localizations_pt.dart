@@ -448,6 +448,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get a_week_ago => 'Uma semana atrás';
 
   @override
+  String get next_week => 'Next week';
+
+  @override
   String get add_to_library => 'Adicionar à biblioteca';
 
   @override
@@ -1663,6 +1666,13 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get clear_library_input =>
       'Type \'manga\', \'anime\' and/or \'novel\' (separated by a comma) to remove all related entries';
+
+  @override
+  String get enable_pip => 'Enable Picture-in-Picture (PiP)';
+
+  @override
+  String get enable_auto_pip =>
+      'Enter PiP automatically when moving out of app';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
