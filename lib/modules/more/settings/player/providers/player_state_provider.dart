@@ -6,46 +6,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'player_state_provider.g.dart';
 
 @riverpod
-class EnablePiPState extends _$EnablePiPState {
-  @override
-  bool build() {
-    return isar.settings.getSync(227)!.enablePiP ?? true;
-  }
-
-  void set(bool value) {
-    final settings = isar.settings.getSync(227);
-    state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..enablePiP = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
-  }
-}
-
-@riverpod
-class EnableAutoPiPState extends _$EnableAutoPiPState {
-  @override
-  bool build() {
-    return isar.settings.getSync(227)!.enableAutoPiP ?? true;
-  }
-
-  void set(bool value) {
-    final settings = isar.settings.getSync(227);
-    state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..enableAutoPiP = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
-  }
-}
-
-@riverpod
 class DefaultSubtitleLangState extends _$DefaultSubtitleLangState {
   @override
   Locale build() {

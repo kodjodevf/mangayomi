@@ -6,39 +6,6 @@ part of 'player_state_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$enablePiPStateHash() => r'e99c6a5dc9d6fe55c6b33b03d2d74e55ae5f4199';
-
-/// See also [EnablePiPState].
-@ProviderFor(EnablePiPState)
-final enablePiPStateProvider =
-    AutoDisposeNotifierProvider<EnablePiPState, bool>.internal(
-  EnablePiPState.new,
-  name: r'enablePiPStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$enablePiPStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$EnablePiPState = AutoDisposeNotifier<bool>;
-String _$enableAutoPiPStateHash() =>
-    r'5d0e53cccb9be4cedb8567ce1cd7b5fe3ff2e52f';
-
-/// See also [EnableAutoPiPState].
-@ProviderFor(EnableAutoPiPState)
-final enableAutoPiPStateProvider =
-    AutoDisposeNotifierProvider<EnableAutoPiPState, bool>.internal(
-  EnableAutoPiPState.new,
-  name: r'enableAutoPiPStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$enableAutoPiPStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$EnableAutoPiPState = AutoDisposeNotifier<bool>;
 String _$defaultSubtitleLangStateHash() =>
     r'ae7b275e168dd15117512d9ed1c474736458753b';
 
