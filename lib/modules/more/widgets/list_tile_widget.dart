@@ -31,6 +31,12 @@ class ListTileWidget extends StatelessWidget {
         child: Icon(icon, color: context.primaryColor),
       ),
       title: Text(title),
+      subtitle: subtitle != null
+          ? Text(
+              subtitle!,
+              style: TextStyle(fontSize: 11, color: context.secondaryColor),
+            )
+          : null,
       trailing: trailing,
     );
   }

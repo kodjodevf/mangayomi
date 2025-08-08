@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:isolate';
 import 'package:flutter/foundation.dart';
-import 'package:mangayomi/modules/manga/reader/reader_view.dart';
+import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/src/rust/api/image.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
 import 'package:mangayomi/utils/extensions/others.dart';

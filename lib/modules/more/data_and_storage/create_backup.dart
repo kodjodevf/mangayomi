@@ -222,6 +222,7 @@ List<(String, int)> _getSettingsList(BuildContext context) {
   final l10n = context.l10n;
   return [
     (l10n.app_settings, 6),
+    (l10n.custom_buttons, 10),
     (l10n.sources_settings, 7),
     (l10n.include_sensitive_settings, 8),
   ];

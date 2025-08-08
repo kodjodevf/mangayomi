@@ -18,12 +18,6 @@ class DiscordRPC {
   /// Start timestamp in millis
   final int startAt = DateTime.timestamp().millisecondsSinceEpoch;
 
-  /// Start timestamp in millis for the current chapter/episode
-  int chapterStartAt = 0;
-
-  /// End timestamp in millis for the current chapter/episode
-  int chapterEndAt = 0;
-
   /// Temp var
   late bool rpcShowReadingWatchingProgress;
 
@@ -91,6 +85,7 @@ class DiscordRPC {
         : "Reading";
     final title = chapter.manga.value!.name;
     final chapterTitle = chapter.name;
+    final imageUrl = chapter.manga.value!.imageUrl;
     final rpcShowTitle = ref.read(rpcShowTitleStateProvider);
     final rpcShowCoverImage = ref.read(rpcShowCoverImageStateProvider);
     await updateActivity(
@@ -98,9 +93,10 @@ class DiscordRPC {
       state: rpcShowTitle && rpcShowReadingWatchingProgress
           ? chapterTitle
           : "-----",
-      assets: rpcShowCoverImage
+      assets:
+          rpcShowCoverImage && imageUrl != null && imageUrl.startsWith("http")
           ? RPCAssets(
-              largeImage: chapter.manga.value!.imageUrl,
+              largeImage: imageUrl,
               largeText: rpcShowTitle ? chapter.manga.value!.name : "-----",
               smallImage: "app-icon",
               smallText: "Mangayomi",
@@ -130,32 +126,20 @@ class DiscordRPC {
     await updateActivity(timestamps: RPCTimestamps(start: startAt));
   }
 
-  Future<void> startChapterTimestamp(
-    int offsetInMillis,
-    int durationInMillis,
+  Future<void> updateChapterTimestamp(
+    Duration position,
+    Duration duration,
   ) async {
     if (!rpcShowReadingWatchingProgress) {
       return;
     }
-    chapterStartAt = DateTime.timestamp().millisecondsSinceEpoch;
-    chapterEndAt =
-        DateTime.timestamp().millisecondsSinceEpoch + durationInMillis;
     await updateActivity(
       timestamps: RPCTimestamps(
-        start: chapterStartAt,
-        end: chapterEndAt - offsetInMillis,
-      ),
-    );
-  }
-
-  Future<void> updateChapterTimestamp(int newOffsetInMillis) async {
-    if (!rpcShowReadingWatchingProgress) {
-      return;
-    }
-    await updateActivity(
-      timestamps: RPCTimestamps(
-        start: chapterStartAt,
-        end: chapterEndAt - newOffsetInMillis,
+        start: DateTime.timestamp().subtract(position).millisecondsSinceEpoch,
+        end: DateTime.timestamp()
+            .subtract(position)
+            .add(duration)
+            .millisecondsSinceEpoch,
       ),
     );
   }

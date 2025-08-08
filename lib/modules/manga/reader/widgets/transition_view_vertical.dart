@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/modules/manga/reader/reader_view.dart';
+import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/chapter_transition_page.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 

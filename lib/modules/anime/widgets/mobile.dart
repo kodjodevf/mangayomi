@@ -24,6 +24,7 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
   final Widget topButtonBarWidget;
   final GlobalKey<VideoState> videoStatekey;
   final Widget bottomButtonBarWidget;
+  final ValueNotifier<List<(String, int)>> chapterMarks;
   const MobileControllerWidget({
     super.key,
     required this.videoController,
@@ -32,6 +33,7 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
     required this.streamController,
     required this.videoStatekey,
     required this.doubleSpeed,
+    required this.chapterMarks,
   });
 
   @override
@@ -464,6 +466,7 @@ class _MobileControllerWidgetState
                                       });
                                     },
                                     player: widget.videoController.player,
+                                    chapterMarks: widget.chapterMarks,
                                   ),
                                 ),
                                 widget.bottomButtonBarWidget,
@@ -491,6 +494,7 @@ class _MobileControllerWidgetState
                             child: CustomSeekBar(
                               delta: _seekBarDeltaValueNotifier,
                               player: widget.videoController.player,
+                              chapterMarks: widget.chapterMarks,
                             ),
                           ),
                         ],
