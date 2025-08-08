@@ -3,6 +3,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -785,7 +786,7 @@ class MangasListState extends _$MangasListState {
       newList.add(value.id!);
     }
     if (newList.isEmpty) {
-      ref.read(isLongPressedMangaStateProvider.notifier).update(false);
+      ref.read(isLongPressedStateProvider.notifier).update(false);
     }
     state = newList;
   }
@@ -815,64 +816,23 @@ class MangasListState extends _$MangasListState {
 }
 
 @riverpod
-class IsLongPressedMangaState extends _$IsLongPressedMangaState {
-  @override
-  bool build() {
-    return false;
-  }
-
-  void update(bool value) {
-    state = value;
-  }
-}
-
-@riverpod
 class MangasSetIsReadState extends _$MangasSetIsReadState {
   @override
-  void build({required List<int> mangaIds}) {}
+  void build({required List<int> mangaIds, required bool markAsRead}) {}
 
   void set() {
     final allChapters = <Chapter>[];
     final allMangas = <Manga>[];
+    final now = DateTime.now().millisecondsSinceEpoch;
     for (var mangaid in mangaIds) {
       final manga = isar.mangas.getSync(mangaid)!;
       final chapters = manga.chapters;
-      if (chapters.isNotEmpty) {
-        chapters.last.updateTrackChapterRead(ref);
-        for (var chapter in chapters) {
-          chapter.isRead = true;
-          chapter.lastPageRead = "1";
-          chapter.updatedAt = DateTime.now().millisecondsSinceEpoch;
-          chapter.manga.value = manga;
-          allChapters.add(chapter);
-        }
-        allMangas.add(manga);
-      }
-    }
-
-    isar.writeTxnSync(() {
-      isar.chapters.putAllSync(allChapters);
-      isar.mangas.putAllSync(allMangas);
-    });
-
-    ref.read(isLongPressedMangaStateProvider.notifier).update(false);
-    ref.read(mangasListStateProvider.notifier).clear();
-  }
-}
-
-@riverpod
-class MangasSetUnReadState extends _$MangasSetUnReadState {
-  @override
-  void build({required List<int> mangaIds}) {}
-
-  void set() {
-    final allChapters = <Chapter>[];
-    final allMangas = <Manga>[];
-    for (var mangaid in mangaIds) {
-      final manga = isar.mangas.getSync(mangaid)!;
-      for (var chapter in manga.chapters) {
-        chapter.isRead = false;
-        chapter.updatedAt = DateTime.now().millisecondsSinceEpoch;
+      if (chapters.isEmpty) continue;
+      if (markAsRead) chapters.last.updateTrackChapterRead(ref);
+      for (var chapter in chapters) {
+        chapter.isRead = markAsRead;
+        if (markAsRead) chapter.lastPageRead = "1";
+        chapter.updatedAt = now;
         chapter.manga.value = manga;
         allChapters.add(chapter);
       }
@@ -884,7 +844,7 @@ class MangasSetUnReadState extends _$MangasSetUnReadState {
       isar.mangas.putAllSync(allMangas);
     });
 
-    ref.read(isLongPressedMangaStateProvider.notifier).update(false);
+    ref.read(isLongPressedStateProvider.notifier).update(false);
     ref.read(mangasListStateProvider.notifier).clear();
   }
 }
