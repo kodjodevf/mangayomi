@@ -1425,6 +1425,30 @@ abstract class AppLocalizations {
   /// **'Sync progress'**
   String get sync_button_sync;
 
+  /// No description provided for @sync_button_upload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload only'**
+  String get sync_button_upload;
+
+  /// No description provided for @sync_button_upload_info.
+  ///
+  /// In en, this message translates to:
+  /// **'This operation will fully replace the remote data with local data!'**
+  String get sync_button_upload_info;
+
+  /// No description provided for @sync_button_download.
+  ///
+  /// In en, this message translates to:
+  /// **'Download only'**
+  String get sync_button_download;
+
+  /// No description provided for @sync_button_download_info.
+  ///
+  /// In en, this message translates to:
+  /// **'This operation will fully replace the local data with remote data!'**
+  String get sync_button_download_info;
+
   /// No description provided for @sync_on.
   ///
   /// In en, this message translates to:
