@@ -706,6 +706,20 @@ class AppLocalizationsFr extends AppLocalizations {
   String get sync_button_sync => 'Synchroniser les progrès';
 
   @override
+  String get sync_button_upload => 'Upload only';
+
+  @override
+  String get sync_button_upload_info =>
+      'This operation will fully replace the remote data with local data!';
+
+  @override
+  String get sync_button_download => 'Download only';
+
+  @override
+  String get sync_button_download_info =>
+      'This operation will fully replace the local data with remote data!';
+
+  @override
   String get sync_on => 'Activer la synchronisation';
 
   @override
