@@ -451,26 +451,21 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
   ) async {
     await manga.chapters.load();
     final chapters = manga.chapters;
-    await isar.writeTxn(() async {
-      await isar.historys.delete(deleteId!);
+    isar.writeTxnSync(() {
+      isar.historys.deleteSync(deleteId!);
       for (var chapter in chapters) {
-        await isar.chapters.delete(chapter.id!);
-        await ref
+        isar.chapters.deleteSync(chapter.id!);
+        ref
             .read(synchingProvider(syncId: 1).notifier)
-            .addChangedPartAsync(
-              ActionType.removeChapter,
-              chapter.id,
-              "{}",
-              false,
-            );
+            .addChangedPart(ActionType.removeChapter, chapter.id, "{}", false);
       }
-      await isar.mangas.delete(manga.id!);
-      await ref
+      isar.mangas.deleteSync(manga.id!);
+      ref
           .read(synchingProvider(syncId: 1).notifier)
-          .addChangedPartAsync(ActionType.removeHistory, deleteId, "{}", false);
-      await ref
+          .addChangedPart(ActionType.removeHistory, deleteId, "{}", false);
+      ref
           .read(synchingProvider(syncId: 1).notifier)
-          .addChangedPartAsync(ActionType.removeItem, manga.id, "{}", false);
+          .addChangedPart(ActionType.removeItem, manga.id, "{}", false);
     });
     if (context.mounted) {
       Navigator.pop(context);

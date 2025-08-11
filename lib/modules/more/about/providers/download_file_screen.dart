@@ -25,9 +25,9 @@ class DownloadFileScreen extends ConsumerStatefulWidget {
 class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
   int _total = 0;
   int _received = 0;
-  late http.StreamedResponse _response;
+  http.StreamedResponse? _response;
   final List<int> _bytes = [];
-  late StreamSubscription<List<int>>? _subscription;
+  StreamSubscription<List<int>>? _subscription;
 
   @override
   void dispose() {
@@ -131,8 +131,8 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
       return;
     }
     _response = await http.Client().send(http.Request('GET', Uri.parse(url)));
-    _total = _response.contentLength ?? 0;
-    _subscription = _response.stream.listen((value) {
+    _total = _response?.contentLength ?? 0;
+    _subscription = _response?.stream.listen((value) {
       setState(() {
         _bytes.addAll(value);
         _received += value.length;

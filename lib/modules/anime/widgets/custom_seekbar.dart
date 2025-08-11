@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/anime/widgets/custom_track_shape.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
 
@@ -9,6 +10,7 @@ class CustomSeekBar extends StatefulWidget {
   final Duration? delta;
   final Function(Duration)? onSeekStart;
   final Function(Duration)? onSeekEnd;
+  final ValueNotifier<List<(String, int)>> chapterMarks;
 
   const CustomSeekBar({
     super.key,
@@ -16,6 +18,7 @@ class CustomSeekBar extends StatefulWidget {
     this.onSeekEnd,
     required this.player,
     this.delta,
+    required this.chapterMarks,
   });
 
   @override
@@ -90,6 +93,14 @@ class CustomSeekBarState extends State<CustomSeekBar> {
               data: SliderTheme.of(context).copyWith(
                 trackHeight: isDesktop ? null : 3,
                 overlayShape: const RoundSliderOverlayShape(overlayRadius: 5.0),
+                trackShape: CustomTrackShape(
+                  currentPosition: clampedValue,
+                  bufferPosition: max(buffer.inMilliseconds.toDouble(), 0),
+                  maxValue: maxValue < 1 ? 1 : maxValue,
+                  minValue: 0,
+                  chapterMarks: widget.chapterMarks.value,
+                  chapterMarkWidth: 10,
+                ),
               ),
               child: Slider(
                 max: maxValue,

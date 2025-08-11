@@ -36,6 +36,12 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="mangayomi" android:host="add-repo" />
             </intent-filter>
+            <intent-filter android:label="Add custom button">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="mangayomi" android:host="add-button" />
+            </intent-filter>
         </activity>
         <activity
             android:name="com.linusu.flutter_web_auth_2.CallbackActivity"

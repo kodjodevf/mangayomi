@@ -62,6 +62,13 @@ class MoreScreen extends StatelessWidget {
             ),
             ListTileWidget(
               onTap: () {
+                context.push('/calendarScreen');
+              },
+              icon: Icons.calendar_month_outlined,
+              title: l10n.calendar,
+            ),
+            ListTileWidget(
+              onTap: () {
                 context.push('/dataAndStorage');
               },
               icon: Icons.storage,

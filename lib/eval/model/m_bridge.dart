@@ -690,6 +690,7 @@ void Function() botToast(
   ],
   bool onlyOne = true,
   bool? themeDark,
+  bool showIcon = true,
 }) {
   final context = navigatorKey.currentState?.context;
   final assets = [
@@ -703,12 +704,14 @@ void Function() botToast(
     duration: Duration(seconds: second),
     animationDuration: Duration(milliseconds: animationDuration),
     animationReverseDuration: Duration(milliseconds: animationDuration),
-    leading: (_) => Image.asset(
-      (themeDark == null
-          ? (assets..shuffle()).first
-          : assets[themeDark ? 0 : 1]),
-      height: 25,
-    ),
+    leading: showIcon
+        ? (_) => Image.asset(
+            (themeDark == null
+                ? (assets..shuffle()).first
+                : assets[themeDark ? 0 : 1]),
+            height: 25,
+          )
+        : null,
     title: (_) => Text(title, style: TextStyle(fontSize: fontSize)),
     trailing: hasCloudFlare
         ? (_) => OutlinedButton.icon(

@@ -15,11 +15,13 @@ import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 class TrackerItemCard extends StatelessWidget {
   final TrackSearch track;
   final ItemType itemType;
+  final int? mangaId;
 
   const TrackerItemCard({
     super.key,
     required this.track,
     required this.itemType,
+    this.mangaId,
   });
 
   @override
@@ -140,6 +142,12 @@ class TrackerItemCard extends StatelessWidget {
                   initExpanded: false,
                   onChanged: (value) {},
                 ),
+                if (mangaId != null)
+                  TextButton.icon(
+                    onPressed: () => _pushLocalLibrary(context),
+                    label: Text(l10n.track_library_navigate),
+                    icon: Icon(Icons.north_east),
+                  ),
                 TextButton.icon(
                   onPressed: () => _pushMigrationScreen(context),
                   label: Text(l10n.track_library_add),
@@ -182,6 +190,12 @@ class TrackerItemCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
+                if (mangaId != null)
+                  TextButton.icon(
+                    onPressed: () => _pushLocalLibrary(context),
+                    label: Text(l10n.track_library_navigate),
+                    icon: Icon(Icons.north_east),
+                  ),
                 TextButton.icon(
                   onPressed: () => _pushMigrationScreen(context),
                   label: Text(l10n.track_library_add),
@@ -248,6 +262,10 @@ class TrackerItemCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _pushLocalLibrary(BuildContext context) {
+    context.push('/manga-reader/detail', extra: mangaId);
   }
 
   void _pushMigrationScreen(BuildContext context) {
