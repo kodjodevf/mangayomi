@@ -25,7 +25,43 @@ Future<void> fetchSourcesList({
   final info = await PackageInfo.fromPlatform();
 
   final sourceList = (jsonDecode(req.body) as List)
-      .map((e) => Source.fromJson(e))
+      .map((e) {
+        if (e['id'] is String &&
+            e['name'] != null &&
+            e['site'] != null &&
+            e['lang'] != null &&
+            e['version'] != null &&
+            e['url'] != null &&
+            e['iconUrl'] != null) {
+          final src = Source.fromJson(e)
+            ..apiUrl = ''
+            ..appMinVerReq = ''
+            ..dateFormat = ''
+            ..dateFormatLocale = ''
+            ..hasCloudflare = false
+            ..headers = ''
+            ..isActive = true
+            ..isAdded = false
+            ..isFullData = false
+            ..isNsfw = false
+            ..isPinned = false
+            ..lastUsed = false
+            ..sourceCode = ''
+            ..typeSource = ''
+            ..versionLast = '0.0.1'
+            ..isObsolete = false
+            ..isLocal = false
+            ..lang = _convertLang(e)
+            ..baseUrl = e['site']
+            ..sourceCodeUrl = e['url']
+            ..sourceCodeLanguage = SourceCodeLanguage.lnreader
+            ..itemType = ItemType.novel
+            ..notes = "Performance might be slow due to limited engine";
+          src.id = 'lnreader-plugin-"${src.name}"."${src.lang}"'.hashCode;
+          return src;
+        }
+        return Source.fromJson(e);
+      })
       .where(
         (source) =>
             source.itemType == itemType &&
@@ -199,4 +235,45 @@ int compareVersions(String version1, String version2) {
   }
 
   return v1Parts.length.compareTo(v2Parts.length);
+}
+
+String _convertLang(dynamic e) {
+  final lang = e['lang'];
+  if (lang is String) {
+    switch (lang) {
+      case "‎العربية":
+        return "ar";
+      case "中文, 汉语, 漢語":
+        return "zh";
+      case "English":
+        return "en";
+      case "Français":
+        return "fr";
+      case "Bahasa Indonesia":
+        return "id";
+      case "日本語":
+        return "ja";
+      case "조선말, 한국어":
+        return "ko";
+      case "Polski":
+        return "pl";
+      case "Português":
+        return "pt";
+      case "Русский":
+        return "ru";
+      case "Español":
+        return "es";
+      case "ไทย":
+        return "th";
+      case "Türkçe":
+        return "tr";
+      case "Українська":
+        return "uk";
+      case "Tiếng Việt":
+        return "vi";
+      default:
+        return "all";
+    }
+  }
+  return "all";
 }

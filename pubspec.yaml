@@ -132,6 +132,7 @@ flutter:
     - assets/fonts/
     - assets/trackers_icons/
     - assets/app_icons/
+    - assets/js/
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true

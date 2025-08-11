@@ -113,7 +113,7 @@ class Source {
     hasCloudflare = json['hasCloudflare'];
     headers = json['headers'];
     iconUrl = json['iconUrl'];
-    id = json['id'];
+    id = json['id'] is int ? json['id'] : null;
     isActive = json['isActive'];
     isAdded = json['isAdded'];
     isFullData = json['isFullData'];
@@ -191,4 +191,4 @@ class Source {
   }
 }
 
-enum SourceCodeLanguage { dart, javascript }
+enum SourceCodeLanguage { dart, javascript, lnreader }
