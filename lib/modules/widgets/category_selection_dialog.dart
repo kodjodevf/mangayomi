@@ -7,6 +7,7 @@ import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/modules/library/widgets/list_tile_manga_category.dart';
+import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -151,7 +152,7 @@ void showCategorySelectionDialog({
                         if (isBulk) {
                           ref.read(mangasListStateProvider.notifier).clear();
                           ref
-                              .read(isLongPressedMangaStateProvider.notifier)
+                              .read(isLongPressedStateProvider.notifier)
                               .update(false);
                         }
                       });
