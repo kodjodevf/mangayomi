@@ -1,6 +1,6 @@
 // https://github.com/LNReader/lnreader/blob/master/src/plugins/types/filterTypes.ts
 
-export let FilterTypes
+let FilterTypes
 
 ;(function(FilterTypes) {
   FilterTypes["TextInput"] = "Text"
@@ -10,26 +10,34 @@ export let FilterTypes
   FilterTypes["ExcludableCheckboxGroup"] = "XCheckbox"
 })(FilterTypes || (FilterTypes = {}))
 
-export const isPickerValue = q => {
+module.exports.isPickerValue = q => {
   return q.type === FilterTypes.Picker && typeof q.value === "string"
 }
 
-export const isCheckboxValue = q => {
+module.exports.isCheckboxValue = q => {
   return q.type === FilterTypes.CheckboxGroup && Array.isArray(q.value)
 }
 
-export const isSwitchValue = q => {
+module.exports.isSwitchValue = q => {
   return q.type === FilterTypes.Switch && typeof q.value === "boolean"
 }
 
-export const isTextValue = q => {
+module.exports.isTextValue = q => {
   return q.type === FilterTypes.TextInput && typeof q.value === "string"
 }
 
-export const isXCheckboxValue = q => {
+module.exports.isXCheckboxValue = q => {
   return (
     q.type === FilterTypes.ExcludableCheckboxGroup &&
     typeof q.value === "object" &&
     !Array.isArray(q.value)
   )
 }
+
+module.exports.FilterTypes = {
+  "TextInput": "Text",
+  "Picker": "Picker",
+  "CheckboxGroup": "Checkbox",
+  "Switch": "Switch",
+  "ExcludableCheckboxGroup": "XCheckbox"
+};

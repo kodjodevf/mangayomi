@@ -21,9 +21,7 @@ JavascriptRuntime getJavascriptRuntime({
 }) {
   JavascriptRuntime runtime;
   runtime = QuickJsRuntime2(
-    moduleHandler: (name) {
-      return jsPackages[name] ?? "";
-    },
+    stackSize: 1024 * 1024 * 4
   );
   runtime.enableHandlePromises();
   return runtime;
@@ -44,43 +42,7 @@ class LNReaderExtensionService implements ExtensionService {
 module={},exports=Function("return this")(),Object.defineProperties(module,{namespace:{set:function(a){exports=a}},exports:{set:function(a){for(var b in a)a.hasOwnProperty(b)&&(exports[b]=a[b])},get:function(){return exports}}});
 async function jsonStringify(fn) {
     return JSON.stringify(await fn());
-}''');
-  }
-
-  Future<void> _initAsync() async {
-    runtime = getJavascriptRuntime();
-    JsHttpClient(runtime).init();
-    JsUtils(runtime).init();
-    runtime.evaluate('''
-module={},exports=Function("return this")(),Object.defineProperties(module,{namespace:{set:function(a){exports=a}},exports:{set:function(a){for(var b in a)a.hasOwnProperty(b)&&(exports[b]=a[b])},get:function(){return exports}}});
-async function jsonStringify(fn) {
-    return JSON.stringify(await fn());
 }
-${jsPackages["polyfill/form-data"]}
-${jsPackages["polyfill/URLSearchParams"]}
-${jsPackages["polyfill/URL"]}
-''');
-    await _importPackages();
-    runtime.evaluate('''
-${source.sourceCode}
-var extension = exports.default;
-''');
-  }
-
-  Future<void> _importPackages() async {
-    try {
-      await runtime.handlePromise(
-        await runtime.evaluateAsync('''
-const packageList = ["htmlparser2", "cheerio", "dayjs", "urlencode", "@libs/novelStatus", 
-                     "@libs/isAbsoluteUrl", "@libs/filterInputs", "@libs/defaultCover"];
-const packages = {};
-async function importPackages() {
-  for (const pkg of packageList) {
-    const temp = await import(pkg);
-    packages[pkg] = temp;
-  }
-}
-importPackages();
 const require = (package) => {
   switch (package) {
     case "htmlparser2":
@@ -93,12 +55,49 @@ const require = (package) => {
         return {encode: module.exports.encode, decode: module.exports.decode};
     case "@libs/fetch":
         return {fetchApi: fetchApi};
+    case "@libs/novelStatus":
+        return {NovelStatus: module.exports.NovelStatus};
+    case "@libs/isAbsoluteUrl":
+        return {isUrlAbsolute: module.exports.isUrlAbsolute};
+    case "@libs/filterInputs":
+        return {
+          FilterTypes: module.exports.FilterTypes,
+          isPickerValue: module.exports.isPickerValue,
+          isCheckboxValue: module.exports.isCheckboxValue,
+          isSwitchValue: module.exports.isSwitchValue,
+          isTextValue: module.exports.isTextValue,
+          isXCheckboxValue: module.exports.isXCheckboxValue
+        };
+    case "@libs/defaultCover":
+        return {defaultCover: module.exports.defaultCover};
+    case "@libs/storage":
+        return {storage: {get: () => null}};
     default:
-      return packages[package];
+        return {};
   }
 };
-'''),
-      );
+''');
+    _importPackages();
+    runtime.evaluate('''
+${source.sourceCode}
+const extension = exports.default;
+extension.popularNovels
+''');
+  }
+
+  void _importPackages() {
+    try {
+      runtime.evaluate(jsPackages["polyfill/form-data"] ?? "");
+      runtime.evaluate(jsPackages["polyfill/URLSearchParams"] ?? "");
+      runtime.evaluate(jsPackages["polyfill/URL"] ?? "");
+      runtime.evaluate(jsPackages["htmlparser2"] ?? "");
+      runtime.evaluate(jsPackages["cheerio"] ?? "");
+      runtime.evaluate(jsPackages["dayjs"] ?? "");
+      runtime.evaluate(jsPackages["urlencode"] ?? "");
+      runtime.evaluate(jsPackages["@libs/novelStatus"] ?? "");
+      runtime.evaluate(jsPackages["@libs/isAbsoluteUrl"] ?? "");
+      runtime.evaluate(jsPackages["@libs/filterInputs"] ?? "");
+      runtime.evaluate(jsPackages["@libs/defaultCover"] ?? "");
     } catch (e) {
       rethrow;
     }
@@ -227,7 +226,7 @@ const require = (package) => {
 
   @override
   Future<String> getHtmlContent(String name, String url) async {
-    await _initAsync();
+    _init();
     final res = (await runtime.handlePromise(
       await runtime.evaluateAsync(
         'jsonStringify(() => extension.parseChapter(`$url`))',
@@ -279,7 +278,7 @@ const require = (package) => {
   }
 
   Future<T> _extensionCallAsync<T>(String call) async {
-    await _initAsync();
+    _init();
 
     try {
       final promised = await runtime.handlePromise(

@@ -1,6 +1,6 @@
 // https://github.com/LNReader/lnreader/blob/master/src/plugins/types/index.ts
 
-export let NovelStatus
+let NovelStatus
 
 ;(function(NovelStatus) {
   NovelStatus["Unknown"] = "Unknown"
@@ -11,3 +11,5 @@ export let NovelStatus
   NovelStatus["Cancelled"] = "Cancelled"
   NovelStatus["OnHiatus"] = "On Hiatus"
 })(NovelStatus || (NovelStatus = {}))
+
+module.exports.NovelStatus = NovelStatus

@@ -1,6 +1,6 @@
 // https://github.com/LNReader/lnreader/blob/master/src/plugins/helpers/isAbsoluteUrl.ts
 
-export const isUrlAbsolute = url => {
+module.exports.isUrlAbsolute = url => {
   if (url) {
     if (url.indexOf("//") === 0) {
       return true
