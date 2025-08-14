@@ -85,7 +85,7 @@ Future<void> downloadChapter(
     chapter,
     mangaMainDirectory: mangaMainDirectory,
   ))!;
-  await Directory(chapterDirectory.path).create(recursive: true);
+  await storageProvider.createDirectorySafely(chapterDirectory.path);
   Map<String, String> videoHeader = {};
   Map<String, String> htmlHeader = {
     "Priority": "u=0, i",
@@ -260,6 +260,7 @@ Future<void> downloadChapter(
         !mp4FileExist && itemType == ItemType.anime ||
         !htmlFileExist && itemType == ItemType.novel) {
       final mainDirectory = (await storageProvider.getDirectory())!;
+      storageProvider.createDirectorySafely(mainDirectory.path);
       for (var index = 0; index < pageUrls.length; index++) {
         if (Platform.isAndroid) {
           if (!(await File(p.join(mainDirectory.path, ".nomedia")).exists())) {
