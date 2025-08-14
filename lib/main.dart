@@ -7,6 +7,7 @@ import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -38,6 +39,7 @@ import 'package:path/path.dart' as p;
 late Isar isar;
 DiscordRPC? discordRpc;
 WebViewEnvironment? webViewEnvironment;
+Map<String, String> jsPackages = {};
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isLinux && runWebViewTitleBarWidget(args)) return;
@@ -93,6 +95,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   void initState() {
     super.initState();
     initializeDateFormatting();
+    _initJsPackages();
     _initDeepLinks();
     unawaited(ref.read(scanLocalLibraryProvider.future));
 
@@ -241,6 +244,24 @@ class _MyAppState extends ConsumerState<MyApp> {
       }
     }
     return true;
+  }
+
+  Future<void> _initJsPackages() async {
+    jsPackages["polyfill/form-data"] = await _loadJsCode("formdata");
+    jsPackages["polyfill/URLSearchParams"] = await _loadJsCode("URLSearchParams");
+    jsPackages["polyfill/URL"] = await _loadJsCode("URL");
+    jsPackages["htmlparser2"] = await _loadJsCode("htmlparser2.bundle");
+    jsPackages["cheerio"] = await _loadJsCode("cheerio.bundle");
+    jsPackages["dayjs"] = await _loadJsCode("dayjs.bundle");
+    jsPackages["urlencode"] = await _loadJsCode("urlencode.bundle");
+    jsPackages["@libs/novelStatus"] = await _loadJsCode("NovelStatus");
+    jsPackages["@libs/isAbsoluteUrl"] = await _loadJsCode("isAbsoluteUrl");
+    jsPackages["@libs/filterInputs"] = await _loadJsCode("FilterTypes");
+    jsPackages["@libs/defaultCover"] = await _loadJsCode("defaultCover");
+  }
+
+  Future<String> _loadJsCode(String name) async {
+    return await rootBundle.loadString("assets/js/$name.js");
   }
 }
 

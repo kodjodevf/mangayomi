@@ -26,7 +26,11 @@ class _CreateExtensionState extends State<CreateExtension> {
   int _languageIndex = 0;
   final List<String> _sourceTypes = ["single", "multi", "torrent"];
   final List<String> _itemTypes = ["Manga", "Anime", "Novel"];
-  final List<String> _languages = ["Dart", "JavaScript"];
+  final List<String> _languages = [
+    "Dart",
+    "JavaScript",
+    "JavaScript (LNReader)",
+  ];
   SourceCodeLanguage _sourceCodeLanguage = SourceCodeLanguage.dart;
   @override
   Widget build(BuildContext context) {
@@ -67,9 +71,11 @@ class _CreateExtensionState extends State<CreateExtension> {
                           setState(() {
                             if (v == 0) {
                               _sourceCodeLanguage = SourceCodeLanguage.dart;
-                            } else {
+                            } else if (v == 1) {
                               _sourceCodeLanguage =
                                   SourceCodeLanguage.javascript;
+                            } else {
+                              _sourceCodeLanguage = SourceCodeLanguage.lnreader;
                             }
                             _languageIndex = v!;
                           });
