@@ -50,7 +50,7 @@ const require = (package) => {
     case "cheerio":
         return {load: module.exports.load};
     case "dayjs":
-        return {dayjs: module.exports.dayjs};
+        return module.exports.dayjs;
     case "urlencode":
         return {encode: module.exports.encode, decode: module.exports.decode};
     case "@libs/fetch":
