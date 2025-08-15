@@ -61,7 +61,6 @@ class _CustomNavigationSettingsState
                         [
                           "/more",
                           "/browse",
-                          "/history",
                         ].any((element) => element == navigation)
                         ? null
                         : (value) {
