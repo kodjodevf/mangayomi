@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mangayomi/modules/more/widgets/downloaded_only_widget.dart';
 import 'package:mangayomi/modules/more/widgets/incognito_mode_widget.dart';
 import 'package:mangayomi/modules/more/widgets/list_tile_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -37,6 +38,7 @@ class MoreScreen extends StatelessWidget {
             //     onChanged: (value) {},
             //   ),
             // ),
+            const DownloadedOnlyWidget(),
             const IncognitoModeWidget(),
             const Divider(),
             ListTileWidget(

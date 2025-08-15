@@ -1,22 +1,22 @@
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-part 'incognito_mode_state_provider.g.dart';
+part 'downloaded_only_state_provider.g.dart';
 
 @riverpod
-class IncognitoModeState extends _$IncognitoModeState {
+class DownloadedOnlyState extends _$DownloadedOnlyState {
   @override
   bool build() {
-    return isar.settings.getSync(227)!.incognitoMode ?? false;
+    return isar.settings.getSync(227)!.downloadedOnlyMode ?? false;
   }
 
-  void setIncognitoMode(bool value) {
+  void setDownloadedOnly(bool value) {
     final settings = isar.settings.getSync(227)!;
     state = value;
     isar.writeTxnSync(
       () => isar.settings.putSync(
         settings
-          ..incognitoMode = state
+          ..downloadedOnlyMode = state
           ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       ),
     );
