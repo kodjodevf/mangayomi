@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/more/widgets/incognito_mode_widget.dart';
 import 'package:mangayomi/modules/more/widgets/list_tile_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 
-class MoreScreen extends StatelessWidget {
+class MoreScreen extends ConsumerStatefulWidget {
   const MoreScreen({super.key});
 
   @override
+  ConsumerState<MoreScreen> createState() => MoreScreenState();
+}
+
+class MoreScreenState extends ConsumerState<MoreScreen> {
+  @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context);
+    final hiddenItems = ref.watch(hideItemsStateProvider);
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -39,6 +47,14 @@ class MoreScreen extends StatelessWidget {
             // ),
             const IncognitoModeWidget(),
             const Divider(),
+            if (hiddenItems.contains("/history"))
+              ListTileWidget(
+                onTap: () {
+                  context.push('/history');
+                },
+                icon: Icons.history,
+                title: l10n!.history,
+              ),
             ListTileWidget(
               onTap: () {
                 context.push('/downloadQueue');
