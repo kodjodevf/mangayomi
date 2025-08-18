@@ -234,6 +234,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get incognito_mode_description => 'पढ़ने का इतिहास रोकता है';
 
   @override
+  String get downloaded_only => 'Downloaded only';
+
+  @override
+  String get downloaded_only_description =>
+      'Only show downloaded entries in your library';
+
+  @override
   String get download_queue => 'डाउनलोड कतार';
 
   @override
@@ -796,6 +803,9 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get novel_extensions => 'Novel Extensions';
+
+  @override
+  String get extension_settings => 'Extension settings';
 
   @override
   String get anime => 'एनीमे';
@@ -1364,6 +1374,27 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get downloads_are_limited_to_wifi =>
       'Downloads are limited to Wi-Fi only';
+
+  @override
+  String get recommendations => 'Recommendations';
+
+  @override
+  String get recommendations_similar => 'similar';
+
+  @override
+  String get recommendations_weights => 'Recommendation Weights';
+
+  @override
+  String get recommendations_weights_genre => 'Genre Similarity';
+
+  @override
+  String get recommendations_weights_setting => 'Setting Similarity';
+
+  @override
+  String get recommendations_weights_synopsis => 'Story Similarity';
+
+  @override
+  String get recommendations_weights_theme => 'Theme Similarity';
 
   @override
   String get manga_extensions_repo => 'Manga extensions repo';

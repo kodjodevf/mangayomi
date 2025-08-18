@@ -233,6 +233,13 @@ class AppLocalizationsTh extends AppLocalizations {
   String get incognito_mode_description => 'หยุดประวัติการอ่านชั่วคราว';
 
   @override
+  String get downloaded_only => 'Downloaded only';
+
+  @override
+  String get downloaded_only_description =>
+      'Only show downloaded entries in your library';
+
+  @override
   String get download_queue => 'คิวดาวน์โหลด';
 
   @override
@@ -795,6 +802,9 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get novel_extensions => 'ส่วนขยายของนวนิยาย';
+
+  @override
+  String get extension_settings => 'Extension settings';
 
   @override
   String get anime => 'อนิเมะ';
@@ -1362,6 +1372,27 @@ class AppLocalizationsTh extends AppLocalizations {
   @override
   String get downloads_are_limited_to_wifi =>
       'การดาวน์โหลดจำกัดเฉพาะ Wi-Fi เท่านั้น';
+
+  @override
+  String get recommendations => 'Recommendations';
+
+  @override
+  String get recommendations_similar => 'similar';
+
+  @override
+  String get recommendations_weights => 'Recommendation Weights';
+
+  @override
+  String get recommendations_weights_genre => 'Genre Similarity';
+
+  @override
+  String get recommendations_weights_setting => 'Setting Similarity';
+
+  @override
+  String get recommendations_weights_synopsis => 'Story Similarity';
+
+  @override
+  String get recommendations_weights_theme => 'Theme Similarity';
 
   @override
   String get manga_extensions_repo => 'ที่เก็บส่วนขยายมังงะ';

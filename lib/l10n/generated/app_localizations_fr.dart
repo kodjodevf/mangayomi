@@ -236,6 +236,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get incognito_mode_description => 'Suspend l\'historique de lecture';
 
   @override
+  String get downloaded_only => 'Downloaded only';
+
+  @override
+  String get downloaded_only_description =>
+      'Only show downloaded entries in your library';
+
+  @override
   String get download_queue => 'File de téléchargement';
 
   @override
@@ -803,6 +810,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get novel_extensions => 'Extensions de romans';
+
+  @override
+  String get extension_settings => 'Extension settings';
 
   @override
   String get anime => 'Animé';
@@ -1379,6 +1389,27 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get downloads_are_limited_to_wifi =>
       'Les téléchargements sont limités au Wi-Fi uniquement';
+
+  @override
+  String get recommendations => 'Recommendations';
+
+  @override
+  String get recommendations_similar => 'similar';
+
+  @override
+  String get recommendations_weights => 'Recommendation Weights';
+
+  @override
+  String get recommendations_weights_genre => 'Genre Similarity';
+
+  @override
+  String get recommendations_weights_setting => 'Setting Similarity';
+
+  @override
+  String get recommendations_weights_synopsis => 'Story Similarity';
+
+  @override
+  String get recommendations_weights_theme => 'Theme Similarity';
 
   @override
   String get manga_extensions_repo => 'Dépôt d\'extensions de mangas';
