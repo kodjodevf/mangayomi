@@ -77,6 +77,8 @@
   "clean_database_desc": "This will remove all items that are not added to the library!",
   "incognito_mode": "Incognito Mode",
   "incognito_mode_description": "Pauses reading history",
+  "downloaded_only": "Downloaded only",
+  "downloaded_only_description": "Only show downloaded entries in your library",
   "download_queue": "Download Queue",
   "categories": "Categories",
   "statistics": "Statistics",

@@ -258,7 +258,10 @@ class Settings {
 
   bool? rpcShowCoverImage;
 
+  bool? downloadedOnlyMode;
+  
   late AlgorithmWeights? algorithmWeights;
+
 
   Settings({
     this.id = 227,
@@ -375,6 +378,7 @@ class Settings {
     this.rpcShowReadingWatchingProgress = true,
     this.rpcShowTitle = true,
     this.rpcShowCoverImage = true,
+    this.downloadedOnlyMode = false,
     this.algorithmWeights,
   });
 
@@ -597,6 +601,7 @@ class Settings {
     rpcShowReadingWatchingProgress = json['rpcShowReadingWatchingProgress'];
     rpcShowTitle = json['rpcShowTitle'];
     rpcShowCoverImage = json['rpcShowCoverImage'];
+    downloadedOnlyMode = json['downloadedOnlyMode'];
     algorithmWeights = json['algorithmWeights'] != null
         ? AlgorithmWeights.fromJson(json['algorithmWeights'])
         : null;
@@ -738,6 +743,7 @@ class Settings {
     'rpcShowReadingWatchingProgress': rpcShowReadingWatchingProgress,
     'rpcShowTitle': rpcShowTitle,
     'rpcShowCoverImage': rpcShowCoverImage,
+    'downloadedOnlyMode': downloadedOnlyMode,
     if (algorithmWeights != null)
       'algorithmWeights': algorithmWeights!.toJson(),
   };
