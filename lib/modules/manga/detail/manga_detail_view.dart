@@ -625,6 +625,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   value: 3,
                                   child: Text(l10n.migrate),
                                 ),
+                                if (!isLocalArchive)
+                                  PopupMenuItem<int>(
+                                    value: 4,
+                                    child: Text(l10n.extension_settings),
+                                  ),
                               ];
                             },
                             onSelected: (value) {
@@ -651,6 +656,16 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   break;
                                 case 3:
                                   context.push("/migrate", extra: widget.manga);
+                                  break;
+                                case 4:
+                                  final source = getSource(
+                                    widget.manga!.lang!,
+                                    widget.manga!.source!,
+                                  );
+                                  context.push(
+                                    '/extension_detail',
+                                    extra: source,
+                                  );
                                   break;
                               }
                             },
