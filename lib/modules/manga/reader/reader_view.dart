@@ -640,7 +640,7 @@ class _MangaChapterPageGalleryState
                                     reverse: _isReverseHorizontal,
                                     physics: const ClampingScrollPhysics(),
                                     canScrollPage: (_) {
-                                      return _horizontalScaleValue == 1.0;
+                                      return true;
                                     },
                                     itemBuilder: (context, index) {
                                       if (index < _uChapDataPreload.length &&
@@ -693,9 +693,7 @@ class _MangaChapterPageGalleryState
                                     reverse: _isReverseHorizontal,
                                     physics: const ClampingScrollPhysics(),
                                     canScrollPage: (gestureDetails) {
-                                      return gestureDetails != null
-                                          ? !(gestureDetails.totalScale! > 1.0)
-                                          : true;
+                                      return true;
                                     },
                                     itemBuilder: (BuildContext context, int index) {
                                       if (_uChapDataPreload[index]
