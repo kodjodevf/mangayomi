@@ -1,7 +1,7 @@
 name: mangayomi
 description: Free and open source manga reader and anime streaming cross-plateform app inspired by Tachiyomi and Aniyomi.
 publish_to: "none"
-version: 0.6.3+85
+version: 0.6.35+86
 
 environment:
   sdk: ^3.8.1
@@ -91,7 +91,7 @@ dependencies:
     git:
       url: https://github.com/kodjodevf/epubx.dart.git
       ref: dev
-  d4rt: 0.0.9
+  d4rt: 0.1.1
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   flutter_discord_rpc_fork:
@@ -156,5 +156,3 @@ inno_bundle:
     - french
     - german
   admin: false
-  version: 0.6.3
-

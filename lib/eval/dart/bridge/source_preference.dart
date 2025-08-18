@@ -3,7 +3,7 @@ import 'package:mangayomi/eval/model/source_preference.dart';
 
 // EditTextPreference
 class SourcePreferenceBridge {
-  final checkBoxPreferenceBridgedClass = BridgedClassDefinition(
+  final checkBoxPreferenceBridgedClass = BridgedClass(
     nativeType: CheckBoxPreference,
     name: 'CheckBoxPreference',
     constructors: {
@@ -28,7 +28,7 @@ class SourcePreferenceBridge {
           (target as SourcePreference).checkBoxPreference?.value,
     },
   );
-  final switchPreferenceCompatBridgedClass = BridgedClassDefinition(
+  final switchPreferenceCompatBridgedClass = BridgedClass(
     nativeType: SwitchPreferenceCompat,
     name: 'SwitchPreferenceCompat',
     constructors: {
@@ -53,7 +53,7 @@ class SourcePreferenceBridge {
           (target as SourcePreference).switchPreferenceCompat?.value,
     },
   );
-  final listPreferenceBridgedClass = BridgedClassDefinition(
+  final listPreferenceBridgedClass = BridgedClass(
     nativeType: ListPreference,
     name: 'ListPreference',
     constructors: {
@@ -85,7 +85,7 @@ class SourcePreferenceBridge {
     },
   );
 
-  final multiSelectListPreferenceBridgedClass = BridgedClassDefinition(
+  final multiSelectListPreferenceBridgedClass = BridgedClass(
     nativeType: MultiSelectListPreference,
     name: 'MultiSelectListPreference',
     constructors: {
@@ -116,7 +116,7 @@ class SourcePreferenceBridge {
           (target as SourcePreference).multiSelectListPreference?.entryValues,
     },
   );
-  final editTextPreferenceBridgedClass = BridgedClassDefinition(
+  final editTextPreferenceBridgedClass = BridgedClass(
     nativeType: EditTextPreference,
     name: 'EditTextPreference',
     constructors: {

@@ -203,6 +203,7 @@ class DiscordRPC {
   }
 
   Future<void> disconnect() async {
+    if (!FlutterDiscordRPC.instance.isConnected) return;
     await FlutterDiscordRPC.instance.disconnect();
   }
 

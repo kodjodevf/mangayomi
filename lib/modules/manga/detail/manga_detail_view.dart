@@ -22,6 +22,7 @@ import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.d
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_search_widget.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_widget.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
+import 'package:mangayomi/modules/more/providers/algorithm_weights_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
 import 'package:mangayomi/modules/widgets/bottom_select_bar.dart';
@@ -625,6 +626,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   value: 3,
                                   child: Text(l10n.migrate),
                                 ),
+                                if (!isLocalArchive)
+                                  PopupMenuItem<int>(
+                                    value: 4,
+                                    child: Text(l10n.extension_settings),
+                                  ),
                               ];
                             },
                             onSelected: (value) {
@@ -651,6 +657,16 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   break;
                                 case 3:
                                   context.push("/migrate", extra: widget.manga);
+                                  break;
+                                case 4:
+                                  final source = getSource(
+                                    widget.manga!.lang!,
+                                    widget.manga!.source!,
+                                  );
+                                  context.push(
+                                    '/extension_detail',
+                                    extra: source,
+                                  );
                                   break;
                               }
                             },
@@ -1595,6 +1611,37 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               ],
                             ),
                           ),
+                  ),
+                  const SizedBox(height: 15),
+                  SizedBox(
+                    width: context.width(1),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: OutlinedButton.icon(
+                        style: ButtonStyle(
+                          shape: WidgetStatePropertyAll(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                          ),
+                        ),
+                        onPressed: () {
+                          final algorithmWeights = ref.read(
+                            algorithmWeightsStateProvider,
+                          );
+                          context.push(
+                            "/recommendations",
+                            extra: (
+                              widget.manga!.name,
+                              widget.manga!.itemType,
+                              algorithmWeights,
+                            ),
+                          );
+                        },
+                        label: Text(l10n.recommendations),
+                        icon: Icon(Icons.arrow_right_alt_outlined),
+                      ),
+                    ),
                   ),
                   if (!context.isTablet)
                     Column(

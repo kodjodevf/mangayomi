@@ -258,6 +258,11 @@ class Settings {
 
   bool? rpcShowCoverImage;
 
+  bool? downloadedOnlyMode;
+  
+  late AlgorithmWeights? algorithmWeights;
+
+
   Settings({
     this.id = 227,
     this.updatedAt = 0,
@@ -373,6 +378,8 @@ class Settings {
     this.rpcShowReadingWatchingProgress = true,
     this.rpcShowTitle = true,
     this.rpcShowCoverImage = true,
+    this.downloadedOnlyMode = false,
+    this.algorithmWeights,
   });
 
   Settings.fromJson(Map<String, dynamic> json) {
@@ -594,6 +601,10 @@ class Settings {
     rpcShowReadingWatchingProgress = json['rpcShowReadingWatchingProgress'];
     rpcShowTitle = json['rpcShowTitle'];
     rpcShowCoverImage = json['rpcShowCoverImage'];
+    downloadedOnlyMode = json['downloadedOnlyMode'];
+    algorithmWeights = json['algorithmWeights'] != null
+        ? AlgorithmWeights.fromJson(json['algorithmWeights'])
+        : null;
   }
 
   Map<String, dynamic> toJson() => {
@@ -732,6 +743,9 @@ class Settings {
     'rpcShowReadingWatchingProgress': rpcShowReadingWatchingProgress,
     'rpcShowTitle': rpcShowTitle,
     'rpcShowCoverImage': rpcShowCoverImage,
+    'downloadedOnlyMode': downloadedOnlyMode,
+    if (algorithmWeights != null)
+      'algorithmWeights': algorithmWeights!.toJson(),
   };
 }
 
@@ -1085,6 +1099,35 @@ class PlayerSubtitleSettings {
     'backgroundColorR': backgroundColorR,
     'backgroundColorG': backgroundColorG,
     'backgroundColorB': backgroundColorB,
+  };
+}
+
+@embedded
+class AlgorithmWeights {
+  int? genre;
+  int? setting;
+  int? synopsis;
+  int? theme;
+
+  AlgorithmWeights({
+    this.genre = 30,
+    this.setting = 15,
+    this.synopsis = 40,
+    this.theme = 20,
+  });
+
+  AlgorithmWeights.fromJson(Map<String, dynamic> json) {
+    genre = json['genre'];
+    setting = json['setting'];
+    synopsis = json['synopsis'];
+    theme = json['theme'];
+  }
+
+  Map<String, dynamic> toJson() => {
+    'genre': genre,
+    'setting': setting,
+    'synopsis': synopsis,
+    'theme': theme,
   };
 }
 

@@ -7,7 +7,7 @@ import 'package:mangayomi/modules/browse/extension/providers/extension_preferenc
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 
 class MProviderBridged {
-  final mProviderBridged = BridgedClassDefinition(
+  final mProviderBridged = BridgedClass(
     nativeType: MProvider,
     name: 'MProvider',
     constructors: {

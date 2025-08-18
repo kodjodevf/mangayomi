@@ -21,6 +21,7 @@ import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
 import 'package:mangayomi/modules/more/categories/providers/isar_providers.dart';
+import 'package:mangayomi/modules/more/providers/downloaded_only_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/bottom_select_bar.dart';
@@ -136,6 +137,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
         final withoutCategories = ref.watch(
           getAllMangaWithoutCategoriesStreamProvider(itemType: widget.itemType),
         );
+        final downloadedOnly = ref.watch(downloadedOnlyStateProvider);
         final mangaAll = ref.watch(
           getAllMangaStreamProvider(
             categoryId: null,
@@ -249,6 +251,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                             ref: ref,
                             localSource: localSource,
                             settings: settings,
+                            downloadedOnly: downloadedOnly,
                           );
                         }
                         if (tabCount > 0 &&
@@ -281,6 +284,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                               startedFilterType: startedFilterType,
                               bookmarkedFilterType: bookmarkedFilterType,
                               sortType: sortType,
+                              downloadedOnly: downloadedOnly,
                             );
                             final withoutCategoryNumberOfItemsList =
                                 _filterAndSortManga(
@@ -290,6 +294,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                   startedFilterType: startedFilterType,
                                   bookmarkedFilterType: bookmarkedFilterType,
                                   sortType: sortType,
+                                  downloadedOnly: downloadedOnly,
                                 );
 
                             return DefaultTabController(
@@ -372,6 +377,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                           categoryId:
                                                               entr[i - 1].id!,
                                                           settings: settings,
+                                                          downloadedOnly:
+                                                              downloadedOnly,
                                                         ),
                                               ],
                                             ),
@@ -398,6 +405,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                         continueReaderBtn,
                                                     categoryId: entr[i].id!,
                                                     settings: settings,
+                                                    downloadedOnly:
+                                                        downloadedOnly,
                                                   ),
                                               ],
                                             ),
@@ -434,6 +443,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                       ref: ref,
                                                       localSource: localSource,
                                                       settings: settings,
+                                                      downloadedOnly:
+                                                          downloadedOnly,
                                                     )
                                                   : _bodyWithCatories(
                                                       categoryId:
@@ -456,6 +467,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                       ref: ref,
                                                       localSource: localSource,
                                                       settings: settings,
+                                                      downloadedOnly:
+                                                          downloadedOnly,
                                                     ),
                                           if (withoutCategory.isEmpty)
                                             for (
@@ -483,6 +496,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                                 ref: ref,
                                                 localSource: localSource,
                                                 settings: settings,
+                                                downloadedOnly: downloadedOnly,
                                               ),
                                         ],
                                       ),
@@ -503,6 +517,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                             startedFilterType: startedFilterType,
                             bookmarkedFilterType: bookmarkedFilterType,
                             sortType: sortType,
+                            downloadedOnly: downloadedOnly,
                           );
                           return Scaffold(
                             appBar: _appBar(
@@ -528,6 +543,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                               ref: ref,
                               localSource: localSource,
                               settings: settings,
+                              downloadedOnly: downloadedOnly,
                             ),
                           );
                         },
@@ -659,6 +675,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     required bool continueReaderBtn,
     required int categoryId,
     required Settings settings,
+    required bool downloadedOnly,
   }) {
     final mangas = ref.watch(
       getAllMangaStreamProvider(
@@ -683,6 +700,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
           startedFilterType: startedFilterType,
           bookmarkedFilterType: bookmarkedFilterType,
           sortType: sortType!,
+          downloadedOnly: downloadedOnly,
         );
         return CircleAvatar(
           backgroundColor: Theme.of(context).focusColor,
@@ -719,6 +737,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     required WidgetRef ref,
     required DisplayType displayType,
     required Settings settings,
+    required bool downloadedOnly,
   }) {
     final l10n = l10nLocalizations(context)!;
     final mangas = ref.watch(
@@ -746,6 +765,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             startedFilterType: startedFilterType,
             bookmarkedFilterType: bookmarkedFilterType,
             sortType: sortType!,
+            downloadedOnly: downloadedOnly,
           );
           if (entries.isNotEmpty) {
             final entriesManga = reverse ? entries.reversed.toList() : entries;
@@ -803,6 +823,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     required WidgetRef ref,
     bool withoutCategories = false,
     required Settings settings,
+    required bool downloadedOnly,
   }) {
     final sortType = ref
         .watch(
@@ -835,6 +856,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
           startedFilterType: startedFilterType,
           bookmarkedFilterType: bookmarkedFilterType,
           sortType: sortType ?? 0,
+          downloadedOnly: downloadedOnly,
         );
         if (entries.isNotEmpty) {
           final entriesManga = reverse ? entries.reversed.toList() : entries;
@@ -898,6 +920,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     required int startedFilterType,
     required int bookmarkedFilterType,
     required int sortType,
+    bool downloadedOnly = false,
   }) {
     List<Manga>? mangas;
     final searchQuery = _textEditingController.text;
@@ -912,7 +935,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
           .where((element) {
             // Filter by download
             List list = [];
-            if (downloadFilterType == 1) {
+            if (downloadFilterType == 1 || downloadedOnly) {
               for (var chap in element.chapters) {
                 final modelChapDownload = isar.downloads
                     .filter()

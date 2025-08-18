@@ -705,6 +705,20 @@ class AppLocalizationsRu extends AppLocalizations {
   String get sync_button_sync => 'Синхронизировать прогресс';
 
   @override
+  String get sync_button_upload => 'Upload only';
+
+  @override
+  String get sync_button_upload_info =>
+      'This operation will fully replace the remote data with local data!';
+
+  @override
+  String get sync_button_download => 'Download only';
+
+  @override
+  String get sync_button_download_info =>
+      'This operation will fully replace the local data with remote data!';
+
+  @override
   String get sync_on => 'Включить синхронизацию';
 
   @override
