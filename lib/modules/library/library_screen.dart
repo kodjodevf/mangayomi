@@ -18,11 +18,13 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/modules/library/providers/add_torrent.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
+import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
 import 'package:mangayomi/modules/more/categories/providers/isar_providers.dart';
 import 'package:mangayomi/modules/more/providers/downloaded_only_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
+import 'package:mangayomi/modules/widgets/bottom_select_bar.dart';
 import 'package:mangayomi/modules/widgets/category_selection_dialog.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
@@ -570,159 +572,85 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
               return const ProgressCenter();
             },
           ),
-          bottomNavigationBar: Consumer(
-            builder: (context, ref, child) {
-              final isLongPressed = ref.watch(isLongPressedMangaStateProvider);
-              final color = Theme.of(context).textTheme.bodyLarge!.color!;
+          bottomNavigationBar: Builder(
+            builder: (context) {
               final mangaIds = ref.watch(mangasListStateProvider);
-              return AnimatedContainer(
-                curve: Curves.easeIn,
-                decoration: BoxDecoration(
-                  color: context.primaryColor.withValues(alpha: 0.2),
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
+              final color = Theme.of(context).textTheme.bodyLarge!.color!;
+              return BottomSelectBar(
+                isVisible: ref.watch(isLongPressedStateProvider),
+                actions: [
+                  BottomSelectButton(
+                    icon: Icon(Icons.label_outline_rounded, color: color),
+                    onPressed: () {
+                      final mangaIdsList = ref.watch(mangasListStateProvider);
+                      final List<Manga> bulkMangas = mangaIdsList
+                          .map((id) => isar.mangas.getSync(id)!)
+                          .toList();
+                      showCategorySelectionDialog(
+                        context: context,
+                        ref: ref,
+                        itemType: widget.itemType,
+                        bulkMangas: bulkMangas,
+                      );
+                    },
                   ),
-                ),
-                duration: const Duration(milliseconds: 100),
-                height: isLongPressed ? 70 : 0,
-                width: context.width(1),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: 70,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shadowColor: Colors.transparent,
-                            elevation: 0,
-                            backgroundColor: Colors.transparent,
-                          ),
-                          onPressed: () {
-                            final mangaIdsList = ref.watch(
-                              mangasListStateProvider,
-                            );
-                            final List<Manga> bulkMangas = mangaIdsList
-                                .map((id) => isar.mangas.getSync(id)!)
-                                .toList();
-                            showCategorySelectionDialog(
-                              context: context,
-                              ref: ref,
-                              itemType: widget.itemType,
-                              bulkMangas: bulkMangas,
-                            );
-                          },
-                          child: Icon(
-                            Icons.label_outline_rounded,
-                            color: color,
-                          ),
+                  BottomSelectButton(
+                    icon: Icon(Icons.done_all_sharp, color: color),
+                    onPressed: () {
+                      ref
+                          .read(
+                            mangasSetIsReadStateProvider(
+                              mangaIds: mangaIds,
+                              markAsRead: true,
+                            ).notifier,
+                          )
+                          .set();
+                      ref.invalidate(
+                        getAllMangaWithoutCategoriesStreamProvider(
+                          itemType: widget.itemType,
                         ),
-                      ),
-                    ),
-                    Expanded(
-                      child: SizedBox(
-                        height: 70,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0,
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                          ),
-                          onPressed: () {
-                            ref
-                                .read(
-                                  mangasSetIsReadStateProvider(
-                                    mangaIds: mangaIds,
-                                  ).notifier,
-                                )
-                                .set();
-                            ref.invalidate(
-                              getAllMangaWithoutCategoriesStreamProvider(
-                                itemType: widget.itemType,
-                              ),
-                            );
-                            ref.invalidate(
-                              getAllMangaStreamProvider(
-                                categoryId: null,
-                                itemType: widget.itemType,
-                              ),
-                            );
-                          },
-                          child: Icon(Icons.done_all_sharp, color: color),
+                      );
+                      ref.invalidate(
+                        getAllMangaStreamProvider(
+                          categoryId: null,
+                          itemType: widget.itemType,
                         ),
-                      ),
-                    ),
-                    Expanded(
-                      child: SizedBox(
-                        height: 70,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0,
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                          ),
-                          onPressed: () {
-                            ref
-                                .read(
-                                  mangasSetUnReadStateProvider(
-                                    mangaIds: mangaIds,
-                                  ).notifier,
-                                )
-                                .set();
-                            ref.invalidate(
-                              getAllMangaWithoutCategoriesStreamProvider(
-                                itemType: widget.itemType,
-                              ),
-                            );
-                            ref.invalidate(
-                              getAllMangaStreamProvider(
-                                categoryId: null,
-                                itemType: widget.itemType,
-                              ),
-                            );
-                          },
-                          child: Icon(Icons.remove_done_sharp, color: color),
+                      );
+                    },
+                  ),
+                  BottomSelectButton(
+                    icon: Icon(Icons.remove_done_sharp, color: color),
+                    onPressed: () {
+                      ref
+                          .read(
+                            mangasSetIsReadStateProvider(
+                              mangaIds: mangaIds,
+                              markAsRead: false,
+                            ).notifier,
+                          )
+                          .set();
+                      ref.invalidate(
+                        getAllMangaWithoutCategoriesStreamProvider(
+                          itemType: widget.itemType,
                         ),
-                      ),
-                    ),
-                    // Expanded(
-                    //   child: SizedBox(
-                    //     height: 70,
-                    //     child: ElevatedButton(
-                    //         style: ElevatedButton.styleFrom(
-                    //           elevation: 0,
-                    //           backgroundColor: Colors.transparent,
-                    //           shadowColor: Colors.transparent,
-                    //         ),
-                    //         onPressed: () {},
-                    //         child: Icon(
-                    //           Icons.download_outlined,
-                    //           color: color,
-                    //         )),
-                    //   ),
-                    // ),
-                    Expanded(
-                      child: SizedBox(
-                        height: 70,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0,
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                          ),
-                          onPressed: () {
-                            _deleteManga();
-                          },
-                          child: Icon(
-                            Icons.delete_outline_outlined,
-                            color: color,
-                          ),
+                      );
+                      ref.invalidate(
+                        getAllMangaStreamProvider(
+                          categoryId: null,
+                          itemType: widget.itemType,
                         ),
-                      ),
-                    ),
-                  ],
-                ),
+                      );
+                    },
+                  ),
+                  // BottomBarAction(
+                  //   icon: Icon(Icons.download_outlined, color: color),
+                  //   onPressed: () {}
+                  // ),
+                  BottomSelectButton(
+                    icon: Icon(Icons.delete_outline_outlined, color: color),
+                    onPressed: () => _deleteManga(),
+                  ),
+                ],
               );
             },
           ),
@@ -1229,7 +1157,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
 
                             ref.read(mangasListStateProvider.notifier).clear();
                             ref
-                                .read(isLongPressedMangaStateProvider.notifier)
+                                .read(isLongPressedStateProvider.notifier)
                                 .update(false);
                             if (mounted) {
                               Navigator.pop(context);
@@ -1882,7 +1810,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     int? categoryId,
     Settings settings,
   ) {
-    final isLongPressed = ref.watch(isLongPressedMangaStateProvider);
+    final isLongPressed = ref.watch(isLongPressedStateProvider);
     final mangaIdsList = ref.watch(mangasListStateProvider);
     final manga = categoryId == null
         ? ref.watch(
@@ -1911,7 +1839,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                       ref.read(mangasListStateProvider.notifier).clear();
 
                       ref
-                          .read(isLongPressedMangaStateProvider.notifier)
+                          .read(isLongPressedStateProvider.notifier)
                           .update(!isLongPressed);
                     },
                     icon: const Icon(Icons.clear),
@@ -1936,7 +1864,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                                 .selectSome(manga);
                           }
                           ref
-                              .read(isLongPressedMangaStateProvider.notifier)
+                              .read(isLongPressedStateProvider.notifier)
                               .update(false);
                         } else {
                           for (var manga in data) {

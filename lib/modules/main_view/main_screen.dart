@@ -24,7 +24,7 @@ import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/services/sync_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
-import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
+import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 
 final libLocationRegex = RegExp(r"^/(Manga|Anime|Novel)Library$");
@@ -241,7 +241,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
               final incognitoMode = ref.watch(incognitoModeStateProvider);
               final downloadedOnly = ref.watch(downloadedOnlyStateProvider);
-              final isLongPressed = ref.watch(isLongPressedMangaStateProvider);
+              final isLongPressed = ref.watch(isLongPressedStateProvider);
 
               return Column(
                 children: [
