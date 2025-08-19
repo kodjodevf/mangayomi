@@ -433,6 +433,7 @@
   "include_sensitive_settings": "Include sensitive settings (e.g., tracker login tokens)",
   "create": "Create",
   "downloads_are_limited_to_wifi": "Downloads are limited to Wi-Fi only",
+  "recommendations": "Recommendations",
   "recommendations_similar": "similar",
   "recommendations_weights": "Recommendation Weights",
   "recommendations_weights_genre": "Genre Similarity",
