@@ -201,6 +201,8 @@ class Settings {
 
   List<Repo>? novelExtensionsRepo;
 
+  String? androidProxyServer;
+
   @enumerated
   late SectionType disableSectionType;
 
@@ -371,6 +373,7 @@ class Settings {
     this.mangaExtensionsRepo,
     this.animeExtensionsRepo,
     this.novelExtensionsRepo,
+    this.androidProxyServer,
     this.lastTrackerLibraryLocation,
     this.mergeLibraryNavMobile = false,
     this.enableDiscordRpc = true,
@@ -594,6 +597,7 @@ class Settings {
                 .map((e) => Repo.fromJson(e))
                 .toList();
     }
+    androidProxyServer = json['androidProxyServer'];
     lastTrackerLibraryLocation = json['lastTrackerLibraryLocation'];
     mergeLibraryNavMobile = json['mergeLibraryNavMobile'];
     enableDiscordRpc = json['enableDiscordRpc'];
@@ -736,6 +740,7 @@ class Settings {
     'mangaExtensionsRepo': mangaExtensionsRepo?.map((e) => e.toJson()).toList(),
     'animeExtensionsRepo': animeExtensionsRepo?.map((e) => e.toJson()).toList(),
     'novelExtensionsRepo': novelExtensionsRepo?.map((e) => e.toJson()).toList(),
+    'androidProxyServer': androidProxyServer,
     'lastTrackerLibraryLocation': lastTrackerLibraryLocation,
     'mergeLibraryNavMobile': mergeLibraryNavMobile,
     'enableDiscordRpc': enableDiscordRpc,

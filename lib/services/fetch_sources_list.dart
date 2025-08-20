@@ -25,7 +25,56 @@ Future<void> fetchSourcesList({
   final info = await PackageInfo.fromPlatform();
 
   final sourceList = (jsonDecode(req.body) as List)
-      .map((e) => Source.fromJson(e))
+      .expand((e) sync* {
+        if (e['name'] != null &&
+            e['pkg'] != null &&
+            e['version'] != null &&
+            e['code'] != null &&
+            e['lang'] != null &&
+            e['nsfw'] != null &&
+            e['sources'] != null &&
+            e['apk'] != null) {
+          final repoUrl = url.replaceAll("/index.min.json", "");
+          final sources = e['sources'] as List;
+          for (final source in sources) {
+            final src = Source.fromJson(e)
+              ..apiUrl = ''
+              ..appMinVerReq = ''
+              ..dateFormat = ''
+              ..dateFormatLocale = ''
+              ..hasCloudflare = false
+              ..headers = ''
+              ..isActive = true
+              ..isAdded = false
+              ..isFullData = false
+              ..isNsfw = e['nsfw'] == 1
+              ..isPinned = false
+              ..lastUsed = false
+              ..sourceCode = ''
+              ..typeSource = ''
+              ..versionLast = '0.0.1'
+              ..isObsolete = false
+              ..isLocal = false
+              ..name = source['name']
+              ..lang = source['lang']
+              ..baseUrl = source['baseUrl']
+              ..sourceCodeUrl = "$repoUrl/apk/${e['apk']}"
+              ..sourceCodeLanguage = SourceCodeLanguage.mihon
+              ..itemType =
+                  (e['pkg'] as String).startsWith(
+                    "eu.kanade.tachiyomi.animeextension",
+                  )
+                  ? ItemType.anime
+                  : ItemType.manga
+              ..iconUrl = "$repoUrl/icon/${e['pkg']}.png"
+              ..notes = "Requires Android Proxy Server!";
+            src.id = 'mihon-${source['id']}'.hashCode;
+            yield src;
+          }
+        } else {
+          yield Source.fromJson(e);
+        }
+      })
       .where(
         (source) =>
             source.itemType == itemType &&
@@ -74,14 +123,17 @@ Future<void> _updateSource(
 ) async {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
   final req = await http.get(Uri.parse(source.sourceCodeUrl!));
+  final sourceCode = source.sourceCodeLanguage == SourceCodeLanguage.mihon
+      ? base64.encode(req.bodyBytes)
+      : req.body;
   final headers = getExtensionService(
-    source..sourceCode = req.body,
+    source..sourceCode = sourceCode,
   ).getHeaders();
 
   final updatedSource = Source()
     ..headers = jsonEncode(headers)
     ..isAdded = true
-    ..sourceCode = req.body
+    ..sourceCode = sourceCode
     ..sourceCodeUrl = source.sourceCodeUrl
     ..id = source.id
     ..apiUrl = source.apiUrl

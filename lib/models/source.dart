@@ -191,4 +191,4 @@ class Source {
   }
 }
 
-enum SourceCodeLanguage { dart, javascript }
+enum SourceCodeLanguage { dart, javascript, mihon }

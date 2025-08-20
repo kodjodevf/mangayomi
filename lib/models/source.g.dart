@@ -489,10 +489,12 @@ const _SourceitemTypeValueEnumMap = {
 const _SourcesourceCodeLanguageEnumValueMap = {
   'dart': 0,
   'javascript': 1,
+  'mihon': 2,
 };
 const _SourcesourceCodeLanguageValueEnumMap = {
   0: SourceCodeLanguage.dart,
   1: SourceCodeLanguage.javascript,
+  2: SourceCodeLanguage.mihon,
 };
 
 Id _sourceGetId(Source object) {
