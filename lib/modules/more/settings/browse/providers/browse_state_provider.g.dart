@@ -157,6 +157,23 @@ class _GetRepoInfosProviderElement
   String get jsonUrl => (origin as GetRepoInfosProvider).jsonUrl;
 }
 
+String _$androidProxyServerStateHash() =>
+    r'c16bddb7d686a13e8f34a18dec2d983232f34c65';
+
+/// See also [AndroidProxyServerState].
+@ProviderFor(AndroidProxyServerState)
+final androidProxyServerStateProvider =
+    AutoDisposeNotifierProvider<AndroidProxyServerState, String>.internal(
+  AndroidProxyServerState.new,
+  name: r'androidProxyServerStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$androidProxyServerStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$AndroidProxyServerState = AutoDisposeNotifier<String>;
 String _$onlyIncludePinnedSourceStateHash() =>
     r'b9f707348d5d0f7abfa8e615c1d2b35c6dbd57f3';
 

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http_interceptor/http_interceptor.dart';
+import 'package:mangayomi/eval/javascript/http.dart';
 import 'package:mangayomi/eval/model/filter.dart';
 import 'package:mangayomi/eval/model/m_chapter.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
@@ -26,12 +27,14 @@ class MihonExtensionService implements ExtensionService {
 
   @override
   Map<String, String> getHeaders() {
-    return {};
+    return source.headers != null && source.headers!.isNotEmpty
+        ? (jsonDecode(source.headers!) as Map?)?.toMapStringString ?? {}
+        : {};
   }
 
   @override
   bool get supportsLatest {
-    return true;
+    return source.supportLatest ?? false;
   }
 
   @override
@@ -116,6 +119,7 @@ class MihonExtensionService implements ExtensionService {
         "method": "getSearch$name",
         "page": page + 1,
         "search": query,
+        // "filterList$name": _convertFilters(filters),
         "data": source.sourceCode,
       }),
     );
@@ -213,7 +217,7 @@ class MihonExtensionService implements ExtensionService {
       }),
     );
     final data = jsonDecode(res.body) as List;
-    return data.map((e) => PageUrl(e['url'])).toList();
+    return data.map((e) => PageUrl(e['imageUrl'])).toList();
   }
 
   @override
@@ -231,7 +235,7 @@ class MihonExtensionService implements ExtensionService {
       final tempHeaders =
           e['headers']['namesAndValues\$okhttp'] as List<dynamic>;
       final Map<String, String> headers = {};
-      for (var i = 0; i + 1 < tempHeaders.length; i++) {
+      for (var i = 0; i + 1 < tempHeaders.length; i += 2) {
         headers[tempHeaders[i]] = tempHeaders[i + 1];
       }
       return Video(
@@ -265,11 +269,45 @@ class MihonExtensionService implements ExtensionService {
 
   @override
   FilterList getFilterList() {
+    // return source.getFilterList() ?? FilterList([]);
     return FilterList([]);
   }
 
   @override
   List<SourcePreference> getSourcePreferences() {
     return [];
+  }
+
+  List<dynamic> _convertFilters(List<dynamic> filters) {
+    return filters.expand((e) sync* {
+      if (e is TextFilter) {
+        yield {"name": e.name, "state": e.state};
+      } else if (e is GroupFilter) {
+        yield {
+          "name": e.name,
+          "state": e.state.expand((e) sync* {
+            if (e is CheckBoxFilter) {
+              yield {"name": e.name, "id": e.value, "state": e.state};
+            } else if (e is TriStateFilter) {
+              yield {
+                "name": e.name,
+                "id": e.value,
+                "state": e.state,
+                "included": e.state == 1,
+                "ignored": e.state == 0,
+                "excluded": e.state == 2,
+              };
+            }
+          }).toList(),
+        };
+      } else if (e is SelectFilter) {
+        yield {"name": e.name, "state": e.state};
+      } else if (e is SortFilter) {
+        yield {
+          "name": e.name,
+          "state": {"ascending": e.state.ascending, "index": e.state.index},
+        };
+      }
+    }).toList();
   }
 }

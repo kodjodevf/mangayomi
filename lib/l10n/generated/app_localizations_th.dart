@@ -1404,6 +1404,9 @@ class AppLocalizationsTh extends AppLocalizations {
   String get novel_extensions_repo => 'ที่เก็บส่วนขยายโนเวล';
 
   @override
+  String get android_proxy_server => 'Android Proxy Server (ApkBridge)';
+
+  @override
   String get undefined => 'ไม่ได้กำหนด';
 
   @override

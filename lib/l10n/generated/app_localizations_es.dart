@@ -1418,6 +1418,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get novel_extensions_repo => 'Repositorio de extensiones de novelas';
 
   @override
+  String get android_proxy_server => 'Android Proxy Server (ApkBridge)';
+
+  @override
   String get undefined => 'Indefinido';
 
   @override

@@ -2733,6 +2733,12 @@ abstract class AppLocalizations {
   /// **'Novel extensions repo'**
   String get novel_extensions_repo;
 
+  /// No description provided for @android_proxy_server.
+  ///
+  /// In en, this message translates to:
+  /// **'Android Proxy Server (ApkBridge)'**
+  String get android_proxy_server;
+
   /// No description provided for @undefined.
   ///
   /// In en, this message translates to:

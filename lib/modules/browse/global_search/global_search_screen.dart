@@ -119,7 +119,7 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
   }
 }
 
-class SourceSearchScreen extends StatefulWidget {
+class SourceSearchScreen extends ConsumerStatefulWidget {
   final String query;
 
   final Source source;
@@ -130,10 +130,10 @@ class SourceSearchScreen extends StatefulWidget {
   });
 
   @override
-  State<SourceSearchScreen> createState() => _SourceSearchScreenState();
+  ConsumerState<SourceSearchScreen> createState() => _SourceSearchScreenState();
 }
 
-class _SourceSearchScreenState extends State<SourceSearchScreen> {
+class _SourceSearchScreenState extends ConsumerState<SourceSearchScreen> {
   @override
   void initState() {
     super.initState();
@@ -146,11 +146,13 @@ class _SourceSearchScreenState extends State<SourceSearchScreen> {
   _init() async {
     try {
       _errorMessage = "";
-      pages = await search(
-        source: widget.source,
-        page: 1,
-        query: widget.query,
-        filterList: [],
+      pages = await ref.read(
+        searchProvider(
+          source: widget.source,
+          page: 1,
+          query: widget.query,
+          filterList: [],
+        ).future,
       );
       if (mounted) {
         setState(() {

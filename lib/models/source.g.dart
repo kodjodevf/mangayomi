@@ -47,131 +47,141 @@ const SourceSchema = CollectionSchema(
       name: r'dateFormatLocale',
       type: IsarType.string,
     ),
-    r'hasCloudflare': PropertySchema(
+    r'filterList': PropertySchema(
       id: 6,
+      name: r'filterList',
+      type: IsarType.string,
+    ),
+    r'hasCloudflare': PropertySchema(
+      id: 7,
       name: r'hasCloudflare',
       type: IsarType.bool,
     ),
     r'headers': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'headers',
       type: IsarType.string,
     ),
     r'iconUrl': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'iconUrl',
       type: IsarType.string,
     ),
     r'isActive': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'isActive',
       type: IsarType.bool,
     ),
     r'isAdded': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'isAdded',
       type: IsarType.bool,
     ),
     r'isFullData': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'isFullData',
       type: IsarType.bool,
     ),
     r'isLocal': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'isLocal',
       type: IsarType.bool,
     ),
     r'isManga': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'isManga',
       type: IsarType.bool,
     ),
     r'isNsfw': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'isNsfw',
       type: IsarType.bool,
     ),
     r'isObsolete': PropertySchema(
-      id: 15,
+      id: 16,
       name: r'isObsolete',
       type: IsarType.bool,
     ),
     r'isPinned': PropertySchema(
-      id: 16,
+      id: 17,
       name: r'isPinned',
       type: IsarType.bool,
     ),
     r'isTorrent': PropertySchema(
-      id: 17,
+      id: 18,
       name: r'isTorrent',
       type: IsarType.bool,
     ),
     r'itemType': PropertySchema(
-      id: 18,
+      id: 19,
       name: r'itemType',
       type: IsarType.byte,
       enumMap: _SourceitemTypeEnumValueMap,
     ),
     r'lang': PropertySchema(
-      id: 19,
+      id: 20,
       name: r'lang',
       type: IsarType.string,
     ),
     r'lastUsed': PropertySchema(
-      id: 20,
+      id: 21,
       name: r'lastUsed',
       type: IsarType.bool,
     ),
     r'name': PropertySchema(
-      id: 21,
+      id: 22,
       name: r'name',
       type: IsarType.string,
     ),
     r'notes': PropertySchema(
-      id: 22,
+      id: 23,
       name: r'notes',
       type: IsarType.string,
     ),
     r'repo': PropertySchema(
-      id: 23,
+      id: 24,
       name: r'repo',
       type: IsarType.object,
       target: r'Repo',
     ),
     r'sourceCode': PropertySchema(
-      id: 24,
+      id: 25,
       name: r'sourceCode',
       type: IsarType.string,
     ),
     r'sourceCodeLanguage': PropertySchema(
-      id: 25,
+      id: 26,
       name: r'sourceCodeLanguage',
       type: IsarType.byte,
       enumMap: _SourcesourceCodeLanguageEnumValueMap,
     ),
     r'sourceCodeUrl': PropertySchema(
-      id: 26,
+      id: 27,
       name: r'sourceCodeUrl',
       type: IsarType.string,
     ),
+    r'supportLatest': PropertySchema(
+      id: 28,
+      name: r'supportLatest',
+      type: IsarType.bool,
+    ),
     r'typeSource': PropertySchema(
-      id: 27,
+      id: 29,
       name: r'typeSource',
       type: IsarType.string,
     ),
     r'updatedAt': PropertySchema(
-      id: 28,
+      id: 30,
       name: r'updatedAt',
       type: IsarType.long,
     ),
     r'version': PropertySchema(
-      id: 29,
+      id: 31,
       name: r'version',
       type: IsarType.string,
     ),
     r'versionLast': PropertySchema(
-      id: 30,
+      id: 32,
       name: r'versionLast',
       type: IsarType.string,
     )
@@ -228,6 +238,12 @@ int _sourceEstimateSize(
   }
   {
     final value = object.dateFormatLocale;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.filterList;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
     }
@@ -314,36 +330,38 @@ void _sourceSerialize(
   writer.writeString(offsets[3], object.baseUrl);
   writer.writeString(offsets[4], object.dateFormat);
   writer.writeString(offsets[5], object.dateFormatLocale);
-  writer.writeBool(offsets[6], object.hasCloudflare);
-  writer.writeString(offsets[7], object.headers);
-  writer.writeString(offsets[8], object.iconUrl);
-  writer.writeBool(offsets[9], object.isActive);
-  writer.writeBool(offsets[10], object.isAdded);
-  writer.writeBool(offsets[11], object.isFullData);
-  writer.writeBool(offsets[12], object.isLocal);
-  writer.writeBool(offsets[13], object.isManga);
-  writer.writeBool(offsets[14], object.isNsfw);
-  writer.writeBool(offsets[15], object.isObsolete);
-  writer.writeBool(offsets[16], object.isPinned);
-  writer.writeBool(offsets[17], object.isTorrent);
-  writer.writeByte(offsets[18], object.itemType.index);
-  writer.writeString(offsets[19], object.lang);
-  writer.writeBool(offsets[20], object.lastUsed);
-  writer.writeString(offsets[21], object.name);
-  writer.writeString(offsets[22], object.notes);
+  writer.writeString(offsets[6], object.filterList);
+  writer.writeBool(offsets[7], object.hasCloudflare);
+  writer.writeString(offsets[8], object.headers);
+  writer.writeString(offsets[9], object.iconUrl);
+  writer.writeBool(offsets[10], object.isActive);
+  writer.writeBool(offsets[11], object.isAdded);
+  writer.writeBool(offsets[12], object.isFullData);
+  writer.writeBool(offsets[13], object.isLocal);
+  writer.writeBool(offsets[14], object.isManga);
+  writer.writeBool(offsets[15], object.isNsfw);
+  writer.writeBool(offsets[16], object.isObsolete);
+  writer.writeBool(offsets[17], object.isPinned);
+  writer.writeBool(offsets[18], object.isTorrent);
+  writer.writeByte(offsets[19], object.itemType.index);
+  writer.writeString(offsets[20], object.lang);
+  writer.writeBool(offsets[21], object.lastUsed);
+  writer.writeString(offsets[22], object.name);
+  writer.writeString(offsets[23], object.notes);
   writer.writeObject<Repo>(
-    offsets[23],
+    offsets[24],
     allOffsets,
     RepoSchema.serialize,
     object.repo,
   );
-  writer.writeString(offsets[24], object.sourceCode);
-  writer.writeByte(offsets[25], object.sourceCodeLanguage.index);
-  writer.writeString(offsets[26], object.sourceCodeUrl);
-  writer.writeString(offsets[27], object.typeSource);
-  writer.writeLong(offsets[28], object.updatedAt);
-  writer.writeString(offsets[29], object.version);
-  writer.writeString(offsets[30], object.versionLast);
+  writer.writeString(offsets[25], object.sourceCode);
+  writer.writeByte(offsets[26], object.sourceCodeLanguage.index);
+  writer.writeString(offsets[27], object.sourceCodeUrl);
+  writer.writeBool(offsets[28], object.supportLatest);
+  writer.writeString(offsets[29], object.typeSource);
+  writer.writeLong(offsets[30], object.updatedAt);
+  writer.writeString(offsets[31], object.version);
+  writer.writeString(offsets[32], object.versionLast);
 }
 
 Source _sourceDeserialize(
@@ -359,38 +377,40 @@ Source _sourceDeserialize(
     baseUrl: reader.readStringOrNull(offsets[3]),
     dateFormat: reader.readStringOrNull(offsets[4]),
     dateFormatLocale: reader.readStringOrNull(offsets[5]),
-    hasCloudflare: reader.readBoolOrNull(offsets[6]),
-    headers: reader.readStringOrNull(offsets[7]),
-    iconUrl: reader.readStringOrNull(offsets[8]),
+    filterList: reader.readStringOrNull(offsets[6]),
+    hasCloudflare: reader.readBoolOrNull(offsets[7]),
+    headers: reader.readStringOrNull(offsets[8]),
+    iconUrl: reader.readStringOrNull(offsets[9]),
     id: id,
-    isActive: reader.readBoolOrNull(offsets[9]),
-    isAdded: reader.readBoolOrNull(offsets[10]),
-    isFullData: reader.readBoolOrNull(offsets[11]),
-    isLocal: reader.readBoolOrNull(offsets[12]),
-    isManga: reader.readBoolOrNull(offsets[13]),
-    isNsfw: reader.readBoolOrNull(offsets[14]),
-    isObsolete: reader.readBoolOrNull(offsets[15]),
-    isPinned: reader.readBoolOrNull(offsets[16]),
-    itemType: _SourceitemTypeValueEnumMap[reader.readByteOrNull(offsets[18])] ??
+    isActive: reader.readBoolOrNull(offsets[10]),
+    isAdded: reader.readBoolOrNull(offsets[11]),
+    isFullData: reader.readBoolOrNull(offsets[12]),
+    isLocal: reader.readBoolOrNull(offsets[13]),
+    isManga: reader.readBoolOrNull(offsets[14]),
+    isNsfw: reader.readBoolOrNull(offsets[15]),
+    isObsolete: reader.readBoolOrNull(offsets[16]),
+    isPinned: reader.readBoolOrNull(offsets[17]),
+    itemType: _SourceitemTypeValueEnumMap[reader.readByteOrNull(offsets[19])] ??
         ItemType.manga,
-    lang: reader.readStringOrNull(offsets[19]),
-    lastUsed: reader.readBoolOrNull(offsets[20]),
-    name: reader.readStringOrNull(offsets[21]),
-    notes: reader.readStringOrNull(offsets[22]),
+    lang: reader.readStringOrNull(offsets[20]),
+    lastUsed: reader.readBoolOrNull(offsets[21]),
+    name: reader.readStringOrNull(offsets[22]),
+    notes: reader.readStringOrNull(offsets[23]),
     repo: reader.readObjectOrNull<Repo>(
-      offsets[23],
+      offsets[24],
       RepoSchema.deserialize,
       allOffsets,
     ),
-    sourceCode: reader.readStringOrNull(offsets[24]),
-    sourceCodeUrl: reader.readStringOrNull(offsets[26]),
-    typeSource: reader.readStringOrNull(offsets[27]),
-    updatedAt: reader.readLongOrNull(offsets[28]),
-    version: reader.readStringOrNull(offsets[29]),
-    versionLast: reader.readStringOrNull(offsets[30]),
+    sourceCode: reader.readStringOrNull(offsets[25]),
+    sourceCodeUrl: reader.readStringOrNull(offsets[27]),
+    supportLatest: reader.readBoolOrNull(offsets[28]),
+    typeSource: reader.readStringOrNull(offsets[29]),
+    updatedAt: reader.readLongOrNull(offsets[30]),
+    version: reader.readStringOrNull(offsets[31]),
+    versionLast: reader.readStringOrNull(offsets[32]),
   );
   object.sourceCodeLanguage = _SourcesourceCodeLanguageValueEnumMap[
-          reader.readByteOrNull(offsets[25])] ??
+          reader.readByteOrNull(offsets[26])] ??
       SourceCodeLanguage.dart;
   return object;
 }
@@ -415,13 +435,13 @@ P _sourceDeserializeProp<P>(
     case 5:
       return (reader.readStringOrNull(offset)) as P;
     case 6:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 7:
       return (reader.readStringOrNull(offset)) as P;
+    case 7:
+      return (reader.readBoolOrNull(offset)) as P;
     case 8:
       return (reader.readStringOrNull(offset)) as P;
     case 9:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 10:
       return (reader.readBoolOrNull(offset)) as P;
     case 11:
@@ -437,39 +457,43 @@ P _sourceDeserializeProp<P>(
     case 16:
       return (reader.readBoolOrNull(offset)) as P;
     case 17:
-      return (reader.readBool(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 18:
+      return (reader.readBool(offset)) as P;
+    case 19:
       return (_SourceitemTypeValueEnumMap[reader.readByteOrNull(offset)] ??
           ItemType.manga) as P;
-    case 19:
-      return (reader.readStringOrNull(offset)) as P;
     case 20:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 21:
       return (reader.readStringOrNull(offset)) as P;
+    case 21:
+      return (reader.readBoolOrNull(offset)) as P;
     case 22:
       return (reader.readStringOrNull(offset)) as P;
     case 23:
+      return (reader.readStringOrNull(offset)) as P;
+    case 24:
       return (reader.readObjectOrNull<Repo>(
         offset,
         RepoSchema.deserialize,
         allOffsets,
       )) as P;
-    case 24:
-      return (reader.readStringOrNull(offset)) as P;
     case 25:
+      return (reader.readStringOrNull(offset)) as P;
+    case 26:
       return (_SourcesourceCodeLanguageValueEnumMap[
               reader.readByteOrNull(offset)] ??
           SourceCodeLanguage.dart) as P;
-    case 26:
-      return (reader.readStringOrNull(offset)) as P;
     case 27:
       return (reader.readStringOrNull(offset)) as P;
     case 28:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 29:
       return (reader.readStringOrNull(offset)) as P;
     case 30:
+      return (reader.readLongOrNull(offset)) as P;
+    case 31:
+      return (reader.readStringOrNull(offset)) as P;
+    case 32:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1466,6 +1490,152 @@ extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         property: r'dateFormatLocale',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> filterListIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'filterList',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> filterListIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'filterList',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> filterListEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'filterList',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> filterListGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'filterList',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> filterListLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'filterList',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> filterListBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'filterList',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> filterListStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'filterList',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> filterListEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'filterList',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> filterListContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'filterList',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> filterListMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'filterList',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> filterListIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'filterList',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> filterListIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'filterList',
         value: '',
       ));
     });
@@ -2954,6 +3124,32 @@ extension SourceQueryFilter on QueryBuilder<Source, Source, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterFilterCondition> supportLatestIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'supportLatest',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> supportLatestIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'supportLatest',
+      ));
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterFilterCondition> supportLatestEqualTo(
+      bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'supportLatest',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterFilterCondition> typeSourceIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -3546,6 +3742,18 @@ extension SourceQuerySortBy on QueryBuilder<Source, Source, QSortBy> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterSortBy> sortByFilterList() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'filterList', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> sortByFilterListDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'filterList', Sort.desc);
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterSortBy> sortByHasCloudflare() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'hasCloudflare', Sort.asc);
@@ -3786,6 +3994,18 @@ extension SourceQuerySortBy on QueryBuilder<Source, Source, QSortBy> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterSortBy> sortBySupportLatest() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'supportLatest', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> sortBySupportLatestDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'supportLatest', Sort.desc);
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterSortBy> sortByTypeSource() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'typeSource', Sort.asc);
@@ -3905,6 +4125,18 @@ extension SourceQuerySortThenBy on QueryBuilder<Source, Source, QSortThenBy> {
   QueryBuilder<Source, Source, QAfterSortBy> thenByDateFormatLocaleDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dateFormatLocale', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> thenByFilterList() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'filterList', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> thenByFilterListDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'filterList', Sort.desc);
     });
   }
 
@@ -4160,6 +4392,18 @@ extension SourceQuerySortThenBy on QueryBuilder<Source, Source, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Source, Source, QAfterSortBy> thenBySupportLatest() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'supportLatest', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Source, Source, QAfterSortBy> thenBySupportLatestDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'supportLatest', Sort.desc);
+    });
+  }
+
   QueryBuilder<Source, Source, QAfterSortBy> thenByTypeSource() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'typeSource', Sort.asc);
@@ -4251,6 +4495,13 @@ extension SourceQueryWhereDistinct on QueryBuilder<Source, Source, QDistinct> {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'dateFormatLocale',
           caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Source, Source, QDistinct> distinctByFilterList(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'filterList', caseSensitive: caseSensitive);
     });
   }
 
@@ -4382,6 +4633,12 @@ extension SourceQueryWhereDistinct on QueryBuilder<Source, Source, QDistinct> {
     });
   }
 
+  QueryBuilder<Source, Source, QDistinct> distinctBySupportLatest() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'supportLatest');
+    });
+  }
+
   QueryBuilder<Source, Source, QDistinct> distinctByTypeSource(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -4450,6 +4707,12 @@ extension SourceQueryProperty on QueryBuilder<Source, Source, QQueryProperty> {
   QueryBuilder<Source, String?, QQueryOperations> dateFormatLocaleProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dateFormatLocale');
+    });
+  }
+
+  QueryBuilder<Source, String?, QQueryOperations> filterListProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'filterList');
     });
   }
 
@@ -4577,6 +4840,12 @@ extension SourceQueryProperty on QueryBuilder<Source, Source, QQueryProperty> {
   QueryBuilder<Source, String?, QQueryOperations> sourceCodeUrlProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'sourceCodeUrl');
+    });
+  }
+
+  QueryBuilder<Source, bool?, QQueryOperations> supportLatestProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'supportLatest');
     });
   }
 

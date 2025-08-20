@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http_interceptor/http_interceptor.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/lib.dart';
+import 'package:mangayomi/eval/model/filter.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -67,7 +69,8 @@ Future<void> fetchSourcesList({
                   ? ItemType.anime
                   : ItemType.manga
               ..iconUrl = "$repoUrl/icon/${e['pkg']}.png"
-              ..notes = "Requires Android Proxy Server!";
+              ..notes =
+                  "Requires Android Proxy Server (ApkBridge) for installing and using the extensions!";
             src.id = 'mihon-${source['id']}'.hashCode;
             yield src;
           }
@@ -126,12 +129,37 @@ Future<void> _updateSource(
   final sourceCode = source.sourceCodeLanguage == SourceCodeLanguage.mihon
       ? base64.encode(req.bodyBytes)
       : req.body;
-  final headers = getExtensionService(
-    source..sourceCode = sourceCode,
-  ).getHeaders();
+  final androidProxyServer = ref.read(androidProxyServerStateProvider);
+  Map<String, String> headers = {};
+  bool? supportLatest;
+  FilterList? filterList;
+  if (source.sourceCodeLanguage == SourceCodeLanguage.mihon) {
+    headers = await fetchHeadersDalvik(
+      http,
+      source..sourceCode = sourceCode,
+      androidProxyServer,
+    );
+    supportLatest = await fetchSupportLatestDalvik(
+      http,
+      source..sourceCode = sourceCode,
+      androidProxyServer,
+    );
+    filterList = await fetchFilterListDalvik(
+      http,
+      source..sourceCode = sourceCode,
+      androidProxyServer,
+    );
+  } else {
+    headers = getExtensionService(
+      source..sourceCode = sourceCode,
+      androidProxyServer,
+    ).getHeaders();
+  }
 
   final updatedSource = Source()
     ..headers = jsonEncode(headers)
+    ..supportLatest = supportLatest
+    ..filterList = filterList != null ? jsonEncode(filterList.toJson()) : null
     ..isAdded = true
     ..sourceCode = sourceCode
     ..sourceCodeUrl = source.sourceCodeUrl
@@ -251,4 +279,134 @@ int compareVersions(String version1, String version2) {
   }
 
   return v1Parts.length.compareTo(v2Parts.length);
+}
+
+Future<Map<String, String>> fetchHeadersDalvik(
+  InterceptedClient client,
+  Source source,
+  String androidProxyServer,
+) async {
+  try {
+    final name = source.itemType == ItemType.anime ? "Anime" : "Manga";
+    final res = await client.post(
+      Uri.parse("$androidProxyServer/dalvik"),
+      body: jsonEncode({"method": "headers$name", "data": source.sourceCode}),
+    );
+    final data = jsonDecode(res.body) as List;
+    final Map<String, String> headers = {};
+    for (var i = 0; i + 1 < data.length; i += 2) {
+      headers[data[i]] = data[i + 1];
+    }
+    return headers;
+  } catch (_) {
+    return {};
+  }
+}
+
+Future<bool> fetchSupportLatestDalvik(
+  InterceptedClient client,
+  Source source,
+  String androidProxyServer,
+) async {
+  try {
+    final name = source.itemType == ItemType.anime ? "Anime" : "Manga";
+    final res = await client.post(
+      Uri.parse("$androidProxyServer/dalvik"),
+      body: jsonEncode({
+        "method": "supportLatest$name",
+        "data": source.sourceCode,
+      }),
+    );
+    return res.body.trim() == "true";
+  } catch (_) {
+    return false;
+  }
+}
+
+Future<FilterList?> fetchFilterListDalvik(
+  InterceptedClient client,
+  Source source,
+  String androidProxyServer,
+) async {
+  try {
+    final name = source.itemType == ItemType.anime ? "Anime" : "Manga";
+    final res = await client.post(
+      Uri.parse("$androidProxyServer/dalvik"),
+      body: jsonEncode({"method": "filters$name", "data": source.sourceCode}),
+    );
+    final data = jsonDecode(res.body) as List;
+    final filters = data.expand((e) sync* {
+      if (e['name'] is String &&
+          e['state'] is Map<String, dynamic> &&
+          e['values'] is List) {
+        yield SortFilter(
+          "${e['name']}Filter",
+          e['name'],
+          SortState(e['state']['index'], e['state']['ascending'], null),
+          (e['values'] as List)
+              .map((e) => SelectFilterOption(e, e, null))
+              .toList(),
+          null,
+        );
+      } else if (e['name'] is String &&
+          e['state'] is int &&
+          (e['values'] is List || e['vals'] is List)) {
+        yield SelectFilter(
+          "${e['name']}Filter",
+          e['name'],
+          e['state'],
+          e['vals'] is List
+              ? (e['vals'] as List)
+                    .map(
+                      (e) => SelectFilterOption(e['first'], e['second'], null),
+                    )
+                    .toList()
+              : e['values'] is List
+              ? (e['values'] as List)
+                    .map((e) => SelectFilterOption(e, e, null))
+                    .toList()
+              : [],
+          "SelectFilter",
+        );
+      } else if (e['name'] is String && e['state'] is List) {
+        yield GroupFilter(
+          "${e['name']}Filter",
+          e['name'],
+          (e['state'] as List).map((e) {
+            if (e['included'] is bool &&
+                e['ignored'] is bool &&
+                e['excluded'] is bool) {
+              return TriStateFilter(
+                null,
+                e['name'],
+                e['id'] ?? e['name'],
+                null,
+                state: e['state'],
+              );
+            }
+            return CheckBoxFilter(
+              null,
+              e['name'],
+              e['id'] ?? e['name'],
+              null,
+              state: e['state'],
+            );
+          }).toList(),
+          "GroupFilter",
+        );
+      } else if (e['name'] is String && e['state'] is String) {
+        yield TextFilter(
+          "${e['name']}Filter",
+          e['name'],
+          null,
+          state: e['state'],
+        );
+      } else if (e['name'] is String && e['state'] is int) {
+        yield HeaderFilter(e['name'], "${e['name']}Filter");
+      }
+    }).toList();
+    return FilterList(filters);
+  } catch (_) {
+    return null;
+  }
 }

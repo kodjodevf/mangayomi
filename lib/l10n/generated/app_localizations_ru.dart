@@ -1417,6 +1417,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get novel_extensions_repo => 'Репозиторий расширений новелл';
 
   @override
+  String get android_proxy_server => 'Android Proxy Server (ApkBridge)';
+
+  @override
   String get undefined => 'Не определено';
 
   @override
