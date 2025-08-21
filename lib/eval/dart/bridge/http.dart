@@ -5,7 +5,7 @@ import 'package:mangayomi/eval/model/m_source.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 
 class HttpBridge {
-  final clientBridgedClass = BridgedClassDefinition(
+  final clientBridgedClass = BridgedClass(
     nativeType: InterceptedClient,
     name: 'Client',
     constructors: {
@@ -76,7 +76,7 @@ class HttpBridge {
           (target as Client).send(positionalArgs[0] as BaseRequest),
     },
   );
-  final baseRequestBridgedClass = BridgedClassDefinition(
+  final baseRequestBridgedClass = BridgedClass(
     nativeType: BaseRequest,
     name: 'BaseRequest',
     nativeNames: ['Request'],
@@ -99,7 +99,7 @@ class HttpBridge {
       'finalized': (visitor, target) => (target as BaseRequest).finalized,
     },
   );
-  final responseBridgedClass = BridgedClassDefinition(
+  final responseBridgedClass = BridgedClass(
     nativeType: Response,
     name: 'Response',
     constructors: {
@@ -120,7 +120,7 @@ class HttpBridge {
       'request': (visitor, target) => (target as Response).request,
     },
   );
-  final streamedResponseBridgedClass = BridgedClassDefinition(
+  final streamedResponseBridgedClass = BridgedClass(
     nativeType: StreamedResponse,
     name: 'StreamedResponse',
     constructors: {
@@ -144,7 +144,7 @@ class HttpBridge {
       'request': (visitor, target) => (target as StreamedResponse).request,
     },
   );
-  final byteStreamBridgedClass = BridgedClassDefinition(
+  final byteStreamBridgedClass = BridgedClass(
     nativeType: ByteStream,
     name: 'ByteStream',
     constructors: {

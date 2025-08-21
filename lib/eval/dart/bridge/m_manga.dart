@@ -3,7 +3,7 @@ import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/models/manga.dart';
 
 class MMangaBridge {
-  final mMangaBridgedClass = BridgedClassDefinition(
+  final mMangaBridgedClass = BridgedClass(
     nativeType: MManga,
     name: 'MManga',
     constructors: {

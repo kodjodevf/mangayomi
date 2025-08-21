@@ -124,12 +124,14 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                           } else {
                             context.push(
                               '/globalSearch',
-                              extra:
-                                  switch (_tabList[_tabBarController.index]) {
-                                    "manga" => ItemType.manga,
-                                    "anime" => ItemType.anime,
-                                    _ => ItemType.novel,
-                                  },
+                              extra: (
+                                null,
+                                switch (_tabList[_tabBarController.index]) {
+                                  "manga" => ItemType.manga,
+                                  "anime" => ItemType.anime,
+                                  _ => ItemType.novel,
+                                },
+                              ),
                             );
                           }
                         },

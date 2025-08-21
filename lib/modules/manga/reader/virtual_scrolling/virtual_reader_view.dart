@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -7,11 +8,10 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/modules/manga/reader/virtual_scrolling/virtual_page_manager.dart';
 import 'package:mangayomi/modules/manga/reader/virtual_scrolling/virtual_manga_list.dart';
-import 'package:mangayomi/modules/manga/reader/reader_view.dart' as reader;
 
 /// Provides virtual page manager instances
 final virtualPageManagerProvider =
-    Provider.family<VirtualPageManager, List<reader.UChapDataPreload>>((
+    Provider.family<VirtualPageManager, List<UChapDataPreload>>((
       ref,
       pages,
     ) {
@@ -20,7 +20,7 @@ final virtualPageManagerProvider =
 
 /// Main widget for virtual reading that replaces ScrollablePositionedList
 class VirtualReaderView extends ConsumerStatefulWidget {
-  final List<reader.UChapDataPreload> pages;
+  final List<UChapDataPreload> pages;
   final ItemScrollController itemScrollController;
   final ScrollOffsetController scrollOffsetController;
   final ItemPositionsListener itemPositionsListener;
@@ -28,7 +28,7 @@ class VirtualReaderView extends ConsumerStatefulWidget {
   final double minCacheExtent;
   final int initialScrollIndex;
   final ScrollPhysics physics;
-  final Function(reader.UChapDataPreload data) onLongPressData;
+  final Function(UChapDataPreload data) onLongPressData;
   final Function(bool) onFailedToLoadImage;
   final BackgroundColor backgroundColor;
   final bool isDoublePageMode;
@@ -169,10 +169,10 @@ mixin VirtualPageManagerMixin<T extends ConsumerStatefulWidget>
   }
 
   /// Override this method to provide the pages list
-  List<reader.UChapDataPreload> getPages();
+  List<UChapDataPreload> getPages();
 
   /// Call this when pages change
-  void updateVirtualPages(List<reader.UChapDataPreload> newPages) {
+  void updateVirtualPages(List<UChapDataPreload> newPages) {
     _virtualPageManager?.dispose();
     _virtualPageManager = VirtualPageManager(pages: newPages);
   }

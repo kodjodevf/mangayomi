@@ -14,15 +14,15 @@
       "bundleIdentifier": "com.kodjodevf.mangayomi",
       "developerName": "Moustapha Kodjo Amadou",
       "subtitle": "Read manga, novels, and watch anime",
-      "version": "0.6.3",
-      "versionDate": "2025-07-09T14:01:54Z",
+      "version": "0.6.35",
+      "versionDate": "2025-08-05T14:52:24Z",
       "versionDescription": "",
-      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.3/Mangayomi-v0.6.3-ios.ipa",
+      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.35/Mangayomi-v0.6.35-ios.ipa",
       "localizedDescription": "Mangayomi is an open-source Flutter app for reading manga, novels, and watching anime across multiple platforms.",
       "iconURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/icons/icon_default.webp",
       "tintColor": "EF4444",
       "category": "entertainment",
-      "size": 58376897,
+      "size": 59596142,
       "screenshotURLs": [
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_0_default.webp",
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_1_default.webp",
@@ -30,9 +30,16 @@
       ],
       "versions": [
         {
+          "version": "0.6.35",
+          "date": "2025-08-05T14:52:24Z",
+          "localizedDescription": "",
+          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.35/Mangayomi-v0.6.35-ios.ipa",
+          "size": 59596142
+        },
+        {
           "version": "0.6.3",
           "date": "2025-07-09T14:01:54Z",
-          "localizedDescription": "",
+          "localizedDescription": "What's Changed\r\n* added option to change hwdec by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/483\r\n* Fixes, Refactors, and Async Improvements by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/484\r\n* Fix Async Transaction Bug and Category Management Issues by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/489\r\n* Create PKGBUILD for Arch linux by @saberr26 in https://github.com/kodjodevf/mangayomi/pull/485\r\n* added two\u2022way\u2022tracking by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/490\r\n* Refactor: Consolidate _openCategory() Methods into Unified Dialog by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/491\r\n* Release file lock by closing InputStream by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/493\r\n* increased protobuf limit to 250 MB by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/494\r\n* Make buttons white for consistency in light mode by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/496\r\n* improved two\u2022way track screen by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/497\r\n* Don't allow zooming by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/502\r\n* adjusted tracker library + bug fixes by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/501\r\n* iOS CBZ import fix by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/503\r\n* \ud83c\udfac Improve Fullscreen Stability & Simplify AniSkip Logic by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/499\r\n* added option to disable merged library navigation by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/504\r\n* reworked sync server by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/506\r\n* Fix \"Read\" and \"Unread\" button [based on PR 506] by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/507\r\n* Fix labels on navigation bar [based on PR 506] by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/508\r\n* Refactor code  by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/509\r\n* Fix menu colors on theme change by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/511\r\n* Fix delete \"Downloaded episodes/chapters\" by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/512\r\n* Add tracker button to localArchive by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/513\r\n* Changed the \"Page preload amount\" Setting to be a Slider by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/510\r\n\r\nNew Contributors\r\n* @saberr26 made their first contribution in https://github.com/kodjodevf/mangayomi/pull/485\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.6.25...v0.6.3",
           "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.3/Mangayomi-v0.6.3-ios.ipa",
           "size": 58376897
         },
@@ -171,6 +178,17 @@
       "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
       "notify": true,
       "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.6.3"
+    },
+    {
+      "appID": "com.kodjodevf.mangayomi",
+      "title": "0.6.35 - 05 Aug",
+      "identifier": "release-0.6.35",
+      "caption": "Update for Mangayomi now available!",
+      "date": "2025-08-05T14:52:24Z",
+      "tintColor": "EF4444",
+      "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
+      "notify": true,
+      "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.6.35"
     }
   ]
 }

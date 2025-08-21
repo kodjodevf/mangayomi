@@ -41,7 +41,7 @@ class SyncServer extends _$SyncServer {
     String username,
     String password,
   ) async {
-    server = server[server.length - 1] == '/'
+    server = server.isNotEmpty && server[server.length - 1] == '/'
         ? server.substring(0, server.length - 1)
         : server;
     try {
@@ -67,7 +67,12 @@ class SyncServer extends _$SyncServer {
     }
   }
 
-  Future<void> startSync(AppLocalizations l10n, bool silent) async {
+  Future<void> startSync(
+    AppLocalizations l10n,
+    bool silent, {
+    bool upload = false,
+    bool download = false,
+  }) async {
     if (!silent) {
       botToast(l10n.sync_starting, second: 500);
     }
@@ -75,27 +80,46 @@ class SyncServer extends _$SyncServer {
       final syncPreference = ref.read(synchingProvider(syncId: syncId));
       final syncNotifier = ref.read(synchingProvider(syncId: syncId).notifier);
 
-      final resultManga = await _syncManga(l10n, syncNotifier);
+      final resultManga = await _syncManga(
+        l10n,
+        syncNotifier,
+        download: download,
+        upload: upload,
+      );
       if (!resultManga) {
         botToast(l10n.sync_failed, second: 5);
         return;
       }
       if (syncPreference.syncHistories) {
-        final resultHistory = await _syncHistory(l10n, syncNotifier);
+        final resultHistory = await _syncHistory(
+          l10n,
+          syncNotifier,
+          download: download,
+          upload: upload,
+        );
         if (!resultHistory) {
           botToast(l10n.sync_failed, second: 5);
           return;
         }
       }
       if (syncPreference.syncUpdates) {
-        final resultUpdate = await _syncUpdate(l10n, syncNotifier);
+        final resultUpdate = await _syncUpdate(
+          l10n,
+          syncNotifier,
+          download: download,
+          upload: upload,
+        );
         if (!resultUpdate) {
           botToast(l10n.sync_failed, second: 5);
           return;
         }
       }
       if (syncPreference.syncSettings) {
-        final resultSettings = await _syncSettings(l10n);
+        final resultSettings = await _syncSettings(
+          l10n,
+          download: download,
+          upload: upload,
+        );
         if (!resultSettings) {
           botToast(l10n.sync_failed, second: 5);
           return;
@@ -111,8 +135,13 @@ class SyncServer extends _$SyncServer {
     }
   }
 
-  Future<bool> _syncManga(AppLocalizations l10n, Synching syncNotifier) async {
-    final mangaData = _getMangaData();
+  Future<bool> _syncManga(
+    AppLocalizations l10n,
+    Synching syncNotifier, {
+    bool upload = false,
+    bool download = false,
+  }) async {
+    final mangaData = _getMangaData(upload: upload, download: download);
     final accessToken = _getAccessToken();
     var response = await http.post(
       Uri.parse('${_getServer()}$_syncMangaUrl'),
@@ -127,11 +156,20 @@ class SyncServer extends _$SyncServer {
       return false;
     }
 
-    final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
-    await _upsertCategories(jsonData, syncNotifier);
-    await _upsertManga(jsonData, syncNotifier);
-    await _upsertChapters(jsonData, syncNotifier);
-    await _upsertTracks(jsonData, syncNotifier);
+    if (!upload) {
+      final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+      await _upsertCategories(jsonData, syncNotifier);
+      await _upsertManga(jsonData, syncNotifier);
+      await _upsertChapters(jsonData, syncNotifier);
+      await _upsertTracks(jsonData, syncNotifier);
+    } else {
+      await syncNotifier.clearChangedParts([
+        ActionType.removeCategory,
+        ActionType.removeItem,
+        ActionType.removeChapter,
+        ActionType.removeTrack,
+      ], true);
+    }
 
     syncNotifier.setLastSyncManga(DateTime.now().millisecondsSinceEpoch);
 
@@ -140,9 +178,11 @@ class SyncServer extends _$SyncServer {
 
   Future<bool> _syncHistory(
     AppLocalizations l10n,
-    Synching syncNotifier,
-  ) async {
-    final historyData = _getHistoryData();
+    Synching syncNotifier, {
+    bool upload = false,
+    bool download = false,
+  }) async {
+    final historyData = _getHistoryData(upload: upload, download: download);
     final accessToken = _getAccessToken();
     var response = await http.post(
       Uri.parse('${_getServer()}$_syncHistoryUrl'),
@@ -157,16 +197,25 @@ class SyncServer extends _$SyncServer {
       return false;
     }
 
-    final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
-    await _upsertHistories(jsonData, syncNotifier);
+    if (!upload) {
+      final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+      await _upsertHistories(jsonData, syncNotifier);
+    } else {
+      await syncNotifier.clearChangedParts([ActionType.removeHistory], true);
+    }
 
     syncNotifier.setLastSyncHistory(DateTime.now().millisecondsSinceEpoch);
 
     return true;
   }
 
-  Future<bool> _syncUpdate(AppLocalizations l10n, Synching syncNotifier) async {
-    final updateData = _getUpdateData();
+  Future<bool> _syncUpdate(
+    AppLocalizations l10n,
+    Synching syncNotifier, {
+    bool upload = false,
+    bool download = false,
+  }) async {
+    final updateData = _getUpdateData(upload: upload, download: download);
     final accessToken = _getAccessToken();
     var response = await http.post(
       Uri.parse('${_getServer()}$_syncUpdateUrl'),
@@ -181,16 +230,24 @@ class SyncServer extends _$SyncServer {
       return false;
     }
 
-    final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
-    await _upsertUpdates(jsonData, syncNotifier);
+    if (!upload) {
+      final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+      await _upsertUpdates(jsonData, syncNotifier);
+    } else {
+      await syncNotifier.clearChangedParts([ActionType.removeUpdate], true);
+    }
 
     syncNotifier.setLastSyncUpdate(DateTime.now().millisecondsSinceEpoch);
 
     return true;
   }
 
-  Future<bool> _syncSettings(AppLocalizations l10n) async {
-    final settingsData = _getSettingsData();
+  Future<bool> _syncSettings(
+    AppLocalizations l10n, {
+    bool upload = false,
+    bool download = false,
+  }) async {
+    final settingsData = _getSettingsData(download: download);
     final accessToken = _getAccessToken();
     var response = await http.post(
       Uri.parse('${_getServer()}$_syncSettingsUrl'),
@@ -205,8 +262,10 @@ class SyncServer extends _$SyncServer {
       return false;
     }
 
-    final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
-    await _upsertSettings(jsonData);
+    if (!upload) {
+      final jsonData = jsonDecode(response.body) as Map<String, dynamic>;
+      await _upsertSettings(jsonData);
+    }
 
     return true;
   }
@@ -424,36 +483,61 @@ class SyncServer extends _$SyncServer {
     });
   }
 
-  String _getMangaData() {
+  String _getMangaData({bool upload = false, bool download = false}) {
     Map<String, dynamic> data = {};
-    data["categories"] = _getCategories();
-    data["deleted_categories"] = _getDeletedObjects(ActionType.removeCategory);
-    data["manga"] = _getManga();
-    data["deleted_manga"] = _getDeletedObjects(ActionType.removeItem);
-    data["chapters"] = _getChapters();
-    data["deleted_chapters"] = _getDeletedObjects(ActionType.removeChapter);
-    data["tracks"] = _getTracks();
-    data["deleted_tracks"] = _getDeletedObjects(ActionType.removeTrack);
+    data["categories"] = download ? [] : _getCategories();
+    data["deleted_categories"] = download
+        ? []
+        : _getDeletedObjects(ActionType.removeCategory);
+    data["manga"] = download ? [] : _getManga();
+    data["deleted_manga"] = download
+        ? []
+        : _getDeletedObjects(ActionType.removeItem);
+    data["chapters"] = download ? [] : _getChapters();
+    data["deleted_chapters"] = download
+        ? []
+        : _getDeletedObjects(ActionType.removeChapter);
+    data["tracks"] = download ? [] : _getTracks();
+    data["deleted_tracks"] = download
+        ? []
+        : _getDeletedObjects(ActionType.removeTrack);
+    if (upload) {
+      data["resetAll"] = true;
+    }
     return jsonEncode(data);
   }
 
-  String _getHistoryData() {
+  String _getHistoryData({bool upload = false, bool download = false}) {
     Map<String, dynamic> data = {};
-    data["histories"] = _getHistories();
-    data["deleted_histories"] = _getDeletedObjects(ActionType.removeHistory);
+    data["histories"] = download ? [] : _getHistories();
+    data["deleted_histories"] = download
+        ? []
+        : _getDeletedObjects(ActionType.removeHistory);
+    if (upload) {
+      data["resetAll"] = true;
+    }
     return jsonEncode(data);
   }
 
-  String _getUpdateData() {
+  String _getUpdateData({bool upload = false, bool download = false}) {
     Map<String, dynamic> data = {};
-    data["updates"] = _getUpdates();
-    data["deleted_updates"] = _getDeletedObjects(ActionType.removeUpdate);
+    data["updates"] = download ? [] : _getUpdates();
+    data["deleted_updates"] = download
+        ? []
+        : _getDeletedObjects(ActionType.removeUpdate);
+    if (upload) {
+      data["resetAll"] = true;
+    }
     return jsonEncode(data);
   }
 
-  String _getSettingsData() {
+  String _getSettingsData({bool download = false}) {
     Map<String, dynamic> data = {};
-    data["settings"] = isar.settings.getSync(227)!..updatedAt ??= DateTime.now().millisecondsSinceEpoch..cookiesList = [];
+    if (!download) {
+      data["settings"] = isar.settings.getSync(227)!
+        ..updatedAt ??= DateTime.now().millisecondsSinceEpoch
+        ..cookiesList = [];
+    }
     return jsonEncode(data);
   }
 

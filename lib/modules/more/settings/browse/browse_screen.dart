@@ -10,6 +10,7 @@ import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/update.dart';
+import 'package:mangayomi/modules/more/settings/player/custom_button_screen.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -140,6 +141,17 @@ class BrowseSScreen extends ConsumerWidget {
                     title: Text(l10n.clean_database),
                     subtitle: Text(
                       l10n.clean_database_desc,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.secondaryColor,
+                      ),
+                    ),
+                  ),
+                  ListTile(
+                    onTap: () => _showClearLibraryDialog(context, ref),
+                    title: Text(l10n.clear_library),
+                    subtitle: Text(
+                      l10n.clear_library_desc,
                       style: TextStyle(
                         fontSize: 11,
                         color: context.secondaryColor,
@@ -328,6 +340,149 @@ void _showCleanNonLibraryDialog(BuildContext context, dynamic l10n) {
             ],
           ),
         ],
+      );
+    },
+  );
+}
+
+void _showClearLibraryDialog(BuildContext context, WidgetRef ref) {
+  final itemTypes = ItemType.values.map((e) => e.name).toList();
+  bool isInputError = true;
+  final textController = TextEditingController();
+  showDialog(
+    context: context,
+    builder: (context) {
+      return StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: Column(
+              children: [
+                Text(context.l10n.clear_library),
+                Text(
+                  context.l10n.clear_library_input,
+                  style: TextStyle(fontSize: 11, color: context.secondaryColor),
+                ),
+              ],
+            ),
+            content: SizedBox(
+              width: context.width(0.8),
+              child: CustomTextFormField(
+                controller: textController,
+                context: context,
+                isMissing: isInputError,
+                val: (text) => setState(() {
+                  isInputError =
+                      text.trim().isEmpty ||
+                      text.split(",").any((e) => !itemTypes.contains(e));
+                }),
+                missing: (_) {},
+              ),
+            ),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      context.l10n.cancel,
+                      style: TextStyle(color: context.primaryColor),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: isInputError
+                        ? null
+                        : () {
+                            final mangasList = isar.mangas
+                                .filter()
+                                .anyOf(
+                                  textController.text
+                                      .split(",")
+                                      .map(
+                                        (e) => switch (e) {
+                                          "manga" => ItemType.manga,
+                                          "anime" => ItemType.anime,
+                                          "novel" => ItemType.novel,
+                                          _ => null,
+                                        },
+                                      ),
+                                  (q, element) => element == null
+                                      ? q.idIsNull()
+                                      : q.itemTypeEqualTo(element),
+                                )
+                                .findAllSync();
+                            final provider = ref.read(
+                              synchingProvider(syncId: 1).notifier,
+                            );
+                            isar.writeTxnSync(() {
+                              for (var manga in mangasList) {
+                                final histories = isar.historys
+                                    .filter()
+                                    .mangaIdEqualTo(manga.id)
+                                    .findAllSync();
+                                for (var history in histories) {
+                                  isar.historys.deleteSync(history.id!);
+                                  provider.addChangedPart(
+                                    ActionType.removeHistory,
+                                    history.id,
+                                    "{}",
+                                    false,
+                                  );
+                                }
+
+                                for (var chapter in manga.chapters) {
+                                  final updates = isar.updates
+                                      .filter()
+                                      .mangaIdEqualTo(chapter.mangaId)
+                                      .chapterNameEqualTo(chapter.name)
+                                      .findAllSync();
+                                  for (var update in updates) {
+                                    isar.updates.deleteSync(update.id!);
+                                    provider.addChangedPart(
+                                      ActionType.removeUpdate,
+                                      update.id,
+                                      "{}",
+                                      false,
+                                    );
+                                  }
+                                  isar.chapters.deleteSync(chapter.id!);
+                                  provider.addChangedPart(
+                                    ActionType.removeChapter,
+                                    chapter.id,
+                                    "{}",
+                                    false,
+                                  );
+                                }
+                                isar.mangas.deleteSync(manga.id!);
+                                provider.addChangedPart(
+                                  ActionType.removeItem,
+                                  manga.id,
+                                  "{}",
+                                  false,
+                                );
+                              }
+                            });
+                            botToast(
+                              context.l10n.cleaned_database(mangasList.length),
+                            );
+                            Navigator.pop(context);
+                          },
+                    child: Text(
+                      context.l10n.ok,
+                      style: TextStyle(
+                        color: isInputError
+                            ? context.secondaryColor
+                            : context.primaryColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
       );
     },
   );

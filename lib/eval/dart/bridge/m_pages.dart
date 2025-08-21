@@ -3,7 +3,7 @@ import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/eval/model/m_pages.dart';
 
 class MPagesBridge {
-  final mPageBridgedClass = BridgedClassDefinition(
+  final mPageBridgedClass = BridgedClass(
     nativeType: MPages,
     name: 'MPages',
     constructors: {
