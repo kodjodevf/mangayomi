@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
@@ -8,11 +10,16 @@ import 'package:numberpicker/numberpicker.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 
-class PlayerScreen extends ConsumerWidget {
+class PlayerScreen extends ConsumerStatefulWidget {
   const PlayerScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<PlayerScreen> createState() => _PlayerScreenState();
+}
+
+class _PlayerScreenState extends ConsumerState<PlayerScreen> {
+  @override
+  Widget build(BuildContext context) {
     final defaultSubtitleLang = ref.watch(defaultSubtitleLangStateProvider);
     final markEpisodeAsSeenType = ref.watch(markEpisodeAsSeenTypeStateProvider);
     final defaultSkipIntroLength = ref.watch(
@@ -26,11 +33,10 @@ class PlayerScreen extends ConsumerWidget {
     final enableAutoSkip = ref.watch(enableAutoSkipStateProvider);
     final aniSkipTimeoutLength = ref.watch(aniSkipTimeoutLengthStateProvider);
     final useLibass = ref.watch(useLibassStateProvider);
-    final hwdecMode = ref.watch(hwdecModeStateProvider(rawValue: true));
 
     final fullScreenPlayer = ref.watch(fullScreenPlayerStateProvider);
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.player)),
+      appBar: AppBar(title: Text(context.l10n.internal_player)),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -343,23 +349,6 @@ class PlayerScreen extends ConsumerWidget {
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
-            ListTile(
-              title: Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.info_outline_rounded,
-                      color: context.secondaryColor,
-                    ),
-                  ],
-                ),
-              ),
-              subtitle: Text(
-                context.l10n.aniskip_requires_info,
-                style: TextStyle(fontSize: 11, color: context.secondaryColor),
-              ),
-            ),
             SwitchListTile(
               value: useLibass,
               title: Text(context.l10n.use_libass),
@@ -380,6 +369,26 @@ class PlayerScreen extends ConsumerWidget {
               onExpansionChanged: (value) =>
                   ref.read(enableAniSkipStateProvider.notifier).set(value),
               children: [
+                ListTile(
+                  title: Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline_rounded,
+                          color: context.secondaryColor,
+                        ),
+                      ],
+                    ),
+                  ),
+                  subtitle: Text(
+                    context.l10n.aniskip_requires_info,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: context.secondaryColor,
+                    ),
+                  ),
+                ),
                 SwitchListTile(
                   value: enableAutoSkip,
                   title: Text(context.l10n.enable_auto_skip),
@@ -467,80 +476,6 @@ class PlayerScreen extends ConsumerWidget {
               onChanged: (value) {
                 ref.read(fullScreenPlayerStateProvider.notifier).set(value);
               },
-            ),
-            ListTile(
-              onTap: () {
-                final values = [
-                  ("no", ""),
-                  ("auto", ""),
-                  ("d3d11va", "(Windows 8+)"),
-                  ("d3d11va-copy", "(Windows 8+)"),
-                  ("videotoolbox", "(iOS 9.0+)"),
-                  ("videotoolbox-copy", "(iOS 9.0+)"),
-                  ("nvdec", "(CUDA)"),
-                  ("nvdec-copy", "(CUDA)"),
-                  ("mediacodec", "- HW (Android)"),
-                  ("mediacodec-copy", "- HW+ (Android)"),
-                  ("crystalhd", ""),
-                ];
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text(context.l10n.hwdec),
-                      content: SizedBox(
-                        width: context.width(0.8),
-                        child: SuperListView.builder(
-                          shrinkWrap: true,
-                          itemCount: values.length,
-                          itemBuilder: (context, index) {
-                            return RadioListTile(
-                              dense: true,
-                              contentPadding: const EdgeInsets.all(0),
-                              value: values[index].$1,
-                              groupValue: hwdecMode,
-                              onChanged: (value) {
-                                ref
-                                    .read(hwdecModeStateProvider(rawValue: true).notifier)
-                                    .set(value!);
-                                Navigator.pop(context);
-                              },
-                              title: Row(
-                                children: [
-                                  Text(
-                                    "${values[index].$1} ${values[index].$2}",
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      actions: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            TextButton(
-                              onPressed: () async {
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                context.l10n.cancel,
-                                style: TextStyle(color: context.primaryColor),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-              title: Text(context.l10n.hwdec),
-              subtitle: Text(
-                hwdecMode,
-                style: TextStyle(fontSize: 11, color: context.secondaryColor),
-              ),
             ),
           ],
         ),

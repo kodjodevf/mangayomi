@@ -957,6 +957,12 @@ abstract class AppLocalizations {
   /// **'A week ago'**
   String get a_week_ago;
 
+  /// No description provided for @next_week.
+  ///
+  /// In en, this message translates to:
+  /// **'Next week'**
+  String get next_week;
+
   /// No description provided for @add_to_library.
   ///
   /// In en, this message translates to:
@@ -2127,6 +2133,12 @@ abstract class AppLocalizations {
   /// **'Audio'**
   String get video_audio;
 
+  /// No description provided for @video_audio_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferred languages, pitch correction, audio channels'**
+  String get video_audio_info;
+
   /// No description provided for @player.
   ///
   /// In en, this message translates to:
@@ -2553,6 +2565,12 @@ abstract class AppLocalizations {
   /// **'Advanced'**
   String get advanced;
 
+  /// No description provided for @advanced_info.
+  ///
+  /// In en, this message translates to:
+  /// **'mpv config'**
+  String get advanced_info;
+
   /// No description provided for @use_native_http_client.
   ///
   /// In en, this message translates to:
@@ -2907,6 +2925,12 @@ abstract class AppLocalizations {
   /// **'Hardware Decoder'**
   String get hwdec;
 
+  /// No description provided for @track_library_navigate.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to existing local entry'**
+  String get track_library_navigate;
+
   /// No description provided for @track_library_add.
   ///
   /// In en, this message translates to:
@@ -2990,6 +3014,282 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sync settings'**
   String get sync_enable_settings;
+
+  /// No description provided for @enable_mpv.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable mpv shaders / scripts'**
+  String get enable_mpv;
+
+  /// No description provided for @mpv_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Supports .js scripts under mpv/scripts/'**
+  String get mpv_info;
+
+  /// No description provided for @mpv_redownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Redownload mpv config files'**
+  String get mpv_redownload;
+
+  /// No description provided for @mpv_redownload_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Replaces old config files with new one!'**
+  String get mpv_redownload_info;
+
+  /// No description provided for @mpv_download.
+  ///
+  /// In en, this message translates to:
+  /// **'MPV config files are required!\nDownload now?'**
+  String get mpv_download;
+
+  /// No description provided for @custom_buttons.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom buttons'**
+  String get custom_buttons;
+
+  /// No description provided for @custom_buttons_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Execute lua code with custom buttons'**
+  String get custom_buttons_info;
+
+  /// No description provided for @custom_buttons_edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit custom buttons'**
+  String get custom_buttons_edit;
+
+  /// No description provided for @custom_buttons_add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add custom button'**
+  String get custom_buttons_add;
+
+  /// No description provided for @custom_buttons_added.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom button added!'**
+  String get custom_buttons_added;
+
+  /// No description provided for @custom_buttons_delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete custom button'**
+  String get custom_buttons_delete;
+
+  /// No description provided for @custom_buttons_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Button text'**
+  String get custom_buttons_text;
+
+  /// No description provided for @custom_buttons_text_req.
+  ///
+  /// In en, this message translates to:
+  /// **'Button text required'**
+  String get custom_buttons_text_req;
+
+  /// No description provided for @custom_buttons_js_code.
+  ///
+  /// In en, this message translates to:
+  /// **'lua code'**
+  String get custom_buttons_js_code;
+
+  /// No description provided for @custom_buttons_js_code_req.
+  ///
+  /// In en, this message translates to:
+  /// **'lua code required'**
+  String get custom_buttons_js_code_req;
+
+  /// No description provided for @custom_buttons_js_code_long.
+  ///
+  /// In en, this message translates to:
+  /// **'lua code (on long press)'**
+  String get custom_buttons_js_code_long;
+
+  /// No description provided for @custom_buttons_startup.
+  ///
+  /// In en, this message translates to:
+  /// **'lua code (on startup)'**
+  String get custom_buttons_startup;
+
+  /// No description provided for @n_days.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} days'**
+  String n_days(Object n);
+
+  /// No description provided for @decoder.
+  ///
+  /// In en, this message translates to:
+  /// **'Decoder'**
+  String get decoder;
+
+  /// No description provided for @decoder_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Hardware decoding, pixel format, debanding'**
+  String get decoder_info;
+
+  /// No description provided for @enable_gpu_next.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable gpu-next (Android only)'**
+  String get enable_gpu_next;
+
+  /// No description provided for @enable_gpu_next_info.
+  ///
+  /// In en, this message translates to:
+  /// **'A new video rendering backend'**
+  String get enable_gpu_next_info;
+
+  /// No description provided for @debanding.
+  ///
+  /// In en, this message translates to:
+  /// **'Debanding'**
+  String get debanding;
+
+  /// No description provided for @use_yuv420p.
+  ///
+  /// In en, this message translates to:
+  /// **'Use YUV420P pixel format'**
+  String get use_yuv420p;
+
+  /// No description provided for @use_yuv420p_info.
+  ///
+  /// In en, this message translates to:
+  /// **'May fix black screens on some video codecs, can also improve performance at the cost of quality'**
+  String get use_yuv420p_info;
+
+  /// No description provided for @audio_preferred_languages.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferred langauages'**
+  String get audio_preferred_languages;
+
+  /// No description provided for @audio_preferred_languages_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio langauage(s) to be selected by default on a video with multiple audio streams, 2/3-letter languages codes (e.g.: en, de, fr) work. Multiple values can be delimited by a comma.'**
+  String get audio_preferred_languages_info;
+
+  /// No description provided for @enable_audio_pitch_correction.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable audio pitch correction'**
+  String get enable_audio_pitch_correction;
+
+  /// No description provided for @enable_audio_pitch_correction_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Prevents the audio from becoming high-pitched at faster speeds and low-pitched at slower speeds'**
+  String get enable_audio_pitch_correction_info;
+
+  /// No description provided for @audio_channels.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio channels'**
+  String get audio_channels;
+
+  /// No description provided for @volume_boost_cap.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume boost cap'**
+  String get volume_boost_cap;
+
+  /// No description provided for @internal_player.
+  ///
+  /// In en, this message translates to:
+  /// **'Internal player'**
+  String get internal_player;
+
+  /// No description provided for @internal_player_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress, controls, orientation'**
+  String get internal_player_info;
+
+  /// No description provided for @subtitle_delay_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtitle delay'**
+  String get subtitle_delay_text;
+
+  /// No description provided for @subtitle_delay.
+  ///
+  /// In en, this message translates to:
+  /// **'Delay (ms)'**
+  String get subtitle_delay;
+
+  /// No description provided for @subtitle_speed.
+  ///
+  /// In en, this message translates to:
+  /// **'Speed'**
+  String get subtitle_speed;
+
+  /// No description provided for @calendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get calendar;
+
+  /// No description provided for @calendar_no_data.
+  ///
+  /// In en, this message translates to:
+  /// **'No data yet.'**
+  String get calendar_no_data;
+
+  /// No description provided for @calendar_info.
+  ///
+  /// In en, this message translates to:
+  /// **'The calendar is only able to predict the next chapter upload based on the older uploads. Some data might not be 100% accurate!'**
+  String get calendar_info;
+
+  /// No description provided for @in_n_day.
+  ///
+  /// In en, this message translates to:
+  /// **'in {days} day'**
+  String in_n_day(Object days);
+
+  /// No description provided for @in_n_days.
+  ///
+  /// In en, this message translates to:
+  /// **'in {days} days'**
+  String in_n_days(Object days);
+
+  /// No description provided for @clear_library.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear library'**
+  String get clear_library;
+
+  /// No description provided for @clear_library_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose to clear all manga, anime and/or novel entries'**
+  String get clear_library_desc;
+
+  /// No description provided for @clear_library_input.
+  ///
+  /// In en, this message translates to:
+  /// **'Type \'manga\', \'anime\' and/or \'novel\' (separated by a comma) to remove all related entries'**
+  String get clear_library_input;
+
+  /// No description provided for @enable_pip.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Picture-in-Picture (PiP)'**
+  String get enable_pip;
+
+  /// No description provided for @enable_auto_pip.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter PiP automatically when moving out of app'**
+  String get enable_auto_pip;
 }
 
 class _AppLocalizationsDelegate

@@ -41,7 +41,7 @@ final backupFrequencyStateProvider =
 
 typedef _$BackupFrequencyState = AutoDisposeNotifier<int>;
 String _$backupFrequencyOptionsStateHash() =>
-    r'477541f3b59fe662ea3471400ff62066ea7e2196';
+    r'9aa31bef65e0e2f20b306ed17ff058df2f24a635';
 
 /// See also [BackupFrequencyOptionsState].
 @ProviderFor(BackupFrequencyOptionsState)

@@ -13,11 +13,12 @@ import 'package:path/path.dart' as p;
 part 'get_video_list.g.dart';
 
 @riverpod
-Future<(List<Video>, bool, List<String>)> getVideoList(
+Future<(List<Video>, bool, List<String>, Directory?)> getVideoList(
   Ref ref, {
   required Chapter episode,
 }) async {
   final storageProvider = StorageProvider();
+  final mpvDirectory = await storageProvider.getMpvDirectory();
   final mangaDirectory = await storageProvider.getMangaMainDirectory(episode);
   final isLocalArchive =
       episode.manga.value!.isLocalArchive! &&
@@ -52,6 +53,7 @@ Future<(List<Video>, bool, List<String>)> getVideoList(
       [Video(path!, episode.name!, path, subtitles: subtitles)],
       true,
       infoHashes,
+      mpvDirectory
     );
   }
   final source = getSource(
@@ -68,7 +70,7 @@ Future<(List<Video>, bool, List<String>)> getVideoList(
         episode.url,
         episode.archivePath,
       );
-      return (videos, false, [infohash ?? ""]);
+      return (videos, false, [infohash ?? ""], mpvDirectory);
     }
 
     try {
@@ -91,7 +93,7 @@ Future<(List<Video>, bool, List<String>)> getVideoList(
         }
       }
     }
-    return (torrentList, false, infoHashes);
+    return (torrentList, false, infoHashes, mpvDirectory);
   }
 
   List<Video> list = await getExtensionService(
@@ -105,5 +107,5 @@ Future<(List<Video>, bool, List<String>)> getVideoList(
     }
   }
 
-  return (videos, false, infoHashes);
+  return (videos, false, infoHashes, mpvDirectory);
 }

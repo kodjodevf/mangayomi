@@ -21,52 +21,43 @@ class SettingsScreen extends StatelessWidget {
             ),
             ListTileWidget(
               title: l10n.appearance,
-              subtitle: l10n.appearance_subtitle,
               icon: Icons.color_lens_rounded,
               onTap: () => context.push('/appearance'),
             ),
             ListTileWidget(
               title: l10n.reader,
-              subtitle: l10n.reader_subtitle,
               icon: Icons.chrome_reader_mode_rounded,
               onTap: () => context.push('/readerMode'),
             ),
             ListTileWidget(
               title: l10n.player,
-              subtitle: l10n.reader_subtitle,
               icon: Icons.play_circle_outline_outlined,
-              onTap: () => context.push('/playerMode'),
+              onTap: () => context.push('/playerOverview'),
             ),
             ListTileWidget(
               title: l10n.downloads,
-              subtitle: l10n.downloads_subtitle,
               icon: Icons.download_outlined,
               onTap: () => context.push('/downloads'),
             ),
             ListTileWidget(
               title: l10n.tracking,
-              subtitle: "",
               icon: Icons.sync_outlined,
               onTap: () => context.push('/track'),
             ),
             ListTileWidget(
               title: l10n.syncing,
-              subtitle: l10n.syncing_subtitle,
               icon: Icons.cloud_sync_outlined,
               onTap: () => context.push('/sync'),
             ),
             ListTileWidget(
               title: l10n.browse,
-              subtitle: l10n.browse_subtitle,
               icon: Icons.explore_rounded,
               onTap: () => context.push('/browseS'),
             ),
             ListTileWidget(
-              onTap: () {
-                context.push('/about');
-              },
-              icon: Icons.info_outline,
               title: l10n.about,
+              icon: Icons.info_outline,
+              onTap: () => context.push('/about'),
             ),
           ],
         ),

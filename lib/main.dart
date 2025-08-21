@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:app_links/app_links.dart';
+import 'package:archive/archive.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/foundation.dart';
@@ -13,6 +14,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
+import 'package:mangayomi/models/custom_button.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
@@ -31,9 +33,11 @@ import 'package:mangayomi/utils/url_protocol/api.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_provider.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:path/path.dart' as p;
+import 'package:flutter/services.dart' show rootBundle;
 
 late Isar isar;
 DiscordRPC? discordRpc;
@@ -94,6 +98,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     super.initState();
     initializeDateFormatting();
     _initDeepLinks();
+    _setupMpvConfig();
     unawaited(ref.read(scanLocalLibraryProvider.future));
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -141,7 +146,7 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   Future<void> _initDeepLinks() async {
     _appLinks = AppLinks();
-    _linkSubscription = _appLinks.uriLinkStream.listen((uri) {
+    _linkSubscription = _appLinks.uriLinkStream.listen((uri) async {
       if (uri == lastUri) return; // Debouncing Deep Links
       lastUri = uri;
       switch (uri.host) {
@@ -220,6 +225,62 @@ class _MyAppState extends ConsumerState<MyApp> {
             },
           );
           break;
+        case "add-button":
+          final buttonDataRaw = uri.queryParametersAll["button"];
+          final context = navigatorKey.currentContext;
+          if (context == null || !context.mounted || buttonDataRaw == null) {
+            return;
+          }
+          final l10n = context.l10n;
+          for (final buttonRaw in buttonDataRaw) {
+            final buttonData = jsonDecode(
+              utf8.decode(base64.decode(buttonRaw)),
+            );
+            if (buttonData is Map<String, dynamic>) {
+              final customButton = CustomButton.fromJson(buttonData);
+              await showDialog(
+                context: navigatorKey.currentContext!,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text(l10n.custom_buttons_add),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "${l10n.name}: ${customButton.title ?? 'Unknown'}",
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        child: Text(l10n.cancel),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                      FilledButton(
+                        child: Text(l10n.add),
+                        onPressed: () async {
+                          if (context.mounted) Navigator.of(context).pop();
+                          await isar.writeTxn(() async {
+                            await isar.customButtons.put(
+                              customButton
+                                ..pos = await isar.customButtons.count()
+                                ..isFavourite = false
+                                ..id = null
+                                ..updatedAt =
+                                    DateTime.now().millisecondsSinceEpoch,
+                            );
+                          });
+                          botToast(l10n.custom_buttons_added);
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            }
+          }
+          break;
         default:
       }
     });
@@ -241,6 +302,38 @@ class _MyAppState extends ConsumerState<MyApp> {
       }
     }
     return true;
+  }
+
+  Future<void> _setupMpvConfig() async {
+    final provider = StorageProvider();
+    final dir = await provider.getMpvDirectory();
+    final mpvFile = File('${dir!.path}/mpv.conf');
+    final inputFile = File('${dir.path}/input.conf');
+    final filesMissing =
+        !(await mpvFile.exists()) && !(await inputFile.exists());
+    if (filesMissing) {
+      final bytes = await rootBundle.load("assets/mangayomi_mpv.zip");
+      final archive = ZipDecoder().decodeBytes(bytes.buffer.asUint8List());
+      String shadersDir = path.join(dir.path, 'shaders');
+      await Directory(shadersDir).create(recursive: true);
+      String scriptsDir = path.join(dir.path, 'scripts');
+      await Directory(scriptsDir).create(recursive: true);
+      for (final file in archive.files) {
+        if (file.name == "mpv.conf") {
+          await mpvFile.writeAsBytes(file.content);
+        } else if (file.name == "input.conf") {
+          await inputFile.writeAsBytes(file.content);
+        } else if (file.name.startsWith("shaders/") &&
+            file.name.endsWith(".glsl")) {
+          final shaderFile = File('$shadersDir/${file.name.split("/").last}');
+          await shaderFile.writeAsBytes(file.content);
+        } else if (file.name.startsWith("scripts/") &&
+            (file.name.endsWith(".js") || file.name.endsWith(".lua"))) {
+          final scriptFile = File('$scriptsDir/${file.name.split("/").last}');
+          await scriptFile.writeAsBytes(file.content);
+        }
+      }
+    }
   }
 }
 

@@ -26,6 +26,18 @@ class Chapter {
   ///Only for local archive Comic
   String? archivePath;
 
+  bool? isFiller;
+
+  String? thumbnailUrl;
+
+  String? description;
+
+  /// video size
+  String? downloadSize;
+
+  /// video duration
+  String? duration;
+
   int? updatedAt;
 
   final manga = IsarLink<Manga>();
@@ -41,6 +53,11 @@ class Chapter {
     this.isRead = false,
     this.lastPageRead = '',
     this.archivePath = '',
+    this.isFiller = false,
+    this.thumbnailUrl,
+    this.description,
+    this.downloadSize,
+    this.duration,
     this.updatedAt = 0,
   });
 
@@ -55,6 +72,11 @@ class Chapter {
     name = json['name'];
     scanlator = json['scanlator'];
     url = json['url'];
+    isFiller = json['isFiller'] ?? false;
+    thumbnailUrl = json['thumbnailUrl'];
+    description = json['description'];
+    downloadSize = json['downloadSize'];
+    duration = json['duration'];
     updatedAt = json['updatedAt'];
   }
 
@@ -69,6 +91,11 @@ class Chapter {
     'name': name,
     'scanlator': scanlator,
     'url': url,
+    'isFiller': isFiller,
+    'thumbnailUrl': thumbnailUrl,
+    'description': description,
+    'downloadSize': downloadSize,
+    'duration': duration,
     'updatedAt': updatedAt ?? 0,
   };
 }
