@@ -228,6 +228,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get incognito_mode_description => '暂停阅读历史';
 
   @override
+  String get downloaded_only => 'Downloaded only';
+
+  @override
+  String get downloaded_only_description =>
+      'Only show downloaded entries in your library';
+
+  @override
   String get download_queue => '下载队列';
 
   @override
@@ -694,6 +701,20 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sync_button_sync => '同步进度';
 
   @override
+  String get sync_button_upload => 'Upload only';
+
+  @override
+  String get sync_button_upload_info =>
+      'This operation will fully replace the remote data with local data!';
+
+  @override
+  String get sync_button_download => 'Download only';
+
+  @override
+  String get sync_button_download_info =>
+      'This operation will fully replace the local data with remote data!';
+
+  @override
   String get sync_on => '启用同步';
 
   @override
@@ -774,6 +795,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get novel_extensions => '小说扩展';
+
+  @override
+  String get extension_settings => 'Extension settings';
 
   @override
   String get anime => '动画';
@@ -1332,6 +1356,27 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get downloads_are_limited_to_wifi => '下载仅限于WiFi';
+
+  @override
+  String get recommendations => 'Recommendations';
+
+  @override
+  String get recommendations_similar => 'similar';
+
+  @override
+  String get recommendations_weights => 'Recommendation Weights';
+
+  @override
+  String get recommendations_weights_genre => 'Genre Similarity';
+
+  @override
+  String get recommendations_weights_setting => 'Setting Similarity';
+
+  @override
+  String get recommendations_weights_synopsis => 'Story Similarity';
+
+  @override
+  String get recommendations_weights_theme => 'Theme Similarity';
 
   @override
   String get manga_extensions_repo => '漫画扩展库';

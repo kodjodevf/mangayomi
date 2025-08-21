@@ -3,6 +3,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
@@ -13,6 +14,7 @@ import 'package:mangayomi/modules/browse/extension/widgets/create_extension.dart
 import 'package:mangayomi/modules/browse/sources/sources_filter_screen.dart';
 import 'package:mangayomi/modules/calendar/calendar_screen.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/migrate_screen.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/recommendation_screen.dart';
 import 'package:mangayomi/modules/more/data_and_storage/create_backup.dart';
 import 'package:mangayomi/modules/more/data_and_storage/data_and_storage.dart';
 import 'package:mangayomi/modules/more/settings/appearance/custom_navigation_settings.dart';
@@ -174,9 +176,9 @@ class RouterNotifier extends ChangeNotifier {
       name: "extension_detail",
       builder: (source) => ExtensionDetail(source: source),
     ),
-    _genericRoute<ItemType>(
+    _genericRoute<(String?, ItemType)>(
       name: "globalSearch",
-      builder: (itemType) => GlobalSearchScreen(itemType: itemType),
+      builder: (data) => GlobalSearchScreen(search: data.$1, itemType: data.$2),
     ),
     _genericRoute(name: "about", child: const AboutScreen()),
     _genericRoute(name: "track", child: const TrackScreen()),
@@ -245,6 +247,14 @@ class RouterNotifier extends ChangeNotifier {
     _genericRoute<(Manga, TrackSearch)>(
       name: "migrate/tracker",
       builder: (data) => MigrationScreen(manga: data.$1, trackSearch: data.$2),
+    ),
+    _genericRoute<(String, ItemType, AlgorithmWeights)>(
+      name: "recommendations",
+      builder: (data) => RecommendationScreen(
+        name: data.$1,
+        itemType: data.$2,
+        algorithmWeights: data.$3,
+      ),
     ),
   ];
 

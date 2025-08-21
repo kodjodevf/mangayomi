@@ -234,6 +234,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get incognito_mode_description => 'Pausiert den Leseverlauf';
 
   @override
+  String get downloaded_only => 'Downloaded only';
+
+  @override
+  String get downloaded_only_description =>
+      'Only show downloaded entries in your library';
+
+  @override
   String get download_queue => 'Download-Warteschlange';
 
   @override
@@ -704,6 +711,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get sync_button_sync => 'Jetzt synchronisieren';
 
   @override
+  String get sync_button_upload => 'Upload only';
+
+  @override
+  String get sync_button_upload_info =>
+      'This operation will fully replace the remote data with local data!';
+
+  @override
+  String get sync_button_download => 'Download only';
+
+  @override
+  String get sync_button_download_info =>
+      'This operation will fully replace the local data with remote data!';
+
+  @override
   String get sync_on => 'Sync aktivieren';
 
   @override
@@ -787,6 +808,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get novel_extensions => 'Novel-Erweiterungen';
+
+  @override
+  String get extension_settings => 'Extension settings';
 
   @override
   String get anime => 'Anime';
@@ -1368,6 +1392,27 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get downloads_are_limited_to_wifi =>
       'Downloads sind nur über WLAN verfügbar';
+
+  @override
+  String get recommendations => 'Recommendations';
+
+  @override
+  String get recommendations_similar => 'similar';
+
+  @override
+  String get recommendations_weights => 'Recommendation Weights';
+
+  @override
+  String get recommendations_weights_genre => 'Genre Similarity';
+
+  @override
+  String get recommendations_weights_setting => 'Setting Similarity';
+
+  @override
+  String get recommendations_weights_synopsis => 'Story Similarity';
+
+  @override
+  String get recommendations_weights_theme => 'Theme Similarity';
 
   @override
   String get manga_extensions_repo => 'Manga-Erweiterungs-Repository';

@@ -537,6 +537,18 @@ abstract class AppLocalizations {
   /// **'Pauses reading history'**
   String get incognito_mode_description;
 
+  /// No description provided for @downloaded_only.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloaded only'**
+  String get downloaded_only;
+
+  /// No description provided for @downloaded_only_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Only show downloaded entries in your library'**
+  String get downloaded_only_description;
+
   /// No description provided for @download_queue.
   ///
   /// In en, this message translates to:
@@ -1431,6 +1443,30 @@ abstract class AppLocalizations {
   /// **'Sync progress'**
   String get sync_button_sync;
 
+  /// No description provided for @sync_button_upload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload only'**
+  String get sync_button_upload;
+
+  /// No description provided for @sync_button_upload_info.
+  ///
+  /// In en, this message translates to:
+  /// **'This operation will fully replace the remote data with local data!'**
+  String get sync_button_upload_info;
+
+  /// No description provided for @sync_button_download.
+  ///
+  /// In en, this message translates to:
+  /// **'Download only'**
+  String get sync_button_download;
+
+  /// No description provided for @sync_button_download_info.
+  ///
+  /// In en, this message translates to:
+  /// **'This operation will fully replace the local data with remote data!'**
+  String get sync_button_download_info;
+
   /// No description provided for @sync_on.
   ///
   /// In en, this message translates to:
@@ -1586,6 +1622,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Novel Extensions'**
   String get novel_extensions;
+
+  /// No description provided for @extension_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Extension settings'**
+  String get extension_settings;
 
   /// No description provided for @anime.
   ///
@@ -2648,6 +2690,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Downloads are limited to Wi-Fi only'**
   String get downloads_are_limited_to_wifi;
+
+  /// No description provided for @recommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendations'**
+  String get recommendations;
+
+  /// No description provided for @recommendations_similar.
+  ///
+  /// In en, this message translates to:
+  /// **'similar'**
+  String get recommendations_similar;
+
+  /// No description provided for @recommendations_weights.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendation Weights'**
+  String get recommendations_weights;
+
+  /// No description provided for @recommendations_weights_genre.
+  ///
+  /// In en, this message translates to:
+  /// **'Genre Similarity'**
+  String get recommendations_weights_genre;
+
+  /// No description provided for @recommendations_weights_setting.
+  ///
+  /// In en, this message translates to:
+  /// **'Setting Similarity'**
+  String get recommendations_weights_setting;
+
+  /// No description provided for @recommendations_weights_synopsis.
+  ///
+  /// In en, this message translates to:
+  /// **'Story Similarity'**
+  String get recommendations_weights_synopsis;
+
+  /// No description provided for @recommendations_weights_theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme Similarity'**
+  String get recommendations_weights_theme;
 
   /// No description provided for @manga_extensions_repo.
   ///

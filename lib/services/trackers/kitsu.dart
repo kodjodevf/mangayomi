@@ -160,7 +160,7 @@ class Kitsu extends _$Kitsu {
             mediaId: jsonRes['id'],
             summary: jsonRes['synopsis'] ?? "",
             totalChapter: (jsonRes[totalChapter] ?? 0),
-            coverUrl: jsonRes['posterImage']['original'] ?? "",
+            coverUrl: jsonRes['posterImage']?['original'] ?? "",
             title: jsonRes['canonicalTitle'],
             startDate: "",
             publishingType: (jsonRes["subtype"] ?? ""),
@@ -192,22 +192,23 @@ class Kitsu extends _$Kitsu {
       final mediaId = jsonRes['id'] is String
           ? int.parse(jsonRes['id'])
           : jsonRes['id'];
-      final score = jsonRes['attributes']['averageRating'] is String
-          ? double.parse(jsonRes['attributes']['averageRating'])
-          : jsonRes['attributes']['averageRating'];
+      final attributes = jsonRes['attributes'];
+      final score = attributes['averageRating'] is String
+          ? double.parse(attributes['averageRating'])
+          : attributes['averageRating'];
       return TrackSearch(
         libraryId: mediaId,
         syncId: syncId,
         trackingUrl: _mediaUrl(isManga ? 'manga' : 'anime', mediaId),
         mediaId: mediaId,
-        summary: jsonRes['attributes']['synopsis'] ?? "",
-        totalChapter: (jsonRes['attributes'][totalChapter] ?? 0),
-        coverUrl: jsonRes['attributes']['posterImage']['original'] ?? "",
-        title: jsonRes['attributes']['canonicalTitle'],
+        summary: attributes['synopsis'] ?? "",
+        totalChapter: (attributes[totalChapter] ?? 0),
+        coverUrl: attributes['posterImage']?['original'] ?? "",
+        title: attributes['canonicalTitle'],
         startDate: "",
         score: score,
-        publishingType: (jsonRes['attributes']['subtype'] ?? ""),
-        publishingStatus: jsonRes['attributes']['endDate'] == null
+        publishingType: (attributes['subtype'] ?? ""),
+        publishingStatus: attributes['endDate'] == null
             ? "Publishing"
             : "Finished",
       );
@@ -250,7 +251,7 @@ class Kitsu extends _$Kitsu {
           trackingUrl: _mediaUrl(type, id),
           summary: included['synopsis'] ?? "",
           totalChapter: included[totalChapter] ?? 0,
-          coverUrl: included['posterImage']['original'] ?? "",
+          coverUrl: included['posterImage']?['original'] ?? "",
           title: included['canonicalTitle'],
           startDate: "",
           publishingType: (included["subtype"] ?? ""),

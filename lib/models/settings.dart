@@ -275,6 +275,10 @@ class Settings {
   late AudioChannel audioChannels;
 
   int? volumeBoostCap;
+  
+  bool? downloadedOnlyMode;
+  
+  late AlgorithmWeights? algorithmWeights;
 
   Settings({
     this.id = 227,
@@ -399,6 +403,8 @@ class Settings {
     this.enableAudioPitchCorrection,
     this.audioChannels = AudioChannel.autoSafe,
     this.volumeBoostCap,
+    this.downloadedOnlyMode = false,
+    this.algorithmWeights,
   });
 
   Settings.fromJson(Map<String, dynamic> json) {
@@ -630,6 +636,10 @@ class Settings {
     audioChannels = AudioChannel
         .values[json['audioChannels'] ?? AudioChannel.autoSafe.index];
     volumeBoostCap = json['volumeBoostCap'];
+    downloadedOnlyMode = json['downloadedOnlyMode'];
+    algorithmWeights = json['algorithmWeights'] != null
+        ? AlgorithmWeights.fromJson(json['algorithmWeights'])
+        : null;
   }
 
   Map<String, dynamic> toJson() => {
@@ -776,6 +786,9 @@ class Settings {
     'enableAudioPitchCorrection': enableAudioPitchCorrection,
     'audioChannels': audioChannels.index,
     'volumeBoostCap': volumeBoostCap,
+    'downloadedOnlyMode': downloadedOnlyMode,
+    if (algorithmWeights != null)
+      'algorithmWeights': algorithmWeights!.toJson(),
   };
 }
 
@@ -1143,6 +1156,35 @@ class PlayerSubtitleSettings {
     'backgroundColorR': backgroundColorR,
     'backgroundColorG': backgroundColorG,
     'backgroundColorB': backgroundColorB,
+  };
+}
+
+@embedded
+class AlgorithmWeights {
+  int? genre;
+  int? setting;
+  int? synopsis;
+  int? theme;
+
+  AlgorithmWeights({
+    this.genre = 30,
+    this.setting = 15,
+    this.synopsis = 40,
+    this.theme = 20,
+  });
+
+  AlgorithmWeights.fromJson(Map<String, dynamic> json) {
+    genre = json['genre'];
+    setting = json['setting'];
+    synopsis = json['synopsis'];
+    theme = json['theme'];
+  }
+
+  Map<String, dynamic> toJson() => {
+    'genre': genre,
+    'setting': setting,
+    'synopsis': synopsis,
+    'theme': theme,
   };
 }
 
