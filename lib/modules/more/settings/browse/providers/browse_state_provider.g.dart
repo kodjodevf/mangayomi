@@ -158,7 +158,7 @@ class _GetRepoInfosProviderElement
 }
 
 String _$androidProxyServerStateHash() =>
-    r'c16bddb7d686a13e8f34a18dec2d983232f34c65';
+    r'3ac060f8a61added586dcefc889fa44c71263c5b';
 
 /// See also [AndroidProxyServerState].
 @ProviderFor(AndroidProxyServerState)

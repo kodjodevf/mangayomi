@@ -52,9 +52,14 @@ class Source {
 
   String? headers;
 
+  /// For Mihon ext
   bool? supportLatest;
 
+  /// For Mihon ext
   String? filterList;
+
+  /// For Mihon ext
+  String? preferenceList;
 
   bool? isManga;
 
@@ -102,6 +107,7 @@ class Source {
     this.headers = '',
     this.supportLatest,
     this.filterList,
+    this.preferenceList,
     this.isManga,
     this.itemType = ItemType.manga,
     this.appMinVerReq = "",
@@ -127,6 +133,7 @@ class Source {
     headers = json['headers'];
     supportLatest = json['supportLatest'];
     filterList = json['filterList'];
+    preferenceList = json['preferenceList'];
     iconUrl = json['iconUrl'];
     id = json['id'];
     isActive = json['isActive'];
@@ -164,6 +171,7 @@ class Source {
     'headers': headers,
     'supportLatest': supportLatest,
     'filterList': filterList,
+    'preferenceList': preferenceList,
     'iconUrl': iconUrl,
     'id': id,
     'isActive': isActive,

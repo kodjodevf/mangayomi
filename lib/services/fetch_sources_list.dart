@@ -4,6 +4,7 @@ import 'package:http_interceptor/http_interceptor.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/eval/model/filter.dart';
+import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -133,6 +134,7 @@ Future<void> _updateSource(
   Map<String, String> headers = {};
   bool? supportLatest;
   FilterList? filterList;
+  List<SourcePreference>? preferenceList;
   if (source.sourceCodeLanguage == SourceCodeLanguage.mihon) {
     headers = await fetchHeadersDalvik(
       http,
@@ -149,6 +151,11 @@ Future<void> _updateSource(
       source..sourceCode = sourceCode,
       androidProxyServer,
     );
+    preferenceList = await fetchPreferencesDalvik(
+      http,
+      source..sourceCode = sourceCode,
+      androidProxyServer,
+    );
   } else {
     headers = getExtensionService(
       source..sourceCode = sourceCode,
@@ -160,6 +167,9 @@ Future<void> _updateSource(
     ..headers = jsonEncode(headers)
     ..supportLatest = supportLatest
     ..filterList = filterList != null ? jsonEncode(filterList.toJson()) : null
+    ..preferenceList = preferenceList != null
+        ? jsonEncode(preferenceList.map((e) => e.toJson()).toList())
+        : null
     ..isAdded = true
     ..sourceCode = sourceCode
     ..sourceCodeUrl = source.sourceCodeUrl
@@ -406,6 +416,33 @@ Future<FilterList?> fetchFilterListDalvik(
       }
     }).toList();
     return FilterList(filters);
+  } catch (_) {
+    return null;
+  }
+}
+
+Future<List<SourcePreference>?> fetchPreferencesDalvik(
+  InterceptedClient client,
+  Source source,
+  String androidProxyServer,
+) async {
+  try {
+    final name = source.itemType == ItemType.anime ? "Anime" : "Manga";
+    final res = await client.post(
+      Uri.parse("$androidProxyServer/dalvik"),
+      body: jsonEncode({
+        "method": "preferences$name",
+        "data": source.sourceCode,
+      }),
+    );
+    final data = jsonDecode(res.body) as List;
+    return data
+        .map(
+          (e) => SourcePreference.fromJson(e)
+            ..id = null
+            ..sourceId = source.id,
+        )
+        .toList();
   } catch (_) {
     return null;
   }

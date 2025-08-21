@@ -52,6 +52,7 @@ class MihonExtensionService implements ExtensionService {
         "method": "getPopular$name",
         "page": page + 1,
         "search": "",
+        "preferences": getSourcePreferences(),
         "data": source.sourceCode,
       }),
     );
@@ -86,6 +87,7 @@ class MihonExtensionService implements ExtensionService {
         "method": "getLatest$name",
         "page": page + 1,
         "search": "",
+        "preferences": getSourcePreferences(),
         "data": source.sourceCode,
       }),
     );
@@ -120,7 +122,8 @@ class MihonExtensionService implements ExtensionService {
         "method": "getSearch$name",
         "page": max(1, page),
         "search": query,
-        // "filterList$name": _convertFilters(filters),
+        // "filterList": _convertFilters(filters),
+        "preferences": getSourcePreferences(),
         "data": source.sourceCode,
       }),
     );
@@ -155,6 +158,7 @@ class MihonExtensionService implements ExtensionService {
         "method": "getDetails$name",
         if (source.itemType == ItemType.manga) "mangaData": {"url": url},
         if (source.itemType == ItemType.anime) "animeData": {"url": url},
+        "preferences": getSourcePreferences(),
         "data": source.sourceCode,
       }),
     );
@@ -189,6 +193,7 @@ class MihonExtensionService implements ExtensionService {
             : "getChapterList",
         if (source.itemType == ItemType.manga) "mangaData": {"url": url},
         if (source.itemType == ItemType.anime) "animeData": {"url": url},
+        "preferences": getSourcePreferences(),
         "data": source.sourceCode,
       }),
     );
@@ -214,6 +219,7 @@ class MihonExtensionService implements ExtensionService {
       body: jsonEncode({
         "method": "getPageList",
         "chapterData": {"url": url},
+        "preferences": getSourcePreferences(),
         "data": source.sourceCode,
       }),
     );
@@ -228,6 +234,7 @@ class MihonExtensionService implements ExtensionService {
       body: jsonEncode({
         "method": "getVideoList",
         "episodeData": {"url": url},
+        "preferences": getSourcePreferences(),
         "data": source.sourceCode,
       }),
     );
@@ -288,37 +295,44 @@ class MihonExtensionService implements ExtensionService {
 
   @override
   List<SourcePreference> getSourcePreferences() {
-    return [];
+    if (source.preferenceList == null) {
+      return [];
+    }
+    final data = jsonDecode(source.preferenceList!) as List;
+    return data.map((e) => SourcePreference.fromJson(e)).toList();
   }
 
   List<dynamic> _convertFilters(List<dynamic> filters) {
     return filters.expand((e) sync* {
       if (e is TextFilter) {
-        yield {"name": e.name, "state": e.state};
+        yield {"name": e.name, "stateString": e.state, "type": "TextFilter"};
       } else if (e is GroupFilter) {
         yield {
           "name": e.name,
-          "state": e.state.expand((e) sync* {
+          "stateList": e.state.expand((e) sync* {
             if (e is CheckBoxFilter) {
-              yield {"name": e.name, "id": e.value, "state": e.state};
+              yield {
+                "name": e.name,
+                "stateBoolean": e.state,
+                "type": "CheckBoxFilter",
+              };
             } else if (e is TriStateFilter) {
               yield {
                 "name": e.name,
-                "id": e.value,
-                "state": e.state,
-                "included": e.state == 1,
-                "ignored": e.state == 0,
-                "excluded": e.state == 2,
+                "stateInt": e.state,
+                "type": "TriStateFilter",
               };
             }
           }).toList(),
+          "type": "GroupFilter",
         };
       } else if (e is SelectFilter) {
-        yield {"name": e.name, "state": e.state};
+        yield {"name": e.name, "stateInt": e.state, "type": "SelectFilter"};
       } else if (e is SortFilter) {
         yield {
           "name": e.name,
-          "state": {"ascending": e.state.ascending, "index": e.state.index},
+          "stateSort": {"ascending": e.state.ascending, "index": e.state.index},
+          "type": "SortFilter",
         };
       }
     }).toList();
