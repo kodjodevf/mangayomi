@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/eval/javascript/http.dart';
 import 'package:mangayomi/eval/model/filter.dart';
@@ -117,7 +118,7 @@ class MihonExtensionService implements ExtensionService {
       Uri.parse("$androidProxyServer/dalvik"),
       body: jsonEncode({
         "method": "getSearch$name",
-        "page": page + 1,
+        "page": max(1, page),
         "search": query,
         // "filterList$name": _convertFilters(filters),
         "data": source.sourceCode,
@@ -233,10 +234,12 @@ class MihonExtensionService implements ExtensionService {
     final data = jsonDecode(res.body) as List;
     return data.map((e) {
       final tempHeaders =
-          e['headers']['namesAndValues\$okhttp'] as List<dynamic>;
+          e['headers']?['namesAndValues\$okhttp'] as List<dynamic>?;
       final Map<String, String> headers = {};
-      for (var i = 0; i + 1 < tempHeaders.length; i += 2) {
-        headers[tempHeaders[i]] = tempHeaders[i + 1];
+      if (tempHeaders != null) {
+        for (var i = 0; i + 1 < tempHeaders.length; i += 2) {
+          headers[tempHeaders[i]] = tempHeaders[i + 1];
+        }
       }
       return Video(
         e['videoUrl'],
@@ -245,12 +248,22 @@ class MihonExtensionService implements ExtensionService {
         headers: headers,
         audios:
             (e['audioTracks'] as List?)
-                ?.map((e) => Track(file: e['file'], label: e['label']))
+                ?.map(
+                  (e) => Track(
+                    file: e['file'] ?? e['url'],
+                    label: e['label'] ?? e['lang'],
+                  ),
+                )
                 .toList() ??
             [],
         subtitles:
             (e['subtitleTracks'] as List?)
-                ?.map((e) => Track(file: e['file'], label: e['label']))
+                ?.map(
+                  (e) => Track(
+                    file: e['file'] ?? e['url'],
+                    label: e['label'] ?? e['lang'],
+                  ),
+                )
                 .toList() ??
             [],
       );
