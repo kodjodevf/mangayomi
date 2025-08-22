@@ -122,7 +122,7 @@ class MihonExtensionService implements ExtensionService {
         "method": "getSearch$name",
         "page": max(1, page),
         "search": query,
-        // "filterList": _convertFilters(filters),
+        "filterList": _convertFilters(filters),
         "preferences": getSourcePreferences(),
         "data": source.sourceCode,
       }),
@@ -289,8 +289,7 @@ class MihonExtensionService implements ExtensionService {
 
   @override
   FilterList getFilterList() {
-    // return source.getFilterList() ?? FilterList([]);
-    return FilterList([]);
+    return source.getFilterList() ?? FilterList([]);
   }
 
   @override
