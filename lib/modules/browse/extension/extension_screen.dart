@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/widgets/custom_sliver_grouped_list_view.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
@@ -66,6 +68,9 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
     final streamExtensions = ref.watch(
       getExtensionsStreamProvider(widget.itemType),
     );
+    final repositories = ref.watch(
+      extensionsRepoStateProvider(widget.itemType),
+    );
 
     final l10n = l10nLocalizations(context)!;
 
@@ -92,6 +97,12 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
             final notInstalledEntries = <Source>[];
 
             for (var element in filteredData) {
+              if (repositories
+                      .firstWhereOrNull((e) => e == element.repo)
+                      ?.hidden ??
+                  false) {
+                continue;
+              }
               final isLatestVersion = element.version == element.versionLast;
 
               if (compareVersions(

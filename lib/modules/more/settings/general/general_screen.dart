@@ -34,6 +34,7 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context);
+    final customDns = ref.watch(customDnsStateProvider);
     final enableDiscordRpc = ref.watch(enableDiscordRpcStateProvider);
     final hideDiscordRpcInIncognito = ref.watch(
       hideDiscordRpcInIncognitoStateProvider,
@@ -48,6 +49,14 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            ListTile(
+              onTap: () => _showCustomDnsDialog(context, ref, customDns),
+              title: Text(l10n.custom_dns),
+              subtitle: Text(
+                customDns,
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
+              ),
+            ),
             Container(
               margin: const EdgeInsets.all(20.0),
               padding: const EdgeInsets.all(10.0),
@@ -287,6 +296,79 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showCustomDnsDialog(
+    BuildContext context,
+    WidgetRef ref,
+    String customDns,
+  ) {
+    final dnsController = TextEditingController(text: customDns);
+    String dns = customDns;
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: Text(
+              context.l10n.custom_dns,
+              style: const TextStyle(fontSize: 30),
+            ),
+            content: SizedBox(
+              width: context.width(0.8),
+              height: context.height(0.3),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: TextFormField(
+                      controller: dnsController,
+                      autofocus: true,
+                      onChanged: (value) => setState(() {
+                        dns = value;
+                      }),
+                      decoration: InputDecoration(
+                        hintText: "8.8.8.8",
+                        filled: false,
+                        contentPadding: const EdgeInsets.all(12),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(width: 0.4),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5),
+                          borderSide: const BorderSide(),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: SizedBox(
+                      width: context.width(1),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          ref.read(customDnsStateProvider.notifier).set(dns);
+                          Navigator.pop(context);
+                        },
+                        child: Text(context.l10n.dialog_confirm),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }

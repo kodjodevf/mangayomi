@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
+import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/eval/javascript/http.dart';
@@ -74,7 +75,10 @@ Future<GetChapterPagesModel> getChapterPages(
         pageUrls.add(PageUrl(isarPageUrls.urls![i], headers: headers));
       }
     } else {
-      pageUrls = await getExtensionService(source).getPageList(chapter.url!);
+      pageUrls = await getExtensionService(
+        source,
+        ref.read(androidProxyServerStateProvider),
+      ).getPageList(chapter.url!);
     }
   }
 

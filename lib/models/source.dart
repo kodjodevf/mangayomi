@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:isar/isar.dart';
+import 'package:mangayomi/eval/model/filter.dart';
 import 'package:mangayomi/eval/model/m_source.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -49,6 +52,15 @@ class Source {
 
   String? headers;
 
+  /// For Mihon ext
+  bool? supportLatest;
+
+  /// For Mihon ext
+  String? filterList;
+
+  /// For Mihon ext
+  String? preferenceList;
+
   bool? isManga;
 
   @enumerated
@@ -93,6 +105,9 @@ class Source {
     this.versionLast = "0.0.1",
     this.sourceCode = '',
     this.headers = '',
+    this.supportLatest,
+    this.filterList,
+    this.preferenceList,
     this.isManga,
     this.itemType = ItemType.manga,
     this.appMinVerReq = "",
@@ -104,6 +119,10 @@ class Source {
     this.updatedAt = 0,
   });
 
+  FilterList? getFilterList() => filterList != null
+      ? FilterList.fromJson(jsonDecode(filterList!) as Map<String, dynamic>)
+      : null;
+
   Source.fromJson(Map<String, dynamic> json) {
     apiUrl = json['apiUrl'];
     appMinVerReq = json['appMinVerReq'];
@@ -112,6 +131,9 @@ class Source {
     dateFormatLocale = json['dateFormatLocale'];
     hasCloudflare = json['hasCloudflare'];
     headers = json['headers'];
+    supportLatest = json['supportLatest'];
+    filterList = json['filterList'];
+    preferenceList = json['preferenceList'];
     iconUrl = json['iconUrl'];
     id = json['id'];
     isActive = json['isActive'];
@@ -147,6 +169,9 @@ class Source {
     'dateFormatLocale': dateFormatLocale,
     'hasCloudflare': hasCloudflare,
     'headers': headers,
+    'supportLatest': supportLatest,
+    'filterList': filterList,
+    'preferenceList': preferenceList,
     'iconUrl': iconUrl,
     'id': id,
     'isActive': isActive,
@@ -191,4 +216,4 @@ class Source {
   }
 }
 
-enum SourceCodeLanguage { dart, javascript }
+enum SourceCodeLanguage { dart, javascript, mihon }

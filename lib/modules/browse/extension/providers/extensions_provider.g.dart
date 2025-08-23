@@ -7,7 +7,7 @@ part of 'extensions_provider.dart';
 // **************************************************************************
 
 String _$getExtensionsStreamHash() =>
-    r'3c5d6625c40c222f25fc8141df078dd46bcc762f';
+    r'af34092ebf31c784010110af746e3ee2731297bd';
 
 /// Copied from Dart SDK
 class _SystemHash {

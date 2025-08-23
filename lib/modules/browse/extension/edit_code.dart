@@ -9,6 +9,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/manga/home/widget/filter_widget.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/app_font_family.dart';
+import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_detail.dart';
 import 'package:mangayomi/services/get_filter_list.dart';
@@ -314,6 +315,7 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
                                   if (source != null) {
                                     final service = getExtensionService(
                                       source!,
+                                      ref.read(androidProxyServerStateProvider),
                                     );
 
                                     try {

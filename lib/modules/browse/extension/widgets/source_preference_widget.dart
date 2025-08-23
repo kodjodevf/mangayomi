@@ -45,15 +45,15 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                     showDialog(
                       context: context,
                       builder: (context) => EditTextDialogWidget(
-                        text: pref.value!,
+                        text: pref.value ?? "",
                         onChanged: (value) {
                           setState(() {
                             pref.value = value;
                           });
                           setPreferenceSetting(preference, widget.source);
                         },
-                        dialogTitle: pref.dialogTitle!,
-                        dialogMessage: pref.dialogMessage!,
+                        dialogTitle: pref.dialogTitle ?? "",
+                        dialogMessage: pref.dialogMessage ?? "",
                       ),
                     );
                   },

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/video.dart';
+import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/torrent_server.dart';
 import 'package:mangayomi/utils/utils.dart';
@@ -10,6 +11,8 @@ import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
+
+import '../models/source.dart';
 part 'get_video_list.g.dart';
 
 @riverpod
@@ -60,8 +63,14 @@ Future<(List<Video>, bool, List<String>, Directory?)> getVideoList(
     episode.manga.value!.lang!,
     episode.manga.value!.source!,
   );
+  final proxyServer = ref.read(androidProxyServerStateProvider);
 
-  if (source?.isTorrent ?? false || episode.manga.value!.source == "torrent") {
+  final isMihonTorrent =
+      source?.sourceCodeLanguage == SourceCodeLanguage.mihon &&
+      source!.name!.contains("(Torrent");
+  if ((source?.isTorrent ?? false) ||
+      episode.manga.value!.source == "torrent" ||
+      isMihonTorrent) {
     List<Video> list = [];
 
     List<Video> torrentList = [];
@@ -74,7 +83,10 @@ Future<(List<Video>, bool, List<String>, Directory?)> getVideoList(
     }
 
     try {
-      list = await getExtensionService(source!).getVideoList(episode.url!);
+      list = await getExtensionService(
+        source!,
+        proxyServer,
+      ).getVideoList(episode.url!);
     } catch (e) {
       list = [Video(episode.url!, episode.name!, episode.url!)];
     }
@@ -98,6 +110,7 @@ Future<(List<Video>, bool, List<String>, Directory?)> getVideoList(
 
   List<Video> list = await getExtensionService(
     source!,
+    proxyServer,
   ).getVideoList(episode.url!);
   List<Video> videos = [];
 

@@ -54,8 +54,20 @@ class MClient {
     rhttp.ClientSettings? settings,
     bool showCloudFlareError = true,
   }) {
+    final clientSettings = customDns == null || customDns!.trim().isEmpty
+        ? settings
+        : settings?.copyWith(
+                dnsSettings: DnsSettings.dynamic(
+                  resolver: (host) async => [customDns!],
+                ),
+              ) ??
+              ClientSettings(
+                dnsSettings: DnsSettings.dynamic(
+                  resolver: (host) async => [customDns!],
+                ),
+              );
     return InterceptedClient.build(
-      client: httpClient(settings: settings, reqcopyWith: reqcopyWith),
+      client: httpClient(settings: clientSettings, reqcopyWith: reqcopyWith),
       retryPolicy: ResolveCloudFlareChallenge(showCloudFlareError),
       interceptors: [
         MCookieManager(reqcopyWith),

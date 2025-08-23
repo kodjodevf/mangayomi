@@ -21,6 +21,7 @@ class BrowseSScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final androidProxyServer = ref.watch(androidProxyServerStateProvider);
     final onlyIncludePinnedSource = ref.watch(
       onlyIncludePinnedSourceStateProvider,
     );
@@ -50,6 +51,21 @@ class BrowseSScreen extends ConsumerWidget {
                           ),
                         ),
                       ],
+                    ),
+                  ),
+                  ListTile(
+                    onTap: () => _showAndroidProxyServerDialog(
+                      context,
+                      ref,
+                      androidProxyServer,
+                    ),
+                    title: Text(l10n.android_proxy_server),
+                    subtitle: Text(
+                      androidProxyServer,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.secondaryColor,
+                      ),
                     ),
                   ),
                   ListTile(
@@ -251,6 +267,82 @@ void _showClearAllSourcesDialog(BuildContext context, dynamic l10n) {
         ],
       );
     },
+  );
+}
+
+void _showAndroidProxyServerDialog(
+  BuildContext context,
+  WidgetRef ref,
+  String proxyServer,
+) {
+  final serverController = TextEditingController(text: proxyServer);
+  String server = proxyServer;
+  showDialog(
+    context: context,
+    builder: (context) => StatefulBuilder(
+      builder: (context, setState) {
+        return AlertDialog(
+          title: Text(
+            context.l10n.android_proxy_server,
+            style: const TextStyle(fontSize: 30),
+          ),
+          content: SizedBox(
+            width: context.width(0.8),
+            height: context.height(0.3),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: TextFormField(
+                    controller: serverController,
+                    autofocus: true,
+                    onChanged: (value) => setState(() {
+                      server = value;
+                    }),
+                    decoration: InputDecoration(
+                      hintText:
+                          "Server IP (e.g., 10.0.0.5 or https://example.com)",
+                      filled: false,
+                      contentPadding: const EdgeInsets.all(12),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(width: 0.4),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: const BorderSide(),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: SizedBox(
+                    width: context.width(1),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        ref
+                            .read(androidProxyServerStateProvider.notifier)
+                            .set(server);
+                        Navigator.pop(context);
+                      },
+                      child: Text(context.l10n.dialog_confirm),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    ),
   );
 }
 

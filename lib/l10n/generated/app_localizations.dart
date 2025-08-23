@@ -2751,6 +2751,18 @@ abstract class AppLocalizations {
   /// **'Novel extensions repo'**
   String get novel_extensions_repo;
 
+  /// No description provided for @custom_dns.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom DNS (leave blank to use system DNS)'**
+  String get custom_dns;
+
+  /// No description provided for @android_proxy_server.
+  ///
+  /// In en, this message translates to:
+  /// **'Android Proxy Server (ApkBridge)'**
+  String get android_proxy_server;
+
   /// No description provided for @undefined.
   ///
   /// In en, this message translates to:
@@ -3279,17 +3291,11 @@ abstract class AppLocalizations {
   /// **'Type \'manga\', \'anime\' and/or \'novel\' (separated by a comma) to remove all related entries'**
   String get clear_library_input;
 
-  /// No description provided for @enable_pip.
+  /// No description provided for @recommendations_similarity.
   ///
   /// In en, this message translates to:
-  /// **'Enable Picture-in-Picture (PiP)'**
-  String get enable_pip;
-
-  /// No description provided for @enable_auto_pip.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter PiP automatically when moving out of app'**
-  String get enable_auto_pip;
+  /// **'Similarity:'**
+  String get recommendations_similarity;
 }
 
 class _AppLocalizationsDelegate
