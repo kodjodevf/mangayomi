@@ -446,6 +446,8 @@
   "manga_extensions_repo": "Manga extensions repo",
   "anime_extensions_repo": "Anime extensions repo",
   "novel_extensions_repo": "Novel extensions repo",
+  "custom_dns": "Custom DNS (leave blank to use system DNS)",
+  "android_proxy_server": "Android Proxy Server (ApkBridge)",
   "undefined": "undefined",
   "empty_extensions_repo": "You don't have any repository urls here. Click on the plus button to add one!",
   "add_extensions_repo": "Add repo URL",

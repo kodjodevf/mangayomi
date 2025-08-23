@@ -4,6 +4,7 @@ import 'package:epubx/epubx.dart';
 import 'package:html/parser.dart';
 import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -48,11 +49,16 @@ Future<(String, EpubBook?)> getHtmlContent(
     chapter.manga.value!.source!,
   );
   String? html;
+  final proxyServer = ref.read(androidProxyServerStateProvider);
   if (htmlContent != null) {
-    html = await getExtensionService(source!).cleanHtmlContent(htmlContent);
+    html = await getExtensionService(
+      source!,
+      proxyServer,
+    ).cleanHtmlContent(htmlContent);
   } else {
     html = await getExtensionService(
       source!,
+      proxyServer,
     ).getHtmlContent(chapter.manga.value!.name!, chapter.url!);
   }
   return (_buildHtml(html.substring(1, html.length - 1)), null);

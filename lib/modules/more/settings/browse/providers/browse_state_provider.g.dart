@@ -157,6 +157,23 @@ class _GetRepoInfosProviderElement
   String get jsonUrl => (origin as GetRepoInfosProvider).jsonUrl;
 }
 
+String _$androidProxyServerStateHash() =>
+    r'3ac060f8a61added586dcefc889fa44c71263c5b';
+
+/// See also [AndroidProxyServerState].
+@ProviderFor(AndroidProxyServerState)
+final androidProxyServerStateProvider =
+    AutoDisposeNotifierProvider<AndroidProxyServerState, String>.internal(
+  AndroidProxyServerState.new,
+  name: r'androidProxyServerStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$androidProxyServerStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$AndroidProxyServerState = AutoDisposeNotifier<String>;
 String _$onlyIncludePinnedSourceStateHash() =>
     r'b9f707348d5d0f7abfa8e615c1d2b35c6dbd57f3';
 
@@ -175,7 +192,7 @@ final onlyIncludePinnedSourceStateProvider =
 
 typedef _$OnlyIncludePinnedSourceState = AutoDisposeNotifier<bool>;
 String _$extensionsRepoStateHash() =>
-    r'5c23b8b7ecf83b253b76a2663a71c0c752e53a40';
+    r'86edc9a3f78d72acda4b20a058031c345ee406eb';
 
 abstract class _$ExtensionsRepoState
     extends BuildlessAutoDisposeNotifier<List<Repo>> {

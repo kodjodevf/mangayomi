@@ -6,7 +6,7 @@ part of 'headers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$headersHash() => r'47499544c2d972da6a0c20f41fe3fc46d1d7c1a0';
+String _$headersHash() => r'a33ccbf1971e6b5da84f25a852c675a4d8821ea2';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -42,10 +42,12 @@ class HeadersFamily extends Family<Map<String, String>> {
   HeadersProvider call({
     required String source,
     required String lang,
+    String androidProxyServer = "",
   }) {
     return HeadersProvider(
       source: source,
       lang: lang,
+      androidProxyServer: androidProxyServer,
     );
   }
 
@@ -56,6 +58,7 @@ class HeadersFamily extends Family<Map<String, String>> {
     return call(
       source: provider.source,
       lang: provider.lang,
+      androidProxyServer: provider.androidProxyServer,
     );
   }
 
@@ -80,11 +83,13 @@ class HeadersProvider extends AutoDisposeProvider<Map<String, String>> {
   HeadersProvider({
     required String source,
     required String lang,
+    String androidProxyServer = "",
   }) : this._internal(
           (ref) => headers(
             ref as HeadersRef,
             source: source,
             lang: lang,
+            androidProxyServer: androidProxyServer,
           ),
           from: headersProvider,
           name: r'headersProvider',
@@ -96,6 +101,7 @@ class HeadersProvider extends AutoDisposeProvider<Map<String, String>> {
           allTransitiveDependencies: HeadersFamily._allTransitiveDependencies,
           source: source,
           lang: lang,
+          androidProxyServer: androidProxyServer,
         );
 
   HeadersProvider._internal(
@@ -107,10 +113,12 @@ class HeadersProvider extends AutoDisposeProvider<Map<String, String>> {
     required super.from,
     required this.source,
     required this.lang,
+    required this.androidProxyServer,
   }) : super.internal();
 
   final String source;
   final String lang;
+  final String androidProxyServer;
 
   @override
   Override overrideWith(
@@ -127,6 +135,7 @@ class HeadersProvider extends AutoDisposeProvider<Map<String, String>> {
         debugGetCreateSourceHash: null,
         source: source,
         lang: lang,
+        androidProxyServer: androidProxyServer,
       ),
     );
   }
@@ -140,7 +149,8 @@ class HeadersProvider extends AutoDisposeProvider<Map<String, String>> {
   bool operator ==(Object other) {
     return other is HeadersProvider &&
         other.source == source &&
-        other.lang == lang;
+        other.lang == lang &&
+        other.androidProxyServer == androidProxyServer;
   }
 
   @override
@@ -148,6 +158,7 @@ class HeadersProvider extends AutoDisposeProvider<Map<String, String>> {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, source.hashCode);
     hash = _SystemHash.combine(hash, lang.hashCode);
+    hash = _SystemHash.combine(hash, androidProxyServer.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -161,6 +172,9 @@ mixin HeadersRef on AutoDisposeProviderRef<Map<String, String>> {
 
   /// The parameter `lang` of this provider.
   String get lang;
+
+  /// The parameter `androidProxyServer` of this provider.
+  String get androidProxyServer;
 }
 
 class _HeadersProviderElement
@@ -171,6 +185,9 @@ class _HeadersProviderElement
   String get source => (origin as HeadersProvider).source;
   @override
   String get lang => (origin as HeadersProvider).lang;
+  @override
+  String get androidProxyServer =>
+      (origin as HeadersProvider).androidProxyServer;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -1425,6 +1425,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get novel_extensions_repo => 'Repositório de extensões de romances';
 
   @override
+  String get custom_dns => 'Custom DNS (leave blank to use system DNS)';
+
+  @override
+  String get android_proxy_server => 'Android Proxy Server (ApkBridge)';
+
+  @override
   String get undefined => 'Indefinido';
 
   @override
@@ -1713,11 +1719,7 @@ class AppLocalizationsPt extends AppLocalizations {
       'Type \'manga\', \'anime\' and/or \'novel\' (separated by a comma) to remove all related entries';
 
   @override
-  String get enable_pip => 'Enable Picture-in-Picture (PiP)';
-
-  @override
-  String get enable_auto_pip =>
-      'Enter PiP automatically when moving out of app';
+  String get recommendations_similarity => 'Similarity:';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).

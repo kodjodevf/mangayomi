@@ -6,7 +6,7 @@ part of 'get_html_content.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getHtmlContentHash() => r'19e6959d8fceb065b19c6c6d38cd1b5132a8ba94';
+String _$getHtmlContentHash() => r'c32670ed25b093761c867f5cf1cb5dfe063edc84';
 
 /// Copied from Dart SDK
 class _SystemHash {

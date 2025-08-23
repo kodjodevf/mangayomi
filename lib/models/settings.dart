@@ -169,6 +169,8 @@ class Settings {
 
   int? aniSkipTimeoutLength;
 
+  String? customDns;
+
   String? btServerAddress;
 
   int? btServerPort;
@@ -200,6 +202,8 @@ class Settings {
   List<Repo>? animeExtensionsRepo;
 
   List<Repo>? novelExtensionsRepo;
+
+  String? androidProxyServer;
 
   @enumerated
   late SectionType disableSectionType;
@@ -277,7 +281,7 @@ class Settings {
   int? volumeBoostCap;
   
   bool? downloadedOnlyMode;
-  
+
   late AlgorithmWeights? algorithmWeights;
 
   Settings({
@@ -354,6 +358,7 @@ class Settings {
     this.enableAniSkip,
     this.enableAutoSkip,
     this.aniSkipTimeoutLength,
+    this.customDns = "",
     this.btServerAddress = "127.0.0.1",
     this.btServerPort,
     this.fullScreenReader = true,
@@ -388,6 +393,7 @@ class Settings {
     this.mangaExtensionsRepo,
     this.animeExtensionsRepo,
     this.novelExtensionsRepo,
+    this.androidProxyServer,
     this.lastTrackerLibraryLocation,
     this.mergeLibraryNavMobile = false,
     this.enableDiscordRpc = true,
@@ -548,6 +554,7 @@ class Settings {
     enableAniSkip = json['enableAniSkip'];
     enableAutoSkip = json['enableAutoSkip'];
     aniSkipTimeoutLength = json['aniSkipTimeoutLength'];
+    customDns = json['customDns'];
     btServerAddress = json['btServerAddress'];
     btServerPort = json['btServerPort'];
     customColorFilter = json['customColorFilter'] != null
@@ -619,6 +626,7 @@ class Settings {
                 .map((e) => Repo.fromJson(e))
                 .toList();
     }
+    androidProxyServer = json['androidProxyServer'];
     lastTrackerLibraryLocation = json['lastTrackerLibraryLocation'];
     mergeLibraryNavMobile = json['mergeLibraryNavMobile'];
     enableDiscordRpc = json['enableDiscordRpc'];
@@ -734,6 +742,7 @@ class Settings {
     'enableAniSkip': enableAniSkip,
     'enableAutoSkip': enableAutoSkip,
     'aniSkipTimeoutLength': aniSkipTimeoutLength,
+    'customDns': customDns,
     'btServerAddress': btServerAddress,
     'btServerPort': btServerPort,
     'fullScreenReader': fullScreenReader,
@@ -771,6 +780,7 @@ class Settings {
     'mangaExtensionsRepo': mangaExtensionsRepo?.map((e) => e.toJson()).toList(),
     'animeExtensionsRepo': animeExtensionsRepo?.map((e) => e.toJson()).toList(),
     'novelExtensionsRepo': novelExtensionsRepo?.map((e) => e.toJson()).toList(),
+    'androidProxyServer': androidProxyServer,
     'lastTrackerLibraryLocation': lastTrackerLibraryLocation,
     'mergeLibraryNavMobile': mergeLibraryNavMobile,
     'enableDiscordRpc': enableDiscordRpc,
@@ -989,20 +999,34 @@ class Repo {
   String? name;
   String? website;
   String? jsonUrl;
+  bool? hidden;
 
-  Repo({this.name, this.website, this.jsonUrl});
+  Repo({this.name, this.website, this.jsonUrl, this.hidden});
 
   Repo.fromJson(Map<String, dynamic> json) {
-    name = json['name'];
-    website = json['website'];
+    name = json['meta']?['name'] ?? json['name'];
+    website = json['meta']?['website'] ?? json['website'];
     jsonUrl = json['jsonUrl'];
+    hidden = json['hidden'];
   }
 
   Map<String, dynamic> toJson() => {
     'name': name,
     'website': website,
     'jsonUrl': jsonUrl,
+    'hidden': hidden,
   };
+
+  @override
+  bool operator ==(Object other) {
+    return other is Repo &&
+        name == other.name &&
+        website == other.website &&
+        jsonUrl == other.jsonUrl;
+  }
+
+  @override
+  int get hashCode => Object.hash(name, website, jsonUrl);
 }
 
 @embedded

@@ -1388,6 +1388,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get novel_extensions_repo => '小说扩展库';
 
   @override
+  String get custom_dns => 'Custom DNS (leave blank to use system DNS)';
+
+  @override
+  String get android_proxy_server => 'Android Proxy Server (ApkBridge)';
+
+  @override
   String get undefined => '未定义';
 
   @override
@@ -1670,9 +1676,5 @@ class AppLocalizationsZh extends AppLocalizations {
       'Type \'manga\', \'anime\' and/or \'novel\' (separated by a comma) to remove all related entries';
 
   @override
-  String get enable_pip => 'Enable Picture-in-Picture (PiP)';
-
-  @override
-  String get enable_auto_pip =>
-      'Enter PiP automatically when moving out of app';
+  String get recommendations_similarity => 'Similarity:';
 }

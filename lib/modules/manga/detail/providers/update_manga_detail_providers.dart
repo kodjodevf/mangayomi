@@ -28,7 +28,7 @@ Future<dynamic> updateMangaDetail(
     final source = getSource(manga.lang!, manga.source!);
     MManga getManga;
 
-    getManga = await ref.watch(
+    getManga = await ref.read(
       getDetailProvider(url: manga.link!, source: source!).future,
     );
 
@@ -39,9 +39,11 @@ Future<dynamic> updateMangaDetail(
             .toSet()
             .toList() ??
         [];
+    final tempName = getManga.name?.trim().trimLeft().trimRight();
+    final tempLink = getManga.link?.trim().trimLeft().trimRight();
     manga
       ..imageUrl = getManga.imageUrl ?? manga.imageUrl
-      ..name = getManga.name?.trim().trimLeft().trimRight() ?? manga.name
+      ..name = tempName != null && tempName.isNotEmpty ? tempName : manga.name
       ..genre = (genre.isEmpty ? null : genre) ?? manga.genre ?? []
       ..author =
           getManga.author?.trim().trimLeft().trimRight() ?? manga.author ?? ""
@@ -54,7 +56,7 @@ Future<dynamic> updateMangaDetail(
           getManga.description?.trim().trimLeft().trimRight() ??
           manga.description ??
           ""
-      ..link = getManga.link?.trim().trimLeft().trimRight() ?? manga.link
+      ..link = tempLink != null && tempLink.isNotEmpty ? tempLink : manga.link
       ..source = manga.source
       ..lang = manga.lang
       ..itemType = source.itemType

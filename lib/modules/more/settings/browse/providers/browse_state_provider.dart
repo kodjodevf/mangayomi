@@ -11,6 +11,39 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'browse_state_provider.g.dart';
 
 @riverpod
+class AndroidProxyServerState extends _$AndroidProxyServerState {
+  @override
+  String build() {
+    String proxyServer =
+        isar.settings.getSync(227)!.androidProxyServer ??
+        "http://127.0.0.1:8080";
+    if (!proxyServer.startsWith("http")) {
+      proxyServer = "http://$proxyServer";
+    }
+    if ((proxyServer.contains("localhost") ||
+            RegExp(
+              r'^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$',
+            ).hasMatch(proxyServer.replaceAll("://", ":").split(":")[1])) &&
+        proxyServer.split(":").length < 3) {
+      proxyServer = "$proxyServer:8080";
+    }
+    return proxyServer;
+  }
+
+  void set(String value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..androidProxyServer = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
 class OnlyIncludePinnedSourceState extends _$OnlyIncludePinnedSourceState {
   @override
   bool build() {
@@ -41,6 +74,16 @@ class ExtensionsRepoState extends _$ExtensionsRepoState {
           _ => settings.novelExtensionsRepo,
         } ??
         [];
+  }
+
+  void setVisibility(Repo repo, bool hidden) {
+    final value = state.map((e) {
+      if (e == repo) {
+        e.hidden = hidden;
+      }
+      return e;
+    }).toList();
+    set(value);
   }
 
   void set(List<Repo> value) {

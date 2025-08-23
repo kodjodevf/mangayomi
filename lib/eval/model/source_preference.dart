@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:isar/isar.dart';
 part 'source_preference.g.dart';
 
@@ -139,7 +141,9 @@ class ListPreference {
     return ListPreference(
       title: json['title'],
       summary: json['summary'],
-      valueIndex: json['valueIndex'],
+      valueIndex: json['valueIndex'] != null
+          ? max(0, json['valueIndex'])
+          : null,
       entries: json['entries']?.cast<String>(),
       entryValues: json['entryValues']?.cast<String>(),
     );

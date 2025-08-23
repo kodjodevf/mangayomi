@@ -4,6 +4,26 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'general_state_provider.g.dart';
 
 @riverpod
+class CustomDnsState extends _$CustomDnsState {
+  @override
+  String build() {
+    return isar.settings.getSync(227)!.customDns ?? "";
+  }
+
+  void set(String value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..customDns = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
 class EnableDiscordRpcState extends _$EnableDiscordRpcState {
   @override
   bool build() {
