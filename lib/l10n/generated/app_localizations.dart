@@ -2733,6 +2733,12 @@ abstract class AppLocalizations {
   /// **'Novel extensions repo'**
   String get novel_extensions_repo;
 
+  /// No description provided for @custom_dns.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom DNS (leave blank to use system DNS)'**
+  String get custom_dns;
+
   /// No description provided for @android_proxy_server.
   ///
   /// In en, this message translates to:

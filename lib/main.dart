@@ -19,6 +19,7 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/storage_usage.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/general/providers/general_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/router/router.dart';
@@ -38,6 +39,7 @@ import 'package:path/path.dart' as p;
 late Isar isar;
 DiscordRPC? discordRpc;
 WebViewEnvironment? webViewEnvironment;
+String? customDns;
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isLinux && runWebViewTitleBarWidget(args)) return;
@@ -97,6 +99,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     unawaited(ref.read(scanLocalLibraryProvider.future));
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      customDns = ref.read(customDnsStateProvider);
       if (ref.read(clearChapterCacheOnAppLaunchStateProvider)) {
         ref
             .read(totalChapterCacheSizeStateProvider.notifier)

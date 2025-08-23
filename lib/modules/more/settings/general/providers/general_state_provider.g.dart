@@ -6,6 +6,22 @@ part of 'general_state_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+String _$customDnsStateHash() => r'6061c64d742b3f873e54c1b9ef724b7c0b6350a2';
+
+/// See also [CustomDnsState].
+@ProviderFor(CustomDnsState)
+final customDnsStateProvider =
+    AutoDisposeNotifierProvider<CustomDnsState, String>.internal(
+  CustomDnsState.new,
+  name: r'customDnsStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$customDnsStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$CustomDnsState = AutoDisposeNotifier<String>;
 String _$enableDiscordRpcStateHash() =>
     r'ab8ce3b29f5d94aedbc88dcb87c7c834648270f5';
 

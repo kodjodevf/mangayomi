@@ -1414,6 +1414,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get novel_extensions_repo => 'Roman-Erweiterungs-Repository';
 
   @override
+  String get custom_dns => 'Custom DNS (leave blank to use system DNS)';
+
+  @override
   String get android_proxy_server => 'Android Proxy Server (ApkBridge)';
 
   @override

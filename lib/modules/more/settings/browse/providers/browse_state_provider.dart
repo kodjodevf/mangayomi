@@ -76,6 +76,16 @@ class ExtensionsRepoState extends _$ExtensionsRepoState {
         [];
   }
 
+  void setVisibility(Repo repo, bool hidden) {
+    final value = state.map((e) {
+      if (e == repo) {
+        e.hidden = hidden;
+      }
+      return e;
+    }).toList();
+    set(value);
+  }
+
   void set(List<Repo> value) {
     final settings = isar.settings.getSync(227)!;
     state = value;

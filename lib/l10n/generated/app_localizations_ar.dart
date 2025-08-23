@@ -1403,6 +1403,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get novel_extensions_repo => 'مستودع إضافات الروايات';
 
   @override
+  String get custom_dns => 'Custom DNS (leave blank to use system DNS)';
+
+  @override
   String get android_proxy_server => 'Android Proxy Server (ApkBridge)';
 
   @override
