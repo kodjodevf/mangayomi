@@ -40,7 +40,6 @@ Future<List<ImdbEpisode>?> fetchImdbEpisodes(String imdbId) async {
         ?.map((e) => ImdbEpisode.fromJson(e))
         .toList();
   } catch (_) {
-    rethrow;
     return null;
   }
 }
@@ -63,7 +62,6 @@ Future<List<ImdbSubtitle>?> fetchImdbSubtitles(String imdbId) async {
         .where((e) => e.url != null)
         .toList();
   } catch (_) {
-    rethrow;
     return null;
   }
 }
@@ -100,10 +98,10 @@ class ImdbTitle {
       primaryImage: json["primaryImage"]?["url"],
       startYear: json["startYear"],
       endYear: json["endYear"],
-      aggregateRating: json["aggregateRating"] is int
-          ? (json["aggregateRating"] as int).toDouble()
-          : json["aggregateRating"],
-      voteCount: json["voteCount"],
+      aggregateRating: json["rating"]?["aggregateRating"] is int
+          ? (json["rating"]?["aggregateRating"] as int).toDouble()
+          : json["rating"]?["aggregateRating"],
+      voteCount: json["rating"]?["voteCount"],
     );
   }
 }

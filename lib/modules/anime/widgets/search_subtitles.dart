@@ -199,7 +199,6 @@ class _SubtitlesWidgetSearchState extends ConsumerState<SubtitlesWidgetSearch> {
                   }
                 } catch (e) {
                   _errorMsg = e.toString();
-                  rethrow;
                 }
                 if (mounted) {
                   setState(() {
