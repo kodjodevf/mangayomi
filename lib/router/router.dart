@@ -15,6 +15,7 @@ import 'package:mangayomi/modules/browse/sources/sources_filter_screen.dart';
 import 'package:mangayomi/modules/calendar/calendar_screen.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/migrate_screen.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/recommendation_screen.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/watch_order_screen.dart';
 import 'package:mangayomi/modules/more/data_and_storage/create_backup.dart';
 import 'package:mangayomi/modules/more/data_and_storage/data_and_storage.dart';
 import 'package:mangayomi/modules/more/settings/appearance/custom_navigation_settings.dart';
@@ -255,6 +256,10 @@ class RouterNotifier extends ChangeNotifier {
         itemType: data.$2,
         algorithmWeights: data.$3,
       ),
+    ),
+    _genericRoute<String>(
+      name: "watchOrder",
+      builder: (data) => WatchOrderScreen(name: data),
     ),
   ];
 

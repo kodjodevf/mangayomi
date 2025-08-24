@@ -1676,5 +1676,8 @@ class AppLocalizationsZh extends AppLocalizations {
       'Type \'manga\', \'anime\' and/or \'novel\' (separated by a comma) to remove all related entries';
 
   @override
+  String get watch_order => 'Watch order';
+
+  @override
   String get recommendations_similarity => 'Similarity:';
 }
