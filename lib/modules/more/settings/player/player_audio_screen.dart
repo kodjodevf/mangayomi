@@ -68,24 +68,26 @@ class _PlayerAudioScreenState extends ConsumerState<PlayerAudioScreen> {
                       title: Text(context.l10n.audio_channels),
                       content: SizedBox(
                         width: context.width(0.8),
-                        child: SuperListView.builder(
-                          shrinkWrap: true,
-                          itemCount: values.length,
-                          itemBuilder: (context, index) {
-                            return RadioListTile(
-                              dense: true,
-                              contentPadding: const EdgeInsets.all(0),
-                              value: values[index].$1,
-                              groupValue: audioChannel,
-                              onChanged: (value) {
-                                ref
-                                    .read(audioChannelStateProvider.notifier)
-                                    .set(value!);
-                                Navigator.pop(context);
-                              },
-                              title: Row(children: [Text(values[index].$2)]),
-                            );
+                        child: RadioGroup(
+                          groupValue: audioChannel,
+                          onChanged: (value) {
+                            ref
+                                .read(audioChannelStateProvider.notifier)
+                                .set(value!);
+                            Navigator.pop(context);
                           },
+                          child: SuperListView.builder(
+                            shrinkWrap: true,
+                            itemCount: values.length,
+                            itemBuilder: (context, index) {
+                              return RadioListTile(
+                                dense: true,
+                                contentPadding: const EdgeInsets.all(0),
+                                value: values[index].$1,
+                                title: Row(children: [Text(values[index].$2)]),
+                              );
+                            },
+                          ),
                         ),
                       ),
                       actions: [

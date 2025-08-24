@@ -146,25 +146,29 @@ class AppearanceScreen extends ConsumerWidget {
               title: Text(l10n.app_language),
               content: SizedBox(
                 width: context.width(0.8),
-                child: SuperListView.builder(
-                  shrinkWrap: true,
-                  itemCount: AppLocalizations.supportedLocales.length,
-                  itemBuilder: (context, index) {
-                    final locale = AppLocalizations.supportedLocales[index];
-                    return RadioListTile(
-                      dense: true,
-                      contentPadding: const EdgeInsets.all(0),
-                      value: locale,
-                      groupValue: l10nLocale,
-                      onChanged: (value) {
-                        ref
-                            .read(l10nLocaleStateProvider.notifier)
-                            .setLocale(locale);
-                        Navigator.pop(context);
-                      },
-                      title: Text(completeLanguageName(locale.toLanguageTag())),
-                    );
+                child: RadioGroup(
+                  groupValue: l10nLocale,
+                  onChanged: (value) {
+                    ref
+                        .read(l10nLocaleStateProvider.notifier)
+                        .setLocale(value!);
+                    Navigator.pop(context);
                   },
+                  child: SuperListView.builder(
+                    shrinkWrap: true,
+                    itemCount: AppLocalizations.supportedLocales.length,
+                    itemBuilder: (context, index) {
+                      final locale = AppLocalizations.supportedLocales[index];
+                      return RadioListTile(
+                        dense: true,
+                        contentPadding: const EdgeInsets.all(0),
+                        value: locale,
+                        title: Text(
+                          completeLanguageName(locale.toLanguageTag()),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
               actions: [
@@ -276,28 +280,29 @@ class AppearanceScreen extends ConsumerWidget {
                                   slivers: [
                                     SliverPadding(
                                       padding: const EdgeInsets.all(0),
-                                      sliver: SuperSliverList.builder(
-                                        itemCount: values.length,
-                                        itemBuilder: (context, index) {
-                                          final value = values[index];
-                                          return RadioListTile(
-                                            dense: true,
-                                            contentPadding:
-                                                const EdgeInsets.all(0),
-                                            value: value.value().fontFamily,
-                                            groupValue: appFontFamily,
-                                            onChanged: (value) {
-                                              ref
-                                                  .read(
-                                                    appFontFamilyProvider
-                                                        .notifier,
-                                                  )
-                                                  .set(value);
-                                              Navigator.pop(context);
-                                            },
-                                            title: Text(value.key),
-                                          );
+                                      sliver: RadioGroup(
+                                        groupValue: appFontFamily,
+                                        onChanged: (value) {
+                                          ref
+                                              .read(
+                                                appFontFamilyProvider.notifier,
+                                              )
+                                              .set(value);
+                                          Navigator.pop(context);
                                         },
+                                        child: SuperSliverList.builder(
+                                          itemCount: values.length,
+                                          itemBuilder: (context, index) {
+                                            final value = values[index];
+                                            return RadioListTile(
+                                              dense: true,
+                                              contentPadding:
+                                                  const EdgeInsets.all(0),
+                                              value: value.value().fontFamily,
+                                              title: Text(value.key),
+                                            );
+                                          },
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -364,28 +369,30 @@ class AppearanceScreen extends ConsumerWidget {
               title: Text(l10n.relative_timestamp),
               content: SizedBox(
                 width: context.width(0.8),
-                child: SuperListView.builder(
-                  shrinkWrap: true,
-                  itemCount: relativeTimestampsList(context).length,
-                  itemBuilder: (context, index) {
-                    return RadioListTile(
-                      dense: true,
-                      contentPadding: const EdgeInsets.all(0),
-                      value: index,
-                      groupValue: relativeTimestamps,
-                      onChanged: (value) {
-                        ref
-                            .read(relativeTimesTampsStateProvider.notifier)
-                            .set(value!);
-                        Navigator.pop(context);
-                      },
-                      title: Row(
-                        children: [
-                          Text(relativeTimestampsList(context)[index]),
-                        ],
-                      ),
-                    );
+                child: RadioGroup(
+                  groupValue: relativeTimestamps,
+                  onChanged: (value) {
+                    ref
+                        .read(relativeTimesTampsStateProvider.notifier)
+                        .set(value!);
+                    Navigator.pop(context);
                   },
+                  child: SuperListView.builder(
+                    shrinkWrap: true,
+                    itemCount: relativeTimestampsList(context).length,
+                    itemBuilder: (context, index) {
+                      return RadioListTile(
+                        dense: true,
+                        contentPadding: const EdgeInsets.all(0),
+                        value: index,
+                        title: Row(
+                          children: [
+                            Text(relativeTimestampsList(context)[index]),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
               actions: [
@@ -431,28 +438,30 @@ class AppearanceScreen extends ConsumerWidget {
               title: Text(l10n.date_format),
               content: SizedBox(
                 width: context.width(0.8),
-                child: SuperListView.builder(
-                  shrinkWrap: true,
-                  itemCount: dateFormatsList.length,
-                  itemBuilder: (context, index) {
-                    return RadioListTile(
-                      dense: true,
-                      contentPadding: const EdgeInsets.all(0),
-                      value: dateFormatsList[index],
-                      groupValue: dateFormatState,
-                      onChanged: (value) {
-                        ref.read(dateFormatStateProvider.notifier).set(value!);
-                        Navigator.pop(context);
-                      },
-                      title: Row(
-                        children: [
-                          Text(
-                            "${dateFormatsList[index]} (${dateFormat(context: context, DateTime.now().millisecondsSinceEpoch.toString(), useRelativeTimesTamps: false, dateFormat: dateFormatsList[index], ref: ref)})",
-                          ),
-                        ],
-                      ),
-                    );
+                child: RadioGroup(
+                  groupValue: dateFormatState,
+                  onChanged: (value) {
+                    ref.read(dateFormatStateProvider.notifier).set(value!);
+                    Navigator.pop(context);
                   },
+                  child: SuperListView.builder(
+                    shrinkWrap: true,
+                    itemCount: dateFormatsList.length,
+                    itemBuilder: (context, index) {
+                      return RadioListTile(
+                        dense: true,
+                        contentPadding: const EdgeInsets.all(0),
+                        value: dateFormatsList[index],
+                        title: Row(
+                          children: [
+                            Text(
+                              "${dateFormatsList[index]} (${dateFormat(context: context, DateTime.now().millisecondsSinceEpoch.toString(), useRelativeTimesTamps: false, dateFormat: dateFormatsList[index], ref: ref)})",
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
               actions: [

@@ -49,34 +49,36 @@ class _PlayerDecoderScreenState extends ConsumerState<PlayerDecoderScreen> {
                       title: Text(context.l10n.hwdec),
                       content: SizedBox(
                         width: context.width(0.8),
-                        child: SuperListView.builder(
-                          shrinkWrap: true,
-                          itemCount: values.length,
-                          itemBuilder: (context, index) {
-                            return RadioListTile(
-                              dense: true,
-                              contentPadding: const EdgeInsets.all(0),
-                              value: values[index].$1,
-                              groupValue: hwdecMode,
-                              onChanged: (value) {
-                                ref
-                                    .read(
-                                      hwdecModeStateProvider(
-                                        rawValue: true,
-                                      ).notifier,
-                                    )
-                                    .set(value!);
-                                Navigator.pop(context);
-                              },
-                              title: Row(
-                                children: [
-                                  Text(
-                                    "${values[index].$1} ${values[index].$2}",
-                                  ),
-                                ],
-                              ),
-                            );
+                        child: RadioGroup(
+                          groupValue: hwdecMode,
+                          onChanged: (value) {
+                            ref
+                                .read(
+                                  hwdecModeStateProvider(
+                                    rawValue: true,
+                                  ).notifier,
+                                )
+                                .set(value!);
+                            Navigator.pop(context);
                           },
+                          child: SuperListView.builder(
+                            shrinkWrap: true,
+                            itemCount: values.length,
+                            itemBuilder: (context, index) {
+                              return RadioListTile(
+                                dense: true,
+                                contentPadding: const EdgeInsets.all(0),
+                                value: values[index].$1,
+                                title: Row(
+                                  children: [
+                                    Text(
+                                      "${values[index].$1} ${values[index].$2}",
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                       actions: [
@@ -130,24 +132,26 @@ class _PlayerDecoderScreenState extends ConsumerState<PlayerDecoderScreen> {
                       title: Text(context.l10n.debanding),
                       content: SizedBox(
                         width: context.width(0.8),
-                        child: SuperListView.builder(
-                          shrinkWrap: true,
-                          itemCount: values.length,
-                          itemBuilder: (context, index) {
-                            return RadioListTile(
-                              dense: true,
-                              contentPadding: const EdgeInsets.all(0),
-                              value: values[index].$1,
-                              groupValue: debandingType,
-                              onChanged: (value) {
-                                ref
-                                    .read(debandingStateProvider.notifier)
-                                    .set(value!);
-                                Navigator.pop(context);
-                              },
-                              title: Row(children: [Text(values[index].$2)]),
-                            );
+                        child: RadioGroup(
+                          groupValue: debandingType,
+                          onChanged: (value) {
+                            ref
+                                .read(debandingStateProvider.notifier)
+                                .set(value!);
+                            Navigator.pop(context);
                           },
+                          child: SuperListView.builder(
+                            shrinkWrap: true,
+                            itemCount: values.length,
+                            itemBuilder: (context, index) {
+                              return RadioListTile(
+                                dense: true,
+                                contentPadding: const EdgeInsets.all(0),
+                                value: values[index].$1,
+                                title: Row(children: [Text(values[index].$2)]),
+                              );
+                            },
+                          ),
                         ),
                       ),
                       actions: [

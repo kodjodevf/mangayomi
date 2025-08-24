@@ -238,38 +238,29 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
               return [
                 PopupMenuItem<int>(
                   value: 0,
-                  child: RadioListTile(
-                    title: Text(context.l10n.comfortable_grid),
-                    value: DisplayType.comfortableGrid,
+                  child: RadioGroup(
                     groupValue: displayType,
                     onChanged: (a) {
                       context.pop();
                       displayTypeNotifier.setMangaHomeDisplayType(a!);
                     },
-                  ),
-                ),
-                PopupMenuItem<int>(
-                  value: 1,
-                  child: RadioListTile(
-                    title: Text(context.l10n.compact_grid),
-                    value: DisplayType.compactGrid,
-                    groupValue: displayType,
-                    onChanged: (a) {
-                      context.pop();
-                      displayTypeNotifier.setMangaHomeDisplayType(a!);
-                    },
-                  ),
-                ),
-                PopupMenuItem<int>(
-                  value: 2,
-                  child: RadioListTile(
-                    title: Text(context.l10n.list),
-                    value: DisplayType.list,
-                    groupValue: displayType,
-                    onChanged: (a) {
-                      context.pop();
-                      displayTypeNotifier.setMangaHomeDisplayType(a!);
-                    },
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        RadioListTile(
+                          title: Text(context.l10n.comfortable_grid),
+                          value: DisplayType.comfortableGrid,
+                        ),
+                        RadioListTile(
+                          title: Text(context.l10n.compact_grid),
+                          value: DisplayType.compactGrid,
+                        ),
+                        RadioListTile(
+                          title: Text(context.l10n.list),
+                          value: DisplayType.list,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ];

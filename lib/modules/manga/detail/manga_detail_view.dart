@@ -1349,29 +1349,29 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         ),
         Consumer(
           builder: (context, ref, chil) {
-            return Column(
-              children: [
-                RadioListTile(
-                  dense: true,
-                  title: Text(l10n.source_title),
-                  value: "e",
-                  groupValue: "e",
-                  selected: true,
-                  onChanged: (value) {},
-                ),
-                RadioListTile(
-                  dense: true,
-                  title: Text(
-                    widget.itemType != ItemType.anime
-                        ? l10n.chapter_number
-                        : l10n.episode_number,
+            return RadioGroup(
+              groupValue: "e",
+              onChanged: (value) {},
+              child: Column(
+                children: [
+                  RadioListTile(
+                    dense: true,
+                    title: Text(l10n.source_title),
+                    value: "e",
+                    selected: true,
                   ),
-                  value: "ej",
-                  groupValue: "e",
-                  selected: false,
-                  onChanged: (value) {},
-                ),
-              ],
+                  RadioListTile(
+                    dense: true,
+                    title: Text(
+                      widget.itemType != ItemType.anime
+                          ? l10n.chapter_number
+                          : l10n.episode_number,
+                    ),
+                    value: "ej",
+                    selected: false,
+                  ),
+                ],
+              ),
             );
           },
         ),
