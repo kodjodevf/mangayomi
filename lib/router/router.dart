@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/anime/anime_player_view.dart';
@@ -257,9 +258,9 @@ class RouterNotifier extends ChangeNotifier {
         algorithmWeights: data.$3,
       ),
     ),
-    _genericRoute<String>(
+    _genericRoute<(String, Track?)>(
       name: "watchOrder",
-      builder: (data) => WatchOrderScreen(name: data),
+      builder: (data) => WatchOrderScreen(name: data.$1, track: data.$2),
     ),
   ];
 

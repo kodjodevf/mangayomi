@@ -3297,6 +3297,12 @@ abstract class AppLocalizations {
   /// **'Watch order'**
   String get watch_order;
 
+  /// No description provided for @sequels.
+  ///
+  /// In en, this message translates to:
+  /// **'Sequels'**
+  String get sequels;
+
   /// No description provided for @recommendations_similarity.
   ///
   /// In en, this message translates to:

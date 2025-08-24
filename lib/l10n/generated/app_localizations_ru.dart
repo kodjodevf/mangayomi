@@ -1724,5 +1724,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get watch_order => 'Watch order';
 
   @override
+  String get sequels => 'Sequels';
+
+  @override
   String get recommendations_similarity => 'Similarity:';
 }
