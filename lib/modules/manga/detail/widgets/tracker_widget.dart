@@ -203,6 +203,19 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                                     dense: true,
                                     contentPadding: const EdgeInsets.all(0),
                                     value: status,
+                                    // ignore: deprecated_member_use
+                                    onChanged: (value) {
+                                      ref
+                                          .read(
+                                            trackStateProvider(
+                                              track: widget.trackRes
+                                                ..status = status,
+                                              itemType: widget.itemType,
+                                            ).notifier,
+                                          )
+                                          .updateManga();
+                                      Navigator.pop(context);
+                                    },
                                     title: Text(
                                       getTrackStatus(status, context),
                                     ),
