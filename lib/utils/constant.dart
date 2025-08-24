@@ -67,10 +67,15 @@ TrackStatus toTrackStatus(TrackStatus status, ItemType itemType, int syncId) {
       "Anilist",
       const Color.fromRGBO(51, 37, 50, 1),
     ),
-    _ => (
+    3 => (
       "assets/trackers_icons/tracker_kitsu.webp",
       "Kitsu",
       const Color.fromRGBO(18, 25, 35, 1),
+    ),
+    _ => (
+      "assets/trackers_icons/tracker_simkl.png",
+      "Simkl",
+      const Color.fromARGB(255, 35, 15, 90),
     ),
   };
 }

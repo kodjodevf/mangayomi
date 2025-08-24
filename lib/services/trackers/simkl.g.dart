@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'kitsu.dart';
+part of 'simkl.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$kitsuHash() => r'3f6af42dd0bb3fe543197db692598384ca5cc95f';
+String _$simklHash() => r'7385cd7925dff352509f1b51d4ab2eb6af733b15';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,39 +29,39 @@ class _SystemHash {
   }
 }
 
-abstract class _$Kitsu extends BuildlessAutoDisposeNotifier<void> {
+abstract class _$Simkl extends BuildlessAutoDisposeNotifier<void> {
   late final int syncId;
   late final ItemType? itemType;
 
   void build({
     required int syncId,
-    ItemType? itemType,
+    required ItemType? itemType,
   });
 }
 
-/// See also [Kitsu].
-@ProviderFor(Kitsu)
-const kitsuProvider = KitsuFamily();
+/// See also [Simkl].
+@ProviderFor(Simkl)
+const simklProvider = SimklFamily();
 
-/// See also [Kitsu].
-class KitsuFamily extends Family<void> {
-  /// See also [Kitsu].
-  const KitsuFamily();
+/// See also [Simkl].
+class SimklFamily extends Family<void> {
+  /// See also [Simkl].
+  const SimklFamily();
 
-  /// See also [Kitsu].
-  KitsuProvider call({
+  /// See also [Simkl].
+  SimklProvider call({
     required int syncId,
-    ItemType? itemType,
+    required ItemType? itemType,
   }) {
-    return KitsuProvider(
+    return SimklProvider(
       syncId: syncId,
       itemType: itemType,
     );
   }
 
   @override
-  KitsuProvider getProviderOverride(
-    covariant KitsuProvider provider,
+  SimklProvider getProviderOverride(
+    covariant SimklProvider provider,
   ) {
     return call(
       syncId: provider.syncId,
@@ -81,32 +81,32 @@ class KitsuFamily extends Family<void> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'kitsuProvider';
+  String? get name => r'simklProvider';
 }
 
-/// See also [Kitsu].
-class KitsuProvider extends AutoDisposeNotifierProviderImpl<Kitsu, void> {
-  /// See also [Kitsu].
-  KitsuProvider({
+/// See also [Simkl].
+class SimklProvider extends AutoDisposeNotifierProviderImpl<Simkl, void> {
+  /// See also [Simkl].
+  SimklProvider({
     required int syncId,
-    ItemType? itemType,
+    required ItemType? itemType,
   }) : this._internal(
-          () => Kitsu()
+          () => Simkl()
             ..syncId = syncId
             ..itemType = itemType,
-          from: kitsuProvider,
-          name: r'kitsuProvider',
+          from: simklProvider,
+          name: r'simklProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$kitsuHash,
-          dependencies: KitsuFamily._dependencies,
-          allTransitiveDependencies: KitsuFamily._allTransitiveDependencies,
+                  : _$simklHash,
+          dependencies: SimklFamily._dependencies,
+          allTransitiveDependencies: SimklFamily._allTransitiveDependencies,
           syncId: syncId,
           itemType: itemType,
         );
 
-  KitsuProvider._internal(
+  SimklProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -122,7 +122,7 @@ class KitsuProvider extends AutoDisposeNotifierProviderImpl<Kitsu, void> {
 
   @override
   void runNotifierBuild(
-    covariant Kitsu notifier,
+    covariant Simkl notifier,
   ) {
     return notifier.build(
       syncId: syncId,
@@ -131,10 +131,10 @@ class KitsuProvider extends AutoDisposeNotifierProviderImpl<Kitsu, void> {
   }
 
   @override
-  Override overrideWith(Kitsu Function() create) {
+  Override overrideWith(Simkl Function() create) {
     return ProviderOverride(
       origin: this,
-      override: KitsuProvider._internal(
+      override: SimklProvider._internal(
         () => create()
           ..syncId = syncId
           ..itemType = itemType,
@@ -150,13 +150,13 @@ class KitsuProvider extends AutoDisposeNotifierProviderImpl<Kitsu, void> {
   }
 
   @override
-  AutoDisposeNotifierProviderElement<Kitsu, void> createElement() {
-    return _KitsuProviderElement(this);
+  AutoDisposeNotifierProviderElement<Simkl, void> createElement() {
+    return _SimklProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is KitsuProvider &&
+    return other is SimklProvider &&
         other.syncId == syncId &&
         other.itemType == itemType;
   }
@@ -173,7 +173,7 @@ class KitsuProvider extends AutoDisposeNotifierProviderImpl<Kitsu, void> {
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin KitsuRef on AutoDisposeNotifierProviderRef<void> {
+mixin SimklRef on AutoDisposeNotifierProviderRef<void> {
   /// The parameter `syncId` of this provider.
   int get syncId;
 
@@ -181,14 +181,14 @@ mixin KitsuRef on AutoDisposeNotifierProviderRef<void> {
   ItemType? get itemType;
 }
 
-class _KitsuProviderElement
-    extends AutoDisposeNotifierProviderElement<Kitsu, void> with KitsuRef {
-  _KitsuProviderElement(super.provider);
+class _SimklProviderElement
+    extends AutoDisposeNotifierProviderElement<Simkl, void> with SimklRef {
+  _SimklProviderElement(super.provider);
 
   @override
-  int get syncId => (origin as KitsuProvider).syncId;
+  int get syncId => (origin as SimklProvider).syncId;
   @override
-  ItemType? get itemType => (origin as KitsuProvider).itemType;
+  ItemType? get itemType => (origin as SimklProvider).itemType;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

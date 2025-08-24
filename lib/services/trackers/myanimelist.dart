@@ -12,11 +12,12 @@ import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/more/settings/track/myanimelist/model.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+import 'base_tracker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'myanimelist.g.dart';
 
 @riverpod
-class MyAnimeList extends _$MyAnimeList {
+class MyAnimeList extends _$MyAnimeList implements BaseTracker {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
   static const _baseOAuthUrl = 'https://myanimelist.net/v1/oauth2';
   static const _baseApiUrl = 'https://api.myanimelist.net/v2';
@@ -118,6 +119,7 @@ class MyAnimeList extends _$MyAnimeList {
         );
   }
 
+  @override
   Future<List<TrackSearch>> search(String query, isManga) async {
     final accessToken = await _getAccessToken();
     final url = Uri.parse(
@@ -170,6 +172,7 @@ class MyAnimeList extends _$MyAnimeList {
     );
   }
 
+  @override
   Future<List<TrackSearch>> fetchGeneralData({
     bool isManga = true,
     String rankingType = "airing",
@@ -209,6 +212,7 @@ class MyAnimeList extends _$MyAnimeList {
           }).toList();
   }
 
+  @override
   Future<List<TrackSearch>> fetchUserData({bool isManga = true}) async {
     final accessToken = await _getAccessToken();
     final item = isManga ? "mangalist" : "animelist";
@@ -292,6 +296,7 @@ class MyAnimeList extends _$MyAnimeList {
     };
   }
 
+  @override
   List<TrackStatus> statusList(bool isManga) => [
     isManga ? TrackStatus.reading : TrackStatus.watching,
     TrackStatus.completed,
@@ -349,7 +354,8 @@ class MyAnimeList extends _$MyAnimeList {
     return jsonDecode(response.body)['name'];
   }
 
-  Future<Track> findLibItem(Track track, bool isManga) async {
+  @override
+  Future<Track?> findLibItem(Track track, bool isManga) async {
     final type = isManga ? "manga" : "anime";
     final contentUnit = isManga ? 'num_chapters' : 'num_episodes';
     final accessToken = await _getAccessToken();
@@ -391,6 +397,7 @@ class MyAnimeList extends _$MyAnimeList {
     return date.millisecondsSinceEpoch;
   }
 
+  @override
   Future<Track> update(Track track, bool isManga) async {
     final accessToken = await _getAccessToken();
     final formBody = {
@@ -430,5 +437,15 @@ class MyAnimeList extends _$MyAnimeList {
       url,
       headers: {'Authorization': 'Bearer $accessToken'},
     );
+  }
+  
+  @override
+  String displayScore(int score) {
+    throw UnimplementedError();
+  }
+  
+  @override
+  (int, int) getScoreValue() {
+    throw UnimplementedError();
   }
 }
