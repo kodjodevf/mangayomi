@@ -1454,6 +1454,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get load_own_subtitles => '加载自定义字幕';
 
   @override
+  String get search_subtitles => 'Search subtitles online...';
+
+  @override
   String extension_notes(Object notes) {
     return 'Notes: $notes';
   }

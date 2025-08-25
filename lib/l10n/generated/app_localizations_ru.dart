@@ -1498,6 +1498,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get load_own_subtitles => 'Загрузить свои собственные субтитры...';
 
   @override
+  String get search_subtitles => 'Search subtitles online...';
+
+  @override
   String extension_notes(Object notes) {
     return 'Notes: $notes';
   }
