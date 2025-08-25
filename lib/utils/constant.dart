@@ -73,14 +73,14 @@ TrackStatus toTrackStatus(TrackStatus status, ItemType itemType, int syncId) {
       const Color.fromRGBO(18, 25, 35, 1),
     ),
     4 => (
-      "assets/trackers_icons/tracker_simkl.png",
+      "assets/trackers_icons/tracker_simkl.webp",
       "Simkl",
-      const Color.fromARGB(8, 8, 8, 1),
+      const Color.fromRGBO(8, 8, 8, 1),
     ),
     _ => (
-      "assets/trackers_icons/tracker_trakt.png",
+      "assets/trackers_icons/tracker_trakt.webp",
       "Trakt",
-      const Color.fromARGB(175, 175, 54, 162),
+      const Color.fromRGBO(175, 54, 162, 1),
     ),
   };
 }
