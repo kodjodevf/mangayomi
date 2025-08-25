@@ -20,7 +20,9 @@ class TraktTv extends _$TraktTv implements BaseTracker {
   static const _baseOAuthUrl = 'https://api.trakt.tv/oauth';
   static const _baseApiUrl = 'https://api.trakt.tv';
   static final _isDesktop = (Platform.isWindows || Platform.isLinux);
-  static const _redirectUri = 'http://localhost:43824';
+  static final _redirectUri = _isDesktop
+      ? 'http://localhost:43824'
+      : 'mangayomi';
   static const _clientId =
       '5520c7e24da0d8d73ec80315b61b9849483583b013cb7f296c6db723eb9886a1';
   static const _clientSecret =

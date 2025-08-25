@@ -20,7 +20,9 @@ class Simkl extends _$Simkl implements BaseTracker {
   static const _baseOAuthUrl = 'https://simkl.com/oauth';
   static const _baseApiUrl = 'https://api.simkl.com';
   static final _isDesktop = (Platform.isWindows || Platform.isLinux);
-  static const _redirectUri = 'http://localhost:43824';
+  static final _redirectUri = _isDesktop
+      ? 'http://localhost:43824'
+      : 'mangayomi';
   static const _clientId =
       '1e0a52930b1bdface4e30c1a94a44641475f3c80b69a5ea939562153fccffb68';
   static const _clientSecret =
