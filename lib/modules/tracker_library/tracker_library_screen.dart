@@ -679,7 +679,9 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
           } else {
             ref.read(lastTrackerLibraryLocationStateProvider.notifier).set((
               syncId,
-              isManga ?? true,
+              isManga ??
+                  (syncId != TrackerProviders.simkl.syncId &&
+                      syncId != TrackerProviders.trakt.syncId),
             ));
             context.pop();
           }

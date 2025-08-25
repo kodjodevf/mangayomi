@@ -68,7 +68,7 @@ class TraktTv extends _$TraktTv implements BaseTracker {
     final accessToken = await _getAccessToken();
     final url = Uri.parse('$_baseApiUrl/$type/$rankingType').replace(
       queryParameters: {
-        'extended': 'full',
+        'extended': 'full,images',
         'clientId': _clientId,
         'limit': '15',
       },
@@ -86,7 +86,15 @@ class TraktTv extends _$TraktTv implements BaseTracker {
                 'No summary available.',
             totalChapter:
                 e['aired_episodes'] ?? e[type]?['aired_episodes'] ?? 1,
-            coverUrl: 'https://wsrv.nl/?url=wsrv.nl/lichtenstein.jpg',
+            coverUrl: (e['images']?['fanart'] as List?)?.isNotEmpty ?? false
+                ? 'https://wsrv.nl/?url=${e['images']?['fanart'][0]}'
+                : (e[type]?['images']?['fanart'] as List?)?.isNotEmpty ?? false
+                ? 'https://wsrv.nl/?url=${e[type]?['images']?['fanart'][0]}'
+                : (e['images']?['poster'] as List?)?.isNotEmpty ?? false
+                ? 'https://wsrv.nl/?url=${e['images']?['poster'][0]}'
+                : (e[type]?['images']?['poster'] as List?)?.isNotEmpty ?? false
+                ? 'https://wsrv.nl/?url=${e[type]?['images']?['poster'][0]}'
+                : '',
             title: e['title'] ?? e[type]?['title'] ?? 'Unknown Title',
             score: double.tryParse(
               (e["rating"] ?? e[type]?["rating"] as num?)
@@ -111,7 +119,7 @@ class TraktTv extends _$TraktTv implements BaseTracker {
     final accessToken = await _getAccessToken();
     final url = Uri.parse(
       '$_baseApiUrl/sync/watched/$type',
-    ).replace(queryParameters: {"extended": "full"});
+    ).replace(queryParameters: {"extended": "full,images"});
     final result = await _makeGetRequest(url, accessToken);
     final data = jsonDecode(result.body) as List?;
     return data?.map((e) {
@@ -121,7 +129,15 @@ class TraktTv extends _$TraktTv implements BaseTracker {
             mediaId: e[type]?['ids']?['trakt'],
             summary: e[type]?['overview'] ?? 'No summary available.',
             totalChapter: e[type]?['aired_episodes'] ?? 1,
-            coverUrl: 'https://wsrv.nl/?url=wsrv.nl/lichtenstein.jpg',
+            coverUrl: (e['images']?['fanart'] as List?)?.isNotEmpty ?? false
+                ? 'https://wsrv.nl/?url=${e['images']?['fanart'][0]}'
+                : (e[type]?['images']?['fanart'] as List?)?.isNotEmpty ?? false
+                ? 'https://wsrv.nl/?url=${e[type]?['images']?['fanart'][0]}'
+                : (e['images']?['poster'] as List?)?.isNotEmpty ?? false
+                ? 'https://wsrv.nl/?url=${e['images']?['poster'][0]}'
+                : (e[type]?['images']?['poster'] as List?)?.isNotEmpty ?? false
+                ? 'https://wsrv.nl/?url=${e[type]?['images']?['poster'][0]}'
+                : '',
             title: e[type]['title'] ?? 'Unknown Title',
             score: double.tryParse(
               (e[type]?["rating"] as num?)?.toDouble().toStringAsFixed(2) ?? "",
@@ -170,7 +186,7 @@ class TraktTv extends _$TraktTv implements BaseTracker {
     final url = Uri.parse('$_baseApiUrl/search/movie,show').replace(
       queryParameters: {
         'query': query,
-        'extended': 'full',
+        'extended': 'full,images',
         'clientId': _clientId,
         'limit': '15',
       },
@@ -184,9 +200,22 @@ class TraktTv extends _$TraktTv implements BaseTracker {
             mediaId: e[type]?['ids']?['trakt'],
             summary: e[type]?['overview'] ?? 'No summary available.',
             totalChapter: e[type]?['aired_episodes'] ?? 1,
-            coverUrl: 'https://wsrv.nl/?url=wsrv.nl/lichtenstein.jpg',
+            coverUrl: (e['images']?['fanart'] as List?)?.isNotEmpty ?? false
+                ? 'https://wsrv.nl/?url=${e['images']?['fanart'][0]}'
+                : (e[type]?['images']?['fanart'] as List?)?.isNotEmpty ?? false
+                ? 'https://wsrv.nl/?url=${e[type]?['images']?['fanart'][0]}'
+                : (e['images']?['poster'] as List?)?.isNotEmpty ?? false
+                ? 'https://wsrv.nl/?url=${e['images']?['poster'][0]}'
+                : (e[type]?['images']?['poster'] as List?)?.isNotEmpty ?? false
+                ? 'https://wsrv.nl/?url=${e[type]?['images']?['poster'][0]}'
+                : '',
             title: e[type]['title'] ?? 'Unknown Title',
-            score: (e[type]?["rating"] as num?)?.toDouble(),
+            score: double.tryParse(
+              (e["rating"] ?? e[type]?["rating"] as num?)
+                      ?.toDouble()
+                      .toStringAsFixed(2) ??
+                  "",
+            ),
             startDate: e[type]?["first_aired"] ?? "",
             publishingType: type,
             publishingStatus: e[type]["status"],
