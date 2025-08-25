@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'track_state_providers.dart';
+part of 'simkl.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$trackStateHash() => r'0b2fa471cb843d5880f921f1c721a05b54bc1515';
+String _$simklHash() => r'3b8ff48675ba743d39aef595dc6cd70f4bd404cf';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,42 +29,42 @@ class _SystemHash {
   }
 }
 
-abstract class _$TrackState extends BuildlessAutoDisposeNotifier<Track> {
-  late final Track? track;
+abstract class _$Simkl extends BuildlessAutoDisposeNotifier<void> {
+  late final int syncId;
   late final ItemType? itemType;
 
-  Track build({
-    Track? track,
+  void build({
+    required int syncId,
     required ItemType? itemType,
   });
 }
 
-/// See also [TrackState].
-@ProviderFor(TrackState)
-const trackStateProvider = TrackStateFamily();
+/// See also [Simkl].
+@ProviderFor(Simkl)
+const simklProvider = SimklFamily();
 
-/// See also [TrackState].
-class TrackStateFamily extends Family<Track> {
-  /// See also [TrackState].
-  const TrackStateFamily();
+/// See also [Simkl].
+class SimklFamily extends Family<void> {
+  /// See also [Simkl].
+  const SimklFamily();
 
-  /// See also [TrackState].
-  TrackStateProvider call({
-    Track? track,
+  /// See also [Simkl].
+  SimklProvider call({
+    required int syncId,
     required ItemType? itemType,
   }) {
-    return TrackStateProvider(
-      track: track,
+    return SimklProvider(
+      syncId: syncId,
       itemType: itemType,
     );
   }
 
   @override
-  TrackStateProvider getProviderOverride(
-    covariant TrackStateProvider provider,
+  SimklProvider getProviderOverride(
+    covariant SimklProvider provider,
   ) {
     return call(
-      track: provider.track,
+      syncId: provider.syncId,
       itemType: provider.itemType,
     );
   }
@@ -81,92 +81,90 @@ class TrackStateFamily extends Family<Track> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'trackStateProvider';
+  String? get name => r'simklProvider';
 }
 
-/// See also [TrackState].
-class TrackStateProvider
-    extends AutoDisposeNotifierProviderImpl<TrackState, Track> {
-  /// See also [TrackState].
-  TrackStateProvider({
-    Track? track,
+/// See also [Simkl].
+class SimklProvider extends AutoDisposeNotifierProviderImpl<Simkl, void> {
+  /// See also [Simkl].
+  SimklProvider({
+    required int syncId,
     required ItemType? itemType,
   }) : this._internal(
-          () => TrackState()
-            ..track = track
+          () => Simkl()
+            ..syncId = syncId
             ..itemType = itemType,
-          from: trackStateProvider,
-          name: r'trackStateProvider',
+          from: simklProvider,
+          name: r'simklProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$trackStateHash,
-          dependencies: TrackStateFamily._dependencies,
-          allTransitiveDependencies:
-              TrackStateFamily._allTransitiveDependencies,
-          track: track,
+                  : _$simklHash,
+          dependencies: SimklFamily._dependencies,
+          allTransitiveDependencies: SimklFamily._allTransitiveDependencies,
+          syncId: syncId,
           itemType: itemType,
         );
 
-  TrackStateProvider._internal(
+  SimklProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.track,
+    required this.syncId,
     required this.itemType,
   }) : super.internal();
 
-  final Track? track;
+  final int syncId;
   final ItemType? itemType;
 
   @override
-  Track runNotifierBuild(
-    covariant TrackState notifier,
+  void runNotifierBuild(
+    covariant Simkl notifier,
   ) {
     return notifier.build(
-      track: track,
+      syncId: syncId,
       itemType: itemType,
     );
   }
 
   @override
-  Override overrideWith(TrackState Function() create) {
+  Override overrideWith(Simkl Function() create) {
     return ProviderOverride(
       origin: this,
-      override: TrackStateProvider._internal(
+      override: SimklProvider._internal(
         () => create()
-          ..track = track
+          ..syncId = syncId
           ..itemType = itemType,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        track: track,
+        syncId: syncId,
         itemType: itemType,
       ),
     );
   }
 
   @override
-  AutoDisposeNotifierProviderElement<TrackState, Track> createElement() {
-    return _TrackStateProviderElement(this);
+  AutoDisposeNotifierProviderElement<Simkl, void> createElement() {
+    return _SimklProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is TrackStateProvider &&
-        other.track == track &&
+    return other is SimklProvider &&
+        other.syncId == syncId &&
         other.itemType == itemType;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, track.hashCode);
+    hash = _SystemHash.combine(hash, syncId.hashCode);
     hash = _SystemHash.combine(hash, itemType.hashCode);
 
     return _SystemHash.finish(hash);
@@ -175,41 +173,22 @@ class TrackStateProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin TrackStateRef on AutoDisposeNotifierProviderRef<Track> {
-  /// The parameter `track` of this provider.
-  Track? get track;
+mixin SimklRef on AutoDisposeNotifierProviderRef<void> {
+  /// The parameter `syncId` of this provider.
+  int get syncId;
 
   /// The parameter `itemType` of this provider.
   ItemType? get itemType;
 }
 
-class _TrackStateProviderElement
-    extends AutoDisposeNotifierProviderElement<TrackState, Track>
-    with TrackStateRef {
-  _TrackStateProviderElement(super.provider);
+class _SimklProviderElement
+    extends AutoDisposeNotifierProviderElement<Simkl, void> with SimklRef {
+  _SimklProviderElement(super.provider);
 
   @override
-  Track? get track => (origin as TrackStateProvider).track;
+  int get syncId => (origin as SimklProvider).syncId;
   @override
-  ItemType? get itemType => (origin as TrackStateProvider).itemType;
+  ItemType? get itemType => (origin as SimklProvider).itemType;
 }
-
-String _$lastTrackerLibraryLocationStateHash() =>
-    r'c09efe7fe4f8dda723c31bc6543dbaa571718342';
-
-/// See also [LastTrackerLibraryLocationState].
-@ProviderFor(LastTrackerLibraryLocationState)
-final lastTrackerLibraryLocationStateProvider = AutoDisposeNotifierProvider<
-    LastTrackerLibraryLocationState, (int, bool)>.internal(
-  LastTrackerLibraryLocationState.new,
-  name: r'lastTrackerLibraryLocationStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$lastTrackerLibraryLocationStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$LastTrackerLibraryLocationState = AutoDisposeNotifier<(int, bool)>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

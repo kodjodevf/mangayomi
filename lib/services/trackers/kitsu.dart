@@ -9,11 +9,12 @@ import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/more/settings/track/myanimelist/model.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+import 'base_tracker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'kitsu.g.dart';
 
 @riverpod
-class Kitsu extends _$Kitsu {
+class Kitsu extends _$Kitsu implements BaseTracker {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
   final String _clientId =
       'dd031b32d2f56c990b1425efe6c42ad847e7fe3ab46bf1299f05ecd856bdb7dd';
@@ -76,6 +77,7 @@ class Kitsu extends _$Kitsu {
     }
   }
 
+  @override
   Future<Track> update(Track track, bool isManga) async {
     final isNew = track.libraryId == null;
     final String? userId = isNew ? _getUserId() : null;
@@ -127,6 +129,7 @@ class Kitsu extends _$Kitsu {
     return track;
   }
 
+  @override
   Future<List<TrackSearch>> search(String search, bool isManga) async {
     final accessToken = _getAccessToken();
 
@@ -175,6 +178,7 @@ class Kitsu extends _$Kitsu {
         .toList();
   }
 
+  @override
   Future<List<TrackSearch>> fetchGeneralData({
     bool isManga = true,
     String rankingType = "popularityRank",
@@ -215,6 +219,7 @@ class Kitsu extends _$Kitsu {
     }).toList();
   }
 
+  @override
   Future<List<TrackSearch>> fetchUserData({bool isManga = true}) async {
     final type = isManga ? "manga" : "anime";
     final userId = _getUserId();
@@ -271,6 +276,7 @@ class Kitsu extends _$Kitsu {
     return result;
   }
 
+  @override
   Future<Track?> findLibItem(Track track, bool isManga) async {
     final type = isManga ? "manga" : "anime";
     final userId = _getUserId();
@@ -374,6 +380,7 @@ class Kitsu extends _$Kitsu {
     };
   }
 
+  @override
   List<TrackStatus> statusList(bool isManga) => [
     isManga ? TrackStatus.reading : TrackStatus.watching,
     TrackStatus.completed,
@@ -410,5 +417,15 @@ class Kitsu extends _$Kitsu {
 
   String? _toKitsuScore(int score) {
     return score > 0 ? (score * 2).toString() : null;
+  }
+  
+  @override
+  String displayScore(int score) {
+    throw UnimplementedError();
+  }
+  
+  @override
+  (int, int) getScoreValue() {
+    throw UnimplementedError();
   }
 }

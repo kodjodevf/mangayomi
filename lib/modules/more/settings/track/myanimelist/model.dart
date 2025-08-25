@@ -15,7 +15,7 @@ class OAuth {
 
   OAuth.fromJson(Map<String, dynamic> json) {
     tokenType = json['token_type'];
-    expiresIn = json['expires_in'] as int;
+    expiresIn = json['expires_in'] as int?;
     accessToken = json['access_token'];
     refreshToken = json['refresh_token'];
     clientId = json['client_id'];

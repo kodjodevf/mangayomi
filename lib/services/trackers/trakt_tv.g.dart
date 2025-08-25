@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'track_state_providers.dart';
+part of 'trakt_tv.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$trackStateHash() => r'0b2fa471cb843d5880f921f1c721a05b54bc1515';
+String _$traktTvHash() => r'de97ae0edbc905d07af2ce8758441fba6cdd7be2';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,42 +29,42 @@ class _SystemHash {
   }
 }
 
-abstract class _$TrackState extends BuildlessAutoDisposeNotifier<Track> {
-  late final Track? track;
+abstract class _$TraktTv extends BuildlessAutoDisposeNotifier<void> {
+  late final int syncId;
   late final ItemType? itemType;
 
-  Track build({
-    Track? track,
+  void build({
+    required int syncId,
     required ItemType? itemType,
   });
 }
 
-/// See also [TrackState].
-@ProviderFor(TrackState)
-const trackStateProvider = TrackStateFamily();
+/// See also [TraktTv].
+@ProviderFor(TraktTv)
+const traktTvProvider = TraktTvFamily();
 
-/// See also [TrackState].
-class TrackStateFamily extends Family<Track> {
-  /// See also [TrackState].
-  const TrackStateFamily();
+/// See also [TraktTv].
+class TraktTvFamily extends Family<void> {
+  /// See also [TraktTv].
+  const TraktTvFamily();
 
-  /// See also [TrackState].
-  TrackStateProvider call({
-    Track? track,
+  /// See also [TraktTv].
+  TraktTvProvider call({
+    required int syncId,
     required ItemType? itemType,
   }) {
-    return TrackStateProvider(
-      track: track,
+    return TraktTvProvider(
+      syncId: syncId,
       itemType: itemType,
     );
   }
 
   @override
-  TrackStateProvider getProviderOverride(
-    covariant TrackStateProvider provider,
+  TraktTvProvider getProviderOverride(
+    covariant TraktTvProvider provider,
   ) {
     return call(
-      track: provider.track,
+      syncId: provider.syncId,
       itemType: provider.itemType,
     );
   }
@@ -81,92 +81,90 @@ class TrackStateFamily extends Family<Track> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'trackStateProvider';
+  String? get name => r'traktTvProvider';
 }
 
-/// See also [TrackState].
-class TrackStateProvider
-    extends AutoDisposeNotifierProviderImpl<TrackState, Track> {
-  /// See also [TrackState].
-  TrackStateProvider({
-    Track? track,
+/// See also [TraktTv].
+class TraktTvProvider extends AutoDisposeNotifierProviderImpl<TraktTv, void> {
+  /// See also [TraktTv].
+  TraktTvProvider({
+    required int syncId,
     required ItemType? itemType,
   }) : this._internal(
-          () => TrackState()
-            ..track = track
+          () => TraktTv()
+            ..syncId = syncId
             ..itemType = itemType,
-          from: trackStateProvider,
-          name: r'trackStateProvider',
+          from: traktTvProvider,
+          name: r'traktTvProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$trackStateHash,
-          dependencies: TrackStateFamily._dependencies,
-          allTransitiveDependencies:
-              TrackStateFamily._allTransitiveDependencies,
-          track: track,
+                  : _$traktTvHash,
+          dependencies: TraktTvFamily._dependencies,
+          allTransitiveDependencies: TraktTvFamily._allTransitiveDependencies,
+          syncId: syncId,
           itemType: itemType,
         );
 
-  TrackStateProvider._internal(
+  TraktTvProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
-    required this.track,
+    required this.syncId,
     required this.itemType,
   }) : super.internal();
 
-  final Track? track;
+  final int syncId;
   final ItemType? itemType;
 
   @override
-  Track runNotifierBuild(
-    covariant TrackState notifier,
+  void runNotifierBuild(
+    covariant TraktTv notifier,
   ) {
     return notifier.build(
-      track: track,
+      syncId: syncId,
       itemType: itemType,
     );
   }
 
   @override
-  Override overrideWith(TrackState Function() create) {
+  Override overrideWith(TraktTv Function() create) {
     return ProviderOverride(
       origin: this,
-      override: TrackStateProvider._internal(
+      override: TraktTvProvider._internal(
         () => create()
-          ..track = track
+          ..syncId = syncId
           ..itemType = itemType,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
-        track: track,
+        syncId: syncId,
         itemType: itemType,
       ),
     );
   }
 
   @override
-  AutoDisposeNotifierProviderElement<TrackState, Track> createElement() {
-    return _TrackStateProviderElement(this);
+  AutoDisposeNotifierProviderElement<TraktTv, void> createElement() {
+    return _TraktTvProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is TrackStateProvider &&
-        other.track == track &&
+    return other is TraktTvProvider &&
+        other.syncId == syncId &&
         other.itemType == itemType;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, track.hashCode);
+    hash = _SystemHash.combine(hash, syncId.hashCode);
     hash = _SystemHash.combine(hash, itemType.hashCode);
 
     return _SystemHash.finish(hash);
@@ -175,41 +173,22 @@ class TrackStateProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin TrackStateRef on AutoDisposeNotifierProviderRef<Track> {
-  /// The parameter `track` of this provider.
-  Track? get track;
+mixin TraktTvRef on AutoDisposeNotifierProviderRef<void> {
+  /// The parameter `syncId` of this provider.
+  int get syncId;
 
   /// The parameter `itemType` of this provider.
   ItemType? get itemType;
 }
 
-class _TrackStateProviderElement
-    extends AutoDisposeNotifierProviderElement<TrackState, Track>
-    with TrackStateRef {
-  _TrackStateProviderElement(super.provider);
+class _TraktTvProviderElement
+    extends AutoDisposeNotifierProviderElement<TraktTv, void> with TraktTvRef {
+  _TraktTvProviderElement(super.provider);
 
   @override
-  Track? get track => (origin as TrackStateProvider).track;
+  int get syncId => (origin as TraktTvProvider).syncId;
   @override
-  ItemType? get itemType => (origin as TrackStateProvider).itemType;
+  ItemType? get itemType => (origin as TraktTvProvider).itemType;
 }
-
-String _$lastTrackerLibraryLocationStateHash() =>
-    r'c09efe7fe4f8dda723c31bc6543dbaa571718342';
-
-/// See also [LastTrackerLibraryLocationState].
-@ProviderFor(LastTrackerLibraryLocationState)
-final lastTrackerLibraryLocationStateProvider = AutoDisposeNotifierProvider<
-    LastTrackerLibraryLocationState, (int, bool)>.internal(
-  LastTrackerLibraryLocationState.new,
-  name: r'lastTrackerLibraryLocationStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$lastTrackerLibraryLocationStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$LastTrackerLibraryLocationState = AutoDisposeNotifier<(int, bool)>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
