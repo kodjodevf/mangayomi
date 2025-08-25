@@ -22,7 +22,7 @@ class TraktTv extends _$TraktTv implements BaseTracker {
   static final _isDesktop = (Platform.isWindows || Platform.isLinux);
   static final _redirectUri = _isDesktop
       ? 'http://localhost:43824'
-      : 'mangayomi://';
+      : 'https://intradeus.github.io/http-protocol-redirector/?r=mangayomi://';
   static const _clientId =
       '5520c7e24da0d8d73ec80315b61b9849483583b013cb7f296c6db723eb9886a1';
   static const _clientSecret =
