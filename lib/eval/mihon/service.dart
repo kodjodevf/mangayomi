@@ -203,9 +203,9 @@ class MihonExtensionService implements ExtensionService {
           (e) => MChapter(
             name: e['name'],
             url: e['url'],
-            dateUpload: e['date_upload'] is int
-                ? (e['date_upload'] as int).toString()
-                : e['date_upload'],
+            dateUpload:
+                (e['date_upload'] as int?)?.toString() ??
+                DateTime.now().millisecondsSinceEpoch.toString(),
             scanlator: e['scanlator'],
           ),
         )

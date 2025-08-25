@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:isar/isar.dart';
+import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/calendar/providers/calendar_provider.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
@@ -241,7 +243,15 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
   List<Manga> _getEntriesForDay(DateTime day, List<Manga> data) {
     return data.where((e) {
-      final temp = DateTime.now().add(Duration(days: e.smartUpdateDays!));
+      final lastChapter = e.chapters
+          .filter()
+          .sortByDateUploadDesc()
+          .findFirstSync();
+      final lastDate = int.tryParse(lastChapter?.dateUpload ?? "");
+      final start = lastDate != null
+          ? DateTime.fromMillisecondsSinceEpoch(lastDate)
+          : DateTime.now();
+      final temp = start.add(Duration(days: e.smartUpdateDays!));
       final predictedDay = "${temp.year}-${temp.month}-${temp.day}";
       final selectedDay = "${day.year}-${day.month}-${day.day}";
       return predictedDay == selectedDay;
