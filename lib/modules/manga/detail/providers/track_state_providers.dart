@@ -10,6 +10,7 @@ import 'package:mangayomi/services/trackers/base_tracker.dart';
 import 'package:mangayomi/services/trackers/kitsu.dart';
 import 'package:mangayomi/services/trackers/myanimelist.dart';
 import 'package:mangayomi/services/trackers/simkl.dart';
+import 'package:mangayomi/services/trackers/trakt_tv.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'track_state_providers.g.dart';
 
@@ -30,6 +31,9 @@ class TrackState extends _$TrackState {
       ),
       3 => ref.read(kitsuProvider(syncId: syncId, itemType: itemType).notifier),
       4 => ref.read(simklProvider(syncId: syncId, itemType: itemType).notifier),
+      5 => ref.read(
+        traktTvProvider(syncId: syncId, itemType: itemType).notifier,
+      ),
       _ => throw Exception('Unsupported syncId: $syncId'),
     };
   }
@@ -117,6 +121,8 @@ class TrackState extends _$TrackState {
     } else if (syncId == TrackerProviders.kitsu.syncId) {
       findManga = await tracker.update(newTrack, _isManga);
     } else if (syncId == TrackerProviders.simkl.syncId) {
+      findManga = await tracker.findLibItem(newTrack, _isManga);
+    } else if (syncId == TrackerProviders.trakt.syncId) {
       findManga = await tracker.findLibItem(newTrack, _isManga);
     }
     writeBack(findManga!);

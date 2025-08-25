@@ -13,6 +13,7 @@ import 'package:mangayomi/services/trackers/anilist.dart';
 import 'package:mangayomi/services/trackers/kitsu.dart';
 import 'package:mangayomi/services/trackers/myanimelist.dart';
 import 'package:mangayomi/services/trackers/simkl.dart';
+import 'package:mangayomi/services/trackers/trakt_tv.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class TrackScreen extends ConsumerWidget {
@@ -111,6 +112,20 @@ class TrackScreen extends ConsumerWidget {
                         .login();
                   },
                   id: TrackerProviders.simkl.syncId,
+                  entries: entries,
+                ),
+                TrackListile(
+                  onTap: () async {
+                    await ref
+                        .read(
+                          traktTvProvider(
+                            syncId: TrackerProviders.trakt.syncId,
+                            itemType: null,
+                          ).notifier,
+                        )
+                        .login();
+                  },
+                  id: TrackerProviders.trakt.syncId,
                   entries: entries,
                 ),
                 ListTile(

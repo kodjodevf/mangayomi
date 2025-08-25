@@ -6,7 +6,7 @@ part of 'simkl.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$simklHash() => r'7385cd7925dff352509f1b51d4ab2eb6af733b15';
+String _$simklHash() => r'3b8ff48675ba743d39aef595dc6cd70f4bd404cf';
 
 /// Copied from Dart SDK
 class _SystemHash {

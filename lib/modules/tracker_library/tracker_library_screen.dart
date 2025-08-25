@@ -24,7 +24,8 @@ enum TrackerProviders {
   myAnimeList(syncId: 1, name: "MAL"),
   anilist(syncId: 2, name: "AL"),
   kitsu(syncId: 3, name: "Kitsu"),
-  simkl(syncId: 4, name: "Simkl");
+  simkl(syncId: 4, name: "Simkl"),
+  trakt(syncId: 5, name: "Trakt");
 
   const TrackerProviders({required this.syncId, required this.name});
 
@@ -69,6 +70,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
       2 => _sectionsAL(trackerProvider.syncId, itemType),
       3 => _sectionsKitsu(trackerProvider.syncId, itemType),
       4 => _sectionsSimkl(trackerProvider.syncId, itemType),
+      5 => _sectionsTrakt(trackerProvider.syncId, itemType),
       _ => [],
     };
     if (_isSearch && _query.isNotEmpty) {
@@ -87,7 +89,10 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "${trackerProvider.name} | ${itemType == ItemType.anime ? l10n.anime : l10n.manga}",
+          (trackerProvider.syncId == TrackerProviders.simkl.syncId ||
+                  trackerProvider.syncId == TrackerProviders.trakt.syncId)
+              ? trackerProvider.name
+              : "${trackerProvider.name} | ${itemType == ItemType.anime ? l10n.anime : l10n.manga}",
         ),
         leading: !_isSearch ? null : Container(),
         actions: [
@@ -210,6 +215,67 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
     );
     await box.deleteAll(keys);
     setState(() {});
+  }
+
+  List<TrackLibrarySection> _sectionsTrakt(int syncId, ItemType itemType) {
+    return [
+      TrackLibrarySection(
+        name: "Continue watching movies",
+        syncId: syncId,
+        func: _fetchUserData(syncId, ItemType.manga),
+        itemType: ItemType.anime,
+      ),
+      TrackLibrarySection(
+        name: "Continue watching series",
+        syncId: syncId,
+        func: _fetchUserData(syncId, ItemType.anime),
+        itemType: ItemType.anime,
+      ),
+      TrackLibrarySection(
+        name: "Trending Movies",
+        syncId: syncId,
+        func: _fetchGeneralData(syncId, ItemType.manga),
+        itemType: ItemType.anime,
+      ),
+      TrackLibrarySection(
+        name: "Trending Series",
+        syncId: syncId,
+        func: _fetchGeneralData(syncId, ItemType.anime),
+        itemType: ItemType.anime,
+      ),
+      TrackLibrarySection(
+        name: "Popular Movies",
+        syncId: syncId,
+        func: _fetchGeneralData(syncId, ItemType.manga, rankingType: "popular"),
+        itemType: ItemType.anime,
+      ),
+      TrackLibrarySection(
+        name: "Popular Series",
+        syncId: syncId,
+        func: _fetchGeneralData(syncId, ItemType.anime, rankingType: "popular"),
+        itemType: ItemType.anime,
+      ),
+      TrackLibrarySection(
+        name: "Top Movies (All Time)",
+        syncId: syncId,
+        func: _fetchGeneralData(
+          syncId,
+          ItemType.manga,
+          rankingType: "favorited/all",
+        ),
+        itemType: ItemType.anime,
+      ),
+      TrackLibrarySection(
+        name: "Top Series (All Time)",
+        syncId: syncId,
+        func: _fetchGeneralData(
+          syncId,
+          ItemType.anime,
+          rankingType: "favorited/all",
+        ),
+        itemType: ItemType.anime,
+      ),
+    ];
   }
 
   List<TrackLibrarySection> _sectionsSimkl(int syncId, ItemType itemType) {
@@ -548,6 +614,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
                 _getListile(l10n, TrackerProviders.anilist.syncId),
                 _getListile(l10n, TrackerProviders.kitsu.syncId),
                 _getListile(l10n, TrackerProviders.simkl.syncId),
+                _getListile(l10n, TrackerProviders.trakt.syncId),
               ],
             ),
           ),
@@ -604,7 +671,9 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
         ),
         enabled: isLoggedIn,
         onTap: () {
-          if (isManga == null && syncId != TrackerProviders.simkl.syncId) {
+          if (isManga == null &&
+              syncId != TrackerProviders.simkl.syncId &&
+              syncId != TrackerProviders.trakt.syncId) {
             context.pop();
             _openSwitchTypeDialog(l10n, syncId);
           } else {
