@@ -25,6 +25,7 @@ import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provi
 import 'package:mangayomi/modules/more/providers/algorithm_weights_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
+import 'package:mangayomi/modules/tracker_library/tracker_library_screen.dart';
 import 'package:mangayomi/modules/widgets/bottom_select_bar.dart';
 import 'package:mangayomi/modules/widgets/category_selection_dialog.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
@@ -1643,6 +1644,86 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                       ),
                     ),
                   ),
+                  const SizedBox(height: 15),
+                  if (widget.manga!.itemType == ItemType.anime)
+                    SizedBox(
+                      width: context.width(1),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: OutlinedButton.icon(
+                          style: ButtonStyle(
+                            shape: WidgetStatePropertyAll(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                            ),
+                          ),
+                          onPressed: () {
+                            context.push(
+                              "/watchOrder",
+                              extra: (widget.manga!.name, null),
+                            );
+                          },
+                          label: Text(l10n.watch_order),
+                          icon: Icon(Icons.arrow_right_alt_outlined),
+                        ),
+                      ),
+                    ),
+                  if (widget.manga!.itemType == ItemType.anime)
+                    StreamBuilder(
+                      stream: isar.tracks
+                          .filter()
+                          .idIsNotNull()
+                          .mangaIdEqualTo(widget.manga!.id!)
+                          .watch(fireImmediately: true),
+                      builder: (context, snapshot) {
+                        List<Track>? trackRes = snapshot.hasData
+                            ? snapshot.data
+                            : [];
+                        final isNotSupported =
+                            trackRes?.firstOrNull?.syncId !=
+                                TrackerProviders.myAnimeList.syncId &&
+                            trackRes?.firstOrNull?.syncId !=
+                                TrackerProviders.anilist.syncId;
+                        if ((trackRes?.isEmpty ?? true) || (isNotSupported)) {
+                          return Container();
+                        }
+                        return Column(
+                          children: [
+                            const SizedBox(height: 15),
+                            SizedBox(
+                              width: context.width(1),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: OutlinedButton.icon(
+                                  style: ButtonStyle(
+                                    shape: WidgetStatePropertyAll(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          30.0,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    context.push(
+                                      "/watchOrder",
+                                      extra: (
+                                        widget.manga!.name,
+                                        trackRes?.firstOrNull,
+                                      ),
+                                    );
+                                  },
+                                  label: Text(l10n.sequels),
+                                  icon: Icon(Icons.arrow_right_alt_outlined),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  const SizedBox(height: 15),
                   if (!context.isTablet)
                     Column(
                       children: [
