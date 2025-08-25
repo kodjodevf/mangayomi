@@ -22,7 +22,7 @@ class Simkl extends _$Simkl implements BaseTracker {
   static final _isDesktop = (Platform.isWindows || Platform.isLinux);
   static final _redirectUri = _isDesktop
       ? 'http://localhost:43824'
-      : 'mangayomi';
+      : 'mangayomi://';
   static const _clientId =
       '1e0a52930b1bdface4e30c1a94a44641475f3c80b69a5ea939562153fccffb68';
   static const _clientSecret =
@@ -43,7 +43,7 @@ class Simkl extends _$Simkl implements BaseTracker {
 
     try {
       final uri = await FlutterWebAuth2.authenticate(
-        url: "$loginUrl&redirect_uri=$callbackUrlScheme",
+        url: "$loginUrl&redirect_uri=$_redirectUri",
         callbackUrlScheme: callbackUrlScheme,
       );
       final code = Uri.parse(uri).queryParameters['code'];
