@@ -13,8 +13,9 @@ String _$migrationHash() => r'2a82120544e693a3162da887a3ca1b3066f3799f';
 final migrationProvider = AutoDisposeFutureProvider<void>.internal(
   migration,
   name: r'migrationProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$migrationHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$migrationHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );

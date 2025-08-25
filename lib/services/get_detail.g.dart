@@ -39,24 +39,13 @@ class GetDetailFamily extends Family<AsyncValue<MManga>> {
   const GetDetailFamily();
 
   /// See also [getDetail].
-  GetDetailProvider call({
-    required String url,
-    required Source source,
-  }) {
-    return GetDetailProvider(
-      url: url,
-      source: source,
-    );
+  GetDetailProvider call({required String url, required Source source}) {
+    return GetDetailProvider(url: url, source: source);
   }
 
   @override
-  GetDetailProvider getProviderOverride(
-    covariant GetDetailProvider provider,
-  ) {
-    return call(
-      url: provider.url,
-      source: provider.source,
-    );
+  GetDetailProvider getProviderOverride(covariant GetDetailProvider provider) {
+    return call(url: provider.url, source: provider.source);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -77,26 +66,19 @@ class GetDetailFamily extends Family<AsyncValue<MManga>> {
 /// See also [getDetail].
 class GetDetailProvider extends AutoDisposeFutureProvider<MManga> {
   /// See also [getDetail].
-  GetDetailProvider({
-    required String url,
-    required Source source,
-  }) : this._internal(
-          (ref) => getDetail(
-            ref as GetDetailRef,
-            url: url,
-            source: source,
-          ),
-          from: getDetailProvider,
-          name: r'getDetailProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$getDetailHash,
-          dependencies: GetDetailFamily._dependencies,
-          allTransitiveDependencies: GetDetailFamily._allTransitiveDependencies,
-          url: url,
-          source: source,
-        );
+  GetDetailProvider({required String url, required Source source})
+    : this._internal(
+        (ref) => getDetail(ref as GetDetailRef, url: url, source: source),
+        from: getDetailProvider,
+        name: r'getDetailProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$getDetailHash,
+        dependencies: GetDetailFamily._dependencies,
+        allTransitiveDependencies: GetDetailFamily._allTransitiveDependencies,
+        url: url,
+        source: source,
+      );
 
   GetDetailProvider._internal(
     super._createNotifier, {
@@ -172,5 +154,6 @@ class _GetDetailProviderElement extends AutoDisposeFutureProviderElement<MManga>
   @override
   Source get source => (origin as GetDetailProvider).source;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

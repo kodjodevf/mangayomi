@@ -32,9 +32,7 @@ class _SystemHash {
 abstract class _$HwdecModeState extends BuildlessAutoDisposeNotifier<String> {
   late final bool rawValue;
 
-  String build({
-    bool rawValue = false,
-  });
+  String build({bool rawValue = false});
 }
 
 /// See also [HwdecModeState].
@@ -47,21 +45,15 @@ class HwdecModeStateFamily extends Family<String> {
   const HwdecModeStateFamily();
 
   /// See also [HwdecModeState].
-  HwdecModeStateProvider call({
-    bool rawValue = false,
-  }) {
-    return HwdecModeStateProvider(
-      rawValue: rawValue,
-    );
+  HwdecModeStateProvider call({bool rawValue = false}) {
+    return HwdecModeStateProvider(rawValue: rawValue);
   }
 
   @override
   HwdecModeStateProvider getProviderOverride(
     covariant HwdecModeStateProvider provider,
   ) {
-    return call(
-      rawValue: provider.rawValue,
-    );
+    return call(rawValue: provider.rawValue);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -83,21 +75,19 @@ class HwdecModeStateFamily extends Family<String> {
 class HwdecModeStateProvider
     extends AutoDisposeNotifierProviderImpl<HwdecModeState, String> {
   /// See also [HwdecModeState].
-  HwdecModeStateProvider({
-    bool rawValue = false,
-  }) : this._internal(
-          () => HwdecModeState()..rawValue = rawValue,
-          from: hwdecModeStateProvider,
-          name: r'hwdecModeStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$hwdecModeStateHash,
-          dependencies: HwdecModeStateFamily._dependencies,
-          allTransitiveDependencies:
-              HwdecModeStateFamily._allTransitiveDependencies,
-          rawValue: rawValue,
-        );
+  HwdecModeStateProvider({bool rawValue = false})
+    : this._internal(
+        () => HwdecModeState()..rawValue = rawValue,
+        from: hwdecModeStateProvider,
+        name: r'hwdecModeStateProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$hwdecModeStateHash,
+        dependencies: HwdecModeStateFamily._dependencies,
+        allTransitiveDependencies:
+            HwdecModeStateFamily._allTransitiveDependencies,
+        rawValue: rawValue,
+      );
 
   HwdecModeStateProvider._internal(
     super._createNotifier, {
@@ -112,12 +102,8 @@ class HwdecModeStateProvider
   final bool rawValue;
 
   @override
-  String runNotifierBuild(
-    covariant HwdecModeState notifier,
-  ) {
-    return notifier.build(
-      rawValue: rawValue,
-    );
+  String runNotifierBuild(covariant HwdecModeState notifier) {
+    return notifier.build(rawValue: rawValue);
   }
 
   @override
@@ -177,14 +163,14 @@ String _$debandingStateHash() => r'b93e2fc826d98cc8bce1aab9a92900353e4d3958';
 @ProviderFor(DebandingState)
 final debandingStateProvider =
     AutoDisposeNotifierProvider<DebandingState, DebandingType>.internal(
-  DebandingState.new,
-  name: r'debandingStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$debandingStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      DebandingState.new,
+      name: r'debandingStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$debandingStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$DebandingState = AutoDisposeNotifier<DebandingType>;
 String _$useGpuNextStateHash() => r'cfc109cd7db66e359e9523102a84aa8cf37bf243';
@@ -193,14 +179,14 @@ String _$useGpuNextStateHash() => r'cfc109cd7db66e359e9523102a84aa8cf37bf243';
 @ProviderFor(UseGpuNextState)
 final useGpuNextStateProvider =
     AutoDisposeNotifierProvider<UseGpuNextState, bool>.internal(
-  UseGpuNextState.new,
-  name: r'useGpuNextStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$useGpuNextStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      UseGpuNextState.new,
+      name: r'useGpuNextStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$useGpuNextStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$UseGpuNextState = AutoDisposeNotifier<bool>;
 String _$useYUV420PStateHash() => r'c600001eff34b2b8df31ba604413b8b20edc3044';
@@ -209,14 +195,14 @@ String _$useYUV420PStateHash() => r'c600001eff34b2b8df31ba604413b8b20edc3044';
 @ProviderFor(UseYUV420PState)
 final useYUV420PStateProvider =
     AutoDisposeNotifierProvider<UseYUV420PState, bool>.internal(
-  UseYUV420PState.new,
-  name: r'useYUV420PStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$useYUV420PStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      UseYUV420PState.new,
+      name: r'useYUV420PStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$useYUV420PStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$UseYUV420PState = AutoDisposeNotifier<bool>;
 // ignore_for_file: type=lint

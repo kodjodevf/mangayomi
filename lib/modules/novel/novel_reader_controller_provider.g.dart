@@ -34,9 +34,7 @@ abstract class _$NovelReaderController
     extends BuildlessAutoDisposeNotifier<void> {
   late final Chapter chapter;
 
-  void build({
-    required Chapter chapter,
-  });
+  void build({required Chapter chapter});
 }
 
 /// See also [NovelReaderController].
@@ -49,21 +47,15 @@ class NovelReaderControllerFamily extends Family<void> {
   const NovelReaderControllerFamily();
 
   /// See also [NovelReaderController].
-  NovelReaderControllerProvider call({
-    required Chapter chapter,
-  }) {
-    return NovelReaderControllerProvider(
-      chapter: chapter,
-    );
+  NovelReaderControllerProvider call({required Chapter chapter}) {
+    return NovelReaderControllerProvider(chapter: chapter);
   }
 
   @override
   NovelReaderControllerProvider getProviderOverride(
     covariant NovelReaderControllerProvider provider,
   ) {
-    return call(
-      chapter: provider.chapter,
-    );
+    return call(chapter: provider.chapter);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -85,21 +77,19 @@ class NovelReaderControllerFamily extends Family<void> {
 class NovelReaderControllerProvider
     extends AutoDisposeNotifierProviderImpl<NovelReaderController, void> {
   /// See also [NovelReaderController].
-  NovelReaderControllerProvider({
-    required Chapter chapter,
-  }) : this._internal(
-          () => NovelReaderController()..chapter = chapter,
-          from: novelReaderControllerProvider,
-          name: r'novelReaderControllerProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$novelReaderControllerHash,
-          dependencies: NovelReaderControllerFamily._dependencies,
-          allTransitiveDependencies:
-              NovelReaderControllerFamily._allTransitiveDependencies,
-          chapter: chapter,
-        );
+  NovelReaderControllerProvider({required Chapter chapter})
+    : this._internal(
+        () => NovelReaderController()..chapter = chapter,
+        from: novelReaderControllerProvider,
+        name: r'novelReaderControllerProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$novelReaderControllerHash,
+        dependencies: NovelReaderControllerFamily._dependencies,
+        allTransitiveDependencies:
+            NovelReaderControllerFamily._allTransitiveDependencies,
+        chapter: chapter,
+      );
 
   NovelReaderControllerProvider._internal(
     super._createNotifier, {
@@ -114,12 +104,8 @@ class NovelReaderControllerProvider
   final Chapter chapter;
 
   @override
-  void runNotifierBuild(
-    covariant NovelReaderController notifier,
-  ) {
-    return notifier.build(
-      chapter: chapter,
-    );
+  void runNotifierBuild(covariant NovelReaderController notifier) {
+    return notifier.build(chapter: chapter);
   }
 
   @override
@@ -140,7 +126,7 @@ class NovelReaderControllerProvider
 
   @override
   AutoDisposeNotifierProviderElement<NovelReaderController, void>
-      createElement() {
+  createElement() {
     return _NovelReaderControllerProviderElement(this);
   }
 
@@ -173,5 +159,6 @@ class _NovelReaderControllerProviderElement
   @override
   Chapter get chapter => (origin as NovelReaderControllerProvider).chapter;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

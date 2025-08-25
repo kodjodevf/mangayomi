@@ -12,14 +12,14 @@ String _$dateFormatStateHash() => r'9b11f72b8fa535b74873365618089dfca957e445';
 @ProviderFor(DateFormatState)
 final dateFormatStateProvider =
     AutoDisposeNotifierProvider<DateFormatState, String>.internal(
-  DateFormatState.new,
-  name: r'dateFormatStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$dateFormatStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      DateFormatState.new,
+      name: r'dateFormatStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$dateFormatStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$DateFormatState = AutoDisposeNotifier<String>;
 String _$relativeTimesTampsStateHash() =>
@@ -29,14 +29,14 @@ String _$relativeTimesTampsStateHash() =>
 @ProviderFor(RelativeTimesTampsState)
 final relativeTimesTampsStateProvider =
     AutoDisposeNotifierProvider<RelativeTimesTampsState, int>.internal(
-  RelativeTimesTampsState.new,
-  name: r'relativeTimesTampsStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$relativeTimesTampsStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      RelativeTimesTampsState.new,
+      name: r'relativeTimesTampsStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$relativeTimesTampsStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$RelativeTimesTampsState = AutoDisposeNotifier<int>;
 // ignore_for_file: type=lint

@@ -10,21 +10,21 @@ packages:
     source: hosted
     version: "85.0.0"
   analyzer:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
       name: analyzer
-      sha256: "974859dc0ff5f37bc4313244b3218c791810d03ab3470a579580279ba971a48d"
+      sha256: f4ad0fea5f102201015c9aae9d93bc02f75dd9491529a8c21f88d17a8523d44c
       url: "https://pub.dev"
     source: hosted
-    version: "7.7.1"
+    version: "7.6.0"
   analyzer_plugin:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
       name: analyzer_plugin
-      sha256: dd574a0ab77de88b7d9c12bc4b626109a5ca9078216a79041a5c24c3a1bd103c
+      sha256: a5ab7590c27b779f3d4de67f31c4109dbe13dd7339f86461a6f2a8ab2594d8ce
       url: "https://pub.dev"
     source: hosted
-    version: "0.13.7"
+    version: "0.13.4"
   antlr4:
     dependency: transitive
     description:
@@ -341,10 +341,10 @@ packages:
     dependency: transitive
     description:
       name: custom_lint_visitor
-      sha256: "36282d85714af494ee2d7da8c8913630aa6694da99f104fb2ed4afcf8fc857d8"
+      sha256: "4a86a0d8415a91fbb8298d6ef03e9034dc8e323a599ddc4120a0e36c433983a2"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.0+7.3.0"
+    version: "1.0.0+7.7.0"
   d4rt:
     dependency: "direct main"
     description:
@@ -357,10 +357,10 @@ packages:
     dependency: transitive
     description:
       name: dart_style
-      sha256: "7306ab8a2359a48d22310ad823521d723acfed60ee1f7e37388e8986853b6820"
+      sha256: "8a0e5fba27e8ee025d2ffb4ee820b4e6e2cf5e4246a6b1a477eb66866947e0bb"
       url: "https://pub.dev"
     source: hosted
-    version: "2.3.8"
+    version: "3.1.1"
   dartx:
     dependency: transitive
     description:
@@ -487,10 +487,10 @@ packages:
     dependency: "direct main"
     description:
       name: ffigen
-      sha256: "2119b4fe3aad0db94dc9531b90283c4640a6231070e613c400b426a4da08c704"
+      sha256: "2bd9a420ca42cb5ce8cff5d80f88547b547a042ae26807704b1698714e4464a2"
       url: "https://pub.dev"
     source: hosted
-    version: "16.1.0"
+    version: "19.1.0"
   file:
     dependency: transitive
     description:
@@ -734,18 +734,18 @@ packages:
     dependency: "direct dev"
     description:
       name: freezed
-      sha256: "44c19278dd9d89292cf46e97dc0c1e52ce03275f40a97c5a348e802a924bf40e"
+      sha256: "6022db4c7bfa626841b2a10f34dd1e1b68e8f8f9650db6112dcdeeca45ca793c"
       url: "https://pub.dev"
     source: hosted
-    version: "2.5.7"
+    version: "3.0.6"
   freezed_annotation:
     dependency: "direct main"
     description:
       name: freezed_annotation
-      sha256: c2e2d632dd9b8a2b7751117abcfc2b4888ecfe181bd9fca7170d9ef02e595fe2
+      sha256: c87ff004c8aa6af2d531668b46a4ea379f7191dc6dfa066acd53d506da6e044b
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.4"
+    version: "3.0.0"
   frontend_server_client:
     dependency: transitive
     description:
@@ -869,10 +869,9 @@ packages:
   hive_generator:
     dependency: "direct dev"
     description:
-      name: hive_generator
-      sha256: "06cb8f58ace74de61f63500564931f9505368f45f98958bd7a6c35ba24159db4"
-      url: "https://pub.dev"
-    source: hosted
+      path: "plugins/hive_generator"
+      relative: true
+    source: path
     version: "2.0.1"
   html:
     dependency: "direct main"
@@ -886,10 +885,10 @@ packages:
     dependency: "direct main"
     description:
       name: http
-      sha256: "2c11f3f94c687ee9bad77c171151672986360b2b001d109814ee7140b2cf261b"
+      sha256: bb2ce4590bc2667c96f318d68cac1b5a7987ec819351d32b1c987239a815e007
       url: "https://pub.dev"
     source: hosted
-    version: "1.4.0"
+    version: "1.5.0"
   http_client_helper:
     dependency: transitive
     description:
@@ -962,14 +961,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
-  iregexp:
-    dependency: transitive
-    description:
-      name: iregexp
-      sha256: "143859dcaeecf6f683102786762d70a47ef8441a0d2287a158172d32d38799cf"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.1.2"
   isar:
     dependency: "direct main"
     description:
@@ -989,10 +980,9 @@ packages:
   isar_generator:
     dependency: "direct dev"
     description:
-      name: isar_generator
-      sha256: "76c121e1295a30423604f2f819bc255bc79f852f3bc8743a24017df6068ad133"
-      url: "https://pub.dev"
-    source: hosted
+      path: "plugins/isar_generator"
+      relative: true
+    source: path
     version: "3.1.0+1"
   isolate_contactor:
     dependency: transitive
@@ -1034,14 +1024,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.9.0"
-  json_path:
-    dependency: "direct main"
-    description:
-      name: json_path
-      sha256: a3a06eb005f2e93d0df7f263cdf76bbd02c7602f5c4bed9be94fcca4c36be03e
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.7.5"
   json_view:
     dependency: "direct main"
     description:
@@ -1138,14 +1120,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.11.1"
-  maybe_just_nothing:
-    dependency: transitive
-    description:
-      name: maybe_just_nothing
-      sha256: "0c06326e26d08f6ed43247404376366dc4d756cef23a4f1db765f546224c35e0"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.5.3"
   media_kit:
     dependency: "direct main"
     description:
@@ -1531,14 +1505,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.3"
-  rfc_6901:
-    dependency: transitive
-    description:
-      name: rfc_6901
-      sha256: df1bbfa3d023009598f19636d6114c6ac1e0b7bb7bf6a260f0e6e6ce91416820
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.0"
   riverpod:
     dependency: transitive
     description:
@@ -1551,10 +1517,10 @@ packages:
     dependency: transitive
     description:
       name: riverpod_analyzer_utils
-      sha256: c6b8222b2b483cb87ae77ad147d6408f400c64f060df7a225b127f4afef4f8c8
+      sha256: "03a17170088c63aab6c54c44456f5ab78876a1ddb6032ffde1662ddab4959611"
       url: "https://pub.dev"
     source: hosted
-    version: "0.5.8"
+    version: "0.5.10"
   riverpod_annotation:
     dependency: "direct main"
     description:
@@ -1567,10 +1533,10 @@ packages:
     dependency: "direct dev"
     description:
       name: riverpod_generator
-      sha256: "63546d70952015f0981361636bf8f356d9cfd9d7f6f0815e3c07789a41233188"
+      sha256: "44a0992d54473eb199ede00e2260bd3c262a86560e3c6f6374503d86d0580e36"
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.3"
+    version: "2.6.5"
   rust_lib_mangayomi:
     dependency: "direct main"
     description:
@@ -1747,18 +1713,18 @@ packages:
     dependency: transitive
     description:
       name: source_gen
-      sha256: "14658ba5f669685cd3d63701d01b31ea748310f7ab854e471962670abcf57832"
+      sha256: "35c8150ece9e8c8d263337a265153c3329667640850b9304861faea59fc98f6b"
       url: "https://pub.dev"
     source: hosted
-    version: "1.5.0"
+    version: "2.0.0"
   source_helper:
     dependency: transitive
     description:
       name: source_helper
-      sha256: "86d247119aedce8e63f4751bd9626fc9613255935558447569ad42f9f5b48b3c"
+      sha256: a447acb083d3a5ef17f983dd36201aeea33fedadb3228fa831f2f0c92f0f3aca
       url: "https://pub.dev"
     source: hosted
-    version: "1.3.5"
+    version: "1.3.7"
   source_span:
     dependency: transitive
     description:

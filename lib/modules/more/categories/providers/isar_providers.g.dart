@@ -40,21 +40,15 @@ class GetMangaCategorieStreamFamily extends Family<AsyncValue<List<Category>>> {
   const GetMangaCategorieStreamFamily();
 
   /// See also [getMangaCategorieStream].
-  GetMangaCategorieStreamProvider call({
-    required ItemType itemType,
-  }) {
-    return GetMangaCategorieStreamProvider(
-      itemType: itemType,
-    );
+  GetMangaCategorieStreamProvider call({required ItemType itemType}) {
+    return GetMangaCategorieStreamProvider(itemType: itemType);
   }
 
   @override
   GetMangaCategorieStreamProvider getProviderOverride(
     covariant GetMangaCategorieStreamProvider provider,
   ) {
-    return call(
-      itemType: provider.itemType,
-    );
+    return call(itemType: provider.itemType);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -76,24 +70,22 @@ class GetMangaCategorieStreamFamily extends Family<AsyncValue<List<Category>>> {
 class GetMangaCategorieStreamProvider
     extends AutoDisposeStreamProvider<List<Category>> {
   /// See also [getMangaCategorieStream].
-  GetMangaCategorieStreamProvider({
-    required ItemType itemType,
-  }) : this._internal(
-          (ref) => getMangaCategorieStream(
-            ref as GetMangaCategorieStreamRef,
-            itemType: itemType,
-          ),
-          from: getMangaCategorieStreamProvider,
-          name: r'getMangaCategorieStreamProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$getMangaCategorieStreamHash,
-          dependencies: GetMangaCategorieStreamFamily._dependencies,
-          allTransitiveDependencies:
-              GetMangaCategorieStreamFamily._allTransitiveDependencies,
+  GetMangaCategorieStreamProvider({required ItemType itemType})
+    : this._internal(
+        (ref) => getMangaCategorieStream(
+          ref as GetMangaCategorieStreamRef,
           itemType: itemType,
-        );
+        ),
+        from: getMangaCategorieStreamProvider,
+        name: r'getMangaCategorieStreamProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$getMangaCategorieStreamHash,
+        dependencies: GetMangaCategorieStreamFamily._dependencies,
+        allTransitiveDependencies:
+            GetMangaCategorieStreamFamily._allTransitiveDependencies,
+        itemType: itemType,
+      );
 
   GetMangaCategorieStreamProvider._internal(
     super._createNotifier, {
@@ -161,5 +153,6 @@ class _GetMangaCategorieStreamProviderElement
   @override
   ItemType get itemType => (origin as GetMangaCategorieStreamProvider).itemType;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

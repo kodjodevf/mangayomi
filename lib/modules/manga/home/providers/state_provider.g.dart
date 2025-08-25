@@ -11,16 +11,19 @@ String _$mangaHomeDisplayTypeStateHash() =>
 
 /// See also [MangaHomeDisplayTypeState].
 @ProviderFor(MangaHomeDisplayTypeState)
-final mangaHomeDisplayTypeStateProvider = AutoDisposeNotifierProvider<
-    MangaHomeDisplayTypeState, DisplayType>.internal(
-  MangaHomeDisplayTypeState.new,
-  name: r'mangaHomeDisplayTypeStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$mangaHomeDisplayTypeStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+final mangaHomeDisplayTypeStateProvider =
+    AutoDisposeNotifierProvider<
+      MangaHomeDisplayTypeState,
+      DisplayType
+    >.internal(
+      MangaHomeDisplayTypeState.new,
+      name: r'mangaHomeDisplayTypeStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$mangaHomeDisplayTypeStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$MangaHomeDisplayTypeState = AutoDisposeNotifier<DisplayType>;
 // ignore_for_file: type=lint

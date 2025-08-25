@@ -40,21 +40,15 @@ class GetMangaDetailStreamFamily extends Family<AsyncValue<Manga?>> {
   const GetMangaDetailStreamFamily();
 
   /// See also [getMangaDetailStream].
-  GetMangaDetailStreamProvider call({
-    required int mangaId,
-  }) {
-    return GetMangaDetailStreamProvider(
-      mangaId: mangaId,
-    );
+  GetMangaDetailStreamProvider call({required int mangaId}) {
+    return GetMangaDetailStreamProvider(mangaId: mangaId);
   }
 
   @override
   GetMangaDetailStreamProvider getProviderOverride(
     covariant GetMangaDetailStreamProvider provider,
   ) {
-    return call(
-      mangaId: provider.mangaId,
-    );
+    return call(mangaId: provider.mangaId);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -75,24 +69,22 @@ class GetMangaDetailStreamFamily extends Family<AsyncValue<Manga?>> {
 /// See also [getMangaDetailStream].
 class GetMangaDetailStreamProvider extends AutoDisposeStreamProvider<Manga?> {
   /// See also [getMangaDetailStream].
-  GetMangaDetailStreamProvider({
-    required int mangaId,
-  }) : this._internal(
-          (ref) => getMangaDetailStream(
-            ref as GetMangaDetailStreamRef,
-            mangaId: mangaId,
-          ),
-          from: getMangaDetailStreamProvider,
-          name: r'getMangaDetailStreamProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$getMangaDetailStreamHash,
-          dependencies: GetMangaDetailStreamFamily._dependencies,
-          allTransitiveDependencies:
-              GetMangaDetailStreamFamily._allTransitiveDependencies,
+  GetMangaDetailStreamProvider({required int mangaId})
+    : this._internal(
+        (ref) => getMangaDetailStream(
+          ref as GetMangaDetailStreamRef,
           mangaId: mangaId,
-        );
+        ),
+        from: getMangaDetailStreamProvider,
+        name: r'getMangaDetailStreamProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$getMangaDetailStreamHash,
+        dependencies: GetMangaDetailStreamFamily._dependencies,
+        allTransitiveDependencies:
+            GetMangaDetailStreamFamily._allTransitiveDependencies,
+        mangaId: mangaId,
+      );
 
   GetMangaDetailStreamProvider._internal(
     super._createNotifier, {
@@ -171,21 +163,15 @@ class GetChaptersStreamFamily extends Family<AsyncValue<List<Chapter>>> {
   const GetChaptersStreamFamily();
 
   /// See also [getChaptersStream].
-  GetChaptersStreamProvider call({
-    required int mangaId,
-  }) {
-    return GetChaptersStreamProvider(
-      mangaId: mangaId,
-    );
+  GetChaptersStreamProvider call({required int mangaId}) {
+    return GetChaptersStreamProvider(mangaId: mangaId);
   }
 
   @override
   GetChaptersStreamProvider getProviderOverride(
     covariant GetChaptersStreamProvider provider,
   ) {
-    return call(
-      mangaId: provider.mangaId,
-    );
+    return call(mangaId: provider.mangaId);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -207,24 +193,20 @@ class GetChaptersStreamFamily extends Family<AsyncValue<List<Chapter>>> {
 class GetChaptersStreamProvider
     extends AutoDisposeStreamProvider<List<Chapter>> {
   /// See also [getChaptersStream].
-  GetChaptersStreamProvider({
-    required int mangaId,
-  }) : this._internal(
-          (ref) => getChaptersStream(
-            ref as GetChaptersStreamRef,
-            mangaId: mangaId,
-          ),
-          from: getChaptersStreamProvider,
-          name: r'getChaptersStreamProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$getChaptersStreamHash,
-          dependencies: GetChaptersStreamFamily._dependencies,
-          allTransitiveDependencies:
-              GetChaptersStreamFamily._allTransitiveDependencies,
-          mangaId: mangaId,
-        );
+  GetChaptersStreamProvider({required int mangaId})
+    : this._internal(
+        (ref) =>
+            getChaptersStream(ref as GetChaptersStreamRef, mangaId: mangaId),
+        from: getChaptersStreamProvider,
+        name: r'getChaptersStreamProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$getChaptersStreamHash,
+        dependencies: GetChaptersStreamFamily._dependencies,
+        allTransitiveDependencies:
+            GetChaptersStreamFamily._allTransitiveDependencies,
+        mangaId: mangaId,
+      );
 
   GetChaptersStreamProvider._internal(
     super._createNotifier, {
@@ -290,5 +272,6 @@ class _GetChaptersStreamProviderElement
   @override
   int get mangaId => (origin as GetChaptersStreamProvider).mangaId;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

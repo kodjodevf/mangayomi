@@ -52,9 +52,7 @@ class HeadersFamily extends Family<Map<String, String>> {
   }
 
   @override
-  HeadersProvider getProviderOverride(
-    covariant HeadersProvider provider,
-  ) {
+  HeadersProvider getProviderOverride(covariant HeadersProvider provider) {
     return call(
       source: provider.source,
       lang: provider.lang,
@@ -85,24 +83,23 @@ class HeadersProvider extends AutoDisposeProvider<Map<String, String>> {
     required String lang,
     String androidProxyServer = "",
   }) : this._internal(
-          (ref) => headers(
-            ref as HeadersRef,
-            source: source,
-            lang: lang,
-            androidProxyServer: androidProxyServer,
-          ),
-          from: headersProvider,
-          name: r'headersProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$headersHash,
-          dependencies: HeadersFamily._dependencies,
-          allTransitiveDependencies: HeadersFamily._allTransitiveDependencies,
-          source: source,
-          lang: lang,
-          androidProxyServer: androidProxyServer,
-        );
+         (ref) => headers(
+           ref as HeadersRef,
+           source: source,
+           lang: lang,
+           androidProxyServer: androidProxyServer,
+         ),
+         from: headersProvider,
+         name: r'headersProvider',
+         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+             ? null
+             : _$headersHash,
+         dependencies: HeadersFamily._dependencies,
+         allTransitiveDependencies: HeadersFamily._allTransitiveDependencies,
+         source: source,
+         lang: lang,
+         androidProxyServer: androidProxyServer,
+       );
 
   HeadersProvider._internal(
     super._createNotifier, {
@@ -178,7 +175,8 @@ mixin HeadersRef on AutoDisposeProviderRef<Map<String, String>> {
 }
 
 class _HeadersProviderElement
-    extends AutoDisposeProviderElement<Map<String, String>> with HeadersRef {
+    extends AutoDisposeProviderElement<Map<String, String>>
+    with HeadersRef {
   _HeadersProviderElement(super.provider);
 
   @override
@@ -189,5 +187,6 @@ class _HeadersProviderElement
   String get androidProxyServer =>
       (origin as HeadersProvider).androidProxyServer;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

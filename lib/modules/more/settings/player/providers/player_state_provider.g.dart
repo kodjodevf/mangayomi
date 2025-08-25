@@ -13,14 +13,14 @@ String _$defaultSubtitleLangStateHash() =>
 @ProviderFor(DefaultSubtitleLangState)
 final defaultSubtitleLangStateProvider =
     AutoDisposeNotifierProvider<DefaultSubtitleLangState, Locale>.internal(
-  DefaultSubtitleLangState.new,
-  name: r'defaultSubtitleLangStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$defaultSubtitleLangStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      DefaultSubtitleLangState.new,
+      name: r'defaultSubtitleLangStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$defaultSubtitleLangStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$DefaultSubtitleLangState = AutoDisposeNotifier<Locale>;
 String _$markEpisodeAsSeenTypeStateHash() =>
@@ -30,14 +30,14 @@ String _$markEpisodeAsSeenTypeStateHash() =>
 @ProviderFor(MarkEpisodeAsSeenTypeState)
 final markEpisodeAsSeenTypeStateProvider =
     AutoDisposeNotifierProvider<MarkEpisodeAsSeenTypeState, int>.internal(
-  MarkEpisodeAsSeenTypeState.new,
-  name: r'markEpisodeAsSeenTypeStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$markEpisodeAsSeenTypeStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      MarkEpisodeAsSeenTypeState.new,
+      name: r'markEpisodeAsSeenTypeStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$markEpisodeAsSeenTypeStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$MarkEpisodeAsSeenTypeState = AutoDisposeNotifier<int>;
 String _$defaultSkipIntroLengthStateHash() =>
@@ -47,14 +47,14 @@ String _$defaultSkipIntroLengthStateHash() =>
 @ProviderFor(DefaultSkipIntroLengthState)
 final defaultSkipIntroLengthStateProvider =
     AutoDisposeNotifierProvider<DefaultSkipIntroLengthState, int>.internal(
-  DefaultSkipIntroLengthState.new,
-  name: r'defaultSkipIntroLengthStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$defaultSkipIntroLengthStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      DefaultSkipIntroLengthState.new,
+      name: r'defaultSkipIntroLengthStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$defaultSkipIntroLengthStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$DefaultSkipIntroLengthState = AutoDisposeNotifier<int>;
 String _$defaultDoubleTapToSkipLengthStateHash() =>
@@ -62,16 +62,19 @@ String _$defaultDoubleTapToSkipLengthStateHash() =>
 
 /// See also [DefaultDoubleTapToSkipLengthState].
 @ProviderFor(DefaultDoubleTapToSkipLengthState)
-final defaultDoubleTapToSkipLengthStateProvider = AutoDisposeNotifierProvider<
-    DefaultDoubleTapToSkipLengthState, int>.internal(
-  DefaultDoubleTapToSkipLengthState.new,
-  name: r'defaultDoubleTapToSkipLengthStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$defaultDoubleTapToSkipLengthStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+final defaultDoubleTapToSkipLengthStateProvider =
+    AutoDisposeNotifierProvider<
+      DefaultDoubleTapToSkipLengthState,
+      int
+    >.internal(
+      DefaultDoubleTapToSkipLengthState.new,
+      name: r'defaultDoubleTapToSkipLengthStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$defaultDoubleTapToSkipLengthStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$DefaultDoubleTapToSkipLengthState = AutoDisposeNotifier<int>;
 String _$defaultPlayBackSpeedStateHash() =>
@@ -81,14 +84,14 @@ String _$defaultPlayBackSpeedStateHash() =>
 @ProviderFor(DefaultPlayBackSpeedState)
 final defaultPlayBackSpeedStateProvider =
     AutoDisposeNotifierProvider<DefaultPlayBackSpeedState, double>.internal(
-  DefaultPlayBackSpeedState.new,
-  name: r'defaultPlayBackSpeedStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$defaultPlayBackSpeedStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      DefaultPlayBackSpeedState.new,
+      name: r'defaultPlayBackSpeedStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$defaultPlayBackSpeedStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$DefaultPlayBackSpeedState = AutoDisposeNotifier<double>;
 String _$fullScreenPlayerStateHash() =>
@@ -98,14 +101,14 @@ String _$fullScreenPlayerStateHash() =>
 @ProviderFor(FullScreenPlayerState)
 final fullScreenPlayerStateProvider =
     AutoDisposeNotifierProvider<FullScreenPlayerState, bool>.internal(
-  FullScreenPlayerState.new,
-  name: r'fullScreenPlayerStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$fullScreenPlayerStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      FullScreenPlayerState.new,
+      name: r'fullScreenPlayerStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$fullScreenPlayerStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$FullScreenPlayerState = AutoDisposeNotifier<bool>;
 String _$enableAniSkipStateHash() =>
@@ -115,14 +118,14 @@ String _$enableAniSkipStateHash() =>
 @ProviderFor(EnableAniSkipState)
 final enableAniSkipStateProvider =
     AutoDisposeNotifierProvider<EnableAniSkipState, bool>.internal(
-  EnableAniSkipState.new,
-  name: r'enableAniSkipStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$enableAniSkipStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      EnableAniSkipState.new,
+      name: r'enableAniSkipStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$enableAniSkipStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$EnableAniSkipState = AutoDisposeNotifier<bool>;
 String _$enableAutoSkipStateHash() =>
@@ -132,14 +135,14 @@ String _$enableAutoSkipStateHash() =>
 @ProviderFor(EnableAutoSkipState)
 final enableAutoSkipStateProvider =
     AutoDisposeNotifierProvider<EnableAutoSkipState, bool>.internal(
-  EnableAutoSkipState.new,
-  name: r'enableAutoSkipStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$enableAutoSkipStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      EnableAutoSkipState.new,
+      name: r'enableAutoSkipStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$enableAutoSkipStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$EnableAutoSkipState = AutoDisposeNotifier<bool>;
 String _$aniSkipTimeoutLengthStateHash() =>
@@ -149,14 +152,14 @@ String _$aniSkipTimeoutLengthStateHash() =>
 @ProviderFor(AniSkipTimeoutLengthState)
 final aniSkipTimeoutLengthStateProvider =
     AutoDisposeNotifierProvider<AniSkipTimeoutLengthState, int>.internal(
-  AniSkipTimeoutLengthState.new,
-  name: r'aniSkipTimeoutLengthStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$aniSkipTimeoutLengthStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      AniSkipTimeoutLengthState.new,
+      name: r'aniSkipTimeoutLengthStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$aniSkipTimeoutLengthStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$AniSkipTimeoutLengthState = AutoDisposeNotifier<int>;
 String _$useLibassStateHash() => r'aa8024f8b754117dfe80594f85155b05311a3152';
@@ -165,14 +168,14 @@ String _$useLibassStateHash() => r'aa8024f8b754117dfe80594f85155b05311a3152';
 @ProviderFor(UseLibassState)
 final useLibassStateProvider =
     AutoDisposeNotifierProvider<UseLibassState, bool>.internal(
-  UseLibassState.new,
-  name: r'useLibassStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$useLibassStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      UseLibassState.new,
+      name: r'useLibassStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$useLibassStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$UseLibassState = AutoDisposeNotifier<bool>;
 String _$useMpvConfigStateHash() => r'f91e6a7dbd3c5f7674ba74842521ecfca01c78b0';
@@ -181,14 +184,14 @@ String _$useMpvConfigStateHash() => r'f91e6a7dbd3c5f7674ba74842521ecfca01c78b0';
 @ProviderFor(UseMpvConfigState)
 final useMpvConfigStateProvider =
     AutoDisposeNotifierProvider<UseMpvConfigState, bool>.internal(
-  UseMpvConfigState.new,
-  name: r'useMpvConfigStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$useMpvConfigStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      UseMpvConfigState.new,
+      name: r'useMpvConfigStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$useMpvConfigStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$UseMpvConfigState = AutoDisposeNotifier<bool>;
 // ignore_for_file: type=lint

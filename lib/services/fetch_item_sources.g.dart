@@ -86,25 +86,24 @@ class FetchItemSourcesListProvider extends FutureProvider<void> {
     required bool reFresh,
     required ItemType itemType,
   }) : this._internal(
-          (ref) => fetchItemSourcesList(
-            ref as FetchItemSourcesListRef,
-            id: id,
-            reFresh: reFresh,
-            itemType: itemType,
-          ),
-          from: fetchItemSourcesListProvider,
-          name: r'fetchItemSourcesListProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$fetchItemSourcesListHash,
-          dependencies: FetchItemSourcesListFamily._dependencies,
-          allTransitiveDependencies:
-              FetchItemSourcesListFamily._allTransitiveDependencies,
-          id: id,
-          reFresh: reFresh,
-          itemType: itemType,
-        );
+         (ref) => fetchItemSourcesList(
+           ref as FetchItemSourcesListRef,
+           id: id,
+           reFresh: reFresh,
+           itemType: itemType,
+         ),
+         from: fetchItemSourcesListProvider,
+         name: r'fetchItemSourcesListProvider',
+         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+             ? null
+             : _$fetchItemSourcesListHash,
+         dependencies: FetchItemSourcesListFamily._dependencies,
+         allTransitiveDependencies:
+             FetchItemSourcesListFamily._allTransitiveDependencies,
+         id: id,
+         reFresh: reFresh,
+         itemType: itemType,
+       );
 
   FetchItemSourcesListProvider._internal(
     super._createNotifier, {
@@ -190,5 +189,6 @@ class _FetchItemSourcesListProviderElement extends FutureProviderElement<void>
   @override
   ItemType get itemType => (origin as FetchItemSourcesListProvider).itemType;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -36,27 +36,24 @@ const getArchivesDataFromDirectoryProvider =
     GetArchivesDataFromDirectoryFamily();
 
 /// See also [getArchivesDataFromDirectory].
-class GetArchivesDataFromDirectoryFamily extends Family<
-    AsyncValue<List<(String, LocalExtensionType, Uint8List, String)>>> {
+class GetArchivesDataFromDirectoryFamily
+    extends
+        Family<
+          AsyncValue<List<(String, LocalExtensionType, Uint8List, String)>>
+        > {
   /// See also [getArchivesDataFromDirectory].
   const GetArchivesDataFromDirectoryFamily();
 
   /// See also [getArchivesDataFromDirectory].
-  GetArchivesDataFromDirectoryProvider call(
-    String path,
-  ) {
-    return GetArchivesDataFromDirectoryProvider(
-      path,
-    );
+  GetArchivesDataFromDirectoryProvider call(String path) {
+    return GetArchivesDataFromDirectoryProvider(path);
   }
 
   @override
   GetArchivesDataFromDirectoryProvider getProviderOverride(
     covariant GetArchivesDataFromDirectoryProvider provider,
   ) {
-    return call(
-      provider.path,
-    );
+    return call(provider.path);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -75,27 +72,28 @@ class GetArchivesDataFromDirectoryFamily extends Family<
 }
 
 /// See also [getArchivesDataFromDirectory].
-class GetArchivesDataFromDirectoryProvider extends AutoDisposeFutureProvider<
-    List<(String, LocalExtensionType, Uint8List, String)>> {
+class GetArchivesDataFromDirectoryProvider
+    extends
+        AutoDisposeFutureProvider<
+          List<(String, LocalExtensionType, Uint8List, String)>
+        > {
   /// See also [getArchivesDataFromDirectory].
-  GetArchivesDataFromDirectoryProvider(
-    String path,
-  ) : this._internal(
-          (ref) => getArchivesDataFromDirectory(
-            ref as GetArchivesDataFromDirectoryRef,
-            path,
-          ),
-          from: getArchivesDataFromDirectoryProvider,
-          name: r'getArchivesDataFromDirectoryProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$getArchivesDataFromDirectoryHash,
-          dependencies: GetArchivesDataFromDirectoryFamily._dependencies,
-          allTransitiveDependencies:
-              GetArchivesDataFromDirectoryFamily._allTransitiveDependencies,
-          path: path,
-        );
+  GetArchivesDataFromDirectoryProvider(String path)
+    : this._internal(
+        (ref) => getArchivesDataFromDirectory(
+          ref as GetArchivesDataFromDirectoryRef,
+          path,
+        ),
+        from: getArchivesDataFromDirectoryProvider,
+        name: r'getArchivesDataFromDirectoryProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$getArchivesDataFromDirectoryHash,
+        dependencies: GetArchivesDataFromDirectoryFamily._dependencies,
+        allTransitiveDependencies:
+            GetArchivesDataFromDirectoryFamily._allTransitiveDependencies,
+        path: path,
+      );
 
   GetArchivesDataFromDirectoryProvider._internal(
     super._createNotifier, {
@@ -112,8 +110,9 @@ class GetArchivesDataFromDirectoryProvider extends AutoDisposeFutureProvider<
   @override
   Override overrideWith(
     FutureOr<List<(String, LocalExtensionType, Uint8List, String)>> Function(
-            GetArchivesDataFromDirectoryRef provider)
-        create,
+      GetArchivesDataFromDirectoryRef provider,
+    )
+    create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -131,7 +130,9 @@ class GetArchivesDataFromDirectoryProvider extends AutoDisposeFutureProvider<
 
   @override
   AutoDisposeFutureProviderElement<
-      List<(String, LocalExtensionType, Uint8List, String)>> createElement() {
+    List<(String, LocalExtensionType, Uint8List, String)>
+  >
+  createElement() {
     return _GetArchivesDataFromDirectoryProviderElement(this);
   }
 
@@ -151,15 +152,20 @@ class GetArchivesDataFromDirectoryProvider extends AutoDisposeFutureProvider<
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin GetArchivesDataFromDirectoryRef on AutoDisposeFutureProviderRef<
-    List<(String, LocalExtensionType, Uint8List, String)>> {
+mixin GetArchivesDataFromDirectoryRef
+    on
+        AutoDisposeFutureProviderRef<
+          List<(String, LocalExtensionType, Uint8List, String)>
+        > {
   /// The parameter `path` of this provider.
   String get path;
 }
 
 class _GetArchivesDataFromDirectoryProviderElement
-    extends AutoDisposeFutureProviderElement<
-        List<(String, LocalExtensionType, Uint8List, String)>>
+    extends
+        AutoDisposeFutureProviderElement<
+          List<(String, LocalExtensionType, Uint8List, String)>
+        >
     with GetArchivesDataFromDirectoryRef {
   _GetArchivesDataFromDirectoryProviderElement(super.provider);
 
@@ -181,21 +187,15 @@ class GetArchiveDataFromDirectoryFamily
   const GetArchiveDataFromDirectoryFamily();
 
   /// See also [getArchiveDataFromDirectory].
-  GetArchiveDataFromDirectoryProvider call(
-    String path,
-  ) {
-    return GetArchiveDataFromDirectoryProvider(
-      path,
-    );
+  GetArchiveDataFromDirectoryProvider call(String path) {
+    return GetArchiveDataFromDirectoryProvider(path);
   }
 
   @override
   GetArchiveDataFromDirectoryProvider getProviderOverride(
     covariant GetArchiveDataFromDirectoryProvider provider,
   ) {
-    return call(
-      provider.path,
-    );
+    return call(provider.path);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -217,24 +217,22 @@ class GetArchiveDataFromDirectoryFamily
 class GetArchiveDataFromDirectoryProvider
     extends AutoDisposeFutureProvider<List<LocalArchive>> {
   /// See also [getArchiveDataFromDirectory].
-  GetArchiveDataFromDirectoryProvider(
-    String path,
-  ) : this._internal(
-          (ref) => getArchiveDataFromDirectory(
-            ref as GetArchiveDataFromDirectoryRef,
-            path,
-          ),
-          from: getArchiveDataFromDirectoryProvider,
-          name: r'getArchiveDataFromDirectoryProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$getArchiveDataFromDirectoryHash,
-          dependencies: GetArchiveDataFromDirectoryFamily._dependencies,
-          allTransitiveDependencies:
-              GetArchiveDataFromDirectoryFamily._allTransitiveDependencies,
-          path: path,
-        );
+  GetArchiveDataFromDirectoryProvider(String path)
+    : this._internal(
+        (ref) => getArchiveDataFromDirectory(
+          ref as GetArchiveDataFromDirectoryRef,
+          path,
+        ),
+        from: getArchiveDataFromDirectoryProvider,
+        name: r'getArchiveDataFromDirectoryProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$getArchiveDataFromDirectoryHash,
+        dependencies: GetArchiveDataFromDirectoryFamily._dependencies,
+        allTransitiveDependencies:
+            GetArchiveDataFromDirectoryFamily._allTransitiveDependencies,
+        path: path,
+      );
 
   GetArchiveDataFromDirectoryProvider._internal(
     super._createNotifier, {
@@ -251,8 +249,9 @@ class GetArchiveDataFromDirectoryProvider
   @override
   Override overrideWith(
     FutureOr<List<LocalArchive>> Function(
-            GetArchiveDataFromDirectoryRef provider)
-        create,
+      GetArchiveDataFromDirectoryRef provider,
+    )
+    create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -312,27 +311,22 @@ String _$getArchivesDataFromFileHash() =>
 const getArchivesDataFromFileProvider = GetArchivesDataFromFileFamily();
 
 /// See also [getArchivesDataFromFile].
-class GetArchivesDataFromFileFamily extends Family<
-    AsyncValue<(String, LocalExtensionType, Uint8List, String)>> {
+class GetArchivesDataFromFileFamily
+    extends
+        Family<AsyncValue<(String, LocalExtensionType, Uint8List, String)>> {
   /// See also [getArchivesDataFromFile].
   const GetArchivesDataFromFileFamily();
 
   /// See also [getArchivesDataFromFile].
-  GetArchivesDataFromFileProvider call(
-    String path,
-  ) {
-    return GetArchivesDataFromFileProvider(
-      path,
-    );
+  GetArchivesDataFromFileProvider call(String path) {
+    return GetArchivesDataFromFileProvider(path);
   }
 
   @override
   GetArchivesDataFromFileProvider getProviderOverride(
     covariant GetArchivesDataFromFileProvider provider,
   ) {
-    return call(
-      provider.path,
-    );
+    return call(provider.path);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -351,27 +345,26 @@ class GetArchivesDataFromFileFamily extends Family<
 }
 
 /// See also [getArchivesDataFromFile].
-class GetArchivesDataFromFileProvider extends AutoDisposeFutureProvider<
-    (String, LocalExtensionType, Uint8List, String)> {
+class GetArchivesDataFromFileProvider
+    extends
+        AutoDisposeFutureProvider<
+          (String, LocalExtensionType, Uint8List, String)
+        > {
   /// See also [getArchivesDataFromFile].
-  GetArchivesDataFromFileProvider(
-    String path,
-  ) : this._internal(
-          (ref) => getArchivesDataFromFile(
-            ref as GetArchivesDataFromFileRef,
-            path,
-          ),
-          from: getArchivesDataFromFileProvider,
-          name: r'getArchivesDataFromFileProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$getArchivesDataFromFileHash,
-          dependencies: GetArchivesDataFromFileFamily._dependencies,
-          allTransitiveDependencies:
-              GetArchivesDataFromFileFamily._allTransitiveDependencies,
-          path: path,
-        );
+  GetArchivesDataFromFileProvider(String path)
+    : this._internal(
+        (ref) =>
+            getArchivesDataFromFile(ref as GetArchivesDataFromFileRef, path),
+        from: getArchivesDataFromFileProvider,
+        name: r'getArchivesDataFromFileProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$getArchivesDataFromFileHash,
+        dependencies: GetArchivesDataFromFileFamily._dependencies,
+        allTransitiveDependencies:
+            GetArchivesDataFromFileFamily._allTransitiveDependencies,
+        path: path,
+      );
 
   GetArchivesDataFromFileProvider._internal(
     super._createNotifier, {
@@ -388,8 +381,9 @@ class GetArchivesDataFromFileProvider extends AutoDisposeFutureProvider<
   @override
   Override overrideWith(
     FutureOr<(String, LocalExtensionType, Uint8List, String)> Function(
-            GetArchivesDataFromFileRef provider)
-        create,
+      GetArchivesDataFromFileRef provider,
+    )
+    create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -407,7 +401,9 @@ class GetArchivesDataFromFileProvider extends AutoDisposeFutureProvider<
 
   @override
   AutoDisposeFutureProviderElement<
-      (String, LocalExtensionType, Uint8List, String)> createElement() {
+    (String, LocalExtensionType, Uint8List, String)
+  >
+  createElement() {
     return _GetArchivesDataFromFileProviderElement(this);
   }
 
@@ -427,15 +423,20 @@ class GetArchivesDataFromFileProvider extends AutoDisposeFutureProvider<
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin GetArchivesDataFromFileRef on AutoDisposeFutureProviderRef<
-    (String, LocalExtensionType, Uint8List, String)> {
+mixin GetArchivesDataFromFileRef
+    on
+        AutoDisposeFutureProviderRef<
+          (String, LocalExtensionType, Uint8List, String)
+        > {
   /// The parameter `path` of this provider.
   String get path;
 }
 
 class _GetArchivesDataFromFileProviderElement
-    extends AutoDisposeFutureProviderElement<
-        (String, LocalExtensionType, Uint8List, String)>
+    extends
+        AutoDisposeFutureProviderElement<
+          (String, LocalExtensionType, Uint8List, String)
+        >
     with GetArchivesDataFromFileRef {
   _GetArchivesDataFromFileProviderElement(super.provider);
 
@@ -456,21 +457,15 @@ class GetArchiveDataFromFileFamily extends Family<AsyncValue<LocalArchive>> {
   const GetArchiveDataFromFileFamily();
 
   /// See also [getArchiveDataFromFile].
-  GetArchiveDataFromFileProvider call(
-    String path,
-  ) {
-    return GetArchiveDataFromFileProvider(
-      path,
-    );
+  GetArchiveDataFromFileProvider call(String path) {
+    return GetArchiveDataFromFileProvider(path);
   }
 
   @override
   GetArchiveDataFromFileProvider getProviderOverride(
     covariant GetArchiveDataFromFileProvider provider,
   ) {
-    return call(
-      provider.path,
-    );
+    return call(provider.path);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -492,24 +487,19 @@ class GetArchiveDataFromFileFamily extends Family<AsyncValue<LocalArchive>> {
 class GetArchiveDataFromFileProvider
     extends AutoDisposeFutureProvider<LocalArchive> {
   /// See also [getArchiveDataFromFile].
-  GetArchiveDataFromFileProvider(
-    String path,
-  ) : this._internal(
-          (ref) => getArchiveDataFromFile(
-            ref as GetArchiveDataFromFileRef,
-            path,
-          ),
-          from: getArchiveDataFromFileProvider,
-          name: r'getArchiveDataFromFileProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$getArchiveDataFromFileHash,
-          dependencies: GetArchiveDataFromFileFamily._dependencies,
-          allTransitiveDependencies:
-              GetArchiveDataFromFileFamily._allTransitiveDependencies,
-          path: path,
-        );
+  GetArchiveDataFromFileProvider(String path)
+    : this._internal(
+        (ref) => getArchiveDataFromFile(ref as GetArchiveDataFromFileRef, path),
+        from: getArchiveDataFromFileProvider,
+        name: r'getArchiveDataFromFileProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$getArchiveDataFromFileHash,
+        dependencies: GetArchiveDataFromFileFamily._dependencies,
+        allTransitiveDependencies:
+            GetArchiveDataFromFileFamily._allTransitiveDependencies,
+        path: path,
+      );
 
   GetArchiveDataFromFileProvider._internal(
     super._createNotifier, {
@@ -575,5 +565,6 @@ class _GetArchiveDataFromFileProviderElement
   @override
   String get path => (origin as GetArchiveDataFromFileProvider).path;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
