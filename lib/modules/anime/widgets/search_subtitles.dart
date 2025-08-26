@@ -369,7 +369,6 @@ class _SubtitlesWidgetSearchState extends ConsumerState<SubtitlesWidgetSearch> {
       if (context.mounted) {
         botToast(context.l10n.failed);
       }
-      rethrow;
     }
   }
 
