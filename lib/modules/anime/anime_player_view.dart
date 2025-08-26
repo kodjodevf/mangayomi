@@ -1151,7 +1151,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         .toList();
 
     List<String> subs = [];
-    if (widget.videos.isNotEmpty && !widget.isLocal) {
+    if (widget.videos.isNotEmpty) {
       for (var video in widget.videos) {
         for (var sub in video.subtitles ?? []) {
           if (!subs.contains(sub.file)) {
@@ -1159,8 +1159,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             final label = sub.label;
             videoSubtitle.add(
               VideoPrefs(
-                isLocal: false,
-                subtitle: file.startsWith("http")
+                isLocal: widget.isLocal,
+                subtitle: (file.startsWith("http") || file.startsWith("file"))
                     ? SubtitleTrack.uri(file, title: label, language: label)
                     : SubtitleTrack.data(file, title: label, language: label),
               ),

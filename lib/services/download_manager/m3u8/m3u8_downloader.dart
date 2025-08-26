@@ -152,15 +152,24 @@ class M3u8Downloader {
         }
         _log('Downloading subtitle file: ${element.label}');
         subtitleFile.createSync(recursive: true);
-        final response = await _withRetry(
-          () => httpClient.get(Uri.parse(element.file ?? ''), headers: headers),
-        );
-        if (response.statusCode != 200) {
-          _log('Warning: Failed to download subtitle file: ${element.label}');
+        if (element.file == null || element.file!.trim().isEmpty) {
+          _log('Warning: No subtitle file: ${element.label}');
           continue;
         }
-        _log('Subtitle file downloaded: ${element.label}');
-        await subtitleFile.writeAsBytes(response.bodyBytes);
+        if (element.file!.startsWith("http")) {
+          final response = await _withRetry(
+            () =>
+                httpClient.get(Uri.parse(element.file ?? ''), headers: headers),
+          );
+          if (response.statusCode != 200) {
+            _log('Warning: Failed to download subtitle file: ${element.label}');
+            continue;
+          }
+          _log('Subtitle file downloaded: ${element.label}');
+          await subtitleFile.writeAsBytes(response.bodyBytes);
+        } else {
+          await subtitleFile.writeAsString(element.file!);
+        }
       }
     } catch (e) {
       throw M3u8DownloaderException('Download failed', e);
