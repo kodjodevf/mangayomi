@@ -945,6 +945,12 @@ abstract class AppLocalizations {
   /// **'No log.txt available!'**
   String get no_app_logs;
 
+  /// No description provided for @failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed!'**
+  String get failed;
+
   /// No description provided for @n_days_ago.
   ///
   /// In en, this message translates to:

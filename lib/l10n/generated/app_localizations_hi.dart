@@ -443,6 +443,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get no_app_logs => 'No log.txt available!';
 
   @override
+  String get failed => 'Failed!';
+
+  @override
   String n_days_ago(Object days) {
     return '$days दिन पहले';
   }

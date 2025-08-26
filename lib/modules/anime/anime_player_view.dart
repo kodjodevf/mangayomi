@@ -1355,6 +1355,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                     await subtitlesSearchraggableMenu(
                           context,
                           chapter: widget.episode,
+                          isLocal: widget.isLocal,
                         )
                         as ImdbSubtitle?;
                 if (subtitle != null && context.mounted) {

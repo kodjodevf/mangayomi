@@ -145,6 +145,7 @@
   "check_for_update": "Check for update",
   "share_app_logs": "Share app logs",
   "no_app_logs": "No log.txt available!",
+  "failed": "Failed!",
   "n_days_ago": "{days} days ago",
   "today": "Today",
   "yesterday": "Yesterday",
