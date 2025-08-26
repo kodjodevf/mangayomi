@@ -25,7 +25,7 @@ class ChapterPageDownload extends ConsumerWidget {
     ref.read(downloadChapterProvider(chapter: chapter, useWifi: useWifi));
   }
 
-  void _sendFile() async {
+  void _sendFile(BuildContext context) async {
     final storageProvider = StorageProvider();
     final mangaDir = await storageProvider.getMangaMainDirectory(chapter);
     final path = await storageProvider.getMangaChapterDirectory(
@@ -52,8 +52,13 @@ class ChapterPageDownload extends ConsumerWidget {
     } else {
       files = path!.listSync().map((e) => XFile(e.path)).toList();
     }
-    if (files.isNotEmpty) {
-      Share.shareXFiles(files, text: chapter.name);
+    if (files.isNotEmpty && context.mounted) {
+      final box = context.findRenderObject() as RenderBox?;
+      Share.shareXFiles(
+        files,
+        text: chapter.name,
+        sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+      );
     }
   }
 
@@ -123,7 +128,7 @@ class ChapterPageDownload extends ConsumerWidget {
                       ),
                       onSelected: (value) {
                         if (value == 0) {
-                          _sendFile();
+                          _sendFile(context);
                         } else if (value == 1) {
                           _deleteFile(download.id!);
                         }

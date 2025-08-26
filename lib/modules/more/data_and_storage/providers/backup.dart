@@ -176,9 +176,13 @@ Future<void> doBackUp(
               alignment: Alignment.topLeft,
               child: ElevatedButton(
                 onPressed: () {
-                  Share.shareXFiles([
-                    XFile(p.join(path, "$name.backup")),
-                  ], text: "$name.backup");
+                  final box = context.findRenderObject() as RenderBox?;
+                  Share.shareXFiles(
+                    [XFile(p.join(path, "$name.backup"))],
+                    text: "$name.backup",
+                    sharePositionOrigin:
+                        box!.localToGlobal(Offset.zero) & box.size,
+                  );
                 },
                 child: Text(context.l10n.share),
               ),

@@ -2255,13 +2255,22 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                                 format: "image/png",
                                 includeLibassSubtitles: _includeSubtitles,
                               );
-                              await Share.shareXFiles([
-                                XFile.fromData(
-                                  imageBytes!,
-                                  name: name,
-                                  mimeType: 'image/png',
-                                ),
-                              ]);
+                              if (context.mounted) {
+                                final box =
+                                    context.findRenderObject() as RenderBox?;
+                                await Share.shareXFiles(
+                                  [
+                                    XFile.fromData(
+                                      imageBytes!,
+                                      name: name,
+                                      mimeType: 'image/png',
+                                    ),
+                                  ],
+                                  sharePositionOrigin:
+                                      box!.localToGlobal(Offset.zero) &
+                                      box.size,
+                                );
+                              }
                             },
                           ),
                           button(
