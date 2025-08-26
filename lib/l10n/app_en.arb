@@ -537,6 +537,8 @@
   "clear_library": "Clear library",
   "clear_library_desc": "Choose to clear all manga, anime and/or novel entries",
   "clear_library_input": "Type 'manga', 'anime' and/or 'novel' (separated by a comma) to remove all related entries",
+  "watch_order": "Watch order",
+  "sequels": "Sequels",
   "recommendations": "Recommendations",
   "recommendations_similarity": "Similarity:"
 }

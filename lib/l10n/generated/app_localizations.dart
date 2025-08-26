@@ -3297,6 +3297,18 @@ abstract class AppLocalizations {
   /// **'Type \'manga\', \'anime\' and/or \'novel\' (separated by a comma) to remove all related entries'**
   String get clear_library_input;
 
+  /// No description provided for @watch_order.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch order'**
+  String get watch_order;
+
+  /// No description provided for @sequels.
+  ///
+  /// In en, this message translates to:
+  /// **'Sequels'**
+  String get sequels;
+
   /// No description provided for @recommendations_similarity.
   ///
   /// In en, this message translates to:
