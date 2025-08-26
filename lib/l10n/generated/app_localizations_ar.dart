@@ -435,6 +435,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get check_for_update => 'التحقق من التحديثات';
 
   @override
+  String get share_app_logs => 'Share app logs';
+
+  @override
+  String get no_app_logs => 'No log.txt available!';
+
+  @override
   String n_days_ago(Object days) {
     return 'منذ $days أيام';
   }
