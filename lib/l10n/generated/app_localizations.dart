@@ -2883,6 +2883,12 @@ abstract class AppLocalizations {
   /// **'Load your own subtitles...'**
   String get load_own_subtitles;
 
+  /// No description provided for @search_subtitles.
+  ///
+  /// In en, this message translates to:
+  /// **'Search subtitles online...'**
+  String get search_subtitles;
+
   /// No description provided for @extension_notes.
   ///
   /// In en, this message translates to:
