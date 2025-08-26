@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:isar/isar.dart';
+import 'package:mangayomi/eval/model/source_preference.dart';
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/services/fetch_item_sources.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
@@ -56,24 +61,126 @@ class _ExtensionListTileWidgetState
   }
 
   Widget _buildTrailingButton(BuildContext context, String label) {
-    return TextButton(
-      onPressed: _isLoading
-          ? null
-          : () {
-              if (!_updateAvailable && _sourceNotEmpty) {
-                context.push('/extension_detail', extra: widget.source);
-              } else {
-                _handleSourceFetch();
-              }
-            },
-      child: _isLoading
-          ? const SizedBox(
-              height: 20,
-              width: 20,
-              child: CircularProgressIndicator(strokeWidth: 2.0),
-            )
-          : Text(label),
-    );
+    final isInstall = label == context.l10n.install;
+    final isUpdate = label == context.l10n.update;
+    return _isLoading
+        ? const SizedBox(
+            height: 20,
+            width: 20,
+            child: CircularProgressIndicator(strokeWidth: 2.0),
+          )
+        : Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextButton(
+                onPressed: _isLoading
+                    ? null
+                    : () {
+                        if (!_updateAvailable && _sourceNotEmpty) {
+                          context.push(
+                            '/extension_detail',
+                            extra: widget.source,
+                          );
+                        } else {
+                          _handleSourceFetch();
+                        }
+                      },
+                child: Icon(
+                  isInstall
+                      ? Icons.download_outlined
+                      : isUpdate
+                      ? Icons.system_update_alt_outlined
+                      : Icons.settings_outlined,
+                  size: 24,
+                ),
+              ),
+              if (_sourceNotEmpty)
+                TextButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (ctx) {
+                        return AlertDialog(
+                          title: Text(widget.source.name!),
+                          content: Text(
+                            ctx.l10n.uninstall_extension(widget.source.name!),
+                          ),
+                          actions: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(ctx);
+                                  },
+                                  child: Text(ctx.l10n.cancel),
+                                ),
+                                const SizedBox(width: 15),
+                                TextButton(
+                                  onPressed: () {
+                                    final sourcePrefsIds = isar
+                                        .sourcePreferences
+                                        .filter()
+                                        .sourceIdEqualTo(widget.source.id!)
+                                        .findAllSync()
+                                        .map((e) => e.id!)
+                                        .toList();
+                                    final sourcePrefsStringIds = isar
+                                        .sourcePreferenceStringValues
+                                        .filter()
+                                        .sourceIdEqualTo(widget.source.id!)
+                                        .findAllSync()
+                                        .map((e) => e.id)
+                                        .toList();
+                                    isar.writeTxnSync(() {
+                                      if (widget.source.isObsolete ?? false) {
+                                        isar.sources.deleteSync(
+                                          widget.source.id!,
+                                        );
+                                        ref
+                                            .read(
+                                              synchingProvider(
+                                                syncId: 1,
+                                              ).notifier,
+                                            )
+                                            .addChangedPart(
+                                              ActionType.removeExtension,
+                                              widget.source.id,
+                                              "{}",
+                                              false,
+                                            );
+                                      } else {
+                                        isar.sources.putSync(
+                                          widget.source
+                                            ..sourceCode = ""
+                                            ..isAdded = false
+                                            ..isPinned = false
+                                            ..updatedAt = DateTime.now()
+                                                .millisecondsSinceEpoch,
+                                        );
+                                      }
+                                      isar.sourcePreferences.deleteAllSync(
+                                        sourcePrefsIds,
+                                      );
+                                      isar.sourcePreferenceStringValues
+                                          .deleteAllSync(sourcePrefsStringIds);
+                                    });
+
+                                    Navigator.pop(ctx);
+                                  },
+                                  child: Text(ctx.l10n.ok),
+                                ),
+                              ],
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: Icon(Icons.delete_outline, size: 24),
+                ),
+            ],
+          );
   }
 
   @override
