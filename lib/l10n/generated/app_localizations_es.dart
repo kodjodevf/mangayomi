@@ -1443,6 +1443,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get android_proxy_server => 'Android Proxy Server (ApkBridge)';
 
   @override
+  String get get_apk_bridge => 'Get ApkBridge';
+
+  @override
   String get undefined => 'Indefinido';
 
   @override
