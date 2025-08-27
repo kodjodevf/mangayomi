@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'myanimelist.dart';
+part of 'trakt_tv.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$myAnimeListHash() => r'9846f76ce69f952d20cc1e8edbc5ca565cd4e7c9';
+String _$traktTvHash() => r'de97ae0edbc905d07af2ce8758441fba6cdd7be2';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,32 +29,44 @@ class _SystemHash {
   }
 }
 
-abstract class _$MyAnimeList extends BuildlessAutoDisposeNotifier<void> {
+abstract class _$TraktTv extends BuildlessAutoDisposeNotifier<void> {
   late final int syncId;
   late final ItemType? itemType;
 
-  void build({required int syncId, required ItemType? itemType});
+  void build({
+    required int syncId,
+    required ItemType? itemType,
+  });
 }
 
-/// See also [MyAnimeList].
-@ProviderFor(MyAnimeList)
-const myAnimeListProvider = MyAnimeListFamily();
+/// See also [TraktTv].
+@ProviderFor(TraktTv)
+const traktTvProvider = TraktTvFamily();
 
-/// See also [MyAnimeList].
-class MyAnimeListFamily extends Family<void> {
-  /// See also [MyAnimeList].
-  const MyAnimeListFamily();
+/// See also [TraktTv].
+class TraktTvFamily extends Family<void> {
+  /// See also [TraktTv].
+  const TraktTvFamily();
 
-  /// See also [MyAnimeList].
-  MyAnimeListProvider call({required int syncId, required ItemType? itemType}) {
-    return MyAnimeListProvider(syncId: syncId, itemType: itemType);
+  /// See also [TraktTv].
+  TraktTvProvider call({
+    required int syncId,
+    required ItemType? itemType,
+  }) {
+    return TraktTvProvider(
+      syncId: syncId,
+      itemType: itemType,
+    );
   }
 
   @override
-  MyAnimeListProvider getProviderOverride(
-    covariant MyAnimeListProvider provider,
+  TraktTvProvider getProviderOverride(
+    covariant TraktTvProvider provider,
   ) {
-    return call(syncId: provider.syncId, itemType: provider.itemType);
+    return call(
+      syncId: provider.syncId,
+      itemType: provider.itemType,
+    );
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -69,30 +81,32 @@ class MyAnimeListFamily extends Family<void> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'myAnimeListProvider';
+  String? get name => r'traktTvProvider';
 }
 
-/// See also [MyAnimeList].
-class MyAnimeListProvider
-    extends AutoDisposeNotifierProviderImpl<MyAnimeList, void> {
-  /// See also [MyAnimeList].
-  MyAnimeListProvider({required int syncId, required ItemType? itemType})
-    : this._internal(
-        () => MyAnimeList()
-          ..syncId = syncId
-          ..itemType = itemType,
-        from: myAnimeListProvider,
-        name: r'myAnimeListProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$myAnimeListHash,
-        dependencies: MyAnimeListFamily._dependencies,
-        allTransitiveDependencies: MyAnimeListFamily._allTransitiveDependencies,
-        syncId: syncId,
-        itemType: itemType,
-      );
+/// See also [TraktTv].
+class TraktTvProvider extends AutoDisposeNotifierProviderImpl<TraktTv, void> {
+  /// See also [TraktTv].
+  TraktTvProvider({
+    required int syncId,
+    required ItemType? itemType,
+  }) : this._internal(
+          () => TraktTv()
+            ..syncId = syncId
+            ..itemType = itemType,
+          from: traktTvProvider,
+          name: r'traktTvProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$traktTvHash,
+          dependencies: TraktTvFamily._dependencies,
+          allTransitiveDependencies: TraktTvFamily._allTransitiveDependencies,
+          syncId: syncId,
+          itemType: itemType,
+        );
 
-  MyAnimeListProvider._internal(
+  TraktTvProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -107,15 +121,20 @@ class MyAnimeListProvider
   final ItemType? itemType;
 
   @override
-  void runNotifierBuild(covariant MyAnimeList notifier) {
-    return notifier.build(syncId: syncId, itemType: itemType);
+  void runNotifierBuild(
+    covariant TraktTv notifier,
+  ) {
+    return notifier.build(
+      syncId: syncId,
+      itemType: itemType,
+    );
   }
 
   @override
-  Override overrideWith(MyAnimeList Function() create) {
+  Override overrideWith(TraktTv Function() create) {
     return ProviderOverride(
       origin: this,
-      override: MyAnimeListProvider._internal(
+      override: TraktTvProvider._internal(
         () => create()
           ..syncId = syncId
           ..itemType = itemType,
@@ -131,13 +150,13 @@ class MyAnimeListProvider
   }
 
   @override
-  AutoDisposeNotifierProviderElement<MyAnimeList, void> createElement() {
-    return _MyAnimeListProviderElement(this);
+  AutoDisposeNotifierProviderElement<TraktTv, void> createElement() {
+    return _TraktTvProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is MyAnimeListProvider &&
+    return other is TraktTvProvider &&
         other.syncId == syncId &&
         other.itemType == itemType;
   }
@@ -154,7 +173,7 @@ class MyAnimeListProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin MyAnimeListRef on AutoDisposeNotifierProviderRef<void> {
+mixin TraktTvRef on AutoDisposeNotifierProviderRef<void> {
   /// The parameter `syncId` of this provider.
   int get syncId;
 
@@ -162,16 +181,14 @@ mixin MyAnimeListRef on AutoDisposeNotifierProviderRef<void> {
   ItemType? get itemType;
 }
 
-class _MyAnimeListProviderElement
-    extends AutoDisposeNotifierProviderElement<MyAnimeList, void>
-    with MyAnimeListRef {
-  _MyAnimeListProviderElement(super.provider);
+class _TraktTvProviderElement
+    extends AutoDisposeNotifierProviderElement<TraktTv, void> with TraktTvRef {
+  _TraktTvProviderElement(super.provider);
 
   @override
-  int get syncId => (origin as MyAnimeListProvider).syncId;
+  int get syncId => (origin as TraktTvProvider).syncId;
   @override
-  ItemType? get itemType => (origin as MyAnimeListProvider).itemType;
+  ItemType? get itemType => (origin as TraktTvProvider).itemType;
 }
-
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

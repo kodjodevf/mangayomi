@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'myanimelist.dart';
+part of 'simkl.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$myAnimeListHash() => r'9846f76ce69f952d20cc1e8edbc5ca565cd4e7c9';
+String _$simklHash() => r'3b8ff48675ba743d39aef595dc6cd70f4bd404cf';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -29,32 +29,44 @@ class _SystemHash {
   }
 }
 
-abstract class _$MyAnimeList extends BuildlessAutoDisposeNotifier<void> {
+abstract class _$Simkl extends BuildlessAutoDisposeNotifier<void> {
   late final int syncId;
   late final ItemType? itemType;
 
-  void build({required int syncId, required ItemType? itemType});
+  void build({
+    required int syncId,
+    required ItemType? itemType,
+  });
 }
 
-/// See also [MyAnimeList].
-@ProviderFor(MyAnimeList)
-const myAnimeListProvider = MyAnimeListFamily();
+/// See also [Simkl].
+@ProviderFor(Simkl)
+const simklProvider = SimklFamily();
 
-/// See also [MyAnimeList].
-class MyAnimeListFamily extends Family<void> {
-  /// See also [MyAnimeList].
-  const MyAnimeListFamily();
+/// See also [Simkl].
+class SimklFamily extends Family<void> {
+  /// See also [Simkl].
+  const SimklFamily();
 
-  /// See also [MyAnimeList].
-  MyAnimeListProvider call({required int syncId, required ItemType? itemType}) {
-    return MyAnimeListProvider(syncId: syncId, itemType: itemType);
+  /// See also [Simkl].
+  SimklProvider call({
+    required int syncId,
+    required ItemType? itemType,
+  }) {
+    return SimklProvider(
+      syncId: syncId,
+      itemType: itemType,
+    );
   }
 
   @override
-  MyAnimeListProvider getProviderOverride(
-    covariant MyAnimeListProvider provider,
+  SimklProvider getProviderOverride(
+    covariant SimklProvider provider,
   ) {
-    return call(syncId: provider.syncId, itemType: provider.itemType);
+    return call(
+      syncId: provider.syncId,
+      itemType: provider.itemType,
+    );
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -69,30 +81,32 @@ class MyAnimeListFamily extends Family<void> {
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'myAnimeListProvider';
+  String? get name => r'simklProvider';
 }
 
-/// See also [MyAnimeList].
-class MyAnimeListProvider
-    extends AutoDisposeNotifierProviderImpl<MyAnimeList, void> {
-  /// See also [MyAnimeList].
-  MyAnimeListProvider({required int syncId, required ItemType? itemType})
-    : this._internal(
-        () => MyAnimeList()
-          ..syncId = syncId
-          ..itemType = itemType,
-        from: myAnimeListProvider,
-        name: r'myAnimeListProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$myAnimeListHash,
-        dependencies: MyAnimeListFamily._dependencies,
-        allTransitiveDependencies: MyAnimeListFamily._allTransitiveDependencies,
-        syncId: syncId,
-        itemType: itemType,
-      );
+/// See also [Simkl].
+class SimklProvider extends AutoDisposeNotifierProviderImpl<Simkl, void> {
+  /// See also [Simkl].
+  SimklProvider({
+    required int syncId,
+    required ItemType? itemType,
+  }) : this._internal(
+          () => Simkl()
+            ..syncId = syncId
+            ..itemType = itemType,
+          from: simklProvider,
+          name: r'simklProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$simklHash,
+          dependencies: SimklFamily._dependencies,
+          allTransitiveDependencies: SimklFamily._allTransitiveDependencies,
+          syncId: syncId,
+          itemType: itemType,
+        );
 
-  MyAnimeListProvider._internal(
+  SimklProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -107,15 +121,20 @@ class MyAnimeListProvider
   final ItemType? itemType;
 
   @override
-  void runNotifierBuild(covariant MyAnimeList notifier) {
-    return notifier.build(syncId: syncId, itemType: itemType);
+  void runNotifierBuild(
+    covariant Simkl notifier,
+  ) {
+    return notifier.build(
+      syncId: syncId,
+      itemType: itemType,
+    );
   }
 
   @override
-  Override overrideWith(MyAnimeList Function() create) {
+  Override overrideWith(Simkl Function() create) {
     return ProviderOverride(
       origin: this,
-      override: MyAnimeListProvider._internal(
+      override: SimklProvider._internal(
         () => create()
           ..syncId = syncId
           ..itemType = itemType,
@@ -131,13 +150,13 @@ class MyAnimeListProvider
   }
 
   @override
-  AutoDisposeNotifierProviderElement<MyAnimeList, void> createElement() {
-    return _MyAnimeListProviderElement(this);
+  AutoDisposeNotifierProviderElement<Simkl, void> createElement() {
+    return _SimklProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is MyAnimeListProvider &&
+    return other is SimklProvider &&
         other.syncId == syncId &&
         other.itemType == itemType;
   }
@@ -154,7 +173,7 @@ class MyAnimeListProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin MyAnimeListRef on AutoDisposeNotifierProviderRef<void> {
+mixin SimklRef on AutoDisposeNotifierProviderRef<void> {
   /// The parameter `syncId` of this provider.
   int get syncId;
 
@@ -162,16 +181,14 @@ mixin MyAnimeListRef on AutoDisposeNotifierProviderRef<void> {
   ItemType? get itemType;
 }
 
-class _MyAnimeListProviderElement
-    extends AutoDisposeNotifierProviderElement<MyAnimeList, void>
-    with MyAnimeListRef {
-  _MyAnimeListProviderElement(super.provider);
+class _SimklProviderElement
+    extends AutoDisposeNotifierProviderElement<Simkl, void> with SimklRef {
+  _SimklProviderElement(super.provider);
 
   @override
-  int get syncId => (origin as MyAnimeListProvider).syncId;
+  int get syncId => (origin as SimklProvider).syncId;
   @override
-  ItemType? get itemType => (origin as MyAnimeListProvider).itemType;
+  ItemType? get itemType => (origin as SimklProvider).itemType;
 }
-
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
