@@ -2,17 +2,30 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/fetch_subtitles.dart';
+import 'package:mangayomi/services/http/m_client.dart';
+import 'package:mangayomi/services/http/rhttp/src/model/settings.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/utils/extensions/string_extensions.dart';
+import 'package:mangayomi/utils/log/logger.dart';
+import 'package:path/path.dart' as path;
 import 'package:super_sliver_list/super_sliver_list.dart';
 
 class SubtitlesWidgetSearch extends ConsumerStatefulWidget {
   final Chapter chapter;
-  const SubtitlesWidgetSearch({required this.chapter, super.key});
+  final bool isLocal;
+  const SubtitlesWidgetSearch({
+    required this.chapter,
+    required this.isLocal,
+    super.key,
+  });
 
   @override
   ConsumerState<SubtitlesWidgetSearch> createState() =>
@@ -296,6 +309,12 @@ class _SubtitlesWidgetSearchState extends ConsumerState<SubtitlesWidgetSearch> {
                           ),
                       ],
                     ),
+                    if (isSubtitles && widget.isLocal)
+                      OutlinedButton.icon(
+                        onPressed: () async => _downloadSubtitle(index),
+                        label: Text(context.l10n.download),
+                        icon: Icon(Icons.download_outlined),
+                      ),
                   ],
                 ),
               ],
@@ -308,11 +327,70 @@ class _SubtitlesWidgetSearchState extends ConsumerState<SubtitlesWidgetSearch> {
       },
     );
   }
+
+  Future<void> _downloadSubtitle(int index) async {
+    botToast(context.l10n.started);
+    try {
+      final subtitle = subtitles![index];
+      final storageProvider = StorageProvider();
+      final chapterDirectory = (await storageProvider.getMangaChapterDirectory(
+        widget.chapter,
+      ))!;
+      final subtitleFile = File(
+        path.join(
+          '${chapterDirectory.path}_subtitles',
+          '${subtitle.language}.srt',
+        ),
+      );
+      final client = MClient.httpClient(
+        settings: const ClientSettings(
+          throwOnStatusCode: false,
+          tlsSettings: TlsSettings(verifyCertificates: false),
+        ),
+      );
+      await subtitleFile.create(recursive: true);
+      final response = await _withRetry(
+        () => client.get(Uri.parse(subtitle.url ?? '')),
+      );
+      if (response.statusCode != 200) {
+        AppLogger.log(
+          'Warning: Failed to download subtitle file: ${subtitle.language}',
+        );
+        return;
+      }
+      AppLogger.log('Subtitle file downloaded: ${subtitle.language}');
+      await subtitleFile.writeAsBytes(response.bodyBytes);
+      if (context.mounted) {
+        botToast(context.l10n.finished(""));
+      }
+    } catch (e) {
+      AppLogger.log("Failed to download subtitle:", logLevel: LogLevel.error);
+      AppLogger.log(e.toString(), logLevel: LogLevel.error);
+      if (context.mounted) {
+        botToast(context.l10n.failed);
+      }
+    }
+  }
+
+  Future<T> _withRetry<T>(Future<T> Function() operation) async {
+    int attempts = 0;
+    while (true) {
+      try {
+        attempts++;
+        return await operation();
+      } catch (e) {
+        if (attempts >= 3) {
+          AppLogger.log("Request retries failed", logLevel: LogLevel.error);
+        }
+      }
+    }
+  }
 }
 
 subtitlesSearchraggableMenu(
   BuildContext context, {
   required Chapter chapter,
+  required bool isLocal,
 }) async {
   var padding = MediaQuery.of(context).padding;
   return await showDialog(
@@ -352,7 +430,7 @@ subtitlesSearchraggableMenu(
                   ],
                 ),
               ),
-              SubtitlesWidgetSearch(chapter: chapter),
+              SubtitlesWidgetSearch(chapter: chapter, isLocal: isLocal),
             ],
           ),
         ),

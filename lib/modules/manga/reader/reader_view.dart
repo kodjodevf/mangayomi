@@ -401,13 +401,21 @@ class _MangaChapterPageGalleryState
                           context.l10n.share,
                           Icons.share_outlined,
                           () async {
-                            await Share.shareXFiles([
-                              XFile.fromData(
-                                imageBytes,
-                                name: name,
-                                mimeType: 'image/png',
-                              ),
-                            ]);
+                            if (context.mounted) {
+                              final box =
+                                  context.findRenderObject() as RenderBox?;
+                              await Share.shareXFiles(
+                                [
+                                  XFile.fromData(
+                                    imageBytes,
+                                    name: name,
+                                    mimeType: 'image/png',
+                                  ),
+                                ],
+                                sharePositionOrigin:
+                                    box!.localToGlobal(Offset.zero) & box.size,
+                              );
+                            }
                           },
                         ),
                         button(

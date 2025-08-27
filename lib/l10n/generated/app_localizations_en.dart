@@ -437,6 +437,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get check_for_update => 'Check for update';
 
   @override
+  String get share_app_logs => 'Share app logs';
+
+  @override
+  String get no_app_logs => 'No log.txt available!';
+
+  @override
+  String get failed => 'Failed!';
+
+  @override
   String n_days_ago(Object days) {
     return '$days days ago';
   }

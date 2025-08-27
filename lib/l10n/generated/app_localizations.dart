@@ -933,6 +933,24 @@ abstract class AppLocalizations {
   /// **'Check for update'**
   String get check_for_update;
 
+  /// No description provided for @share_app_logs.
+  ///
+  /// In en, this message translates to:
+  /// **'Share app logs'**
+  String get share_app_logs;
+
+  /// No description provided for @no_app_logs.
+  ///
+  /// In en, this message translates to:
+  /// **'No log.txt available!'**
+  String get no_app_logs;
+
+  /// No description provided for @failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed!'**
+  String get failed;
+
   /// No description provided for @n_days_ago.
   ///
   /// In en, this message translates to:

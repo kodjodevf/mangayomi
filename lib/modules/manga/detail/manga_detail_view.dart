@@ -654,7 +654,14 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   );
                                   final url =
                                       "${source!.baseUrl}${widget.manga!.link!.getUrlWithoutDomain}";
-                                  Share.share(url);
+                                  final box =
+                                      context.findRenderObject() as RenderBox?;
+                                  Share.share(
+                                    url,
+                                    sharePositionOrigin:
+                                        box!.localToGlobal(Offset.zero) &
+                                        box.size,
+                                  );
                                   break;
                                 case 3:
                                   context.push("/migrate", extra: widget.manga);

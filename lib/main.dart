@@ -30,6 +30,7 @@ import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
 import 'package:mangayomi/utils/discord_rpc.dart';
+import 'package:mangayomi/utils/log/logger.dart';
 import 'package:mangayomi/utils/url_protocol/api.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_provider.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
@@ -66,6 +67,7 @@ void main(List<String> args) async {
       );
     }
   }
+  await AppLogger.init();
   isar = await StorageProvider().initDB(null, inspector: kDebugMode);
   await Hive.initFlutter();
   Hive.registerAdapter(TrackSearchAdapter());
@@ -144,6 +146,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   void dispose() {
     _linkSubscription?.cancel();
     discordRpc?.destroy();
+    AppLogger.dispose();
     super.dispose();
   }
 
