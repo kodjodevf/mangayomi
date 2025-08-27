@@ -127,24 +127,30 @@ class RhttpUnknownException extends RhttpException {
 }
 
 RhttpException parseError(HttpRequest request, rust.RhttpError error) {
-  return error.when(
-    rhttpCancelError: () => RhttpCancelException(request),
-    rhttpTimeoutError: () => RhttpTimeoutException(request),
-    rhttpRedirectError: () => RhttpRedirectException(request),
-    rhttpStatusCodeError: (code, headers, body) => RhttpStatusCodeException(
-      request: request,
-      statusCode: code,
-      headers: headers,
-      body: switch (body) {
-        rust_http.HttpResponseBody_Text() => body.field0,
-        rust_http.HttpResponseBody_Bytes() => body.field0,
-        rust_http.HttpResponseBody_Stream() => null,
-      },
-    ),
-    rhttpInvalidCertificateError: (message) =>
-        RhttpInvalidCertificateException(request: request, message: message),
-    rhttpConnectionError: (message) =>
-        RhttpConnectionException(request, message),
-    rhttpUnknownError: (message) => RhttpUnknownException(request, message),
-  );
+  return switch (error) {
+    rust.RhttpError_RhttpCancelError() => RhttpCancelException(request),
+    rust.RhttpError_RhttpTimeoutError() => RhttpTimeoutException(request),
+    rust.RhttpError_RhttpRedirectError() => RhttpRedirectException(request),
+    rust.RhttpError_RhttpStatusCodeError(
+      field0: final code,
+      field1: final headers,
+      field2: final body,
+    ) =>
+      RhttpStatusCodeException(
+        request: request,
+        statusCode: code,
+        headers: headers,
+        body: switch (body) {
+          rust_http.HttpResponseBody_Text() => body.field0,
+          rust_http.HttpResponseBody_Bytes() => body.field0,
+          rust_http.HttpResponseBody_Stream() => null,
+        },
+      ),
+    rust.RhttpError_RhttpInvalidCertificateError(field0: final message) =>
+      RhttpInvalidCertificateException(request: request, message: message),
+    rust.RhttpError_RhttpConnectionError(field0: final message) =>
+      RhttpConnectionException(request, message),
+    rust.RhttpError_RhttpUnknownError(field0: final message) =>
+      RhttpUnknownException(request, message),
+  };
 }

@@ -535,4 +535,10 @@ class Anilist extends _$Anilist implements BaseTracker {
       _ => (100, 1),
     };
   }
+  
+  @override
+  Future<bool> checkRefresh() async {
+    ref.read(tracksProvider(syncId: syncId).notifier).setRefreshing(false);
+    return true;
+  }
 }

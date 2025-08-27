@@ -418,4 +418,10 @@ class Simkl extends _$Simkl implements BaseTracker {
   (int, int) getScoreValue() {
     throw UnimplementedError();
   }
+  
+  @override
+  Future<bool> checkRefresh() async {
+    ref.read(tracksProvider(syncId: syncId).notifier).setRefreshing(false);
+    return true;
+  }
 }

@@ -169,6 +169,12 @@ class TrackState extends _$TrackState {
     final tracker = getNotifier(syncId);
     return await tracker.fetchUserData(isManga: _isManga);
   }
+
+  Future<bool> checkRefresh() async {
+    final syncId = track!.syncId!;
+    final tracker = getNotifier(syncId);
+    return await tracker.checkRefresh();
+  }
 }
 
 @riverpod

@@ -2,6 +2,7 @@ import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_search.dart';
 
 abstract class BaseTracker {
+  Future<bool> checkRefresh();
   Future<Track?> findLibItem(Track track, bool isManga);
   Future<Track> update(Track track, bool isManga);
   List<TrackStatus> statusList(bool isManga);

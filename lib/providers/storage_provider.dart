@@ -201,6 +201,16 @@ class StorageProvider {
       });
     }
 
+    final prefs = await isar.trackPreferences
+        .filter()
+        .syncIdIsNotNull()
+        .findAll();
+    await isar.writeTxn(() async {
+      for (final pref in prefs) {
+        await isar.trackPreferences.put(pref..refreshing = true);
+      }
+    });
+
     final customButton = await isar.customButtons
         .filter()
         .idIsNotNull()

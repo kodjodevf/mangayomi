@@ -19,8 +19,13 @@ const TrackPreferenceSchema = CollectionSchema(
   properties: {
     r'oAuth': PropertySchema(id: 0, name: r'oAuth', type: IsarType.string),
     r'prefs': PropertySchema(id: 1, name: r'prefs', type: IsarType.string),
-    r'username': PropertySchema(
+    r'refreshing': PropertySchema(
       id: 2,
+      name: r'refreshing',
+      type: IsarType.bool,
+    ),
+    r'username': PropertySchema(
+      id: 3,
       name: r'username',
       type: IsarType.string,
     ),
@@ -76,7 +81,8 @@ void _trackPreferenceSerialize(
 ) {
   writer.writeString(offsets[0], object.oAuth);
   writer.writeString(offsets[1], object.prefs);
-  writer.writeString(offsets[2], object.username);
+  writer.writeBool(offsets[2], object.refreshing);
+  writer.writeString(offsets[3], object.username);
 }
 
 TrackPreference _trackPreferenceDeserialize(
@@ -88,8 +94,9 @@ TrackPreference _trackPreferenceDeserialize(
   final object = TrackPreference(
     oAuth: reader.readStringOrNull(offsets[0]),
     prefs: reader.readStringOrNull(offsets[1]),
+    refreshing: reader.readBoolOrNull(offsets[2]),
     syncId: id,
-    username: reader.readStringOrNull(offsets[2]),
+    username: reader.readStringOrNull(offsets[3]),
   );
   return object;
 }
@@ -106,6 +113,8 @@ P _trackPreferenceDeserializeProp<P>(
     case 1:
       return (reader.readStringOrNull(offset)) as P;
     case 2:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 3:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -530,6 +539,33 @@ extension TrackPreferenceQueryFilter
   }
 
   QueryBuilder<TrackPreference, TrackPreference, QAfterFilterCondition>
+  refreshingIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'refreshing'),
+      );
+    });
+  }
+
+  QueryBuilder<TrackPreference, TrackPreference, QAfterFilterCondition>
+  refreshingIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'refreshing'),
+      );
+    });
+  }
+
+  QueryBuilder<TrackPreference, TrackPreference, QAfterFilterCondition>
+  refreshingEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'refreshing', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<TrackPreference, TrackPreference, QAfterFilterCondition>
   syncIdIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
@@ -797,6 +833,20 @@ extension TrackPreferenceQuerySortBy
   }
 
   QueryBuilder<TrackPreference, TrackPreference, QAfterSortBy>
+  sortByRefreshing() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'refreshing', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TrackPreference, TrackPreference, QAfterSortBy>
+  sortByRefreshingDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'refreshing', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TrackPreference, TrackPreference, QAfterSortBy>
   sortByUsername() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'username', Sort.asc);
@@ -836,6 +886,20 @@ extension TrackPreferenceQuerySortThenBy
   thenByPrefsDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'prefs', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TrackPreference, TrackPreference, QAfterSortBy>
+  thenByRefreshing() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'refreshing', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TrackPreference, TrackPreference, QAfterSortBy>
+  thenByRefreshingDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'refreshing', Sort.desc);
     });
   }
 
@@ -885,6 +949,13 @@ extension TrackPreferenceQueryWhereDistinct
     });
   }
 
+  QueryBuilder<TrackPreference, TrackPreference, QDistinct>
+  distinctByRefreshing() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'refreshing');
+    });
+  }
+
   QueryBuilder<TrackPreference, TrackPreference, QDistinct> distinctByUsername({
     bool caseSensitive = true,
   }) {
@@ -911,6 +982,12 @@ extension TrackPreferenceQueryProperty
   QueryBuilder<TrackPreference, String?, QQueryOperations> prefsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'prefs');
+    });
+  }
+
+  QueryBuilder<TrackPreference, bool?, QQueryOperations> refreshingProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'refreshing');
     });
   }
 

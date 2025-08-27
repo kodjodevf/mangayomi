@@ -16,6 +16,15 @@ class Tracks extends _$Tracks {
     return isar.trackPreferences.getSync(syncId!);
   }
 
+  void setRefreshing(bool refreshing) {
+    if (state != null) {
+      state!.refreshing = refreshing;
+      isar.writeTxnSync(() {
+        isar.trackPreferences.putSync(state!);
+      });
+    }
+  }
+
   void login(TrackPreference trackPreference) {
     isar.writeTxnSync(() {
       isar.trackPreferences.putSync(trackPreference);
