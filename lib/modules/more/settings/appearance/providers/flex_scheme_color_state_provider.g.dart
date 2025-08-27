@@ -13,14 +13,14 @@ String _$flexSchemeColorStateHash() =>
 @ProviderFor(FlexSchemeColorState)
 final flexSchemeColorStateProvider =
     AutoDisposeNotifierProvider<FlexSchemeColorState, FlexSchemeColor>.internal(
-  FlexSchemeColorState.new,
-  name: r'flexSchemeColorStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$flexSchemeColorStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      FlexSchemeColorState.new,
+      name: r'flexSchemeColorStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$flexSchemeColorStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$FlexSchemeColorState = AutoDisposeNotifier<FlexSchemeColor>;
 // ignore_for_file: type=lint

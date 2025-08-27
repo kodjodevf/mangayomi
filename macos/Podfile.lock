@@ -164,7 +164,7 @@ SPEC CHECKSUMS:
   flutter_inappwebview_macos: c2d68649f9f8f1831bfcd98d73fd6256366d9d1d
   flutter_qjs: cb2d0cba9deade1d03b89f6c432eac126f39482a
   flutter_web_auth_2: 62b08da29f15a20fa63f144234622a1488d45b65
-  FlutterMacOS: 8f6f14fa908a6fb3fba0cd85dbd81ec4b251fb24
+  FlutterMacOS: d0db08ddef1a9af05a5ec4b724367152bb0500b1
   isar_flutter_libs: a65381780401f81ad6bf3f2e7cd0de5698fb98c4
   just_audio: 4e391f57b79cad2b0674030a00453ca5ce817eed
   media_kit_libs_macos_video: 85a23e549b5f480e72cae3e5634b5514bc692f65

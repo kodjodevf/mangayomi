@@ -34,9 +34,7 @@ abstract class _$AnimeStreamController
     extends BuildlessAutoDisposeNotifier<void> {
   late final Chapter episode;
 
-  void build({
-    required Chapter episode,
-  });
+  void build({required Chapter episode});
 }
 
 /// See also [AnimeStreamController].
@@ -49,21 +47,15 @@ class AnimeStreamControllerFamily extends Family<void> {
   const AnimeStreamControllerFamily();
 
   /// See also [AnimeStreamController].
-  AnimeStreamControllerProvider call({
-    required Chapter episode,
-  }) {
-    return AnimeStreamControllerProvider(
-      episode: episode,
-    );
+  AnimeStreamControllerProvider call({required Chapter episode}) {
+    return AnimeStreamControllerProvider(episode: episode);
   }
 
   @override
   AnimeStreamControllerProvider getProviderOverride(
     covariant AnimeStreamControllerProvider provider,
   ) {
-    return call(
-      episode: provider.episode,
-    );
+    return call(episode: provider.episode);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -85,21 +77,19 @@ class AnimeStreamControllerFamily extends Family<void> {
 class AnimeStreamControllerProvider
     extends AutoDisposeNotifierProviderImpl<AnimeStreamController, void> {
   /// See also [AnimeStreamController].
-  AnimeStreamControllerProvider({
-    required Chapter episode,
-  }) : this._internal(
-          () => AnimeStreamController()..episode = episode,
-          from: animeStreamControllerProvider,
-          name: r'animeStreamControllerProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$animeStreamControllerHash,
-          dependencies: AnimeStreamControllerFamily._dependencies,
-          allTransitiveDependencies:
-              AnimeStreamControllerFamily._allTransitiveDependencies,
-          episode: episode,
-        );
+  AnimeStreamControllerProvider({required Chapter episode})
+    : this._internal(
+        () => AnimeStreamController()..episode = episode,
+        from: animeStreamControllerProvider,
+        name: r'animeStreamControllerProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$animeStreamControllerHash,
+        dependencies: AnimeStreamControllerFamily._dependencies,
+        allTransitiveDependencies:
+            AnimeStreamControllerFamily._allTransitiveDependencies,
+        episode: episode,
+      );
 
   AnimeStreamControllerProvider._internal(
     super._createNotifier, {
@@ -114,12 +104,8 @@ class AnimeStreamControllerProvider
   final Chapter episode;
 
   @override
-  void runNotifierBuild(
-    covariant AnimeStreamController notifier,
-  ) {
-    return notifier.build(
-      episode: episode,
-    );
+  void runNotifierBuild(covariant AnimeStreamController notifier) {
+    return notifier.build(episode: episode);
   }
 
   @override
@@ -140,7 +126,7 @@ class AnimeStreamControllerProvider
 
   @override
   AutoDisposeNotifierProviderElement<AnimeStreamController, void>
-      createElement() {
+  createElement() {
     return _AnimeStreamControllerProviderElement(this);
   }
 
@@ -173,5 +159,6 @@ class _AnimeStreamControllerProviderElement
   @override
   Chapter get episode => (origin as AnimeStreamControllerProvider).episode;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

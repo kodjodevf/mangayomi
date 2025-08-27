@@ -13,14 +13,14 @@ String _$audioPreferredLangStateHash() =>
 @ProviderFor(AudioPreferredLangState)
 final audioPreferredLangStateProvider =
     AutoDisposeNotifierProvider<AudioPreferredLangState, String>.internal(
-  AudioPreferredLangState.new,
-  name: r'audioPreferredLangStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$audioPreferredLangStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      AudioPreferredLangState.new,
+      name: r'audioPreferredLangStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$audioPreferredLangStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$AudioPreferredLangState = AutoDisposeNotifier<String>;
 String _$enableAudioPitchCorrectionStateHash() =>
@@ -30,14 +30,14 @@ String _$enableAudioPitchCorrectionStateHash() =>
 @ProviderFor(EnableAudioPitchCorrectionState)
 final enableAudioPitchCorrectionStateProvider =
     AutoDisposeNotifierProvider<EnableAudioPitchCorrectionState, bool>.internal(
-  EnableAudioPitchCorrectionState.new,
-  name: r'enableAudioPitchCorrectionStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$enableAudioPitchCorrectionStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      EnableAudioPitchCorrectionState.new,
+      name: r'enableAudioPitchCorrectionStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$enableAudioPitchCorrectionStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$EnableAudioPitchCorrectionState = AutoDisposeNotifier<bool>;
 String _$audioChannelStateHash() => r'e71ffa85c37d545fb7b22e9539241b4926a2d384';
@@ -46,14 +46,14 @@ String _$audioChannelStateHash() => r'e71ffa85c37d545fb7b22e9539241b4926a2d384';
 @ProviderFor(AudioChannelState)
 final audioChannelStateProvider =
     AutoDisposeNotifierProvider<AudioChannelState, AudioChannel>.internal(
-  AudioChannelState.new,
-  name: r'audioChannelStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$audioChannelStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      AudioChannelState.new,
+      name: r'audioChannelStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$audioChannelStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$AudioChannelState = AutoDisposeNotifier<AudioChannel>;
 String _$volumeBoostCapStateHash() =>
@@ -63,14 +63,14 @@ String _$volumeBoostCapStateHash() =>
 @ProviderFor(VolumeBoostCapState)
 final volumeBoostCapStateProvider =
     AutoDisposeNotifierProvider<VolumeBoostCapState, int>.internal(
-  VolumeBoostCapState.new,
-  name: r'volumeBoostCapStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$volumeBoostCapStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      VolumeBoostCapState.new,
+      name: r'volumeBoostCapStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$volumeBoostCapStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$VolumeBoostCapState = AutoDisposeNotifier<int>;
 // ignore_for_file: type=lint

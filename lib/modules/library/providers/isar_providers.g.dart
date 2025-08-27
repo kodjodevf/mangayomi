@@ -53,10 +53,7 @@ class GetAllMangaStreamFamily extends Family<AsyncValue<List<Manga>>> {
   GetAllMangaStreamProvider getProviderOverride(
     covariant GetAllMangaStreamProvider provider,
   ) {
-    return call(
-      categoryId: provider.categoryId,
-      itemType: provider.itemType,
-    );
+    return call(categoryId: provider.categoryId, itemType: provider.itemType);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -81,23 +78,22 @@ class GetAllMangaStreamProvider extends AutoDisposeStreamProvider<List<Manga>> {
     required int? categoryId,
     required ItemType itemType,
   }) : this._internal(
-          (ref) => getAllMangaStream(
-            ref as GetAllMangaStreamRef,
-            categoryId: categoryId,
-            itemType: itemType,
-          ),
-          from: getAllMangaStreamProvider,
-          name: r'getAllMangaStreamProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$getAllMangaStreamHash,
-          dependencies: GetAllMangaStreamFamily._dependencies,
-          allTransitiveDependencies:
-              GetAllMangaStreamFamily._allTransitiveDependencies,
-          categoryId: categoryId,
-          itemType: itemType,
-        );
+         (ref) => getAllMangaStream(
+           ref as GetAllMangaStreamRef,
+           categoryId: categoryId,
+           itemType: itemType,
+         ),
+         from: getAllMangaStreamProvider,
+         name: r'getAllMangaStreamProvider',
+         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+             ? null
+             : _$getAllMangaStreamHash,
+         dependencies: GetAllMangaStreamFamily._dependencies,
+         allTransitiveDependencies:
+             GetAllMangaStreamFamily._allTransitiveDependencies,
+         categoryId: categoryId,
+         itemType: itemType,
+       );
 
   GetAllMangaStreamProvider._internal(
     super._createNotifier, {
@@ -193,18 +189,14 @@ class GetAllMangaWithoutCategoriesStreamFamily
   GetAllMangaWithoutCategoriesStreamProvider call({
     required ItemType itemType,
   }) {
-    return GetAllMangaWithoutCategoriesStreamProvider(
-      itemType: itemType,
-    );
+    return GetAllMangaWithoutCategoriesStreamProvider(itemType: itemType);
   }
 
   @override
   GetAllMangaWithoutCategoriesStreamProvider getProviderOverride(
     covariant GetAllMangaWithoutCategoriesStreamProvider provider,
   ) {
-    return call(
-      itemType: provider.itemType,
-    );
+    return call(itemType: provider.itemType);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -226,24 +218,22 @@ class GetAllMangaWithoutCategoriesStreamFamily
 class GetAllMangaWithoutCategoriesStreamProvider
     extends AutoDisposeStreamProvider<List<Manga>> {
   /// See also [getAllMangaWithoutCategoriesStream].
-  GetAllMangaWithoutCategoriesStreamProvider({
-    required ItemType itemType,
-  }) : this._internal(
-          (ref) => getAllMangaWithoutCategoriesStream(
-            ref as GetAllMangaWithoutCategoriesStreamRef,
-            itemType: itemType,
-          ),
-          from: getAllMangaWithoutCategoriesStreamProvider,
-          name: r'getAllMangaWithoutCategoriesStreamProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$getAllMangaWithoutCategoriesStreamHash,
-          dependencies: GetAllMangaWithoutCategoriesStreamFamily._dependencies,
-          allTransitiveDependencies: GetAllMangaWithoutCategoriesStreamFamily
-              ._allTransitiveDependencies,
+  GetAllMangaWithoutCategoriesStreamProvider({required ItemType itemType})
+    : this._internal(
+        (ref) => getAllMangaWithoutCategoriesStream(
+          ref as GetAllMangaWithoutCategoriesStreamRef,
           itemType: itemType,
-        );
+        ),
+        from: getAllMangaWithoutCategoriesStreamProvider,
+        name: r'getAllMangaWithoutCategoriesStreamProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$getAllMangaWithoutCategoriesStreamHash,
+        dependencies: GetAllMangaWithoutCategoriesStreamFamily._dependencies,
+        allTransitiveDependencies:
+            GetAllMangaWithoutCategoriesStreamFamily._allTransitiveDependencies,
+        itemType: itemType,
+      );
 
   GetAllMangaWithoutCategoriesStreamProvider._internal(
     super._createNotifier, {
@@ -260,7 +250,7 @@ class GetAllMangaWithoutCategoriesStreamProvider
   @override
   Override overrideWith(
     Stream<List<Manga>> Function(GetAllMangaWithoutCategoriesStreamRef provider)
-        create,
+    create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -320,14 +310,14 @@ String _$getSettingsStreamHash() => r'c5a51e0e3473b25d2365025832a27ed2cc029b27';
 @ProviderFor(getSettingsStream)
 final getSettingsStreamProvider =
     AutoDisposeStreamProvider<List<Settings>>.internal(
-  getSettingsStream,
-  name: r'getSettingsStreamProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$getSettingsStreamHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      getSettingsStream,
+      name: r'getSettingsStreamProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$getSettingsStreamHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element

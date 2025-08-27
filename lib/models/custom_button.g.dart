@@ -37,22 +37,15 @@ const CustomButtonSchema = CollectionSchema(
       name: r'isFavourite',
       type: IsarType.bool,
     ),
-    r'pos': PropertySchema(
-      id: 4,
-      name: r'pos',
-      type: IsarType.long,
-    ),
-    r'title': PropertySchema(
-      id: 5,
-      name: r'title',
-      type: IsarType.string,
-    ),
+    r'pos': PropertySchema(id: 4, name: r'pos', type: IsarType.long),
+    r'title': PropertySchema(id: 5, name: r'title', type: IsarType.string),
     r'updatedAt': PropertySchema(
       id: 6,
       name: r'updatedAt',
       type: IsarType.long,
-    )
+    ),
   },
+
   estimateSize: _customButtonEstimateSize,
   serialize: _customButtonSerialize,
   deserialize: _customButtonDeserialize,
@@ -61,6 +54,7 @@ const CustomButtonSchema = CollectionSchema(
   indexes: {},
   links: {},
   embeddedSchemas: {},
+
   getId: _customButtonGetId,
   getLinks: _customButtonGetLinks,
   attach: _customButtonAttach,
@@ -169,7 +163,10 @@ List<IsarLinkBase<dynamic>> _customButtonGetLinks(CustomButton object) {
 }
 
 void _customButtonAttach(
-    IsarCollection<dynamic> col, Id id, CustomButton object) {
+  IsarCollection<dynamic> col,
+  Id id,
+  CustomButton object,
+) {
   object.id = id;
 }
 
@@ -186,15 +183,13 @@ extension CustomButtonQueryWhere
     on QueryBuilder<CustomButton, CustomButton, QWhereClause> {
   QueryBuilder<CustomButton, CustomButton, QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: id,
-        upper: id,
-      ));
+      return query.addWhereClause(IdWhereClause.between(lower: id, upper: id));
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterWhereClause> idNotEqualTo(
-      Id id) {
+    Id id,
+  ) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -217,8 +212,9 @@ extension CustomButtonQueryWhere
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterWhereClause> idGreaterThan(
-      Id id,
-      {bool include = false}) {
+    Id id, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -226,8 +222,10 @@ extension CustomButtonQueryWhere
     });
   }
 
-  QueryBuilder<CustomButton, CustomButton, QAfterWhereClause> idLessThan(Id id,
-      {bool include = false}) {
+  QueryBuilder<CustomButton, CustomButton, QAfterWhereClause> idLessThan(
+    Id id, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -242,12 +240,14 @@ extension CustomButtonQueryWhere
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: lowerId,
-        includeLower: includeLower,
-        upper: upperId,
-        includeUpper: includeUpper,
-      ));
+      return query.addWhereClause(
+        IdWhereClause.between(
+          lower: lowerId,
+          includeLower: includeLower,
+          upper: upperId,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 }
@@ -255,71 +255,74 @@ extension CustomButtonQueryWhere
 extension CustomButtonQueryFilter
     on QueryBuilder<CustomButton, CustomButton, QFilterCondition> {
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codeLongPressIsNull() {
+  codeLongPressIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'codeLongPress',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'codeLongPress'),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codeLongPressIsNotNull() {
+  codeLongPressIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'codeLongPress',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'codeLongPress'),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codeLongPressEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  codeLongPressEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'codeLongPress',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'codeLongPress',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codeLongPressGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'codeLongPress',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codeLongPressLessThan(
+  codeLongPressGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'codeLongPress',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'codeLongPress',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codeLongPressBetween(
+  codeLongPressLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'codeLongPress',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
+  codeLongPressBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -327,153 +330,158 @@ extension CustomButtonQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'codeLongPress',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'codeLongPress',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codeLongPressStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  codeLongPressStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'codeLongPress',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'codeLongPress',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codeLongPressEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  codeLongPressEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'codeLongPress',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'codeLongPress',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codeLongPressContains(String value, {bool caseSensitive = true}) {
+  codeLongPressContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'codeLongPress',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'codeLongPress',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codeLongPressMatches(String pattern, {bool caseSensitive = true}) {
+  codeLongPressMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'codeLongPress',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'codeLongPress',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codeLongPressIsEmpty() {
+  codeLongPressIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'codeLongPress',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'codeLongPress', value: ''),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codeLongPressIsNotEmpty() {
+  codeLongPressIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'codeLongPress',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'codeLongPress', value: ''),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codePressIsNull() {
+  codePressIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'codePress',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'codePress'),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codePressIsNotNull() {
+  codePressIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'codePress',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'codePress'),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codePressEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  codePressEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'codePress',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'codePress',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codePressGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'codePress',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codePressLessThan(
+  codePressGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'codePress',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'codePress',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codePressBetween(
+  codePressLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'codePress',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
+  codePressBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -481,153 +489,158 @@ extension CustomButtonQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'codePress',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'codePress',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codePressStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  codePressStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'codePress',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'codePress',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codePressEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  codePressEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'codePress',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'codePress',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codePressContains(String value, {bool caseSensitive = true}) {
+  codePressContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'codePress',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'codePress',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codePressMatches(String pattern, {bool caseSensitive = true}) {
+  codePressMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'codePress',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'codePress',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codePressIsEmpty() {
+  codePressIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'codePress',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'codePress', value: ''),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codePressIsNotEmpty() {
+  codePressIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'codePress',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'codePress', value: ''),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codeStartupIsNull() {
+  codeStartupIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'codeStartup',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'codeStartup'),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codeStartupIsNotNull() {
+  codeStartupIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'codeStartup',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'codeStartup'),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codeStartupEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  codeStartupEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'codeStartup',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'codeStartup',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codeStartupGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'codeStartup',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codeStartupLessThan(
+  codeStartupGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'codeStartup',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'codeStartup',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codeStartupBetween(
+  codeStartupLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'codeStartup',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
+  codeStartupBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -635,111 +648,113 @@ extension CustomButtonQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'codeStartup',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'codeStartup',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codeStartupStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  codeStartupStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'codeStartup',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'codeStartup',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codeStartupEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  codeStartupEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'codeStartup',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'codeStartup',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codeStartupContains(String value, {bool caseSensitive = true}) {
+  codeStartupContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'codeStartup',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'codeStartup',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codeStartupMatches(String pattern, {bool caseSensitive = true}) {
+  codeStartupMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'codeStartup',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'codeStartup',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codeStartupIsEmpty() {
+  codeStartupIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'codeStartup',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'codeStartup', value: ''),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      codeStartupIsNotEmpty() {
+  codeStartupIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'codeStartup',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'codeStartup', value: ''),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition> idIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'id',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'id'),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      idIsNotNull() {
+  idIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'id',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'id'),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition> idEqualTo(
-      Id? value) {
+    Id? value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'id', value: value),
+      );
     });
   }
 
@@ -748,11 +763,13 @@ extension CustomButtonQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -761,11 +778,13 @@ extension CustomButtonQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -776,82 +795,82 @@ extension CustomButtonQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'id',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'id',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      isFavouriteIsNull() {
+  isFavouriteIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'isFavourite',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'isFavourite'),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      isFavouriteIsNotNull() {
+  isFavouriteIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'isFavourite',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'isFavourite'),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      isFavouriteEqualTo(bool? value) {
+  isFavouriteEqualTo(bool? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'isFavourite',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'isFavourite', value: value),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition> posIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'pos',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'pos'),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      posIsNotNull() {
+  posIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'pos',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'pos'),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition> posEqualTo(
-      int? value) {
+    int? value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'pos',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'pos', value: value),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      posGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
+  posGreaterThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'pos',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'pos',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -860,11 +879,13 @@ extension CustomButtonQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'pos',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'pos',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -875,31 +896,33 @@ extension CustomButtonQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'pos',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'pos',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      titleIsNull() {
+  titleIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'title',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'title'),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      titleIsNotNull() {
+  titleIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'title',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'title'),
+      );
     });
   }
 
@@ -908,27 +931,31 @@ extension CustomButtonQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'title',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'title',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      titleGreaterThan(
+  titleGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'title',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'title',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -938,12 +965,14 @@ extension CustomButtonQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'title',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'title',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -955,28 +984,29 @@ extension CustomButtonQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'title',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'title',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      titleStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  titleStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'title',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'title',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -985,129 +1015,134 @@ extension CustomButtonQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'title',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'title',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition> titleContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'title',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'title',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition> titleMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'title',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      titleIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'title',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      titleIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'title',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      updatedAtIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'updatedAt',
-      ));
-    });
-  }
-
-  QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      updatedAtIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'updatedAt',
-      ));
-    });
-  }
-
-  QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      updatedAtEqualTo(int? value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'updatedAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      updatedAtGreaterThan(
-    int? value, {
-    bool include = false,
+    String pattern, {
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'updatedAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'title',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      updatedAtLessThan(
-    int? value, {
-    bool include = false,
-  }) {
+  titleIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'updatedAt',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'title', value: ''),
+      );
     });
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
-      updatedAtBetween(
+  titleIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'title', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
+  updatedAtIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'updatedAt'),
+      );
+    });
+  }
+
+  QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
+  updatedAtIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'updatedAt'),
+      );
+    });
+  }
+
+  QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
+  updatedAtEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'updatedAt', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
+  updatedAtGreaterThan(int? value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'updatedAt',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
+  updatedAtLessThan(int? value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'updatedAt',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CustomButton, CustomButton, QAfterFilterCondition>
+  updatedAtBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'updatedAt',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'updatedAt',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 }
@@ -1127,7 +1162,7 @@ extension CustomButtonQuerySortBy
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterSortBy>
-      sortByCodeLongPressDesc() {
+  sortByCodeLongPressDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codeLongPress', Sort.desc);
     });
@@ -1152,7 +1187,7 @@ extension CustomButtonQuerySortBy
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterSortBy>
-      sortByCodeStartupDesc() {
+  sortByCodeStartupDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codeStartup', Sort.desc);
     });
@@ -1165,7 +1200,7 @@ extension CustomButtonQuerySortBy
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterSortBy>
-      sortByIsFavouriteDesc() {
+  sortByIsFavouriteDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isFavourite', Sort.desc);
     });
@@ -1217,7 +1252,7 @@ extension CustomButtonQuerySortThenBy
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterSortBy>
-      thenByCodeLongPressDesc() {
+  thenByCodeLongPressDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codeLongPress', Sort.desc);
     });
@@ -1242,7 +1277,7 @@ extension CustomButtonQuerySortThenBy
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterSortBy>
-      thenByCodeStartupDesc() {
+  thenByCodeStartupDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codeStartup', Sort.desc);
     });
@@ -1267,7 +1302,7 @@ extension CustomButtonQuerySortThenBy
   }
 
   QueryBuilder<CustomButton, CustomButton, QAfterSortBy>
-      thenByIsFavouriteDesc() {
+  thenByIsFavouriteDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isFavourite', Sort.desc);
     });
@@ -1312,23 +1347,28 @@ extension CustomButtonQuerySortThenBy
 
 extension CustomButtonQueryWhereDistinct
     on QueryBuilder<CustomButton, CustomButton, QDistinct> {
-  QueryBuilder<CustomButton, CustomButton, QDistinct> distinctByCodeLongPress(
-      {bool caseSensitive = true}) {
+  QueryBuilder<CustomButton, CustomButton, QDistinct> distinctByCodeLongPress({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'codeLongPress',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'codeLongPress',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<CustomButton, CustomButton, QDistinct> distinctByCodePress(
-      {bool caseSensitive = true}) {
+  QueryBuilder<CustomButton, CustomButton, QDistinct> distinctByCodePress({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'codePress', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<CustomButton, CustomButton, QDistinct> distinctByCodeStartup(
-      {bool caseSensitive = true}) {
+  QueryBuilder<CustomButton, CustomButton, QDistinct> distinctByCodeStartup({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'codeStartup', caseSensitive: caseSensitive);
     });
@@ -1346,8 +1386,9 @@ extension CustomButtonQueryWhereDistinct
     });
   }
 
-  QueryBuilder<CustomButton, CustomButton, QDistinct> distinctByTitle(
-      {bool caseSensitive = true}) {
+  QueryBuilder<CustomButton, CustomButton, QDistinct> distinctByTitle({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'title', caseSensitive: caseSensitive);
     });
@@ -1369,7 +1410,7 @@ extension CustomButtonQueryProperty
   }
 
   QueryBuilder<CustomButton, String?, QQueryOperations>
-      codeLongPressProperty() {
+  codeLongPressProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'codeLongPress');
     });

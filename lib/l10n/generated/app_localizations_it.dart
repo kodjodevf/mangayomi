@@ -1497,6 +1497,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get load_own_subtitles => 'Carica i tuoi sottotitoli...';
 
   @override
+  String get search_subtitles => 'Search subtitles online...';
+
+  @override
   String extension_notes(Object notes) {
     return 'Notes: $notes';
   }
@@ -1718,6 +1721,12 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get clear_library_input =>
       'Type \'manga\', \'anime\' and/or \'novel\' (separated by a comma) to remove all related entries';
+
+  @override
+  String get watch_order => 'Watch order';
+
+  @override
+  String get sequels => 'Sequels';
 
   @override
   String get recommendations_similarity => 'Similarity:';

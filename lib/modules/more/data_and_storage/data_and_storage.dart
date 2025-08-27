@@ -39,50 +39,48 @@ class DataAndStorage extends ConsumerWidget {
                       title: Text(l10n.download_location),
                       content: SizedBox(
                         width: context.width(0.8),
-                        child: SuperListView(
-                          shrinkWrap: true,
-                          children: [
-                            RadioListTile(
-                              dense: true,
-                              contentPadding: const EdgeInsets.all(0),
-                              value: downloadLocationState.$2.isEmpty
-                                  ? downloadLocationState.$1
-                                  : downloadLocationState.$2,
-                              groupValue: downloadLocationState.$1,
-                              onChanged: (value) {
+                        child: RadioGroup(
+                          groupValue: downloadLocationState.$2.isEmpty
+                              ? downloadLocationState.$1
+                              : downloadLocationState.$2,
+                          onChanged: (value) async {
+                            if (value == downloadLocationState.$1) {
+                              ref
+                                  .read(downloadLocationStateProvider.notifier)
+                                  .set("");
+                              Navigator.pop(context);
+                            } else {
+                              String? result = await FilePicker.platform
+                                  .getDirectoryPath();
+
+                              if (result != null) {
                                 ref
                                     .read(
                                       downloadLocationStateProvider.notifier,
                                     )
-                                    .set("");
-                                Navigator.pop(context);
-                              },
-                              title: Text(downloadLocationState.$1),
-                            ),
-                            RadioListTile(
-                              dense: true,
-                              contentPadding: const EdgeInsets.all(0),
-                              value: downloadLocationState.$2.isEmpty
-                                  ? downloadLocationState.$1
-                                  : downloadLocationState.$2,
-                              groupValue: downloadLocationState.$2,
-                              onChanged: (value) async {
-                                String? result = await FilePicker.platform
-                                    .getDirectoryPath();
-
-                                if (result != null) {
-                                  ref
-                                      .read(
-                                        downloadLocationStateProvider.notifier,
-                                      )
-                                      .set(result);
-                                } else {}
-                                if (!context.mounted) return;
-                                Navigator.pop(context);
-                              },
-                              title: Text(l10n.custom_location),
-                            ),
-                          ],
+                                    .set(result);
+                              } else {}
+                              if (!context.mounted) return;
+                              Navigator.pop(context);
+                            }
+                          },
+                          child: SuperListView(
+                            shrinkWrap: true,
+                            children: [
+                              RadioListTile(
+                                dense: true,
+                                contentPadding: const EdgeInsets.all(0),
+                                value: downloadLocationState.$1,
+                                title: Text(downloadLocationState.$1),
+                              ),
+                              RadioListTile(
+                                dense: true,
+                                contentPadding: const EdgeInsets.all(0),
+                                value: downloadLocationState.$2,
+                                title: Text(l10n.custom_location),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       actions: [
@@ -275,24 +273,26 @@ class DataAndStorage extends ConsumerWidget {
                       title: Text(l10n.backup_frequency),
                       content: SizedBox(
                         width: context.width(0.8),
-                        child: SuperListView.builder(
-                          shrinkWrap: true,
-                          itemCount: list.length,
-                          itemBuilder: (context, index) {
-                            return RadioListTile(
-                              dense: true,
-                              contentPadding: const EdgeInsets.all(0),
-                              value: index,
-                              groupValue: backupFrequency,
-                              onChanged: (value) {
-                                ref
-                                    .read(backupFrequencyStateProvider.notifier)
-                                    .set(value!);
-                                Navigator.pop(context);
-                              },
-                              title: Row(children: [Text(list[index])]),
-                            );
+                        child: RadioGroup(
+                          groupValue: backupFrequency,
+                          onChanged: (value) {
+                            ref
+                                .read(backupFrequencyStateProvider.notifier)
+                                .set(value!);
+                            Navigator.pop(context);
                           },
+                          child: SuperListView.builder(
+                            shrinkWrap: true,
+                            itemCount: list.length,
+                            itemBuilder: (context, index) {
+                              return RadioListTile(
+                                dense: true,
+                                contentPadding: const EdgeInsets.all(0),
+                                value: index,
+                                title: Row(children: [Text(list[index])]),
+                              );
+                            },
+                          ),
                         ),
                       ),
                       actions: [

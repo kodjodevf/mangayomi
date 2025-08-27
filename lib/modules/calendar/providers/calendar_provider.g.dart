@@ -39,21 +39,15 @@ class GetCalendarStreamFamily extends Family<AsyncValue<List<Manga>>> {
   const GetCalendarStreamFamily();
 
   /// See also [getCalendarStream].
-  GetCalendarStreamProvider call({
-    ItemType? itemType,
-  }) {
-    return GetCalendarStreamProvider(
-      itemType: itemType,
-    );
+  GetCalendarStreamProvider call({ItemType? itemType}) {
+    return GetCalendarStreamProvider(itemType: itemType);
   }
 
   @override
   GetCalendarStreamProvider getProviderOverride(
     covariant GetCalendarStreamProvider provider,
   ) {
-    return call(
-      itemType: provider.itemType,
-    );
+    return call(itemType: provider.itemType);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -74,24 +68,20 @@ class GetCalendarStreamFamily extends Family<AsyncValue<List<Manga>>> {
 /// See also [getCalendarStream].
 class GetCalendarStreamProvider extends AutoDisposeStreamProvider<List<Manga>> {
   /// See also [getCalendarStream].
-  GetCalendarStreamProvider({
-    ItemType? itemType,
-  }) : this._internal(
-          (ref) => getCalendarStream(
-            ref as GetCalendarStreamRef,
-            itemType: itemType,
-          ),
-          from: getCalendarStreamProvider,
-          name: r'getCalendarStreamProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$getCalendarStreamHash,
-          dependencies: GetCalendarStreamFamily._dependencies,
-          allTransitiveDependencies:
-              GetCalendarStreamFamily._allTransitiveDependencies,
-          itemType: itemType,
-        );
+  GetCalendarStreamProvider({ItemType? itemType})
+    : this._internal(
+        (ref) =>
+            getCalendarStream(ref as GetCalendarStreamRef, itemType: itemType),
+        from: getCalendarStreamProvider,
+        name: r'getCalendarStreamProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$getCalendarStreamHash,
+        dependencies: GetCalendarStreamFamily._dependencies,
+        allTransitiveDependencies:
+            GetCalendarStreamFamily._allTransitiveDependencies,
+        itemType: itemType,
+      );
 
   GetCalendarStreamProvider._internal(
     super._createNotifier, {
@@ -157,5 +147,6 @@ class _GetCalendarStreamProviderElement
   @override
   ItemType? get itemType => (origin as GetCalendarStreamProvider).itemType;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

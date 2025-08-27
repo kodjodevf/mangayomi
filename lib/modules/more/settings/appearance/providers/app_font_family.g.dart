@@ -12,14 +12,14 @@ String _$appFontFamilyHash() => r'edc7d34d3b1aa149fdbd95fa0b07d9746b7279b1';
 @ProviderFor(AppFontFamily)
 final appFontFamilyProvider =
     AutoDisposeNotifierProvider<AppFontFamily, String?>.internal(
-  AppFontFamily.new,
-  name: r'appFontFamilyProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$appFontFamilyHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      AppFontFamily.new,
+      name: r'appFontFamilyProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$appFontFamilyHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$AppFontFamily = AutoDisposeNotifier<String?>;
 // ignore_for_file: type=lint

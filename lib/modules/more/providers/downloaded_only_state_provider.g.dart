@@ -13,14 +13,14 @@ String _$downloadedOnlyStateHash() =>
 @ProviderFor(DownloadedOnlyState)
 final downloadedOnlyStateProvider =
     AutoDisposeNotifierProvider<DownloadedOnlyState, bool>.internal(
-  DownloadedOnlyState.new,
-  name: r'downloadedOnlyStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$downloadedOnlyStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      DownloadedOnlyState.new,
+      name: r'downloadedOnlyStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$downloadedOnlyStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$DownloadedOnlyState = AutoDisposeNotifier<bool>;
 // ignore_for_file: type=lint

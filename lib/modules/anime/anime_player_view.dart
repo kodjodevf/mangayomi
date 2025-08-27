@@ -37,6 +37,7 @@ import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/aniskip.dart';
+import 'package:mangayomi/services/fetch_subtitles.dart';
 import 'package:mangayomi/services/get_video_list.dart';
 import 'package:mangayomi/services/torrent_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -51,6 +52,8 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
+
+import 'widgets/search_subtitles.dart';
 
 bool _isDesktop = Platform.isMacOS || Platform.isLinux || Platform.isWindows;
 
@@ -1151,7 +1154,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         .toList();
 
     List<String> subs = [];
-    if (widget.videos.isNotEmpty && !widget.isLocal) {
+    if (widget.videos.isNotEmpty) {
       for (var video in widget.videos) {
         for (var sub in video.subtitles ?? []) {
           if (!subs.contains(sub.file)) {
@@ -1159,8 +1162,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             final label = sub.label;
             videoSubtitle.add(
               VideoPrefs(
-                isLocal: false,
-                subtitle: file.startsWith("http")
+                isLocal: widget.isLocal,
+                subtitle: (file.startsWith("http") || file.startsWith("file"))
                     ? SubtitleTrack.uri(file, title: label, language: label)
                     : SubtitleTrack.data(file, title: label, language: label),
               ),
@@ -1296,7 +1299,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
               ),
             ],
           ),
-          const SizedBox(height: 15),
+          const SizedBox(height: 30),
           ...videoSubtitleLast.toSet().toList().map((sub) {
             final title =
                 sub.title ??
@@ -1322,6 +1325,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
               child: textWidget(title, selected),
             );
           }),
+          const SizedBox(height: 30),
           GestureDetector(
             onTap: () async {
               try {
@@ -1342,6 +1346,34 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
               }
             },
             child: textWidget(context.l10n.load_own_subtitles, false),
+          ),
+          const SizedBox(height: 30),
+          GestureDetector(
+            onTap: () async {
+              try {
+                final subtitle =
+                    await subtitlesSearchraggableMenu(
+                          context,
+                          chapter: widget.episode,
+                        )
+                        as ImdbSubtitle?;
+                if (subtitle != null && context.mounted) {
+                  _player.setSubtitleTrack(
+                    SubtitleTrack.uri(
+                      subtitle.url!,
+                      title: subtitle.language,
+                      language: subtitle.language,
+                    ),
+                  );
+                }
+                if (!context.mounted) return;
+                Navigator.pop(context);
+              } catch (_) {
+                botToast("Error");
+                Navigator.pop(context);
+              }
+            },
+            child: textWidget(context.l10n.search_subtitles, false),
           ),
         ],
       ),

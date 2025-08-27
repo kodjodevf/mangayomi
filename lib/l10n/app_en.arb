@@ -468,6 +468,7 @@
   "genre_search_source": "Browse in source",
   "source_not_added": "Source is not installed!",
   "load_own_subtitles": "Load your own subtitles...",
+  "search_subtitles": "Search subtitles online...",
   "extension_notes": "Notes: {notes}",
   "unsupported_repo": "You've tried to add an unsupported repository. Please check the discord server for support!",
   "end_of_chapter": "End of chapter",
@@ -536,6 +537,8 @@
   "clear_library": "Clear library",
   "clear_library_desc": "Choose to clear all manga, anime and/or novel entries",
   "clear_library_input": "Type 'manga', 'anime' and/or 'novel' (separated by a comma) to remove all related entries",
+  "watch_order": "Watch order",
+  "sequels": "Sequels",
   "recommendations": "Recommendations",
   "recommendations_similarity": "Similarity:"
 }

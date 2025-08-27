@@ -65,30 +65,30 @@ class SyncScreen extends ConsumerWidget {
                           title: Text(l10n.sync_auto),
                           content: SizedBox(
                             width: context.width(0.8),
-                            child: SuperListView.builder(
-                              shrinkWrap: true,
-                              itemCount: autoSyncOptions.length,
-                              itemBuilder: (context, index) {
-                                final optionName = autoSyncOptions.keys
-                                    .elementAt(index);
-                                final optionValue = autoSyncOptions.values
-                                    .elementAt(index);
-                                return RadioListTile(
-                                  dense: true,
-                                  contentPadding: const EdgeInsets.all(0),
-                                  value: optionValue,
-                                  groupValue: syncPreference.autoSyncFrequency,
-                                  onChanged: (value) {
-                                    ref
-                                        .read(
-                                          synchingProvider(syncId: 1).notifier,
-                                        )
-                                        .setAutoSyncFrequency(value!);
-                                    Navigator.pop(context);
-                                  },
-                                  title: Text(optionName),
-                                );
+                            child: RadioGroup(
+                              groupValue: syncPreference.autoSyncFrequency,
+                              onChanged: (value) {
+                                ref
+                                    .read(synchingProvider(syncId: 1).notifier)
+                                    .setAutoSyncFrequency(value!);
+                                Navigator.pop(context);
                               },
+                              child: SuperListView.builder(
+                                shrinkWrap: true,
+                                itemCount: autoSyncOptions.length,
+                                itemBuilder: (context, index) {
+                                  final optionName = autoSyncOptions.keys
+                                      .elementAt(index);
+                                  final optionValue = autoSyncOptions.values
+                                      .elementAt(index);
+                                  return RadioListTile(
+                                    dense: true,
+                                    contentPadding: const EdgeInsets.all(0),
+                                    value: optionValue,
+                                    title: Text(optionName),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                           actions: [

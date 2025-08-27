@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/widgets.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';

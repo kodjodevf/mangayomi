@@ -43,20 +43,14 @@ class CropBordersFamily extends Family<AsyncValue<Uint8List?>> {
     required UChapDataPreload data,
     required bool cropBorder,
   }) {
-    return CropBordersProvider(
-      data: data,
-      cropBorder: cropBorder,
-    );
+    return CropBordersProvider(data: data, cropBorder: cropBorder);
   }
 
   @override
   CropBordersProvider getProviderOverride(
     covariant CropBordersProvider provider,
   ) {
-    return call(
-      data: provider.data,
-      cropBorder: provider.cropBorder,
-    );
+    return call(data: provider.data, cropBorder: provider.cropBorder);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -81,23 +75,22 @@ class CropBordersProvider extends FutureProvider<Uint8List?> {
     required UChapDataPreload data,
     required bool cropBorder,
   }) : this._internal(
-          (ref) => cropBorders(
-            ref as CropBordersRef,
-            data: data,
-            cropBorder: cropBorder,
-          ),
-          from: cropBordersProvider,
-          name: r'cropBordersProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$cropBordersHash,
-          dependencies: CropBordersFamily._dependencies,
-          allTransitiveDependencies:
-              CropBordersFamily._allTransitiveDependencies,
-          data: data,
-          cropBorder: cropBorder,
-        );
+         (ref) => cropBorders(
+           ref as CropBordersRef,
+           data: data,
+           cropBorder: cropBorder,
+         ),
+         from: cropBordersProvider,
+         name: r'cropBordersProvider',
+         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+             ? null
+             : _$cropBordersHash,
+         dependencies: CropBordersFamily._dependencies,
+         allTransitiveDependencies:
+             CropBordersFamily._allTransitiveDependencies,
+         data: data,
+         cropBorder: cropBorder,
+       );
 
   CropBordersProvider._internal(
     super._createNotifier, {
@@ -173,5 +166,6 @@ class _CropBordersProviderElement extends FutureProviderElement<Uint8List?>
   @override
   bool get cropBorder => (origin as CropBordersProvider).cropBorder;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

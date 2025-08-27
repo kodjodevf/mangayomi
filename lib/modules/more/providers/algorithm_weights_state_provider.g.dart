@@ -11,16 +11,19 @@ String _$algorithmWeightsStateHash() =>
 
 /// See also [AlgorithmWeightsState].
 @ProviderFor(AlgorithmWeightsState)
-final algorithmWeightsStateProvider = AutoDisposeNotifierProvider<
-    AlgorithmWeightsState, AlgorithmWeights>.internal(
-  AlgorithmWeightsState.new,
-  name: r'algorithmWeightsStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$algorithmWeightsStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+final algorithmWeightsStateProvider =
+    AutoDisposeNotifierProvider<
+      AlgorithmWeightsState,
+      AlgorithmWeights
+    >.internal(
+      AlgorithmWeightsState.new,
+      name: r'algorithmWeightsStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$algorithmWeightsStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$AlgorithmWeightsState = AutoDisposeNotifier<AlgorithmWeights>;
 // ignore_for_file: type=lint
