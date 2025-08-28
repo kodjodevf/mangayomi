@@ -1542,6 +1542,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get hwdec => 'Hardware Decoder';
 
   @override
+  String get enable_hardware_accel => 'Hardware Acceleration';
+
+  @override
+  String get enable_hardware_accel_info =>
+      'Turn it on/off if you are experiencing bugs or crashes';
+
+  @override
   String get track_library_navigate => 'Go to existing local entry';
 
   @override

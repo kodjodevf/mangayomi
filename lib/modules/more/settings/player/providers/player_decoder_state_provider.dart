@@ -50,6 +50,29 @@ class HwdecModeState extends _$HwdecModeState {
 }
 
 @riverpod
+class EnableHardwareAccelState extends _$EnableHardwareAccelState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.enableHardwareAcceleration ??
+            Platform.isMacOS
+        ? false
+        : true;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..enableHardwareAcceleration = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
 class DebandingState extends _$DebandingState {
   @override
   DebandingType build() {

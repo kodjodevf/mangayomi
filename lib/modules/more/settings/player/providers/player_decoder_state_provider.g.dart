@@ -157,6 +157,23 @@ class _HwdecModeStateProviderElement
   bool get rawValue => (origin as HwdecModeStateProvider).rawValue;
 }
 
+String _$enableHardwareAccelStateHash() =>
+    r'4804b699c14a78db9c760ec4eaf8a88bb6ce1b9b';
+
+/// See also [EnableHardwareAccelState].
+@ProviderFor(EnableHardwareAccelState)
+final enableHardwareAccelStateProvider =
+    AutoDisposeNotifierProvider<EnableHardwareAccelState, bool>.internal(
+      EnableHardwareAccelState.new,
+      name: r'enableHardwareAccelStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$enableHardwareAccelStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+typedef _$EnableHardwareAccelState = AutoDisposeNotifier<bool>;
 String _$debandingStateHash() => r'b93e2fc826d98cc8bce1aab9a92900353e4d3958';
 
 /// See also [DebandingState].

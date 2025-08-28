@@ -212,6 +212,8 @@ class Settings {
 
   String? hwdecMode;
 
+  bool? enableHardwareAcceleration;
+
   int? libraryFilterNovelDownloadType;
 
   int? libraryFilterNovelUnreadType;
@@ -373,6 +375,7 @@ class Settings {
     this.disableSectionType = SectionType.all,
     this.useLibass = true,
     this.hwdecMode = "auto",
+    this.enableHardwareAcceleration,
     this.libraryFilterNovelDownloadType = 0,
     this.libraryFilterNovelUnreadType = 0,
     this.libraryFilterNovelStartedType = 0,
@@ -577,6 +580,7 @@ class Settings {
         SectionType.values[json['disableSectionType'] ?? SectionType.all.index];
     useLibass = json['useLibass'];
     hwdecMode = json['hwdecMode'];
+    enableHardwareAcceleration = json['enableHardwareAcceleration'];
     libraryFilterNovelBookMarkedType = json['libraryFilterNovelBookMarkedType'];
     libraryFilterNovelDownloadType = json['libraryFilterNovelDownloadType'];
     libraryFilterNovelStartedType = json['libraryFilterNovelStartedType'];
@@ -759,6 +763,7 @@ class Settings {
     'disableSectionType': disableSectionType.index,
     'useLibass': useLibass,
     'hwdecMode': hwdecMode,
+    'enableHardwareAcceleration': enableHardwareAcceleration,
     'libraryFilterNovelBookMarkedType': libraryFilterNovelBookMarkedType,
     'libraryFilterNovelDownloadType': libraryFilterNovelDownloadType,
     'libraryFilterNovelStartedType': libraryFilterNovelStartedType,
