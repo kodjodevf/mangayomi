@@ -2781,6 +2781,12 @@ abstract class AppLocalizations {
   /// **'Android Proxy Server (ApkBridge)'**
   String get android_proxy_server;
 
+  /// No description provided for @get_apk_bridge.
+  ///
+  /// In en, this message translates to:
+  /// **'Get ApkBridge'**
+  String get get_apk_bridge;
+
   /// No description provided for @undefined.
   ///
   /// In en, this message translates to:

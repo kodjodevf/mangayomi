@@ -15,8 +15,13 @@ import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.da
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
+import 'package:mangayomi/utils/log/logger.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class BrowseSScreen extends ConsumerWidget {
+  static const apkUrl =
+      "https://github.com/Schnitzel5/ApkBridge/releases/latest";
+
   const BrowseSScreen({super.key});
 
   @override
@@ -66,6 +71,22 @@ class BrowseSScreen extends ConsumerWidget {
                         fontSize: 11,
                         color: context.secondaryColor,
                       ),
+                    ),
+                    trailing: OutlinedButton.icon(
+                      onPressed: () async {
+                        if (!await launchUrl(
+                          Uri.parse(apkUrl),
+                          mode: LaunchMode.externalApplication,
+                        )) {
+                          AppLogger.log(
+                            'Could not launch $apkUrl',
+                            logLevel: LogLevel.error,
+                          );
+                          botToast('Could not launch $apkUrl');
+                        }
+                      },
+                      label: Text(l10n.get_apk_bridge),
+                      icon: const Icon(Icons.download_outlined),
                     ),
                   ),
                   ListTile(
