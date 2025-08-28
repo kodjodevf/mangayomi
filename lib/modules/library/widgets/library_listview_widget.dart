@@ -62,6 +62,7 @@ class LibraryListViewWidget extends StatelessWidget {
                       lang: entry.lang!,
                       mangaM: entry,
                       source: entry.source!,
+                      sourceId: entry.sourceId,
                     );
                     ref.invalidate(
                       getAllMangaWithoutCategoriesStreamProvider(
@@ -140,6 +141,7 @@ class LibraryListViewWidget extends StatelessWidget {
                                                 headersProvider(
                                                   source: entry.source!,
                                                   lang: entry.lang!,
+                                                  sourceId: entry.sourceId,
                                                 ),
                                               ),
                                             ),

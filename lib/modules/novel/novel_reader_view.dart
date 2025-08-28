@@ -418,7 +418,11 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                 IconButton(
                   onPressed: () async {
                     final manga = chapter.manga.value!;
-                    final source = getSource(manga.lang!, manga.source!)!;
+                    final source = getSource(
+                      manga.lang!,
+                      manga.source!,
+                      manga.sourceId,
+                    )!;
                     String url = chapter.url!.startsWith('/')
                         ? "${source.baseUrl}/${chapter.url!}"
                         : chapter.url!;

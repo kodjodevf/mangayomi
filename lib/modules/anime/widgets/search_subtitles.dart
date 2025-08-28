@@ -13,7 +13,6 @@ import 'package:mangayomi/services/fetch_subtitles.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/http/rhttp/src/model/settings.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
-import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/log/logger.dart';
 import 'package:path/path.dart' as path;
 import 'package:super_sliver_list/super_sliver_list.dart';
@@ -360,13 +359,13 @@ class _SubtitlesWidgetSearchState extends ConsumerState<SubtitlesWidgetSearch> {
       }
       AppLogger.log('Subtitle file downloaded: ${subtitle.language}');
       await subtitleFile.writeAsBytes(response.bodyBytes);
-      if (context.mounted) {
+      if (mounted) {
         botToast(context.l10n.finished(""));
       }
     } catch (e) {
       AppLogger.log("Failed to download subtitle:", logLevel: LogLevel.error);
       AppLogger.log(e.toString(), logLevel: LogLevel.error);
-      if (context.mounted) {
+      if (mounted) {
         botToast(context.l10n.failed);
       }
     }

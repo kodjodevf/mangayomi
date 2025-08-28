@@ -402,7 +402,11 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
         ? Image.memory(manga.customCoverImage as Uint8List)
         : cachedCompressedNetworkImage(
             headers: ref.watch(
-              headersProvider(source: manga.source!, lang: manga.lang!),
+              headersProvider(
+                source: manga.source!,
+                lang: manga.lang!,
+                sourceId: manga.sourceId,
+              ),
             ),
             imageUrl: toImgUrl(
               manga.customCoverFromTracker ?? manga.imageUrl ?? "",

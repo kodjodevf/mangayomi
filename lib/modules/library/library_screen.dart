@@ -2020,6 +2020,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                           lang: randomManga.lang!,
                           mangaM: randomManga,
                           source: randomManga.source!,
+                          sourceId: randomManga.sourceId,
                         );
                       });
                     } else if (value == 2) {

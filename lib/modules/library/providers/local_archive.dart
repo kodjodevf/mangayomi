@@ -48,6 +48,7 @@ Future importArchivesFromFile(
           isLocalArchive: true,
           artist: '',
           updatedAt: dateNow,
+          sourceId: null,
         );
 
     for (var file in result.files.reversed.toList()) {

@@ -310,6 +310,7 @@ class _MigrationMangaGlobalImageCardState
                                 headersProvider(
                                   source: widget.source.name!,
                                   lang: widget.source.lang!,
+                                  sourceId: widget.source.id,
                                 ),
                               ),
                               imageUrl: toImgUrl(
@@ -586,6 +587,7 @@ class _MigrationMangaGlobalImageCardState
                               categories: categoryIds,
                               dateAdded: DateTime.now().millisecondsSinceEpoch,
                               updatedAt: DateTime.now().millisecondsSinceEpoch,
+                              sourceId: widget.source.id,
                             );
                             int mangaId = -1;
                             isar.writeTxnSync(() {

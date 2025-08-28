@@ -78,14 +78,15 @@ const MangaSchema = CollectionSchema(
       type: IsarType.long,
     ),
     r'source': PropertySchema(id: 19, name: r'source', type: IsarType.string),
+    r'sourceId': PropertySchema(id: 20, name: r'sourceId', type: IsarType.long),
     r'status': PropertySchema(
-      id: 20,
+      id: 21,
       name: r'status',
       type: IsarType.byte,
       enumMap: _MangastatusEnumValueMap,
     ),
     r'updatedAt': PropertySchema(
-      id: 21,
+      id: 22,
       name: r'updatedAt',
       type: IsarType.long,
     ),
@@ -227,8 +228,9 @@ void _mangaSerialize(
   writer.writeString(offsets[17], object.name);
   writer.writeLong(offsets[18], object.smartUpdateDays);
   writer.writeString(offsets[19], object.source);
-  writer.writeByte(offsets[20], object.status.index);
-  writer.writeLong(offsets[21], object.updatedAt);
+  writer.writeLong(offsets[20], object.sourceId);
+  writer.writeByte(offsets[21], object.status.index);
+  writer.writeLong(offsets[22], object.updatedAt);
 }
 
 Manga _mangaDeserialize(
@@ -261,10 +263,11 @@ Manga _mangaDeserialize(
     name: reader.readStringOrNull(offsets[17]),
     smartUpdateDays: reader.readLongOrNull(offsets[18]),
     source: reader.readStringOrNull(offsets[19]),
+    sourceId: reader.readLongOrNull(offsets[20]),
     status:
-        _MangastatusValueEnumMap[reader.readByteOrNull(offsets[20])] ??
+        _MangastatusValueEnumMap[reader.readByteOrNull(offsets[21])] ??
         Status.ongoing,
-    updatedAt: reader.readLongOrNull(offsets[21]),
+    updatedAt: reader.readLongOrNull(offsets[22]),
   );
   return object;
 }
@@ -319,10 +322,12 @@ P _mangaDeserializeProp<P>(
     case 19:
       return (reader.readStringOrNull(offset)) as P;
     case 20:
+      return (reader.readLongOrNull(offset)) as P;
+    case 21:
       return (_MangastatusValueEnumMap[reader.readByteOrNull(offset)] ??
               Status.ongoing)
           as P;
-    case 21:
+    case 22:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -2887,6 +2892,81 @@ extension MangaQueryFilter on QueryBuilder<Manga, Manga, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> sourceIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'sourceId'),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> sourceIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'sourceId'),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> sourceIdEqualTo(
+    int? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'sourceId', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> sourceIdGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'sourceId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> sourceIdLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'sourceId',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterFilterCondition> sourceIdBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'sourceId',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
   QueryBuilder<Manga, Manga, QAfterFilterCondition> statusEqualTo(
     Status value,
   ) {
@@ -3294,6 +3374,18 @@ extension MangaQuerySortBy on QueryBuilder<Manga, Manga, QSortBy> {
     });
   }
 
+  QueryBuilder<Manga, Manga, QAfterSortBy> sortBySourceId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sourceId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterSortBy> sortBySourceIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sourceId', Sort.desc);
+    });
+  }
+
   QueryBuilder<Manga, Manga, QAfterSortBy> sortByStatus() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'status', Sort.asc);
@@ -3536,6 +3628,18 @@ extension MangaQuerySortThenBy on QueryBuilder<Manga, Manga, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Manga, Manga, QAfterSortBy> thenBySourceId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sourceId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterSortBy> thenBySourceIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sourceId', Sort.desc);
+    });
+  }
+
   QueryBuilder<Manga, Manga, QAfterSortBy> thenByStatus() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'status', Sort.asc);
@@ -3703,6 +3807,12 @@ extension MangaQueryWhereDistinct on QueryBuilder<Manga, Manga, QDistinct> {
     });
   }
 
+  QueryBuilder<Manga, Manga, QDistinct> distinctBySourceId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'sourceId');
+    });
+  }
+
   QueryBuilder<Manga, Manga, QDistinct> distinctByStatus() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'status');
@@ -3841,6 +3951,12 @@ extension MangaQueryProperty on QueryBuilder<Manga, Manga, QQueryProperty> {
   QueryBuilder<Manga, String?, QQueryOperations> sourceProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'source');
+    });
+  }
+
+  QueryBuilder<Manga, int?, QQueryOperations> sourceIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'sourceId');
     });
   }
 

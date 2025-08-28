@@ -28,9 +28,9 @@ extension ClassElementX on ClassElement {
     return [
       ...fields,
       if (collectionAnnotation?.inheritance ?? embeddedAnnotation!.inheritance)
-        for (InterfaceType supertype in allSupertypes) ...[
-          if (!supertype.isDartCoreObject) ...supertype.element.fields
-        ]
+        for (final InterfaceType supertype in allSupertypes) ...[
+          if (!supertype.isDartCoreObject) ...supertype.element.fields,
+        ],
     ]
         .where(
           (PropertyInducingElement e) =>

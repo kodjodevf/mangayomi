@@ -7,7 +7,7 @@ part of 'local_archive.dart';
 // **************************************************************************
 
 String _$importArchivesFromFileHash() =>
-    r'4d92aaade0544f76214030364433f91d27570b5a';
+    r'784b9d45958695faffdf04ee7c105c9b486122de';
 
 /// Copied from Dart SDK
 class _SystemHash {

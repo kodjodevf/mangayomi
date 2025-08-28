@@ -47,6 +47,7 @@ Future<(String, EpubBook?)> getHtmlContent(
   final source = getSource(
     chapter.manga.value!.lang!,
     chapter.manga.value!.source!,
+    chapter.manga.value!.sourceId,
   );
   String? html;
   final proxyServer = ref.read(androidProxyServerStateProvider);

@@ -286,7 +286,7 @@ class _RestoreBackupProviderElement extends AutoDisposeProviderElement<void>
 }
 
 String _$restoreKotatsuBackupHash() =>
-    r'e927f6a196a0349285fecbd84f30c2a9125998b2';
+    r'4b43cb1719527b3030b9966e5ef662c29435425d';
 
 /// See also [restoreKotatsuBackup].
 @ProviderFor(restoreKotatsuBackup)
@@ -407,7 +407,7 @@ class _RestoreKotatsuBackupProviderElement
 }
 
 String _$restoreTachiBkBackupHash() =>
-    r'ae971c2630393df773eb1d64214b4daefb080b95';
+    r'54434eaa9dc875d03ffb1dcf62ad2d7971649d61';
 
 /// See also [restoreTachiBkBackup].
 @ProviderFor(restoreTachiBkBackup)

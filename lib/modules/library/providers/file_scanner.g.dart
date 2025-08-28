@@ -6,7 +6,7 @@ part of 'file_scanner.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$scanLocalLibraryHash() => r'7e028c45097e5802ee974d9f0c5a2bc540bba91c';
+String _$scanLocalLibraryHash() => r'efbad9aa5fa4233e260a2e132389c23b40ef515a';
 
 /// Scans `Mangayomi/local` folder (if exists) for Mangas/Animes and imports in library.
 ///

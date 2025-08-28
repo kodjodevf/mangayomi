@@ -284,6 +284,7 @@ class TrackerItemCard extends StatelessWidget {
           link: null,
           status: Status.unknown,
           description: "",
+          sourceId: null,
         ),
         track,
       ),

@@ -6,7 +6,7 @@ part of 'anilist.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$anilistHash() => r'f6d46f4e330f1461ef18242a5e86589cb7a165c5';
+String _$anilistHash() => r'b3c56b172308ecd98c4dd9fb89d17ccc36487754';
 
 /// Copied from Dart SDK
 class _SystemHash {

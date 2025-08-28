@@ -56,12 +56,13 @@ Future<(List<Video>, bool, List<String>, Directory?)> getVideoList(
       [Video(path!, episode.name!, path, subtitles: subtitles)],
       true,
       infoHashes,
-      mpvDirectory
+      mpvDirectory,
     );
   }
   final source = getSource(
     episode.manga.value!.lang!,
     episode.manga.value!.source!,
+    episode.manga.value!.sourceId,
   );
   final proxyServer = ref.read(androidProxyServerStateProvider);
 

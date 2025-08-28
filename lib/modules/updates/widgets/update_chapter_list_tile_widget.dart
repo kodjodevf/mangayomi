@@ -71,6 +71,7 @@ class UpdateChapterListTileWidget extends ConsumerWidget {
                                         headersProvider(
                                           source: manga.source!,
                                           lang: manga.lang!,
+                                          sourceId: manga.sourceId,
                                         ),
                                       ),
                                     ),

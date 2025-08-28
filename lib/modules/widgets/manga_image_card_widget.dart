@@ -61,7 +61,11 @@ class MangaImageCardWidget extends ConsumerWidget {
                         : getMangaDetail!.imageUrl ?? "",
                   ),
                   headers: ref.watch(
-                    headersProvider(source: source.name!, lang: source.lang!),
+                    headersProvider(
+                      source: source.name!,
+                      lang: source.lang!,
+                      sourceId: source.id,
+                    ),
                   ),
                   cache: true,
                   cacheMaxAge: const Duration(days: 7),
@@ -74,6 +78,7 @@ class MangaImageCardWidget extends ConsumerWidget {
               lang: source.lang!,
               source: source.name!,
               itemType: itemType,
+              sourceId: source.id,
             );
           },
           onLongPress: () {
@@ -85,6 +90,7 @@ class MangaImageCardWidget extends ConsumerWidget {
               source: source.name!,
               itemType: itemType,
               addToFavourite: true,
+              sourceId: source.id,
             );
           },
           onSecondaryTap: () {
@@ -96,6 +102,7 @@ class MangaImageCardWidget extends ConsumerWidget {
               source: source.name!,
               itemType: itemType,
               addToFavourite: true,
+              sourceId: source.id,
             );
           },
           children: [
@@ -173,7 +180,11 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
                       : getMangaDetail!.imageUrl ?? "",
                 ),
                 headers: ref.watch(
-                  headersProvider(source: source.name!, lang: source.lang!),
+                  headersProvider(
+                    source: source.name!,
+                    lang: source.lang!,
+                    sourceId: source.id,
+                  ),
                 ),
               );
         return Padding(
@@ -191,6 +202,7 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
                   lang: source.lang!,
                   source: source.name!,
                   itemType: itemType,
+                  sourceId: source.id,
                 );
               },
               onLongPress: () {
@@ -202,6 +214,7 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
                   source: source.name!,
                   itemType: itemType,
                   addToFavourite: true,
+                  sourceId: source.id,
                 );
               },
               onSecondaryTap: () {
@@ -213,6 +226,7 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
                   source: source.name!,
                   itemType: itemType,
                   addToFavourite: true,
+                  sourceId: source.id,
                 );
               },
               child: Row(
@@ -286,6 +300,7 @@ Future<void> pushToMangaReaderDetail({
   required String lang,
   required BuildContext context,
   required String source,
+  required int? sourceId,
   int? archiveId,
   Manga? mangaM,
   ItemType? itemType,
@@ -309,6 +324,7 @@ Future<void> pushToMangaReaderDetail({
           lastUpdate: 0,
           itemType: itemType ?? ItemType.manga,
           artist: getManga.artist ?? '',
+          sourceId: sourceId,
         );
     final empty = isar.mangas
         .filter()
@@ -334,7 +350,12 @@ Future<void> pushToMangaReaderDetail({
   } else {
     mangaId = archiveId;
   }
-
+  final mang = isar.mangas.getSync(mangaId);
+  if (mang!.sourceId == null) {
+    isar.writeTxnSync(() {
+      isar.mangas.putSync(mang..sourceId = sourceId);
+    });
+  }
   final settings = isar.settings.getSync(227)!;
   final sortList = settings.sortChapterList ?? [];
   final checkIfExist = sortList

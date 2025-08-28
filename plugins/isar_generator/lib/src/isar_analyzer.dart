@@ -162,21 +162,21 @@ class IsarAnalyzer {
   }
 
   Map<String, String> _getEmbeddedDartNames(ClassElement element) {
-    void _fillNames(Map<String, String> names, ClassElement element) {
+    void fillNames(Map<String, String> names, ClassElement element) {
       for (final property in element.allAccessors) {
         final type = property.type.scalarType.element;
         if (type is ClassElement && type.embeddedAnnotation != null) {
           final isarName = type.isarName;
           if (!names.containsKey(isarName)) {
             names[type.isarName] = type.displayName;
-            _fillNames(names, type);
+            fillNames(names, type);
           }
         }
       }
     }
 
     final names = <String, String>{};
-    _fillNames(names, element);
+    fillNames(names, element);
     return names;
   }
 

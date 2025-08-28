@@ -293,6 +293,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                         headersProvider(
                                           source: widget.manga!.source!,
                                           lang: widget.manga!.lang!,
+                                          sourceId: widget.manga!.sourceId,
                                         ),
                                       ),
                                 imageUrl: toImgUrl(
@@ -651,6 +652,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   final source = getSource(
                                     widget.manga!.lang!,
                                     widget.manga!.source!,
+                                    widget.manga!.sourceId,
                                   );
                                   final url =
                                       "${source!.baseUrl}${widget.manga!.link!.getUrlWithoutDomain}";
@@ -670,6 +672,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   final source = getSource(
                                     widget.manga!.lang!,
                                     widget.manga!.source!,
+                                    widget.manga!.sourceId,
                                   );
                                   context.push(
                                     '/extension_detail',
@@ -1513,6 +1516,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                         final source = getSource(
                                           widget.manga!.lang!,
                                           widget.manga!.source!,
+                                          widget.manga!.sourceId,
                                         );
                                         if (source == null) {
                                           botToast(l10n.source_not_added);
@@ -1827,6 +1831,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                     headersProvider(
                       source: widget.manga!.source!,
                       lang: widget.manga!.lang!,
+                      sourceId: widget.manga!.sourceId,
                     ),
                   ),
           );
@@ -1889,6 +1894,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                   final source = getSource(
                     widget.manga!.lang!,
                     widget.manga!.source!,
+                    widget.manga!.sourceId,
                   );
                   final url =
                       "${source!.baseUrl}${widget.manga!.link!.getUrlWithoutDomain}";

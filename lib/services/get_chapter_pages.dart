@@ -63,6 +63,7 @@ Future<GetChapterPagesModel> getChapterPages(
     final source = getSource(
       chapter.manga.value!.lang!,
       chapter.manga.value!.source!,
+      chapter.manga.value!.sourceId,
     )!;
     if ((isarPageUrls?.urls?.isNotEmpty ?? false) &&
         (isarPageUrls?.chapterUrl ?? chapter.url) == chapter.url) {

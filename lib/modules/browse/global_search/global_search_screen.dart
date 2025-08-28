@@ -263,6 +263,7 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
           itemType: widget.source.itemType,
           useMaterialRoute: true,
           source: widget.source.name!,
+          sourceId: widget.source.id,
         );
       },
       child: StreamBuilder(
@@ -298,6 +299,7 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
                                 headersProvider(
                                   source: widget.source.name!,
                                   lang: widget.source.lang!,
+                                  sourceId: widget.source.id,
                                 ),
                               ),
                               imageUrl: toImgUrl(

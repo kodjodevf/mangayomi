@@ -51,6 +51,7 @@ Future addTorrentFromUrlOrFromFile(
           isLocalArchive: true,
           artist: '',
           updatedAt: dateNow,
+          sourceId: null,
         );
 
     if (url != null) {

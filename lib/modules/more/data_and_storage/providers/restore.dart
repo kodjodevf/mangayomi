@@ -332,6 +332,7 @@ void restoreKotatsuBackup(Ref ref, Archive archive) {
                 categories: [favourite["category_id"]],
                 itemType: ItemType.manga,
                 favorite: true,
+                sourceId: null,
               );
               isar.mangas.putSync(manga);
             }
@@ -402,6 +403,7 @@ void restoreTachiBkBackup(Ref ref, String path, BackupType bkType) {
         favorite: true,
         dateAdded: tempManga.dateAdded * 1000,
         lastUpdate: tempManga.lastModifiedAt * 1000,
+        sourceId: null,
       );
       if (bkType == BackupType.neko) {
         manga.source = "MangaDex";
@@ -481,6 +483,7 @@ void restoreTachiBkBackup(Ref ref, String path, BackupType bkType) {
           favorite: true,
           dateAdded: tempAnime.dateAdded * 1000,
           lastUpdate: tempAnime.lastModifiedAt * 1000,
+          sourceId: null,
         );
         isar.mangas.putSync(anime);
         History? history;

@@ -94,6 +94,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                     headersProvider(
                                       source: entry.source!,
                                       lang: entry.lang!,
+                                      sourceId: entry.sourceId,
                                     ),
                                   ),
                           ),
@@ -110,6 +111,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                           lang: entry.lang!,
                           mangaM: entry,
                           source: entry.source!,
+                          sourceId: entry.sourceId,
                         );
                         if (context.mounted) {
                           ref.invalidate(

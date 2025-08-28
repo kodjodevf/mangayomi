@@ -54,6 +54,8 @@ class Manga {
 
   int? updatedAt;
 
+  int? sourceId;
+
   @Backlink(to: "manga")
   final chapters = IsarLinks<Chapter>();
 
@@ -70,6 +72,7 @@ class Manga {
     required this.name,
     required this.status,
     required this.description,
+    required this.sourceId,
     this.isManga,
     this.itemType = ItemType.manga,
     this.dateAdded,
@@ -107,6 +110,7 @@ class Manga {
     customCoverFromTracker = json['customCoverFromTracker'];
     smartUpdateDays = json['smartUpdateDays'];
     updatedAt = json['updatedAt'];
+    sourceId = json['sourceId'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -132,6 +136,7 @@ class Manga {
     'customCoverFromTracker': customCoverFromTracker,
     'smartUpdateDays': smartUpdateDays,
     'updatedAt': updatedAt ?? 0,
+    'sourceId': sourceId,
   };
 }
 

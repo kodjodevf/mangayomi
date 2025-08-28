@@ -1495,7 +1495,11 @@ class _MangaChapterPageGalleryState
                 IconButton(
                   onPressed: () async {
                     final manga = chapter.manga.value!;
-                    final source = getSource(manga.lang!, manga.source!)!;
+                    final source = getSource(
+                      manga.lang!,
+                      manga.source!,
+                      manga.sourceId,
+                    )!;
                     final url =
                         "${source.baseUrl}${chapter.url!.getUrlWithoutDomain}";
                     Map<String, dynamic> data = {
