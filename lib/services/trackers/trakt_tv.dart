@@ -10,6 +10,7 @@ import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/more/settings/track/myanimelist/model.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+import 'package:mangayomi/utils/log/logger.dart';
 import 'base_tracker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'trakt_tv.g.dart';
@@ -293,13 +294,18 @@ class TraktTv extends _$TraktTv implements BaseTracker {
     return track;
   }
 
-  Future<String> _getAccessToken() async {
+  Future<String> _getAccessToken({bool bypass = false}) async {
     final track = ref.read(tracksProvider(syncId: syncId));
     final mALOAuth = OAuth.fromJson(
       jsonDecode(track!.oAuth!) as Map<String, dynamic>,
     );
     final expiresIn = DateTime.fromMillisecondsSinceEpoch(mALOAuth.expiresIn!);
     if (DateTime.now().isBefore(expiresIn)) return mALOAuth.accessToken!;
+    if (!bypass &&
+        (ref.read(tracksProvider(syncId: syncId))?.refreshing ?? false)) {
+      return mALOAuth.accessToken!;
+    }
+    ref.read(tracksProvider(syncId: syncId).notifier).setRefreshing(true);
     final refreshed = await _tryRefreshToken(mALOAuth);
     if (refreshed == null) {
       ref.read(tracksProvider(syncId: syncId).notifier).logout();
@@ -308,6 +314,8 @@ class TraktTv extends _$TraktTv implements BaseTracker {
     }
     final username = await _getUserName(refreshed.accessToken!);
     _saveOAuth(username, refreshed);
+    await Future.delayed(Duration(seconds: 3));
+    ref.read(tracksProvider(syncId: syncId).notifier).setRefreshing(false);
     return refreshed.accessToken!;
   }
 
@@ -315,16 +323,17 @@ class TraktTv extends _$TraktTv implements BaseTracker {
     String primaryClientId = oldOAuth.clientId ?? _clientId;
 
     Future<OAuth?> tryRefresh(String cid) async {
+      final params = {
+        'refresh_token': oldOAuth.refreshToken,
+        'client_id': cid,
+        'client_secret': _clientSecret,
+        'redirect_uri': _redirectUri,
+        'grant_type': 'refresh_token',
+      };
       final response = await http.post(
         Uri.parse('$_baseOAuthUrl/token'),
-        body: {
-          'refresh_token': oldOAuth.refreshToken,
-          'client_id': cid,
-          'client_secret': _clientSecret,
-          'redirect_uri': _redirectUri,
-          'grant_type': 'refresh_token',
-        },
         headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(params),
       );
       if (response.statusCode != 200) return null;
       final body = jsonDecode(response.body) as Map<String, dynamic>;
@@ -377,7 +386,7 @@ class TraktTv extends _$TraktTv implements BaseTracker {
       'grant_type': 'authorization_code',
     };
     final response = await http.post(
-      Uri.parse('$_baseApiUrl/oauth/token'),
+      Uri.parse('$_baseOAuthUrl/token'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(params),
     );
@@ -421,5 +430,23 @@ class TraktTv extends _$TraktTv implements BaseTracker {
   @override
   (int, int) getScoreValue() {
     throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> checkRefresh() async {
+    try {
+      await _getAccessToken(bypass: true);
+      AppLogger.log("Refreshed Trakt.tv token!");
+      return true;
+    } catch (e) {
+      AppLogger.log(
+        "Failed to refresh Trakt.tv token:",
+        logLevel: LogLevel.error,
+      );
+      AppLogger.log(e.toString(), logLevel: LogLevel.error);
+      return false;
+    } finally {
+      ref.read(tracksProvider(syncId: syncId).notifier).setRefreshing(false);
+    }
   }
 }

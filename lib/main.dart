@@ -18,7 +18,10 @@ import 'package:mangayomi/models/custom_button.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/models/track.dart' as track;
+import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
+import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/storage_usage.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/general/providers/general_state_provider.dart';
@@ -101,12 +104,13 @@ class _MyAppState extends ConsumerState<MyApp> {
   void initState() {
     super.initState();
     initializeDateFormatting();
+    customDns = ref.read(customDnsStateProvider);
+    _checkTrackerRefresh();
     _initDeepLinks();
     _setupMpvConfig();
     unawaited(ref.read(scanLocalLibraryProvider.future));
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      customDns = ref.read(customDnsStateProvider);
       if (ref.read(clearChapterCacheOnAppLaunchStateProvider)) {
         ref
             .read(totalChapterCacheSizeStateProvider.notifier)
@@ -339,6 +343,22 @@ class _MyAppState extends ConsumerState<MyApp> {
           await scriptFile.writeAsBytes(file.content);
         }
       }
+    }
+  }
+
+  Future<void> _checkTrackerRefresh() async {
+    final prefs = await isar.trackPreferences
+        .filter()
+        .syncIdIsNotNull()
+        .findAll();
+    for (final pref in prefs) {
+      final temp = track.Track(
+        syncId: pref.syncId,
+        status: track.TrackStatus.completed,
+      );
+      ref
+          .read(trackStateProvider(track: temp, itemType: null).notifier)
+          .checkRefresh();
     }
   }
 }

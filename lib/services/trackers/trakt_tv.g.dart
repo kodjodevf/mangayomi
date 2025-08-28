@@ -6,7 +6,7 @@ part of 'trakt_tv.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$traktTvHash() => r'de97ae0edbc905d07af2ce8758441fba6cdd7be2';
+String _$traktTvHash() => r'1ae8a5c79cb6b5fc6c5d9db61ed9307deeb450ed';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -33,10 +33,7 @@ abstract class _$TraktTv extends BuildlessAutoDisposeNotifier<void> {
   late final int syncId;
   late final ItemType? itemType;
 
-  void build({
-    required int syncId,
-    required ItemType? itemType,
-  });
+  void build({required int syncId, required ItemType? itemType});
 }
 
 /// See also [TraktTv].
@@ -49,24 +46,13 @@ class TraktTvFamily extends Family<void> {
   const TraktTvFamily();
 
   /// See also [TraktTv].
-  TraktTvProvider call({
-    required int syncId,
-    required ItemType? itemType,
-  }) {
-    return TraktTvProvider(
-      syncId: syncId,
-      itemType: itemType,
-    );
+  TraktTvProvider call({required int syncId, required ItemType? itemType}) {
+    return TraktTvProvider(syncId: syncId, itemType: itemType);
   }
 
   @override
-  TraktTvProvider getProviderOverride(
-    covariant TraktTvProvider provider,
-  ) {
-    return call(
-      syncId: provider.syncId,
-      itemType: provider.itemType,
-    );
+  TraktTvProvider getProviderOverride(covariant TraktTvProvider provider) {
+    return call(syncId: provider.syncId, itemType: provider.itemType);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -87,24 +73,21 @@ class TraktTvFamily extends Family<void> {
 /// See also [TraktTv].
 class TraktTvProvider extends AutoDisposeNotifierProviderImpl<TraktTv, void> {
   /// See also [TraktTv].
-  TraktTvProvider({
-    required int syncId,
-    required ItemType? itemType,
-  }) : this._internal(
-          () => TraktTv()
-            ..syncId = syncId
-            ..itemType = itemType,
-          from: traktTvProvider,
-          name: r'traktTvProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$traktTvHash,
-          dependencies: TraktTvFamily._dependencies,
-          allTransitiveDependencies: TraktTvFamily._allTransitiveDependencies,
-          syncId: syncId,
-          itemType: itemType,
-        );
+  TraktTvProvider({required int syncId, required ItemType? itemType})
+    : this._internal(
+        () => TraktTv()
+          ..syncId = syncId
+          ..itemType = itemType,
+        from: traktTvProvider,
+        name: r'traktTvProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$traktTvHash,
+        dependencies: TraktTvFamily._dependencies,
+        allTransitiveDependencies: TraktTvFamily._allTransitiveDependencies,
+        syncId: syncId,
+        itemType: itemType,
+      );
 
   TraktTvProvider._internal(
     super._createNotifier, {
@@ -121,13 +104,8 @@ class TraktTvProvider extends AutoDisposeNotifierProviderImpl<TraktTv, void> {
   final ItemType? itemType;
 
   @override
-  void runNotifierBuild(
-    covariant TraktTv notifier,
-  ) {
-    return notifier.build(
-      syncId: syncId,
-      itemType: itemType,
-    );
+  void runNotifierBuild(covariant TraktTv notifier) {
+    return notifier.build(syncId: syncId, itemType: itemType);
   }
 
   @override
@@ -182,7 +160,8 @@ mixin TraktTvRef on AutoDisposeNotifierProviderRef<void> {
 }
 
 class _TraktTvProviderElement
-    extends AutoDisposeNotifierProviderElement<TraktTv, void> with TraktTvRef {
+    extends AutoDisposeNotifierProviderElement<TraktTv, void>
+    with TraktTvRef {
   _TraktTvProviderElement(super.provider);
 
   @override
@@ -190,5 +169,6 @@ class _TraktTvProviderElement
   @override
   ItemType? get itemType => (origin as TraktTvProvider).itemType;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

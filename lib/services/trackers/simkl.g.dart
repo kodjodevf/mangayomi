@@ -6,7 +6,7 @@ part of 'simkl.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$simklHash() => r'3b8ff48675ba743d39aef595dc6cd70f4bd404cf';
+String _$simklHash() => r'b55f4a85c66fbb4456e0499f15376d314cd0bf90';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -33,10 +33,7 @@ abstract class _$Simkl extends BuildlessAutoDisposeNotifier<void> {
   late final int syncId;
   late final ItemType? itemType;
 
-  void build({
-    required int syncId,
-    required ItemType? itemType,
-  });
+  void build({required int syncId, required ItemType? itemType});
 }
 
 /// See also [Simkl].
@@ -49,24 +46,13 @@ class SimklFamily extends Family<void> {
   const SimklFamily();
 
   /// See also [Simkl].
-  SimklProvider call({
-    required int syncId,
-    required ItemType? itemType,
-  }) {
-    return SimklProvider(
-      syncId: syncId,
-      itemType: itemType,
-    );
+  SimklProvider call({required int syncId, required ItemType? itemType}) {
+    return SimklProvider(syncId: syncId, itemType: itemType);
   }
 
   @override
-  SimklProvider getProviderOverride(
-    covariant SimklProvider provider,
-  ) {
-    return call(
-      syncId: provider.syncId,
-      itemType: provider.itemType,
-    );
+  SimklProvider getProviderOverride(covariant SimklProvider provider) {
+    return call(syncId: provider.syncId, itemType: provider.itemType);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -87,24 +73,21 @@ class SimklFamily extends Family<void> {
 /// See also [Simkl].
 class SimklProvider extends AutoDisposeNotifierProviderImpl<Simkl, void> {
   /// See also [Simkl].
-  SimklProvider({
-    required int syncId,
-    required ItemType? itemType,
-  }) : this._internal(
-          () => Simkl()
-            ..syncId = syncId
-            ..itemType = itemType,
-          from: simklProvider,
-          name: r'simklProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$simklHash,
-          dependencies: SimklFamily._dependencies,
-          allTransitiveDependencies: SimklFamily._allTransitiveDependencies,
-          syncId: syncId,
-          itemType: itemType,
-        );
+  SimklProvider({required int syncId, required ItemType? itemType})
+    : this._internal(
+        () => Simkl()
+          ..syncId = syncId
+          ..itemType = itemType,
+        from: simklProvider,
+        name: r'simklProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$simklHash,
+        dependencies: SimklFamily._dependencies,
+        allTransitiveDependencies: SimklFamily._allTransitiveDependencies,
+        syncId: syncId,
+        itemType: itemType,
+      );
 
   SimklProvider._internal(
     super._createNotifier, {
@@ -121,13 +104,8 @@ class SimklProvider extends AutoDisposeNotifierProviderImpl<Simkl, void> {
   final ItemType? itemType;
 
   @override
-  void runNotifierBuild(
-    covariant Simkl notifier,
-  ) {
-    return notifier.build(
-      syncId: syncId,
-      itemType: itemType,
-    );
+  void runNotifierBuild(covariant Simkl notifier) {
+    return notifier.build(syncId: syncId, itemType: itemType);
   }
 
   @override
@@ -182,7 +160,8 @@ mixin SimklRef on AutoDisposeNotifierProviderRef<void> {
 }
 
 class _SimklProviderElement
-    extends AutoDisposeNotifierProviderElement<Simkl, void> with SimklRef {
+    extends AutoDisposeNotifierProviderElement<Simkl, void>
+    with SimklRef {
   _SimklProviderElement(super.provider);
 
   @override
@@ -190,5 +169,6 @@ class _SimklProviderElement
   @override
   ItemType? get itemType => (origin as SimklProvider).itemType;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

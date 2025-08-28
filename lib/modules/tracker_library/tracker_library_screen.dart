@@ -163,9 +163,11 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
         child: StreamBuilder(
-          stream: isar.trackPreferences.filter().syncIdIsNotNull().watch(
-            fireImmediately: true,
-          ),
+          stream: isar.trackPreferences
+              .filter()
+              .syncIdIsNotNull()
+              .anyOf([false, null], (q, e) => q.refreshingEqualTo(e))
+              .watch(fireImmediately: true),
           builder: (context, snapshot) {
             _preferences = snapshot.hasData ? snapshot.data ?? [] : [];
             return _preferences.any((p) => p.syncId == trackerProvider.syncId)
@@ -207,6 +209,13 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
     TrackerProviders trackerProvider,
     ItemType itemType,
   ) async {
+    final temp = Track(
+      syncId: trackerProvider.syncId,
+      status: TrackStatus.completed,
+    );
+    await ref
+        .read(trackStateProvider(track: temp, itemType: null).notifier)
+        .checkRefresh();
     final box = await Hive.openBox("tracker_library");
     final keys = box.keys.where(
       (e) => (e as String).startsWith(

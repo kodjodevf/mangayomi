@@ -428,4 +428,10 @@ class Kitsu extends _$Kitsu implements BaseTracker {
   (int, int) getScoreValue() {
     throw UnimplementedError();
   }
+  
+  @override
+  Future<bool> checkRefresh() async {
+    ref.read(tracksProvider(syncId: syncId).notifier).setRefreshing(false);
+    return true;
+  }
 }

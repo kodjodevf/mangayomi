@@ -12,6 +12,7 @@ import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/more/settings/track/myanimelist/model.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+import 'package:mangayomi/utils/log/logger.dart';
 import 'base_tracker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'myanimelist.g.dart';
@@ -59,13 +60,18 @@ class MyAnimeList extends _$MyAnimeList implements BaseTracker {
     }
   }
 
-  Future<String> _getAccessToken() async {
+  Future<String> _getAccessToken({bool bypass = false}) async {
     final track = ref.read(tracksProvider(syncId: syncId));
     final mALOAuth = OAuth.fromJson(
       jsonDecode(track!.oAuth!) as Map<String, dynamic>,
     );
     final expiresIn = DateTime.fromMillisecondsSinceEpoch(mALOAuth.expiresIn!);
     if (DateTime.now().isBefore(expiresIn)) return mALOAuth.accessToken!;
+    if (!bypass &&
+        (ref.read(tracksProvider(syncId: syncId))?.refreshing ?? false)) {
+      return mALOAuth.accessToken!;
+    }
+    ref.read(tracksProvider(syncId: syncId).notifier).setRefreshing(true);
     final refreshed = await _tryRefreshToken(mALOAuth);
     if (refreshed == null) {
       ref.read(tracksProvider(syncId: syncId).notifier).logout();
@@ -74,6 +80,8 @@ class MyAnimeList extends _$MyAnimeList implements BaseTracker {
     }
     final username = await _getUserName(refreshed.accessToken!);
     _saveOAuth(username, refreshed);
+    await Future.delayed(Duration(seconds: 3));
+    ref.read(tracksProvider(syncId: syncId).notifier).setRefreshing(false);
     return refreshed.accessToken!;
   }
 
@@ -438,14 +446,29 @@ class MyAnimeList extends _$MyAnimeList implements BaseTracker {
       headers: {'Authorization': 'Bearer $accessToken'},
     );
   }
-  
+
   @override
   String displayScore(int score) {
     throw UnimplementedError();
   }
-  
+
   @override
   (int, int) getScoreValue() {
     throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> checkRefresh() async {
+    try {
+      await _getAccessToken(bypass: true);
+      AppLogger.log("Refreshed MAL token!");
+      return true;
+    } catch (e) {
+      AppLogger.log("Failed to refresh MAL token:", logLevel: LogLevel.error);
+      AppLogger.log(e.toString(), logLevel: LogLevel.error);
+      return false;
+    } finally {
+      ref.read(tracksProvider(syncId: syncId).notifier).setRefreshing(false);
+    }
   }
 }
