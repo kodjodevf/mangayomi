@@ -41,7 +41,17 @@ class MangaImageCardWidget extends ConsumerWidget {
           .sourceEqualTo(source.name)
           .watch(fireImmediately: true),
       builder: (context, snapshot) {
-        final hasData = snapshot.hasData && snapshot.data!.isNotEmpty;
+        bool hasData = snapshot.hasData;
+        final mangaList = hasData
+            ? snapshot.data!
+                  .where(
+                    (element) => element.sourceId == null
+                        ? true
+                        : element.sourceId == source.id,
+                  )
+                  .toList()
+            : [];
+        hasData = hasData && mangaList.isNotEmpty;
         return CoverViewWidget(
           bottomTextWidget: BottomTextWidget(
             maxLines: 1,
@@ -49,14 +59,14 @@ class MangaImageCardWidget extends ConsumerWidget {
             isComfortableGrid: isComfortableGrid,
           ),
           isComfortableGrid: isComfortableGrid,
-          image: hasData && snapshot.data!.first.customCoverImage != null
-              ? MemoryImage(snapshot.data!.first.customCoverImage as Uint8List)
+          image: hasData && mangaList.first.customCoverImage != null
+              ? MemoryImage(mangaList.first.customCoverImage as Uint8List)
                     as ImageProvider
               : CustomExtendedNetworkImageProvider(
                   toImgUrl(
                     hasData
-                        ? snapshot.data!.first.customCoverFromTracker ??
-                              snapshot.data!.first.imageUrl ??
+                        ? mangaList.first.customCoverFromTracker ??
+                              mangaList.first.imageUrl ??
                               ""
                         : getMangaDetail!.imageUrl ?? "",
                   ),
@@ -107,11 +117,11 @@ class MangaImageCardWidget extends ConsumerWidget {
           },
           children: [
             Container(
-              color: hasData && snapshot.data!.first.favorite!
+              color: hasData && mangaList.first.favorite!
                   ? Colors.black.withValues(alpha: 0.5)
                   : null,
             ),
-            if (hasData && snapshot.data!.first.favorite!)
+            if (hasData && mangaList.first.favorite!)
               Positioned(
                 top: 0,
                 left: 0,
