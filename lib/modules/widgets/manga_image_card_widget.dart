@@ -177,15 +177,25 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
           .sourceEqualTo(source.name)
           .watch(fireImmediately: true),
       builder: (context, snapshot) {
-        final hasData = snapshot.hasData && snapshot.data!.isNotEmpty;
-        final image = hasData && snapshot.data!.first.customCoverImage != null
-            ? MemoryImage(snapshot.data!.first.customCoverImage as Uint8List)
+        bool hasData = snapshot.hasData;
+        final mangaList = hasData
+            ? snapshot.data!
+                  .where(
+                    (element) => element.sourceId == null
+                        ? true
+                        : element.sourceId == source.id,
+                  )
+                  .toList()
+            : [];
+        hasData = hasData && mangaList.isNotEmpty;
+        final image = hasData && mangaList.first.customCoverImage != null
+            ? MemoryImage(mangaList.first.customCoverImage as Uint8List)
                   as ImageProvider
             : CustomExtendedNetworkImageProvider(
                 toImgUrl(
                   hasData
-                      ? snapshot.data!.first.customCoverFromTracker ??
-                            snapshot.data!.first.imageUrl ??
+                      ? mangaList.first.customCoverFromTracker ??
+                            mangaList.first.imageUrl ??
                             ""
                       : getMangaDetail!.imageUrl ?? "",
                 ),
@@ -259,7 +269,7 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
                         Container(
                           height: 55,
                           width: 40,
-                          color: hasData && snapshot.data!.first.favorite!
+                          color: hasData && mangaList.first.favorite!
                               ? Colors.black.withValues(alpha: 0.5)
                               : null,
                         ),
@@ -276,7 +286,7 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  if (hasData && snapshot.data!.first.favorite!)
+                  if (hasData && mangaList.first.favorite!)
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
@@ -348,6 +358,10 @@ Future<void> pushToMangaReaderDetail({
           manga..updatedAt = DateTime.now().millisecondsSinceEpoch,
         );
       });
+    } else {
+      isar.writeTxnSync(() {
+        isar.mangas.putSync(manga);
+      });
     }
 
     mangaId = isar.mangas
@@ -355,7 +369,11 @@ Future<void> pushToMangaReaderDetail({
         .langEqualTo(lang)
         .nameEqualTo(manga.name)
         .sourceEqualTo(manga.source)
-        .findFirstSync()!
+        .findAllSync()
+        .firstWhere(
+          (element) =>
+              element.sourceId == null ? true : element.sourceId == sourceId,
+        )
         .id!;
   } else {
     mangaId = archiveId;
