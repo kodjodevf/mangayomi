@@ -17,6 +17,7 @@ class PlayerDecoderScreen extends ConsumerStatefulWidget {
 class _PlayerDecoderScreenState extends ConsumerState<PlayerDecoderScreen> {
   @override
   Widget build(BuildContext context) {
+    final enableHardwareAccel = ref.watch(enableHardwareAccelStateProvider);
     final hwdecMode = ref.watch(hwdecModeStateProvider(rawValue: true));
     final useGpuNext = ref.watch(useGpuNextStateProvider);
     final debandingType = ref.watch(debandingStateProvider);
@@ -27,6 +28,17 @@ class _PlayerDecoderScreenState extends ConsumerState<PlayerDecoderScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            SwitchListTile(
+              value: enableHardwareAccel,
+              title: Text(context.l10n.enable_hardware_accel),
+              subtitle: Text(
+                context.l10n.enable_hardware_accel_info,
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
+              ),
+              onChanged: (value) {
+                ref.read(enableHardwareAccelStateProvider.notifier).set(value);
+              },
+            ),
             ListTile(
               onTap: () {
                 final values = [

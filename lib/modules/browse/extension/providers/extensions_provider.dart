@@ -13,7 +13,11 @@ Stream<List<Source>> getExtensionsStream(Ref ref, ItemType itemType) async* {
       .filter()
       .idIsNotNull()
       .and()
-      .repo((q) => q.hiddenIsNull().or().hiddenEqualTo(false))
+      .group(
+        (q) => q.repoIsNull().or().repo(
+          (q) => q.hiddenIsNull().or().hiddenEqualTo(false),
+        ),
+      )
       .isActiveEqualTo(true)
       .itemTypeEqualTo(itemType)
       .watch(fireImmediately: true);

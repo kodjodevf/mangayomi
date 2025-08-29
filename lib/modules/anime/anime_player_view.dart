@@ -255,6 +255,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     ),
   );
   late final hwdecMode = ref.read(hwdecModeStateProvider());
+  late final enableHardwareAccel = ref.read(enableHardwareAccelStateProvider);
   late final VideoController _controller;
   late final _streamController = ref.read(
     animeStreamControllerProvider(episode: widget.episode).notifier,
@@ -843,6 +844,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       _player,
       configuration: VideoControllerConfiguration(
         hwdec: hwdecMode,
+        enableHardwareAcceleration: enableHardwareAccel,
         vo: Platform.isAndroid
             ? useGpuNext
                   ? "gpu-next"

@@ -482,6 +482,8 @@
   "you_have_finished_reading": "You have finished reading",
   "return_to_the_list_of_chapters": "Return to the list of chapters",
   "hwdec": "Hardware Decoder",
+  "enable_hardware_accel": "Hardware Acceleration",
+  "enable_hardware_accel_info": "Turn it on/off if you are experiencing bugs or crashes",
   "track_library_navigate": "Go to existing local entry",
   "track_library_add": "Add to local library",
   "track_library_add_confirm": "Add tracked item to local library",

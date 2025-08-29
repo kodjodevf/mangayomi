@@ -2967,6 +2967,18 @@ abstract class AppLocalizations {
   /// **'Hardware Decoder'**
   String get hwdec;
 
+  /// No description provided for @enable_hardware_accel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hardware Acceleration'**
+  String get enable_hardware_accel;
+
+  /// No description provided for @enable_hardware_accel_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn it on/off if you are experiencing bugs or crashes'**
+  String get enable_hardware_accel_info;
+
   /// No description provided for @track_library_navigate.
   ///
   /// In en, this message translates to:
