@@ -7,7 +7,7 @@ part of 'extensions_provider.dart';
 // **************************************************************************
 
 String _$getExtensionsStreamHash() =>
-    r'3c5d6625c40c222f25fc8141df078dd46bcc762f';
+    r'af34092ebf31c784010110af746e3ee2731297bd';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -40,21 +40,15 @@ class GetExtensionsStreamFamily extends Family<AsyncValue<List<Source>>> {
   const GetExtensionsStreamFamily();
 
   /// See also [getExtensionsStream].
-  GetExtensionsStreamProvider call(
-    ItemType itemType,
-  ) {
-    return GetExtensionsStreamProvider(
-      itemType,
-    );
+  GetExtensionsStreamProvider call(ItemType itemType) {
+    return GetExtensionsStreamProvider(itemType);
   }
 
   @override
   GetExtensionsStreamProvider getProviderOverride(
     covariant GetExtensionsStreamProvider provider,
   ) {
-    return call(
-      provider.itemType,
-    );
+    return call(provider.itemType);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -76,24 +70,19 @@ class GetExtensionsStreamFamily extends Family<AsyncValue<List<Source>>> {
 class GetExtensionsStreamProvider
     extends AutoDisposeStreamProvider<List<Source>> {
   /// See also [getExtensionsStream].
-  GetExtensionsStreamProvider(
-    ItemType itemType,
-  ) : this._internal(
-          (ref) => getExtensionsStream(
-            ref as GetExtensionsStreamRef,
-            itemType,
-          ),
-          from: getExtensionsStreamProvider,
-          name: r'getExtensionsStreamProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$getExtensionsStreamHash,
-          dependencies: GetExtensionsStreamFamily._dependencies,
-          allTransitiveDependencies:
-              GetExtensionsStreamFamily._allTransitiveDependencies,
-          itemType: itemType,
-        );
+  GetExtensionsStreamProvider(ItemType itemType)
+    : this._internal(
+        (ref) => getExtensionsStream(ref as GetExtensionsStreamRef, itemType),
+        from: getExtensionsStreamProvider,
+        name: r'getExtensionsStreamProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$getExtensionsStreamHash,
+        dependencies: GetExtensionsStreamFamily._dependencies,
+        allTransitiveDependencies:
+            GetExtensionsStreamFamily._allTransitiveDependencies,
+        itemType: itemType,
+      );
 
   GetExtensionsStreamProvider._internal(
     super._createNotifier, {
@@ -159,5 +148,6 @@ class _GetExtensionsStreamProviderElement
   @override
   ItemType get itemType => (origin as GetExtensionsStreamProvider).itemType;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

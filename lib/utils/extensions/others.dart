@@ -5,7 +5,7 @@ import 'dart:ui';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/modules/manga/reader/reader_view.dart';
+import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/utils/headers.dart';
@@ -17,6 +17,21 @@ import 'package:path/path.dart' as p;
 extension LetExtension<T> on T {
   R let<R>(R Function(T) block) {
     return block(this);
+  }
+}
+
+extension MedianExtension on List<int> {
+  int median() {
+    var middle = length ~/ 2;
+    if (length % 2 == 1) {
+      return this[middle];
+    } else {
+      return ((this[middle - 1] + this[middle]) / 2).round();
+    }
+  }
+
+  int arithmeticMean() {
+    return isNotEmpty ? (reduce((e1, e2) => e1 + e2) / length).round() : 0;
   }
 }
 
@@ -105,6 +120,7 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
                           headersProvider(
                             source: data.chapter!.manga.value!.source!,
                             lang: data.chapter!.manga.value!.lang!,
+                            sourceId: data.chapter!.manga.value!.sourceId,
                           ),
                         ),
                       },

@@ -293,12 +293,14 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
         )
         .findAll();
     final idsToDelete = <Id>[];
-    for (var update in updates) {
-      idsToDelete.add(update.id!);
-      ref
-          .read(synchingProvider(syncId: 1).notifier)
-          .addChangedPart(ActionType.removeUpdate, update.id, "{}", false);
-    }
+    isar.writeTxnSync(() {
+      for (var update in updates) {
+        idsToDelete.add(update.id!);
+        ref
+            .read(synchingProvider(syncId: 1).notifier)
+            .addChangedPart(ActionType.removeUpdate, update.id, "{}", false);
+      }
+    });
     await isar.writeTxn(() => isar.updates.deleteAll(idsToDelete));
   }
 

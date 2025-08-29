@@ -6,7 +6,7 @@ part of 'search.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$searchHash() => r'8ef361b28d7a569b9f5babd69eb83efd9d9814d7';
+String _$searchHash() => r'b08d5a4b6e7d285830af7e5388b06fa61f175ede';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -54,9 +54,7 @@ class SearchFamily extends Family<AsyncValue<MPages?>> {
   }
 
   @override
-  SearchProvider getProviderOverride(
-    covariant SearchProvider provider,
-  ) {
+  SearchProvider getProviderOverride(covariant SearchProvider provider) {
     return call(
       source: provider.source,
       query: provider.query,
@@ -89,26 +87,25 @@ class SearchProvider extends AutoDisposeFutureProvider<MPages?> {
     required int page,
     required List<dynamic> filterList,
   }) : this._internal(
-          (ref) => search(
-            ref as SearchRef,
-            source: source,
-            query: query,
-            page: page,
-            filterList: filterList,
-          ),
-          from: searchProvider,
-          name: r'searchProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$searchHash,
-          dependencies: SearchFamily._dependencies,
-          allTransitiveDependencies: SearchFamily._allTransitiveDependencies,
-          source: source,
-          query: query,
-          page: page,
-          filterList: filterList,
-        );
+         (ref) => search(
+           ref as SearchRef,
+           source: source,
+           query: query,
+           page: page,
+           filterList: filterList,
+         ),
+         from: searchProvider,
+         name: r'searchProvider',
+         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+             ? null
+             : _$searchHash,
+         dependencies: SearchFamily._dependencies,
+         allTransitiveDependencies: SearchFamily._allTransitiveDependencies,
+         source: source,
+         query: query,
+         page: page,
+         filterList: filterList,
+       );
 
   SearchProvider._internal(
     super._createNotifier, {
@@ -129,9 +126,7 @@ class SearchProvider extends AutoDisposeFutureProvider<MPages?> {
   final List<dynamic> filterList;
 
   @override
-  Override overrideWith(
-    FutureOr<MPages?> Function(SearchRef provider) create,
-  ) {
+  Override overrideWith(FutureOr<MPages?> Function(SearchRef provider) create) {
     return ProviderOverride(
       origin: this,
       override: SearchProvider._internal(
@@ -204,5 +199,6 @@ class _SearchProviderElement extends AutoDisposeFutureProviderElement<MPages?>
   @override
   List<dynamic> get filterList => (origin as SearchProvider).filterList;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

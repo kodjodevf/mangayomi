@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:app_links/app_links.dart';
+import 'package:archive/archive.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/foundation.dart';
@@ -13,12 +14,17 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
+import 'package:mangayomi/models/custom_button.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/models/track.dart' as track;
+import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
+import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/storage_usage.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/general/providers/general_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/router/router.dart';
@@ -27,6 +33,7 @@ import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
 import 'package:mangayomi/utils/discord_rpc.dart';
+import 'package:mangayomi/utils/log/logger.dart';
 import 'package:mangayomi/utils/url_protocol/api.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_provider.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
@@ -34,10 +41,12 @@ import 'package:media_kit/media_kit.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:path/path.dart' as p;
+import 'package:flutter/services.dart' show rootBundle;
 
 late Isar isar;
 DiscordRPC? discordRpc;
 WebViewEnvironment? webViewEnvironment;
+String? customDns;
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isLinux && runWebViewTitleBarWidget(args)) return;
@@ -69,6 +78,7 @@ void main(List<String> args) async {
 }
 
 Future<void> _postLaunchInit(StorageProvider storage) async {
+  await AppLogger.init();
   final hivePath = (Platform.isIOS || Platform.isMacOS)
       ? "databases"
       : p.join("Mangayomi", "databases");
@@ -141,7 +151,10 @@ class _MyAppState extends ConsumerState<MyApp> {
   void initState() {
     super.initState();
     initializeDateFormatting();
+    customDns = ref.read(customDnsStateProvider);
+    _checkTrackerRefresh();
     _initDeepLinks();
+    _setupMpvConfig();
     unawaited(ref.read(scanLocalLibraryProvider.future));
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -184,12 +197,13 @@ class _MyAppState extends ConsumerState<MyApp> {
   void dispose() {
     _linkSubscription?.cancel();
     discordRpc?.destroy();
+    AppLogger.dispose();
     super.dispose();
   }
 
   Future<void> _initDeepLinks() async {
     _appLinks = AppLinks();
-    _linkSubscription = _appLinks.uriLinkStream.listen((uri) {
+    _linkSubscription = _appLinks.uriLinkStream.listen((uri) async {
       if (uri == lastUri) return; // Debouncing Deep Links
       lastUri = uri;
       switch (uri.host) {
@@ -268,6 +282,62 @@ class _MyAppState extends ConsumerState<MyApp> {
             },
           );
           break;
+        case "add-button":
+          final buttonDataRaw = uri.queryParametersAll["button"];
+          final context = navigatorKey.currentContext;
+          if (context == null || !context.mounted || buttonDataRaw == null) {
+            return;
+          }
+          final l10n = context.l10n;
+          for (final buttonRaw in buttonDataRaw) {
+            final buttonData = jsonDecode(
+              utf8.decode(base64.decode(buttonRaw)),
+            );
+            if (buttonData is Map<String, dynamic>) {
+              final customButton = CustomButton.fromJson(buttonData);
+              await showDialog(
+                context: navigatorKey.currentContext!,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text(l10n.custom_buttons_add),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "${l10n.name}: ${customButton.title ?? 'Unknown'}",
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        child: Text(l10n.cancel),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                      FilledButton(
+                        child: Text(l10n.add),
+                        onPressed: () async {
+                          if (context.mounted) Navigator.of(context).pop();
+                          await isar.writeTxn(() async {
+                            await isar.customButtons.put(
+                              customButton
+                                ..pos = await isar.customButtons.count()
+                                ..isFavourite = false
+                                ..id = null
+                                ..updatedAt =
+                                    DateTime.now().millisecondsSinceEpoch,
+                            );
+                          });
+                          botToast(l10n.custom_buttons_added);
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            }
+          }
+          break;
         default:
       }
     });
@@ -289,6 +359,54 @@ class _MyAppState extends ConsumerState<MyApp> {
       }
     }
     return true;
+  }
+
+  Future<void> _setupMpvConfig() async {
+    final provider = StorageProvider();
+    final dir = await provider.getMpvDirectory();
+    final mpvFile = File('${dir!.path}/mpv.conf');
+    final inputFile = File('${dir.path}/input.conf');
+    final filesMissing =
+        !(await mpvFile.exists()) && !(await inputFile.exists());
+    if (filesMissing) {
+      final bytes = await rootBundle.load("assets/mangayomi_mpv.zip");
+      final archive = ZipDecoder().decodeBytes(bytes.buffer.asUint8List());
+      String shadersDir = p.join(dir.path, 'shaders');
+      await Directory(shadersDir).create(recursive: true);
+      String scriptsDir = p.join(dir.path, 'scripts');
+      await Directory(scriptsDir).create(recursive: true);
+      for (final file in archive.files) {
+        if (file.name == "mpv.conf") {
+          await mpvFile.writeAsBytes(file.content);
+        } else if (file.name == "input.conf") {
+          await inputFile.writeAsBytes(file.content);
+        } else if (file.name.startsWith("shaders/") &&
+            file.name.endsWith(".glsl")) {
+          final shaderFile = File('$shadersDir/${file.name.split("/").last}');
+          await shaderFile.writeAsBytes(file.content);
+        } else if (file.name.startsWith("scripts/") &&
+            (file.name.endsWith(".js") || file.name.endsWith(".lua"))) {
+          final scriptFile = File('$scriptsDir/${file.name.split("/").last}');
+          await scriptFile.writeAsBytes(file.content);
+        }
+      }
+    }
+  }
+
+  Future<void> _checkTrackerRefresh() async {
+    final prefs = await isar.trackPreferences
+        .filter()
+        .syncIdIsNotNull()
+        .findAll();
+    for (final pref in prefs) {
+      final temp = track.Track(
+        syncId: pref.syncId,
+        status: track.TrackStatus.completed,
+      );
+      ref
+          .read(trackStateProvider(track: temp, itemType: null).notifier)
+          .checkRefresh();
+    }
   }
 }
 

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/main.dart';
@@ -5,6 +7,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/services/get_detail.dart';
+import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,10 +25,10 @@ Future<dynamic> updateMangaDetail(
     if (manga!.chapters.isNotEmpty && isInit) {
       return;
     }
-    final source = getSource(manga.lang!, manga.source!);
+    final source = getSource(manga.lang!, manga.source!, manga.sourceId);
     MManga getManga;
 
-    getManga = await ref.watch(
+    getManga = await ref.read(
       getDetailProvider(url: manga.link!, source: source!).future,
     );
 
@@ -36,9 +39,11 @@ Future<dynamic> updateMangaDetail(
             .toSet()
             .toList() ??
         [];
+    final tempName = getManga.name?.trim().trimLeft().trimRight();
+    final tempLink = getManga.link?.trim().trimLeft().trimRight();
     manga
       ..imageUrl = getManga.imageUrl ?? manga.imageUrl
-      ..name = getManga.name?.trim().trimLeft().trimRight() ?? manga.name
+      ..name = tempName != null && tempName.isNotEmpty ? tempName : manga.name
       ..genre = (genre.isEmpty ? null : genre) ?? manga.genre ?? []
       ..author =
           getManga.author?.trim().trimLeft().trimRight() ?? manga.author ?? ""
@@ -51,7 +56,7 @@ Future<dynamic> updateMangaDetail(
           getManga.description?.trim().trimLeft().trimRight() ??
           manga.description ??
           ""
-      ..link = getManga.link?.trim().trimLeft().trimRight() ?? manga.link
+      ..link = tempLink != null && tempLink.isNotEmpty ? tempLink : manga.link
       ..source = manga.source
       ..lang = manga.lang
       ..itemType = source.itemType
@@ -62,7 +67,7 @@ Future<dynamic> updateMangaDetail(
       return;
     }
     isar.writeTxnSync(() {
-      isar.mangas.putSync(manga);
+      final mangaId = isar.mangas.putSync(manga);
       manga.lastUpdate = DateTime.now().millisecondsSinceEpoch;
 
       List<Chapter> chapters = [];
@@ -81,6 +86,11 @@ Future<dynamic> updateMangaDetail(
             scanlator: chaps[i].scanlator ?? '',
             mangaId: mangaId,
             updatedAt: DateTime.now().millisecondsSinceEpoch,
+            isFiller: chaps[i].isFiller,
+            thumbnailUrl: chaps[i].thumbnailUrl,
+            description: chaps[i].description,
+            downloadSize: chaps[i].downloadSize,
+            duration: chaps[i].duration,
           )..manga.value = manga;
           chapters.add(chapter);
         }
@@ -115,9 +125,37 @@ Future<dynamic> updateMangaDetail(
           oldChap.url = newChap.url;
           oldChap.scanlator = newChap.scanlator;
           oldChap.updatedAt = DateTime.now().millisecondsSinceEpoch;
+          oldChap.isFiller = newChap.isFiller;
+          oldChap.thumbnailUrl = newChap.thumbnailUrl;
+          oldChap.description = newChap.description;
+          oldChap.downloadSize = newChap.downloadSize;
+          oldChap.duration = newChap.duration;
           isar.chapters.putSync(oldChap);
           oldChap.manga.saveSync();
         }
+      }
+      final List<int> daysBetweenUploads = [];
+      for (var i = 0; i + 1 < chaps.length; i++) {
+        if (chaps[i].dateUpload != null && chaps[i + 1].dateUpload != null) {
+          final date1 = DateTime.fromMillisecondsSinceEpoch(
+            int.parse(chaps[i].dateUpload!),
+          );
+          final date2 = DateTime.fromMillisecondsSinceEpoch(
+            int.parse(chaps[i + 1].dateUpload!),
+          );
+          daysBetweenUploads.add(date1.difference(date2).abs().inDays);
+        }
+      }
+      if (daysBetweenUploads.isNotEmpty) {
+        final median = daysBetweenUploads.median();
+        isar.mangas.putSync(
+          manga
+            ..id = mangaId
+            ..smartUpdateDays = max(
+              median,
+              daysBetweenUploads.arithmeticMean(),
+            ),
+        );
       }
     });
   } catch (e, s) {

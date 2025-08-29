@@ -6,10 +6,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_ar.dart';
+import 'app_localizations_as.dart';
 import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
 import 'app_localizations_fr.dart';
+import 'app_localizations_hi.dart';
 import 'app_localizations_id.dart';
 import 'app_localizations_it.dart';
 import 'app_localizations_pt.dart';
@@ -105,11 +107,13 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('ar'),
+    Locale('as'),
     Locale('de'),
     Locale('en'),
     Locale('es'),
     Locale('es', '419'),
     Locale('fr'),
+    Locale('hi'),
     Locale('id'),
     Locale('it'),
     Locale('pt'),
@@ -533,6 +537,18 @@ abstract class AppLocalizations {
   /// **'Pauses reading history'**
   String get incognito_mode_description;
 
+  /// No description provided for @downloaded_only.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloaded only'**
+  String get downloaded_only;
+
+  /// No description provided for @downloaded_only_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Only show downloaded entries in your library'**
+  String get downloaded_only_description;
+
   /// No description provided for @download_queue.
   ///
   /// In en, this message translates to:
@@ -917,6 +933,24 @@ abstract class AppLocalizations {
   /// **'Check for update'**
   String get check_for_update;
 
+  /// No description provided for @share_app_logs.
+  ///
+  /// In en, this message translates to:
+  /// **'Share app logs'**
+  String get share_app_logs;
+
+  /// No description provided for @no_app_logs.
+  ///
+  /// In en, this message translates to:
+  /// **'No log.txt available!'**
+  String get no_app_logs;
+
+  /// No description provided for @failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed!'**
+  String get failed;
+
   /// No description provided for @n_days_ago.
   ///
   /// In en, this message translates to:
@@ -940,6 +974,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'A week ago'**
   String get a_week_ago;
+
+  /// No description provided for @next_week.
+  ///
+  /// In en, this message translates to:
+  /// **'Next week'**
+  String get next_week;
 
   /// No description provided for @add_to_library.
   ///
@@ -1421,6 +1461,30 @@ abstract class AppLocalizations {
   /// **'Sync progress'**
   String get sync_button_sync;
 
+  /// No description provided for @sync_button_upload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload only'**
+  String get sync_button_upload;
+
+  /// No description provided for @sync_button_upload_info.
+  ///
+  /// In en, this message translates to:
+  /// **'This operation will fully replace the remote data with local data!'**
+  String get sync_button_upload_info;
+
+  /// No description provided for @sync_button_download.
+  ///
+  /// In en, this message translates to:
+  /// **'Download only'**
+  String get sync_button_download;
+
+  /// No description provided for @sync_button_download_info.
+  ///
+  /// In en, this message translates to:
+  /// **'This operation will fully replace the local data with remote data!'**
+  String get sync_button_download_info;
+
   /// No description provided for @sync_on.
   ///
   /// In en, this message translates to:
@@ -1576,6 +1640,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Novel Extensions'**
   String get novel_extensions;
+
+  /// No description provided for @extension_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Extension settings'**
+  String get extension_settings;
 
   /// No description provided for @anime.
   ///
@@ -2081,6 +2151,12 @@ abstract class AppLocalizations {
   /// **'Audio'**
   String get video_audio;
 
+  /// No description provided for @video_audio_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferred languages, pitch correction, audio channels'**
+  String get video_audio_info;
+
   /// No description provided for @player.
   ///
   /// In en, this message translates to:
@@ -2507,6 +2583,12 @@ abstract class AppLocalizations {
   /// **'Advanced'**
   String get advanced;
 
+  /// No description provided for @advanced_info.
+  ///
+  /// In en, this message translates to:
+  /// **'mpv config'**
+  String get advanced_info;
+
   /// No description provided for @use_native_http_client.
   ///
   /// In en, this message translates to:
@@ -2627,6 +2709,48 @@ abstract class AppLocalizations {
   /// **'Downloads are limited to Wi-Fi only'**
   String get downloads_are_limited_to_wifi;
 
+  /// No description provided for @recommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendations'**
+  String get recommendations;
+
+  /// No description provided for @recommendations_similar.
+  ///
+  /// In en, this message translates to:
+  /// **'similar'**
+  String get recommendations_similar;
+
+  /// No description provided for @recommendations_weights.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendation Weights'**
+  String get recommendations_weights;
+
+  /// No description provided for @recommendations_weights_genre.
+  ///
+  /// In en, this message translates to:
+  /// **'Genre Similarity'**
+  String get recommendations_weights_genre;
+
+  /// No description provided for @recommendations_weights_setting.
+  ///
+  /// In en, this message translates to:
+  /// **'Setting Similarity'**
+  String get recommendations_weights_setting;
+
+  /// No description provided for @recommendations_weights_synopsis.
+  ///
+  /// In en, this message translates to:
+  /// **'Story Similarity'**
+  String get recommendations_weights_synopsis;
+
+  /// No description provided for @recommendations_weights_theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme Similarity'**
+  String get recommendations_weights_theme;
+
   /// No description provided for @manga_extensions_repo.
   ///
   /// In en, this message translates to:
@@ -2644,6 +2768,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Novel extensions repo'**
   String get novel_extensions_repo;
+
+  /// No description provided for @custom_dns.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom DNS (leave blank to use system DNS)'**
+  String get custom_dns;
+
+  /// No description provided for @android_proxy_server.
+  ///
+  /// In en, this message translates to:
+  /// **'Android Proxy Server (ApkBridge)'**
+  String get android_proxy_server;
+
+  /// No description provided for @get_apk_bridge.
+  ///
+  /// In en, this message translates to:
+  /// **'Get ApkBridge'**
+  String get get_apk_bridge;
 
   /// No description provided for @undefined.
   ///
@@ -2765,6 +2907,12 @@ abstract class AppLocalizations {
   /// **'Load your own subtitles...'**
   String get load_own_subtitles;
 
+  /// No description provided for @search_subtitles.
+  ///
+  /// In en, this message translates to:
+  /// **'Search subtitles online...'**
+  String get search_subtitles;
+
   /// No description provided for @extension_notes.
   ///
   /// In en, this message translates to:
@@ -2818,6 +2966,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hardware Decoder'**
   String get hwdec;
+
+  /// No description provided for @enable_hardware_accel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hardware Acceleration'**
+  String get enable_hardware_accel;
+
+  /// No description provided for @enable_hardware_accel_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn it on/off if you are experiencing bugs or crashes'**
+  String get enable_hardware_accel_info;
+
+  /// No description provided for @track_library_navigate.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to existing local entry'**
+  String get track_library_navigate;
 
   /// No description provided for @track_library_add.
   ///
@@ -2902,6 +3068,288 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sync settings'**
   String get sync_enable_settings;
+
+  /// No description provided for @enable_mpv.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable mpv shaders / scripts'**
+  String get enable_mpv;
+
+  /// No description provided for @mpv_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Supports .js scripts under mpv/scripts/'**
+  String get mpv_info;
+
+  /// No description provided for @mpv_redownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Redownload mpv config files'**
+  String get mpv_redownload;
+
+  /// No description provided for @mpv_redownload_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Replaces old config files with new one!'**
+  String get mpv_redownload_info;
+
+  /// No description provided for @mpv_download.
+  ///
+  /// In en, this message translates to:
+  /// **'MPV config files are required!\nDownload now?'**
+  String get mpv_download;
+
+  /// No description provided for @custom_buttons.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom buttons'**
+  String get custom_buttons;
+
+  /// No description provided for @custom_buttons_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Execute lua code with custom buttons'**
+  String get custom_buttons_info;
+
+  /// No description provided for @custom_buttons_edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit custom buttons'**
+  String get custom_buttons_edit;
+
+  /// No description provided for @custom_buttons_add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add custom button'**
+  String get custom_buttons_add;
+
+  /// No description provided for @custom_buttons_added.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom button added!'**
+  String get custom_buttons_added;
+
+  /// No description provided for @custom_buttons_delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete custom button'**
+  String get custom_buttons_delete;
+
+  /// No description provided for @custom_buttons_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Button text'**
+  String get custom_buttons_text;
+
+  /// No description provided for @custom_buttons_text_req.
+  ///
+  /// In en, this message translates to:
+  /// **'Button text required'**
+  String get custom_buttons_text_req;
+
+  /// No description provided for @custom_buttons_js_code.
+  ///
+  /// In en, this message translates to:
+  /// **'lua code'**
+  String get custom_buttons_js_code;
+
+  /// No description provided for @custom_buttons_js_code_req.
+  ///
+  /// In en, this message translates to:
+  /// **'lua code required'**
+  String get custom_buttons_js_code_req;
+
+  /// No description provided for @custom_buttons_js_code_long.
+  ///
+  /// In en, this message translates to:
+  /// **'lua code (on long press)'**
+  String get custom_buttons_js_code_long;
+
+  /// No description provided for @custom_buttons_startup.
+  ///
+  /// In en, this message translates to:
+  /// **'lua code (on startup)'**
+  String get custom_buttons_startup;
+
+  /// No description provided for @n_days.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} days'**
+  String n_days(Object n);
+
+  /// No description provided for @decoder.
+  ///
+  /// In en, this message translates to:
+  /// **'Decoder'**
+  String get decoder;
+
+  /// No description provided for @decoder_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Hardware decoding, pixel format, debanding'**
+  String get decoder_info;
+
+  /// No description provided for @enable_gpu_next.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable gpu-next (Android only)'**
+  String get enable_gpu_next;
+
+  /// No description provided for @enable_gpu_next_info.
+  ///
+  /// In en, this message translates to:
+  /// **'A new video rendering backend'**
+  String get enable_gpu_next_info;
+
+  /// No description provided for @debanding.
+  ///
+  /// In en, this message translates to:
+  /// **'Debanding'**
+  String get debanding;
+
+  /// No description provided for @use_yuv420p.
+  ///
+  /// In en, this message translates to:
+  /// **'Use YUV420P pixel format'**
+  String get use_yuv420p;
+
+  /// No description provided for @use_yuv420p_info.
+  ///
+  /// In en, this message translates to:
+  /// **'May fix black screens on some video codecs, can also improve performance at the cost of quality'**
+  String get use_yuv420p_info;
+
+  /// No description provided for @audio_preferred_languages.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferred langauages'**
+  String get audio_preferred_languages;
+
+  /// No description provided for @audio_preferred_languages_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio langauage(s) to be selected by default on a video with multiple audio streams, 2/3-letter languages codes (e.g.: en, de, fr) work. Multiple values can be delimited by a comma.'**
+  String get audio_preferred_languages_info;
+
+  /// No description provided for @enable_audio_pitch_correction.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable audio pitch correction'**
+  String get enable_audio_pitch_correction;
+
+  /// No description provided for @enable_audio_pitch_correction_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Prevents the audio from becoming high-pitched at faster speeds and low-pitched at slower speeds'**
+  String get enable_audio_pitch_correction_info;
+
+  /// No description provided for @audio_channels.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio channels'**
+  String get audio_channels;
+
+  /// No description provided for @volume_boost_cap.
+  ///
+  /// In en, this message translates to:
+  /// **'Volume boost cap'**
+  String get volume_boost_cap;
+
+  /// No description provided for @internal_player.
+  ///
+  /// In en, this message translates to:
+  /// **'Internal player'**
+  String get internal_player;
+
+  /// No description provided for @internal_player_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress, controls, orientation'**
+  String get internal_player_info;
+
+  /// No description provided for @subtitle_delay_text.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtitle delay'**
+  String get subtitle_delay_text;
+
+  /// No description provided for @subtitle_delay.
+  ///
+  /// In en, this message translates to:
+  /// **'Delay (ms)'**
+  String get subtitle_delay;
+
+  /// No description provided for @subtitle_speed.
+  ///
+  /// In en, this message translates to:
+  /// **'Speed'**
+  String get subtitle_speed;
+
+  /// No description provided for @calendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get calendar;
+
+  /// No description provided for @calendar_no_data.
+  ///
+  /// In en, this message translates to:
+  /// **'No data yet.'**
+  String get calendar_no_data;
+
+  /// No description provided for @calendar_info.
+  ///
+  /// In en, this message translates to:
+  /// **'The calendar is only able to predict the next chapter upload based on the older uploads. Some data might not be 100% accurate!'**
+  String get calendar_info;
+
+  /// No description provided for @in_n_day.
+  ///
+  /// In en, this message translates to:
+  /// **'in {days} day'**
+  String in_n_day(Object days);
+
+  /// No description provided for @in_n_days.
+  ///
+  /// In en, this message translates to:
+  /// **'in {days} days'**
+  String in_n_days(Object days);
+
+  /// No description provided for @clear_library.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear library'**
+  String get clear_library;
+
+  /// No description provided for @clear_library_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose to clear all manga, anime and/or novel entries'**
+  String get clear_library_desc;
+
+  /// No description provided for @clear_library_input.
+  ///
+  /// In en, this message translates to:
+  /// **'Type \'manga\', \'anime\' and/or \'novel\' (separated by a comma) to remove all related entries'**
+  String get clear_library_input;
+
+  /// No description provided for @watch_order.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch order'**
+  String get watch_order;
+
+  /// No description provided for @sequels.
+  ///
+  /// In en, this message translates to:
+  /// **'Sequels'**
+  String get sequels;
+
+  /// No description provided for @recommendations_similarity.
+  ///
+  /// In en, this message translates to:
+  /// **'Similarity:'**
+  String get recommendations_similarity;
 }
 
 class _AppLocalizationsDelegate
@@ -2916,10 +3364,12 @@ class _AppLocalizationsDelegate
   @override
   bool isSupported(Locale locale) => <String>[
     'ar',
+    'as',
     'de',
     'en',
     'es',
     'fr',
+    'hi',
     'id',
     'it',
     'pt',
@@ -2958,6 +3408,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   switch (locale.languageCode) {
     case 'ar':
       return AppLocalizationsAr();
+    case 'as':
+      return AppLocalizationsAs();
     case 'de':
       return AppLocalizationsDe();
     case 'en':
@@ -2966,6 +3418,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsEs();
     case 'fr':
       return AppLocalizationsFr();
+    case 'hi':
+      return AppLocalizationsHi();
     case 'id':
       return AppLocalizationsId();
     case 'it':

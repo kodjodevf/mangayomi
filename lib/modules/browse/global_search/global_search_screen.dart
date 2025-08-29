@@ -24,15 +24,16 @@ import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
 class GlobalSearchScreen extends ConsumerStatefulWidget {
+  final String? search;
   final ItemType itemType;
-  const GlobalSearchScreen({required this.itemType, super.key});
+  const GlobalSearchScreen({this.search, required this.itemType, super.key});
 
   @override
   ConsumerState<GlobalSearchScreen> createState() => _GlobalSearchScreenState();
 }
 
 class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
-  String query = "";
+  String _query = "";
   final _textEditingController = TextEditingController();
   late final List<Source> sourceList =
       ref.read(onlyIncludePinnedSourceStateProvider)
@@ -50,8 +51,17 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
             .and()
             .itemTypeEqualTo(widget.itemType)
             .findAllSync();
+
+  @override
+  void initState() {
+    super.initState();
+    _textEditingController.text = widget.search ?? "";
+  }
+
   @override
   Widget build(BuildContext context) {
+    final query = _query.isNotEmpty ? _query : widget.search ?? "";
+
     return Scaffold(
       appBar: AppBar(
         leading: Container(),
@@ -62,27 +72,27 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
               Navigator.pop(context);
             },
             onFieldSubmitted: (value) async {
-              if (!(query == _textEditingController.text)) {
+              if (!(_query == _textEditingController.text)) {
                 setState(() {
-                  query = "";
+                  _query = "";
                 });
                 await Future.delayed(const Duration(milliseconds: 10));
                 setState(() {
-                  query = value;
+                  _query = value;
                 });
               }
             },
             onSuffixPressed: () {
               _textEditingController.clear();
               setState(() {
-                query = "";
+                _query = "";
               });
             },
             controller: _textEditingController,
           ),
         ],
       ),
-      body: query.isNotEmpty
+      body: _query.isNotEmpty || widget.search != null
           ? SuperListView.builder(
               itemCount: sourceList.length,
               extentPrecalculationPolicy: SuperPrecalculationPolicy(),
@@ -90,7 +100,11 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
                 final source = sourceList[index];
                 return SizedBox(
                   height: 260,
-                  child: SourceSearchScreen(query: query, source: source),
+                  child: SourceSearchScreen(
+                    key: ValueKey(query),
+                    query: query,
+                    source: source,
+                  ),
                 );
               },
             )
@@ -105,7 +119,7 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
   }
 }
 
-class SourceSearchScreen extends StatefulWidget {
+class SourceSearchScreen extends ConsumerStatefulWidget {
   final String query;
 
   final Source source;
@@ -116,10 +130,10 @@ class SourceSearchScreen extends StatefulWidget {
   });
 
   @override
-  State<SourceSearchScreen> createState() => _SourceSearchScreenState();
+  ConsumerState<SourceSearchScreen> createState() => _SourceSearchScreenState();
 }
 
-class _SourceSearchScreenState extends State<SourceSearchScreen> {
+class _SourceSearchScreenState extends ConsumerState<SourceSearchScreen> {
   @override
   void initState() {
     super.initState();
@@ -132,11 +146,13 @@ class _SourceSearchScreenState extends State<SourceSearchScreen> {
   _init() async {
     try {
       _errorMessage = "";
-      pages = await search(
-        source: widget.source,
-        page: 1,
-        query: widget.query,
-        filterList: [],
+      pages = await ref.read(
+        searchProvider(
+          source: widget.source,
+          page: 1,
+          query: widget.query,
+          filterList: [],
+        ).future,
       );
       if (mounted) {
         setState(() {
@@ -247,6 +263,7 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
           itemType: widget.source.itemType,
           useMaterialRoute: true,
           source: widget.source.name!,
+          sourceId: widget.source.id,
         );
       },
       child: StreamBuilder(
@@ -282,6 +299,7 @@ class _MangaGlobalImageCardState extends ConsumerState<MangaGlobalImageCard>
                                 headersProvider(
                                   source: widget.source.name!,
                                   lang: widget.source.lang!,
+                                  sourceId: widget.source.id,
                                 ),
                               ),
                               imageUrl: toImgUrl(

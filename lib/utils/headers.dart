@@ -14,8 +14,10 @@ Map<String, String> headers(
   Ref ref, {
   required String source,
   required String lang,
+  required int? sourceId,
+  String androidProxyServer = "",
 }) {
-  final mSource = getSource(lang, source);
+  final mSource = getSource(lang, source, sourceId);
 
   Map<String, String> headers = {};
 
@@ -26,7 +28,9 @@ Map<String, String> headers(
       headers.addAll((jsonDecode(fromSource) as Map).toMapStringString!);
     }
 
-    headers.addAll(getExtensionService(mSource).getHeaders());
+    headers.addAll(
+      getExtensionService(mSource, androidProxyServer).getHeaders(),
+    );
     headers.addAll(MClient.getCookiesPref(mSource.baseUrl!));
   }
 

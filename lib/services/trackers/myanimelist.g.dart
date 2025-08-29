@@ -6,7 +6,7 @@ part of 'myanimelist.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$myAnimeListHash() => r'a612e9ce814268ac79dc86d810ca6bd3671812e6';
+String _$myAnimeListHash() => r'092a7d2d329c5d40fede4bfc00644576b2d08eaa';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -33,10 +33,7 @@ abstract class _$MyAnimeList extends BuildlessAutoDisposeNotifier<void> {
   late final int syncId;
   late final ItemType? itemType;
 
-  void build({
-    required int syncId,
-    required ItemType? itemType,
-  });
+  void build({required int syncId, required ItemType? itemType});
 }
 
 /// See also [MyAnimeList].
@@ -49,24 +46,15 @@ class MyAnimeListFamily extends Family<void> {
   const MyAnimeListFamily();
 
   /// See also [MyAnimeList].
-  MyAnimeListProvider call({
-    required int syncId,
-    required ItemType? itemType,
-  }) {
-    return MyAnimeListProvider(
-      syncId: syncId,
-      itemType: itemType,
-    );
+  MyAnimeListProvider call({required int syncId, required ItemType? itemType}) {
+    return MyAnimeListProvider(syncId: syncId, itemType: itemType);
   }
 
   @override
   MyAnimeListProvider getProviderOverride(
     covariant MyAnimeListProvider provider,
   ) {
-    return call(
-      syncId: provider.syncId,
-      itemType: provider.itemType,
-    );
+    return call(syncId: provider.syncId, itemType: provider.itemType);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -88,25 +76,21 @@ class MyAnimeListFamily extends Family<void> {
 class MyAnimeListProvider
     extends AutoDisposeNotifierProviderImpl<MyAnimeList, void> {
   /// See also [MyAnimeList].
-  MyAnimeListProvider({
-    required int syncId,
-    required ItemType? itemType,
-  }) : this._internal(
-          () => MyAnimeList()
-            ..syncId = syncId
-            ..itemType = itemType,
-          from: myAnimeListProvider,
-          name: r'myAnimeListProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$myAnimeListHash,
-          dependencies: MyAnimeListFamily._dependencies,
-          allTransitiveDependencies:
-              MyAnimeListFamily._allTransitiveDependencies,
-          syncId: syncId,
-          itemType: itemType,
-        );
+  MyAnimeListProvider({required int syncId, required ItemType? itemType})
+    : this._internal(
+        () => MyAnimeList()
+          ..syncId = syncId
+          ..itemType = itemType,
+        from: myAnimeListProvider,
+        name: r'myAnimeListProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$myAnimeListHash,
+        dependencies: MyAnimeListFamily._dependencies,
+        allTransitiveDependencies: MyAnimeListFamily._allTransitiveDependencies,
+        syncId: syncId,
+        itemType: itemType,
+      );
 
   MyAnimeListProvider._internal(
     super._createNotifier, {
@@ -123,13 +107,8 @@ class MyAnimeListProvider
   final ItemType? itemType;
 
   @override
-  void runNotifierBuild(
-    covariant MyAnimeList notifier,
-  ) {
-    return notifier.build(
-      syncId: syncId,
-      itemType: itemType,
-    );
+  void runNotifierBuild(covariant MyAnimeList notifier) {
+    return notifier.build(syncId: syncId, itemType: itemType);
   }
 
   @override
@@ -193,5 +172,6 @@ class _MyAnimeListProviderElement
   @override
   ItemType? get itemType => (origin as MyAnimeListProvider).itemType;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

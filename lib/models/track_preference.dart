@@ -12,7 +12,15 @@ class TrackPreference {
 
   String? prefs;
 
-  TrackPreference({this.syncId, this.username, this.oAuth, this.prefs});
+  bool? refreshing;
+
+  TrackPreference({
+    this.syncId,
+    this.username,
+    this.oAuth,
+    this.prefs,
+    this.refreshing,
+  });
 
   TrackPreference.fromJson(Map<String, dynamic> json) {
     syncId = json['syncId'];

@@ -6,7 +6,7 @@ part of 'track_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$tracksHash() => r'71db9b803345d0b31c8efba0538a68fea356a71f';
+String _$tracksHash() => r'05f1531a3200b0ad9f1e4bf74cd9eb44301f9f21';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -32,9 +32,7 @@ class _SystemHash {
 abstract class _$Tracks extends BuildlessAutoDisposeNotifier<TrackPreference?> {
   late final int? syncId;
 
-  TrackPreference? build({
-    required int? syncId,
-  });
+  TrackPreference? build({required int? syncId});
 }
 
 /// See also [Tracks].
@@ -47,21 +45,13 @@ class TracksFamily extends Family<TrackPreference?> {
   const TracksFamily();
 
   /// See also [Tracks].
-  TracksProvider call({
-    required int? syncId,
-  }) {
-    return TracksProvider(
-      syncId: syncId,
-    );
+  TracksProvider call({required int? syncId}) {
+    return TracksProvider(syncId: syncId);
   }
 
   @override
-  TracksProvider getProviderOverride(
-    covariant TracksProvider provider,
-  ) {
-    return call(
-      syncId: provider.syncId,
-    );
+  TracksProvider getProviderOverride(covariant TracksProvider provider) {
+    return call(syncId: provider.syncId);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -83,20 +73,18 @@ class TracksFamily extends Family<TrackPreference?> {
 class TracksProvider
     extends AutoDisposeNotifierProviderImpl<Tracks, TrackPreference?> {
   /// See also [Tracks].
-  TracksProvider({
-    required int? syncId,
-  }) : this._internal(
-          () => Tracks()..syncId = syncId,
-          from: tracksProvider,
-          name: r'tracksProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$tracksHash,
-          dependencies: TracksFamily._dependencies,
-          allTransitiveDependencies: TracksFamily._allTransitiveDependencies,
-          syncId: syncId,
-        );
+  TracksProvider({required int? syncId})
+    : this._internal(
+        () => Tracks()..syncId = syncId,
+        from: tracksProvider,
+        name: r'tracksProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$tracksHash,
+        dependencies: TracksFamily._dependencies,
+        allTransitiveDependencies: TracksFamily._allTransitiveDependencies,
+        syncId: syncId,
+      );
 
   TracksProvider._internal(
     super._createNotifier, {
@@ -111,12 +99,8 @@ class TracksProvider
   final int? syncId;
 
   @override
-  TrackPreference? runNotifierBuild(
-    covariant Tracks notifier,
-  ) {
-    return notifier.build(
-      syncId: syncId,
-    );
+  TrackPreference? runNotifierBuild(covariant Tracks notifier) {
+    return notifier.build(syncId: syncId);
   }
 
   @override
@@ -177,14 +161,14 @@ String _$updateProgressAfterReadingStateHash() =>
 @ProviderFor(UpdateProgressAfterReadingState)
 final updateProgressAfterReadingStateProvider =
     AutoDisposeNotifierProvider<UpdateProgressAfterReadingState, bool>.internal(
-  UpdateProgressAfterReadingState.new,
-  name: r'updateProgressAfterReadingStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$updateProgressAfterReadingStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      UpdateProgressAfterReadingState.new,
+      name: r'updateProgressAfterReadingStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$updateProgressAfterReadingStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$UpdateProgressAfterReadingState = AutoDisposeNotifier<bool>;
 // ignore_for_file: type=lint

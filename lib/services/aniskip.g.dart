@@ -13,8 +13,9 @@ String _$aniSkipHash() => r'2e5d19b025a2207ff64da7bf7908450ea9e5ff8c';
 final aniSkipProvider = AutoDisposeNotifierProvider<AniSkip, void>.internal(
   AniSkip.new,
   name: r'aniSkipProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$aniSkipHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$aniSkipHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );

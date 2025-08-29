@@ -1,12 +1,21 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/eval/model/m_pages.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+part 'search_.g.dart';
 
-Future<MPages?> search({
+@riverpod
+Future<MPages?> search(
+  Ref ref, {
   required Source source,
   required String query,
   required int page,
   required List<dynamic> filterList,
 }) async {
-  return getExtensionService(source).search(query, page, filterList);
+  return getExtensionService(
+    source,
+    ref.read(androidProxyServerStateProvider),
+  ).search(query, page, filterList);
 }

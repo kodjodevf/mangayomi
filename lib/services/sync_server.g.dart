@@ -6,7 +6,7 @@ part of 'sync_server.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$syncServerHash() => r'97a778696e0cc8b8e4c706de50d60464bb7b2f03';
+String _$syncServerHash() => r'08225f80e9c249dc62e8e918acecbd593f54541f';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -32,9 +32,7 @@ class _SystemHash {
 abstract class _$SyncServer extends BuildlessAutoDisposeNotifier<void> {
   late final int syncId;
 
-  void build({
-    required int syncId,
-  });
+  void build({required int syncId});
 }
 
 /// See also [SyncServer].
@@ -47,21 +45,15 @@ class SyncServerFamily extends Family<void> {
   const SyncServerFamily();
 
   /// See also [SyncServer].
-  SyncServerProvider call({
-    required int syncId,
-  }) {
-    return SyncServerProvider(
-      syncId: syncId,
-    );
+  SyncServerProvider call({required int syncId}) {
+    return SyncServerProvider(syncId: syncId);
   }
 
   @override
   SyncServerProvider getProviderOverride(
     covariant SyncServerProvider provider,
   ) {
-    return call(
-      syncId: provider.syncId,
-    );
+    return call(syncId: provider.syncId);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -83,21 +75,18 @@ class SyncServerFamily extends Family<void> {
 class SyncServerProvider
     extends AutoDisposeNotifierProviderImpl<SyncServer, void> {
   /// See also [SyncServer].
-  SyncServerProvider({
-    required int syncId,
-  }) : this._internal(
-          () => SyncServer()..syncId = syncId,
-          from: syncServerProvider,
-          name: r'syncServerProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$syncServerHash,
-          dependencies: SyncServerFamily._dependencies,
-          allTransitiveDependencies:
-              SyncServerFamily._allTransitiveDependencies,
-          syncId: syncId,
-        );
+  SyncServerProvider({required int syncId})
+    : this._internal(
+        () => SyncServer()..syncId = syncId,
+        from: syncServerProvider,
+        name: r'syncServerProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$syncServerHash,
+        dependencies: SyncServerFamily._dependencies,
+        allTransitiveDependencies: SyncServerFamily._allTransitiveDependencies,
+        syncId: syncId,
+      );
 
   SyncServerProvider._internal(
     super._createNotifier, {
@@ -112,12 +101,8 @@ class SyncServerProvider
   final int syncId;
 
   @override
-  void runNotifierBuild(
-    covariant SyncServer notifier,
-  ) {
-    return notifier.build(
-      syncId: syncId,
-    );
+  void runNotifierBuild(covariant SyncServer notifier) {
+    return notifier.build(syncId: syncId);
   }
 
   @override
@@ -170,5 +155,6 @@ class _SyncServerProviderElement
   @override
   int get syncId => (origin as SyncServerProvider).syncId;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -12,14 +12,14 @@ String _$chaptersListStateHash() => r'251609214d127964e84d4616d2c3a7afa4fd80b4';
 @ProviderFor(ChaptersListState)
 final chaptersListStateProvider =
     AutoDisposeNotifierProvider<ChaptersListState, List<Chapter>>.internal(
-  ChaptersListState.new,
-  name: r'chaptersListStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$chaptersListStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      ChaptersListState.new,
+      name: r'chaptersListStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$chaptersListStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$ChaptersListState = AutoDisposeNotifier<List<Chapter>>;
 String _$isLongPressedStateHash() =>
@@ -29,14 +29,14 @@ String _$isLongPressedStateHash() =>
 @ProviderFor(IsLongPressedState)
 final isLongPressedStateProvider =
     AutoDisposeNotifierProvider<IsLongPressedState, bool>.internal(
-  IsLongPressedState.new,
-  name: r'isLongPressedStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$isLongPressedStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      IsLongPressedState.new,
+      name: r'isLongPressedStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$isLongPressedStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$IsLongPressedState = AutoDisposeNotifier<bool>;
 String _$isExtendedStateHash() => r'e386098118bdebf67d489a4a2f49b017e02b27bf';
@@ -45,14 +45,14 @@ String _$isExtendedStateHash() => r'e386098118bdebf67d489a4a2f49b017e02b27bf';
 @ProviderFor(IsExtendedState)
 final isExtendedStateProvider =
     AutoDisposeNotifierProvider<IsExtendedState, bool>.internal(
-  IsExtendedState.new,
-  name: r'isExtendedStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$isExtendedStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      IsExtendedState.new,
+      name: r'isExtendedStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$isExtendedStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$IsExtendedState = AutoDisposeNotifier<bool>;
 String _$sortChapterStateHash() => r'a6e547fd4badfa14ecb9270054c7e166dfc6e238';
@@ -82,9 +82,7 @@ abstract class _$SortChapterState
     extends BuildlessAutoDisposeNotifier<SortChapter> {
   late final int mangaId;
 
-  SortChapter build({
-    required int mangaId,
-  });
+  SortChapter build({required int mangaId});
 }
 
 /// See also [SortChapterState].
@@ -97,21 +95,15 @@ class SortChapterStateFamily extends Family<SortChapter> {
   const SortChapterStateFamily();
 
   /// See also [SortChapterState].
-  SortChapterStateProvider call({
-    required int mangaId,
-  }) {
-    return SortChapterStateProvider(
-      mangaId: mangaId,
-    );
+  SortChapterStateProvider call({required int mangaId}) {
+    return SortChapterStateProvider(mangaId: mangaId);
   }
 
   @override
   SortChapterStateProvider getProviderOverride(
     covariant SortChapterStateProvider provider,
   ) {
-    return call(
-      mangaId: provider.mangaId,
-    );
+    return call(mangaId: provider.mangaId);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -133,21 +125,19 @@ class SortChapterStateFamily extends Family<SortChapter> {
 class SortChapterStateProvider
     extends AutoDisposeNotifierProviderImpl<SortChapterState, SortChapter> {
   /// See also [SortChapterState].
-  SortChapterStateProvider({
-    required int mangaId,
-  }) : this._internal(
-          () => SortChapterState()..mangaId = mangaId,
-          from: sortChapterStateProvider,
-          name: r'sortChapterStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$sortChapterStateHash,
-          dependencies: SortChapterStateFamily._dependencies,
-          allTransitiveDependencies:
-              SortChapterStateFamily._allTransitiveDependencies,
-          mangaId: mangaId,
-        );
+  SortChapterStateProvider({required int mangaId})
+    : this._internal(
+        () => SortChapterState()..mangaId = mangaId,
+        from: sortChapterStateProvider,
+        name: r'sortChapterStateProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$sortChapterStateHash,
+        dependencies: SortChapterStateFamily._dependencies,
+        allTransitiveDependencies:
+            SortChapterStateFamily._allTransitiveDependencies,
+        mangaId: mangaId,
+      );
 
   SortChapterStateProvider._internal(
     super._createNotifier, {
@@ -162,12 +152,8 @@ class SortChapterStateProvider
   final int mangaId;
 
   @override
-  SortChapter runNotifierBuild(
-    covariant SortChapterState notifier,
-  ) {
-    return notifier.build(
-      mangaId: mangaId,
-    );
+  SortChapter runNotifierBuild(covariant SortChapterState notifier) {
+    return notifier.build(mangaId: mangaId);
   }
 
   @override
@@ -188,7 +174,7 @@ class SortChapterStateProvider
 
   @override
   AutoDisposeNotifierProviderElement<SortChapterState, SortChapter>
-      createElement() {
+  createElement() {
     return _SortChapterStateProviderElement(this);
   }
 
@@ -229,9 +215,7 @@ abstract class _$ChapterFilterDownloadedState
     extends BuildlessAutoDisposeNotifier<int> {
   late final int mangaId;
 
-  int build({
-    required int mangaId,
-  });
+  int build({required int mangaId});
 }
 
 /// See also [ChapterFilterDownloadedState].
@@ -245,21 +229,15 @@ class ChapterFilterDownloadedStateFamily extends Family<int> {
   const ChapterFilterDownloadedStateFamily();
 
   /// See also [ChapterFilterDownloadedState].
-  ChapterFilterDownloadedStateProvider call({
-    required int mangaId,
-  }) {
-    return ChapterFilterDownloadedStateProvider(
-      mangaId: mangaId,
-    );
+  ChapterFilterDownloadedStateProvider call({required int mangaId}) {
+    return ChapterFilterDownloadedStateProvider(mangaId: mangaId);
   }
 
   @override
   ChapterFilterDownloadedStateProvider getProviderOverride(
     covariant ChapterFilterDownloadedStateProvider provider,
   ) {
-    return call(
-      mangaId: provider.mangaId,
-    );
+    return call(mangaId: provider.mangaId);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -281,21 +259,19 @@ class ChapterFilterDownloadedStateFamily extends Family<int> {
 class ChapterFilterDownloadedStateProvider
     extends AutoDisposeNotifierProviderImpl<ChapterFilterDownloadedState, int> {
   /// See also [ChapterFilterDownloadedState].
-  ChapterFilterDownloadedStateProvider({
-    required int mangaId,
-  }) : this._internal(
-          () => ChapterFilterDownloadedState()..mangaId = mangaId,
-          from: chapterFilterDownloadedStateProvider,
-          name: r'chapterFilterDownloadedStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$chapterFilterDownloadedStateHash,
-          dependencies: ChapterFilterDownloadedStateFamily._dependencies,
-          allTransitiveDependencies:
-              ChapterFilterDownloadedStateFamily._allTransitiveDependencies,
-          mangaId: mangaId,
-        );
+  ChapterFilterDownloadedStateProvider({required int mangaId})
+    : this._internal(
+        () => ChapterFilterDownloadedState()..mangaId = mangaId,
+        from: chapterFilterDownloadedStateProvider,
+        name: r'chapterFilterDownloadedStateProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$chapterFilterDownloadedStateHash,
+        dependencies: ChapterFilterDownloadedStateFamily._dependencies,
+        allTransitiveDependencies:
+            ChapterFilterDownloadedStateFamily._allTransitiveDependencies,
+        mangaId: mangaId,
+      );
 
   ChapterFilterDownloadedStateProvider._internal(
     super._createNotifier, {
@@ -310,12 +286,8 @@ class ChapterFilterDownloadedStateProvider
   final int mangaId;
 
   @override
-  int runNotifierBuild(
-    covariant ChapterFilterDownloadedState notifier,
-  ) {
-    return notifier.build(
-      mangaId: mangaId,
-    );
+  int runNotifierBuild(covariant ChapterFilterDownloadedState notifier) {
+    return notifier.build(mangaId: mangaId);
   }
 
   @override
@@ -336,7 +308,7 @@ class ChapterFilterDownloadedStateProvider
 
   @override
   AutoDisposeNotifierProviderElement<ChapterFilterDownloadedState, int>
-      createElement() {
+  createElement() {
     return _ChapterFilterDownloadedStateProviderElement(this);
   }
 
@@ -363,8 +335,9 @@ mixin ChapterFilterDownloadedStateRef on AutoDisposeNotifierProviderRef<int> {
 }
 
 class _ChapterFilterDownloadedStateProviderElement
-    extends AutoDisposeNotifierProviderElement<ChapterFilterDownloadedState,
-        int> with ChapterFilterDownloadedStateRef {
+    extends
+        AutoDisposeNotifierProviderElement<ChapterFilterDownloadedState, int>
+    with ChapterFilterDownloadedStateRef {
   _ChapterFilterDownloadedStateProviderElement(super.provider);
 
   @override
@@ -378,9 +351,7 @@ abstract class _$ChapterFilterUnreadState
     extends BuildlessAutoDisposeNotifier<int> {
   late final int mangaId;
 
-  int build({
-    required int mangaId,
-  });
+  int build({required int mangaId});
 }
 
 /// See also [ChapterFilterUnreadState].
@@ -393,21 +364,15 @@ class ChapterFilterUnreadStateFamily extends Family<int> {
   const ChapterFilterUnreadStateFamily();
 
   /// See also [ChapterFilterUnreadState].
-  ChapterFilterUnreadStateProvider call({
-    required int mangaId,
-  }) {
-    return ChapterFilterUnreadStateProvider(
-      mangaId: mangaId,
-    );
+  ChapterFilterUnreadStateProvider call({required int mangaId}) {
+    return ChapterFilterUnreadStateProvider(mangaId: mangaId);
   }
 
   @override
   ChapterFilterUnreadStateProvider getProviderOverride(
     covariant ChapterFilterUnreadStateProvider provider,
   ) {
-    return call(
-      mangaId: provider.mangaId,
-    );
+    return call(mangaId: provider.mangaId);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -429,21 +394,19 @@ class ChapterFilterUnreadStateFamily extends Family<int> {
 class ChapterFilterUnreadStateProvider
     extends AutoDisposeNotifierProviderImpl<ChapterFilterUnreadState, int> {
   /// See also [ChapterFilterUnreadState].
-  ChapterFilterUnreadStateProvider({
-    required int mangaId,
-  }) : this._internal(
-          () => ChapterFilterUnreadState()..mangaId = mangaId,
-          from: chapterFilterUnreadStateProvider,
-          name: r'chapterFilterUnreadStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$chapterFilterUnreadStateHash,
-          dependencies: ChapterFilterUnreadStateFamily._dependencies,
-          allTransitiveDependencies:
-              ChapterFilterUnreadStateFamily._allTransitiveDependencies,
-          mangaId: mangaId,
-        );
+  ChapterFilterUnreadStateProvider({required int mangaId})
+    : this._internal(
+        () => ChapterFilterUnreadState()..mangaId = mangaId,
+        from: chapterFilterUnreadStateProvider,
+        name: r'chapterFilterUnreadStateProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$chapterFilterUnreadStateHash,
+        dependencies: ChapterFilterUnreadStateFamily._dependencies,
+        allTransitiveDependencies:
+            ChapterFilterUnreadStateFamily._allTransitiveDependencies,
+        mangaId: mangaId,
+      );
 
   ChapterFilterUnreadStateProvider._internal(
     super._createNotifier, {
@@ -458,12 +421,8 @@ class ChapterFilterUnreadStateProvider
   final int mangaId;
 
   @override
-  int runNotifierBuild(
-    covariant ChapterFilterUnreadState notifier,
-  ) {
-    return notifier.build(
-      mangaId: mangaId,
-    );
+  int runNotifierBuild(covariant ChapterFilterUnreadState notifier) {
+    return notifier.build(mangaId: mangaId);
   }
 
   @override
@@ -484,7 +443,7 @@ class ChapterFilterUnreadStateProvider
 
   @override
   AutoDisposeNotifierProviderElement<ChapterFilterUnreadState, int>
-      createElement() {
+  createElement() {
     return _ChapterFilterUnreadStateProviderElement(this);
   }
 
@@ -526,9 +485,7 @@ abstract class _$ChapterFilterBookmarkedState
     extends BuildlessAutoDisposeNotifier<int> {
   late final int mangaId;
 
-  int build({
-    required int mangaId,
-  });
+  int build({required int mangaId});
 }
 
 /// See also [ChapterFilterBookmarkedState].
@@ -542,21 +499,15 @@ class ChapterFilterBookmarkedStateFamily extends Family<int> {
   const ChapterFilterBookmarkedStateFamily();
 
   /// See also [ChapterFilterBookmarkedState].
-  ChapterFilterBookmarkedStateProvider call({
-    required int mangaId,
-  }) {
-    return ChapterFilterBookmarkedStateProvider(
-      mangaId: mangaId,
-    );
+  ChapterFilterBookmarkedStateProvider call({required int mangaId}) {
+    return ChapterFilterBookmarkedStateProvider(mangaId: mangaId);
   }
 
   @override
   ChapterFilterBookmarkedStateProvider getProviderOverride(
     covariant ChapterFilterBookmarkedStateProvider provider,
   ) {
-    return call(
-      mangaId: provider.mangaId,
-    );
+    return call(mangaId: provider.mangaId);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -578,21 +529,19 @@ class ChapterFilterBookmarkedStateFamily extends Family<int> {
 class ChapterFilterBookmarkedStateProvider
     extends AutoDisposeNotifierProviderImpl<ChapterFilterBookmarkedState, int> {
   /// See also [ChapterFilterBookmarkedState].
-  ChapterFilterBookmarkedStateProvider({
-    required int mangaId,
-  }) : this._internal(
-          () => ChapterFilterBookmarkedState()..mangaId = mangaId,
-          from: chapterFilterBookmarkedStateProvider,
-          name: r'chapterFilterBookmarkedStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$chapterFilterBookmarkedStateHash,
-          dependencies: ChapterFilterBookmarkedStateFamily._dependencies,
-          allTransitiveDependencies:
-              ChapterFilterBookmarkedStateFamily._allTransitiveDependencies,
-          mangaId: mangaId,
-        );
+  ChapterFilterBookmarkedStateProvider({required int mangaId})
+    : this._internal(
+        () => ChapterFilterBookmarkedState()..mangaId = mangaId,
+        from: chapterFilterBookmarkedStateProvider,
+        name: r'chapterFilterBookmarkedStateProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$chapterFilterBookmarkedStateHash,
+        dependencies: ChapterFilterBookmarkedStateFamily._dependencies,
+        allTransitiveDependencies:
+            ChapterFilterBookmarkedStateFamily._allTransitiveDependencies,
+        mangaId: mangaId,
+      );
 
   ChapterFilterBookmarkedStateProvider._internal(
     super._createNotifier, {
@@ -607,12 +556,8 @@ class ChapterFilterBookmarkedStateProvider
   final int mangaId;
 
   @override
-  int runNotifierBuild(
-    covariant ChapterFilterBookmarkedState notifier,
-  ) {
-    return notifier.build(
-      mangaId: mangaId,
-    );
+  int runNotifierBuild(covariant ChapterFilterBookmarkedState notifier) {
+    return notifier.build(mangaId: mangaId);
   }
 
   @override
@@ -633,7 +578,7 @@ class ChapterFilterBookmarkedStateProvider
 
   @override
   AutoDisposeNotifierProviderElement<ChapterFilterBookmarkedState, int>
-      createElement() {
+  createElement() {
     return _ChapterFilterBookmarkedStateProviderElement(this);
   }
 
@@ -660,8 +605,9 @@ mixin ChapterFilterBookmarkedStateRef on AutoDisposeNotifierProviderRef<int> {
 }
 
 class _ChapterFilterBookmarkedStateProviderElement
-    extends AutoDisposeNotifierProviderElement<ChapterFilterBookmarkedState,
-        int> with ChapterFilterBookmarkedStateRef {
+    extends
+        AutoDisposeNotifierProviderElement<ChapterFilterBookmarkedState, int>
+    with ChapterFilterBookmarkedStateRef {
   _ChapterFilterBookmarkedStateProviderElement(super.provider);
 
   @override
@@ -675,9 +621,7 @@ abstract class _$ChapterFilterResultState
     extends BuildlessAutoDisposeNotifier<bool> {
   late final Manga manga;
 
-  bool build({
-    required Manga manga,
-  });
+  bool build({required Manga manga});
 }
 
 /// See also [ChapterFilterResultState].
@@ -690,21 +634,15 @@ class ChapterFilterResultStateFamily extends Family<bool> {
   const ChapterFilterResultStateFamily();
 
   /// See also [ChapterFilterResultState].
-  ChapterFilterResultStateProvider call({
-    required Manga manga,
-  }) {
-    return ChapterFilterResultStateProvider(
-      manga: manga,
-    );
+  ChapterFilterResultStateProvider call({required Manga manga}) {
+    return ChapterFilterResultStateProvider(manga: manga);
   }
 
   @override
   ChapterFilterResultStateProvider getProviderOverride(
     covariant ChapterFilterResultStateProvider provider,
   ) {
-    return call(
-      manga: provider.manga,
-    );
+    return call(manga: provider.manga);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -726,21 +664,19 @@ class ChapterFilterResultStateFamily extends Family<bool> {
 class ChapterFilterResultStateProvider
     extends AutoDisposeNotifierProviderImpl<ChapterFilterResultState, bool> {
   /// See also [ChapterFilterResultState].
-  ChapterFilterResultStateProvider({
-    required Manga manga,
-  }) : this._internal(
-          () => ChapterFilterResultState()..manga = manga,
-          from: chapterFilterResultStateProvider,
-          name: r'chapterFilterResultStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$chapterFilterResultStateHash,
-          dependencies: ChapterFilterResultStateFamily._dependencies,
-          allTransitiveDependencies:
-              ChapterFilterResultStateFamily._allTransitiveDependencies,
-          manga: manga,
-        );
+  ChapterFilterResultStateProvider({required Manga manga})
+    : this._internal(
+        () => ChapterFilterResultState()..manga = manga,
+        from: chapterFilterResultStateProvider,
+        name: r'chapterFilterResultStateProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$chapterFilterResultStateHash,
+        dependencies: ChapterFilterResultStateFamily._dependencies,
+        allTransitiveDependencies:
+            ChapterFilterResultStateFamily._allTransitiveDependencies,
+        manga: manga,
+      );
 
   ChapterFilterResultStateProvider._internal(
     super._createNotifier, {
@@ -755,12 +691,8 @@ class ChapterFilterResultStateProvider
   final Manga manga;
 
   @override
-  bool runNotifierBuild(
-    covariant ChapterFilterResultState notifier,
-  ) {
-    return notifier.build(
-      manga: manga,
-    );
+  bool runNotifierBuild(covariant ChapterFilterResultState notifier) {
+    return notifier.build(manga: manga);
   }
 
   @override
@@ -781,7 +713,7 @@ class ChapterFilterResultStateProvider
 
   @override
   AutoDisposeNotifierProviderElement<ChapterFilterResultState, bool>
-      createElement() {
+  createElement() {
     return _ChapterFilterResultStateProviderElement(this);
   }
 
@@ -822,9 +754,7 @@ abstract class _$ChapterSetIsBookmarkState
     extends BuildlessAutoDisposeNotifier<void> {
   late final Manga manga;
 
-  void build({
-    required Manga manga,
-  });
+  void build({required Manga manga});
 }
 
 /// See also [ChapterSetIsBookmarkState].
@@ -837,21 +767,15 @@ class ChapterSetIsBookmarkStateFamily extends Family<void> {
   const ChapterSetIsBookmarkStateFamily();
 
   /// See also [ChapterSetIsBookmarkState].
-  ChapterSetIsBookmarkStateProvider call({
-    required Manga manga,
-  }) {
-    return ChapterSetIsBookmarkStateProvider(
-      manga: manga,
-    );
+  ChapterSetIsBookmarkStateProvider call({required Manga manga}) {
+    return ChapterSetIsBookmarkStateProvider(manga: manga);
   }
 
   @override
   ChapterSetIsBookmarkStateProvider getProviderOverride(
     covariant ChapterSetIsBookmarkStateProvider provider,
   ) {
-    return call(
-      manga: provider.manga,
-    );
+    return call(manga: provider.manga);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -873,21 +797,19 @@ class ChapterSetIsBookmarkStateFamily extends Family<void> {
 class ChapterSetIsBookmarkStateProvider
     extends AutoDisposeNotifierProviderImpl<ChapterSetIsBookmarkState, void> {
   /// See also [ChapterSetIsBookmarkState].
-  ChapterSetIsBookmarkStateProvider({
-    required Manga manga,
-  }) : this._internal(
-          () => ChapterSetIsBookmarkState()..manga = manga,
-          from: chapterSetIsBookmarkStateProvider,
-          name: r'chapterSetIsBookmarkStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$chapterSetIsBookmarkStateHash,
-          dependencies: ChapterSetIsBookmarkStateFamily._dependencies,
-          allTransitiveDependencies:
-              ChapterSetIsBookmarkStateFamily._allTransitiveDependencies,
-          manga: manga,
-        );
+  ChapterSetIsBookmarkStateProvider({required Manga manga})
+    : this._internal(
+        () => ChapterSetIsBookmarkState()..manga = manga,
+        from: chapterSetIsBookmarkStateProvider,
+        name: r'chapterSetIsBookmarkStateProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$chapterSetIsBookmarkStateHash,
+        dependencies: ChapterSetIsBookmarkStateFamily._dependencies,
+        allTransitiveDependencies:
+            ChapterSetIsBookmarkStateFamily._allTransitiveDependencies,
+        manga: manga,
+      );
 
   ChapterSetIsBookmarkStateProvider._internal(
     super._createNotifier, {
@@ -902,12 +824,8 @@ class ChapterSetIsBookmarkStateProvider
   final Manga manga;
 
   @override
-  void runNotifierBuild(
-    covariant ChapterSetIsBookmarkState notifier,
-  ) {
-    return notifier.build(
-      manga: manga,
-    );
+  void runNotifierBuild(covariant ChapterSetIsBookmarkState notifier) {
+    return notifier.build(manga: manga);
   }
 
   @override
@@ -928,7 +846,7 @@ class ChapterSetIsBookmarkStateProvider
 
   @override
   AutoDisposeNotifierProviderElement<ChapterSetIsBookmarkState, void>
-      createElement() {
+  createElement() {
     return _ChapterSetIsBookmarkStateProviderElement(this);
   }
 
@@ -969,9 +887,7 @@ abstract class _$ChapterSetIsReadState
     extends BuildlessAutoDisposeNotifier<void> {
   late final Manga manga;
 
-  void build({
-    required Manga manga,
-  });
+  void build({required Manga manga});
 }
 
 /// See also [ChapterSetIsReadState].
@@ -984,21 +900,15 @@ class ChapterSetIsReadStateFamily extends Family<void> {
   const ChapterSetIsReadStateFamily();
 
   /// See also [ChapterSetIsReadState].
-  ChapterSetIsReadStateProvider call({
-    required Manga manga,
-  }) {
-    return ChapterSetIsReadStateProvider(
-      manga: manga,
-    );
+  ChapterSetIsReadStateProvider call({required Manga manga}) {
+    return ChapterSetIsReadStateProvider(manga: manga);
   }
 
   @override
   ChapterSetIsReadStateProvider getProviderOverride(
     covariant ChapterSetIsReadStateProvider provider,
   ) {
-    return call(
-      manga: provider.manga,
-    );
+    return call(manga: provider.manga);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -1020,21 +930,19 @@ class ChapterSetIsReadStateFamily extends Family<void> {
 class ChapterSetIsReadStateProvider
     extends AutoDisposeNotifierProviderImpl<ChapterSetIsReadState, void> {
   /// See also [ChapterSetIsReadState].
-  ChapterSetIsReadStateProvider({
-    required Manga manga,
-  }) : this._internal(
-          () => ChapterSetIsReadState()..manga = manga,
-          from: chapterSetIsReadStateProvider,
-          name: r'chapterSetIsReadStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$chapterSetIsReadStateHash,
-          dependencies: ChapterSetIsReadStateFamily._dependencies,
-          allTransitiveDependencies:
-              ChapterSetIsReadStateFamily._allTransitiveDependencies,
-          manga: manga,
-        );
+  ChapterSetIsReadStateProvider({required Manga manga})
+    : this._internal(
+        () => ChapterSetIsReadState()..manga = manga,
+        from: chapterSetIsReadStateProvider,
+        name: r'chapterSetIsReadStateProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$chapterSetIsReadStateHash,
+        dependencies: ChapterSetIsReadStateFamily._dependencies,
+        allTransitiveDependencies:
+            ChapterSetIsReadStateFamily._allTransitiveDependencies,
+        manga: manga,
+      );
 
   ChapterSetIsReadStateProvider._internal(
     super._createNotifier, {
@@ -1049,12 +957,8 @@ class ChapterSetIsReadStateProvider
   final Manga manga;
 
   @override
-  void runNotifierBuild(
-    covariant ChapterSetIsReadState notifier,
-  ) {
-    return notifier.build(
-      manga: manga,
-    );
+  void runNotifierBuild(covariant ChapterSetIsReadState notifier) {
+    return notifier.build(manga: manga);
   }
 
   @override
@@ -1075,7 +979,7 @@ class ChapterSetIsReadStateProvider
 
   @override
   AutoDisposeNotifierProviderElement<ChapterSetIsReadState, void>
-      createElement() {
+  createElement() {
     return _ChapterSetIsReadStateProviderElement(this);
   }
 
@@ -1116,9 +1020,7 @@ abstract class _$ChapterSetDownloadState
     extends BuildlessAutoDisposeNotifier<void> {
   late final Manga manga;
 
-  void build({
-    required Manga manga,
-  });
+  void build({required Manga manga});
 }
 
 /// See also [ChapterSetDownloadState].
@@ -1131,21 +1033,15 @@ class ChapterSetDownloadStateFamily extends Family<void> {
   const ChapterSetDownloadStateFamily();
 
   /// See also [ChapterSetDownloadState].
-  ChapterSetDownloadStateProvider call({
-    required Manga manga,
-  }) {
-    return ChapterSetDownloadStateProvider(
-      manga: manga,
-    );
+  ChapterSetDownloadStateProvider call({required Manga manga}) {
+    return ChapterSetDownloadStateProvider(manga: manga);
   }
 
   @override
   ChapterSetDownloadStateProvider getProviderOverride(
     covariant ChapterSetDownloadStateProvider provider,
   ) {
-    return call(
-      manga: provider.manga,
-    );
+    return call(manga: provider.manga);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -1167,21 +1063,19 @@ class ChapterSetDownloadStateFamily extends Family<void> {
 class ChapterSetDownloadStateProvider
     extends AutoDisposeNotifierProviderImpl<ChapterSetDownloadState, void> {
   /// See also [ChapterSetDownloadState].
-  ChapterSetDownloadStateProvider({
-    required Manga manga,
-  }) : this._internal(
-          () => ChapterSetDownloadState()..manga = manga,
-          from: chapterSetDownloadStateProvider,
-          name: r'chapterSetDownloadStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$chapterSetDownloadStateHash,
-          dependencies: ChapterSetDownloadStateFamily._dependencies,
-          allTransitiveDependencies:
-              ChapterSetDownloadStateFamily._allTransitiveDependencies,
-          manga: manga,
-        );
+  ChapterSetDownloadStateProvider({required Manga manga})
+    : this._internal(
+        () => ChapterSetDownloadState()..manga = manga,
+        from: chapterSetDownloadStateProvider,
+        name: r'chapterSetDownloadStateProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$chapterSetDownloadStateHash,
+        dependencies: ChapterSetDownloadStateFamily._dependencies,
+        allTransitiveDependencies:
+            ChapterSetDownloadStateFamily._allTransitiveDependencies,
+        manga: manga,
+      );
 
   ChapterSetDownloadStateProvider._internal(
     super._createNotifier, {
@@ -1196,12 +1090,8 @@ class ChapterSetDownloadStateProvider
   final Manga manga;
 
   @override
-  void runNotifierBuild(
-    covariant ChapterSetDownloadState notifier,
-  ) {
-    return notifier.build(
-      manga: manga,
-    );
+  void runNotifierBuild(covariant ChapterSetDownloadState notifier) {
+    return notifier.build(manga: manga);
   }
 
   @override
@@ -1222,7 +1112,7 @@ class ChapterSetDownloadStateProvider
 
   @override
   AutoDisposeNotifierProviderElement<ChapterSetDownloadState, void>
-      createElement() {
+  createElement() {
     return _ChapterSetDownloadStateProviderElement(this);
   }
 
@@ -1263,26 +1153,27 @@ String _$chaptersListttStateHash() =>
 @ProviderFor(ChaptersListttState)
 final chaptersListttStateProvider =
     AutoDisposeNotifierProvider<ChaptersListttState, List<Chapter>>.internal(
-  ChaptersListttState.new,
-  name: r'chaptersListttStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$chaptersListttStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      ChaptersListttState.new,
+      name: r'chaptersListttStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$chaptersListttStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$ChaptersListttState = AutoDisposeNotifier<List<Chapter>>;
 String _$scanlatorsFilterStateHash() =>
     r'8da89864801cd7620029d28cfb3f9bee3c67cba8';
 
-abstract class _$ScanlatorsFilterState extends BuildlessAutoDisposeNotifier<
-    (List<String>, List<String>, List<String>)> {
+abstract class _$ScanlatorsFilterState
+    extends
+        BuildlessAutoDisposeNotifier<
+          (List<String>, List<String>, List<String>)
+        > {
   late final Manga manga;
 
-  (List<String>, List<String>, List<String>) build(
-    Manga manga,
-  );
+  (List<String>, List<String>, List<String>) build(Manga manga);
 }
 
 /// See also [ScanlatorsFilterState].
@@ -1296,21 +1187,15 @@ class ScanlatorsFilterStateFamily
   const ScanlatorsFilterStateFamily();
 
   /// See also [ScanlatorsFilterState].
-  ScanlatorsFilterStateProvider call(
-    Manga manga,
-  ) {
-    return ScanlatorsFilterStateProvider(
-      manga,
-    );
+  ScanlatorsFilterStateProvider call(Manga manga) {
+    return ScanlatorsFilterStateProvider(manga);
   }
 
   @override
   ScanlatorsFilterStateProvider getProviderOverride(
     covariant ScanlatorsFilterStateProvider provider,
   ) {
-    return call(
-      provider.manga,
-    );
+    return call(provider.manga);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -1329,24 +1214,26 @@ class ScanlatorsFilterStateFamily
 }
 
 /// See also [ScanlatorsFilterState].
-class ScanlatorsFilterStateProvider extends AutoDisposeNotifierProviderImpl<
-    ScanlatorsFilterState, (List<String>, List<String>, List<String>)> {
+class ScanlatorsFilterStateProvider
+    extends
+        AutoDisposeNotifierProviderImpl<
+          ScanlatorsFilterState,
+          (List<String>, List<String>, List<String>)
+        > {
   /// See also [ScanlatorsFilterState].
-  ScanlatorsFilterStateProvider(
-    Manga manga,
-  ) : this._internal(
-          () => ScanlatorsFilterState()..manga = manga,
-          from: scanlatorsFilterStateProvider,
-          name: r'scanlatorsFilterStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$scanlatorsFilterStateHash,
-          dependencies: ScanlatorsFilterStateFamily._dependencies,
-          allTransitiveDependencies:
-              ScanlatorsFilterStateFamily._allTransitiveDependencies,
-          manga: manga,
-        );
+  ScanlatorsFilterStateProvider(Manga manga)
+    : this._internal(
+        () => ScanlatorsFilterState()..manga = manga,
+        from: scanlatorsFilterStateProvider,
+        name: r'scanlatorsFilterStateProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$scanlatorsFilterStateHash,
+        dependencies: ScanlatorsFilterStateFamily._dependencies,
+        allTransitiveDependencies:
+            ScanlatorsFilterStateFamily._allTransitiveDependencies,
+        manga: manga,
+      );
 
   ScanlatorsFilterStateProvider._internal(
     super._createNotifier, {
@@ -1364,9 +1251,7 @@ class ScanlatorsFilterStateProvider extends AutoDisposeNotifierProviderImpl<
   (List<String>, List<String>, List<String>) runNotifierBuild(
     covariant ScanlatorsFilterState notifier,
   ) {
-    return notifier.build(
-      manga,
-    );
+    return notifier.build(manga);
   }
 
   @override
@@ -1386,8 +1271,11 @@ class ScanlatorsFilterStateProvider extends AutoDisposeNotifierProviderImpl<
   }
 
   @override
-  AutoDisposeNotifierProviderElement<ScanlatorsFilterState,
-      (List<String>, List<String>, List<String>)> createElement() {
+  AutoDisposeNotifierProviderElement<
+    ScanlatorsFilterState,
+    (List<String>, List<String>, List<String>)
+  >
+  createElement() {
     return _ScanlatorsFilterStateProviderElement(this);
   }
 
@@ -1407,20 +1295,27 @@ class ScanlatorsFilterStateProvider extends AutoDisposeNotifierProviderImpl<
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin ScanlatorsFilterStateRef on AutoDisposeNotifierProviderRef<
-    (List<String>, List<String>, List<String>)> {
+mixin ScanlatorsFilterStateRef
+    on
+        AutoDisposeNotifierProviderRef<
+          (List<String>, List<String>, List<String>)
+        > {
   /// The parameter `manga` of this provider.
   Manga get manga;
 }
 
 class _ScanlatorsFilterStateProviderElement
-    extends AutoDisposeNotifierProviderElement<ScanlatorsFilterState,
-        (List<String>, List<String>, List<String>)>
+    extends
+        AutoDisposeNotifierProviderElement<
+          ScanlatorsFilterState,
+          (List<String>, List<String>, List<String>)
+        >
     with ScanlatorsFilterStateRef {
   _ScanlatorsFilterStateProviderElement(super.provider);
 
   @override
   Manga get manga => (origin as ScanlatorsFilterStateProvider).manga;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

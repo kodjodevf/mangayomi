@@ -5,6 +5,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_widget.dart';
+import 'package:mangayomi/modules/tracker_library/tracker_library_screen.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
@@ -20,10 +21,14 @@ class TrackingDetail extends StatefulWidget {
 class _TrackingDetailState extends State<TrackingDetail>
     with TickerProviderStateMixin {
   late TabController _tabBarController;
+  bool get isMovies =>
+      widget.trackerPref.syncId == TrackerProviders.simkl.syncId ||
+      widget.trackerPref.syncId == TrackerProviders.trakt.syncId;
+
   @override
   void initState() {
     super.initState();
-    _tabBarController = TabController(length: 2, vsync: this);
+    _tabBarController = TabController(length: isMovies ? 1 : 2, vsync: this);
   }
 
   @override
@@ -35,9 +40,10 @@ class _TrackingDetailState extends State<TrackingDetail>
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
+
     return DefaultTabController(
       animationDuration: Duration.zero,
-      length: 2,
+      length: isMovies ? 1 : 2,
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -51,7 +57,7 @@ class _TrackingDetailState extends State<TrackingDetail>
             indicatorSize: TabBarIndicatorSize.tab,
             controller: _tabBarController,
             tabs: [
-              Tab(text: l10n.manga),
+              if (!isMovies) Tab(text: l10n.manga),
               Tab(text: l10n.anime),
             ],
           ),
@@ -59,10 +65,11 @@ class _TrackingDetailState extends State<TrackingDetail>
         body: TabBarView(
           controller: _tabBarController,
           children: [
-            TrackingTab(
-              itemType: ItemType.manga,
-              syncId: widget.trackerPref.syncId!,
-            ),
+            if (!isMovies)
+              TrackingTab(
+                itemType: ItemType.manga,
+                syncId: widget.trackerPref.syncId!,
+              ),
             TrackingTab(
               itemType: ItemType.anime,
               syncId: widget.trackerPref.syncId!,

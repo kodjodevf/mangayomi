@@ -130,6 +130,7 @@ Future<void> scanLocalLibrary(Ref ref) async {
         itemType: itemType,
         dateAdded: dateNow,
         lastUpdate: dateNow,
+        sourceId: null,
       );
       newMangas++;
     }

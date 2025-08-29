@@ -7,7 +7,7 @@ part of 'add_torrent.dart';
 // **************************************************************************
 
 String _$addTorrentFromUrlOrFromFileHash() =>
-    r'ca841c87c01dd9e9254b99b3223ac67d775ba5b2';
+    r'a54f90b6708b13eeb8fed098691f9a79dbab50fd';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -45,22 +45,14 @@ class AddTorrentFromUrlOrFromFileFamily extends Family<AsyncValue> {
     required bool init,
     String? url,
   }) {
-    return AddTorrentFromUrlOrFromFileProvider(
-      mManga,
-      init: init,
-      url: url,
-    );
+    return AddTorrentFromUrlOrFromFileProvider(mManga, init: init, url: url);
   }
 
   @override
   AddTorrentFromUrlOrFromFileProvider getProviderOverride(
     covariant AddTorrentFromUrlOrFromFileProvider provider,
   ) {
-    return call(
-      provider.mManga,
-      init: provider.init,
-      url: provider.url,
-    );
+    return call(provider.mManga, init: provider.init, url: provider.url);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -87,25 +79,24 @@ class AddTorrentFromUrlOrFromFileProvider
     required bool init,
     String? url,
   }) : this._internal(
-          (ref) => addTorrentFromUrlOrFromFile(
-            ref as AddTorrentFromUrlOrFromFileRef,
-            mManga,
-            init: init,
-            url: url,
-          ),
-          from: addTorrentFromUrlOrFromFileProvider,
-          name: r'addTorrentFromUrlOrFromFileProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$addTorrentFromUrlOrFromFileHash,
-          dependencies: AddTorrentFromUrlOrFromFileFamily._dependencies,
-          allTransitiveDependencies:
-              AddTorrentFromUrlOrFromFileFamily._allTransitiveDependencies,
-          mManga: mManga,
-          init: init,
-          url: url,
-        );
+         (ref) => addTorrentFromUrlOrFromFile(
+           ref as AddTorrentFromUrlOrFromFileRef,
+           mManga,
+           init: init,
+           url: url,
+         ),
+         from: addTorrentFromUrlOrFromFileProvider,
+         name: r'addTorrentFromUrlOrFromFileProvider',
+         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+             ? null
+             : _$addTorrentFromUrlOrFromFileHash,
+         dependencies: AddTorrentFromUrlOrFromFileFamily._dependencies,
+         allTransitiveDependencies:
+             AddTorrentFromUrlOrFromFileFamily._allTransitiveDependencies,
+         mManga: mManga,
+         init: init,
+         url: url,
+       );
 
   AddTorrentFromUrlOrFromFileProvider._internal(
     super._createNotifier, {
@@ -192,5 +183,6 @@ class _AddTorrentFromUrlOrFromFileProviderElement
   @override
   String? get url => (origin as AddTorrentFromUrlOrFromFileProvider).url;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

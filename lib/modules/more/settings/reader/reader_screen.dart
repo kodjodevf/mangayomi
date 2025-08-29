@@ -39,35 +39,35 @@ class ReaderScreen extends ConsumerWidget {
                       title: Text(context.l10n.default_reading_mode),
                       content: SizedBox(
                         width: context.width(0.8),
-                        child: SuperListView.builder(
-                          shrinkWrap: true,
-                          itemCount: ReaderMode.values.length,
-                          itemBuilder: (context, index) {
-                            return RadioListTile(
-                              dense: true,
-                              contentPadding: const EdgeInsets.all(0),
-                              value: ReaderMode.values[index],
-                              groupValue: defaultReadingMode,
-                              onChanged: (value) {
-                                ref
-                                    .read(
-                                      defaultReadingModeStateProvider.notifier,
-                                    )
-                                    .set(value!);
-                                Navigator.pop(context);
-                              },
-                              title: Row(
-                                children: [
-                                  Text(
-                                    getReaderModeName(
-                                      ReaderMode.values[index],
-                                      context,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
+                        child: RadioGroup(
+                          groupValue: defaultReadingMode,
+                          onChanged: (value) {
+                            ref
+                                .read(defaultReadingModeStateProvider.notifier)
+                                .set(value!);
+                            Navigator.pop(context);
                           },
+                          child: SuperListView.builder(
+                            shrinkWrap: true,
+                            itemCount: ReaderMode.values.length,
+                            itemBuilder: (context, index) {
+                              return RadioListTile(
+                                dense: true,
+                                contentPadding: const EdgeInsets.all(0),
+                                value: ReaderMode.values[index],
+                                title: Row(
+                                  children: [
+                                    Text(
+                                      getReaderModeName(
+                                        ReaderMode.values[index],
+                                        context,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                       actions: [
@@ -105,31 +105,32 @@ class ReaderScreen extends ConsumerWidget {
                       title: Text(context.l10n.double_tap_animation_speed),
                       content: SizedBox(
                         width: context.width(0.8),
-                        child: SuperListView.builder(
-                          shrinkWrap: true,
-                          itemCount: 3,
-                          itemBuilder: (context, index) {
-                            return RadioListTile(
-                              dense: true,
-                              contentPadding: const EdgeInsets.all(0),
-                              value: index,
-                              groupValue: doubleTapAnimationSpeed,
-                              onChanged: (value) {
-                                ref
-                                    .read(
-                                      doubleTapAnimationSpeedStateProvider
-                                          .notifier,
-                                    )
-                                    .set(value!);
-                                Navigator.pop(context);
-                              },
-                              title: Row(
-                                children: [
-                                  Text(getAnimationSpeedName(index, context)),
-                                ],
-                              ),
-                            );
+                        child: RadioGroup(
+                          groupValue: doubleTapAnimationSpeed,
+                          onChanged: (value) {
+                            ref
+                                .read(
+                                  doubleTapAnimationSpeedStateProvider.notifier,
+                                )
+                                .set(value!);
+                            Navigator.pop(context);
                           },
+                          child: SuperListView.builder(
+                            shrinkWrap: true,
+                            itemCount: 3,
+                            itemBuilder: (context, index) {
+                              return RadioListTile(
+                                dense: true,
+                                contentPadding: const EdgeInsets.all(0),
+                                value: index,
+                                title: Row(
+                                  children: [
+                                    Text(getAnimationSpeedName(index, context)),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                       actions: [
@@ -167,33 +168,35 @@ class ReaderScreen extends ConsumerWidget {
                       title: Text(context.l10n.background_color),
                       content: SizedBox(
                         width: context.width(0.8),
-                        child: SuperListView.builder(
-                          shrinkWrap: true,
-                          itemCount: BackgroundColor.values.length,
-                          itemBuilder: (context, index) {
-                            return RadioListTile(
-                              dense: true,
-                              contentPadding: const EdgeInsets.all(0),
-                              value: BackgroundColor.values[index],
-                              groupValue: backgroundColor,
-                              onChanged: (value) {
-                                ref
-                                    .read(backgroundColorStateProvider.notifier)
-                                    .set(value!);
-                                Navigator.pop(context);
-                              },
-                              title: Row(
-                                children: [
-                                  Text(
-                                    getBackgroundColorName(
-                                      BackgroundColor.values[index],
-                                      context,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
+                        child: RadioGroup(
+                          groupValue: backgroundColor,
+                          onChanged: (value) {
+                            ref
+                                .read(backgroundColorStateProvider.notifier)
+                                .set(value!);
+                            Navigator.pop(context);
                           },
+                          child: SuperListView.builder(
+                            shrinkWrap: true,
+                            itemCount: BackgroundColor.values.length,
+                            itemBuilder: (context, index) {
+                              return RadioListTile(
+                                dense: true,
+                                contentPadding: const EdgeInsets.all(0),
+                                value: BackgroundColor.values[index],
+                                title: Row(
+                                  children: [
+                                    Text(
+                                      getBackgroundColorName(
+                                        BackgroundColor.values[index],
+                                        context,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                       actions: [
@@ -301,32 +304,34 @@ class ReaderScreen extends ConsumerWidget {
                       title: Text(context.l10n.scale_type),
                       content: SizedBox(
                         width: context.width(0.8),
-                        child: SuperListView.builder(
-                          shrinkWrap: true,
-                          itemCount: getScaleTypeNames(context).length,
-                          itemBuilder: (context, index) {
-                            return RadioListTile(
-                              // dense: true,
-                              contentPadding: const EdgeInsets.all(0),
-                              value: index,
-                              groupValue: scaleType.index,
-                              onChanged: (value) {
-                                ref
-                                    .read(scaleTypeStateProvider.notifier)
-                                    .set(ScaleType.values[value!]);
-                                Navigator.pop(context);
-                              },
-                              title: Row(
-                                children: [
-                                  Text(
-                                    getScaleTypeNames(
-                                      context,
-                                    )[index].toString(),
-                                  ),
-                                ],
-                              ),
-                            );
+                        child: RadioGroup(
+                          groupValue: scaleType.index,
+                          onChanged: (value) {
+                            ref
+                                .read(scaleTypeStateProvider.notifier)
+                                .set(ScaleType.values[value!]);
+                            Navigator.pop(context);
                           },
+                          child: SuperListView.builder(
+                            shrinkWrap: true,
+                            itemCount: getScaleTypeNames(context).length,
+                            itemBuilder: (context, index) {
+                              return RadioListTile(
+                                // dense: true,
+                                contentPadding: const EdgeInsets.all(0),
+                                value: index,
+                                title: Row(
+                                  children: [
+                                    Text(
+                                      getScaleTypeNames(
+                                        context,
+                                      )[index].toString(),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                         ),
                       ),
                       actions: [

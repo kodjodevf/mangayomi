@@ -32,9 +32,7 @@ class _SystemHash {
 abstract class _$StatisticsState extends BuildlessAutoDisposeNotifier<void> {
   late final ItemType itemType;
 
-  void build(
-    ItemType itemType,
-  );
+  void build(ItemType itemType);
 }
 
 /// See also [StatisticsState].
@@ -47,21 +45,15 @@ class StatisticsStateFamily extends Family<void> {
   const StatisticsStateFamily();
 
   /// See also [StatisticsState].
-  StatisticsStateProvider call(
-    ItemType itemType,
-  ) {
-    return StatisticsStateProvider(
-      itemType,
-    );
+  StatisticsStateProvider call(ItemType itemType) {
+    return StatisticsStateProvider(itemType);
   }
 
   @override
   StatisticsStateProvider getProviderOverride(
     covariant StatisticsStateProvider provider,
   ) {
-    return call(
-      provider.itemType,
-    );
+    return call(provider.itemType);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -83,21 +75,19 @@ class StatisticsStateFamily extends Family<void> {
 class StatisticsStateProvider
     extends AutoDisposeNotifierProviderImpl<StatisticsState, void> {
   /// See also [StatisticsState].
-  StatisticsStateProvider(
-    ItemType itemType,
-  ) : this._internal(
-          () => StatisticsState()..itemType = itemType,
-          from: statisticsStateProvider,
-          name: r'statisticsStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$statisticsStateHash,
-          dependencies: StatisticsStateFamily._dependencies,
-          allTransitiveDependencies:
-              StatisticsStateFamily._allTransitiveDependencies,
-          itemType: itemType,
-        );
+  StatisticsStateProvider(ItemType itemType)
+    : this._internal(
+        () => StatisticsState()..itemType = itemType,
+        from: statisticsStateProvider,
+        name: r'statisticsStateProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$statisticsStateHash,
+        dependencies: StatisticsStateFamily._dependencies,
+        allTransitiveDependencies:
+            StatisticsStateFamily._allTransitiveDependencies,
+        itemType: itemType,
+      );
 
   StatisticsStateProvider._internal(
     super._createNotifier, {
@@ -112,12 +102,8 @@ class StatisticsStateProvider
   final ItemType itemType;
 
   @override
-  void runNotifierBuild(
-    covariant StatisticsState notifier,
-  ) {
-    return notifier.build(
-      itemType,
-    );
+  void runNotifierBuild(covariant StatisticsState notifier) {
+    return notifier.build(itemType);
   }
 
   @override
@@ -170,5 +156,6 @@ class _StatisticsStateProviderElement
   @override
   ItemType get itemType => (origin as StatisticsStateProvider).itemType;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

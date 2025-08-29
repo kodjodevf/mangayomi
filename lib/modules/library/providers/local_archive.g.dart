@@ -7,7 +7,7 @@ part of 'local_archive.dart';
 // **************************************************************************
 
 String _$importArchivesFromFileHash() =>
-    r'4d92aaade0544f76214030364433f91d27570b5a';
+    r'784b9d45958695faffdf04ee7c105c9b486122de';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -87,25 +87,24 @@ class ImportArchivesFromFileProvider
     required ItemType itemType,
     required bool init,
   }) : this._internal(
-          (ref) => importArchivesFromFile(
-            ref as ImportArchivesFromFileRef,
-            mManga,
-            itemType: itemType,
-            init: init,
-          ),
-          from: importArchivesFromFileProvider,
-          name: r'importArchivesFromFileProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$importArchivesFromFileHash,
-          dependencies: ImportArchivesFromFileFamily._dependencies,
-          allTransitiveDependencies:
-              ImportArchivesFromFileFamily._allTransitiveDependencies,
-          mManga: mManga,
-          itemType: itemType,
-          init: init,
-        );
+         (ref) => importArchivesFromFile(
+           ref as ImportArchivesFromFileRef,
+           mManga,
+           itemType: itemType,
+           init: init,
+         ),
+         from: importArchivesFromFileProvider,
+         name: r'importArchivesFromFileProvider',
+         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+             ? null
+             : _$importArchivesFromFileHash,
+         dependencies: ImportArchivesFromFileFamily._dependencies,
+         allTransitiveDependencies:
+             ImportArchivesFromFileFamily._allTransitiveDependencies,
+         mManga: mManga,
+         itemType: itemType,
+         init: init,
+       );
 
   ImportArchivesFromFileProvider._internal(
     super._createNotifier, {
@@ -192,5 +191,6 @@ class _ImportArchivesFromFileProviderElement
   @override
   bool get init => (origin as ImportArchivesFromFileProvider).init;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

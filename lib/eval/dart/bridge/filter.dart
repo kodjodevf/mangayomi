@@ -2,7 +2,7 @@ import 'package:d4rt/d4rt.dart';
 import 'package:mangayomi/eval/model/filter.dart';
 
 class FilterBridge {
-  final filterBridgedClass = BridgedClassDefinition(
+  final filterBridgedClass = BridgedClass(
     nativeType: FilterList,
     name: 'FilterList',
     constructors: {
@@ -19,7 +19,7 @@ class FilterBridge {
           (target as FilterList).filters = value as List,
     },
   );
-  final selectFilterBridgedClass = BridgedClassDefinition(
+  final selectFilterBridgedClass = BridgedClass(
     nativeType: SelectFilter,
     name: 'SelectFilter',
     constructors: {
@@ -53,7 +53,7 @@ class FilterBridge {
           (target as SelectFilter).typeName = value as String?,
     },
   );
-  final selectFilterOptionBridgedClass = BridgedClassDefinition(
+  final selectFilterOptionBridgedClass = BridgedClass(
     nativeType: SelectFilterOption,
     name: 'SelectFilterOption',
     constructors: {
@@ -80,7 +80,7 @@ class FilterBridge {
     },
   );
 
-  final separatorFilterBridgedClass = BridgedClassDefinition(
+  final separatorFilterBridgedClass = BridgedClass(
     nativeType: SeparatorFilter,
     name: 'SeparatorFilter',
     constructors: {
@@ -103,7 +103,7 @@ class FilterBridge {
     },
   );
 
-  final headerFilterBridgedClass = BridgedClassDefinition(
+  final headerFilterBridgedClass = BridgedClass(
     nativeType: HeaderFilter,
     name: 'HeaderFilter',
     constructors: {
@@ -130,7 +130,7 @@ class FilterBridge {
     },
   );
 
-  final textFilterBridgedClass = BridgedClassDefinition(
+  final textFilterBridgedClass = BridgedClass(
     nativeType: TextFilter,
     name: 'TextFilter',
     constructors: {
@@ -161,7 +161,7 @@ class FilterBridge {
     },
   );
 
-  final sortFilterBridgedClass = BridgedClassDefinition(
+  final sortFilterBridgedClass = BridgedClass(
     nativeType: SortFilter,
     name: 'SortFilter',
     constructors: {
@@ -193,7 +193,7 @@ class FilterBridge {
           (target as SortFilter).values = value as List,
     },
   );
-  final sortStateBridgedClass = BridgedClassDefinition(
+  final sortStateBridgedClass = BridgedClass(
     nativeType: SortState,
     name: 'SortState',
     constructors: {
@@ -220,7 +220,7 @@ class FilterBridge {
     },
   );
 
-  final triStateFilterBridgedClass = BridgedClassDefinition(
+  final triStateFilterBridgedClass = BridgedClass(
     nativeType: TriStateFilter,
     name: 'TriStateFilter',
     constructors: {
@@ -253,7 +253,7 @@ class FilterBridge {
     },
   );
 
-  final groupFilterBridgedClass = BridgedClassDefinition(
+  final groupFilterBridgedClass = BridgedClass(
     nativeType: GroupFilter,
     name: 'GroupFilter',
     constructors: {
@@ -284,7 +284,7 @@ class FilterBridge {
     },
   );
 
-  final checkBoxFilterBridgedClass = BridgedClassDefinition(
+  final checkBoxFilterBridgedClass = BridgedClass(
     nativeType: CheckBoxFilter,
     name: 'CheckBoxFilter',
     constructors: {

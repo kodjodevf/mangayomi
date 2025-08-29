@@ -6,7 +6,7 @@ part of 'track_state_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$trackStateHash() => r'b70770f8524a0d9059ffd3f52b42634c16672a0f';
+String _$trackStateHash() => r'19fcc38b559996509aa71645de9531bc4b2d4205';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -33,10 +33,7 @@ abstract class _$TrackState extends BuildlessAutoDisposeNotifier<Track> {
   late final Track? track;
   late final ItemType? itemType;
 
-  Track build({
-    Track? track,
-    required ItemType? itemType,
-  });
+  Track build({Track? track, required ItemType? itemType});
 }
 
 /// See also [TrackState].
@@ -49,24 +46,15 @@ class TrackStateFamily extends Family<Track> {
   const TrackStateFamily();
 
   /// See also [TrackState].
-  TrackStateProvider call({
-    Track? track,
-    required ItemType? itemType,
-  }) {
-    return TrackStateProvider(
-      track: track,
-      itemType: itemType,
-    );
+  TrackStateProvider call({Track? track, required ItemType? itemType}) {
+    return TrackStateProvider(track: track, itemType: itemType);
   }
 
   @override
   TrackStateProvider getProviderOverride(
     covariant TrackStateProvider provider,
   ) {
-    return call(
-      track: provider.track,
-      itemType: provider.itemType,
-    );
+    return call(track: provider.track, itemType: provider.itemType);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -88,25 +76,21 @@ class TrackStateFamily extends Family<Track> {
 class TrackStateProvider
     extends AutoDisposeNotifierProviderImpl<TrackState, Track> {
   /// See also [TrackState].
-  TrackStateProvider({
-    Track? track,
-    required ItemType? itemType,
-  }) : this._internal(
-          () => TrackState()
-            ..track = track
-            ..itemType = itemType,
-          from: trackStateProvider,
-          name: r'trackStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$trackStateHash,
-          dependencies: TrackStateFamily._dependencies,
-          allTransitiveDependencies:
-              TrackStateFamily._allTransitiveDependencies,
-          track: track,
-          itemType: itemType,
-        );
+  TrackStateProvider({Track? track, required ItemType? itemType})
+    : this._internal(
+        () => TrackState()
+          ..track = track
+          ..itemType = itemType,
+        from: trackStateProvider,
+        name: r'trackStateProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$trackStateHash,
+        dependencies: TrackStateFamily._dependencies,
+        allTransitiveDependencies: TrackStateFamily._allTransitiveDependencies,
+        track: track,
+        itemType: itemType,
+      );
 
   TrackStateProvider._internal(
     super._createNotifier, {
@@ -123,13 +107,8 @@ class TrackStateProvider
   final ItemType? itemType;
 
   @override
-  Track runNotifierBuild(
-    covariant TrackState notifier,
-  ) {
-    return notifier.build(
-      track: track,
-      itemType: itemType,
-    );
+  Track runNotifierBuild(covariant TrackState notifier) {
+    return notifier.build(track: track, itemType: itemType);
   }
 
   @override
@@ -199,16 +178,19 @@ String _$lastTrackerLibraryLocationStateHash() =>
 
 /// See also [LastTrackerLibraryLocationState].
 @ProviderFor(LastTrackerLibraryLocationState)
-final lastTrackerLibraryLocationStateProvider = AutoDisposeNotifierProvider<
-    LastTrackerLibraryLocationState, (int, bool)>.internal(
-  LastTrackerLibraryLocationState.new,
-  name: r'lastTrackerLibraryLocationStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$lastTrackerLibraryLocationStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+final lastTrackerLibraryLocationStateProvider =
+    AutoDisposeNotifierProvider<
+      LastTrackerLibraryLocationState,
+      (int, bool)
+    >.internal(
+      LastTrackerLibraryLocationState.new,
+      name: r'lastTrackerLibraryLocationStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$lastTrackerLibraryLocationStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$LastTrackerLibraryLocationState = AutoDisposeNotifier<(int, bool)>;
 // ignore_for_file: type=lint

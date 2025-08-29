@@ -6,8 +6,11 @@ import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_library_screen.dart';
 import 'package:mangayomi/services/trackers/anilist.dart';
+import 'package:mangayomi/services/trackers/base_tracker.dart';
 import 'package:mangayomi/services/trackers/kitsu.dart';
 import 'package:mangayomi/services/trackers/myanimelist.dart';
+import 'package:mangayomi/services/trackers/simkl.dart';
+import 'package:mangayomi/services/trackers/trakt_tv.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'track_state_providers.g.dart';
 
@@ -18,7 +21,7 @@ class TrackState extends _$TrackState {
     return track!;
   }
 
-  dynamic getNotifier(int syncId) {
+  BaseTracker getNotifier(int syncId) {
     return switch (syncId) {
       1 => ref.read(
         myAnimeListProvider(syncId: syncId, itemType: itemType).notifier,
@@ -27,6 +30,10 @@ class TrackState extends _$TrackState {
         anilistProvider(syncId: syncId, itemType: itemType).notifier,
       ),
       3 => ref.read(kitsuProvider(syncId: syncId, itemType: itemType).notifier),
+      4 => ref.read(simklProvider(syncId: syncId, itemType: itemType).notifier),
+      5 => ref.read(
+        traktTvProvider(syncId: syncId, itemType: itemType).notifier,
+      ),
       _ => throw Exception('Unsupported syncId: $syncId'),
     };
   }
@@ -106,13 +113,17 @@ class TrackState extends _$TrackState {
     );
     final tracker = getNotifier(syncId);
 
-    if (syncId == 1) {
+    if (syncId == TrackerProviders.myAnimeList.syncId) {
       findManga = await tracker.findLibItem(newTrack, _isManga);
-    } else if (syncId == 2) {
+    } else if (syncId == TrackerProviders.anilist.syncId) {
       findManga = await tracker.findLibItem(newTrack, _isManga);
       findManga ??= await tracker.update(newTrack, _isManga);
-    } else if (syncId == 3) {
+    } else if (syncId == TrackerProviders.kitsu.syncId) {
       findManga = await tracker.update(newTrack, _isManga);
+    } else if (syncId == TrackerProviders.simkl.syncId) {
+      findManga = await tracker.findLibItem(newTrack, _isManga);
+    } else if (syncId == TrackerProviders.trakt.syncId) {
+      findManga = await tracker.findLibItem(newTrack, _isManga);
     }
     writeBack(findManga!);
   }
@@ -157,6 +168,12 @@ class TrackState extends _$TrackState {
     final syncId = track!.syncId!;
     final tracker = getNotifier(syncId);
     return await tracker.fetchUserData(isManga: _isManga);
+  }
+
+  Future<bool> checkRefresh() async {
+    final syncId = track!.syncId!;
+    final tracker = getNotifier(syncId);
+    return await tracker.checkRefresh();
   }
 }
 

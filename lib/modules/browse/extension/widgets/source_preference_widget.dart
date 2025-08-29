@@ -45,15 +45,15 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                     showDialog(
                       context: context,
                       builder: (context) => EditTextDialogWidget(
-                        text: pref.value!,
+                        text: pref.value ?? "",
                         onChanged: (value) {
                           setState(() {
                             pref.value = value;
                           });
                           setPreferenceSetting(preference, widget.source);
                         },
-                        dialogTitle: pref.dialogTitle!,
-                        dialogMessage: pref.dialogMessage!,
+                        dialogTitle: pref.dialogTitle ?? "",
+                        dialogMessage: pref.dialogMessage ?? "",
                       ),
                     );
                   },
@@ -127,23 +127,25 @@ class _SourcePreferenceWidgetState extends State<SourcePreferenceWidget> {
                         ),
                         content: SizedBox(
                           width: context.width(0.8),
-                          child: SuperListView.builder(
-                            shrinkWrap: true,
-                            itemCount: pref.entries!.length,
-                            itemBuilder: (context, index) {
-                              return RadioListTile(
-                                dense: true,
-                                contentPadding: const EdgeInsets.all(0),
-                                value: index,
-                                groupValue: pref.valueIndex,
-                                onChanged: (value) {
-                                  Navigator.pop(context, index);
-                                },
-                                title: Row(
-                                  children: [Text(pref.entries![index])],
-                                ),
-                              );
+                          child: RadioGroup(
+                            groupValue: pref.valueIndex,
+                            onChanged: (value) {
+                              Navigator.pop(context, value);
                             },
+                            child: SuperListView.builder(
+                              shrinkWrap: true,
+                              itemCount: pref.entries!.length,
+                              itemBuilder: (context, index) {
+                                return RadioListTile(
+                                  dense: true,
+                                  contentPadding: const EdgeInsets.all(0),
+                                  value: index,
+                                  title: Row(
+                                    children: [Text(pref.entries![index])],
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                         ),
                         actions: [

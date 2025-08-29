@@ -12,14 +12,16 @@ import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/manga/reader/providers/crop_borders_provider.dart';
+import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/manga/reader/double_columm_view_center.dart';
 import 'package:mangayomi/modules/manga/reader/providers/color_filter_provider.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/color_filter_widget.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/custom_popup_menu_button.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/custom_value_indicator_shape.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -399,13 +401,21 @@ class _MangaChapterPageGalleryState
                           context.l10n.share,
                           Icons.share_outlined,
                           () async {
-                            await Share.shareXFiles([
-                              XFile.fromData(
-                                imageBytes,
-                                name: name,
-                                mimeType: 'image/png',
-                              ),
-                            ]);
+                            if (context.mounted) {
+                              final box =
+                                  context.findRenderObject() as RenderBox?;
+                              await Share.shareXFiles(
+                                [
+                                  XFile.fromData(
+                                    imageBytes,
+                                    name: name,
+                                    mimeType: 'image/png',
+                                  ),
+                                ],
+                                sharePositionOrigin:
+                                    box!.localToGlobal(Offset.zero) & box.size,
+                              );
+                            }
                           },
                         ),
                         button(
@@ -640,7 +650,7 @@ class _MangaChapterPageGalleryState
                                     reverse: _isReverseHorizontal,
                                     physics: const ClampingScrollPhysics(),
                                     canScrollPage: (_) {
-                                      return _horizontalScaleValue == 1.0;
+                                      return true;
                                     },
                                     itemBuilder: (context, index) {
                                       if (index < _uChapDataPreload.length &&
@@ -693,9 +703,7 @@ class _MangaChapterPageGalleryState
                                     reverse: _isReverseHorizontal,
                                     physics: const ClampingScrollPhysics(),
                                     canScrollPage: (gestureDetails) {
-                                      return gestureDetails != null
-                                          ? !(gestureDetails.totalScale! > 1.0)
-                                          : true;
+                                      return true;
                                     },
                                     itemBuilder: (BuildContext context, int index) {
                                       if (_uChapDataPreload[index]
@@ -1487,7 +1495,11 @@ class _MangaChapterPageGalleryState
                 IconButton(
                   onPressed: () async {
                     final manga = chapter.manga.value!;
-                    final source = getSource(manga.lang!, manga.source!)!;
+                    final source = getSource(
+                      manga.lang!,
+                      manga.source!,
+                      manga.sourceId,
+                    )!;
                     final url =
                         "${source.baseUrl}${chapter.url!.getUrlWithoutDomain}";
                     Map<String, dynamic> data = {
@@ -1633,7 +1645,7 @@ class _MangaChapterPageGalleryState
                                       return SliderTheme(
                                         data: SliderTheme.of(context).copyWith(
                                           valueIndicatorShape:
-                                              _CustomValueIndicatorShape(
+                                              CustomValueIndicatorShape(
                                                 tranform: _isReverseHorizontal,
                                               ),
                                           overlayShape:
@@ -2502,192 +2514,5 @@ class _MangaChapterPageGalleryState
       _autoPagescroll();
       _autoScroll.value = true;
     }
-  }
-}
-
-class UChapDataPreload {
-  Chapter? chapter;
-  Directory? directory;
-  PageUrl? pageUrl;
-  bool? isLocale;
-  Uint8List? archiveImage;
-  int? index;
-  GetChapterPagesModel? chapterUrlModel;
-  int? pageIndex;
-  Uint8List? cropImage;
-  bool isTransitionPage;
-  Chapter? nextChapter;
-  String? mangaName;
-  bool? isLastChapter;
-
-  UChapDataPreload(
-    this.chapter,
-    this.directory,
-    this.pageUrl,
-    this.isLocale,
-    this.archiveImage,
-    this.index,
-    this.chapterUrlModel,
-    this.pageIndex, {
-    this.cropImage,
-    this.isTransitionPage = false,
-    this.nextChapter,
-    this.mangaName,
-    this.isLastChapter = false,
-  });
-
-  UChapDataPreload.transition({
-    required Chapter currentChapter,
-    required this.nextChapter,
-    required String this.mangaName,
-    required int this.pageIndex,
-    this.isLastChapter = false,
-  }) : chapter = currentChapter,
-       isTransitionPage = true,
-       directory = null,
-       pageUrl = null,
-       isLocale = null,
-       archiveImage = null,
-       index = null,
-       chapterUrlModel = null,
-       cropImage = null;
-}
-
-class CustomPopupMenuButton<T> extends StatelessWidget {
-  final String label;
-  final String title;
-  final ValueChanged<T> onSelected;
-  final T value;
-  final List<T> list;
-  final String Function(T) itemText;
-  const CustomPopupMenuButton({
-    super.key,
-    required this.label,
-    required this.title,
-    required this.onSelected,
-    required this.value,
-    required this.list,
-    required this.itemText,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: PopupMenuButton(
-        popUpAnimationStyle: popupAnimationStyle,
-        tooltip: "",
-        offset: Offset.fromDirection(1),
-        color: Colors.black,
-        onSelected: onSelected,
-        itemBuilder: (context) => [
-          for (var d in list)
-            PopupMenuItem(
-              value: d,
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.check,
-                    color: d == value ? Colors.white : Colors.transparent,
-                  ),
-                  const SizedBox(width: 7),
-                  Text(
-                    itemText(d),
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ],
-              ),
-            ),
-        ],
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    color: Theme.of(
-                      context,
-                    ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-              ),
-              Row(
-                children: [
-                  Text(title),
-                  const SizedBox(width: 20),
-                  const Icon(Icons.keyboard_arrow_down_outlined),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _CustomValueIndicatorShape extends SliderComponentShape {
-  final _indicatorShape = const PaddleSliderValueIndicatorShape();
-  final bool tranform;
-  const _CustomValueIndicatorShape({this.tranform = false});
-  @override
-  Size getPreferredSize(bool isEnabled, bool isDiscrete) {
-    return const Size(40, 40);
-  }
-
-  @override
-  void paint(
-    PaintingContext context,
-    Offset center, {
-    required Animation<double> activationAnimation,
-    required Animation<double> enableAnimation,
-    required bool isDiscrete,
-    required TextPainter labelPainter,
-    required RenderBox parentBox,
-    required SliderThemeData sliderTheme,
-    required TextDirection textDirection,
-    required double value,
-    required double textScaleFactor,
-    required Size sizeWithOverflow,
-  }) {
-    final textSpan = TextSpan(
-      text: labelPainter.text?.toPlainText(),
-      style: sliderTheme.valueIndicatorTextStyle,
-    );
-
-    final textPainter = TextPainter(
-      text: textSpan,
-      textAlign: labelPainter.textAlign,
-      textDirection: textDirection,
-    );
-
-    textPainter.layout();
-
-    context.canvas.save();
-    context.canvas.translate(center.dx, center.dy);
-    context.canvas.scale(tranform ? -1.0 : 1.0, 1.0);
-    context.canvas.translate(-center.dx, -center.dy);
-
-    _indicatorShape.paint(
-      context,
-      center,
-      activationAnimation: activationAnimation,
-      enableAnimation: enableAnimation,
-      labelPainter: textPainter,
-      parentBox: parentBox,
-      sliderTheme: sliderTheme,
-      value: value,
-      textScaleFactor: textScaleFactor,
-      sizeWithOverflow: sizeWithOverflow,
-      isDiscrete: isDiscrete,
-      textDirection: textDirection,
-    );
-
-    context.canvas.restore();
   }
 }

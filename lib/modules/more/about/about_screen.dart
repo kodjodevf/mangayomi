@@ -1,12 +1,19 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/about/providers/check_for_update.dart';
 import 'package:mangayomi/modules/more/about/providers/get_package_info.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:path/path.dart' as path;
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AboutScreen extends ConsumerWidget {
@@ -72,6 +79,35 @@ class AboutScreen extends ConsumerWidget {
                           );
                         },
                         title: Text(l10n.check_for_update),
+                      ),
+                      ListTile(
+                        onTap: () async {
+                          final storage = StorageProvider();
+                          final directory = await storage.getDefaultDirectory();
+                          final file = File(
+                            path.join(directory!.path, 'logs.txt'),
+                          );
+                          if (await file.exists()) {
+                            if (Platform.isLinux) {
+                              await Clipboard.setData(
+                                ClipboardData(text: file.path),
+                              );
+                            }
+                            if (context.mounted) {
+                              final box =
+                                  context.findRenderObject() as RenderBox?;
+                              Share.shareXFiles(
+                                [XFile(file.path)],
+                                text: "log.txt",
+                                sharePositionOrigin:
+                                    box!.localToGlobal(Offset.zero) & box.size,
+                              );
+                            }
+                          } else {
+                            botToast(l10n.no_app_logs);
+                          }
+                        },
+                        title: Text(l10n.share_app_logs),
                       ),
                       // ListTile(
                       //   onTap: () {},

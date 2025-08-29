@@ -26,7 +26,7 @@ class BackupFrequencyOptionsState extends _$BackupFrequencyOptionsState {
   @override
   List<int> build() {
     return isar.settings.getSync(227)!.backupListOptions ??
-        [0, 1, 2, 3, 4, 5, 6, 7];
+        [0, 1, 2, 3, 4, 5, 6, 7, 10];
   }
 
   void set(List<int> values) {

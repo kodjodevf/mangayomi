@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
+import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/eval/javascript/http.dart';
@@ -9,7 +11,6 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
-import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
@@ -62,6 +63,7 @@ Future<GetChapterPagesModel> getChapterPages(
     final source = getSource(
       chapter.manga.value!.lang!,
       chapter.manga.value!.source!,
+      chapter.manga.value!.sourceId,
     )!;
     if ((isarPageUrls?.urls?.isNotEmpty ?? false) &&
         (isarPageUrls?.chapterUrl ?? chapter.url) == chapter.url) {
@@ -74,7 +76,10 @@ Future<GetChapterPagesModel> getChapterPages(
         pageUrls.add(PageUrl(isarPageUrls.urls![i], headers: headers));
       }
     } else {
-      pageUrls = await getExtensionService(source).getPageList(chapter.url!);
+      pageUrls = await getExtensionService(
+        source,
+        ref.read(androidProxyServerStateProvider),
+      ).getPageList(chapter.url!);
     }
   }
 

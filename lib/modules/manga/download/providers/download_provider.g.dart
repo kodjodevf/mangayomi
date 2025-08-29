@@ -40,21 +40,15 @@ class AddDownloadToQueueFamily extends Family<AsyncValue<void>> {
   const AddDownloadToQueueFamily();
 
   /// See also [addDownloadToQueue].
-  AddDownloadToQueueProvider call({
-    required Chapter chapter,
-  }) {
-    return AddDownloadToQueueProvider(
-      chapter: chapter,
-    );
+  AddDownloadToQueueProvider call({required Chapter chapter}) {
+    return AddDownloadToQueueProvider(chapter: chapter);
   }
 
   @override
   AddDownloadToQueueProvider getProviderOverride(
     covariant AddDownloadToQueueProvider provider,
   ) {
-    return call(
-      chapter: provider.chapter,
-    );
+    return call(chapter: provider.chapter);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -75,24 +69,20 @@ class AddDownloadToQueueFamily extends Family<AsyncValue<void>> {
 /// See also [addDownloadToQueue].
 class AddDownloadToQueueProvider extends AutoDisposeFutureProvider<void> {
   /// See also [addDownloadToQueue].
-  AddDownloadToQueueProvider({
-    required Chapter chapter,
-  }) : this._internal(
-          (ref) => addDownloadToQueue(
-            ref as AddDownloadToQueueRef,
-            chapter: chapter,
-          ),
-          from: addDownloadToQueueProvider,
-          name: r'addDownloadToQueueProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$addDownloadToQueueHash,
-          dependencies: AddDownloadToQueueFamily._dependencies,
-          allTransitiveDependencies:
-              AddDownloadToQueueFamily._allTransitiveDependencies,
-          chapter: chapter,
-        );
+  AddDownloadToQueueProvider({required Chapter chapter})
+    : this._internal(
+        (ref) =>
+            addDownloadToQueue(ref as AddDownloadToQueueRef, chapter: chapter),
+        from: addDownloadToQueueProvider,
+        name: r'addDownloadToQueueProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$addDownloadToQueueHash,
+        dependencies: AddDownloadToQueueFamily._dependencies,
+        allTransitiveDependencies:
+            AddDownloadToQueueFamily._allTransitiveDependencies,
+        chapter: chapter,
+      );
 
   AddDownloadToQueueProvider._internal(
     super._createNotifier, {
@@ -151,14 +141,15 @@ mixin AddDownloadToQueueRef on AutoDisposeFutureProviderRef<void> {
 }
 
 class _AddDownloadToQueueProviderElement
-    extends AutoDisposeFutureProviderElement<void> with AddDownloadToQueueRef {
+    extends AutoDisposeFutureProviderElement<void>
+    with AddDownloadToQueueRef {
   _AddDownloadToQueueProviderElement(super.provider);
 
   @override
   Chapter get chapter => (origin as AddDownloadToQueueProvider).chapter;
 }
 
-String _$downloadChapterHash() => r'4d008f26f03bf21010742b73cf83643c61f66c2b';
+String _$downloadChapterHash() => r'5eb401736efdfb2990fda6e2d97160aaeb94aec1';
 
 /// See also [downloadChapter].
 @ProviderFor(downloadChapter)
@@ -216,25 +207,24 @@ class DownloadChapterProvider extends AutoDisposeFutureProvider<void> {
     bool? useWifi,
     void Function()? callback,
   }) : this._internal(
-          (ref) => downloadChapter(
-            ref as DownloadChapterRef,
-            chapter: chapter,
-            useWifi: useWifi,
-            callback: callback,
-          ),
-          from: downloadChapterProvider,
-          name: r'downloadChapterProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$downloadChapterHash,
-          dependencies: DownloadChapterFamily._dependencies,
-          allTransitiveDependencies:
-              DownloadChapterFamily._allTransitiveDependencies,
-          chapter: chapter,
-          useWifi: useWifi,
-          callback: callback,
-        );
+         (ref) => downloadChapter(
+           ref as DownloadChapterRef,
+           chapter: chapter,
+           useWifi: useWifi,
+           callback: callback,
+         ),
+         from: downloadChapterProvider,
+         name: r'downloadChapterProvider',
+         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+             ? null
+             : _$downloadChapterHash,
+         dependencies: DownloadChapterFamily._dependencies,
+         allTransitiveDependencies:
+             DownloadChapterFamily._allTransitiveDependencies,
+         chapter: chapter,
+         useWifi: useWifi,
+         callback: callback,
+       );
 
   DownloadChapterProvider._internal(
     super._createNotifier, {
@@ -310,7 +300,8 @@ mixin DownloadChapterRef on AutoDisposeFutureProviderRef<void> {
 }
 
 class _DownloadChapterProviderElement
-    extends AutoDisposeFutureProviderElement<void> with DownloadChapterRef {
+    extends AutoDisposeFutureProviderElement<void>
+    with DownloadChapterRef {
   _DownloadChapterProviderElement(super.provider);
 
   @override
@@ -333,21 +324,15 @@ class ProcessDownloadsFamily extends Family<AsyncValue<void>> {
   const ProcessDownloadsFamily();
 
   /// See also [processDownloads].
-  ProcessDownloadsProvider call({
-    bool? useWifi,
-  }) {
-    return ProcessDownloadsProvider(
-      useWifi: useWifi,
-    );
+  ProcessDownloadsProvider call({bool? useWifi}) {
+    return ProcessDownloadsProvider(useWifi: useWifi);
   }
 
   @override
   ProcessDownloadsProvider getProviderOverride(
     covariant ProcessDownloadsProvider provider,
   ) {
-    return call(
-      useWifi: provider.useWifi,
-    );
+    return call(useWifi: provider.useWifi);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -368,24 +353,19 @@ class ProcessDownloadsFamily extends Family<AsyncValue<void>> {
 /// See also [processDownloads].
 class ProcessDownloadsProvider extends AutoDisposeFutureProvider<void> {
   /// See also [processDownloads].
-  ProcessDownloadsProvider({
-    bool? useWifi,
-  }) : this._internal(
-          (ref) => processDownloads(
-            ref as ProcessDownloadsRef,
-            useWifi: useWifi,
-          ),
-          from: processDownloadsProvider,
-          name: r'processDownloadsProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$processDownloadsHash,
-          dependencies: ProcessDownloadsFamily._dependencies,
-          allTransitiveDependencies:
-              ProcessDownloadsFamily._allTransitiveDependencies,
-          useWifi: useWifi,
-        );
+  ProcessDownloadsProvider({bool? useWifi})
+    : this._internal(
+        (ref) => processDownloads(ref as ProcessDownloadsRef, useWifi: useWifi),
+        from: processDownloadsProvider,
+        name: r'processDownloadsProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$processDownloadsHash,
+        dependencies: ProcessDownloadsFamily._dependencies,
+        allTransitiveDependencies:
+            ProcessDownloadsFamily._allTransitiveDependencies,
+        useWifi: useWifi,
+      );
 
   ProcessDownloadsProvider._internal(
     super._createNotifier, {
@@ -444,11 +424,13 @@ mixin ProcessDownloadsRef on AutoDisposeFutureProviderRef<void> {
 }
 
 class _ProcessDownloadsProviderElement
-    extends AutoDisposeFutureProviderElement<void> with ProcessDownloadsRef {
+    extends AutoDisposeFutureProviderElement<void>
+    with ProcessDownloadsRef {
   _ProcessDownloadsProviderElement(super.provider);
 
   @override
   bool? get useWifi => (origin as ProcessDownloadsProvider).useWifi;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -3,7 +3,9 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/anime/anime_player_view.dart';
@@ -11,11 +13,19 @@ import 'package:mangayomi/modules/browse/extension/edit_code.dart';
 import 'package:mangayomi/modules/browse/extension/extension_detail.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/create_extension.dart';
 import 'package:mangayomi/modules/browse/sources/sources_filter_screen.dart';
+import 'package:mangayomi/modules/calendar/calendar_screen.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/migrate_screen.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/recommendation_screen.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/watch_order_screen.dart';
 import 'package:mangayomi/modules/more/data_and_storage/create_backup.dart';
 import 'package:mangayomi/modules/more/data_and_storage/data_and_storage.dart';
 import 'package:mangayomi/modules/more/settings/appearance/custom_navigation_settings.dart';
 import 'package:mangayomi/modules/more/settings/browse/source_repositories.dart';
+import 'package:mangayomi/modules/more/settings/player/custom_button_screen.dart';
+import 'package:mangayomi/modules/more/settings/player/player_advanced_screen.dart';
+import 'package:mangayomi/modules/more/settings/player/player_audio_screen.dart';
+import 'package:mangayomi/modules/more/settings/player/player_decoder_screen.dart';
+import 'package:mangayomi/modules/more/settings/player/player_overview_screen.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/more/statistics/statistics_screen.dart';
 import 'package:mangayomi/modules/novel/novel_reader_view.dart';
@@ -168,9 +178,9 @@ class RouterNotifier extends ChangeNotifier {
       name: "extension_detail",
       builder: (source) => ExtensionDetail(source: source),
     ),
-    _genericRoute<ItemType>(
+    _genericRoute<(String?, ItemType)>(
       name: "globalSearch",
-      builder: (itemType) => GlobalSearchScreen(itemType: itemType),
+      builder: (data) => GlobalSearchScreen(search: data.$1, itemType: data.$2),
     ),
     _genericRoute(name: "about", child: const AboutScreen()),
     _genericRoute(name: "track", child: const TrackScreen()),
@@ -203,6 +213,7 @@ class RouterNotifier extends ChangeNotifier {
       name: "trackingDetail",
       builder: (trackerPref) => TrackingDetail(trackerPref: trackerPref),
     ),
+    _genericRoute(name: "playerOverview", child: const PlayerOverviewScreen()),
     _genericRoute(name: "playerMode", child: const PlayerScreen()),
     _genericRoute<int>(
       name: "codeEditor",
@@ -214,6 +225,23 @@ class RouterNotifier extends ChangeNotifier {
       name: "customNavigationSettings",
       child: const CustomNavigationSettings(),
     ),
+    _genericRoute(
+      name: "customButtonScreen",
+      child: const CustomButtonScreen(),
+    ),
+    _genericRoute(
+      name: "playerDecoderScreen",
+      child: const PlayerDecoderScreen(),
+    ),
+    _genericRoute(name: "playerAudioScreen", child: const PlayerAudioScreen()),
+    _genericRoute(
+      name: "playerAdvancedScreen",
+      child: const PlayerAdvancedScreen(),
+    ),
+    _genericRoute<ItemType?>(
+      name: "calendarScreen",
+      builder: (itemType) => CalendarScreen(itemType: itemType),
+    ),
     _genericRoute<Manga>(
       name: "migrate",
       builder: (manga) => MigrationScreen(manga: manga),
@@ -221,6 +249,18 @@ class RouterNotifier extends ChangeNotifier {
     _genericRoute<(Manga, TrackSearch)>(
       name: "migrate/tracker",
       builder: (data) => MigrationScreen(manga: data.$1, trackSearch: data.$2),
+    ),
+    _genericRoute<(String, ItemType, AlgorithmWeights)>(
+      name: "recommendations",
+      builder: (data) => RecommendationScreen(
+        name: data.$1,
+        itemType: data.$2,
+        algorithmWeights: data.$3,
+      ),
+    ),
+    _genericRoute<(String, Track?)>(
+      name: "watchOrder",
+      builder: (data) => WatchOrderScreen(name: data.$1, track: data.$2),
     ),
   ];
 

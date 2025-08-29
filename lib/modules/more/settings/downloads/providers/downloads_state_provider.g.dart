@@ -12,14 +12,14 @@ String _$onlyOnWifiStateHash() => r'ea6df18bb5dc5019a00fca258d45cb0dfee0dffe';
 @ProviderFor(OnlyOnWifiState)
 final onlyOnWifiStateProvider =
     AutoDisposeNotifierProvider<OnlyOnWifiState, bool>.internal(
-  OnlyOnWifiState.new,
-  name: r'onlyOnWifiStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$onlyOnWifiStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      OnlyOnWifiState.new,
+      name: r'onlyOnWifiStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$onlyOnWifiStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$OnlyOnWifiState = AutoDisposeNotifier<bool>;
 String _$saveAsCBZArchiveStateHash() =>
@@ -29,14 +29,14 @@ String _$saveAsCBZArchiveStateHash() =>
 @ProviderFor(SaveAsCBZArchiveState)
 final saveAsCBZArchiveStateProvider =
     AutoDisposeNotifierProvider<SaveAsCBZArchiveState, bool>.internal(
-  SaveAsCBZArchiveState.new,
-  name: r'saveAsCBZArchiveStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$saveAsCBZArchiveStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      SaveAsCBZArchiveState.new,
+      name: r'saveAsCBZArchiveStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$saveAsCBZArchiveStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$SaveAsCBZArchiveState = AutoDisposeNotifier<bool>;
 String _$downloadLocationStateHash() =>
@@ -44,16 +44,19 @@ String _$downloadLocationStateHash() =>
 
 /// See also [DownloadLocationState].
 @ProviderFor(DownloadLocationState)
-final downloadLocationStateProvider = AutoDisposeNotifierProvider<
-    DownloadLocationState, (String, String)>.internal(
-  DownloadLocationState.new,
-  name: r'downloadLocationStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$downloadLocationStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+final downloadLocationStateProvider =
+    AutoDisposeNotifierProvider<
+      DownloadLocationState,
+      (String, String)
+    >.internal(
+      DownloadLocationState.new,
+      name: r'downloadLocationStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$downloadLocationStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$DownloadLocationState = AutoDisposeNotifier<(String, String)>;
 String _$concurrentDownloadsStateHash() =>
@@ -63,14 +66,14 @@ String _$concurrentDownloadsStateHash() =>
 @ProviderFor(ConcurrentDownloadsState)
 final concurrentDownloadsStateProvider =
     AutoDisposeNotifierProvider<ConcurrentDownloadsState, int>.internal(
-  ConcurrentDownloadsState.new,
-  name: r'concurrentDownloadsStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$concurrentDownloadsStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      ConcurrentDownloadsState.new,
+      name: r'concurrentDownloadsStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$concurrentDownloadsStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$ConcurrentDownloadsState = AutoDisposeNotifier<int>;
 // ignore_for_file: type=lint

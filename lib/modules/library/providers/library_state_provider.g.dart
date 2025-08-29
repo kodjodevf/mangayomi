@@ -35,10 +35,7 @@ abstract class _$LibraryDisplayTypeState
   late final ItemType itemType;
   late final Settings settings;
 
-  DisplayType build({
-    required ItemType itemType,
-    required Settings settings,
-  });
+  DisplayType build({required ItemType itemType, required Settings settings});
 }
 
 /// See also [LibraryDisplayTypeState].
@@ -65,10 +62,7 @@ class LibraryDisplayTypeStateFamily extends Family<DisplayType> {
   LibraryDisplayTypeStateProvider getProviderOverride(
     covariant LibraryDisplayTypeStateProvider provider,
   ) {
-    return call(
-      itemType: provider.itemType,
-      settings: provider.settings,
-    );
+    return call(itemType: provider.itemType, settings: provider.settings);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -87,28 +81,28 @@ class LibraryDisplayTypeStateFamily extends Family<DisplayType> {
 }
 
 /// See also [LibraryDisplayTypeState].
-class LibraryDisplayTypeStateProvider extends AutoDisposeNotifierProviderImpl<
-    LibraryDisplayTypeState, DisplayType> {
+class LibraryDisplayTypeStateProvider
+    extends
+        AutoDisposeNotifierProviderImpl<LibraryDisplayTypeState, DisplayType> {
   /// See also [LibraryDisplayTypeState].
   LibraryDisplayTypeStateProvider({
     required ItemType itemType,
     required Settings settings,
   }) : this._internal(
-          () => LibraryDisplayTypeState()
-            ..itemType = itemType
-            ..settings = settings,
-          from: libraryDisplayTypeStateProvider,
-          name: r'libraryDisplayTypeStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$libraryDisplayTypeStateHash,
-          dependencies: LibraryDisplayTypeStateFamily._dependencies,
-          allTransitiveDependencies:
-              LibraryDisplayTypeStateFamily._allTransitiveDependencies,
-          itemType: itemType,
-          settings: settings,
-        );
+         () => LibraryDisplayTypeState()
+           ..itemType = itemType
+           ..settings = settings,
+         from: libraryDisplayTypeStateProvider,
+         name: r'libraryDisplayTypeStateProvider',
+         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+             ? null
+             : _$libraryDisplayTypeStateHash,
+         dependencies: LibraryDisplayTypeStateFamily._dependencies,
+         allTransitiveDependencies:
+             LibraryDisplayTypeStateFamily._allTransitiveDependencies,
+         itemType: itemType,
+         settings: settings,
+       );
 
   LibraryDisplayTypeStateProvider._internal(
     super._createNotifier, {
@@ -125,13 +119,8 @@ class LibraryDisplayTypeStateProvider extends AutoDisposeNotifierProviderImpl<
   final Settings settings;
 
   @override
-  DisplayType runNotifierBuild(
-    covariant LibraryDisplayTypeState notifier,
-  ) {
-    return notifier.build(
-      itemType: itemType,
-      settings: settings,
-    );
+  DisplayType runNotifierBuild(covariant LibraryDisplayTypeState notifier) {
+    return notifier.build(itemType: itemType, settings: settings);
   }
 
   @override
@@ -155,7 +144,7 @@ class LibraryDisplayTypeStateProvider extends AutoDisposeNotifierProviderImpl<
 
   @override
   AutoDisposeNotifierProviderElement<LibraryDisplayTypeState, DisplayType>
-      createElement() {
+  createElement() {
     return _LibraryDisplayTypeStateProviderElement(this);
   }
 
@@ -188,8 +177,9 @@ mixin LibraryDisplayTypeStateRef
 }
 
 class _LibraryDisplayTypeStateProviderElement
-    extends AutoDisposeNotifierProviderElement<LibraryDisplayTypeState,
-        DisplayType> with LibraryDisplayTypeStateRef {
+    extends
+        AutoDisposeNotifierProviderElement<LibraryDisplayTypeState, DisplayType>
+    with LibraryDisplayTypeStateRef {
   _LibraryDisplayTypeStateProviderElement(super.provider);
 
   @override
@@ -205,9 +195,7 @@ abstract class _$LibraryGridSizeState
     extends BuildlessAutoDisposeNotifier<int?> {
   late final ItemType itemType;
 
-  int? build({
-    required ItemType itemType,
-  });
+  int? build({required ItemType itemType});
 }
 
 /// See also [LibraryGridSizeState].
@@ -220,21 +208,15 @@ class LibraryGridSizeStateFamily extends Family<int?> {
   const LibraryGridSizeStateFamily();
 
   /// See also [LibraryGridSizeState].
-  LibraryGridSizeStateProvider call({
-    required ItemType itemType,
-  }) {
-    return LibraryGridSizeStateProvider(
-      itemType: itemType,
-    );
+  LibraryGridSizeStateProvider call({required ItemType itemType}) {
+    return LibraryGridSizeStateProvider(itemType: itemType);
   }
 
   @override
   LibraryGridSizeStateProvider getProviderOverride(
     covariant LibraryGridSizeStateProvider provider,
   ) {
-    return call(
-      itemType: provider.itemType,
-    );
+    return call(itemType: provider.itemType);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -256,21 +238,19 @@ class LibraryGridSizeStateFamily extends Family<int?> {
 class LibraryGridSizeStateProvider
     extends AutoDisposeNotifierProviderImpl<LibraryGridSizeState, int?> {
   /// See also [LibraryGridSizeState].
-  LibraryGridSizeStateProvider({
-    required ItemType itemType,
-  }) : this._internal(
-          () => LibraryGridSizeState()..itemType = itemType,
-          from: libraryGridSizeStateProvider,
-          name: r'libraryGridSizeStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$libraryGridSizeStateHash,
-          dependencies: LibraryGridSizeStateFamily._dependencies,
-          allTransitiveDependencies:
-              LibraryGridSizeStateFamily._allTransitiveDependencies,
-          itemType: itemType,
-        );
+  LibraryGridSizeStateProvider({required ItemType itemType})
+    : this._internal(
+        () => LibraryGridSizeState()..itemType = itemType,
+        from: libraryGridSizeStateProvider,
+        name: r'libraryGridSizeStateProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$libraryGridSizeStateHash,
+        dependencies: LibraryGridSizeStateFamily._dependencies,
+        allTransitiveDependencies:
+            LibraryGridSizeStateFamily._allTransitiveDependencies,
+        itemType: itemType,
+      );
 
   LibraryGridSizeStateProvider._internal(
     super._createNotifier, {
@@ -285,12 +265,8 @@ class LibraryGridSizeStateProvider
   final ItemType itemType;
 
   @override
-  int? runNotifierBuild(
-    covariant LibraryGridSizeState notifier,
-  ) {
-    return notifier.build(
-      itemType: itemType,
-    );
+  int? runNotifierBuild(covariant LibraryGridSizeState notifier) {
+    return notifier.build(itemType: itemType);
   }
 
   @override
@@ -311,7 +287,7 @@ class LibraryGridSizeStateProvider
 
   @override
   AutoDisposeNotifierProviderElement<LibraryGridSizeState, int?>
-      createElement() {
+  createElement() {
     return _LibraryGridSizeStateProviderElement(this);
   }
 
@@ -418,23 +394,22 @@ class MangaFilterDownloadedStateProvider
     required ItemType itemType,
     required Settings settings,
   }) : this._internal(
-          () => MangaFilterDownloadedState()
-            ..mangaList = mangaList
-            ..itemType = itemType
-            ..settings = settings,
-          from: mangaFilterDownloadedStateProvider,
-          name: r'mangaFilterDownloadedStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$mangaFilterDownloadedStateHash,
-          dependencies: MangaFilterDownloadedStateFamily._dependencies,
-          allTransitiveDependencies:
-              MangaFilterDownloadedStateFamily._allTransitiveDependencies,
-          mangaList: mangaList,
-          itemType: itemType,
-          settings: settings,
-        );
+         () => MangaFilterDownloadedState()
+           ..mangaList = mangaList
+           ..itemType = itemType
+           ..settings = settings,
+         from: mangaFilterDownloadedStateProvider,
+         name: r'mangaFilterDownloadedStateProvider',
+         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+             ? null
+             : _$mangaFilterDownloadedStateHash,
+         dependencies: MangaFilterDownloadedStateFamily._dependencies,
+         allTransitiveDependencies:
+             MangaFilterDownloadedStateFamily._allTransitiveDependencies,
+         mangaList: mangaList,
+         itemType: itemType,
+         settings: settings,
+       );
 
   MangaFilterDownloadedStateProvider._internal(
     super._createNotifier, {
@@ -453,9 +428,7 @@ class MangaFilterDownloadedStateProvider
   final Settings settings;
 
   @override
-  int runNotifierBuild(
-    covariant MangaFilterDownloadedState notifier,
-  ) {
+  int runNotifierBuild(covariant MangaFilterDownloadedState notifier) {
     return notifier.build(
       mangaList: mangaList,
       itemType: itemType,
@@ -486,7 +459,7 @@ class MangaFilterDownloadedStateProvider
 
   @override
   AutoDisposeNotifierProviderElement<MangaFilterDownloadedState, int>
-      createElement() {
+  createElement() {
     return _MangaFilterDownloadedStateProviderElement(this);
   }
 
@@ -611,23 +584,22 @@ class MangaFilterUnreadStateProvider
     required ItemType itemType,
     required Settings settings,
   }) : this._internal(
-          () => MangaFilterUnreadState()
-            ..mangaList = mangaList
-            ..itemType = itemType
-            ..settings = settings,
-          from: mangaFilterUnreadStateProvider,
-          name: r'mangaFilterUnreadStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$mangaFilterUnreadStateHash,
-          dependencies: MangaFilterUnreadStateFamily._dependencies,
-          allTransitiveDependencies:
-              MangaFilterUnreadStateFamily._allTransitiveDependencies,
-          mangaList: mangaList,
-          itemType: itemType,
-          settings: settings,
-        );
+         () => MangaFilterUnreadState()
+           ..mangaList = mangaList
+           ..itemType = itemType
+           ..settings = settings,
+         from: mangaFilterUnreadStateProvider,
+         name: r'mangaFilterUnreadStateProvider',
+         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+             ? null
+             : _$mangaFilterUnreadStateHash,
+         dependencies: MangaFilterUnreadStateFamily._dependencies,
+         allTransitiveDependencies:
+             MangaFilterUnreadStateFamily._allTransitiveDependencies,
+         mangaList: mangaList,
+         itemType: itemType,
+         settings: settings,
+       );
 
   MangaFilterUnreadStateProvider._internal(
     super._createNotifier, {
@@ -646,9 +618,7 @@ class MangaFilterUnreadStateProvider
   final Settings settings;
 
   @override
-  int runNotifierBuild(
-    covariant MangaFilterUnreadState notifier,
-  ) {
+  int runNotifierBuild(covariant MangaFilterUnreadState notifier) {
     return notifier.build(
       mangaList: mangaList,
       itemType: itemType,
@@ -679,7 +649,7 @@ class MangaFilterUnreadStateProvider
 
   @override
   AutoDisposeNotifierProviderElement<MangaFilterUnreadState, int>
-      createElement() {
+  createElement() {
     return _MangaFilterUnreadStateProviderElement(this);
   }
 
@@ -802,23 +772,22 @@ class MangaFilterStartedStateProvider
     required ItemType itemType,
     required Settings settings,
   }) : this._internal(
-          () => MangaFilterStartedState()
-            ..mangaList = mangaList
-            ..itemType = itemType
-            ..settings = settings,
-          from: mangaFilterStartedStateProvider,
-          name: r'mangaFilterStartedStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$mangaFilterStartedStateHash,
-          dependencies: MangaFilterStartedStateFamily._dependencies,
-          allTransitiveDependencies:
-              MangaFilterStartedStateFamily._allTransitiveDependencies,
-          mangaList: mangaList,
-          itemType: itemType,
-          settings: settings,
-        );
+         () => MangaFilterStartedState()
+           ..mangaList = mangaList
+           ..itemType = itemType
+           ..settings = settings,
+         from: mangaFilterStartedStateProvider,
+         name: r'mangaFilterStartedStateProvider',
+         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+             ? null
+             : _$mangaFilterStartedStateHash,
+         dependencies: MangaFilterStartedStateFamily._dependencies,
+         allTransitiveDependencies:
+             MangaFilterStartedStateFamily._allTransitiveDependencies,
+         mangaList: mangaList,
+         itemType: itemType,
+         settings: settings,
+       );
 
   MangaFilterStartedStateProvider._internal(
     super._createNotifier, {
@@ -837,9 +806,7 @@ class MangaFilterStartedStateProvider
   final Settings settings;
 
   @override
-  int runNotifierBuild(
-    covariant MangaFilterStartedState notifier,
-  ) {
+  int runNotifierBuild(covariant MangaFilterStartedState notifier) {
     return notifier.build(
       mangaList: mangaList,
       itemType: itemType,
@@ -870,7 +837,7 @@ class MangaFilterStartedStateProvider
 
   @override
   AutoDisposeNotifierProviderElement<MangaFilterStartedState, int>
-      createElement() {
+  createElement() {
     return _MangaFilterStartedStateProviderElement(this);
   }
 
@@ -993,23 +960,22 @@ class MangaFilterBookmarkedStateProvider
     required ItemType itemType,
     required Settings settings,
   }) : this._internal(
-          () => MangaFilterBookmarkedState()
-            ..mangaList = mangaList
-            ..itemType = itemType
-            ..settings = settings,
-          from: mangaFilterBookmarkedStateProvider,
-          name: r'mangaFilterBookmarkedStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$mangaFilterBookmarkedStateHash,
-          dependencies: MangaFilterBookmarkedStateFamily._dependencies,
-          allTransitiveDependencies:
-              MangaFilterBookmarkedStateFamily._allTransitiveDependencies,
-          mangaList: mangaList,
-          itemType: itemType,
-          settings: settings,
-        );
+         () => MangaFilterBookmarkedState()
+           ..mangaList = mangaList
+           ..itemType = itemType
+           ..settings = settings,
+         from: mangaFilterBookmarkedStateProvider,
+         name: r'mangaFilterBookmarkedStateProvider',
+         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+             ? null
+             : _$mangaFilterBookmarkedStateHash,
+         dependencies: MangaFilterBookmarkedStateFamily._dependencies,
+         allTransitiveDependencies:
+             MangaFilterBookmarkedStateFamily._allTransitiveDependencies,
+         mangaList: mangaList,
+         itemType: itemType,
+         settings: settings,
+       );
 
   MangaFilterBookmarkedStateProvider._internal(
     super._createNotifier, {
@@ -1028,9 +994,7 @@ class MangaFilterBookmarkedStateProvider
   final Settings settings;
 
   @override
-  int runNotifierBuild(
-    covariant MangaFilterBookmarkedState notifier,
-  ) {
+  int runNotifierBuild(covariant MangaFilterBookmarkedState notifier) {
     return notifier.build(
       mangaList: mangaList,
       itemType: itemType,
@@ -1061,7 +1025,7 @@ class MangaFilterBookmarkedStateProvider
 
   @override
   AutoDisposeNotifierProviderElement<MangaFilterBookmarkedState, int>
-      createElement() {
+  createElement() {
     return _MangaFilterBookmarkedStateProviderElement(this);
   }
 
@@ -1186,23 +1150,22 @@ class MangasFilterResultStateProvider
     required ItemType itemType,
     required Settings settings,
   }) : this._internal(
-          () => MangasFilterResultState()
-            ..mangaList = mangaList
-            ..itemType = itemType
-            ..settings = settings,
-          from: mangasFilterResultStateProvider,
-          name: r'mangasFilterResultStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$mangasFilterResultStateHash,
-          dependencies: MangasFilterResultStateFamily._dependencies,
-          allTransitiveDependencies:
-              MangasFilterResultStateFamily._allTransitiveDependencies,
-          mangaList: mangaList,
-          itemType: itemType,
-          settings: settings,
-        );
+         () => MangasFilterResultState()
+           ..mangaList = mangaList
+           ..itemType = itemType
+           ..settings = settings,
+         from: mangasFilterResultStateProvider,
+         name: r'mangasFilterResultStateProvider',
+         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+             ? null
+             : _$mangasFilterResultStateHash,
+         dependencies: MangasFilterResultStateFamily._dependencies,
+         allTransitiveDependencies:
+             MangasFilterResultStateFamily._allTransitiveDependencies,
+         mangaList: mangaList,
+         itemType: itemType,
+         settings: settings,
+       );
 
   MangasFilterResultStateProvider._internal(
     super._createNotifier, {
@@ -1221,9 +1184,7 @@ class MangasFilterResultStateProvider
   final Settings settings;
 
   @override
-  bool runNotifierBuild(
-    covariant MangasFilterResultState notifier,
-  ) {
+  bool runNotifierBuild(covariant MangasFilterResultState notifier) {
     return notifier.build(
       mangaList: mangaList,
       itemType: itemType,
@@ -1254,7 +1215,7 @@ class MangasFilterResultStateProvider
 
   @override
   AutoDisposeNotifierProviderElement<MangasFilterResultState, bool>
-      createElement() {
+  createElement() {
     return _MangasFilterResultStateProviderElement(this);
   }
 
@@ -1312,10 +1273,7 @@ abstract class _$LibraryShowCategoryTabsState
   late final ItemType itemType;
   late final Settings settings;
 
-  bool build({
-    required ItemType itemType,
-    required Settings settings,
-  });
+  bool build({required ItemType itemType, required Settings settings});
 }
 
 /// See also [LibraryShowCategoryTabsState].
@@ -1343,10 +1301,7 @@ class LibraryShowCategoryTabsStateFamily extends Family<bool> {
   LibraryShowCategoryTabsStateProvider getProviderOverride(
     covariant LibraryShowCategoryTabsStateProvider provider,
   ) {
-    return call(
-      itemType: provider.itemType,
-      settings: provider.settings,
-    );
+    return call(itemType: provider.itemType, settings: provider.settings);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -1366,28 +1321,27 @@ class LibraryShowCategoryTabsStateFamily extends Family<bool> {
 
 /// See also [LibraryShowCategoryTabsState].
 class LibraryShowCategoryTabsStateProvider
-    extends AutoDisposeNotifierProviderImpl<LibraryShowCategoryTabsState,
-        bool> {
+    extends
+        AutoDisposeNotifierProviderImpl<LibraryShowCategoryTabsState, bool> {
   /// See also [LibraryShowCategoryTabsState].
   LibraryShowCategoryTabsStateProvider({
     required ItemType itemType,
     required Settings settings,
   }) : this._internal(
-          () => LibraryShowCategoryTabsState()
-            ..itemType = itemType
-            ..settings = settings,
-          from: libraryShowCategoryTabsStateProvider,
-          name: r'libraryShowCategoryTabsStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$libraryShowCategoryTabsStateHash,
-          dependencies: LibraryShowCategoryTabsStateFamily._dependencies,
-          allTransitiveDependencies:
-              LibraryShowCategoryTabsStateFamily._allTransitiveDependencies,
-          itemType: itemType,
-          settings: settings,
-        );
+         () => LibraryShowCategoryTabsState()
+           ..itemType = itemType
+           ..settings = settings,
+         from: libraryShowCategoryTabsStateProvider,
+         name: r'libraryShowCategoryTabsStateProvider',
+         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+             ? null
+             : _$libraryShowCategoryTabsStateHash,
+         dependencies: LibraryShowCategoryTabsStateFamily._dependencies,
+         allTransitiveDependencies:
+             LibraryShowCategoryTabsStateFamily._allTransitiveDependencies,
+         itemType: itemType,
+         settings: settings,
+       );
 
   LibraryShowCategoryTabsStateProvider._internal(
     super._createNotifier, {
@@ -1404,13 +1358,8 @@ class LibraryShowCategoryTabsStateProvider
   final Settings settings;
 
   @override
-  bool runNotifierBuild(
-    covariant LibraryShowCategoryTabsState notifier,
-  ) {
-    return notifier.build(
-      itemType: itemType,
-      settings: settings,
-    );
+  bool runNotifierBuild(covariant LibraryShowCategoryTabsState notifier) {
+    return notifier.build(itemType: itemType, settings: settings);
   }
 
   @override
@@ -1434,7 +1383,7 @@ class LibraryShowCategoryTabsStateProvider
 
   @override
   AutoDisposeNotifierProviderElement<LibraryShowCategoryTabsState, bool>
-      createElement() {
+  createElement() {
     return _LibraryShowCategoryTabsStateProviderElement(this);
   }
 
@@ -1466,8 +1415,9 @@ mixin LibraryShowCategoryTabsStateRef on AutoDisposeNotifierProviderRef<bool> {
 }
 
 class _LibraryShowCategoryTabsStateProviderElement
-    extends AutoDisposeNotifierProviderElement<LibraryShowCategoryTabsState,
-        bool> with LibraryShowCategoryTabsStateRef {
+    extends
+        AutoDisposeNotifierProviderElement<LibraryShowCategoryTabsState, bool>
+    with LibraryShowCategoryTabsStateRef {
   _LibraryShowCategoryTabsStateProviderElement(super.provider);
 
   @override
@@ -1486,10 +1436,7 @@ abstract class _$LibraryDownloadedChaptersState
   late final ItemType itemType;
   late final Settings settings;
 
-  bool build({
-    required ItemType itemType,
-    required Settings settings,
-  });
+  bool build({required ItemType itemType, required Settings settings});
 }
 
 /// See also [LibraryDownloadedChaptersState].
@@ -1517,10 +1464,7 @@ class LibraryDownloadedChaptersStateFamily extends Family<bool> {
   LibraryDownloadedChaptersStateProvider getProviderOverride(
     covariant LibraryDownloadedChaptersStateProvider provider,
   ) {
-    return call(
-      itemType: provider.itemType,
-      settings: provider.settings,
-    );
+    return call(itemType: provider.itemType, settings: provider.settings);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -1540,28 +1484,27 @@ class LibraryDownloadedChaptersStateFamily extends Family<bool> {
 
 /// See also [LibraryDownloadedChaptersState].
 class LibraryDownloadedChaptersStateProvider
-    extends AutoDisposeNotifierProviderImpl<LibraryDownloadedChaptersState,
-        bool> {
+    extends
+        AutoDisposeNotifierProviderImpl<LibraryDownloadedChaptersState, bool> {
   /// See also [LibraryDownloadedChaptersState].
   LibraryDownloadedChaptersStateProvider({
     required ItemType itemType,
     required Settings settings,
   }) : this._internal(
-          () => LibraryDownloadedChaptersState()
-            ..itemType = itemType
-            ..settings = settings,
-          from: libraryDownloadedChaptersStateProvider,
-          name: r'libraryDownloadedChaptersStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$libraryDownloadedChaptersStateHash,
-          dependencies: LibraryDownloadedChaptersStateFamily._dependencies,
-          allTransitiveDependencies:
-              LibraryDownloadedChaptersStateFamily._allTransitiveDependencies,
-          itemType: itemType,
-          settings: settings,
-        );
+         () => LibraryDownloadedChaptersState()
+           ..itemType = itemType
+           ..settings = settings,
+         from: libraryDownloadedChaptersStateProvider,
+         name: r'libraryDownloadedChaptersStateProvider',
+         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+             ? null
+             : _$libraryDownloadedChaptersStateHash,
+         dependencies: LibraryDownloadedChaptersStateFamily._dependencies,
+         allTransitiveDependencies:
+             LibraryDownloadedChaptersStateFamily._allTransitiveDependencies,
+         itemType: itemType,
+         settings: settings,
+       );
 
   LibraryDownloadedChaptersStateProvider._internal(
     super._createNotifier, {
@@ -1578,13 +1521,8 @@ class LibraryDownloadedChaptersStateProvider
   final Settings settings;
 
   @override
-  bool runNotifierBuild(
-    covariant LibraryDownloadedChaptersState notifier,
-  ) {
-    return notifier.build(
-      itemType: itemType,
-      settings: settings,
-    );
+  bool runNotifierBuild(covariant LibraryDownloadedChaptersState notifier) {
+    return notifier.build(itemType: itemType, settings: settings);
   }
 
   @override
@@ -1608,7 +1546,7 @@ class LibraryDownloadedChaptersStateProvider
 
   @override
   AutoDisposeNotifierProviderElement<LibraryDownloadedChaptersState, bool>
-      createElement() {
+  createElement() {
     return _LibraryDownloadedChaptersStateProviderElement(this);
   }
 
@@ -1641,8 +1579,9 @@ mixin LibraryDownloadedChaptersStateRef
 }
 
 class _LibraryDownloadedChaptersStateProviderElement
-    extends AutoDisposeNotifierProviderElement<LibraryDownloadedChaptersState,
-        bool> with LibraryDownloadedChaptersStateRef {
+    extends
+        AutoDisposeNotifierProviderElement<LibraryDownloadedChaptersState, bool>
+    with LibraryDownloadedChaptersStateRef {
   _LibraryDownloadedChaptersStateProviderElement(super.provider);
 
   @override
@@ -1661,10 +1600,7 @@ abstract class _$LibraryLanguageState
   late final ItemType itemType;
   late final Settings settings;
 
-  bool build({
-    required ItemType itemType,
-    required Settings settings,
-  });
+  bool build({required ItemType itemType, required Settings settings});
 }
 
 /// See also [LibraryLanguageState].
@@ -1681,20 +1617,14 @@ class LibraryLanguageStateFamily extends Family<bool> {
     required ItemType itemType,
     required Settings settings,
   }) {
-    return LibraryLanguageStateProvider(
-      itemType: itemType,
-      settings: settings,
-    );
+    return LibraryLanguageStateProvider(itemType: itemType, settings: settings);
   }
 
   @override
   LibraryLanguageStateProvider getProviderOverride(
     covariant LibraryLanguageStateProvider provider,
   ) {
-    return call(
-      itemType: provider.itemType,
-      settings: provider.settings,
-    );
+    return call(itemType: provider.itemType, settings: provider.settings);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -1720,21 +1650,20 @@ class LibraryLanguageStateProvider
     required ItemType itemType,
     required Settings settings,
   }) : this._internal(
-          () => LibraryLanguageState()
-            ..itemType = itemType
-            ..settings = settings,
-          from: libraryLanguageStateProvider,
-          name: r'libraryLanguageStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$libraryLanguageStateHash,
-          dependencies: LibraryLanguageStateFamily._dependencies,
-          allTransitiveDependencies:
-              LibraryLanguageStateFamily._allTransitiveDependencies,
-          itemType: itemType,
-          settings: settings,
-        );
+         () => LibraryLanguageState()
+           ..itemType = itemType
+           ..settings = settings,
+         from: libraryLanguageStateProvider,
+         name: r'libraryLanguageStateProvider',
+         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+             ? null
+             : _$libraryLanguageStateHash,
+         dependencies: LibraryLanguageStateFamily._dependencies,
+         allTransitiveDependencies:
+             LibraryLanguageStateFamily._allTransitiveDependencies,
+         itemType: itemType,
+         settings: settings,
+       );
 
   LibraryLanguageStateProvider._internal(
     super._createNotifier, {
@@ -1751,13 +1680,8 @@ class LibraryLanguageStateProvider
   final Settings settings;
 
   @override
-  bool runNotifierBuild(
-    covariant LibraryLanguageState notifier,
-  ) {
-    return notifier.build(
-      itemType: itemType,
-      settings: settings,
-    );
+  bool runNotifierBuild(covariant LibraryLanguageState notifier) {
+    return notifier.build(itemType: itemType, settings: settings);
   }
 
   @override
@@ -1781,7 +1705,7 @@ class LibraryLanguageStateProvider
 
   @override
   AutoDisposeNotifierProviderElement<LibraryLanguageState, bool>
-      createElement() {
+  createElement() {
     return _LibraryLanguageStateProviderElement(this);
   }
 
@@ -1831,10 +1755,7 @@ abstract class _$LibraryLocalSourceState
   late final ItemType itemType;
   late final Settings settings;
 
-  bool build({
-    required ItemType itemType,
-    required Settings settings,
-  });
+  bool build({required ItemType itemType, required Settings settings});
 }
 
 /// See also [LibraryLocalSourceState].
@@ -1861,10 +1782,7 @@ class LibraryLocalSourceStateFamily extends Family<bool> {
   LibraryLocalSourceStateProvider getProviderOverride(
     covariant LibraryLocalSourceStateProvider provider,
   ) {
-    return call(
-      itemType: provider.itemType,
-      settings: provider.settings,
-    );
+    return call(itemType: provider.itemType, settings: provider.settings);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -1890,21 +1808,20 @@ class LibraryLocalSourceStateProvider
     required ItemType itemType,
     required Settings settings,
   }) : this._internal(
-          () => LibraryLocalSourceState()
-            ..itemType = itemType
-            ..settings = settings,
-          from: libraryLocalSourceStateProvider,
-          name: r'libraryLocalSourceStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$libraryLocalSourceStateHash,
-          dependencies: LibraryLocalSourceStateFamily._dependencies,
-          allTransitiveDependencies:
-              LibraryLocalSourceStateFamily._allTransitiveDependencies,
-          itemType: itemType,
-          settings: settings,
-        );
+         () => LibraryLocalSourceState()
+           ..itemType = itemType
+           ..settings = settings,
+         from: libraryLocalSourceStateProvider,
+         name: r'libraryLocalSourceStateProvider',
+         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+             ? null
+             : _$libraryLocalSourceStateHash,
+         dependencies: LibraryLocalSourceStateFamily._dependencies,
+         allTransitiveDependencies:
+             LibraryLocalSourceStateFamily._allTransitiveDependencies,
+         itemType: itemType,
+         settings: settings,
+       );
 
   LibraryLocalSourceStateProvider._internal(
     super._createNotifier, {
@@ -1921,13 +1838,8 @@ class LibraryLocalSourceStateProvider
   final Settings settings;
 
   @override
-  bool runNotifierBuild(
-    covariant LibraryLocalSourceState notifier,
-  ) {
-    return notifier.build(
-      itemType: itemType,
-      settings: settings,
-    );
+  bool runNotifierBuild(covariant LibraryLocalSourceState notifier) {
+    return notifier.build(itemType: itemType, settings: settings);
   }
 
   @override
@@ -1951,7 +1863,7 @@ class LibraryLocalSourceStateProvider
 
   @override
   AutoDisposeNotifierProviderElement<LibraryLocalSourceState, bool>
-      createElement() {
+  createElement() {
     return _LibraryLocalSourceStateProviderElement(this);
   }
 
@@ -2001,10 +1913,7 @@ abstract class _$LibraryShowNumbersOfItemsState
   late final ItemType itemType;
   late final Settings settings;
 
-  bool build({
-    required ItemType itemType,
-    required Settings settings,
-  });
+  bool build({required ItemType itemType, required Settings settings});
 }
 
 /// See also [LibraryShowNumbersOfItemsState].
@@ -2032,10 +1941,7 @@ class LibraryShowNumbersOfItemsStateFamily extends Family<bool> {
   LibraryShowNumbersOfItemsStateProvider getProviderOverride(
     covariant LibraryShowNumbersOfItemsStateProvider provider,
   ) {
-    return call(
-      itemType: provider.itemType,
-      settings: provider.settings,
-    );
+    return call(itemType: provider.itemType, settings: provider.settings);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -2055,28 +1961,27 @@ class LibraryShowNumbersOfItemsStateFamily extends Family<bool> {
 
 /// See also [LibraryShowNumbersOfItemsState].
 class LibraryShowNumbersOfItemsStateProvider
-    extends AutoDisposeNotifierProviderImpl<LibraryShowNumbersOfItemsState,
-        bool> {
+    extends
+        AutoDisposeNotifierProviderImpl<LibraryShowNumbersOfItemsState, bool> {
   /// See also [LibraryShowNumbersOfItemsState].
   LibraryShowNumbersOfItemsStateProvider({
     required ItemType itemType,
     required Settings settings,
   }) : this._internal(
-          () => LibraryShowNumbersOfItemsState()
-            ..itemType = itemType
-            ..settings = settings,
-          from: libraryShowNumbersOfItemsStateProvider,
-          name: r'libraryShowNumbersOfItemsStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$libraryShowNumbersOfItemsStateHash,
-          dependencies: LibraryShowNumbersOfItemsStateFamily._dependencies,
-          allTransitiveDependencies:
-              LibraryShowNumbersOfItemsStateFamily._allTransitiveDependencies,
-          itemType: itemType,
-          settings: settings,
-        );
+         () => LibraryShowNumbersOfItemsState()
+           ..itemType = itemType
+           ..settings = settings,
+         from: libraryShowNumbersOfItemsStateProvider,
+         name: r'libraryShowNumbersOfItemsStateProvider',
+         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+             ? null
+             : _$libraryShowNumbersOfItemsStateHash,
+         dependencies: LibraryShowNumbersOfItemsStateFamily._dependencies,
+         allTransitiveDependencies:
+             LibraryShowNumbersOfItemsStateFamily._allTransitiveDependencies,
+         itemType: itemType,
+         settings: settings,
+       );
 
   LibraryShowNumbersOfItemsStateProvider._internal(
     super._createNotifier, {
@@ -2093,13 +1998,8 @@ class LibraryShowNumbersOfItemsStateProvider
   final Settings settings;
 
   @override
-  bool runNotifierBuild(
-    covariant LibraryShowNumbersOfItemsState notifier,
-  ) {
-    return notifier.build(
-      itemType: itemType,
-      settings: settings,
-    );
+  bool runNotifierBuild(covariant LibraryShowNumbersOfItemsState notifier) {
+    return notifier.build(itemType: itemType, settings: settings);
   }
 
   @override
@@ -2123,7 +2023,7 @@ class LibraryShowNumbersOfItemsStateProvider
 
   @override
   AutoDisposeNotifierProviderElement<LibraryShowNumbersOfItemsState, bool>
-      createElement() {
+  createElement() {
     return _LibraryShowNumbersOfItemsStateProviderElement(this);
   }
 
@@ -2156,8 +2056,9 @@ mixin LibraryShowNumbersOfItemsStateRef
 }
 
 class _LibraryShowNumbersOfItemsStateProviderElement
-    extends AutoDisposeNotifierProviderElement<LibraryShowNumbersOfItemsState,
-        bool> with LibraryShowNumbersOfItemsStateRef {
+    extends
+        AutoDisposeNotifierProviderElement<LibraryShowNumbersOfItemsState, bool>
+    with LibraryShowNumbersOfItemsStateRef {
   _LibraryShowNumbersOfItemsStateProviderElement(super.provider);
 
   @override
@@ -2176,10 +2077,7 @@ abstract class _$LibraryShowContinueReadingButtonState
   late final ItemType itemType;
   late final Settings settings;
 
-  bool build({
-    required ItemType itemType,
-    required Settings settings,
-  });
+  bool build({required ItemType itemType, required Settings settings});
 }
 
 /// See also [LibraryShowContinueReadingButtonState].
@@ -2207,10 +2105,7 @@ class LibraryShowContinueReadingButtonStateFamily extends Family<bool> {
   LibraryShowContinueReadingButtonStateProvider getProviderOverride(
     covariant LibraryShowContinueReadingButtonStateProvider provider,
   ) {
-    return call(
-      itemType: provider.itemType,
-      settings: provider.settings,
-    );
+    return call(itemType: provider.itemType, settings: provider.settings);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -2230,29 +2125,31 @@ class LibraryShowContinueReadingButtonStateFamily extends Family<bool> {
 
 /// See also [LibraryShowContinueReadingButtonState].
 class LibraryShowContinueReadingButtonStateProvider
-    extends AutoDisposeNotifierProviderImpl<
-        LibraryShowContinueReadingButtonState, bool> {
+    extends
+        AutoDisposeNotifierProviderImpl<
+          LibraryShowContinueReadingButtonState,
+          bool
+        > {
   /// See also [LibraryShowContinueReadingButtonState].
   LibraryShowContinueReadingButtonStateProvider({
     required ItemType itemType,
     required Settings settings,
   }) : this._internal(
-          () => LibraryShowContinueReadingButtonState()
-            ..itemType = itemType
-            ..settings = settings,
-          from: libraryShowContinueReadingButtonStateProvider,
-          name: r'libraryShowContinueReadingButtonStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$libraryShowContinueReadingButtonStateHash,
-          dependencies:
-              LibraryShowContinueReadingButtonStateFamily._dependencies,
-          allTransitiveDependencies: LibraryShowContinueReadingButtonStateFamily
-              ._allTransitiveDependencies,
-          itemType: itemType,
-          settings: settings,
-        );
+         () => LibraryShowContinueReadingButtonState()
+           ..itemType = itemType
+           ..settings = settings,
+         from: libraryShowContinueReadingButtonStateProvider,
+         name: r'libraryShowContinueReadingButtonStateProvider',
+         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+             ? null
+             : _$libraryShowContinueReadingButtonStateHash,
+         dependencies:
+             LibraryShowContinueReadingButtonStateFamily._dependencies,
+         allTransitiveDependencies: LibraryShowContinueReadingButtonStateFamily
+             ._allTransitiveDependencies,
+         itemType: itemType,
+         settings: settings,
+       );
 
   LibraryShowContinueReadingButtonStateProvider._internal(
     super._createNotifier, {
@@ -2272,15 +2169,13 @@ class LibraryShowContinueReadingButtonStateProvider
   bool runNotifierBuild(
     covariant LibraryShowContinueReadingButtonState notifier,
   ) {
-    return notifier.build(
-      itemType: itemType,
-      settings: settings,
-    );
+    return notifier.build(itemType: itemType, settings: settings);
   }
 
   @override
   Override overrideWith(
-      LibraryShowContinueReadingButtonState Function() create) {
+    LibraryShowContinueReadingButtonState Function() create,
+  ) {
     return ProviderOverride(
       origin: this,
       override: LibraryShowContinueReadingButtonStateProvider._internal(
@@ -2299,8 +2194,11 @@ class LibraryShowContinueReadingButtonStateProvider
   }
 
   @override
-  AutoDisposeNotifierProviderElement<LibraryShowContinueReadingButtonState,
-      bool> createElement() {
+  AutoDisposeNotifierProviderElement<
+    LibraryShowContinueReadingButtonState,
+    bool
+  >
+  createElement() {
     return _LibraryShowContinueReadingButtonStateProviderElement(this);
   }
 
@@ -2333,9 +2231,12 @@ mixin LibraryShowContinueReadingButtonStateRef
 }
 
 class _LibraryShowContinueReadingButtonStateProviderElement
-    extends AutoDisposeNotifierProviderElement<
-        LibraryShowContinueReadingButtonState,
-        bool> with LibraryShowContinueReadingButtonStateRef {
+    extends
+        AutoDisposeNotifierProviderElement<
+          LibraryShowContinueReadingButtonState,
+          bool
+        >
+    with LibraryShowContinueReadingButtonStateRef {
   _LibraryShowContinueReadingButtonStateProviderElement(super.provider);
 
   @override
@@ -2384,10 +2285,7 @@ class SortLibraryMangaStateFamily extends Family<SortLibraryManga> {
   SortLibraryMangaStateProvider getProviderOverride(
     covariant SortLibraryMangaStateProvider provider,
   ) {
-    return call(
-      itemType: provider.itemType,
-      settings: provider.settings,
-    );
+    return call(itemType: provider.itemType, settings: provider.settings);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -2406,28 +2304,31 @@ class SortLibraryMangaStateFamily extends Family<SortLibraryManga> {
 }
 
 /// See also [SortLibraryMangaState].
-class SortLibraryMangaStateProvider extends AutoDisposeNotifierProviderImpl<
-    SortLibraryMangaState, SortLibraryManga> {
+class SortLibraryMangaStateProvider
+    extends
+        AutoDisposeNotifierProviderImpl<
+          SortLibraryMangaState,
+          SortLibraryManga
+        > {
   /// See also [SortLibraryMangaState].
   SortLibraryMangaStateProvider({
     required ItemType itemType,
     required Settings settings,
   }) : this._internal(
-          () => SortLibraryMangaState()
-            ..itemType = itemType
-            ..settings = settings,
-          from: sortLibraryMangaStateProvider,
-          name: r'sortLibraryMangaStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$sortLibraryMangaStateHash,
-          dependencies: SortLibraryMangaStateFamily._dependencies,
-          allTransitiveDependencies:
-              SortLibraryMangaStateFamily._allTransitiveDependencies,
-          itemType: itemType,
-          settings: settings,
-        );
+         () => SortLibraryMangaState()
+           ..itemType = itemType
+           ..settings = settings,
+         from: sortLibraryMangaStateProvider,
+         name: r'sortLibraryMangaStateProvider',
+         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+             ? null
+             : _$sortLibraryMangaStateHash,
+         dependencies: SortLibraryMangaStateFamily._dependencies,
+         allTransitiveDependencies:
+             SortLibraryMangaStateFamily._allTransitiveDependencies,
+         itemType: itemType,
+         settings: settings,
+       );
 
   SortLibraryMangaStateProvider._internal(
     super._createNotifier, {
@@ -2444,13 +2345,8 @@ class SortLibraryMangaStateProvider extends AutoDisposeNotifierProviderImpl<
   final Settings settings;
 
   @override
-  SortLibraryManga runNotifierBuild(
-    covariant SortLibraryMangaState notifier,
-  ) {
-    return notifier.build(
-      itemType: itemType,
-      settings: settings,
-    );
+  SortLibraryManga runNotifierBuild(covariant SortLibraryMangaState notifier) {
+    return notifier.build(itemType: itemType, settings: settings);
   }
 
   @override
@@ -2474,7 +2370,7 @@ class SortLibraryMangaStateProvider extends AutoDisposeNotifierProviderImpl<
 
   @override
   AutoDisposeNotifierProviderElement<SortLibraryMangaState, SortLibraryManga>
-      createElement() {
+  createElement() {
     return _SortLibraryMangaStateProviderElement(this);
   }
 
@@ -2507,8 +2403,12 @@ mixin SortLibraryMangaStateRef
 }
 
 class _SortLibraryMangaStateProviderElement
-    extends AutoDisposeNotifierProviderElement<SortLibraryMangaState,
-        SortLibraryManga> with SortLibraryMangaStateRef {
+    extends
+        AutoDisposeNotifierProviderElement<
+          SortLibraryMangaState,
+          SortLibraryManga
+        >
+    with SortLibraryMangaStateRef {
   _SortLibraryMangaStateProviderElement(super.provider);
 
   @override
@@ -2517,49 +2417,31 @@ class _SortLibraryMangaStateProviderElement
   Settings get settings => (origin as SortLibraryMangaStateProvider).settings;
 }
 
-String _$mangasListStateHash() => r'ad1cc419dfd3793bfc8c90f3ce8b7726561dd9ad';
+String _$mangasListStateHash() => r'bbd2e3600ec22a774b1774ae3c221815e52bfef6';
 
 /// See also [MangasListState].
 @ProviderFor(MangasListState)
 final mangasListStateProvider =
     AutoDisposeNotifierProvider<MangasListState, List<int>>.internal(
-  MangasListState.new,
-  name: r'mangasListStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$mangasListStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      MangasListState.new,
+      name: r'mangasListStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$mangasListStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$MangasListState = AutoDisposeNotifier<List<int>>;
-String _$isLongPressedMangaStateHash() =>
-    r'f77076b0335e92df26a75ea0c338d4214a330184';
-
-/// See also [IsLongPressedMangaState].
-@ProviderFor(IsLongPressedMangaState)
-final isLongPressedMangaStateProvider =
-    AutoDisposeNotifierProvider<IsLongPressedMangaState, bool>.internal(
-  IsLongPressedMangaState.new,
-  name: r'isLongPressedMangaStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$isLongPressedMangaStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$IsLongPressedMangaState = AutoDisposeNotifier<bool>;
 String _$mangasSetIsReadStateHash() =>
-    r'8f4f7f22ea8e82cf2370fb997033e1a4ec03168f';
+    r'2a1b1005e2ed5068d36188a3fb969d21b64bfef6';
 
 abstract class _$MangasSetIsReadState
     extends BuildlessAutoDisposeNotifier<void> {
   late final List<int> mangaIds;
+  late final bool markAsRead;
 
-  void build({
-    required List<int> mangaIds,
-  });
+  void build({required List<int> mangaIds, required bool markAsRead});
 }
 
 /// See also [MangasSetIsReadState].
@@ -2574,9 +2456,11 @@ class MangasSetIsReadStateFamily extends Family<void> {
   /// See also [MangasSetIsReadState].
   MangasSetIsReadStateProvider call({
     required List<int> mangaIds,
+    required bool markAsRead,
   }) {
     return MangasSetIsReadStateProvider(
       mangaIds: mangaIds,
+      markAsRead: markAsRead,
     );
   }
 
@@ -2584,9 +2468,7 @@ class MangasSetIsReadStateFamily extends Family<void> {
   MangasSetIsReadStateProvider getProviderOverride(
     covariant MangasSetIsReadStateProvider provider,
   ) {
-    return call(
-      mangaIds: provider.mangaIds,
-    );
+    return call(mangaIds: provider.mangaIds, markAsRead: provider.markAsRead);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -2610,19 +2492,22 @@ class MangasSetIsReadStateProvider
   /// See also [MangasSetIsReadState].
   MangasSetIsReadStateProvider({
     required List<int> mangaIds,
+    required bool markAsRead,
   }) : this._internal(
-          () => MangasSetIsReadState()..mangaIds = mangaIds,
-          from: mangasSetIsReadStateProvider,
-          name: r'mangasSetIsReadStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$mangasSetIsReadStateHash,
-          dependencies: MangasSetIsReadStateFamily._dependencies,
-          allTransitiveDependencies:
-              MangasSetIsReadStateFamily._allTransitiveDependencies,
-          mangaIds: mangaIds,
-        );
+         () => MangasSetIsReadState()
+           ..mangaIds = mangaIds
+           ..markAsRead = markAsRead,
+         from: mangasSetIsReadStateProvider,
+         name: r'mangasSetIsReadStateProvider',
+         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+             ? null
+             : _$mangasSetIsReadStateHash,
+         dependencies: MangasSetIsReadStateFamily._dependencies,
+         allTransitiveDependencies:
+             MangasSetIsReadStateFamily._allTransitiveDependencies,
+         mangaIds: mangaIds,
+         markAsRead: markAsRead,
+       );
 
   MangasSetIsReadStateProvider._internal(
     super._createNotifier, {
@@ -2632,17 +2517,15 @@ class MangasSetIsReadStateProvider
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.mangaIds,
+    required this.markAsRead,
   }) : super.internal();
 
   final List<int> mangaIds;
+  final bool markAsRead;
 
   @override
-  void runNotifierBuild(
-    covariant MangasSetIsReadState notifier,
-  ) {
-    return notifier.build(
-      mangaIds: mangaIds,
-    );
+  void runNotifierBuild(covariant MangasSetIsReadState notifier) {
+    return notifier.build(mangaIds: mangaIds, markAsRead: markAsRead);
   }
 
   @override
@@ -2650,32 +2533,38 @@ class MangasSetIsReadStateProvider
     return ProviderOverride(
       origin: this,
       override: MangasSetIsReadStateProvider._internal(
-        () => create()..mangaIds = mangaIds,
+        () => create()
+          ..mangaIds = mangaIds
+          ..markAsRead = markAsRead,
         from: from,
         name: null,
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         mangaIds: mangaIds,
+        markAsRead: markAsRead,
       ),
     );
   }
 
   @override
   AutoDisposeNotifierProviderElement<MangasSetIsReadState, void>
-      createElement() {
+  createElement() {
     return _MangasSetIsReadStateProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is MangasSetIsReadStateProvider && other.mangaIds == mangaIds;
+    return other is MangasSetIsReadStateProvider &&
+        other.mangaIds == mangaIds &&
+        other.markAsRead == markAsRead;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, mangaIds.hashCode);
+    hash = _SystemHash.combine(hash, markAsRead.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -2686,6 +2575,9 @@ class MangasSetIsReadStateProvider
 mixin MangasSetIsReadStateRef on AutoDisposeNotifierProviderRef<void> {
   /// The parameter `mangaIds` of this provider.
   List<int> get mangaIds;
+
+  /// The parameter `markAsRead` of this provider.
+  bool get markAsRead;
 }
 
 class _MangasSetIsReadStateProviderElement
@@ -2695,153 +2587,9 @@ class _MangasSetIsReadStateProviderElement
 
   @override
   List<int> get mangaIds => (origin as MangasSetIsReadStateProvider).mangaIds;
+  @override
+  bool get markAsRead => (origin as MangasSetIsReadStateProvider).markAsRead;
 }
 
-String _$mangasSetUnReadStateHash() =>
-    r'09ddd287b110fd76494f9f56bd5cf76f58936f1f';
-
-abstract class _$MangasSetUnReadState
-    extends BuildlessAutoDisposeNotifier<void> {
-  late final List<int> mangaIds;
-
-  void build({
-    required List<int> mangaIds,
-  });
-}
-
-/// See also [MangasSetUnReadState].
-@ProviderFor(MangasSetUnReadState)
-const mangasSetUnReadStateProvider = MangasSetUnReadStateFamily();
-
-/// See also [MangasSetUnReadState].
-class MangasSetUnReadStateFamily extends Family<void> {
-  /// See also [MangasSetUnReadState].
-  const MangasSetUnReadStateFamily();
-
-  /// See also [MangasSetUnReadState].
-  MangasSetUnReadStateProvider call({
-    required List<int> mangaIds,
-  }) {
-    return MangasSetUnReadStateProvider(
-      mangaIds: mangaIds,
-    );
-  }
-
-  @override
-  MangasSetUnReadStateProvider getProviderOverride(
-    covariant MangasSetUnReadStateProvider provider,
-  ) {
-    return call(
-      mangaIds: provider.mangaIds,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'mangasSetUnReadStateProvider';
-}
-
-/// See also [MangasSetUnReadState].
-class MangasSetUnReadStateProvider
-    extends AutoDisposeNotifierProviderImpl<MangasSetUnReadState, void> {
-  /// See also [MangasSetUnReadState].
-  MangasSetUnReadStateProvider({
-    required List<int> mangaIds,
-  }) : this._internal(
-          () => MangasSetUnReadState()..mangaIds = mangaIds,
-          from: mangasSetUnReadStateProvider,
-          name: r'mangasSetUnReadStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$mangasSetUnReadStateHash,
-          dependencies: MangasSetUnReadStateFamily._dependencies,
-          allTransitiveDependencies:
-              MangasSetUnReadStateFamily._allTransitiveDependencies,
-          mangaIds: mangaIds,
-        );
-
-  MangasSetUnReadStateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.mangaIds,
-  }) : super.internal();
-
-  final List<int> mangaIds;
-
-  @override
-  void runNotifierBuild(
-    covariant MangasSetUnReadState notifier,
-  ) {
-    return notifier.build(
-      mangaIds: mangaIds,
-    );
-  }
-
-  @override
-  Override overrideWith(MangasSetUnReadState Function() create) {
-    return ProviderOverride(
-      origin: this,
-      override: MangasSetUnReadStateProvider._internal(
-        () => create()..mangaIds = mangaIds,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        mangaIds: mangaIds,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeNotifierProviderElement<MangasSetUnReadState, void>
-      createElement() {
-    return _MangasSetUnReadStateProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is MangasSetUnReadStateProvider && other.mangaIds == mangaIds;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, mangaIds.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin MangasSetUnReadStateRef on AutoDisposeNotifierProviderRef<void> {
-  /// The parameter `mangaIds` of this provider.
-  List<int> get mangaIds;
-}
-
-class _MangasSetUnReadStateProviderElement
-    extends AutoDisposeNotifierProviderElement<MangasSetUnReadState, void>
-    with MangasSetUnReadStateRef {
-  _MangasSetUnReadStateProviderElement(super.provider);
-
-  @override
-  List<int> get mangaIds => (origin as MangasSetUnReadStateProvider).mangaIds;
-}
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

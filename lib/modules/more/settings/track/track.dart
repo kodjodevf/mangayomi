@@ -7,10 +7,13 @@ import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
 import 'package:mangayomi/modules/more/widgets/list_tile_widget.dart';
+import 'package:mangayomi/modules/tracker_library/tracker_library_screen.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/trackers/anilist.dart';
 import 'package:mangayomi/services/trackers/kitsu.dart';
 import 'package:mangayomi/services/trackers/myanimelist.dart';
+import 'package:mangayomi/services/trackers/simkl.dart';
+import 'package:mangayomi/services/trackers/trakt_tv.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
 class TrackScreen extends ConsumerWidget {
@@ -65,16 +68,22 @@ class TrackScreen extends ConsumerWidget {
                 ),
                 TrackListile(
                   onTap: () async {
-                    await ref.read(anilistProvider(syncId: 2).notifier).login();
+                    await ref
+                        .read(
+                          anilistProvider(
+                            syncId: TrackerProviders.anilist.syncId,
+                          ).notifier,
+                        )
+                        .login();
                   },
-                  id: 2,
+                  id: TrackerProviders.anilist.syncId,
                   entries: entries!,
                 ),
                 TrackListile(
                   onTap: () async {
                     _showDialogLogin(context, ref);
                   },
-                  id: 3,
+                  id: TrackerProviders.kitsu.syncId,
                   entries: entries,
                 ),
                 TrackListile(
@@ -82,13 +91,41 @@ class TrackScreen extends ConsumerWidget {
                     await ref
                         .read(
                           myAnimeListProvider(
-                            syncId: 1,
+                            syncId: TrackerProviders.myAnimeList.syncId,
                             itemType: null,
                           ).notifier,
                         )
                         .login();
                   },
-                  id: 1,
+                  id: TrackerProviders.myAnimeList.syncId,
+                  entries: entries,
+                ),
+                TrackListile(
+                  onTap: () async {
+                    await ref
+                        .read(
+                          simklProvider(
+                            syncId: TrackerProviders.simkl.syncId,
+                            itemType: null,
+                          ).notifier,
+                        )
+                        .login();
+                  },
+                  id: TrackerProviders.simkl.syncId,
+                  entries: entries,
+                ),
+                TrackListile(
+                  onTap: () async {
+                    await ref
+                        .read(
+                          traktTvProvider(
+                            syncId: TrackerProviders.trakt.syncId,
+                            itemType: null,
+                          ).notifier,
+                        )
+                        .login();
+                  },
+                  id: TrackerProviders.trakt.syncId,
                   entries: entries,
                 ),
                 ListTile(
@@ -231,7 +268,11 @@ void _showDialogLogin(BuildContext context, WidgetRef ref) {
                                 isLoading = true;
                               });
                               final res = await ref
-                                  .read(kitsuProvider(syncId: 3).notifier)
+                                  .read(
+                                    kitsuProvider(
+                                      syncId: TrackerProviders.kitsu.syncId,
+                                    ).notifier,
+                                  )
                                   .login(email, password);
                               if (!res.$1) {
                                 setState(() {

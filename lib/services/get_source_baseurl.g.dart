@@ -6,7 +6,7 @@ part of 'get_source_baseurl.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$sourceBaseUrlHash() => r'2eaf2f441085cec9e2f035763ef2ec64aa00f838';
+String _$sourceBaseUrlHash() => r'ead3cca719e2530502d97613e3168e0031eecde7';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -39,21 +39,15 @@ class SourceBaseUrlFamily extends Family<String> {
   const SourceBaseUrlFamily();
 
   /// See also [sourceBaseUrl].
-  SourceBaseUrlProvider call({
-    required Source source,
-  }) {
-    return SourceBaseUrlProvider(
-      source: source,
-    );
+  SourceBaseUrlProvider call({required Source source}) {
+    return SourceBaseUrlProvider(source: source);
   }
 
   @override
   SourceBaseUrlProvider getProviderOverride(
     covariant SourceBaseUrlProvider provider,
   ) {
-    return call(
-      source: provider.source,
-    );
+    return call(source: provider.source);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -74,24 +68,19 @@ class SourceBaseUrlFamily extends Family<String> {
 /// See also [sourceBaseUrl].
 class SourceBaseUrlProvider extends AutoDisposeProvider<String> {
   /// See also [sourceBaseUrl].
-  SourceBaseUrlProvider({
-    required Source source,
-  }) : this._internal(
-          (ref) => sourceBaseUrl(
-            ref as SourceBaseUrlRef,
-            source: source,
-          ),
-          from: sourceBaseUrlProvider,
-          name: r'sourceBaseUrlProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$sourceBaseUrlHash,
-          dependencies: SourceBaseUrlFamily._dependencies,
-          allTransitiveDependencies:
-              SourceBaseUrlFamily._allTransitiveDependencies,
-          source: source,
-        );
+  SourceBaseUrlProvider({required Source source})
+    : this._internal(
+        (ref) => sourceBaseUrl(ref as SourceBaseUrlRef, source: source),
+        from: sourceBaseUrlProvider,
+        name: r'sourceBaseUrlProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$sourceBaseUrlHash,
+        dependencies: SourceBaseUrlFamily._dependencies,
+        allTransitiveDependencies:
+            SourceBaseUrlFamily._allTransitiveDependencies,
+        source: source,
+      );
 
   SourceBaseUrlProvider._internal(
     super._createNotifier, {
@@ -106,9 +95,7 @@ class SourceBaseUrlProvider extends AutoDisposeProvider<String> {
   final Source source;
 
   @override
-  Override overrideWith(
-    String Function(SourceBaseUrlRef provider) create,
-  ) {
+  Override overrideWith(String Function(SourceBaseUrlRef provider) create) {
     return ProviderOverride(
       origin: this,
       override: SourceBaseUrlProvider._internal(
@@ -156,5 +143,6 @@ class _SourceBaseUrlProviderElement extends AutoDisposeProviderElement<String>
   @override
   Source get source => (origin as SourceBaseUrlProvider).source;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

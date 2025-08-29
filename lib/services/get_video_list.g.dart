@@ -6,7 +6,7 @@ part of 'get_video_list.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getVideoListHash() => r'aeed8a24962e960a374d6bc7294e798ad3d0c05e';
+String _$getVideoListHash() => r'0b35633b9758cd633cc826801568aa81fbb27b61';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -35,26 +35,20 @@ const getVideoListProvider = GetVideoListFamily();
 
 /// See also [getVideoList].
 class GetVideoListFamily
-    extends Family<AsyncValue<(List<Video>, bool, List<String>)>> {
+    extends Family<AsyncValue<(List<Video>, bool, List<String>, Directory?)>> {
   /// See also [getVideoList].
   const GetVideoListFamily();
 
   /// See also [getVideoList].
-  GetVideoListProvider call({
-    required Chapter episode,
-  }) {
-    return GetVideoListProvider(
-      episode: episode,
-    );
+  GetVideoListProvider call({required Chapter episode}) {
+    return GetVideoListProvider(episode: episode);
   }
 
   @override
   GetVideoListProvider getProviderOverride(
     covariant GetVideoListProvider provider,
   ) {
-    return call(
-      episode: provider.episode,
-    );
+    return call(episode: provider.episode);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -74,26 +68,24 @@ class GetVideoListFamily
 
 /// See also [getVideoList].
 class GetVideoListProvider
-    extends AutoDisposeFutureProvider<(List<Video>, bool, List<String>)> {
+    extends
+        AutoDisposeFutureProvider<
+          (List<Video>, bool, List<String>, Directory?)
+        > {
   /// See also [getVideoList].
-  GetVideoListProvider({
-    required Chapter episode,
-  }) : this._internal(
-          (ref) => getVideoList(
-            ref as GetVideoListRef,
-            episode: episode,
-          ),
-          from: getVideoListProvider,
-          name: r'getVideoListProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$getVideoListHash,
-          dependencies: GetVideoListFamily._dependencies,
-          allTransitiveDependencies:
-              GetVideoListFamily._allTransitiveDependencies,
-          episode: episode,
-        );
+  GetVideoListProvider({required Chapter episode})
+    : this._internal(
+        (ref) => getVideoList(ref as GetVideoListRef, episode: episode),
+        from: getVideoListProvider,
+        name: r'getVideoListProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$getVideoListHash,
+        dependencies: GetVideoListFamily._dependencies,
+        allTransitiveDependencies:
+            GetVideoListFamily._allTransitiveDependencies,
+        episode: episode,
+      );
 
   GetVideoListProvider._internal(
     super._createNotifier, {
@@ -109,9 +101,10 @@ class GetVideoListProvider
 
   @override
   Override overrideWith(
-    FutureOr<(List<Video>, bool, List<String>)> Function(
-            GetVideoListRef provider)
-        create,
+    FutureOr<(List<Video>, bool, List<String>, Directory?)> Function(
+      GetVideoListRef provider,
+    )
+    create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -128,8 +121,10 @@ class GetVideoListProvider
   }
 
   @override
-  AutoDisposeFutureProviderElement<(List<Video>, bool, List<String>)>
-      createElement() {
+  AutoDisposeFutureProviderElement<
+    (List<Video>, bool, List<String>, Directory?)
+  >
+  createElement() {
     return _GetVideoListProviderElement(this);
   }
 
@@ -150,18 +145,25 @@ class GetVideoListProvider
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 mixin GetVideoListRef
-    on AutoDisposeFutureProviderRef<(List<Video>, bool, List<String>)> {
+    on
+        AutoDisposeFutureProviderRef<
+          (List<Video>, bool, List<String>, Directory?)
+        > {
   /// The parameter `episode` of this provider.
   Chapter get episode;
 }
 
 class _GetVideoListProviderElement
-    extends AutoDisposeFutureProviderElement<(List<Video>, bool, List<String>)>
+    extends
+        AutoDisposeFutureProviderElement<
+          (List<Video>, bool, List<String>, Directory?)
+        >
     with GetVideoListRef {
   _GetVideoListProviderElement(super.provider);
 
   @override
   Chapter get episode => (origin as GetVideoListProvider).episode;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -32,9 +32,7 @@ class _SystemHash {
 abstract class _$CurrentIndex extends BuildlessAutoDisposeNotifier<int> {
   late final Chapter chapter;
 
-  int build(
-    Chapter chapter,
-  );
+  int build(Chapter chapter);
 }
 
 /// See also [CurrentIndex].
@@ -47,21 +45,15 @@ class CurrentIndexFamily extends Family<int> {
   const CurrentIndexFamily();
 
   /// See also [CurrentIndex].
-  CurrentIndexProvider call(
-    Chapter chapter,
-  ) {
-    return CurrentIndexProvider(
-      chapter,
-    );
+  CurrentIndexProvider call(Chapter chapter) {
+    return CurrentIndexProvider(chapter);
   }
 
   @override
   CurrentIndexProvider getProviderOverride(
     covariant CurrentIndexProvider provider,
   ) {
-    return call(
-      provider.chapter,
-    );
+    return call(provider.chapter);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -83,21 +75,19 @@ class CurrentIndexFamily extends Family<int> {
 class CurrentIndexProvider
     extends AutoDisposeNotifierProviderImpl<CurrentIndex, int> {
   /// See also [CurrentIndex].
-  CurrentIndexProvider(
-    Chapter chapter,
-  ) : this._internal(
-          () => CurrentIndex()..chapter = chapter,
-          from: currentIndexProvider,
-          name: r'currentIndexProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$currentIndexHash,
-          dependencies: CurrentIndexFamily._dependencies,
-          allTransitiveDependencies:
-              CurrentIndexFamily._allTransitiveDependencies,
-          chapter: chapter,
-        );
+  CurrentIndexProvider(Chapter chapter)
+    : this._internal(
+        () => CurrentIndex()..chapter = chapter,
+        from: currentIndexProvider,
+        name: r'currentIndexProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$currentIndexHash,
+        dependencies: CurrentIndexFamily._dependencies,
+        allTransitiveDependencies:
+            CurrentIndexFamily._allTransitiveDependencies,
+        chapter: chapter,
+      );
 
   CurrentIndexProvider._internal(
     super._createNotifier, {
@@ -112,12 +102,8 @@ class CurrentIndexProvider
   final Chapter chapter;
 
   @override
-  int runNotifierBuild(
-    covariant CurrentIndex notifier,
-  ) {
-    return notifier.build(
-      chapter,
-    );
+  int runNotifierBuild(covariant CurrentIndex notifier) {
+    return notifier.build(chapter);
   }
 
   @override
@@ -176,9 +162,7 @@ String _$readerControllerHash() => r'8b2995dcf849eddff308a105a2e06c9534096fac';
 abstract class _$ReaderController extends BuildlessAutoDisposeNotifier<void> {
   late final Chapter chapter;
 
-  void build({
-    required Chapter chapter,
-  });
+  void build({required Chapter chapter});
 }
 
 /// See also [ReaderController].
@@ -191,21 +175,15 @@ class ReaderControllerFamily extends Family<void> {
   const ReaderControllerFamily();
 
   /// See also [ReaderController].
-  ReaderControllerProvider call({
-    required Chapter chapter,
-  }) {
-    return ReaderControllerProvider(
-      chapter: chapter,
-    );
+  ReaderControllerProvider call({required Chapter chapter}) {
+    return ReaderControllerProvider(chapter: chapter);
   }
 
   @override
   ReaderControllerProvider getProviderOverride(
     covariant ReaderControllerProvider provider,
   ) {
-    return call(
-      chapter: provider.chapter,
-    );
+    return call(chapter: provider.chapter);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -227,21 +205,19 @@ class ReaderControllerFamily extends Family<void> {
 class ReaderControllerProvider
     extends AutoDisposeNotifierProviderImpl<ReaderController, void> {
   /// See also [ReaderController].
-  ReaderControllerProvider({
-    required Chapter chapter,
-  }) : this._internal(
-          () => ReaderController()..chapter = chapter,
-          from: readerControllerProvider,
-          name: r'readerControllerProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$readerControllerHash,
-          dependencies: ReaderControllerFamily._dependencies,
-          allTransitiveDependencies:
-              ReaderControllerFamily._allTransitiveDependencies,
-          chapter: chapter,
-        );
+  ReaderControllerProvider({required Chapter chapter})
+    : this._internal(
+        () => ReaderController()..chapter = chapter,
+        from: readerControllerProvider,
+        name: r'readerControllerProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$readerControllerHash,
+        dependencies: ReaderControllerFamily._dependencies,
+        allTransitiveDependencies:
+            ReaderControllerFamily._allTransitiveDependencies,
+        chapter: chapter,
+      );
 
   ReaderControllerProvider._internal(
     super._createNotifier, {
@@ -256,12 +232,8 @@ class ReaderControllerProvider
   final Chapter chapter;
 
   @override
-  void runNotifierBuild(
-    covariant ReaderController notifier,
-  ) {
-    return notifier.build(
-      chapter: chapter,
-    );
+  void runNotifierBuild(covariant ReaderController notifier) {
+    return notifier.build(chapter: chapter);
   }
 
   @override
@@ -314,5 +286,6 @@ class _ReaderControllerProviderElement
   @override
   Chapter get chapter => (origin as ReaderControllerProvider).chapter;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -140,7 +140,7 @@ class _MigrationScreenScreenState extends ConsumerState<MigrationScreen> {
   }
 }
 
-class MigrationSourceSearchScreen extends StatefulWidget {
+class MigrationSourceSearchScreen extends ConsumerStatefulWidget {
   final String query;
   final Manga manga;
   final TrackSearch? trackSearch;
@@ -155,12 +155,12 @@ class MigrationSourceSearchScreen extends StatefulWidget {
   });
 
   @override
-  State<MigrationSourceSearchScreen> createState() =>
+  ConsumerState<MigrationSourceSearchScreen> createState() =>
       _MigrationSourceSearchScreenState();
 }
 
 class _MigrationSourceSearchScreenState
-    extends State<MigrationSourceSearchScreen> {
+    extends ConsumerState<MigrationSourceSearchScreen> {
   @override
   void initState() {
     super.initState();
@@ -173,11 +173,13 @@ class _MigrationSourceSearchScreenState
   _init() async {
     try {
       _errorMessage = "";
-      pages = await search(
-        source: widget.source,
-        page: 1,
-        query: widget.query,
-        filterList: [],
+      pages = await ref.read(
+        searchProvider(
+          source: widget.source,
+          page: 1,
+          query: widget.query,
+          filterList: [],
+        ).future,
       );
       if (mounted) {
         setState(() {
@@ -308,6 +310,7 @@ class _MigrationMangaGlobalImageCardState
                                 headersProvider(
                                   source: widget.source.name!,
                                   lang: widget.source.lang!,
+                                  sourceId: widget.source.id,
                                 ),
                               ),
                               imageUrl: toImgUrl(
@@ -584,6 +587,7 @@ class _MigrationMangaGlobalImageCardState
                               categories: categoryIds,
                               dateAdded: DateTime.now().millisecondsSinceEpoch,
                               updatedAt: DateTime.now().millisecondsSinceEpoch,
+                              sourceId: widget.source.id,
                             );
                             int mangaId = -1;
                             isar.writeTxnSync(() {

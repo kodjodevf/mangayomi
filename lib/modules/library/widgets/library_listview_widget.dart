@@ -9,6 +9,7 @@ import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/modules/library/providers/isar_providers.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/constant.dart';
@@ -44,7 +45,7 @@ class LibraryListViewWidget extends StatelessWidget {
         bool isLocalArchive = entry.isLocalArchive ?? false;
         return Consumer(
           builder: (context, ref, child) {
-            final isLongPressed = ref.watch(isLongPressedMangaStateProvider);
+            final isLongPressed = ref.watch(isLongPressedStateProvider);
             return Material(
               borderRadius: BorderRadius.circular(5),
               color: Colors.transparent,
@@ -61,6 +62,7 @@ class LibraryListViewWidget extends StatelessWidget {
                       lang: entry.lang!,
                       mangaM: entry,
                       source: entry.source!,
+                      sourceId: entry.sourceId,
                     );
                     ref.invalidate(
                       getAllMangaWithoutCategoriesStreamProvider(
@@ -80,7 +82,7 @@ class LibraryListViewWidget extends StatelessWidget {
                     ref.read(mangasListStateProvider.notifier).update(entry);
 
                     ref
-                        .read(isLongPressedMangaStateProvider.notifier)
+                        .read(isLongPressedStateProvider.notifier)
                         .update(!isLongPressed);
                   } else {
                     ref.read(mangasListStateProvider.notifier).update(entry);
@@ -91,7 +93,7 @@ class LibraryListViewWidget extends StatelessWidget {
                     ref.read(mangasListStateProvider.notifier).update(entry);
 
                     ref
-                        .read(isLongPressedMangaStateProvider.notifier)
+                        .read(isLongPressedStateProvider.notifier)
                         .update(!isLongPressed);
                   } else {
                     ref.read(mangasListStateProvider.notifier).update(entry);
@@ -139,6 +141,7 @@ class LibraryListViewWidget extends StatelessWidget {
                                                 headersProvider(
                                                   source: entry.source!,
                                                   lang: entry.lang!,
+                                                  sourceId: entry.sourceId,
                                                 ),
                                               ),
                                             ),

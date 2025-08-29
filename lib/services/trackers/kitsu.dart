@@ -9,11 +9,12 @@ import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/more/settings/track/myanimelist/model.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+import 'base_tracker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'kitsu.g.dart';
 
 @riverpod
-class Kitsu extends _$Kitsu {
+class Kitsu extends _$Kitsu implements BaseTracker {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
   final String _clientId =
       'dd031b32d2f56c990b1425efe6c42ad847e7fe3ab46bf1299f05ecd856bdb7dd';
@@ -76,6 +77,7 @@ class Kitsu extends _$Kitsu {
     }
   }
 
+  @override
   Future<Track> update(Track track, bool isManga) async {
     final isNew = track.libraryId == null;
     final String? userId = isNew ? _getUserId() : null;
@@ -127,6 +129,7 @@ class Kitsu extends _$Kitsu {
     return track;
   }
 
+  @override
   Future<List<TrackSearch>> search(String search, bool isManga) async {
     final accessToken = _getAccessToken();
 
@@ -160,7 +163,7 @@ class Kitsu extends _$Kitsu {
             mediaId: jsonRes['id'],
             summary: jsonRes['synopsis'] ?? "",
             totalChapter: (jsonRes[totalChapter] ?? 0),
-            coverUrl: jsonRes['posterImage']['original'] ?? "",
+            coverUrl: jsonRes['posterImage']?['original'] ?? "",
             title: jsonRes['canonicalTitle'],
             startDate: "",
             publishingType: (jsonRes["subtype"] ?? ""),
@@ -175,6 +178,7 @@ class Kitsu extends _$Kitsu {
         .toList();
   }
 
+  @override
   Future<List<TrackSearch>> fetchGeneralData({
     bool isManga = true,
     String rankingType = "popularityRank",
@@ -192,28 +196,30 @@ class Kitsu extends _$Kitsu {
       final mediaId = jsonRes['id'] is String
           ? int.parse(jsonRes['id'])
           : jsonRes['id'];
-      final score = jsonRes['attributes']['averageRating'] is String
-          ? double.parse(jsonRes['attributes']['averageRating'])
-          : jsonRes['attributes']['averageRating'];
+      final attributes = jsonRes['attributes'];
+      final score = attributes['averageRating'] is String
+          ? double.parse(attributes['averageRating'])
+          : attributes['averageRating'];
       return TrackSearch(
         libraryId: mediaId,
         syncId: syncId,
         trackingUrl: _mediaUrl(isManga ? 'manga' : 'anime', mediaId),
         mediaId: mediaId,
-        summary: jsonRes['attributes']['synopsis'] ?? "",
-        totalChapter: (jsonRes['attributes'][totalChapter] ?? 0),
-        coverUrl: jsonRes['attributes']['posterImage']['original'] ?? "",
-        title: jsonRes['attributes']['canonicalTitle'],
+        summary: attributes['synopsis'] ?? "",
+        totalChapter: (attributes[totalChapter] ?? 0),
+        coverUrl: attributes['posterImage']?['original'] ?? "",
+        title: attributes['canonicalTitle'],
         startDate: "",
         score: score,
-        publishingType: (jsonRes['attributes']['subtype'] ?? ""),
-        publishingStatus: jsonRes['attributes']['endDate'] == null
+        publishingType: (attributes['subtype'] ?? ""),
+        publishingStatus: attributes['endDate'] == null
             ? "Publishing"
             : "Finished",
       );
     }).toList();
   }
 
+  @override
   Future<List<TrackSearch>> fetchUserData({bool isManga = true}) async {
     final type = isManga ? "manga" : "anime";
     final userId = _getUserId();
@@ -250,7 +256,7 @@ class Kitsu extends _$Kitsu {
           trackingUrl: _mediaUrl(type, id),
           summary: included['synopsis'] ?? "",
           totalChapter: included[totalChapter] ?? 0,
-          coverUrl: included['posterImage']['original'] ?? "",
+          coverUrl: included['posterImage']?['original'] ?? "",
           title: included['canonicalTitle'],
           startDate: "",
           publishingType: (included["subtype"] ?? ""),
@@ -270,6 +276,7 @@ class Kitsu extends _$Kitsu {
     return result;
   }
 
+  @override
   Future<Track?> findLibItem(Track track, bool isManga) async {
     final type = isManga ? "manga" : "anime";
     final userId = _getUserId();
@@ -373,6 +380,7 @@ class Kitsu extends _$Kitsu {
     };
   }
 
+  @override
   List<TrackStatus> statusList(bool isManga) => [
     isManga ? TrackStatus.reading : TrackStatus.watching,
     TrackStatus.completed,
@@ -409,5 +417,21 @@ class Kitsu extends _$Kitsu {
 
   String? _toKitsuScore(int score) {
     return score > 0 ? (score * 2).toString() : null;
+  }
+  
+  @override
+  String displayScore(int score) {
+    throw UnimplementedError();
+  }
+  
+  @override
+  (int, int) getScoreValue() {
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future<bool> checkRefresh() async {
+    ref.read(tracksProvider(syncId: syncId).notifier).setRefreshing(false);
+    return true;
   }
 }

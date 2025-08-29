@@ -14,6 +14,7 @@ import 'package:mangayomi/services/download_manager/m3u8/models/download.dart';
 import 'package:mangayomi/services/download_manager/m3u8/models/ts_info.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
+import 'package:mangayomi/utils/log/logger.dart';
 import 'package:path/path.dart' as path;
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:convert/convert.dart';
@@ -50,6 +51,7 @@ class M3u8Downloader {
     if (kDebugMode) {
       log('[M3u8Downloader] $message');
     }
+    AppLogger.log(message);
   }
 
   void close() {
@@ -149,18 +151,30 @@ class M3u8Downloader {
           continue;
         }
         _log('Downloading subtitle file: ${element.label}');
-        subtitleFile.createSync(recursive: true);
-        final response = await _withRetry(
-          () => httpClient.get(Uri.parse(element.file ?? ''), headers: headers),
-        );
-        if (response.statusCode != 200) {
-          _log('Warning: Failed to download subtitle file: ${element.label}');
+        if (element.file == null || element.file!.trim().isEmpty) {
+          _log('Warning: No subtitle file: ${element.label}');
           continue;
         }
-        _log('Subtitle file downloaded: ${element.label}');
-        await subtitleFile.writeAsBytes(response.bodyBytes);
+        subtitleFile.createSync(recursive: true);
+        if (element.file!.startsWith("http")) {
+          final response = await _withRetry(
+            () =>
+                httpClient.get(Uri.parse(element.file ?? ''), headers: headers),
+          );
+          if (response.statusCode != 200) {
+            _log('Warning: Failed to download subtitle file: ${element.label}');
+            continue;
+          }
+          _log('Subtitle file downloaded: ${element.label}');
+          await subtitleFile.writeAsBytes(response.bodyBytes);
+        } else {
+          _log('Subtitle file written: ${element.label}');
+          await subtitleFile.writeAsString(element.file!);
+        }
       }
     } catch (e) {
+      AppLogger.log("Download failed", logLevel: LogLevel.error);
+      AppLogger.log(e.toString(), logLevel: LogLevel.error);
       throw M3u8DownloaderException('Download failed', e);
     } finally {
       close();

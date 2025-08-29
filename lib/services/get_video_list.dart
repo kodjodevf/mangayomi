@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/video.dart';
+import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/torrent_server.dart';
 import 'package:mangayomi/utils/utils.dart';
@@ -10,14 +11,17 @@ import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
+
+import '../models/source.dart';
 part 'get_video_list.g.dart';
 
 @riverpod
-Future<(List<Video>, bool, List<String>)> getVideoList(
+Future<(List<Video>, bool, List<String>, Directory?)> getVideoList(
   Ref ref, {
   required Chapter episode,
 }) async {
   final storageProvider = StorageProvider();
+  final mpvDirectory = await storageProvider.getMpvDirectory();
   final mangaDirectory = await storageProvider.getMangaMainDirectory(episode);
   final isLocalArchive =
       episode.manga.value!.isLocalArchive! &&
@@ -52,14 +56,22 @@ Future<(List<Video>, bool, List<String>)> getVideoList(
       [Video(path!, episode.name!, path, subtitles: subtitles)],
       true,
       infoHashes,
+      mpvDirectory,
     );
   }
   final source = getSource(
     episode.manga.value!.lang!,
     episode.manga.value!.source!,
+    episode.manga.value!.sourceId,
   );
+  final proxyServer = ref.read(androidProxyServerStateProvider);
 
-  if (source?.isTorrent ?? false || episode.manga.value!.source == "torrent") {
+  final isMihonTorrent =
+      source?.sourceCodeLanguage == SourceCodeLanguage.mihon &&
+      source!.name!.contains("(Torrent");
+  if ((source?.isTorrent ?? false) ||
+      episode.manga.value!.source == "torrent" ||
+      isMihonTorrent) {
     List<Video> list = [];
 
     List<Video> torrentList = [];
@@ -68,11 +80,14 @@ Future<(List<Video>, bool, List<String>)> getVideoList(
         episode.url,
         episode.archivePath,
       );
-      return (videos, false, [infohash ?? ""]);
+      return (videos, false, [infohash ?? ""], mpvDirectory);
     }
 
     try {
-      list = await getExtensionService(source!).getVideoList(episode.url!);
+      list = await getExtensionService(
+        source!,
+        proxyServer,
+      ).getVideoList(episode.url!);
     } catch (e) {
       list = [Video(episode.url!, episode.name!, episode.url!)];
     }
@@ -91,11 +106,12 @@ Future<(List<Video>, bool, List<String>)> getVideoList(
         }
       }
     }
-    return (torrentList, false, infoHashes);
+    return (torrentList, false, infoHashes, mpvDirectory);
   }
 
   List<Video> list = await getExtensionService(
     source!,
+    proxyServer,
   ).getVideoList(episode.url!);
   List<Video> videos = [];
 
@@ -105,5 +121,5 @@ Future<(List<Video>, bool, List<String>)> getVideoList(
     }
   }
 
-  return (videos, false, infoHashes);
+  return (videos, false, infoHashes, mpvDirectory);
 }

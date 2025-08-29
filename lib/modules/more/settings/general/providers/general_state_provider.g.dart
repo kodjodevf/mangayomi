@@ -6,6 +6,22 @@ part of 'general_state_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+String _$customDnsStateHash() => r'6061c64d742b3f873e54c1b9ef724b7c0b6350a2';
+
+/// See also [CustomDnsState].
+@ProviderFor(CustomDnsState)
+final customDnsStateProvider =
+    AutoDisposeNotifierProvider<CustomDnsState, String>.internal(
+      CustomDnsState.new,
+      name: r'customDnsStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$customDnsStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+typedef _$CustomDnsState = AutoDisposeNotifier<String>;
 String _$enableDiscordRpcStateHash() =>
     r'ab8ce3b29f5d94aedbc88dcb87c7c834648270f5';
 
@@ -13,14 +29,14 @@ String _$enableDiscordRpcStateHash() =>
 @ProviderFor(EnableDiscordRpcState)
 final enableDiscordRpcStateProvider =
     AutoDisposeNotifierProvider<EnableDiscordRpcState, bool>.internal(
-  EnableDiscordRpcState.new,
-  name: r'enableDiscordRpcStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$enableDiscordRpcStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      EnableDiscordRpcState.new,
+      name: r'enableDiscordRpcStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$enableDiscordRpcStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$EnableDiscordRpcState = AutoDisposeNotifier<bool>;
 String _$hideDiscordRpcInIncognitoStateHash() =>
@@ -30,14 +46,14 @@ String _$hideDiscordRpcInIncognitoStateHash() =>
 @ProviderFor(HideDiscordRpcInIncognitoState)
 final hideDiscordRpcInIncognitoStateProvider =
     AutoDisposeNotifierProvider<HideDiscordRpcInIncognitoState, bool>.internal(
-  HideDiscordRpcInIncognitoState.new,
-  name: r'hideDiscordRpcInIncognitoStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$hideDiscordRpcInIncognitoStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      HideDiscordRpcInIncognitoState.new,
+      name: r'hideDiscordRpcInIncognitoStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$hideDiscordRpcInIncognitoStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$HideDiscordRpcInIncognitoState = AutoDisposeNotifier<bool>;
 String _$rpcShowReadingWatchingProgressStateHash() =>
@@ -45,16 +61,19 @@ String _$rpcShowReadingWatchingProgressStateHash() =>
 
 /// See also [RpcShowReadingWatchingProgressState].
 @ProviderFor(RpcShowReadingWatchingProgressState)
-final rpcShowReadingWatchingProgressStateProvider = AutoDisposeNotifierProvider<
-    RpcShowReadingWatchingProgressState, bool>.internal(
-  RpcShowReadingWatchingProgressState.new,
-  name: r'rpcShowReadingWatchingProgressStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$rpcShowReadingWatchingProgressStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+final rpcShowReadingWatchingProgressStateProvider =
+    AutoDisposeNotifierProvider<
+      RpcShowReadingWatchingProgressState,
+      bool
+    >.internal(
+      RpcShowReadingWatchingProgressState.new,
+      name: r'rpcShowReadingWatchingProgressStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$rpcShowReadingWatchingProgressStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$RpcShowReadingWatchingProgressState = AutoDisposeNotifier<bool>;
 String _$rpcShowTitleStateHash() => r'b784b58365a72b54cbe46b1582c97c2f9b8057a2';
@@ -63,14 +82,14 @@ String _$rpcShowTitleStateHash() => r'b784b58365a72b54cbe46b1582c97c2f9b8057a2';
 @ProviderFor(RpcShowTitleState)
 final rpcShowTitleStateProvider =
     AutoDisposeNotifierProvider<RpcShowTitleState, bool>.internal(
-  RpcShowTitleState.new,
-  name: r'rpcShowTitleStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$rpcShowTitleStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      RpcShowTitleState.new,
+      name: r'rpcShowTitleStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$rpcShowTitleStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$RpcShowTitleState = AutoDisposeNotifier<bool>;
 String _$rpcShowCoverImageStateHash() =>
@@ -80,14 +99,14 @@ String _$rpcShowCoverImageStateHash() =>
 @ProviderFor(RpcShowCoverImageState)
 final rpcShowCoverImageStateProvider =
     AutoDisposeNotifierProvider<RpcShowCoverImageState, bool>.internal(
-  RpcShowCoverImageState.new,
-  name: r'rpcShowCoverImageStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$rpcShowCoverImageStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      RpcShowCoverImageState.new,
+      name: r'rpcShowCoverImageStateProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$rpcShowCoverImageStateHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$RpcShowCoverImageState = AutoDisposeNotifier<bool>;
 // ignore_for_file: type=lint

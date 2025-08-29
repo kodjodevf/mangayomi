@@ -8,6 +8,7 @@ import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/custom_button.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -131,6 +132,15 @@ Future<void> doBackUp(
         .toList();
     datas.addAll({"extensions": res});
   }
+  if (list.contains(10)) {
+    final res = isar.customButtons
+        .filter()
+        .idIsNotNull()
+        .findAllSync()
+        .map((e) => e.toJson())
+        .toList();
+    datas.addAll({"customButtons": res});
+  }
   final regExp = RegExp(r'[^a-zA-Z0-9 .()\-\s]');
   final name =
       'mangayomi_${DateTime.now().toString().replaceAll(regExp, '_').replaceAll(' ', '_')}';
@@ -166,9 +176,13 @@ Future<void> doBackUp(
               alignment: Alignment.topLeft,
               child: ElevatedButton(
                 onPressed: () {
-                  Share.shareXFiles([
-                    XFile(p.join(path, "$name.backup")),
-                  ], text: "$name.backup");
+                  final box = context.findRenderObject() as RenderBox?;
+                  Share.shareXFiles(
+                    [XFile(p.join(path, "$name.backup"))],
+                    text: "$name.backup",
+                    sharePositionOrigin:
+                        box!.localToGlobal(Offset.zero) & box.size,
+                  );
                 },
                 child: Text(context.l10n.share),
               ),

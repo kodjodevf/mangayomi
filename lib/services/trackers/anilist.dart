@@ -10,11 +10,12 @@ import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/more/settings/track/myanimelist/model.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+import 'base_tracker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'anilist.g.dart';
 
 @riverpod
-class Anilist extends _$Anilist {
+class Anilist extends _$Anilist implements BaseTracker {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
   static final _isDesktop = Platform.isWindows || Platform.isLinux;
   final String _clientId = _isDesktop ? '13587' : '13588';
@@ -77,6 +78,7 @@ class Anilist extends _$Anilist {
     }
   }
 
+  @override
   Future<Track> update(Track track, bool isManga) async {
     final isNew = track.libraryId == null;
     final opName = isNew ? 'AddEntry' : 'UpdateEntry';
@@ -114,6 +116,7 @@ class Anilist extends _$Anilist {
     return track;
   }
 
+  @override
   Future<List<TrackSearch>> search(String search, bool isManga) async {
     final type = isManga ? "MANGA" : "ANIME";
     final contentUnit = isManga ? "chapters" : "episodes";
@@ -169,6 +172,7 @@ class Anilist extends _$Anilist {
         .toList();
   }
 
+  @override
   Future<Track?> findLibItem(Track track, bool isManga) async {
     final userId = int.parse(
       ref.read(tracksProvider(syncId: syncId))!.username!,
@@ -225,6 +229,7 @@ class Anilist extends _$Anilist {
       ..totalChapter = jsonRes['media'][contentUnit] as int? ?? 0;
   }
 
+  @override
   Future<List<TrackSearch>> fetchGeneralData({
     bool isManga = true,
     String rankingType =
@@ -284,6 +289,7 @@ class Anilist extends _$Anilist {
         .toList();
   }
 
+  @override
   Future<List<TrackSearch>> fetchUserData({bool isManga = true}) async {
     final userId = int.parse(
       ref.read(tracksProvider(syncId: syncId))!.username!,
@@ -454,6 +460,7 @@ class Anilist extends _$Anilist {
     };
   }
 
+  @override
   List<TrackStatus> statusList(bool isManga) => [
     isManga ? TrackStatus.reading : TrackStatus.watching,
     TrackStatus.completed,
@@ -497,6 +504,7 @@ class Anilist extends _$Anilist {
     return {"year": date.year, "month": date.month, "day": date.day};
   }
 
+  @override
   String displayScore(int score) {
     final prefs = isar.trackPreferences.getSync(syncId)!.prefs;
     final scoreFormat = jsonDecode(prefs!)['scoreFormat'];
@@ -515,6 +523,7 @@ class Anilist extends _$Anilist {
     };
   }
 
+  @override
   (int, int) getScoreValue() {
     final prefs = isar.trackPreferences.getSync(syncId)!.prefs;
     String scoreFormat = jsonDecode(prefs!)['scoreFormat'];
@@ -525,5 +534,11 @@ class Anilist extends _$Anilist {
       'POINT_3' => (100, 30),
       _ => (100, 1),
     };
+  }
+  
+  @override
+  Future<bool> checkRefresh() async {
+    ref.read(tracksProvider(syncId: syncId).notifier).setRefreshing(false);
+    return true;
   }
 }

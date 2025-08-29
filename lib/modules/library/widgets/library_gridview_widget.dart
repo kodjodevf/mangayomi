@@ -9,6 +9,7 @@ import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/modules/library/providers/isar_providers.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/constant.dart';
@@ -52,7 +53,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final isLongPressed = ref.watch(isLongPressedMangaStateProvider);
+        final isLongPressed = ref.watch(isLongPressedStateProvider);
         final itemType = widget.itemType;
 
         final gridSize = ref.watch(
@@ -93,6 +94,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                     headersProvider(
                                       source: entry.source!,
                                       lang: entry.lang!,
+                                      sourceId: entry.sourceId,
                                     ),
                                   ),
                           ),
@@ -109,6 +111,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                           lang: entry.lang!,
                           mangaM: entry,
                           source: entry.source!,
+                          sourceId: entry.sourceId,
                         );
                         if (context.mounted) {
                           ref.invalidate(
@@ -430,7 +433,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
   ) {
     if (!isLongPressed) {
       ref.read(mangasListStateProvider.notifier).update(entry);
-      ref.read(isLongPressedMangaStateProvider.notifier).update(!isLongPressed);
+      ref.read(isLongPressedStateProvider.notifier).update(!isLongPressed);
     } else {
       ref.read(mangasListStateProvider.notifier).update(entry);
     }

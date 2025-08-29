@@ -64,7 +64,6 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
   }
 
   bool _isSearch = false;
-  // List<History> _entriesData = []; // TODO. The variable is never used/modified
   @override
   Widget build(BuildContext context) {
     final hideItems = ref.watch(hideItemsStateProvider);
@@ -403,7 +402,11 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
         ? Image.memory(manga.customCoverImage as Uint8List)
         : cachedCompressedNetworkImage(
             headers: ref.watch(
-              headersProvider(source: manga.source!, lang: manga.lang!),
+              headersProvider(
+                source: manga.source!,
+                lang: manga.lang!,
+                sourceId: manga.sourceId,
+              ),
             ),
             imageUrl: toImgUrl(
               manga.customCoverFromTracker ?? manga.imageUrl ?? "",
@@ -451,26 +454,21 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
   ) async {
     await manga.chapters.load();
     final chapters = manga.chapters;
-    await isar.writeTxn(() async {
-      await isar.historys.delete(deleteId!);
+    isar.writeTxnSync(() {
+      isar.historys.deleteSync(deleteId!);
       for (var chapter in chapters) {
-        await isar.chapters.delete(chapter.id!);
-        await ref
+        isar.chapters.deleteSync(chapter.id!);
+        ref
             .read(synchingProvider(syncId: 1).notifier)
-            .addChangedPartAsync(
-              ActionType.removeChapter,
-              chapter.id,
-              "{}",
-              false,
-            );
+            .addChangedPart(ActionType.removeChapter, chapter.id, "{}", false);
       }
-      await isar.mangas.delete(manga.id!);
-      await ref
+      isar.mangas.deleteSync(manga.id!);
+      ref
           .read(synchingProvider(syncId: 1).notifier)
-          .addChangedPartAsync(ActionType.removeHistory, deleteId, "{}", false);
-      await ref
+          .addChangedPart(ActionType.removeHistory, deleteId, "{}", false);
+      ref
           .read(synchingProvider(syncId: 1).notifier)
-          .addChangedPartAsync(ActionType.removeItem, manga.id, "{}", false);
+          .addChangedPart(ActionType.removeItem, manga.id, "{}", false);
     });
     if (context.mounted) {
       Navigator.pop(context);

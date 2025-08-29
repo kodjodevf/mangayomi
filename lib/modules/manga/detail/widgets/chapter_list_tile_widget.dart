@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
+import 'package:mangayomi/modules/widgets/progress_center.dart';
+import 'package:mangayomi/utils/constant.dart';
 import 'package:marquee/marquee.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -10,6 +13,8 @@ import 'package:mangayomi/utils/extensions/chapter.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/manga/download/download_page_widget.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
 class ChapterListTileWidget extends ConsumerWidget {
   final Chapter chapter;
@@ -33,6 +38,9 @@ class ChapterListTileWidget extends ConsumerWidget {
         onLongPress: () => _handleInteraction(ref),
         onSecondaryTap: () => _handleInteraction(ref),
         child: ListTile(
+          tileColor: (chapter.isFiller ?? false)
+              ? context.primaryColor.withValues(alpha: 0.15)
+              : null,
           textColor: chapter.isRead!
               ? context.isLight
                     ? Colors.black.withValues(alpha: 0.4)
@@ -44,14 +52,43 @@ class ChapterListTileWidget extends ConsumerWidget {
           onTap: () async => _handleInteraction(ref, context),
           title: Row(
             children: [
+              if (chapter.thumbnailUrl != null)
+                _thumbnailPreview(context, chapter.thumbnailUrl),
               chapter.isBookmarked!
                   ? Icon(Icons.bookmark, size: 16, color: context.primaryColor)
                   : Container(),
-              Flexible(child: _buildTitle(chapter.name!, context)),
+              chapter.description != null
+                  ? Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildTitle(chapter.name!, context),
+                          Text(
+                            chapter.description!,
+                            style: const TextStyle(fontSize: 11),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    )
+                  : Flexible(child: _buildTitle(chapter.name!, context)),
             ],
           ),
           subtitle: Row(
             children: [
+              if (chapter.isFiller ?? false)
+                Row(
+                  children: [
+                    Icon(Icons.label, size: 16, color: context.primaryColor),
+                    Text(
+                      " Filler ",
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.primaryColor,
+                      ),
+                    ),
+                  ],
+                ),
               if ((chapter.manga.value!.isLocalArchive ?? false) == false)
                 Text(
                   chapter.dateUpload == null || chapter.dateUpload!.isEmpty
@@ -169,6 +206,64 @@ class ChapterListTileWidget extends ConsumerWidget {
             overflow: TextOverflow.ellipsis,
           );
         }
+      },
+    );
+  }
+
+  Widget _thumbnailPreview(BuildContext context, String? imageUrl) {
+    final imageProvider = CustomExtendedNetworkImageProvider(
+      toImgUrl(imageUrl ?? ""),
+    );
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
+      child: GestureDetector(
+        onTap: () {
+          _openImage(context, imageProvider);
+        },
+        child: SizedBox(
+          width: 50,
+          height: 65,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(5)),
+              image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _openImage(BuildContext context, ImageProvider imageProvider) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Stack(
+            children: [
+              GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: PhotoViewGallery.builder(
+                  backgroundDecoration: const BoxDecoration(
+                    color: Colors.transparent,
+                  ),
+                  itemCount: 1,
+                  builder: (context, index) {
+                    return PhotoViewGalleryPageOptions(
+                      imageProvider: imageProvider,
+                      minScale: PhotoViewComputedScale.contained,
+                      maxScale: 2.0,
+                    );
+                  },
+                  loadingBuilder: (context, event) {
+                    return const ProgressCenter();
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
       },
     );
   }

@@ -271,7 +271,11 @@ Future<void> downloadChapter(
         final cookie = MClient.getCookiesPref(page.url);
         final headers = itemType == ItemType.manga
             ? ref.read(
-                headersProvider(source: manga.source!, lang: manga.lang!),
+                headersProvider(
+                  source: manga.source!,
+                  lang: manga.lang!,
+                  sourceId: manga.sourceId,
+                ),
               )
             : itemType == ItemType.anime
             ? videoHeader

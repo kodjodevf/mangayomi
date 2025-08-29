@@ -6,7 +6,7 @@ part of 'supports_latest.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$supportsLatestHash() => r'71f77f99b86f2f597ec728add2483a5623f4984a';
+String _$supportsLatestHash() => r'e2d9b73adde86f78f1ab1c97d91ea2d3a59dc78d';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -39,21 +39,15 @@ class SupportsLatestFamily extends Family<bool> {
   const SupportsLatestFamily();
 
   /// See also [supportsLatest].
-  SupportsLatestProvider call({
-    required Source source,
-  }) {
-    return SupportsLatestProvider(
-      source: source,
-    );
+  SupportsLatestProvider call({required Source source}) {
+    return SupportsLatestProvider(source: source);
   }
 
   @override
   SupportsLatestProvider getProviderOverride(
     covariant SupportsLatestProvider provider,
   ) {
-    return call(
-      source: provider.source,
-    );
+    return call(source: provider.source);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -74,24 +68,19 @@ class SupportsLatestFamily extends Family<bool> {
 /// See also [supportsLatest].
 class SupportsLatestProvider extends AutoDisposeProvider<bool> {
   /// See also [supportsLatest].
-  SupportsLatestProvider({
-    required Source source,
-  }) : this._internal(
-          (ref) => supportsLatest(
-            ref as SupportsLatestRef,
-            source: source,
-          ),
-          from: supportsLatestProvider,
-          name: r'supportsLatestProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$supportsLatestHash,
-          dependencies: SupportsLatestFamily._dependencies,
-          allTransitiveDependencies:
-              SupportsLatestFamily._allTransitiveDependencies,
-          source: source,
-        );
+  SupportsLatestProvider({required Source source})
+    : this._internal(
+        (ref) => supportsLatest(ref as SupportsLatestRef, source: source),
+        from: supportsLatestProvider,
+        name: r'supportsLatestProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$supportsLatestHash,
+        dependencies: SupportsLatestFamily._dependencies,
+        allTransitiveDependencies:
+            SupportsLatestFamily._allTransitiveDependencies,
+        source: source,
+      );
 
   SupportsLatestProvider._internal(
     super._createNotifier, {
@@ -106,9 +95,7 @@ class SupportsLatestProvider extends AutoDisposeProvider<bool> {
   final Source source;
 
   @override
-  Override overrideWith(
-    bool Function(SupportsLatestRef provider) create,
-  ) {
+  Override overrideWith(bool Function(SupportsLatestRef provider) create) {
     return ProviderOverride(
       origin: this,
       override: SupportsLatestProvider._internal(
@@ -156,5 +143,6 @@ class _SupportsLatestProviderElement extends AutoDisposeProviderElement<bool>
   @override
   Source get source => (origin as SupportsLatestProvider).source;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
