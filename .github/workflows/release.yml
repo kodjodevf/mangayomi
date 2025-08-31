@@ -107,6 +107,15 @@ jobs:
       - name: Install the CLI tool
         run: cargo install 'flutter_rust_bridge_codegen'
 
+      - name: Select Xcode 16.2
+        run: sudo xcode-select -switch /Applications/Xcode_16.2.app/Contents/Developer
+
+      - name: Print Xcode version
+        run: xcodebuild -version
+
+      - name: Download iOS Platform
+        run: xcodebuild -downloadPlatform iOS
+
       - name: flutter pub get
         run: flutter pub get
 
