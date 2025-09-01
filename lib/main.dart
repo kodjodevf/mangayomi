@@ -38,7 +38,6 @@ import 'package:mangayomi/utils/url_protocol/api.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_provider.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:path/path.dart' as p;
@@ -324,9 +323,9 @@ class _MyAppState extends ConsumerState<MyApp> {
     if (filesMissing) {
       final bytes = await rootBundle.load("assets/mangayomi_mpv.zip");
       final archive = ZipDecoder().decodeBytes(bytes.buffer.asUint8List());
-      String shadersDir = path.join(dir.path, 'shaders');
+      String shadersDir = p.join(dir.path, 'shaders');
       await Directory(shadersDir).create(recursive: true);
-      String scriptsDir = path.join(dir.path, 'scripts');
+      String scriptsDir = p.join(dir.path, 'scripts');
       await Directory(scriptsDir).create(recursive: true);
       for (final file in archive.files) {
         if (file.name == "mpv.conf") {
