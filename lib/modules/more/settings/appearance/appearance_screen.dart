@@ -269,43 +269,33 @@ class AppearanceScreen extends ConsumerWidget {
                                   ),
                                 )
                                 .toList();
-                            return Flexible(
+                            return Expanded(
                               child: Scrollbar(
                                 interactive: true,
                                 thickness: 12,
                                 radius: const Radius.circular(10),
                                 controller: controller,
-                                child: CustomScrollView(
-                                  controller: controller,
-                                  slivers: [
-                                    SliverPadding(
-                                      padding: const EdgeInsets.all(0),
-                                      sliver: RadioGroup(
-                                        groupValue: appFontFamily,
-                                        onChanged: (value) {
-                                          ref
-                                              .read(
-                                                appFontFamilyProvider.notifier,
-                                              )
-                                              .set(value);
-                                          Navigator.pop(context);
-                                        },
-                                        child: SuperSliverList.builder(
-                                          itemCount: values.length,
-                                          itemBuilder: (context, index) {
-                                            final value = values[index];
-                                            return RadioListTile(
-                                              dense: true,
-                                              contentPadding:
-                                                  const EdgeInsets.all(0),
-                                              value: value.value().fontFamily,
-                                              title: Text(value.key),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                child: RadioGroup<String?>(
+                                  groupValue: appFontFamily,
+                                  onChanged: (value) {
+                                    ref
+                                        .read(appFontFamilyProvider.notifier)
+                                        .set(value);
+                                    Navigator.pop(context);
+                                  },
+                                  child: SuperListView.builder(
+                                    controller: controller,
+                                    itemCount: values.length,
+                                    itemBuilder: (context, index) {
+                                      final value = values[index];
+                                      return RadioListTile<String?>(
+                                        dense: true,
+                                        contentPadding: const EdgeInsets.all(0),
+                                        value: value.value().fontFamily,
+                                        title: Text(value.key),
+                                      );
+                                    },
+                                  ),
                                 ),
                               ),
                             );
