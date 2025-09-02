@@ -69,7 +69,6 @@ void main(List<String> args) async {
       );
     }
   }
-  await AppLogger.init();
   isar = await StorageProvider().initDB(null, inspector: kDebugMode);
   await Hive.initFlutter();
   Hive.registerAdapter(TrackSearchAdapter());
@@ -85,6 +84,7 @@ void main(List<String> args) async {
 Future<void> _postLaunchInit() async {
   await StorageProvider().requestPermission();
   await StorageProvider().deleteBtDirectory();
+  await AppLogger.init();
 }
 
 class MyApp extends ConsumerStatefulWidget {
