@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:numberpicker/numberpicker.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class DownloadsScreen extends ConsumerStatefulWidget {
   const DownloadsScreen({super.key});
@@ -18,6 +20,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
     final saveAsCBZArchiveState = ref.watch(saveAsCBZArchiveStateProvider);
     final onlyOnWifiState = ref.watch(onlyOnWifiStateProvider);
     final concurrentDownloads = ref.watch(concurrentDownloadsStateProvider);
+    final localFolders = ref.watch(localFoldersStateProvider);
     final l10n = l10nLocalizations(context);
     return Scaffold(
       appBar: AppBar(title: Text(l10n!.downloads)),
@@ -105,6 +108,14 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                 "$concurrentDownloads",
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
+            ),
+            SuperListView.builder(
+              itemCount: localFolders.length,
+              padding: const EdgeInsets.only(bottom: 100),
+              itemBuilder: (context, index) {
+                final folder = localFolders[index];
+                return Text(folder);
+              },
             ),
           ],
         ),

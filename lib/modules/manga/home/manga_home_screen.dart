@@ -63,7 +63,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
       ? 2
       : 0;
   late Source source = widget.source;
-  late List<dynamic> filters = getFilterList(source: source);
+  late bool isLocal = source.name == "local" && source.lang == "";
+  late List<dynamic> filters = isLocal ? [] : getFilterList(source: source);
   final List<MManga> _mangaList = [];
   List<TypeMangaSelector> _types(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
@@ -127,8 +128,10 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   AsyncValue<MPages?>? _getManga;
   int _length = 0;
   bool _isFiltering = false;
-  late final supportsLatest = ref.watch(supportsLatestProvider(source: source));
-  late final filterList = getFilterList(source: source);
+  late final supportsLatest = isLocal
+      ? true
+      : ref.watch(supportsLatestProvider(source: source));
+  late final filterList = isLocal ? [] : getFilterList(source: source);
   @override
   Widget build(BuildContext context) {
     if (_selectedIndex == 2 && (_isSearch && _query.isNotEmpty) ||
@@ -161,7 +164,15 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("${source.name}"),
+                  Text(
+                    isLocal
+                        ? "${source.name}"
+                        : "${context.l10n.local_source} ${source.itemType == ItemType.manga
+                              ? context.l10n.manga
+                              : source.itemType == ItemType.anime
+                              ? context.l10n.anime
+                              : context.l10n.novel}",
+                  ),
                   source.notes != null && source.notes!.isNotEmpty
                       ? SizedBox(
                           height: 20,

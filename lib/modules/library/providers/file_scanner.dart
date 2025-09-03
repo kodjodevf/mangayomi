@@ -1,6 +1,7 @@
 import 'dart:io'; // For I/O-operations
 import 'package:isar/isar.dart'; // Isar database package for local storage
 import 'package:mangayomi/main.dart'; // Exposes the global `isar` instance
+import 'package:mangayomi/models/settings.dart';
 import 'package:path/path.dart' as p; // For manipulating file system paths
 import 'package:bot_toast/bot_toast.dart'; // For Exceptions
 import 'package:mangayomi/models/manga.dart'; // Has Manga model and ItemType enum
@@ -10,6 +11,26 @@ import 'package:mangayomi/providers/storage_provider.dart'; // Provides storage 
 import 'package:riverpod_annotation/riverpod_annotation.dart'; // Annotations for code generation
 part 'file_scanner.g.dart';
 
+@riverpod
+class LocalFoldersState extends _$LocalFoldersState {
+  @override
+  List<String> build() {
+    return isar.settings.getSync(227)!.localFolders ?? [];
+  }
+
+  void setDownloadedOnly(List<String> value) {
+    final settings = isar.settings.getSync(227)!;
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings
+          ..localFolders = state
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
 /// Scans `Mangayomi/local` folder (if exists) for Mangas/Animes and imports in library.
 ///
 /// **Folder structure:**
@@ -18,25 +39,38 @@ part 'file_scanner.g.dart';
 /// Mangayomi/local/MangaName/Chapter1/Page1.jpg
 /// Mangayomi/local/MangaName/Chapter2.cbz
 /// Mangayomi/local/AnimeName/Episode1.mp4
+/// Mangayomi/local/NovelName/Chapter1.epub
+/// Mangayomi/local/NovelName/Chapter2.html
 /// ```
 /// **Supported filetypes:** (taken from lib/modules/library/providers/local_archive.dart, line 98)
 /// ```
 /// Videotypes:   mp4, mov, avi, flv, wmv, mpeg, mkv
 /// Imagetypes:   jpg, jpeg, png, webp
 /// Archivetypes: cbz, zip, cbt, tar
+/// Other types: epub, html
 /// ```
 @riverpod
 Future<void> scanLocalLibrary(Ref ref) async {
   // Get /local directory
   final localDir = await _getLocalLibrary();
+  await _scanDirectory(ref, localDir);
+  final customDirs = ref.read(localFoldersStateProvider);
+  for (final dir in customDirs) {
+    await _scanDirectory(ref, Directory(dir));
+  }
+}
+
+Future<void> _scanDirectory(Ref ref, Directory? dir) async {
   // Don't do anything if /local doesn't exist
-  if (localDir == null || !await localDir.exists()) return;
+  if (dir == null || !await dir.exists()) return;
 
   final dateNow = DateTime.now().millisecondsSinceEpoch;
 
   // Fetch all existing mangas in library that are in /local (or \local)
   final List<Manga> existingMangas = await isar.mangas
       .filter()
+      .sourceEqualTo("local")
+      .or()
       .linkContains("Mangayomi/local")
       .or()
       .linkContains("Mangayomi\\local")
@@ -84,7 +118,7 @@ Future<void> scanLocalLibrary(Ref ref) async {
   }
 
   // Iterate over each sub-directory (each representing a title, Manga or Anime)
-  await for (final folder in localDir.list()) {
+  await for (final folder in dir.list()) {
     if (folder is! Directory) continue;
     final title = p.basename(folder.path); // Anime/Manga title
     String relativePath = _getRelativePath(folder.path);
@@ -98,11 +132,14 @@ Future<void> scanLocalLibrary(Ref ref) async {
     final hasImagesFolders = subDirs.isNotEmpty;
     final hasArchives = files.any((f) => _isArchive(f.path));
     final hasVideos = files.any((f) => _isVideo(f.path));
+    final hasEpubs = files.any((f) => _isEpubHtml(f.path));
     late ItemType itemType;
     if (hasImagesFolders || hasArchives) {
       itemType = ItemType.manga;
     } else if (hasVideos) {
       itemType = ItemType.anime;
+    } else if (hasEpubs) {
+      itemType = ItemType.novel;
     } else {
       continue; // nothing to import from this folder
     }
@@ -115,7 +152,7 @@ Future<void> scanLocalLibrary(Ref ref) async {
       manga = mangaMap[relativePath]!;
     } else {
       manga = Manga(
-        favorite: true,
+        favorite: false,
         source: 'local',
         author: '',
         artist: '',
@@ -167,6 +204,11 @@ Future<void> scanLocalLibrary(Ref ref) async {
       // Each .mp4 is an episode
       final videos = files.where((f) => _isVideo(f.path)).toList();
       addNewChapters(videos, false);
+    }
+    if (hasEpubs) {
+      // Each .mp4 is an episode
+      final epubs = files.where((f) => _isEpubHtml(f.path)).toList();
+      addNewChapters(epubs, false);
     }
   }
 
@@ -334,4 +376,10 @@ bool _isVideo(String path) {
     '.mkv',
   };
   return videoExtensions.contains(ext);
+}
+
+/// Returns if file is an epub or html
+bool _isEpubHtml(String path) {
+  final ext = p.extension(path).toLowerCase();
+  return ext == '.epub' || ext == '.html';
 }
