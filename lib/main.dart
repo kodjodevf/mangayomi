@@ -38,7 +38,6 @@ import 'package:mangayomi/utils/url_protocol/api.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_provider.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:media_kit/media_kit.dart';
-import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:path/path.dart' as p;
@@ -70,22 +69,70 @@ void main(List<String> args) async {
       );
     }
   }
+  final storage = StorageProvider();
+  await storage.requestPermission();
+  await _migrateOldLayout();
+  isar = await storage.initDB(null, inspector: kDebugMode);
+  runApp(const ProviderScope(child: MyApp()));
+  unawaited(_postLaunchInit(storage)); // Defer non-essential async operations
+}
+
+Future<void> _postLaunchInit(StorageProvider storage) async {
   await AppLogger.init();
-  isar = await StorageProvider().initDB(null, inspector: kDebugMode);
-  await Hive.initFlutter();
+  final hivePath = (Platform.isIOS || Platform.isMacOS)
+      ? "databases"
+      : p.join("Mangayomi", "databases");
+  await Hive.initFlutter(Platform.isAndroid ? "" : hivePath);
   Hive.registerAdapter(TrackSearchAdapter());
   if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
     discordRpc = DiscordRPC(applicationId: "1395040506677039157");
     await discordRpc?.initialize();
   }
-
-  runApp(const ProviderScope(child: MyApp()));
-  unawaited(_postLaunchInit()); // Defer non-essential async operations
+  await storage.deleteBtDirectory();
 }
 
-Future<void> _postLaunchInit() async {
-  await StorageProvider().requestPermission();
-  await StorageProvider().deleteBtDirectory();
+/// This can be removed after next release (v0.6.40?)
+/// It is a one-time thing to migrate the database and folders to the new
+/// iOS and macOS location (PR #517)
+Future<void> _migrateOldLayout() async {
+  if (!(Platform.isIOS || Platform.isMacOS)) return;
+  final root = await getApplicationDocumentsDirectory();
+  final oldRoot = Directory(p.join(root.path, 'Mangayomi'));
+  if (!await oldRoot.exists()) return;
+  final newDbDir = Directory(p.join(root.path, 'databases'));
+  await newDbDir.create(recursive: true);
+  // Move database files to new directory
+  for (final filename in [
+    'mangayomiDb.isar',
+    'mangayomiDb.isar.lock',
+    'tracker_library.hive',
+    'tracker_library.lock',
+  ]) {
+    final oldFile = File(p.join(root.path, filename));
+    if (await oldFile.exists()) {
+      final newFile = File(p.join(newDbDir.path, filename));
+      await oldFile.rename(newFile.path);
+    }
+  }
+  // Move subfolders up a level
+  for (final sub in ['backup', 'downloads', 'Pictures', 'local']) {
+    final oldSubDir = Directory(p.join(oldRoot.path, sub));
+    final newSubDir = Directory(p.join(root.path, sub));
+    if (!await oldSubDir.exists()) continue;
+    // If by chance newSubDir is empty, safe to rename; otherwise, move contents
+    if (!(await newSubDir.exists())) {
+      await oldSubDir.rename(newSubDir.path);
+    } else {
+      // merge contents
+      await for (final entity in oldSubDir.list()) {
+        await entity.rename(p.join(newSubDir.path, p.basename(entity.path)));
+      }
+    }
+    // remove subfolder if empty
+    if (await oldSubDir.list().isEmpty) await oldSubDir.delete();
+  }
+  // Clean up old empty folder
+  if (await oldRoot.list().isEmpty) await oldRoot.delete();
 }
 
 class MyApp extends ConsumerStatefulWidget {
@@ -324,9 +371,9 @@ class _MyAppState extends ConsumerState<MyApp> {
     if (filesMissing) {
       final bytes = await rootBundle.load("assets/mangayomi_mpv.zip");
       final archive = ZipDecoder().decodeBytes(bytes.buffer.asUint8List());
-      String shadersDir = path.join(dir.path, 'shaders');
+      String shadersDir = p.join(dir.path, 'shaders');
       await Directory(shadersDir).create(recursive: true);
-      String scriptsDir = path.join(dir.path, 'scripts');
+      String scriptsDir = p.join(dir.path, 'scripts');
       await Directory(scriptsDir).create(recursive: true);
       for (final file in archive.files) {
         if (file.name == "mpv.conf") {
