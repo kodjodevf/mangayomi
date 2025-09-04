@@ -164,7 +164,7 @@ class TraktTv extends _$TraktTv implements BaseTracker {
         "movies";
     final url = Uri.parse(
       '$_baseApiUrl/sync/history/${isMovie ? "movies" : "shows"}/${track.mediaId}',
-    ).replace(queryParameters: {"extended": "full"});
+    ).replace(queryParameters: {"extended": "full", "page": "1", "limit": "3000"});
     final result = await _makeGetRequest(url, accessToken);
     final data = jsonDecode(result.body) as List?;
     if (data?.isNotEmpty ?? false) {
@@ -239,7 +239,7 @@ class TraktTv extends _$TraktTv implements BaseTracker {
     final isMovie =
         track.trackingUrl?.replaceAll("https://trakt.tv/", "").split("/")[0] ==
         "movies";
-    final urlRemove = Uri.parse(
+    /*final urlRemove = Uri.parse(
       "$_baseApiUrl/sync/history/remove",
     ).replace(queryParameters: {'clientId': _clientId});
     final bodyRemove = isMovie
@@ -257,7 +257,7 @@ class TraktTv extends _$TraktTv implements BaseTracker {
               },
             ],
           };
-    await _makePostRequest(urlRemove, accessToken, bodyRemove);
+    await _makePostRequest(urlRemove, accessToken, bodyRemove);*/
     final url = Uri.parse(
       "$_baseApiUrl/sync/history",
     ).replace(queryParameters: {'extended': 'full', 'clientId': _clientId});
@@ -265,7 +265,7 @@ class TraktTv extends _$TraktTv implements BaseTracker {
         ? {
             'movies': [
               {
-                'watched_at': DateTime.now().toIso8601String(),
+                'watched_at': DateTime.timestamp().toIso8601String(),
                 'ids': {'trakt': track.mediaId},
               },
             ],
@@ -273,7 +273,6 @@ class TraktTv extends _$TraktTv implements BaseTracker {
         : {
             'shows': [
               {
-                'watched_at': DateTime.now().toIso8601String(),
                 'ids': {'trakt': track.mediaId},
                 'seasons': [
                   {
@@ -281,7 +280,7 @@ class TraktTv extends _$TraktTv implements BaseTracker {
                     'episodes': [
                       for (int i = 1; i <= (track.lastChapterRead ?? 1); i++)
                         {
-                          'watched_at': DateTime.now().toIso8601String(),
+                          'watched_at': DateTime.timestamp().toIso8601String(),
                           'number': i,
                         },
                     ],
