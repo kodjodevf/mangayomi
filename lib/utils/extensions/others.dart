@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
@@ -13,6 +15,16 @@ import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+
+extension FileFormatter on num {
+  String formattedFileSize({bool base1024 = true}) {
+    final base = base1024 ? 1024 : 1000;
+    if (this <= 0) return "0";
+    final units = ["B", "kB", "MB", "GB", "TB"];
+    int digitGroups = (log(this) / log(base)).round();
+    return "${NumberFormat("#,##0.#").format(this / pow(base, digitGroups))} ${units[digitGroups]}";
+  }
+}
 
 extension LetExtension<T> on T {
   R let<R>(R Function(T) block) {

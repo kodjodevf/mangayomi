@@ -165,7 +165,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    isLocal
+                    !isLocal
                         ? "${source.name}"
                         : "${context.l10n.local_source} ${source.itemType == ItemType.manga
                               ? context.l10n.manga
@@ -278,44 +278,45 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
             },
             onSelected: (value) {},
           ),
-          PopupMenuButton(
-            popUpAnimationStyle: popupAnimationStyle,
-            itemBuilder: (context) {
-              return [
-                PopupMenuItem<int>(
-                  value: 0,
-                  child: Text(context.l10n.open_in_browser),
-                ),
-                PopupMenuItem<int>(
-                  value: 1,
-                  child: Text(context.l10n.settings),
-                ),
-              ];
-            },
-            onSelected: (value) async {
-              if (value == 0) {
-                final baseUrl = ref.watch(
-                  sourceBaseUrlProvider(source: source),
-                );
-                Map<String, dynamic> data = {
-                  'url': baseUrl,
-                  'sourceId': source.id.toString(),
-                  'title': '',
-                };
-                context.push("/mangawebview", extra: data);
-              } else {
-                final res = await context.push(
-                  '/extension_detail',
-                  extra: source,
-                );
-                if (res != null && mounted) {
-                  setState(() {
-                    source = res as Source;
-                  });
+          if (!isLocal)
+            PopupMenuButton(
+              popUpAnimationStyle: popupAnimationStyle,
+              itemBuilder: (context) {
+                return [
+                  PopupMenuItem<int>(
+                    value: 0,
+                    child: Text(context.l10n.open_in_browser),
+                  ),
+                  PopupMenuItem<int>(
+                    value: 1,
+                    child: Text(context.l10n.settings),
+                  ),
+                ];
+              },
+              onSelected: (value) async {
+                if (value == 0) {
+                  final baseUrl = ref.watch(
+                    sourceBaseUrlProvider(source: source),
+                  );
+                  Map<String, dynamic> data = {
+                    'url': baseUrl,
+                    'sourceId': source.id.toString(),
+                    'title': '',
+                  };
+                  context.push("/mangawebview", extra: data);
+                } else {
+                  final res = await context.push(
+                    '/extension_detail',
+                    extra: source,
+                  );
+                  if (res != null && mounted) {
+                    setState(() {
+                      source = res as Source;
+                    });
+                  }
                 }
-              }
-            },
-          ),
+              },
+            ),
         ],
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(AppBar().preferredSize.height * 0.8),

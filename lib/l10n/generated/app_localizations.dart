@@ -3350,6 +3350,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Similarity:'**
   String get recommendations_similarity;
+
+  /// No description provided for @local_folder.
+  ///
+  /// In en, this message translates to:
+  /// **'Local folders'**
+  String get local_folder;
+
+  /// No description provided for @add_local_folder.
+  ///
+  /// In en, this message translates to:
+  /// **'Add local folder'**
+  String get add_local_folder;
+
+  /// No description provided for @rescan_local_folder.
+  ///
+  /// In en, this message translates to:
+  /// **'Rescan all local folders now'**
+  String get rescan_local_folder;
+
+  /// No description provided for @export_metadata.
+  ///
+  /// In en, this message translates to:
+  /// **'Export metadata'**
+  String get export_metadata;
+
+  /// No description provided for @exported.
+  ///
+  /// In en, this message translates to:
+  /// **'Exported'**
+  String get exported;
 }
 
 class _AppLocalizationsDelegate

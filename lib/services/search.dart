@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:isar/isar.dart';
 import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
@@ -22,6 +24,7 @@ Future<MPages?> search(
     final result =
         (await isar.mangas
                 .filter()
+                .itemTypeEqualTo(source.itemType)
                 .group(
                   (q) => q
                       .sourceEqualTo("local")
@@ -31,7 +34,7 @@ Future<MPages?> search(
                       .linkContains("Mangayomi\\local"),
                 )
                 .nameContains(query, caseSensitive: false)
-                .offset(page * 50)
+                .offset(max(0, page - 1) * 50)
                 .limit(50)
                 .findAll())
             .map((e) => MManga(name: e.name))
