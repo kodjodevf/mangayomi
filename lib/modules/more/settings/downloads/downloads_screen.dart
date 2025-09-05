@@ -132,12 +132,21 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Text(
-                      context.l10n.local_folder,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: context.primaryColor,
-                      ),
+                    child: Row(
+                      children: [
+                        Text(
+                          context.l10n.local_folder,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: context.primaryColor,
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        OutlinedButton.icon(
+                          onPressed: () => _showHelpDialog(context),
+                          label: const Icon(Icons.question_mark),
+                        ),
+                      ],
                     ),
                   ),
                   FutureBuilder(
@@ -160,6 +169,133 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showHelpDialog(BuildContext context) {
+    final data = (
+      "LocalFolder",
+      [
+        (
+          "MangaName",
+          [
+            ("cover.jpg", Icons.image_outlined),
+            (
+              "Chapter1",
+              [
+                ("Page1.jpg", Icons.image_outlined),
+                ("Page2.jpeg", Icons.image_outlined),
+                ("Page3.png", Icons.image_outlined),
+                ("Page4.webp", Icons.image_outlined),
+              ],
+            ),
+            ("Chapter2.cbz", Icons.folder_zip_outlined),
+            ("Chapter3.zip", Icons.folder_zip_outlined),
+            ("Chapter4.cbt", Icons.folder_zip_outlined),
+            ("Chapter5.tar", Icons.folder_zip_outlined),
+          ],
+        ),
+        (
+          "AnimeName",
+          [
+            ("cover.jpg", Icons.image_outlined),
+            ("Episode1.mp4", Icons.video_file_outlined),
+            (
+              "Episode1_subtitles",
+              [
+                ("en.srt", Icons.subtitles_outlined),
+                ("de.srt", Icons.subtitles_outlined),
+              ],
+            ),
+            ("Episode2.mov", Icons.video_file_outlined),
+            ("Episode3.avi", Icons.video_file_outlined),
+            ("Episode4.flv", Icons.video_file_outlined),
+            ("Episode5.wmv", Icons.video_file_outlined),
+            ("Episode6.mpeg", Icons.video_file_outlined),
+            ("Episode7.mkv", Icons.video_file_outlined),
+          ],
+        ),
+        (
+          "NovelName",
+          [
+            ("cover.jpg", Icons.image_outlined),
+            ("NovelName.epub", Icons.book_outlined),
+          ],
+        ),
+      ],
+    );
+
+    Widget buildSubFolder((String, dynamic) data, int level) {
+      if (data.$2 is List) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text.rich(
+              TextSpan(
+                children: [
+                  for (int i = 1; i < level; i++)
+                    const WidgetSpan(child: SizedBox(width: 20)),
+                  if (level > 0)
+                    WidgetSpan(child: Icon(Icons.subdirectory_arrow_right)),
+                  WidgetSpan(child: Icon(Icons.folder)),
+                  const WidgetSpan(child: SizedBox(width: 5)),
+                  TextSpan(text: data.$1),
+                ],
+              ),
+            ),
+            ...(data.$2 as List<(String, dynamic)>).map(
+              (e) => buildSubFolder(e, level + 1),
+            ),
+          ],
+        );
+      }
+      return Text.rich(
+        TextSpan(
+          children: [
+            for (int i = 1; i < level; i++)
+              const WidgetSpan(child: SizedBox(width: 20)),
+            if (level > 0)
+              WidgetSpan(child: Icon(Icons.subdirectory_arrow_right)),
+            WidgetSpan(child: Icon(data.$2 as IconData)),
+            const WidgetSpan(child: SizedBox(width: 5)),
+            TextSpan(text: data.$1),
+          ],
+        ),
+      );
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(context.l10n.local_folder_structure),
+              content: SizedBox(
+                width: context.width(0.6),
+                height: context.height(0.8),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SingleChildScrollView(child: buildSubFolder(data, 0)),
+                ),
+              ),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(context.l10n.cancel),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 

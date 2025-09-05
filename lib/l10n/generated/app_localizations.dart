@@ -3351,6 +3351,12 @@ abstract class AppLocalizations {
   /// **'Similarity:'**
   String get recommendations_similarity;
 
+  /// No description provided for @local_folder_structure.
+  ///
+  /// In en, this message translates to:
+  /// **'Structure of a local folder'**
+  String get local_folder_structure;
+
   /// No description provided for @local_folder.
   ///
   /// In en, this message translates to:

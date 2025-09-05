@@ -1737,6 +1737,9 @@ class AppLocalizationsAs extends AppLocalizations {
   String get recommendations_similarity => 'Similarity:';
 
   @override
+  String get local_folder_structure => 'Structure of a local folder';
+
+  @override
   String get local_folder => 'Local folders';
 
   @override

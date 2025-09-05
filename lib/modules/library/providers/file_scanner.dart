@@ -131,7 +131,9 @@ Future<void> _scanDirectory(Ref ref, Directory? dir) async {
     final files = children.whereType<File>().toList();
 
     // Determine itemtype
-    final hasImagesFolders = subDirs.isNotEmpty;
+    final hasImagesFolders = subDirs
+        .where((e) => !e.path.endsWith("_subtitles"))
+        .isNotEmpty;
     final hasArchives = files.any((f) => _isArchive(f.path));
     final hasVideos = files.any((f) => _isVideo(f.path));
     final hasEpubs = files.any((f) => _isEpub(f.path));
