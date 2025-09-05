@@ -332,8 +332,14 @@ class _SubtitlesWidgetSearchState extends ConsumerState<SubtitlesWidgetSearch> {
     try {
       final subtitle = subtitles![index];
       final storageProvider = StorageProvider();
+      final animeDir =
+          widget.chapter.archivePath != null &&
+              widget.chapter.manga.value?.source == "local"
+          ? Directory(path.dirname(widget.chapter.archivePath!))
+          : null;
       final chapterDirectory = (await storageProvider.getMangaChapterDirectory(
         widget.chapter,
+        mangaMainDirectory: animeDir,
       ))!;
       final subtitleFile = File(
         path.join(

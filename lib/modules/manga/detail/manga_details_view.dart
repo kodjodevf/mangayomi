@@ -160,37 +160,36 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
         },
       ),
       body: MangaDetailView(
-        titleDescription: isLocalArchive
-            ? Container()
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.manga.author!,
-                    style: const TextStyle(fontWeight: FontWeight.w500),
+        titleDescription: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.manga.author ?? "Unknown",
+              style: const TextStyle(fontWeight: FontWeight.w500),
+            ),
+            Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Icon(getMangaStatusIcon(widget.manga.status), size: 14),
+                const SizedBox(width: 4),
+                Text(getMangaStatusName(widget.manga.status, context)),
+                if (!isLocalArchive) const Text(' • '),
+                if (!isLocalArchive) Text(widget.manga.source!),
+                if (!isLocalArchive)
+                  Text(' (${widget.manga.lang!.toUpperCase()})'),
+                if (!isLocalArchive && !widget.sourceExist)
+                  const Padding(
+                    padding: EdgeInsets.all(3),
+                    child: Icon(
+                      Icons.warning_amber,
+                      color: Colors.deepOrangeAccent,
+                      size: 14,
+                    ),
                   ),
-                  Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      Icon(getMangaStatusIcon(widget.manga.status), size: 14),
-                      const SizedBox(width: 4),
-                      Text(getMangaStatusName(widget.manga.status, context)),
-                      const Text(' • '),
-                      Text(widget.manga.source!),
-                      Text(' (${widget.manga.lang!.toUpperCase()})'),
-                      if (!widget.sourceExist)
-                        const Padding(
-                          padding: EdgeInsets.all(3),
-                          child: Icon(
-                            Icons.warning_amber,
-                            color: Colors.deepOrangeAccent,
-                            size: 14,
-                          ),
-                        ),
-                    ],
-                  ),
-                ],
-              ),
+              ],
+            ),
+          ],
+        ),
         action: widget.manga.favorite!
             ? SizedBox(
                 child: ElevatedButton(

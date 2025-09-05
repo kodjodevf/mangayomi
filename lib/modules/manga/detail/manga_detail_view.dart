@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:draggable_menu/draggable_menu.dart';
@@ -32,6 +33,7 @@ import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/utils/cached_network.dart';
@@ -633,9 +635,13 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     value: 4,
                                     child: Text(l10n.extension_settings),
                                   ),
+                                PopupMenuItem<int>(
+                                  value: 5,
+                                  child: Text(l10n.export_metadata),
+                                ),
                               ];
                             },
-                            onSelected: (value) {
+                            onSelected: (value) async {
                               switch (value) {
                                 case 0:
                                   widget.checkForUpdate(true);
@@ -678,6 +684,58 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     '/extension_detail',
                                     extra: source,
                                   );
+                                  break;
+                                case 5:
+                                  try {
+                                    final result = await FilePicker.platform
+                                        .getDirectoryPath();
+                                    if (result != null) {
+                                      final client = MClient.init();
+                                      final coverFile = File(
+                                        p.join(result, "cover.jpg"),
+                                      );
+                                      final metadataFile = File(
+                                        p.join(result, "metadata.json"),
+                                      );
+                                      final headers =
+                                          widget.manga!.isLocalArchive!
+                                          ? null
+                                          : ref.read(
+                                              headersProvider(
+                                                source: widget.manga!.source!,
+                                                lang: widget.manga!.lang!,
+                                                sourceId:
+                                                    widget.manga!.sourceId,
+                                              ),
+                                            );
+                                      final imageUrl = toImgUrl(
+                                        widget.manga!.customCoverFromTracker ??
+                                            widget.manga!.imageUrl ??
+                                            "",
+                                      );
+                                      final res = await client.get(
+                                        Uri.parse(imageUrl),
+                                        headers: headers,
+                                      );
+                                      await coverFile.writeAsBytes(
+                                        res.bodyBytes,
+                                      );
+                                      await metadataFile.writeAsString(
+                                        jsonEncode({
+                                          "name": widget.manga!.name,
+                                          "description":
+                                              widget.manga!.description,
+                                          "artist": widget.manga!.artist,
+                                          "author": widget.manga!.author,
+                                          "genre": widget.manga!.genre,
+                                          "status": widget.manga!.status.index,
+                                        }),
+                                      );
+                                      botToast(l10n.exported);
+                                    }
+                                  } catch (e) {
+                                    botToast("Failed to export metadata: $e");
+                                  }
                                   break;
                               }
                             },
@@ -1454,7 +1512,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                   ),
               ],
             ),
-            isLocalArchive ? _action() : _actionFavouriteAndWebview(),
+            _actionFavouriteAndWebview(),
             Container(
               color: Theme.of(context).scaffoldBackgroundColor,
               child: Column(
@@ -1875,53 +1933,58 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
       child: Row(
         children: [
           Expanded(child: widget.action!),
-          Expanded(child: _smartUpdateDays()),
+          if (!isLocalArchive) Expanded(child: _smartUpdateDays()),
           Expanded(
             child: widget.itemType == ItemType.novel
                 ? SizedBox.shrink()
                 : _action(),
           ),
-          Expanded(
-            child: SizedBox(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                  elevation: 0,
-                ),
-                onPressed: () async {
-                  final manga = widget.manga!;
+          if (!isLocalArchive)
+            Expanded(
+              child: SizedBox(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                    elevation: 0,
+                  ),
+                  onPressed: () async {
+                    final manga = widget.manga!;
 
-                  final source = getSource(
-                    widget.manga!.lang!,
-                    widget.manga!.source!,
-                    widget.manga!.sourceId,
-                  );
-                  final url =
-                      "${source!.baseUrl}${widget.manga!.link!.getUrlWithoutDomain}";
+                    final source = getSource(
+                      widget.manga!.lang!,
+                      widget.manga!.source!,
+                      widget.manga!.sourceId,
+                    );
+                    final url =
+                        "${source!.baseUrl}${widget.manga!.link!.getUrlWithoutDomain}";
 
-                  Map<String, dynamic> data = {
-                    'url': url,
-                    'sourceId': source.id.toString(),
-                    'title': manga.name!,
-                  };
-                  context.push("/mangawebview", extra: data);
-                },
-                child: Column(
-                  children: [
-                    Icon(Icons.public, size: 20, color: context.secondaryColor),
-                    const SizedBox(height: 4),
-                    Text(
-                      'WebView',
-                      style: TextStyle(
-                        fontSize: 11,
+                    Map<String, dynamic> data = {
+                      'url': url,
+                      'sourceId': source.id.toString(),
+                      'title': manga.name!,
+                    };
+                    context.push("/mangawebview", extra: data);
+                  },
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.public,
+                        size: 20,
                         color: context.secondaryColor,
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 4),
+                      Text(
+                        'WebView',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: context.secondaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
         ],
       ),
     );

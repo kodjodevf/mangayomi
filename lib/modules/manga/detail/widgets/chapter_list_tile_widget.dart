@@ -146,6 +146,21 @@ class ChapterListTileWidget extends ConsumerWidget {
                     ),
                   ],
                 ),
+              if (chapter.downloadSize != null)
+                Row(
+                  children: [
+                    const Text(' • '),
+                    Text(
+                      chapter.downloadSize!,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.isLight
+                            ? Colors.black.withValues(alpha: 0.4)
+                            : Colors.white.withValues(alpha: 0.3),
+                      ),
+                    ),
+                  ],
+                ),
             ],
           ),
           trailing:

@@ -6,7 +6,7 @@ part of 'trakt_tv.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$traktTvHash() => r'd852a7d96511637bf565cbcf6e958397740158fd';
+String _$traktTvHash() => r'269f0b865c39188f083dbc7dcad9652ee9e31efa';
 
 /// Copied from Dart SDK
 class _SystemHash {

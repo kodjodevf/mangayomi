@@ -13,6 +13,9 @@ import 'package:mangayomi/utils/language.dart';
 class SourceListTile extends StatelessWidget {
   final ItemType itemType;
   final Source source;
+
+  bool get isLocal => source.name == "local" && source.lang == "";
+
   const SourceListTile({
     super.key,
     required this.source,
@@ -24,21 +27,23 @@ class SourceListTile extends StatelessWidget {
     return Consumer(
       builder: (context, ref, child) => ListTile(
         onTap: () {
-          final sources = isar.sources
-              .filter()
-              .idIsNotNull()
-              .and()
-              .itemTypeEqualTo(itemType)
-              .findAllSync();
-          isar.writeTxnSync(() {
-            for (var src in sources) {
-              isar.sources.putSync(
-                src
-                  ..lastUsed = src.id == source.id ? true : false
-                  ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-              );
-            }
-          });
+          if (!isLocal) {
+            final sources = isar.sources
+                .filter()
+                .idIsNotNull()
+                .and()
+                .itemTypeEqualTo(itemType)
+                .findAllSync();
+            isar.writeTxnSync(() {
+              for (var src in sources) {
+                isar.sources.putSync(
+                  src
+                    ..lastUsed = src.id == source.id ? true : false
+                    ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+                );
+              }
+            });
+          }
           context.push('/mangaHome', extra: (source, false));
         },
         leading: Container(
@@ -73,7 +78,15 @@ class SourceListTile extends StatelessWidget {
             ),
           ],
         ),
-        title: Text(source.name!),
+        title: Text(
+          !isLocal
+              ? source.name!
+              : "${context.l10n.local_source} ${source.itemType == ItemType.manga
+                    ? context.l10n.manga
+                    : source.itemType == ItemType.anime
+                    ? context.l10n.anime
+                    : context.l10n.novel}",
+        ),
         trailing: SizedBox(
           width: 150,
           child: Row(
@@ -96,22 +109,23 @@ class SourceListTile extends StatelessWidget {
                 },
               ),
               const SizedBox(width: 10),
-              IconButton(
-                padding: const EdgeInsets.all(0),
-                onPressed: () {
-                  isar.writeTxnSync(
-                    () => isar.sources.putSync(
-                      source
-                        ..isPinned = !source.isPinned!
-                        ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-                    ),
-                  );
-                },
-                icon: Icon(
-                  Icons.push_pin_outlined,
-                  color: source.isPinned! ? context.primaryColor : null,
+              if (!isLocal)
+                IconButton(
+                  padding: const EdgeInsets.all(0),
+                  onPressed: () {
+                    isar.writeTxnSync(
+                      () => isar.sources.putSync(
+                        source
+                          ..isPinned = !source.isPinned!
+                          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+                      ),
+                    );
+                  },
+                  icon: Icon(
+                    Icons.push_pin_outlined,
+                    color: source.isPinned! ? context.primaryColor : null,
+                  ),
                 ),
-              ),
             ],
           ),
         ),

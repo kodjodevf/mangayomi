@@ -1,6 +1,10 @@
+import 'dart:convert';
 import 'dart:io'; // For I/O-operations
+import 'package:epubx/epubx.dart';
 import 'package:isar/isar.dart'; // Isar database package for local storage
 import 'package:mangayomi/main.dart'; // Exposes the global `isar` instance
+import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:path/path.dart' as p; // For manipulating file system paths
 import 'package:bot_toast/bot_toast.dart'; // For Exceptions
 import 'package:mangayomi/models/manga.dart'; // Has Manga model and ItemType enum
@@ -10,6 +14,26 @@ import 'package:mangayomi/providers/storage_provider.dart'; // Provides storage 
 import 'package:riverpod_annotation/riverpod_annotation.dart'; // Annotations for code generation
 part 'file_scanner.g.dart';
 
+@riverpod
+class LocalFoldersState extends _$LocalFoldersState {
+  @override
+  List<String> build() {
+    return isar.settings.getSync(227)!.localFolders ?? [];
+  }
+
+  void set(List<String> value) {
+    final settings = isar.settings.getSync(227)!;
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings
+          ..localFolders = state
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
 /// Scans `Mangayomi/local` folder (if exists) for Mangas/Animes and imports in library.
 ///
 /// **Folder structure:**
@@ -18,25 +42,37 @@ part 'file_scanner.g.dart';
 /// Mangayomi/local/MangaName/Chapter1/Page1.jpg
 /// Mangayomi/local/MangaName/Chapter2.cbz
 /// Mangayomi/local/AnimeName/Episode1.mp4
+/// Mangayomi/local/NovelName/NovelName.epub
 /// ```
 /// **Supported filetypes:** (taken from lib/modules/library/providers/local_archive.dart, line 98)
 /// ```
 /// Videotypes:   mp4, mov, avi, flv, wmv, mpeg, mkv
 /// Imagetypes:   jpg, jpeg, png, webp
 /// Archivetypes: cbz, zip, cbt, tar
+/// Other types: epub
 /// ```
 @riverpod
 Future<void> scanLocalLibrary(Ref ref) async {
   // Get /local directory
-  final localDir = await _getLocalLibrary();
+  final localDir = await getLocalLibrary();
+  await _scanDirectory(ref, localDir);
+  final customDirs = ref.read(localFoldersStateProvider);
+  for (final dir in customDirs) {
+    await _scanDirectory(ref, Directory(dir));
+  }
+}
+
+Future<void> _scanDirectory(Ref ref, Directory? dir) async {
   // Don't do anything if /local doesn't exist
-  if (localDir == null || !await localDir.exists()) return;
+  if (dir == null || !await dir.exists()) return;
 
   final dateNow = DateTime.now().millisecondsSinceEpoch;
 
   // Fetch all existing mangas in library that are in /local (or \local)
   final List<Manga> existingMangas = await isar.mangas
       .filter()
+      .sourceEqualTo("local")
+      .or()
       .linkContains("Mangayomi/local")
       .or()
       .linkContains("Mangayomi\\local")
@@ -84,7 +120,7 @@ Future<void> scanLocalLibrary(Ref ref) async {
   }
 
   // Iterate over each sub-directory (each representing a title, Manga or Anime)
-  await for (final folder in localDir.list()) {
+  await for (final folder in dir.list()) {
     if (folder is! Directory) continue;
     final title = p.basename(folder.path); // Anime/Manga title
     String relativePath = _getRelativePath(folder.path);
@@ -95,14 +131,19 @@ Future<void> scanLocalLibrary(Ref ref) async {
     final files = children.whereType<File>().toList();
 
     // Determine itemtype
-    final hasImagesFolders = subDirs.isNotEmpty;
+    final hasImagesFolders = subDirs
+        .where((e) => !e.path.endsWith("_subtitles"))
+        .isNotEmpty;
     final hasArchives = files.any((f) => _isArchive(f.path));
     final hasVideos = files.any((f) => _isVideo(f.path));
+    final hasEpubs = files.any((f) => _isEpub(f.path));
     late ItemType itemType;
     if (hasImagesFolders || hasArchives) {
       itemType = ItemType.manga;
     } else if (hasVideos) {
       itemType = ItemType.anime;
+    } else if (hasEpubs) {
+      itemType = ItemType.novel;
     } else {
       continue; // nothing to import from this folder
     }
@@ -115,7 +156,7 @@ Future<void> scanLocalLibrary(Ref ref) async {
       manga = mangaMap[relativePath]!;
     } else {
       manga = Manga(
-        favorite: true,
+        favorite: false,
         source: 'local',
         author: '',
         artist: '',
@@ -151,6 +192,26 @@ Future<void> scanLocalLibrary(Ref ref) async {
     } else if (imageFiles.isEmpty && manga.customCoverImage != null) {
       manga.customCoverImage = null;
     }
+
+    final jsonFiles = files.where((f) => _isJson(f.path)).toList();
+    if (jsonFiles.isNotEmpty) {
+      try {
+        final str = await File(jsonFiles.first.path).readAsString();
+        final data = jsonDecode(str) as Map<String, dynamic>?;
+        manga.name = data?["name"];
+        manga.description = data?["description"];
+        manga.artist = data?["artist"];
+        manga.author = data?["author"];
+        manga.genre = data?["genre"]?.cast<String>();
+        manga.status = data?["status"] != null
+            ? Status.values[data!["status"]]
+            : Status.unknown;
+        manga.lastUpdate = dateNow;
+      } catch (e) {
+        BotToast.showText(text: "Error reading metadata: $e");
+      }
+    }
+
     processedMangas.add(manga);
 
     // Scan chapters/episodes
@@ -167,6 +228,11 @@ Future<void> scanLocalLibrary(Ref ref) async {
       // Each .mp4 is an episode
       final videos = files.where((f) => _isVideo(f.path)).toList();
       addNewChapters(videos, false);
+    }
+    if (hasEpubs) {
+      // Each .epub
+      final epubs = files.where((f) => _isEpub(f.path)).toList();
+      addNewChapters(epubs, false);
     }
   }
 
@@ -193,6 +259,8 @@ Future<void> scanLocalLibrary(Ref ref) async {
     // Fetch all existing mangas in library that are in /local (or \local)
     final savedMangas = await isar.mangas
         .filter()
+        .sourceEqualTo("local")
+        .or()
         .linkContains("Mangayomi/local")
         .or()
         .linkContains("Mangayomi\\local")
@@ -223,20 +291,51 @@ Future<void> scanLocalLibrary(Ref ref) async {
     final itemName = p.basename(p.dirname(chapterPath));
     final manga = mangaByName[itemName];
     if (manga != null) {
-      final chap = Chapter(
-        mangaId: manga.id,
-        name:
-            pathBool[1] // If Chapter is an image folder or archive/video
-            ? p.basename(chapterPath)
-            : p.basenameWithoutExtension(chapterPath),
-        dateUpload: dateNow.toString(),
-        archivePath: chapterPath,
-      );
+      final chapterFile = File(chapterPath);
+      if (manga.itemType == ItemType.novel) {
+        final bytes = await chapterFile.readAsBytes();
+        final book = await EpubReader.readBook(bytes);
+        if (book.Content != null && book.Content!.Images != null) {
+          final coverImage =
+              book.Content!.Images!.containsKey("media/file0.png")
+              ? book.Content!.Images!["media/file0.png"]!.Content
+              : book.Content!.Images!.values.first.Content;
+          manga.customCoverImage = coverImage;
+          saveManga++;
+        }
+        for (var chapter in book.Chapters ?? []) {
+          chaptersToSave.add(
+            Chapter(
+              mangaId: manga.id,
+              name: chapter.Title is String && chapter.Title.isEmpty
+                  ? "Book"
+                  : chapter.Title,
+              archivePath: chapterPath,
+              downloadSize: chapterFile.existsSync()
+                  ? chapterFile.lengthSync().formattedFileSize()
+                  : null,
+            )..manga.value = manga,
+          );
+        }
+      } else {
+        final chap = Chapter(
+          mangaId: manga.id,
+          name:
+              pathBool[1] // If Chapter is an image folder or archive/video
+              ? p.basename(chapterPath)
+              : p.basenameWithoutExtension(chapterPath),
+          dateUpload: dateNow.toString(),
+          archivePath: chapterPath,
+          downloadSize: chapterFile.existsSync()
+              ? chapterFile.lengthSync().formattedFileSize()
+              : null,
+        );
+        chaptersToSave.add(chap);
+      }
       if (manga.lastUpdate != dateNow) {
         manga.lastUpdate = dateNow;
         saveManga++;
       }
-      chaptersToSave.add(chap);
     }
   }
   try {
@@ -272,7 +371,7 @@ Future<void> scanLocalLibrary(Ref ref) async {
 }
 
 /// Returns the `/local` directory inside the app's default storage.
-Future<Directory?> _getLocalLibrary() async {
+Future<Directory?> getLocalLibrary() async {
   try {
     final dir = await StorageProvider().getDefaultDirectory();
     return dir == null ? null : Directory(p.join(dir.path, 'local'));
@@ -309,6 +408,12 @@ String _getRelativePath(dir) {
   }
 }
 
+/// Returns if file is a json
+bool _isJson(String path) {
+  final ext = p.extension(path).toLowerCase();
+  return ext == '.json';
+}
+
 /// Returns if file is an image
 bool _isImage(String path) {
   final ext = p.extension(path).toLowerCase();
@@ -334,4 +439,10 @@ bool _isVideo(String path) {
     '.mkv',
   };
   return videoExtensions.contains(ext);
+}
+
+/// Returns if file is an epub or html
+bool _isEpub(String path) {
+  final ext = p.extension(path).toLowerCase();
+  return ext == '.epub';
 }
