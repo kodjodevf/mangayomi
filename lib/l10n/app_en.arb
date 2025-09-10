@@ -546,5 +546,11 @@
   "watch_order": "Watch order",
   "sequels": "Sequels",
   "recommendations": "Recommendations",
-  "recommendations_similarity": "Similarity:"
+  "recommendations_similarity": "Similarity:",
+  "local_folder_structure": "Structure of a local folder",
+  "local_folder": "Local folders",
+  "add_local_folder": "Add local folder",
+  "rescan_local_folder": "Rescan all local folders now",
+  "export_metadata": "Export metadata",
+  "exported": "Exported"
 }

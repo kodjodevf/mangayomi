@@ -73,6 +73,28 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
                     label: Text(context.l10n.show_extensions),
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 12),
+                  child: Row(
+                    children: [
+                      Text(
+                        l10n.other,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SourceListTile(
+                  source: Source(
+                    name: "local",
+                    lang: "",
+                    itemType: widget.itemType,
+                  ),
+                  itemType: widget.itemType,
+                ),
               ],
             );
           }
@@ -177,6 +199,34 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
                   itemComparator: (item1, item2) =>
                       item1.name!.compareTo(item2.name!),
                   order: GroupedListOrder.ASC,
+                ),
+                SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 12),
+                        child: Row(
+                          children: [
+                            Text(
+                              l10n.other,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SourceListTile(
+                        source: Source(
+                          name: "local",
+                          lang: "",
+                          itemType: widget.itemType,
+                        ),
+                        itemType: widget.itemType,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

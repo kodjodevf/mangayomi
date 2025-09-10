@@ -22,7 +22,8 @@ Future<dynamic> updateMangaDetail(
 }) async {
   try {
     final manga = isar.mangas.getSync(mangaId!);
-    if (manga!.chapters.isNotEmpty && isInit) {
+    if ((manga!.isLocalArchive ?? false) ||
+        (manga.chapters.isNotEmpty && isInit)) {
       return;
     }
     final source = getSource(manga.lang!, manga.source!, manga.sourceId);

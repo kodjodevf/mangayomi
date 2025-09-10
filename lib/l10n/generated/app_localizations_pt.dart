@@ -1748,6 +1748,24 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get recommendations_similarity => 'Similarity:';
+
+  @override
+  String get local_folder_structure => 'Structure of a local folder';
+
+  @override
+  String get local_folder => 'Local folders';
+
+  @override
+  String get add_local_folder => 'Add local folder';
+
+  @override
+  String get rescan_local_folder => 'Rescan all local folders now';
+
+  @override
+  String get export_metadata => 'Export metadata';
+
+  @override
+  String get exported => 'Exported';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
