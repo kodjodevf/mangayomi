@@ -6,7 +6,7 @@ part of 'file_scanner.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$scanLocalLibraryHash() => r'80267fbc1da18bbd7ef6c8c4ef87bcea9ad99869';
+String _$scanLocalLibraryHash() => r'7fdedaa37917728d9f3b9d8f15090c94bdb34238';
 
 /// Scans `Mangayomi/local` folder (if exists) for Mangas/Animes and imports in library.
 ///
@@ -16,15 +16,14 @@ String _$scanLocalLibraryHash() => r'80267fbc1da18bbd7ef6c8c4ef87bcea9ad99869';
 /// Mangayomi/local/MangaName/Chapter1/Page1.jpg
 /// Mangayomi/local/MangaName/Chapter2.cbz
 /// Mangayomi/local/AnimeName/Episode1.mp4
-/// Mangayomi/local/NovelName/Chapter1.epub
-/// Mangayomi/local/NovelName/Chapter2.html
+/// Mangayomi/local/NovelName/NovelName.epub
 /// ```
 /// **Supported filetypes:** (taken from lib/modules/library/providers/local_archive.dart, line 98)
 /// ```
 /// Videotypes:   mp4, mov, avi, flv, wmv, mpeg, mkv
 /// Imagetypes:   jpg, jpeg, png, webp
 /// Archivetypes: cbz, zip, cbt, tar
-/// Other types: epub, html
+/// Other types: epub
 /// ```
 ///
 /// Copied from [scanLocalLibrary].
@@ -42,7 +41,7 @@ final scanLocalLibraryProvider = AutoDisposeFutureProvider<void>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ScanLocalLibraryRef = AutoDisposeFutureProviderRef<void>;
-String _$localFoldersStateHash() => r'3bea18b0e5e6d9d1950e12293825fc85b1a0de6c';
+String _$localFoldersStateHash() => r'7cf7902ad34ee5ae018b2c9ac3849e822bc5f0b7';
 
 /// See also [LocalFoldersState].
 @ProviderFor(LocalFoldersState)

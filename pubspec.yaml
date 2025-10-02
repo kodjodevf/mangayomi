@@ -4,7 +4,7 @@ publish_to: "none"
 version: 0.6.5+87
 
 environment:
-  sdk: ^3.8.1
+  sdk: ^3.9.2
 
 dependencies:
   flutter:
@@ -58,7 +58,7 @@ dependencies:
   ffi: ^2.1.3
   ffigen: 19.1.0
   http_interceptor: ^2.0.0
-  js_packer: ^0.0.5
+  js_packer: ^0.0.6
   flutter_qjs:
     git:
       url: https://github.com/kodjodevf/flutter_qjs.git
@@ -71,7 +71,7 @@ dependencies:
   re_highlight: ^0.0.3
   json_view: ^0.4.2
   super_sliver_list: ^0.4.1
-  flutter_rust_bridge: 2.10.0
+  flutter_rust_bridge: ^2.11.1
   rust_lib_mangayomi:
     path: rust_builder
   pseudom: ^1.0.1
@@ -95,7 +95,7 @@ dependencies:
     git:
       url: https://github.com/kodjodevf/epubx.dart.git
       ref: dev
-  d4rt: 0.1.3
+  d4rt: ^0.1.5
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   flutter_discord_rpc_fork:
@@ -119,7 +119,7 @@ dev_dependencies:
   build_runner: ^2.4.6
   riverpod_generator: ^2.6.5
   flutter_launcher_icons: ^0.14.3
-  isar_generator: 
+  isar_generator:
     path: plugins/isar_generator
   flutter_lints: ^5.0.0
   freezed: ^3.0.0
