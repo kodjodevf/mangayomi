@@ -328,58 +328,69 @@ Future<void> pushToMangaReaderDetail({
   bool addToFavourite = false,
 }) async {
   int? mangaId;
-  if (archiveId == null) {
-    final manga =
-        mangaM ??
-        Manga(
-          imageUrl: getManga!.imageUrl,
-          name: getManga.name!.trim().trimLeft().trimRight(),
-          genre: getManga.genre?.map((e) => e.toString()).toList() ?? [],
-          author: getManga.author ?? "",
-          status: getManga.status ?? Status.unknown,
-          description: getManga.description ?? "",
-          link: getManga.link,
-          source: source,
-          lang: lang,
-          lastUpdate: 0,
-          itemType: itemType ?? ItemType.manga,
-          artist: getManga.artist ?? '',
-          sourceId: sourceId,
-        );
-    final empty = isar.mangas
-        .filter()
-        .langEqualTo(lang)
-        .nameEqualTo(manga.name)
-        .sourceEqualTo(manga.source)
-        .isEmptySync();
-    if (empty) {
-      isar.writeTxnSync(() {
-        isar.mangas.putSync(
-          manga..updatedAt = DateTime.now().millisecondsSinceEpoch,
-        );
-      });
-    } else {
-      isar.writeTxnSync(() {
-        isar.mangas.putSync(manga);
-      });
-    }
+  mangaId = isar.mangas
+      .filter()
+      .isLocalArchiveEqualTo(true)
+      .sourceEqualTo("local")
+      .nameEqualTo(getManga?.name)
+      .findFirstSync()
+      ?.id;
 
-    mangaId = isar.mangas
-        .filter()
-        .langEqualTo(lang)
-        .nameEqualTo(manga.name)
-        .sourceEqualTo(manga.source)
-        .findAllSync()
-        .firstWhere(
-          (element) =>
-              element.sourceId == null ? true : element.sourceId == sourceId,
-        )
-        .id!;
-  } else {
-    mangaId = archiveId;
+  if (mangaId == null) {
+    if (archiveId == null) {
+      final manga =
+          mangaM ??
+          Manga(
+            imageUrl: getManga!.imageUrl,
+            name: getManga.name!.trim().trimLeft().trimRight(),
+            genre: getManga.genre?.map((e) => e.toString()).toList() ?? [],
+            author: getManga.author ?? "",
+            status: getManga.status ?? Status.unknown,
+            description: getManga.description ?? "",
+            link: getManga.link,
+            source: source,
+            lang: lang,
+            lastUpdate: 0,
+            itemType: itemType ?? ItemType.manga,
+            artist: getManga.artist ?? '',
+            sourceId: sourceId,
+          );
+      final empty = isar.mangas
+          .filter()
+          .langEqualTo(lang)
+          .nameEqualTo(manga.name)
+          .sourceEqualTo(manga.source)
+          .isEmptySync();
+      if (empty) {
+        isar.writeTxnSync(() {
+          isar.mangas.putSync(
+            manga..updatedAt = DateTime.now().millisecondsSinceEpoch,
+          );
+        });
+      } else {
+        isar.writeTxnSync(() {
+          isar.mangas.putSync(manga);
+        });
+      }
+
+      mangaId = isar.mangas
+          .filter()
+          .langEqualTo(lang)
+          .nameEqualTo(manga.name)
+          .sourceEqualTo(manga.source)
+          .findAllSync()
+          .firstWhere(
+            (element) =>
+                element.sourceId == null ? true : element.sourceId == sourceId,
+          )
+          .id!;
+    } else {
+      mangaId = archiveId;
+    }
   }
+
   final mang = isar.mangas.getSync(mangaId);
-  if (mang!.sourceId == null) {
+  if (mang!.sourceId == null && !(mang.isLocalArchive ?? false)) {
     isar.writeTxnSync(() {
       isar.mangas.putSync(mang..sourceId = sourceId);
     });

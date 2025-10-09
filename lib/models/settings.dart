@@ -286,6 +286,8 @@ class Settings {
 
   late AlgorithmWeights? algorithmWeights;
 
+  List<String>? localFolders;
+
   Settings({
     this.id = 227,
     this.updatedAt = 0,
@@ -414,6 +416,7 @@ class Settings {
     this.volumeBoostCap,
     this.downloadedOnlyMode = false,
     this.algorithmWeights,
+    this.localFolders,
   });
 
   Settings.fromJson(Map<String, dynamic> json) {
@@ -652,6 +655,7 @@ class Settings {
     algorithmWeights = json['algorithmWeights'] != null
         ? AlgorithmWeights.fromJson(json['algorithmWeights'])
         : null;
+    localFolders = json['localFolders'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -804,6 +808,7 @@ class Settings {
     'downloadedOnlyMode': downloadedOnlyMode,
     if (algorithmWeights != null)
       'algorithmWeights': algorithmWeights!.toJson(),
+    'localFolders': localFolders,
   };
 }
 

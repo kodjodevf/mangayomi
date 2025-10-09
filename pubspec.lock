@@ -349,10 +349,10 @@ packages:
     dependency: "direct main"
     description:
       name: d4rt
-      sha256: "802f4fed100431335d87912e97132117ad7dd2a455958c92b94995317d92402f"
+      sha256: "59521e738b85c2db8240775fec9dbeda488d58bf6c1c27198baba54bbe623c5a"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.3"
+    version: "0.1.5"
   dart_style:
     dependency: transitive
     description:
@@ -549,10 +549,10 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "67e99dd4547bdba15a49d53ab61f50397b194804"
+      resolved-ref: "5032c0ac4d257b0fad8d3c6cd05f6d15889fc1e5"
       url: "https://github.com/Schnitzel5/flutter-discord-rpc.git"
     source: git
-    version: "1.0.4"
+    version: "1.0.5"
   flutter_inappwebview:
     dependency: "direct main"
     description:
@@ -667,10 +667,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_rust_bridge
-      sha256: b416ff56002789e636244fb4cc449f587656eff995e5a7169457eb0593fcaddb
+      sha256: "37ef40bc6f863652e865f0b2563ea07f0d3c58d8efad803cc01933a4b2ee067e"
       url: "https://pub.dev"
     source: hosted
-    version: "2.10.0"
+    version: "2.11.1"
   flutter_svg:
     dependency: transitive
     description:
@@ -1012,10 +1012,10 @@ packages:
     dependency: "direct main"
     description:
       name: js_packer
-      sha256: f45ffa90165a810d7134f0b96b54068e4aac9d80a8b181eafa3978ec6dbc66a3
+      sha256: "1d31c768594787acbab3573573e751fa6cf1e085ddacfd9cafd3d74eddb27060"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.5"
+    version: "0.0.6"
   json_annotation:
     dependency: transitive
     description:
@@ -2230,5 +2230,5 @@ packages:
     source: hosted
     version: "2.2.2"
 sdks:
-  dart: ">=3.8.1 <4.0.0"
+  dart: ">=3.9.2 <4.0.0"
   flutter: ">=3.35.0"
