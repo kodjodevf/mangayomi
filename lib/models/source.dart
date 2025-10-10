@@ -135,7 +135,7 @@ class Source {
     filterList = json['filterList'];
     preferenceList = json['preferenceList'];
     iconUrl = json['iconUrl'];
-    id = json['id'];
+    id = json['id'] is int ? json['id'] : null;
     isActive = json['isActive'];
     isAdded = json['isAdded'];
     isFullData = json['isFullData'];
@@ -216,4 +216,9 @@ class Source {
   }
 }
 
-enum SourceCodeLanguage { dart, javascript, mihon }
+enum SourceCodeLanguage {
+  dart,
+  javascript,
+  mihon,
+  lnreader
+}
