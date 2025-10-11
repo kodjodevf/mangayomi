@@ -17,7 +17,7 @@ class JsCheerio {
       final html = args[0];
       final doc = parse(html);
       _elementKey++;
-      _elements[_elementKey] = doc.documentElement;
+      _elements[_elementKey] = doc.body;
       return _elementKey;
     });
 
@@ -156,114 +156,203 @@ class JsCheerio {
     });
 
     runtime.evaluate('''
-    function \$(key) {
-      return {
-        _key: key,
-        _call: function(method, args) {
-          if (!args) {
-            args = [];
-          }
-          return sendMessage("element_call", JSON.stringify([method, this._key, args]));
-        },
-        text: function() {
-          return this._call("text");
-        },
-        html: function() {
-          return this._call("html");
-        },
-        outerHtml: function() {
-          return this._call("outerHtml");
-        },
-        addClass: function(cls) {
-          this._call("addClass", [cls]);
-          return this;
-        },
-        removeClass: function(cls) {
-          this._call("removeClass", [cls]);
-          return this;
-        },
-        hasClass: function(cls) {
-          return this._call("hasClass", [cls]);
-        },
-        attr: function(name) {
-          return this._call("attr", [name]);
-        },
-        setAttr: function(name, value) {
-          this._call("setAttr", [name, value]);
-          return this;
-        },
-        removeAttr: function(name) {
-          this._call("removeAttr", [name]);
-          return this;
-        },
-        val: function() {
-          return this._call("val");
-        },
-        setVal: function(value) {
-          this._call("setVal", [value]);
-          return this;
-        },
-        children: function() {
-          let result = this._call("children");
-          return JSON.parse(result).map(k => \$(k));
-        },
-        parent: function() {
-          let k = this._call("parent");
-          return \$(k);
-        },
-        find: function(selector) {
-          let result = this._call("find", [selector]);
-          return JSON.parse(result).map(k => \$(k));
-        },
-        first: function() {
-          let k = this._call("first");
-          return \$(k);
-        },
-        last: function() {
-          let k = this._call("last");
-          return \$(k);
-        },
-        next: function() {
-          let k = this._call("next");
-          return \$(k);
-        },
-        prev: function() {
-          let k = this._call("prev");
-          return \$(k);
-        },
-        append: function(html) {
-          this._call("append", [html]);
-          return this;
-        },
-        prepend: function(html) {
-          this._call("prepend", [html]);
-          return this;
-        },
-        empty: function() {
-          this._call("empty");
-          return this;
-        },
-        remove: function() {
-          this._call("remove");
-          return this;
-        },
-        each: function(fn) {
-          this.children().forEach((child, i) => fn(child, i));
-          return this;
-        },
-        map(fn) {
-          return this.children().map((child, i) => fn(child, i));
-        },
-        filter(fn) {
-          return this.children().filter((child, i) => fn(child, i));
-        }
-      };
-    }
+class Element {
+  constructor(key) {
+    this._key = key;
+  }
 
-    function load(html) {
-      const key = sendMessage("load", JSON.stringify([html]));
-      return \$(key);
+  _call(method, args = []) {
+    return sendMessage("element_call", JSON.stringify([method, this._key, args]));
+  }
+
+  text() { return this._call("text"); }
+  html() { return this._call("html"); }
+  outerHtml() { return this._call("outerHtml"); }
+  val() { return this._call("val"); }
+  attr(name) { return this._call("attr", [name]); }
+  hasClass(cls) { return this._call("hasClass", [cls]); }
+
+  addClass(cls) { this._call("addClass", [cls]); return this; }
+  removeClass(cls) { this._call("removeClass", [cls]); return this; }
+  setAttr(name, value) { this._call("setAttr", [name, value]); return this; }
+  removeAttr(name) { this._call("removeAttr", [name]); return this; }
+  setVal(value) { this._call("setVal", [value]); return this; }
+
+  append(html) { this._call("append", [html]); return this; }
+  prepend(html) { this._call("prepend", [html]); return this; }
+  empty() { this._call("empty"); return this; }
+  remove() { this._call("remove"); return this; }
+
+  children() {
+    const keys = JSON.parse(this._call("children"));
+    return new ElementCollection(keys.map(k => new Element(k)));
+  }
+
+  find(selector) {
+    const keys = JSON.parse(this._call("find", [selector]));
+    return new ElementCollection(keys.map(k => new Element(k)));
+  }
+
+  parent() {
+    return new Element(this._call("parent"));
+  }
+
+  next() {
+    return new Element(this._call("next"));
+  }
+
+  prev() {
+    return new Element(this._call("prev"));
+  }
+
+  first() {
+    return new Element(this._call("first"));
+  }
+
+  last() {
+    return new Element(this._call("last"));
+  }
+}
+
+class ElementCollection {
+  constructor(elements) {
+    this.elements = elements;
+  }
+
+  each(fn) {
+    this.elements.forEach((el, i) => fn(i, el));
+    return this;
+  }
+
+  map(fn) {
+    return this.elements.map((el, i) => fn(el, i));
+  }
+
+  filter(fn) {
+    return new ElementCollection(this.elements.filter((el, i) => fn(el, i)));
+  }
+
+  addClass(cls) {
+    this.elements.forEach(el => el.addClass(cls));
+    return this;
+  }
+
+  removeClass(cls) {
+    this.elements.forEach(el => el.removeClass(cls));
+    return this;
+  }
+
+  setAttr(name, value) {
+    this.elements.forEach(el => el.setAttr(name, value));
+    return this;
+  }
+
+  removeAttr(name) {
+    this.elements.forEach(el => el.removeAttr(name));
+    return this;
+  }
+
+  setVal(value) {
+    this.elements.forEach(el => el.setVal(value));
+    return this;
+  }
+
+  append(html) {
+    this.elements.forEach(el => el.append(html));
+    return this;
+  }
+
+  prepend(html) {
+    this.elements.forEach(el => el.prepend(html));
+    return this;
+  }
+
+  empty() {
+    this.elements.forEach(el => el.empty());
+    return this;
+  }
+
+  remove() {
+    this.elements.forEach(el => el.remove());
+    return this;
+  }
+
+  find(selector) {
+    const found = this.elements.flatMap(el => {
+      const keys = JSON.parse(el._call("find", [selector]));
+      return keys.map(k => new Element(k));
+    });
+    return new ElementCollection(found);
+  }
+
+  children() {
+    const children = this.elements.flatMap(el => {
+      const keys = JSON.parse(el._call("children"));
+      return keys.map(k => new Element(k));
+    });
+    return new ElementCollection(children);
+  }
+
+  parent() {
+    const parents = this.elements.map(el => new Element(el._call("parent")));
+    return new ElementCollection(parents);
+  }
+
+  next() {
+    const nextEls = this.elements.map(el => new Element(el._call("next")));
+    return new ElementCollection(nextEls);
+  }
+
+  prev() {
+    const prevEls = this.elements.map(el => new Element(el._call("prev")));
+    return new ElementCollection(prevEls);
+  }
+
+  first() {
+    return this.elements[0] || null;
+  }
+
+  last() {
+    return this.elements[this.elements.length - 1] || null;
+  }
+
+  get(index) {
+    return this.elements[index] || null;
+  }
+
+  length() {
+    return this.elements.length;
+  }
+
+  [Symbol.iterator]() {
+    return this.elements[Symbol.iterator]();
+  }
+}
+
+function load(html) {
+  const rootKey = sendMessage("load", JSON.stringify([html]));
+  const root = new Element(rootKey);
+
+  const \$ = function(input) {
+    if (typeof input === "string") {
+      return root.find(input); // returns ElementCollection
+    } else if (input instanceof ElementCollection) {
+      return input;
+    } else if (input instanceof Element) {
+      return input;
+    } else if (input && input._key) {
+      return new ElementCollection([new Element(input._key)]);
+    } else {
+      return new ElementCollection([new Element(input)]);
     }
+  };
+
+  \$.root = root;
+  \$.Element = Element;
+  \$.Collection = ElementCollection;
+
+  return \$;
+}
   ''');
   }
 }

@@ -6,7 +6,197 @@ class JsHtmlParser {
 
   void init() {
     runtime.evaluate('''
-class Parser{constructor(t={}){this.options=t,this.buffer=""}write(t){this.buffer+=t;let s=0,o=0;const i=this.buffer.length;let n=null;for(;s<i;){const t=this.buffer[s];if('"'!==t&&"'"!==t)if("<"===t&&null===n){if(s>o&&this.options.ontext){const t=this.buffer.slice(o,s);this.options.ontext(t)}s++;const t="/"===this.buffer[s];t&&s++;const n=s;for(;s<i&&/[a-zA-Z0-9:-]/.test(this.buffer[s]);)s++;const e=s,f=this.buffer.slice(n,e);t?this.options.onclosetag&&this.options.onclosetag(f):this.options.onopentagname&&this.options.onopentagname(f);let h={},r="",l="",u=null;for(;s<i&&">"!==this.buffer[s];){const n=this.buffer[s];if(/\\s/.test(n)){s++;continue}if("/"===n&&">"===this.buffer[s+1])return!t&&this.options.onselfclosingtag&&this.options.onselfclosingtag(),s+=2,o=s,this.options.onopentag&&this.options.onopentag(f,h),void(this.options.onopentagend&&this.options.onopentagend());let e=s;for(;s<i&&/[^\\s=>]/.test(this.buffer[s]);)s++;for(r=this.buffer.slice(e,s);s<i&&/\\s/.test(this.buffer[s]);)s++;if("="===this.buffer[s]){for(s++;s<i&&/\\s/.test(this.buffer[s]);)s++;const t=this.buffer[s];if('"'===t||"'"===t){u=t,s++;const o=s;for(;s<i&&this.buffer[s]!==u;)s++;l=this.buffer.slice(o,s),s++}else{const t=s;for(;s<i&&/[^\\s>]/.test(this.buffer[s]);)s++;l=this.buffer.slice(t,s)}this.options.onattribute&&this.options.onattribute(r,l),h[r]=l,r="",l=""}else this.options.onattribute&&this.options.onattribute(r,null),h[r]=null,r=""}s++,!t&&this.options.onopentag&&this.options.onopentag(f,h),this.options.onopentagend&&this.options.onopentagend(),o=s}else s++;else n===t?n=null:null===n&&(n=t),s++}if(o<i&&this.options.ontext){const t=this.buffer.slice(o,i);this.options.ontext(t)}}end(){this.options.onend&&this.options.onend()}}
+class Parser {
+    constructor(options = {}) {
+        this.options = options;
+        this.buffer = '';
+    }
+
+    isVoidElement(name) {
+      return [
+        "area",
+        "base",
+        "basefont",
+        "br",
+        "col",
+        "command",
+        "embed",
+        "frame",
+        "hr",
+        "img",
+        "input",
+        "isindex",
+        "keygen",
+        "link",
+        "meta",
+        "param",
+        "source",
+        "track",
+        "wbr",
+      ].includes(name);
+    }
+
+    write(html) {
+        this.buffer += html;
+        let i = 0;
+        let textStart = 0;
+        const len = this.buffer.length;
+        let insideQuote = null;
+
+        while (i < len) {
+            const ch = this.buffer[i];
+
+            // Track string literals
+            if ((ch === '"' || ch === "'")) {
+                if (insideQuote === ch) {
+                    insideQuote = null;
+                } else if (insideQuote === null) {
+                    insideQuote = ch;
+                }
+                i++;
+                continue;
+            }
+
+            if (ch === '<' && insideQuote === null) {
+                // Emit any text before the tag
+                if (i > textStart && this.options.ontext) {
+                    const text = this.buffer.slice(textStart, i);
+                    this.options.ontext(text);
+                }
+
+                const tagStart = i;
+                i++;
+
+                const isClosing = this.buffer[i] === '/';
+                if (isClosing) i++;
+
+                // Parse tag name
+                const nameStart = i;
+                while (i < len && /[a-zA-Z0-9:-]/.test(this.buffer[i])) i++;
+                const nameEnd = i;
+                const tagName = this.buffer.slice(nameStart, nameEnd);
+
+                if (isClosing) {
+                    if (this.options.onclosetag) {
+                        this.options.onclosetag(tagName);
+                    }
+                } else {
+                    if (this.options.onopentagname) {
+                        this.options.onopentagname(tagName);
+                    }
+                }
+
+                // Parse attributes
+                let attrs = {};
+                let attrName = '';
+                let attrValue = '';
+                let readingAttrName = true;
+                let inAttrQuote = null;
+
+                while (i < len && this.buffer[i] !== '>') {
+                    const c = this.buffer[i];
+
+                    // Skip over whitespace
+                    if (/\\s/.test(c)) {
+                        i++;
+                        continue;
+                    }
+
+                    // Handle self-closing tag
+                    if (c === '/' && this.buffer[i + 1] === '>') {
+                        if (!isClosing && this.options.onselfclosingtag) {
+                            this.options.onselfclosingtag();
+                        }
+                        i += 2;
+                        textStart = i;
+                        if (this.options.onopentag) {
+                            this.options.onopentag(tagName, attrs);
+                        }
+                        if (this.options.onopentagend) {
+                            this.options.onopentagend();
+                        }
+                        continue;
+                    }
+
+                    // Parse attribute name
+                    let attrStart = i;
+                    while (i < len && /[^\\s=>]/.test(this.buffer[i])) i++;
+                    attrName = this.buffer.slice(attrStart, i);
+
+                    // Skip whitespace after name
+                    while (i < len && /\\s/.test(this.buffer[i])) i++;
+
+                    // Expect '='
+                    if (this.buffer[i] === '=') {
+                        i++; // skip '='
+
+                        // Skip whitespace after '='
+                        while (i < len && /\\s/.test(this.buffer[i])) i++;
+
+                        const quote = this.buffer[i];
+                        if (quote === '"' || quote === "'") {
+                            inAttrQuote = quote;
+                            i++; // skip quote
+
+                            const valStart = i;
+                            while (i < len && this.buffer[i] !== inAttrQuote) i++;
+                            attrValue = this.buffer.slice(valStart, i);
+                            i++; // skip closing quote
+                        } else {
+                            // Unquoted value
+                            const valStart = i;
+                            while (i < len && /[^\\s>]/.test(this.buffer[i])) i++;
+                            attrValue = this.buffer.slice(valStart, i);
+                        }
+
+                        // Emit merged attribute callback
+                        if (this.options.onattribute) {
+                            this.options.onattribute(attrName, attrValue);
+                        }
+
+                        attrs[attrName] = attrValue;
+                        attrName = '';
+                        attrValue = '';
+                    } else {
+                        // attribute without value (e.g. `disabled`)
+                        if (this.options.onattribute) {
+                            this.options.onattribute(attrName, null);
+                        }
+                        attrs[attrName] = null;
+                        attrName = '';
+                    }
+                }
+
+                // Closing normal tag '>'
+                i++; // skip '>'
+
+                if (!isClosing && this.options.onopentag) {
+                    this.options.onopentag(tagName, attrs);
+                }
+
+                if (this.options.onopentagend) {
+                    this.options.onopentagend();
+                }
+
+                textStart = i;
+            } else {
+                i++;
+            }
+        }
+
+        // Emit any remaining text
+        if (textStart < len && this.options.ontext) {
+            const text = this.buffer.slice(textStart, len);
+            this.options.ontext(text);
+        }
+    }
+
+    end() {
+        if (this.options.onend) {
+            this.options.onend();
+        }
+    }
+}
 ''');
   }
 }

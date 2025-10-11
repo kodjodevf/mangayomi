@@ -58,10 +58,16 @@ class Response {
     return this.response.body;
   }
   json() {
-    return JSON.parse(this.body);
+    const val = JSON.parse(this.body);
+    return new Promise(function(resolve, reject) {
+      resolve(val);
+    });
   }
   text() {
-    return this.body;
+    const val = this.body;
+    return new Promise(function(resolve, reject) {
+      resolve(val);
+    });
   }
 }
 

@@ -22,9 +22,7 @@ JavascriptRuntime getJavascriptRuntime({
   Map<String, dynamic>? extraArgs = const {},
 }) {
   JavascriptRuntime runtime;
-  runtime = QuickJsRuntime2(
-    stackSize: 1024 * 1024 * 4
-  );
+  runtime = QuickJsRuntime2(stackSize: 1024 * 1024 * 4);
   runtime.enableHandlePromises();
   return runtime;
 }
@@ -109,9 +107,9 @@ const extension = exports.default;
   Future<MPages> getPopular(int page) async {
     final items =
         ((await _extensionCallAsync(
-                  'popularNovels($page, {showLatestNovels: false, filters: extension.filters})',
-                ))
-                as List<dynamic>)
+              'popularNovels($page, {showLatestNovels: false, filters: extension.filters})',
+              [],
+            )))
             .map((e) => NovelItem.fromJson(e))
             .map(
               (e) => MManga(
@@ -129,9 +127,9 @@ const extension = exports.default;
   Future<MPages> getLatestUpdates(int page) async {
     final items =
         ((await _extensionCallAsync(
-                  'popularNovels($page, {showLatestNovels: true, filters: extension.filters})',
-                ))
-                as List<dynamic>)
+              'popularNovels($page, {showLatestNovels: true, filters: extension.filters})',
+              [],
+            )))
             .map((e) => NovelItem.fromJson(e))
             .map(
               (e) => MManga(
@@ -148,8 +146,7 @@ const extension = exports.default;
   @override
   Future<MPages> search(String query, int page, List<dynamic> filters) async {
     final items =
-        ((await _extensionCallAsync('searchNovels("$query",$page)'))
-                as List<dynamic>)
+        ((await _extensionCallAsync('searchNovels("$query",$page)', [])))
             .map((e) => NovelItem.fromJson(e))
             .map(
               (e) => MManga(
@@ -166,7 +163,10 @@ const extension = exports.default;
   @override
   Future<MManga> getDetail(String url) async {
     final item = SourceNovel.fromJson(
-      await _extensionCallAsync('parseNovel(`$url`)'),
+      await _extensionCallAsync('parseNovel(`$url`)', {}),
+    );
+    final chapters = SourcePage.fromJson(
+      await _extensionCallAsync('parsePage(`${item.path}`, `1`)', {}),
     );
     return MManga(
       name: item.name,
@@ -182,7 +182,7 @@ const extension = exports.default;
       },
       genre: item.genres?.split(","),
       chapters:
-          item.chapters
+          (chapters.chapters.isNotEmpty ? chapters.chapters : item.chapters)
               ?.map(
                 (e) => MChapter(
                   name: e.name,
@@ -259,12 +259,11 @@ const extension = exports.default;
       if (def != null) {
         return def;
       }
-
       rethrow;
     }
   }
 
-  Future<T> _extensionCallAsync<T>(String call) async {
+  Future<T> _extensionCallAsync<T>(String call, T def) async {
     _init();
 
     try {
@@ -274,6 +273,9 @@ const extension = exports.default;
 
       return jsonDecode(promised.stringResult) as T;
     } catch (e) {
+      if (def != null) {
+        return def;
+      }
       rethrow;
     }
   }

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class ChapterItem {
   String name;
   String path;
@@ -18,7 +20,9 @@ class ChapterItem {
       name: json['name'],
       path: json['path'],
       releaseTime: json['releaseTime'],
-      chapterNumber: json['chapterNumber'],
+      chapterNumber:
+          int.tryParse(json['chapterNumber']) ??
+          (json['chapterNumber'] as num?)?.toInt(),
       page: json['page'],
     );
   }
@@ -86,7 +90,9 @@ class SourceNovel extends NovelItem {
       author: json['author'],
       artist: json['artist'],
       status: json['status'],
-      rating: json['rating']?.toDouble(),
+      rating: json['rating'] is double
+          ? json['rating']
+          : json['rating']?.toDouble(),
       chapters: (json['chapters'] as List<dynamic>?)
           ?.map((item) => ChapterItem.fromJson(item))
           .toList(),
@@ -117,9 +123,11 @@ class SourcePage {
 
   factory SourcePage.fromJson(Map<String, dynamic> json) {
     return SourcePage(
-      chapters: (json['chapters'] as List<dynamic>)
-          .map((item) => ChapterItem.fromJson(item))
-          .toList(),
+      chapters:
+          (json['chapters'] as List<dynamic>?)
+              ?.map((item) => ChapterItem.fromJson(item))
+              .toList() ??
+          [],
     );
   }
 
