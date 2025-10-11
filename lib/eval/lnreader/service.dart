@@ -45,9 +45,6 @@ module={},exports=Function("return this")(),Object.defineProperties(module,{name
     JsHtmlParser(runtime).init();
     JsCheerio(runtime).init();
     runtime.evaluate('''
-async function jsonStringify(fn) {
-    return JSON.stringify(await fn());
-}
 const require = (package) => {
   switch (package) {
     case "htmlparser2":

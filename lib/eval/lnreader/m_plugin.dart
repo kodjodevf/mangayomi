@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class ChapterItem {
   String name;
   String path;
@@ -20,9 +18,10 @@ class ChapterItem {
       name: json['name'],
       path: json['path'],
       releaseTime: json['releaseTime'],
-      chapterNumber:
-          int.tryParse(json['chapterNumber']) ??
-          (json['chapterNumber'] as num?)?.toInt(),
+      chapterNumber: json['chapterNumber'] != null
+          ? (json['chapterNumber'] as num?)?.toInt() ??
+                int.tryParse(json['chapterNumber'])
+          : null,
       page: json['page'],
     );
   }

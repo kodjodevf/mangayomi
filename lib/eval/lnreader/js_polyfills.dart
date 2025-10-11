@@ -6,7 +6,19 @@ class JsPolyfills {
 
   void init() {
     runtime.evaluate('''
-const global="object"==typeof globalThis?globalThis:"object"==typeof window?window:"object"==typeof self?self:this,_FormData=global.FormData,_send=global.XMLHttpRequest&&global.XMLHttpRequest.prototype.send,_fetch=global.Request&&global.fetch,_sendBeacon=global.navigator&&global.navigator.sendBeacon,_match=global.Element&&global.Element.prototype,stringTag=global.Symbol&&Symbol.toStringTag;function ensureArgs(e,t){if(e.length<t)throw new TypeError(`\${t} argument required, but only \${e.length} present.`)}function normalizeArgs(e,t,a){return[String(e),String(t)]}function normalizeLinefeeds(e){return e.replace(/\r?\n|\r/g,"\r\n")}function each(e,t){for(let a=0;a<e.length;a++)t(e[a])}stringTag&&"File"in global&&!File.prototype[stringTag]&&(File.prototype[stringTag]="File");const escape=e=>e.replace(/\n/g,"%0A").replace(/\r/g,"%0D").replace(/"/g,"%22");class FormData{constructor(e){this._data=[];const t=this;e&&each(e.elements,(e=>{if(e.name&&!e.disabled&&"submit"!==e.type&&"button"!==e.type&&!e.matches("form fieldset[disabled] *"))if("file"===e.type){each(e.files&&e.files.length?e.files:[new File([],"",{type:"application/octet-stream"})],(a=>{t.append(e.name,a)}))}else if("select-multiple"===e.type||"select-one"===e.type)each(e.options,(a=>{!a.disabled&&a.selected&&t.append(e.name,a.value)}));else if("checkbox"===e.type||"radio"===e.type)e.checked&&t.append(e.name,e.value);else{const a="textarea"===e.type?normalizeLinefeeds(e.value):e.value;t.append(e.name,a)}}))}append(e,t,a){ensureArgs(arguments,2),this._data.push(normalizeArgs(e,t,a))}delete(e){ensureArgs(arguments,1);const t=[];e=String(e),each(this._data,(a=>{a[0]!==e&&t.push(a)})),this._data=t}*entries(){for(var e=0;e<this._data.length;e++)yield this._data[e]}forEach(e,t){ensureArgs(arguments,1);for(const[a,n]of this)e.call(t,n,a,this)}get(e){ensureArgs(arguments,1);const t=this._data;e=String(e);for(let a=0;a<t.length;a++)if(t[a][0]===e)return t[a][1];return null}getAll(e){ensureArgs(arguments,1);const t=[];return e=String(e),each(this._data,(a=>{a[0]===e&&t.push(a[1])})),t}has(e){ensureArgs(arguments,1),e=String(e);for(let t=0;t<this._data.length;t++)if(this._data[t][0]===e)return!0;return!1}*keys(){for(const[e]of this)yield e}set(e,t,a){ensureArgs(arguments,2),e=String(e);const n=[],r=normalizeArgs(e,t,a);let s=!0;each(this._data,(t=>{t[0]===e?s&&(s=!n.push(r)):n.push(t)})),s&&n.push(r),this._data=n}*values(){for(const[,e]of this)yield e}_asNative(){const e=new _FormData;for(const[t,a]of this)e.append(t,a);return e}_blob(){const e="----formdata-polyfill-"+Math.random(),t=[],a=`--\${e}\r\nContent-Disposition: form-data; name="`;return this.forEach(((e,n)=>"string"==typeof e?t.push(a+escape(normalizeLinefeeds(n))+`"\r\n\r\n\${normalizeLinefeeds(e)}\r\n`):t.push(a+escape(normalizeLinefeeds(n))+`"; filename="\${escape(e.name)}"\r\nContent-Type: \${e.type||"application/octet-stream"}\r\n\r\n`,e,"\r\n"))),t.push(`--\${e}--`),new Blob(t,{type:"multipart/form-data; boundary="+e})}[Symbol.iterator](){return this.entries()}toString(){return"[object FormData]"}}stringTag&&(FormData.prototype[stringTag]="FormData");
+class FormData {
+  constructor() {
+    this.params = {};
+  }
+
+  append(key, value) {
+    this.params[key] = value;
+  }
+
+  toJSON() {
+    return this.params;
+  }
+}
 ''');
     runtime.evaluate('''
 /**!

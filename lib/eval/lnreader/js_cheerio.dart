@@ -219,17 +219,45 @@ class ElementCollection {
     this.elements = elements;
   }
 
+  text() {
+    return this.map(function(i, el) {
+      return el.text();
+    }).toArray().join("\\n") ?? "";
+  }
+
+  html() {
+    return this.first()?.html();
+  }
+
+  outerHtml() {
+    return this.first()?.outerHtml();
+  }
+
+  attr(name) {
+    return this.first()?.attr(name);
+  }
+
+  hasClass(cls) {
+    return this.first()?.hasClass(cls);
+  }
+
   each(fn) {
     this.elements.forEach((el, i) => fn(i, el));
     return this;
   }
 
   map(fn) {
-    return this.elements.map((el, i) => fn(el, i));
+    return new ElementCollection(this.elements.map((el, i) => fn(i, el)));
   }
 
   filter(fn) {
-    return new ElementCollection(this.elements.filter((el, i) => fn(el, i)));
+    return new ElementCollection(this.elements.filter(function (el, i) {
+      try {
+        return fn(i, el);
+      } catch (_) {
+        return false;
+      }
+    }));
   }
 
   addClass(cls) {
@@ -309,23 +337,48 @@ class ElementCollection {
   }
 
   first() {
-    return this.elements[0] || null;
+    return this.get(0);
   }
 
   last() {
-    return this.elements[this.elements.length - 1] || null;
+    return this.get(this.elements.length - 1);
   }
 
   get(index) {
-    return this.elements[index] || null;
+    return this.elements[index] || new Stub();
   }
 
   length() {
     return this.elements.length;
   }
 
+  toArray() {
+    return this.elements;
+  }
+
   [Symbol.iterator]() {
     return this.elements[Symbol.iterator]();
+  }
+}
+
+class Stub {
+  text() {
+    return null;
+  }
+  html() {
+    return null;
+  }
+  outerHtml() {
+    return null;
+  }
+  val() {
+    return null;
+  }
+  attr(name) {
+    return null;
+  }
+  hasClass(cls) {
+    return false;
   }
 }
 
@@ -334,12 +387,12 @@ function load(html) {
   const root = new Element(rootKey);
 
   const \$ = function(input) {
-    if (typeof input === "string") {
-      return root.find(input); // returns ElementCollection
-    } else if (input instanceof ElementCollection) {
+    if (input instanceof ElementCollection) {
       return input;
     } else if (input instanceof Element) {
       return input;
+    } else if (typeof input === "string") {
+      return root.find(input); // returns ElementCollection
     } else if (input && input._key) {
       return new ElementCollection([new Element(input._key)]);
     } else {
@@ -347,6 +400,9 @@ function load(html) {
     }
   };
 
+  \$.html = function() {
+    return root.html();
+  };
   \$.root = root;
   \$.Element = Element;
   \$.Collection = ElementCollection;

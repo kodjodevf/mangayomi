@@ -72,6 +72,10 @@ String.prototype.substringBetween = function(left, right) {
     return this.substring(leftIndex, rightIndex);
 }
 
+async function jsonStringify(fn) {
+    return JSON.stringify(await fn());
+}
+
 const isUrlAbsolute = url => {
   if (url) {
     if (url.indexOf("//") === 0) {
