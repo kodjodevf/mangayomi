@@ -165,6 +165,23 @@ const extension = exports.default;
     final chapters = SourcePage.fromJson(
       await _extensionCallAsync('parsePage(`${item.path}`, `1`)', {}),
     );
+    final chaps =
+        ((chapters.chapters.isNotEmpty ? chapters.chapters : item.chapters)
+            ?.map(
+              (e) => MChapter(
+                name: e.name,
+                url: e.path,
+                dateUpload: e.releaseTime != null
+                    ? DateTime.tryParse(
+                            e.releaseTime!,
+                          )?.millisecondsSinceEpoch.toString() ??
+                          int.tryParse(e.releaseTime!)?.toString() ??
+                          DateTime.now().millisecondsSinceEpoch.toString()
+                    : DateTime.now().millisecondsSinceEpoch.toString(),
+              ),
+            )
+            .toList() ??
+        []);
     return MManga(
       name: item.name,
       imageUrl: item.cover,
@@ -178,23 +195,7 @@ const extension = exports.default;
         _ => Status.unknown,
       },
       genre: item.genres?.split(","),
-      chapters:
-          (chapters.chapters.isNotEmpty ? chapters.chapters : item.chapters)
-              ?.map(
-                (e) => MChapter(
-                  name: e.name,
-                  url: e.path,
-                  dateUpload: e.releaseTime != null
-                      ? DateTime.tryParse(
-                              e.releaseTime!,
-                            )?.millisecondsSinceEpoch.toString() ??
-                            int.tryParse(e.releaseTime!)?.toString() ??
-                            DateTime.now().millisecondsSinceEpoch.toString()
-                      : DateTime.now().millisecondsSinceEpoch.toString(),
-                ),
-              )
-              .toList() ??
-          [],
+      chapters: chaps.reversed.toList(),
     );
   }
 
