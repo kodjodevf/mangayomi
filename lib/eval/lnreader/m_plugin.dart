@@ -80,8 +80,11 @@ class SourceNovel extends NovelItem {
   });
 
   factory SourceNovel.fromJson(Map<String, dynamic> json) {
+    if (json['path'] == null) {
+      throw 'path is null';
+    }
     return SourceNovel(
-      name: json['name'],
+      name: json['name'] ?? '',
       path: json['path'],
       cover: json['cover'],
       genres: json['genres'],
