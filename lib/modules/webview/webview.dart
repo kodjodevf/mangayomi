@@ -23,7 +23,7 @@ class MangaWebView extends ConsumerStatefulWidget {
 }
 
 class _MangaWebViewState extends ConsumerState<MangaWebView> {
-  late final MyInAppBrowser browser;
+  MyInAppBrowser? browser;
   double _progress = 0;
   bool isNotWebviewWindow = false;
   @override
@@ -43,8 +43,10 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
     if (Platform.isLinux) {
       _desktopWebview?.close();
     } else {
-      if (browser.isOpened()) browser.close();
-      browser.dispose();
+      if (browser != null) {
+        if (browser!.isOpened()) browser!.close();
+        browser!.dispose();
+      }
     }
     super.dispose();
   }
@@ -99,7 +101,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
           }
         },
       );
-      await browser.openUrlRequest(
+      await browser!.openUrlRequest(
         urlRequest: URLRequest(url: WebUri(widget.url)),
         settings: InAppBrowserClassSettings(
           browserSettings: InAppBrowserSettings(
@@ -180,9 +182,9 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                               leading: IconButton(
                                 onPressed: () {
                                   if (Platform.isWindows) {
-                                    if (browser.isOpened()) {
-                                      browser.close();
-                                      browser.dispose();
+                                    if (browser!.isOpened()) {
+                                      browser!.close();
+                                      browser!.dispose();
                                     }
                                   }
                                   Navigator.pop(context);
