@@ -51,13 +51,26 @@ import 'package:path/path.dart' as p;
 
 typedef DoubleClickAnimationListener = void Function();
 
-class MangaReaderView extends ConsumerWidget {
+class MangaReaderView extends ConsumerStatefulWidget {
   final int chapterId;
   const MangaReaderView({super.key, required this.chapterId});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final chapterData = ref.watch(mangaReaderProvider(chapterId));
+  ConsumerState<MangaReaderView> createState() => _MangaReaderViewState();
+}
+
+class _MangaReaderViewState extends ConsumerState<MangaReaderView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.invalidate(mangaReaderProvider(widget.chapterId));
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final chapterData = ref.watch(mangaReaderProvider(widget.chapterId));
 
     return chapterData.when(
       loading: () => scaffoldWith(context, const ProgressCenter()),

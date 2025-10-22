@@ -31,10 +31,12 @@ class LNReaderExtensionService implements ExtensionService {
   late JavascriptRuntime runtime;
   @override
   late Source source;
+  bool _isInitialized = false;
 
   LNReaderExtensionService(this.source);
 
   void _init() {
+    if (_isInitialized) return;
     runtime = getJavascriptRuntime();
     runtime.evaluate('''
 module={},exports=Function("return this")(),Object.defineProperties(module,{namespace:{set:function(a){exports=a}},exports:{set:function(a){for(var b in a)a.hasOwnProperty(b)&&(exports[b]=a[b])},get:function(){return exports}}});
@@ -83,6 +85,7 @@ const require = (package) => {
 ${source.sourceCode}
 const extension = exports.default;
 ''');
+    _isInitialized = true;
   }
 
   @override
