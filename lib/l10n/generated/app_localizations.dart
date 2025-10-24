@@ -2787,6 +2787,12 @@ abstract class AppLocalizations {
   /// **'Get ApkBridge'**
   String get get_apk_bridge;
 
+  /// No description provided for @get_sync_server.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Sync Server here'**
+  String get get_sync_server;
+
   /// No description provided for @undefined.
   ///
   /// In en, this message translates to:

@@ -663,6 +663,7 @@ class _MigrationMangaGlobalImageCardState
       widget.oldManga.imageUrl = widget.manga.imageUrl;
       widget.oldManga.lang = widget.source.lang;
       widget.oldManga.source = widget.source.name;
+      widget.oldManga.sourceId = widget.source.id;
       widget.oldManga.artist = preview.artist;
       widget.oldManga.author = preview.author;
       widget.oldManga.status = preview.status ?? widget.oldManga.status;
