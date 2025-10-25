@@ -452,6 +452,7 @@
   "custom_dns": "Custom DNS (leave blank to use system DNS)",
   "android_proxy_server": "Android Proxy Server (ApkBridge)",
   "get_apk_bridge": "Get ApkBridge",
+  "get_sync_server": "Get Sync Server here",
   "undefined": "undefined",
   "empty_extensions_repo": "You don't have any repository urls here. Click on the plus button to add one!",
   "add_extensions_repo": "Add repo URL",

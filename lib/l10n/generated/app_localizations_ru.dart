@@ -1445,6 +1445,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get get_apk_bridge => 'Get ApkBridge';
 
   @override
+  String get get_sync_server => 'Get Sync Server here';
+
+  @override
   String get undefined => 'Не определено';
 
   @override
