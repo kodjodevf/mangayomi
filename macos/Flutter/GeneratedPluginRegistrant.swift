@@ -13,7 +13,7 @@ import file_picker
 import flutter_inappwebview_macos
 import flutter_qjs
 import flutter_web_auth_2
-import isar_flutter_libs
+import isar_community_flutter_libs
 import just_audio
 import media_kit_libs_macos_video
 import media_kit_video

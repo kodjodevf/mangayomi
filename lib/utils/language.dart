@@ -1,4 +1,4 @@
-completeLanguageName(String lang) {
+String completeLanguageName(String lang) {
   lang = lang.toLowerCase();
   for (var element in languagesMap.entries) {
     if (element.value.toLowerCase() == lang) {
@@ -122,7 +122,7 @@ final languagesMap = {
 };
 
 /// this might not always work depending on how every extension provides its subtitles
-completeLanguageNameEnglish(String lang) {
+String completeLanguageNameEnglish(String lang) {
   lang = lang.toLowerCase();
   for (var element in languagesMapEnglish.entries) {
     if (element.value.toLowerCase() == lang) {

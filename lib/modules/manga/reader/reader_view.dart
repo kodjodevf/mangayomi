@@ -27,6 +27,7 @@ import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
+import 'package:mangayomi/utils/riverpod.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/services/get_chapter_pages.dart';
@@ -179,6 +180,7 @@ class _MangaChapterPageGalleryState
       );
     }
     discordRpc?.showIdleText();
+    _readerController.keepAliveLink?.close();
     super.dispose();
   }
 
@@ -246,7 +248,7 @@ class _MangaChapterPageGalleryState
   late int pagePreloadAmount = ref.read(pagePreloadAmountStateProvider);
   late bool _isBookmarked = _readerController.getChapterBookmarked();
 
-  final _currentReaderMode = StateProvider<ReaderMode?>((ref) => null);
+  final _currentReaderMode = StateProvider<ReaderMode?>(() => null);
   PageMode? _pageMode;
   bool _isView = false;
   Alignment _scalePosition = Alignment.center;
@@ -283,7 +285,7 @@ class _MangaChapterPageGalleryState
   bool _isReverseHorizontal = false;
 
   late final _showPagesNumber = StateProvider(
-    (ref) => _readerController.getShowPageNumber(),
+    () => _readerController.getShowPageNumber(),
   );
 
   Color _backgroundColor(BuildContext context) =>

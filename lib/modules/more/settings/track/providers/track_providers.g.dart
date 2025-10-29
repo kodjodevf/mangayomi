@@ -6,170 +6,157 @@ part of 'track_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$tracksHash() => r'05f1531a3200b0ad9f1e4bf74cd9eb44301f9f21';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-abstract class _$Tracks extends BuildlessAutoDisposeNotifier<TrackPreference?> {
-  late final int? syncId;
-
-  TrackPreference? build({required int? syncId});
-}
-
-/// See also [Tracks].
 @ProviderFor(Tracks)
-const tracksProvider = TracksFamily();
+const tracksProvider = TracksFamily._();
 
-/// See also [Tracks].
-class TracksFamily extends Family<TrackPreference?> {
-  /// See also [Tracks].
-  const TracksFamily();
+final class TracksProvider extends $NotifierProvider<Tracks, TrackPreference?> {
+  const TracksProvider._({
+    required TracksFamily super.from,
+    required int? super.argument,
+  }) : super(
+         retry: null,
+         name: r'tracksProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// See also [Tracks].
-  TracksProvider call({required int? syncId}) {
-    return TracksProvider(syncId: syncId);
+  @override
+  String debugGetCreateSourceHash() => _$tracksHash();
+
+  @override
+  String toString() {
+    return r'tracksProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  TracksProvider getProviderOverride(covariant TracksProvider provider) {
-    return call(syncId: provider.syncId);
-  }
+  Tracks create() => Tracks();
 
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'tracksProvider';
-}
-
-/// See also [Tracks].
-class TracksProvider
-    extends AutoDisposeNotifierProviderImpl<Tracks, TrackPreference?> {
-  /// See also [Tracks].
-  TracksProvider({required int? syncId})
-    : this._internal(
-        () => Tracks()..syncId = syncId,
-        from: tracksProvider,
-        name: r'tracksProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$tracksHash,
-        dependencies: TracksFamily._dependencies,
-        allTransitiveDependencies: TracksFamily._allTransitiveDependencies,
-        syncId: syncId,
-      );
-
-  TracksProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.syncId,
-  }) : super.internal();
-
-  final int? syncId;
-
-  @override
-  TrackPreference? runNotifierBuild(covariant Tracks notifier) {
-    return notifier.build(syncId: syncId);
-  }
-
-  @override
-  Override overrideWith(Tracks Function() create) {
-    return ProviderOverride(
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(TrackPreference? value) {
+    return $ProviderOverride(
       origin: this,
-      override: TracksProvider._internal(
-        () => create()..syncId = syncId,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        syncId: syncId,
-      ),
+      providerOverride: $SyncValueProvider<TrackPreference?>(value),
     );
   }
 
   @override
-  AutoDisposeNotifierProviderElement<Tracks, TrackPreference?> createElement() {
-    return _TracksProviderElement(this);
-  }
-
-  @override
   bool operator ==(Object other) {
-    return other is TracksProvider && other.syncId == syncId;
+    return other is TracksProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, syncId.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin TracksRef on AutoDisposeNotifierProviderRef<TrackPreference?> {
-  /// The parameter `syncId` of this provider.
-  int? get syncId;
-}
+String _$tracksHash() => r'05f1531a3200b0ad9f1e4bf74cd9eb44301f9f21';
 
-class _TracksProviderElement
-    extends AutoDisposeNotifierProviderElement<Tracks, TrackPreference?>
-    with TracksRef {
-  _TracksProviderElement(super.provider);
+final class TracksFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          Tracks,
+          TrackPreference?,
+          TrackPreference?,
+          TrackPreference?,
+          int?
+        > {
+  const TracksFamily._()
+    : super(
+        retry: null,
+        name: r'tracksProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  TracksProvider call({required int? syncId}) =>
+      TracksProvider._(argument: syncId, from: this);
 
   @override
-  int? get syncId => (origin as TracksProvider).syncId;
+  String toString() => r'tracksProvider';
+}
+
+abstract class _$Tracks extends $Notifier<TrackPreference?> {
+  late final _$args = ref.$arg as int?;
+  int? get syncId => _$args;
+
+  TrackPreference? build({required int? syncId});
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(syncId: _$args);
+    final ref = this.ref as $Ref<TrackPreference?, TrackPreference?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<TrackPreference?, TrackPreference?>,
+              TrackPreference?,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(UpdateProgressAfterReadingState)
+const updateProgressAfterReadingStateProvider =
+    UpdateProgressAfterReadingStateProvider._();
+
+final class UpdateProgressAfterReadingStateProvider
+    extends $NotifierProvider<UpdateProgressAfterReadingState, bool> {
+  const UpdateProgressAfterReadingStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'updateProgressAfterReadingStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$updateProgressAfterReadingStateHash();
+
+  @$internal
+  @override
+  UpdateProgressAfterReadingState create() => UpdateProgressAfterReadingState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
 }
 
 String _$updateProgressAfterReadingStateHash() =>
     r'ff62bff97327d9c6b2c694fb20ca8df98e5107a0';
 
-/// See also [UpdateProgressAfterReadingState].
-@ProviderFor(UpdateProgressAfterReadingState)
-final updateProgressAfterReadingStateProvider =
-    AutoDisposeNotifierProvider<UpdateProgressAfterReadingState, bool>.internal(
-      UpdateProgressAfterReadingState.new,
-      name: r'updateProgressAfterReadingStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$updateProgressAfterReadingStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$UpdateProgressAfterReadingState = AutoDisposeNotifier<bool>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$UpdateProgressAfterReadingState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

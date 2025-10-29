@@ -6,172 +6,120 @@ part of 'myanimelist.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$myAnimeListHash() => r'092a7d2d329c5d40fede4bfc00644576b2d08eaa';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-abstract class _$MyAnimeList extends BuildlessAutoDisposeNotifier<void> {
-  late final int syncId;
-  late final ItemType? itemType;
-
-  void build({required int syncId, required ItemType? itemType});
-}
-
-/// See also [MyAnimeList].
 @ProviderFor(MyAnimeList)
-const myAnimeListProvider = MyAnimeListFamily();
+const myAnimeListProvider = MyAnimeListFamily._();
 
-/// See also [MyAnimeList].
-class MyAnimeListFamily extends Family<void> {
-  /// See also [MyAnimeList].
-  const MyAnimeListFamily();
+final class MyAnimeListProvider extends $NotifierProvider<MyAnimeList, void> {
+  const MyAnimeListProvider._({
+    required MyAnimeListFamily super.from,
+    required ({int syncId, ItemType? itemType, WidgetRef widgetRef})
+    super.argument,
+  }) : super(
+         retry: null,
+         name: r'myAnimeListProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// See also [MyAnimeList].
-  MyAnimeListProvider call({required int syncId, required ItemType? itemType}) {
-    return MyAnimeListProvider(syncId: syncId, itemType: itemType);
+  @override
+  String debugGetCreateSourceHash() => _$myAnimeListHash();
+
+  @override
+  String toString() {
+    return r'myAnimeListProvider'
+        ''
+        '$argument';
   }
 
+  @$internal
   @override
-  MyAnimeListProvider getProviderOverride(
-    covariant MyAnimeListProvider provider,
-  ) {
-    return call(syncId: provider.syncId, itemType: provider.itemType);
-  }
+  MyAnimeList create() => MyAnimeList();
 
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'myAnimeListProvider';
-}
-
-/// See also [MyAnimeList].
-class MyAnimeListProvider
-    extends AutoDisposeNotifierProviderImpl<MyAnimeList, void> {
-  /// See also [MyAnimeList].
-  MyAnimeListProvider({required int syncId, required ItemType? itemType})
-    : this._internal(
-        () => MyAnimeList()
-          ..syncId = syncId
-          ..itemType = itemType,
-        from: myAnimeListProvider,
-        name: r'myAnimeListProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$myAnimeListHash,
-        dependencies: MyAnimeListFamily._dependencies,
-        allTransitiveDependencies: MyAnimeListFamily._allTransitiveDependencies,
-        syncId: syncId,
-        itemType: itemType,
-      );
-
-  MyAnimeListProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.syncId,
-    required this.itemType,
-  }) : super.internal();
-
-  final int syncId;
-  final ItemType? itemType;
-
-  @override
-  void runNotifierBuild(covariant MyAnimeList notifier) {
-    return notifier.build(syncId: syncId, itemType: itemType);
-  }
-
-  @override
-  Override overrideWith(MyAnimeList Function() create) {
-    return ProviderOverride(
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(void value) {
+    return $ProviderOverride(
       origin: this,
-      override: MyAnimeListProvider._internal(
-        () => create()
-          ..syncId = syncId
-          ..itemType = itemType,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        syncId: syncId,
-        itemType: itemType,
-      ),
+      providerOverride: $SyncValueProvider<void>(value),
     );
   }
 
   @override
-  AutoDisposeNotifierProviderElement<MyAnimeList, void> createElement() {
-    return _MyAnimeListProviderElement(this);
-  }
-
-  @override
   bool operator ==(Object other) {
-    return other is MyAnimeListProvider &&
-        other.syncId == syncId &&
-        other.itemType == itemType;
+    return other is MyAnimeListProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, syncId.hashCode);
-    hash = _SystemHash.combine(hash, itemType.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin MyAnimeListRef on AutoDisposeNotifierProviderRef<void> {
-  /// The parameter `syncId` of this provider.
-  int get syncId;
+String _$myAnimeListHash() => r'6fc4940fbc11af8b3779ecc42bb3845eadc06f0f';
 
-  /// The parameter `itemType` of this provider.
-  ItemType? get itemType;
-}
+final class MyAnimeListFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          MyAnimeList,
+          void,
+          void,
+          void,
+          ({int syncId, ItemType? itemType, WidgetRef widgetRef})
+        > {
+  const MyAnimeListFamily._()
+    : super(
+        retry: null,
+        name: r'myAnimeListProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
-class _MyAnimeListProviderElement
-    extends AutoDisposeNotifierProviderElement<MyAnimeList, void>
-    with MyAnimeListRef {
-  _MyAnimeListProviderElement(super.provider);
+  MyAnimeListProvider call({
+    required int syncId,
+    required ItemType? itemType,
+    required WidgetRef widgetRef,
+  }) => MyAnimeListProvider._(
+    argument: (syncId: syncId, itemType: itemType, widgetRef: widgetRef),
+    from: this,
+  );
 
   @override
-  int get syncId => (origin as MyAnimeListProvider).syncId;
-  @override
-  ItemType? get itemType => (origin as MyAnimeListProvider).itemType;
+  String toString() => r'myAnimeListProvider';
 }
 
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$MyAnimeList extends $Notifier<void> {
+  late final _$args =
+      ref.$arg as ({int syncId, ItemType? itemType, WidgetRef widgetRef});
+  int get syncId => _$args.syncId;
+  ItemType? get itemType => _$args.itemType;
+  WidgetRef get widgetRef => _$args.widgetRef;
+
+  void build({
+    required int syncId,
+    required ItemType? itemType,
+    required WidgetRef widgetRef,
+  });
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    build(
+      syncId: _$args.syncId,
+      itemType: _$args.itemType,
+      widgetRef: _$args.widgetRef,
+    );
+    final ref = this.ref as $Ref<void, void>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<void, void>,
+              void,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, null);
+  }
+}

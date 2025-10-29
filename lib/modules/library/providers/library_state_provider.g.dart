@@ -6,2590 +6,1706 @@ part of 'library_state_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$libraryDisplayTypeStateHash() =>
-    r'459a91429b3d1490347cae4bd062745c5e372f05';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-abstract class _$LibraryDisplayTypeState
-    extends BuildlessAutoDisposeNotifier<DisplayType> {
-  late final ItemType itemType;
-  late final Settings settings;
-
-  DisplayType build({required ItemType itemType, required Settings settings});
-}
-
-/// See also [LibraryDisplayTypeState].
 @ProviderFor(LibraryDisplayTypeState)
-const libraryDisplayTypeStateProvider = LibraryDisplayTypeStateFamily();
+const libraryDisplayTypeStateProvider = LibraryDisplayTypeStateFamily._();
 
-/// See also [LibraryDisplayTypeState].
-class LibraryDisplayTypeStateFamily extends Family<DisplayType> {
-  /// See also [LibraryDisplayTypeState].
-  const LibraryDisplayTypeStateFamily();
-
-  /// See also [LibraryDisplayTypeState].
-  LibraryDisplayTypeStateProvider call({
-    required ItemType itemType,
-    required Settings settings,
-  }) {
-    return LibraryDisplayTypeStateProvider(
-      itemType: itemType,
-      settings: settings,
-    );
-  }
-
-  @override
-  LibraryDisplayTypeStateProvider getProviderOverride(
-    covariant LibraryDisplayTypeStateProvider provider,
-  ) {
-    return call(itemType: provider.itemType, settings: provider.settings);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'libraryDisplayTypeStateProvider';
-}
-
-/// See also [LibraryDisplayTypeState].
-class LibraryDisplayTypeStateProvider
-    extends
-        AutoDisposeNotifierProviderImpl<LibraryDisplayTypeState, DisplayType> {
-  /// See also [LibraryDisplayTypeState].
-  LibraryDisplayTypeStateProvider({
-    required ItemType itemType,
-    required Settings settings,
-  }) : this._internal(
-         () => LibraryDisplayTypeState()
-           ..itemType = itemType
-           ..settings = settings,
-         from: libraryDisplayTypeStateProvider,
+final class LibraryDisplayTypeStateProvider
+    extends $NotifierProvider<LibraryDisplayTypeState, DisplayType> {
+  const LibraryDisplayTypeStateProvider._({
+    required LibraryDisplayTypeStateFamily super.from,
+    required ({ItemType itemType, Settings settings}) super.argument,
+  }) : super(
+         retry: null,
          name: r'libraryDisplayTypeStateProvider',
-         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-             ? null
-             : _$libraryDisplayTypeStateHash,
-         dependencies: LibraryDisplayTypeStateFamily._dependencies,
-         allTransitiveDependencies:
-             LibraryDisplayTypeStateFamily._allTransitiveDependencies,
-         itemType: itemType,
-         settings: settings,
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
        );
 
-  LibraryDisplayTypeStateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.itemType,
-    required this.settings,
-  }) : super.internal();
-
-  final ItemType itemType;
-  final Settings settings;
+  @override
+  String debugGetCreateSourceHash() => _$libraryDisplayTypeStateHash();
 
   @override
-  DisplayType runNotifierBuild(covariant LibraryDisplayTypeState notifier) {
-    return notifier.build(itemType: itemType, settings: settings);
+  String toString() {
+    return r'libraryDisplayTypeStateProvider'
+        ''
+        '$argument';
   }
 
+  @$internal
   @override
-  Override overrideWith(LibraryDisplayTypeState Function() create) {
-    return ProviderOverride(
+  LibraryDisplayTypeState create() => LibraryDisplayTypeState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DisplayType value) {
+    return $ProviderOverride(
       origin: this,
-      override: LibraryDisplayTypeStateProvider._internal(
-        () => create()
-          ..itemType = itemType
-          ..settings = settings,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        itemType: itemType,
-        settings: settings,
-      ),
+      providerOverride: $SyncValueProvider<DisplayType>(value),
     );
-  }
-
-  @override
-  AutoDisposeNotifierProviderElement<LibraryDisplayTypeState, DisplayType>
-  createElement() {
-    return _LibraryDisplayTypeStateProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
     return other is LibraryDisplayTypeStateProvider &&
-        other.itemType == itemType &&
-        other.settings == settings;
+        other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, itemType.hashCode);
-    hash = _SystemHash.combine(hash, settings.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin LibraryDisplayTypeStateRef
-    on AutoDisposeNotifierProviderRef<DisplayType> {
-  /// The parameter `itemType` of this provider.
-  ItemType get itemType;
+String _$libraryDisplayTypeStateHash() =>
+    r'459a91429b3d1490347cae4bd062745c5e372f05';
 
-  /// The parameter `settings` of this provider.
-  Settings get settings;
+final class LibraryDisplayTypeStateFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          LibraryDisplayTypeState,
+          DisplayType,
+          DisplayType,
+          DisplayType,
+          ({ItemType itemType, Settings settings})
+        > {
+  const LibraryDisplayTypeStateFamily._()
+    : super(
+        retry: null,
+        name: r'libraryDisplayTypeStateProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  LibraryDisplayTypeStateProvider call({
+    required ItemType itemType,
+    required Settings settings,
+  }) => LibraryDisplayTypeStateProvider._(
+    argument: (itemType: itemType, settings: settings),
+    from: this,
+  );
+
+  @override
+  String toString() => r'libraryDisplayTypeStateProvider';
 }
 
-class _LibraryDisplayTypeStateProviderElement
-    extends
-        AutoDisposeNotifierProviderElement<LibraryDisplayTypeState, DisplayType>
-    with LibraryDisplayTypeStateRef {
-  _LibraryDisplayTypeStateProviderElement(super.provider);
+abstract class _$LibraryDisplayTypeState extends $Notifier<DisplayType> {
+  late final _$args = ref.$arg as ({ItemType itemType, Settings settings});
+  ItemType get itemType => _$args.itemType;
+  Settings get settings => _$args.settings;
+
+  DisplayType build({required ItemType itemType, required Settings settings});
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(itemType: _$args.itemType, settings: _$args.settings);
+    final ref = this.ref as $Ref<DisplayType, DisplayType>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<DisplayType, DisplayType>,
+              DisplayType,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(LibraryGridSizeState)
+const libraryGridSizeStateProvider = LibraryGridSizeStateFamily._();
+
+final class LibraryGridSizeStateProvider
+    extends $NotifierProvider<LibraryGridSizeState, int?> {
+  const LibraryGridSizeStateProvider._({
+    required LibraryGridSizeStateFamily super.from,
+    required ItemType super.argument,
+  }) : super(
+         retry: null,
+         name: r'libraryGridSizeStateProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
-  ItemType get itemType => (origin as LibraryDisplayTypeStateProvider).itemType;
+  String debugGetCreateSourceHash() => _$libraryGridSizeStateHash();
+
   @override
-  Settings get settings => (origin as LibraryDisplayTypeStateProvider).settings;
+  String toString() {
+    return r'libraryGridSizeStateProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  LibraryGridSizeState create() => LibraryGridSizeState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int?>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is LibraryGridSizeStateProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
 }
 
 String _$libraryGridSizeStateHash() =>
     r'288b58266426aae511454e120d76a7fde7d2899b';
 
-abstract class _$LibraryGridSizeState
-    extends BuildlessAutoDisposeNotifier<int?> {
-  late final ItemType itemType;
-
-  int? build({required ItemType itemType});
-}
-
-/// See also [LibraryGridSizeState].
-@ProviderFor(LibraryGridSizeState)
-const libraryGridSizeStateProvider = LibraryGridSizeStateFamily();
-
-/// See also [LibraryGridSizeState].
-class LibraryGridSizeStateFamily extends Family<int?> {
-  /// See also [LibraryGridSizeState].
-  const LibraryGridSizeStateFamily();
-
-  /// See also [LibraryGridSizeState].
-  LibraryGridSizeStateProvider call({required ItemType itemType}) {
-    return LibraryGridSizeStateProvider(itemType: itemType);
-  }
-
-  @override
-  LibraryGridSizeStateProvider getProviderOverride(
-    covariant LibraryGridSizeStateProvider provider,
-  ) {
-    return call(itemType: provider.itemType);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'libraryGridSizeStateProvider';
-}
-
-/// See also [LibraryGridSizeState].
-class LibraryGridSizeStateProvider
-    extends AutoDisposeNotifierProviderImpl<LibraryGridSizeState, int?> {
-  /// See also [LibraryGridSizeState].
-  LibraryGridSizeStateProvider({required ItemType itemType})
-    : this._internal(
-        () => LibraryGridSizeState()..itemType = itemType,
-        from: libraryGridSizeStateProvider,
+final class LibraryGridSizeStateFamily extends $Family
+    with
+        $ClassFamilyOverride<LibraryGridSizeState, int?, int?, int?, ItemType> {
+  const LibraryGridSizeStateFamily._()
+    : super(
+        retry: null,
         name: r'libraryGridSizeStateProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$libraryGridSizeStateHash,
-        dependencies: LibraryGridSizeStateFamily._dependencies,
-        allTransitiveDependencies:
-            LibraryGridSizeStateFamily._allTransitiveDependencies,
-        itemType: itemType,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
       );
 
-  LibraryGridSizeStateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.itemType,
-  }) : super.internal();
-
-  final ItemType itemType;
+  LibraryGridSizeStateProvider call({required ItemType itemType}) =>
+      LibraryGridSizeStateProvider._(argument: itemType, from: this);
 
   @override
-  int? runNotifierBuild(covariant LibraryGridSizeState notifier) {
-    return notifier.build(itemType: itemType);
-  }
+  String toString() => r'libraryGridSizeStateProvider';
+}
 
+abstract class _$LibraryGridSizeState extends $Notifier<int?> {
+  late final _$args = ref.$arg as ItemType;
+  ItemType get itemType => _$args;
+
+  int? build({required ItemType itemType});
+  @$mustCallSuper
   @override
-  Override overrideWith(LibraryGridSizeState Function() create) {
-    return ProviderOverride(
-      origin: this,
-      override: LibraryGridSizeStateProvider._internal(
-        () => create()..itemType = itemType,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        itemType: itemType,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeNotifierProviderElement<LibraryGridSizeState, int?>
-  createElement() {
-    return _LibraryGridSizeStateProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is LibraryGridSizeStateProvider && other.itemType == itemType;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, itemType.hashCode);
-
-    return _SystemHash.finish(hash);
+  void runBuild() {
+    final created = build(itemType: _$args);
+    final ref = this.ref as $Ref<int?, int?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<int?, int?>,
+              int?,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin LibraryGridSizeStateRef on AutoDisposeNotifierProviderRef<int?> {
-  /// The parameter `itemType` of this provider.
-  ItemType get itemType;
-}
-
-class _LibraryGridSizeStateProviderElement
-    extends AutoDisposeNotifierProviderElement<LibraryGridSizeState, int?>
-    with LibraryGridSizeStateRef {
-  _LibraryGridSizeStateProviderElement(super.provider);
-
-  @override
-  ItemType get itemType => (origin as LibraryGridSizeStateProvider).itemType;
-}
-
-String _$mangaFilterDownloadedStateHash() =>
-    r'6d84bc7063be1734a0c267906a94e6b70e8b72fe';
-
-abstract class _$MangaFilterDownloadedState
-    extends BuildlessAutoDisposeNotifier<int> {
-  late final List<Manga> mangaList;
-  late final ItemType itemType;
-  late final Settings settings;
-
-  int build({
-    required List<Manga> mangaList,
-    required ItemType itemType,
-    required Settings settings,
-  });
-}
-
-/// See also [MangaFilterDownloadedState].
 @ProviderFor(MangaFilterDownloadedState)
-const mangaFilterDownloadedStateProvider = MangaFilterDownloadedStateFamily();
+const mangaFilterDownloadedStateProvider = MangaFilterDownloadedStateFamily._();
 
-/// See also [MangaFilterDownloadedState].
-class MangaFilterDownloadedStateFamily extends Family<int> {
-  /// See also [MangaFilterDownloadedState].
-  const MangaFilterDownloadedStateFamily();
-
-  /// See also [MangaFilterDownloadedState].
-  MangaFilterDownloadedStateProvider call({
-    required List<Manga> mangaList,
-    required ItemType itemType,
-    required Settings settings,
-  }) {
-    return MangaFilterDownloadedStateProvider(
-      mangaList: mangaList,
-      itemType: itemType,
-      settings: settings,
-    );
-  }
-
-  @override
-  MangaFilterDownloadedStateProvider getProviderOverride(
-    covariant MangaFilterDownloadedStateProvider provider,
-  ) {
-    return call(
-      mangaList: provider.mangaList,
-      itemType: provider.itemType,
-      settings: provider.settings,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'mangaFilterDownloadedStateProvider';
-}
-
-/// See also [MangaFilterDownloadedState].
-class MangaFilterDownloadedStateProvider
-    extends AutoDisposeNotifierProviderImpl<MangaFilterDownloadedState, int> {
-  /// See also [MangaFilterDownloadedState].
-  MangaFilterDownloadedStateProvider({
-    required List<Manga> mangaList,
-    required ItemType itemType,
-    required Settings settings,
-  }) : this._internal(
-         () => MangaFilterDownloadedState()
-           ..mangaList = mangaList
-           ..itemType = itemType
-           ..settings = settings,
-         from: mangaFilterDownloadedStateProvider,
+final class MangaFilterDownloadedStateProvider
+    extends $NotifierProvider<MangaFilterDownloadedState, int> {
+  const MangaFilterDownloadedStateProvider._({
+    required MangaFilterDownloadedStateFamily super.from,
+    required ({List<Manga> mangaList, ItemType itemType, Settings settings})
+    super.argument,
+  }) : super(
+         retry: null,
          name: r'mangaFilterDownloadedStateProvider',
-         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-             ? null
-             : _$mangaFilterDownloadedStateHash,
-         dependencies: MangaFilterDownloadedStateFamily._dependencies,
-         allTransitiveDependencies:
-             MangaFilterDownloadedStateFamily._allTransitiveDependencies,
-         mangaList: mangaList,
-         itemType: itemType,
-         settings: settings,
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
        );
 
-  MangaFilterDownloadedStateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.mangaList,
-    required this.itemType,
-    required this.settings,
-  }) : super.internal();
-
-  final List<Manga> mangaList;
-  final ItemType itemType;
-  final Settings settings;
+  @override
+  String debugGetCreateSourceHash() => _$mangaFilterDownloadedStateHash();
 
   @override
-  int runNotifierBuild(covariant MangaFilterDownloadedState notifier) {
-    return notifier.build(
-      mangaList: mangaList,
-      itemType: itemType,
-      settings: settings,
-    );
+  String toString() {
+    return r'mangaFilterDownloadedStateProvider'
+        ''
+        '$argument';
   }
 
+  @$internal
   @override
-  Override overrideWith(MangaFilterDownloadedState Function() create) {
-    return ProviderOverride(
+  MangaFilterDownloadedState create() => MangaFilterDownloadedState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
       origin: this,
-      override: MangaFilterDownloadedStateProvider._internal(
-        () => create()
-          ..mangaList = mangaList
-          ..itemType = itemType
-          ..settings = settings,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        mangaList: mangaList,
-        itemType: itemType,
-        settings: settings,
-      ),
+      providerOverride: $SyncValueProvider<int>(value),
     );
-  }
-
-  @override
-  AutoDisposeNotifierProviderElement<MangaFilterDownloadedState, int>
-  createElement() {
-    return _MangaFilterDownloadedStateProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
     return other is MangaFilterDownloadedStateProvider &&
-        other.mangaList == mangaList &&
-        other.itemType == itemType &&
-        other.settings == settings;
+        other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, mangaList.hashCode);
-    hash = _SystemHash.combine(hash, itemType.hashCode);
-    hash = _SystemHash.combine(hash, settings.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin MangaFilterDownloadedStateRef on AutoDisposeNotifierProviderRef<int> {
-  /// The parameter `mangaList` of this provider.
-  List<Manga> get mangaList;
+String _$mangaFilterDownloadedStateHash() =>
+    r'6d84bc7063be1734a0c267906a94e6b70e8b72fe';
 
-  /// The parameter `itemType` of this provider.
-  ItemType get itemType;
+final class MangaFilterDownloadedStateFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          MangaFilterDownloadedState,
+          int,
+          int,
+          int,
+          ({List<Manga> mangaList, ItemType itemType, Settings settings})
+        > {
+  const MangaFilterDownloadedStateFamily._()
+    : super(
+        retry: null,
+        name: r'mangaFilterDownloadedStateProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
-  /// The parameter `settings` of this provider.
-  Settings get settings;
+  MangaFilterDownloadedStateProvider call({
+    required List<Manga> mangaList,
+    required ItemType itemType,
+    required Settings settings,
+  }) => MangaFilterDownloadedStateProvider._(
+    argument: (mangaList: mangaList, itemType: itemType, settings: settings),
+    from: this,
+  );
+
+  @override
+  String toString() => r'mangaFilterDownloadedStateProvider';
 }
 
-class _MangaFilterDownloadedStateProviderElement
-    extends AutoDisposeNotifierProviderElement<MangaFilterDownloadedState, int>
-    with MangaFilterDownloadedStateRef {
-  _MangaFilterDownloadedStateProviderElement(super.provider);
-
-  @override
-  List<Manga> get mangaList =>
-      (origin as MangaFilterDownloadedStateProvider).mangaList;
-  @override
-  ItemType get itemType =>
-      (origin as MangaFilterDownloadedStateProvider).itemType;
-  @override
-  Settings get settings =>
-      (origin as MangaFilterDownloadedStateProvider).settings;
-}
-
-String _$mangaFilterUnreadStateHash() =>
-    r'bd96c9f42a40d0610788feda3bee5fb8662afe50';
-
-abstract class _$MangaFilterUnreadState
-    extends BuildlessAutoDisposeNotifier<int> {
-  late final List<Manga> mangaList;
-  late final ItemType itemType;
-  late final Settings settings;
+abstract class _$MangaFilterDownloadedState extends $Notifier<int> {
+  late final _$args =
+      ref.$arg
+          as ({List<Manga> mangaList, ItemType itemType, Settings settings});
+  List<Manga> get mangaList => _$args.mangaList;
+  ItemType get itemType => _$args.itemType;
+  Settings get settings => _$args.settings;
 
   int build({
     required List<Manga> mangaList,
     required ItemType itemType,
     required Settings settings,
   });
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(
+      mangaList: _$args.mangaList,
+      itemType: _$args.itemType,
+      settings: _$args.settings,
+    );
+    final ref = this.ref as $Ref<int, int>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<int, int>,
+              int,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
 }
 
-/// See also [MangaFilterUnreadState].
 @ProviderFor(MangaFilterUnreadState)
-const mangaFilterUnreadStateProvider = MangaFilterUnreadStateFamily();
+const mangaFilterUnreadStateProvider = MangaFilterUnreadStateFamily._();
 
-/// See also [MangaFilterUnreadState].
-class MangaFilterUnreadStateFamily extends Family<int> {
-  /// See also [MangaFilterUnreadState].
-  const MangaFilterUnreadStateFamily();
-
-  /// See also [MangaFilterUnreadState].
-  MangaFilterUnreadStateProvider call({
-    required List<Manga> mangaList,
-    required ItemType itemType,
-    required Settings settings,
-  }) {
-    return MangaFilterUnreadStateProvider(
-      mangaList: mangaList,
-      itemType: itemType,
-      settings: settings,
-    );
-  }
-
-  @override
-  MangaFilterUnreadStateProvider getProviderOverride(
-    covariant MangaFilterUnreadStateProvider provider,
-  ) {
-    return call(
-      mangaList: provider.mangaList,
-      itemType: provider.itemType,
-      settings: provider.settings,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'mangaFilterUnreadStateProvider';
-}
-
-/// See also [MangaFilterUnreadState].
-class MangaFilterUnreadStateProvider
-    extends AutoDisposeNotifierProviderImpl<MangaFilterUnreadState, int> {
-  /// See also [MangaFilterUnreadState].
-  MangaFilterUnreadStateProvider({
-    required List<Manga> mangaList,
-    required ItemType itemType,
-    required Settings settings,
-  }) : this._internal(
-         () => MangaFilterUnreadState()
-           ..mangaList = mangaList
-           ..itemType = itemType
-           ..settings = settings,
-         from: mangaFilterUnreadStateProvider,
+final class MangaFilterUnreadStateProvider
+    extends $NotifierProvider<MangaFilterUnreadState, int> {
+  const MangaFilterUnreadStateProvider._({
+    required MangaFilterUnreadStateFamily super.from,
+    required ({List<Manga> mangaList, ItemType itemType, Settings settings})
+    super.argument,
+  }) : super(
+         retry: null,
          name: r'mangaFilterUnreadStateProvider',
-         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-             ? null
-             : _$mangaFilterUnreadStateHash,
-         dependencies: MangaFilterUnreadStateFamily._dependencies,
-         allTransitiveDependencies:
-             MangaFilterUnreadStateFamily._allTransitiveDependencies,
-         mangaList: mangaList,
-         itemType: itemType,
-         settings: settings,
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
        );
 
-  MangaFilterUnreadStateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.mangaList,
-    required this.itemType,
-    required this.settings,
-  }) : super.internal();
-
-  final List<Manga> mangaList;
-  final ItemType itemType;
-  final Settings settings;
+  @override
+  String debugGetCreateSourceHash() => _$mangaFilterUnreadStateHash();
 
   @override
-  int runNotifierBuild(covariant MangaFilterUnreadState notifier) {
-    return notifier.build(
-      mangaList: mangaList,
-      itemType: itemType,
-      settings: settings,
-    );
+  String toString() {
+    return r'mangaFilterUnreadStateProvider'
+        ''
+        '$argument';
   }
 
+  @$internal
   @override
-  Override overrideWith(MangaFilterUnreadState Function() create) {
-    return ProviderOverride(
+  MangaFilterUnreadState create() => MangaFilterUnreadState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
       origin: this,
-      override: MangaFilterUnreadStateProvider._internal(
-        () => create()
-          ..mangaList = mangaList
-          ..itemType = itemType
-          ..settings = settings,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        mangaList: mangaList,
-        itemType: itemType,
-        settings: settings,
-      ),
+      providerOverride: $SyncValueProvider<int>(value),
     );
-  }
-
-  @override
-  AutoDisposeNotifierProviderElement<MangaFilterUnreadState, int>
-  createElement() {
-    return _MangaFilterUnreadStateProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
     return other is MangaFilterUnreadStateProvider &&
-        other.mangaList == mangaList &&
-        other.itemType == itemType &&
-        other.settings == settings;
+        other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, mangaList.hashCode);
-    hash = _SystemHash.combine(hash, itemType.hashCode);
-    hash = _SystemHash.combine(hash, settings.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin MangaFilterUnreadStateRef on AutoDisposeNotifierProviderRef<int> {
-  /// The parameter `mangaList` of this provider.
-  List<Manga> get mangaList;
+String _$mangaFilterUnreadStateHash() =>
+    r'bd96c9f42a40d0610788feda3bee5fb8662afe50';
 
-  /// The parameter `itemType` of this provider.
-  ItemType get itemType;
+final class MangaFilterUnreadStateFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          MangaFilterUnreadState,
+          int,
+          int,
+          int,
+          ({List<Manga> mangaList, ItemType itemType, Settings settings})
+        > {
+  const MangaFilterUnreadStateFamily._()
+    : super(
+        retry: null,
+        name: r'mangaFilterUnreadStateProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
-  /// The parameter `settings` of this provider.
-  Settings get settings;
+  MangaFilterUnreadStateProvider call({
+    required List<Manga> mangaList,
+    required ItemType itemType,
+    required Settings settings,
+  }) => MangaFilterUnreadStateProvider._(
+    argument: (mangaList: mangaList, itemType: itemType, settings: settings),
+    from: this,
+  );
+
+  @override
+  String toString() => r'mangaFilterUnreadStateProvider';
 }
 
-class _MangaFilterUnreadStateProviderElement
-    extends AutoDisposeNotifierProviderElement<MangaFilterUnreadState, int>
-    with MangaFilterUnreadStateRef {
-  _MangaFilterUnreadStateProviderElement(super.provider);
-
-  @override
-  List<Manga> get mangaList =>
-      (origin as MangaFilterUnreadStateProvider).mangaList;
-  @override
-  ItemType get itemType => (origin as MangaFilterUnreadStateProvider).itemType;
-  @override
-  Settings get settings => (origin as MangaFilterUnreadStateProvider).settings;
-}
-
-String _$mangaFilterStartedStateHash() =>
-    r'7546110e32fe4eac49006ce3c721d8f72a2b3128';
-
-abstract class _$MangaFilterStartedState
-    extends BuildlessAutoDisposeNotifier<int> {
-  late final List<Manga> mangaList;
-  late final ItemType itemType;
-  late final Settings settings;
+abstract class _$MangaFilterUnreadState extends $Notifier<int> {
+  late final _$args =
+      ref.$arg
+          as ({List<Manga> mangaList, ItemType itemType, Settings settings});
+  List<Manga> get mangaList => _$args.mangaList;
+  ItemType get itemType => _$args.itemType;
+  Settings get settings => _$args.settings;
 
   int build({
     required List<Manga> mangaList,
     required ItemType itemType,
     required Settings settings,
   });
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(
+      mangaList: _$args.mangaList,
+      itemType: _$args.itemType,
+      settings: _$args.settings,
+    );
+    final ref = this.ref as $Ref<int, int>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<int, int>,
+              int,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
 }
 
-/// See also [MangaFilterStartedState].
 @ProviderFor(MangaFilterStartedState)
-const mangaFilterStartedStateProvider = MangaFilterStartedStateFamily();
+const mangaFilterStartedStateProvider = MangaFilterStartedStateFamily._();
 
-/// See also [MangaFilterStartedState].
-class MangaFilterStartedStateFamily extends Family<int> {
-  /// See also [MangaFilterStartedState].
-  const MangaFilterStartedStateFamily();
-
-  /// See also [MangaFilterStartedState].
-  MangaFilterStartedStateProvider call({
-    required List<Manga> mangaList,
-    required ItemType itemType,
-    required Settings settings,
-  }) {
-    return MangaFilterStartedStateProvider(
-      mangaList: mangaList,
-      itemType: itemType,
-      settings: settings,
-    );
-  }
-
-  @override
-  MangaFilterStartedStateProvider getProviderOverride(
-    covariant MangaFilterStartedStateProvider provider,
-  ) {
-    return call(
-      mangaList: provider.mangaList,
-      itemType: provider.itemType,
-      settings: provider.settings,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'mangaFilterStartedStateProvider';
-}
-
-/// See also [MangaFilterStartedState].
-class MangaFilterStartedStateProvider
-    extends AutoDisposeNotifierProviderImpl<MangaFilterStartedState, int> {
-  /// See also [MangaFilterStartedState].
-  MangaFilterStartedStateProvider({
-    required List<Manga> mangaList,
-    required ItemType itemType,
-    required Settings settings,
-  }) : this._internal(
-         () => MangaFilterStartedState()
-           ..mangaList = mangaList
-           ..itemType = itemType
-           ..settings = settings,
-         from: mangaFilterStartedStateProvider,
+final class MangaFilterStartedStateProvider
+    extends $NotifierProvider<MangaFilterStartedState, int> {
+  const MangaFilterStartedStateProvider._({
+    required MangaFilterStartedStateFamily super.from,
+    required ({List<Manga> mangaList, ItemType itemType, Settings settings})
+    super.argument,
+  }) : super(
+         retry: null,
          name: r'mangaFilterStartedStateProvider',
-         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-             ? null
-             : _$mangaFilterStartedStateHash,
-         dependencies: MangaFilterStartedStateFamily._dependencies,
-         allTransitiveDependencies:
-             MangaFilterStartedStateFamily._allTransitiveDependencies,
-         mangaList: mangaList,
-         itemType: itemType,
-         settings: settings,
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
        );
 
-  MangaFilterStartedStateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.mangaList,
-    required this.itemType,
-    required this.settings,
-  }) : super.internal();
-
-  final List<Manga> mangaList;
-  final ItemType itemType;
-  final Settings settings;
+  @override
+  String debugGetCreateSourceHash() => _$mangaFilterStartedStateHash();
 
   @override
-  int runNotifierBuild(covariant MangaFilterStartedState notifier) {
-    return notifier.build(
-      mangaList: mangaList,
-      itemType: itemType,
-      settings: settings,
-    );
+  String toString() {
+    return r'mangaFilterStartedStateProvider'
+        ''
+        '$argument';
   }
 
+  @$internal
   @override
-  Override overrideWith(MangaFilterStartedState Function() create) {
-    return ProviderOverride(
+  MangaFilterStartedState create() => MangaFilterStartedState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
       origin: this,
-      override: MangaFilterStartedStateProvider._internal(
-        () => create()
-          ..mangaList = mangaList
-          ..itemType = itemType
-          ..settings = settings,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        mangaList: mangaList,
-        itemType: itemType,
-        settings: settings,
-      ),
+      providerOverride: $SyncValueProvider<int>(value),
     );
-  }
-
-  @override
-  AutoDisposeNotifierProviderElement<MangaFilterStartedState, int>
-  createElement() {
-    return _MangaFilterStartedStateProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
     return other is MangaFilterStartedStateProvider &&
-        other.mangaList == mangaList &&
-        other.itemType == itemType &&
-        other.settings == settings;
+        other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, mangaList.hashCode);
-    hash = _SystemHash.combine(hash, itemType.hashCode);
-    hash = _SystemHash.combine(hash, settings.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin MangaFilterStartedStateRef on AutoDisposeNotifierProviderRef<int> {
-  /// The parameter `mangaList` of this provider.
-  List<Manga> get mangaList;
+String _$mangaFilterStartedStateHash() =>
+    r'7546110e32fe4eac49006ce3c721d8f72a2b3128';
 
-  /// The parameter `itemType` of this provider.
-  ItemType get itemType;
+final class MangaFilterStartedStateFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          MangaFilterStartedState,
+          int,
+          int,
+          int,
+          ({List<Manga> mangaList, ItemType itemType, Settings settings})
+        > {
+  const MangaFilterStartedStateFamily._()
+    : super(
+        retry: null,
+        name: r'mangaFilterStartedStateProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
-  /// The parameter `settings` of this provider.
-  Settings get settings;
+  MangaFilterStartedStateProvider call({
+    required List<Manga> mangaList,
+    required ItemType itemType,
+    required Settings settings,
+  }) => MangaFilterStartedStateProvider._(
+    argument: (mangaList: mangaList, itemType: itemType, settings: settings),
+    from: this,
+  );
+
+  @override
+  String toString() => r'mangaFilterStartedStateProvider';
 }
 
-class _MangaFilterStartedStateProviderElement
-    extends AutoDisposeNotifierProviderElement<MangaFilterStartedState, int>
-    with MangaFilterStartedStateRef {
-  _MangaFilterStartedStateProviderElement(super.provider);
-
-  @override
-  List<Manga> get mangaList =>
-      (origin as MangaFilterStartedStateProvider).mangaList;
-  @override
-  ItemType get itemType => (origin as MangaFilterStartedStateProvider).itemType;
-  @override
-  Settings get settings => (origin as MangaFilterStartedStateProvider).settings;
-}
-
-String _$mangaFilterBookmarkedStateHash() =>
-    r'77e5317ee6504667e001e43c549f0ee5abd3ed53';
-
-abstract class _$MangaFilterBookmarkedState
-    extends BuildlessAutoDisposeNotifier<int> {
-  late final List<Manga> mangaList;
-  late final ItemType itemType;
-  late final Settings settings;
+abstract class _$MangaFilterStartedState extends $Notifier<int> {
+  late final _$args =
+      ref.$arg
+          as ({List<Manga> mangaList, ItemType itemType, Settings settings});
+  List<Manga> get mangaList => _$args.mangaList;
+  ItemType get itemType => _$args.itemType;
+  Settings get settings => _$args.settings;
 
   int build({
     required List<Manga> mangaList,
     required ItemType itemType,
     required Settings settings,
   });
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(
+      mangaList: _$args.mangaList,
+      itemType: _$args.itemType,
+      settings: _$args.settings,
+    );
+    final ref = this.ref as $Ref<int, int>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<int, int>,
+              int,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
 }
 
-/// See also [MangaFilterBookmarkedState].
 @ProviderFor(MangaFilterBookmarkedState)
-const mangaFilterBookmarkedStateProvider = MangaFilterBookmarkedStateFamily();
+const mangaFilterBookmarkedStateProvider = MangaFilterBookmarkedStateFamily._();
 
-/// See also [MangaFilterBookmarkedState].
-class MangaFilterBookmarkedStateFamily extends Family<int> {
-  /// See also [MangaFilterBookmarkedState].
-  const MangaFilterBookmarkedStateFamily();
-
-  /// See also [MangaFilterBookmarkedState].
-  MangaFilterBookmarkedStateProvider call({
-    required List<Manga> mangaList,
-    required ItemType itemType,
-    required Settings settings,
-  }) {
-    return MangaFilterBookmarkedStateProvider(
-      mangaList: mangaList,
-      itemType: itemType,
-      settings: settings,
-    );
-  }
-
-  @override
-  MangaFilterBookmarkedStateProvider getProviderOverride(
-    covariant MangaFilterBookmarkedStateProvider provider,
-  ) {
-    return call(
-      mangaList: provider.mangaList,
-      itemType: provider.itemType,
-      settings: provider.settings,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'mangaFilterBookmarkedStateProvider';
-}
-
-/// See also [MangaFilterBookmarkedState].
-class MangaFilterBookmarkedStateProvider
-    extends AutoDisposeNotifierProviderImpl<MangaFilterBookmarkedState, int> {
-  /// See also [MangaFilterBookmarkedState].
-  MangaFilterBookmarkedStateProvider({
-    required List<Manga> mangaList,
-    required ItemType itemType,
-    required Settings settings,
-  }) : this._internal(
-         () => MangaFilterBookmarkedState()
-           ..mangaList = mangaList
-           ..itemType = itemType
-           ..settings = settings,
-         from: mangaFilterBookmarkedStateProvider,
+final class MangaFilterBookmarkedStateProvider
+    extends $NotifierProvider<MangaFilterBookmarkedState, int> {
+  const MangaFilterBookmarkedStateProvider._({
+    required MangaFilterBookmarkedStateFamily super.from,
+    required ({List<Manga> mangaList, ItemType itemType, Settings settings})
+    super.argument,
+  }) : super(
+         retry: null,
          name: r'mangaFilterBookmarkedStateProvider',
-         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-             ? null
-             : _$mangaFilterBookmarkedStateHash,
-         dependencies: MangaFilterBookmarkedStateFamily._dependencies,
-         allTransitiveDependencies:
-             MangaFilterBookmarkedStateFamily._allTransitiveDependencies,
-         mangaList: mangaList,
-         itemType: itemType,
-         settings: settings,
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
        );
 
-  MangaFilterBookmarkedStateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.mangaList,
-    required this.itemType,
-    required this.settings,
-  }) : super.internal();
-
-  final List<Manga> mangaList;
-  final ItemType itemType;
-  final Settings settings;
+  @override
+  String debugGetCreateSourceHash() => _$mangaFilterBookmarkedStateHash();
 
   @override
-  int runNotifierBuild(covariant MangaFilterBookmarkedState notifier) {
-    return notifier.build(
-      mangaList: mangaList,
-      itemType: itemType,
-      settings: settings,
-    );
+  String toString() {
+    return r'mangaFilterBookmarkedStateProvider'
+        ''
+        '$argument';
   }
 
+  @$internal
   @override
-  Override overrideWith(MangaFilterBookmarkedState Function() create) {
-    return ProviderOverride(
+  MangaFilterBookmarkedState create() => MangaFilterBookmarkedState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
       origin: this,
-      override: MangaFilterBookmarkedStateProvider._internal(
-        () => create()
-          ..mangaList = mangaList
-          ..itemType = itemType
-          ..settings = settings,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        mangaList: mangaList,
-        itemType: itemType,
-        settings: settings,
-      ),
+      providerOverride: $SyncValueProvider<int>(value),
     );
-  }
-
-  @override
-  AutoDisposeNotifierProviderElement<MangaFilterBookmarkedState, int>
-  createElement() {
-    return _MangaFilterBookmarkedStateProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
     return other is MangaFilterBookmarkedStateProvider &&
-        other.mangaList == mangaList &&
-        other.itemType == itemType &&
-        other.settings == settings;
+        other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, mangaList.hashCode);
-    hash = _SystemHash.combine(hash, itemType.hashCode);
-    hash = _SystemHash.combine(hash, settings.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin MangaFilterBookmarkedStateRef on AutoDisposeNotifierProviderRef<int> {
-  /// The parameter `mangaList` of this provider.
-  List<Manga> get mangaList;
+String _$mangaFilterBookmarkedStateHash() =>
+    r'77e5317ee6504667e001e43c549f0ee5abd3ed53';
 
-  /// The parameter `itemType` of this provider.
-  ItemType get itemType;
+final class MangaFilterBookmarkedStateFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          MangaFilterBookmarkedState,
+          int,
+          int,
+          int,
+          ({List<Manga> mangaList, ItemType itemType, Settings settings})
+        > {
+  const MangaFilterBookmarkedStateFamily._()
+    : super(
+        retry: null,
+        name: r'mangaFilterBookmarkedStateProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
-  /// The parameter `settings` of this provider.
-  Settings get settings;
+  MangaFilterBookmarkedStateProvider call({
+    required List<Manga> mangaList,
+    required ItemType itemType,
+    required Settings settings,
+  }) => MangaFilterBookmarkedStateProvider._(
+    argument: (mangaList: mangaList, itemType: itemType, settings: settings),
+    from: this,
+  );
+
+  @override
+  String toString() => r'mangaFilterBookmarkedStateProvider';
 }
 
-class _MangaFilterBookmarkedStateProviderElement
-    extends AutoDisposeNotifierProviderElement<MangaFilterBookmarkedState, int>
-    with MangaFilterBookmarkedStateRef {
-  _MangaFilterBookmarkedStateProviderElement(super.provider);
+abstract class _$MangaFilterBookmarkedState extends $Notifier<int> {
+  late final _$args =
+      ref.$arg
+          as ({List<Manga> mangaList, ItemType itemType, Settings settings});
+  List<Manga> get mangaList => _$args.mangaList;
+  ItemType get itemType => _$args.itemType;
+  Settings get settings => _$args.settings;
+
+  int build({
+    required List<Manga> mangaList,
+    required ItemType itemType,
+    required Settings settings,
+  });
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(
+      mangaList: _$args.mangaList,
+      itemType: _$args.itemType,
+      settings: _$args.settings,
+    );
+    final ref = this.ref as $Ref<int, int>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<int, int>,
+              int,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(MangasFilterResultState)
+const mangasFilterResultStateProvider = MangasFilterResultStateFamily._();
+
+final class MangasFilterResultStateProvider
+    extends $NotifierProvider<MangasFilterResultState, bool> {
+  const MangasFilterResultStateProvider._({
+    required MangasFilterResultStateFamily super.from,
+    required ({List<Manga> mangaList, ItemType itemType, Settings settings})
+    super.argument,
+  }) : super(
+         retry: null,
+         name: r'mangasFilterResultStateProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
-  List<Manga> get mangaList =>
-      (origin as MangaFilterBookmarkedStateProvider).mangaList;
+  String debugGetCreateSourceHash() => _$mangasFilterResultStateHash();
+
   @override
-  ItemType get itemType =>
-      (origin as MangaFilterBookmarkedStateProvider).itemType;
+  String toString() {
+    return r'mangasFilterResultStateProvider'
+        ''
+        '$argument';
+  }
+
+  @$internal
   @override
-  Settings get settings =>
-      (origin as MangaFilterBookmarkedStateProvider).settings;
+  MangasFilterResultState create() => MangasFilterResultState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is MangasFilterResultStateProvider &&
+        other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
 }
 
 String _$mangasFilterResultStateHash() =>
     r'c6f916c35e9b7125ba073d09aa6838605b933b20';
 
-abstract class _$MangasFilterResultState
-    extends BuildlessAutoDisposeNotifier<bool> {
-  late final List<Manga> mangaList;
-  late final ItemType itemType;
-  late final Settings settings;
+final class MangasFilterResultStateFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          MangasFilterResultState,
+          bool,
+          bool,
+          bool,
+          ({List<Manga> mangaList, ItemType itemType, Settings settings})
+        > {
+  const MangasFilterResultStateFamily._()
+    : super(
+        retry: null,
+        name: r'mangasFilterResultStateProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  MangasFilterResultStateProvider call({
+    required List<Manga> mangaList,
+    required ItemType itemType,
+    required Settings settings,
+  }) => MangasFilterResultStateProvider._(
+    argument: (mangaList: mangaList, itemType: itemType, settings: settings),
+    from: this,
+  );
+
+  @override
+  String toString() => r'mangasFilterResultStateProvider';
+}
+
+abstract class _$MangasFilterResultState extends $Notifier<bool> {
+  late final _$args =
+      ref.$arg
+          as ({List<Manga> mangaList, ItemType itemType, Settings settings});
+  List<Manga> get mangaList => _$args.mangaList;
+  ItemType get itemType => _$args.itemType;
+  Settings get settings => _$args.settings;
 
   bool build({
     required List<Manga> mangaList,
     required ItemType itemType,
     required Settings settings,
   });
-}
-
-/// See also [MangasFilterResultState].
-@ProviderFor(MangasFilterResultState)
-const mangasFilterResultStateProvider = MangasFilterResultStateFamily();
-
-/// See also [MangasFilterResultState].
-class MangasFilterResultStateFamily extends Family<bool> {
-  /// See also [MangasFilterResultState].
-  const MangasFilterResultStateFamily();
-
-  /// See also [MangasFilterResultState].
-  MangasFilterResultStateProvider call({
-    required List<Manga> mangaList,
-    required ItemType itemType,
-    required Settings settings,
-  }) {
-    return MangasFilterResultStateProvider(
-      mangaList: mangaList,
-      itemType: itemType,
-      settings: settings,
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(
+      mangaList: _$args.mangaList,
+      itemType: _$args.itemType,
+      settings: _$args.settings,
     );
-  }
-
-  @override
-  MangasFilterResultStateProvider getProviderOverride(
-    covariant MangasFilterResultStateProvider provider,
-  ) {
-    return call(
-      mangaList: provider.mangaList,
-      itemType: provider.itemType,
-      settings: provider.settings,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'mangasFilterResultStateProvider';
-}
-
-/// See also [MangasFilterResultState].
-class MangasFilterResultStateProvider
-    extends AutoDisposeNotifierProviderImpl<MangasFilterResultState, bool> {
-  /// See also [MangasFilterResultState].
-  MangasFilterResultStateProvider({
-    required List<Manga> mangaList,
-    required ItemType itemType,
-    required Settings settings,
-  }) : this._internal(
-         () => MangasFilterResultState()
-           ..mangaList = mangaList
-           ..itemType = itemType
-           ..settings = settings,
-         from: mangasFilterResultStateProvider,
-         name: r'mangasFilterResultStateProvider',
-         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-             ? null
-             : _$mangasFilterResultStateHash,
-         dependencies: MangasFilterResultStateFamily._dependencies,
-         allTransitiveDependencies:
-             MangasFilterResultStateFamily._allTransitiveDependencies,
-         mangaList: mangaList,
-         itemType: itemType,
-         settings: settings,
-       );
-
-  MangasFilterResultStateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.mangaList,
-    required this.itemType,
-    required this.settings,
-  }) : super.internal();
-
-  final List<Manga> mangaList;
-  final ItemType itemType;
-  final Settings settings;
-
-  @override
-  bool runNotifierBuild(covariant MangasFilterResultState notifier) {
-    return notifier.build(
-      mangaList: mangaList,
-      itemType: itemType,
-      settings: settings,
-    );
-  }
-
-  @override
-  Override overrideWith(MangasFilterResultState Function() create) {
-    return ProviderOverride(
-      origin: this,
-      override: MangasFilterResultStateProvider._internal(
-        () => create()
-          ..mangaList = mangaList
-          ..itemType = itemType
-          ..settings = settings,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        mangaList: mangaList,
-        itemType: itemType,
-        settings: settings,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeNotifierProviderElement<MangasFilterResultState, bool>
-  createElement() {
-    return _MangasFilterResultStateProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is MangasFilterResultStateProvider &&
-        other.mangaList == mangaList &&
-        other.itemType == itemType &&
-        other.settings == settings;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, mangaList.hashCode);
-    hash = _SystemHash.combine(hash, itemType.hashCode);
-    hash = _SystemHash.combine(hash, settings.hashCode);
-
-    return _SystemHash.finish(hash);
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin MangasFilterResultStateRef on AutoDisposeNotifierProviderRef<bool> {
-  /// The parameter `mangaList` of this provider.
-  List<Manga> get mangaList;
-
-  /// The parameter `itemType` of this provider.
-  ItemType get itemType;
-
-  /// The parameter `settings` of this provider.
-  Settings get settings;
-}
-
-class _MangasFilterResultStateProviderElement
-    extends AutoDisposeNotifierProviderElement<MangasFilterResultState, bool>
-    with MangasFilterResultStateRef {
-  _MangasFilterResultStateProviderElement(super.provider);
-
-  @override
-  List<Manga> get mangaList =>
-      (origin as MangasFilterResultStateProvider).mangaList;
-  @override
-  ItemType get itemType => (origin as MangasFilterResultStateProvider).itemType;
-  @override
-  Settings get settings => (origin as MangasFilterResultStateProvider).settings;
-}
-
-String _$libraryShowCategoryTabsStateHash() =>
-    r'0bdaf08a47247175aea9ca1fe515b6c347c27c61';
-
-abstract class _$LibraryShowCategoryTabsState
-    extends BuildlessAutoDisposeNotifier<bool> {
-  late final ItemType itemType;
-  late final Settings settings;
-
-  bool build({required ItemType itemType, required Settings settings});
-}
-
-/// See also [LibraryShowCategoryTabsState].
 @ProviderFor(LibraryShowCategoryTabsState)
 const libraryShowCategoryTabsStateProvider =
-    LibraryShowCategoryTabsStateFamily();
+    LibraryShowCategoryTabsStateFamily._();
 
-/// See also [LibraryShowCategoryTabsState].
-class LibraryShowCategoryTabsStateFamily extends Family<bool> {
-  /// See also [LibraryShowCategoryTabsState].
-  const LibraryShowCategoryTabsStateFamily();
-
-  /// See also [LibraryShowCategoryTabsState].
-  LibraryShowCategoryTabsStateProvider call({
-    required ItemType itemType,
-    required Settings settings,
-  }) {
-    return LibraryShowCategoryTabsStateProvider(
-      itemType: itemType,
-      settings: settings,
-    );
-  }
-
-  @override
-  LibraryShowCategoryTabsStateProvider getProviderOverride(
-    covariant LibraryShowCategoryTabsStateProvider provider,
-  ) {
-    return call(itemType: provider.itemType, settings: provider.settings);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'libraryShowCategoryTabsStateProvider';
-}
-
-/// See also [LibraryShowCategoryTabsState].
-class LibraryShowCategoryTabsStateProvider
-    extends
-        AutoDisposeNotifierProviderImpl<LibraryShowCategoryTabsState, bool> {
-  /// See also [LibraryShowCategoryTabsState].
-  LibraryShowCategoryTabsStateProvider({
-    required ItemType itemType,
-    required Settings settings,
-  }) : this._internal(
-         () => LibraryShowCategoryTabsState()
-           ..itemType = itemType
-           ..settings = settings,
-         from: libraryShowCategoryTabsStateProvider,
+final class LibraryShowCategoryTabsStateProvider
+    extends $NotifierProvider<LibraryShowCategoryTabsState, bool> {
+  const LibraryShowCategoryTabsStateProvider._({
+    required LibraryShowCategoryTabsStateFamily super.from,
+    required ({ItemType itemType, Settings settings}) super.argument,
+  }) : super(
+         retry: null,
          name: r'libraryShowCategoryTabsStateProvider',
-         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-             ? null
-             : _$libraryShowCategoryTabsStateHash,
-         dependencies: LibraryShowCategoryTabsStateFamily._dependencies,
-         allTransitiveDependencies:
-             LibraryShowCategoryTabsStateFamily._allTransitiveDependencies,
-         itemType: itemType,
-         settings: settings,
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
        );
 
-  LibraryShowCategoryTabsStateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.itemType,
-    required this.settings,
-  }) : super.internal();
-
-  final ItemType itemType;
-  final Settings settings;
+  @override
+  String debugGetCreateSourceHash() => _$libraryShowCategoryTabsStateHash();
 
   @override
-  bool runNotifierBuild(covariant LibraryShowCategoryTabsState notifier) {
-    return notifier.build(itemType: itemType, settings: settings);
+  String toString() {
+    return r'libraryShowCategoryTabsStateProvider'
+        ''
+        '$argument';
   }
 
+  @$internal
   @override
-  Override overrideWith(LibraryShowCategoryTabsState Function() create) {
-    return ProviderOverride(
+  LibraryShowCategoryTabsState create() => LibraryShowCategoryTabsState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
       origin: this,
-      override: LibraryShowCategoryTabsStateProvider._internal(
-        () => create()
-          ..itemType = itemType
-          ..settings = settings,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        itemType: itemType,
-        settings: settings,
-      ),
+      providerOverride: $SyncValueProvider<bool>(value),
     );
-  }
-
-  @override
-  AutoDisposeNotifierProviderElement<LibraryShowCategoryTabsState, bool>
-  createElement() {
-    return _LibraryShowCategoryTabsStateProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
     return other is LibraryShowCategoryTabsStateProvider &&
-        other.itemType == itemType &&
-        other.settings == settings;
+        other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, itemType.hashCode);
-    hash = _SystemHash.combine(hash, settings.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin LibraryShowCategoryTabsStateRef on AutoDisposeNotifierProviderRef<bool> {
-  /// The parameter `itemType` of this provider.
-  ItemType get itemType;
+String _$libraryShowCategoryTabsStateHash() =>
+    r'0bdaf08a47247175aea9ca1fe515b6c347c27c61';
 
-  /// The parameter `settings` of this provider.
-  Settings get settings;
-}
+final class LibraryShowCategoryTabsStateFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          LibraryShowCategoryTabsState,
+          bool,
+          bool,
+          bool,
+          ({ItemType itemType, Settings settings})
+        > {
+  const LibraryShowCategoryTabsStateFamily._()
+    : super(
+        retry: null,
+        name: r'libraryShowCategoryTabsStateProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
-class _LibraryShowCategoryTabsStateProviderElement
-    extends
-        AutoDisposeNotifierProviderElement<LibraryShowCategoryTabsState, bool>
-    with LibraryShowCategoryTabsStateRef {
-  _LibraryShowCategoryTabsStateProviderElement(super.provider);
+  LibraryShowCategoryTabsStateProvider call({
+    required ItemType itemType,
+    required Settings settings,
+  }) => LibraryShowCategoryTabsStateProvider._(
+    argument: (itemType: itemType, settings: settings),
+    from: this,
+  );
 
   @override
-  ItemType get itemType =>
-      (origin as LibraryShowCategoryTabsStateProvider).itemType;
-  @override
-  Settings get settings =>
-      (origin as LibraryShowCategoryTabsStateProvider).settings;
+  String toString() => r'libraryShowCategoryTabsStateProvider';
 }
 
-String _$libraryDownloadedChaptersStateHash() =>
-    r'ac9868c3cda2c6a9097d9c4c8a6fd0a78edffe26';
-
-abstract class _$LibraryDownloadedChaptersState
-    extends BuildlessAutoDisposeNotifier<bool> {
-  late final ItemType itemType;
-  late final Settings settings;
+abstract class _$LibraryShowCategoryTabsState extends $Notifier<bool> {
+  late final _$args = ref.$arg as ({ItemType itemType, Settings settings});
+  ItemType get itemType => _$args.itemType;
+  Settings get settings => _$args.settings;
 
   bool build({required ItemType itemType, required Settings settings});
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(itemType: _$args.itemType, settings: _$args.settings);
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
 }
 
-/// See also [LibraryDownloadedChaptersState].
 @ProviderFor(LibraryDownloadedChaptersState)
 const libraryDownloadedChaptersStateProvider =
-    LibraryDownloadedChaptersStateFamily();
+    LibraryDownloadedChaptersStateFamily._();
 
-/// See also [LibraryDownloadedChaptersState].
-class LibraryDownloadedChaptersStateFamily extends Family<bool> {
-  /// See also [LibraryDownloadedChaptersState].
-  const LibraryDownloadedChaptersStateFamily();
-
-  /// See also [LibraryDownloadedChaptersState].
-  LibraryDownloadedChaptersStateProvider call({
-    required ItemType itemType,
-    required Settings settings,
-  }) {
-    return LibraryDownloadedChaptersStateProvider(
-      itemType: itemType,
-      settings: settings,
-    );
-  }
-
-  @override
-  LibraryDownloadedChaptersStateProvider getProviderOverride(
-    covariant LibraryDownloadedChaptersStateProvider provider,
-  ) {
-    return call(itemType: provider.itemType, settings: provider.settings);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'libraryDownloadedChaptersStateProvider';
-}
-
-/// See also [LibraryDownloadedChaptersState].
-class LibraryDownloadedChaptersStateProvider
-    extends
-        AutoDisposeNotifierProviderImpl<LibraryDownloadedChaptersState, bool> {
-  /// See also [LibraryDownloadedChaptersState].
-  LibraryDownloadedChaptersStateProvider({
-    required ItemType itemType,
-    required Settings settings,
-  }) : this._internal(
-         () => LibraryDownloadedChaptersState()
-           ..itemType = itemType
-           ..settings = settings,
-         from: libraryDownloadedChaptersStateProvider,
+final class LibraryDownloadedChaptersStateProvider
+    extends $NotifierProvider<LibraryDownloadedChaptersState, bool> {
+  const LibraryDownloadedChaptersStateProvider._({
+    required LibraryDownloadedChaptersStateFamily super.from,
+    required ({ItemType itemType, Settings settings}) super.argument,
+  }) : super(
+         retry: null,
          name: r'libraryDownloadedChaptersStateProvider',
-         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-             ? null
-             : _$libraryDownloadedChaptersStateHash,
-         dependencies: LibraryDownloadedChaptersStateFamily._dependencies,
-         allTransitiveDependencies:
-             LibraryDownloadedChaptersStateFamily._allTransitiveDependencies,
-         itemType: itemType,
-         settings: settings,
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
        );
 
-  LibraryDownloadedChaptersStateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.itemType,
-    required this.settings,
-  }) : super.internal();
-
-  final ItemType itemType;
-  final Settings settings;
+  @override
+  String debugGetCreateSourceHash() => _$libraryDownloadedChaptersStateHash();
 
   @override
-  bool runNotifierBuild(covariant LibraryDownloadedChaptersState notifier) {
-    return notifier.build(itemType: itemType, settings: settings);
+  String toString() {
+    return r'libraryDownloadedChaptersStateProvider'
+        ''
+        '$argument';
   }
 
+  @$internal
   @override
-  Override overrideWith(LibraryDownloadedChaptersState Function() create) {
-    return ProviderOverride(
+  LibraryDownloadedChaptersState create() => LibraryDownloadedChaptersState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
       origin: this,
-      override: LibraryDownloadedChaptersStateProvider._internal(
-        () => create()
-          ..itemType = itemType
-          ..settings = settings,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        itemType: itemType,
-        settings: settings,
-      ),
+      providerOverride: $SyncValueProvider<bool>(value),
     );
-  }
-
-  @override
-  AutoDisposeNotifierProviderElement<LibraryDownloadedChaptersState, bool>
-  createElement() {
-    return _LibraryDownloadedChaptersStateProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
     return other is LibraryDownloadedChaptersStateProvider &&
-        other.itemType == itemType &&
-        other.settings == settings;
+        other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, itemType.hashCode);
-    hash = _SystemHash.combine(hash, settings.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin LibraryDownloadedChaptersStateRef
-    on AutoDisposeNotifierProviderRef<bool> {
-  /// The parameter `itemType` of this provider.
-  ItemType get itemType;
+String _$libraryDownloadedChaptersStateHash() =>
+    r'ac9868c3cda2c6a9097d9c4c8a6fd0a78edffe26';
 
-  /// The parameter `settings` of this provider.
-  Settings get settings;
+final class LibraryDownloadedChaptersStateFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          LibraryDownloadedChaptersState,
+          bool,
+          bool,
+          bool,
+          ({ItemType itemType, Settings settings})
+        > {
+  const LibraryDownloadedChaptersStateFamily._()
+    : super(
+        retry: null,
+        name: r'libraryDownloadedChaptersStateProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  LibraryDownloadedChaptersStateProvider call({
+    required ItemType itemType,
+    required Settings settings,
+  }) => LibraryDownloadedChaptersStateProvider._(
+    argument: (itemType: itemType, settings: settings),
+    from: this,
+  );
+
+  @override
+  String toString() => r'libraryDownloadedChaptersStateProvider';
 }
 
-class _LibraryDownloadedChaptersStateProviderElement
-    extends
-        AutoDisposeNotifierProviderElement<LibraryDownloadedChaptersState, bool>
-    with LibraryDownloadedChaptersStateRef {
-  _LibraryDownloadedChaptersStateProviderElement(super.provider);
+abstract class _$LibraryDownloadedChaptersState extends $Notifier<bool> {
+  late final _$args = ref.$arg as ({ItemType itemType, Settings settings});
+  ItemType get itemType => _$args.itemType;
+  Settings get settings => _$args.settings;
+
+  bool build({required ItemType itemType, required Settings settings});
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(itemType: _$args.itemType, settings: _$args.settings);
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(LibraryLanguageState)
+const libraryLanguageStateProvider = LibraryLanguageStateFamily._();
+
+final class LibraryLanguageStateProvider
+    extends $NotifierProvider<LibraryLanguageState, bool> {
+  const LibraryLanguageStateProvider._({
+    required LibraryLanguageStateFamily super.from,
+    required ({ItemType itemType, Settings settings}) super.argument,
+  }) : super(
+         retry: null,
+         name: r'libraryLanguageStateProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
-  ItemType get itemType =>
-      (origin as LibraryDownloadedChaptersStateProvider).itemType;
+  String debugGetCreateSourceHash() => _$libraryLanguageStateHash();
+
   @override
-  Settings get settings =>
-      (origin as LibraryDownloadedChaptersStateProvider).settings;
+  String toString() {
+    return r'libraryLanguageStateProvider'
+        ''
+        '$argument';
+  }
+
+  @$internal
+  @override
+  LibraryLanguageState create() => LibraryLanguageState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is LibraryLanguageStateProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
 }
 
 String _$libraryLanguageStateHash() =>
     r'3673dceb22d4220347f104efa31a2e5ecb0e5fb9';
 
-abstract class _$LibraryLanguageState
-    extends BuildlessAutoDisposeNotifier<bool> {
-  late final ItemType itemType;
-  late final Settings settings;
+final class LibraryLanguageStateFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          LibraryLanguageState,
+          bool,
+          bool,
+          bool,
+          ({ItemType itemType, Settings settings})
+        > {
+  const LibraryLanguageStateFamily._()
+    : super(
+        retry: null,
+        name: r'libraryLanguageStateProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
-  bool build({required ItemType itemType, required Settings settings});
-}
-
-/// See also [LibraryLanguageState].
-@ProviderFor(LibraryLanguageState)
-const libraryLanguageStateProvider = LibraryLanguageStateFamily();
-
-/// See also [LibraryLanguageState].
-class LibraryLanguageStateFamily extends Family<bool> {
-  /// See also [LibraryLanguageState].
-  const LibraryLanguageStateFamily();
-
-  /// See also [LibraryLanguageState].
   LibraryLanguageStateProvider call({
     required ItemType itemType,
     required Settings settings,
-  }) {
-    return LibraryLanguageStateProvider(itemType: itemType, settings: settings);
-  }
+  }) => LibraryLanguageStateProvider._(
+    argument: (itemType: itemType, settings: settings),
+    from: this,
+  );
 
   @override
-  LibraryLanguageStateProvider getProviderOverride(
-    covariant LibraryLanguageStateProvider provider,
-  ) {
-    return call(itemType: provider.itemType, settings: provider.settings);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'libraryLanguageStateProvider';
+  String toString() => r'libraryLanguageStateProvider';
 }
 
-/// See also [LibraryLanguageState].
-class LibraryLanguageStateProvider
-    extends AutoDisposeNotifierProviderImpl<LibraryLanguageState, bool> {
-  /// See also [LibraryLanguageState].
-  LibraryLanguageStateProvider({
-    required ItemType itemType,
-    required Settings settings,
-  }) : this._internal(
-         () => LibraryLanguageState()
-           ..itemType = itemType
-           ..settings = settings,
-         from: libraryLanguageStateProvider,
-         name: r'libraryLanguageStateProvider',
-         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-             ? null
-             : _$libraryLanguageStateHash,
-         dependencies: LibraryLanguageStateFamily._dependencies,
-         allTransitiveDependencies:
-             LibraryLanguageStateFamily._allTransitiveDependencies,
-         itemType: itemType,
-         settings: settings,
-       );
-
-  LibraryLanguageStateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.itemType,
-    required this.settings,
-  }) : super.internal();
-
-  final ItemType itemType;
-  final Settings settings;
-
-  @override
-  bool runNotifierBuild(covariant LibraryLanguageState notifier) {
-    return notifier.build(itemType: itemType, settings: settings);
-  }
-
-  @override
-  Override overrideWith(LibraryLanguageState Function() create) {
-    return ProviderOverride(
-      origin: this,
-      override: LibraryLanguageStateProvider._internal(
-        () => create()
-          ..itemType = itemType
-          ..settings = settings,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        itemType: itemType,
-        settings: settings,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeNotifierProviderElement<LibraryLanguageState, bool>
-  createElement() {
-    return _LibraryLanguageStateProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is LibraryLanguageStateProvider &&
-        other.itemType == itemType &&
-        other.settings == settings;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, itemType.hashCode);
-    hash = _SystemHash.combine(hash, settings.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin LibraryLanguageStateRef on AutoDisposeNotifierProviderRef<bool> {
-  /// The parameter `itemType` of this provider.
-  ItemType get itemType;
-
-  /// The parameter `settings` of this provider.
-  Settings get settings;
-}
-
-class _LibraryLanguageStateProviderElement
-    extends AutoDisposeNotifierProviderElement<LibraryLanguageState, bool>
-    with LibraryLanguageStateRef {
-  _LibraryLanguageStateProviderElement(super.provider);
-
-  @override
-  ItemType get itemType => (origin as LibraryLanguageStateProvider).itemType;
-  @override
-  Settings get settings => (origin as LibraryLanguageStateProvider).settings;
-}
-
-String _$libraryLocalSourceStateHash() =>
-    r'4a1beb1f43cd4023f848f9d76731c3095236a148';
-
-abstract class _$LibraryLocalSourceState
-    extends BuildlessAutoDisposeNotifier<bool> {
-  late final ItemType itemType;
-  late final Settings settings;
+abstract class _$LibraryLanguageState extends $Notifier<bool> {
+  late final _$args = ref.$arg as ({ItemType itemType, Settings settings});
+  ItemType get itemType => _$args.itemType;
+  Settings get settings => _$args.settings;
 
   bool build({required ItemType itemType, required Settings settings});
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(itemType: _$args.itemType, settings: _$args.settings);
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
 }
 
-/// See also [LibraryLocalSourceState].
 @ProviderFor(LibraryLocalSourceState)
-const libraryLocalSourceStateProvider = LibraryLocalSourceStateFamily();
+const libraryLocalSourceStateProvider = LibraryLocalSourceStateFamily._();
 
-/// See also [LibraryLocalSourceState].
-class LibraryLocalSourceStateFamily extends Family<bool> {
-  /// See also [LibraryLocalSourceState].
-  const LibraryLocalSourceStateFamily();
-
-  /// See also [LibraryLocalSourceState].
-  LibraryLocalSourceStateProvider call({
-    required ItemType itemType,
-    required Settings settings,
-  }) {
-    return LibraryLocalSourceStateProvider(
-      itemType: itemType,
-      settings: settings,
-    );
-  }
-
-  @override
-  LibraryLocalSourceStateProvider getProviderOverride(
-    covariant LibraryLocalSourceStateProvider provider,
-  ) {
-    return call(itemType: provider.itemType, settings: provider.settings);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'libraryLocalSourceStateProvider';
-}
-
-/// See also [LibraryLocalSourceState].
-class LibraryLocalSourceStateProvider
-    extends AutoDisposeNotifierProviderImpl<LibraryLocalSourceState, bool> {
-  /// See also [LibraryLocalSourceState].
-  LibraryLocalSourceStateProvider({
-    required ItemType itemType,
-    required Settings settings,
-  }) : this._internal(
-         () => LibraryLocalSourceState()
-           ..itemType = itemType
-           ..settings = settings,
-         from: libraryLocalSourceStateProvider,
+final class LibraryLocalSourceStateProvider
+    extends $NotifierProvider<LibraryLocalSourceState, bool> {
+  const LibraryLocalSourceStateProvider._({
+    required LibraryLocalSourceStateFamily super.from,
+    required ({ItemType itemType, Settings settings}) super.argument,
+  }) : super(
+         retry: null,
          name: r'libraryLocalSourceStateProvider',
-         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-             ? null
-             : _$libraryLocalSourceStateHash,
-         dependencies: LibraryLocalSourceStateFamily._dependencies,
-         allTransitiveDependencies:
-             LibraryLocalSourceStateFamily._allTransitiveDependencies,
-         itemType: itemType,
-         settings: settings,
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
        );
 
-  LibraryLocalSourceStateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.itemType,
-    required this.settings,
-  }) : super.internal();
-
-  final ItemType itemType;
-  final Settings settings;
+  @override
+  String debugGetCreateSourceHash() => _$libraryLocalSourceStateHash();
 
   @override
-  bool runNotifierBuild(covariant LibraryLocalSourceState notifier) {
-    return notifier.build(itemType: itemType, settings: settings);
+  String toString() {
+    return r'libraryLocalSourceStateProvider'
+        ''
+        '$argument';
   }
 
+  @$internal
   @override
-  Override overrideWith(LibraryLocalSourceState Function() create) {
-    return ProviderOverride(
+  LibraryLocalSourceState create() => LibraryLocalSourceState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
       origin: this,
-      override: LibraryLocalSourceStateProvider._internal(
-        () => create()
-          ..itemType = itemType
-          ..settings = settings,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        itemType: itemType,
-        settings: settings,
-      ),
+      providerOverride: $SyncValueProvider<bool>(value),
     );
-  }
-
-  @override
-  AutoDisposeNotifierProviderElement<LibraryLocalSourceState, bool>
-  createElement() {
-    return _LibraryLocalSourceStateProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
     return other is LibraryLocalSourceStateProvider &&
-        other.itemType == itemType &&
-        other.settings == settings;
+        other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, itemType.hashCode);
-    hash = _SystemHash.combine(hash, settings.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin LibraryLocalSourceStateRef on AutoDisposeNotifierProviderRef<bool> {
-  /// The parameter `itemType` of this provider.
-  ItemType get itemType;
+String _$libraryLocalSourceStateHash() =>
+    r'4a1beb1f43cd4023f848f9d76731c3095236a148';
 
-  /// The parameter `settings` of this provider.
-  Settings get settings;
-}
+final class LibraryLocalSourceStateFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          LibraryLocalSourceState,
+          bool,
+          bool,
+          bool,
+          ({ItemType itemType, Settings settings})
+        > {
+  const LibraryLocalSourceStateFamily._()
+    : super(
+        retry: null,
+        name: r'libraryLocalSourceStateProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
-class _LibraryLocalSourceStateProviderElement
-    extends AutoDisposeNotifierProviderElement<LibraryLocalSourceState, bool>
-    with LibraryLocalSourceStateRef {
-  _LibraryLocalSourceStateProviderElement(super.provider);
+  LibraryLocalSourceStateProvider call({
+    required ItemType itemType,
+    required Settings settings,
+  }) => LibraryLocalSourceStateProvider._(
+    argument: (itemType: itemType, settings: settings),
+    from: this,
+  );
 
   @override
-  ItemType get itemType => (origin as LibraryLocalSourceStateProvider).itemType;
-  @override
-  Settings get settings => (origin as LibraryLocalSourceStateProvider).settings;
+  String toString() => r'libraryLocalSourceStateProvider';
 }
 
-String _$libraryShowNumbersOfItemsStateHash() =>
-    r'040768e98505577b85e52b5e5f6ae6915de1b222';
-
-abstract class _$LibraryShowNumbersOfItemsState
-    extends BuildlessAutoDisposeNotifier<bool> {
-  late final ItemType itemType;
-  late final Settings settings;
+abstract class _$LibraryLocalSourceState extends $Notifier<bool> {
+  late final _$args = ref.$arg as ({ItemType itemType, Settings settings});
+  ItemType get itemType => _$args.itemType;
+  Settings get settings => _$args.settings;
 
   bool build({required ItemType itemType, required Settings settings});
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(itemType: _$args.itemType, settings: _$args.settings);
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
 }
 
-/// See also [LibraryShowNumbersOfItemsState].
 @ProviderFor(LibraryShowNumbersOfItemsState)
 const libraryShowNumbersOfItemsStateProvider =
-    LibraryShowNumbersOfItemsStateFamily();
+    LibraryShowNumbersOfItemsStateFamily._();
 
-/// See also [LibraryShowNumbersOfItemsState].
-class LibraryShowNumbersOfItemsStateFamily extends Family<bool> {
-  /// See also [LibraryShowNumbersOfItemsState].
-  const LibraryShowNumbersOfItemsStateFamily();
-
-  /// See also [LibraryShowNumbersOfItemsState].
-  LibraryShowNumbersOfItemsStateProvider call({
-    required ItemType itemType,
-    required Settings settings,
-  }) {
-    return LibraryShowNumbersOfItemsStateProvider(
-      itemType: itemType,
-      settings: settings,
-    );
-  }
-
-  @override
-  LibraryShowNumbersOfItemsStateProvider getProviderOverride(
-    covariant LibraryShowNumbersOfItemsStateProvider provider,
-  ) {
-    return call(itemType: provider.itemType, settings: provider.settings);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'libraryShowNumbersOfItemsStateProvider';
-}
-
-/// See also [LibraryShowNumbersOfItemsState].
-class LibraryShowNumbersOfItemsStateProvider
-    extends
-        AutoDisposeNotifierProviderImpl<LibraryShowNumbersOfItemsState, bool> {
-  /// See also [LibraryShowNumbersOfItemsState].
-  LibraryShowNumbersOfItemsStateProvider({
-    required ItemType itemType,
-    required Settings settings,
-  }) : this._internal(
-         () => LibraryShowNumbersOfItemsState()
-           ..itemType = itemType
-           ..settings = settings,
-         from: libraryShowNumbersOfItemsStateProvider,
+final class LibraryShowNumbersOfItemsStateProvider
+    extends $NotifierProvider<LibraryShowNumbersOfItemsState, bool> {
+  const LibraryShowNumbersOfItemsStateProvider._({
+    required LibraryShowNumbersOfItemsStateFamily super.from,
+    required ({ItemType itemType, Settings settings}) super.argument,
+  }) : super(
+         retry: null,
          name: r'libraryShowNumbersOfItemsStateProvider',
-         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-             ? null
-             : _$libraryShowNumbersOfItemsStateHash,
-         dependencies: LibraryShowNumbersOfItemsStateFamily._dependencies,
-         allTransitiveDependencies:
-             LibraryShowNumbersOfItemsStateFamily._allTransitiveDependencies,
-         itemType: itemType,
-         settings: settings,
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
        );
 
-  LibraryShowNumbersOfItemsStateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.itemType,
-    required this.settings,
-  }) : super.internal();
-
-  final ItemType itemType;
-  final Settings settings;
+  @override
+  String debugGetCreateSourceHash() => _$libraryShowNumbersOfItemsStateHash();
 
   @override
-  bool runNotifierBuild(covariant LibraryShowNumbersOfItemsState notifier) {
-    return notifier.build(itemType: itemType, settings: settings);
+  String toString() {
+    return r'libraryShowNumbersOfItemsStateProvider'
+        ''
+        '$argument';
   }
 
+  @$internal
   @override
-  Override overrideWith(LibraryShowNumbersOfItemsState Function() create) {
-    return ProviderOverride(
+  LibraryShowNumbersOfItemsState create() => LibraryShowNumbersOfItemsState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
       origin: this,
-      override: LibraryShowNumbersOfItemsStateProvider._internal(
-        () => create()
-          ..itemType = itemType
-          ..settings = settings,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        itemType: itemType,
-        settings: settings,
-      ),
+      providerOverride: $SyncValueProvider<bool>(value),
     );
-  }
-
-  @override
-  AutoDisposeNotifierProviderElement<LibraryShowNumbersOfItemsState, bool>
-  createElement() {
-    return _LibraryShowNumbersOfItemsStateProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
     return other is LibraryShowNumbersOfItemsStateProvider &&
-        other.itemType == itemType &&
-        other.settings == settings;
+        other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, itemType.hashCode);
-    hash = _SystemHash.combine(hash, settings.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin LibraryShowNumbersOfItemsStateRef
-    on AutoDisposeNotifierProviderRef<bool> {
-  /// The parameter `itemType` of this provider.
-  ItemType get itemType;
+String _$libraryShowNumbersOfItemsStateHash() =>
+    r'040768e98505577b85e52b5e5f6ae6915de1b222';
 
-  /// The parameter `settings` of this provider.
-  Settings get settings;
-}
+final class LibraryShowNumbersOfItemsStateFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          LibraryShowNumbersOfItemsState,
+          bool,
+          bool,
+          bool,
+          ({ItemType itemType, Settings settings})
+        > {
+  const LibraryShowNumbersOfItemsStateFamily._()
+    : super(
+        retry: null,
+        name: r'libraryShowNumbersOfItemsStateProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
-class _LibraryShowNumbersOfItemsStateProviderElement
-    extends
-        AutoDisposeNotifierProviderElement<LibraryShowNumbersOfItemsState, bool>
-    with LibraryShowNumbersOfItemsStateRef {
-  _LibraryShowNumbersOfItemsStateProviderElement(super.provider);
+  LibraryShowNumbersOfItemsStateProvider call({
+    required ItemType itemType,
+    required Settings settings,
+  }) => LibraryShowNumbersOfItemsStateProvider._(
+    argument: (itemType: itemType, settings: settings),
+    from: this,
+  );
 
   @override
-  ItemType get itemType =>
-      (origin as LibraryShowNumbersOfItemsStateProvider).itemType;
-  @override
-  Settings get settings =>
-      (origin as LibraryShowNumbersOfItemsStateProvider).settings;
+  String toString() => r'libraryShowNumbersOfItemsStateProvider';
 }
 
-String _$libraryShowContinueReadingButtonStateHash() =>
-    r'e85d6a904a1aed27810aff85f55701da150a8a33';
-
-abstract class _$LibraryShowContinueReadingButtonState
-    extends BuildlessAutoDisposeNotifier<bool> {
-  late final ItemType itemType;
-  late final Settings settings;
+abstract class _$LibraryShowNumbersOfItemsState extends $Notifier<bool> {
+  late final _$args = ref.$arg as ({ItemType itemType, Settings settings});
+  ItemType get itemType => _$args.itemType;
+  Settings get settings => _$args.settings;
 
   bool build({required ItemType itemType, required Settings settings});
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(itemType: _$args.itemType, settings: _$args.settings);
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
 }
 
-/// See also [LibraryShowContinueReadingButtonState].
 @ProviderFor(LibraryShowContinueReadingButtonState)
 const libraryShowContinueReadingButtonStateProvider =
-    LibraryShowContinueReadingButtonStateFamily();
+    LibraryShowContinueReadingButtonStateFamily._();
 
-/// See also [LibraryShowContinueReadingButtonState].
-class LibraryShowContinueReadingButtonStateFamily extends Family<bool> {
-  /// See also [LibraryShowContinueReadingButtonState].
-  const LibraryShowContinueReadingButtonStateFamily();
-
-  /// See also [LibraryShowContinueReadingButtonState].
-  LibraryShowContinueReadingButtonStateProvider call({
-    required ItemType itemType,
-    required Settings settings,
-  }) {
-    return LibraryShowContinueReadingButtonStateProvider(
-      itemType: itemType,
-      settings: settings,
-    );
-  }
-
-  @override
-  LibraryShowContinueReadingButtonStateProvider getProviderOverride(
-    covariant LibraryShowContinueReadingButtonStateProvider provider,
-  ) {
-    return call(itemType: provider.itemType, settings: provider.settings);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'libraryShowContinueReadingButtonStateProvider';
-}
-
-/// See also [LibraryShowContinueReadingButtonState].
-class LibraryShowContinueReadingButtonStateProvider
-    extends
-        AutoDisposeNotifierProviderImpl<
-          LibraryShowContinueReadingButtonState,
-          bool
-        > {
-  /// See also [LibraryShowContinueReadingButtonState].
-  LibraryShowContinueReadingButtonStateProvider({
-    required ItemType itemType,
-    required Settings settings,
-  }) : this._internal(
-         () => LibraryShowContinueReadingButtonState()
-           ..itemType = itemType
-           ..settings = settings,
-         from: libraryShowContinueReadingButtonStateProvider,
+final class LibraryShowContinueReadingButtonStateProvider
+    extends $NotifierProvider<LibraryShowContinueReadingButtonState, bool> {
+  const LibraryShowContinueReadingButtonStateProvider._({
+    required LibraryShowContinueReadingButtonStateFamily super.from,
+    required ({ItemType itemType, Settings settings}) super.argument,
+  }) : super(
+         retry: null,
          name: r'libraryShowContinueReadingButtonStateProvider',
-         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-             ? null
-             : _$libraryShowContinueReadingButtonStateHash,
-         dependencies:
-             LibraryShowContinueReadingButtonStateFamily._dependencies,
-         allTransitiveDependencies: LibraryShowContinueReadingButtonStateFamily
-             ._allTransitiveDependencies,
-         itemType: itemType,
-         settings: settings,
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
        );
 
-  LibraryShowContinueReadingButtonStateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.itemType,
-    required this.settings,
-  }) : super.internal();
-
-  final ItemType itemType;
-  final Settings settings;
+  @override
+  String debugGetCreateSourceHash() =>
+      _$libraryShowContinueReadingButtonStateHash();
 
   @override
-  bool runNotifierBuild(
-    covariant LibraryShowContinueReadingButtonState notifier,
-  ) {
-    return notifier.build(itemType: itemType, settings: settings);
+  String toString() {
+    return r'libraryShowContinueReadingButtonStateProvider'
+        ''
+        '$argument';
   }
 
+  @$internal
   @override
-  Override overrideWith(
-    LibraryShowContinueReadingButtonState Function() create,
-  ) {
-    return ProviderOverride(
+  LibraryShowContinueReadingButtonState create() =>
+      LibraryShowContinueReadingButtonState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
       origin: this,
-      override: LibraryShowContinueReadingButtonStateProvider._internal(
-        () => create()
-          ..itemType = itemType
-          ..settings = settings,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        itemType: itemType,
-        settings: settings,
-      ),
+      providerOverride: $SyncValueProvider<bool>(value),
     );
-  }
-
-  @override
-  AutoDisposeNotifierProviderElement<
-    LibraryShowContinueReadingButtonState,
-    bool
-  >
-  createElement() {
-    return _LibraryShowContinueReadingButtonStateProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
     return other is LibraryShowContinueReadingButtonStateProvider &&
-        other.itemType == itemType &&
-        other.settings == settings;
+        other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, itemType.hashCode);
-    hash = _SystemHash.combine(hash, settings.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin LibraryShowContinueReadingButtonStateRef
-    on AutoDisposeNotifierProviderRef<bool> {
-  /// The parameter `itemType` of this provider.
-  ItemType get itemType;
+String _$libraryShowContinueReadingButtonStateHash() =>
+    r'e85d6a904a1aed27810aff85f55701da150a8a33';
 
-  /// The parameter `settings` of this provider.
-  Settings get settings;
+final class LibraryShowContinueReadingButtonStateFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          LibraryShowContinueReadingButtonState,
+          bool,
+          bool,
+          bool,
+          ({ItemType itemType, Settings settings})
+        > {
+  const LibraryShowContinueReadingButtonStateFamily._()
+    : super(
+        retry: null,
+        name: r'libraryShowContinueReadingButtonStateProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  LibraryShowContinueReadingButtonStateProvider call({
+    required ItemType itemType,
+    required Settings settings,
+  }) => LibraryShowContinueReadingButtonStateProvider._(
+    argument: (itemType: itemType, settings: settings),
+    from: this,
+  );
+
+  @override
+  String toString() => r'libraryShowContinueReadingButtonStateProvider';
 }
 
-class _LibraryShowContinueReadingButtonStateProviderElement
-    extends
-        AutoDisposeNotifierProviderElement<
-          LibraryShowContinueReadingButtonState,
-          bool
-        >
-    with LibraryShowContinueReadingButtonStateRef {
-  _LibraryShowContinueReadingButtonStateProviderElement(super.provider);
+abstract class _$LibraryShowContinueReadingButtonState extends $Notifier<bool> {
+  late final _$args = ref.$arg as ({ItemType itemType, Settings settings});
+  ItemType get itemType => _$args.itemType;
+  Settings get settings => _$args.settings;
+
+  bool build({required ItemType itemType, required Settings settings});
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(itemType: _$args.itemType, settings: _$args.settings);
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(SortLibraryMangaState)
+const sortLibraryMangaStateProvider = SortLibraryMangaStateFamily._();
+
+final class SortLibraryMangaStateProvider
+    extends $NotifierProvider<SortLibraryMangaState, SortLibraryManga> {
+  const SortLibraryMangaStateProvider._({
+    required SortLibraryMangaStateFamily super.from,
+    required ({ItemType itemType, Settings settings}) super.argument,
+  }) : super(
+         retry: null,
+         name: r'sortLibraryMangaStateProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
-  ItemType get itemType =>
-      (origin as LibraryShowContinueReadingButtonStateProvider).itemType;
+  String debugGetCreateSourceHash() => _$sortLibraryMangaStateHash();
+
   @override
-  Settings get settings =>
-      (origin as LibraryShowContinueReadingButtonStateProvider).settings;
+  String toString() {
+    return r'sortLibraryMangaStateProvider'
+        ''
+        '$argument';
+  }
+
+  @$internal
+  @override
+  SortLibraryMangaState create() => SortLibraryMangaState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SortLibraryManga value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SortLibraryManga>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is SortLibraryMangaStateProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
 }
 
 String _$sortLibraryMangaStateHash() =>
     r'9cf913f9ad66fa19fad1d8b86afdcf52d990c5ee';
 
-abstract class _$SortLibraryMangaState
-    extends BuildlessAutoDisposeNotifier<SortLibraryManga> {
-  late final ItemType itemType;
-  late final Settings settings;
+final class SortLibraryMangaStateFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          SortLibraryMangaState,
+          SortLibraryManga,
+          SortLibraryManga,
+          SortLibraryManga,
+          ({ItemType itemType, Settings settings})
+        > {
+  const SortLibraryMangaStateFamily._()
+    : super(
+        retry: null,
+        name: r'sortLibraryMangaStateProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  SortLibraryMangaStateProvider call({
+    required ItemType itemType,
+    required Settings settings,
+  }) => SortLibraryMangaStateProvider._(
+    argument: (itemType: itemType, settings: settings),
+    from: this,
+  );
+
+  @override
+  String toString() => r'sortLibraryMangaStateProvider';
+}
+
+abstract class _$SortLibraryMangaState extends $Notifier<SortLibraryManga> {
+  late final _$args = ref.$arg as ({ItemType itemType, Settings settings});
+  ItemType get itemType => _$args.itemType;
+  Settings get settings => _$args.settings;
 
   SortLibraryManga build({
     required ItemType itemType,
     required Settings settings,
   });
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(itemType: _$args.itemType, settings: _$args.settings);
+    final ref = this.ref as $Ref<SortLibraryManga, SortLibraryManga>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<SortLibraryManga, SortLibraryManga>,
+              SortLibraryManga,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
 }
 
-/// See also [SortLibraryMangaState].
-@ProviderFor(SortLibraryMangaState)
-const sortLibraryMangaStateProvider = SortLibraryMangaStateFamily();
+@ProviderFor(MangasListState)
+const mangasListStateProvider = MangasListStateProvider._();
 
-/// See also [SortLibraryMangaState].
-class SortLibraryMangaStateFamily extends Family<SortLibraryManga> {
-  /// See also [SortLibraryMangaState].
-  const SortLibraryMangaStateFamily();
-
-  /// See also [SortLibraryMangaState].
-  SortLibraryMangaStateProvider call({
-    required ItemType itemType,
-    required Settings settings,
-  }) {
-    return SortLibraryMangaStateProvider(
-      itemType: itemType,
-      settings: settings,
-    );
-  }
-
-  @override
-  SortLibraryMangaStateProvider getProviderOverride(
-    covariant SortLibraryMangaStateProvider provider,
-  ) {
-    return call(itemType: provider.itemType, settings: provider.settings);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'sortLibraryMangaStateProvider';
-}
-
-/// See also [SortLibraryMangaState].
-class SortLibraryMangaStateProvider
-    extends
-        AutoDisposeNotifierProviderImpl<
-          SortLibraryMangaState,
-          SortLibraryManga
-        > {
-  /// See also [SortLibraryMangaState].
-  SortLibraryMangaStateProvider({
-    required ItemType itemType,
-    required Settings settings,
-  }) : this._internal(
-         () => SortLibraryMangaState()
-           ..itemType = itemType
-           ..settings = settings,
-         from: sortLibraryMangaStateProvider,
-         name: r'sortLibraryMangaStateProvider',
-         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-             ? null
-             : _$sortLibraryMangaStateHash,
-         dependencies: SortLibraryMangaStateFamily._dependencies,
-         allTransitiveDependencies:
-             SortLibraryMangaStateFamily._allTransitiveDependencies,
-         itemType: itemType,
-         settings: settings,
-       );
-
-  SortLibraryMangaStateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.itemType,
-    required this.settings,
-  }) : super.internal();
-
-  final ItemType itemType;
-  final Settings settings;
-
-  @override
-  SortLibraryManga runNotifierBuild(covariant SortLibraryMangaState notifier) {
-    return notifier.build(itemType: itemType, settings: settings);
-  }
-
-  @override
-  Override overrideWith(SortLibraryMangaState Function() create) {
-    return ProviderOverride(
-      origin: this,
-      override: SortLibraryMangaStateProvider._internal(
-        () => create()
-          ..itemType = itemType
-          ..settings = settings,
-        from: from,
-        name: null,
+final class MangasListStateProvider
+    extends $NotifierProvider<MangasListState, List<int>> {
+  const MangasListStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'mangasListStateProvider',
+        isAutoDispose: true,
         dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        itemType: itemType,
-        settings: settings,
-      ),
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$mangasListStateHash();
+
+  @$internal
+  @override
+  MangasListState create() => MangasListState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(List<int> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<List<int>>(value),
     );
   }
-
-  @override
-  AutoDisposeNotifierProviderElement<SortLibraryMangaState, SortLibraryManga>
-  createElement() {
-    return _SortLibraryMangaStateProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is SortLibraryMangaStateProvider &&
-        other.itemType == itemType &&
-        other.settings == settings;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, itemType.hashCode);
-    hash = _SystemHash.combine(hash, settings.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin SortLibraryMangaStateRef
-    on AutoDisposeNotifierProviderRef<SortLibraryManga> {
-  /// The parameter `itemType` of this provider.
-  ItemType get itemType;
-
-  /// The parameter `settings` of this provider.
-  Settings get settings;
-}
-
-class _SortLibraryMangaStateProviderElement
-    extends
-        AutoDisposeNotifierProviderElement<
-          SortLibraryMangaState,
-          SortLibraryManga
-        >
-    with SortLibraryMangaStateRef {
-  _SortLibraryMangaStateProviderElement(super.provider);
-
-  @override
-  ItemType get itemType => (origin as SortLibraryMangaStateProvider).itemType;
-  @override
-  Settings get settings => (origin as SortLibraryMangaStateProvider).settings;
 }
 
 String _$mangasListStateHash() => r'bbd2e3600ec22a774b1774ae3c221815e52bfef6';
 
-/// See also [MangasListState].
-@ProviderFor(MangasListState)
-final mangasListStateProvider =
-    AutoDisposeNotifierProvider<MangasListState, List<int>>.internal(
-      MangasListState.new,
-      name: r'mangasListStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$mangasListStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$MangasListState = AutoDisposeNotifier<List<int>>;
-String _$mangasSetIsReadStateHash() =>
-    r'2a1b1005e2ed5068d36188a3fb969d21b64bfef6';
-
-abstract class _$MangasSetIsReadState
-    extends BuildlessAutoDisposeNotifier<void> {
-  late final List<int> mangaIds;
-  late final bool markAsRead;
-
-  void build({required List<int> mangaIds, required bool markAsRead});
+abstract class _$MangasListState extends $Notifier<List<int>> {
+  List<int> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<List<int>, List<int>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<List<int>, List<int>>,
+              List<int>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
 }
 
-/// See also [MangasSetIsReadState].
 @ProviderFor(MangasSetIsReadState)
-const mangasSetIsReadStateProvider = MangasSetIsReadStateFamily();
+const mangasSetIsReadStateProvider = MangasSetIsReadStateFamily._();
 
-/// See also [MangasSetIsReadState].
-class MangasSetIsReadStateFamily extends Family<void> {
-  /// See also [MangasSetIsReadState].
-  const MangasSetIsReadStateFamily();
-
-  /// See also [MangasSetIsReadState].
-  MangasSetIsReadStateProvider call({
-    required List<int> mangaIds,
-    required bool markAsRead,
-  }) {
-    return MangasSetIsReadStateProvider(
-      mangaIds: mangaIds,
-      markAsRead: markAsRead,
-    );
-  }
-
-  @override
-  MangasSetIsReadStateProvider getProviderOverride(
-    covariant MangasSetIsReadStateProvider provider,
-  ) {
-    return call(mangaIds: provider.mangaIds, markAsRead: provider.markAsRead);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'mangasSetIsReadStateProvider';
-}
-
-/// See also [MangasSetIsReadState].
-class MangasSetIsReadStateProvider
-    extends AutoDisposeNotifierProviderImpl<MangasSetIsReadState, void> {
-  /// See also [MangasSetIsReadState].
-  MangasSetIsReadStateProvider({
-    required List<int> mangaIds,
-    required bool markAsRead,
-  }) : this._internal(
-         () => MangasSetIsReadState()
-           ..mangaIds = mangaIds
-           ..markAsRead = markAsRead,
-         from: mangasSetIsReadStateProvider,
+final class MangasSetIsReadStateProvider
+    extends $NotifierProvider<MangasSetIsReadState, void> {
+  const MangasSetIsReadStateProvider._({
+    required MangasSetIsReadStateFamily super.from,
+    required ({List<int> mangaIds, bool markAsRead}) super.argument,
+  }) : super(
+         retry: null,
          name: r'mangasSetIsReadStateProvider',
-         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-             ? null
-             : _$mangasSetIsReadStateHash,
-         dependencies: MangasSetIsReadStateFamily._dependencies,
-         allTransitiveDependencies:
-             MangasSetIsReadStateFamily._allTransitiveDependencies,
-         mangaIds: mangaIds,
-         markAsRead: markAsRead,
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
        );
 
-  MangasSetIsReadStateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.mangaIds,
-    required this.markAsRead,
-  }) : super.internal();
-
-  final List<int> mangaIds;
-  final bool markAsRead;
+  @override
+  String debugGetCreateSourceHash() => _$mangasSetIsReadStateHash();
 
   @override
-  void runNotifierBuild(covariant MangasSetIsReadState notifier) {
-    return notifier.build(mangaIds: mangaIds, markAsRead: markAsRead);
+  String toString() {
+    return r'mangasSetIsReadStateProvider'
+        ''
+        '$argument';
   }
 
+  @$internal
   @override
-  Override overrideWith(MangasSetIsReadState Function() create) {
-    return ProviderOverride(
+  MangasSetIsReadState create() => MangasSetIsReadState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(void value) {
+    return $ProviderOverride(
       origin: this,
-      override: MangasSetIsReadStateProvider._internal(
-        () => create()
-          ..mangaIds = mangaIds
-          ..markAsRead = markAsRead,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        mangaIds: mangaIds,
-        markAsRead: markAsRead,
-      ),
+      providerOverride: $SyncValueProvider<void>(value),
     );
-  }
-
-  @override
-  AutoDisposeNotifierProviderElement<MangasSetIsReadState, void>
-  createElement() {
-    return _MangasSetIsReadStateProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is MangasSetIsReadStateProvider &&
-        other.mangaIds == mangaIds &&
-        other.markAsRead == markAsRead;
+    return other is MangasSetIsReadStateProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, mangaIds.hashCode);
-    hash = _SystemHash.combine(hash, markAsRead.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin MangasSetIsReadStateRef on AutoDisposeNotifierProviderRef<void> {
-  /// The parameter `mangaIds` of this provider.
-  List<int> get mangaIds;
+String _$mangasSetIsReadStateHash() =>
+    r'2a1b1005e2ed5068d36188a3fb969d21b64bfef6';
 
-  /// The parameter `markAsRead` of this provider.
-  bool get markAsRead;
-}
+final class MangasSetIsReadStateFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          MangasSetIsReadState,
+          void,
+          void,
+          void,
+          ({List<int> mangaIds, bool markAsRead})
+        > {
+  const MangasSetIsReadStateFamily._()
+    : super(
+        retry: null,
+        name: r'mangasSetIsReadStateProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
-class _MangasSetIsReadStateProviderElement
-    extends AutoDisposeNotifierProviderElement<MangasSetIsReadState, void>
-    with MangasSetIsReadStateRef {
-  _MangasSetIsReadStateProviderElement(super.provider);
+  MangasSetIsReadStateProvider call({
+    required List<int> mangaIds,
+    required bool markAsRead,
+  }) => MangasSetIsReadStateProvider._(
+    argument: (mangaIds: mangaIds, markAsRead: markAsRead),
+    from: this,
+  );
 
   @override
-  List<int> get mangaIds => (origin as MangasSetIsReadStateProvider).mangaIds;
-  @override
-  bool get markAsRead => (origin as MangasSetIsReadStateProvider).markAsRead;
+  String toString() => r'mangasSetIsReadStateProvider';
 }
 
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$MangasSetIsReadState extends $Notifier<void> {
+  late final _$args = ref.$arg as ({List<int> mangaIds, bool markAsRead});
+  List<int> get mangaIds => _$args.mangaIds;
+  bool get markAsRead => _$args.markAsRead;
+
+  void build({required List<int> mangaIds, required bool markAsRead});
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    build(mangaIds: _$args.mangaIds, markAsRead: _$args.markAsRead);
+    final ref = this.ref as $Ref<void, void>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<void, void>,
+              void,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, null);
+  }
+}

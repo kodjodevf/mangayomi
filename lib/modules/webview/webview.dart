@@ -52,7 +52,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
   }
 
   Webview? _desktopWebview;
-  _runWebViewDesktop() async {
+  Future<void> _runWebViewDesktop() async {
     if (Platform.isLinux) {
       _desktopWebview = await WebviewWindow.create();
 

@@ -5,7 +5,7 @@ import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -214,7 +214,13 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
       status: TrackStatus.completed,
     );
     await ref
-        .read(trackStateProvider(track: temp, itemType: null).notifier)
+        .read(
+          trackStateProvider(
+            track: temp,
+            itemType: null,
+            widgetRef: ref,
+          ).notifier,
+        )
         .checkRefresh();
     final box = await Hive.openBox("tracker_library");
     final keys = box.keys.where(
@@ -576,6 +582,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
           trackStateProvider(
             track: Track(syncId: syncId, status: TrackStatus.completed),
             itemType: itemType,
+            widgetRef: ref,
           ).notifier,
         )
         .search(query);
@@ -591,6 +598,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
           trackStateProvider(
             track: Track(syncId: syncId, status: TrackStatus.completed),
             itemType: itemType,
+            widgetRef: ref,
           ).notifier,
         )
         .fetchGeneralData(rankingType: rankingType);
@@ -605,6 +613,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
           trackStateProvider(
             track: Track(syncId: syncId, status: TrackStatus.completed),
             itemType: itemType,
+            widgetRef: ref,
           ).notifier,
         )
         .fetchUserData();

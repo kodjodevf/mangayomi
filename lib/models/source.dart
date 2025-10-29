@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/filter.dart';
 import 'package:mangayomi/eval/model/m_source.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -216,9 +216,4 @@ class Source {
   }
 }
 
-enum SourceCodeLanguage {
-  dart,
-  javascript,
-  mihon,
-  lnreader
-}
+enum SourceCodeLanguage { dart, javascript, mihon, lnreader }

@@ -12,8 +12,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   go_router: ^14.6.3
-  flutter_riverpod: ^2.6.1
-  riverpod_annotation: ^2.6.1
+  flutter_riverpod: ^3.0.3
+  riverpod_annotation: ^3.0.3
   html: ^0.15.5
   font_awesome_flutter: ^10.8.0
   expandable_text: ^2.3.0
@@ -28,8 +28,8 @@ dependencies:
   permission_handler: ^11.3.1
   flutter_inappwebview: ^6.2.0-beta.2
   draggable_menu: ^4.4.1
-  isar: 3.1.0+1
-  isar_flutter_libs: 3.1.0+1
+  isar_community: ^3.3.0-dev.2
+  isar_community_flutter_libs: ^3.3.0-dev.2
   share_plus: ^10.0.2
   xpath_selector_html_parser: ^3.0.1
   archive: ^4.0.1
@@ -113,17 +113,16 @@ dependency_overrides:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^2.4.6
-  riverpod_generator: ^2.6.5
+  build_runner: ^2.4.11
+  riverpod_generator: ^3.0.3
   flutter_launcher_icons: ^0.14.3
-  isar_generator:
-    path: plugins/isar_generator
-  flutter_lints: ^5.0.0
+  isar_community_generator: ^3.3.0-dev.2
+  flutter_lints: ^6.0.0
   freezed: ^3.0.0
   inno_bundle: ^0.9.0
   protoc_plugin: ^22.0.1
-  hive_generator:
-    path: plugins/hive_generator
+  # hive_generator:
+  #   path: plugins/hive_generator
 
 flutter:
   uses-material-design: true

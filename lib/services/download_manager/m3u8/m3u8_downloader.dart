@@ -58,7 +58,7 @@ class M3u8Downloader {
     _receivePort?.close();
   }
 
-  static _recreateClient() async {
+  static Future<void> _recreateClient() async {
     await RustLib.init();
     httpClient = MClient.httpClient(
       settings: const ClientSettings(

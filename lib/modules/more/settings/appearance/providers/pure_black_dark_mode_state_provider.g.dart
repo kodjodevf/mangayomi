@@ -6,22 +6,59 @@ part of 'pure_black_dark_mode_state_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(PureBlackDarkModeState)
+const pureBlackDarkModeStateProvider = PureBlackDarkModeStateProvider._();
+
+final class PureBlackDarkModeStateProvider
+    extends $NotifierProvider<PureBlackDarkModeState, bool> {
+  const PureBlackDarkModeStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'pureBlackDarkModeStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$pureBlackDarkModeStateHash();
+
+  @$internal
+  @override
+  PureBlackDarkModeState create() => PureBlackDarkModeState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
 String _$pureBlackDarkModeStateHash() =>
     r'a597f2ae7d7374fa57fb6c26aed274774d788509';
 
-/// See also [PureBlackDarkModeState].
-@ProviderFor(PureBlackDarkModeState)
-final pureBlackDarkModeStateProvider =
-    AutoDisposeNotifierProvider<PureBlackDarkModeState, bool>.internal(
-      PureBlackDarkModeState.new,
-      name: r'pureBlackDarkModeStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$pureBlackDarkModeStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$PureBlackDarkModeState = AutoDisposeNotifier<bool>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$PureBlackDarkModeState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

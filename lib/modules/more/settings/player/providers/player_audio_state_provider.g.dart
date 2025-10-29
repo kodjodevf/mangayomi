@@ -6,72 +6,221 @@ part of 'player_audio_state_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(AudioPreferredLangState)
+const audioPreferredLangStateProvider = AudioPreferredLangStateProvider._();
+
+final class AudioPreferredLangStateProvider
+    extends $NotifierProvider<AudioPreferredLangState, String> {
+  const AudioPreferredLangStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'audioPreferredLangStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$audioPreferredLangStateHash();
+
+  @$internal
+  @override
+  AudioPreferredLangState create() => AudioPreferredLangState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
 String _$audioPreferredLangStateHash() =>
     r'9d70ec2677efb51b8e0c174b55114865853f12ea';
 
-/// See also [AudioPreferredLangState].
-@ProviderFor(AudioPreferredLangState)
-final audioPreferredLangStateProvider =
-    AutoDisposeNotifierProvider<AudioPreferredLangState, String>.internal(
-      AudioPreferredLangState.new,
-      name: r'audioPreferredLangStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$audioPreferredLangStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+abstract class _$AudioPreferredLangState extends $Notifier<String> {
+  String build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<String, String>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String, String>,
+              String,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
 
-typedef _$AudioPreferredLangState = AutoDisposeNotifier<String>;
+@ProviderFor(EnableAudioPitchCorrectionState)
+const enableAudioPitchCorrectionStateProvider =
+    EnableAudioPitchCorrectionStateProvider._();
+
+final class EnableAudioPitchCorrectionStateProvider
+    extends $NotifierProvider<EnableAudioPitchCorrectionState, bool> {
+  const EnableAudioPitchCorrectionStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'enableAudioPitchCorrectionStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$enableAudioPitchCorrectionStateHash();
+
+  @$internal
+  @override
+  EnableAudioPitchCorrectionState create() => EnableAudioPitchCorrectionState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
 String _$enableAudioPitchCorrectionStateHash() =>
     r'6614f4b04ff8fe8ef57c9a6f160646d3d25e2f4d';
 
-/// See also [EnableAudioPitchCorrectionState].
-@ProviderFor(EnableAudioPitchCorrectionState)
-final enableAudioPitchCorrectionStateProvider =
-    AutoDisposeNotifierProvider<EnableAudioPitchCorrectionState, bool>.internal(
-      EnableAudioPitchCorrectionState.new,
-      name: r'enableAudioPitchCorrectionStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$enableAudioPitchCorrectionStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+abstract class _$EnableAudioPitchCorrectionState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
 
-typedef _$EnableAudioPitchCorrectionState = AutoDisposeNotifier<bool>;
+@ProviderFor(AudioChannelState)
+const audioChannelStateProvider = AudioChannelStateProvider._();
+
+final class AudioChannelStateProvider
+    extends $NotifierProvider<AudioChannelState, AudioChannel> {
+  const AudioChannelStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'audioChannelStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$audioChannelStateHash();
+
+  @$internal
+  @override
+  AudioChannelState create() => AudioChannelState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(AudioChannel value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<AudioChannel>(value),
+    );
+  }
+}
+
 String _$audioChannelStateHash() => r'e71ffa85c37d545fb7b22e9539241b4926a2d384';
 
-/// See also [AudioChannelState].
-@ProviderFor(AudioChannelState)
-final audioChannelStateProvider =
-    AutoDisposeNotifierProvider<AudioChannelState, AudioChannel>.internal(
-      AudioChannelState.new,
-      name: r'audioChannelStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$audioChannelStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+abstract class _$AudioChannelState extends $Notifier<AudioChannel> {
+  AudioChannel build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<AudioChannel, AudioChannel>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AudioChannel, AudioChannel>,
+              AudioChannel,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
 
-typedef _$AudioChannelState = AutoDisposeNotifier<AudioChannel>;
+@ProviderFor(VolumeBoostCapState)
+const volumeBoostCapStateProvider = VolumeBoostCapStateProvider._();
+
+final class VolumeBoostCapStateProvider
+    extends $NotifierProvider<VolumeBoostCapState, int> {
+  const VolumeBoostCapStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'volumeBoostCapStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$volumeBoostCapStateHash();
+
+  @$internal
+  @override
+  VolumeBoostCapState create() => VolumeBoostCapState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
+  }
+}
+
 String _$volumeBoostCapStateHash() =>
     r'b0f5ad3bbb0e1a798ce229572b363465ad606a06';
 
-/// See also [VolumeBoostCapState].
-@ProviderFor(VolumeBoostCapState)
-final volumeBoostCapStateProvider =
-    AutoDisposeNotifierProvider<VolumeBoostCapState, int>.internal(
-      VolumeBoostCapState.new,
-      name: r'volumeBoostCapStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$volumeBoostCapStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$VolumeBoostCapState = AutoDisposeNotifier<int>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$VolumeBoostCapState extends $Notifier<int> {
+  int build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<int, int>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<int, int>,
+              int,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

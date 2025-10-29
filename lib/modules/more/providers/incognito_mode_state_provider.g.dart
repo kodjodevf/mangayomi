@@ -6,22 +6,59 @@ part of 'incognito_mode_state_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(IncognitoModeState)
+const incognitoModeStateProvider = IncognitoModeStateProvider._();
+
+final class IncognitoModeStateProvider
+    extends $NotifierProvider<IncognitoModeState, bool> {
+  const IncognitoModeStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'incognitoModeStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$incognitoModeStateHash();
+
+  @$internal
+  @override
+  IncognitoModeState create() => IncognitoModeState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
 String _$incognitoModeStateHash() =>
     r'3858256a820eef632d3df57533f2aad14f555b22';
 
-/// See also [IncognitoModeState].
-@ProviderFor(IncognitoModeState)
-final incognitoModeStateProvider =
-    AutoDisposeNotifierProvider<IncognitoModeState, bool>.internal(
-      IncognitoModeState.new,
-      name: r'incognitoModeStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$incognitoModeStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$IncognitoModeState = AutoDisposeNotifier<bool>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$IncognitoModeState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

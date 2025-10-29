@@ -6,180 +6,128 @@ part of 'check_for_update.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$checkForUpdateHash() => r'644316334ac3e95d37f54d7197d744c9de1260b6';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-/// See also [checkForUpdate].
 @ProviderFor(checkForUpdate)
-const checkForUpdateProvider = CheckForUpdateFamily();
+const checkForUpdateProvider = CheckForUpdateFamily._();
 
-/// See also [checkForUpdate].
-class CheckForUpdateFamily extends Family<AsyncValue<void>> {
-  /// See also [checkForUpdate].
-  const CheckForUpdateFamily();
+final class CheckForUpdateProvider
+    extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
+    with $FutureModifier<void>, $FutureProvider<void> {
+  const CheckForUpdateProvider._({
+    required CheckForUpdateFamily super.from,
+    required ({BuildContext? context, bool? manualUpdate}) super.argument,
+  }) : super(
+         retry: null,
+         name: r'checkForUpdateProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// See also [checkForUpdate].
-  CheckForUpdateProvider call({BuildContext? context, bool? manualUpdate}) {
-    return CheckForUpdateProvider(context: context, manualUpdate: manualUpdate);
+  @override
+  String debugGetCreateSourceHash() => _$checkForUpdateHash();
+
+  @override
+  String toString() {
+    return r'checkForUpdateProvider'
+        ''
+        '$argument';
   }
 
+  @$internal
   @override
-  CheckForUpdateProvider getProviderOverride(
-    covariant CheckForUpdateProvider provider,
-  ) {
-    return call(context: provider.context, manualUpdate: provider.manualUpdate);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
+  $FutureProviderElement<void> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'checkForUpdateProvider';
-}
-
-/// See also [checkForUpdate].
-class CheckForUpdateProvider extends AutoDisposeFutureProvider<void> {
-  /// See also [checkForUpdate].
-  CheckForUpdateProvider({BuildContext? context, bool? manualUpdate})
-    : this._internal(
-        (ref) => checkForUpdate(
-          ref as CheckForUpdateRef,
-          context: context,
-          manualUpdate: manualUpdate,
-        ),
-        from: checkForUpdateProvider,
-        name: r'checkForUpdateProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$checkForUpdateHash,
-        dependencies: CheckForUpdateFamily._dependencies,
-        allTransitiveDependencies:
-            CheckForUpdateFamily._allTransitiveDependencies,
-        context: context,
-        manualUpdate: manualUpdate,
-      );
-
-  CheckForUpdateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.context,
-    required this.manualUpdate,
-  }) : super.internal();
-
-  final BuildContext? context;
-  final bool? manualUpdate;
-
-  @override
-  Override overrideWith(
-    FutureOr<void> Function(CheckForUpdateRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: CheckForUpdateProvider._internal(
-        (ref) => create(ref as CheckForUpdateRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        context: context,
-        manualUpdate: manualUpdate,
-      ),
+  FutureOr<void> create(Ref ref) {
+    final argument =
+        this.argument as ({BuildContext? context, bool? manualUpdate});
+    return checkForUpdate(
+      ref,
+      context: argument.context,
+      manualUpdate: argument.manualUpdate,
     );
   }
 
   @override
-  AutoDisposeFutureProviderElement<void> createElement() {
-    return _CheckForUpdateProviderElement(this);
-  }
-
-  @override
   bool operator ==(Object other) {
-    return other is CheckForUpdateProvider &&
-        other.context == context &&
-        other.manualUpdate == manualUpdate;
+    return other is CheckForUpdateProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, context.hashCode);
-    hash = _SystemHash.combine(hash, manualUpdate.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin CheckForUpdateRef on AutoDisposeFutureProviderRef<void> {
-  /// The parameter `context` of this provider.
-  BuildContext? get context;
+String _$checkForUpdateHash() => r'644316334ac3e95d37f54d7197d744c9de1260b6';
 
-  /// The parameter `manualUpdate` of this provider.
-  bool? get manualUpdate;
+final class CheckForUpdateFamily extends $Family
+    with
+        $FunctionalFamilyOverride<
+          FutureOr<void>,
+          ({BuildContext? context, bool? manualUpdate})
+        > {
+  const CheckForUpdateFamily._()
+    : super(
+        retry: null,
+        name: r'checkForUpdateProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  CheckForUpdateProvider call({BuildContext? context, bool? manualUpdate}) =>
+      CheckForUpdateProvider._(
+        argument: (context: context, manualUpdate: manualUpdate),
+        from: this,
+      );
+
+  @override
+  String toString() => r'checkForUpdateProvider';
 }
 
-class _CheckForUpdateProviderElement
-    extends AutoDisposeFutureProviderElement<void>
-    with CheckForUpdateRef {
-  _CheckForUpdateProviderElement(super.provider);
+@ProviderFor(checkForAppUpdates)
+const checkForAppUpdatesProvider = CheckForAppUpdatesProvider._();
+
+final class CheckForAppUpdatesProvider
+    extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
+  const CheckForAppUpdatesProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'checkForAppUpdatesProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
-  BuildContext? get context => (origin as CheckForUpdateProvider).context;
+  String debugGetCreateSourceHash() => _$checkForAppUpdatesHash();
+
+  @$internal
   @override
-  bool? get manualUpdate => (origin as CheckForUpdateProvider).manualUpdate;
+  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  bool create(Ref ref) {
+    return checkForAppUpdates(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
 }
 
 String _$checkForAppUpdatesHash() =>
     r'2243b74d748a90847bacff256cb2ef0a344fee80';
-
-/// See also [checkForAppUpdates].
-@ProviderFor(checkForAppUpdates)
-final checkForAppUpdatesProvider = AutoDisposeProvider<bool>.internal(
-  checkForAppUpdates,
-  name: r'checkForAppUpdatesProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$checkForAppUpdatesHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef CheckForAppUpdatesRef = AutoDisposeProviderRef<bool>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

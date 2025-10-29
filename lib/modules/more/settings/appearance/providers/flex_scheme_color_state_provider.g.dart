@@ -6,22 +6,59 @@ part of 'flex_scheme_color_state_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(FlexSchemeColorState)
+const flexSchemeColorStateProvider = FlexSchemeColorStateProvider._();
+
+final class FlexSchemeColorStateProvider
+    extends $NotifierProvider<FlexSchemeColorState, FlexSchemeColor> {
+  const FlexSchemeColorStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'flexSchemeColorStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$flexSchemeColorStateHash();
+
+  @$internal
+  @override
+  FlexSchemeColorState create() => FlexSchemeColorState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(FlexSchemeColor value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<FlexSchemeColor>(value),
+    );
+  }
+}
+
 String _$flexSchemeColorStateHash() =>
     r'0b484f5c16d099fd94e2150bf4a32d9e8338feb3';
 
-/// See also [FlexSchemeColorState].
-@ProviderFor(FlexSchemeColorState)
-final flexSchemeColorStateProvider =
-    AutoDisposeNotifierProvider<FlexSchemeColorState, FlexSchemeColor>.internal(
-      FlexSchemeColorState.new,
-      name: r'flexSchemeColorStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$flexSchemeColorStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$FlexSchemeColorState = AutoDisposeNotifier<FlexSchemeColor>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$FlexSchemeColorState extends $Notifier<FlexSchemeColor> {
+  FlexSchemeColor build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<FlexSchemeColor, FlexSchemeColor>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<FlexSchemeColor, FlexSchemeColor>,
+              FlexSchemeColor,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

@@ -6,25 +6,59 @@ part of 'state_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(MangaHomeDisplayTypeState)
+const mangaHomeDisplayTypeStateProvider = MangaHomeDisplayTypeStateProvider._();
+
+final class MangaHomeDisplayTypeStateProvider
+    extends $NotifierProvider<MangaHomeDisplayTypeState, DisplayType> {
+  const MangaHomeDisplayTypeStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'mangaHomeDisplayTypeStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$mangaHomeDisplayTypeStateHash();
+
+  @$internal
+  @override
+  MangaHomeDisplayTypeState create() => MangaHomeDisplayTypeState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DisplayType value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<DisplayType>(value),
+    );
+  }
+}
+
 String _$mangaHomeDisplayTypeStateHash() =>
     r'6e91cef2e4a9925cab1a7a764ac6a0e741398fb2';
 
-/// See also [MangaHomeDisplayTypeState].
-@ProviderFor(MangaHomeDisplayTypeState)
-final mangaHomeDisplayTypeStateProvider =
-    AutoDisposeNotifierProvider<
-      MangaHomeDisplayTypeState,
-      DisplayType
-    >.internal(
-      MangaHomeDisplayTypeState.new,
-      name: r'mangaHomeDisplayTypeStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$mangaHomeDisplayTypeStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$MangaHomeDisplayTypeState = AutoDisposeNotifier<DisplayType>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$MangaHomeDisplayTypeState extends $Notifier<DisplayType> {
+  DisplayType build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<DisplayType, DisplayType>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<DisplayType, DisplayType>,
+              DisplayType,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
@@ -72,6 +72,7 @@ class TrackScreen extends ConsumerWidget {
                         .read(
                           anilistProvider(
                             syncId: TrackerProviders.anilist.syncId,
+                            widgetRef: ref,
                           ).notifier,
                         )
                         .login();
@@ -93,6 +94,7 @@ class TrackScreen extends ConsumerWidget {
                           myAnimeListProvider(
                             syncId: TrackerProviders.myAnimeList.syncId,
                             itemType: null,
+                            widgetRef: ref,
                           ).notifier,
                         )
                         .login();
@@ -107,6 +109,7 @@ class TrackScreen extends ConsumerWidget {
                           simklProvider(
                             syncId: TrackerProviders.simkl.syncId,
                             itemType: null,
+                            widgetRef: ref,
                           ).notifier,
                         )
                         .login();
@@ -121,6 +124,7 @@ class TrackScreen extends ConsumerWidget {
                           traktTvProvider(
                             syncId: TrackerProviders.trakt.syncId,
                             itemType: null,
+                            widgetRef: ref,
                           ).notifier,
                         )
                         .login();
@@ -271,6 +275,7 @@ void _showDialogLogin(BuildContext context, WidgetRef ref) {
                                   .read(
                                     kitsuProvider(
                                       syncId: TrackerProviders.kitsu.syncId,
+                                      widgetRef: ref,
                                     ).notifier,
                                   )
                                   .login(email, password);

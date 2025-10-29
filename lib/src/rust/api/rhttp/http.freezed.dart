@@ -1,6 +1,5 @@
-// dart format width=80
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -41,6 +40,136 @@ class $HttpHeadersCopyWith<$Res>  {
 $HttpHeadersCopyWith(HttpHeaders _, $Res Function(HttpHeaders) __);
 }
 
+
+/// Adds pattern-matching-related methods to [HttpHeaders].
+extension HttpHeadersPatterns on HttpHeaders {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( HttpHeaders_Map value)?  map,TResult Function( HttpHeaders_List value)?  list,required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case HttpHeaders_Map() when map != null:
+return map(_that);case HttpHeaders_List() when list != null:
+return list(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( HttpHeaders_Map value)  map,required TResult Function( HttpHeaders_List value)  list,}){
+final _that = this;
+switch (_that) {
+case HttpHeaders_Map():
+return map(_that);case HttpHeaders_List():
+return list(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( HttpHeaders_Map value)?  map,TResult? Function( HttpHeaders_List value)?  list,}){
+final _that = this;
+switch (_that) {
+case HttpHeaders_Map() when map != null:
+return map(_that);case HttpHeaders_List() when list != null:
+return list(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( Map<String, String> field0)?  map,TResult Function( List<(String, String)> field0)?  list,required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case HttpHeaders_Map() when map != null:
+return map(_that.field0);case HttpHeaders_List() when list != null:
+return list(_that.field0);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( Map<String, String> field0)  map,required TResult Function( List<(String, String)> field0)  list,}) {final _that = this;
+switch (_that) {
+case HttpHeaders_Map():
+return map(_that.field0);case HttpHeaders_List():
+return list(_that.field0);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( Map<String, String> field0)?  map,TResult? Function( List<(String, String)> field0)?  list,}) {final _that = this;
+switch (_that) {
+case HttpHeaders_Map() when map != null:
+return map(_that.field0);case HttpHeaders_List() when list != null:
+return list(_that.field0);case _:
+  return null;
+
+}
+}
+
+}
 
 /// @nodoc
 
@@ -215,6 +344,142 @@ class $HttpResponseBodyCopyWith<$Res>  {
 $HttpResponseBodyCopyWith(HttpResponseBody _, $Res Function(HttpResponseBody) __);
 }
 
+
+/// Adds pattern-matching-related methods to [HttpResponseBody].
+extension HttpResponseBodyPatterns on HttpResponseBody {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( HttpResponseBody_Text value)?  text,TResult Function( HttpResponseBody_Bytes value)?  bytes,TResult Function( HttpResponseBody_Stream value)?  stream,required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case HttpResponseBody_Text() when text != null:
+return text(_that);case HttpResponseBody_Bytes() when bytes != null:
+return bytes(_that);case HttpResponseBody_Stream() when stream != null:
+return stream(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( HttpResponseBody_Text value)  text,required TResult Function( HttpResponseBody_Bytes value)  bytes,required TResult Function( HttpResponseBody_Stream value)  stream,}){
+final _that = this;
+switch (_that) {
+case HttpResponseBody_Text():
+return text(_that);case HttpResponseBody_Bytes():
+return bytes(_that);case HttpResponseBody_Stream():
+return stream(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( HttpResponseBody_Text value)?  text,TResult? Function( HttpResponseBody_Bytes value)?  bytes,TResult? Function( HttpResponseBody_Stream value)?  stream,}){
+final _that = this;
+switch (_that) {
+case HttpResponseBody_Text() when text != null:
+return text(_that);case HttpResponseBody_Bytes() when bytes != null:
+return bytes(_that);case HttpResponseBody_Stream() when stream != null:
+return stream(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String field0)?  text,TResult Function( Uint8List field0)?  bytes,TResult Function()?  stream,required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case HttpResponseBody_Text() when text != null:
+return text(_that.field0);case HttpResponseBody_Bytes() when bytes != null:
+return bytes(_that.field0);case HttpResponseBody_Stream() when stream != null:
+return stream();case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String field0)  text,required TResult Function( Uint8List field0)  bytes,required TResult Function()  stream,}) {final _that = this;
+switch (_that) {
+case HttpResponseBody_Text():
+return text(_that.field0);case HttpResponseBody_Bytes():
+return bytes(_that.field0);case HttpResponseBody_Stream():
+return stream();}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String field0)?  text,TResult? Function( Uint8List field0)?  bytes,TResult? Function()?  stream,}) {final _that = this;
+switch (_that) {
+case HttpResponseBody_Text() when text != null:
+return text(_that.field0);case HttpResponseBody_Bytes() when bytes != null:
+return bytes(_that.field0);case HttpResponseBody_Stream() when stream != null:
+return stream();case _:
+  return null;
+
+}
+}
+
+}
 
 /// @nodoc
 

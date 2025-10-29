@@ -6,25 +6,61 @@ part of 'state_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(SubtitleSettingsState)
+const subtitleSettingsStateProvider = SubtitleSettingsStateProvider._();
+
+final class SubtitleSettingsStateProvider
+    extends $NotifierProvider<SubtitleSettingsState, PlayerSubtitleSettings> {
+  const SubtitleSettingsStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'subtitleSettingsStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$subtitleSettingsStateHash();
+
+  @$internal
+  @override
+  SubtitleSettingsState create() => SubtitleSettingsState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(PlayerSubtitleSettings value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<PlayerSubtitleSettings>(value),
+    );
+  }
+}
+
 String _$subtitleSettingsStateHash() =>
     r'410485b55561b7a307c7a55f6798bca225f39830';
 
-/// See also [SubtitleSettingsState].
-@ProviderFor(SubtitleSettingsState)
-final subtitleSettingsStateProvider =
-    AutoDisposeNotifierProvider<
-      SubtitleSettingsState,
-      PlayerSubtitleSettings
-    >.internal(
-      SubtitleSettingsState.new,
-      name: r'subtitleSettingsStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$subtitleSettingsStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$SubtitleSettingsState = AutoDisposeNotifier<PlayerSubtitleSettings>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$SubtitleSettingsState
+    extends $Notifier<PlayerSubtitleSettings> {
+  PlayerSubtitleSettings build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref =
+        this.ref as $Ref<PlayerSubtitleSettings, PlayerSubtitleSettings>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<PlayerSubtitleSettings, PlayerSubtitleSettings>,
+              PlayerSubtitleSettings,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

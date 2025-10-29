@@ -6,62 +6,169 @@ part of 'color_filter_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(CustomColorFilterState)
+const customColorFilterStateProvider = CustomColorFilterStateProvider._();
+
+final class CustomColorFilterStateProvider
+    extends $NotifierProvider<CustomColorFilterState, CustomColorFilter?> {
+  const CustomColorFilterStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'customColorFilterStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$customColorFilterStateHash();
+
+  @$internal
+  @override
+  CustomColorFilterState create() => CustomColorFilterState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(CustomColorFilter? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<CustomColorFilter?>(value),
+    );
+  }
+}
+
 String _$customColorFilterStateHash() =>
     r'e83ed3712f2f69c6ad15b2b3b10ff17cf8bb2898';
 
-/// See also [CustomColorFilterState].
-@ProviderFor(CustomColorFilterState)
-final customColorFilterStateProvider =
-    AutoDisposeNotifierProvider<
-      CustomColorFilterState,
-      CustomColorFilter?
-    >.internal(
-      CustomColorFilterState.new,
-      name: r'customColorFilterStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$customColorFilterStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+abstract class _$CustomColorFilterState extends $Notifier<CustomColorFilter?> {
+  CustomColorFilter? build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<CustomColorFilter?, CustomColorFilter?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<CustomColorFilter?, CustomColorFilter?>,
+              CustomColorFilter?,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
 
-typedef _$CustomColorFilterState = AutoDisposeNotifier<CustomColorFilter?>;
+@ProviderFor(EnableCustomColorFilterState)
+const enableCustomColorFilterStateProvider =
+    EnableCustomColorFilterStateProvider._();
+
+final class EnableCustomColorFilterStateProvider
+    extends $NotifierProvider<EnableCustomColorFilterState, bool> {
+  const EnableCustomColorFilterStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'enableCustomColorFilterStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$enableCustomColorFilterStateHash();
+
+  @$internal
+  @override
+  EnableCustomColorFilterState create() => EnableCustomColorFilterState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
 String _$enableCustomColorFilterStateHash() =>
     r'20579f0101c7f64051d63ea85813aeb068fdb3c9';
 
-/// See also [EnableCustomColorFilterState].
-@ProviderFor(EnableCustomColorFilterState)
-final enableCustomColorFilterStateProvider =
-    AutoDisposeNotifierProvider<EnableCustomColorFilterState, bool>.internal(
-      EnableCustomColorFilterState.new,
-      name: r'enableCustomColorFilterStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$enableCustomColorFilterStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+abstract class _$EnableCustomColorFilterState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
 
-typedef _$EnableCustomColorFilterState = AutoDisposeNotifier<bool>;
+@ProviderFor(ColorFilterBlendModeState)
+const colorFilterBlendModeStateProvider = ColorFilterBlendModeStateProvider._();
+
+final class ColorFilterBlendModeStateProvider
+    extends $NotifierProvider<ColorFilterBlendModeState, ColorFilterBlendMode> {
+  const ColorFilterBlendModeStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'colorFilterBlendModeStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$colorFilterBlendModeStateHash();
+
+  @$internal
+  @override
+  ColorFilterBlendModeState create() => ColorFilterBlendModeState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ColorFilterBlendMode value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ColorFilterBlendMode>(value),
+    );
+  }
+}
+
 String _$colorFilterBlendModeStateHash() =>
     r'92e84b352b519dd32d1c418d7477a10a8921bc19';
 
-/// See also [ColorFilterBlendModeState].
-@ProviderFor(ColorFilterBlendModeState)
-final colorFilterBlendModeStateProvider =
-    AutoDisposeNotifierProvider<
-      ColorFilterBlendModeState,
-      ColorFilterBlendMode
-    >.internal(
-      ColorFilterBlendModeState.new,
-      name: r'colorFilterBlendModeStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$colorFilterBlendModeStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$ColorFilterBlendModeState = AutoDisposeNotifier<ColorFilterBlendMode>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$ColorFilterBlendModeState
+    extends $Notifier<ColorFilterBlendMode> {
+  ColorFilterBlendMode build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<ColorFilterBlendMode, ColorFilterBlendMode>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<ColorFilterBlendMode, ColorFilterBlendMode>,
+              ColorFilterBlendMode,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
