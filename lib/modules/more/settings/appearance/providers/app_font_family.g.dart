@@ -6,21 +6,58 @@ part of 'app_font_family.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(AppFontFamily)
+const appFontFamilyProvider = AppFontFamilyProvider._();
+
+final class AppFontFamilyProvider
+    extends $NotifierProvider<AppFontFamily, String?> {
+  const AppFontFamilyProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'appFontFamilyProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$appFontFamilyHash();
+
+  @$internal
+  @override
+  AppFontFamily create() => AppFontFamily();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String?>(value),
+    );
+  }
+}
+
 String _$appFontFamilyHash() => r'edc7d34d3b1aa149fdbd95fa0b07d9746b7279b1';
 
-/// See also [AppFontFamily].
-@ProviderFor(AppFontFamily)
-final appFontFamilyProvider =
-    AutoDisposeNotifierProvider<AppFontFamily, String?>.internal(
-      AppFontFamily.new,
-      name: r'appFontFamilyProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$appFontFamilyHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$AppFontFamily = AutoDisposeNotifier<String?>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$AppFontFamily extends $Notifier<String?> {
+  String? build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<String?, String?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String?, String?>,
+              String?,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

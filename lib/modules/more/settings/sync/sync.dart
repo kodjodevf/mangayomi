@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
@@ -51,11 +51,11 @@ class SyncScreen extends ConsumerWidget {
                   title: Text(context.l10n.sync_on),
                   onChanged: (value) {
                     ref
-                        .read(SynchingProvider(syncId: 1).notifier)
+                        .read(synchingProvider(syncId: 1).notifier)
                         .setSyncOn(value);
                     if (!value) {
                       ref
-                          .read(SynchingProvider(syncId: 1).notifier)
+                          .read(synchingProvider(syncId: 1).notifier)
                           .setAutoSyncFrequency(0);
                     }
                   },
@@ -160,7 +160,7 @@ class SyncScreen extends ConsumerWidget {
                   onChanged: syncPreference.syncOn
                       ? (value) {
                           ref
-                              .read(SynchingProvider(syncId: 1).notifier)
+                              .read(synchingProvider(syncId: 1).notifier)
                               .setSyncHistories(value);
                         }
                       : null,
@@ -171,7 +171,7 @@ class SyncScreen extends ConsumerWidget {
                   onChanged: syncPreference.syncOn
                       ? (value) {
                           ref
-                              .read(SynchingProvider(syncId: 1).notifier)
+                              .read(synchingProvider(syncId: 1).notifier)
                               .setSyncUpdates(value);
                         }
                       : null,
@@ -182,7 +182,7 @@ class SyncScreen extends ConsumerWidget {
                   onChanged: syncPreference.syncOn
                       ? (value) {
                           ref
-                              .read(SynchingProvider(syncId: 1).notifier)
+                              .read(synchingProvider(syncId: 1).notifier)
                               .setSyncSettings(value);
                         }
                       : null,

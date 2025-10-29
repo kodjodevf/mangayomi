@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
@@ -35,6 +35,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
+import 'package:mangayomi/utils/riverpod.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -100,7 +101,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     super.dispose();
   }
 
-  final offetProvider = StateProvider((ref) => 0.0);
+  final offetProvider = StateProvider(() => 0.0);
   bool _expanded = false;
   late final ScrollController _scrollController;
   late final isLocalArchive = widget.manga!.isLocalArchive ?? false;
@@ -2139,7 +2140,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                       ),
                                       onPressed: () async {
                                         final trackSearch =
-                                            await trackersSearchraggableMenu(
+                                            await trackersSearchDraggableMenu(
                                                   context,
                                                   itemType:
                                                       widget.manga!.itemType,
@@ -2502,7 +2503,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 text: l10nLocalizations(context)!.add_tracker,
                                 onTap: () async {
                                   final trackSearch =
-                                      await trackersSearchraggableMenu(
+                                      await trackersSearchDraggableMenu(
                                             context,
                                             itemType: widget.manga!.itemType,
                                             track: Track(
@@ -2518,6 +2519,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                           trackStateProvider(
                                             track: null,
                                             itemType: widget.manga!.itemType,
+                                            widgetRef: ref,
                                           ).notifier,
                                         )
                                         .setTrackSearch(

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io'; // For I/O-operations
 import 'package:epubx/epubx.dart';
-import 'package:isar/isar.dart'; // Isar database package for local storage
+import 'package:isar_community/isar.dart'; // Isar database package for local storage
 import 'package:mangayomi/main.dart'; // Exposes the global `isar` instance
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
@@ -9,7 +9,6 @@ import 'package:path/path.dart' as p; // For manipulating file system paths
 import 'package:bot_toast/bot_toast.dart'; // For Exceptions
 import 'package:mangayomi/models/manga.dart'; // Has Manga model and ItemType enum
 import 'package:mangayomi/models/chapter.dart'; // Has Chapter model with archivePath
-import 'package:flutter_riverpod/flutter_riverpod.dart'; // Riverpod state management
 import 'package:mangayomi/providers/storage_provider.dart'; // Provides storage directory selection
 import 'package:riverpod_annotation/riverpod_annotation.dart'; // Annotations for code generation
 part 'file_scanner.g.dart';
@@ -387,7 +386,7 @@ Future<Directory?> getLocalLibrary() async {
 /// becomes:
 /// "Manga 1/chapter1.zip"
 /// ```
-String _getRelativePath(dir) {
+String _getRelativePath(dynamic dir) {
   String relativePath;
 
   if (dir is Directory) {

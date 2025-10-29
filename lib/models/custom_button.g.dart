@@ -58,7 +58,7 @@ const CustomButtonSchema = CollectionSchema(
   getId: _customButtonGetId,
   getLinks: _customButtonGetLinks,
   attach: _customButtonAttach,
-  version: '3.1.0+1',
+  version: '3.3.0-dev.3',
 );
 
 int _customButtonEstimateSize(

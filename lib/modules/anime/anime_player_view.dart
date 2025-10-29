@@ -986,6 +986,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     _currentPosition.dispose();
     _subDelayController.dispose();
     _subSpeedController.dispose();
+    _streamController.keepAliveLink?.close();
     super.dispose();
   }
 

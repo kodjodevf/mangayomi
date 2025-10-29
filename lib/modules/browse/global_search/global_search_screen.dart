@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/eval/model/m_pages.dart';
 import 'package:mangayomi/main.dart';
@@ -143,7 +143,7 @@ class _SourceSearchScreenState extends ConsumerState<SourceSearchScreen> {
   String _errorMessage = "";
   bool _isLoading = true;
   MPages? pages;
-  _init() async {
+  Future<void> _init() async {
     try {
       _errorMessage = "";
       pages = await ref.read(

@@ -6,156 +6,96 @@ part of 'statistics_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$statisticsStateHash() => r'81e1957e0e39a9863a8e7d0e1dc565c4eb0e6f9a';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-abstract class _$StatisticsState extends BuildlessAutoDisposeNotifier<void> {
-  late final ItemType itemType;
-
-  void build(ItemType itemType);
-}
-
-/// See also [StatisticsState].
 @ProviderFor(StatisticsState)
-const statisticsStateProvider = StatisticsStateFamily();
+const statisticsStateProvider = StatisticsStateFamily._();
 
-/// See also [StatisticsState].
-class StatisticsStateFamily extends Family<void> {
-  /// See also [StatisticsState].
-  const StatisticsStateFamily();
+final class StatisticsStateProvider
+    extends $NotifierProvider<StatisticsState, void> {
+  const StatisticsStateProvider._({
+    required StatisticsStateFamily super.from,
+    required ItemType super.argument,
+  }) : super(
+         retry: null,
+         name: r'statisticsStateProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// See also [StatisticsState].
-  StatisticsStateProvider call(ItemType itemType) {
-    return StatisticsStateProvider(itemType);
+  @override
+  String debugGetCreateSourceHash() => _$statisticsStateHash();
+
+  @override
+  String toString() {
+    return r'statisticsStateProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  StatisticsStateProvider getProviderOverride(
-    covariant StatisticsStateProvider provider,
-  ) {
-    return call(provider.itemType);
-  }
+  StatisticsState create() => StatisticsState();
 
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'statisticsStateProvider';
-}
-
-/// See also [StatisticsState].
-class StatisticsStateProvider
-    extends AutoDisposeNotifierProviderImpl<StatisticsState, void> {
-  /// See also [StatisticsState].
-  StatisticsStateProvider(ItemType itemType)
-    : this._internal(
-        () => StatisticsState()..itemType = itemType,
-        from: statisticsStateProvider,
-        name: r'statisticsStateProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$statisticsStateHash,
-        dependencies: StatisticsStateFamily._dependencies,
-        allTransitiveDependencies:
-            StatisticsStateFamily._allTransitiveDependencies,
-        itemType: itemType,
-      );
-
-  StatisticsStateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.itemType,
-  }) : super.internal();
-
-  final ItemType itemType;
-
-  @override
-  void runNotifierBuild(covariant StatisticsState notifier) {
-    return notifier.build(itemType);
-  }
-
-  @override
-  Override overrideWith(StatisticsState Function() create) {
-    return ProviderOverride(
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(void value) {
+    return $ProviderOverride(
       origin: this,
-      override: StatisticsStateProvider._internal(
-        () => create()..itemType = itemType,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        itemType: itemType,
-      ),
+      providerOverride: $SyncValueProvider<void>(value),
     );
   }
 
   @override
-  AutoDisposeNotifierProviderElement<StatisticsState, void> createElement() {
-    return _StatisticsStateProviderElement(this);
-  }
-
-  @override
   bool operator ==(Object other) {
-    return other is StatisticsStateProvider && other.itemType == itemType;
+    return other is StatisticsStateProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, itemType.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin StatisticsStateRef on AutoDisposeNotifierProviderRef<void> {
-  /// The parameter `itemType` of this provider.
-  ItemType get itemType;
-}
+String _$statisticsStateHash() => r'81e1957e0e39a9863a8e7d0e1dc565c4eb0e6f9a';
 
-class _StatisticsStateProviderElement
-    extends AutoDisposeNotifierProviderElement<StatisticsState, void>
-    with StatisticsStateRef {
-  _StatisticsStateProviderElement(super.provider);
+final class StatisticsStateFamily extends $Family
+    with $ClassFamilyOverride<StatisticsState, void, void, void, ItemType> {
+  const StatisticsStateFamily._()
+    : super(
+        retry: null,
+        name: r'statisticsStateProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  StatisticsStateProvider call(ItemType itemType) =>
+      StatisticsStateProvider._(argument: itemType, from: this);
 
   @override
-  ItemType get itemType => (origin as StatisticsStateProvider).itemType;
+  String toString() => r'statisticsStateProvider';
 }
 
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$StatisticsState extends $Notifier<void> {
+  late final _$args = ref.$arg as ItemType;
+  ItemType get itemType => _$args;
+
+  void build(ItemType itemType);
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    build(_$args);
+    final ref = this.ref as $Ref<void, void>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<void, void>,
+              void,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, null);
+  }
+}

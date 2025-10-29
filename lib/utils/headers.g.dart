@@ -6,203 +6,128 @@ part of 'headers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$headersHash() => r'6ad2d5394456d7c054f1270a9f774329ccbb5dad';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-/// See also [headers].
 @ProviderFor(headers)
-const headersProvider = HeadersFamily();
+const headersProvider = HeadersFamily._();
 
-/// See also [headers].
-class HeadersFamily extends Family<Map<String, String>> {
-  /// See also [headers].
-  const HeadersFamily();
-
-  /// See also [headers].
-  HeadersProvider call({
-    required String source,
-    required String lang,
-    required int? sourceId,
-    String androidProxyServer = "",
-  }) {
-    return HeadersProvider(
-      source: source,
-      lang: lang,
-      sourceId: sourceId,
-      androidProxyServer: androidProxyServer,
-    );
-  }
-
-  @override
-  HeadersProvider getProviderOverride(covariant HeadersProvider provider) {
-    return call(
-      source: provider.source,
-      lang: provider.lang,
-      sourceId: provider.sourceId,
-      androidProxyServer: provider.androidProxyServer,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'headersProvider';
-}
-
-/// See also [headers].
-class HeadersProvider extends AutoDisposeProvider<Map<String, String>> {
-  /// See also [headers].
-  HeadersProvider({
-    required String source,
-    required String lang,
-    required int? sourceId,
-    String androidProxyServer = "",
-  }) : this._internal(
-         (ref) => headers(
-           ref as HeadersRef,
-           source: source,
-           lang: lang,
-           sourceId: sourceId,
-           androidProxyServer: androidProxyServer,
-         ),
-         from: headersProvider,
+final class HeadersProvider
+    extends
+        $FunctionalProvider<
+          Map<String, String>,
+          Map<String, String>,
+          Map<String, String>
+        >
+    with $Provider<Map<String, String>> {
+  const HeadersProvider._({
+    required HeadersFamily super.from,
+    required ({
+      String source,
+      String lang,
+      int? sourceId,
+      String androidProxyServer,
+    })
+    super.argument,
+  }) : super(
+         retry: null,
          name: r'headersProvider',
-         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-             ? null
-             : _$headersHash,
-         dependencies: HeadersFamily._dependencies,
-         allTransitiveDependencies: HeadersFamily._allTransitiveDependencies,
-         source: source,
-         lang: lang,
-         sourceId: sourceId,
-         androidProxyServer: androidProxyServer,
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
        );
 
-  HeadersProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.source,
-    required this.lang,
-    required this.sourceId,
-    required this.androidProxyServer,
-  }) : super.internal();
-
-  final String source;
-  final String lang;
-  final int? sourceId;
-  final String androidProxyServer;
+  @override
+  String debugGetCreateSourceHash() => _$headersHash();
 
   @override
-  Override overrideWith(
-    Map<String, String> Function(HeadersRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: HeadersProvider._internal(
-        (ref) => create(ref as HeadersRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        source: source,
-        lang: lang,
-        sourceId: sourceId,
-        androidProxyServer: androidProxyServer,
-      ),
+  String toString() {
+    return r'headersProvider'
+        ''
+        '$argument';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<Map<String, String>> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  Map<String, String> create(Ref ref) {
+    final argument =
+        this.argument
+            as ({
+              String source,
+              String lang,
+              int? sourceId,
+              String androidProxyServer,
+            });
+    return headers(
+      ref,
+      source: argument.source,
+      lang: argument.lang,
+      sourceId: argument.sourceId,
+      androidProxyServer: argument.androidProxyServer,
     );
   }
 
-  @override
-  AutoDisposeProviderElement<Map<String, String>> createElement() {
-    return _HeadersProviderElement(this);
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Map<String, String> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Map<String, String>>(value),
+    );
   }
 
   @override
   bool operator ==(Object other) {
-    return other is HeadersProvider &&
-        other.source == source &&
-        other.lang == lang &&
-        other.sourceId == sourceId &&
-        other.androidProxyServer == androidProxyServer;
+    return other is HeadersProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, source.hashCode);
-    hash = _SystemHash.combine(hash, lang.hashCode);
-    hash = _SystemHash.combine(hash, sourceId.hashCode);
-    hash = _SystemHash.combine(hash, androidProxyServer.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin HeadersRef on AutoDisposeProviderRef<Map<String, String>> {
-  /// The parameter `source` of this provider.
-  String get source;
+String _$headersHash() => r'6ad2d5394456d7c054f1270a9f774329ccbb5dad';
 
-  /// The parameter `lang` of this provider.
-  String get lang;
+final class HeadersFamily extends $Family
+    with
+        $FunctionalFamilyOverride<
+          Map<String, String>,
+          ({
+            String source,
+            String lang,
+            int? sourceId,
+            String androidProxyServer,
+          })
+        > {
+  const HeadersFamily._()
+    : super(
+        retry: null,
+        name: r'headersProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
-  /// The parameter `sourceId` of this provider.
-  int? get sourceId;
+  HeadersProvider call({
+    required String source,
+    required String lang,
+    required int? sourceId,
+    String androidProxyServer = '',
+  }) => HeadersProvider._(
+    argument: (
+      source: source,
+      lang: lang,
+      sourceId: sourceId,
+      androidProxyServer: androidProxyServer,
+    ),
+    from: this,
+  );
 
-  /// The parameter `androidProxyServer` of this provider.
-  String get androidProxyServer;
+  @override
+  String toString() => r'headersProvider';
 }
-
-class _HeadersProviderElement
-    extends AutoDisposeProviderElement<Map<String, String>>
-    with HeadersRef {
-  _HeadersProviderElement(super.provider);
-
-  @override
-  String get source => (origin as HeadersProvider).source;
-  @override
-  String get lang => (origin as HeadersProvider).lang;
-  @override
-  int? get sourceId => (origin as HeadersProvider).sourceId;
-  @override
-  String get androidProxyServer =>
-      (origin as HeadersProvider).androidProxyServer;
-}
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -6,169 +6,120 @@ part of 'simkl.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$simklHash() => r'3a6e18e9a2ef6dc702c569bd747c66ff605643ce';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-abstract class _$Simkl extends BuildlessAutoDisposeNotifier<void> {
-  late final int syncId;
-  late final ItemType? itemType;
-
-  void build({required int syncId, required ItemType? itemType});
-}
-
-/// See also [Simkl].
 @ProviderFor(Simkl)
-const simklProvider = SimklFamily();
+const simklProvider = SimklFamily._();
 
-/// See also [Simkl].
-class SimklFamily extends Family<void> {
-  /// See also [Simkl].
-  const SimklFamily();
+final class SimklProvider extends $NotifierProvider<Simkl, void> {
+  const SimklProvider._({
+    required SimklFamily super.from,
+    required ({int syncId, ItemType? itemType, WidgetRef widgetRef})
+    super.argument,
+  }) : super(
+         retry: null,
+         name: r'simklProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// See also [Simkl].
-  SimklProvider call({required int syncId, required ItemType? itemType}) {
-    return SimklProvider(syncId: syncId, itemType: itemType);
+  @override
+  String debugGetCreateSourceHash() => _$simklHash();
+
+  @override
+  String toString() {
+    return r'simklProvider'
+        ''
+        '$argument';
   }
 
+  @$internal
   @override
-  SimklProvider getProviderOverride(covariant SimklProvider provider) {
-    return call(syncId: provider.syncId, itemType: provider.itemType);
-  }
+  Simkl create() => Simkl();
 
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'simklProvider';
-}
-
-/// See also [Simkl].
-class SimklProvider extends AutoDisposeNotifierProviderImpl<Simkl, void> {
-  /// See also [Simkl].
-  SimklProvider({required int syncId, required ItemType? itemType})
-    : this._internal(
-        () => Simkl()
-          ..syncId = syncId
-          ..itemType = itemType,
-        from: simklProvider,
-        name: r'simklProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$simklHash,
-        dependencies: SimklFamily._dependencies,
-        allTransitiveDependencies: SimklFamily._allTransitiveDependencies,
-        syncId: syncId,
-        itemType: itemType,
-      );
-
-  SimklProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.syncId,
-    required this.itemType,
-  }) : super.internal();
-
-  final int syncId;
-  final ItemType? itemType;
-
-  @override
-  void runNotifierBuild(covariant Simkl notifier) {
-    return notifier.build(syncId: syncId, itemType: itemType);
-  }
-
-  @override
-  Override overrideWith(Simkl Function() create) {
-    return ProviderOverride(
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(void value) {
+    return $ProviderOverride(
       origin: this,
-      override: SimklProvider._internal(
-        () => create()
-          ..syncId = syncId
-          ..itemType = itemType,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        syncId: syncId,
-        itemType: itemType,
-      ),
+      providerOverride: $SyncValueProvider<void>(value),
     );
   }
 
   @override
-  AutoDisposeNotifierProviderElement<Simkl, void> createElement() {
-    return _SimklProviderElement(this);
-  }
-
-  @override
   bool operator ==(Object other) {
-    return other is SimklProvider &&
-        other.syncId == syncId &&
-        other.itemType == itemType;
+    return other is SimklProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, syncId.hashCode);
-    hash = _SystemHash.combine(hash, itemType.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin SimklRef on AutoDisposeNotifierProviderRef<void> {
-  /// The parameter `syncId` of this provider.
-  int get syncId;
+String _$simklHash() => r'f2770c0a3f3f6c0730aec2b5128a9bffe19eeb4d';
 
-  /// The parameter `itemType` of this provider.
-  ItemType? get itemType;
-}
+final class SimklFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          Simkl,
+          void,
+          void,
+          void,
+          ({int syncId, ItemType? itemType, WidgetRef widgetRef})
+        > {
+  const SimklFamily._()
+    : super(
+        retry: null,
+        name: r'simklProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
-class _SimklProviderElement
-    extends AutoDisposeNotifierProviderElement<Simkl, void>
-    with SimklRef {
-  _SimklProviderElement(super.provider);
+  SimklProvider call({
+    required int syncId,
+    required ItemType? itemType,
+    required WidgetRef widgetRef,
+  }) => SimklProvider._(
+    argument: (syncId: syncId, itemType: itemType, widgetRef: widgetRef),
+    from: this,
+  );
 
   @override
-  int get syncId => (origin as SimklProvider).syncId;
-  @override
-  ItemType? get itemType => (origin as SimklProvider).itemType;
+  String toString() => r'simklProvider';
 }
 
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$Simkl extends $Notifier<void> {
+  late final _$args =
+      ref.$arg as ({int syncId, ItemType? itemType, WidgetRef widgetRef});
+  int get syncId => _$args.syncId;
+  ItemType? get itemType => _$args.itemType;
+  WidgetRef get widgetRef => _$args.widgetRef;
+
+  void build({
+    required int syncId,
+    required ItemType? itemType,
+    required WidgetRef widgetRef,
+  });
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    build(
+      syncId: _$args.syncId,
+      itemType: _$args.itemType,
+      widgetRef: _$args.widgetRef,
+    );
+    final ref = this.ref as $Ref<void, void>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<void, void>,
+              void,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, null);
+  }
+}

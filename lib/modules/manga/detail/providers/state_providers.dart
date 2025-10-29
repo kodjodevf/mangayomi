@@ -1,4 +1,4 @@
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
@@ -307,7 +307,7 @@ class ChapterSetIsBookmarkState extends _$ChapterSetIsBookmarkState {
   @override
   void build({required Manga manga}) {}
 
-  set() {
+  void set() {
     final allChapters = <Chapter>[];
     final chapters = ref.watch(chaptersListStateProvider);
     for (var chapter in chapters) {
@@ -327,7 +327,7 @@ class ChapterSetIsReadState extends _$ChapterSetIsReadState {
   @override
   void build({required Manga manga}) {}
 
-  set() {
+  void set() {
     final allChapters = <Chapter>[];
     final chapters = ref.watch(chaptersListStateProvider);
     for (var chapter in chapters) {
@@ -347,7 +347,7 @@ class ChapterSetDownloadState extends _$ChapterSetDownloadState {
   @override
   void build({required Manga manga}) {}
 
-  set() {
+  void set() {
     ref.read(isLongPressedStateProvider.notifier).update(false);
     isar.txnSync(() {
       for (var chapter in ref.watch(chaptersListStateProvider)) {
@@ -372,7 +372,7 @@ class ChaptersListttState extends _$ChaptersListttState {
     return [];
   }
 
-  set(List<Chapter> chapters) async {
+  void set(List<Chapter> chapters) async {
     await Future.delayed(const Duration(milliseconds: 10));
     state = chapters;
   }
@@ -431,7 +431,7 @@ class ScanlatorsFilterState extends _$ScanlatorsFilterState {
     return filter.isEmpty ? null : filter.first.scanlators;
   }
 
-  setFilteredList(String scanlator) {
+  void setFilteredList(String scanlator) {
     List<String> scanlatorFilteredList = [];
     for (var a in state.$3) {
       scanlatorFilteredList.add(a);

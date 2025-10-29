@@ -3,7 +3,6 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'fetch_item_sources.g.dart';
 
 @Riverpod(keepAlive: true)

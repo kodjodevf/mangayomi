@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
@@ -28,7 +29,11 @@ class Anilist extends _$Anilist implements BaseTracker {
       : 'G2fFUiGtgFd60D0lCkhgGKvMmrCfDmZXADQIzWXr';
 
   @override
-  void build({required int syncId, ItemType? itemType}) {}
+  void build({
+    required int syncId,
+    ItemType? itemType,
+    required WidgetRef widgetRef,
+  }) {}
 
   Future<bool?> login() async {
     final callbackUrlScheme = _isDesktop
@@ -61,7 +66,7 @@ class Anilist extends _$Anilist implements BaseTracker {
             .add(Duration(seconds: res['expires_in']))
             .millisecondsSinceEpoch;
       final currenUser = await _getCurrentUser(aLOAuth.accessToken!);
-      ref
+      widgetRef
           .read(tracksProvider(syncId: syncId).notifier)
           .login(
             TrackPreference(
@@ -175,7 +180,7 @@ class Anilist extends _$Anilist implements BaseTracker {
   @override
   Future<Track?> findLibItem(Track track, bool isManga) async {
     final userId = int.parse(
-      ref.read(tracksProvider(syncId: syncId))!.username!,
+      widgetRef.read(tracksProvider(syncId: syncId))!.username!,
     );
     final type = isManga ? "MANGA" : "ANIME";
     final typeVar = isManga ? "manga_id" : "anime_id";
@@ -292,7 +297,7 @@ class Anilist extends _$Anilist implements BaseTracker {
   @override
   Future<List<TrackSearch>> fetchUserData({bool isManga = true}) async {
     final userId = int.parse(
-      ref.read(tracksProvider(syncId: syncId))!.username!,
+      widgetRef.read(tracksProvider(syncId: syncId))!.username!,
     );
     final type = isManga ? "MANGA" : "ANIME";
     final contentUnit = isManga ? "chapters" : "episodes";
@@ -411,13 +416,13 @@ class Anilist extends _$Anilist implements BaseTracker {
   }
 
   Future<String> _getAccessToken() async {
-    final track = ref.read(tracksProvider(syncId: syncId));
+    final track = widgetRef.read(tracksProvider(syncId: syncId));
     final mALOAuth = OAuth.fromJson(
       jsonDecode(track!.oAuth!) as Map<String, dynamic>,
     );
     final expiresIn = DateTime.fromMillisecondsSinceEpoch(mALOAuth.expiresIn!);
     if (DateTime.now().isAfter(expiresIn)) {
-      ref.read(tracksProvider(syncId: syncId).notifier).logout();
+      widgetRef.read(tracksProvider(syncId: syncId).notifier).logout();
       botToast("Anilist Token expired");
       throw Exception("Token expired");
     }
@@ -535,10 +540,12 @@ class Anilist extends _$Anilist implements BaseTracker {
       _ => (100, 1),
     };
   }
-  
+
   @override
   Future<bool> checkRefresh() async {
-    ref.read(tracksProvider(syncId: syncId).notifier).setRefreshing(false);
+    widgetRef
+        .read(tracksProvider(syncId: syncId).notifier)
+        .setRefreshing(false);
     return true;
   }
 }

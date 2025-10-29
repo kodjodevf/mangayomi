@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -17,29 +18,57 @@ part 'track_state_providers.g.dart';
 @riverpod
 class TrackState extends _$TrackState {
   @override
-  Track build({Track? track, required ItemType? itemType}) {
+  Track build({
+    Track? track,
+    required ItemType? itemType,
+    required WidgetRef widgetRef,
+  }) {
     return track!;
   }
 
   BaseTracker getNotifier(int syncId) {
     return switch (syncId) {
-      1 => ref.read(
-        myAnimeListProvider(syncId: syncId, itemType: itemType).notifier,
+      1 => widgetRef.read(
+        myAnimeListProvider(
+          syncId: syncId,
+          itemType: itemType,
+          widgetRef: widgetRef,
+        ).notifier,
       ),
-      2 => ref.read(
-        anilistProvider(syncId: syncId, itemType: itemType).notifier,
+      2 => widgetRef.read(
+        anilistProvider(
+          syncId: syncId,
+          itemType: itemType,
+          widgetRef: widgetRef,
+        ).notifier,
       ),
-      3 => ref.read(kitsuProvider(syncId: syncId, itemType: itemType).notifier),
-      4 => ref.read(simklProvider(syncId: syncId, itemType: itemType).notifier),
-      5 => ref.read(
-        traktTvProvider(syncId: syncId, itemType: itemType).notifier,
+      3 => widgetRef.read(
+        kitsuProvider(
+          syncId: syncId,
+          itemType: itemType,
+          widgetRef: widgetRef,
+        ).notifier,
+      ),
+      4 => widgetRef.read(
+        simklProvider(
+          syncId: syncId,
+          itemType: itemType,
+          widgetRef: widgetRef,
+        ).notifier,
+      ),
+      5 => widgetRef.read(
+        traktTvProvider(
+          syncId: syncId,
+          itemType: itemType,
+          widgetRef: widgetRef,
+        ).notifier,
       ),
       _ => throw Exception('Unsupported syncId: $syncId'),
     };
   }
 
   void writeBack(Track t) {
-    ref
+    widgetRef
         .read(tracksProvider(syncId: t.syncId!).notifier)
         .updateTrackManga(t, itemType!);
   }

@@ -47,7 +47,7 @@ class _SubtitlesWidgetSearchState extends ConsumerState<SubtitlesWidgetSearch> {
     _init();
   }
 
-  _init() async {
+  Future<void> _init() async {
     await Future.delayed(const Duration(microseconds: 100));
     try {
       titles = await fetchImdbTitles(query);
@@ -392,7 +392,7 @@ class _SubtitlesWidgetSearchState extends ConsumerState<SubtitlesWidgetSearch> {
   }
 }
 
-subtitlesSearchraggableMenu(
+Future<dynamic> subtitlesSearchraggableMenu(
   BuildContext context, {
   required Chapter chapter,
   required bool isLocal,

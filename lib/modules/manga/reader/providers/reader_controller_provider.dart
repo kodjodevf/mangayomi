@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar/isar.dart';
+import 'package:flutter_riverpod/misc.dart';
+import 'package:isar_community/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
@@ -27,7 +28,7 @@ class CurrentIndex extends _$CurrentIndex {
         .getPageIndex();
   }
 
-  setCurrentIndex(int currentIndex) {
+  void setCurrentIndex(int currentIndex) {
     state = currentIndex;
   }
 }
@@ -46,7 +47,14 @@ BoxFit getBoxFit(ScaleType scaleType) {
 @riverpod
 class ReaderController extends _$ReaderController {
   @override
-  void build({required Chapter chapter}) {}
+  KeepAliveLink build({required Chapter chapter}) {
+    _keepAliveLink = ref.keepAlive();
+    return _keepAliveLink!;
+  }
+
+  KeepAliveLink? _keepAliveLink;
+
+  KeepAliveLink? get keepAliveLink => _keepAliveLink;
 
   Manga getManga() {
     return chapter.manga.value!;
@@ -440,6 +448,7 @@ extension ChapterExtensions on Chapter {
               trackStateProvider(
                 track: track,
                 itemType: manga.itemType,
+                widgetRef: ref,
               ).notifier,
             )
             .updateManga();

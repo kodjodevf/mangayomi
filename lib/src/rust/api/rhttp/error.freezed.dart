@@ -1,6 +1,5 @@
-// dart format width=80
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -41,6 +40,166 @@ class $RhttpErrorCopyWith<$Res>  {
 $RhttpErrorCopyWith(RhttpError _, $Res Function(RhttpError) __);
 }
 
+
+/// Adds pattern-matching-related methods to [RhttpError].
+extension RhttpErrorPatterns on RhttpError {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( RhttpError_RhttpCancelError value)?  rhttpCancelError,TResult Function( RhttpError_RhttpTimeoutError value)?  rhttpTimeoutError,TResult Function( RhttpError_RhttpRedirectError value)?  rhttpRedirectError,TResult Function( RhttpError_RhttpStatusCodeError value)?  rhttpStatusCodeError,TResult Function( RhttpError_RhttpInvalidCertificateError value)?  rhttpInvalidCertificateError,TResult Function( RhttpError_RhttpConnectionError value)?  rhttpConnectionError,TResult Function( RhttpError_RhttpUnknownError value)?  rhttpUnknownError,required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case RhttpError_RhttpCancelError() when rhttpCancelError != null:
+return rhttpCancelError(_that);case RhttpError_RhttpTimeoutError() when rhttpTimeoutError != null:
+return rhttpTimeoutError(_that);case RhttpError_RhttpRedirectError() when rhttpRedirectError != null:
+return rhttpRedirectError(_that);case RhttpError_RhttpStatusCodeError() when rhttpStatusCodeError != null:
+return rhttpStatusCodeError(_that);case RhttpError_RhttpInvalidCertificateError() when rhttpInvalidCertificateError != null:
+return rhttpInvalidCertificateError(_that);case RhttpError_RhttpConnectionError() when rhttpConnectionError != null:
+return rhttpConnectionError(_that);case RhttpError_RhttpUnknownError() when rhttpUnknownError != null:
+return rhttpUnknownError(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( RhttpError_RhttpCancelError value)  rhttpCancelError,required TResult Function( RhttpError_RhttpTimeoutError value)  rhttpTimeoutError,required TResult Function( RhttpError_RhttpRedirectError value)  rhttpRedirectError,required TResult Function( RhttpError_RhttpStatusCodeError value)  rhttpStatusCodeError,required TResult Function( RhttpError_RhttpInvalidCertificateError value)  rhttpInvalidCertificateError,required TResult Function( RhttpError_RhttpConnectionError value)  rhttpConnectionError,required TResult Function( RhttpError_RhttpUnknownError value)  rhttpUnknownError,}){
+final _that = this;
+switch (_that) {
+case RhttpError_RhttpCancelError():
+return rhttpCancelError(_that);case RhttpError_RhttpTimeoutError():
+return rhttpTimeoutError(_that);case RhttpError_RhttpRedirectError():
+return rhttpRedirectError(_that);case RhttpError_RhttpStatusCodeError():
+return rhttpStatusCodeError(_that);case RhttpError_RhttpInvalidCertificateError():
+return rhttpInvalidCertificateError(_that);case RhttpError_RhttpConnectionError():
+return rhttpConnectionError(_that);case RhttpError_RhttpUnknownError():
+return rhttpUnknownError(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( RhttpError_RhttpCancelError value)?  rhttpCancelError,TResult? Function( RhttpError_RhttpTimeoutError value)?  rhttpTimeoutError,TResult? Function( RhttpError_RhttpRedirectError value)?  rhttpRedirectError,TResult? Function( RhttpError_RhttpStatusCodeError value)?  rhttpStatusCodeError,TResult? Function( RhttpError_RhttpInvalidCertificateError value)?  rhttpInvalidCertificateError,TResult? Function( RhttpError_RhttpConnectionError value)?  rhttpConnectionError,TResult? Function( RhttpError_RhttpUnknownError value)?  rhttpUnknownError,}){
+final _that = this;
+switch (_that) {
+case RhttpError_RhttpCancelError() when rhttpCancelError != null:
+return rhttpCancelError(_that);case RhttpError_RhttpTimeoutError() when rhttpTimeoutError != null:
+return rhttpTimeoutError(_that);case RhttpError_RhttpRedirectError() when rhttpRedirectError != null:
+return rhttpRedirectError(_that);case RhttpError_RhttpStatusCodeError() when rhttpStatusCodeError != null:
+return rhttpStatusCodeError(_that);case RhttpError_RhttpInvalidCertificateError() when rhttpInvalidCertificateError != null:
+return rhttpInvalidCertificateError(_that);case RhttpError_RhttpConnectionError() when rhttpConnectionError != null:
+return rhttpConnectionError(_that);case RhttpError_RhttpUnknownError() when rhttpUnknownError != null:
+return rhttpUnknownError(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  rhttpCancelError,TResult Function()?  rhttpTimeoutError,TResult Function()?  rhttpRedirectError,TResult Function( int field0,  List<(String, String)> field1,  HttpResponseBody field2)?  rhttpStatusCodeError,TResult Function( String field0)?  rhttpInvalidCertificateError,TResult Function( String field0)?  rhttpConnectionError,TResult Function( String field0)?  rhttpUnknownError,required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case RhttpError_RhttpCancelError() when rhttpCancelError != null:
+return rhttpCancelError();case RhttpError_RhttpTimeoutError() when rhttpTimeoutError != null:
+return rhttpTimeoutError();case RhttpError_RhttpRedirectError() when rhttpRedirectError != null:
+return rhttpRedirectError();case RhttpError_RhttpStatusCodeError() when rhttpStatusCodeError != null:
+return rhttpStatusCodeError(_that.field0,_that.field1,_that.field2);case RhttpError_RhttpInvalidCertificateError() when rhttpInvalidCertificateError != null:
+return rhttpInvalidCertificateError(_that.field0);case RhttpError_RhttpConnectionError() when rhttpConnectionError != null:
+return rhttpConnectionError(_that.field0);case RhttpError_RhttpUnknownError() when rhttpUnknownError != null:
+return rhttpUnknownError(_that.field0);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  rhttpCancelError,required TResult Function()  rhttpTimeoutError,required TResult Function()  rhttpRedirectError,required TResult Function( int field0,  List<(String, String)> field1,  HttpResponseBody field2)  rhttpStatusCodeError,required TResult Function( String field0)  rhttpInvalidCertificateError,required TResult Function( String field0)  rhttpConnectionError,required TResult Function( String field0)  rhttpUnknownError,}) {final _that = this;
+switch (_that) {
+case RhttpError_RhttpCancelError():
+return rhttpCancelError();case RhttpError_RhttpTimeoutError():
+return rhttpTimeoutError();case RhttpError_RhttpRedirectError():
+return rhttpRedirectError();case RhttpError_RhttpStatusCodeError():
+return rhttpStatusCodeError(_that.field0,_that.field1,_that.field2);case RhttpError_RhttpInvalidCertificateError():
+return rhttpInvalidCertificateError(_that.field0);case RhttpError_RhttpConnectionError():
+return rhttpConnectionError(_that.field0);case RhttpError_RhttpUnknownError():
+return rhttpUnknownError(_that.field0);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  rhttpCancelError,TResult? Function()?  rhttpTimeoutError,TResult? Function()?  rhttpRedirectError,TResult? Function( int field0,  List<(String, String)> field1,  HttpResponseBody field2)?  rhttpStatusCodeError,TResult? Function( String field0)?  rhttpInvalidCertificateError,TResult? Function( String field0)?  rhttpConnectionError,TResult? Function( String field0)?  rhttpUnknownError,}) {final _that = this;
+switch (_that) {
+case RhttpError_RhttpCancelError() when rhttpCancelError != null:
+return rhttpCancelError();case RhttpError_RhttpTimeoutError() when rhttpTimeoutError != null:
+return rhttpTimeoutError();case RhttpError_RhttpRedirectError() when rhttpRedirectError != null:
+return rhttpRedirectError();case RhttpError_RhttpStatusCodeError() when rhttpStatusCodeError != null:
+return rhttpStatusCodeError(_that.field0,_that.field1,_that.field2);case RhttpError_RhttpInvalidCertificateError() when rhttpInvalidCertificateError != null:
+return rhttpInvalidCertificateError(_that.field0);case RhttpError_RhttpConnectionError() when rhttpConnectionError != null:
+return rhttpConnectionError(_that.field0);case RhttpError_RhttpUnknownError() when rhttpUnknownError != null:
+return rhttpUnknownError(_that.field0);case _:
+  return null;
+
+}
+}
+
+}
 
 /// @nodoc
 

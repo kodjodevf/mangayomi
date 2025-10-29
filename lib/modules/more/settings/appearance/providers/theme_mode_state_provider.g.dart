@@ -6,38 +6,112 @@ part of 'theme_mode_state_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(ThemeModeState)
+const themeModeStateProvider = ThemeModeStateProvider._();
+
+final class ThemeModeStateProvider
+    extends $NotifierProvider<ThemeModeState, bool> {
+  const ThemeModeStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'themeModeStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$themeModeStateHash();
+
+  @$internal
+  @override
+  ThemeModeState create() => ThemeModeState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
 String _$themeModeStateHash() => r'f1a29fab544a04b3f1d9c269e08f5b83ec51e0c3';
 
-/// See also [ThemeModeState].
-@ProviderFor(ThemeModeState)
-final themeModeStateProvider =
-    AutoDisposeNotifierProvider<ThemeModeState, bool>.internal(
-      ThemeModeState.new,
-      name: r'themeModeStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$themeModeStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+abstract class _$ThemeModeState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
 
-typedef _$ThemeModeState = AutoDisposeNotifier<bool>;
+@ProviderFor(FollowSystemThemeState)
+const followSystemThemeStateProvider = FollowSystemThemeStateProvider._();
+
+final class FollowSystemThemeStateProvider
+    extends $NotifierProvider<FollowSystemThemeState, bool> {
+  const FollowSystemThemeStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'followSystemThemeStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$followSystemThemeStateHash();
+
+  @$internal
+  @override
+  FollowSystemThemeState create() => FollowSystemThemeState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
 String _$followSystemThemeStateHash() =>
     r'07837fff5d56fb0b15b555d203af2bbe94e138f8';
 
-/// See also [FollowSystemThemeState].
-@ProviderFor(FollowSystemThemeState)
-final followSystemThemeStateProvider =
-    AutoDisposeNotifierProvider<FollowSystemThemeState, bool>.internal(
-      FollowSystemThemeState.new,
-      name: r'followSystemThemeStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$followSystemThemeStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$FollowSystemThemeState = AutoDisposeNotifier<bool>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$FollowSystemThemeState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

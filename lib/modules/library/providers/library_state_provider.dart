@@ -146,7 +146,7 @@ class MangaFilterDownloadedState extends _$MangaFilterDownloadedState {
     state = type;
   }
 
-  update() {
+  void update() {
     if (state == 0) {
       setType(1);
     } else if (state == 1) {
@@ -228,7 +228,7 @@ class MangaFilterUnreadState extends _$MangaFilterUnreadState {
     }
   }
 
-  update() {
+  List<Manga> update() {
     if (state == 0) {
       final data = mangaList.where((element) {
         List list = [];

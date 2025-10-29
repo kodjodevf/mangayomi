@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
+import 'package:mangayomi/utils/riverpod.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -11,10 +12,7 @@ import 'package:mangayomi/modules/manga/reader/virtual_scrolling/virtual_manga_l
 
 /// Provides virtual page manager instances
 final virtualPageManagerProvider =
-    Provider.family<VirtualPageManager, List<UChapDataPreload>>((
-      ref,
-      pages,
-    ) {
+    Provider.family<VirtualPageManager, List<UChapDataPreload>>((ref, pages) {
       return VirtualPageManager(pages: pages);
     });
 
@@ -203,7 +201,7 @@ final virtualPageConfigProvider = Provider<VirtualPageConfig>((ref) {
 });
 
 /// Provider for page preload amount (renamed to avoid conflicts)
-final readerPagePreloadAmountStateProvider = StateProvider<int>((ref) => 3);
+final readerPagePreloadAmountStateProvider = StateProvider<int>(() => 3);
 
 /// Extension to convert ReaderMode to virtual scrolling parameters
 extension ReaderModeExtension on ReaderMode {

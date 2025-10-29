@@ -8,7 +8,6 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/manga/archive_reader/models/models.dart';
 import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'local_archive.g.dart';
 
 @riverpod

@@ -55,7 +55,7 @@ const DownloadSchema = CollectionSchema(
   getId: _downloadGetId,
   getLinks: _downloadGetLinks,
   attach: _downloadAttach,
-  version: '3.1.0+1',
+  version: '3.3.0-dev.3',
 );
 
 int _downloadEstimateSize(

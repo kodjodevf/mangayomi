@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
@@ -37,7 +37,7 @@ void setPreferenceSetting(SourcePreference sourcePreference, Source source) {
   });
 }
 
-getPreferenceValue(int sourceId, String key) {
+dynamic getPreferenceValue(int sourceId, String key) {
   final sourcePreference = getSourcePreferenceEntry(key, sourceId);
 
   if (sourcePreference.listPreference != null) {
