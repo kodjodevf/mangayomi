@@ -77,7 +77,7 @@ void main(List<String> args) async {
     await discordRpc?.initialize();
   }
 
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(ProviderScope(child: MyApp(), retry: (retryCount, error) => null));
   unawaited(_postLaunchInit()); // Defer non-essential async operations
 }
 
