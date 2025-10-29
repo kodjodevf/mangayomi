@@ -419,16 +419,19 @@ class _MangaChapterPageGalleryState
                             if (context.mounted) {
                               final box =
                                   context.findRenderObject() as RenderBox?;
-                              await Share.shareXFiles(
-                                [
-                                  XFile.fromData(
-                                    imageBytes,
-                                    name: name,
-                                    mimeType: 'image/png',
-                                  ),
-                                ],
-                                sharePositionOrigin:
-                                    box!.localToGlobal(Offset.zero) & box.size,
+                              await SharePlus.instance.share(
+                                ShareParams(
+                                  files: [
+                                    XFile.fromData(
+                                      imageBytes,
+                                      name: name,
+                                      mimeType: 'image/png',
+                                    ),
+                                  ],
+                                  sharePositionOrigin:
+                                      box!.localToGlobal(Offset.zero) &
+                                      box.size,
+                                ),
                               );
                             }
                           },

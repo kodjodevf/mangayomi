@@ -665,11 +665,13 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                       "${source!.baseUrl}${widget.manga!.link!.getUrlWithoutDomain}";
                                   final box =
                                       context.findRenderObject() as RenderBox?;
-                                  Share.share(
-                                    url,
-                                    sharePositionOrigin:
-                                        box!.localToGlobal(Offset.zero) &
-                                        box.size,
+                                  SharePlus.instance.share(
+                                    ShareParams(
+                                      text: url,
+                                      sharePositionOrigin:
+                                          box!.localToGlobal(Offset.zero) &
+                                          box.size,
+                                    ),
                                   );
                                   break;
                                 case 3:
@@ -2235,13 +2237,17 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                       final bytes = await imageProvider
                                           .getBytes(context);
                                       if (bytes != null) {
-                                        await Share.shareXFiles([
-                                          XFile.fromData(
-                                            bytes,
-                                            name: widget.manga!.name,
-                                            mimeType: 'image/png',
+                                        await SharePlus.instance.share(
+                                          ShareParams(
+                                            files: [
+                                              XFile.fromData(
+                                                bytes,
+                                                name: widget.manga!.name,
+                                                mimeType: 'image/png',
+                                              ),
+                                            ],
                                           ),
-                                        ]);
+                                        );
                                       }
                                     },
                                     child: const Padding(

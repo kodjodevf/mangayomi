@@ -182,12 +182,14 @@ Future<void> doBackUp(
                       return null;
                     }
                   }();
-                  Share.shareXFiles(
-                    [XFile(p.join(path, "$name.backup"))],
-                    text: "$name.backup",
-                    sharePositionOrigin: box == null
-                        ? null
-                        : box.localToGlobal(Offset.zero) & box.size,
+                  SharePlus.instance.share(
+                    ShareParams(
+                      files: [XFile(p.join(path, "$name.backup"))],
+                      text: "$name.backup",
+                      sharePositionOrigin: box == null
+                          ? null
+                          : box.localToGlobal(Offset.zero) & box.size,
+                    ),
                   );
                 },
                 child: Text(context.l10n.share),

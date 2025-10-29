@@ -243,11 +243,13 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                               } else if (value == 1) {
                                 final box =
                                     context.findRenderObject() as RenderBox?;
-                                Share.share(
-                                  _url,
-                                  sharePositionOrigin:
-                                      box!.localToGlobal(Offset.zero) &
-                                      box.size,
+                                SharePlus.instance.share(
+                                  ShareParams(
+                                    text: _url,
+                                    sharePositionOrigin:
+                                        box!.localToGlobal(Offset.zero) &
+                                        box.size,
+                                  ),
                                 );
                               } else if (value == 2) {
                                 await InAppBrowser.openWithSystemBrowser(

@@ -54,10 +54,12 @@ class ChapterPageDownload extends ConsumerWidget {
     }
     if (files.isNotEmpty && context.mounted) {
       final box = context.findRenderObject() as RenderBox?;
-      Share.shareXFiles(
-        files,
-        text: chapter.name,
-        sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+      SharePlus.instance.share(
+        ShareParams(
+          files: files,
+          text: chapter.name,
+          sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+        ),
       );
     }
   }

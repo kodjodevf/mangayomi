@@ -96,11 +96,14 @@ class AboutScreen extends ConsumerWidget {
                             if (context.mounted) {
                               final box =
                                   context.findRenderObject() as RenderBox?;
-                              Share.shareXFiles(
-                                [XFile(file.path)],
-                                text: "log.txt",
-                                sharePositionOrigin:
-                                    box!.localToGlobal(Offset.zero) & box.size,
+                              SharePlus.instance.share(
+                                ShareParams(
+                                  files: [XFile(file.path)],
+                                  text: "log.txt",
+                                  sharePositionOrigin:
+                                      box!.localToGlobal(Offset.zero) &
+                                      box.size,
+                                ),
                               );
                             }
                           } else {
