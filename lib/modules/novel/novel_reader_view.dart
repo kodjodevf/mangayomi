@@ -203,127 +203,119 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
             bottom: false,
             child: Stack(
               children: [
-                Row(
-                  children: [
-                    widget.result.when(
-                      data: (data) {
-                        epubBook = data.$2;
-                        Future.delayed(const Duration(milliseconds: 1000), () {
-                          if (!scrolled && _scrollController.hasClients) {
-                            _scrollController.animateTo(
-                              _scrollController.position.maxScrollExtent *
-                                  (double.tryParse(chapter.lastPageRead!) ?? 0),
-                              duration: Duration(seconds: 2),
-                              curve: Curves.fastOutSlowIn,
-                            );
-                            scrolled = true;
-                          }
-                        });
-                        return Expanded(
-                          child: Scrollbar(
-                            controller: _scrollController,
-                            interactive: true,
-                            child: GestureDetector(
-                              behavior: HitTestBehavior.translucent,
-                              onTap: () {
-                                _isViewFunction();
+                widget.result.when(
+                  data: (data) {
+                    epubBook = data.$2;
+                    Future.delayed(const Duration(milliseconds: 1000), () {
+                      if (!scrolled && _scrollController.hasClients) {
+                        _scrollController.animateTo(
+                          _scrollController.position.maxScrollExtent *
+                              (double.tryParse(chapter.lastPageRead!) ?? 0),
+                          duration: Duration(seconds: 2),
+                          curve: Curves.fastOutSlowIn,
+                        );
+                        scrolled = true;
+                      }
+                    });
+                    return Scrollbar(
+                      controller: _scrollController,
+                      interactive: true,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTap: () {
+                          _isViewFunction();
+                        },
+                        child: CustomScrollView(
+                          controller: _scrollController,
+                          physics: const BouncingScrollPhysics(),
+                          slivers: [
+                            HtmlWidget(
+                              data.$1,
+                              customWidgetBuilder: (element) =>
+                                  _buildCustomWidgets(element),
+                              customStylesBuilder: (element) {
+                                switch (backgroundColor) {
+                                  case BackgroundColor.black:
+                                    return {'background-color': 'black'};
+                                  default:
+                                    return {'background-color': '#F0F0F0'};
+                                }
                               },
-                              child: CustomScrollView(
-                                controller: _scrollController,
-                                physics: const BouncingScrollPhysics(),
-                                slivers: [
-                                  HtmlWidget(
-                                    data.$1,
-                                    customWidgetBuilder: (element) =>
-                                        _buildCustomWidgets(element),
-                                    customStylesBuilder: (element) {
-                                      switch (backgroundColor) {
-                                        case BackgroundColor.black:
-                                          return {'background-color': 'black'};
-                                        default:
-                                          return {
-                                            'background-color': '#F0F0F0',
-                                          };
-                                      }
-                                    },
-                                    onTapUrl: (url) {
-                                      context.push(
-                                        "/mangawebview",
-                                        extra: {'url': url, 'title': url},
-                                      );
-                                      return true;
-                                    },
-                                    renderMode: RenderMode.sliverList,
-                                    textStyle: TextStyle(
-                                      color:
-                                          backgroundColor ==
-                                              BackgroundColor.white
-                                          ? Colors.black
-                                          : Colors.white,
-                                      fontSize: fontSize.toDouble(),
-                                    ),
-                                  ),
-                                  SliverToBoxAdapter(
-                                    child: Center(
-                                      heightFactor: 2,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        spacing: 5,
-                                        children: [
-                                          IconButton(
-                                            padding: const EdgeInsets.all(5),
-                                            onPressed: () =>
-                                                pushReplacementMangaReaderView(
-                                                  context: context,
-                                                  chapter: _readerController
-                                                      .getPrevChapter(),
-                                                ),
-                                            icon: Icon(
-                                              size: 32,
-                                              Icons.arrow_back,
-                                              color:
-                                                  backgroundColor ==
-                                                      BackgroundColor.white
-                                                  ? Colors.black
-                                                  : Colors.white,
-                                            ),
-                                          ),
-                                          IconButton(
-                                            padding: const EdgeInsets.all(5),
-                                            onPressed: () =>
-                                                pushReplacementMangaReaderView(
-                                                  context: context,
-                                                  chapter: _readerController
-                                                      .getNextChapter(),
-                                                ),
-                                            icon: Icon(
-                                              size: 32,
-                                              Icons.arrow_forward,
-                                              color:
-                                                  backgroundColor ==
-                                                      BackgroundColor.white
-                                                  ? Colors.black
-                                                  : Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                              onTapUrl: (url) {
+                                context.push(
+                                  "/mangawebview",
+                                  extra: {'url': url, 'title': url},
+                                );
+                                return true;
+                              },
+                              renderMode: RenderMode.sliverList,
+                              textStyle: TextStyle(
+                                color: backgroundColor == BackgroundColor.white
+                                    ? Colors.black
+                                    : Colors.white,
+                                fontSize: fontSize.toDouble(),
                               ),
                             ),
-                          ),
-                        );
-                      },
-                      loading: () => const Expanded(
-                        child: Center(child: CircularProgressIndicator()),
+                            SliverToBoxAdapter(
+                              child: Center(
+                                heightFactor: 2,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  spacing: 5,
+                                  children: [
+                                    IconButton(
+                                      padding: const EdgeInsets.all(5),
+                                      onPressed: () =>
+                                          pushReplacementMangaReaderView(
+                                            context: context,
+                                            chapter: _readerController
+                                                .getPrevChapter(),
+                                          ),
+                                      icon: Icon(
+                                        size: 32,
+                                        Icons.arrow_back,
+                                        color:
+                                            backgroundColor ==
+                                                BackgroundColor.white
+                                            ? Colors.black
+                                            : Colors.white,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      padding: const EdgeInsets.all(5),
+                                      onPressed: () =>
+                                          pushReplacementMangaReaderView(
+                                            context: context,
+                                            chapter: _readerController
+                                                .getNextChapter(),
+                                          ),
+                                      icon: Icon(
+                                        size: 32,
+                                        Icons.arrow_forward,
+                                        color:
+                                            backgroundColor ==
+                                                BackgroundColor.white
+                                            ? Colors.black
+                                            : Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      error: (err, stack) =>
-                          Center(child: Text(err.toString())),
-                    ),
-                  ],
+                    );
+                  },
+                  loading: () => scaffoldWith(
+                    context,
+                    Center(child: CircularProgressIndicator()),
+                  ),
+                  error: (err, stack) => scaffoldWith(
+                    context,
+                    Center(child: Text(err.toString())),
+                  ),
                 ),
                 _appBar(),
                 _bottomBar(backgroundColor),
@@ -332,6 +324,31 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
           ),
         ),
       ),
+    );
+  }
+
+  Widget scaffoldWith(
+    BuildContext context,
+    Widget body, {
+    bool restoreUi = false,
+  }) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: const Text(''),
+        leading: BackButton(
+          onPressed: () {
+            if (restoreUi) {
+              SystemChrome.setEnabledSystemUIMode(
+                SystemUiMode.manual,
+                overlays: SystemUiOverlay.values,
+              );
+            }
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
+      body: body,
     );
   }
 

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:intl/intl.dart';
@@ -33,7 +34,11 @@ class MyAnimeList extends _$MyAnimeList implements BaseTracker {
   }
 
   @override
-  void build({required int syncId, required ItemType? itemType}) {}
+  void build({
+    required int syncId,
+    required ItemType? itemType,
+    required WidgetRef widgetRef,
+  }) {}
 
   Future<bool?> login() async {
     final callbackUrlScheme = _isDesktop
@@ -61,27 +66,29 @@ class MyAnimeList extends _$MyAnimeList implements BaseTracker {
   }
 
   Future<String> _getAccessToken({bool bypass = false}) async {
-    final track = ref.read(tracksProvider(syncId: syncId));
+    final track = widgetRef.read(tracksProvider(syncId: syncId));
     final mALOAuth = OAuth.fromJson(
       jsonDecode(track!.oAuth!) as Map<String, dynamic>,
     );
     final expiresIn = DateTime.fromMillisecondsSinceEpoch(mALOAuth.expiresIn!);
     if (DateTime.now().isBefore(expiresIn)) return mALOAuth.accessToken!;
     if (!bypass &&
-        (ref.read(tracksProvider(syncId: syncId))?.refreshing ?? false)) {
+        (widgetRef.read(tracksProvider(syncId: syncId))?.refreshing ?? false)) {
       return mALOAuth.accessToken!;
     }
-    ref.read(tracksProvider(syncId: syncId).notifier).setRefreshing(true);
+    widgetRef.read(tracksProvider(syncId: syncId).notifier).setRefreshing(true);
     final refreshed = await _tryRefreshToken(mALOAuth);
     if (refreshed == null) {
-      ref.read(tracksProvider(syncId: syncId).notifier).logout();
+      widgetRef.read(tracksProvider(syncId: syncId).notifier).logout();
       botToast("MyAnimeList Token expired");
       throw Exception("Token expired");
     }
     final username = await _getUserName(refreshed.accessToken!);
     _saveOAuth(username, refreshed);
     await Future.delayed(Duration(seconds: 3));
-    ref.read(tracksProvider(syncId: syncId).notifier).setRefreshing(false);
+    widgetRef
+        .read(tracksProvider(syncId: syncId).notifier)
+        .setRefreshing(false);
     return refreshed.accessToken!;
   }
 
@@ -115,7 +122,7 @@ class MyAnimeList extends _$MyAnimeList implements BaseTracker {
   }
 
   void _saveOAuth(String username, OAuth oAuth) {
-    ref
+    widgetRef
         .read(tracksProvider(syncId: syncId).notifier)
         .login(
           TrackPreference(
@@ -468,7 +475,9 @@ class MyAnimeList extends _$MyAnimeList implements BaseTracker {
       AppLogger.log(e.toString(), logLevel: LogLevel.error);
       return false;
     } finally {
-      ref.read(tracksProvider(syncId: syncId).notifier).setRefreshing(false);
+      widgetRef
+          .read(tracksProvider(syncId: syncId).notifier)
+          .setRefreshing(false);
     }
   }
 }

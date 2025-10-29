@@ -2,7 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/eval/model/m_pages.dart';
 import 'package:mangayomi/main.dart';
@@ -170,7 +170,7 @@ class _MigrationSourceSearchScreenState
   String _errorMessage = "";
   bool _isLoading = true;
   MPages? pages;
-  _init() async {
+  Future<void> _init() async {
     try {
       _errorMessage = "";
       pages = await ref.read(
@@ -599,6 +599,7 @@ class _MigrationMangaGlobalImageCardState
                                     trackStateProvider(
                                       track: null,
                                       itemType: widget.oldManga.itemType,
+                                      widgetRef: ref,
                                     ).notifier,
                                   )
                                   .setTrackSearch(
@@ -663,6 +664,7 @@ class _MigrationMangaGlobalImageCardState
       widget.oldManga.imageUrl = widget.manga.imageUrl;
       widget.oldManga.lang = widget.source.lang;
       widget.oldManga.source = widget.source.name;
+      widget.oldManga.sourceId = widget.source.id;
       widget.oldManga.artist = preview.artist;
       widget.oldManga.author = preview.author;
       widget.oldManga.status = preview.status ?? widget.oldManga.status;

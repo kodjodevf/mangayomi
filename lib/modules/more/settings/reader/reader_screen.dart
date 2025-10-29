@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -360,13 +362,14 @@ class ReaderScreen extends ConsumerWidget {
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
-            SwitchListTile(
-              value: fullScreenReader,
-              title: Text(context.l10n.fullscreen),
-              onChanged: (value) {
-                ref.read(fullScreenReaderStateProvider.notifier).set(value);
-              },
-            ),
+            if (!(Platform.isAndroid || Platform.isIOS))
+              SwitchListTile(
+                value: fullScreenReader,
+                title: Text(context.l10n.fullscreen),
+                onChanged: (value) {
+                  ref.read(fullScreenReaderStateProvider.notifier).set(value);
+                },
+              ),
             SwitchListTile(
               value: animatePageTransitions,
               title: Text(context.l10n.animate_page_transitions),

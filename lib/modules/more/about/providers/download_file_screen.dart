@@ -47,6 +47,12 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
             Text(
               "${l10n.app_version(updateAvailable.$1)}\n\n${updateAvailable.$2}",
             ),
+          ],
+        ),
+      ),
+      actions: [
+        Column(
+          children: [
             _total > 0
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -64,48 +70,46 @@ class _DownloadFileScreenState extends ConsumerState<DownloadFileScreen> {
                     ],
                   )
                 : SizedBox.shrink(),
-          ],
-        ),
-      ),
-      actions: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            TextButton(
-              onPressed: () async {
-                try {
-                  await _subscription?.cancel();
-                } catch (_) {}
-                if (context.mounted) {
-                  Navigator.pop(context);
-                }
-              },
-              child: Text(l10n.cancel),
-            ),
-            const SizedBox(width: 15),
-            ElevatedButton(
-              onPressed: _total == 0
-                  ? () async {
-                      if (Platform.isAndroid) {
-                        final deviceInfo = DeviceInfoPlugin();
-                        final androidInfo = await deviceInfo.androidInfo;
-                        String apkUrl = "";
-                        for (String abi in androidInfo.supportedAbis) {
-                          final url = updateAvailable.$4.firstWhereOrNull(
-                            (apk) => (apk as String).contains(abi),
-                          );
-                          if (url != null) {
-                            apkUrl = url;
-                            break;
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () async {
+                    try {
+                      await _subscription?.cancel();
+                    } catch (_) {}
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: Text(l10n.cancel),
+                ),
+                const SizedBox(width: 15),
+                ElevatedButton(
+                  onPressed: _total == 0
+                      ? () async {
+                          if (Platform.isAndroid) {
+                            final deviceInfo = DeviceInfoPlugin();
+                            final androidInfo = await deviceInfo.androidInfo;
+                            String apkUrl = "";
+                            for (String abi in androidInfo.supportedAbis) {
+                              final url = updateAvailable.$4.firstWhereOrNull(
+                                (apk) => (apk as String).contains(abi),
+                              );
+                              if (url != null) {
+                                apkUrl = url;
+                                break;
+                              }
+                            }
+                            await _downloadApk(apkUrl);
+                          } else {
+                            _launchInBrowser(Uri.parse(updateAvailable.$3));
                           }
                         }
-                        await _downloadApk(apkUrl);
-                      } else {
-                        _launchInBrowser(Uri.parse(updateAvailable.$3));
-                      }
-                    }
-                  : null,
-              child: Text(l10n.download),
+                      : null,
+                  child: Text(l10n.download),
+                ),
+              ],
             ),
           ],
         ),

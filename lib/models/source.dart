@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/filter.dart';
 import 'package:mangayomi/eval/model/m_source.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -135,7 +135,7 @@ class Source {
     filterList = json['filterList'];
     preferenceList = json['preferenceList'];
     iconUrl = json['iconUrl'];
-    id = json['id'];
+    id = json['id'] is int ? json['id'] : null;
     isActive = json['isActive'];
     isAdded = json['isAdded'];
     isFullData = json['isFullData'];
@@ -216,4 +216,4 @@ class Source {
   }
 }
 
-enum SourceCodeLanguage { dart, javascript, mihon }
+enum SourceCodeLanguage { dart, javascript, mihon, lnreader }

@@ -6,143 +6,82 @@ part of 'get_source_baseurl.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$sourceBaseUrlHash() => r'ead3cca719e2530502d97613e3168e0031eecde7';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-/// See also [sourceBaseUrl].
 @ProviderFor(sourceBaseUrl)
-const sourceBaseUrlProvider = SourceBaseUrlFamily();
+const sourceBaseUrlProvider = SourceBaseUrlFamily._();
 
-/// See also [sourceBaseUrl].
-class SourceBaseUrlFamily extends Family<String> {
-  /// See also [sourceBaseUrl].
-  const SourceBaseUrlFamily();
+final class SourceBaseUrlProvider
+    extends $FunctionalProvider<String, String, String>
+    with $Provider<String> {
+  const SourceBaseUrlProvider._({
+    required SourceBaseUrlFamily super.from,
+    required Source super.argument,
+  }) : super(
+         retry: null,
+         name: r'sourceBaseUrlProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// See also [sourceBaseUrl].
-  SourceBaseUrlProvider call({required Source source}) {
-    return SourceBaseUrlProvider(source: source);
+  @override
+  String debugGetCreateSourceHash() => _$sourceBaseUrlHash();
+
+  @override
+  String toString() {
+    return r'sourceBaseUrlProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  SourceBaseUrlProvider getProviderOverride(
-    covariant SourceBaseUrlProvider provider,
-  ) {
-    return call(source: provider.source);
+  $ProviderElement<String> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  String create(Ref ref) {
+    final argument = this.argument as Source;
+    return sourceBaseUrl(ref, source: argument);
   }
 
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'sourceBaseUrlProvider';
-}
-
-/// See also [sourceBaseUrl].
-class SourceBaseUrlProvider extends AutoDisposeProvider<String> {
-  /// See also [sourceBaseUrl].
-  SourceBaseUrlProvider({required Source source})
-    : this._internal(
-        (ref) => sourceBaseUrl(ref as SourceBaseUrlRef, source: source),
-        from: sourceBaseUrlProvider,
-        name: r'sourceBaseUrlProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$sourceBaseUrlHash,
-        dependencies: SourceBaseUrlFamily._dependencies,
-        allTransitiveDependencies:
-            SourceBaseUrlFamily._allTransitiveDependencies,
-        source: source,
-      );
-
-  SourceBaseUrlProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.source,
-  }) : super.internal();
-
-  final Source source;
-
-  @override
-  Override overrideWith(String Function(SourceBaseUrlRef provider) create) {
-    return ProviderOverride(
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
       origin: this,
-      override: SourceBaseUrlProvider._internal(
-        (ref) => create(ref as SourceBaseUrlRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        source: source,
-      ),
+      providerOverride: $SyncValueProvider<String>(value),
     );
   }
 
   @override
-  AutoDisposeProviderElement<String> createElement() {
-    return _SourceBaseUrlProviderElement(this);
-  }
-
-  @override
   bool operator ==(Object other) {
-    return other is SourceBaseUrlProvider && other.source == source;
+    return other is SourceBaseUrlProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, source.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin SourceBaseUrlRef on AutoDisposeProviderRef<String> {
-  /// The parameter `source` of this provider.
-  Source get source;
-}
+String _$sourceBaseUrlHash() => r'ead3cca719e2530502d97613e3168e0031eecde7';
 
-class _SourceBaseUrlProviderElement extends AutoDisposeProviderElement<String>
-    with SourceBaseUrlRef {
-  _SourceBaseUrlProviderElement(super.provider);
+final class SourceBaseUrlFamily extends $Family
+    with $FunctionalFamilyOverride<String, Source> {
+  const SourceBaseUrlFamily._()
+    : super(
+        retry: null,
+        name: r'sourceBaseUrlProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  SourceBaseUrlProvider call({required Source source}) =>
+      SourceBaseUrlProvider._(argument: source, from: this);
 
   @override
-  Source get source => (origin as SourceBaseUrlProvider).source;
+  String toString() => r'sourceBaseUrlProvider';
 }
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

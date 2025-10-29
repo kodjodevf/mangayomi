@@ -6,221 +6,309 @@ part of 'player_decoder_state_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$hwdecModeStateHash() => r'8186e3c5f3db0e952f629d56b2e580e546aed65e';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-abstract class _$HwdecModeState extends BuildlessAutoDisposeNotifier<String> {
-  late final bool rawValue;
-
-  String build({bool rawValue = false});
-}
-
-/// See also [HwdecModeState].
 @ProviderFor(HwdecModeState)
-const hwdecModeStateProvider = HwdecModeStateFamily();
+const hwdecModeStateProvider = HwdecModeStateFamily._();
 
-/// See also [HwdecModeState].
-class HwdecModeStateFamily extends Family<String> {
-  /// See also [HwdecModeState].
-  const HwdecModeStateFamily();
+final class HwdecModeStateProvider
+    extends $NotifierProvider<HwdecModeState, String> {
+  const HwdecModeStateProvider._({
+    required HwdecModeStateFamily super.from,
+    required bool super.argument,
+  }) : super(
+         retry: null,
+         name: r'hwdecModeStateProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// See also [HwdecModeState].
-  HwdecModeStateProvider call({bool rawValue = false}) {
-    return HwdecModeStateProvider(rawValue: rawValue);
+  @override
+  String debugGetCreateSourceHash() => _$hwdecModeStateHash();
+
+  @override
+  String toString() {
+    return r'hwdecModeStateProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  HwdecModeStateProvider getProviderOverride(
-    covariant HwdecModeStateProvider provider,
-  ) {
-    return call(rawValue: provider.rawValue);
-  }
+  HwdecModeState create() => HwdecModeState();
 
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'hwdecModeStateProvider';
-}
-
-/// See also [HwdecModeState].
-class HwdecModeStateProvider
-    extends AutoDisposeNotifierProviderImpl<HwdecModeState, String> {
-  /// See also [HwdecModeState].
-  HwdecModeStateProvider({bool rawValue = false})
-    : this._internal(
-        () => HwdecModeState()..rawValue = rawValue,
-        from: hwdecModeStateProvider,
-        name: r'hwdecModeStateProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$hwdecModeStateHash,
-        dependencies: HwdecModeStateFamily._dependencies,
-        allTransitiveDependencies:
-            HwdecModeStateFamily._allTransitiveDependencies,
-        rawValue: rawValue,
-      );
-
-  HwdecModeStateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.rawValue,
-  }) : super.internal();
-
-  final bool rawValue;
-
-  @override
-  String runNotifierBuild(covariant HwdecModeState notifier) {
-    return notifier.build(rawValue: rawValue);
-  }
-
-  @override
-  Override overrideWith(HwdecModeState Function() create) {
-    return ProviderOverride(
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
       origin: this,
-      override: HwdecModeStateProvider._internal(
-        () => create()..rawValue = rawValue,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        rawValue: rawValue,
-      ),
+      providerOverride: $SyncValueProvider<String>(value),
     );
   }
 
   @override
-  AutoDisposeNotifierProviderElement<HwdecModeState, String> createElement() {
-    return _HwdecModeStateProviderElement(this);
-  }
-
-  @override
   bool operator ==(Object other) {
-    return other is HwdecModeStateProvider && other.rawValue == rawValue;
+    return other is HwdecModeStateProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, rawValue.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin HwdecModeStateRef on AutoDisposeNotifierProviderRef<String> {
-  /// The parameter `rawValue` of this provider.
-  bool get rawValue;
-}
+String _$hwdecModeStateHash() => r'8186e3c5f3db0e952f629d56b2e580e546aed65e';
 
-class _HwdecModeStateProviderElement
-    extends AutoDisposeNotifierProviderElement<HwdecModeState, String>
-    with HwdecModeStateRef {
-  _HwdecModeStateProviderElement(super.provider);
+final class HwdecModeStateFamily extends $Family
+    with $ClassFamilyOverride<HwdecModeState, String, String, String, bool> {
+  const HwdecModeStateFamily._()
+    : super(
+        retry: null,
+        name: r'hwdecModeStateProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  HwdecModeStateProvider call({bool rawValue = false}) =>
+      HwdecModeStateProvider._(argument: rawValue, from: this);
 
   @override
-  bool get rawValue => (origin as HwdecModeStateProvider).rawValue;
+  String toString() => r'hwdecModeStateProvider';
+}
+
+abstract class _$HwdecModeState extends $Notifier<String> {
+  late final _$args = ref.$arg as bool;
+  bool get rawValue => _$args;
+
+  String build({bool rawValue = false});
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(rawValue: _$args);
+    final ref = this.ref as $Ref<String, String>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String, String>,
+              String,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(EnableHardwareAccelState)
+const enableHardwareAccelStateProvider = EnableHardwareAccelStateProvider._();
+
+final class EnableHardwareAccelStateProvider
+    extends $NotifierProvider<EnableHardwareAccelState, bool> {
+  const EnableHardwareAccelStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'enableHardwareAccelStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$enableHardwareAccelStateHash();
+
+  @$internal
+  @override
+  EnableHardwareAccelState create() => EnableHardwareAccelState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
 }
 
 String _$enableHardwareAccelStateHash() =>
     r'4804b699c14a78db9c760ec4eaf8a88bb6ce1b9b';
 
-/// See also [EnableHardwareAccelState].
-@ProviderFor(EnableHardwareAccelState)
-final enableHardwareAccelStateProvider =
-    AutoDisposeNotifierProvider<EnableHardwareAccelState, bool>.internal(
-      EnableHardwareAccelState.new,
-      name: r'enableHardwareAccelStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$enableHardwareAccelStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+abstract class _$EnableHardwareAccelState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
 
-typedef _$EnableHardwareAccelState = AutoDisposeNotifier<bool>;
+@ProviderFor(DebandingState)
+const debandingStateProvider = DebandingStateProvider._();
+
+final class DebandingStateProvider
+    extends $NotifierProvider<DebandingState, DebandingType> {
+  const DebandingStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'debandingStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$debandingStateHash();
+
+  @$internal
+  @override
+  DebandingState create() => DebandingState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DebandingType value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<DebandingType>(value),
+    );
+  }
+}
+
 String _$debandingStateHash() => r'b93e2fc826d98cc8bce1aab9a92900353e4d3958';
 
-/// See also [DebandingState].
-@ProviderFor(DebandingState)
-final debandingStateProvider =
-    AutoDisposeNotifierProvider<DebandingState, DebandingType>.internal(
-      DebandingState.new,
-      name: r'debandingStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$debandingStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+abstract class _$DebandingState extends $Notifier<DebandingType> {
+  DebandingType build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<DebandingType, DebandingType>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<DebandingType, DebandingType>,
+              DebandingType,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
 
-typedef _$DebandingState = AutoDisposeNotifier<DebandingType>;
+@ProviderFor(UseGpuNextState)
+const useGpuNextStateProvider = UseGpuNextStateProvider._();
+
+final class UseGpuNextStateProvider
+    extends $NotifierProvider<UseGpuNextState, bool> {
+  const UseGpuNextStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'useGpuNextStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$useGpuNextStateHash();
+
+  @$internal
+  @override
+  UseGpuNextState create() => UseGpuNextState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
 String _$useGpuNextStateHash() => r'cfc109cd7db66e359e9523102a84aa8cf37bf243';
 
-/// See also [UseGpuNextState].
-@ProviderFor(UseGpuNextState)
-final useGpuNextStateProvider =
-    AutoDisposeNotifierProvider<UseGpuNextState, bool>.internal(
-      UseGpuNextState.new,
-      name: r'useGpuNextStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$useGpuNextStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+abstract class _$UseGpuNextState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
 
-typedef _$UseGpuNextState = AutoDisposeNotifier<bool>;
+@ProviderFor(UseYUV420PState)
+const useYUV420PStateProvider = UseYUV420PStateProvider._();
+
+final class UseYUV420PStateProvider
+    extends $NotifierProvider<UseYUV420PState, bool> {
+  const UseYUV420PStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'useYUV420PStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$useYUV420PStateHash();
+
+  @$internal
+  @override
+  UseYUV420PState create() => UseYUV420PState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
 String _$useYUV420PStateHash() => r'c600001eff34b2b8df31ba604413b8b20edc3044';
 
-/// See also [UseYUV420PState].
-@ProviderFor(UseYUV420PState)
-final useYUV420PStateProvider =
-    AutoDisposeNotifierProvider<UseYUV420PState, bool>.internal(
-      UseYUV420PState.new,
-      name: r'useYUV420PStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$useYUV420PStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$UseYUV420PState = AutoDisposeNotifier<bool>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$UseYUV420PState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

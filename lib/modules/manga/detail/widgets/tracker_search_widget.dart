@@ -37,7 +37,7 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
   bool hide = false;
   late List<TrackSearch>? tracks = [];
   String? _errorMsg;
-  _init() async {
+  Future<void> _init() async {
     await Future.delayed(const Duration(microseconds: 100));
     try {
       tracks = await ref
@@ -45,6 +45,7 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
             trackStateProvider(
               track: widget.track,
               itemType: widget.itemType,
+              widgetRef: ref,
             ).notifier,
           )
           .search(query);
@@ -233,6 +234,7 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
                                   trackStateProvider(
                                     track: widget.track,
                                     itemType: widget.itemType,
+                                    widgetRef: ref,
                                   ).notifier,
                                 )
                                 .search(d.trim());
@@ -280,7 +282,7 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
   }
 }
 
-trackersSearchraggableMenu(
+Future<dynamic> trackersSearchDraggableMenu(
   BuildContext context, {
   required Track track,
   required ItemType itemType,

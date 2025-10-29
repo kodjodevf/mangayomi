@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -121,7 +121,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         ref.read(checkForUpdateProvider(context: context));
         for (var type in ItemType.values) {
           ref.read(
-            FetchItemSourcesListProvider(
+            fetchItemSourcesListProvider(
               id: null,
               reFresh: false,
               itemType: type,

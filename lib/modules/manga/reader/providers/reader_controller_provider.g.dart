@@ -6,286 +6,193 @@ part of 'reader_controller_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$currentIndexHash() => r'7cf7d12cc79f02fec4de750e4aedf5c9e09e5284';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
+@ProviderFor(CurrentIndex)
+const currentIndexProvider = CurrentIndexFamily._();
 
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
+final class CurrentIndexProvider extends $NotifierProvider<CurrentIndex, int> {
+  const CurrentIndexProvider._({
+    required CurrentIndexFamily super.from,
+    required Chapter super.argument,
+  }) : super(
+         retry: null,
+         name: r'currentIndexProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$currentIndexHash();
+
+  @override
+  String toString() {
+    return r'currentIndexProvider'
+        ''
+        '($argument)';
   }
 
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
+  @$internal
+  @override
+  CurrentIndex create() => CurrentIndex();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is CurrentIndexProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
   }
 }
 
-abstract class _$CurrentIndex extends BuildlessAutoDisposeNotifier<int> {
-  late final Chapter chapter;
+String _$currentIndexHash() => r'e0b5e5b8a2afa5e8df699784009720334e1c9e80';
+
+final class CurrentIndexFamily extends $Family
+    with $ClassFamilyOverride<CurrentIndex, int, int, int, Chapter> {
+  const CurrentIndexFamily._()
+    : super(
+        retry: null,
+        name: r'currentIndexProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  CurrentIndexProvider call(Chapter chapter) =>
+      CurrentIndexProvider._(argument: chapter, from: this);
+
+  @override
+  String toString() => r'currentIndexProvider';
+}
+
+abstract class _$CurrentIndex extends $Notifier<int> {
+  late final _$args = ref.$arg as Chapter;
+  Chapter get chapter => _$args;
 
   int build(Chapter chapter);
-}
-
-/// See also [CurrentIndex].
-@ProviderFor(CurrentIndex)
-const currentIndexProvider = CurrentIndexFamily();
-
-/// See also [CurrentIndex].
-class CurrentIndexFamily extends Family<int> {
-  /// See also [CurrentIndex].
-  const CurrentIndexFamily();
-
-  /// See also [CurrentIndex].
-  CurrentIndexProvider call(Chapter chapter) {
-    return CurrentIndexProvider(chapter);
-  }
-
+  @$mustCallSuper
   @override
-  CurrentIndexProvider getProviderOverride(
-    covariant CurrentIndexProvider provider,
-  ) {
-    return call(provider.chapter);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'currentIndexProvider';
-}
-
-/// See also [CurrentIndex].
-class CurrentIndexProvider
-    extends AutoDisposeNotifierProviderImpl<CurrentIndex, int> {
-  /// See also [CurrentIndex].
-  CurrentIndexProvider(Chapter chapter)
-    : this._internal(
-        () => CurrentIndex()..chapter = chapter,
-        from: currentIndexProvider,
-        name: r'currentIndexProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$currentIndexHash,
-        dependencies: CurrentIndexFamily._dependencies,
-        allTransitiveDependencies:
-            CurrentIndexFamily._allTransitiveDependencies,
-        chapter: chapter,
-      );
-
-  CurrentIndexProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.chapter,
-  }) : super.internal();
-
-  final Chapter chapter;
-
-  @override
-  int runNotifierBuild(covariant CurrentIndex notifier) {
-    return notifier.build(chapter);
-  }
-
-  @override
-  Override overrideWith(CurrentIndex Function() create) {
-    return ProviderOverride(
-      origin: this,
-      override: CurrentIndexProvider._internal(
-        () => create()..chapter = chapter,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        chapter: chapter,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeNotifierProviderElement<CurrentIndex, int> createElement() {
-    return _CurrentIndexProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is CurrentIndexProvider && other.chapter == chapter;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, chapter.hashCode);
-
-    return _SystemHash.finish(hash);
+  void runBuild() {
+    final created = build(_$args);
+    final ref = this.ref as $Ref<int, int>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<int, int>,
+              int,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin CurrentIndexRef on AutoDisposeNotifierProviderRef<int> {
-  /// The parameter `chapter` of this provider.
-  Chapter get chapter;
-}
-
-class _CurrentIndexProviderElement
-    extends AutoDisposeNotifierProviderElement<CurrentIndex, int>
-    with CurrentIndexRef {
-  _CurrentIndexProviderElement(super.provider);
-
-  @override
-  Chapter get chapter => (origin as CurrentIndexProvider).chapter;
-}
-
-String _$readerControllerHash() => r'8b2995dcf849eddff308a105a2e06c9534096fac';
-
-abstract class _$ReaderController extends BuildlessAutoDisposeNotifier<void> {
-  late final Chapter chapter;
-
-  void build({required Chapter chapter});
-}
-
-/// See also [ReaderController].
 @ProviderFor(ReaderController)
-const readerControllerProvider = ReaderControllerFamily();
+const readerControllerProvider = ReaderControllerFamily._();
 
-/// See also [ReaderController].
-class ReaderControllerFamily extends Family<void> {
-  /// See also [ReaderController].
-  const ReaderControllerFamily();
+final class ReaderControllerProvider
+    extends $NotifierProvider<ReaderController, KeepAliveLink> {
+  const ReaderControllerProvider._({
+    required ReaderControllerFamily super.from,
+    required Chapter super.argument,
+  }) : super(
+         retry: null,
+         name: r'readerControllerProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// See also [ReaderController].
-  ReaderControllerProvider call({required Chapter chapter}) {
-    return ReaderControllerProvider(chapter: chapter);
+  @override
+  String debugGetCreateSourceHash() => _$readerControllerHash();
+
+  @override
+  String toString() {
+    return r'readerControllerProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  ReaderControllerProvider getProviderOverride(
-    covariant ReaderControllerProvider provider,
-  ) {
-    return call(chapter: provider.chapter);
-  }
+  ReaderController create() => ReaderController();
 
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'readerControllerProvider';
-}
-
-/// See also [ReaderController].
-class ReaderControllerProvider
-    extends AutoDisposeNotifierProviderImpl<ReaderController, void> {
-  /// See also [ReaderController].
-  ReaderControllerProvider({required Chapter chapter})
-    : this._internal(
-        () => ReaderController()..chapter = chapter,
-        from: readerControllerProvider,
-        name: r'readerControllerProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$readerControllerHash,
-        dependencies: ReaderControllerFamily._dependencies,
-        allTransitiveDependencies:
-            ReaderControllerFamily._allTransitiveDependencies,
-        chapter: chapter,
-      );
-
-  ReaderControllerProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.chapter,
-  }) : super.internal();
-
-  final Chapter chapter;
-
-  @override
-  void runNotifierBuild(covariant ReaderController notifier) {
-    return notifier.build(chapter: chapter);
-  }
-
-  @override
-  Override overrideWith(ReaderController Function() create) {
-    return ProviderOverride(
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(KeepAliveLink value) {
+    return $ProviderOverride(
       origin: this,
-      override: ReaderControllerProvider._internal(
-        () => create()..chapter = chapter,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        chapter: chapter,
-      ),
+      providerOverride: $SyncValueProvider<KeepAliveLink>(value),
     );
   }
 
   @override
-  AutoDisposeNotifierProviderElement<ReaderController, void> createElement() {
-    return _ReaderControllerProviderElement(this);
-  }
-
-  @override
   bool operator ==(Object other) {
-    return other is ReaderControllerProvider && other.chapter == chapter;
+    return other is ReaderControllerProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, chapter.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin ReaderControllerRef on AutoDisposeNotifierProviderRef<void> {
-  /// The parameter `chapter` of this provider.
-  Chapter get chapter;
-}
+String _$readerControllerHash() => r'25b13bbbbd961a5c3dbae3cc0ea58017d7bb5ce8';
 
-class _ReaderControllerProviderElement
-    extends AutoDisposeNotifierProviderElement<ReaderController, void>
-    with ReaderControllerRef {
-  _ReaderControllerProviderElement(super.provider);
+final class ReaderControllerFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          ReaderController,
+          KeepAliveLink,
+          KeepAliveLink,
+          KeepAliveLink,
+          Chapter
+        > {
+  const ReaderControllerFamily._()
+    : super(
+        retry: null,
+        name: r'readerControllerProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  ReaderControllerProvider call({required Chapter chapter}) =>
+      ReaderControllerProvider._(argument: chapter, from: this);
 
   @override
-  Chapter get chapter => (origin as ReaderControllerProvider).chapter;
+  String toString() => r'readerControllerProvider';
 }
 
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$ReaderController extends $Notifier<KeepAliveLink> {
+  late final _$args = ref.$arg as Chapter;
+  Chapter get chapter => _$args;
+
+  KeepAliveLink build({required Chapter chapter});
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(chapter: _$args);
+    final ref = this.ref as $Ref<KeepAliveLink, KeepAliveLink>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<KeepAliveLink, KeepAliveLink>,
+              KeepAliveLink,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

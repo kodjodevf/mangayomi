@@ -6,22 +6,59 @@ part of 'downloaded_only_state_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(DownloadedOnlyState)
+const downloadedOnlyStateProvider = DownloadedOnlyStateProvider._();
+
+final class DownloadedOnlyStateProvider
+    extends $NotifierProvider<DownloadedOnlyState, bool> {
+  const DownloadedOnlyStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'downloadedOnlyStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$downloadedOnlyStateHash();
+
+  @$internal
+  @override
+  DownloadedOnlyState create() => DownloadedOnlyState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
 String _$downloadedOnlyStateHash() =>
     r'09c451617c435ca59554546f5d3090d20c961bfe';
 
-/// See also [DownloadedOnlyState].
-@ProviderFor(DownloadedOnlyState)
-final downloadedOnlyStateProvider =
-    AutoDisposeNotifierProvider<DownloadedOnlyState, bool>.internal(
-      DownloadedOnlyState.new,
-      name: r'downloadedOnlyStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$downloadedOnlyStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$DownloadedOnlyState = AutoDisposeNotifier<bool>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$DownloadedOnlyState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

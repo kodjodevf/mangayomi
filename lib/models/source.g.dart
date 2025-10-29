@@ -145,7 +145,7 @@ const SourceSchema = CollectionSchema(
   getId: _sourceGetId,
   getLinks: _sourceGetLinks,
   attach: _sourceAttach,
-  version: '3.1.0+1',
+  version: '3.3.0-dev.3',
 );
 
 int _sourceEstimateSize(
@@ -475,11 +475,13 @@ const _SourcesourceCodeLanguageEnumValueMap = {
   'dart': 0,
   'javascript': 1,
   'mihon': 2,
+  'lnreader': 3,
 };
 const _SourcesourceCodeLanguageValueEnumMap = {
   0: SourceCodeLanguage.dart,
   1: SourceCodeLanguage.javascript,
   2: SourceCodeLanguage.mihon,
+  3: SourceCodeLanguage.lnreader,
 };
 
 Id _sourceGetId(Source object) {

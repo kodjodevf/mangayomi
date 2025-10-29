@@ -6,25 +6,47 @@ part of 'custom_buttons_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(getCustomButtonsStream)
+const getCustomButtonsStreamProvider = GetCustomButtonsStreamProvider._();
+
+final class GetCustomButtonsStreamProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<CustomButton>>,
+          List<CustomButton>,
+          Stream<List<CustomButton>>
+        >
+    with
+        $FutureModifier<List<CustomButton>>,
+        $StreamProvider<List<CustomButton>> {
+  const GetCustomButtonsStreamProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'getCustomButtonsStreamProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$getCustomButtonsStreamHash();
+
+  @$internal
+  @override
+  $StreamProviderElement<List<CustomButton>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<List<CustomButton>> create(Ref ref) {
+    return getCustomButtonsStream(ref);
+  }
+}
+
 String _$getCustomButtonsStreamHash() =>
     r'476c26eb3d20e9e9eed2e1d8bb15fa74ce357ba3';
-
-/// See also [getCustomButtonsStream].
-@ProviderFor(getCustomButtonsStream)
-final getCustomButtonsStreamProvider =
-    AutoDisposeStreamProvider<List<CustomButton>>.internal(
-      getCustomButtonsStream,
-      name: r'getCustomButtonsStreamProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$getCustomButtonsStreamHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef GetCustomButtonsStreamRef =
-    AutoDisposeStreamProviderRef<List<CustomButton>>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

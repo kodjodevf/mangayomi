@@ -6,7 +6,6 @@ import 'package:mangayomi/src/rust/api/image.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'crop_borders_provider.g.dart';
 
 @Riverpod(keepAlive: true)

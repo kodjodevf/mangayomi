@@ -6,39 +6,101 @@ part of 'router.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(router)
+const routerProvider = RouterProvider._();
+
+final class RouterProvider
+    extends $FunctionalProvider<GoRouter, GoRouter, GoRouter>
+    with $Provider<GoRouter> {
+  const RouterProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'routerProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$routerHash();
+
+  @$internal
+  @override
+  $ProviderElement<GoRouter> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  GoRouter create(Ref ref) {
+    return router(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GoRouter value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GoRouter>(value),
+    );
+  }
+}
+
 String _$routerHash() => r'fe1b18b9e03bd3df71cf66eabd78f0da3ac36247';
 
-/// See also [router].
-@ProviderFor(router)
-final routerProvider = AutoDisposeProvider<GoRouter>.internal(
-  router,
-  name: r'routerProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$routerHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+@ProviderFor(RouterCurrentLocationState)
+const routerCurrentLocationStateProvider =
+    RouterCurrentLocationStateProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef RouterRef = AutoDisposeProviderRef<GoRouter>;
+final class RouterCurrentLocationStateProvider
+    extends $NotifierProvider<RouterCurrentLocationState, String?> {
+  const RouterCurrentLocationStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'routerCurrentLocationStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$routerCurrentLocationStateHash();
+
+  @$internal
+  @override
+  RouterCurrentLocationState create() => RouterCurrentLocationState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String?>(value),
+    );
+  }
+}
+
 String _$routerCurrentLocationStateHash() =>
     r'e3248e9cbfd34a1c0576b28d9bcc01a07f644cb9';
 
-/// See also [RouterCurrentLocationState].
-@ProviderFor(RouterCurrentLocationState)
-final routerCurrentLocationStateProvider =
-    AutoDisposeNotifierProvider<RouterCurrentLocationState, String?>.internal(
-      RouterCurrentLocationState.new,
-      name: r'routerCurrentLocationStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$routerCurrentLocationStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$RouterCurrentLocationState = AutoDisposeNotifier<String?>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$RouterCurrentLocationState extends $Notifier<String?> {
+  String? build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<String?, String?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String?, String?>,
+              String?,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

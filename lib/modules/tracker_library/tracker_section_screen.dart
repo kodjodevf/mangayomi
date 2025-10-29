@@ -74,7 +74,7 @@ class _TrackerSectionScreenState extends State<TrackerSectionScreen> {
     );
   }
 
-  _fetchData() async {
+  Future<void> _fetchData() async {
     final box = await Hive.openBox("tracker_library");
     final key =
         "${widget.section.syncId}-${widget.section.itemType.name}-${widget.section.name}";

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_qjs/quickjs/ffi.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -33,7 +34,11 @@ class Simkl extends _$Simkl implements BaseTracker {
   }
 
   @override
-  void build({required int syncId, required ItemType? itemType}) {}
+  void build({
+    required int syncId,
+    required ItemType? itemType,
+    required WidgetRef widgetRef,
+  }) {}
 
   Future<bool?> login() async {
     final callbackUrlScheme = _isDesktop
@@ -330,7 +335,7 @@ class Simkl extends _$Simkl implements BaseTracker {
   };
 
   Future<String> _getAccessToken() async {
-    final track = ref.read(tracksProvider(syncId: syncId));
+    final track = widgetRef.read(tracksProvider(syncId: syncId));
     final mALOAuth = OAuth.fromJson(
       jsonDecode(track!.oAuth!) as Map<String, dynamic>,
     );
@@ -342,7 +347,7 @@ class Simkl extends _$Simkl implements BaseTracker {
   }
 
   void _saveOAuth(String username, OAuth oAuth) {
-    ref
+    widgetRef
         .read(tracksProvider(syncId: syncId).notifier)
         .login(
           TrackPreference(
@@ -418,10 +423,12 @@ class Simkl extends _$Simkl implements BaseTracker {
   (int, int) getScoreValue() {
     throw UnimplementedError();
   }
-  
+
   @override
   Future<bool> checkRefresh() async {
-    ref.read(tracksProvider(syncId: syncId).notifier).setRefreshing(false);
+    widgetRef
+        .read(tracksProvider(syncId: syncId).notifier)
+        .setRefreshing(false);
     return true;
   }
 }

@@ -12,7 +12,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/custom_button.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -73,7 +73,7 @@ void main(List<String> args) async {
   await storage.requestPermission();
   await _migrateOldLayout();
   isar = await storage.initDB(null, inspector: kDebugMode);
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(ProviderScope(child: MyApp(), retry: (retryCount, error) => null));
   unawaited(_postLaunchInit(storage)); // Defer non-essential async operations
 }
 
@@ -404,7 +404,13 @@ class _MyAppState extends ConsumerState<MyApp> {
         status: track.TrackStatus.completed,
       );
       ref
-          .read(trackStateProvider(track: temp, itemType: null).notifier)
+          .read(
+            trackStateProvider(
+              track: temp,
+              itemType: null,
+              widgetRef: ref,
+            ).notifier,
+          )
           .checkRefresh();
     }
   }

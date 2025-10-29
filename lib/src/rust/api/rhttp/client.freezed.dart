@@ -1,6 +1,5 @@
-// dart format width=80
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -41,6 +40,136 @@ class $ProxySettingsCopyWith<$Res>  {
 $ProxySettingsCopyWith(ProxySettings _, $Res Function(ProxySettings) __);
 }
 
+
+/// Adds pattern-matching-related methods to [ProxySettings].
+extension ProxySettingsPatterns on ProxySettings {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( ProxySettings_NoProxy value)?  noProxy,TResult Function( ProxySettings_CustomProxyList value)?  customProxyList,required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case ProxySettings_NoProxy() when noProxy != null:
+return noProxy(_that);case ProxySettings_CustomProxyList() when customProxyList != null:
+return customProxyList(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( ProxySettings_NoProxy value)  noProxy,required TResult Function( ProxySettings_CustomProxyList value)  customProxyList,}){
+final _that = this;
+switch (_that) {
+case ProxySettings_NoProxy():
+return noProxy(_that);case ProxySettings_CustomProxyList():
+return customProxyList(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( ProxySettings_NoProxy value)?  noProxy,TResult? Function( ProxySettings_CustomProxyList value)?  customProxyList,}){
+final _that = this;
+switch (_that) {
+case ProxySettings_NoProxy() when noProxy != null:
+return noProxy(_that);case ProxySettings_CustomProxyList() when customProxyList != null:
+return customProxyList(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  noProxy,TResult Function( List<CustomProxy> field0)?  customProxyList,required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case ProxySettings_NoProxy() when noProxy != null:
+return noProxy();case ProxySettings_CustomProxyList() when customProxyList != null:
+return customProxyList(_that.field0);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  noProxy,required TResult Function( List<CustomProxy> field0)  customProxyList,}) {final _that = this;
+switch (_that) {
+case ProxySettings_NoProxy():
+return noProxy();case ProxySettings_CustomProxyList():
+return customProxyList(_that.field0);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  noProxy,TResult? Function( List<CustomProxy> field0)?  customProxyList,}) {final _that = this;
+switch (_that) {
+case ProxySettings_NoProxy() when noProxy != null:
+return noProxy();case ProxySettings_CustomProxyList() when customProxyList != null:
+return customProxyList(_that.field0);case _:
+  return null;
+
+}
+}
+
+}
 
 /// @nodoc
 
@@ -175,6 +304,136 @@ class $RedirectSettingsCopyWith<$Res>  {
 $RedirectSettingsCopyWith(RedirectSettings _, $Res Function(RedirectSettings) __);
 }
 
+
+/// Adds pattern-matching-related methods to [RedirectSettings].
+extension RedirectSettingsPatterns on RedirectSettings {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( RedirectSettings_NoRedirect value)?  noRedirect,TResult Function( RedirectSettings_LimitedRedirects value)?  limitedRedirects,required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case RedirectSettings_NoRedirect() when noRedirect != null:
+return noRedirect(_that);case RedirectSettings_LimitedRedirects() when limitedRedirects != null:
+return limitedRedirects(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( RedirectSettings_NoRedirect value)  noRedirect,required TResult Function( RedirectSettings_LimitedRedirects value)  limitedRedirects,}){
+final _that = this;
+switch (_that) {
+case RedirectSettings_NoRedirect():
+return noRedirect(_that);case RedirectSettings_LimitedRedirects():
+return limitedRedirects(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( RedirectSettings_NoRedirect value)?  noRedirect,TResult? Function( RedirectSettings_LimitedRedirects value)?  limitedRedirects,}){
+final _that = this;
+switch (_that) {
+case RedirectSettings_NoRedirect() when noRedirect != null:
+return noRedirect(_that);case RedirectSettings_LimitedRedirects() when limitedRedirects != null:
+return limitedRedirects(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  noRedirect,TResult Function( int field0)?  limitedRedirects,required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case RedirectSettings_NoRedirect() when noRedirect != null:
+return noRedirect();case RedirectSettings_LimitedRedirects() when limitedRedirects != null:
+return limitedRedirects(_that.field0);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  noRedirect,required TResult Function( int field0)  limitedRedirects,}) {final _that = this;
+switch (_that) {
+case RedirectSettings_NoRedirect():
+return noRedirect();case RedirectSettings_LimitedRedirects():
+return limitedRedirects(_that.field0);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  noRedirect,TResult? Function( int field0)?  limitedRedirects,}) {final _that = this;
+switch (_that) {
+case RedirectSettings_NoRedirect() when noRedirect != null:
+return noRedirect();case RedirectSettings_LimitedRedirects() when limitedRedirects != null:
+return limitedRedirects(_that.field0);case _:
+  return null;
+
+}
+}
+
+}
 
 /// @nodoc
 

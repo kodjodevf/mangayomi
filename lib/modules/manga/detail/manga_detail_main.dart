@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/manga/detail/manga_details_view.dart';
@@ -24,7 +24,7 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
     _init();
   }
 
-  _init() async {
+  Future<void> _init() async {
     await Future.delayed(const Duration(milliseconds: 100));
     await ref.read(
       updateMangaDetailProvider(mangaId: widget.mangaId, isInit: true).future,

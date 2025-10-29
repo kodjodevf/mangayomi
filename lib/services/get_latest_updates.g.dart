@@ -6,162 +6,81 @@ part of 'get_latest_updates.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getLatestUpdatesHash() => r'7a3c06c469c77ec933cf2f4dd7d39780d993f0ea';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-/// See also [getLatestUpdates].
 @ProviderFor(getLatestUpdates)
-const getLatestUpdatesProvider = GetLatestUpdatesFamily();
+const getLatestUpdatesProvider = GetLatestUpdatesFamily._();
 
-/// See also [getLatestUpdates].
-class GetLatestUpdatesFamily extends Family<AsyncValue<MPages?>> {
-  /// See also [getLatestUpdates].
-  const GetLatestUpdatesFamily();
+final class GetLatestUpdatesProvider
+    extends $FunctionalProvider<AsyncValue<MPages?>, MPages?, FutureOr<MPages?>>
+    with $FutureModifier<MPages?>, $FutureProvider<MPages?> {
+  const GetLatestUpdatesProvider._({
+    required GetLatestUpdatesFamily super.from,
+    required ({Source source, int page}) super.argument,
+  }) : super(
+         retry: null,
+         name: r'getLatestUpdatesProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// See also [getLatestUpdates].
-  GetLatestUpdatesProvider call({required Source source, required int page}) {
-    return GetLatestUpdatesProvider(source: source, page: page);
+  @override
+  String debugGetCreateSourceHash() => _$getLatestUpdatesHash();
+
+  @override
+  String toString() {
+    return r'getLatestUpdatesProvider'
+        ''
+        '$argument';
   }
 
+  @$internal
   @override
-  GetLatestUpdatesProvider getProviderOverride(
-    covariant GetLatestUpdatesProvider provider,
-  ) {
-    return call(source: provider.source, page: provider.page);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
+  $FutureProviderElement<MPages?> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'getLatestUpdatesProvider';
-}
-
-/// See also [getLatestUpdates].
-class GetLatestUpdatesProvider extends AutoDisposeFutureProvider<MPages?> {
-  /// See also [getLatestUpdates].
-  GetLatestUpdatesProvider({required Source source, required int page})
-    : this._internal(
-        (ref) => getLatestUpdates(
-          ref as GetLatestUpdatesRef,
-          source: source,
-          page: page,
-        ),
-        from: getLatestUpdatesProvider,
-        name: r'getLatestUpdatesProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$getLatestUpdatesHash,
-        dependencies: GetLatestUpdatesFamily._dependencies,
-        allTransitiveDependencies:
-            GetLatestUpdatesFamily._allTransitiveDependencies,
-        source: source,
-        page: page,
-      );
-
-  GetLatestUpdatesProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.source,
-    required this.page,
-  }) : super.internal();
-
-  final Source source;
-  final int page;
-
-  @override
-  Override overrideWith(
-    FutureOr<MPages?> Function(GetLatestUpdatesRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: GetLatestUpdatesProvider._internal(
-        (ref) => create(ref as GetLatestUpdatesRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        source: source,
-        page: page,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeFutureProviderElement<MPages?> createElement() {
-    return _GetLatestUpdatesProviderElement(this);
+  FutureOr<MPages?> create(Ref ref) {
+    final argument = this.argument as ({Source source, int page});
+    return getLatestUpdates(ref, source: argument.source, page: argument.page);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is GetLatestUpdatesProvider &&
-        other.source == source &&
-        other.page == page;
+    return other is GetLatestUpdatesProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, source.hashCode);
-    hash = _SystemHash.combine(hash, page.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin GetLatestUpdatesRef on AutoDisposeFutureProviderRef<MPages?> {
-  /// The parameter `source` of this provider.
-  Source get source;
+String _$getLatestUpdatesHash() => r'7a3c06c469c77ec933cf2f4dd7d39780d993f0ea';
 
-  /// The parameter `page` of this provider.
-  int get page;
-}
+final class GetLatestUpdatesFamily extends $Family
+    with
+        $FunctionalFamilyOverride<
+          FutureOr<MPages?>,
+          ({Source source, int page})
+        > {
+  const GetLatestUpdatesFamily._()
+    : super(
+        retry: null,
+        name: r'getLatestUpdatesProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
-class _GetLatestUpdatesProviderElement
-    extends AutoDisposeFutureProviderElement<MPages?>
-    with GetLatestUpdatesRef {
-  _GetLatestUpdatesProviderElement(super.provider);
+  GetLatestUpdatesProvider call({required Source source, required int page}) =>
+      GetLatestUpdatesProvider._(
+        argument: (source: source, page: page),
+        from: this,
+      );
 
   @override
-  Source get source => (origin as GetLatestUpdatesProvider).source;
-  @override
-  int get page => (origin as GetLatestUpdatesProvider).page;
+  String toString() => r'getLatestUpdatesProvider';
 }
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

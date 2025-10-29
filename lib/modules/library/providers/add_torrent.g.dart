@@ -6,183 +6,92 @@ part of 'add_torrent.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$addTorrentFromUrlOrFromFileHash() =>
-    r'a54f90b6708b13eeb8fed098691f9a79dbab50fd';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-/// See also [addTorrentFromUrlOrFromFile].
 @ProviderFor(addTorrentFromUrlOrFromFile)
-const addTorrentFromUrlOrFromFileProvider = AddTorrentFromUrlOrFromFileFamily();
+const addTorrentFromUrlOrFromFileProvider =
+    AddTorrentFromUrlOrFromFileFamily._();
 
-/// See also [addTorrentFromUrlOrFromFile].
-class AddTorrentFromUrlOrFromFileFamily extends Family<AsyncValue> {
-  /// See also [addTorrentFromUrlOrFromFile].
-  const AddTorrentFromUrlOrFromFileFamily();
-
-  /// See also [addTorrentFromUrlOrFromFile].
-  AddTorrentFromUrlOrFromFileProvider call(
-    Manga? mManga, {
-    required bool init,
-    String? url,
-  }) {
-    return AddTorrentFromUrlOrFromFileProvider(mManga, init: init, url: url);
-  }
-
-  @override
-  AddTorrentFromUrlOrFromFileProvider getProviderOverride(
-    covariant AddTorrentFromUrlOrFromFileProvider provider,
-  ) {
-    return call(provider.mManga, init: provider.init, url: provider.url);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'addTorrentFromUrlOrFromFileProvider';
-}
-
-/// See also [addTorrentFromUrlOrFromFile].
-class AddTorrentFromUrlOrFromFileProvider
-    extends AutoDisposeFutureProvider<Object?> {
-  /// See also [addTorrentFromUrlOrFromFile].
-  AddTorrentFromUrlOrFromFileProvider(
-    Manga? mManga, {
-    required bool init,
-    String? url,
-  }) : this._internal(
-         (ref) => addTorrentFromUrlOrFromFile(
-           ref as AddTorrentFromUrlOrFromFileRef,
-           mManga,
-           init: init,
-           url: url,
-         ),
-         from: addTorrentFromUrlOrFromFileProvider,
+final class AddTorrentFromUrlOrFromFileProvider
+    extends $FunctionalProvider<AsyncValue<dynamic>, dynamic, FutureOr<dynamic>>
+    with $FutureModifier<dynamic>, $FutureProvider<dynamic> {
+  const AddTorrentFromUrlOrFromFileProvider._({
+    required AddTorrentFromUrlOrFromFileFamily super.from,
+    required (Manga?, {bool init, String? url}) super.argument,
+  }) : super(
+         retry: null,
          name: r'addTorrentFromUrlOrFromFileProvider',
-         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-             ? null
-             : _$addTorrentFromUrlOrFromFileHash,
-         dependencies: AddTorrentFromUrlOrFromFileFamily._dependencies,
-         allTransitiveDependencies:
-             AddTorrentFromUrlOrFromFileFamily._allTransitiveDependencies,
-         mManga: mManga,
-         init: init,
-         url: url,
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
        );
 
-  AddTorrentFromUrlOrFromFileProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.mManga,
-    required this.init,
-    required this.url,
-  }) : super.internal();
-
-  final Manga? mManga;
-  final bool init;
-  final String? url;
+  @override
+  String debugGetCreateSourceHash() => _$addTorrentFromUrlOrFromFileHash();
 
   @override
-  Override overrideWith(
-    FutureOr<Object?> Function(AddTorrentFromUrlOrFromFileRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: AddTorrentFromUrlOrFromFileProvider._internal(
-        (ref) => create(ref as AddTorrentFromUrlOrFromFileRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        mManga: mManga,
-        init: init,
-        url: url,
-      ),
-    );
+  String toString() {
+    return r'addTorrentFromUrlOrFromFileProvider'
+        ''
+        '$argument';
   }
 
+  @$internal
   @override
-  AutoDisposeFutureProviderElement<Object?> createElement() {
-    return _AddTorrentFromUrlOrFromFileProviderElement(this);
+  $FutureProviderElement<dynamic> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<dynamic> create(Ref ref) {
+    final argument = this.argument as (Manga?, {bool init, String? url});
+    return addTorrentFromUrlOrFromFile(
+      ref,
+      argument.$1,
+      init: argument.init,
+      url: argument.url,
+    );
   }
 
   @override
   bool operator ==(Object other) {
     return other is AddTorrentFromUrlOrFromFileProvider &&
-        other.mManga == mManga &&
-        other.init == init &&
-        other.url == url;
+        other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, mManga.hashCode);
-    hash = _SystemHash.combine(hash, init.hashCode);
-    hash = _SystemHash.combine(hash, url.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin AddTorrentFromUrlOrFromFileRef on AutoDisposeFutureProviderRef<Object?> {
-  /// The parameter `mManga` of this provider.
-  Manga? get mManga;
+String _$addTorrentFromUrlOrFromFileHash() =>
+    r'a54f90b6708b13eeb8fed098691f9a79dbab50fd';
 
-  /// The parameter `init` of this provider.
-  bool get init;
+final class AddTorrentFromUrlOrFromFileFamily extends $Family
+    with
+        $FunctionalFamilyOverride<
+          FutureOr<dynamic>,
+          (Manga?, {bool init, String? url})
+        > {
+  const AddTorrentFromUrlOrFromFileFamily._()
+    : super(
+        retry: null,
+        name: r'addTorrentFromUrlOrFromFileProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
-  /// The parameter `url` of this provider.
-  String? get url;
+  AddTorrentFromUrlOrFromFileProvider call(
+    Manga? mManga, {
+    required bool init,
+    String? url,
+  }) => AddTorrentFromUrlOrFromFileProvider._(
+    argument: (mManga, init: init, url: url),
+    from: this,
+  );
+
+  @override
+  String toString() => r'addTorrentFromUrlOrFromFileProvider';
 }
-
-class _AddTorrentFromUrlOrFromFileProviderElement
-    extends AutoDisposeFutureProviderElement<Object?>
-    with AddTorrentFromUrlOrFromFileRef {
-  _AddTorrentFromUrlOrFromFileProviderElement(super.provider);
-
-  @override
-  Manga? get mManga => (origin as AddTorrentFromUrlOrFromFileProvider).mManga;
-  @override
-  bool get init => (origin as AddTorrentFromUrlOrFromFileProvider).init;
-  @override
-  String? get url => (origin as AddTorrentFromUrlOrFromFileProvider).url;
-}
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

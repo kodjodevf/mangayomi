@@ -6,108 +6,331 @@ part of 'general_state_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(CustomDnsState)
+const customDnsStateProvider = CustomDnsStateProvider._();
+
+final class CustomDnsStateProvider
+    extends $NotifierProvider<CustomDnsState, String> {
+  const CustomDnsStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'customDnsStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$customDnsStateHash();
+
+  @$internal
+  @override
+  CustomDnsState create() => CustomDnsState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
 String _$customDnsStateHash() => r'6061c64d742b3f873e54c1b9ef724b7c0b6350a2';
 
-/// See also [CustomDnsState].
-@ProviderFor(CustomDnsState)
-final customDnsStateProvider =
-    AutoDisposeNotifierProvider<CustomDnsState, String>.internal(
-      CustomDnsState.new,
-      name: r'customDnsStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$customDnsStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+abstract class _$CustomDnsState extends $Notifier<String> {
+  String build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<String, String>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String, String>,
+              String,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
 
-typedef _$CustomDnsState = AutoDisposeNotifier<String>;
+@ProviderFor(EnableDiscordRpcState)
+const enableDiscordRpcStateProvider = EnableDiscordRpcStateProvider._();
+
+final class EnableDiscordRpcStateProvider
+    extends $NotifierProvider<EnableDiscordRpcState, bool> {
+  const EnableDiscordRpcStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'enableDiscordRpcStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$enableDiscordRpcStateHash();
+
+  @$internal
+  @override
+  EnableDiscordRpcState create() => EnableDiscordRpcState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
 String _$enableDiscordRpcStateHash() =>
     r'ab8ce3b29f5d94aedbc88dcb87c7c834648270f5';
 
-/// See also [EnableDiscordRpcState].
-@ProviderFor(EnableDiscordRpcState)
-final enableDiscordRpcStateProvider =
-    AutoDisposeNotifierProvider<EnableDiscordRpcState, bool>.internal(
-      EnableDiscordRpcState.new,
-      name: r'enableDiscordRpcStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$enableDiscordRpcStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+abstract class _$EnableDiscordRpcState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
 
-typedef _$EnableDiscordRpcState = AutoDisposeNotifier<bool>;
+@ProviderFor(HideDiscordRpcInIncognitoState)
+const hideDiscordRpcInIncognitoStateProvider =
+    HideDiscordRpcInIncognitoStateProvider._();
+
+final class HideDiscordRpcInIncognitoStateProvider
+    extends $NotifierProvider<HideDiscordRpcInIncognitoState, bool> {
+  const HideDiscordRpcInIncognitoStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'hideDiscordRpcInIncognitoStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$hideDiscordRpcInIncognitoStateHash();
+
+  @$internal
+  @override
+  HideDiscordRpcInIncognitoState create() => HideDiscordRpcInIncognitoState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
 String _$hideDiscordRpcInIncognitoStateHash() =>
     r'7404a6ef4ae0d831b755c455c51eb3cb7f18f64f';
 
-/// See also [HideDiscordRpcInIncognitoState].
-@ProviderFor(HideDiscordRpcInIncognitoState)
-final hideDiscordRpcInIncognitoStateProvider =
-    AutoDisposeNotifierProvider<HideDiscordRpcInIncognitoState, bool>.internal(
-      HideDiscordRpcInIncognitoState.new,
-      name: r'hideDiscordRpcInIncognitoStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$hideDiscordRpcInIncognitoStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+abstract class _$HideDiscordRpcInIncognitoState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
 
-typedef _$HideDiscordRpcInIncognitoState = AutoDisposeNotifier<bool>;
+@ProviderFor(RpcShowReadingWatchingProgressState)
+const rpcShowReadingWatchingProgressStateProvider =
+    RpcShowReadingWatchingProgressStateProvider._();
+
+final class RpcShowReadingWatchingProgressStateProvider
+    extends $NotifierProvider<RpcShowReadingWatchingProgressState, bool> {
+  const RpcShowReadingWatchingProgressStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'rpcShowReadingWatchingProgressStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() =>
+      _$rpcShowReadingWatchingProgressStateHash();
+
+  @$internal
+  @override
+  RpcShowReadingWatchingProgressState create() =>
+      RpcShowReadingWatchingProgressState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
 String _$rpcShowReadingWatchingProgressStateHash() =>
     r'ce0582267191d4348cfe15f030d60e52c070163e';
 
-/// See also [RpcShowReadingWatchingProgressState].
-@ProviderFor(RpcShowReadingWatchingProgressState)
-final rpcShowReadingWatchingProgressStateProvider =
-    AutoDisposeNotifierProvider<
-      RpcShowReadingWatchingProgressState,
-      bool
-    >.internal(
-      RpcShowReadingWatchingProgressState.new,
-      name: r'rpcShowReadingWatchingProgressStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$rpcShowReadingWatchingProgressStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+abstract class _$RpcShowReadingWatchingProgressState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
 
-typedef _$RpcShowReadingWatchingProgressState = AutoDisposeNotifier<bool>;
+@ProviderFor(RpcShowTitleState)
+const rpcShowTitleStateProvider = RpcShowTitleStateProvider._();
+
+final class RpcShowTitleStateProvider
+    extends $NotifierProvider<RpcShowTitleState, bool> {
+  const RpcShowTitleStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'rpcShowTitleStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$rpcShowTitleStateHash();
+
+  @$internal
+  @override
+  RpcShowTitleState create() => RpcShowTitleState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
 String _$rpcShowTitleStateHash() => r'b784b58365a72b54cbe46b1582c97c2f9b8057a2';
 
-/// See also [RpcShowTitleState].
-@ProviderFor(RpcShowTitleState)
-final rpcShowTitleStateProvider =
-    AutoDisposeNotifierProvider<RpcShowTitleState, bool>.internal(
-      RpcShowTitleState.new,
-      name: r'rpcShowTitleStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$rpcShowTitleStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+abstract class _$RpcShowTitleState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
 
-typedef _$RpcShowTitleState = AutoDisposeNotifier<bool>;
+@ProviderFor(RpcShowCoverImageState)
+const rpcShowCoverImageStateProvider = RpcShowCoverImageStateProvider._();
+
+final class RpcShowCoverImageStateProvider
+    extends $NotifierProvider<RpcShowCoverImageState, bool> {
+  const RpcShowCoverImageStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'rpcShowCoverImageStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$rpcShowCoverImageStateHash();
+
+  @$internal
+  @override
+  RpcShowCoverImageState create() => RpcShowCoverImageState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
 String _$rpcShowCoverImageStateHash() =>
     r'85a460d188319f5410ed0d5b0cb201b03c9759e7';
 
-/// See also [RpcShowCoverImageState].
-@ProviderFor(RpcShowCoverImageState)
-final rpcShowCoverImageStateProvider =
-    AutoDisposeNotifierProvider<RpcShowCoverImageState, bool>.internal(
-      RpcShowCoverImageState.new,
-      name: r'rpcShowCoverImageStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$rpcShowCoverImageStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$RpcShowCoverImageState = AutoDisposeNotifier<bool>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$RpcShowCoverImageState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:intl/intl.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
@@ -36,7 +37,11 @@ class Kitsu extends _$Kitsu implements BaseTracker {
   String _mediaUrl(String type, int id) => 'https://kitsu.app/$type/$id';
 
   @override
-  void build({required int syncId, ItemType? itemType}) {}
+  void build({
+    required int syncId,
+    ItemType? itemType,
+    required WidgetRef widgetRef,
+  }) {}
 
   Future<(bool, String)> login(String username, String password) async {
     try {
@@ -60,7 +65,7 @@ class Kitsu extends _$Kitsu implements BaseTracker {
             .add(Duration(seconds: res['expires_in']))
             .millisecondsSinceEpoch;
       final currentUser = await _getCurrentUser(aKOAuth.accessToken!);
-      ref
+      widgetRef
           .read(tracksProvider(syncId: syncId).notifier)
           .login(
             TrackPreference(
@@ -352,13 +357,13 @@ class Kitsu extends _$Kitsu implements BaseTracker {
   }
 
   String _getAccessToken() {
-    final track = ref.read(tracksProvider(syncId: syncId));
+    final track = widgetRef.read(tracksProvider(syncId: syncId));
     final mAKOAuth = OAuth.fromJson(
       jsonDecode(track!.oAuth!) as Map<String, dynamic>,
     );
     final expiresIn = DateTime.fromMillisecondsSinceEpoch(mAKOAuth.expiresIn!);
     if (DateTime.now().isAfter(expiresIn)) {
-      ref.read(tracksProvider(syncId: syncId).notifier).logout();
+      widgetRef.read(tracksProvider(syncId: syncId).notifier).logout();
       botToast("Kitsu Token expired");
       throw Exception("Token expired");
     }
@@ -366,7 +371,7 @@ class Kitsu extends _$Kitsu implements BaseTracker {
   }
 
   String _getUserId() {
-    final track = ref.read(tracksProvider(syncId: syncId));
+    final track = widgetRef.read(tracksProvider(syncId: syncId));
     return track!.username!;
   }
 
@@ -418,20 +423,22 @@ class Kitsu extends _$Kitsu implements BaseTracker {
   String? _toKitsuScore(int score) {
     return score > 0 ? (score * 2).toString() : null;
   }
-  
+
   @override
   String displayScore(int score) {
     throw UnimplementedError();
   }
-  
+
   @override
   (int, int) getScoreValue() {
     throw UnimplementedError();
   }
-  
+
   @override
   Future<bool> checkRefresh() async {
-    ref.read(tracksProvider(syncId: syncId).notifier).setRefreshing(false);
+    widgetRef
+        .read(tracksProvider(syncId: syncId).notifier)
+        .setRefreshing(false);
     return true;
   }
 }

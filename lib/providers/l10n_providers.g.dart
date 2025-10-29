@@ -6,21 +6,58 @@ part of 'l10n_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(L10nLocaleState)
+const l10nLocaleStateProvider = L10nLocaleStateProvider._();
+
+final class L10nLocaleStateProvider
+    extends $NotifierProvider<L10nLocaleState, Locale> {
+  const L10nLocaleStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'l10nLocaleStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$l10nLocaleStateHash();
+
+  @$internal
+  @override
+  L10nLocaleState create() => L10nLocaleState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Locale value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Locale>(value),
+    );
+  }
+}
+
 String _$l10nLocaleStateHash() => r'eb373ea1cc24b6d826f395755bbe0e445f592b0d';
 
-/// See also [L10nLocaleState].
-@ProviderFor(L10nLocaleState)
-final l10nLocaleStateProvider =
-    AutoDisposeNotifierProvider<L10nLocaleState, Locale>.internal(
-      L10nLocaleState.new,
-      name: r'l10nLocaleStateProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$l10nLocaleStateHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$L10nLocaleState = AutoDisposeNotifier<Locale>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$L10nLocaleState extends $Notifier<Locale> {
+  Locale build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<Locale, Locale>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<Locale, Locale>,
+              Locale,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

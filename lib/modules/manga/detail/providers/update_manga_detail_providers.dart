@@ -8,9 +8,9 @@ import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/services/get_detail.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
+import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 part 'update_manga_detail_providers.g.dart';
 
 @riverpod
@@ -42,8 +42,13 @@ Future<dynamic> updateMangaDetail(
         [];
     final tempName = getManga.name?.trim().trimLeft().trimRight();
     final tempLink = getManga.link?.trim().trimLeft().trimRight();
+    final imgUrl = getManga.imageUrl ?? manga.imageUrl;
     manga
-      ..imageUrl = getManga.imageUrl ?? manga.imageUrl
+      ..imageUrl = imgUrl == null
+          ? null
+          : imgUrl.startsWith('http')
+          ? imgUrl
+          : '${source.baseUrl ?? ''}/${imgUrl.getUrlWithoutDomain}'
       ..name = tempName != null && tempName.isNotEmpty ? tempName : manga.name
       ..genre = (genre.isEmpty ? null : genre) ?? manga.genre ?? []
       ..author =

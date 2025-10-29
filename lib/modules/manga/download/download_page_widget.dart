@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
@@ -54,10 +54,12 @@ class ChapterPageDownload extends ConsumerWidget {
     }
     if (files.isNotEmpty && context.mounted) {
       final box = context.findRenderObject() as RenderBox?;
-      Share.shareXFiles(
-        files,
-        text: chapter.name,
-        sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+      SharePlus.instance.share(
+        ShareParams(
+          files: files,
+          text: chapter.name,
+          sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+        ),
       );
     }
   }

@@ -12,32 +12,32 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   go_router: ^14.6.3
-  flutter_riverpod: ^2.6.1
-  riverpod_annotation: ^2.6.1
+  flutter_riverpod: ^3.0.3
+  riverpod_annotation: ^3.0.3
   html: ^0.15.5
-  font_awesome_flutter: ^10.8.0
+  font_awesome_flutter: ^10.12.0
   expandable_text: ^2.3.0
-  flex_color_scheme: ^8.3.0
+  flex_color_scheme: ^8.3.1
   extended_image: ^10.0.0
   photo_view: ^0.15.0
   grouped_list: ^6.0.0
-  intl: 0.20.2
+  intl: ^0.20.2
   google_fonts: ^6.2.1
   url_launcher: ^6.3.1
   package_info_plus: ^8.0.0
-  permission_handler: ^11.3.1
+  permission_handler: ^12.0.1
   flutter_inappwebview: ^6.2.0-beta.2
   draggable_menu: ^4.4.1
-  isar: 3.1.0+1
-  isar_flutter_libs: 3.1.0+1
-  share_plus: ^10.0.2
+  isar_community: ^3.3.0-dev.2
+  isar_community_flutter_libs: ^3.3.0-dev.2
+  share_plus: ^12.0.1
   xpath_selector_html_parser: ^3.0.1
   archive: ^4.0.1
   file_picker: ^10.0.0
   path_provider: ^2.1.5
   scrollable_positioned_list: ^0.3.8
   bot_toast: ^4.1.3
-  flutter_web_auth_2: ^3.1.2
+  flutter_web_auth_2: ^4.1.0
   numberpicker: ^2.1.2
   encrypt: ^5.0.3
   media_kit:
@@ -54,7 +54,7 @@ dependencies:
       path: libs/universal/media_kit_libs_video
   crypto: ^3.0.6
   cupertino_icons: ^1.0.8
-  window_manager: ^0.4.3
+  window_manager: ^0.5.1
   ffi: ^2.1.3
   ffigen: 19.1.0
   http_interceptor: ^2.0.0
@@ -64,10 +64,7 @@ dependencies:
       url: https://github.com/kodjodevf/flutter_qjs.git
       ref: main
   http: ^1.5.0
-  re_editor:
-    git:
-      url: https://github.com/kodjodevf/re-editor
-      ref: main
+  re_editor: ^0.8.0
   re_highlight: ^0.0.3
   json_view: ^0.4.2
   super_sliver_list: ^0.4.1
@@ -83,19 +80,19 @@ dependencies:
       path: packages/desktop_webview_window
       ref: main
   screen_brightness: ^2.1.1
-  flutter_widget_from_html: ^0.16.0
+  flutter_widget_from_html: ^0.17.1
   convert: ^3.1.2
-  connectivity_plus: ^6.1.3
+  connectivity_plus: ^7.0.0
   app_links: ^6.4.0
   win32: ^5.10.1
-  protobuf: ^4.0.0
-  device_info_plus: ^11.3.3
+  protobuf: ^5.0.0
+  device_info_plus: ^12.2.0
   marquee: ^2.2.3
   epubx:
     git:
       url: https://github.com/kodjodevf/epubx.dart.git
       ref: dev
-  d4rt: ^0.1.5
+  d4rt: ^0.1.7
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   flutter_discord_rpc_fork:
@@ -116,17 +113,16 @@ dependency_overrides:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^2.4.6
-  riverpod_generator: ^2.6.5
+  build_runner: ^2.4.11
+  riverpod_generator: ^3.0.3
   flutter_launcher_icons: ^0.14.3
-  isar_generator:
-    path: plugins/isar_generator
-  flutter_lints: ^5.0.0
+  isar_community_generator: ^3.3.0-dev.2
+  flutter_lints: ^6.0.0
   freezed: ^3.0.0
   inno_bundle: ^0.9.0
-  protoc_plugin: ^22.0.1
-  hive_generator:
-    path: plugins/hive_generator
+  protoc_plugin: ^23.0.0
+  # hive_generator:
+  #   path: plugins/hive_generator
 
 flutter:
   uses-material-design: true

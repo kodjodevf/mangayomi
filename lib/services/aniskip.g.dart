@@ -6,20 +6,57 @@ part of 'aniskip.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(AniSkip)
+const aniSkipProvider = AniSkipProvider._();
+
+final class AniSkipProvider extends $NotifierProvider<AniSkip, void> {
+  const AniSkipProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'aniSkipProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$aniSkipHash();
+
+  @$internal
+  @override
+  AniSkip create() => AniSkip();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(void value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<void>(value),
+    );
+  }
+}
+
 String _$aniSkipHash() => r'887869b54e2e151633efd46da83bde845e14f421';
 
-/// See also [AniSkip].
-@ProviderFor(AniSkip)
-final aniSkipProvider = AutoDisposeNotifierProvider<AniSkip, void>.internal(
-  AniSkip.new,
-  name: r'aniSkipProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$aniSkipHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$AniSkip = AutoDisposeNotifier<void>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$AniSkip extends $Notifier<void> {
+  void build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    build();
+    final ref = this.ref as $Ref<void, void>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<void, void>,
+              void,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, null);
+  }
+}

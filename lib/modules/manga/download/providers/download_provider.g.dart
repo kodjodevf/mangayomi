@@ -6,431 +6,231 @@ part of 'download_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$addDownloadToQueueHash() =>
-    r'35e8e724755be265a9bf167e4641336630a465d2';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-/// See also [addDownloadToQueue].
 @ProviderFor(addDownloadToQueue)
-const addDownloadToQueueProvider = AddDownloadToQueueFamily();
+const addDownloadToQueueProvider = AddDownloadToQueueFamily._();
 
-/// See also [addDownloadToQueue].
-class AddDownloadToQueueFamily extends Family<AsyncValue<void>> {
-  /// See also [addDownloadToQueue].
-  const AddDownloadToQueueFamily();
+final class AddDownloadToQueueProvider
+    extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
+    with $FutureModifier<void>, $FutureProvider<void> {
+  const AddDownloadToQueueProvider._({
+    required AddDownloadToQueueFamily super.from,
+    required Chapter super.argument,
+  }) : super(
+         retry: null,
+         name: r'addDownloadToQueueProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// See also [addDownloadToQueue].
-  AddDownloadToQueueProvider call({required Chapter chapter}) {
-    return AddDownloadToQueueProvider(chapter: chapter);
+  @override
+  String debugGetCreateSourceHash() => _$addDownloadToQueueHash();
+
+  @override
+  String toString() {
+    return r'addDownloadToQueueProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  AddDownloadToQueueProvider getProviderOverride(
-    covariant AddDownloadToQueueProvider provider,
-  ) {
-    return call(chapter: provider.chapter);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
+  $FutureProviderElement<void> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
 
   @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'addDownloadToQueueProvider';
-}
-
-/// See also [addDownloadToQueue].
-class AddDownloadToQueueProvider extends AutoDisposeFutureProvider<void> {
-  /// See also [addDownloadToQueue].
-  AddDownloadToQueueProvider({required Chapter chapter})
-    : this._internal(
-        (ref) =>
-            addDownloadToQueue(ref as AddDownloadToQueueRef, chapter: chapter),
-        from: addDownloadToQueueProvider,
-        name: r'addDownloadToQueueProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$addDownloadToQueueHash,
-        dependencies: AddDownloadToQueueFamily._dependencies,
-        allTransitiveDependencies:
-            AddDownloadToQueueFamily._allTransitiveDependencies,
-        chapter: chapter,
-      );
-
-  AddDownloadToQueueProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.chapter,
-  }) : super.internal();
-
-  final Chapter chapter;
-
-  @override
-  Override overrideWith(
-    FutureOr<void> Function(AddDownloadToQueueRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: AddDownloadToQueueProvider._internal(
-        (ref) => create(ref as AddDownloadToQueueRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        chapter: chapter,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeFutureProviderElement<void> createElement() {
-    return _AddDownloadToQueueProviderElement(this);
+  FutureOr<void> create(Ref ref) {
+    final argument = this.argument as Chapter;
+    return addDownloadToQueue(ref, chapter: argument);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is AddDownloadToQueueProvider && other.chapter == chapter;
+    return other is AddDownloadToQueueProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, chapter.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin AddDownloadToQueueRef on AutoDisposeFutureProviderRef<void> {
-  /// The parameter `chapter` of this provider.
-  Chapter get chapter;
-}
+String _$addDownloadToQueueHash() =>
+    r'35e8e724755be265a9bf167e4641336630a465d2';
 
-class _AddDownloadToQueueProviderElement
-    extends AutoDisposeFutureProviderElement<void>
-    with AddDownloadToQueueRef {
-  _AddDownloadToQueueProviderElement(super.provider);
+final class AddDownloadToQueueFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<void>, Chapter> {
+  const AddDownloadToQueueFamily._()
+    : super(
+        retry: null,
+        name: r'addDownloadToQueueProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  AddDownloadToQueueProvider call({required Chapter chapter}) =>
+      AddDownloadToQueueProvider._(argument: chapter, from: this);
 
   @override
-  Chapter get chapter => (origin as AddDownloadToQueueProvider).chapter;
+  String toString() => r'addDownloadToQueueProvider';
+}
+
+@ProviderFor(downloadChapter)
+const downloadChapterProvider = DownloadChapterFamily._();
+
+final class DownloadChapterProvider
+    extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
+    with $FutureModifier<void>, $FutureProvider<void> {
+  const DownloadChapterProvider._({
+    required DownloadChapterFamily super.from,
+    required ({Chapter chapter, bool? useWifi, VoidCallback? callback})
+    super.argument,
+  }) : super(
+         retry: null,
+         name: r'downloadChapterProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$downloadChapterHash();
+
+  @override
+  String toString() {
+    return r'downloadChapterProvider'
+        ''
+        '$argument';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<void> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<void> create(Ref ref) {
+    final argument =
+        this.argument
+            as ({Chapter chapter, bool? useWifi, VoidCallback? callback});
+    return downloadChapter(
+      ref,
+      chapter: argument.chapter,
+      useWifi: argument.useWifi,
+      callback: argument.callback,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is DownloadChapterProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
 }
 
 String _$downloadChapterHash() => r'5eb401736efdfb2990fda6e2d97160aaeb94aec1';
 
-/// See also [downloadChapter].
-@ProviderFor(downloadChapter)
-const downloadChapterProvider = DownloadChapterFamily();
+final class DownloadChapterFamily extends $Family
+    with
+        $FunctionalFamilyOverride<
+          FutureOr<void>,
+          ({Chapter chapter, bool? useWifi, VoidCallback? callback})
+        > {
+  const DownloadChapterFamily._()
+    : super(
+        retry: null,
+        name: r'downloadChapterProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
-/// See also [downloadChapter].
-class DownloadChapterFamily extends Family<AsyncValue<void>> {
-  /// See also [downloadChapter].
-  const DownloadChapterFamily();
-
-  /// See also [downloadChapter].
   DownloadChapterProvider call({
     required Chapter chapter,
     bool? useWifi,
-    void Function()? callback,
-  }) {
-    return DownloadChapterProvider(
-      chapter: chapter,
-      useWifi: useWifi,
-      callback: callback,
-    );
-  }
+    VoidCallback? callback,
+  }) => DownloadChapterProvider._(
+    argument: (chapter: chapter, useWifi: useWifi, callback: callback),
+    from: this,
+  );
 
   @override
-  DownloadChapterProvider getProviderOverride(
-    covariant DownloadChapterProvider provider,
-  ) {
-    return call(
-      chapter: provider.chapter,
-      useWifi: provider.useWifi,
-      callback: provider.callback,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'downloadChapterProvider';
+  String toString() => r'downloadChapterProvider';
 }
 
-/// See also [downloadChapter].
-class DownloadChapterProvider extends AutoDisposeFutureProvider<void> {
-  /// See also [downloadChapter].
-  DownloadChapterProvider({
-    required Chapter chapter,
-    bool? useWifi,
-    void Function()? callback,
-  }) : this._internal(
-         (ref) => downloadChapter(
-           ref as DownloadChapterRef,
-           chapter: chapter,
-           useWifi: useWifi,
-           callback: callback,
-         ),
-         from: downloadChapterProvider,
-         name: r'downloadChapterProvider',
-         debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-             ? null
-             : _$downloadChapterHash,
-         dependencies: DownloadChapterFamily._dependencies,
-         allTransitiveDependencies:
-             DownloadChapterFamily._allTransitiveDependencies,
-         chapter: chapter,
-         useWifi: useWifi,
-         callback: callback,
+@ProviderFor(processDownloads)
+const processDownloadsProvider = ProcessDownloadsFamily._();
+
+final class ProcessDownloadsProvider
+    extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
+    with $FutureModifier<void>, $FutureProvider<void> {
+  const ProcessDownloadsProvider._({
+    required ProcessDownloadsFamily super.from,
+    required bool? super.argument,
+  }) : super(
+         retry: null,
+         name: r'processDownloadsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
        );
 
-  DownloadChapterProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.chapter,
-    required this.useWifi,
-    required this.callback,
-  }) : super.internal();
-
-  final Chapter chapter;
-  final bool? useWifi;
-  final void Function()? callback;
+  @override
+  String debugGetCreateSourceHash() => _$processDownloadsHash();
 
   @override
-  Override overrideWith(
-    FutureOr<void> Function(DownloadChapterRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: DownloadChapterProvider._internal(
-        (ref) => create(ref as DownloadChapterRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        chapter: chapter,
-        useWifi: useWifi,
-        callback: callback,
-      ),
-    );
+  String toString() {
+    return r'processDownloadsProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  AutoDisposeFutureProviderElement<void> createElement() {
-    return _DownloadChapterProviderElement(this);
+  $FutureProviderElement<void> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<void> create(Ref ref) {
+    final argument = this.argument as bool?;
+    return processDownloads(ref, useWifi: argument);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is DownloadChapterProvider &&
-        other.chapter == chapter &&
-        other.useWifi == useWifi &&
-        other.callback == callback;
+    return other is ProcessDownloadsProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, chapter.hashCode);
-    hash = _SystemHash.combine(hash, useWifi.hashCode);
-    hash = _SystemHash.combine(hash, callback.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin DownloadChapterRef on AutoDisposeFutureProviderRef<void> {
-  /// The parameter `chapter` of this provider.
-  Chapter get chapter;
-
-  /// The parameter `useWifi` of this provider.
-  bool? get useWifi;
-
-  /// The parameter `callback` of this provider.
-  void Function()? get callback;
-}
-
-class _DownloadChapterProviderElement
-    extends AutoDisposeFutureProviderElement<void>
-    with DownloadChapterRef {
-  _DownloadChapterProviderElement(super.provider);
-
-  @override
-  Chapter get chapter => (origin as DownloadChapterProvider).chapter;
-  @override
-  bool? get useWifi => (origin as DownloadChapterProvider).useWifi;
-  @override
-  void Function()? get callback => (origin as DownloadChapterProvider).callback;
 }
 
 String _$processDownloadsHash() => r'ef5107f9674f2175a7aa18b8e4fc4555f3b6b584';
 
-/// See also [processDownloads].
-@ProviderFor(processDownloads)
-const processDownloadsProvider = ProcessDownloadsFamily();
-
-/// See also [processDownloads].
-class ProcessDownloadsFamily extends Family<AsyncValue<void>> {
-  /// See also [processDownloads].
-  const ProcessDownloadsFamily();
-
-  /// See also [processDownloads].
-  ProcessDownloadsProvider call({bool? useWifi}) {
-    return ProcessDownloadsProvider(useWifi: useWifi);
-  }
-
-  @override
-  ProcessDownloadsProvider getProviderOverride(
-    covariant ProcessDownloadsProvider provider,
-  ) {
-    return call(useWifi: provider.useWifi);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'processDownloadsProvider';
-}
-
-/// See also [processDownloads].
-class ProcessDownloadsProvider extends AutoDisposeFutureProvider<void> {
-  /// See also [processDownloads].
-  ProcessDownloadsProvider({bool? useWifi})
-    : this._internal(
-        (ref) => processDownloads(ref as ProcessDownloadsRef, useWifi: useWifi),
-        from: processDownloadsProvider,
+final class ProcessDownloadsFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<void>, bool?> {
+  const ProcessDownloadsFamily._()
+    : super(
+        retry: null,
         name: r'processDownloadsProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$processDownloadsHash,
-        dependencies: ProcessDownloadsFamily._dependencies,
-        allTransitiveDependencies:
-            ProcessDownloadsFamily._allTransitiveDependencies,
-        useWifi: useWifi,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
       );
 
-  ProcessDownloadsProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.useWifi,
-  }) : super.internal();
-
-  final bool? useWifi;
+  ProcessDownloadsProvider call({bool? useWifi}) =>
+      ProcessDownloadsProvider._(argument: useWifi, from: this);
 
   @override
-  Override overrideWith(
-    FutureOr<void> Function(ProcessDownloadsRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: ProcessDownloadsProvider._internal(
-        (ref) => create(ref as ProcessDownloadsRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        useWifi: useWifi,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeFutureProviderElement<void> createElement() {
-    return _ProcessDownloadsProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is ProcessDownloadsProvider && other.useWifi == useWifi;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, useWifi.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
+  String toString() => r'processDownloadsProvider';
 }
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin ProcessDownloadsRef on AutoDisposeFutureProviderRef<void> {
-  /// The parameter `useWifi` of this provider.
-  bool? get useWifi;
-}
-
-class _ProcessDownloadsProviderElement
-    extends AutoDisposeFutureProviderElement<void>
-    with ProcessDownloadsRef {
-  _ProcessDownloadsProviderElement(super.provider);
-
-  @override
-  bool? get useWifi => (origin as ProcessDownloadsProvider).useWifi;
-}
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
