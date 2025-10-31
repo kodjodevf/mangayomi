@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -21,7 +20,7 @@ class TrackState extends _$TrackState {
   Track build({
     Track? track,
     required ItemType? itemType,
-    required WidgetRef widgetRef,
+    required dynamic widgetRef,
   }) {
     return track!;
   }

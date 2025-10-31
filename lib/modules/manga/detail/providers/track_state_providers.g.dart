@@ -15,7 +15,7 @@ const trackStateProvider = TrackStateFamily._();
 final class TrackStateProvider extends $NotifierProvider<TrackState, Track> {
   const TrackStateProvider._({
     required TrackStateFamily super.from,
-    required ({Track? track, ItemType? itemType, WidgetRef widgetRef})
+    required ({Track? track, ItemType? itemType, dynamic widgetRef})
     super.argument,
   }) : super(
          retry: null,
@@ -58,7 +58,7 @@ final class TrackStateProvider extends $NotifierProvider<TrackState, Track> {
   }
 }
 
-String _$trackStateHash() => r'cd19c5662338c7f0e508cf2f99e89c21f146d664';
+String _$trackStateHash() => r'c3e386652db112f64ce5605afeb5e7a49afbc397';
 
 final class TrackStateFamily extends $Family
     with
@@ -67,7 +67,7 @@ final class TrackStateFamily extends $Family
           Track,
           Track,
           Track,
-          ({Track? track, ItemType? itemType, WidgetRef widgetRef})
+          ({Track? track, ItemType? itemType, dynamic widgetRef})
         > {
   const TrackStateFamily._()
     : super(
@@ -81,7 +81,7 @@ final class TrackStateFamily extends $Family
   TrackStateProvider call({
     Track? track,
     required ItemType? itemType,
-    required WidgetRef widgetRef,
+    required dynamic widgetRef,
   }) => TrackStateProvider._(
     argument: (track: track, itemType: itemType, widgetRef: widgetRef),
     from: this,
@@ -93,15 +93,15 @@ final class TrackStateFamily extends $Family
 
 abstract class _$TrackState extends $Notifier<Track> {
   late final _$args =
-      ref.$arg as ({Track? track, ItemType? itemType, WidgetRef widgetRef});
+      ref.$arg as ({Track? track, ItemType? itemType, dynamic widgetRef});
   Track? get track => _$args.track;
   ItemType? get itemType => _$args.itemType;
-  WidgetRef get widgetRef => _$args.widgetRef;
+  dynamic get widgetRef => _$args.widgetRef;
 
   Track build({
     Track? track,
     required ItemType? itemType,
-    required WidgetRef widgetRef,
+    required dynamic widgetRef,
   });
   @$mustCallSuper
   @override

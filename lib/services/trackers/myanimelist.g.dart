@@ -15,7 +15,7 @@ const myAnimeListProvider = MyAnimeListFamily._();
 final class MyAnimeListProvider extends $NotifierProvider<MyAnimeList, void> {
   const MyAnimeListProvider._({
     required MyAnimeListFamily super.from,
-    required ({int syncId, ItemType? itemType, WidgetRef widgetRef})
+    required ({int syncId, ItemType? itemType, dynamic widgetRef})
     super.argument,
   }) : super(
          retry: null,
@@ -58,7 +58,7 @@ final class MyAnimeListProvider extends $NotifierProvider<MyAnimeList, void> {
   }
 }
 
-String _$myAnimeListHash() => r'6fc4940fbc11af8b3779ecc42bb3845eadc06f0f';
+String _$myAnimeListHash() => r'2aeddba481f6f97fac7ce2037f6c38f84acf755d';
 
 final class MyAnimeListFamily extends $Family
     with
@@ -67,7 +67,7 @@ final class MyAnimeListFamily extends $Family
           void,
           void,
           void,
-          ({int syncId, ItemType? itemType, WidgetRef widgetRef})
+          ({int syncId, ItemType? itemType, dynamic widgetRef})
         > {
   const MyAnimeListFamily._()
     : super(
@@ -81,7 +81,7 @@ final class MyAnimeListFamily extends $Family
   MyAnimeListProvider call({
     required int syncId,
     required ItemType? itemType,
-    required WidgetRef widgetRef,
+    required dynamic widgetRef,
   }) => MyAnimeListProvider._(
     argument: (syncId: syncId, itemType: itemType, widgetRef: widgetRef),
     from: this,
@@ -93,15 +93,15 @@ final class MyAnimeListFamily extends $Family
 
 abstract class _$MyAnimeList extends $Notifier<void> {
   late final _$args =
-      ref.$arg as ({int syncId, ItemType? itemType, WidgetRef widgetRef});
+      ref.$arg as ({int syncId, ItemType? itemType, dynamic widgetRef});
   int get syncId => _$args.syncId;
   ItemType? get itemType => _$args.itemType;
-  WidgetRef get widgetRef => _$args.widgetRef;
+  dynamic get widgetRef => _$args.widgetRef;
 
   void build({
     required int syncId,
     required ItemType? itemType,
-    required WidgetRef widgetRef,
+    required dynamic widgetRef,
   });
   @$mustCallSuper
   @override

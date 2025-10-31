@@ -15,7 +15,7 @@ const kitsuProvider = KitsuFamily._();
 final class KitsuProvider extends $NotifierProvider<Kitsu, void> {
   const KitsuProvider._({
     required KitsuFamily super.from,
-    required ({int syncId, ItemType? itemType, WidgetRef widgetRef})
+    required ({int syncId, ItemType? itemType, dynamic widgetRef})
     super.argument,
   }) : super(
          retry: null,
@@ -58,7 +58,7 @@ final class KitsuProvider extends $NotifierProvider<Kitsu, void> {
   }
 }
 
-String _$kitsuHash() => r'ae5836feaaa4f95953f4890be2084cd1f7a3a412';
+String _$kitsuHash() => r'8a19aa11f167df8d8cb537f746cc9dc31cad1d49';
 
 final class KitsuFamily extends $Family
     with
@@ -67,7 +67,7 @@ final class KitsuFamily extends $Family
           void,
           void,
           void,
-          ({int syncId, ItemType? itemType, WidgetRef widgetRef})
+          ({int syncId, ItemType? itemType, dynamic widgetRef})
         > {
   const KitsuFamily._()
     : super(
@@ -81,7 +81,7 @@ final class KitsuFamily extends $Family
   KitsuProvider call({
     required int syncId,
     ItemType? itemType,
-    required WidgetRef widgetRef,
+    required dynamic widgetRef,
   }) => KitsuProvider._(
     argument: (syncId: syncId, itemType: itemType, widgetRef: widgetRef),
     from: this,
@@ -93,15 +93,15 @@ final class KitsuFamily extends $Family
 
 abstract class _$Kitsu extends $Notifier<void> {
   late final _$args =
-      ref.$arg as ({int syncId, ItemType? itemType, WidgetRef widgetRef});
+      ref.$arg as ({int syncId, ItemType? itemType, dynamic widgetRef});
   int get syncId => _$args.syncId;
   ItemType? get itemType => _$args.itemType;
-  WidgetRef get widgetRef => _$args.widgetRef;
+  dynamic get widgetRef => _$args.widgetRef;
 
   void build({
     required int syncId,
     ItemType? itemType,
-    required WidgetRef widgetRef,
+    required dynamic widgetRef,
   });
   @$mustCallSuper
   @override

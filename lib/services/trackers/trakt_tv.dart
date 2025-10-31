@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
@@ -38,7 +37,7 @@ class TraktTv extends _$TraktTv implements BaseTracker {
   void build({
     required int syncId,
     required ItemType? itemType,
-    required WidgetRef widgetRef,
+    required dynamic widgetRef,
   }) {}
 
   Future<bool?> login() async {

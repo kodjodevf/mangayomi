@@ -15,7 +15,7 @@ const traktTvProvider = TraktTvFamily._();
 final class TraktTvProvider extends $NotifierProvider<TraktTv, void> {
   const TraktTvProvider._({
     required TraktTvFamily super.from,
-    required ({int syncId, ItemType? itemType, WidgetRef widgetRef})
+    required ({int syncId, ItemType? itemType, dynamic widgetRef})
     super.argument,
   }) : super(
          retry: null,
@@ -58,7 +58,7 @@ final class TraktTvProvider extends $NotifierProvider<TraktTv, void> {
   }
 }
 
-String _$traktTvHash() => r'25c72f51804b49771a10d9a7ad2ca5f70581082e';
+String _$traktTvHash() => r'6843c07d55eb4daec6fd99a14037d2cefd51f8de';
 
 final class TraktTvFamily extends $Family
     with
@@ -67,7 +67,7 @@ final class TraktTvFamily extends $Family
           void,
           void,
           void,
-          ({int syncId, ItemType? itemType, WidgetRef widgetRef})
+          ({int syncId, ItemType? itemType, dynamic widgetRef})
         > {
   const TraktTvFamily._()
     : super(
@@ -81,7 +81,7 @@ final class TraktTvFamily extends $Family
   TraktTvProvider call({
     required int syncId,
     required ItemType? itemType,
-    required WidgetRef widgetRef,
+    required dynamic widgetRef,
   }) => TraktTvProvider._(
     argument: (syncId: syncId, itemType: itemType, widgetRef: widgetRef),
     from: this,
@@ -93,15 +93,15 @@ final class TraktTvFamily extends $Family
 
 abstract class _$TraktTv extends $Notifier<void> {
   late final _$args =
-      ref.$arg as ({int syncId, ItemType? itemType, WidgetRef widgetRef});
+      ref.$arg as ({int syncId, ItemType? itemType, dynamic widgetRef});
   int get syncId => _$args.syncId;
   ItemType? get itemType => _$args.itemType;
-  WidgetRef get widgetRef => _$args.widgetRef;
+  dynamic get widgetRef => _$args.widgetRef;
 
   void build({
     required int syncId,
     required ItemType? itemType,
-    required WidgetRef widgetRef,
+    required dynamic widgetRef,
   });
   @$mustCallSuper
   @override

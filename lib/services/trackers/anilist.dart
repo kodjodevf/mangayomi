@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
@@ -32,7 +31,7 @@ class Anilist extends _$Anilist implements BaseTracker {
   void build({
     required int syncId,
     ItemType? itemType,
-    required WidgetRef widgetRef,
+    required dynamic widgetRef,
   }) {}
 
   Future<bool?> login() async {

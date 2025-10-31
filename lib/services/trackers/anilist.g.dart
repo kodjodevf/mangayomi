@@ -15,7 +15,7 @@ const anilistProvider = AnilistFamily._();
 final class AnilistProvider extends $NotifierProvider<Anilist, void> {
   const AnilistProvider._({
     required AnilistFamily super.from,
-    required ({int syncId, ItemType? itemType, WidgetRef widgetRef})
+    required ({int syncId, ItemType? itemType, dynamic widgetRef})
     super.argument,
   }) : super(
          retry: null,
@@ -58,7 +58,7 @@ final class AnilistProvider extends $NotifierProvider<Anilist, void> {
   }
 }
 
-String _$anilistHash() => r'2d34818d1f8c58455b0081d4ae707cff160ea91d';
+String _$anilistHash() => r'c7ade80d69398d712596080cdba0c670724ac0da';
 
 final class AnilistFamily extends $Family
     with
@@ -67,7 +67,7 @@ final class AnilistFamily extends $Family
           void,
           void,
           void,
-          ({int syncId, ItemType? itemType, WidgetRef widgetRef})
+          ({int syncId, ItemType? itemType, dynamic widgetRef})
         > {
   const AnilistFamily._()
     : super(
@@ -81,7 +81,7 @@ final class AnilistFamily extends $Family
   AnilistProvider call({
     required int syncId,
     ItemType? itemType,
-    required WidgetRef widgetRef,
+    required dynamic widgetRef,
   }) => AnilistProvider._(
     argument: (syncId: syncId, itemType: itemType, widgetRef: widgetRef),
     from: this,
@@ -93,15 +93,15 @@ final class AnilistFamily extends $Family
 
 abstract class _$Anilist extends $Notifier<void> {
   late final _$args =
-      ref.$arg as ({int syncId, ItemType? itemType, WidgetRef widgetRef});
+      ref.$arg as ({int syncId, ItemType? itemType, dynamic widgetRef});
   int get syncId => _$args.syncId;
   ItemType? get itemType => _$args.itemType;
-  WidgetRef get widgetRef => _$args.widgetRef;
+  dynamic get widgetRef => _$args.widgetRef;
 
   void build({
     required int syncId,
     ItemType? itemType,
-    required WidgetRef widgetRef,
+    required dynamic widgetRef,
   });
   @$mustCallSuper
   @override
