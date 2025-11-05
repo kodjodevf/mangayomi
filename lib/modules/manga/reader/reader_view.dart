@@ -244,6 +244,7 @@ class _MangaChapterPageGalleryState
   }
 
   final double _horizontalScaleValue = 1.0;
+  bool _isNextChapterPreloading = false;
 
   late int pagePreloadAmount = ref.read(pagePreloadAmountStateProvider);
   late bool _isBookmarked = _readerController.getChapterBookmarked();
@@ -617,44 +618,8 @@ class _MangaChapterPageGalleryState
                                         _toggleScale(offset),
                                     onDoubleTap: () {},
                                     // Chapter transition callbacks
-                                    onChapterChanged: (newChapter) {
-                                      // Update the current chapter when a chapter change is detected
-                                      if (newChapter.id != chapter.id) {
-                                        if (mounted) {
-                                          setState(() {
-                                            _readerController = ref.read(
-                                              readerControllerProvider(
-                                                chapter: newChapter,
-                                              ).notifier,
-                                            );
-                                            chapter = newChapter;
-                                            _isBookmarked = _readerController
-                                                .getChapterBookmarked();
-                                          });
-                                        }
-                                      }
-                                    },
-                                    onReachedLastPage: (lastPageIndex) {
-                                      if (!_isLastPageTransition) {
-                                        try {
-                                          ref
-                                              .watch(
-                                                getChapterPagesProvider(
-                                                  chapter: _readerController
-                                                      .getNextChapter(),
-                                                ).future,
-                                              )
-                                              .then(
-                                                (value) => _preloadNextChapter(
-                                                  value,
-                                                  chapter,
-                                                ),
-                                              );
-                                        } on RangeError {
-                                          _addLastPageTransition(chapter);
-                                        }
-                                      }
-                                    },
+                                    onChapterChanged: (newChapter) {},
+                                    onReachedLastPage: (lastPageIndex) {},
                                   ),
                                 ),
                           )
@@ -1044,15 +1009,21 @@ class _MangaChapterPageGalleryState
         }
         if ((itemPositions.last.index == pagesLength - 1) &&
             !_isLastPageTransition) {
+          if (_isNextChapterPreloading) return;
           try {
+            _isNextChapterPreloading = true;
             ref
                 .watch(
                   getChapterPagesProvider(
                     chapter: _readerController.getNextChapter(),
                   ).future,
                 )
-                .then((value) => _preloadNextChapter(value, chapter));
+                .then((value) {
+                  _preloadNextChapter(value, chapter);
+                  _isNextChapterPreloading = false;
+                });
           } on RangeError {
+            _isNextChapterPreloading = false;
             _addLastPageTransition(chapter);
           }
         }
@@ -1222,15 +1193,21 @@ class _MangaChapterPageGalleryState
 
     if ((_uChapDataPreload[index].pageIndex! == _uChapDataPreload.length - 1) &&
         !_isLastPageTransition) {
+      if (_isNextChapterPreloading) return;
       try {
+        _isNextChapterPreloading = true;
         ref
             .watch(
               getChapterPagesProvider(
                 chapter: _readerController.getNextChapter(),
               ).future,
             )
-            .then((value) => _preloadNextChapter(value, chapter));
+            .then((value) {
+              _preloadNextChapter(value, chapter);
+              _isNextChapterPreloading = false;
+            });
       } on RangeError {
+        _isNextChapterPreloading = false;
         _addLastPageTransition(chapter);
       }
     }
@@ -2011,7 +1988,7 @@ class _MangaChapterPageGalleryState
 
   void _isViewFunction() {
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
-    if (mounted) {
+    if (context.mounted) {
       setState(() {
         _isView = !_isView;
       });
