@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
-import 'package:mangayomi/utils/riverpod.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -9,12 +8,6 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/modules/manga/reader/virtual_scrolling/virtual_page_manager.dart';
 import 'package:mangayomi/modules/manga/reader/virtual_scrolling/virtual_manga_list.dart';
-
-/// Provides virtual page manager instances
-final virtualPageManagerProvider =
-    Provider.family<VirtualPageManager, List<UChapDataPreload>>((ref, pages) {
-      return VirtualPageManager(pages: pages);
-    });
 
 /// Main widget for virtual reading that replaces ScrollablePositionedList
 class VirtualReaderView extends ConsumerStatefulWidget {
@@ -153,71 +146,5 @@ class _VirtualReaderViewState extends ConsumerState<VirtualReaderView> {
           VirtualPageManagerDebugInfo(pageManager: _pageManager),
       ],
     );
-  }
-}
-
-/// Mixin to add virtual page manager capabilities to existing widgets
-mixin VirtualPageManagerMixin<T extends ConsumerStatefulWidget>
-    on ConsumerState<T> {
-  VirtualPageManager? _virtualPageManager;
-
-  VirtualPageManager get virtualPageManager {
-    _virtualPageManager ??= VirtualPageManager(pages: getPages());
-    return _virtualPageManager!;
-  }
-
-  /// Override this method to provide the pages list
-  List<UChapDataPreload> getPages();
-
-  /// Call this when pages change
-  void updateVirtualPages(List<UChapDataPreload> newPages) {
-    _virtualPageManager?.dispose();
-    _virtualPageManager = VirtualPageManager(pages: newPages);
-  }
-
-  /// Call this when the visible page changes
-  void updateVisiblePage(int index) {
-    virtualPageManager.updateVisibleIndex(index);
-  }
-
-  @override
-  void dispose() {
-    _virtualPageManager?.dispose();
-    super.dispose();
-  }
-}
-
-/// Configuration provider for virtual page manager
-final virtualPageConfigProvider = Provider<VirtualPageConfig>((ref) {
-  // Get user preferences for virtual scrolling configuration
-  final preloadAmount = ref.watch(readerPagePreloadAmountStateProvider);
-
-  return VirtualPageConfig(
-    preloadDistance: preloadAmount,
-    maxCachedPages: preloadAmount * 3,
-    cacheTimeout: const Duration(minutes: 5),
-    enableMemoryOptimization: true,
-  );
-});
-
-/// Provider for page preload amount (renamed to avoid conflicts)
-final readerPagePreloadAmountStateProvider = StateProvider<int>(() => 3);
-
-/// Extension to convert ReaderMode to virtual scrolling parameters
-extension ReaderModeExtension on ReaderMode {
-  bool get isContinuous {
-    return this == ReaderMode.verticalContinuous ||
-        this == ReaderMode.webtoon ||
-        this == ReaderMode.horizontalContinuous;
-  }
-
-  Axis get scrollDirection {
-    return this == ReaderMode.horizontalContinuous
-        ? Axis.horizontal
-        : Axis.vertical;
-  }
-
-  bool get isHorizontalContinuous {
-    return this == ReaderMode.horizontalContinuous;
   }
 }

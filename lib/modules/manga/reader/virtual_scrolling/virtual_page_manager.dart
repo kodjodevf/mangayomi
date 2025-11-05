@@ -1,11 +1,10 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 
 /// Page loading states for virtual scrolling
-enum PageLoadState { notLoaded, loading, loaded, error, cached }
+enum PageLoadState { notLoaded, loaded, error, cached }
 
 /// Virtual page information for tracking state
 class VirtualPageInfo {
@@ -26,7 +25,6 @@ class VirtualPageInfo {
   bool get isVisible =>
       loadState == PageLoadState.loaded || loadState == PageLoadState.cached;
   bool get needsLoading => loadState == PageLoadState.notLoaded;
-  bool get isLoading => loadState == PageLoadState.loading;
   bool get hasError => loadState == PageLoadState.error;
 
   void markAccessed() {
@@ -98,9 +96,6 @@ class VirtualPageManager extends ChangeNotifier {
   /// Get page count
   int get pageCount => _originalPages.length;
 
-  /// Get current visible index
-  int get currentVisibleIndex => _currentVisibleIndex;
-
   /// Get page info for a specific index
   VirtualPageInfo? getPageInfo(int index) {
     if (index < 0 || index >= _originalPages.length) return null;
@@ -130,13 +125,6 @@ class VirtualPageManager extends ChangeNotifier {
     return distance <= config.preloadDistance;
   }
 
-  /// Get priority for a page (higher = more important)
-  int getPagePriority(int index) {
-    final distance = (index - _currentVisibleIndex).abs();
-    if (distance == 0) return 1000; // Current page has highest priority
-    return max(0, 100 - distance * 10);
-  }
-
   /// Schedule preloading for nearby pages
   void _schedulePreloading() {
     _preloadQueue.clear();
@@ -150,43 +138,6 @@ class VirtualPageManager extends ChangeNotifier {
         }
       }
     }
-
-    // Process preload queue
-    _processPreloadQueue();
-  }
-
-  /// Process the preload queue
-  void _processPreloadQueue() {
-    final sortedQueue = _preloadQueue.toList()
-      ..sort((a, b) => getPagePriority(b).compareTo(getPagePriority(a)));
-
-    for (final index in sortedQueue.take(3)) {
-      // Limit concurrent loading
-      _loadPage(index);
-    }
-  }
-
-  /// Load a specific page
-  Future<void> _loadPage(int index) async {
-    final pageInfo = _pageInfoMap[index];
-    if (pageInfo == null || pageInfo.isLoading) return;
-
-    pageInfo.loadState = PageLoadState.loading;
-    notifyListeners();
-
-    try {
-      // For now, we just mark as loaded since the actual image loading
-      // is handled by the ImageView widgets
-      await Future.delayed(const Duration(milliseconds: 10));
-
-      pageInfo.loadState = PageLoadState.loaded;
-      pageInfo.markAccessed();
-    } catch (error) {
-      pageInfo.loadState = PageLoadState.error;
-      pageInfo.error = error;
-    }
-
-    notifyListeners();
   }
 
   /// Perform memory cleanup
@@ -238,11 +189,6 @@ class VirtualPageManager extends ChangeNotifier {
     }
   }
 
-  /// Force load a page immediately
-  Future<void> forceLoadPage(int index) async {
-    await _loadPage(index);
-  }
-
   /// Get memory usage statistics
   Map<String, dynamic> getMemoryStats() {
     final loadedCount = _pageInfoMap.values
@@ -261,25 +207,5 @@ class VirtualPageManager extends ChangeNotifier {
       'currentIndex': _currentVisibleIndex,
       'preloadQueueSize': _preloadQueue.length,
     };
-  }
-
-  /// Preload a range of pages
-  Future<void> preloadRange(int startIndex, int endIndex) async {
-    for (int i = startIndex; i <= endIndex && i < _originalPages.length; i++) {
-      if (i >= 0) {
-        await _loadPage(i);
-      }
-    }
-  }
-
-  /// Clear all cached pages
-  void clearCache() {
-    for (final pageInfo in _pageInfoMap.values) {
-      if (pageInfo.loadState != PageLoadState.loading) {
-        pageInfo.loadState = PageLoadState.notLoaded;
-        pageInfo.error = null;
-      }
-    }
-    notifyListeners();
   }
 }

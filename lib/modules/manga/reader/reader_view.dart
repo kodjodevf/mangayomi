@@ -247,7 +247,7 @@ class _MangaChapterPageGalleryState
 
   late int pagePreloadAmount = ref.read(pagePreloadAmountStateProvider);
   late bool _isBookmarked = _readerController.getChapterBookmarked();
-
+  bool _isLastPageTransition = false;
   final _currentReaderMode = StateProvider<ReaderMode?>(() => null);
   PageMode? _pageMode;
   bool _isView = false;
@@ -471,7 +471,7 @@ class _MangaChapterPageGalleryState
     if (cropBorders) {
       _processCropBorders();
     }
-    final usePageTapZones = ref.watch(usePageTapZonesStateProvider);
+
     final l10n = l10nLocalizations(context)!;
     return KeyboardListener(
       autofocus: true,
@@ -635,22 +635,24 @@ class _MangaChapterPageGalleryState
                                       }
                                     },
                                     onReachedLastPage: (lastPageIndex) {
-                                      try {
-                                        ref
-                                            .watch(
-                                              getChapterPagesProvider(
-                                                chapter: _readerController
-                                                    .getNextChapter(),
-                                              ).future,
-                                            )
-                                            .then(
-                                              (value) => _preloadNextChapter(
-                                                value,
-                                                chapter,
-                                              ),
-                                            );
-                                      } on RangeError {
-                                        _addLastPageTransition(chapter);
+                                      if (!_isLastPageTransition) {
+                                        try {
+                                          ref
+                                              .watch(
+                                                getChapterPagesProvider(
+                                                  chapter: _readerController
+                                                      .getNextChapter(),
+                                                ).future,
+                                              )
+                                              .then(
+                                                (value) => _preloadNextChapter(
+                                                  value,
+                                                  chapter,
+                                                ),
+                                              );
+                                        } on RangeError {
+                                          _addLastPageTransition(chapter);
+                                        }
                                       }
                                     },
                                   ),
@@ -941,8 +943,28 @@ class _MangaChapterPageGalleryState
                                     onPageChanged: _onPageChanged,
                                   ),
                           ),
-                    _gestureRightLeft(failedToLoadImage, usePageTapZones),
-                    _gestureTopBottom(failedToLoadImage, usePageTapZones),
+                    Consumer(
+                      builder: (context, ref, child) {
+                        final usePageTapZones = ref.watch(
+                          usePageTapZonesStateProvider,
+                        );
+                        return _gestureRightLeft(
+                          failedToLoadImage,
+                          usePageTapZones,
+                        );
+                      },
+                    ),
+                    Consumer(
+                      builder: (context, ref, child) {
+                        final usePageTapZones = ref.watch(
+                          usePageTapZonesStateProvider,
+                        );
+                        return _gestureTopBottom(
+                          failedToLoadImage,
+                          usePageTapZones,
+                        );
+                      },
+                    ),
                     _appBar(),
                     _bottomBar(),
                     _showPage(),
@@ -1020,7 +1042,8 @@ class _MangaChapterPageGalleryState
             });
           }
         }
-        if (itemPositions.last.index == pagesLength - 1) {
+        if ((itemPositions.last.index == pagesLength - 1) &&
+            !_isLastPageTransition) {
           try {
             ref
                 .watch(
@@ -1042,6 +1065,7 @@ class _MangaChapterPageGalleryState
   }
 
   void _addLastPageTransition(Chapter chap) {
+    if (_isLastPageTransition) return;
     try {
       if (!mounted || (_uChapDataPreload.last.isLastChapter ?? false)) return;
       final currentLength = _uChapDataPreload.length;
@@ -1056,6 +1080,7 @@ class _MangaChapterPageGalleryState
       if (mounted) {
         setState(() {
           _uChapDataPreload.add(transitionPage);
+          _isLastPageTransition = true;
         });
       }
     } catch (_) {}
@@ -1195,7 +1220,8 @@ class _MangaChapterPageGalleryState
           .setCurrentIndex(_uChapDataPreload[index].index!);
     }
 
-    if (_uChapDataPreload[index].pageIndex! == _uChapDataPreload.length - 1) {
+    if ((_uChapDataPreload[index].pageIndex! == _uChapDataPreload.length - 1) &&
+        !_isLastPageTransition) {
       try {
         ref
             .watch(
