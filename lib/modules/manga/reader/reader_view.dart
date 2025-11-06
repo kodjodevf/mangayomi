@@ -40,7 +40,7 @@ import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicat
 import 'package:mangayomi/modules/manga/reader/widgets/transition_view_paged.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/modules/manga/reader/providers/manga_reader_provider.dart';
-import 'package:mangayomi/modules/manga/reader/webtoon_view.dart';
+import 'package:mangayomi/modules/manga/reader/image_view_webtoon.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -564,7 +564,7 @@ class _MangaChapterPageGalleryState
                 return Stack(
                   children: [
                     _isVerticalOrHorizontalContinous()
-                        ? WebtoonView(
+                        ? ImageViewWebtoon(
                             pages: _uChapDataPreload,
                             itemScrollController: _itemScrollController,
                             scrollOffsetController: _pageOffsetController,

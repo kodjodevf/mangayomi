@@ -10,7 +10,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:mangayomi/models/settings.dart';
 
 /// Main widget for virtual reading that replaces ScrollablePositionedList
-class WebtoonView extends StatelessWidget {
+class ImageViewWebtoon extends StatelessWidget {
   final List<UChapDataPreload> pages;
   final ItemScrollController itemScrollController;
   final ScrollOffsetController scrollOffsetController;
@@ -32,7 +32,7 @@ class WebtoonView extends StatelessWidget {
   final Function(Offset) onDoubleTapDown;
   final VoidCallback onDoubleTap;
 
-  const WebtoonView({
+  const ImageViewWebtoon({
     super.key,
     required this.pages,
     required this.itemScrollController,
