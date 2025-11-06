@@ -40,10 +40,9 @@ import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicat
 import 'package:mangayomi/modules/manga/reader/widgets/transition_view_paged.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/modules/manga/reader/providers/manga_reader_provider.dart';
-import 'package:mangayomi/modules/manga/reader/virtual_scrolling/virtual_reader_view.dart';
+import 'package:mangayomi/modules/manga/reader/webtoon_view.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:photo_view/photo_view_gallery.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
@@ -243,7 +242,7 @@ class _MangaChapterPageGalleryState
     WidgetsBinding.instance.addObserver(this);
   }
 
-  final double _horizontalScaleValue = 1.0;
+  // final double _horizontalScaleValue = 1.0;
   bool _isNextChapterPreloading = false;
 
   late int pagePreloadAmount = ref.read(pagePreloadAmountStateProvider);
@@ -565,63 +564,45 @@ class _MangaChapterPageGalleryState
                 return Stack(
                   children: [
                     _isVerticalOrHorizontalContinous()
-                        ? PhotoViewGallery.builder(
-                            itemCount: 1,
-                            builder: (_, _) =>
-                                PhotoViewGalleryPageOptions.customChild(
-                                  controller: _photoViewController,
-                                  scaleStateController:
-                                      _photoViewScaleStateController,
-                                  basePosition: _scalePosition,
-                                  onScaleEnd: _onScaleEnd,
-                                  child: VirtualReaderView(
-                                    pages: _uChapDataPreload,
-                                    itemScrollController: _itemScrollController,
-                                    scrollOffsetController:
-                                        _pageOffsetController,
-                                    itemPositionsListener:
-                                        _itemPositionsListener,
-                                    scrollDirection: isHorizontalContinuaous
-                                        ? Axis.horizontal
-                                        : Axis.vertical,
-                                    minCacheExtent:
-                                        pagePreloadAmount * context.height(1),
-                                    initialScrollIndex: _readerController
-                                        .getPageIndex(),
-                                    physics: const ClampingScrollPhysics(),
-                                    onLongPressData: (data) =>
-                                        _onLongPressImageDialog(data, context),
-                                    onFailedToLoadImage: (value) {
-                                      // Handle failed image loading
-                                      if (_failedToLoadImage.value != value &&
-                                          context.mounted) {
-                                        _failedToLoadImage.value = value;
-                                      }
-                                    },
-                                    backgroundColor: backgroundColor,
-                                    isDoublePageMode:
-                                        _pageMode == PageMode.doublePage &&
-                                        !isHorizontalContinuaous,
-                                    isHorizontalContinuous:
-                                        isHorizontalContinuaous,
-                                    readerMode: ref.watch(_currentReaderMode)!,
-                                    photoViewController: _photoViewController,
-                                    photoViewScaleStateController:
-                                        _photoViewScaleStateController,
-                                    scalePosition: _scalePosition,
-                                    onScaleEnd: (details) => _onScaleEnd(
-                                      context,
-                                      details,
-                                      _photoViewController.value,
-                                    ),
-                                    onDoubleTapDown: (offset) =>
-                                        _toggleScale(offset),
-                                    onDoubleTap: () {},
-                                    // Chapter transition callbacks
-                                    onChapterChanged: (newChapter) {},
-                                    onReachedLastPage: (lastPageIndex) {},
-                                  ),
-                                ),
+                        ? WebtoonView(
+                            pages: _uChapDataPreload,
+                            itemScrollController: _itemScrollController,
+                            scrollOffsetController: _pageOffsetController,
+                            itemPositionsListener: _itemPositionsListener,
+                            scrollDirection: isHorizontalContinuaous
+                                ? Axis.horizontal
+                                : Axis.vertical,
+                            minCacheExtent:
+                                pagePreloadAmount * context.height(1),
+                            initialScrollIndex: _readerController
+                                .getPageIndex(),
+                            physics: const ClampingScrollPhysics(),
+                            onLongPressData: (data) =>
+                                _onLongPressImageDialog(data, context),
+                            onFailedToLoadImage: (value) {
+                              // Handle failed image loading
+                              if (_failedToLoadImage.value != value &&
+                                  context.mounted) {
+                                _failedToLoadImage.value = value;
+                              }
+                            },
+                            backgroundColor: backgroundColor,
+                            isDoublePageMode:
+                                _pageMode == PageMode.doublePage &&
+                                !isHorizontalContinuaous,
+                            isHorizontalContinuous: isHorizontalContinuaous,
+                            readerMode: ref.watch(_currentReaderMode)!,
+                            photoViewController: _photoViewController,
+                            photoViewScaleStateController:
+                                _photoViewScaleStateController,
+                            scalePosition: _scalePosition,
+                            onScaleEnd: (details) => _onScaleEnd(
+                              context,
+                              details,
+                              _photoViewController.value,
+                            ),
+                            onDoubleTapDown: (offset) => _toggleScale(offset),
+                            onDoubleTap: () {},
                           )
                         : Material(
                             color: getBackgroundColor(backgroundColor),
