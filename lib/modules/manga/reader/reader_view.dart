@@ -1397,6 +1397,7 @@ class _MangaChapterPageGalleryState
   }
 
   void _processCropBorders() async {
+    if (_cropBorderCheckList.length == _uChapDataPreload.length) return;
     for (var i = 0; i < _uChapDataPreload.length; i++) {
       if (!_cropBorderCheckList.contains(i)) {
         _cropBorderCheckList.add(i);
