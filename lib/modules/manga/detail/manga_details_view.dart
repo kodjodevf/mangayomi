@@ -163,9 +163,16 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
         titleDescription: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              widget.manga.author ?? "Unknown",
-              style: const TextStyle(fontWeight: FontWeight.w500),
+            Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Icon(Icons.person_outline, size: 14),
+                const SizedBox(width: 4),
+                Text(
+                  widget.manga.author ?? l10n.unknown,
+                  style: const TextStyle(fontWeight: FontWeight.w500),
+                ),
+              ],
             ),
             Wrap(
               crossAxisAlignment: WrapCrossAlignment.center,
