@@ -13,6 +13,130 @@ import 'package:path_provider/path_provider.dart';
 import 'package:extended_image_library/src/network/extended_network_image_provider.dart'
     as image_provider;
 
+/// LRU Memory Cache for decoded image data
+class _LRUCache<K, V> {
+  final int _maxSize;
+  final _cache = <K, V>{};
+  int _currentSize = 0;
+  final int Function(V)? _sizeOf;
+
+  _LRUCache({required int maxSize, int Function(V)? sizeOf})
+    : _maxSize = maxSize,
+      _sizeOf = sizeOf;
+
+  V? get(K key) {
+    final value = _cache.remove(key);
+    if (value != null) {
+      _cache[key] = value; // Move to end (most recently used)
+    }
+    return value;
+  }
+
+  void put(K key, V value) {
+    _cache.remove(key); // Remove if exists
+    _cache[key] = value; // Add to end
+
+    if (_sizeOf != null) {
+      _currentSize += _sizeOf(value);
+      while (_currentSize > _maxSize && _cache.isNotEmpty) {
+        final oldest = _cache.entries.first;
+        _currentSize -= _sizeOf(oldest.value);
+        _cache.remove(oldest.key);
+      }
+    } else {
+      while (_cache.length > _maxSize) {
+        _cache.remove(_cache.keys.first);
+      }
+    }
+  }
+
+  void remove(K key) {
+    final value = _cache.remove(key);
+    if (value != null && _sizeOf != null) {
+      _currentSize -= _sizeOf(value);
+    }
+  }
+
+  void clear() {
+    _cache.clear();
+    _currentSize = 0;
+  }
+
+  int get length => _cache.length;
+  int get currentSize => _currentSize;
+}
+
+/// Global memory cache (100 images max, ~50MB)
+final _memoryCache = _LRUCache<String, Uint8List>(
+  maxSize: 50 * 1024 * 1024, // 50MB
+  sizeOf: (data) => data.length,
+);
+
+/// Cache metadata for LRU eviction
+class _CacheMetadata {
+  final String path;
+  final int size;
+  final DateTime lastAccessed;
+
+  _CacheMetadata({
+    required this.path,
+    required this.size,
+    required this.lastAccessed,
+  });
+}
+
+/// Global cache manager
+class _CacheManager {
+  static const _maxCacheSize = 500 * 1024 * 1024; // 500MB
+
+  static Future<int> getCacheSize(Directory cacheDir) async {
+    if (!await cacheDir.exists()) return 0;
+
+    int totalSize = 0;
+    await for (final entity in cacheDir.list(recursive: true)) {
+      if (entity is File) {
+        totalSize += await entity.length();
+      }
+    }
+    return totalSize;
+  }
+
+  static Future<void> evictOldestIfNeeded(Directory cacheDir) async {
+    final size = await getCacheSize(cacheDir);
+    if (size <= _maxCacheSize) return;
+
+    // Collect all cache files with metadata
+    final List<_CacheMetadata> files = [];
+    await for (final entity in cacheDir.list()) {
+      if (entity is File) {
+        final stat = await entity.stat();
+        files.add(
+          _CacheMetadata(
+            path: entity.path,
+            size: stat.size,
+            lastAccessed: stat.accessed,
+          ),
+        );
+      }
+    }
+
+    // Sort by last accessed (oldest first)
+    files.sort((a, b) => a.lastAccessed.compareTo(b.lastAccessed));
+
+    // Delete until under limit
+    int currentSize = size;
+    for (final file in files) {
+      if (currentSize <= _maxCacheSize) break;
+      try {
+        await File(file.path).delete();
+        currentSize -= file.size;
+      } catch (e) {
+        if (kDebugMode) print('Failed to delete cache file: $e');
+      }
+    }
+  }
+}
+
 class CustomExtendedNetworkImageProvider
     extends ImageProvider<image_provider.ExtendedNetworkImageProvider>
     with ExtendedImageProvider<image_provider.ExtendedNetworkImageProvider>
@@ -186,6 +310,12 @@ class CustomExtendedNetworkImageProvider
     StreamController<ImageChunkEvent>? chunkEvents,
     String md5Key,
   ) async {
+    // Check memory cache first
+    final cachedData = _memoryCache.get(md5Key);
+    if (cachedData != null) {
+      return cachedData;
+    }
+
     final Directory cacheImagesDirectory = Directory(
       join(
         (await getTemporaryDirectory()).path,
@@ -195,6 +325,7 @@ class CustomExtendedNetworkImageProvider
     );
     Uint8List? data;
     final File cacheFile = File(join(cacheImagesDirectory.path, md5Key));
+
     // exist, try to find cache image file
     if (cacheFile.existsSync()) {
       if (key.cacheMaxAge != null) {
@@ -204,19 +335,30 @@ class CustomExtendedNetworkImageProvider
           cacheFile.deleteSync();
         } else {
           data = await cacheFile.readAsBytes();
+          // Store in memory cache
+          _memoryCache.put(md5Key, data);
         }
       } else {
         data = await cacheFile.readAsBytes();
+        // Store in memory cache
+        _memoryCache.put(md5Key, data);
       }
     } else if (!cacheImagesDirectory.existsSync()) {
       await cacheImagesDirectory.create(recursive: true);
     }
+
     // load from network
     if (data == null) {
       data = await _loadNetwork(key, chunkEvents);
       if (data != null) {
+        // Evict old cache if needed before writing
+        await _CacheManager.evictOldestIfNeeded(cacheImagesDirectory);
+
         // cache image file
         await File(join(cacheImagesDirectory.path, md5Key)).writeAsBytes(data);
+
+        // Store in memory cache
+        _memoryCache.put(md5Key, data);
       }
     }
 
@@ -231,30 +373,35 @@ class CustomExtendedNetworkImageProvider
     try {
       final Uri resolved = Uri.base.resolve(key.url);
       final StreamedResponse? response = await _tryGetResponse(resolved);
-      List<int> bytes = [];
-      final int total = response!.contentLength ?? 0;
-      if (response.statusCode == HttpStatus.ok) {
-        int received = 0;
-        response.stream.asBroadcastStream();
-        await for (var chunk in response.stream) {
-          bytes.addAll(chunk);
-          try {
-            received += chunk.length;
-            if (chunkEvents != null) {}
-            chunkEvents!.add(
-              ImageChunkEvent(
-                cumulativeBytesLoaded: received,
-                expectedTotalBytes: total,
-              ),
-            );
-          } catch (e) {
-            if (kDebugMode) {
-              print(e);
-            }
-          }
-        }
-      } else {
+
+      if (response == null || response.statusCode != HttpStatus.ok) {
         return null;
+      }
+
+      // Pre-allocate list if content length is known
+      final int total = response.contentLength ?? 0;
+      final List<int> bytes = total > 0
+          ? List<int>.filled(total, 0, growable: true)
+          : [];
+      int received = 0;
+
+      response.stream.asBroadcastStream();
+      await for (var chunk in response.stream) {
+        if (total > 0 && received + chunk.length <= total) {
+          // Copy directly to pre-allocated list
+          bytes.setRange(received, received + chunk.length, chunk);
+        } else {
+          // Fallback for unknown size
+          bytes.addAll(chunk);
+        }
+
+        received += chunk.length;
+        chunkEvents?.add(
+          ImageChunkEvent(
+            cumulativeBytesLoaded: received,
+            expectedTotalBytes: total,
+          ),
+        );
       }
 
       if (bytes.isEmpty) {
@@ -281,11 +428,20 @@ class CustomExtendedNetworkImageProvider
 
   Future<StreamedResponse> _getResponse(Uri resolved) async {
     var request = Request('GET', resolved);
-    request.headers.addAll(headers ?? {});
+
+    // Optimize headers for better caching and compression
+    final optimizedHeaders = {
+      ...?headers,
+      'Accept-Encoding': 'gzip, deflate, br',
+      'Accept': 'image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+      'Connection': 'keep-alive',
+    };
+    request.headers.addAll(optimizedHeaders);
 
     StreamedResponse response = await MClient.init(
       showCloudFlareError: showCloudFlareError,
     ).send(request);
+
     if (response.statusCode != 200) {
       final res = await MClient.init(
         reqcopyWith: {'useDartHttpClient': true},
@@ -297,20 +453,40 @@ class CustomExtendedNetworkImageProvider
     return response;
   }
 
-  // Http get with cancel, delay try again
+  // Http get with cancel, exponential backoff retry
   Future<StreamedResponse?> _tryGetResponse(Uri resolved) async {
     cancelToken?.throwIfCancellationRequested();
-    return await RetryHelper.tryRun<StreamedResponse>(
-      () {
-        return CancellationTokenSource.register(
+
+    int attempt = 0;
+    while (attempt < retries) {
+      try {
+        return await CancellationTokenSource.register(
           cancelToken,
           _getResponse(resolved),
         );
-      },
-      cancelToken: cancelToken,
-      timeRetry: timeRetry,
-      retries: retries,
-    );
+      } catch (e) {
+        attempt++;
+        if (attempt >= retries) {
+          rethrow;
+        }
+
+        // Exponential backoff: 100ms, 200ms, 400ms, 800ms, etc.
+        final backoffDelay = Duration(
+          milliseconds: timeRetry.inMilliseconds * (1 << attempt),
+        );
+
+        if (kDebugMode) {
+          print(
+            'Retry attempt $attempt/$retries after ${backoffDelay.inMilliseconds}ms',
+          );
+        }
+
+        await Future.delayed(backoffDelay);
+        cancelToken?.throwIfCancellationRequested();
+      }
+    }
+
+    return null;
   }
 
   @override
