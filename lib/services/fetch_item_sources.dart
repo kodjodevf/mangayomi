@@ -15,13 +15,16 @@ Future<void> fetchItemSourcesList(
   if (ref.watch(checkForExtensionsUpdateStateProvider) || reFresh) {
     final repos = ref.watch(extensionsRepoStateProvider(itemType));
     for (Repo repo in repos) {
-      await fetchSourcesList(
-        repo: repo,
-        refresh: reFresh,
-        id: id,
-        ref: ref,
-        itemType: itemType,
-      );
+      try {
+        await fetchSourcesList(
+          repo: repo,
+          refresh: reFresh,
+          id: id,
+          androidProxyServer: ref.watch(androidProxyServerStateProvider),
+          autoUpdateExtensions: ref.watch(autoUpdateExtensionsStateProvider),
+          itemType: itemType,
+        );
+      } catch (_) {}
     }
   }
 }

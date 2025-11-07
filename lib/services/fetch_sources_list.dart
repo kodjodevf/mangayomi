@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/lib.dart';
@@ -9,14 +8,14 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 Future<void> fetchSourcesList({
   int? id,
   required bool refresh,
-  required Ref ref,
+  required String androidProxyServer,
+  required bool autoUpdateExtensions,
   required ItemType itemType,
   required Repo? repo,
 }) async {
@@ -126,21 +125,21 @@ Future<void> fetchSourcesList({
       orElse: () => Source(),
     );
     if (matchingSource.id != null && matchingSource.sourceCodeUrl!.isNotEmpty) {
-      await _updateSource(matchingSource, ref, repo, itemType);
+      await _updateSource(matchingSource, androidProxyServer, repo, itemType);
     }
   } else {
     for (var source in sourceList) {
       final existingSource = await isar.sources.get(source.id!);
       if (existingSource == null) {
-        await _addNewSource(source, ref, repo, itemType);
+        await _addNewSource(source, repo, itemType);
         continue;
       }
       final shouldUpdate =
           existingSource.isAdded! &&
           compareVersions(existingSource.version!, source.version!) < 0;
       if (!shouldUpdate) continue;
-      if (ref.read(autoUpdateExtensionsStateProvider)) {
-        await _updateSource(source, ref, repo, itemType);
+      if (autoUpdateExtensions) {
+        await _updateSource(source, androidProxyServer, repo, itemType);
       } else {
         await isar.writeTxn(() async {
           isar.sources.put(existingSource..versionLast = source.version);
@@ -149,12 +148,12 @@ Future<void> fetchSourcesList({
     }
   }
 
-  checkIfSourceIsObsolete(sourceList, repo!, itemType, ref);
+  checkIfSourceIsObsolete(sourceList, repo!, itemType);
 }
 
 Future<void> _updateSource(
   Source source,
-  Ref ref,
+  String androidProxyServer,
   Repo? repo,
   ItemType itemType,
 ) async {
@@ -163,7 +162,7 @@ Future<void> _updateSource(
   final sourceCode = source.sourceCodeLanguage == SourceCodeLanguage.mihon
       ? base64.encode(req.bodyBytes)
       : req.body;
-  final androidProxyServer = ref.read(androidProxyServerStateProvider);
+
   Map<String, String> headers = {};
   bool? supportLatest;
   FilterList? filterList;
@@ -232,12 +231,7 @@ Future<void> _updateSource(
   await isar.writeTxn(() async => isar.sources.put(updatedSource));
 }
 
-Future<void> _addNewSource(
-  Source source,
-  Ref ref,
-  Repo? repo,
-  ItemType itemType,
-) async {
+Future<void> _addNewSource(Source source, Repo? repo, ItemType itemType) async {
   final newSource = Source()
     ..sourceCodeUrl = source.sourceCodeUrl
     ..id = source.id
@@ -269,7 +263,6 @@ Future<void> checkIfSourceIsObsolete(
   List<Source> sourceList,
   Repo repo,
   ItemType itemType,
-  Ref ref,
 ) async {
   if (sourceList.isEmpty) return;
 
