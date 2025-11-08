@@ -1,7 +1,10 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/modules/novel/novel_reader_controller_provider.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 
 class ReaderSettingsTab extends ConsumerWidget {
   const ReaderSettingsTab({super.key});
@@ -227,7 +230,17 @@ class ReaderSettingsTab extends ConsumerWidget {
 }
 
 class GeneralSettingsTab extends ConsumerWidget {
-  const GeneralSettingsTab({super.key});
+  final ValueNotifier<bool> autoScrollPage;
+  final ValueNotifier<bool> autoScroll;
+  final NovelReaderController readerController;
+  final ValueNotifier<double> pageOffset;
+  const GeneralSettingsTab({
+    required this.autoScrollPage,
+    required this.autoScroll,
+    required this.readerController,
+    required this.pageOffset,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -237,7 +250,6 @@ class GeneralSettingsTab extends ConsumerWidget {
         children: [
           _SwitchListTileSetting(
             title: 'Show Scroll Percentage',
-            subtitle: 'Display reading progress percentage',
             value: ref.watch(novelShowScrollPercentageStateProvider),
             onChanged: (value) {
               ref
@@ -245,18 +257,45 @@ class GeneralSettingsTab extends ConsumerWidget {
                   .set(value);
             },
           ),
-
-          // _SwitchListTileSetting(
-          //   title: 'Auto Scroll',
-          //   subtitle: 'Automatically scroll through pages',
-          //   value: ref.watch(novelAutoScrollStateProvider),
-          //   onChanged: (value) {
-          //     ref.read(novelAutoScrollStateProvider.notifier).set(value);
-          //   },
-          // ),
+          ValueListenableBuilder(
+            valueListenable: autoScrollPage,
+            builder: (context, valueT, child) {
+              return Column(
+                children: [
+                  _SwitchListTileSetting(
+                    secondary: Icon(
+                      valueT ? Icons.timer : Icons.timer_outlined,
+                    ),
+                    value: valueT,
+                    title: context.l10n.auto_scroll,
+                    onChanged: (val) {
+                      readerController.setAutoScroll(val, pageOffset.value);
+                      autoScrollPage.value = val;
+                      autoScroll.value = val;
+                    },
+                  ),
+                  if (valueT)
+                    ValueListenableBuilder(
+                      valueListenable: pageOffset,
+                      builder: (context, value, child) => Slider(
+                        min: 2.0,
+                        max: 30.0,
+                        divisions: max(28, 3),
+                        value: value,
+                        onChanged: (val) {
+                          pageOffset.value = val;
+                        },
+                        onChangeEnd: (val) {
+                          readerController.setAutoScroll(valueT, val);
+                        },
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
           _SwitchListTileSetting(
             title: 'Remove Extra Paragraph Spacing',
-            subtitle: 'Reduce spacing between paragraphs',
             value: ref.watch(novelRemoveExtraParagraphSpacingStateProvider),
             onChanged: (value) {
               ref
@@ -311,22 +350,31 @@ class _SettingSection extends StatelessWidget {
 
 class _SwitchListTileSetting extends StatelessWidget {
   final String title;
-  final String subtitle;
   final bool value;
+  final Widget? secondary;
   final ValueChanged<bool> onChanged;
 
   const _SwitchListTileSetting({
     required this.title,
-    required this.subtitle,
     required this.value,
     required this.onChanged,
+    this.secondary,
   });
 
   @override
   Widget build(BuildContext context) {
     return SwitchListTile(
-      title: Text(title),
-      subtitle: Text(subtitle, style: Theme.of(context).textTheme.bodySmall),
+      secondary: secondary,
+      title: Text(
+        title,
+        style: TextStyle(
+          color: Theme.of(
+            context,
+          ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+          fontSize: 14,
+        ),
+      ),
+
       value: value,
       onChanged: onChanged,
     );

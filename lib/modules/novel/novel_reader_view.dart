@@ -136,6 +136,36 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     ref.read(fullScreenReaderStateProvider.notifier).set(!value!);
   }
 
+  late final _autoScroll = ValueNotifier(
+    _readerController.autoScrollValues().$1,
+  );
+  late final _pageOffset = ValueNotifier(
+    _readerController.autoScrollValues().$2,
+  );
+  late final _autoScrollPage = ValueNotifier(_autoScroll.value);
+  void _autoPagescroll() async {
+    for (int i = 0; i < 1; i++) {
+      await Future.delayed(const Duration(milliseconds: 100));
+      if (!_autoScroll.value) {
+        return;
+      }
+      if (_scrollController.hasClients) {
+        final currentOffset = _scrollController.offset;
+        final maxScroll = _scrollController.position.maxScrollExtent;
+
+        if (!(currentOffset >= maxScroll)) {
+          final newOffset = currentOffset + _pageOffset.value;
+          _scrollController.animateTo(
+            min(newOffset, maxScroll),
+            duration: Duration(milliseconds: 100),
+            curve: Curves.linear,
+          );
+        }
+      }
+    }
+    _autoPagescroll();
+  }
+
   @override
   Widget build(BuildContext context) {
     final backgroundColor = ref.watch(backgroundColorStateProvider);
@@ -204,264 +234,312 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
           child: SafeArea(
             top: !fullScreenReader,
             bottom: false,
-            child: Stack(
-              children: [
-                Column(
+            child: widget.result.when(
+              data: (data) {
+                return Stack(
                   children: [
-                    Flexible(
-                      child: widget.result.when(
-                        data: (data) {
-                          epubBook = data.$2;
+                    Column(
+                      children: [
+                        Flexible(
+                          child: Builder(
+                            builder: (context) {
+                              epubBook = data.$2;
 
-                          final padding = ref.watch(
-                            novelReaderPaddingStateProvider,
-                          );
-                          final lineHeight = ref.watch(
-                            novelReaderLineHeightStateProvider,
-                          );
-                          final textAlign = ref.watch(
-                            novelTextAlignStateProvider,
-                          );
-                          final removeExtraSpacing = ref.watch(
-                            novelRemoveExtraParagraphSpacingStateProvider,
-                          );
-                          final customBackgroundColor = ref.watch(
-                            novelReaderThemeStateProvider,
-                          );
-                          final customTextColor = ref.watch(
-                            novelReaderTextColorStateProvider,
-                          );
-
-                          Color parseColor(String hex) {
-                            final hexColor = hex.replaceAll('#', '');
-                            return Color(int.parse('FF$hexColor', radix: 16));
-                          }
-
-                          TextAlign getTextAlign() {
-                            switch (textAlign) {
-                              case NovelTextAlign.left:
-                                return TextAlign.left;
-                              case NovelTextAlign.center:
-                                return TextAlign.center;
-                              case NovelTextAlign.right:
-                                return TextAlign.right;
-                              case NovelTextAlign.block:
-                                return TextAlign.justify;
-                            }
-                          }
-
-                          Future.delayed(const Duration(milliseconds: 10), () {
-                            if (!scrolled && _scrollController.hasClients) {
-                              _scrollController.animateTo(
-                                _scrollController.position.maxScrollExtent *
-                                    (double.tryParse(chapter.lastPageRead!) ??
-                                        0),
-                                duration: Duration(seconds: 2),
-                                curve: Curves.fastOutSlowIn,
+                              final padding = ref.watch(
+                                novelReaderPaddingStateProvider,
                               );
-                              scrolled = true;
-                            }
-                          });
-                          return Consumer(
-                            builder: (context, ref, _) {
-                              final fontSize = ref.read(
-                                novelFontSizeStateProvider,
+                              final lineHeight = ref.watch(
+                                novelReaderLineHeightStateProvider,
                               );
-                              return Scrollbar(
-                                controller: _scrollController,
-                                interactive: true,
-                                child: GestureDetector(
-                                  behavior: HitTestBehavior.translucent,
-                                  onTap: () {
-                                    _isViewFunction();
-                                  },
-                                  child: CustomScrollView(
-                                    controller: _scrollController,
-                                    physics: const BouncingScrollPhysics(),
-                                    slivers: [
-                                      SliverToBoxAdapter(
-                                        child: Html(
-                                          data: data.$1,
-                                          style: {
-                                            "body": Style(
-                                              fontSize: FontSize(
-                                                fontSize.toDouble(),
-                                              ),
-                                              color: parseColor(
-                                                customTextColor,
-                                              ),
-                                              backgroundColor: parseColor(
-                                                customBackgroundColor,
-                                              ),
-                                              margin: Margins.zero,
-                                              padding: HtmlPaddings.all(
-                                                padding.toDouble(),
-                                              ),
-                                              lineHeight: LineHeight(
-                                                lineHeight,
-                                              ),
-                                              textAlign: getTextAlign(),
-                                            ),
-                                            "p": Style(
-                                              margin: removeExtraSpacing
-                                                  ? Margins.only(bottom: 4)
-                                                  : Margins.only(bottom: 8),
-                                              fontSize: FontSize(
-                                                fontSize.toDouble(),
-                                              ),
-                                              lineHeight: LineHeight(
-                                                lineHeight,
-                                              ),
-                                              textAlign: getTextAlign(),
-                                            ),
-                                            "div": Style(
-                                              fontSize: FontSize(
-                                                fontSize.toDouble(),
-                                              ),
-                                              lineHeight: LineHeight(
-                                                lineHeight,
-                                              ),
-                                              textAlign: getTextAlign(),
-                                            ),
-                                            "span": Style(
-                                              fontSize: FontSize(
-                                                fontSize.toDouble(),
-                                              ),
-                                              lineHeight: LineHeight(
-                                                lineHeight,
-                                              ),
-                                            ),
-                                            "h1, h2, h3, h4, h5, h6": Style(
-                                              color: parseColor(
-                                                customTextColor,
-                                              ),
-                                              lineHeight: LineHeight(
-                                                lineHeight,
-                                              ),
-                                              textAlign: getTextAlign(),
-                                            ),
-                                            "a": Style(
-                                              color: Colors.blue,
-                                              textDecoration:
-                                                  TextDecoration.underline,
-                                            ),
-                                            "img": Style(
-                                              width: Width(100, Unit.percent),
-                                              height: Height.auto(),
-                                            ),
-                                          },
-                                          extensions: [
-                                            TagExtension(
-                                              tagsToExtend: {"img"},
-                                              builder: (extensionContext) {
-                                                final element =
-                                                    extensionContext.node
-                                                        as dom.Element;
-                                                final customWidget =
-                                                    _buildCustomWidgets(
-                                                      element,
-                                                    );
-                                                if (customWidget != null) {
-                                                  return customWidget;
-                                                }
-
-                                                return const SizedBox.shrink();
-                                              },
-                                            ),
-                                          ],
-                                          onLinkTap:
-                                              (url, attributes, element) {
-                                                if (url != null) {
-                                                  context.push(
-                                                    "/mangawebview",
-                                                    extra: {
-                                                      'url': url,
-                                                      'title': url,
-                                                    },
-                                                  );
-                                                }
-                                              },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                              final textAlign = ref.watch(
+                                novelTextAlignStateProvider,
                               );
-                            },
-                          );
-                        },
-                        loading: () => scaffoldWith(
-                          context,
-                          Center(child: CircularProgressIndicator()),
-                        ),
-                        error: (err, stack) => scaffoldWith(
-                          context,
-                          Center(child: Text(err.toString())),
-                        ),
-                      ),
-                    ),
-                    if (ref.watch(novelShowScrollPercentageStateProvider))
-                      StreamBuilder(
-                        stream: _rebuildDetail.stream,
-                        builder: (context, asyncSnapshot) {
-                          return Consumer(
-                            builder: (context, ref, child) {
+                              final removeExtraSpacing = ref.watch(
+                                novelRemoveExtraParagraphSpacingStateProvider,
+                              );
                               final customBackgroundColor = ref.watch(
                                 novelReaderThemeStateProvider,
                               );
                               final customTextColor = ref.watch(
                                 novelReaderTextColorStateProvider,
                               );
-                              final scrollPercentage = maxOffset > 0
-                                  ? ((offset / maxOffset) * 100)
-                                        .clamp(0, 100)
-                                        .toInt()
-                                  : 0;
-                              return Row(
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      color: Color(
-                                        int.parse(
-                                          'FF${customBackgroundColor.replaceAll('#', '')}',
-                                          radix: 16,
-                                        ),
+
+                              Color parseColor(String hex) {
+                                final hexColor = hex.replaceAll('#', '');
+                                return Color(
+                                  int.parse('FF$hexColor', radix: 16),
+                                );
+                              }
+
+                              TextAlign getTextAlign() {
+                                switch (textAlign) {
+                                  case NovelTextAlign.left:
+                                    return TextAlign.left;
+                                  case NovelTextAlign.center:
+                                    return TextAlign.center;
+                                  case NovelTextAlign.right:
+                                    return TextAlign.right;
+                                  case NovelTextAlign.block:
+                                    return TextAlign.justify;
+                                }
+                              }
+
+                              Future.delayed(
+                                const Duration(milliseconds: 10),
+                                () {
+                                  if (!scrolled &&
+                                      _scrollController.hasClients) {
+                                    _scrollController
+                                        .animateTo(
+                                          _scrollController
+                                                  .position
+                                                  .maxScrollExtent *
+                                              (double.tryParse(
+                                                    chapter.lastPageRead!,
+                                                  ) ??
+                                                  0),
+                                          duration: Duration(seconds: 2),
+                                          curve: Curves.fastOutSlowIn,
+                                        )
+                                        .then((value) {
+                                          _autoPagescroll();
+                                          scrolled = true;
+                                        });
+                                  }
+                                },
+                              );
+                              return Consumer(
+                                builder: (context, ref, _) {
+                                  final fontSize = ref.read(
+                                    novelFontSizeStateProvider,
+                                  );
+                                  return Scrollbar(
+                                    controller: _scrollController,
+                                    interactive: true,
+                                    child: GestureDetector(
+                                      behavior: HitTestBehavior.translucent,
+                                      onTap: () {
+                                        _isViewFunction();
+                                      },
+                                      child: CustomScrollView(
+                                        controller: _scrollController,
+                                        physics: const BouncingScrollPhysics(),
+                                        slivers: [
+                                          SliverToBoxAdapter(
+                                            child: Html(
+                                              data: data.$1,
+                                              style: {
+                                                "body": Style(
+                                                  fontSize: FontSize(
+                                                    fontSize.toDouble(),
+                                                  ),
+                                                  color: parseColor(
+                                                    customTextColor,
+                                                  ),
+                                                  backgroundColor: parseColor(
+                                                    customBackgroundColor,
+                                                  ),
+                                                  margin: Margins.zero,
+                                                  padding: HtmlPaddings.all(
+                                                    padding.toDouble(),
+                                                  ),
+                                                  lineHeight: LineHeight(
+                                                    lineHeight,
+                                                  ),
+                                                  textAlign: getTextAlign(),
+                                                ),
+                                                "p": Style(
+                                                  margin: removeExtraSpacing
+                                                      ? Margins.only(bottom: 4)
+                                                      : Margins.only(bottom: 8),
+                                                  fontSize: FontSize(
+                                                    fontSize.toDouble(),
+                                                  ),
+                                                  lineHeight: LineHeight(
+                                                    lineHeight,
+                                                  ),
+                                                  textAlign: getTextAlign(),
+                                                ),
+                                                "div": Style(
+                                                  fontSize: FontSize(
+                                                    fontSize.toDouble(),
+                                                  ),
+                                                  lineHeight: LineHeight(
+                                                    lineHeight,
+                                                  ),
+                                                  textAlign: getTextAlign(),
+                                                ),
+                                                "span": Style(
+                                                  fontSize: FontSize(
+                                                    fontSize.toDouble(),
+                                                  ),
+                                                  lineHeight: LineHeight(
+                                                    lineHeight,
+                                                  ),
+                                                ),
+                                                "h1, h2, h3, h4, h5, h6": Style(
+                                                  color: parseColor(
+                                                    customTextColor,
+                                                  ),
+                                                  lineHeight: LineHeight(
+                                                    lineHeight,
+                                                  ),
+                                                  textAlign: getTextAlign(),
+                                                ),
+                                                "a": Style(
+                                                  color: Colors.blue,
+                                                  textDecoration:
+                                                      TextDecoration.underline,
+                                                ),
+                                                "img": Style(
+                                                  width: Width(
+                                                    100,
+                                                    Unit.percent,
+                                                  ),
+                                                  height: Height.auto(),
+                                                ),
+                                              },
+                                              extensions: [
+                                                TagExtension(
+                                                  tagsToExtend: {"img"},
+                                                  builder: (extensionContext) {
+                                                    final element =
+                                                        extensionContext.node
+                                                            as dom.Element;
+                                                    final customWidget =
+                                                        _buildCustomWidgets(
+                                                          element,
+                                                        );
+                                                    if (customWidget != null) {
+                                                      return customWidget;
+                                                    }
+
+                                                    return const SizedBox.shrink();
+                                                  },
+                                                ),
+                                              ],
+                                              onLinkTap:
+                                                  (url, attributes, element) {
+                                                    if (url != null) {
+                                                      context.push(
+                                                        "/mangawebview",
+                                                        extra: {
+                                                          'url': url,
+                                                          'title': url,
+                                                        },
+                                                      );
+                                                    }
+                                                  },
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      child: Center(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(4.0),
-                                          child: Text(
-                                            '$scrollPercentage %',
-                                            style: TextStyle(
-                                              color: Color(
-                                                int.parse(
-                                                  'FF${customTextColor.replaceAll('#', '')}',
-                                                  radix: 16,
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                        if (ref.watch(novelShowScrollPercentageStateProvider))
+                          StreamBuilder(
+                            stream: _rebuildDetail.stream,
+                            builder: (context, asyncSnapshot) {
+                              return Consumer(
+                                builder: (context, ref, child) {
+                                  final customBackgroundColor = ref.watch(
+                                    novelReaderThemeStateProvider,
+                                  );
+                                  final customTextColor = ref.watch(
+                                    novelReaderTextColorStateProvider,
+                                  );
+                                  final scrollPercentage = maxOffset > 0
+                                      ? ((offset / maxOffset) * 100)
+                                            .clamp(0, 100)
+                                            .toInt()
+                                      : 0;
+                                  return Row(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          color: Color(
+                                            int.parse(
+                                              'FF${customBackgroundColor.replaceAll('#', '')}',
+                                              radix: 16,
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(
+                                                4.0,
+                                              ),
+                                              child: Text(
+                                                '$scrollPercentage %',
+                                                style: TextStyle(
+                                                  color: Color(
+                                                    int.parse(
+                                                      'FF${customTextColor.replaceAll('#', '')}',
+                                                      radix: 16,
+                                                    ),
+                                                  ),
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                ],
+                                    ],
+                                  );
+                                },
                               );
                             },
-                          );
-                        },
-                      ),
+                          ),
+                      ],
+                    ),
+                    _appBar(),
+                    _bottomBar(backgroundColor),
+                    _autoScrollPlayPauseBtn(),
                   ],
-                ),
-                _appBar(),
-                _bottomBar(backgroundColor),
-              ],
+                );
+              },
+              loading: () => scaffoldWith(
+                context,
+                Center(child: CircularProgressIndicator()),
+              ),
+              error: (err, stack) =>
+                  scaffoldWith(context, Center(child: Text(err.toString()))),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _autoScrollPlayPauseBtn() {
+    return Positioned(
+      bottom: 0,
+      right: 0,
+      child: !_isView
+          ? ValueListenableBuilder(
+              valueListenable: _autoScrollPage,
+              builder: (context, valueT, child) => valueT
+                  ? ValueListenableBuilder(
+                      valueListenable: _autoScroll,
+                      builder: (context, value, child) => IconButton(
+                        onPressed: () {
+                          _autoPagescroll();
+                          _autoScroll.value = !value;
+                        },
+                        icon: Icon(
+                          value ? Icons.pause_circle : Icons.play_circle,
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            )
+          : const SizedBox.shrink(),
     );
   }
 
@@ -892,19 +970,29 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                               ),
 
                               IconButton(
-                                onPressed: () {
-                                  customDraggableTabBar(
+                                onPressed: () async {
+                                  _autoScroll.value = false;
+                                  await customDraggableTabBar(
                                     tabs: [
                                       Tab(text: context.l10n.reader),
                                       Tab(text: context.l10n.general),
                                     ],
                                     children: [
                                       ReaderSettingsTab(),
-                                      GeneralSettingsTab(),
+                                      GeneralSettingsTab(
+                                        autoScrollPage: _autoScrollPage,
+                                        autoScroll: _autoScroll,
+                                        readerController: _readerController,
+                                        pageOffset: _pageOffset,
+                                      ),
                                     ],
                                     context: context,
                                     vsync: this,
                                   );
+                                  if (_autoScrollPage.value) {
+                                    _autoPagescroll();
+                                    _autoScroll.value = true;
+                                  }
                                 },
                                 icon: const Icon(Icons.settings),
                               ),

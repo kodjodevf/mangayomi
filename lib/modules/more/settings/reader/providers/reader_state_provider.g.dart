@@ -1037,60 +1037,6 @@ abstract class _$NovelShowScrollPercentageState extends $Notifier<bool> {
   }
 }
 
-@ProviderFor(NovelAutoScrollState)
-const novelAutoScrollStateProvider = NovelAutoScrollStateProvider._();
-
-final class NovelAutoScrollStateProvider
-    extends $NotifierProvider<NovelAutoScrollState, bool> {
-  const NovelAutoScrollStateProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'novelAutoScrollStateProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$novelAutoScrollStateHash();
-
-  @$internal
-  @override
-  NovelAutoScrollState create() => NovelAutoScrollState();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(bool value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<bool>(value),
-    );
-  }
-}
-
-String _$novelAutoScrollStateHash() =>
-    r'80f717515844fa97396dffc6f45ee0b7b9e6f96d';
-
-abstract class _$NovelAutoScrollState extends $Notifier<bool> {
-  bool build();
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    final created = build();
-    final ref = this.ref as $Ref<bool, bool>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<bool, bool>,
-              bool,
-              Object?,
-              Object?
-            >;
-    element.handleValue(ref, created);
-  }
-}
-
 @ProviderFor(NovelRemoveExtraParagraphSpacingState)
 const novelRemoveExtraParagraphSpacingStateProvider =
     NovelRemoveExtraParagraphSpacingStateProvider._();

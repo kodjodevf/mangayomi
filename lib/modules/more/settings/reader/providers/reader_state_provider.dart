@@ -404,26 +404,6 @@ class NovelShowScrollPercentageState extends _$NovelShowScrollPercentageState {
 }
 
 @riverpod
-class NovelAutoScrollState extends _$NovelAutoScrollState {
-  @override
-  bool build() {
-    return isar.settings.getSync(227)!.novelAutoScroll ?? false;
-  }
-
-  void set(bool value) {
-    final settings = isar.settings.getSync(227);
-    state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..novelAutoScroll = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
-  }
-}
-
-@riverpod
 class NovelRemoveExtraParagraphSpacingState
     extends _$NovelRemoveExtraParagraphSpacingState {
   @override

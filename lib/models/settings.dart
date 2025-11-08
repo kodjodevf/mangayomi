@@ -254,8 +254,6 @@ class Settings {
 
   bool? novelShowScrollPercentage;
 
-  bool? novelAutoScroll;
-
   bool? novelRemoveExtraParagraphSpacing;
 
   bool? novelTapToScroll;
@@ -413,7 +411,6 @@ class Settings {
     this.novelReaderPadding = 16,
     this.novelReaderLineHeight = 1.5,
     this.novelShowScrollPercentage = true,
-    this.novelAutoScroll = false,
     this.novelRemoveExtraParagraphSpacing = false,
     this.novelTapToScroll = false,
     this.navigationOrder,
@@ -642,7 +639,6 @@ class Settings {
       novelReaderLineHeight = json['novelReaderLineHeight'];
     }
     novelShowScrollPercentage = json['novelShowScrollPercentage'];
-    novelAutoScroll = json['novelAutoScroll'];
     novelRemoveExtraParagraphSpacing = json['novelRemoveExtraParagraphSpacing'];
     novelTapToScroll = json['novelTapToScroll'];
     if (json['navigationOrder'] != null) {
@@ -828,7 +824,6 @@ class Settings {
     'novelReaderPadding': novelReaderPadding,
     'novelReaderLineHeight': novelReaderLineHeight,
     'novelShowScrollPercentage': novelShowScrollPercentage,
-    'novelAutoScroll': novelAutoScroll,
     'novelRemoveExtraParagraphSpacing': novelRemoveExtraParagraphSpacing,
     'novelTapToScroll': novelTapToScroll,
     'navigationOrder': navigationOrder,
