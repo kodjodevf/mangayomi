@@ -65,7 +65,7 @@ final class GetVideoListProvider
   }
 }
 
-String _$getVideoListHash() => r'c99fd33a99b3fb2e2cc66353f1b8b560f3c8e184';
+String _$getVideoListHash() => r'd374dccf3edc478c883cb79b9f1be724342b9ac7';
 
 final class GetVideoListFamily extends $Family
     with

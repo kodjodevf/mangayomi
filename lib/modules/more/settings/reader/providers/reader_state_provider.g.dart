@@ -764,3 +764,440 @@ abstract class _$NovelTextAlignState extends $Notifier<NovelTextAlign> {
     element.handleValue(ref, created);
   }
 }
+
+@ProviderFor(NovelReaderThemeState)
+const novelReaderThemeStateProvider = NovelReaderThemeStateProvider._();
+
+final class NovelReaderThemeStateProvider
+    extends $NotifierProvider<NovelReaderThemeState, String> {
+  const NovelReaderThemeStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'novelReaderThemeStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$novelReaderThemeStateHash();
+
+  @$internal
+  @override
+  NovelReaderThemeState create() => NovelReaderThemeState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
+String _$novelReaderThemeStateHash() =>
+    r'3149f8ea16353f770b57cce9f27f3e63d062ee7b';
+
+abstract class _$NovelReaderThemeState extends $Notifier<String> {
+  String build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<String, String>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String, String>,
+              String,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(NovelReaderTextColorState)
+const novelReaderTextColorStateProvider = NovelReaderTextColorStateProvider._();
+
+final class NovelReaderTextColorStateProvider
+    extends $NotifierProvider<NovelReaderTextColorState, String> {
+  const NovelReaderTextColorStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'novelReaderTextColorStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$novelReaderTextColorStateHash();
+
+  @$internal
+  @override
+  NovelReaderTextColorState create() => NovelReaderTextColorState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
+String _$novelReaderTextColorStateHash() =>
+    r'28a1987b49a9b0a209c4848dfa4c8c730432c75d';
+
+abstract class _$NovelReaderTextColorState extends $Notifier<String> {
+  String build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<String, String>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String, String>,
+              String,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(NovelReaderPaddingState)
+const novelReaderPaddingStateProvider = NovelReaderPaddingStateProvider._();
+
+final class NovelReaderPaddingStateProvider
+    extends $NotifierProvider<NovelReaderPaddingState, int> {
+  const NovelReaderPaddingStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'novelReaderPaddingStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$novelReaderPaddingStateHash();
+
+  @$internal
+  @override
+  NovelReaderPaddingState create() => NovelReaderPaddingState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
+  }
+}
+
+String _$novelReaderPaddingStateHash() =>
+    r'572f1a7134c499a9a5107d29552beca9a5fd55ea';
+
+abstract class _$NovelReaderPaddingState extends $Notifier<int> {
+  int build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<int, int>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<int, int>,
+              int,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(NovelReaderLineHeightState)
+const novelReaderLineHeightStateProvider =
+    NovelReaderLineHeightStateProvider._();
+
+final class NovelReaderLineHeightStateProvider
+    extends $NotifierProvider<NovelReaderLineHeightState, double> {
+  const NovelReaderLineHeightStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'novelReaderLineHeightStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$novelReaderLineHeightStateHash();
+
+  @$internal
+  @override
+  NovelReaderLineHeightState create() => NovelReaderLineHeightState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(double value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<double>(value),
+    );
+  }
+}
+
+String _$novelReaderLineHeightStateHash() =>
+    r'cc21fb550eecf8d7869c076ab47647afd2873996';
+
+abstract class _$NovelReaderLineHeightState extends $Notifier<double> {
+  double build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<double, double>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<double, double>,
+              double,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(NovelShowScrollPercentageState)
+const novelShowScrollPercentageStateProvider =
+    NovelShowScrollPercentageStateProvider._();
+
+final class NovelShowScrollPercentageStateProvider
+    extends $NotifierProvider<NovelShowScrollPercentageState, bool> {
+  const NovelShowScrollPercentageStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'novelShowScrollPercentageStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$novelShowScrollPercentageStateHash();
+
+  @$internal
+  @override
+  NovelShowScrollPercentageState create() => NovelShowScrollPercentageState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$novelShowScrollPercentageStateHash() =>
+    r'adc9cb5def293fa4ed8b367929e7538f6f056b76';
+
+abstract class _$NovelShowScrollPercentageState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(NovelAutoScrollState)
+const novelAutoScrollStateProvider = NovelAutoScrollStateProvider._();
+
+final class NovelAutoScrollStateProvider
+    extends $NotifierProvider<NovelAutoScrollState, bool> {
+  const NovelAutoScrollStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'novelAutoScrollStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$novelAutoScrollStateHash();
+
+  @$internal
+  @override
+  NovelAutoScrollState create() => NovelAutoScrollState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$novelAutoScrollStateHash() =>
+    r'80f717515844fa97396dffc6f45ee0b7b9e6f96d';
+
+abstract class _$NovelAutoScrollState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(NovelRemoveExtraParagraphSpacingState)
+const novelRemoveExtraParagraphSpacingStateProvider =
+    NovelRemoveExtraParagraphSpacingStateProvider._();
+
+final class NovelRemoveExtraParagraphSpacingStateProvider
+    extends $NotifierProvider<NovelRemoveExtraParagraphSpacingState, bool> {
+  const NovelRemoveExtraParagraphSpacingStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'novelRemoveExtraParagraphSpacingStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() =>
+      _$novelRemoveExtraParagraphSpacingStateHash();
+
+  @$internal
+  @override
+  NovelRemoveExtraParagraphSpacingState create() =>
+      NovelRemoveExtraParagraphSpacingState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$novelRemoveExtraParagraphSpacingStateHash() =>
+    r'5c784a57ce5ee57524317dd00d4b40020e5e0582';
+
+abstract class _$NovelRemoveExtraParagraphSpacingState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(NovelTapToScrollState)
+const novelTapToScrollStateProvider = NovelTapToScrollStateProvider._();
+
+final class NovelTapToScrollStateProvider
+    extends $NotifierProvider<NovelTapToScrollState, bool> {
+  const NovelTapToScrollStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'novelTapToScrollStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$novelTapToScrollStateHash();
+
+  @$internal
+  @override
+  NovelTapToScrollState create() => NovelTapToScrollState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$novelTapToScrollStateHash() =>
+    r'4ad09be8c324b019bd1d94cd8d77ef6077bd2100';
+
+abstract class _$NovelTapToScrollState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
