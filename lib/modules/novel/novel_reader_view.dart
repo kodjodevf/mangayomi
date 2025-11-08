@@ -1080,7 +1080,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                     context: context,
                                     vsync: this,
                                   );
-                                  if (!autoScrollAreadyFalse) {
+                                  if (!autoScrollAreadyFalse ||
+                                      _autoScroll.value) {
                                     if (_autoScrollPage.value) {
                                       _autoPagescroll();
                                       _autoScroll.value = true;

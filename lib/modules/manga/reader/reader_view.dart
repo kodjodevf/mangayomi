@@ -2515,7 +2515,7 @@ class _MangaChapterPageGalleryState
       vsync: this,
       fullWidth: true,
     );
-    if (!autoScrollAreadyFalse) {
+    if (!autoScrollAreadyFalse || _autoScroll.value) {
       if (_autoScrollPage.value) {
         _autoPagescroll();
         _autoScroll.value = true;
