@@ -701,7 +701,7 @@ final class ChapterSetIsBookmarkStateProvider
 }
 
 String _$chapterSetIsBookmarkStateHash() =>
-    r'091d86aebaef46d2e9f35ae9f98c12c3e423f5b3';
+    r'23b56105244d0aeed6ae9c27cee1897de8a306af';
 
 final class ChapterSetIsBookmarkStateFamily extends $Family
     with
@@ -800,7 +800,7 @@ final class ChapterSetIsReadStateProvider
 }
 
 String _$chapterSetIsReadStateHash() =>
-    r'f5af852964964170905278d563fdb03eabed53b9';
+    r'b75796ed2dd03bf3167258bcdf064817e8fa69c9';
 
 final class ChapterSetIsReadStateFamily extends $Family
     with $ClassFamilyOverride<ChapterSetIsReadState, void, void, void, Manga> {
@@ -893,7 +893,7 @@ final class ChapterSetDownloadStateProvider
 }
 
 String _$chapterSetDownloadStateHash() =>
-    r'2f35d274b76e28376b0089b2f6ee6d9d7ebcbeec';
+    r'cb89abd653c018b762eb405634c7f8ca0ee8e99b';
 
 final class ChapterSetDownloadStateFamily extends $Family
     with
@@ -969,7 +969,7 @@ final class ChaptersListttStateProvider
 }
 
 String _$chaptersListttStateHash() =>
-    r'5f1b0d2be32fcb904c12c5735f1340c8b33400a9';
+    r'f45ebd9a5b1fd86b279e263813098564830c2536';
 
 abstract class _$ChaptersListttState extends $Notifier<List<Chapter>> {
   List<Chapter> build();
@@ -1045,7 +1045,7 @@ final class ScanlatorsFilterStateProvider
 }
 
 String _$scanlatorsFilterStateHash() =>
-    r'8da89864801cd7620029d28cfb3f9bee3c67cba8';
+    r'f5220568e29e0c0efaac862fb0dce166f7be3172';
 
 final class ScanlatorsFilterStateFamily extends $Family
     with

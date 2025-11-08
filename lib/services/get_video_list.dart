@@ -86,7 +86,7 @@ Future<(List<Video>, bool, List<String>, Directory?)> getVideoList(
           episode.url,
           episode.archivePath,
         );
-        result = (videos, false, [infohash ?? ""], mpvDirectory);
+        return (videos, false, [infohash ?? ""], mpvDirectory);
       }
 
       try {
@@ -112,7 +112,7 @@ Future<(List<Video>, bool, List<String>, Directory?)> getVideoList(
           }
         }
       }
-      result = (torrentList, false, infoHashes, mpvDirectory);
+      return (torrentList, false, infoHashes, mpvDirectory);
     }
 
     List<Video> list = await getExtensionService(

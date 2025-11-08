@@ -1,10 +1,10 @@
 import 'package:isar_community/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'novel_reader_controller_provider.g.dart';
 
@@ -187,116 +187,4 @@ class NovelReaderController extends _$NovelReaderController {
   String getChapterTitle() {
     return chapter.name!;
   }
-}
-
-extension MangaExtensions on Manga {
-  List<Chapter> getFilteredChapterList() {
-    final data = this.chapters.toList().toList();
-    final filterUnread =
-        (isar.settings
-                    .getSync(227)!
-                    .chapterFilterUnreadList!
-                    .where((element) => element.mangaId == id)
-                    .toList()
-                    .firstOrNull ??
-                ChapterFilterUnread(mangaId: id, type: 0))
-            .type!;
-
-    final filterBookmarked =
-        (isar.settings
-                    .getSync(227)!
-                    .chapterFilterBookmarkedList!
-                    .where((element) => element.mangaId == id)
-                    .toList()
-                    .firstOrNull ??
-                ChapterFilterBookmarked(mangaId: id, type: 0))
-            .type!;
-    final filterDownloaded =
-        (isar.settings
-                    .getSync(227)!
-                    .chapterFilterDownloadedList!
-                    .where((element) => element.mangaId == id)
-                    .toList()
-                    .firstOrNull ??
-                ChapterFilterDownloaded(mangaId: id, type: 0))
-            .type!;
-
-    final sortChapter =
-        (isar.settings
-                    .getSync(227)!
-                    .sortChapterList!
-                    .where((element) => element.mangaId == id)
-                    .toList()
-                    .firstOrNull ??
-                SortChapter(mangaId: id, index: 1, reverse: false))
-            .index;
-    final filterScanlator = _getFilterScanlator(this) ?? [];
-    List<Chapter>? chapterList;
-    chapterList = data
-        .where(
-          (element) => filterUnread == 1
-              ? element.isRead == false
-              : filterUnread == 2
-              ? element.isRead == true
-              : true,
-        )
-        .where(
-          (element) => filterBookmarked == 1
-              ? element.isBookmarked == true
-              : filterBookmarked == 2
-              ? element.isBookmarked == false
-              : true,
-        )
-        .where((element) {
-          final modelChapDownload = isar.downloads
-              .filter()
-              .idIsNotNull()
-              .idEqualTo(element.id)
-              .findAllSync();
-          return filterDownloaded == 1
-              ? modelChapDownload.isNotEmpty &&
-                    modelChapDownload.first.isDownload == true
-              : filterDownloaded == 2
-              ? !(modelChapDownload.isNotEmpty &&
-                    modelChapDownload.first.isDownload == true)
-              : true;
-        })
-        .where((element) => !filterScanlator.contains(element.scanlator))
-        .toList();
-    List<Chapter> chapters = sortChapter == 1
-        ? chapterList.reversed.toList()
-        : chapterList;
-    if (sortChapter == 0) {
-      chapters.sort((a, b) {
-        return (a.scanlator == null ||
-                b.scanlator == null ||
-                a.dateUpload == null ||
-                b.dateUpload == null)
-            ? 0
-            : a.scanlator!.compareTo(b.scanlator!) |
-                  a.dateUpload!.compareTo(b.dateUpload!);
-      });
-    } else if (sortChapter == 2) {
-      chapters.sort((a, b) {
-        return (a.dateUpload == null || b.dateUpload == null)
-            ? 0
-            : int.parse(a.dateUpload!).compareTo(int.parse(b.dateUpload!));
-      });
-    } else if (sortChapter == 3) {
-      chapters.sort((a, b) {
-        return (a.name == null || b.name == null)
-            ? 0
-            : a.name!.compareTo(b.name!);
-      });
-    }
-    return chapterList;
-  }
-}
-
-List<String>? _getFilterScanlator(Manga manga) {
-  final scanlators = isar.settings.getSync(227)!.filterScanlatorList ?? [];
-  final filter = scanlators
-      .where((element) => element.mangaId == manga.id)
-      .toList();
-  return filter.firstOrNull?.scanlators;
 }

@@ -302,3 +302,165 @@ class NovelTextAlignState extends _$NovelTextAlignState {
     );
   }
 }
+
+@riverpod
+class NovelReaderThemeState extends _$NovelReaderThemeState {
+  @override
+  String build() {
+    return isar.settings.getSync(227)!.novelReaderTheme ?? '#292832';
+  }
+
+  void set(String value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..novelReaderTheme = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class NovelReaderTextColorState extends _$NovelReaderTextColorState {
+  @override
+  String build() {
+    return isar.settings.getSync(227)!.novelReaderTextColor ?? '#CCCCCC';
+  }
+
+  void set(String value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..novelReaderTextColor = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class NovelReaderPaddingState extends _$NovelReaderPaddingState {
+  @override
+  int build() {
+    return isar.settings.getSync(227)!.novelReaderPadding ?? 16;
+  }
+
+  void set(int value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..novelReaderPadding = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class NovelReaderLineHeightState extends _$NovelReaderLineHeightState {
+  @override
+  double build() {
+    return isar.settings.getSync(227)!.novelReaderLineHeight ?? 1.5;
+  }
+
+  void set(double value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..novelReaderLineHeight = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class NovelShowScrollPercentageState extends _$NovelShowScrollPercentageState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.novelShowScrollPercentage ?? true;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..novelShowScrollPercentage = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class NovelAutoScrollState extends _$NovelAutoScrollState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.novelAutoScroll ?? false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..novelAutoScroll = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class NovelRemoveExtraParagraphSpacingState
+    extends _$NovelRemoveExtraParagraphSpacingState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.novelRemoveExtraParagraphSpacing ??
+        false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..novelRemoveExtraParagraphSpacing = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class NovelTapToScrollState extends _$NovelTapToScrollState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.novelTapToScroll ?? false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..novelTapToScroll = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}

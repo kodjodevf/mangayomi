@@ -68,7 +68,7 @@ class MClient {
               );
     return InterceptedClient.build(
       client: httpClient(settings: clientSettings, reqcopyWith: reqcopyWith),
-      retryPolicy: ResolveCloudFlareChallenge(showCloudFlareError),
+
       interceptors: [
         MCookieManager(reqcopyWith),
         LoggerInterceptor(showCloudFlareError),
@@ -235,11 +235,15 @@ class LoggerInterceptor extends InterceptorContract {
         Logger.add(LoggerLevel.info, content);
       }
       if (cloudflare) {
-        botToast(
-          "${response.statusCode} Failed to bypass Cloudflare",
-          hasCloudFlare: cloudflare,
-          url: response.request!.url.toString(),
-        );
+        try {
+          botToast(
+            "${response.statusCode} Failed to bypass Cloudflare",
+            hasCloudFlare: cloudflare,
+            url: response.request!.url.toString(),
+          );
+        } catch (e) {
+          throw "${response.statusCode} Failed to bypass Cloudflare";
+        }
       }
     }
 
@@ -252,78 +256,78 @@ bool isCloudflare(BaseResponse response) {
       ["cloudflare-nginx", "cloudflare"].contains(response.headers["server"]);
 }
 
-class ResolveCloudFlareChallenge extends RetryPolicy {
-  bool showCloudFlareError;
-  ResolveCloudFlareChallenge(this.showCloudFlareError);
-  @override
-  int get maxRetryAttempts => 2;
-  @override
-  Future<bool> shouldAttemptRetryOnResponse(BaseResponse response) async {
-    if (!showCloudFlareError || Platform.isLinux) return false;
-    flutter_inappwebview.HeadlessInAppWebView? headlessWebView;
-    int time = 0;
-    bool timeOut = false;
-    bool isCloudFlare = isCloudflare(response);
-    if (isCloudFlare) {
-      headlessWebView = flutter_inappwebview.HeadlessInAppWebView(
-        webViewEnvironment: webViewEnvironment,
-        initialUrlRequest: flutter_inappwebview.URLRequest(
-          url: flutter_inappwebview.WebUri(response.request!.url.toString()),
-        ),
-        onLoadStop: (controller, url) async {
-          try {
-            isCloudFlare = await controller.platform.evaluateJavascript(
-              source:
-                  "document.head.innerHTML.includes('#challenge-success-text')",
-            );
-          } catch (_) {
-            isCloudFlare = false;
-          }
+// class ResolveCloudFlareChallenge extends RetryPolicy {
+//   bool showCloudFlareError;
+//   ResolveCloudFlareChallenge(this.showCloudFlareError);
+//   @override
+//   int get maxRetryAttempts => 2;
+//   @override
+//   Future<bool> shouldAttemptRetryOnResponse(BaseResponse response) async {
+//     if (!showCloudFlareError || Platform.isLinux) return false;
+//     flutter_inappwebview.HeadlessInAppWebView? headlessWebView;
+//     int time = 0;
+//     bool timeOut = false;
+//     bool isCloudFlare = isCloudflare(response);
+//     if (isCloudFlare) {
+//       headlessWebView = flutter_inappwebview.HeadlessInAppWebView(
+//         webViewEnvironment: webViewEnvironment,
+//         initialUrlRequest: flutter_inappwebview.URLRequest(
+//           url: flutter_inappwebview.WebUri(response.request!.url.toString()),
+//         ),
+//         onLoadStop: (controller, url) async {
+//           try {
+//             isCloudFlare = await controller.platform.evaluateJavascript(
+//               source:
+//                   "document.head.innerHTML.includes('#challenge-success-text')",
+//             );
+//           } catch (_) {
+//             isCloudFlare = false;
+//           }
 
-          await Future.doWhile(() async {
-            if (!timeOut && isCloudFlare) {
-              try {
-                isCloudFlare = await controller.platform.evaluateJavascript(
-                  source:
-                      "document.head.innerHTML.includes('#challenge-success-text')",
-                );
-              } catch (_) {
-                isCloudFlare = false;
-              }
-            }
-            if (isCloudFlare) await Future.delayed(Duration(milliseconds: 300));
+//           await Future.doWhile(() async {
+//             if (!timeOut && isCloudFlare) {
+//               try {
+//                 isCloudFlare = await controller.platform.evaluateJavascript(
+//                   source:
+//                       "document.head.innerHTML.includes('#challenge-success-text')",
+//                 );
+//               } catch (_) {
+//                 isCloudFlare = false;
+//               }
+//             }
+//             if (isCloudFlare) await Future.delayed(Duration(milliseconds: 300));
 
-            return isCloudFlare;
-          });
-          if (!timeOut) {
-            final ua =
-                await controller.evaluateJavascript(
-                  source: "navigator.userAgent",
-                ) ??
-                "";
-            await MClient.setCookie(url.toString(), ua, controller);
-          }
-        },
-      );
+//             return isCloudFlare;
+//           });
+//           if (!timeOut) {
+//             final ua =
+//                 await controller.evaluateJavascript(
+//                   source: "navigator.userAgent",
+//                 ) ??
+//                 "";
+//             await MClient.setCookie(url.toString(), ua, controller);
+//           }
+//         },
+//       );
 
-      headlessWebView.run();
+//       headlessWebView.run();
 
-      await Future.doWhile(() async {
-        timeOut = time == 15;
-        if (!isCloudFlare || timeOut) {
-          return false;
-        }
-        await Future.delayed(const Duration(seconds: 1));
-        time++;
-        return true;
-      });
-      try {
-        headlessWebView.dispose();
-      } catch (_) {}
+//       await Future.doWhile(() async {
+//         timeOut = time == 15;
+//         if (!isCloudFlare || timeOut) {
+//           return false;
+//         }
+//         await Future.delayed(const Duration(seconds: 1));
+//         time++;
+//         return true;
+//       });
+//       try {
+//         headlessWebView.dispose();
+//       } catch (_) {}
 
-      return true;
-    }
+//       return true;
+//     }
 
-    return false;
-  }
-}
+//     return false;
+//   }
+// }

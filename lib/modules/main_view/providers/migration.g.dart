@@ -40,4 +40,4 @@ final class MigrationProvider
   }
 }
 
-String _$migrationHash() => r'2a82120544e693a3162da887a3ca1b3066f3799f';
+String _$migrationHash() => r'43d62ddf79798d616ac7d11ce50a47551ef42c98';

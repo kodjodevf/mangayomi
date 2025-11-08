@@ -65,7 +65,7 @@ final class FetchItemSourcesListProvider
 }
 
 String _$fetchItemSourcesListHash() =>
-    r'16238be20517fddacf52a2694fbd50cafbfa7496';
+    r'219aed67d2329f03101f2270e2f344bf70eff128';
 
 final class FetchItemSourcesListFamily extends $Family
     with

@@ -72,7 +72,7 @@ final class SearchProvider
   }
 }
 
-String _$searchHash() => r'e23c6dd56549ffdfc89b5fcfa43719d90ca1760e';
+String _$searchHash() => r'0fa9d882436b1b58b3420dae5a757e7622273eb5';
 
 final class SearchFamily extends $Family
     with

@@ -15,7 +15,7 @@ const simklProvider = SimklFamily._();
 final class SimklProvider extends $NotifierProvider<Simkl, void> {
   const SimklProvider._({
     required SimklFamily super.from,
-    required ({int syncId, ItemType? itemType, WidgetRef widgetRef})
+    required ({int syncId, ItemType? itemType, dynamic widgetRef})
     super.argument,
   }) : super(
          retry: null,
@@ -58,7 +58,7 @@ final class SimklProvider extends $NotifierProvider<Simkl, void> {
   }
 }
 
-String _$simklHash() => r'f2770c0a3f3f6c0730aec2b5128a9bffe19eeb4d';
+String _$simklHash() => r'a5311b207d0bfb5b34911633ee73d5d77ebde6cf';
 
 final class SimklFamily extends $Family
     with
@@ -67,7 +67,7 @@ final class SimklFamily extends $Family
           void,
           void,
           void,
-          ({int syncId, ItemType? itemType, WidgetRef widgetRef})
+          ({int syncId, ItemType? itemType, dynamic widgetRef})
         > {
   const SimklFamily._()
     : super(
@@ -81,7 +81,7 @@ final class SimklFamily extends $Family
   SimklProvider call({
     required int syncId,
     required ItemType? itemType,
-    required WidgetRef widgetRef,
+    required dynamic widgetRef,
   }) => SimklProvider._(
     argument: (syncId: syncId, itemType: itemType, widgetRef: widgetRef),
     from: this,
@@ -93,15 +93,15 @@ final class SimklFamily extends $Family
 
 abstract class _$Simkl extends $Notifier<void> {
   late final _$args =
-      ref.$arg as ({int syncId, ItemType? itemType, WidgetRef widgetRef});
+      ref.$arg as ({int syncId, ItemType? itemType, dynamic widgetRef});
   int get syncId => _$args.syncId;
   ItemType? get itemType => _$args.itemType;
-  WidgetRef get widgetRef => _$args.widgetRef;
+  dynamic get widgetRef => _$args.widgetRef;
 
   void build({
     required int syncId,
     required ItemType? itemType,
-    required WidgetRef widgetRef,
+    required dynamic widgetRef,
   });
   @$mustCallSuper
   @override

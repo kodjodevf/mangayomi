@@ -260,7 +260,7 @@ final class MangaFilterDownloadedStateProvider
 }
 
 String _$mangaFilterDownloadedStateHash() =>
-    r'6d84bc7063be1734a0c267906a94e6b70e8b72fe';
+    r'7ede8df99996399e368f5074dc1b3d4d7fa5e649';
 
 final class MangaFilterDownloadedStateFamily extends $Family
     with
@@ -379,7 +379,7 @@ final class MangaFilterUnreadStateProvider
 }
 
 String _$mangaFilterUnreadStateHash() =>
-    r'bd96c9f42a40d0610788feda3bee5fb8662afe50';
+    r'2bcea3aaccd923e415738d51511c0966a93a2900';
 
 final class MangaFilterUnreadStateFamily extends $Family
     with

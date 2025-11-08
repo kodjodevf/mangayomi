@@ -244,6 +244,22 @@ class Settings {
   @enumerated
   late NovelTextAlign novelTextAlign;
 
+  String? novelReaderTheme;
+
+  String? novelReaderTextColor;
+
+  int? novelReaderPadding;
+
+  double? novelReaderLineHeight;
+
+  bool? novelShowScrollPercentage;
+
+  bool? novelAutoScroll;
+
+  bool? novelRemoveExtraParagraphSpacing;
+
+  bool? novelTapToScroll;
+
   List<String>? navigationOrder;
 
   List<String>? hideItems;
@@ -392,6 +408,14 @@ class Settings {
     this.novelDisplayType = DisplayType.comfortableGrid,
     this.novelFontSize = 14,
     this.novelTextAlign = NovelTextAlign.left,
+    this.novelReaderTheme = '#292832',
+    this.novelReaderTextColor = '#CCCCCC',
+    this.novelReaderPadding = 16,
+    this.novelReaderLineHeight = 1.5,
+    this.novelShowScrollPercentage = true,
+    this.novelAutoScroll = false,
+    this.novelRemoveExtraParagraphSpacing = false,
+    this.novelTapToScroll = false,
     this.navigationOrder,
     this.hideItems,
     this.clearChapterCacheOnAppLaunch = false,
@@ -605,6 +629,22 @@ class Settings {
     }
     novelTextAlign = NovelTextAlign
         .values[json['novelTextAlign'] ?? NovelTextAlign.left.index];
+    if (json['novelReaderTheme'] != null) {
+      novelReaderTheme = json['novelReaderTheme'];
+    }
+    if (json['novelReaderTextColor'] != null) {
+      novelReaderTextColor = json['novelReaderTextColor'];
+    }
+    if (json['novelReaderPadding'] != null) {
+      novelReaderPadding = json['novelReaderPadding'];
+    }
+    if (json['novelReaderLineHeight'] != null) {
+      novelReaderLineHeight = json['novelReaderLineHeight'];
+    }
+    novelShowScrollPercentage = json['novelShowScrollPercentage'];
+    novelAutoScroll = json['novelAutoScroll'];
+    novelRemoveExtraParagraphSpacing = json['novelRemoveExtraParagraphSpacing'];
+    novelTapToScroll = json['novelTapToScroll'];
     if (json['navigationOrder'] != null) {
       navigationOrder = (json['navigationOrder'] as List).cast<String>();
     }
@@ -783,6 +823,14 @@ class Settings {
     'novelDisplayType': novelDisplayType.index,
     'novelFontSize': novelFontSize,
     'novelTextAlign': novelTextAlign.index,
+    'novelReaderTheme': novelReaderTheme,
+    'novelReaderTextColor': novelReaderTextColor,
+    'novelReaderPadding': novelReaderPadding,
+    'novelReaderLineHeight': novelReaderLineHeight,
+    'novelShowScrollPercentage': novelShowScrollPercentage,
+    'novelAutoScroll': novelAutoScroll,
+    'novelRemoveExtraParagraphSpacing': novelRemoveExtraParagraphSpacing,
+    'novelTapToScroll': novelTapToScroll,
     'navigationOrder': navigationOrder,
     'hideItems': hideItems,
     'clearChapterCacheOnAppLaunch': clearChapterCacheOnAppLaunch,

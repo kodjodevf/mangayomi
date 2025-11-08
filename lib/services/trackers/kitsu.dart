@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:intl/intl.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
@@ -40,7 +39,7 @@ class Kitsu extends _$Kitsu implements BaseTracker {
   void build({
     required int syncId,
     ItemType? itemType,
-    required WidgetRef widgetRef,
+    required dynamic widgetRef,
   }) {}
 
   Future<(bool, String)> login(String username, String password) async {

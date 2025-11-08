@@ -160,9 +160,9 @@ class Parser {
                     } else {
                         // attribute without value (e.g. `disabled`)
                         if (this.options.onattribute) {
-                            this.options.onattribute(attrName, null);
+                            this.options.onattribute(attrName, "");
                         }
-                        attrs[attrName] = null;
+                        attrs[attrName] = "";
                         attrName = '';
                     }
                 }

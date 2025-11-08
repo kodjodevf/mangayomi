@@ -1937,11 +1937,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         children: [
           Expanded(child: widget.action!),
           if (!isLocalArchive) Expanded(child: _smartUpdateDays()),
-          Expanded(
-            child: widget.itemType == ItemType.novel
-                ? SizedBox.shrink()
-                : _action(),
-          ),
+          if (widget.itemType != ItemType.novel) Expanded(child: _action()),
           if (!isLocalArchive)
             Expanded(
               child: SizedBox(

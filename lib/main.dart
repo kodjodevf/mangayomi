@@ -22,6 +22,7 @@ import 'package:mangayomi/models/track.dart' as track;
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
+import 'package:mangayomi/modules/manga/reader/providers/crop_borders_provider.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/storage_usage.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/general/providers/general_state_provider.dart';
@@ -31,6 +32,7 @@ import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+import 'package:mangayomi/services/isolate_service.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
 import 'package:mangayomi/utils/discord_rpc.dart';
 import 'package:mangayomi/utils/log/logger.dart';
@@ -52,6 +54,8 @@ void main(List<String> args) async {
   if (Platform.isLinux && runWebViewTitleBarWidget(args)) return;
   MediaKit.ensureInitialized();
   await RustLib.init();
+  await imgCropIsolate.start();
+  await getIsolateService.start();
   if (!(Platform.isAndroid || Platform.isIOS)) {
     await windowManager.ensureInitialized();
   }

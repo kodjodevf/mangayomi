@@ -68,7 +68,7 @@ final class CropBordersProvider
   }
 }
 
-String _$cropBordersHash() => r'04b24357737d6cc75caa38feca77bb5d41f00aa6';
+String _$cropBordersHash() => r'f60987c3f38afd5e10263f3d6935e6007ff942f0';
 
 final class CropBordersFamily extends $Family
     with
