@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/widgets.dart';
 import 'package:isar_community/isar.dart';
+import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/page.dart';
@@ -13,6 +14,7 @@ import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/modules/manga/download/providers/convert_to_cbz.dart';
+import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
@@ -27,6 +29,7 @@ import 'package:mangayomi/utils/extensions/chapter.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
+import 'package:mangayomi/utils/utils.dart';
 import 'package:path/path.dart' as p;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'download_provider.g.dart';
@@ -73,6 +76,7 @@ Future<void> downloadChapter(
     );
 
     List<PageUrl> pageUrls = [];
+    PageUrl? novelPage;
     List<PageUrl> pages = [];
     final StorageProvider storageProvider = StorageProvider();
     await storageProvider.requestPermission();
@@ -225,18 +229,21 @@ Future<void> downloadChapter(
         }
       });
     } else if (itemType == ItemType.novel && chapter.url != null) {
-      final cookie = MClient.getCookiesPref(chapter.url!);
+      final manga = chapter.manga.value!;
+      final source = getSource(manga.lang!, manga.source!, manga.sourceId)!;
+      final chapterUrl = "${source.baseUrl}${chapter.url!.getUrlWithoutDomain}";
+      final cookie = MClient.getCookiesPref(chapterUrl);
       final headers = htmlHeader;
       if (cookie.isNotEmpty) {
         final userAgent = isar.settings.getSync(227)!.userAgent!;
         headers.addAll(cookie);
         headers[HttpHeaders.userAgentHeader] = userAgent;
       }
-      final res = await http.get(Uri.parse(chapter.url!), headers: headers);
+      final res = await http.get(Uri.parse(chapterUrl), headers: headers);
       if (res.headers.containsKey("Location")) {
-        pageUrls = [PageUrl(res.headers["Location"]!)];
+        novelPage = PageUrl(res.headers["Location"]!);
       } else {
-        pageUrls = [PageUrl(chapter.url!)];
+        novelPage = PageUrl(chapterUrl);
       }
       isOk = true;
     }
@@ -324,19 +331,6 @@ Future<void> downloadChapter(
                 ),
               );
             }
-          } else {
-            final file = File(
-              p.join(chapterDirectory.path, "$chapterName.html"),
-            );
-            if (!file.existsSync()) {
-              pages.add(
-                PageUrl(
-                  page.url.trim().trimLeft().trimRight(),
-                  headers: pageHeaders,
-                  fileName: p.join(chapterDirectory.path, "$chapterName.html"),
-                ),
-              );
-            }
           }
         }
       }
@@ -344,18 +338,7 @@ Future<void> downloadChapter(
       if (pages.isEmpty && pageUrls.isNotEmpty) {
         await processConvert();
         savePageUrls();
-        final download = Download(
-          id: chapter.id,
-          succeeded: 0,
-          failed: 0,
-          total: 0,
-          isDownload: true,
-          isStartDownload: false,
-        );
-
-        isar.writeTxnSync(() {
-          isar.downloads.putSync(download..chapter.value = chapter);
-        });
+        await setProgress(DownloadProgress(1, 1, itemType, isCompleted: true));
       } else {
         savePageUrls();
         await MDownloader(
@@ -366,6 +349,24 @@ Future<void> downloadChapter(
         ).download((progress) {
           setProgress(progress);
         });
+      }
+    } else if (itemType == ItemType.novel) {
+      final file = File(p.join(chapterDirectory.path, "$chapterName.html"));
+      if (!file.existsSync() && novelPage != null) {
+        final source = getSource(manga.lang!, manga.source!, manga.sourceId)!;
+        p.join(chapterDirectory.path, "$chapterName.html");
+        final html = await getExtensionService(
+          source,
+          ref.read(androidProxyServerStateProvider),
+        ).getHtmlContent(chapter.manga.value!.name!, chapter.url!);
+        if (html.isNotEmpty) {
+          await file.writeAsString(html);
+          await setProgress(
+            DownloadProgress(1, 1, itemType, isCompleted: true),
+          );
+        }
+      } else {
+        await setProgress(DownloadProgress(1, 1, itemType, isCompleted: true));
       }
     } else if (hasM3U8File) {
       await m3u8Downloader?.download((progress) {

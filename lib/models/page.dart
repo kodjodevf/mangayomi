@@ -12,7 +12,11 @@ class PageUrl {
       headers: (json['headers'] as Map?)?.toMapStringString,
     );
   }
-  Map<String, dynamic> toJson() => {'url': url, 'headers': headers};
+  Map<String, dynamic> toJson() => {
+    'url': url,
+    'headers': headers,
+    'fileName': fileName,
+  };
 
   @override
   String toString() {

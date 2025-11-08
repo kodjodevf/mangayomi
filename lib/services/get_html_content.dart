@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:path/path.dart' as p;
 import 'package:epubx/epubx.dart';
 import 'package:html/parser.dart';
 import 'package:mangayomi/eval/lib.dart';
@@ -36,15 +36,20 @@ Future<(String, EpubBook?)> getHtmlContent(
       result = (_buildHtml("Local epub file not found!"), null);
     }
     final storageProvider = StorageProvider();
-    final mangaDirectory = await storageProvider.getMangaMainDirectory(chapter);
-    final htmlPath = "${mangaDirectory!.path}${chapter.name}.html";
+    final mangaMainDirectory = await storageProvider.getMangaMainDirectory(
+      chapter,
+    );
+    final chapterDirectory = (await storageProvider.getMangaChapterDirectory(
+      chapter,
+      mangaMainDirectory: mangaMainDirectory,
+    ))!;
+
+    final htmlPath = p.join(chapterDirectory.path, "${chapter.name}.html");
+
     final htmlFile = File(htmlPath);
     String? htmlContent;
     if (await htmlFile.exists()) {
       htmlContent = await htmlFile.readAsString();
-      final temp = parse(htmlContent);
-      temp.getElementsByTagName("script").forEach((el) => el.remove());
-      htmlContent = temp.outerHtml;
     }
     final source = getSource(
       chapter.manga.value!.lang!,
@@ -74,8 +79,65 @@ Future<(String, EpubBook?)> getHtmlContent(
 }
 
 String _buildHtml(String input) {
-  return '''<div id="readerViewContent"><div style="padding: 2em;">$input</div></div>'''
+  // Decode basic escapes
+  String cleaned = input
       .replaceAll("\\n", "")
       .replaceAll("\\t", "")
-      .replaceAll("\\\"", "\"");
+      .replaceAll("\\\"", "\"")
+      .replaceAll("\\'", "'")
+      .replaceAll("\\&quot;", "\"")
+      .replaceAll("&quot;", "\"");
+
+  // Parse HTML to clean it
+  final document = parse(cleaned);
+
+  // Remove unwanted elements
+  document.querySelectorAll('iframe').forEach((el) => el.remove());
+  document.querySelectorAll('script').forEach((el) => el.remove());
+  document.querySelectorAll('[data-aa]').forEach((el) => el.remove());
+
+  // Get cleaned HTML
+  String htmlContent = document.body?.innerHtml ?? cleaned;
+
+  // Decode HTML entities while keeping HTML tags
+  htmlContent = _decodeHtmlEntities(htmlContent);
+
+  return '''<div id="readerViewContent"><div style="padding: 2em;">$htmlContent</div></div>''';
+}
+
+String _decodeHtmlEntities(String html) {
+  // Decode numeric HTML entities (&#8220;, &#8217;, etc.)
+  String decoded = html.replaceAllMapped(RegExp(r'&#(\d+);'), (match) {
+    final charCode = int.tryParse(match.group(1)!);
+    return charCode != null ? String.fromCharCode(charCode) : match.group(0)!;
+  });
+
+  // Decode hexadecimal HTML entities (&#x2019;, etc.)
+  decoded = decoded.replaceAllMapped(RegExp(r'&#x([0-9a-fA-F]+);'), (match) {
+    final charCode = int.tryParse(match.group(1)!, radix: 16);
+    return charCode != null ? String.fromCharCode(charCode) : match.group(0)!;
+  });
+
+  // Decode common named HTML entities
+  final entities = {
+    '&amp;': '&',
+    '&lt;': '<',
+    '&gt;': '>',
+    '&nbsp;': ' ',
+    '&quot;': '"',
+    '&apos;': "'",
+    '&ldquo;': '"',
+    '&rdquo;': '"',
+    '&lsquo;': ''',
+    '&rsquo;': ''',
+    '&mdash;': '—',
+    '&ndash;': '–',
+    '&hellip;': '…',
+  };
+
+  entities.forEach((entity, replacement) {
+    decoded = decoded.replaceAll(entity, replacement);
+  });
+
+  return decoded;
 }
