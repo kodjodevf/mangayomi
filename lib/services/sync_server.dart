@@ -33,7 +33,9 @@ class SyncServer extends _$SyncServer {
   final String _syncSettingsUrl = '/sync/settings';
 
   @override
-  void build({required int syncId}) {}
+  void build({required int syncId}) {
+    ref.keepAlive();
+  }
 
   Future<(bool, String)> login(
     AppLocalizations l10n,

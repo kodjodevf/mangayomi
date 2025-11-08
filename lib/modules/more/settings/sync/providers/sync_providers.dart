@@ -12,6 +12,7 @@ part 'sync_providers.g.dart';
 class Synching extends _$Synching {
   @override
   SyncPreference build({required int? syncId}) {
+    ref.keepAlive();
     return isar.syncPreferences.getSync(syncId!) ?? SyncPreference(syncId: 1);
   }
 
