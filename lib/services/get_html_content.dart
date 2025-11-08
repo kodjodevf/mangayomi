@@ -102,7 +102,7 @@ String _buildHtml(String input) {
   // Decode HTML entities while keeping HTML tags
   htmlContent = _decodeHtmlEntities(htmlContent);
 
-  return '''<div id="readerViewContent"><div style="padding: 2em;">$htmlContent</div></div>''';
+  return '''<div id="readerViewContent">$htmlContent</div>''';
 }
 
 String _decodeHtmlEntities(String html) {
