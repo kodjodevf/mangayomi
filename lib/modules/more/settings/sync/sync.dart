@@ -142,12 +142,14 @@ class SyncScreen extends ConsumerWidget {
                           color: context.secondaryColor,
                         ),
                         const SizedBox(width: 10),
-                        Text(
-                          l10n.sync_auto_warning,
-                          softWrap: true,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: context.secondaryColor,
+                        Expanded(
+                          child: Text(
+                            l10n.sync_auto_warning,
+                            softWrap: true,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: context.secondaryColor,
+                            ),
                           ),
                         ),
                       ],
@@ -252,12 +254,14 @@ class SyncScreen extends ConsumerWidget {
                           color: context.secondaryColor,
                         ),
                         const SizedBox(width: 10),
-                        Text(
-                          l10n.syncing_subtitle,
-                          softWrap: true,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: context.secondaryColor,
+                        Expanded(
+                          child: Text(
+                            l10n.syncing_subtitle,
+                            softWrap: true,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: context.secondaryColor,
+                            ),
                           ),
                         ),
                       ],
@@ -304,9 +308,10 @@ class SyncScreen extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Row(
+                Wrap(
+                  spacing: 20,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    const SizedBox(width: 20),
                     Column(
                       children: [
                         IconButton(
@@ -329,7 +334,7 @@ class SyncScreen extends ConsumerWidget {
                         Text(l10n.sync_button_sync),
                       ],
                     ),
-                    const SizedBox(width: 20),
+
                     Column(
                       children: [
                         IconButton(
@@ -346,7 +351,7 @@ class SyncScreen extends ConsumerWidget {
                         Text(l10n.sync_button_upload),
                       ],
                     ),
-                    const SizedBox(width: 20),
+
                     Column(
                       children: [
                         IconButton(
