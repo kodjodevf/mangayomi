@@ -19,7 +19,7 @@ class DiscordRPC {
   final int startAt = DateTime.timestamp().millisecondsSinceEpoch;
 
   /// Temp var
-  late bool rpcShowReadingWatchingProgress;
+  bool rpcShowReadingWatchingProgress = false;
 
   /// Instance of the current RPC activity
   final RpcActivity activity = RpcActivity(
