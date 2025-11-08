@@ -58,7 +58,8 @@ Future<(List<Video>, bool, List<String>, Directory?)> getVideoList(
           }
         }
       }
-      result = (
+      keepAlive.close();
+      return (
         [Video(path!, episode.name!, path, subtitles: subtitles)],
         true,
         infoHashes,
@@ -86,6 +87,7 @@ Future<(List<Video>, bool, List<String>, Directory?)> getVideoList(
           episode.url,
           episode.archivePath,
         );
+        keepAlive.close();
         return (videos, false, [infohash ?? ""], mpvDirectory);
       }
 
@@ -112,6 +114,7 @@ Future<(List<Video>, bool, List<String>, Directory?)> getVideoList(
           }
         }
       }
+      keepAlive.close();
       return (torrentList, false, infoHashes, mpvDirectory);
     }
 
