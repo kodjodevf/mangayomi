@@ -169,7 +169,9 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                 Icon(Icons.person_outline, size: 14),
                 const SizedBox(width: 4),
                 Text(
-                  widget.manga.author ?? l10n.unknown,
+                  (widget.manga.author?.isEmpty ?? false)
+                      ? l10n.unknown
+                      : widget.manga.author!,
                   style: const TextStyle(fontWeight: FontWeight.w500),
                 ),
               ],
