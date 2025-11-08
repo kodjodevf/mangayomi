@@ -86,6 +86,9 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     _scrollController.removeListener(onScroll);
     _scrollController.dispose();
     _rebuildDetail.close();
+    _autoScroll.value = false;
+    _autoScroll.dispose();
+    _autoScrollPage.dispose();
     clearGestureDetailsCache();
     if (isDesktop) {
       setFullScreen(value: false);
@@ -298,7 +301,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                     chapter.lastPageRead!,
                                                   ) ??
                                                   0),
-                                          duration: Duration(seconds: 2),
+                                          duration: Duration(seconds: 1),
                                           curve: Curves.fastOutSlowIn,
                                         )
                                         .then((value) {
@@ -498,6 +501,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                           ),
                       ],
                     ),
+                    _gestureRightLeft(ref.watch(novelTapToScrollStateProvider)),
+                    _gestureTopBottom(ref.watch(novelTapToScrollStateProvider)),
                     _appBar(),
                     _bottomBar(backgroundColor),
                     _autoScrollPlayPauseBtn(),
@@ -574,6 +579,88 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
       overlays: SystemUiOverlay.values,
     );
     Navigator.pop(context);
+  }
+
+  void _onBtnTapped(double value) {
+    final currentOffset = _scrollController.offset;
+    final maxScroll = _scrollController.position.maxScrollExtent;
+
+    final newOffset = currentOffset + value;
+    _scrollController.animateTo(
+      min(newOffset, maxScroll),
+      duration: Duration(milliseconds: 100),
+      curve: Curves.linear,
+    );
+  }
+
+  Widget _gestureRightLeft(bool usePageTapZones) {
+    return Row(
+      children: [
+        /// left region
+        Expanded(
+          flex: 2,
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              usePageTapZones ? _onBtnTapped(-100) : _isViewFunction();
+            },
+          ),
+        ),
+
+        /// center region
+        Expanded(
+          flex: 2,
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              _isViewFunction();
+            },
+          ),
+        ),
+
+        /// right region
+        Expanded(
+          flex: 2,
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              usePageTapZones ? _onBtnTapped(100) : _isViewFunction();
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _gestureTopBottom(bool usePageTapZones) {
+    return Column(
+      children: [
+        /// top region
+        Expanded(
+          flex: 2,
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              usePageTapZones ? _onBtnTapped(-100) : _isViewFunction();
+            },
+          ),
+        ),
+
+        /// center region
+        const Expanded(flex: 5, child: SizedBox.shrink()),
+
+        /// bottom region
+        Expanded(
+          flex: 2,
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              usePageTapZones ? _onBtnTapped(100) : _isViewFunction();
+            },
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _appBar() {
@@ -971,7 +1058,11 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
 
                               IconButton(
                                 onPressed: () async {
-                                  _autoScroll.value = false;
+                                  bool autoScrollAreadyFalse =
+                                      _autoScroll.value == false;
+                                  if (!autoScrollAreadyFalse) {
+                                    _autoScroll.value = false;
+                                  }
                                   await customDraggableTabBar(
                                     tabs: [
                                       Tab(text: context.l10n.reader),
@@ -989,9 +1080,11 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                     context: context,
                                     vsync: this,
                                   );
-                                  if (_autoScrollPage.value) {
-                                    _autoPagescroll();
-                                    _autoScroll.value = true;
+                                  if (!autoScrollAreadyFalse) {
+                                    if (_autoScrollPage.value) {
+                                      _autoPagescroll();
+                                      _autoScroll.value = true;
+                                    }
                                   }
                                 },
                                 icon: const Icon(Icons.settings),

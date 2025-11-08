@@ -304,14 +304,13 @@ class GeneralSettingsTab extends ConsumerWidget {
             },
           ),
 
-          // _SwitchListTileSetting(
-          //   title: 'Tap to Scroll',
-          //   subtitle: 'Tap screen to scroll up/down',
-          //   value: ref.watch(novelTapToScrollStateProvider),
-          //   onChanged: (value) {
-          //     ref.read(novelTapToScrollStateProvider.notifier).set(value);
-          //   },
-          // ),
+          _SwitchListTileSetting(
+            title: context.l10n.use_page_tap_zones,
+            value: ref.watch(novelTapToScrollStateProvider),
+            onChanged: (value) {
+              ref.read(novelTapToScrollStateProvider.notifier).set(value);
+            },
+          ),
         ],
       ),
     );

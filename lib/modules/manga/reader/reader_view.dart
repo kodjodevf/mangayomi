@@ -2196,7 +2196,10 @@ class _MangaChapterPageGalleryState
   }
 
   void _showModalSettings() async {
-    _autoScroll.value = false;
+    bool autoScrollAreadyFalse = _autoScroll.value == false;
+    if (!autoScrollAreadyFalse) {
+      _autoScroll.value = false;
+    }
     final l10n = l10nLocalizations(context)!;
     await customDraggableTabBar(
       tabs: [
@@ -2512,10 +2515,11 @@ class _MangaChapterPageGalleryState
       vsync: this,
       fullWidth: true,
     );
-
-    if (_autoScrollPage.value) {
-      _autoPagescroll();
-      _autoScroll.value = true;
+    if (!autoScrollAreadyFalse) {
+      if (_autoScrollPage.value) {
+        _autoPagescroll();
+        _autoScroll.value = true;
+      }
     }
   }
 }
