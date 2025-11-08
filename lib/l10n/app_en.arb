@@ -553,5 +553,11 @@
   "add_local_folder": "Add local folder",
   "rescan_local_folder": "Rescan all local folders now",
   "export_metadata": "Export metadata",
-  "exported": "Exported"
+  "exported": "Exported",
+  "text_size": "Text Size :",
+  "text_align": "Text Align",
+  "line_height": "Line Height",
+  "show_scroll_percentage": "Show Scroll Percentage",
+  "remove_extra_paragraph_spacing": "Remove Extra Paragraph Spacing",
+  "select_label_color": "Select {label} Color"
 }

@@ -961,7 +961,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
-                                      'Text Size :',
+                                      context.l10n.text_size,
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: bodyLargeColor,

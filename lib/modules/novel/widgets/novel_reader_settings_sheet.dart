@@ -21,7 +21,7 @@ class ReaderSettingsTab extends ConsumerWidget {
       child: Column(
         children: [
           _SettingSection(
-            title: 'Theme',
+            title: context.l10n.theme,
             child: Column(
               children: [
                 Wrap(
@@ -91,7 +91,7 @@ class ReaderSettingsTab extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: _ColorPicker(
-                        label: 'Background',
+                        label: context.l10n.background,
                         color: backgroundColor,
                         onColorChanged: (color) {
                           ref
@@ -103,7 +103,7 @@ class ReaderSettingsTab extends ConsumerWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: _ColorPicker(
-                        label: 'Text',
+                        label: context.l10n.text,
                         color: textColor,
                         onColorChanged: (color) {
                           ref
@@ -120,7 +120,7 @@ class ReaderSettingsTab extends ConsumerWidget {
 
           const SizedBox(height: 16),
           _SettingSection(
-            title: 'Text Align',
+            title: context.l10n.text_align,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -197,7 +197,7 @@ class ReaderSettingsTab extends ConsumerWidget {
           const SizedBox(height: 16),
 
           _SettingSection(
-            title: 'Line Height',
+            title: context.l10n.line_height,
             child: Column(
               children: [
                 Row(
@@ -249,7 +249,7 @@ class GeneralSettingsTab extends ConsumerWidget {
       child: Column(
         children: [
           _SwitchListTileSetting(
-            title: 'Show Scroll Percentage',
+            title: context.l10n.show_scroll_percentage,
             value: ref.watch(novelShowScrollPercentageStateProvider),
             onChanged: (value) {
               ref
@@ -295,7 +295,7 @@ class GeneralSettingsTab extends ConsumerWidget {
             },
           ),
           _SwitchListTileSetting(
-            title: 'Remove Extra Paragraph Spacing',
+            title: context.l10n.remove_extra_paragraph_spacing,
             value: ref.watch(novelRemoveExtraParagraphSpacingStateProvider),
             onChanged: (value) {
               ref
@@ -467,7 +467,7 @@ class _ColorPicker extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Select $label Color'),
+          title: Text(context.l10n.select_label_color(label)),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -512,7 +512,7 @@ class _ColorPicker extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel'),
+              child: Text(context.l10n.cancel),
             ),
           ],
         );

@@ -3392,6 +3392,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Exported'**
   String get exported;
+
+  /// No description provided for @text_size.
+  ///
+  /// In en, this message translates to:
+  /// **'Text Size :'**
+  String get text_size;
+
+  /// No description provided for @text_align.
+  ///
+  /// In en, this message translates to:
+  /// **'Text Align'**
+  String get text_align;
+
+  /// No description provided for @line_height.
+  ///
+  /// In en, this message translates to:
+  /// **'Line Height'**
+  String get line_height;
+
+  /// No description provided for @show_scroll_percentage.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Scroll Percentage'**
+  String get show_scroll_percentage;
+
+  /// No description provided for @remove_extra_paragraph_spacing.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Extra Paragraph Spacing'**
+  String get remove_extra_paragraph_spacing;
+
+  /// No description provided for @select_label_color.
+  ///
+  /// In en, this message translates to:
+  /// **'Select {label} Color'**
+  String select_label_color(Object label);
 }
 
 class _AppLocalizationsDelegate
