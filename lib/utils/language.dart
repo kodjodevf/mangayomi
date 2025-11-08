@@ -119,6 +119,7 @@ final languagesMap = {
   "Latin": "la",
   "Uzbek": "uz",
   "Tagalog": "tl",
+  'অসমীয়া': 'as',
 };
 
 /// this might not always work depending on how every extension provides its subtitles
@@ -221,4 +222,5 @@ final languagesMapEnglish = {
   "Latin": "la",
   "Uzbek": "uz",
   "Tagalog": "tl",
+  "Assamese": "as",
 };
