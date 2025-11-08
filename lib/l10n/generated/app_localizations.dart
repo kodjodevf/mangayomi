@@ -14,6 +14,7 @@ import 'app_localizations_fr.dart';
 import 'app_localizations_hi.dart';
 import 'app_localizations_id.dart';
 import 'app_localizations_it.dart';
+import 'app_localizations_ja.dart';
 import 'app_localizations_pt.dart';
 import 'app_localizations_ru.dart';
 import 'app_localizations_th.dart';
@@ -116,6 +117,7 @@ abstract class AppLocalizations {
     Locale('hi'),
     Locale('id'),
     Locale('it'),
+    Locale('ja'),
     Locale('pt'),
     Locale('pt', 'BR'),
     Locale('ru'),
@@ -1104,8 +1106,8 @@ abstract class AppLocalizations {
   /// No description provided for @n_chapters.
   ///
   /// In en, this message translates to:
-  /// **'{number} chapters'**
-  String n_chapters(Object number);
+  /// **'{n} chapters'**
+  String n_chapters(Object n);
 
   /// No description provided for @no_description.
   ///
@@ -3450,6 +3452,7 @@ class _AppLocalizationsDelegate
     'hi',
     'id',
     'it',
+    'ja',
     'pt',
     'ru',
     'th',
@@ -3502,6 +3505,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsId();
     case 'it':
       return AppLocalizationsIt();
+    case 'ja':
+      return AppLocalizationsJa();
     case 'pt':
       return AppLocalizationsPt();
     case 'ru':

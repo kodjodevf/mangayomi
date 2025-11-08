@@ -146,7 +146,7 @@
   "source_title": "Titre de la source",
   "chapter_number": "Numéro de chapitre",
   "share": "Partager",
-  "n_chapters": "{number} chapitres",
+  "n_chapters": "{n} chapitres",
   "no_description": "Aucune description",
   "resume": "Reprendre",
   "read": "Commencer",

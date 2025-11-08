@@ -171,7 +171,7 @@
   "chapter_number": "Chapter number",
   "episode_number": "Episode number",
   "share": "Share",
-  "n_chapters": "{number} chapters",
+  "n_chapters": "{n} chapters",
   "no_description": "No description",
   "resume": "Resume",
   "read": "Read",

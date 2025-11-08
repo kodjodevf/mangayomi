@@ -529,8 +529,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get share => 'Partager';
 
   @override
-  String n_chapters(Object number) {
-    return '$number chapitres';
+  String n_chapters(Object n) {
+    return '$n chapitres';
   }
 
   @override

@@ -527,8 +527,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get share => 'Compartilhar';
 
   @override
-  String n_chapters(Object number) {
-    return '$number capítulos';
+  String n_chapters(Object n) {
+    return '$n capítulos';
   }
 
   @override
@@ -2324,8 +2324,8 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get share => 'Compartilhar';
 
   @override
-  String n_chapters(Object number) {
-    return '$number capítulos';
+  String n_chapters(Object n) {
+    return '$n capítulos';
   }
 
   @override

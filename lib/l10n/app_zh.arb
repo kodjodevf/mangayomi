@@ -150,7 +150,7 @@
     "source_title": "来源标题",
     "chapter_number": "章节号",
     "share": "分享",
-    "n_chapters": "{number}章",
+    "n_chapters": "{n}章",
     "no_description": "无描述",
     "resume": "继续",
     "read": "阅读",

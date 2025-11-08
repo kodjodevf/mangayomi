@@ -523,8 +523,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get share => 'Paylaş';
 
   @override
-  String n_chapters(Object number) {
-    return '$number bölüm';
+  String n_chapters(Object n) {
+    return '$n bölüm';
   }
 
   @override

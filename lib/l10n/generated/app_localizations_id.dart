@@ -527,8 +527,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get share => 'Bagikan';
 
   @override
-  String n_chapters(Object number) {
-    return '$number bab';
+  String n_chapters(Object n) {
+    return '$n bab';
   }
 
   @override

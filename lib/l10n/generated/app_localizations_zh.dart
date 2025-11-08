@@ -514,8 +514,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get share => '分享';
 
   @override
-  String n_chapters(Object number) {
-    return '$number章';
+  String n_chapters(Object n) {
+    return '$n章';
   }
 
   @override

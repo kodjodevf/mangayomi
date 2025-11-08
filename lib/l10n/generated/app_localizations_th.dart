@@ -511,7 +511,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get by_upload_date => 'ตามวันที่อัพโหลด';
 
   @override
-  String get source_title => 'ชื่อจากแหล่ง';
+  String get source_title => 'ชื่อแหล่งที่มา';
 
   @override
   String get chapter_number => 'หมายเลขตอน';
@@ -523,8 +523,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get share => 'แชร์';
 
   @override
-  String n_chapters(Object number) {
-    return '$number ตอน';
+  String n_chapters(Object n) {
+    return '$n ตอน';
   }
 
   @override

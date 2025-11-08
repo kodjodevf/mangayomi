@@ -523,8 +523,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get share => 'Share';
 
   @override
-  String n_chapters(Object number) {
-    return '$number chapters';
+  String n_chapters(Object n) {
+    return '$n chapters';
   }
 
   @override

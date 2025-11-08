@@ -147,7 +147,7 @@
     "source_title": "Kaynak Başlığı",
     "chapter_number": "Bölüm Numarası",
     "share": "Paylaş",
-    "n_chapters": "{number} bölüm",
+    "n_chapters": "{n} bölüm",
     "no_description": "Açıklama Yok",
     "resume": "Devam Et",
     "read": "Oku",

@@ -523,8 +523,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get share => 'साझा करें';
 
   @override
-  String n_chapters(Object number) {
-    return '$number अध्याय';
+  String n_chapters(Object n) {
+    return '$n अध्याय';
   }
 
   @override

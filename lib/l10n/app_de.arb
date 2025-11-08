@@ -163,7 +163,7 @@
     "chapter_number": "Kapitelnummer",
     "episode_number": "Episodennummer",
     "share": "Teilen",
-    "n_chapters": "{number} Kapitel",
+    "n_chapters": "{n} Kapitel",
     "no_description": "Keine Beschreibung",
     "resume": "Fortsetzen",
     "read": "Lesen",

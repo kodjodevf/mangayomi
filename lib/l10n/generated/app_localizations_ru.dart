@@ -528,8 +528,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get share => 'Поделиться';
 
   @override
-  String n_chapters(Object number) {
-    return '$number глав';
+  String n_chapters(Object n) {
+    return '$n глав';
   }
 
   @override

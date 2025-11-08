@@ -147,7 +147,7 @@
     "source_title": "عنوان المصدر",
     "chapter_number": "رقم الفصل",
     "share": "مشاركة",
-    "n_chapters": "{number} فصول",
+    "n_chapters": "{n} فصول",
     "no_description": "لا يوجد وصف",
     "resume": "استئناف",
     "read": "قراءة",

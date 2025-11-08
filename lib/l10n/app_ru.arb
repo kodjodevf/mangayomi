@@ -147,7 +147,7 @@
     "source_title": "Название источника",
     "chapter_number": "Номер главы",
     "share": "Поделиться",
-    "n_chapters": "{number} глав",
+    "n_chapters": "{n} глав",
     "no_description": "Нет описания",
     "resume": "Продолжить",
     "read": "Читать",

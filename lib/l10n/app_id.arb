@@ -147,7 +147,7 @@
     "source_title": "Judul sumber",
     "chapter_number": "Nomor bab",
     "share": "Bagikan",
-    "n_chapters": "{number} bab",
+    "n_chapters": "{n} bab",
     "no_description": "Tidak ada deskripsi",
     "resume": "Lanjutkan",
     "read": "Baca",

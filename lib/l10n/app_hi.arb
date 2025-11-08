@@ -135,7 +135,7 @@
   "source_title": "स्रोत शीर्षक",
   "chapter_number": "अध्याय संख्या",
   "share": "साझा करें",
-  "n_chapters": "{number} अध्याय",
+  "n_chapters": "{n} अध्याय",
   "no_description": "कोई विवरण नहीं",
   "resume": "जारी रखें",
   "read": "पढ़ें",

@@ -514,7 +514,7 @@ class AppLocalizationsAs extends AppLocalizations {
   String get source_title => 'উৎসৰ শিৰোনাম';
 
   @override
-  String get chapter_number => 'অধ্যায়ৰ সংখ্যা';
+  String get chapter_number => 'অধ্যায় নম্বৰ';
 
   @override
   String get episode_number => 'খণ্ড নম্বৰ';
@@ -523,8 +523,8 @@ class AppLocalizationsAs extends AppLocalizations {
   String get share => 'শ্বেয়াৰ';
 
   @override
-  String n_chapters(Object number) {
-    return '$number অধ্যায়';
+  String n_chapters(Object n) {
+    return '$n অধ্যায়';
   }
 
   @override

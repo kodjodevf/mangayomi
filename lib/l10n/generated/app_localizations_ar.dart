@@ -521,8 +521,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get share => 'مشاركة';
 
   @override
-  String n_chapters(Object number) {
-    return '$number فصول';
+  String n_chapters(Object n) {
+    return '$n فصول';
   }
 
   @override
