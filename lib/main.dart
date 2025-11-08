@@ -133,10 +133,14 @@ Future<void> _migrateOldLayout() async {
       }
     }
     // remove subfolder if empty
-    if (await oldSubDir.list().isEmpty) await oldSubDir.delete();
+    if (await oldSubDir.exists() && await oldSubDir.list().isEmpty) {
+      await oldSubDir.delete();
+    }
   }
   // Clean up old empty folder
-  if (await oldRoot.list().isEmpty) await oldRoot.delete();
+  if (await oldRoot.exists() && await oldRoot.list().isEmpty) {
+    await oldRoot.delete();
+  }
 }
 
 class MyApp extends ConsumerStatefulWidget {
