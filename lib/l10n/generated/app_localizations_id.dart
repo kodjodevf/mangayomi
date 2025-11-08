@@ -236,11 +236,11 @@ class AppLocalizationsId extends AppLocalizations {
   String get incognito_mode_description => 'Menghentikan catatan bacaan';
 
   @override
-  String get downloaded_only => 'Downloaded only';
+  String get downloaded_only => 'Hanya yang diunduh';
 
   @override
   String get downloaded_only_description =>
-      'Only show downloaded entries in your library';
+      'Hanya tampilkan entri yang diunduh di perpustakaan Anda';
 
   @override
   String get download_queue => 'Antrian Unduhan';
@@ -415,7 +415,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get save_as_cbz_archive => 'Simpan sebagai Arsip CBZ';
 
   @override
-  String get concurrent_downloads => 'Concurrent downloads';
+  String get concurrent_downloads => 'Unduhan bersamaan';
 
   @override
   String get browse_subtitle => 'Sumber, Pencarian Umum';
@@ -441,13 +441,13 @@ class AppLocalizationsId extends AppLocalizations {
   String get check_for_update => 'Periksa Pembaruan';
 
   @override
-  String get share_app_logs => 'Share app logs';
+  String get share_app_logs => 'Bagikan log aplikasi';
 
   @override
-  String get no_app_logs => 'No log.txt available!';
+  String get no_app_logs => 'Tidak ada file log.txt tersedia!';
 
   @override
-  String get failed => 'Failed!';
+  String get failed => 'Gagal!';
 
   @override
   String n_days_ago(Object days) {
@@ -464,7 +464,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get a_week_ago => 'Seminggu yang Lalu';
 
   @override
-  String get next_week => 'Next week';
+  String get next_week => 'Minggu depan';
 
   @override
   String get add_to_library => 'Tambahkan ke Perpustakaan';
@@ -722,18 +722,18 @@ class AppLocalizationsId extends AppLocalizations {
   String get sync_button_sync => 'Sinkronkan progres';
 
   @override
-  String get sync_button_upload => 'Upload only';
+  String get sync_button_upload => 'Hanya unggah';
 
   @override
   String get sync_button_upload_info =>
-      'This operation will fully replace the remote data with local data!';
+      'Operasi ini akan sepenuhnya menggantikan data jarak jauh dengan data lokal!';
 
   @override
-  String get sync_button_download => 'Download only';
+  String get sync_button_download => 'Hanya unduh';
 
   @override
   String get sync_button_download_info =>
-      'This operation will fully replace the local data with remote data!';
+      'Operasi ini akan sepenuhnya menggantikan data lokal dengan data jarak jauh!';
 
   @override
   String get sync_on => 'Aktifkan sinkronisasi';
@@ -821,7 +821,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get novel_extensions => 'Ekstensi Novel';
 
   @override
-  String get extension_settings => 'Extension settings';
+  String get extension_settings => 'Pengaturan ekstensi';
 
   @override
   String get anime => 'Anime';
@@ -1092,8 +1092,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get video_audio => 'Audio';
 
   @override
-  String get video_audio_info =>
-      'Preferred languages, pitch correction, audio channels';
+  String get video_audio_info => 'Bahasa pilihan, koreksi nada, kanal audio';
 
   @override
   String get player => 'Pemain';
@@ -1165,7 +1164,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get next_25_chapters => '25 bab berikutnya';
 
   @override
-  String get all_chapters => 'All chapters';
+  String get all_chapters => 'Semua bab';
 
   @override
   String get next_episode => 'Episode berikutnya';
@@ -1180,7 +1179,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get next_25_episodes => '25 episode berikutnya';
 
   @override
-  String get all_episodes => 'All episodes';
+  String get all_episodes => 'Semua episode';
 
   @override
   String get cover_saved => 'Sampul disimpan';
@@ -1320,7 +1319,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get advanced => 'Lanjutan';
 
   @override
-  String get advanced_info => 'mpv config';
+  String get advanced_info => 'Konfigurasi mpv';
 
   @override
   String get use_native_http_client => 'Gunakan klien http asli';
@@ -1399,25 +1398,25 @@ class AppLocalizationsId extends AppLocalizations {
       'Unduhan dibatasi hanya untuk Wi-Fi';
 
   @override
-  String get recommendations => 'Recommendations';
+  String get recommendations => 'Rekomendasi';
 
   @override
-  String get recommendations_similar => 'similar';
+  String get recommendations_similar => 'serupa';
 
   @override
-  String get recommendations_weights => 'Recommendation Weights';
+  String get recommendations_weights => 'Bobot rekomendasi';
 
   @override
-  String get recommendations_weights_genre => 'Genre Similarity';
+  String get recommendations_weights_genre => 'Kesamaan genre';
 
   @override
-  String get recommendations_weights_setting => 'Setting Similarity';
+  String get recommendations_weights_setting => 'Kesamaan latar';
 
   @override
-  String get recommendations_weights_synopsis => 'Story Similarity';
+  String get recommendations_weights_synopsis => 'Kesamaan cerita';
 
   @override
-  String get recommendations_weights_theme => 'Theme Similarity';
+  String get recommendations_weights_theme => 'Kesamaan tema';
 
   @override
   String get manga_extensions_repo => 'Repositori ekstensi manga';
@@ -1429,16 +1428,17 @@ class AppLocalizationsId extends AppLocalizations {
   String get novel_extensions_repo => 'Repositori ekstensi novel';
 
   @override
-  String get custom_dns => 'Custom DNS (leave blank to use system DNS)';
+  String get custom_dns =>
+      'DNS kustom (biarkan kosong untuk menggunakan DNS sistem)';
 
   @override
-  String get android_proxy_server => 'Android Proxy Server (ApkBridge)';
+  String get android_proxy_server => 'Server Proxy Android (ApkBridge)';
 
   @override
-  String get get_apk_bridge => 'Get ApkBridge';
+  String get get_apk_bridge => 'Dapatkan ApkBridge';
 
   @override
-  String get get_sync_server => 'Get Sync Server here';
+  String get get_sync_server => 'Dapatkan Server Sinkronisasi di sini';
 
   @override
   String get undefined => 'Tidak terdefinisi';
@@ -1503,11 +1503,11 @@ class AppLocalizationsId extends AppLocalizations {
   String get load_own_subtitles => 'Muat subtitle Anda sendiri...';
 
   @override
-  String get search_subtitles => 'Search subtitles online...';
+  String get search_subtitles => 'Cari subtitle online...';
 
   @override
   String extension_notes(Object notes) {
-    return 'Notes: $notes';
+    return 'Catatan: $notes';
   }
 
   @override
@@ -1515,270 +1515,276 @@ class AppLocalizationsId extends AppLocalizations {
       'Anda telah mencoba menambahkan repositori yang tidak didukung. Silakan periksa server discord untuk mendapatkan dukungan!';
 
   @override
-  String get end_of_chapter => 'End of chapter';
+  String get end_of_chapter => 'Akhir bab';
 
   @override
-  String get chapter_completed => 'Chapter completed';
+  String get chapter_completed => 'Bab selesai';
 
   @override
   String get continue_to_next_chapter =>
-      'Continue scrolling to read the next chapter';
+      'Lanjutkan gulir untuk membaca bab berikutnya';
 
   @override
-  String get no_next_chapter => 'No next chapter';
+  String get no_next_chapter => 'Tidak ada bab berikutnya';
 
   @override
-  String get you_have_finished_reading => 'You have finished reading';
+  String get you_have_finished_reading => 'Anda telah selesai membaca';
 
   @override
-  String get return_to_the_list_of_chapters => 'Return to the list of chapters';
+  String get return_to_the_list_of_chapters => 'Kembali ke daftar bab';
 
   @override
-  String get hwdec => 'Hardware Decoder';
+  String get hwdec => 'Dekoder perangkat keras';
 
   @override
-  String get enable_hardware_accel => 'Hardware Acceleration';
+  String get enable_hardware_accel => 'Akselerasi perangkat keras';
 
   @override
   String get enable_hardware_accel_info =>
-      'Turn it on/off if you are experiencing bugs or crashes';
+      'Aktifkan/nonaktifkan jika Anda mengalami bug atau crash';
 
   @override
-  String get track_library_navigate => 'Go to existing local entry';
+  String get track_library_navigate => 'Pergi ke entri lokal yang ada';
 
   @override
-  String get track_library_add => 'Add to local library';
+  String get track_library_add => 'Tambahkan ke perpustakaan lokal';
 
   @override
-  String get track_library_add_confirm => 'Add tracked item to local library';
+  String get track_library_add_confirm =>
+      'Tambahkan item yang dilacak ke perpustakaan lokal';
 
   @override
   String get track_library_not_logged =>
-      'Login to the corresponding tracker to use this feature!';
+      'Masuk ke pelacak yang sesuai untuk menggunakan fitur ini!';
 
   @override
-  String get track_library_switch => 'Switch to another tracker';
+  String get track_library_switch => 'Beralih ke pelacak lain';
 
   @override
-  String get go_back => 'Go back';
+  String get go_back => 'Kembali';
 
   @override
-  String get merge_library_nav_mobile => 'Merge library navigation on mobile';
+  String get merge_library_nav_mobile =>
+      'Gabungkan navigasi perpustakaan di ponsel';
 
   @override
-  String get enable_discord_rpc => 'Enable Discord RPC';
+  String get enable_discord_rpc => 'Aktifkan Discord RPC';
 
   @override
   String get hide_discord_rpc_incognito =>
-      'Hide Discord RPC while in Incognito';
+      'Sembunyikan Discord RPC saat Inkognito';
 
   @override
   String get rpc_show_reading_watching_progress =>
-      'Show current chapter in Discord (requires a restart)';
+      'Tampilkan bab saat ini di Discord (memerlukan restart)';
 
   @override
-  String get rpc_show_title => 'Show current title in Discord';
+  String get rpc_show_title => 'Tampilkan judul saat ini di Discord';
 
   @override
-  String get rpc_show_cover_image => 'Show current cover image in Discord';
+  String get rpc_show_cover_image =>
+      'Tampilkan gambar sampul saat ini di Discord';
 
   @override
-  String get sync_enable_histories => 'Sync history data';
+  String get sync_enable_histories => 'Sinkronkan data riwayat';
 
   @override
-  String get sync_enable_updates => 'Sync update data';
+  String get sync_enable_updates => 'Sinkronkan data pembaruan';
 
   @override
-  String get sync_enable_settings => 'Sync settings';
+  String get sync_enable_settings => 'Sinkronkan pengaturan';
 
   @override
-  String get enable_mpv => 'Enable mpv shaders / scripts';
+  String get enable_mpv => 'Aktifkan shader / skrip mpv';
 
   @override
-  String get mpv_info => 'Supports .js scripts under mpv/scripts/';
+  String get mpv_info => 'Mendukung skrip .js di bawah mpv/scripts/';
 
   @override
-  String get mpv_redownload => 'Redownload mpv config files';
+  String get mpv_redownload => 'Unduh ulang file konfigurasi mpv';
 
   @override
-  String get mpv_redownload_info => 'Replaces old config files with new one!';
+  String get mpv_redownload_info =>
+      'Mengganti file konfigurasi lama dengan yang baru!';
 
   @override
-  String get mpv_download => 'MPV config files are required!\nDownload now?';
+  String get mpv_download =>
+      'File konfigurasi MPV diperlukan!\nUnduh sekarang?';
 
   @override
-  String get custom_buttons => 'Custom buttons';
+  String get custom_buttons => 'Tombol kustom';
 
   @override
-  String get custom_buttons_info => 'Execute lua code with custom buttons';
+  String get custom_buttons_info => 'Jalankan kode lua dengan tombol kustom';
 
   @override
-  String get custom_buttons_edit => 'Edit custom buttons';
+  String get custom_buttons_edit => 'Edit tombol kustom';
 
   @override
-  String get custom_buttons_add => 'Add custom button';
+  String get custom_buttons_add => 'Tambah tombol kustom';
 
   @override
-  String get custom_buttons_added => 'Custom button added!';
+  String get custom_buttons_added => 'Tombol kustom ditambahkan!';
 
   @override
-  String get custom_buttons_delete => 'Delete custom button';
+  String get custom_buttons_delete => 'Hapus tombol kustom';
 
   @override
-  String get custom_buttons_text => 'Button text';
+  String get custom_buttons_text => 'Teks tombol';
 
   @override
-  String get custom_buttons_text_req => 'Button text required';
+  String get custom_buttons_text_req => 'Teks tombol diperlukan';
 
   @override
-  String get custom_buttons_js_code => 'lua code';
+  String get custom_buttons_js_code => 'Kode lua';
 
   @override
-  String get custom_buttons_js_code_req => 'lua code required';
+  String get custom_buttons_js_code_req => 'Kode lua diperlukan';
 
   @override
-  String get custom_buttons_js_code_long => 'lua code (on long press)';
+  String get custom_buttons_js_code_long => 'Kode lua (pada tekan lama)';
 
   @override
-  String get custom_buttons_startup => 'lua code (on startup)';
+  String get custom_buttons_startup => 'Kode lua (saat startup)';
 
   @override
   String n_days(Object n) {
-    return '$n days';
+    return '$n hari';
   }
 
   @override
-  String get decoder => 'Decoder';
+  String get decoder => 'Dekoder';
 
   @override
-  String get decoder_info => 'Hardware decoding, pixel format, debanding';
+  String get decoder_info =>
+      'Dekoding perangkat keras, format piksel, debanding';
 
   @override
-  String get enable_gpu_next => 'Enable gpu-next (Android only)';
+  String get enable_gpu_next => 'Aktifkan gpu-next (khusus Android)';
 
   @override
-  String get enable_gpu_next_info => 'A new video rendering backend';
+  String get enable_gpu_next_info => 'Mesin rendering video baru';
 
   @override
   String get debanding => 'Debanding';
 
   @override
-  String get use_yuv420p => 'Use YUV420P pixel format';
+  String get use_yuv420p => 'Gunakan format piksel YUV420P';
 
   @override
   String get use_yuv420p_info =>
-      'May fix black screens on some video codecs, can also improve performance at the cost of quality';
+      'Dapat memperbaiki layar hitam pada beberapa codec video, juga dapat meningkatkan kinerja dengan mengorbankan kualitas';
 
   @override
-  String get audio_preferred_languages => 'Preferred langauages';
+  String get audio_preferred_languages => 'Bahasa pilihan';
 
   @override
   String get audio_preferred_languages_info =>
-      'Audio langauage(s) to be selected by default on a video with multiple audio streams, 2/3-letter languages codes (e.g.: en, de, fr) work. Multiple values can be delimited by a comma.';
+      'Bahasa audio untuk dipilih secara default pada video dengan beberapa streaming audio, kode bahasa 2/3 huruf (mis: id, en, ja). Beberapa nilai dapat dipisahkan dengan koma.';
 
   @override
-  String get enable_audio_pitch_correction => 'Enable audio pitch correction';
+  String get enable_audio_pitch_correction => 'Aktifkan koreksi nada audio';
 
   @override
   String get enable_audio_pitch_correction_info =>
-      'Prevents the audio from becoming high-pitched at faster speeds and low-pitched at slower speeds';
+      'Mencegah audio menjadi bernada tinggi pada kecepatan lebih cepat dan bernada rendah pada kecepatan lebih lambat';
 
   @override
-  String get audio_channels => 'Audio channels';
+  String get audio_channels => 'Kanal audio';
 
   @override
-  String get volume_boost_cap => 'Volume boost cap';
+  String get volume_boost_cap => 'Batas peningkatan volume';
 
   @override
-  String get internal_player => 'Internal player';
+  String get internal_player => 'Pemutar internal';
 
   @override
-  String get internal_player_info => 'Progress, controls, orientation';
+  String get internal_player_info => 'Kemajuan, kontrol, orientasi';
 
   @override
-  String get subtitle_delay_text => 'Subtitle delay';
+  String get subtitle_delay_text => 'Penundaan subtitle';
 
   @override
-  String get subtitle_delay => 'Delay (ms)';
+  String get subtitle_delay => 'Penundaan (ms)';
 
   @override
-  String get subtitle_speed => 'Speed';
+  String get subtitle_speed => 'Kecepatan';
 
   @override
-  String get calendar => 'Calendar';
+  String get calendar => 'Kalender';
 
   @override
-  String get calendar_no_data => 'No data yet.';
+  String get calendar_no_data => 'Belum ada data.';
 
   @override
   String get calendar_info =>
-      'The calendar is only able to predict the next chapter upload based on the older uploads. Some data might not be 100% accurate!';
+      'Kalender hanya dapat memprediksi unggahan bab berikutnya berdasarkan unggahan yang lebih lama. Beberapa data mungkin tidak 100% akurat!';
 
   @override
   String in_n_day(Object days) {
-    return 'in $days day';
+    return 'dalam $days hari';
   }
 
   @override
   String in_n_days(Object days) {
-    return 'in $days days';
+    return 'dalam $days hari';
   }
 
   @override
-  String get clear_library => 'Clear library';
+  String get clear_library => 'Bersihkan perpustakaan';
 
   @override
   String get clear_library_desc =>
-      'Choose to clear all manga, anime and/or novel entries';
+      'Pilih untuk menghapus semua entri manga, anime dan/atau novel';
 
   @override
   String get clear_library_input =>
-      'Type \'manga\', \'anime\' and/or \'novel\' (separated by a comma) to remove all related entries';
+      'Ketik \'manga\', \'anime\' dan/atau \'novel\' (dipisahkan dengan koma) untuk menghapus semua entri terkait';
 
   @override
-  String get watch_order => 'Watch order';
+  String get watch_order => 'Urutan menonton';
 
   @override
-  String get sequels => 'Sequels';
+  String get sequels => 'Sekuel';
 
   @override
-  String get recommendations_similarity => 'Similarity:';
+  String get recommendations_similarity => 'Kesamaan:';
 
   @override
-  String get local_folder_structure => 'Structure of a local folder';
+  String get local_folder_structure => 'Struktur folder lokal';
 
   @override
-  String get local_folder => 'Local folders';
+  String get local_folder => 'Folder lokal';
 
   @override
-  String get add_local_folder => 'Add local folder';
+  String get add_local_folder => 'Tambah folder lokal';
 
   @override
-  String get rescan_local_folder => 'Rescan all local folders now';
+  String get rescan_local_folder => 'Pindai ulang semua folder lokal sekarang';
 
   @override
-  String get export_metadata => 'Export metadata';
+  String get export_metadata => 'Ekspor metadata';
 
   @override
-  String get exported => 'Exported';
+  String get exported => 'Diekspor';
 
   @override
-  String get text_size => 'Text Size :';
+  String get text_size => 'Ukuran Teks:';
 
   @override
-  String get text_align => 'Text Align';
+  String get text_align => 'Perataan Teks';
 
   @override
-  String get line_height => 'Line Height';
+  String get line_height => 'Tinggi Baris';
 
   @override
-  String get show_scroll_percentage => 'Show Scroll Percentage';
+  String get show_scroll_percentage => 'Tampilkan Persentase Scroll';
 
   @override
-  String get remove_extra_paragraph_spacing => 'Remove Extra Paragraph Spacing';
+  String get remove_extra_paragraph_spacing => 'Hapus Spasi Ekstra Paragraf';
 
   @override
   String select_label_color(Object label) {
-    return 'Select $label Color';
+    return 'Pilih Warna $label';
   }
 }

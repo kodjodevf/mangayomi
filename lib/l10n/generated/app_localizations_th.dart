@@ -233,11 +233,11 @@ class AppLocalizationsTh extends AppLocalizations {
   String get incognito_mode_description => 'หยุดประวัติการอ่านชั่วคราว';
 
   @override
-  String get downloaded_only => 'Downloaded only';
+  String get downloaded_only => 'ที่ดาวน์โหลดแล้วเท่านั้น';
 
   @override
   String get downloaded_only_description =>
-      'Only show downloaded entries in your library';
+      'แสดงเฉพาะรายการที่ดาวน์โหลดแล้วในห้องสมุดของคุณ';
 
   @override
   String get download_queue => 'คิวดาวน์โหลด';
@@ -412,7 +412,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get save_as_cbz_archive => 'จัดเก็บเป็น CBZ';
 
   @override
-  String get concurrent_downloads => 'Concurrent downloads';
+  String get concurrent_downloads => 'ดาวน์โหลดพร้อมกัน';
 
   @override
   String get browse_subtitle => 'Sources, global search';
@@ -437,13 +437,13 @@ class AppLocalizationsTh extends AppLocalizations {
   String get check_for_update => 'ตรวจสอบการอัพเดท';
 
   @override
-  String get share_app_logs => 'Share app logs';
+  String get share_app_logs => 'แชร์บันทึกแอป';
 
   @override
-  String get no_app_logs => 'No log.txt available!';
+  String get no_app_logs => 'ไม่มีไฟล์ log.txt!';
 
   @override
-  String get failed => 'Failed!';
+  String get failed => 'ล้มเหลว!';
 
   @override
   String n_days_ago(Object days) {
@@ -460,7 +460,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get a_week_ago => 'สัปดาห์ที่แล้ว';
 
   @override
-  String get next_week => 'Next week';
+  String get next_week => 'สัปดาห์หน้า';
 
   @override
   String get add_to_library => 'เพิ่มไปที่ชั้นหนังสือ';
@@ -718,18 +718,18 @@ class AppLocalizationsTh extends AppLocalizations {
   String get sync_button_sync => 'ซิงค์ความคืบหน้า';
 
   @override
-  String get sync_button_upload => 'Upload only';
+  String get sync_button_upload => 'อัปโหลดเท่านั้น';
 
   @override
   String get sync_button_upload_info =>
-      'This operation will fully replace the remote data with local data!';
+      'การดำเนินการนี้จะแทนที่ข้อมูลระยะไกลด้วยข้อมูลในเครื่องทั้งหมด!';
 
   @override
-  String get sync_button_download => 'Download only';
+  String get sync_button_download => 'ดาวน์โหลดเท่านั้น';
 
   @override
   String get sync_button_download_info =>
-      'This operation will fully replace the local data with remote data!';
+      'การดำเนินการนี้จะแทนที่ข้อมูลในเครื่องด้วยข้อมูลระยะไกลทั้งหมด!';
 
   @override
   String get sync_on => 'เปิดการซิงค์';
@@ -816,7 +816,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get novel_extensions => 'ส่วนขยายของนวนิยาย';
 
   @override
-  String get extension_settings => 'Extension settings';
+  String get extension_settings => 'การตั้งค่าส่วนขยาย';
 
   @override
   String get anime => 'อนิเมะ';
@@ -1087,7 +1087,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get video_audio_info =>
-      'Preferred languages, pitch correction, audio channels';
+      'ภาษาที่ต้องการ, การแก้ไขระดับเสียง, ช่องเสียง';
 
   @override
   String get player => 'ตัวเล่น';
@@ -1159,7 +1159,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get next_25_chapters => '25 ตอนถัดไป';
 
   @override
-  String get all_chapters => 'All chapters';
+  String get all_chapters => 'ทุกตอน';
 
   @override
   String get next_episode => 'ตอนถัดไป';
@@ -1174,7 +1174,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get next_25_episodes => '25 ตอนถัดไป';
 
   @override
-  String get all_episodes => 'All episodes';
+  String get all_episodes => 'ทุกตอน';
 
   @override
   String get cover_saved => 'จัดเก็บภาพปกแล้ว';
@@ -1314,7 +1314,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get advanced => 'ขั้นสูง';
 
   @override
-  String get advanced_info => 'mpv config';
+  String get advanced_info => 'การกำหนดค่า mpv';
 
   @override
   String get use_native_http_client => 'ใช้ไคลเอนต์ HTTP พื้นเมือง';
@@ -1393,25 +1393,25 @@ class AppLocalizationsTh extends AppLocalizations {
       'การดาวน์โหลดจำกัดเฉพาะ Wi-Fi เท่านั้น';
 
   @override
-  String get recommendations => 'Recommendations';
+  String get recommendations => 'แนะนำ';
 
   @override
-  String get recommendations_similar => 'similar';
+  String get recommendations_similar => 'คล้ายกัน';
 
   @override
-  String get recommendations_weights => 'Recommendation Weights';
+  String get recommendations_weights => 'น้ำหนักคำแนะนำ';
 
   @override
-  String get recommendations_weights_genre => 'Genre Similarity';
+  String get recommendations_weights_genre => 'ความคล้ายคลึงของประเภท';
 
   @override
-  String get recommendations_weights_setting => 'Setting Similarity';
+  String get recommendations_weights_setting => 'ความคล้ายคลึงของฉาก';
 
   @override
-  String get recommendations_weights_synopsis => 'Story Similarity';
+  String get recommendations_weights_synopsis => 'ความคล้ายคลึงของเรื่องราว';
 
   @override
-  String get recommendations_weights_theme => 'Theme Similarity';
+  String get recommendations_weights_theme => 'ความคล้ายคลึงของธีม';
 
   @override
   String get manga_extensions_repo => 'ที่เก็บส่วนขยายมังงะ';
@@ -1423,16 +1423,16 @@ class AppLocalizationsTh extends AppLocalizations {
   String get novel_extensions_repo => 'ที่เก็บส่วนขยายโนเวล';
 
   @override
-  String get custom_dns => 'Custom DNS (leave blank to use system DNS)';
+  String get custom_dns => 'DNS กำหนดเอง (เว้นว่างไว้เพื่อใช้ DNS ของระบบ)';
 
   @override
-  String get android_proxy_server => 'Android Proxy Server (ApkBridge)';
+  String get android_proxy_server => 'เซิร์ฟเวอร์พร็อกซี Android (ApkBridge)';
 
   @override
-  String get get_apk_bridge => 'Get ApkBridge';
+  String get get_apk_bridge => 'รับ ApkBridge';
 
   @override
-  String get get_sync_server => 'Get Sync Server here';
+  String get get_sync_server => 'รับเซิร์ฟเวอร์ซิงค์ที่นี่';
 
   @override
   String get undefined => 'ไม่ได้กำหนด';
@@ -1497,11 +1497,11 @@ class AppLocalizationsTh extends AppLocalizations {
   String get load_own_subtitles => 'โหลดคำบรรยายของคุณเอง...';
 
   @override
-  String get search_subtitles => 'Search subtitles online...';
+  String get search_subtitles => 'ค้นหาคำบรรยายออนไลน์...';
 
   @override
   String extension_notes(Object notes) {
-    return 'Notes: $notes';
+    return 'หมายเหตุ: $notes';
   }
 
   @override
@@ -1509,270 +1509,270 @@ class AppLocalizationsTh extends AppLocalizations {
       'คุณพยายามเพิ่มที่เก็บข้อมูลที่ไม่รองรับ โปรดตรวจสอบเซิร์ฟเวอร์ Discord เพื่อรับการสนับสนุน!';
 
   @override
-  String get end_of_chapter => 'End of chapter';
+  String get end_of_chapter => 'จบตอน';
 
   @override
-  String get chapter_completed => 'Chapter completed';
+  String get chapter_completed => 'ตอนเสร็จสิ้น';
 
   @override
-  String get continue_to_next_chapter =>
-      'Continue scrolling to read the next chapter';
+  String get continue_to_next_chapter => 'เลื่อนต่อเพื่ออ่านตอนถัดไป';
 
   @override
-  String get no_next_chapter => 'No next chapter';
+  String get no_next_chapter => 'ไม่มีตอนถัดไป';
 
   @override
-  String get you_have_finished_reading => 'You have finished reading';
+  String get you_have_finished_reading => 'คุณอ่านจบแล้ว';
 
   @override
-  String get return_to_the_list_of_chapters => 'Return to the list of chapters';
+  String get return_to_the_list_of_chapters => 'กลับไปที่รายการตอน';
 
   @override
-  String get hwdec => 'Hardware Decoder';
+  String get hwdec => 'ตัวถอดรหัสฮาร์ดแวร์';
 
   @override
-  String get enable_hardware_accel => 'Hardware Acceleration';
+  String get enable_hardware_accel => 'การเร่งฮาร์ดแวร์';
 
   @override
   String get enable_hardware_accel_info =>
-      'Turn it on/off if you are experiencing bugs or crashes';
+      'เปิด/ปิดหากคุณพบข้อผิดพลาดหรือการขัดข้อง';
 
   @override
-  String get track_library_navigate => 'Go to existing local entry';
+  String get track_library_navigate => 'ไปที่รายการในเครื่องที่มีอยู่';
 
   @override
-  String get track_library_add => 'Add to local library';
+  String get track_library_add => 'เพิ่มไปยังห้องสมุดในเครื่อง';
 
   @override
-  String get track_library_add_confirm => 'Add tracked item to local library';
+  String get track_library_add_confirm =>
+      'เพิ่มรายการที่ติดตามไปยังห้องสมุดในเครื่อง';
 
   @override
   String get track_library_not_logged =>
-      'Login to the corresponding tracker to use this feature!';
+      'เข้าสู่ระบบตัวติดตามที่เกี่ยวข้องเพื่อใช้คุณสมบัตินี้!';
 
   @override
-  String get track_library_switch => 'Switch to another tracker';
+  String get track_library_switch => 'สลับไปยังตัวติดตามอื่น';
 
   @override
-  String get go_back => 'Go back';
+  String get go_back => 'ย้อนกลับ';
 
   @override
-  String get merge_library_nav_mobile => 'Merge library navigation on mobile';
+  String get merge_library_nav_mobile => 'รวมการนำทางห้องสมุดบนมือถือ';
 
   @override
-  String get enable_discord_rpc => 'Enable Discord RPC';
+  String get enable_discord_rpc => 'เปิดใช้งาน Discord RPC';
 
   @override
   String get hide_discord_rpc_incognito =>
-      'Hide Discord RPC while in Incognito';
+      'ซ่อน Discord RPC ในโหมดไม่ระบุตัวตน';
 
   @override
   String get rpc_show_reading_watching_progress =>
-      'Show current chapter in Discord (requires a restart)';
+      'แสดงตอนปัจจุบันใน Discord (ต้องรีสตาร์ท)';
 
   @override
-  String get rpc_show_title => 'Show current title in Discord';
+  String get rpc_show_title => 'แสดงชื่อปัจจุบันใน Discord';
 
   @override
-  String get rpc_show_cover_image => 'Show current cover image in Discord';
+  String get rpc_show_cover_image => 'แสดงภาพปกปัจจุบันใน Discord';
 
   @override
-  String get sync_enable_histories => 'Sync history data';
+  String get sync_enable_histories => 'ซิงค์ข้อมูลประวัติ';
 
   @override
-  String get sync_enable_updates => 'Sync update data';
+  String get sync_enable_updates => 'ซิงค์ข้อมูลอัปเดต';
 
   @override
-  String get sync_enable_settings => 'Sync settings';
+  String get sync_enable_settings => 'ซิงค์การตั้งค่า';
 
   @override
-  String get enable_mpv => 'Enable mpv shaders / scripts';
+  String get enable_mpv => 'เปิดใช้งาน mpv shaders / scripts';
 
   @override
-  String get mpv_info => 'Supports .js scripts under mpv/scripts/';
+  String get mpv_info => 'รองรับสคริปต์ .js ใน mpv/scripts/';
 
   @override
-  String get mpv_redownload => 'Redownload mpv config files';
+  String get mpv_redownload => 'ดาวน์โหลดไฟล์กำหนดค่า mpv อีกครั้ง';
 
   @override
-  String get mpv_redownload_info => 'Replaces old config files with new one!';
+  String get mpv_redownload_info => 'แทนที่ไฟล์กำหนดค่าเก่าด้วยไฟล์ใหม่!';
 
   @override
-  String get mpv_download => 'MPV config files are required!\nDownload now?';
+  String get mpv_download => 'ต้องการไฟล์กำหนดค่า MPV!\nดาวน์โหลดตอนนี้?';
 
   @override
-  String get custom_buttons => 'Custom buttons';
+  String get custom_buttons => 'ปุ่มกำหนดเอง';
 
   @override
-  String get custom_buttons_info => 'Execute lua code with custom buttons';
+  String get custom_buttons_info => 'รันโค้ด lua ด้วยปุ่มกำหนดเอง';
 
   @override
-  String get custom_buttons_edit => 'Edit custom buttons';
+  String get custom_buttons_edit => 'แก้ไขปุ่มกำหนดเอง';
 
   @override
-  String get custom_buttons_add => 'Add custom button';
+  String get custom_buttons_add => 'เพิ่มปุ่มกำหนดเอง';
 
   @override
-  String get custom_buttons_added => 'Custom button added!';
+  String get custom_buttons_added => 'เพิ่มปุ่มกำหนดเองแล้ว!';
 
   @override
-  String get custom_buttons_delete => 'Delete custom button';
+  String get custom_buttons_delete => 'ลบปุ่มกำหนดเอง';
 
   @override
-  String get custom_buttons_text => 'Button text';
+  String get custom_buttons_text => 'ข้อความปุ่ม';
 
   @override
-  String get custom_buttons_text_req => 'Button text required';
+  String get custom_buttons_text_req => 'ต้องระบุข้อความปุ่ม';
 
   @override
-  String get custom_buttons_js_code => 'lua code';
+  String get custom_buttons_js_code => 'โค้ด lua';
 
   @override
-  String get custom_buttons_js_code_req => 'lua code required';
+  String get custom_buttons_js_code_req => 'ต้องระบุโค้ด lua';
 
   @override
-  String get custom_buttons_js_code_long => 'lua code (on long press)';
+  String get custom_buttons_js_code_long => 'โค้ด lua (กดค้างไว้)';
 
   @override
-  String get custom_buttons_startup => 'lua code (on startup)';
+  String get custom_buttons_startup => 'โค้ด lua (เมื่อเริ่มต้น)';
 
   @override
   String n_days(Object n) {
-    return '$n days';
+    return '$n วัน';
   }
 
   @override
-  String get decoder => 'Decoder';
+  String get decoder => 'ตัวถอดรหัส';
 
   @override
-  String get decoder_info => 'Hardware decoding, pixel format, debanding';
+  String get decoder_info => 'การถอดรหัสฮาร์ดแวร์, รูปแบบพิกเซล, debanding';
 
   @override
-  String get enable_gpu_next => 'Enable gpu-next (Android only)';
+  String get enable_gpu_next => 'เปิดใช้งาน gpu-next (Android เท่านั้น)';
 
   @override
-  String get enable_gpu_next_info => 'A new video rendering backend';
+  String get enable_gpu_next_info => 'เอ็นจิ้นการแสดงผลวิดีโอใหม่';
 
   @override
   String get debanding => 'Debanding';
 
   @override
-  String get use_yuv420p => 'Use YUV420P pixel format';
+  String get use_yuv420p => 'ใช้รูปแบบพิกเซล YUV420P';
 
   @override
   String get use_yuv420p_info =>
-      'May fix black screens on some video codecs, can also improve performance at the cost of quality';
+      'อาจแก้ไขหน้าจอดำในบางตัวแปลงสัญญาณวิดีโอ ยังสามารถปรับปรุงประสิทธิภาพได้โดยเสียคุณภาพ';
 
   @override
-  String get audio_preferred_languages => 'Preferred langauages';
+  String get audio_preferred_languages => 'ภาษาที่ต้องการ';
 
   @override
   String get audio_preferred_languages_info =>
-      'Audio langauage(s) to be selected by default on a video with multiple audio streams, 2/3-letter languages codes (e.g.: en, de, fr) work. Multiple values can be delimited by a comma.';
+      'ภาษาเสียงที่จะเลือกตามค่าเริ่มต้นในวิดีโอที่มีหลายสตรีมเสียง, รหัสภาษา 2/3 ตัวอักษร (เช่น: th, en, ja) ค่าหลายค่าสามารถคั่นด้วยเครื่องหมายจุลภาค';
 
   @override
-  String get enable_audio_pitch_correction => 'Enable audio pitch correction';
+  String get enable_audio_pitch_correction => 'เปิดใช้งานการแก้ไขระดับเสียง';
 
   @override
   String get enable_audio_pitch_correction_info =>
-      'Prevents the audio from becoming high-pitched at faster speeds and low-pitched at slower speeds';
+      'ป้องกันไม่ให้เสียงกลายเป็นเสียงสูงที่ความเร็วเร็วขึ้นและเสียงต่ำที่ความเร็วช้าลง';
 
   @override
-  String get audio_channels => 'Audio channels';
+  String get audio_channels => 'ช่องเสียง';
 
   @override
-  String get volume_boost_cap => 'Volume boost cap';
+  String get volume_boost_cap => 'ขีดจำกัดการเพิ่มระดับเสียง';
 
   @override
-  String get internal_player => 'Internal player';
+  String get internal_player => 'เครื่องเล่นภายใน';
 
   @override
-  String get internal_player_info => 'Progress, controls, orientation';
+  String get internal_player_info => 'ความคืบหน้า, การควบคุม, การวางแนว';
 
   @override
-  String get subtitle_delay_text => 'Subtitle delay';
+  String get subtitle_delay_text => 'ความล่าช้าของคำบรรยาย';
 
   @override
-  String get subtitle_delay => 'Delay (ms)';
+  String get subtitle_delay => 'ความล่าช้า (ms)';
 
   @override
-  String get subtitle_speed => 'Speed';
+  String get subtitle_speed => 'ความเร็ว';
 
   @override
-  String get calendar => 'Calendar';
+  String get calendar => 'ปฏิทิน';
 
   @override
-  String get calendar_no_data => 'No data yet.';
+  String get calendar_no_data => 'ยังไม่มีข้อมูล';
 
   @override
   String get calendar_info =>
-      'The calendar is only able to predict the next chapter upload based on the older uploads. Some data might not be 100% accurate!';
+      'ปฏิทินสามารถคาดการณ์การอัปโหลดตอนถัดไปได้ตามการอัปโหลดเก่า ข้อมูลบางส่วนอาจไม่แม่นยำ 100%!';
 
   @override
   String in_n_day(Object days) {
-    return 'in $days day';
+    return 'ใน $days วัน';
   }
 
   @override
   String in_n_days(Object days) {
-    return 'in $days days';
+    return 'ใน $days วัน';
   }
 
   @override
-  String get clear_library => 'Clear library';
+  String get clear_library => 'ล้างห้องสมุด';
 
   @override
   String get clear_library_desc =>
-      'Choose to clear all manga, anime and/or novel entries';
+      'เลือกล้างรายการมังงะ, อนิเมะ และ/หรือ นิยายทั้งหมด';
 
   @override
   String get clear_library_input =>
-      'Type \'manga\', \'anime\' and/or \'novel\' (separated by a comma) to remove all related entries';
+      'พิมพ์ \'manga\', \'anime\' และ/หรือ \'novel\' (คั่นด้วยเครื่องหมายจุลภาค) เพื่อลบรายการที่เกี่ยวข้องทั้งหมด';
 
   @override
-  String get watch_order => 'Watch order';
+  String get watch_order => 'ลำดับการดู';
 
   @override
-  String get sequels => 'Sequels';
+  String get sequels => 'ภาคต่อ';
 
   @override
-  String get recommendations_similarity => 'Similarity:';
+  String get recommendations_similarity => 'ความคล้ายคลึง:';
 
   @override
-  String get local_folder_structure => 'Structure of a local folder';
+  String get local_folder_structure => 'โครงสร้างของโฟลเดอร์ในเครื่อง';
 
   @override
-  String get local_folder => 'Local folders';
+  String get local_folder => 'โฟลเดอร์ในเครื่อง';
 
   @override
-  String get add_local_folder => 'Add local folder';
+  String get add_local_folder => 'เพิ่มโฟลเดอร์ในเครื่อง';
 
   @override
-  String get rescan_local_folder => 'Rescan all local folders now';
+  String get rescan_local_folder => 'สแกนโฟลเดอร์ในเครื่องทั้งหมดอีกครั้งทันที';
 
   @override
-  String get export_metadata => 'Export metadata';
+  String get export_metadata => 'ส่งออกข้อมูลเมตา';
 
   @override
-  String get exported => 'Exported';
+  String get exported => 'ส่งออกแล้ว';
 
   @override
-  String get text_size => 'Text Size :';
+  String get text_size => 'ขนาดข้อความ:';
 
   @override
-  String get text_align => 'Text Align';
+  String get text_align => 'การจัดแนวข้อความ';
 
   @override
-  String get line_height => 'Line Height';
+  String get line_height => 'ความสูงบรรทัด';
 
   @override
-  String get show_scroll_percentage => 'Show Scroll Percentage';
+  String get show_scroll_percentage => 'แสดงเปอร์เซ็นต์การเลื่อน';
 
   @override
-  String get remove_extra_paragraph_spacing => 'Remove Extra Paragraph Spacing';
+  String get remove_extra_paragraph_spacing => 'ลบช่องว่างพิเศษระหว่างย่อหน้า';
 
   @override
   String select_label_color(Object label) {
-    return 'Select $label Color';
+    return 'เลือกสี $label';
   }
 }

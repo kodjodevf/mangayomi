@@ -228,11 +228,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get incognito_mode_description => '暂停阅读历史';
 
   @override
-  String get downloaded_only => 'Downloaded only';
+  String get downloaded_only => '仅已下载';
 
   @override
-  String get downloaded_only_description =>
-      'Only show downloaded entries in your library';
+  String get downloaded_only_description => '仅显示库中已下载的条目';
 
   @override
   String get download_queue => '下载队列';
@@ -405,7 +404,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get save_as_cbz_archive => '保存为CBZ档案';
 
   @override
-  String get concurrent_downloads => 'Concurrent downloads';
+  String get concurrent_downloads => '并发下载';
 
   @override
   String get browse_subtitle => '来源，全球搜索';
@@ -429,13 +428,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get check_for_update => '检查更新';
 
   @override
-  String get share_app_logs => 'Share app logs';
+  String get share_app_logs => '分享应用日志';
 
   @override
-  String get no_app_logs => 'No log.txt available!';
+  String get no_app_logs => '没有可用的 log.txt 文件！';
 
   @override
-  String get failed => 'Failed!';
+  String get failed => '失败！';
 
   @override
   String n_days_ago(Object days) {
@@ -452,7 +451,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get a_week_ago => '一周前';
 
   @override
-  String get next_week => 'Next week';
+  String get next_week => '下周';
 
   @override
   String get add_to_library => '添加到图书馆';
@@ -710,18 +709,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sync_button_sync => '同步进度';
 
   @override
-  String get sync_button_upload => 'Upload only';
+  String get sync_button_upload => '仅上传';
 
   @override
-  String get sync_button_upload_info =>
-      'This operation will fully replace the remote data with local data!';
+  String get sync_button_upload_info => '此操作将完全用本地数据替换远程数据！';
 
   @override
-  String get sync_button_download => 'Download only';
+  String get sync_button_download => '仅下载';
 
   @override
-  String get sync_button_download_info =>
-      'This operation will fully replace the local data with remote data!';
+  String get sync_button_download_info => '此操作将完全用远程数据替换本地数据！';
 
   @override
   String get sync_on => '启用同步';
@@ -806,7 +803,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get novel_extensions => '小说扩展';
 
   @override
-  String get extension_settings => 'Extension settings';
+  String get extension_settings => '扩展设置';
 
   @override
   String get anime => '动画';
@@ -1070,8 +1067,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get video_audio => '音频';
 
   @override
-  String get video_audio_info =>
-      'Preferred languages, pitch correction, audio channels';
+  String get video_audio_info => '首选语言、音调校正、音频通道';
 
   @override
   String get player => '播放器';
@@ -1139,7 +1135,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get next_25_chapters => '下25章';
 
   @override
-  String get all_chapters => 'All chapters';
+  String get all_chapters => '所有章节';
 
   @override
   String get next_episode => '下一集';
@@ -1154,7 +1150,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get next_25_episodes => '接下来的 25 集';
 
   @override
-  String get all_episodes => 'All episodes';
+  String get all_episodes => '所有剧集';
 
   @override
   String get cover_saved => '封面已保存';
@@ -1291,7 +1287,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get advanced => '高级';
 
   @override
-  String get advanced_info => 'mpv config';
+  String get advanced_info => 'mpv 配置';
 
   @override
   String get use_native_http_client => '使用本地 HTTP 客户端';
@@ -1367,25 +1363,25 @@ class AppLocalizationsZh extends AppLocalizations {
   String get downloads_are_limited_to_wifi => '下载仅限于WiFi';
 
   @override
-  String get recommendations => 'Recommendations';
+  String get recommendations => '推荐';
 
   @override
-  String get recommendations_similar => 'similar';
+  String get recommendations_similar => '相似';
 
   @override
-  String get recommendations_weights => 'Recommendation Weights';
+  String get recommendations_weights => '推荐权重';
 
   @override
-  String get recommendations_weights_genre => 'Genre Similarity';
+  String get recommendations_weights_genre => '类型相似度';
 
   @override
-  String get recommendations_weights_setting => 'Setting Similarity';
+  String get recommendations_weights_setting => '设定相似度';
 
   @override
-  String get recommendations_weights_synopsis => 'Story Similarity';
+  String get recommendations_weights_synopsis => '故事相似度';
 
   @override
-  String get recommendations_weights_theme => 'Theme Similarity';
+  String get recommendations_weights_theme => '主题相似度';
 
   @override
   String get manga_extensions_repo => '漫画扩展库';
@@ -1397,16 +1393,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get novel_extensions_repo => '小说扩展库';
 
   @override
-  String get custom_dns => 'Custom DNS (leave blank to use system DNS)';
+  String get custom_dns => '自定义 DNS（留空使用系统 DNS）';
 
   @override
-  String get android_proxy_server => 'Android Proxy Server (ApkBridge)';
+  String get android_proxy_server => 'Android 代理服务器（ApkBridge）';
 
   @override
-  String get get_apk_bridge => 'Get ApkBridge';
+  String get get_apk_bridge => '获取 ApkBridge';
 
   @override
-  String get get_sync_server => 'Get Sync Server here';
+  String get get_sync_server => '在此获取同步服务器';
 
   @override
   String get undefined => '未定义';
@@ -1469,281 +1465,272 @@ class AppLocalizationsZh extends AppLocalizations {
   String get load_own_subtitles => '加载自定义字幕';
 
   @override
-  String get search_subtitles => 'Search subtitles online...';
+  String get search_subtitles => '在线搜索字幕...';
 
   @override
   String extension_notes(Object notes) {
-    return 'Notes: $notes';
+    return '备注：$notes';
   }
 
   @override
   String get unsupported_repo => '您试图添加不支持的版本库。请查看 discord 服务器以获得支持！';
 
   @override
-  String get end_of_chapter => 'End of chapter';
+  String get end_of_chapter => '章节结束';
 
   @override
-  String get chapter_completed => 'Chapter completed';
+  String get chapter_completed => '章节完成';
 
   @override
-  String get continue_to_next_chapter =>
-      'Continue scrolling to read the next chapter';
+  String get continue_to_next_chapter => '继续滚动阅读下一章';
 
   @override
-  String get no_next_chapter => 'No next chapter';
+  String get no_next_chapter => '没有下一章';
 
   @override
-  String get you_have_finished_reading => 'You have finished reading';
+  String get you_have_finished_reading => '您已读完';
 
   @override
-  String get return_to_the_list_of_chapters => 'Return to the list of chapters';
+  String get return_to_the_list_of_chapters => '返回章节列表';
 
   @override
-  String get hwdec => 'Hardware Decoder';
+  String get hwdec => '硬件解码器';
 
   @override
-  String get enable_hardware_accel => 'Hardware Acceleration';
+  String get enable_hardware_accel => '硬件加速';
 
   @override
-  String get enable_hardware_accel_info =>
-      'Turn it on/off if you are experiencing bugs or crashes';
+  String get enable_hardware_accel_info => '如果遇到错误或崩溃，请打开/关闭';
 
   @override
-  String get track_library_navigate => 'Go to existing local entry';
+  String get track_library_navigate => '转到现有本地条目';
 
   @override
-  String get track_library_add => 'Add to local library';
+  String get track_library_add => '添加到本地库';
 
   @override
-  String get track_library_add_confirm => 'Add tracked item to local library';
+  String get track_library_add_confirm => '将跟踪项目添加到本地库';
 
   @override
-  String get track_library_not_logged =>
-      'Login to the corresponding tracker to use this feature!';
+  String get track_library_not_logged => '请登录相应的跟踪器以使用此功能！';
 
   @override
-  String get track_library_switch => 'Switch to another tracker';
+  String get track_library_switch => '切换到另一个跟踪器';
 
   @override
-  String get go_back => 'Go back';
+  String get go_back => '返回';
 
   @override
-  String get merge_library_nav_mobile => 'Merge library navigation on mobile';
+  String get merge_library_nav_mobile => '在移动设备上合并库导航';
 
   @override
-  String get enable_discord_rpc => 'Enable Discord RPC';
+  String get enable_discord_rpc => '启用 Discord RPC';
 
   @override
-  String get hide_discord_rpc_incognito =>
-      'Hide Discord RPC while in Incognito';
+  String get hide_discord_rpc_incognito => '隐身模式下隐藏 Discord RPC';
 
   @override
-  String get rpc_show_reading_watching_progress =>
-      'Show current chapter in Discord (requires a restart)';
+  String get rpc_show_reading_watching_progress => '在 Discord 中显示当前章节（需要重启）';
 
   @override
-  String get rpc_show_title => 'Show current title in Discord';
+  String get rpc_show_title => '在 Discord 中显示当前标题';
 
   @override
-  String get rpc_show_cover_image => 'Show current cover image in Discord';
+  String get rpc_show_cover_image => '在 Discord 中显示当前封面图片';
 
   @override
-  String get sync_enable_histories => 'Sync history data';
+  String get sync_enable_histories => '同步历史记录数据';
 
   @override
-  String get sync_enable_updates => 'Sync update data';
+  String get sync_enable_updates => '同步更新数据';
 
   @override
-  String get sync_enable_settings => 'Sync settings';
+  String get sync_enable_settings => '同步设置';
 
   @override
-  String get enable_mpv => 'Enable mpv shaders / scripts';
+  String get enable_mpv => '启用 mpv 着色器/脚本';
 
   @override
-  String get mpv_info => 'Supports .js scripts under mpv/scripts/';
+  String get mpv_info => '支持 mpv/scripts/ 下的 .js 脚本';
 
   @override
-  String get mpv_redownload => 'Redownload mpv config files';
+  String get mpv_redownload => '重新下载 mpv 配置文件';
 
   @override
-  String get mpv_redownload_info => 'Replaces old config files with new one!';
+  String get mpv_redownload_info => '用新配置文件替换旧配置文件！';
 
   @override
-  String get mpv_download => 'MPV config files are required!\nDownload now?';
+  String get mpv_download => '需要 MPV 配置文件！\n现在下载？';
 
   @override
-  String get custom_buttons => 'Custom buttons';
+  String get custom_buttons => '自定义按钮';
 
   @override
-  String get custom_buttons_info => 'Execute lua code with custom buttons';
+  String get custom_buttons_info => '使用自定义按钮执行 lua 代码';
 
   @override
-  String get custom_buttons_edit => 'Edit custom buttons';
+  String get custom_buttons_edit => '编辑自定义按钮';
 
   @override
-  String get custom_buttons_add => 'Add custom button';
+  String get custom_buttons_add => '添加自定义按钮';
 
   @override
-  String get custom_buttons_added => 'Custom button added!';
+  String get custom_buttons_added => '已添加自定义按钮！';
 
   @override
-  String get custom_buttons_delete => 'Delete custom button';
+  String get custom_buttons_delete => '删除自定义按钮';
 
   @override
-  String get custom_buttons_text => 'Button text';
+  String get custom_buttons_text => '按钮文本';
 
   @override
-  String get custom_buttons_text_req => 'Button text required';
+  String get custom_buttons_text_req => '按钮文本必填';
 
   @override
-  String get custom_buttons_js_code => 'lua code';
+  String get custom_buttons_js_code => 'lua 代码';
 
   @override
-  String get custom_buttons_js_code_req => 'lua code required';
+  String get custom_buttons_js_code_req => 'lua 代码必填';
 
   @override
-  String get custom_buttons_js_code_long => 'lua code (on long press)';
+  String get custom_buttons_js_code_long => 'lua 代码（长按时）';
 
   @override
-  String get custom_buttons_startup => 'lua code (on startup)';
+  String get custom_buttons_startup => 'lua 代码（启动时）';
 
   @override
   String n_days(Object n) {
-    return '$n days';
+    return '$n 天';
   }
 
   @override
-  String get decoder => 'Decoder';
+  String get decoder => '解码器';
 
   @override
-  String get decoder_info => 'Hardware decoding, pixel format, debanding';
+  String get decoder_info => '硬件解码、像素格式、去色带';
 
   @override
-  String get enable_gpu_next => 'Enable gpu-next (Android only)';
+  String get enable_gpu_next => '启用 gpu-next（仅限 Android）';
 
   @override
-  String get enable_gpu_next_info => 'A new video rendering backend';
+  String get enable_gpu_next_info => '新的视频渲染引擎';
 
   @override
-  String get debanding => 'Debanding';
+  String get debanding => '去色带';
 
   @override
-  String get use_yuv420p => 'Use YUV420P pixel format';
+  String get use_yuv420p => '使用 YUV420P 像素格式';
 
   @override
-  String get use_yuv420p_info =>
-      'May fix black screens on some video codecs, can also improve performance at the cost of quality';
+  String get use_yuv420p_info => '可以修复某些视频编解码器上的黑屏，也可以以质量为代价提高性能';
 
   @override
-  String get audio_preferred_languages => 'Preferred langauages';
+  String get audio_preferred_languages => '首选语言';
 
   @override
   String get audio_preferred_languages_info =>
-      'Audio langauage(s) to be selected by default on a video with multiple audio streams, 2/3-letter languages codes (e.g.: en, de, fr) work. Multiple values can be delimited by a comma.';
+      '在具有多个音频流的视频上默认选择的音频语言，2/3 字母语言代码（例如：zh、en、ja）。多个值可以用逗号分隔。';
 
   @override
-  String get enable_audio_pitch_correction => 'Enable audio pitch correction';
+  String get enable_audio_pitch_correction => '启用音频音调校正';
 
   @override
-  String get enable_audio_pitch_correction_info =>
-      'Prevents the audio from becoming high-pitched at faster speeds and low-pitched at slower speeds';
+  String get enable_audio_pitch_correction_info => '防止音频在较快速度时变高音，在较慢速度时变低音';
 
   @override
-  String get audio_channels => 'Audio channels';
+  String get audio_channels => '音频通道';
 
   @override
-  String get volume_boost_cap => 'Volume boost cap';
+  String get volume_boost_cap => '音量增强上限';
 
   @override
-  String get internal_player => 'Internal player';
+  String get internal_player => '内部播放器';
 
   @override
-  String get internal_player_info => 'Progress, controls, orientation';
+  String get internal_player_info => '进度、控制、方向';
 
   @override
-  String get subtitle_delay_text => 'Subtitle delay';
+  String get subtitle_delay_text => '字幕延迟';
 
   @override
-  String get subtitle_delay => 'Delay (ms)';
+  String get subtitle_delay => '延迟（毫秒）';
 
   @override
-  String get subtitle_speed => 'Speed';
+  String get subtitle_speed => '速度';
 
   @override
-  String get calendar => 'Calendar';
+  String get calendar => '日历';
 
   @override
-  String get calendar_no_data => 'No data yet.';
+  String get calendar_no_data => '暂无数据。';
 
   @override
-  String get calendar_info =>
-      'The calendar is only able to predict the next chapter upload based on the older uploads. Some data might not be 100% accurate!';
+  String get calendar_info => '日历只能根据旧的上传预测下一章的上传。某些数据可能不是 100% 准确！';
 
   @override
   String in_n_day(Object days) {
-    return 'in $days day';
+    return '$days 天后';
   }
 
   @override
   String in_n_days(Object days) {
-    return 'in $days days';
+    return '$days 天后';
   }
 
   @override
-  String get clear_library => 'Clear library';
+  String get clear_library => '清空库';
 
   @override
-  String get clear_library_desc =>
-      'Choose to clear all manga, anime and/or novel entries';
+  String get clear_library_desc => '选择清除所有漫画、动画和/或小说条目';
 
   @override
   String get clear_library_input =>
-      'Type \'manga\', \'anime\' and/or \'novel\' (separated by a comma) to remove all related entries';
+      '输入 \'manga\'、\'anime\' 和/或 \'novel\'（用逗号分隔）以删除所有相关条目';
 
   @override
-  String get watch_order => 'Watch order';
+  String get watch_order => '观看顺序';
 
   @override
-  String get sequels => 'Sequels';
+  String get sequels => '续集';
 
   @override
-  String get recommendations_similarity => 'Similarity:';
+  String get recommendations_similarity => '相似度：';
 
   @override
-  String get local_folder_structure => 'Structure of a local folder';
+  String get local_folder_structure => '本地文件夹结构';
 
   @override
-  String get local_folder => 'Local folders';
+  String get local_folder => '本地文件夹';
 
   @override
-  String get add_local_folder => 'Add local folder';
+  String get add_local_folder => '添加本地文件夹';
 
   @override
-  String get rescan_local_folder => 'Rescan all local folders now';
+  String get rescan_local_folder => '立即重新扫描所有本地文件夹';
 
   @override
-  String get export_metadata => 'Export metadata';
+  String get export_metadata => '导出元数据';
 
   @override
-  String get exported => 'Exported';
+  String get exported => '已导出';
 
   @override
-  String get text_size => 'Text Size :';
+  String get text_size => '文字大小：';
 
   @override
-  String get text_align => 'Text Align';
+  String get text_align => '文字对齐';
 
   @override
-  String get line_height => 'Line Height';
+  String get line_height => '行高';
 
   @override
-  String get show_scroll_percentage => 'Show Scroll Percentage';
+  String get show_scroll_percentage => '显示滚动百分比';
 
   @override
-  String get remove_extra_paragraph_spacing => 'Remove Extra Paragraph Spacing';
+  String get remove_extra_paragraph_spacing => '删除额外的段落间距';
 
   @override
   String select_label_color(Object label) {
-    return 'Select $label Color';
+    return '选择 $label 颜色';
   }
 }

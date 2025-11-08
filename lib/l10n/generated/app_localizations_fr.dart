@@ -236,11 +236,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get incognito_mode_description => 'Suspend l\'historique de lecture';
 
   @override
-  String get downloaded_only => 'Downloaded only';
+  String get downloaded_only => 'Téléchargés uniquement';
 
   @override
   String get downloaded_only_description =>
-      'Only show downloaded entries in your library';
+      'Afficher uniquement les entrées téléchargées dans votre bibliothèque';
 
   @override
   String get download_queue => 'File de téléchargement';
@@ -416,7 +416,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get save_as_cbz_archive => 'Enregistrer comme archive CBZ';
 
   @override
-  String get concurrent_downloads => 'Concurrent downloads';
+  String get concurrent_downloads => 'Téléchargements simultanés';
 
   @override
   String get browse_subtitle => 'Sources, extensions, recherche globale';
@@ -443,13 +443,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get check_for_update => 'Rechercher des mises à jour';
 
   @override
-  String get share_app_logs => 'Share app logs';
+  String get share_app_logs => 'Partager les journaux de l\'application';
 
   @override
-  String get no_app_logs => 'No log.txt available!';
+  String get no_app_logs => 'Aucun fichier log.txt disponible !';
 
   @override
-  String get failed => 'Failed!';
+  String get failed => 'Échoué !';
 
   @override
   String n_days_ago(Object days) {
@@ -466,7 +466,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get a_week_ago => 'Il y a une semaine';
 
   @override
-  String get next_week => 'Next week';
+  String get next_week => 'La semaine prochaine';
 
   @override
   String get add_to_library => 'Ajouter à la bibliothèque';
@@ -725,18 +725,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get sync_button_sync => 'Synchroniser les progrès';
 
   @override
-  String get sync_button_upload => 'Upload only';
+  String get sync_button_upload => 'Téléverser uniquement';
 
   @override
   String get sync_button_upload_info =>
-      'This operation will fully replace the remote data with local data!';
+      'Cette opération remplacera complètement les données distantes par les données locales !';
 
   @override
-  String get sync_button_download => 'Download only';
+  String get sync_button_download => 'Télécharger uniquement';
 
   @override
   String get sync_button_download_info =>
-      'This operation will fully replace the local data with remote data!';
+      'Cette opération remplacera complètement les données locales par les données distantes !';
 
   @override
   String get sync_on => 'Activer la synchronisation';
@@ -824,7 +824,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get novel_extensions => 'Extensions de romans';
 
   @override
-  String get extension_settings => 'Extension settings';
+  String get extension_settings => 'Paramètres de l\'extension';
 
   @override
   String get anime => 'Animé';
@@ -1099,7 +1099,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get video_audio_info =>
-      'Preferred languages, pitch correction, audio channels';
+      'Langues préférées, correction de la hauteur tonale, canaux audio';
 
   @override
   String get player => 'Lecteur';
@@ -1172,7 +1172,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get next_25_chapters => '25 chapitres suivants';
 
   @override
-  String get all_chapters => 'All chapters';
+  String get all_chapters => 'Tous les chapitres';
 
   @override
   String get next_episode => 'Épisode suivant';
@@ -1187,7 +1187,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get next_25_episodes => '25 épisodes suivants';
 
   @override
-  String get all_episodes => 'All episodes';
+  String get all_episodes => 'Tous les épisodes';
 
   @override
   String get cover_saved => 'Couverture enregistrée';
@@ -1329,7 +1329,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get advanced => 'Avancé';
 
   @override
-  String get advanced_info => 'mpv config';
+  String get advanced_info => 'Configuration mpv';
 
   @override
   String get use_native_http_client => 'Utiliser le client HTTP natif';
@@ -1410,25 +1410,25 @@ class AppLocalizationsFr extends AppLocalizations {
       'Les téléchargements sont limités au Wi-Fi uniquement';
 
   @override
-  String get recommendations => 'Recommendations';
+  String get recommendations => 'Recommandations';
 
   @override
-  String get recommendations_similar => 'similar';
+  String get recommendations_similar => 'similaire';
 
   @override
-  String get recommendations_weights => 'Recommendation Weights';
+  String get recommendations_weights => 'Poids des recommandations';
 
   @override
-  String get recommendations_weights_genre => 'Genre Similarity';
+  String get recommendations_weights_genre => 'Similarité de genre';
 
   @override
-  String get recommendations_weights_setting => 'Setting Similarity';
+  String get recommendations_weights_setting => 'Similarité de cadre';
 
   @override
-  String get recommendations_weights_synopsis => 'Story Similarity';
+  String get recommendations_weights_synopsis => 'Similarité d\'histoire';
 
   @override
-  String get recommendations_weights_theme => 'Theme Similarity';
+  String get recommendations_weights_theme => 'Similarité de thème';
 
   @override
   String get manga_extensions_repo => 'Dépôt d\'extensions de mangas';
@@ -1440,16 +1440,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get novel_extensions_repo => 'Dépôt d\'extensions de romans';
 
   @override
-  String get custom_dns => 'Custom DNS (leave blank to use system DNS)';
+  String get custom_dns =>
+      'DNS personnalisé (laisser vide pour utiliser le DNS système)';
 
   @override
-  String get android_proxy_server => 'Android Proxy Server (ApkBridge)';
+  String get android_proxy_server => 'Serveur proxy Android (ApkBridge)';
 
   @override
-  String get get_apk_bridge => 'Get ApkBridge';
+  String get get_apk_bridge => 'Obtenir ApkBridge';
 
   @override
-  String get get_sync_server => 'Get Sync Server here';
+  String get get_sync_server => 'Obtenir le serveur de synchronisation ici';
 
   @override
   String get undefined => 'Indéfini';
@@ -1514,11 +1515,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get load_own_subtitles => 'Charger vos propres sous-titres...';
 
   @override
-  String get search_subtitles => 'Search subtitles online...';
+  String get search_subtitles => 'Rechercher des sous-titres en ligne...';
 
   @override
   String extension_notes(Object notes) {
-    return 'Notes: $notes';
+    return 'Notes : $notes';
   }
 
   @override
@@ -1546,251 +1547,261 @@ class AppLocalizationsFr extends AppLocalizations {
       'Retournez à la liste des chapitres';
 
   @override
-  String get hwdec => 'Hardware Decoder';
+  String get hwdec => 'Décodeur matériel';
 
   @override
-  String get enable_hardware_accel => 'Hardware Acceleration';
+  String get enable_hardware_accel => 'Accélération matérielle';
 
   @override
   String get enable_hardware_accel_info =>
-      'Turn it on/off if you are experiencing bugs or crashes';
+      'Activez/désactivez si vous rencontrez des bugs ou des plantages';
 
   @override
-  String get track_library_navigate => 'Go to existing local entry';
+  String get track_library_navigate => 'Accéder à l\'entrée locale existante';
 
   @override
-  String get track_library_add => 'Add to local library';
+  String get track_library_add => 'Ajouter à la bibliothèque locale';
 
   @override
-  String get track_library_add_confirm => 'Add tracked item to local library';
+  String get track_library_add_confirm =>
+      'Ajouter l\'élément suivi à la bibliothèque locale';
 
   @override
   String get track_library_not_logged =>
-      'Login to the corresponding tracker to use this feature!';
+      'Connectez-vous au tracker correspondant pour utiliser cette fonctionnalité !';
 
   @override
-  String get track_library_switch => 'Switch to another tracker';
+  String get track_library_switch => 'Changer pour un autre tracker';
 
   @override
-  String get go_back => 'Go back';
+  String get go_back => 'Retour';
 
   @override
-  String get merge_library_nav_mobile => 'Merge library navigation on mobile';
+  String get merge_library_nav_mobile =>
+      'Fusionner la navigation de la bibliothèque sur mobile';
 
   @override
-  String get enable_discord_rpc => 'Enable Discord RPC';
+  String get enable_discord_rpc => 'Activer Discord RPC';
 
   @override
   String get hide_discord_rpc_incognito =>
-      'Hide Discord RPC while in Incognito';
+      'Masquer Discord RPC en mode Incognito';
 
   @override
   String get rpc_show_reading_watching_progress =>
-      'Show current chapter in Discord (requires a restart)';
+      'Afficher le chapitre actuel dans Discord (nécessite un redémarrage)';
 
   @override
-  String get rpc_show_title => 'Show current title in Discord';
+  String get rpc_show_title => 'Afficher le titre actuel dans Discord';
 
   @override
-  String get rpc_show_cover_image => 'Show current cover image in Discord';
+  String get rpc_show_cover_image =>
+      'Afficher l\'image de couverture actuelle dans Discord';
 
   @override
-  String get sync_enable_histories => 'Sync history data';
+  String get sync_enable_histories => 'Synchroniser les données d\'historique';
 
   @override
-  String get sync_enable_updates => 'Sync update data';
+  String get sync_enable_updates => 'Synchroniser les données de mise à jour';
 
   @override
-  String get sync_enable_settings => 'Sync settings';
+  String get sync_enable_settings => 'Synchroniser les paramètres';
 
   @override
-  String get enable_mpv => 'Enable mpv shaders / scripts';
+  String get enable_mpv => 'Activer les shaders / scripts mpv';
 
   @override
-  String get mpv_info => 'Supports .js scripts under mpv/scripts/';
+  String get mpv_info => 'Supporte les scripts .js sous mpv/scripts/';
 
   @override
-  String get mpv_redownload => 'Redownload mpv config files';
+  String get mpv_redownload =>
+      'Retélécharger les fichiers de configuration mpv';
 
   @override
-  String get mpv_redownload_info => 'Replaces old config files with new one!';
+  String get mpv_redownload_info =>
+      'Remplace les anciens fichiers de configuration par les nouveaux !';
 
   @override
-  String get mpv_download => 'MPV config files are required!\nDownload now?';
+  String get mpv_download =>
+      'Les fichiers de configuration MPV sont requis !\nTélécharger maintenant ?';
 
   @override
-  String get custom_buttons => 'Custom buttons';
+  String get custom_buttons => 'Boutons personnalisés';
 
   @override
-  String get custom_buttons_info => 'Execute lua code with custom buttons';
+  String get custom_buttons_info =>
+      'Exécuter du code lua avec des boutons personnalisés';
 
   @override
-  String get custom_buttons_edit => 'Edit custom buttons';
+  String get custom_buttons_edit => 'Modifier les boutons personnalisés';
 
   @override
-  String get custom_buttons_add => 'Add custom button';
+  String get custom_buttons_add => 'Ajouter un bouton personnalisé';
 
   @override
-  String get custom_buttons_added => 'Custom button added!';
+  String get custom_buttons_added => 'Bouton personnalisé ajouté !';
 
   @override
-  String get custom_buttons_delete => 'Delete custom button';
+  String get custom_buttons_delete => 'Supprimer le bouton personnalisé';
 
   @override
-  String get custom_buttons_text => 'Button text';
+  String get custom_buttons_text => 'Texte du bouton';
 
   @override
-  String get custom_buttons_text_req => 'Button text required';
+  String get custom_buttons_text_req => 'Texte du bouton requis';
 
   @override
-  String get custom_buttons_js_code => 'lua code';
+  String get custom_buttons_js_code => 'Code lua';
 
   @override
-  String get custom_buttons_js_code_req => 'lua code required';
+  String get custom_buttons_js_code_req => 'Code lua requis';
 
   @override
-  String get custom_buttons_js_code_long => 'lua code (on long press)';
+  String get custom_buttons_js_code_long => 'Code lua (sur appui long)';
 
   @override
-  String get custom_buttons_startup => 'lua code (on startup)';
+  String get custom_buttons_startup => 'Code lua (au démarrage)';
 
   @override
   String n_days(Object n) {
-    return '$n days';
+    return '$n jours';
   }
 
   @override
-  String get decoder => 'Decoder';
+  String get decoder => 'Décodeur';
 
   @override
-  String get decoder_info => 'Hardware decoding, pixel format, debanding';
+  String get decoder_info => 'Décodage matériel, format de pixel, debanding';
 
   @override
-  String get enable_gpu_next => 'Enable gpu-next (Android only)';
+  String get enable_gpu_next => 'Activer gpu-next (Android uniquement)';
 
   @override
-  String get enable_gpu_next_info => 'A new video rendering backend';
+  String get enable_gpu_next_info => 'Un nouveau moteur de rendu vidéo';
 
   @override
   String get debanding => 'Debanding';
 
   @override
-  String get use_yuv420p => 'Use YUV420P pixel format';
+  String get use_yuv420p => 'Utiliser le format de pixel YUV420P';
 
   @override
   String get use_yuv420p_info =>
-      'May fix black screens on some video codecs, can also improve performance at the cost of quality';
+      'Peut corriger les écrans noirs sur certains codecs vidéo, peut également améliorer les performances au détriment de la qualité';
 
   @override
-  String get audio_preferred_languages => 'Preferred langauages';
+  String get audio_preferred_languages => 'Langues préférées';
 
   @override
   String get audio_preferred_languages_info =>
-      'Audio langauage(s) to be selected by default on a video with multiple audio streams, 2/3-letter languages codes (e.g.: en, de, fr) work. Multiple values can be delimited by a comma.';
+      'Langue(s) audio à sélectionner par défaut sur une vidéo avec plusieurs flux audio, codes de langue à 2/3 lettres (par exemple : fr, en, de). Plusieurs valeurs peuvent être délimitées par une virgule.';
 
   @override
-  String get enable_audio_pitch_correction => 'Enable audio pitch correction';
+  String get enable_audio_pitch_correction =>
+      'Activer la correction de hauteur tonale audio';
 
   @override
   String get enable_audio_pitch_correction_info =>
-      'Prevents the audio from becoming high-pitched at faster speeds and low-pitched at slower speeds';
+      'Empêche l\'audio de devenir aigu à des vitesses plus rapides et grave à des vitesses plus lentes';
 
   @override
-  String get audio_channels => 'Audio channels';
+  String get audio_channels => 'Canaux audio';
 
   @override
-  String get volume_boost_cap => 'Volume boost cap';
+  String get volume_boost_cap => 'Limite d\'amplification du volume';
 
   @override
-  String get internal_player => 'Internal player';
+  String get internal_player => 'Lecteur interne';
 
   @override
-  String get internal_player_info => 'Progress, controls, orientation';
+  String get internal_player_info => 'Progression, contrôles, orientation';
 
   @override
-  String get subtitle_delay_text => 'Subtitle delay';
+  String get subtitle_delay_text => 'Délai des sous-titres';
 
   @override
-  String get subtitle_delay => 'Delay (ms)';
+  String get subtitle_delay => 'Délai (ms)';
 
   @override
-  String get subtitle_speed => 'Speed';
+  String get subtitle_speed => 'Vitesse';
 
   @override
-  String get calendar => 'Calendar';
+  String get calendar => 'Calendrier';
 
   @override
-  String get calendar_no_data => 'No data yet.';
+  String get calendar_no_data => 'Aucune donnée pour l\'instant.';
 
   @override
   String get calendar_info =>
-      'The calendar is only able to predict the next chapter upload based on the older uploads. Some data might not be 100% accurate!';
+      'Le calendrier ne peut prédire le prochain téléversement de chapitre que sur la base des téléversements précédents. Certaines données peuvent ne pas être précises à 100% !';
 
   @override
   String in_n_day(Object days) {
-    return 'in $days day';
+    return 'dans $days jour';
   }
 
   @override
   String in_n_days(Object days) {
-    return 'in $days days';
+    return 'dans $days jours';
   }
 
   @override
-  String get clear_library => 'Clear library';
+  String get clear_library => 'Vider la bibliothèque';
 
   @override
   String get clear_library_desc =>
-      'Choose to clear all manga, anime and/or novel entries';
+      'Choisissez d\'effacer toutes les entrées manga, anime et/ou roman';
 
   @override
   String get clear_library_input =>
-      'Type \'manga\', \'anime\' and/or \'novel\' (separated by a comma) to remove all related entries';
+      'Tapez \'manga\', \'anime\' et/ou \'novel\' (séparés par une virgule) pour supprimer toutes les entrées associées';
 
   @override
-  String get watch_order => 'Watch order';
+  String get watch_order => 'Ordre de visionnage';
 
   @override
-  String get sequels => 'Sequels';
+  String get sequels => 'Suites';
 
   @override
-  String get recommendations_similarity => 'Similarity:';
+  String get recommendations_similarity => 'Similarité :';
 
   @override
-  String get local_folder_structure => 'Structure of a local folder';
+  String get local_folder_structure => 'Structure d\'un dossier local';
 
   @override
-  String get local_folder => 'Local folders';
+  String get local_folder => 'Dossiers locaux';
 
   @override
-  String get add_local_folder => 'Add local folder';
+  String get add_local_folder => 'Ajouter un dossier local';
 
   @override
-  String get rescan_local_folder => 'Rescan all local folders now';
+  String get rescan_local_folder =>
+      'Réanalyser tous les dossiers locaux maintenant';
 
   @override
-  String get export_metadata => 'Export metadata';
+  String get export_metadata => 'Exporter les métadonnées';
 
   @override
-  String get exported => 'Exported';
+  String get exported => 'Exporté';
 
   @override
-  String get text_size => 'Text Size :';
+  String get text_size => 'Taille du texte :';
 
   @override
-  String get text_align => 'Text Align';
+  String get text_align => 'Alignement du texte';
 
   @override
-  String get line_height => 'Line Height';
+  String get line_height => 'Hauteur de ligne';
 
   @override
-  String get show_scroll_percentage => 'Show Scroll Percentage';
+  String get show_scroll_percentage => 'Afficher le pourcentage de défilement';
 
   @override
-  String get remove_extra_paragraph_spacing => 'Remove Extra Paragraph Spacing';
+  String get remove_extra_paragraph_spacing =>
+      'Supprimer l\'espacement supplémentaire des paragraphes';
 
   @override
   String select_label_color(Object label) {
-    return 'Select $label Color';
+    return 'Sélectionner la couleur $label';
   }
 }

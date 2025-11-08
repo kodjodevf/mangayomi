@@ -232,11 +232,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get incognito_mode_description => 'يوقف سجل القراءة';
 
   @override
-  String get downloaded_only => 'Downloaded only';
+  String get downloaded_only => 'المحملة فقط';
 
   @override
   String get downloaded_only_description =>
-      'Only show downloaded entries in your library';
+      'إظهار الإدخالات المحملة فقط في مكتبتك';
 
   @override
   String get download_queue => 'قائمة الانتظار للتحميل';
@@ -410,7 +410,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get save_as_cbz_archive => 'حفظ كأرشيف CBZ';
 
   @override
-  String get concurrent_downloads => 'Concurrent downloads';
+  String get concurrent_downloads => 'التحميلات المتزامنة';
 
   @override
   String get browse_subtitle => 'المصادر، البحث العام';
@@ -435,13 +435,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get check_for_update => 'التحقق من التحديثات';
 
   @override
-  String get share_app_logs => 'Share app logs';
+  String get share_app_logs => 'مشاركة سجلات التطبيق';
 
   @override
-  String get no_app_logs => 'No log.txt available!';
+  String get no_app_logs => 'لا يوجد ملف log.txt!';
 
   @override
-  String get failed => 'Failed!';
+  String get failed => 'فشل!';
 
   @override
   String n_days_ago(Object days) {
@@ -458,7 +458,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get a_week_ago => 'منذ أسبوع';
 
   @override
-  String get next_week => 'Next week';
+  String get next_week => 'الأسبوع القادم';
 
   @override
   String get add_to_library => 'إضافة إلى المكتبة';
@@ -716,18 +716,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sync_button_sync => 'مزامنة التقدم';
 
   @override
-  String get sync_button_upload => 'Upload only';
+  String get sync_button_upload => 'رفع فقط';
 
   @override
   String get sync_button_upload_info =>
-      'This operation will fully replace the remote data with local data!';
+      'ستستبدل هذه العملية البيانات البعيدة بالكامل بالبيانات المحلية!';
 
   @override
-  String get sync_button_download => 'Download only';
+  String get sync_button_download => 'تنزيل فقط';
 
   @override
   String get sync_button_download_info =>
-      'This operation will fully replace the local data with remote data!';
+      'ستستبدل هذه العملية البيانات المحلية بالكامل بالبيانات البعيدة!';
 
   @override
   String get sync_on => 'تمكين المزامنة';
@@ -814,7 +814,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get novel_extensions => 'إضافات الروايات';
 
   @override
-  String get extension_settings => 'Extension settings';
+  String get extension_settings => 'إعدادات الإضافة';
 
   @override
   String get anime => 'أنمي';
@@ -1088,7 +1088,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get video_audio_info =>
-      'Preferred languages, pitch correction, audio channels';
+      'اللغات المفضلة، تصحيح طبقة الصوت، قنوات الصوت';
 
   @override
   String get player => 'لاعب';
@@ -1158,7 +1158,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get next_25_chapters => 'الفصول الخمسة والعشرون التالية';
 
   @override
-  String get all_chapters => 'All chapters';
+  String get all_chapters => 'كل الفصول';
 
   @override
   String get next_episode => 'الحلقة التالية';
@@ -1173,7 +1173,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get next_25_episodes => 'الخمسة وعشرون حلقة التالية';
 
   @override
-  String get all_episodes => 'All episodes';
+  String get all_episodes => 'كل الحلقات';
 
   @override
   String get cover_saved => 'الغلاف المحفوظ';
@@ -1313,7 +1313,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get advanced => 'متقدم';
 
   @override
-  String get advanced_info => 'mpv config';
+  String get advanced_info => 'تكوين mpv';
 
   @override
   String get use_native_http_client => 'استخدام عميل HTTP الأصلي';
@@ -1392,25 +1392,25 @@ class AppLocalizationsAr extends AppLocalizations {
   String get downloads_are_limited_to_wifi => 'التنزيلات مقتصرة على Wi-Fi فقط';
 
   @override
-  String get recommendations => 'Recommendations';
+  String get recommendations => 'التوصيات';
 
   @override
-  String get recommendations_similar => 'similar';
+  String get recommendations_similar => 'مشابه';
 
   @override
-  String get recommendations_weights => 'Recommendation Weights';
+  String get recommendations_weights => 'أوزان التوصية';
 
   @override
-  String get recommendations_weights_genre => 'Genre Similarity';
+  String get recommendations_weights_genre => 'تشابه النوع';
 
   @override
-  String get recommendations_weights_setting => 'Setting Similarity';
+  String get recommendations_weights_setting => 'تشابه الإعداد';
 
   @override
-  String get recommendations_weights_synopsis => 'Story Similarity';
+  String get recommendations_weights_synopsis => 'تشابه القصة';
 
   @override
-  String get recommendations_weights_theme => 'Theme Similarity';
+  String get recommendations_weights_theme => 'تشابه الموضوع';
 
   @override
   String get manga_extensions_repo => 'مستودع إضافات المانجا';
@@ -1422,16 +1422,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get novel_extensions_repo => 'مستودع إضافات الروايات';
 
   @override
-  String get custom_dns => 'Custom DNS (leave blank to use system DNS)';
+  String get custom_dns => 'DNS مخصص (اتركه فارغًا لاستخدام DNS النظام)';
 
   @override
-  String get android_proxy_server => 'Android Proxy Server (ApkBridge)';
+  String get android_proxy_server => 'خادم بروكسي Android (ApkBridge)';
 
   @override
-  String get get_apk_bridge => 'Get ApkBridge';
+  String get get_apk_bridge => 'احصل على ApkBridge';
 
   @override
-  String get get_sync_server => 'Get Sync Server here';
+  String get get_sync_server => 'احصل على خادم المزامنة من هنا';
 
   @override
   String get undefined => 'غير محدد';
@@ -1496,11 +1496,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get load_own_subtitles => 'تحميل الترجمة الخاصة بك...';
 
   @override
-  String get search_subtitles => 'Search subtitles online...';
+  String get search_subtitles => 'البحث عن ترجمات عبر الإنترنت...';
 
   @override
   String extension_notes(Object notes) {
-    return 'Notes: $notes';
+    return 'ملاحظات: $notes';
   }
 
   @override
@@ -1508,270 +1508,271 @@ class AppLocalizationsAr extends AppLocalizations {
       'لقد حاولت إضافة مستودع غير مدعوم. يرجى التحقق من خادم الخلاف للحصول على الدعم!';
 
   @override
-  String get end_of_chapter => 'End of chapter';
+  String get end_of_chapter => 'نهاية الفصل';
 
   @override
-  String get chapter_completed => 'Chapter completed';
+  String get chapter_completed => 'اكتمل الفصل';
 
   @override
-  String get continue_to_next_chapter =>
-      'Continue scrolling to read the next chapter';
+  String get continue_to_next_chapter => 'استمر في التمرير لقراءة الفصل التالي';
 
   @override
-  String get no_next_chapter => 'No next chapter';
+  String get no_next_chapter => 'لا يوجد فصل تالٍ';
 
   @override
-  String get you_have_finished_reading => 'You have finished reading';
+  String get you_have_finished_reading => 'لقد انتهيت من القراءة';
 
   @override
-  String get return_to_the_list_of_chapters => 'Return to the list of chapters';
+  String get return_to_the_list_of_chapters => 'العودة إلى قائمة الفصول';
 
   @override
-  String get hwdec => 'Hardware Decoder';
+  String get hwdec => 'فك تشفير الأجهزة';
 
   @override
-  String get enable_hardware_accel => 'Hardware Acceleration';
+  String get enable_hardware_accel => 'تسريع الأجهزة';
 
   @override
   String get enable_hardware_accel_info =>
-      'Turn it on/off if you are experiencing bugs or crashes';
+      'قم بتشغيله/إيقافه إذا كنت تواجه أخطاء أو أعطال';
 
   @override
-  String get track_library_navigate => 'Go to existing local entry';
+  String get track_library_navigate => 'انتقل إلى الإدخال المحلي الموجود';
 
   @override
-  String get track_library_add => 'Add to local library';
+  String get track_library_add => 'أضف إلى المكتبة المحلية';
 
   @override
-  String get track_library_add_confirm => 'Add tracked item to local library';
+  String get track_library_add_confirm =>
+      'إضافة العنصر المتتبع إلى المكتبة المحلية';
 
   @override
   String get track_library_not_logged =>
-      'Login to the corresponding tracker to use this feature!';
+      'قم بتسجيل الدخول إلى المتتبع المقابل لاستخدام هذه الميزة!';
 
   @override
-  String get track_library_switch => 'Switch to another tracker';
+  String get track_library_switch => 'التبديل إلى متتبع آخر';
 
   @override
-  String get go_back => 'Go back';
+  String get go_back => 'العودة';
 
   @override
-  String get merge_library_nav_mobile => 'Merge library navigation on mobile';
+  String get merge_library_nav_mobile =>
+      'دمج التنقل في المكتبة على الهاتف المحمول';
 
   @override
-  String get enable_discord_rpc => 'Enable Discord RPC';
+  String get enable_discord_rpc => 'تمكين Discord RPC';
 
   @override
-  String get hide_discord_rpc_incognito =>
-      'Hide Discord RPC while in Incognito';
+  String get hide_discord_rpc_incognito => 'إخفاء Discord RPC في وضع التخفي';
 
   @override
   String get rpc_show_reading_watching_progress =>
-      'Show current chapter in Discord (requires a restart)';
+      'إظهار الفصل الحالي في Discord (يتطلب إعادة التشغيل)';
 
   @override
-  String get rpc_show_title => 'Show current title in Discord';
+  String get rpc_show_title => 'إظهار العنوان الحالي في Discord';
 
   @override
-  String get rpc_show_cover_image => 'Show current cover image in Discord';
+  String get rpc_show_cover_image => 'إظهار صورة الغلاف الحالية في Discord';
 
   @override
-  String get sync_enable_histories => 'Sync history data';
+  String get sync_enable_histories => 'مزامنة بيانات السجل';
 
   @override
-  String get sync_enable_updates => 'Sync update data';
+  String get sync_enable_updates => 'مزامنة بيانات التحديث';
 
   @override
-  String get sync_enable_settings => 'Sync settings';
+  String get sync_enable_settings => 'مزامنة الإعدادات';
 
   @override
-  String get enable_mpv => 'Enable mpv shaders / scripts';
+  String get enable_mpv => 'تمكين تظليل / سكريبتات mpv';
 
   @override
-  String get mpv_info => 'Supports .js scripts under mpv/scripts/';
+  String get mpv_info => 'يدعم سكريبتات .js تحت mpv/scripts/';
 
   @override
-  String get mpv_redownload => 'Redownload mpv config files';
+  String get mpv_redownload => 'إعادة تنزيل ملفات تكوين mpv';
 
   @override
-  String get mpv_redownload_info => 'Replaces old config files with new one!';
+  String get mpv_redownload_info => 'يستبدل ملفات التكوين القديمة بأخرى جديدة!';
 
   @override
-  String get mpv_download => 'MPV config files are required!\nDownload now?';
+  String get mpv_download => 'ملفات تكوين MPV مطلوبة!\nتنزيل الآن؟';
 
   @override
-  String get custom_buttons => 'Custom buttons';
+  String get custom_buttons => 'أزرار مخصصة';
 
   @override
-  String get custom_buttons_info => 'Execute lua code with custom buttons';
+  String get custom_buttons_info => 'تنفيذ كود lua بأزرار مخصصة';
 
   @override
-  String get custom_buttons_edit => 'Edit custom buttons';
+  String get custom_buttons_edit => 'تحرير الأزرار المخصصة';
 
   @override
-  String get custom_buttons_add => 'Add custom button';
+  String get custom_buttons_add => 'إضافة زر مخصص';
 
   @override
-  String get custom_buttons_added => 'Custom button added!';
+  String get custom_buttons_added => 'تمت إضافة الزر المخصص!';
 
   @override
-  String get custom_buttons_delete => 'Delete custom button';
+  String get custom_buttons_delete => 'حذف الزر المخصص';
 
   @override
-  String get custom_buttons_text => 'Button text';
+  String get custom_buttons_text => 'نص الزر';
 
   @override
-  String get custom_buttons_text_req => 'Button text required';
+  String get custom_buttons_text_req => 'نص الزر مطلوب';
 
   @override
-  String get custom_buttons_js_code => 'lua code';
+  String get custom_buttons_js_code => 'كود lua';
 
   @override
-  String get custom_buttons_js_code_req => 'lua code required';
+  String get custom_buttons_js_code_req => 'كود lua مطلوب';
 
   @override
-  String get custom_buttons_js_code_long => 'lua code (on long press)';
+  String get custom_buttons_js_code_long => 'كود lua (عند الضغط لفترة طويلة)';
 
   @override
-  String get custom_buttons_startup => 'lua code (on startup)';
+  String get custom_buttons_startup => 'كود lua (عند بدء التشغيل)';
 
   @override
   String n_days(Object n) {
-    return '$n days';
+    return '$n أيام';
   }
 
   @override
-  String get decoder => 'Decoder';
+  String get decoder => 'فك التشفير';
 
   @override
-  String get decoder_info => 'Hardware decoding, pixel format, debanding';
+  String get decoder_info => 'فك تشفير الأجهزة، تنسيق البكسل، إزالة التدرج';
 
   @override
-  String get enable_gpu_next => 'Enable gpu-next (Android only)';
+  String get enable_gpu_next => 'تمكين gpu-next (Android فقط)';
 
   @override
-  String get enable_gpu_next_info => 'A new video rendering backend';
+  String get enable_gpu_next_info => 'محرك عرض فيديو جديد';
 
   @override
-  String get debanding => 'Debanding';
+  String get debanding => 'إزالة التدرج';
 
   @override
-  String get use_yuv420p => 'Use YUV420P pixel format';
+  String get use_yuv420p => 'استخدام تنسيق بكسل YUV420P';
 
   @override
   String get use_yuv420p_info =>
-      'May fix black screens on some video codecs, can also improve performance at the cost of quality';
+      'قد يصلح الشاشات السوداء على بعض برامج ترميز الفيديو، ويمكن أيضًا تحسين الأداء على حساب الجودة';
 
   @override
-  String get audio_preferred_languages => 'Preferred langauages';
+  String get audio_preferred_languages => 'اللغات المفضلة';
 
   @override
   String get audio_preferred_languages_info =>
-      'Audio langauage(s) to be selected by default on a video with multiple audio streams, 2/3-letter languages codes (e.g.: en, de, fr) work. Multiple values can be delimited by a comma.';
+      'لغة (لغات) الصوت المراد تحديدها افتراضيًا على فيديو يحتوي على تدفقات صوت متعددة، رموز لغة من 2/3 أحرف (مثل: ar، en، ja). يمكن فصل القيم المتعددة بفاصلة.';
 
   @override
-  String get enable_audio_pitch_correction => 'Enable audio pitch correction';
+  String get enable_audio_pitch_correction => 'تمكين تصحيح طبقة الصوت';
 
   @override
   String get enable_audio_pitch_correction_info =>
-      'Prevents the audio from becoming high-pitched at faster speeds and low-pitched at slower speeds';
+      'يمنع الصوت من أن يصبح حادًا بسرعات أسرع وعميقًا بسرعات أبطأ';
 
   @override
-  String get audio_channels => 'Audio channels';
+  String get audio_channels => 'قنوات الصوت';
 
   @override
-  String get volume_boost_cap => 'Volume boost cap';
+  String get volume_boost_cap => 'حد تعزيز الصوت';
 
   @override
-  String get internal_player => 'Internal player';
+  String get internal_player => 'المشغل الداخلي';
 
   @override
-  String get internal_player_info => 'Progress, controls, orientation';
+  String get internal_player_info => 'التقدم، عناصر التحكم، الاتجاه';
 
   @override
-  String get subtitle_delay_text => 'Subtitle delay';
+  String get subtitle_delay_text => 'تأخير الترجمة';
 
   @override
-  String get subtitle_delay => 'Delay (ms)';
+  String get subtitle_delay => 'التأخير (ms)';
 
   @override
-  String get subtitle_speed => 'Speed';
+  String get subtitle_speed => 'السرعة';
 
   @override
-  String get calendar => 'Calendar';
+  String get calendar => 'التقويم';
 
   @override
-  String get calendar_no_data => 'No data yet.';
+  String get calendar_no_data => 'لا توجد بيانات حتى الآن.';
 
   @override
   String get calendar_info =>
-      'The calendar is only able to predict the next chapter upload based on the older uploads. Some data might not be 100% accurate!';
+      'لا يمكن للتقويم التنبؤ بتحميل الفصل التالي إلا بناءً على التحميلات القديمة. قد لا تكون بعض البيانات دقيقة بنسبة 100٪!';
 
   @override
   String in_n_day(Object days) {
-    return 'in $days day';
+    return 'في $days يوم';
   }
 
   @override
   String in_n_days(Object days) {
-    return 'in $days days';
+    return 'في $days أيام';
   }
 
   @override
-  String get clear_library => 'Clear library';
+  String get clear_library => 'مسح المكتبة';
 
   @override
   String get clear_library_desc =>
-      'Choose to clear all manga, anime and/or novel entries';
+      'اختر مسح جميع إدخالات المانجا والأنمي و/أو الرواية';
 
   @override
   String get clear_library_input =>
-      'Type \'manga\', \'anime\' and/or \'novel\' (separated by a comma) to remove all related entries';
+      'اكتب \'manga\' و \'anime\' و/أو \'novel\' (مفصولة بفاصلة) لإزالة جميع الإدخالات ذات الصلة';
 
   @override
-  String get watch_order => 'Watch order';
+  String get watch_order => 'ترتيب المشاهدة';
 
   @override
-  String get sequels => 'Sequels';
+  String get sequels => 'الأجزاء التالية';
 
   @override
-  String get recommendations_similarity => 'Similarity:';
+  String get recommendations_similarity => 'التشابه:';
 
   @override
-  String get local_folder_structure => 'Structure of a local folder';
+  String get local_folder_structure => 'هيكل المجلد المحلي';
 
   @override
-  String get local_folder => 'Local folders';
+  String get local_folder => 'المجلدات المحلية';
 
   @override
-  String get add_local_folder => 'Add local folder';
+  String get add_local_folder => 'إضافة مجلد محلي';
 
   @override
-  String get rescan_local_folder => 'Rescan all local folders now';
+  String get rescan_local_folder => 'إعادة فحص جميع المجلدات المحلية الآن';
 
   @override
-  String get export_metadata => 'Export metadata';
+  String get export_metadata => 'تصدير البيانات الوصفية';
 
   @override
-  String get exported => 'Exported';
+  String get exported => 'تم التصدير';
 
   @override
-  String get text_size => 'Text Size :';
+  String get text_size => 'حجم النص:';
 
   @override
-  String get text_align => 'Text Align';
+  String get text_align => 'محاذاة النص';
 
   @override
-  String get line_height => 'Line Height';
+  String get line_height => 'ارتفاع السطر';
 
   @override
-  String get show_scroll_percentage => 'Show Scroll Percentage';
+  String get show_scroll_percentage => 'إظهار نسبة التمرير';
 
   @override
-  String get remove_extra_paragraph_spacing => 'Remove Extra Paragraph Spacing';
+  String get remove_extra_paragraph_spacing =>
+      'إزالة المسافات الإضافية بين الفقرات';
 
   @override
   String select_label_color(Object label) {
-    return 'Select $label Color';
+    return 'تحديد لون $label';
   }
 }

@@ -233,11 +233,11 @@ class AppLocalizationsTr extends AppLocalizations {
   String get incognito_mode_description => 'Okuma geçmişini duraklatır';
 
   @override
-  String get downloaded_only => 'Downloaded only';
+  String get downloaded_only => 'Sadece indirilmiş';
 
   @override
   String get downloaded_only_description =>
-      'Only show downloaded entries in your library';
+      'Kütüphanenizde yalnızca indirilmiş girişleri göster';
 
   @override
   String get download_queue => 'İndirme Kuyruğu';
@@ -411,7 +411,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get save_as_cbz_archive => 'CBZ Arşivi Olarak Kaydet';
 
   @override
-  String get concurrent_downloads => 'Concurrent downloads';
+  String get concurrent_downloads => 'Eş zamanlı indirmeler';
 
   @override
   String get browse_subtitle => 'Kaynaklar, genel arama';
@@ -437,13 +437,13 @@ class AppLocalizationsTr extends AppLocalizations {
   String get check_for_update => 'Güncelleme Kontrol Et';
 
   @override
-  String get share_app_logs => 'Share app logs';
+  String get share_app_logs => 'Uygulama günlüklerini paylaş';
 
   @override
-  String get no_app_logs => 'No log.txt available!';
+  String get no_app_logs => 'log.txt dosyası yok!';
 
   @override
-  String get failed => 'Failed!';
+  String get failed => 'Başarısız!';
 
   @override
   String n_days_ago(Object days) {
@@ -460,7 +460,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get a_week_ago => 'Bir Hafta Önce';
 
   @override
-  String get next_week => 'Next week';
+  String get next_week => 'Gelecek hafta';
 
   @override
   String get add_to_library => 'Kütüphaneye Ekle';
@@ -718,18 +718,18 @@ class AppLocalizationsTr extends AppLocalizations {
   String get sync_button_sync => 'İlerlemeyi senkronize et';
 
   @override
-  String get sync_button_upload => 'Upload only';
+  String get sync_button_upload => 'Sadece yükle';
 
   @override
   String get sync_button_upload_info =>
-      'This operation will fully replace the remote data with local data!';
+      'Bu işlem uzak verileri yerel verilerle tamamen değiştirecektir!';
 
   @override
-  String get sync_button_download => 'Download only';
+  String get sync_button_download => 'Sadece indir';
 
   @override
   String get sync_button_download_info =>
-      'This operation will fully replace the local data with remote data!';
+      'Bu işlem yerel verileri uzak verilerle tamamen değiştirecektir!';
 
   @override
   String get sync_on => 'Senkronizasyonu etkinleştir';
@@ -817,7 +817,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get novel_extensions => 'Hikaye Uzantıları';
 
   @override
-  String get extension_settings => 'Extension settings';
+  String get extension_settings => 'Uzantı ayarları';
 
   @override
   String get anime => 'Anime';
@@ -1091,7 +1091,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get video_audio_info =>
-      'Preferred languages, pitch correction, audio channels';
+      'Tercih edilen diller, perde düzeltmesi, ses kanalları';
 
   @override
   String get player => 'Oyuncu';
@@ -1163,7 +1163,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get next_25_chapters => 'Sonraki 25 bölüm';
 
   @override
-  String get all_chapters => 'All chapters';
+  String get all_chapters => 'Tüm bölümler';
 
   @override
   String get next_episode => 'Sonraki Bölüm';
@@ -1178,7 +1178,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get next_25_episodes => 'Sonraki 25 Bölüm';
 
   @override
-  String get all_episodes => 'All episodes';
+  String get all_episodes => 'Tüm bölümler';
 
   @override
   String get cover_saved => 'Kapak kaydedildi';
@@ -1319,7 +1319,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get advanced => 'Gelişmiş';
 
   @override
-  String get advanced_info => 'mpv config';
+  String get advanced_info => 'mpv yapılandırması';
 
   @override
   String get use_native_http_client => 'Yerel http istemcisini kullan';
@@ -1399,25 +1399,25 @@ class AppLocalizationsTr extends AppLocalizations {
       'İndirmeler yalnızca Wi-Fi ile sınırlıdır';
 
   @override
-  String get recommendations => 'Recommendations';
+  String get recommendations => 'Öneriler';
 
   @override
-  String get recommendations_similar => 'similar';
+  String get recommendations_similar => 'benzer';
 
   @override
-  String get recommendations_weights => 'Recommendation Weights';
+  String get recommendations_weights => 'Öneri ağırlıkları';
 
   @override
-  String get recommendations_weights_genre => 'Genre Similarity';
+  String get recommendations_weights_genre => 'Tür benzerliği';
 
   @override
-  String get recommendations_weights_setting => 'Setting Similarity';
+  String get recommendations_weights_setting => 'Ortam benzerliği';
 
   @override
-  String get recommendations_weights_synopsis => 'Story Similarity';
+  String get recommendations_weights_synopsis => 'Hikaye benzerliği';
 
   @override
-  String get recommendations_weights_theme => 'Theme Similarity';
+  String get recommendations_weights_theme => 'Tema benzerliği';
 
   @override
   String get manga_extensions_repo => 'Manga uzantıları deposu';
@@ -1429,16 +1429,17 @@ class AppLocalizationsTr extends AppLocalizations {
   String get novel_extensions_repo => 'Roman uzantıları deposu';
 
   @override
-  String get custom_dns => 'Custom DNS (leave blank to use system DNS)';
+  String get custom_dns =>
+      'Özel DNS (sistem DNS\'ini kullanmak için boş bırakın)';
 
   @override
-  String get android_proxy_server => 'Android Proxy Server (ApkBridge)';
+  String get android_proxy_server => 'Android Proxy Sunucusu (ApkBridge)';
 
   @override
-  String get get_apk_bridge => 'Get ApkBridge';
+  String get get_apk_bridge => 'ApkBridge\'i edinin';
 
   @override
-  String get get_sync_server => 'Get Sync Server here';
+  String get get_sync_server => 'Senkronizasyon Sunucusunu buradan alın';
 
   @override
   String get undefined => 'Tanımsız';
@@ -1503,11 +1504,11 @@ class AppLocalizationsTr extends AppLocalizations {
   String get load_own_subtitles => 'Kendi altyazılarınızı yükleyin...';
 
   @override
-  String get search_subtitles => 'Search subtitles online...';
+  String get search_subtitles => 'Çevrimiçi altyazı ara...';
 
   @override
   String extension_notes(Object notes) {
-    return 'Notes: $notes';
+    return 'Notlar: $notes';
   }
 
   @override
@@ -1515,270 +1516,275 @@ class AppLocalizationsTr extends AppLocalizations {
       'Desteklenmeyen bir depo eklemeye çalıştınız. Lütfen destek için discord sunucusunu kontrol edin!';
 
   @override
-  String get end_of_chapter => 'End of chapter';
+  String get end_of_chapter => 'Bölüm sonu';
 
   @override
-  String get chapter_completed => 'Chapter completed';
+  String get chapter_completed => 'Bölüm tamamlandı';
 
   @override
   String get continue_to_next_chapter =>
-      'Continue scrolling to read the next chapter';
+      'Bir sonraki bölümü okumak için kaydırmaya devam edin';
 
   @override
-  String get no_next_chapter => 'No next chapter';
+  String get no_next_chapter => 'Sonraki bölüm yok';
 
   @override
-  String get you_have_finished_reading => 'You have finished reading';
+  String get you_have_finished_reading => 'Okumayı bitirdiniz';
 
   @override
-  String get return_to_the_list_of_chapters => 'Return to the list of chapters';
+  String get return_to_the_list_of_chapters => 'Bölüm listesine dön';
 
   @override
-  String get hwdec => 'Hardware Decoder';
+  String get hwdec => 'Donanım kod çözücü';
 
   @override
-  String get enable_hardware_accel => 'Hardware Acceleration';
+  String get enable_hardware_accel => 'Donanım hızlandırma';
 
   @override
   String get enable_hardware_accel_info =>
-      'Turn it on/off if you are experiencing bugs or crashes';
+      'Hata veya çökmelerle karşılaşırsanız açın/kapatın';
 
   @override
-  String get track_library_navigate => 'Go to existing local entry';
+  String get track_library_navigate => 'Mevcut yerel girişe git';
 
   @override
-  String get track_library_add => 'Add to local library';
+  String get track_library_add => 'Yerel kütüphaneye ekle';
 
   @override
-  String get track_library_add_confirm => 'Add tracked item to local library';
+  String get track_library_add_confirm =>
+      'İzlenen öğeyi yerel kütüphaneye ekle';
 
   @override
   String get track_library_not_logged =>
-      'Login to the corresponding tracker to use this feature!';
+      'Bu özelliği kullanmak için ilgili izleyicide oturum açın!';
 
   @override
-  String get track_library_switch => 'Switch to another tracker';
+  String get track_library_switch => 'Başka bir izleyiciye geç';
 
   @override
-  String get go_back => 'Go back';
+  String get go_back => 'Geri dön';
 
   @override
-  String get merge_library_nav_mobile => 'Merge library navigation on mobile';
+  String get merge_library_nav_mobile =>
+      'Mobilde kütüphane gezinmesini birleştir';
 
   @override
-  String get enable_discord_rpc => 'Enable Discord RPC';
+  String get enable_discord_rpc => 'Discord RPC\'yi etkinleştir';
 
   @override
-  String get hide_discord_rpc_incognito =>
-      'Hide Discord RPC while in Incognito';
+  String get hide_discord_rpc_incognito => 'Gizli modda Discord RPC\'yi gizle';
 
   @override
   String get rpc_show_reading_watching_progress =>
-      'Show current chapter in Discord (requires a restart)';
+      'Discord\'da mevcut bölümü göster (yeniden başlatma gerektirir)';
 
   @override
-  String get rpc_show_title => 'Show current title in Discord';
+  String get rpc_show_title => 'Discord\'da mevcut başlığı göster';
 
   @override
-  String get rpc_show_cover_image => 'Show current cover image in Discord';
+  String get rpc_show_cover_image => 'Discord\'da mevcut kapak resmini göster';
 
   @override
-  String get sync_enable_histories => 'Sync history data';
+  String get sync_enable_histories => 'Geçmiş verilerini senkronize et';
 
   @override
-  String get sync_enable_updates => 'Sync update data';
+  String get sync_enable_updates => 'Güncelleme verilerini senkronize et';
 
   @override
-  String get sync_enable_settings => 'Sync settings';
+  String get sync_enable_settings => 'Ayarları senkronize et';
 
   @override
-  String get enable_mpv => 'Enable mpv shaders / scripts';
+  String get enable_mpv => 'mpv gölgelendiricilerini / betiklerini etkinleştir';
 
   @override
-  String get mpv_info => 'Supports .js scripts under mpv/scripts/';
+  String get mpv_info => 'mpv/scripts/ altında .js betiklerini destekler';
 
   @override
-  String get mpv_redownload => 'Redownload mpv config files';
+  String get mpv_redownload => 'mpv yapılandırma dosyalarını yeniden indir';
 
   @override
-  String get mpv_redownload_info => 'Replaces old config files with new one!';
+  String get mpv_redownload_info =>
+      'Eski yapılandırma dosyalarını yenileriyle değiştirir!';
 
   @override
-  String get mpv_download => 'MPV config files are required!\nDownload now?';
+  String get mpv_download =>
+      'MPV yapılandırma dosyaları gerekli!\nŞimdi indir?';
 
   @override
-  String get custom_buttons => 'Custom buttons';
+  String get custom_buttons => 'Özel düğmeler';
 
   @override
-  String get custom_buttons_info => 'Execute lua code with custom buttons';
+  String get custom_buttons_info => 'Özel düğmelerle lua kodu çalıştır';
 
   @override
-  String get custom_buttons_edit => 'Edit custom buttons';
+  String get custom_buttons_edit => 'Özel düğmeleri düzenle';
 
   @override
-  String get custom_buttons_add => 'Add custom button';
+  String get custom_buttons_add => 'Özel düğme ekle';
 
   @override
-  String get custom_buttons_added => 'Custom button added!';
+  String get custom_buttons_added => 'Özel düğme eklendi!';
 
   @override
-  String get custom_buttons_delete => 'Delete custom button';
+  String get custom_buttons_delete => 'Özel düğmeyi sil';
 
   @override
-  String get custom_buttons_text => 'Button text';
+  String get custom_buttons_text => 'Düğme metni';
 
   @override
-  String get custom_buttons_text_req => 'Button text required';
+  String get custom_buttons_text_req => 'Düğme metni gerekli';
 
   @override
-  String get custom_buttons_js_code => 'lua code';
+  String get custom_buttons_js_code => 'lua kodu';
 
   @override
-  String get custom_buttons_js_code_req => 'lua code required';
+  String get custom_buttons_js_code_req => 'lua kodu gerekli';
 
   @override
-  String get custom_buttons_js_code_long => 'lua code (on long press)';
+  String get custom_buttons_js_code_long => 'lua kodu (uzun basışta)';
 
   @override
-  String get custom_buttons_startup => 'lua code (on startup)';
+  String get custom_buttons_startup => 'lua kodu (başlangıçta)';
 
   @override
   String n_days(Object n) {
-    return '$n days';
+    return '$n gün';
   }
 
   @override
-  String get decoder => 'Decoder';
+  String get decoder => 'Kod çözücü';
 
   @override
-  String get decoder_info => 'Hardware decoding, pixel format, debanding';
+  String get decoder_info => 'Donanım kod çözme, piksel formatı, debanding';
 
   @override
-  String get enable_gpu_next => 'Enable gpu-next (Android only)';
+  String get enable_gpu_next => 'gpu-next\'i etkinleştir (sadece Android)';
 
   @override
-  String get enable_gpu_next_info => 'A new video rendering backend';
+  String get enable_gpu_next_info => 'Yeni video işleme motoru';
 
   @override
   String get debanding => 'Debanding';
 
   @override
-  String get use_yuv420p => 'Use YUV420P pixel format';
+  String get use_yuv420p => 'YUV420P piksel formatını kullan';
 
   @override
   String get use_yuv420p_info =>
-      'May fix black screens on some video codecs, can also improve performance at the cost of quality';
+      'Bazı video codec\'lerinde siyah ekranları düzeltebilir, kalite pahasına performansı da artırabilir';
 
   @override
-  String get audio_preferred_languages => 'Preferred langauages';
+  String get audio_preferred_languages => 'Tercih edilen diller';
 
   @override
   String get audio_preferred_languages_info =>
-      'Audio langauage(s) to be selected by default on a video with multiple audio streams, 2/3-letter languages codes (e.g.: en, de, fr) work. Multiple values can be delimited by a comma.';
+      'Birden fazla ses akışına sahip bir videoda varsayılan olarak seçilecek ses dil(ler)i, 2/3 harfli dil kodları (örn: tr, en, ja). Birden fazla değer virgülle ayrılabilir.';
 
   @override
-  String get enable_audio_pitch_correction => 'Enable audio pitch correction';
+  String get enable_audio_pitch_correction =>
+      'Ses perdesi düzeltmeyi etkinleştir';
 
   @override
   String get enable_audio_pitch_correction_info =>
-      'Prevents the audio from becoming high-pitched at faster speeds and low-pitched at slower speeds';
+      'Daha yüksek hızlarda sesin tiz, daha düşük hızlarda pes olmasını önler';
 
   @override
-  String get audio_channels => 'Audio channels';
+  String get audio_channels => 'Ses kanalları';
 
   @override
-  String get volume_boost_cap => 'Volume boost cap';
+  String get volume_boost_cap => 'Ses yükseltme sınırı';
 
   @override
-  String get internal_player => 'Internal player';
+  String get internal_player => 'Dahili oynatıcı';
 
   @override
-  String get internal_player_info => 'Progress, controls, orientation';
+  String get internal_player_info => 'İlerleme, kontroller, yönelim';
 
   @override
-  String get subtitle_delay_text => 'Subtitle delay';
+  String get subtitle_delay_text => 'Altyazı gecikmesi';
 
   @override
-  String get subtitle_delay => 'Delay (ms)';
+  String get subtitle_delay => 'Gecikme (ms)';
 
   @override
-  String get subtitle_speed => 'Speed';
+  String get subtitle_speed => 'Hız';
 
   @override
-  String get calendar => 'Calendar';
+  String get calendar => 'Takvim';
 
   @override
-  String get calendar_no_data => 'No data yet.';
+  String get calendar_no_data => 'Henüz veri yok.';
 
   @override
   String get calendar_info =>
-      'The calendar is only able to predict the next chapter upload based on the older uploads. Some data might not be 100% accurate!';
+      'Takvim, bir sonraki bölüm yüklemesini yalnızca eski yüklemelere göre tahmin edebilir. Bazı veriler %100 doğru olmayabilir!';
 
   @override
   String in_n_day(Object days) {
-    return 'in $days day';
+    return '$days gün içinde';
   }
 
   @override
   String in_n_days(Object days) {
-    return 'in $days days';
+    return '$days gün içinde';
   }
 
   @override
-  String get clear_library => 'Clear library';
+  String get clear_library => 'Kütüphaneyi temizle';
 
   @override
   String get clear_library_desc =>
-      'Choose to clear all manga, anime and/or novel entries';
+      'Tüm manga, anime ve/veya roman girişlerini temizlemeyi seçin';
 
   @override
   String get clear_library_input =>
-      'Type \'manga\', \'anime\' and/or \'novel\' (separated by a comma) to remove all related entries';
+      'İlgili tüm girişleri kaldırmak için \'manga\', \'anime\' ve/veya \'novel\' yazın (virgülle ayrılmış)';
 
   @override
-  String get watch_order => 'Watch order';
+  String get watch_order => 'İzleme sırası';
 
   @override
-  String get sequels => 'Sequels';
+  String get sequels => 'Devam filmleri';
 
   @override
-  String get recommendations_similarity => 'Similarity:';
+  String get recommendations_similarity => 'Benzerlik:';
 
   @override
-  String get local_folder_structure => 'Structure of a local folder';
+  String get local_folder_structure => 'Yerel klasör yapısı';
 
   @override
-  String get local_folder => 'Local folders';
+  String get local_folder => 'Yerel klasörler';
 
   @override
-  String get add_local_folder => 'Add local folder';
+  String get add_local_folder => 'Yerel klasör ekle';
 
   @override
-  String get rescan_local_folder => 'Rescan all local folders now';
+  String get rescan_local_folder => 'Tüm yerel klasörleri şimdi yeniden tara';
 
   @override
-  String get export_metadata => 'Export metadata';
+  String get export_metadata => 'Meta verileri dışa aktar';
 
   @override
-  String get exported => 'Exported';
+  String get exported => 'Dışa aktarıldı';
 
   @override
-  String get text_size => 'Text Size :';
+  String get text_size => 'Metin Boyutu:';
 
   @override
-  String get text_align => 'Text Align';
+  String get text_align => 'Metin Hizalama';
 
   @override
-  String get line_height => 'Line Height';
+  String get line_height => 'Satır Yüksekliği';
 
   @override
-  String get show_scroll_percentage => 'Show Scroll Percentage';
+  String get show_scroll_percentage => 'Kaydırma Yüzdesini Göster';
 
   @override
-  String get remove_extra_paragraph_spacing => 'Remove Extra Paragraph Spacing';
+  String get remove_extra_paragraph_spacing =>
+      'Ekstra Paragraf Aralığını Kaldır';
 
   @override
   String select_label_color(Object label) {
-    return 'Select $label Color';
+    return '$label Rengini Seç';
   }
 }

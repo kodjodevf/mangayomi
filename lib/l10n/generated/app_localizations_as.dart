@@ -33,7 +33,7 @@ class AppLocalizationsAs extends AppLocalizations {
   String get filter => 'ফিল্টাৰ';
 
   @override
-  String get ignore_filters => 'Ignore Filters';
+  String get ignore_filters => 'ফিল্টাৰসমূহ উপেক্ষা কৰক';
 
   @override
   String get downloaded => 'ডাউনলোড কৰা';
@@ -42,7 +42,7 @@ class AppLocalizationsAs extends AppLocalizations {
   String get unread => 'নপঢ়া';
 
   @override
-  String get unwatched => 'Unwatched';
+  String get unwatched => 'নোচোৱা';
 
   @override
   String get started => 'আৰম্ভ কৰা';
@@ -60,7 +60,7 @@ class AppLocalizationsAs extends AppLocalizations {
   String get last_read => 'শেষত পঢ়া';
 
   @override
-  String get last_watched => 'Last watched';
+  String get last_watched => 'শেষত চোৱা';
 
   @override
   String get last_update_check => 'শেষ আপডেট পৰীক্ষা';
@@ -76,30 +76,30 @@ class AppLocalizationsAs extends AppLocalizations {
       count,
       locale: localeName,
       other:
-          'You are deleting all $count $entryTypePlural of this $mediaType from the library.',
+          'আপুনি এই $mediaTypeৰ সকলো $count $entryTypePlural আপোনাৰ পুথিভঁৰালৰ পৰা আঁতৰাইছে।',
       one:
-          'You are deleting the only $entryType of this $mediaType from the library.',
+          'আপুনি এই $mediaTypeৰ একমাত্ৰ $entryType আপোনাৰ পুথিভঁৰালৰ পৰা আঁতৰাইছে।',
     );
-    return '$_temp0\nThis will also remove the whole $mediaType from your library.\n\nNote: The files themselves will not be deleted.';
+    return '$_temp0\nইয়াৰ ফলত সম্পূৰ্ণ $mediaTypeও আপোনাৰ পুথিভঁৰালৰ পৰা আঁতৰোৱা হ\'ব।\n\nটোকা: ফাইলসমূহ নিজে মচা নহ\'ব।';
   }
 
   @override
-  String get chapter => 'chapter';
+  String get chapter => 'অধ্যায়';
 
   @override
-  String get episode => 'episode';
+  String get episode => 'খণ্ড';
 
   @override
   String get unread_count => 'নপঢ়াৰ সংখ্যা';
 
   @override
-  String get unwatched_count => 'Unwatched count';
+  String get unwatched_count => 'নোচোৱাৰ সংখ্যা';
 
   @override
   String get latest_chapter => 'শেষৰ অধ্যায়';
 
   @override
-  String get latest_episode => 'Latest episode';
+  String get latest_episode => 'শেহতীয়া খণ্ড';
 
   @override
   String get date_added => 'তাৰিখ যোগ কৰা';
@@ -129,7 +129,7 @@ class AppLocalizationsAs extends AppLocalizations {
   String get downloaded_chapters => 'ডাউনলোড কৰা অধ্যায়';
 
   @override
-  String get downloaded_episodes => 'Downloaded episodes';
+  String get downloaded_episodes => 'ডাউনলোড কৰা খণ্ডসমূহ';
 
   @override
   String get language => 'ভাষা';
@@ -154,7 +154,8 @@ class AppLocalizationsAs extends AppLocalizations {
       'পঢ়া অব্যাহত ৰখাৰ বুটাম দেখুৱাওক';
 
   @override
-  String get show_continue_watching_buttons => 'Show continue watching buttons';
+  String get show_continue_watching_buttons =>
+      'চোৱা অব্যাহত ৰাখক বুটাম দেখুৱাওক';
 
   @override
   String get empty_library => 'খালী পুথিভঁৰাল';
@@ -172,8 +173,7 @@ class AppLocalizationsAs extends AppLocalizations {
   String get remove_everything_msg => 'আপুনি নিশ্চিত নে? সকলো ইতিহাস হেৰাই যাব';
 
   @override
-  String get remove_all_update_msg =>
-      'Are you sure? The whole update will be cleared';
+  String get remove_all_update_msg => 'আপুনি নিশ্চিত নেকি? সকলো আপডেট মচা হ\'ব';
 
   @override
   String get ok => 'ঠিক আছে';
@@ -213,19 +213,19 @@ class AppLocalizationsAs extends AppLocalizations {
   String get migrate => 'স্থানান্তৰ';
 
   @override
-  String get migrate_confirm => 'Migrate to another source';
+  String get migrate_confirm => 'অন্য উৎসলৈ স্থানান্তৰ কৰক';
 
   @override
-  String get clean_database => 'Clean database';
+  String get clean_database => 'ডাটাবেছ পৰিষ্কাৰ কৰক';
 
   @override
   String cleaned_database(Object x) {
-    return 'Database cleaned! $x entries removed';
+    return 'ডাটাবেছ পৰিষ্কাৰ হ\'ল! $x টা এণ্ট্ৰি আঁতৰোৱা হ\'ল';
   }
 
   @override
   String get clean_database_desc =>
-      'This will remove all items that are not added to the library!';
+      'এইটোৱে পুথিভঁৰালত যোগ নকৰা সকলো বস্তু আঁতৰাব!';
 
   @override
   String get incognito_mode => 'গোপন মোড';
@@ -234,11 +234,11 @@ class AppLocalizationsAs extends AppLocalizations {
   String get incognito_mode_description => 'পঢ়াৰ ইতিহাস স্থগিত কৰে';
 
   @override
-  String get downloaded_only => 'Downloaded only';
+  String get downloaded_only => 'কেৱল ডাউনলোড কৰা';
 
   @override
   String get downloaded_only_description =>
-      'Only show downloaded entries in your library';
+      'আপোনাৰ পুথিভঁৰালত কেৱল ডাউনলোড কৰা এণ্ট্ৰিসমূহ দেখুৱাওক';
 
   @override
   String get download_queue => 'ডাউনলোড শাৰী';
@@ -247,7 +247,7 @@ class AppLocalizationsAs extends AppLocalizations {
   String get categories => 'শ্ৰেণী';
 
   @override
-  String get statistics => 'Statistics';
+  String get statistics => 'পৰিসংখ্যা';
 
   @override
   String get settings => 'ছেটিং';
@@ -304,7 +304,7 @@ class AppLocalizationsAs extends AppLocalizations {
   String get app_language => 'এপৰ ভাষা';
 
   @override
-  String get default_subtitle_language => 'Default subtitle language';
+  String get default_subtitle_language => 'ডিফল্ট উপশিৰোনাম ভাষা';
 
   @override
   String get appearance => 'চেহেৰা';
@@ -319,7 +319,7 @@ class AppLocalizationsAs extends AppLocalizations {
   String get dark_mode => 'ডাৰ্ক মোড';
 
   @override
-  String get follow_system_theme => 'Follow system theme';
+  String get follow_system_theme => 'ছিষ্টেম থিম অনুসৰণ কৰক';
 
   @override
   String get on => 'অন';
@@ -412,7 +412,7 @@ class AppLocalizationsAs extends AppLocalizations {
   String get save_as_cbz_archive => 'CBZ আৰ্কাইভ হিচাপে সাঁচক';
 
   @override
-  String get concurrent_downloads => 'Concurrent downloads';
+  String get concurrent_downloads => 'সমসাময়িক ডাউনলোড';
 
   @override
   String get browse_subtitle => 'উৎস, গ্ল’বেল সন্ধান';
@@ -437,13 +437,13 @@ class AppLocalizationsAs extends AppLocalizations {
   String get check_for_update => 'আপডেটৰ বাবে পৰীক্ষা কৰক';
 
   @override
-  String get share_app_logs => 'Share app logs';
+  String get share_app_logs => 'এপ লগ শ্বেয়াৰ কৰক';
 
   @override
-  String get no_app_logs => 'No log.txt available!';
+  String get no_app_logs => 'কোনো log.txt ফাইল উপলব্ধ নাই!';
 
   @override
-  String get failed => 'Failed!';
+  String get failed => 'বিফল!';
 
   @override
   String n_days_ago(Object days) {
@@ -460,7 +460,7 @@ class AppLocalizationsAs extends AppLocalizations {
   String get a_week_ago => 'এসপ্তাহৰ আগতে';
 
   @override
-  String get next_week => 'Next week';
+  String get next_week => 'পৰৱৰ্তী সপ্তাহ';
 
   @override
   String get add_to_library => 'পুথিভঁৰালত যোগ কৰক';
@@ -505,7 +505,7 @@ class AppLocalizationsAs extends AppLocalizations {
   String get by_chapter_number => 'অধ্যায়ৰ সংখ্যা অনুসৰি';
 
   @override
-  String get by_episode_number => 'By episode number';
+  String get by_episode_number => 'খণ্ড নম্বৰ অনুসৰি';
 
   @override
   String get by_upload_date => 'আপলোডৰ তাৰিখ অনুসৰি';
@@ -517,7 +517,7 @@ class AppLocalizationsAs extends AppLocalizations {
   String get chapter_number => 'অধ্যায়ৰ সংখ্যা';
 
   @override
-  String get episode_number => 'Episode number';
+  String get episode_number => 'খণ্ড নম্বৰ';
 
   @override
   String get share => 'শ্বেয়াৰ';
@@ -537,7 +537,7 @@ class AppLocalizationsAs extends AppLocalizations {
   String get read => 'পঢ়ক';
 
   @override
-  String get watch => 'Watch';
+  String get watch => 'চাওক';
 
   @override
   String get popular => 'জনপ্ৰিয়';
@@ -619,7 +619,7 @@ class AppLocalizationsAs extends AppLocalizations {
   String get total_chapters => 'মুঠ অধ্যায়';
 
   @override
-  String get total_episodes => 'Total episodes';
+  String get total_episodes => 'মুঠ খণ্ড';
 
   @override
   String get import_local_file => 'স্থানীয় ফাইল আমদানি কৰক';
@@ -678,115 +678,115 @@ class AppLocalizationsAs extends AppLocalizations {
   String get tracking => 'ট্ৰেকিং';
 
   @override
-  String get syncing => 'Sync';
+  String get syncing => 'সমন্বয় কৰি আছে';
 
   @override
-  String get sync_password => 'Password (at least 8 characters)';
+  String get sync_password => 'পাছৱৰ্ড (কমেও ৮টা আখৰ)';
 
   @override
-  String get sync_logged => 'Login successful';
+  String get sync_logged => 'লগইন সফল';
 
   @override
   String get syncing_subtitle =>
-      'Sync your progress across multiple devices via a self-hosted \nserver. Check out our discord server for more info!';
+      'স্ব-হোষ্ট কৰা চাৰ্ভাৰৰ জৰিয়তে একাধিক ডিভাইচত আপোনাৰ প্ৰগতি সমন্বয় কৰক। অধিক তথ্যৰ বাবে আমাৰ ডিস্ক\'ৰ্ড চাৰ্ভাৰ চাওক!';
 
   @override
-  String get last_sync_manga => 'Last manga sync at: ';
+  String get last_sync_manga => 'শেহতীয়া মাংগা সিংক: ';
 
   @override
-  String get last_sync_history => 'Last history sync at: ';
+  String get last_sync_history => 'শেহতীয়া ইতিহাস সিংক: ';
 
   @override
-  String get last_sync_update => 'Last update sync at: ';
+  String get last_sync_update => 'শেহতীয়া আপডেট সিংক: ';
 
   @override
-  String get sync_server => 'Sync Server Address';
+  String get sync_server => 'সিংক চাৰ্ভাৰ ঠিকনা';
 
   @override
-  String get sync_login_invalid_creds => 'Invalid email or password';
+  String get sync_login_invalid_creds => 'অবৈধ ইমেইল বা পাছৱৰ্ড';
 
   @override
-  String get sync_starting => 'Starting sync...';
+  String get sync_starting => 'সিংক আৰম্ভ হৈছে...';
 
   @override
-  String get sync_finished => 'Sync finished';
+  String get sync_finished => 'সিংক সম্পূৰ্ণ';
 
   @override
-  String get sync_failed => 'Sync failed';
+  String get sync_failed => 'সিংক বিফল';
 
   @override
-  String get sync_button_sync => 'Sync progress';
+  String get sync_button_sync => 'প্ৰগতি সিংক কৰক';
 
   @override
-  String get sync_button_upload => 'Upload only';
+  String get sync_button_upload => 'কেৱল আপলোড কৰক';
 
   @override
   String get sync_button_upload_info =>
-      'This operation will fully replace the remote data with local data!';
+      'এই অপাৰেশনে ৰিম\'ট ডাটা সম্পূৰ্ণৰূপে ল\'কেল ডাটাৰ সৈতে প্ৰতিস্থাপন কৰিব!';
 
   @override
-  String get sync_button_download => 'Download only';
+  String get sync_button_download => 'কেৱল ডাউনলোড কৰক';
 
   @override
   String get sync_button_download_info =>
-      'This operation will fully replace the local data with remote data!';
+      'এই অপাৰেশনে ল\'কেল ডাটা সম্পূৰ্ণৰূপে ৰিম\'ট ডাটাৰ সৈতে প্ৰতিস্থাপন কৰিব!';
 
   @override
-  String get sync_on => 'Enable sync';
+  String get sync_on => 'সিংক সক্ষম কৰক';
 
   @override
-  String get sync_auto => 'Auto Sync';
+  String get sync_auto => 'স্বয়ংক্ৰিয় সিংক';
 
   @override
   String get sync_auto_warning =>
-      'Auto Sync is currently an experimental feature!';
+      'স্বয়ংক্ৰিয় সিংক বৰ্তমান এক পৰীক্ষামূলক বৈশিষ্ট্য!';
 
   @override
-  String get sync_auto_off => 'Off';
+  String get sync_auto_off => 'বন্ধ';
 
   @override
-  String get sync_auto_5_minutes => 'Every 5 minutes';
+  String get sync_auto_5_minutes => 'প্ৰতি ৫ মিনিট';
 
   @override
-  String get sync_auto_10_minutes => 'Every 10 minutes';
+  String get sync_auto_10_minutes => 'প্ৰতি ১০ মিনিট';
 
   @override
-  String get sync_auto_30_minutes => 'Every 30 minutes';
+  String get sync_auto_30_minutes => 'প্ৰতি ৩০ মিনিট';
 
   @override
-  String get sync_auto_1_hour => 'Every 1 hour';
+  String get sync_auto_1_hour => 'প্ৰতি ১ ঘণ্টা';
 
   @override
-  String get sync_auto_3_hours => 'Every 3 hours';
+  String get sync_auto_3_hours => 'প্ৰতি ৩ ঘণ্টা';
 
   @override
-  String get sync_auto_6_hours => 'Every 6 hours';
+  String get sync_auto_6_hours => 'প্ৰতি ৬ ঘণ্টা';
 
   @override
-  String get sync_auto_12_hours => 'Every 12 hours';
+  String get sync_auto_12_hours => 'প্ৰতি ১২ ঘণ্টা';
 
   @override
-  String get server_error => 'Server error!';
+  String get server_error => 'চাৰ্ভাৰ ত্ৰুটি!';
 
   @override
-  String get dialog_confirm => 'Confirm';
+  String get dialog_confirm => 'নিশ্চিত কৰক';
 
   @override
   String get description => 'বিৱৰণ';
 
   @override
-  String get reorder_navigation => 'Customize navigation';
+  String get reorder_navigation => 'নেভিগেশ্বন কাষ্টমাইজ কৰক';
 
   @override
   String get reorder_navigation_description =>
-      'Reorder and toggle each navigation to your needs.';
+      'আপোনাৰ প্ৰয়োজন অনুসৰি প্ৰতিটো নেভিগেশ্বন পুনৰ্বিন্যাস আৰু টগল কৰক।';
 
   @override
-  String get full_screen_player => 'Use Fullscreen';
+  String get full_screen_player => 'সম্পূৰ্ণ স্ক্ৰীন ব্যৱহাৰ কৰক';
 
   @override
   String get full_screen_player_info =>
-      'Automatically use fullscreen when playing a video.';
+      'ভিডিঅ\' চলাওঁতে স্বয়ংক্ৰিয়ভাৱে সম্পূৰ্ণ স্ক্ৰীন ব্যৱহাৰ কৰক।';
 
   @override
   String episode_progress(Object n) {
@@ -805,7 +805,7 @@ class AppLocalizationsAs extends AppLocalizations {
   String get anime_sources => 'এনিমে উৎস';
 
   @override
-  String get novel_sources => 'Novel Sources';
+  String get novel_sources => 'উপন্যাস উৎস';
 
   @override
   String get anime_extensions => 'এনিমে এক্সটেনশন';
@@ -814,10 +814,10 @@ class AppLocalizationsAs extends AppLocalizations {
   String get manga_extensions => 'মাংগা এক্সটেনশন';
 
   @override
-  String get novel_extensions => 'Novel Extensions';
+  String get novel_extensions => 'উপন্যাস এক্সটেনশ্বন';
 
   @override
-  String get extension_settings => 'Extension settings';
+  String get extension_settings => 'এক্সটেনশ্বন ছেটিংছ';
 
   @override
   String get anime => 'এনিমে';
@@ -826,7 +826,7 @@ class AppLocalizationsAs extends AppLocalizations {
   String get manga => 'মাংগা';
 
   @override
-  String get novel => 'Novel';
+  String get novel => 'উপন্যাস';
 
   @override
   String get library_no_category_exist => 'আপোনাৰ এতিয়াও কোনো শ্ৰেণী নাই';
@@ -925,7 +925,7 @@ class AppLocalizationsAs extends AppLocalizations {
       'নতুন সংস্কৰণ উপলব্ধ হ’লে এক্সটেনশন স্বয়ংক্ৰিয়ভাৱে আপডেট কৰিব।';
 
   @override
-  String get check_for_app_updates => 'Check for app updates on startup';
+  String get check_for_app_updates => 'ষ্টাৰ্টআপত এপ আপডেট পৰীক্ষা কৰক';
 
   @override
   String get reading_mode => 'পঢ়াৰ মোড';
@@ -1081,14 +1081,13 @@ class AppLocalizationsAs extends AppLocalizations {
   String get installed => 'ইনষ্টল কৰা';
 
   @override
-  String get auto_scroll => 'স্বয়ংক্ৰিয় স্ক্ৰ’ল';
+  String get auto_scroll => 'স্বয়ংক্ৰিয় স্ক্ৰ\'ল';
 
   @override
-  String get video_audio => 'অডিঅ’';
+  String get video_audio => 'অডিঅ\'';
 
   @override
-  String get video_audio_info =>
-      'Preferred languages, pitch correction, audio channels';
+  String get video_audio_info => 'পচন্দৰ ভাষা, পিচ সংশোধন, অডিঅ\' চেনেল';
 
   @override
   String get player => 'প্লেয়াৰ';
@@ -1098,7 +1097,7 @@ class AppLocalizationsAs extends AppLocalizations {
       'খণ্ডটো কেতিয়া দেখা বুলি চিহ্নিত কৰিব';
 
   @override
-  String get default_skip_intro_length => 'ডিফল্ট ইনট্ৰ’ এৰি দিয়াৰ দৈৰ্ঘ্য';
+  String get default_skip_intro_length => 'ডিফল্ট ইনট্ৰ\' এৰি দিয়াৰ দৈৰ্ঘ্য';
 
   @override
   String get default_playback_speed_length => 'ডিফল্ট প্লেবেক গতিৰ দৈৰ্ঘ্য';
@@ -1114,666 +1113,672 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String get default_skip_forward_skip_length =>
-      'Default skip forward skip length';
+      'ডিফল্ট স্কিপ ফৰৱাৰ্ড স্কিপ দৈৰ্ঘ্য';
 
   @override
   String get aniskip_requires_info =>
-      'AniSkip requires the anime to be tracked with MAL or Anilist to work.';
+      'AniSkip কাম কৰিবলৈ এনিমে MAL বা Anilistৰ সৈতে ট্ৰেক কৰা হ\'ব লাগিব।';
 
   @override
-  String get enable_aniskip => 'Enable AniSkip';
+  String get enable_aniskip => 'AniSkip সক্ষম কৰক';
 
   @override
-  String get enable_auto_skip => 'Enable auto skip';
+  String get enable_auto_skip => 'স্বয়ংক্ৰিয় স্কিপ সক্ষম কৰক';
 
   @override
-  String get aniskip_button_timeout => 'Button timeout';
+  String get aniskip_button_timeout => 'বুটাম টাইমআউট';
 
   @override
-  String get skip_opening => 'Skip opening';
+  String get skip_opening => 'ওপেনিং স্কিপ কৰক';
 
   @override
-  String get skip_ending => 'Skip ending';
+  String get skip_ending => 'এণ্ডিং স্কিপ কৰক';
 
   @override
-  String get fullscreen => 'Fullscreen';
+  String get fullscreen => 'সম্পূৰ্ণ স্ক্ৰীন';
 
   @override
-  String get update_library => 'Update library';
+  String get update_library => 'পুথিভঁৰাল আপডেট কৰক';
 
   @override
   String updating_library(Object cur, Object failed, Object max) {
-    return 'Updating library ($cur / $max) - Failed: $failed';
+    return 'পুথিভঁৰাল আপডেট কৰি আছে ($cur / $max) - বিফল: $failed';
   }
 
   @override
-  String get next_chapter => 'Next chapter';
+  String get next_chapter => 'পৰৱৰ্তী অধ্যায়';
 
   @override
-  String get next_5_chapters => 'Next 5 chapters';
+  String get next_5_chapters => 'পৰৱৰ্তী ৫ টা অধ্যায়';
 
   @override
-  String get next_10_chapters => 'Next 10 chapters';
+  String get next_10_chapters => 'পৰৱৰ্তী ১০ টা অধ্যায়';
 
   @override
-  String get next_25_chapters => 'Next 25 chapters';
+  String get next_25_chapters => 'পৰৱৰ্তী ২৫ টা অধ্যায়';
 
   @override
-  String get all_chapters => 'All chapters';
+  String get all_chapters => 'সকলো অধ্যায়';
 
   @override
-  String get next_episode => 'Next episode';
+  String get next_episode => 'পৰৱৰ্তী খণ্ড';
 
   @override
-  String get next_5_episodes => 'Next 5 episodes';
+  String get next_5_episodes => 'পৰৱৰ্তী ৫ টা খণ্ড';
 
   @override
-  String get next_10_episodes => 'Next 10 episodes';
+  String get next_10_episodes => 'পৰৱৰ্তী ১০ টা খণ্ড';
 
   @override
-  String get next_25_episodes => 'Next 25 episodes';
+  String get next_25_episodes => 'পৰৱৰ্তী ২৫ টা খণ্ড';
 
   @override
-  String get all_episodes => 'All episodes';
+  String get all_episodes => 'সকলো খণ্ড';
 
   @override
-  String get cover_saved => 'Cover saved';
+  String get cover_saved => 'কভাৰ সংৰক্ষিত';
 
   @override
-  String get set_as_cover => 'Set as cover';
+  String get set_as_cover => 'কভাৰ হিচাপে সেট কৰক';
 
   @override
-  String get use_this_as_cover_art => 'Use this as cover art?';
+  String get use_this_as_cover_art => 'ইয়াক কভাৰ আৰ্ট হিচাপে ব্যৱহাৰ কৰিবনে?';
 
   @override
-  String get save => 'Save';
+  String get save => 'সংৰক্ষণ কৰক';
 
   @override
-  String get picture_saved => 'Picture saved';
+  String get picture_saved => 'ছবি সংৰক্ষিত';
 
   @override
-  String get cover_updated => 'Cover updated';
+  String get cover_updated => 'কভাৰ আপডেট কৰা হ\'ল';
 
   @override
-  String get include_subtitles => 'Include subtitles';
+  String get include_subtitles => 'উপশিৰোনাম অন্তৰ্ভুক্ত কৰক';
 
   @override
-  String get blend_mode_default => 'Default';
+  String get blend_mode_default => 'ডিফল্ট';
 
   @override
-  String get blend_mode_multiply => 'Multiply';
+  String get blend_mode_multiply => 'গুণ কৰক';
 
   @override
-  String get blend_mode_screen => 'Screen';
+  String get blend_mode_screen => 'স্ক্ৰীন';
 
   @override
-  String get blend_mode_overlay => 'Overlay';
+  String get blend_mode_overlay => 'অভাৰলে';
 
   @override
   String get blend_mode_colorDodge => 'ColorDodge';
 
   @override
-  String get blend_mode_lighten => 'Lighten';
+  String get blend_mode_lighten => 'পাতল কৰক';
 
   @override
   String get blend_mode_colorBurn => 'ColorBurn';
 
   @override
-  String get blend_mode_darken => 'Darken';
+  String get blend_mode_darken => 'গাঢ় কৰক';
 
   @override
-  String get blend_mode_difference => 'Difference';
+  String get blend_mode_difference => 'পাৰ্থক্য';
 
   @override
-  String get blend_mode_saturation => 'Saturation';
+  String get blend_mode_saturation => 'সংপৃক্ততা';
 
   @override
   String get blend_mode_softLight => 'SoftLight';
 
   @override
-  String get blend_mode_plus => 'Plus';
+  String get blend_mode_plus => 'যোগ কৰক';
 
   @override
-  String get blend_mode_exclusion => 'Exclusion';
+  String get blend_mode_exclusion => 'বৰ্জন';
 
   @override
-  String get custom_color_filter => 'Custom color filter';
+  String get custom_color_filter => 'কাষ্টম ৰং ফিল্টাৰ';
 
   @override
-  String get color_filter_blend_mode => 'Color filter blend mode';
+  String get color_filter_blend_mode => 'ৰং ফিল্টাৰ ব্লেণ্ড মোড';
 
   @override
-  String get enable_all => 'Enable all';
+  String get enable_all => 'সকলো সক্ষম কৰক';
 
   @override
-  String get disable_all => 'Disable all';
+  String get disable_all => 'সকলো নিষ্ক্ৰিয় কৰক';
 
   @override
-  String get font => 'Font';
+  String get font => 'ফণ্ট';
 
   @override
-  String get color => 'Color';
+  String get color => 'ৰং';
 
   @override
-  String get font_size => 'Font size';
+  String get font_size => 'ফণ্ট আকাৰ';
 
   @override
-  String get text => 'Text';
+  String get text => 'পাঠ';
 
   @override
-  String get border => 'Border';
+  String get border => 'সীমা';
 
   @override
-  String get background => 'Background';
+  String get background => 'পটভূমি';
 
   @override
   String get no_subtite_warning_message =>
-      'Has no effect because there aren\'t any subtitle tracks in this video';
+      'এই ভিডিঅ\'ত কোনো উপশিৰোনাম ট্ৰেক নাই সেয়েহে কোনো প্ৰভাৱ নাই';
 
   @override
-  String get grid_size => 'Grid size';
+  String get grid_size => 'গ্ৰিড আকাৰ';
 
   @override
   String n_per_row(Object n) {
-    return '$n per row';
+    return 'প্ৰতি শাৰীত $n';
   }
 
   @override
-  String get horizontal_continious => 'Horizontal continuous';
+  String get horizontal_continious => 'অনুভূমিক নিৰন্তৰ';
 
   @override
-  String get edit_code => 'Edit code';
+  String get edit_code => 'ক\'ড সম্পাদনা কৰক';
 
   @override
-  String get use_libass => 'Enable libass';
+  String get use_libass => 'libass সক্ষম কৰক';
 
   @override
   String get use_libass_info =>
-      'Use libass based subtitle rendering for native backend.';
+      'নেটিভ বেকএণ্ডৰ বাবে libass ভিত্তিক উপশিৰোনাম ৰেণ্ডাৰিং ব্যৱহাৰ কৰক।';
 
   @override
   String get libass_not_disable_message =>
-      'Disable `use libass` in player settings to be able to customize the subtitles.';
+      'উপশিৰোনামসমূহ কাষ্টমাইজ কৰিবলৈ সক্ষম হ\'বলৈ প্লেয়াৰ ছেটিংছত `libass ব্যৱহাৰ কৰক` নিষ্ক্ৰিয় কৰক।';
 
   @override
-  String get torrent_stream => 'Torrent Stream';
+  String get torrent_stream => 'টৰেণ্ট ষ্ট্ৰীম';
 
   @override
-  String get add_torrent => 'Add torrent';
+  String get add_torrent => 'টৰেণ্ট যোগ কৰক';
 
   @override
-  String get enter_torrent_hint_text => 'Enter magnet or torrent file url';
+  String get enter_torrent_hint_text => 'মেগনেট বা টৰেণ্ট ফাইল url দিয়ক';
 
   @override
-  String get torrent_url => 'Torrent url';
+  String get torrent_url => 'টৰেণ্ট url';
 
   @override
-  String get or => 'OR';
+  String get or => 'বা';
 
   @override
-  String get advanced => 'Advanced';
+  String get advanced => 'উন্নত';
 
   @override
-  String get advanced_info => 'mpv config';
+  String get advanced_info => 'mpv কনফিগাৰেশ্বন';
 
   @override
-  String get use_native_http_client => 'Use native http client';
+  String get use_native_http_client => 'নেটিভ http ক্লায়েণ্ট ব্যৱহাৰ কৰক';
 
   @override
   String get use_native_http_client_info =>
-      'it automatically supports platform features such VPNs, support more HTTP features such as HTTP/3 and custom redirect handling';
+      'ই স্বয়ংক্ৰিয়ভাৱে VPNৰ দৰে প্লেটফৰ্ম বৈশিষ্ট্যসমূহ সমৰ্থন কৰে, HTTP/3ৰ দৰে অধিক HTTP বৈশিষ্ট্যসমূহ সমৰ্থন কৰে আৰু কাষ্টম ৰিডাইৰেক্ট হেণ্ডলিং';
 
   @override
   String n_hour_ago(Object hour) {
-    return '$hour hour ago';
+    return '$hour ঘণ্টা পূৰ্বে';
   }
 
   @override
   String n_hours_ago(Object hours) {
-    return '$hours hours ago';
+    return '$hours ঘণ্টা পূৰ্বে';
   }
 
   @override
   String n_minute_ago(Object minute) {
-    return '$minute minute ago';
+    return '$minute মিনিট পূৰ্বে';
   }
 
   @override
   String n_minutes_ago(Object minutes) {
-    return '$minutes minutes ago';
+    return '$minutes মিনিট পূৰ্বে';
   }
 
   @override
   String n_day_ago(Object day) {
-    return '$day day ago';
+    return '$day দিন পূৰ্বে';
   }
 
   @override
-  String get now => 'now';
+  String get now => 'এতিয়া';
 
   @override
   String library_last_updated(Object lastUpdated) {
-    return 'Library last updated: $lastUpdated';
+    return 'পুথিভঁৰাল শেষবাৰৰ বাবে আপডেট কৰা হৈছে: $lastUpdated';
   }
 
   @override
-  String get data_and_storage => 'Data and storage';
+  String get data_and_storage => 'ডাটা আৰু সংৰক্ষণ';
 
   @override
-  String get download_location_info => 'Used for chapter downloads';
+  String get download_location_info => 'অধ্যায় ডাউনলোডৰ বাবে ব্যৱহৃত';
 
   @override
-  String get storage => 'Storage';
+  String get storage => 'সংৰক্ষণ';
 
   @override
   String get clear_chapter_and_episode_cache =>
-      'Clear chapter and episode cache';
+      'অধ্যায় আৰু খণ্ড কেচ পৰিষ্কাৰ কৰক';
 
   @override
-  String get cache_cleared => 'Cache cleared';
+  String get cache_cleared => 'কেচ পৰিষ্কাৰ হ\'ল';
 
   @override
   String get clear_chapter_or_episode_cache_on_app_launch =>
-      'Clear chapter/episode cache on app launch';
+      'এপ লঞ্চত অধ্যায়/খণ্ড কেচ পৰিষ্কাৰ কৰক';
 
   @override
-  String get app_settings => 'App settings';
+  String get app_settings => 'এপ ছেটিংছ';
 
   @override
-  String get sources_settings => 'Sources settings';
+  String get sources_settings => 'উৎস ছেটিংছ';
 
   @override
   String get include_sensitive_settings =>
-      'Include sensitive settings (e.g., tracker login tokens)';
+      'সংবেদনশীল ছেটিংছ অন্তৰ্ভুক্ত কৰক (যেনে, ট্ৰেকাৰ লগইন টোকেন)';
 
   @override
-  String get create => 'Create';
+  String get create => 'সৃষ্টি কৰক';
 
   @override
-  String get downloads_are_limited_to_wifi =>
-      'Downloads are limited to Wi-Fi only';
+  String get downloads_are_limited_to_wifi => 'ডাউনলোডসমূহ কেৱল Wi-Fiলৈ সীমিত';
 
   @override
-  String get recommendations => 'Recommendations';
+  String get recommendations => 'পৰামৰ্শসমূহ';
 
   @override
-  String get recommendations_similar => 'similar';
+  String get recommendations_similar => 'সমান';
 
   @override
-  String get recommendations_weights => 'Recommendation Weights';
+  String get recommendations_weights => 'পৰামৰ্শ ওজন';
 
   @override
-  String get recommendations_weights_genre => 'Genre Similarity';
+  String get recommendations_weights_genre => 'ধাৰা সাদৃশ্য';
 
   @override
-  String get recommendations_weights_setting => 'Setting Similarity';
+  String get recommendations_weights_setting => 'ছেটিং সাদৃশ্য';
 
   @override
-  String get recommendations_weights_synopsis => 'Story Similarity';
+  String get recommendations_weights_synopsis => 'কাহিনী সাদৃশ্য';
 
   @override
-  String get recommendations_weights_theme => 'Theme Similarity';
+  String get recommendations_weights_theme => 'থিম সাদৃশ্য';
 
   @override
-  String get manga_extensions_repo => 'Manga extensions repo';
+  String get manga_extensions_repo => 'মাংগা এক্সটেনশ্বন ৰিপ\'';
 
   @override
-  String get anime_extensions_repo => 'Anime extensions repo';
+  String get anime_extensions_repo => 'এনিমে এক্সটেনশ্বন ৰিপ\'';
 
   @override
-  String get novel_extensions_repo => 'Novel extensions repo';
+  String get novel_extensions_repo => 'উপন্যাস এক্সটেনশ্বন ৰিপ\'';
 
   @override
-  String get custom_dns => 'Custom DNS (leave blank to use system DNS)';
+  String get custom_dns => 'কাষ্টম DNS (ছিষ্টেম DNS ব্যৱহাৰ কৰিবলৈ খালী ৰাখক)';
 
   @override
-  String get android_proxy_server => 'Android Proxy Server (ApkBridge)';
+  String get android_proxy_server => 'Android প্ৰক্সি চাৰ্ভাৰ (ApkBridge)';
 
   @override
-  String get get_apk_bridge => 'Get ApkBridge';
+  String get get_apk_bridge => 'ApkBridge প্ৰাপ্ত কৰক';
 
   @override
-  String get get_sync_server => 'Get Sync Server here';
+  String get get_sync_server => 'সিংক চাৰ্ভাৰ ইয়াত প্ৰাপ্ত কৰক';
 
   @override
-  String get undefined => 'undefined';
+  String get undefined => 'অপৰিভাষিত';
 
   @override
   String get empty_extensions_repo =>
-      'You don\'t have any repository urls here. Click on the plus button to add one!';
+      'আপোনাৰ ইয়াত কোনো ৰিপজিটৰী URL নাই। এটা যোগ কৰিবলৈ প্লাছ বুটামত ক্লিক কৰক!';
 
   @override
-  String get add_extensions_repo => 'Add repo URL';
+  String get add_extensions_repo => 'ৰিপ\' URL যোগ কৰক';
 
   @override
-  String get remove_extensions_repo => 'Remove repo URL';
+  String get remove_extensions_repo => 'ৰিপ\' URL আঁতৰাওক';
 
   @override
-  String get manage_manga_repo_urls => 'Manage Manga Repo URLs';
+  String get manage_manga_repo_urls => 'মাংগা ৰিপ\' URL পৰিচালনা কৰক';
 
   @override
-  String get manage_anime_repo_urls => 'Manage Anime Repo URLs';
+  String get manage_anime_repo_urls => 'এনিমে ৰিপ\' URL পৰিচালনা কৰক';
 
   @override
-  String get manage_novel_repo_urls => 'Manage Novel Repo URLs';
+  String get manage_novel_repo_urls => 'উপন্যাস ৰিপ\' URL পৰিচালনা কৰক';
 
   @override
-  String get url_cannot_be_empty => 'URL cannot be empty';
+  String get url_cannot_be_empty => 'URL খালী হ\'ব নোৱাৰে';
 
   @override
-  String get url_must_end_with_dot_json => 'URL must end with .json';
+  String get url_must_end_with_dot_json => 'URL .jsonৰ সৈতে শেষ হ\'ব লাগিব';
 
   @override
-  String get repo_url => 'Repo URL';
+  String get repo_url => 'ৰিপ\' URL';
 
   @override
-  String get invalid_url_format => 'Invalid URL format';
+  String get invalid_url_format => 'অবৈধ URL বিন্যাস';
 
   @override
-  String get clear_all_sources => 'Clear all sources';
+  String get clear_all_sources => 'সকলো উৎস পৰিষ্কাৰ কৰক';
 
   @override
   String get clear_all_sources_msg =>
-      'This will completely erase all sources of the application. Are you sure you want to continue?';
+      'ই এপ্লিকেশ্বনৰ সকলো উৎস সম্পূৰ্ণৰূপে মচি পেলাব। আপুনি নিশ্চিত যে আপুনি অব্যাহত ৰাখিব বিচাৰে?';
 
   @override
-  String get sources_cleared => 'Sources cleared!!!';
+  String get sources_cleared => 'উৎসসমূহ পৰিষ্কাৰ হ\'ল!!!';
 
   @override
-  String get repo_added => 'Source repository added!';
+  String get repo_added => 'উৎস ৰিপজিটৰী যোগ কৰা হ\'ল!';
 
   @override
-  String get add_repo => 'Add Repository?';
+  String get add_repo => 'ৰিপজিটৰী যোগ কৰিবনে?';
 
   @override
-  String get genre_search_library => 'Search genre in library';
+  String get genre_search_library => 'পুথিভঁৰালত ধাৰা বিচাৰক';
 
   @override
-  String get genre_search_source => 'Browse in source';
+  String get genre_search_source => 'উৎসত ব্ৰাউজ কৰক';
 
   @override
-  String get source_not_added => 'Source is not installed!';
+  String get source_not_added => 'উৎস ইনষ্টল কৰা হোৱা নাই!';
 
   @override
-  String get load_own_subtitles => 'Load your own subtitles...';
+  String get load_own_subtitles => 'নিজৰ উপশিৰোনামসমূহ লোড কৰক...';
 
   @override
-  String get search_subtitles => 'Search subtitles online...';
+  String get search_subtitles => 'উপশিৰোনামসমূহ অনলাইনত বিচাৰক...';
 
   @override
   String extension_notes(Object notes) {
-    return 'Notes: $notes';
+    return 'টোকা: $notes';
   }
 
   @override
   String get unsupported_repo =>
-      'You\'ve tried to add an unsupported repository. Please check the discord server for support!';
+      'আপুনি এক অসমৰ্থিত ৰিপজিটৰী যোগ কৰিবলৈ চেষ্টা কৰিছে। সমৰ্থনৰ বাবে ডিস্ক\'ৰ্ড চাৰ্ভাৰ পৰীক্ষা কৰক!';
 
   @override
-  String get end_of_chapter => 'End of chapter';
+  String get end_of_chapter => 'অধ্যায়ৰ শেষ';
 
   @override
-  String get chapter_completed => 'Chapter completed';
+  String get chapter_completed => 'অধ্যায় সম্পূৰ্ণ';
 
   @override
   String get continue_to_next_chapter =>
-      'Continue scrolling to read the next chapter';
+      'পৰৱৰ্তী অধ্যায় পঢ়িবলৈ স্ক্ৰ\'ল কৰি থাকক';
 
   @override
-  String get no_next_chapter => 'No next chapter';
+  String get no_next_chapter => 'কোনো পৰৱৰ্তী অধ্যায় নাই';
 
   @override
-  String get you_have_finished_reading => 'You have finished reading';
+  String get you_have_finished_reading => 'আপুনি পঢ়া শেষ কৰিলে';
 
   @override
-  String get return_to_the_list_of_chapters => 'Return to the list of chapters';
+  String get return_to_the_list_of_chapters =>
+      'অধ্যায়সমূহৰ তালিকালৈ উভতি যাওক';
 
   @override
-  String get hwdec => 'Hardware Decoder';
+  String get hwdec => 'হাৰ্ডৱেৰ ডিক\'ডাৰ';
 
   @override
-  String get enable_hardware_accel => 'Hardware Acceleration';
+  String get enable_hardware_accel => 'হাৰ্ডৱেৰ ত্বৰণ';
 
   @override
   String get enable_hardware_accel_info =>
-      'Turn it on/off if you are experiencing bugs or crashes';
+      'যদি আপুনি বাগ বা ক্ৰেশৰ সন্মুখীন হৈছে তেন্তে ইয়াক চালু/বন্ধ কৰক';
 
   @override
-  String get track_library_navigate => 'Go to existing local entry';
+  String get track_library_navigate => 'বৰ্তমান স্থানীয় এণ্ট্ৰিলৈ যাওক';
 
   @override
-  String get track_library_add => 'Add to local library';
+  String get track_library_add => 'স্থানীয় পুথিভঁৰালত যোগ কৰক';
 
   @override
-  String get track_library_add_confirm => 'Add tracked item to local library';
+  String get track_library_add_confirm =>
+      'ট্ৰেক কৰা আইটেম স্থানীয় পুথিভঁৰালত যোগ কৰক';
 
   @override
   String get track_library_not_logged =>
-      'Login to the corresponding tracker to use this feature!';
+      'এই বৈশিষ্ট্য ব্যৱহাৰ কৰিবলৈ সংশ্লিষ্ট ট্ৰেকাৰত লগইন কৰক!';
 
   @override
-  String get track_library_switch => 'Switch to another tracker';
+  String get track_library_switch => 'অন্য ট্ৰেকাৰলৈ সলনি কৰক';
 
   @override
-  String get go_back => 'Go back';
+  String get go_back => 'উভতি যাওক';
 
   @override
-  String get merge_library_nav_mobile => 'Merge library navigation on mobile';
+  String get merge_library_nav_mobile =>
+      'মোবাইলত পুথিভঁৰাল নেভিগেশ্বন মাৰ্জ কৰক';
 
   @override
-  String get enable_discord_rpc => 'Enable Discord RPC';
+  String get enable_discord_rpc => 'Discord RPC সক্ষম কৰক';
 
   @override
   String get hide_discord_rpc_incognito =>
-      'Hide Discord RPC while in Incognito';
+      'ইনকগনিট\' ম\'ডত Discord RPC লুকুৱাওক';
 
   @override
   String get rpc_show_reading_watching_progress =>
-      'Show current chapter in Discord (requires a restart)';
+      'Discordত বৰ্তমান অধ্যায় দেখুৱাওক (পুনৰাৰম্ভৰ প্ৰয়োজন)';
 
   @override
-  String get rpc_show_title => 'Show current title in Discord';
+  String get rpc_show_title => 'Discordত বৰ্তমান শিৰোনাম দেখুৱাওক';
 
   @override
-  String get rpc_show_cover_image => 'Show current cover image in Discord';
+  String get rpc_show_cover_image => 'Discordত বৰ্তমান কভাৰ ছবি দেখুৱাওক';
 
   @override
-  String get sync_enable_histories => 'Sync history data';
+  String get sync_enable_histories => 'ইতিহাস ডাটা সিংক কৰক';
 
   @override
-  String get sync_enable_updates => 'Sync update data';
+  String get sync_enable_updates => 'আপডেট ডাটা সিংক কৰক';
 
   @override
-  String get sync_enable_settings => 'Sync settings';
+  String get sync_enable_settings => 'ছেটিংছ সিংক কৰক';
 
   @override
-  String get enable_mpv => 'Enable mpv shaders / scripts';
+  String get enable_mpv => 'mpv ছেডাৰ / স্ক্ৰিপ্ট সক্ষম কৰক';
 
   @override
-  String get mpv_info => 'Supports .js scripts under mpv/scripts/';
+  String get mpv_info => 'mpv/scripts/ৰ অধীনত .js স্ক্ৰিপ্ট সমৰ্থন কৰে';
 
   @override
-  String get mpv_redownload => 'Redownload mpv config files';
+  String get mpv_redownload => 'mpv কনফিগ ফাইলসমূহ পুনৰ ডাউনলোড কৰক';
 
   @override
-  String get mpv_redownload_info => 'Replaces old config files with new one!';
+  String get mpv_redownload_info =>
+      'পুৰণি কনফিগ ফাইলসমূহ নতুনৰ সৈতে প্ৰতিস্থাপন কৰে!';
 
   @override
-  String get mpv_download => 'MPV config files are required!\nDownload now?';
+  String get mpv_download =>
+      'MPV কনফিগ ফাইলসমূহ প্ৰয়োজনীয়!\nএতিয়াই ডাউনলোড কৰিবনে?';
 
   @override
-  String get custom_buttons => 'Custom buttons';
+  String get custom_buttons => 'কাষ্টম বুটাম';
 
   @override
-  String get custom_buttons_info => 'Execute lua code with custom buttons';
+  String get custom_buttons_info => 'কাষ্টম বুটামৰ সৈতে lua ক\'ড নিষ্পাদন কৰক';
 
   @override
-  String get custom_buttons_edit => 'Edit custom buttons';
+  String get custom_buttons_edit => 'কাষ্টম বুটাম সম্পাদনা কৰক';
 
   @override
-  String get custom_buttons_add => 'Add custom button';
+  String get custom_buttons_add => 'কাষ্টম বুটাম যোগ কৰক';
 
   @override
-  String get custom_buttons_added => 'Custom button added!';
+  String get custom_buttons_added => 'কাষ্টম বুটাম যোগ কৰা হ\'ল!';
 
   @override
-  String get custom_buttons_delete => 'Delete custom button';
+  String get custom_buttons_delete => 'কাষ্টম বুটাম মচক';
 
   @override
-  String get custom_buttons_text => 'Button text';
+  String get custom_buttons_text => 'বুটাম টেক্সট';
 
   @override
-  String get custom_buttons_text_req => 'Button text required';
+  String get custom_buttons_text_req => 'বুটাম টেক্সট প্ৰয়োজনীয়';
 
   @override
-  String get custom_buttons_js_code => 'lua code';
+  String get custom_buttons_js_code => 'lua ক\'ড';
 
   @override
-  String get custom_buttons_js_code_req => 'lua code required';
+  String get custom_buttons_js_code_req => 'lua ক\'ড প্ৰয়োজনীয়';
 
   @override
-  String get custom_buttons_js_code_long => 'lua code (on long press)';
+  String get custom_buttons_js_code_long => 'lua ক\'ড (দীৰ্ঘ প্ৰেছত)';
 
   @override
-  String get custom_buttons_startup => 'lua code (on startup)';
+  String get custom_buttons_startup => 'lua ক\'ড (ষ্টাৰ্টআপত)';
 
   @override
   String n_days(Object n) {
-    return '$n days';
+    return '$n দিন';
   }
 
   @override
-  String get decoder => 'Decoder';
+  String get decoder => 'ডিক\'ডাৰ';
 
   @override
-  String get decoder_info => 'Hardware decoding, pixel format, debanding';
+  String get decoder_info => 'হাৰ্ডৱেৰ ডিক\'ডিং, পিক্সেল ফৰমেট, ডিবেণ্ডিং';
 
   @override
-  String get enable_gpu_next => 'Enable gpu-next (Android only)';
+  String get enable_gpu_next => 'gpu-next সক্ষম কৰক (কেৱল Android)';
 
   @override
-  String get enable_gpu_next_info => 'A new video rendering backend';
+  String get enable_gpu_next_info => 'এক নতুন ভিডিঅ\' ৰেণ্ডাৰিং ইঞ্জিন';
 
   @override
-  String get debanding => 'Debanding';
+  String get debanding => 'ডিবেণ্ডিং';
 
   @override
-  String get use_yuv420p => 'Use YUV420P pixel format';
+  String get use_yuv420p => 'YUV420P পিক্সেল ফৰমেট ব্যৱহাৰ কৰক';
 
   @override
   String get use_yuv420p_info =>
-      'May fix black screens on some video codecs, can also improve performance at the cost of quality';
+      'কিছুমান ভিডিঅ\' ক\'ডেকত ক\'লা স্ক্ৰীন ঠিক কৰিব পাৰে, গুণমানৰ মূল্যত প্ৰদৰ্শন উন্নত কৰিব পাৰে';
 
   @override
-  String get audio_preferred_languages => 'Preferred langauages';
+  String get audio_preferred_languages => 'পচন্দৰ ভাষাসমূহ';
 
   @override
   String get audio_preferred_languages_info =>
-      'Audio langauage(s) to be selected by default on a video with multiple audio streams, 2/3-letter languages codes (e.g.: en, de, fr) work. Multiple values can be delimited by a comma.';
+      'একাধিক অডিঅ\' ষ্ট্ৰীম থকা ভিডিঅ\'ত ডিফল্টভাৱে নিৰ্বাচিত অডিঅ\' ভাষা(সমূহ), 2/3-আখৰৰ ভাষা ক\'ড (যেনে: as, en, ja)। একাধিক মান কমাৰ দ্বাৰা পৃথক কৰিব পাৰি।';
 
   @override
-  String get enable_audio_pitch_correction => 'Enable audio pitch correction';
+  String get enable_audio_pitch_correction => 'অডিঅ\' পিচ সংশোধন সক্ষম কৰক';
 
   @override
   String get enable_audio_pitch_correction_info =>
-      'Prevents the audio from becoming high-pitched at faster speeds and low-pitched at slower speeds';
+      'দ্ৰুত গতিত অডিঅ\' উচ্চ-পিচ আৰু লেহেম গতিত নিম্ন-পিচ হোৱাৰ পৰা ৰোধ কৰে';
 
   @override
-  String get audio_channels => 'Audio channels';
+  String get audio_channels => 'অডিঅ\' চেনেলসমূহ';
 
   @override
-  String get volume_boost_cap => 'Volume boost cap';
+  String get volume_boost_cap => 'ভলিউম বুষ্ট কেপ';
 
   @override
-  String get internal_player => 'Internal player';
+  String get internal_player => 'আভ্যন্তৰীণ প্লেয়াৰ';
 
   @override
-  String get internal_player_info => 'Progress, controls, orientation';
+  String get internal_player_info => 'প্ৰগতি, নিয়ন্ত্ৰণ, অভিমুখীকৰণ';
 
   @override
-  String get subtitle_delay_text => 'Subtitle delay';
+  String get subtitle_delay_text => 'উপশিৰোনাম বিলম্ব';
 
   @override
-  String get subtitle_delay => 'Delay (ms)';
+  String get subtitle_delay => 'বিলম্ব (ms)';
 
   @override
-  String get subtitle_speed => 'Speed';
+  String get subtitle_speed => 'গতি';
 
   @override
-  String get calendar => 'Calendar';
+  String get calendar => 'কেলেণ্ডাৰ';
 
   @override
-  String get calendar_no_data => 'No data yet.';
+  String get calendar_no_data => 'এতিয়াও কোনো ডাটা নাই।';
 
   @override
   String get calendar_info =>
-      'The calendar is only able to predict the next chapter upload based on the older uploads. Some data might not be 100% accurate!';
+      'কেলেণ্ডাৰে কেৱল পুৰণি আপলোডৰ ভিত্তিত পৰৱৰ্তী অধ্যায় আপলোডৰ পূৰ্বাভাস দিব পাৰে। কিছুমান ডাটা ১০০% সঠিক নহ\'বও পাৰে!';
 
   @override
   String in_n_day(Object days) {
-    return 'in $days day';
+    return '$days দিনত';
   }
 
   @override
   String in_n_days(Object days) {
-    return 'in $days days';
+    return '$days দিনত';
   }
 
   @override
-  String get clear_library => 'Clear library';
+  String get clear_library => 'পুথিভঁৰাল পৰিষ্কাৰ কৰক';
 
   @override
   String get clear_library_desc =>
-      'Choose to clear all manga, anime and/or novel entries';
+      'সকলো মাংগা, এনিমে আৰু/বা উপন্যাস এণ্ট্ৰিসমূহ পৰিষ্কাৰ কৰিবলৈ নিৰ্বাচন কৰক';
 
   @override
   String get clear_library_input =>
-      'Type \'manga\', \'anime\' and/or \'novel\' (separated by a comma) to remove all related entries';
+      'সকলো সংশ্লিষ্ট এণ্ট্ৰিসমূহ আঁতৰাবলৈ \'manga\', \'anime\' আৰু/বা \'novel\' টাইপ কৰক (কমাৰ দ্বাৰা পৃথক)';
 
   @override
-  String get watch_order => 'Watch order';
+  String get watch_order => 'চোৱাৰ ক্ৰম';
 
   @override
-  String get sequels => 'Sequels';
+  String get sequels => 'ছিক্বেলসমূহ';
 
   @override
-  String get recommendations_similarity => 'Similarity:';
+  String get recommendations_similarity => 'সাদৃশ্য:';
 
   @override
-  String get local_folder_structure => 'Structure of a local folder';
+  String get local_folder_structure => 'স্থানীয় ফ\'ল্ডাৰৰ গাঁথনি';
 
   @override
-  String get local_folder => 'Local folders';
+  String get local_folder => 'স্থানীয় ফ\'ল্ডাৰ';
 
   @override
-  String get add_local_folder => 'Add local folder';
+  String get add_local_folder => 'স্থানীয় ফ\'ল্ডাৰ যোগ কৰক';
 
   @override
-  String get rescan_local_folder => 'Rescan all local folders now';
+  String get rescan_local_folder =>
+      'সকলো স্থানীয় ফ\'ল্ডাৰ এতিয়াই পুনৰ স্কেন কৰক';
 
   @override
-  String get export_metadata => 'Export metadata';
+  String get export_metadata => 'মেটাডাটা ৰপ্তানি কৰক';
 
   @override
-  String get exported => 'Exported';
+  String get exported => 'ৰপ্তানি কৰা হ\'ল';
 
   @override
-  String get text_size => 'Text Size :';
+  String get text_size => 'পাঠ আকাৰ:';
 
   @override
-  String get text_align => 'Text Align';
+  String get text_align => 'পাঠ সংৰেখণ';
 
   @override
-  String get line_height => 'Line Height';
+  String get line_height => 'শাৰী উচ্চতা';
 
   @override
-  String get show_scroll_percentage => 'Show Scroll Percentage';
+  String get show_scroll_percentage => 'স্ক্ৰ\'ল শতাংশ দেখুৱাওক';
 
   @override
-  String get remove_extra_paragraph_spacing => 'Remove Extra Paragraph Spacing';
+  String get remove_extra_paragraph_spacing =>
+      'অতিৰিক্ত অনুচ্ছেদ স্পেছিং আঁতৰাওক';
 
   @override
   String select_label_color(Object label) {
-    return 'Select $label Color';
+    return '$label ৰং নিৰ্বাচন কৰক';
   }
 }
