@@ -14,10 +14,10 @@
       "bundleIdentifier": "com.kodjodevf.mangayomi",
       "developerName": "Moustapha Kodjo Amadou",
       "subtitle": "Read manga, novels, and watch anime",
-      "version": "0.1.0",
+      "version": "0.6.60",
       "versionDate": "2025-11-09T01:02:44Z",
-      "versionDescription": "",
-      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.1.0/Mangayomi-v0.1.0-ios.ipa",
+      "versionDescription": "What's Changed\r\n* iOS Workflow fix by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/573\r\n* fixed trakt episode numbers by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/575\r\n* reworked local source by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/574\r\n* added support for LNReader plugins by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/587\r\n* fixed migration sourceId issue by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/594\r\n* Refactor and update dependencies for Isar and Riverpod by @kodjodevf in https://github.com/kodjodevf/mangayomi/pull/596\r\n* Standardize Folder Structure on Windows, Linux, iOS & macOS by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/517\r\n* Some optimisations\r\n\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.6.5...v0.6.60",
+      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.60/Mangayomi-v0.6.60-ios.ipa",
       "localizedDescription": "Mangayomi is an open-source Flutter app for reading manga, novels, and watching anime across multiple platforms.",
       "iconURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/icons/icon_default.webp",
       "tintColor": "EF4444",
@@ -30,10 +30,10 @@
       ],
       "versions": [
         {
-          "version": "0.1.0",
+          "version": "0.6.60",
           "date": "2025-11-09T01:02:44Z",
           "localizedDescription": "",
-          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.1.0/Mangayomi-v0.1.0-ios.ipa",
+          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.60/Mangayomi-v0.6.60-ios.ipa",
           "size": 44339219
         },
         {
@@ -217,14 +217,14 @@
     },
     {
       "appID": "com.kodjodevf.mangayomi",
-      "title": "0.1.0 - 09 Nov",
-      "identifier": "release-0.1.0",
+      "title": "0.6.60 - 09 Nov",
+      "identifier": "release-0.6.60",
       "caption": "Update for Mangayomi now available!",
       "date": "2025-11-09T01:02:44Z",
       "tintColor": "EF4444",
       "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
       "notify": true,
-      "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.1.0"
+      "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.6.60"
     }
   ]
 }
