@@ -172,22 +172,74 @@ class ReaderSettingsTab extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.space_bar, size: 20),
-                    Expanded(
-                      child: Slider(
-                        value: padding.toDouble(),
-                        min: 0,
-                        max: 50,
-                        divisions: 50,
-                        label: '$padding px',
-                        onChanged: (value) {
-                          ref
-                              .read(novelReaderPaddingStateProvider.notifier)
-                              .set(value.toInt());
-                        },
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Theme.of(
+                          context,
+                        ).primaryColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        Icons.space_bar_rounded,
+                        size: 22,
+                        color: Theme.of(context).primaryColor,
                       ),
                     ),
-                    Text('${padding}px'),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          trackHeight: 4,
+                          thumbShape: const RoundSliderThumbShape(
+                            enabledThumbRadius: 8,
+                          ),
+                          overlayShape: const RoundSliderOverlayShape(
+                            overlayRadius: 16,
+                          ),
+                          activeTrackColor: Theme.of(context).primaryColor,
+                          inactiveTrackColor: Theme.of(
+                            context,
+                          ).primaryColor.withValues(alpha: 0.2),
+                          thumbColor: Theme.of(context).primaryColor,
+                          overlayColor: Theme.of(
+                            context,
+                          ).primaryColor.withValues(alpha: 0.2),
+                        ),
+                        child: Slider(
+                          value: padding.toDouble(),
+                          min: 0,
+                          max: 50,
+                          divisions: 50,
+                          label: '$padding px',
+                          onChanged: (value) {
+                            ref
+                                .read(novelReaderPaddingStateProvider.notifier)
+                                .set(value.toInt());
+                          },
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Theme.of(
+                          context,
+                        ).primaryColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        '${padding}px',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -202,22 +254,76 @@ class ReaderSettingsTab extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.height, size: 20),
-                    Expanded(
-                      child: Slider(
-                        value: lineHeight,
-                        min: 1.0,
-                        max: 3.0,
-                        divisions: 20,
-                        label: lineHeight.toStringAsFixed(1),
-                        onChanged: (value) {
-                          ref
-                              .read(novelReaderLineHeightStateProvider.notifier)
-                              .set(value);
-                        },
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Theme.of(
+                          context,
+                        ).primaryColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        Icons.height_rounded,
+                        size: 22,
+                        color: Theme.of(context).primaryColor,
                       ),
                     ),
-                    Text(lineHeight.toStringAsFixed(1)),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          trackHeight: 4,
+                          thumbShape: const RoundSliderThumbShape(
+                            enabledThumbRadius: 8,
+                          ),
+                          overlayShape: const RoundSliderOverlayShape(
+                            overlayRadius: 16,
+                          ),
+                          activeTrackColor: Theme.of(context).primaryColor,
+                          inactiveTrackColor: Theme.of(
+                            context,
+                          ).primaryColor.withValues(alpha: 0.2),
+                          thumbColor: Theme.of(context).primaryColor,
+                          overlayColor: Theme.of(
+                            context,
+                          ).primaryColor.withValues(alpha: 0.2),
+                        ),
+                        child: Slider(
+                          value: lineHeight,
+                          min: 1.0,
+                          max: 3.0,
+                          divisions: 20,
+                          label: lineHeight.toStringAsFixed(1),
+                          onChanged: (value) {
+                            ref
+                                .read(
+                                  novelReaderLineHeightStateProvider.notifier,
+                                )
+                                .set(value);
+                          },
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Theme.of(
+                          context,
+                        ).primaryColor.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        lineHeight.toStringAsFixed(1),
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -328,19 +434,48 @@ class _SettingSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).textTheme.titleLarge?.color,
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 10),
+          child: Row(
+            children: [
+              Container(
+                width: 4,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.titleLarge?.color,
+                  letterSpacing: 0.3,
+                ),
+              ),
+            ],
           ),
         ),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-            child: child,
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Theme.of(context).primaryColor.withValues(alpha: 0.04),
+                Colors.transparent,
+              ],
+            ),
+            border: Border.all(
+              color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+              width: 1,
+            ),
           ),
+          child: Padding(padding: const EdgeInsets.all(16), child: child),
         ),
       ],
     );
@@ -402,38 +537,58 @@ class _ThemeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 70,
-        height: 60,
-        decoration: BoxDecoration(
-          color: _parseColor(backgroundColor),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: isSelected
-                ? Theme.of(context).primaryColor
-                : Colors.grey.withValues(alpha: 0.3),
-            width: isSelected ? 3 : 1,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width: 75,
+          height: 70,
+          decoration: BoxDecoration(
+            color: _parseColor(backgroundColor),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isSelected
+                  ? Theme.of(context).primaryColor
+                  : Colors.grey.withValues(alpha: 0.3),
+              width: isSelected ? 3 : 1.5,
+            ),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: Theme.of(
+                        context,
+                      ).primaryColor.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
           ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Aa',
-              style: TextStyle(
-                color: _parseColor(textColor),
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Aa',
+                style: TextStyle(
+                  color: _parseColor(textColor),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(color: _parseColor(textColor), fontSize: 10),
-            ),
-          ],
+              const SizedBox(height: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  color: _parseColor(textColor),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -526,70 +681,127 @@ class _ColorPicker extends StatelessWidget {
     Color selectedColor,
   ) {
     final isSelected = optionColor.toARGB32() == selectedColor.toARGB32();
-    return GestureDetector(
-      onTap: () {
-        onColorChanged(_colorToHex(optionColor));
-        Navigator.of(context).pop();
-      },
-      child: Container(
-        width: 50,
-        height: 50,
-        decoration: BoxDecoration(
-          color: optionColor,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
-            width: isSelected ? 3 : 1,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          onColorChanged(_colorToHex(optionColor));
+          Navigator.of(context).pop();
+        },
+        borderRadius: BorderRadius.circular(10),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+            color: optionColor,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
+              width: isSelected ? 3 : 1.5,
+            ),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: Theme.of(
+                        context,
+                      ).primaryColor.withValues(alpha: 0.4),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
           ),
+          child: isSelected
+              ? Icon(
+                  Icons.check_circle_rounded,
+                  size: 26,
+                  color: optionColor.computeLuminance() > 0.5
+                      ? Colors.black
+                      : Colors.white,
+                )
+              : null,
         ),
-        child: isSelected
-            ? Icon(
-                Icons.check,
-                color: optionColor.computeLuminance() > 0.5
-                    ? Colors.black
-                    : Colors.white,
-              )
-            : null,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _showColorPickerDialog(context),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 30,
-              height: 30,
-              decoration: BoxDecoration(
-                color: _parseColor(color),
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: Colors.grey),
-              ),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => _showColorPickerDialog(context),
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.grey.withValues(alpha: 0.3),
+              width: 1.5,
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(label, style: const TextStyle(fontSize: 12)),
-                  Text(
-                    color,
-                    style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+            borderRadius: BorderRadius.circular(12),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Theme.of(context).primaryColor.withValues(alpha: 0.03),
+                Colors.transparent,
+              ],
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: _parseColor(color),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: Colors.grey.withValues(alpha: 0.5),
+                    width: 2,
                   ),
-                ],
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const Icon(Icons.arrow_drop_down),
-          ],
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      color,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.grey[600],
+                        fontFamily: 'monospace',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.palette_outlined,
+                color: Theme.of(context).primaryColor.withValues(alpha: 0.7),
+                size: 20,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -609,28 +821,34 @@ class _AlignButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: isSelected
-              ? Theme.of(context).primaryColor.withValues(alpha: 0.2)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            color: isSelected
+                ? Theme.of(context).primaryColor.withValues(alpha: 0.15)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: isSelected
+                  ? Theme.of(context).primaryColor
+                  : Colors.grey.withValues(alpha: 0.3),
+              width: isSelected ? 2 : 1.5,
+            ),
+          ),
+          child: Icon(
+            icon,
+            size: 22,
             color: isSelected
                 ? Theme.of(context).primaryColor
-                : Colors.grey.withValues(alpha: 0.3),
-            width: isSelected ? 2 : 1,
+                : Theme.of(context).iconTheme.color,
           ),
-        ),
-        child: Icon(
-          icon,
-          color: isSelected
-              ? Theme.of(context).primaryColor
-              : Theme.of(context).iconTheme.color,
         ),
       ),
     );

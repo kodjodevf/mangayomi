@@ -117,6 +117,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
         fontSize = initFontSize;
       });
     });
+    if (!isDesktop) SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     discordRpc?.showChapterDetails(ref, chapter);
   }
 

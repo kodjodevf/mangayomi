@@ -79,6 +79,7 @@ class AutoBackupLocationState extends _$AutoBackupLocationState {
 
 @riverpod
 Future<void> checkAndBackup(Ref ref) async {
+  ref.keepAlive();
   final settings = isar.settings.getSync(227);
   final backupFrequency = _duration(settings!.backupFrequency);
   if (backupFrequency == null || settings.startDatebackup == null) return;

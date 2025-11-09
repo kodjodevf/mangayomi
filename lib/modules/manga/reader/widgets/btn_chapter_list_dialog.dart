@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
 Widget btnToShowChapterListDialog(
@@ -21,11 +24,70 @@ Widget btnToShowChapterListDialog(
       await showDialog(
         context: context,
         builder: (context) {
-          return AlertDialog(
-            title: Text(title),
-            content: SizedBox(
-              width: context.width(0.8),
-              child: ChapterListWidget(chapter: chapter),
+          return Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            elevation: 8,
+            child: Container(
+              width: context.width(0.85),
+              constraints: BoxConstraints(maxHeight: context.height(0.8)),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    context.primaryColor.withValues(alpha: 0.05),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: context.primaryColor.withValues(alpha: 0.2),
+                          width: 1,
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.menu_book_rounded,
+                          color: context.primaryColor,
+                          size: 24,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            title,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: context.primaryColor,
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: Icon(
+                            Icons.close_rounded,
+                            color: context.primaryColor.withValues(alpha: 0.7),
+                          ),
+                          tooltip: 'Fermer',
+                        ),
+                      ],
+                    ),
+                  ),
+                  Flexible(child: ChapterListWidget(chapter: chapter)),
+                ],
+              ),
             ),
           );
         },
@@ -79,22 +141,25 @@ class _ChapterListWidgetState extends State<ChapterListWidget> {
   Widget build(BuildContext context) {
     return Scrollbar(
       interactive: true,
-      thickness: 12,
+      thickness: 8,
       radius: const Radius.circular(10),
       controller: controller,
       child: CustomScrollView(
         controller: controller,
         slivers: [
           SliverPadding(
-            padding: const EdgeInsets.symmetric(vertical: 2),
+            padding: const EdgeInsets.all(12),
             sliver: SuperSliverList.builder(
               itemCount: chapterList.length,
               itemBuilder: (context, index) {
                 final chapter = chapterList[index];
                 final currentChap = chapter == chapterList[currentChapIndex];
-                return ChapterListTile(
-                  chapter: chapter,
-                  currentChap: currentChap,
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: ChapterListTile(
+                    chapter: chapter,
+                    currentChap: currentChap,
+                  ),
                 );
               },
             ),
@@ -123,86 +188,224 @@ class _ChapterListTileState extends State<ChapterListTile> {
   late bool isBookmarked = chapter.isBookmarked!;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: widget.currentChap
-          ? context.primaryColor.withValues(alpha: 0.3)
-          : null,
-      child: ListTile(
-        textColor: chapter.isRead!
-            ? context.isLight
-                  ? Colors.black.withValues(alpha: 0.4)
-                  : Colors.white.withValues(alpha: 0.3)
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      decoration: BoxDecoration(
+        color: widget.currentChap
+            ? context.primaryColor.withValues(alpha: 0.15)
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+        border: widget.currentChap
+            ? Border.all(
+                color: context.primaryColor.withValues(alpha: 0.4),
+                width: 1.5,
+              )
             : null,
-        selectedColor: chapter.isRead!
-            ? Colors.white.withValues(alpha: 0.3)
-            : Colors.white,
-        onTap: () async {
-          if (!widget.currentChap) {
-            Navigator.pop(context);
-            pushReplacementMangaReaderView(context: context, chapter: chapter);
-          }
-        },
-        title: Text(
-          chapter.name!,
-          style: const TextStyle(fontSize: 13),
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: Row(
-          children: [
-            if (!(chapter.manga.value!.isLocalArchive ?? false))
-              Consumer(
-                builder: (context, ref, child) => Text(
-                  chapter.dateUpload == null || chapter.dateUpload!.isEmpty
-                      ? ""
-                      : dateFormat(
-                          chapter.dateUpload!,
-                          ref: ref,
-                          context: context,
-                        ),
-                  style: const TextStyle(fontSize: 11),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: () async {
+            if (!widget.currentChap) {
+              Navigator.pop(context);
+              pushReplacementMangaReaderView(
+                context: context,
+                chapter: chapter,
+              );
+            }
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                // Chapter indicator
+                Container(
+                  width: 4,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: chapter.isRead!
+                        ? Colors.grey.withValues(alpha: 0.3)
+                        : context.primaryColor,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
-              ),
-            if (!chapter.isRead!)
-              if (chapter.lastPageRead!.isNotEmpty &&
-                  chapter.lastPageRead != "1")
-                if (chapter.scanlator != null && chapter.scanlator!.isNotEmpty)
-                  Row(
+                const SizedBox(width: 12),
+                // Chapter content
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(' • '),
                       Text(
-                        chapter.scanlator!,
+                        chapter.name!,
                         style: TextStyle(
-                          fontSize: 11,
+                          fontSize: 14,
+                          fontWeight: widget.currentChap
+                              ? FontWeight.bold
+                              : FontWeight.w500,
                           color: chapter.isRead!
                               ? context.isLight
                                     ? Colors.black.withValues(alpha: 0.4)
-                                    : Colors.white.withValues(alpha: 0.3)
+                                    : Colors.white.withValues(alpha: 0.4)
                               : null,
                         ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
                       ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          if (!(chapter.manga.value!.isLocalArchive ?? false))
+                            Consumer(
+                              builder: (context, ref, child) {
+                                final dateText =
+                                    chapter.dateUpload == null ||
+                                        chapter.dateUpload!.isEmpty
+                                    ? ""
+                                    : dateFormat(
+                                        chapter.dateUpload!,
+                                        ref: ref,
+                                        context: context,
+                                      );
+                                return dateText.isNotEmpty
+                                    ? Row(
+                                        children: [
+                                          Icon(
+                                            Icons.access_time_rounded,
+                                            size: 12,
+                                            color: Colors.grey,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            dateText,
+                                            style: const TextStyle(
+                                              fontSize: 11,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : const SizedBox.shrink();
+                              },
+                            ),
+                          if (chapter.scanlator != null &&
+                              chapter.scanlator!.isNotEmpty)
+                            Row(
+                              children: [
+                                if (!(chapter.manga.value!.isLocalArchive ??
+                                        false) &&
+                                    (chapter.dateUpload != null &&
+                                        chapter.dateUpload!.isNotEmpty))
+                                  const Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                    ),
+                                    child: Text(
+                                      '•',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ),
+                                Icon(
+                                  Icons.group_rounded,
+                                  size: 12,
+                                  color: Colors.grey,
+                                ),
+                                const SizedBox(width: 4),
+                                Flexible(
+                                  child: Text(
+                                    chapter.scanlator!,
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: Colors.grey,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                        ],
+                      ),
+                      if (!chapter.isRead! &&
+                          chapter.lastPageRead!.isNotEmpty &&
+                          chapter.lastPageRead != "1")
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.bookmark_rounded,
+                                size: 12,
+                                color: context.primaryColor,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                chapter.manga.value!.itemType == ItemType.anime
+                                    ? context.l10n.episode_progress(
+                                        Duration(
+                                          milliseconds: int.parse(
+                                            chapter.lastPageRead!,
+                                          ),
+                                        ).toString().substringBefore("."),
+                                      )
+                                    : context.l10n.page(
+                                        chapter.manga.value!.itemType ==
+                                                ItemType.manga
+                                            ? chapter.lastPageRead!
+                                            : "${((double.tryParse(chapter.lastPageRead!) ?? 0) * 100).toStringAsFixed(0)} %",
+                                      ),
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                  color: context.primaryColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                     ],
                   ),
-          ],
-        ),
-        trailing: Consumer(
-          builder: (context, ref, child) => IconButton(
-            onPressed: () {
-              setState(() {
-                isBookmarked = !isBookmarked;
-              });
-              isar.writeTxnSync(
-                () => {
-                  isar.chapters.putSync(
-                    chapter
-                      ..isBookmarked = isBookmarked
-                      ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+                ),
+                const SizedBox(width: 12),
+                // Bookmark button
+                Consumer(
+                  builder: (context, ref, child) => Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(20),
+                      onTap: () {
+                        setState(() {
+                          isBookmarked = !isBookmarked;
+                        });
+                        isar.writeTxnSync(
+                          () => {
+                            isar.chapters.putSync(
+                              chapter
+                                ..isBookmarked = isBookmarked
+                                ..updatedAt =
+                                    DateTime.now().millisecondsSinceEpoch,
+                            ),
+                          },
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Icon(
+                          isBookmarked
+                              ? Icons.bookmark_rounded
+                              : Icons.bookmark_outline_rounded,
+                          color: isBookmarked
+                              ? context.primaryColor
+                              : Colors.grey,
+                          size: 22,
+                        ),
+                      ),
+                    ),
                   ),
-                },
-              );
-            },
-            icon: Icon(
-              isBookmarked ? Icons.bookmark : Icons.bookmark_outline,
-              color: context.primaryColor,
+                ),
+              ],
             ),
           ),
         ),
