@@ -51,7 +51,19 @@ class ChapterListTileWidget extends ConsumerWidget {
               : Colors.white,
           onTap: () async => _handleInteraction(ref, context),
           title: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
+              Container(
+                width: 4,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: chapter.isRead!
+                      ? Colors.grey.withValues(alpha: 0.3)
+                      : context.primaryColor,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 12),
               if (chapter.thumbnailUrl != null)
                 _thumbnailPreview(context, chapter.thumbnailUrl),
               chapter.isBookmarked!
@@ -76,6 +88,7 @@ class ChapterListTileWidget extends ConsumerWidget {
           ),
           subtitle: Row(
             children: [
+              const SizedBox(width: 16),
               if (chapter.isFiller ?? false)
                 Row(
                   children: [
