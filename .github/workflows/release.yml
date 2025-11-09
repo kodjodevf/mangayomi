@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  ZSIGN_VERSION: '0.7'
+  ZSIGN_VERSION: "0.7"
 
 jobs:
   build-and-release-android-apks:
@@ -86,40 +86,41 @@ jobs:
   build-and-release-ios-ipa:
     permissions:
       contents: write
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
-      # Checkout branch
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          ref: ${{ github.ref }}
-          path: .
 
-      - name: setup flutter
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: "stable"
+          architecture: x64
 
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-ios,x86_64-apple-ios
 
-      - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen'
+      - name: Setup Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: rust
+          cache-on-failure: true
 
-      - name: Select Xcode 16.2
-        run: sudo xcode-select -switch /Applications/Xcode_16.2.app/Contents/Developer
+      - name: Install flutter_rust_bridge_codegen
+        run: cargo install flutter_rust_bridge_codegen
+
+      - name: Select Xcode 16.4
+        run: sudo xcode-select --switch /Applications/Xcode_16.4.app
 
       - name: Print Xcode version
         run: xcodebuild -version
 
-      - name: Download iOS Platform
-        run: xcodebuild -downloadPlatform iOS
-
-      - name: flutter pub get
+      - name: Flutter pub get
         run: flutter pub get
 
-      - name: setup signing environment
+      - name: Setup signing environment
         env:
           P12_BASE64: ${{ secrets.P12_CERTIFICATE }}
           PROVISIONING_PROFILE_BASE64: ${{ secrets.PROVISIONING_PROFILE }}
@@ -130,24 +131,24 @@ jobs:
           unzip zsign.zip
           chmod +x zsign || chmod +x zsign-*
 
-      - name: build ios
+      - name: Build iOS
         env:
           P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
         run: |
-          flutter build ios --release --no-codesign --verbose
+          flutter build ios --release --no-codesign
           mkdir -p build/ios/iphoneos/Payload
-          ln -s ../Runner.app build/ios/iphoneos/Payload/Runner.app
+          mv build/ios/iphoneos/Runner.app build/ios/iphoneos/Payload/
           ./zsign -f -k ./certificate.p12 -p "$P12_PASSWORD" -m ./profile.mobileprovision ./build/ios/iphoneos/Payload/Runner.app
           cd build/ios/iphoneos
-          zip -r ./Mangayomi-${{ github.ref_name }}-ios.ipa Payload
+          zip -r Mangayomi-${{ github.ref_name }}-ios.ipa Payload
 
-      - name: upload artifact ios ipa
+      - name: Upload artifact iOS IPA
         uses: actions/upload-artifact@v4
         with:
           name: Mangayomi-${{ github.ref_name }}-ios
           path: "build/ios/iphoneos/Mangayomi-*.ipa"
 
-      - name: release package ios ipa
+      - name: Release package iOS IPA
         uses: ncipollo/release-action@v1
         with:
           artifacts: "build/ios/iphoneos/Mangayomi-*.ipa"
@@ -223,7 +224,7 @@ jobs:
 
       - name: build windows exe
         run: |
-            dart run inno_bundle:build --release
+          dart run inno_bundle:build --release
 
       - name: build windows zip
         run: |
@@ -366,7 +367,7 @@ jobs:
           cp -r * %{buildroot}/usr/bin/
           cp -r %{_sourcedir}/usr/share/* %{buildroot}/usr/share/
           cp %{_sourcedir}/mangayomi.desktop %{buildroot}/usr/share/applications/mangayomi.desktop
-          
+
           %files
           /usr/bin/*
           /usr/share/applications/mangayomi.desktop
