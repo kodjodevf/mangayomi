@@ -165,7 +165,11 @@ Future<dynamic> updateMangaDetail(
       }
     });
   } catch (e, s) {
-    if (showToast) botToast('$e\n$s');
+    if (showToast) {
+      botToast('$e\n$s');
+    } else {
+      rethrow;
+    }
     return;
   }
 }

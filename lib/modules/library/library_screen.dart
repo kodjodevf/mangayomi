@@ -96,7 +96,11 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     for (var manga in mangaList) {
       try {
         await ref.read(
-          updateMangaDetailProvider(mangaId: manga.id, isInit: false).future,
+          updateMangaDetailProvider(
+            mangaId: manga.id,
+            isInit: false,
+            showToast: false,
+          ).future,
         );
       } catch (_) {
         failed++;
