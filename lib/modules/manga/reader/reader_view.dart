@@ -14,6 +14,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
+import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/reader/providers/crop_borders_provider.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
@@ -389,7 +390,7 @@ class _MangaChapterPageGalleryState
                                               isar.mangas.putSync(
                                                 manga
                                                   ..customCoverImage =
-                                                      imageBytes
+                                                      imageBytes.getCoverImage
                                                   ..updatedAt = DateTime.now()
                                                       .millisecondsSinceEpoch,
                                               );

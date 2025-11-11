@@ -176,9 +176,8 @@ class _CreateBackupState extends ConsumerState<CreateBackup> {
                             result = await FilePicker.platform
                                 .getDirectoryPath();
                           }
-
                           if (result != null && context.mounted) {
-                            ref.watch(
+                            ref.read(
                               doBackUpProvider(
                                 list: indexList,
                                 path: result,

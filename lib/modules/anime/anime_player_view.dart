@@ -23,6 +23,7 @@ import 'package:mangayomi/modules/anime/providers/anime_player_controller_provid
 import 'package:mangayomi/modules/anime/widgets/aniskip_countdown_btn.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/anime/widgets/play_or_pause_button.dart';
+import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/anime/widgets/mobile.dart';
 import 'package:mangayomi/modules/anime/widgets/subtitle_view.dart';
@@ -2223,7 +2224,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                                                       ..updatedAt = DateTime.now()
                                                           .millisecondsSinceEpoch
                                                       ..customCoverImage =
-                                                          imageBytes,
+                                                          imageBytes
+                                                              ?.getCoverImage,
                                                   );
                                                 });
                                                 if (context.mounted) {

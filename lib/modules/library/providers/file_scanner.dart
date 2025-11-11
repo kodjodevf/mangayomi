@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:io'; // For I/O-operations
+import 'dart:typed_data';
 import 'package:epubx/epubx.dart';
 import 'package:isar_community/isar.dart'; // Isar database package for local storage
 import 'package:mangayomi/main.dart'; // Exposes the global `isar` instance
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:path/path.dart' as p; // For manipulating file system paths
 import 'package:bot_toast/bot_toast.dart'; // For Exceptions
@@ -182,7 +184,7 @@ Future<void> _scanDirectory(Ref ref, Directory? dir) async {
         final bytes = await File(imageFiles.first.path).readAsBytes();
         final byteList = bytes.toList();
         if (manga.customCoverImage != byteList) {
-          manga.customCoverImage = byteList;
+          manga.customCoverImage = Uint8List.fromList(byteList).getCoverImage;
           manga.lastUpdate = dateNow;
         }
       } catch (e) {
@@ -299,7 +301,9 @@ Future<void> _scanDirectory(Ref ref, Directory? dir) async {
               book.Content!.Images!.containsKey("media/file0.png")
               ? book.Content!.Images!["media/file0.png"]!.Content
               : book.Content!.Images!.values.first.Content;
-          manga.customCoverImage = coverImage;
+          manga.customCoverImage = coverImage == null
+              ? null
+              : Uint8List.fromList(coverImage).getCoverImage;
           saveManga++;
         }
         for (var chapter in book.Chapters ?? []) {

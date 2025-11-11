@@ -1131,30 +1131,32 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                             // Downloaded Chapters
                             if (downloadedChapsList.isNotEmpty) {
                               for (var manga in mangasList) {
-                                String mangaDirectory = "";
-                                if (manga.isLocalArchive ?? false) {
-                                  mangaDirectory = _deleteImport(
-                                    manga,
-                                    mangaDirectory,
-                                  );
-                                  // Also remove item from library
-                                  // else it has 0 chapters/episodes
-                                  // and when opened, shows exception
-                                  // "Null check operator"
-                                  isar.writeTxnSync(() {
-                                    _removeImport(ref, manga);
-                                  });
-                                } else {
-                                  mangaDirectory = await _deleteDownload(
-                                    manga,
-                                    mangaDirectory,
-                                  );
-                                }
-                                if (mangaDirectory.isNotEmpty) {
-                                  final path = Directory(mangaDirectory);
-                                  if (path.existsSync() &&
-                                      path.listSync().isEmpty) {
-                                    path.deleteSync(recursive: true);
+                                if (!(manga.isLocalArchive ?? false)) {
+                                  String mangaDirectory = "";
+                                  if (manga.isLocalArchive ?? false) {
+                                    mangaDirectory = _deleteImport(
+                                      manga,
+                                      mangaDirectory,
+                                    );
+                                    // Also remove item from library
+                                    // else it has 0 chapters/episodes
+                                    // and when opened, shows exception
+                                    // "Null check operator"
+                                    isar.writeTxnSync(() {
+                                      _removeImport(ref, manga);
+                                    });
+                                  } else {
+                                    mangaDirectory = await _deleteDownload(
+                                      manga,
+                                      mangaDirectory,
+                                    );
+                                  }
+                                  if (mangaDirectory.isNotEmpty) {
+                                    final path = Directory(mangaDirectory);
+                                    if (path.existsSync() &&
+                                        path.listSync().isEmpty) {
+                                      path.deleteSync(recursive: true);
+                                    }
                                   }
                                 }
                               }
