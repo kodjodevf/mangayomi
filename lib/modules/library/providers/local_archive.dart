@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:epubx/epubx.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -139,6 +140,9 @@ extension Uint8ListExtensions on Uint8List {
     if (length < 5) {
       return this;
     }
+    botToast(
+      "Cover image is larger than 5MB (${length.toStringAsFixed(2)}MB). Skipping cover image.",
+    );
     return null;
   }
 }
