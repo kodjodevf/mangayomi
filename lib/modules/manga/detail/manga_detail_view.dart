@@ -661,8 +661,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     widget.manga!.source!,
                                     widget.manga!.sourceId,
                                   );
+                                  if (source == null) return;
                                   final url =
-                                      "${source!.baseUrl}${widget.manga!.link!.getUrlWithoutDomain}";
+                                      "${source.baseUrl}${widget.manga!.link!.getUrlWithoutDomain}";
                                   final box =
                                       context.findRenderObject() as RenderBox?;
                                   SharePlus.instance.share(
@@ -683,6 +684,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     widget.manga!.source!,
                                     widget.manga!.sourceId,
                                   );
+                                  if (source == null) return;
                                   context.push(
                                     '/extension_detail',
                                     extra: source,
@@ -1954,8 +1956,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                       widget.manga!.source!,
                       widget.manga!.sourceId,
                     );
+                    if (source == null) return;
                     final url =
-                        "${source!.baseUrl}${widget.manga!.link!.getUrlWithoutDomain}";
+                        "${source.baseUrl}${widget.manga!.link!.getUrlWithoutDomain}";
 
                     Map<String, dynamic> data = {
                       'url': url,
