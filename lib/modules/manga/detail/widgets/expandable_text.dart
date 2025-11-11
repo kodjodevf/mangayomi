@@ -280,6 +280,7 @@ class ExpandableTextState extends State<ExpandableText>
           textDirection: textDirection,
           textAlign: textAlign,
           textScaler: textScaler,
+          onTap: _linkTapped,
         );
 
         Widget textWidget = selectableText;
