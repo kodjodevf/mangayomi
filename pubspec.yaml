@@ -91,7 +91,7 @@ dependencies:
     git:
       url: https://github.com/kodjodevf/epubx.dart.git
       ref: dev
-  d4rt: ^0.1.7
+  d4rt: ^0.1.8
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   flutter_discord_rpc_fork:
