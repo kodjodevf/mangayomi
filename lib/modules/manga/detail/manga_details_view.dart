@@ -100,15 +100,6 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                           onPressed: () {
                             chap.pushToReaderView(context);
                           },
-                          textWidth: measureText(
-                            l10n.resume,
-                            Theme.of(context).textTheme.labelLarge!,
-                          ).width,
-                          width: calculateDynamicButtonWidth(
-                            l10n.resume,
-                            Theme.of(context).textTheme.labelLarge!,
-                            50,
-                          ), // 50 Padding, else RenderFlex overflow Exception
                         );
                       }
                       return CustomFloatingActionBtn(
@@ -122,15 +113,6 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                               .last
                               .pushToReaderView(context);
                         },
-                        textWidth: measureText(
-                          buttonLabel,
-                          Theme.of(context).textTheme.labelLarge!,
-                        ).width,
-                        width: calculateDynamicButtonWidth(
-                          buttonLabel,
-                          Theme.of(context).textTheme.labelLarge!,
-                          50,
-                        ), // 50 Padding, else RenderFlex overflow Exception
                       );
                     }
                     return CustomFloatingActionBtn(
@@ -144,15 +126,6 @@ class _MangaDetailsViewState extends ConsumerState<MangaDetailsView> {
                             .last
                             .pushToReaderView(context);
                       },
-                      textWidth: measureText(
-                        buttonLabel,
-                        Theme.of(context).textTheme.labelLarge!,
-                      ).width,
-                      width: calculateDynamicButtonWidth(
-                        buttonLabel,
-                        Theme.of(context).textTheme.labelLarge!,
-                        50,
-                      ), // 50 Padding, else RenderFlex overflow Exception
                     );
                   },
                 )

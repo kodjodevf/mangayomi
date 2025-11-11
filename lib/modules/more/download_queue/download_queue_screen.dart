@@ -173,15 +173,6 @@ class DownloadQueueScreen extends ConsumerWidget {
               onPressed: () {
                 ref.read(processDownloadsProvider());
               },
-              textWidth: measureText(
-                l10n.download_queue,
-                Theme.of(context).textTheme.labelLarge!,
-              ).width,
-              width: calculateDynamicButtonWidth(
-                l10n.download_queue,
-                Theme.of(context).textTheme.labelLarge!,
-                50,
-              ), // 50 Padding, else RenderFlex overflow Exception
             ),
           );
         }

@@ -5,52 +5,60 @@ class CustomFloatingActionBtn extends StatelessWidget {
   final bool isExtended;
   final VoidCallback onPressed;
   final String label;
-  final double width;
-  final double textWidth;
 
   const CustomFloatingActionBtn({
     super.key,
     required this.isExtended,
     required this.onPressed,
     required this.label,
-    required this.width,
-    required this.textWidth,
   });
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      height: 55,
-      width: !isExtended ? 63 : width,
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeIn,
-      child: FloatingActionButton(
+    const duration = Duration(milliseconds: 250);
+    const curve = Curves.easeInOut;
+
+    return AnimatedSize(
+      duration: duration,
+      curve: curve,
+      alignment: Alignment.centerRight,
+      child: FloatingActionButton.extended(
         backgroundColor: context.primaryColor,
+        foregroundColor: Colors.white,
+        elevation: 4,
+        highlightElevation: 8,
         onPressed: onPressed,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              children: [
-                const Icon(Icons.play_arrow, color: Colors.white),
-                AnimatedContainer(
-                  curve: Curves.easeIn,
-                  width: !isExtended ? 0 : 5,
-                  duration: const Duration(milliseconds: 200),
-                ),
-              ],
-            ),
-            AnimatedContainer(
-              curve: Curves.easeIn,
-              width: !isExtended ? 0 : textWidth,
-              duration: const Duration(milliseconds: 200),
-              child: Text(
-                label,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 14, color: Colors.white),
-              ),
-            ),
-          ],
+        extendedIconLabelSpacing: 0,
+        extendedPadding: EdgeInsets.symmetric(horizontal: 16),
+        icon: const Icon(Icons.play_arrow_rounded, size: 24),
+        label: AnimatedSwitcher(
+          duration: duration,
+          switchInCurve: curve,
+          switchOutCurve: curve,
+          transitionBuilder: (child, animation) {
+            return SizeTransition(
+              sizeFactor: animation,
+              axis: Axis.horizontal,
+              axisAlignment: -1,
+              child: FadeTransition(opacity: animation, child: child),
+            );
+          },
+          child: isExtended
+              ? Padding(
+                  key: const ValueKey('extended'),
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    label,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                )
+              : const SizedBox.shrink(key: ValueKey('collapsed')),
         ),
       ),
     );
