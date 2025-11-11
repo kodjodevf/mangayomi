@@ -106,7 +106,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
         failed++;
       }
       numbers++;
-      if (context.mounted) {
+      if (mounted) {
         botToast(
           context.l10n.updating_library(numbers, failed, mangaList.length),
           fontSize: 13,
