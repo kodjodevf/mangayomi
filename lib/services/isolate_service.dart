@@ -5,8 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 
@@ -107,6 +105,18 @@ class GetIsolateService {
               proxyServer ?? '',
             ).search(query!, page!, filterList!);
             responsePort.send({'success': true, 'data': result});
+          } else if (serviceType == 'getVideoList') {
+            final result = await getExtensionService(
+              source!,
+              proxyServer ?? '',
+            ).getVideoList(url!);
+            responsePort.send({'success': true, 'data': result});
+          } else if (serviceType == 'getPageList') {
+            final result = await getExtensionService(
+              source!,
+              proxyServer ?? '',
+            ).getPageList(url!);
+            responsePort.send({'success': true, 'data': result});
           }
         } catch (e) {
           final responsePort = message['responsePort'] as SendPort;
@@ -119,10 +129,6 @@ class GetIsolateService {
   }
 
   Future<T> get<T>({
-    int? id,
-    bool? refresh,
-    ItemType? itemType,
-    Repo? repo,
     String? url,
     int? page,
     String? query,
