@@ -479,10 +479,10 @@ packages:
     dependency: "direct main"
     description:
       name: file_picker
-      sha256: f2d9f173c2c14635cc0e9b14c143c49ef30b4934e8d1d274d6206fcb0086a06f
+      sha256: f8f4ea435f791ab1f817b4e338ed958cb3d04ba43d6736ffc39958d950754967
       url: "https://pub.dev"
     source: hosted
-    version: "10.3.3"
+    version: "10.3.6"
   fixnum:
     dependency: transitive
     description:
@@ -627,7 +627,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "451341bfc91d8960bde06466e88605af87a3b869"
+      resolved-ref: "17ba49cdc00067d9598b7606b479e97c8bcda32b"
       url: "https://github.com/kodjodevf/flutter_qjs.git"
     source: git
     version: "0.0.1"
