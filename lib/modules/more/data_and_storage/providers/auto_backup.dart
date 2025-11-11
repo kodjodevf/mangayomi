@@ -45,6 +45,7 @@ class BackupFrequencyOptionsState extends _$BackupFrequencyOptionsState {
 class AutoBackupLocationState extends _$AutoBackupLocationState {
   @override
   (String, String) build() {
+    ref.keepAlive();
     _refresh();
     return ("", isar.settings.getSync(227)!.autoBackupLocation ?? "");
   }
