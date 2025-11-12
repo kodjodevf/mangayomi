@@ -1936,10 +1936,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     return Container(
       color: Theme.of(context).scaffoldBackgroundColor,
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(child: widget.action!),
           if (!isLocalArchive) Expanded(child: _smartUpdateDays()),
-          if (widget.itemType != ItemType.novel) Expanded(child: _action()),
+          _action(),
           if (!isLocalArchive)
             Expanded(
               child: SizedBox(
@@ -2031,9 +2032,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
       builder: (context, snapshot) {
         List<TrackPreference>? entries = snapshot.hasData ? snapshot.data! : [];
         if (entries.isEmpty) {
-          return Container();
+          return SizedBox.shrink();
         }
-        return SizedBox(
+        return Expanded(
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,

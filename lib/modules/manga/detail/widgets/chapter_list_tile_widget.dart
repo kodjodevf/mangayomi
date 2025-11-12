@@ -38,15 +38,16 @@ class ChapterListTileWidget extends ConsumerWidget {
         onLongPress: () => _handleInteraction(ref),
         onSecondaryTap: () => _handleInteraction(ref),
         child: ListTile(
-          minLeadingWidth: 3,
+          minLeadingWidth: 0,
+          horizontalTitleGap: 13,
           leading: Container(
-            width: 3,
-            height: 25,
+            width: 2,
+            height: 40,
             decoration: BoxDecoration(
               color: chapter.isRead!
                   ? Colors.grey.withValues(alpha: 0.3)
                   : context.primaryColor,
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: BorderRadius.circular(10),
             ),
           ),
           tileColor: (chapter.isFiller ?? false)
@@ -62,13 +63,13 @@ class ChapterListTileWidget extends ConsumerWidget {
               : Colors.white,
           onTap: () async => _handleInteraction(ref, context),
           title: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (chapter.thumbnailUrl != null)
                 _thumbnailPreview(context, chapter.thumbnailUrl),
               chapter.isBookmarked!
                   ? Icon(Icons.bookmark, size: 16, color: context.primaryColor)
-                  : Container(),
+                  : SizedBox.shrink(),
               chapter.description != null
                   ? Flexible(
                       child: Column(
