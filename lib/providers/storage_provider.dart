@@ -53,10 +53,10 @@ class StorageProvider {
       directory = Directory("/storage/emulated/0/Mangayomi/");
     } else {
       final dir = await getApplicationDocumentsDirectory();
-      // The documents dir in iOS and macOS is already named "Mangayomi".
+      // The documents dir in iOS is already named "Mangayomi".
       // Appending "Mangayomi" to the documents dir would create
       // unnecessarily nested Mangayomi/Mangayomi/ folder.
-      if (Platform.isIOS || Platform.isMacOS) return dir;
+      if (Platform.isIOS) return dir;
       directory = Directory(path.join(dir.path, 'Mangayomi'));
     }
     return directory;
@@ -114,10 +114,10 @@ class StorageProvider {
     } else {
       final dir = await getApplicationDocumentsDirectory();
       final p = dPath.isEmpty ? dir.path : dPath;
-      // The documents dir in iOS and macOS is already named "Mangayomi".
+      // The documents dir in iOS is already named "Mangayomi".
       // Appending "Mangayomi" to the documents dir would create
       // unnecessarily nested Mangayomi/Mangayomi/ folder.
-      if (Platform.isIOS || Platform.isMacOS) return Directory(p);
+      if (Platform.isIOS) return Directory(p);
       directory = Directory(path.join(p, 'Mangayomi'));
     }
     return directory;
@@ -163,7 +163,7 @@ class StorageProvider {
     final dir = await getApplicationDocumentsDirectory();
     String dbDir;
     if (Platform.isAndroid) return dir;
-    if (Platform.isIOS || Platform.isMacOS) {
+    if (Platform.isIOS) {
       // Put the database files inside /databases like on Windows, Linux
       // So they are not just in the app folders root dir
       dbDir = path.join(dir.path, 'databases');

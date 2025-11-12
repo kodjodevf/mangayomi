@@ -101,7 +101,15 @@ Future<void> _postLaunchInit(StorageProvider storage) async {
 Future<void> _migrateOldLayout() async {
   if (!(Platform.isIOS || Platform.isMacOS)) return;
   final root = await getApplicationDocumentsDirectory();
-  final oldRoot = Directory(p.join(root.path, 'Mangayomi'));
+  final rootM = Directory(p.join(root.path, 'Mangayomi'));
+  if (Platform.isIOS) {
+    await _migrateOld(rootM, root);
+  } else {
+    await _migrateOld(root, rootM);
+  }
+}
+
+Future<void> _migrateOld(Directory oldRoot, Directory root) async {
   if (!await oldRoot.exists()) return;
   final newDbDir = Directory(p.join(root.path, 'databases'));
   await newDbDir.create(recursive: true);
