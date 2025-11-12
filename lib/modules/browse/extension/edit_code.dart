@@ -96,7 +96,9 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
       _logsNotifier.value.add(event);
       try {
         await Future.delayed(const Duration(milliseconds: 5));
-        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+        if (_scrollController.hasClients) {
+          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+        }
       } catch (_) {}
     });
   }
