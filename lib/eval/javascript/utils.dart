@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:epubx/epubx.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_qjs/flutter_qjs.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
@@ -25,7 +26,12 @@ class JsUtils {
     }
 
     runtime.onMessage('log', (dynamic args) {
-      Logger.add(LoggerLevel.warning, "${args[0]}");
+      if (kDebugMode || useLogger) {
+        // ignore: avoid_print
+        print("LoggerLevel.warning:${args[0]}");
+        Logger.add(LoggerLevel.warning, "${args[0]}");
+      }
+
       return null;
     });
     runtime.onMessage('cryptoHandler', (dynamic args) {

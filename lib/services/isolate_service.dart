@@ -7,6 +7,7 @@ import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/utils/log/log.dart';
 
 class _IsolateData {
   final SendPort sendPort;
@@ -49,6 +50,19 @@ class GetIsolateService {
       if (message is SendPort) {
         completer.complete(message);
       }
+      if (message is String) {
+        if (message.startsWith('LoggerLevel.warning:')) {
+          Logger.add(
+            LoggerLevel.warning,
+            message.replaceFirst('LoggerLevel.warning:', ''),
+          );
+        } else {
+          Logger.add(LoggerLevel.info, message);
+        }
+        if (kDebugMode) {
+          print(message.replaceFirst('LoggerLevel.warning:', ''));
+        }
+      }
     });
 
     _sendPort = await completer.future;
@@ -67,65 +81,79 @@ class GetIsolateService {
     isar = await StorageProvider().initDB(null, inspector: kDebugMode);
 
     final receivePort = ReceivePort();
-    isolateData.sendPort.send(receivePort.sendPort);
+    Zone.current
+        .fork(
+          specification: ZoneSpecification(
+            print: (self, parent, zone, line) {
+              isolateData.sendPort.send(line);
+            },
+          ),
+        )
+        .run(() async {
+          isolateData.sendPort.send(receivePort.sendPort);
 
-    await for (var message in receivePort) {
-      if (message is Map<String, dynamic>) {
-        try {
-          final url = message['url'] as String?;
-          final page = message['page'] as int?;
-          final query = message['query'] as String?;
-          final filterList = message['filterList'] as List?;
-          final source = message['source'] as Source?;
-          final proxyServer = message['proxyServer'] as String?;
-          final serviceType = message['serviceType'] as String?;
-          final responsePort = message['responsePort'] as SendPort;
-
-          if (serviceType == 'getDetail') {
-            final result = await getExtensionService(
-              source!,
-              proxyServer ?? '',
-            ).getDetail(url!);
-            responsePort.send({'success': true, 'data': result});
-          } else if (serviceType == 'getPopular') {
-            final result = await getExtensionService(
-              source!,
-              proxyServer ?? '',
-            ).getPopular(page!);
-            responsePort.send({'success': true, 'data': result});
-          } else if (serviceType == 'getLatestUpdates') {
-            final result = await getExtensionService(
-              source!,
-              proxyServer ?? '',
-            ).getLatestUpdates(page!);
-            responsePort.send({'success': true, 'data': result});
-          } else if (serviceType == 'search') {
-            final result = await getExtensionService(
-              source!,
-              proxyServer ?? '',
-            ).search(query!, page!, filterList!);
-            responsePort.send({'success': true, 'data': result});
-          } else if (serviceType == 'getVideoList') {
-            final result = await getExtensionService(
-              source!,
-              proxyServer ?? '',
-            ).getVideoList(url!);
-            responsePort.send({'success': true, 'data': result});
-          } else if (serviceType == 'getPageList') {
-            final result = await getExtensionService(
-              source!,
-              proxyServer ?? '',
-            ).getPageList(url!);
-            responsePort.send({'success': true, 'data': result});
+          await for (var message in receivePort) {
+            if (message is Map<String, dynamic>) {
+              try {
+                final url = message['url'] as String?;
+                final page = message['page'] as int?;
+                final query = message['query'] as String?;
+                final filterList = message['filterList'] as List?;
+                final source = message['source'] as Source?;
+                final proxyServer = message['proxyServer'] as String?;
+                final serviceType = message['serviceType'] as String?;
+                final useLoggerValue = message['useLogger'] as bool?;
+                final responsePort = message['responsePort'] as SendPort;
+                if (useLoggerValue != null) {
+                  useLogger = useLoggerValue;
+                }
+                if (serviceType == 'getDetail') {
+                  final result = await getExtensionService(
+                    source!,
+                    proxyServer ?? '',
+                  ).getDetail(url!);
+                  responsePort.send({'success': true, 'data': result});
+                } else if (serviceType == 'getPopular') {
+                  final result = await getExtensionService(
+                    source!,
+                    proxyServer ?? '',
+                  ).getPopular(page!);
+                  responsePort.send({'success': true, 'data': result});
+                } else if (serviceType == 'getLatestUpdates') {
+                  final result = await getExtensionService(
+                    source!,
+                    proxyServer ?? '',
+                  ).getLatestUpdates(page!);
+                  responsePort.send({'success': true, 'data': result});
+                } else if (serviceType == 'search') {
+                  final result = await getExtensionService(
+                    source!,
+                    proxyServer ?? '',
+                  ).search(query!, page!, filterList!);
+                  responsePort.send({'success': true, 'data': result});
+                } else if (serviceType == 'getVideoList') {
+                  final result = await getExtensionService(
+                    source!,
+                    proxyServer ?? '',
+                  ).getVideoList(url!);
+                  responsePort.send({'success': true, 'data': result});
+                } else if (serviceType == 'getPageList') {
+                  final result = await getExtensionService(
+                    source!,
+                    proxyServer ?? '',
+                  ).getPageList(url!);
+                  responsePort.send({'success': true, 'data': result});
+                }
+              } catch (e) {
+                final responsePort = message['responsePort'] as SendPort;
+                responsePort.send({'success': false, 'error': e.toString()});
+              }
+              useLogger = false;
+            } else if (message == 'dispose') {
+              break;
+            }
           }
-        } catch (e) {
-          final responsePort = message['responsePort'] as SendPort;
-          responsePort.send({'success': false, 'error': e.toString()});
-        }
-      } else if (message == 'dispose') {
-        break;
-      }
-    }
+        });
   }
 
   Future<T> get<T>({
@@ -138,6 +166,7 @@ class GetIsolateService {
     String? proxyServer,
     bool? autoUpdateExtensions,
     String? androidProxyServer,
+    bool? useLogger,
   }) async {
     if (_sendPort == null) {
       throw Exception('Isolate not running');
@@ -166,6 +195,7 @@ class GetIsolateService {
       'source': source,
       'proxyServer': proxyServer,
       'responsePort': responsePort.sendPort,
+      'useLogger': useLogger,
     });
 
     return completer.future;

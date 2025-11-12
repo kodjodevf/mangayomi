@@ -210,10 +210,10 @@ class LoggerInterceptor extends InterceptorContract {
   Future<BaseRequest> interceptRequest({required BaseRequest request}) async {
     final content =
         "----- Request -----\n${request.toString()}\nheaders: ${request.headers.toString()}";
-    if (kDebugMode) {
+
+    if (kDebugMode || useLogger) {
+      // ignore: avoid_print
       print(content);
-    }
-    if (useLogger) {
       Logger.add(LoggerLevel.info, content);
     }
 
@@ -228,10 +228,10 @@ class LoggerInterceptor extends InterceptorContract {
       final cloudflare = isCloudflare(response);
       final content =
           "----- Response -----\n${response.request?.method}: ${response.request?.url}, statusCode: ${response.statusCode} ${cloudflare ? "Failed to bypass Cloudflare" : ""}";
-      if (kDebugMode) {
+
+      if (kDebugMode || useLogger) {
+        // ignore: avoid_print
         print(content);
-      }
-      if (useLogger) {
         Logger.add(LoggerLevel.info, content);
       }
       if (cloudflare) {

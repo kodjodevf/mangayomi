@@ -489,6 +489,7 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
                                                 proxyServer: ref.read(
                                                   androidProxyServerStateProvider,
                                                 ),
+                                                useLogger: true,
                                               );
                                           result = getManga!.toJson();
                                         } else if (_serviceIndex == 1) {
@@ -502,6 +503,7 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
                                                 proxyServer: ref.read(
                                                   androidProxyServerStateProvider,
                                                 ),
+                                                useLogger: true,
                                               );
                                           result = getManga!.toJson();
                                         } else if (_serviceIndex == 2) {
@@ -514,6 +516,7 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
                                                     page: _page,
                                                     serviceType: 'search',
                                                     proxyServer: proxyServer,
+                                                    useLogger: true,
                                                   );
                                           result = getManga!.toJson();
                                         } else if (_serviceIndex == 3) {
@@ -524,6 +527,7 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
                                                     source: source,
                                                     serviceType: 'getDetail',
                                                     proxyServer: proxyServer,
+                                                    useLogger: true,
                                                   );
 
                                           result = getManga.toJson();

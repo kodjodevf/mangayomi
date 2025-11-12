@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_qjs/flutter_qjs.dart';
 import 'package:mangayomi/utils/log/log.dart';
 
@@ -7,7 +8,11 @@ class JsLibs {
 
   void init() {
     runtime.onMessage('log', (dynamic args) {
-      Logger.add(LoggerLevel.warning, "${args[0]}");
+      if (kDebugMode || useLogger) {
+        // ignore: avoid_print
+        print("LoggerLevel.warning:${args[0]}");
+        Logger.add(LoggerLevel.warning, "${args[0]}");
+      }
       return null;
     });
     runtime.onMessage('urlencode', (dynamic args) {
