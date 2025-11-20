@@ -40,29 +40,24 @@ Future<dynamic> updateMangaDetail(
             .toSet()
             .toList() ??
         [];
-    final tempName = getManga.name?.trim().trimLeft().trimRight();
-    final tempLink = getManga.link?.trim().trimLeft().trimRight();
-    final imgUrl = getManga.imageUrl ?? manga.imageUrl;
+
+    final imgUrl = getManga.imageUrl.trimmedOrDefault(manga.imageUrl);
     manga
       ..imageUrl = imgUrl == null
           ? null
           : imgUrl.startsWith('http')
           ? imgUrl
           : '${source.baseUrl ?? ''}/${imgUrl.getUrlWithoutDomain}'
-      ..name = tempName != null && tempName.isNotEmpty ? tempName : manga.name
+      ..name = getManga.name.trimmedOrDefault(manga.name)
       ..genre = (genre.isEmpty ? null : genre) ?? manga.genre ?? []
-      ..author =
-          getManga.author?.trim().trimLeft().trimRight() ?? manga.author ?? ""
-      ..artist =
-          getManga.artist?.trim().trimLeft().trimRight() ?? manga.artist ?? ""
+      ..author = getManga.author.trimmedOrDefault(manga.author) ?? ""
+      ..artist = getManga.artist.trimmedOrDefault(manga.artist) ?? ""
       ..status = getManga.status == Status.unknown
           ? manga.status
           : getManga.status ?? Status.unknown
       ..description =
-          getManga.description?.trim().trimLeft().trimRight() ??
-          manga.description ??
-          ""
-      ..link = tempLink != null && tempLink.isNotEmpty ? tempLink : manga.link
+          getManga.description.trimmedOrDefault(manga.description) ?? ""
+      ..link = getManga.link.trimmedOrDefault(manga.link)
       ..source = manga.source
       ..lang = manga.lang
       ..itemType = source.itemType
@@ -171,5 +166,14 @@ Future<dynamic> updateMangaDetail(
       rethrow;
     }
     return;
+  }
+}
+
+extension DefaultValueExtension on String? {
+  String? trimmedOrDefault(String? defaultValue) {
+    if (this?.trim().trimLeft().trimRight().isNotEmpty ?? false) {
+      return this!.trim().trimLeft().trimRight();
+    }
+    return defaultValue;
   }
 }

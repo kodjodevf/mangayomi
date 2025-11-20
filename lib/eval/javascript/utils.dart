@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:epubx/epubx.dart';
 import 'package:flutter/foundation.dart';

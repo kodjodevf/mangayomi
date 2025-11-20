@@ -38,6 +38,7 @@ class ChapterListTileWidget extends ConsumerWidget {
         onLongPress: () => _handleInteraction(ref),
         onSecondaryTap: () => _handleInteraction(ref),
         child: ListTile(
+          contentPadding: EdgeInsets.symmetric(horizontal: 15),
           minLeadingWidth: 0,
           horizontalTitleGap: 13,
           leading: Container(
