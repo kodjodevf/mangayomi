@@ -444,3 +444,24 @@ class NovelTapToScrollState extends _$NovelTapToScrollState {
     );
   }
 }
+
+@riverpod
+class ShowPagesNumberState extends _$ShowPagesNumberState {
+  @override
+  build() {
+    return isar.settings.getSync(227)!.showPagesNumber ?? true;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..showPagesNumber = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}

@@ -8,7 +8,7 @@ import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'crop_borders_provider.g.dart';
 
-@Riverpod(keepAlive: true)
+@Riverpod(keepAlive: false)
 Future<Uint8List?> cropBorders(
   Ref ref, {
   required UChapDataPreload data,

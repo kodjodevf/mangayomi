@@ -180,7 +180,7 @@ class _MangaChapterPageGalleryState
       );
     }
     discordRpc?.showIdleText();
-    _readerController.keepAliveLink?.close();
+    // _readerController.keepAliveLink?.close();
     super.dispose();
   }
 
@@ -285,9 +285,9 @@ class _MangaChapterPageGalleryState
   Axis _scrollDirection = Axis.vertical;
   bool _isReverseHorizontal = false;
 
-  late final _showPagesNumber = StateProvider(
-    () => _readerController.getShowPageNumber(),
-  );
+  // late final _showPagesNumber = StateProvider(
+  //   () => _readerController.getShowPageNumber(),
+  // );
 
   Color _backgroundColor(BuildContext context) =>
       Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.9);
@@ -949,7 +949,7 @@ class _MangaChapterPageGalleryState
     return const Duration(milliseconds: 200);
   }
 
-  void _readProgressListener() {
+  void _readProgressListener() async {
     final itemPositions = _itemPositionsListener.itemPositions.value;
     if (itemPositions.isNotEmpty) {
       _currentIndex = itemPositions.first.index;
@@ -994,16 +994,16 @@ class _MangaChapterPageGalleryState
           if (_isNextChapterPreloading) return;
           try {
             _isNextChapterPreloading = true;
-            ref
-                .watch(
-                  getChapterPagesProvider(
-                    chapter: _readerController.getNextChapter(),
-                  ).future,
-                )
-                .then((value) {
-                  _preloadNextChapter(value, chapter);
-                  _isNextChapterPreloading = false;
-                });
+            if (!mounted) return;
+            final value = await ref.read(
+              getChapterPagesProvider(
+                chapter: _readerController.getNextChapter(),
+              ).future,
+            );
+            if (mounted) {
+              _preloadNextChapter(value, chapter);
+              _isNextChapterPreloading = false;
+            }
           } on RangeError {
             _isNextChapterPreloading = false;
             _addLastPageTransition(chapter);
@@ -1136,7 +1136,7 @@ class _MangaChapterPageGalleryState
     }
   }
 
-  void _onPageChanged(int index) {
+  Future<void> _onPageChanged(int index) async {
     final cropBorders = ref.watch(cropBordersStateProvider);
     if (cropBorders) {
       _processCropBordersByIndex(index);
@@ -1178,16 +1178,16 @@ class _MangaChapterPageGalleryState
       if (_isNextChapterPreloading) return;
       try {
         _isNextChapterPreloading = true;
-        ref
-            .watch(
-              getChapterPagesProvider(
-                chapter: _readerController.getNextChapter(),
-              ).future,
-            )
-            .then((value) {
-              _preloadNextChapter(value, chapter);
-              _isNextChapterPreloading = false;
-            });
+        if (!mounted) return;
+        final value = await ref.watch(
+          getChapterPagesProvider(
+            chapter: _readerController.getNextChapter(),
+          ).future,
+        );
+        if (mounted) {
+          _preloadNextChapter(value, chapter);
+          _isNextChapterPreloading = false;
+        }
       } on RangeError {
         _isNextChapterPreloading = false;
         _addLastPageTransition(chapter);
@@ -1380,41 +1380,40 @@ class _MangaChapterPageGalleryState
   void _processCropBordersByIndex(int index) async {
     if (!_cropBorderCheckList.contains(index)) {
       _cropBorderCheckList.add(index);
-      ref
-          .watch(
-            cropBordersProvider(
-              data: _uChapDataPreload[index],
-              cropBorder: true,
-            ).future,
-          )
-          .then((value) {
-            _uChapDataPreload[index] = _uChapDataPreload[index]
-              ..cropImage = value;
-          });
+      if (!mounted) return;
+      final value = await ref.read(
+        cropBordersProvider(
+          data: _uChapDataPreload[index],
+          cropBorder: true,
+        ).future,
+      );
       if (mounted) {
-        setState(() {});
+        setState(() {
+          _uChapDataPreload[index] = _uChapDataPreload[index]
+            ..cropImage = value;
+        });
       }
     }
   }
 
   void _processCropBorders() async {
     if (_cropBorderCheckList.length == _uChapDataPreload.length) return;
+
     for (var i = 0; i < _uChapDataPreload.length; i++) {
       if (!_cropBorderCheckList.contains(i)) {
         _cropBorderCheckList.add(i);
-        ref
-            .watch(
-              cropBordersProvider(
-                data: _uChapDataPreload[i],
-                cropBorder: true,
-              ).future,
-            )
-            .then((value) {
-              _uChapDataPreload[i] = _uChapDataPreload[i]..cropImage = value;
-              if (mounted) {
-                setState(() {});
-              }
-            });
+        if (!mounted) return;
+        final value = await ref.read(
+          cropBordersProvider(
+            data: _uChapDataPreload[i],
+            cropBorder: true,
+          ).future,
+        );
+        if (mounted) {
+          setState(() {
+            _uChapDataPreload[i] = _uChapDataPreload[i]..cropImage = value;
+          });
+        }
       }
     }
   }
@@ -1944,9 +1943,10 @@ class _MangaChapterPageGalleryState
     return Consumer(
       builder: (context, ref, child) {
         final currentIndex = ref.watch(currentIndexProvider(chapter));
+        final showPagesNumber = ref.watch(showPagesNumberStateProvider);
         return _isView
             ? const SizedBox.shrink()
-            : ref.watch(_showPagesNumber)
+            : showPagesNumber
             ? Align(
                 alignment: Alignment.bottomCenter,
                 child: Text(
@@ -2328,13 +2328,14 @@ class _MangaChapterPageGalleryState
         ),
         Consumer(
           builder: (context, ref, chil) {
-            final showPageNumber = ref.watch(_showPagesNumber);
+            final showPagesNumber = ref.watch(showPagesNumberStateProvider);
             final animatePageTransitions = ref.watch(
               animatePageTransitionsStateProvider,
             );
             final scaleType = ref.watch(scaleTypeStateProvider);
             final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
             final backgroundColor = ref.watch(backgroundColorStateProvider);
+            
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
@@ -2393,7 +2394,7 @@ class _MangaChapterPageGalleryState
                       },
                     ),
                     SwitchListTile(
-                      value: showPageNumber,
+                      value: showPagesNumber,
                       title: Text(
                         l10n.show_page_number,
                         style: TextStyle(
@@ -2404,8 +2405,7 @@ class _MangaChapterPageGalleryState
                         ),
                       ),
                       onChanged: (value) {
-                        ref.read(_showPagesNumber.notifier).state = value;
-                        _readerController.setShowPageNumber(value);
+                        ref.read(showPagesNumber.notifier).set(value);
                       },
                     ),
                     SwitchListTile(
