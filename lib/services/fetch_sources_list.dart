@@ -371,80 +371,85 @@ Future<FilterList?> fetchFilterListDalvik(
       body: jsonEncode({"method": "filters$name", "data": source.sourceCode}),
     );
     final data = jsonDecode(res.body) as List;
-    final filters = data.expand((e) sync* {
-      if (e['name'] is String &&
-          e['state'] is Map<String, dynamic> &&
-          e['values'] is List) {
-        yield SortFilter(
-          "${e['name']}Filter",
-          e['name'],
-          SortState(e['state']['index'], e['state']['ascending'], null),
-          (e['values'] as List)
-              .map((e) => SelectFilterOption(e, e, null))
-              .toList(),
-          null,
-        );
-      } else if (e['name'] is String &&
-          e['state'] is int &&
-          (e['values'] is List || e['vals'] is List)) {
-        yield SelectFilter(
-          "${e['name']}Filter",
-          e['name'],
-          e['state'],
-          e['vals'] is List
-              ? (e['vals'] as List)
-                    .map(
-                      (e) => SelectFilterOption(e['first'], e['second'], null),
-                    )
-                    .toList()
-              : e['values'] is List
-              ? (e['values'] as List)
-                    .map((e) => SelectFilterOption(e, e, null))
-                    .toList()
-              : [],
-          "SelectFilter",
-        );
-      } else if (e['name'] is String && e['state'] is List) {
-        yield GroupFilter(
-          "${e['name']}Filter",
-          e['name'],
-          (e['state'] as List).map((e) {
-            if (e['included'] is bool &&
-                e['ignored'] is bool &&
-                e['excluded'] is bool) {
-              return TriStateFilter(
-                null,
-                e['name'],
-                e['id'] ?? e['name'],
-                null,
-                state: e['state'],
-              );
-            }
-            return CheckBoxFilter(
-              null,
-              e['name'],
-              e['id'] ?? e['name'],
-              null,
-              state: e['state'],
-            );
-          }).toList(),
-          "GroupFilter",
-        );
-      } else if (e['name'] is String && e['state'] is String) {
-        yield TextFilter(
-          "${e['name']}Filter",
-          e['name'],
-          null,
-          state: e['state'],
-        );
-      } else if (e['name'] is String && e['state'] is int) {
-        yield HeaderFilter(e['name'], "${e['name']}Filter");
-      }
-    }).toList();
-    return FilterList(filters);
+
+    return FilterList(filtersFromJson(data));
   } catch (_) {
     return null;
   }
+}
+
+List<dynamic> filtersFromJson(List<dynamic> json) {
+  return json.expand((e) sync* {
+    if (e['name'] is String &&
+        e['state'] is Map<String, dynamic> &&
+        e['values'] is List) {
+      yield SortFilter(
+        "${e['name']}Filter",
+        e['name'],
+        SortState(e['state']['index'], e['state']['ascending'], null),
+        (e['values'] as List)
+            .map((e) => SelectFilterOption(e, e, null))
+            .toList(),
+        null,
+      );
+    } else if (e['name'] is String &&
+        e['state'] is int &&
+        (e['values'] is List || e['vals'] is List)) {
+      yield SelectFilter(
+        "${e['name']}Filter",
+        e['name'],
+        e['state'],
+        e['vals'] is List
+            ? (e['vals'] as List)
+                  .map((e) => SelectFilterOption(e['first'], e['second'], null))
+                  .toList()
+            : e['values'] is List
+            ? (e['values'] as List)
+                  .map(
+                    (e) => (e is Map)
+                        ? SelectFilterOption(e['value'], e['value'], null)
+                        : SelectFilterOption(e, e, null),
+                  )
+                  .toList()
+            : [],
+        "SelectFilter",
+      );
+    } else if (e['name'] is String && e['state'] is bool) {
+      yield CheckBoxFilter(
+        null,
+        e['name'],
+        e['id'] ?? e['name'],
+        null,
+        state: e['state'],
+      );
+    } else if (e['included'] is bool &&
+        e['ignored'] is bool &&
+        e['excluded'] is bool) {
+      yield TriStateFilter(
+        null,
+        e['name'],
+        e['id'] ?? e['name'],
+        null,
+        state: e['state'],
+      );
+    } else if (e['name'] is String && e['state'] is List) {
+      yield GroupFilter(
+        "${e['name']}Filter",
+        e['name'],
+        filtersFromJson((e['state'] as List)),
+        "GroupFilter",
+      );
+    } else if (e['name'] is String && e['state'] is String) {
+      yield TextFilter(
+        "${e['name']}Filter",
+        e['name'],
+        null,
+        state: e['state'],
+      );
+    } else if (e['name'] is String && e['state'] is int) {
+      yield HeaderFilter(e['name'], "${e['name']}Filter");
+    }
+  }).toList();
 }
 
 Future<List<SourcePreference>?> fetchPreferencesDalvik(

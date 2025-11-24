@@ -7,7 +7,9 @@ import 'package:mangayomi/eval/model/m_chapter.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/eval/model/m_pages.dart';
 import 'package:mangayomi/eval/model/source_preference.dart';
+import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/page.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/services/http/m_client.dart';
@@ -55,7 +57,9 @@ class MihonExtensionService implements ExtensionService {
         "preferences": getSourcePreferences(),
         "data": source.sourceCode,
       }),
+      headers: getCookie(),
     );
+    hasError(res);
     final data = jsonDecode(res.body) as Map<String, dynamic>;
     final pages = MangaPages.fromJson(data, source.itemType);
     return MPages(
@@ -90,7 +94,9 @@ class MihonExtensionService implements ExtensionService {
         "preferences": getSourcePreferences(),
         "data": source.sourceCode,
       }),
+      headers: getCookie(),
     );
+    hasError(res);
     final data = jsonDecode(res.body) as Map<String, dynamic>;
     final pages = MangaPages.fromJson(data, source.itemType);
     return MPages(
@@ -126,7 +132,9 @@ class MihonExtensionService implements ExtensionService {
         "preferences": getSourcePreferences(),
         "data": source.sourceCode,
       }),
+      headers: getCookie(),
     );
+    hasError(res);
     final data = jsonDecode(res.body) as Map<String, dynamic>;
     final pages = MangaPages.fromJson(data, source.itemType);
     return MPages(
@@ -161,7 +169,9 @@ class MihonExtensionService implements ExtensionService {
         "preferences": getSourcePreferences(),
         "data": source.sourceCode,
       }),
+      headers: getCookie(),
     );
+    hasError(res);
     final data = jsonDecode(res.body) as Map<String, dynamic>;
     final chapters = await getChapterList(url);
     return MManga(
@@ -196,7 +206,9 @@ class MihonExtensionService implements ExtensionService {
         "preferences": getSourcePreferences(),
         "data": source.sourceCode,
       }),
+      headers: getCookie(),
     );
+    hasError(res);
     final data = jsonDecode(res.body) as List;
     return data
         .map(
@@ -222,7 +234,9 @@ class MihonExtensionService implements ExtensionService {
         "preferences": getSourcePreferences(),
         "data": source.sourceCode,
       }),
+      headers: getCookie(),
     );
+    hasError(res);
     final data = jsonDecode(res.body) as List;
     return data.map((e) => PageUrl(e['imageUrl'])).toList();
   }
@@ -237,7 +251,9 @@ class MihonExtensionService implements ExtensionService {
         "preferences": getSourcePreferences(),
         "data": source.sourceCode,
       }),
+      headers: getCookie(),
     );
+    hasError(res);
     final data = jsonDecode(res.body) as List;
     return data.map((e) {
       final tempHeaders =
@@ -335,5 +351,27 @@ class MihonExtensionService implements ExtensionService {
         };
       }
     }).toList();
+  }
+
+  Map<String, String> getCookie() {
+    final userAgent = isar.settings.getSync(227)!.userAgent;
+    return {
+      ...MClient.getCookiesPref(source.baseUrl!),
+      if (userAgent != null) 'user-agent': userAgent,
+    };
+  }
+}
+
+void hasError(Response response) {
+  try {
+    final errorMessage = jsonDecode(response.body)['error'];
+    final code = jsonDecode(response.body)['code'];
+    if (errorMessage != null && code != null) {
+      throw "errorMessage: $errorMessage \n\n\nstatusCode: $code";
+    }
+  } catch (e) {
+    if (e.toString().startsWith('errorMessage:')) {
+      throw e.toString().replaceFirst('errorMessage: ', '');
+    }
   }
 }
