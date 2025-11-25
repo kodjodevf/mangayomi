@@ -91,8 +91,7 @@ class GetIsolateService {
         )
         .run(() async {
           isolateData.sendPort.send(receivePort.sendPort);
-
-          await for (var message in receivePort) {
+          receivePort.listen((message) async {
             if (message is Map<String, dynamic>) {
               try {
                 final url = message['url'] as String?;
@@ -150,9 +149,9 @@ class GetIsolateService {
               }
               useLogger = false;
             } else if (message == 'dispose') {
-              break;
+              receivePort.close();
             }
-          }
+          });
         });
   }
 
