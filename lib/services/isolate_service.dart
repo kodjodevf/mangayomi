@@ -7,6 +7,7 @@ import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/log/log.dart';
 
 class _IsolateData {
@@ -103,6 +104,7 @@ class GetIsolateService {
                 final serviceType = message['serviceType'] as String?;
                 final useLoggerValue = message['useLogger'] as bool?;
                 final responsePort = message['responsePort'] as SendPort;
+                cfPort = message['cfPort'] as int;
                 if (useLoggerValue != null) {
                   useLogger = useLoggerValue;
                 }
@@ -195,6 +197,7 @@ class GetIsolateService {
       'proxyServer': proxyServer,
       'responsePort': responsePort.sendPort,
       'useLogger': useLogger,
+      'cfPort': cfPort,
     });
 
     return completer.future;

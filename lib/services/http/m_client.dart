@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'dart:async';
@@ -68,7 +70,7 @@ class MClient {
               );
     return InterceptedClient.build(
       client: httpClient(settings: clientSettings, reqcopyWith: reqcopyWith),
-
+      retryPolicy: ResolveCloudFlareChallenge(showCloudFlareError),
       interceptors: [
         MCookieManager(reqcopyWith),
         LoggerInterceptor(showCloudFlareError),
@@ -256,78 +258,138 @@ bool isCloudflare(BaseResponse response) {
       ["cloudflare-nginx", "cloudflare"].contains(response.headers["server"]);
 }
 
-// class ResolveCloudFlareChallenge extends RetryPolicy {
-//   bool showCloudFlareError;
-//   ResolveCloudFlareChallenge(this.showCloudFlareError);
-//   @override
-//   int get maxRetryAttempts => 2;
-//   @override
-//   Future<bool> shouldAttemptRetryOnResponse(BaseResponse response) async {
-//     if (!showCloudFlareError || Platform.isLinux) return false;
-//     flutter_inappwebview.HeadlessInAppWebView? headlessWebView;
-//     int time = 0;
-//     bool timeOut = false;
-//     bool isCloudFlare = isCloudflare(response);
-//     if (isCloudFlare) {
-//       headlessWebView = flutter_inappwebview.HeadlessInAppWebView(
-//         webViewEnvironment: webViewEnvironment,
-//         initialUrlRequest: flutter_inappwebview.URLRequest(
-//           url: flutter_inappwebview.WebUri(response.request!.url.toString()),
-//         ),
-//         onLoadStop: (controller, url) async {
-//           try {
-//             isCloudFlare = await controller.platform.evaluateJavascript(
-//               source:
-//                   "document.head.innerHTML.includes('#challenge-success-text')",
-//             );
-//           } catch (_) {
-//             isCloudFlare = false;
-//           }
+class ResolveCloudFlareChallenge extends RetryPolicy {
+  bool showCloudFlareError;
+  ResolveCloudFlareChallenge(this.showCloudFlareError);
+  @override
+  int get maxRetryAttempts => 2;
+  @override
+  Future<bool> shouldAttemptRetryOnResponse(BaseResponse response) async {
+    if (!showCloudFlareError || Platform.isLinux) return false;
+    bool isCloudFlare = isCloudflare(response);
+    if (isCloudFlare) {
+      try {
+        return http
+            .post(
+              Uri.parse('http://localhost:$cfPort/resolve_cf'),
+              headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+              body: jsonEncode({'url': response.request!.url.toString()}),
+            )
+            .then((res) {
+              if (res.statusCode == 200) {
+                final data = jsonDecode(res.body) as Map<String, dynamic>;
+                return data['result'] as bool;
+              }
+              return false;
+            });
+      } catch (e) {
+        return false;
+      }
+    }
 
-//           await Future.doWhile(() async {
-//             if (!timeOut && isCloudFlare) {
-//               try {
-//                 isCloudFlare = await controller.platform.evaluateJavascript(
-//                   source:
-//                       "document.head.innerHTML.includes('#challenge-success-text')",
-//                 );
-//               } catch (_) {
-//                 isCloudFlare = false;
-//               }
-//             }
-//             if (isCloudFlare) await Future.delayed(Duration(milliseconds: 300));
+    return false;
+  }
+}
 
-//             return isCloudFlare;
-//           });
-//           if (!timeOut) {
-//             final ua =
-//                 await controller.evaluateJavascript(
-//                   source: "navigator.userAgent",
-//                 ) ??
-//                 "";
-//             await MClient.setCookie(url.toString(), ua, controller);
-//           }
-//         },
-//       );
+int cfPort = 0;
+void cfResolutionWebviewServer() async {
+  final server = await HttpServer.bind(InternetAddress.loopbackIPv4, cfPort);
+  cfPort = server.port;
 
-//       headlessWebView.run();
+  server.listen((HttpRequest request) {
+    if (request.method == 'POST' && request.uri.path == '/resolve_cf') {
+      _handleResolveCf(request);
+    } else {
+      request.response
+        ..statusCode = HttpStatus.notFound
+        ..write('Not Found')
+        ..close();
+    }
+  });
+}
 
-//       await Future.doWhile(() async {
-//         timeOut = time == 15;
-//         if (!isCloudFlare || timeOut) {
-//           return false;
-//         }
-//         await Future.delayed(const Duration(seconds: 1));
-//         time++;
-//         return true;
-//       });
-//       try {
-//         headlessWebView.dispose();
-//       } catch (_) {}
+void _handleResolveCf(HttpRequest request) async {
+  int time = 0;
+  bool timeOut = false;
+  bool isCloudFlare = true;
+  try {
+    final body = await utf8.decoder.bind(request).join();
+    final data = jsonDecode(body) as Map<String, dynamic>;
+    final url = data['url'] as String?;
 
-//       return true;
-//     }
+    if (url == null) {
+      request.response
+        ..statusCode = HttpStatus.badRequest
+        ..write(jsonEncode({'error': 'Missing url parameter'}))
+        ..close();
+      return;
+    }
 
-//     return false;
-//   }
-// }
+    flutter_inappwebview.HeadlessInAppWebView? headlessWebView;
+    headlessWebView = flutter_inappwebview.HeadlessInAppWebView(
+      webViewEnvironment: webViewEnvironment,
+      initialUrlRequest: flutter_inappwebview.URLRequest(
+        url: flutter_inappwebview.WebUri(url),
+      ),
+      onLoadStop: (controller, url) async {
+        try {
+          isCloudFlare = await controller.platform.evaluateJavascript(
+            source:
+                "document.head.innerHTML.includes('#challenge-success-text')",
+          );
+        } catch (_) {
+          isCloudFlare = false;
+        }
+
+        await Future.doWhile(() async {
+          if (!timeOut && isCloudFlare) {
+            try {
+              isCloudFlare = await controller.platform.evaluateJavascript(
+                source:
+                    "document.head.innerHTML.includes('#challenge-success-text')",
+              );
+            } catch (_) {
+              isCloudFlare = false;
+            }
+          }
+          if (isCloudFlare) await Future.delayed(Duration(milliseconds: 300));
+
+          return isCloudFlare;
+        });
+        if (!timeOut) {
+          final ua =
+              await controller.evaluateJavascript(
+                source: "navigator.userAgent",
+              ) ??
+              "";
+          await MClient.setCookie(url.toString(), ua, controller);
+        }
+      },
+    );
+
+    headlessWebView.run();
+
+    await Future.doWhile(() async {
+      timeOut = time == 15;
+      if (!isCloudFlare || timeOut) {
+        return false;
+      }
+      await Future.delayed(const Duration(seconds: 1));
+      time++;
+      return true;
+    });
+    try {
+      headlessWebView.dispose();
+    } catch (_) {}
+
+    request.response
+      ..headers.contentType = ContentType.json
+      ..write(jsonEncode({'result': isCloudFlare}))
+      ..close();
+  } catch (e) {
+    request.response
+      ..statusCode = HttpStatus.badRequest
+      ..write(jsonEncode({'error': 'Invalid JSON'}))
+      ..close();
+  }
+}
