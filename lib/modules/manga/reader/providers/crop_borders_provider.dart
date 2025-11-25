@@ -68,8 +68,7 @@ class ImageCropIsolate {
 
     final receivePort = ReceivePort();
     mainSendPort.send(receivePort.sendPort);
-
-    await for (var message in receivePort) {
+    receivePort.listen((message) async {
       if (message is Map<String, dynamic>) {
         try {
           final imageBytes = message['imageBytes'] as Uint8List;
@@ -84,9 +83,9 @@ class ImageCropIsolate {
         }
       } else if (message == 'dispose') {
         RustLib.dispose();
-        break;
+        receivePort.close();
       }
-    }
+    });
   }
 
   Future<Uint8List?> process(Uint8List imageBytes) async {
