@@ -238,8 +238,10 @@ class DataAndStorage extends ConsumerWidget {
                                             }
                                             if (!context.mounted) return;
                                             Navigator.pop(context);
-                                          } catch (_) {
-                                            botToast("Error");
+                                          } catch (e) {
+                                            botToast(
+                                              "Error restoring backup: $e",
+                                            );
                                             Navigator.pop(context);
                                           }
                                         },
