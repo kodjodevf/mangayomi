@@ -1344,8 +1344,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                 }
                 if (!context.mounted) return;
                 Navigator.pop(context);
-              } catch (_) {
-                botToast("Error");
+              } catch (e) {
+                botToast("Error: $e");
                 Navigator.pop(context);
               }
             },
