@@ -26,7 +26,7 @@ final class CropBordersProvider
   }) : super(
          retry: null,
          name: r'cropBordersProvider',
-         isAutoDispose: false,
+         isAutoDispose: true,
          dependencies: null,
          $allTransitiveDependencies: null,
        );
@@ -68,7 +68,7 @@ final class CropBordersProvider
   }
 }
 
-String _$cropBordersHash() => r'f60987c3f38afd5e10263f3d6935e6007ff942f0';
+String _$cropBordersHash() => r'ec9c6fc8a8c88a2bb48bb54a497478bc61376291';
 
 final class CropBordersFamily extends $Family
     with
@@ -82,7 +82,7 @@ final class CropBordersFamily extends $Family
         name: r'cropBordersProvider',
         dependencies: null,
         $allTransitiveDependencies: null,
-        isAutoDispose: false,
+        isAutoDispose: true,
       );
 
   CropBordersProvider call({

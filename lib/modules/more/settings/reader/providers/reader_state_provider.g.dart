@@ -1147,3 +1147,57 @@ abstract class _$NovelTapToScrollState extends $Notifier<bool> {
     element.handleValue(ref, created);
   }
 }
+
+@ProviderFor(ShowPagesNumberState)
+const showPagesNumberStateProvider = ShowPagesNumberStateProvider._();
+
+final class ShowPagesNumberStateProvider
+    extends $NotifierProvider<ShowPagesNumberState, dynamic> {
+  const ShowPagesNumberStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'showPagesNumberStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$showPagesNumberStateHash();
+
+  @$internal
+  @override
+  ShowPagesNumberState create() => ShowPagesNumberState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(dynamic value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<dynamic>(value),
+    );
+  }
+}
+
+String _$showPagesNumberStateHash() =>
+    r'c0b72cae1168bc911e0174bd8934842c245eee1b';
+
+abstract class _$ShowPagesNumberState extends $Notifier<dynamic> {
+  dynamic build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<dynamic, dynamic>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<dynamic, dynamic>,
+              dynamic,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

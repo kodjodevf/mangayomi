@@ -151,7 +151,7 @@ final class AutoBackupLocationStateProvider
 }
 
 String _$autoBackupLocationStateHash() =>
-    r'45e1942f6f88ccb92f3f96ddfb5c74df477b61ba';
+    r'c189f31917e32ce25ff195641ee449d969326b9b';
 
 abstract class _$AutoBackupLocationState extends $Notifier<(String, String)> {
   (String, String) build();
@@ -203,4 +203,4 @@ final class CheckAndBackupProvider
   }
 }
 
-String _$checkAndBackupHash() => r'c3fa9f0b0f9009088ee8e787407a691b0044901f';
+String _$checkAndBackupHash() => r'7b1aabd24ab2a523571751df931576608b7f0e89';
