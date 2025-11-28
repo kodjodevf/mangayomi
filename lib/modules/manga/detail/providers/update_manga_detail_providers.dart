@@ -171,7 +171,7 @@ Future<dynamic> updateMangaDetail(
 
 extension DefaultValueExtension on String? {
   String? trimmedOrDefault(String? defaultValue) {
-    if (this?.trim().trimLeft().trimRight().isNotEmpty ?? false) {
+    if (this?.trim().isNotEmpty ?? false) {
       return this!.trim().trimLeft().trimRight();
     }
     return defaultValue;
