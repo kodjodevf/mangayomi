@@ -292,7 +292,9 @@ class ResolveCloudFlareChallenge extends RetryPolicy {
 }
 
 int cfPort = 0;
-void cfResolutionWebviewServer() async {
+
+/// Cloudflare Resolution Webview Server
+Future<void> cfResolutionWebviewServer() async {
   final server = await HttpServer.bind(InternetAddress.loopbackIPv4, cfPort);
   cfPort = server.port;
 

@@ -50,7 +50,6 @@ DiscordRPC? discordRpc;
 WebViewEnvironment? webViewEnvironment;
 String? customDns;
 void main(List<String> args) async {
-  cfResolutionWebviewServer();
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isLinux && runWebViewTitleBarWidget(args)) return;
   MediaKit.ensureInitialized();
@@ -93,6 +92,7 @@ Future<void> _postLaunchInit(StorageProvider storage) async {
     await discordRpc?.initialize();
   }
   await storage.deleteBtDirectory();
+  await cfResolutionWebviewServer();
 }
 
 class MyApp extends ConsumerStatefulWidget {
