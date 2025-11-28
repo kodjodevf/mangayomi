@@ -84,7 +84,7 @@ const TrackSchema = CollectionSchema(
   getId: _trackGetId,
   getLinks: _trackGetLinks,
   attach: _trackAttach,
-  version: '3.3.0-dev.3',
+  version: '3.3.0',
 );
 
 int _trackEstimateSize(

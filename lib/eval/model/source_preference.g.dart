@@ -74,7 +74,7 @@ const SourcePreferenceSchema = CollectionSchema(
   getId: _sourcePreferenceGetId,
   getLinks: _sourcePreferenceGetLinks,
   attach: _sourcePreferenceAttach,
-  version: '3.3.0-dev.3',
+  version: '3.3.0',
 );
 
 int _sourcePreferenceEstimateSize(
@@ -993,7 +993,7 @@ const SourcePreferenceStringValueSchema = CollectionSchema(
   getId: _sourcePreferenceStringValueGetId,
   getLinks: _sourcePreferenceStringValueGetLinks,
   attach: _sourcePreferenceStringValueAttach,
-  version: '3.3.0-dev.3',
+  version: '3.3.0',
 );
 
 int _sourcePreferenceStringValueEstimateSize(

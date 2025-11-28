@@ -44,7 +44,7 @@ const ChangedPartSchema = CollectionSchema(
   getId: _changedPartGetId,
   getLinks: _changedPartGetLinks,
   attach: _changedPartAttach,
-  version: '3.3.0-dev.3',
+  version: '3.3.0',
 );
 
 int _changedPartEstimateSize(

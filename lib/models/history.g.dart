@@ -57,7 +57,7 @@ const HistorySchema = CollectionSchema(
   getId: _historyGetId,
   getLinks: _historyGetLinks,
   attach: _historyAttach,
-  version: '3.3.0-dev.3',
+  version: '3.3.0',
 );
 
 int _historyEstimateSize(

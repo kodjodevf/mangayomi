@@ -74,7 +74,7 @@ const SyncPreferenceSchema = CollectionSchema(
   getId: _syncPreferenceGetId,
   getLinks: _syncPreferenceGetLinks,
   attach: _syncPreferenceAttach,
-  version: '3.3.0-dev.3',
+  version: '3.3.0',
 );
 
 int _syncPreferenceEstimateSize(

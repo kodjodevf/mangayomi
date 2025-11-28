@@ -180,7 +180,7 @@ class _MangaChapterPageGalleryState
       );
     }
     discordRpc?.showIdleText();
-    // _readerController.keepAliveLink?.close();
+    _readerController.keepAliveLink?.close();
     super.dispose();
   }
 
@@ -2335,7 +2335,7 @@ class _MangaChapterPageGalleryState
             final scaleType = ref.watch(scaleTypeStateProvider);
             final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
             final backgroundColor = ref.watch(backgroundColorStateProvider);
-            
+
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
