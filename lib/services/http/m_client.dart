@@ -292,22 +292,44 @@ class ResolveCloudFlareChallenge extends RetryPolicy {
 }
 
 int cfPort = 0;
+HttpServer? _cfServer;
 
 /// Cloudflare Resolution Webview Server
 Future<void> cfResolutionWebviewServer() async {
-  final server = await HttpServer.bind(InternetAddress.loopbackIPv4, cfPort);
-  cfPort = server.port;
+  try {
+    _cfServer = await HttpServer.bind(InternetAddress.loopbackIPv4, cfPort);
+    cfPort = _cfServer!.port;
+    _cfServer!.listen(
+      (HttpRequest request) {
+        if (request.method == 'POST' && request.uri.path == '/resolve_cf') {
+          _handleResolveCf(request);
+        } else {
+          request.response
+            ..statusCode = HttpStatus.notFound
+            ..write('Not Found')
+            ..close();
+        }
+      },
+      onError: (e, st) {
+        debugPrint("CF server listener error: $e\n$st");
+      },
+      cancelOnError: false,
+    );
+  } catch (e, st) {
+    debugPrint("Couldn't start Cloudflare Resolution Webview Server: $e\n$st");
+    botToast("Couldn't start Cloudflare Resolution Webview Server.");
+  }
+}
 
-  server.listen((HttpRequest request) {
-    if (request.method == 'POST' && request.uri.path == '/resolve_cf') {
-      _handleResolveCf(request);
-    } else {
-      request.response
-        ..statusCode = HttpStatus.notFound
-        ..write('Not Found')
-        ..close();
-    }
-  });
+Future<void> stopCfResolutionWebviewServer() async {
+  final server = _cfServer;
+  if (server == null) return;
+  try {
+    await server.close(force: true);
+  } finally {
+    _cfServer = null;
+    cfPort = 0;
+  }
 }
 
 void _handleResolveCf(HttpRequest request) async {

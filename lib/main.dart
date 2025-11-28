@@ -157,6 +157,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   void dispose() {
     _linkSubscription?.cancel();
     discordRpc?.destroy();
+    stopCfResolutionWebviewServer();
     AppLogger.dispose();
     super.dispose();
   }
