@@ -53,6 +53,7 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
+import 'package:window_manager/window_manager.dart' show windowManager;
 
 import 'widgets/search_subtitles.dart';
 
@@ -193,7 +194,10 @@ enum _AniSkipPhase { none, opening, ending }
 bool _firstTime = true;
 
 class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
-    with TickerProviderStateMixin, WidgetsBindingObserver {
+    with
+        AlwaysOnTopStateMixin,
+        TickerProviderStateMixin,
+        WidgetsBindingObserver {
   late final GlobalKey<VideoState> _key = GlobalKey<VideoState>();
   late final useLibass = ref.read(useLibassStateProvider);
   late final useMpvConfig = ref.read(useMpvConfigStateProvider);
@@ -1963,6 +1967,17 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           ),
           Row(
             children: [
+              if (_supportAlwaysOnTop())
+                IconButton(
+                  icon: Icon(
+                    _alwaysOnTop ? Icons.push_pin : Icons.push_pin_outlined,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    setState(() => _alwaysOnTop = !_alwaysOnTop);
+                    windowManager.setAlwaysOnTop(_alwaysOnTop);
+                  },
+                ),
               btnToShowChapterListDialog(
                 context,
                 context.l10n.episodes,
@@ -2373,4 +2388,45 @@ class VideoPrefs {
     this.audio,
     this.title,
   });
+}
+
+mixin AlwaysOnTopStateMixin<T extends StatefulWidget> on State<T> {
+  // The original alwaysOnTop state.
+  // This will be used to restore the original state when the widget disposed.
+  bool? _savedAlwaysOnTop;
+
+  bool _alwaysOnTop = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initAlwaysOnTop();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _disposeAlwaysOnTop();
+  }
+
+  Future<void> _initAlwaysOnTop() async {
+    if (_supportAlwaysOnTop()) {
+      _savedAlwaysOnTop = await windowManager.isAlwaysOnTop();
+      if (mounted) {
+        setState(() => _alwaysOnTop = _savedAlwaysOnTop!);
+      }
+    }
+  }
+
+  Future<void> _disposeAlwaysOnTop() async {
+    if (_supportAlwaysOnTop()) {
+      if (_savedAlwaysOnTop != null) {
+        await windowManager.setAlwaysOnTop(_savedAlwaysOnTop!);
+      }
+    }
+  }
+
+  // Whether the platform support AlwaysOnTop feature.
+  bool _supportAlwaysOnTop() =>
+      !kIsWeb && (Platform.isLinux || Platform.isMacOS || Platform.isWindows);
 }
