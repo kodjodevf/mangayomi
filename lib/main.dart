@@ -50,7 +50,6 @@ DiscordRPC? discordRpc;
 WebViewEnvironment? webViewEnvironment;
 String? customDns;
 void main(List<String> args) async {
-  cfResolutionWebviewServer();
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isLinux && runWebViewTitleBarWidget(args)) return;
   MediaKit.ensureInitialized();
@@ -93,6 +92,7 @@ Future<void> _postLaunchInit(StorageProvider storage) async {
     await discordRpc?.initialize();
   }
   await storage.deleteBtDirectory();
+  await cfResolutionWebviewServer();
 }
 
 class MyApp extends ConsumerStatefulWidget {
@@ -119,6 +119,8 @@ class _MyAppState extends ConsumerState<MyApp> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (ref.read(clearChapterCacheOnAppLaunchStateProvider)) {
+        // Watch before calling clearcache to keep it alive, so that _getTotalDiskSpace completes safely
+        ref.watch(totalChapterCacheSizeStateProvider);
         ref
             .read(totalChapterCacheSizeStateProvider.notifier)
             .clearCache(showToast: false);
@@ -157,6 +159,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   void dispose() {
     _linkSubscription?.cancel();
     discordRpc?.destroy();
+    stopCfResolutionWebviewServer();
     AppLogger.dispose();
     super.dispose();
   }

@@ -35,7 +35,7 @@ Future<dynamic> updateMangaDetail(
 
     final genre =
         getManga.genre
-            ?.map((e) => e.toString().trim().trimLeft().trimRight())
+            ?.map((e) => e.toString().trim())
             .toList()
             .toSet()
             .toList() ??
@@ -80,7 +80,7 @@ Future<dynamic> updateMangaDetail(
         for (var i = 0; i < newChapsIndex; i++) {
           final chapter = Chapter(
             name: chaps[i].name!,
-            url: chaps[i].url!.trim().trimLeft().trimRight(),
+            url: chaps[i].url!.trim(),
             dateUpload: chaps[i].dateUpload == null
                 ? DateTime.now().millisecondsSinceEpoch.toString()
                 : chaps[i].dateUpload.toString(),
@@ -171,8 +171,8 @@ Future<dynamic> updateMangaDetail(
 
 extension DefaultValueExtension on String? {
   String? trimmedOrDefault(String? defaultValue) {
-    if (this?.trim().trimLeft().trimRight().isNotEmpty ?? false) {
-      return this!.trim().trimLeft().trimRight();
+    if (this?.trim().isNotEmpty ?? false) {
+      return this!.trim();
     }
     return defaultValue;
   }
