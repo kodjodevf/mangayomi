@@ -119,6 +119,8 @@ class _MyAppState extends ConsumerState<MyApp> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (ref.read(clearChapterCacheOnAppLaunchStateProvider)) {
+        // Watch before calling clearcache to keep it alive, so that _getTotalDiskSpace completes safely
+        ref.watch(totalChapterCacheSizeStateProvider);
         ref
             .read(totalChapterCacheSizeStateProvider.notifier)
             .clearCache(showToast: false);

@@ -14,7 +14,10 @@ part 'storage_usage.g.dart';
 class TotalChapterCacheSizeState extends _$TotalChapterCacheSizeState {
   @override
   String build() {
-    _getTotalDiskSpace().then((value) => state = _formatBytes(value));
+    _getTotalDiskSpace().then((value) {
+      if (!ref.mounted) return;
+      state = _formatBytes(value);
+    });
     return "0.00 B";
   }
 
