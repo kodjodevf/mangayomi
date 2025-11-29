@@ -195,7 +195,7 @@ bool _firstTime = true;
 
 class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     with
-        AlwaysOnTopStateMixin,
+        _AlwaysOnTopStateMixin,
         TickerProviderStateMixin,
         WidgetsBindingObserver {
   late final GlobalKey<VideoState> _key = GlobalKey<VideoState>();
@@ -2390,7 +2390,7 @@ class VideoPrefs {
   });
 }
 
-mixin AlwaysOnTopStateMixin<T extends StatefulWidget> on State<T> {
+mixin _AlwaysOnTopStateMixin<T extends StatefulWidget> on State<T> {
   // The original alwaysOnTop state.
   // This will be used to restore the original state when the widget disposed.
   bool? _savedAlwaysOnTop;
