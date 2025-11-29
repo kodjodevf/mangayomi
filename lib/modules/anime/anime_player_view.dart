@@ -964,30 +964,31 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   @override
   void dispose() {
     _currentPosition.removeListener(_updateRpcTimestamp);
+    _subDelayController.removeListener(_onSubDelayChanged);
+    _subSpeedController.removeListener(_onSubSpeedChanged);
     WidgetsBinding.instance.removeObserver(this);
     _setCurrentPosition(true);
-    _player.dispose();
+    _player.stop();
+    _completed.cancel();
     _currentPositionSub.cancel();
     _currentTotalDurationSub.cancel();
-    _completed.cancel();
+    _currentPosition.dispose();
+    _currentTotalDuration.dispose();
     _video.dispose();
     _playbackSpeed.dispose();
     _isDoubleSpeed.dispose();
-    _currentTotalDuration.dispose();
     _showFitLabel.dispose();
     _isCompleted.dispose();
     _tempPosition.dispose();
     _fit.dispose();
-    if (!_isDesktop) {
-      _setLandscapeMode(false);
-    }
     _skipPhase.dispose();
-    discordRpc?.showIdleText();
-    discordRpc?.showOriginalTimestamp();
-    _currentPosition.dispose();
     _subDelayController.dispose();
     _subSpeedController.dispose();
+    if (!_isDesktop) _setLandscapeMode(false);
+    discordRpc?.showIdleText();
+    discordRpc?.showOriginalTimestamp();
     _streamController.keepAliveLink?.close();
+    _player.dispose();
     super.dispose();
   }
 
