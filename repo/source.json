@@ -14,15 +14,15 @@
       "bundleIdentifier": "com.kodjodevf.mangayomi",
       "developerName": "Moustapha Kodjo Amadou",
       "subtitle": "Read manga, novels, and watch anime",
-      "version": "0.6.75",
-      "versionDate": "2025-11-28T15:29:16Z",
+      "version": "0.6.80",
+      "versionDate": "2025-11-29T17:29:34Z",
       "versionDescription": "",
-      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.75/Mangayomi-v0.6.75-ios.ipa",
+      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.80/Mangayomi-v0.6.80-ios.ipa",
       "localizedDescription": "Mangayomi is an open-source Flutter app for reading manga, novels, and watching anime across multiple platforms.",
       "iconURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/icons/icon_default.webp",
       "tintColor": "EF4444",
       "category": "entertainment",
-      "size": 44506005,
+      "size": 44514252,
       "screenshotURLs": [
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_0_default.webp",
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_1_default.webp",
@@ -30,9 +30,16 @@
       ],
       "versions": [
         {
+          "version": "0.6.80",
+          "date": "2025-11-29T17:29:34Z",
+          "localizedDescription": "",
+          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.80/Mangayomi-v0.6.80-ios.ipa",
+          "size": 44514252
+        },
+        {
           "version": "0.6.75",
           "date": "2025-11-28T15:29:16Z",
-          "localizedDescription": "",
+          "localizedDescription": "What's Changed\r\n* Fix memory leaks in manga reader_view.dart by @Whiskas101 in https://github.com/kodjodevf/mangayomi/pull/605\r\n* Refactor: remove old layout migration code\r\n* Fix 604 can't restore backup on macos \r\n* Refactor: replace await for loop with listen for message handling in isolate\r\n* Fix CF auto resolution not working\r\n\r\nNew Contributors\r\n* @Whiskas101 made their first contribution in https://github.com/kodjodevf/mangayomi/pull/605\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.6.70...v0.6.75",
           "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.75/Mangayomi-v0.6.75-ios.ipa",
           "size": 44506005
         },
@@ -279,6 +286,17 @@
       "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
       "notify": true,
       "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.6.75"
+    },
+    {
+      "appID": "com.kodjodevf.mangayomi",
+      "title": "0.6.80 - 29 Nov",
+      "identifier": "release-0.6.80",
+      "caption": "Update for Mangayomi now available!",
+      "date": "2025-11-29T17:29:34Z",
+      "tintColor": "EF4444",
+      "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
+      "notify": true,
+      "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.6.80"
     }
   ]
 }
