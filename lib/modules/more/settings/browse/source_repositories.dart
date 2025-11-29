@@ -200,7 +200,7 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                               icon: Stack(
                                 children: [
                                   const Icon(Icons.remove_red_eye_outlined),
-                                  if (!isHidden)
+                                  if (isHidden)
                                     Positioned(
                                       right: 8,
                                       child: Transform.scale(
