@@ -1007,44 +1007,44 @@ packages:
     description:
       path: media_kit
       ref: HEAD
-      resolved-ref: "62b08e33590cba8fba4797eaaa1e95b514adb437"
-      url: "https://github.com/Schnitzel5/media-kit.git"
+      resolved-ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
+      url: "https://github.com/kodjodevf/media-kit.git"
     source: git
     version: "1.2.0"
   media_kit_libs_android_video:
     dependency: transitive
     description:
       path: "libs/android/media_kit_libs_android_video"
-      ref: "62b08e33590cba8fba4797eaaa1e95b514adb437"
-      resolved-ref: "62b08e33590cba8fba4797eaaa1e95b514adb437"
-      url: "https://github.com/Schnitzel5/media-kit.git"
+      ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
+      resolved-ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
+      url: "https://github.com/kodjodevf/media-kit.git"
     source: git
     version: "1.3.7"
   media_kit_libs_ios_video:
     dependency: transitive
     description:
       path: "libs/ios/media_kit_libs_ios_video"
-      ref: "62b08e33590cba8fba4797eaaa1e95b514adb437"
-      resolved-ref: "62b08e33590cba8fba4797eaaa1e95b514adb437"
-      url: "https://github.com/Schnitzel5/media-kit.git"
+      ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
+      resolved-ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
+      url: "https://github.com/kodjodevf/media-kit.git"
     source: git
     version: "1.1.4"
   media_kit_libs_linux:
     dependency: transitive
     description:
       path: "libs/linux/media_kit_libs_linux"
-      ref: "62b08e33590cba8fba4797eaaa1e95b514adb437"
-      resolved-ref: "62b08e33590cba8fba4797eaaa1e95b514adb437"
-      url: "https://github.com/Schnitzel5/media-kit.git"
+      ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
+      resolved-ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
+      url: "https://github.com/kodjodevf/media-kit.git"
     source: git
     version: "1.2.1"
   media_kit_libs_macos_video:
     dependency: transitive
     description:
       path: "libs/macos/media_kit_libs_macos_video"
-      ref: "62b08e33590cba8fba4797eaaa1e95b514adb437"
-      resolved-ref: "62b08e33590cba8fba4797eaaa1e95b514adb437"
-      url: "https://github.com/Schnitzel5/media-kit.git"
+      ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
+      resolved-ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
+      url: "https://github.com/kodjodevf/media-kit.git"
     source: git
     version: "1.1.4"
   media_kit_libs_video:
@@ -1052,17 +1052,17 @@ packages:
     description:
       path: "libs/universal/media_kit_libs_video"
       ref: HEAD
-      resolved-ref: "62b08e33590cba8fba4797eaaa1e95b514adb437"
-      url: "https://github.com/Schnitzel5/media-kit.git"
+      resolved-ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
+      url: "https://github.com/kodjodevf/media-kit.git"
     source: git
     version: "1.0.6"
   media_kit_libs_windows_video:
     dependency: transitive
     description:
       path: "libs/windows/media_kit_libs_windows_video"
-      ref: "62b08e33590cba8fba4797eaaa1e95b514adb437"
-      resolved-ref: "62b08e33590cba8fba4797eaaa1e95b514adb437"
-      url: "https://github.com/Schnitzel5/media-kit.git"
+      ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
+      resolved-ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
+      url: "https://github.com/kodjodevf/media-kit.git"
     source: git
     version: "1.0.11"
   media_kit_video:
@@ -1070,8 +1070,8 @@ packages:
     description:
       path: media_kit_video
       ref: HEAD
-      resolved-ref: "62b08e33590cba8fba4797eaaa1e95b514adb437"
-      url: "https://github.com/Schnitzel5/media-kit.git"
+      resolved-ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
+      url: "https://github.com/kodjodevf/media-kit.git"
     source: git
     version: "1.3.0"
   meta:
