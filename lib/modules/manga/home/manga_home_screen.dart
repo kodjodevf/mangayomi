@@ -712,12 +712,9 @@ class MangaHomeImageCard extends ConsumerStatefulWidget {
   ConsumerState<MangaHomeImageCard> createState() => _MangaHomeImageCardState();
 }
 
-class _MangaHomeImageCardState extends ConsumerState<MangaHomeImageCard>
-    with AutomaticKeepAliveClientMixin<MangaHomeImageCard> {
+class _MangaHomeImageCardState extends ConsumerState<MangaHomeImageCard> {
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-
     return MangaImageCardWidget(
       getMangaDetail: widget.manga,
       source: widget.source,
@@ -725,9 +722,6 @@ class _MangaHomeImageCardState extends ConsumerState<MangaHomeImageCard>
       isComfortableGrid: widget.isComfortableGrid,
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }
 
 class MangaHomeImageCardListTile extends ConsumerStatefulWidget {
@@ -747,19 +741,13 @@ class MangaHomeImageCardListTile extends ConsumerStatefulWidget {
 }
 
 class _MangaHomeImageCardListTileState
-    extends ConsumerState<MangaHomeImageCardListTile>
-    with AutomaticKeepAliveClientMixin<MangaHomeImageCardListTile> {
+    extends ConsumerState<MangaHomeImageCardListTile> {
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-
     return MangaImageCardListTileWidget(
       getMangaDetail: widget.manga,
       source: widget.source,
       itemType: widget.itemType,
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }
