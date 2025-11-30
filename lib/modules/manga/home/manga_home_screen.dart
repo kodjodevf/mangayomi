@@ -83,16 +83,16 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
         _fullDataLength = _fullDataLength + 50;
       } else {
         if (_selectedIndex == 0 && !_isSearch && _query.isEmpty) {
-          mangaRes = await ref.watch(
+          mangaRes = await ref.read(
             getPopularProvider(source: source, page: _page + 1).future,
           );
         } else if (_selectedIndex == 1 && !_isSearch && _query.isEmpty) {
-          mangaRes = await ref.watch(
+          mangaRes = await ref.read(
             getLatestUpdatesProvider(source: source, page: _page + 1).future,
           );
         } else if (_selectedIndex == 2 && (_isSearch && _query.isNotEmpty) ||
             _isFiltering) {
-          mangaRes = await ref.watch(
+          mangaRes = await ref.read(
             searchProvider(
               source: source,
               query: _query,
