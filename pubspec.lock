@@ -189,10 +189,10 @@ packages:
     dependency: transitive
     description:
       name: built_value
-      sha256: "426cf75afdb23aa74bd4e471704de3f9393f3c7b04c1e2d9c6f1073ae0b8b139"
+      sha256: a30f0a0e38671e89a492c44d005b5545b830a961575bbd8336d42869ff71066d
       url: "https://pub.dev"
     source: hosted
-    version: "8.12.1"
+    version: "8.12.0"
   characters:
     dependency: transitive
     description:
@@ -285,10 +285,10 @@ packages:
     dependency: transitive
     description:
       name: cross_file
-      sha256: "701dcfc06da0882883a2657c445103380e53e647060ad8d9dfb710c100996608"
+      sha256: "942a4791cd385a68ccb3b32c71c427aba508a1bb949b86dff2adbe4049f16239"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.5+1"
+    version: "0.3.5"
   crypto:
     dependency: "direct main"
     description:
@@ -374,10 +374,10 @@ packages:
     dependency: "direct main"
     description:
       name: device_info_plus
-      sha256: "4df8babf73058181227e18b08e6ea3520cf5fc5d796888d33b7cb0f33f984b7c"
+      sha256: dd0e8e02186b2196c7848c9d394a5fd6e5b57a43a546082c5820b1ec72317e33
       url: "https://pub.dev"
     source: hosted
-    version: "12.3.0"
+    version: "12.2.0"
   device_info_plus_platform_interface:
     dependency: transitive
     description:
@@ -618,10 +618,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_plugin_android_lifecycle
-      sha256: ee8068e0e1cd16c4a82714119918efdeed33b3ba7772c54b5d094ab53f9b7fd1
+      sha256: "306f0596590e077338312f38837f595c04f28d6cdeeac392d3d74df2f0003687"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.33"
+    version: "2.0.32"
   flutter_qjs:
     dependency: "direct main"
     description:
@@ -1007,44 +1007,44 @@ packages:
     description:
       path: media_kit
       ref: HEAD
-      resolved-ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
-      url: "https://github.com/kodjodevf/media-kit.git"
+      resolved-ref: ef6279dddf85934faed673a41821c6dc5be59e5e
+      url: "https://github.com/Schnitzel5/media-kit.git"
     source: git
-    version: "1.2.0"
+    version: "1.2.2"
   media_kit_libs_android_video:
     dependency: transitive
     description:
       path: "libs/android/media_kit_libs_android_video"
-      ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
-      resolved-ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
-      url: "https://github.com/kodjodevf/media-kit.git"
+      ref: ef6279dddf85934faed673a41821c6dc5be59e5e
+      resolved-ref: ef6279dddf85934faed673a41821c6dc5be59e5e
+      url: "https://github.com/Schnitzel5/media-kit.git"
     source: git
-    version: "1.3.7"
+    version: "1.3.8"
   media_kit_libs_ios_video:
     dependency: transitive
     description:
       path: "libs/ios/media_kit_libs_ios_video"
-      ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
-      resolved-ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
-      url: "https://github.com/kodjodevf/media-kit.git"
+      ref: ef6279dddf85934faed673a41821c6dc5be59e5e
+      resolved-ref: ef6279dddf85934faed673a41821c6dc5be59e5e
+      url: "https://github.com/Schnitzel5/media-kit.git"
     source: git
     version: "1.1.4"
   media_kit_libs_linux:
     dependency: transitive
     description:
       path: "libs/linux/media_kit_libs_linux"
-      ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
-      resolved-ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
-      url: "https://github.com/kodjodevf/media-kit.git"
+      ref: ef6279dddf85934faed673a41821c6dc5be59e5e
+      resolved-ref: ef6279dddf85934faed673a41821c6dc5be59e5e
+      url: "https://github.com/Schnitzel5/media-kit.git"
     source: git
     version: "1.2.1"
   media_kit_libs_macos_video:
     dependency: transitive
     description:
       path: "libs/macos/media_kit_libs_macos_video"
-      ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
-      resolved-ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
-      url: "https://github.com/kodjodevf/media-kit.git"
+      ref: ef6279dddf85934faed673a41821c6dc5be59e5e
+      resolved-ref: ef6279dddf85934faed673a41821c6dc5be59e5e
+      url: "https://github.com/Schnitzel5/media-kit.git"
     source: git
     version: "1.1.4"
   media_kit_libs_video:
@@ -1052,17 +1052,17 @@ packages:
     description:
       path: "libs/universal/media_kit_libs_video"
       ref: HEAD
-      resolved-ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
-      url: "https://github.com/kodjodevf/media-kit.git"
+      resolved-ref: ef6279dddf85934faed673a41821c6dc5be59e5e
+      url: "https://github.com/Schnitzel5/media-kit.git"
     source: git
-    version: "1.0.6"
+    version: "1.0.7"
   media_kit_libs_windows_video:
     dependency: transitive
     description:
       path: "libs/windows/media_kit_libs_windows_video"
-      ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
-      resolved-ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
-      url: "https://github.com/kodjodevf/media-kit.git"
+      ref: ef6279dddf85934faed673a41821c6dc5be59e5e
+      resolved-ref: ef6279dddf85934faed673a41821c6dc5be59e5e
+      url: "https://github.com/Schnitzel5/media-kit.git"
     source: git
     version: "1.0.11"
   media_kit_video:
@@ -1070,10 +1070,10 @@ packages:
     description:
       path: media_kit_video
       ref: HEAD
-      resolved-ref: e887d99990331dc5a03b9609a6ce21f05570c6e6
-      url: "https://github.com/kodjodevf/media-kit.git"
+      resolved-ref: ef6279dddf85934faed673a41821c6dc5be59e5e
+      url: "https://github.com/Schnitzel5/media-kit.git"
     source: git
-    version: "1.3.0"
+    version: "2.0.0"
   meta:
     dependency: transitive
     description:
@@ -1166,18 +1166,18 @@ packages:
     dependency: transitive
     description:
       name: path_provider_android
-      sha256: f2c65e21139ce2c3dad46922be8272bb5963516045659e71bb16e151c93b580e
+      sha256: e122c5ea805bb6773bb12ce667611265980940145be920cd09a4b0ec0285cb16
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.22"
+    version: "2.2.20"
   path_provider_foundation:
     dependency: transitive
     description:
       name: path_provider_foundation
-      sha256: "6d13aece7b3f5c5a9731eaf553ff9dcbc2eff41087fd2df587fd0fed9a3eb0c4"
+      sha256: efaec349ddfc181528345c56f8eda9d6cccd71c177511b132c6a0ddaefaa2738
       url: "https://pub.dev"
     source: hosted
-    version: "2.5.1"
+    version: "2.4.3"
   path_provider_linux:
     dependency: transitive
     description:
@@ -1770,34 +1770,34 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_android
-      sha256: "767344bf3063897b5cf0db830e94f904528e6dd50a6dfaf839f0abf509009611"
+      sha256: "5c8b6c2d89a78f5a1cca70a73d9d5f86c701b36b42f9c9dac7bad592113c28e9"
       url: "https://pub.dev"
     source: hosted
-    version: "6.3.28"
+    version: "6.3.24"
   url_launcher_ios:
     dependency: transitive
     description:
       name: url_launcher_ios
-      sha256: cfde38aa257dae62ffe79c87fab20165dfdf6988c1d31b58ebf59b9106062aad
+      sha256: "6b63f1441e4f653ae799166a72b50b1767321ecc263a57aadf825a7a2a5477d9"
       url: "https://pub.dev"
     source: hosted
-    version: "6.3.6"
+    version: "6.3.5"
   url_launcher_linux:
     dependency: transitive
     description:
       name: url_launcher_linux
-      sha256: d5e14138b3bc193a0f63c10a53c94b91d399df0512b1f29b94a043db7482384a
+      sha256: "4e9ba368772369e3e08f231d2301b4ef72b9ff87c31192ef471b380ef29a4935"
       url: "https://pub.dev"
     source: hosted
-    version: "3.2.2"
+    version: "3.2.1"
   url_launcher_macos:
     dependency: transitive
     description:
       name: url_launcher_macos
-      sha256: "368adf46f71ad3c21b8f06614adb38346f193f3a59ba8fe9a2fd74133070ba18"
+      sha256: "8262208506252a3ed4ff5c0dc1e973d2c0e0ef337d0a074d35634da5d44397c9"
       url: "https://pub.dev"
     source: hosted
-    version: "3.2.5"
+    version: "3.2.4"
   url_launcher_platform_interface:
     dependency: transitive
     description:
@@ -1818,10 +1818,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_windows
-      sha256: "712c70ab1b99744ff066053cbe3e80c73332b38d46e5e945c98689b2e66fc15f"
+      sha256: "3284b6d2ac454cf34f114e1d3319866fdd1e19cdc329999057e44ffe936cfa77"
       url: "https://pub.dev"
     source: hosted
-    version: "3.1.5"
+    version: "3.1.4"
   uuid:
     dependency: transitive
     description:

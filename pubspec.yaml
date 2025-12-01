@@ -41,15 +41,15 @@ dependencies:
   encrypt: ^5.0.3
   media_kit:
     git:
-      url: https://github.com/kodjodevf/media-kit.git
+      url: https://github.com/Schnitzel5/media-kit.git
       path: media_kit
   media_kit_video:
     git:
-      url: https://github.com/kodjodevf/media-kit.git
+      url: https://github.com/Schnitzel5/media-kit.git
       path: media_kit_video
   media_kit_libs_video:
     git:
-      url: https://github.com/kodjodevf/media-kit.git
+      url: https://github.com/Schnitzel5/media-kit.git
       path: libs/universal/media_kit_libs_video
   crypto: ^3.0.7
   cupertino_icons: ^1.0.8
