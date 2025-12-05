@@ -75,8 +75,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
 
   Widget _buildStatisticsTab({required ItemType itemType}) {
     final l10n = context.l10n;
-    // final stats = ref.watch(statisticsStateProvider(itemType).notifier);
-    final stats = ref.watch(statisticsStateProvider(itemType));
+    final stats = ref.watch(getStatisticsProvider(itemType: itemType));
 
     final title = switch (itemType) {
       ItemType.manga => l10n.manga,
