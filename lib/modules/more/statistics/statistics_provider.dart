@@ -6,37 +6,68 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'statistics_provider.g.dart';
 
+class StatisticsData {
+  final int totalItems;
+  final int totalChapters;
+  final int readChapters;
+  final int completedItems;
+  final int downloadedItems;
+
+  const StatisticsData({
+    required this.totalItems,
+    required this.totalChapters,
+    required this.readChapters,
+    required this.completedItems,
+    required this.downloadedItems,
+  });
+}
+
 @riverpod
 class StatisticsState extends _$StatisticsState {
   @override
-  void build(ItemType itemType) {}
-  final items = isar.mangas
-      .filter()
-      .idIsNotNull()
-      .favoriteEqualTo(true)
-      .findAllSync();
-  final chapters = isar.chapters
-      .filter()
-      .idIsNotNull()
-      .manga((q) => q.favoriteEqualTo(true))
-      .findAllSync();
-  int get totalItems => items.where((i) => i.itemType == itemType).length;
-  int get totalChapters =>
-      chapters.where((i) => i.manga.value!.itemType == itemType).length;
-  int get readChapters => chapters
-      .where((i) => i.manga.value!.itemType == itemType && (i.isRead ?? false))
-      .length;
-  int get completedItems => items
-      .where((i) => i.itemType == itemType && (i.status == Status.completed))
-      .where((e) => e.chapters.every((element) => element.isRead ?? false))
-      .length;
+  Future<StatisticsData> build(ItemType itemType) async {
+    final items = await isar.mangas
+        .filter()
+        .idIsNotNull()
+        .favoriteEqualTo(true)
+        .itemTypeEqualTo(itemType)
+        .findAll();
 
-  int get downloadedItems => isar.downloads
-      .filter()
-      .idIsNotNull()
-      .chapter((q) => q.manga((m) => m.itemTypeEqualTo(itemType)))
-      .chapter((q) => q.manga((m) => m.favoriteEqualTo(true)))
-      .isDownloadEqualTo(true)
-      .findAllSync()
-      .length;
+    final chapters = await isar.chapters
+        .filter()
+        .idIsNotNull()
+        .manga((q) => q.favoriteEqualTo(true).itemTypeEqualTo(itemType))
+        .findAll();
+
+    final downloadedCount = await isar.downloads
+        .filter()
+        .idIsNotNull()
+        .chapter((q) => q.manga((m) => m.itemTypeEqualTo(itemType)))
+        .chapter((q) => q.manga((m) => m.favoriteEqualTo(true)))
+        .isDownloadEqualTo(true)
+        .count();
+
+    final totalItems = items.length;
+    final totalChapters = chapters.length;
+    final readChapters = chapters.where((c) => c.isRead ?? false).length;
+
+    int completedItems = 0;
+    for (var item in items) {
+      if (item.status == Status.completed) {
+        final itemChapters = item.chapters.toList();
+        if (itemChapters.isNotEmpty &&
+            itemChapters.every((element) => element.isRead ?? false)) {
+          completedItems++;
+        }
+      }
+    }
+
+    return StatisticsData(
+      totalItems: totalItems,
+      totalChapters: totalChapters,
+      readChapters: readChapters,
+      completedItems: completedItems,
+      downloadedItems: downloadedCount,
+    );
+  }
 }

@@ -75,7 +75,8 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
 
   Widget _buildStatisticsTab({required ItemType itemType}) {
     final l10n = context.l10n;
-    final stats = ref.watch(statisticsStateProvider(itemType).notifier);
+    // final stats = ref.watch(statisticsStateProvider(itemType).notifier);
+    final stats = ref.watch(statisticsStateProvider(itemType));
 
     final title = switch (itemType) {
       ItemType.manga => l10n.manga,
@@ -94,47 +95,52 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
       _ => l10n.unread,
     };
 
-    final totalItems = stats.totalItems;
-    final totalChapters = stats.totalChapters;
-    final readChapters = stats.readChapters;
-    final unreadChapters = totalChapters - readChapters;
-    final completedItems = stats.completedItems;
-    final downloadedItems = stats.downloadedItems;
+    return stats.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (err, stack) => Center(child: Text("Err: $err")),
+      data: (stats) {
+        final totalItems = stats.totalItems;
+        final totalChapters = stats.totalChapters;
+        final readChapters = stats.readChapters;
+        final unreadChapters = totalChapters - readChapters;
+        final completedItems = stats.completedItems;
+        final downloadedItems = stats.downloadedItems;
 
-    final averageChapters = totalItems > 0 ? totalChapters / totalItems : 0;
-    final readPercentage = totalChapters > 0
-        ? (readChapters / totalChapters) * 100
-        : 0;
-    final completedPercentage = totalItems > 0
-        ? (completedItems / totalItems) * 100
-        : 0;
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _buildSectionHeader('Entries'),
-          _buildEntriesCard(
-            totalItems: totalItems,
-            completedItems: completedItems,
-            completedPercentage: completedPercentage.toDouble(),
+        final averageChapters = totalItems > 0 ? totalChapters / totalItems : 0;
+        final readPercentage = totalChapters > 0
+            ? (readChapters / totalChapters) * 100
+            : 0;
+        final completedPercentage = totalItems > 0
+            ? (completedItems / totalItems) * 100
+            : 0;
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildSectionHeader('Entries'),
+              _buildEntriesCard(
+                totalItems: totalItems,
+                completedItems: completedItems,
+                completedPercentage: completedPercentage.toDouble(),
+              ),
+              const SizedBox(height: 10),
+              _buildSectionHeader(chapterLabel),
+              _buildChaptersCard(
+                totalChapters: totalChapters,
+                readChapters: readChapters,
+                unreadChapters: unreadChapters,
+                downloadedItems: downloadedItems,
+                averageChapters: averageChapters.toDouble(),
+                readPercentage: readPercentage.toDouble(),
+                title: title,
+                context: context,
+                unreadLabel: unreadLabel,
+              ),
+            ],
           ),
-          const SizedBox(height: 10),
-          _buildSectionHeader(chapterLabel),
-          _buildChaptersCard(
-            totalChapters: totalChapters,
-            readChapters: readChapters,
-            unreadChapters: unreadChapters,
-            downloadedItems: downloadedItems,
-            averageChapters: averageChapters.toDouble(),
-            readPercentage: readPercentage.toDouble(),
-            title: title,
-            context: context,
-            unreadLabel: unreadLabel,
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
