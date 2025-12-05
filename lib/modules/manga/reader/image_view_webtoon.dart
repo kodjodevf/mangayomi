@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/modules/manga/reader/double_columm_view_vertical.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/double_page_view.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_vertical.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/transition_view_vertical.dart';
@@ -134,10 +134,10 @@ class ImageViewWebtoon extends StatelessWidget {
       behavior: HitTestBehavior.translucent,
       onDoubleTapDown: (details) => onDoubleTapDown(details.globalPosition),
       onDoubleTap: onDoubleTap,
-      child: DoubleColummVerticalView(
-        datas: datas,
+      child: DoublePageView.vertical(
+        pages: datas,
         backgroundColor: backgroundColor,
-        isFailedToLoadImage: onFailedToLoadImage,
+        onFailedToLoadImage: onFailedToLoadImage,
         onLongPressData: onLongPressData,
       ),
     );
