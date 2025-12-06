@@ -189,7 +189,7 @@ jobs:
           pod update
           cd ..
           flutter build macos --release --verbose
-          brew install create-dmg 
+          brew install create-dmg
           create-dmg --volname Mangayomi-${{ github.ref_name }}-macos --window-pos 200 120 --window-size 800 450 --icon-size 100 --app-drop-link 600 185 Mangayomi-${{ github.ref_name }}-macos.dmg build/macos/Build/Products/Release/Mangayomi.app
 
       - name: upload artifact macos dmg
@@ -314,6 +314,11 @@ jobs:
           # Copy built files
           cp -r build/linux/x64/release/bundle/* AppDir/usr/bin/
           cp -rL linux/packaging/icons/* AppDir/usr/share/icons
+          # AppImage fix: Create Symlink AppDir/usr/bin/lib/libmpv.so to AppDir/usr/lib/libmpv.so.2
+          if [ ! -e AppDir/usr/bin/lib/libmpv.so ]; then
+            mkdir -p AppDir/usr/lib
+            ln -s libmpv.so.2 AppDir/usr/lib/libmpv.so
+          fi
           # Scan AppDir/usr/bin/lib for existing libraries to exclude them from linuxdeploy packaging
           EXCLUDE_LIBS=$(find AppDir/usr/bin/lib -type f -name "*.so*" -exec basename {} \; | sort -u)
           # Add --exclude-library flag to each found library
