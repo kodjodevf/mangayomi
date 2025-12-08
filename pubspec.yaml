@@ -99,6 +99,10 @@ dependencies:
       url: https://github.com/Schnitzel5/flutter-discord-rpc.git
       ref: main
   table_calendar: ^3.2.0
+  m_extension_server:
+    git:
+      url: https://github.com/kodjodevf/m_extension_server.git
+      ref: master
 
 dependency_overrides:
   ffi: ^2.1.3

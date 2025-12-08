@@ -19,6 +19,8 @@ PODS:
   - FlutterMacOS (1.0.0)
   - isar_community_flutter_libs (1.0.0):
     - FlutterMacOS
+  - m_extension_server (0.0.1):
+    - FlutterMacOS
   - media_kit_libs_macos_video (1.0.4):
     - FlutterMacOS
   - media_kit_video (0.0.1):
@@ -59,6 +61,7 @@ DEPENDENCIES:
   - flutter_web_auth_2 (from `Flutter/ephemeral/.symlinks/plugins/flutter_web_auth_2/macos`)
   - FlutterMacOS (from `Flutter/ephemeral`)
   - isar_community_flutter_libs (from `Flutter/ephemeral/.symlinks/plugins/isar_community_flutter_libs/macos`)
+  - m_extension_server (from `Flutter/ephemeral/.symlinks/plugins/m_extension_server/macos`)
   - media_kit_libs_macos_video (from `Flutter/ephemeral/.symlinks/plugins/media_kit_libs_macos_video/macos`)
   - media_kit_video (from `Flutter/ephemeral/.symlinks/plugins/media_kit_video/macos`)
   - package_info_plus (from `Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos`)
@@ -98,6 +101,8 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral
   isar_community_flutter_libs:
     :path: Flutter/ephemeral/.symlinks/plugins/isar_community_flutter_libs/macos
+  m_extension_server:
+    :path: Flutter/ephemeral/.symlinks/plugins/m_extension_server/macos
   media_kit_libs_macos_video:
     :path: Flutter/ephemeral/.symlinks/plugins/media_kit_libs_macos_video/macos
   media_kit_video:
@@ -136,6 +141,7 @@ SPEC CHECKSUMS:
   flutter_web_auth_2: 62b08da29f15a20fa63f144234622a1488d45b65
   FlutterMacOS: d0db08ddef1a9af05a5ec4b724367152bb0500b1
   isar_community_flutter_libs: a631ceb5622413b56bcd0a8bf49cb55bf3d8bb2b
+  m_extension_server: 50e95a61bbf93c9a33ddc812d0753bddf1c01456
   media_kit_libs_macos_video: 85a23e549b5f480e72cae3e5634b5514bc692f65
   media_kit_video: fa6564e3799a0a28bff39442334817088b7ca758
   OrderedSet: e539b66b644ff081c73a262d24ad552a69be3a94
