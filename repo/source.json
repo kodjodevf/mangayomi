@@ -14,15 +14,15 @@
       "bundleIdentifier": "com.kodjodevf.mangayomi",
       "developerName": "Moustapha Kodjo Amadou",
       "subtitle": "Read manga, novels, and watch anime",
-      "version": "0.6.80",
-      "versionDate": "2025-11-29T17:29:34Z",
+      "version": "0.6.85",
+      "versionDate": "2025-12-10T13:16:58Z",
       "versionDescription": "",
-      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.80/Mangayomi-v0.6.80-ios.ipa",
+      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.85/Mangayomi-v0.6.85-ios.ipa",
       "localizedDescription": "Mangayomi is an open-source Flutter app for reading manga, novels, and watching anime across multiple platforms.",
       "iconURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/icons/icon_default.webp",
       "tintColor": "EF4444",
       "category": "entertainment",
-      "size": 44514252,
+      "size": 44541949,
       "screenshotURLs": [
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_0_default.webp",
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_1_default.webp",
@@ -30,9 +30,16 @@
       ],
       "versions": [
         {
+          "version": "0.6.85",
+          "date": "2025-12-10T13:16:58Z",
+          "localizedDescription": "",
+          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.85/Mangayomi-v0.6.85-ios.ipa",
+          "size": 44541949
+        },
+        {
           "version": "0.6.80",
           "date": "2025-11-29T17:29:34Z",
-          "localizedDescription": "",
+          "localizedDescription": "\u2022 fix video showing blue blank screen\r\n\r\nWhat's Changed\r\n* Fix: Reverse icon for toggling the Extension. by @hndrbrm in https://github.com/kodjodevf/mangayomi/pull/610\r\n* Various fixes by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/612\r\n* Fix 613 video player showing blue blank screen\r\n* Fix app crash when watching anime\r\n\r\nNew Contributors\r\n* @hndrbrm made their first contribution in https://github.com/kodjodevf/mangayomi/pull/610\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.6.75...v0.6.80",
           "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.80/Mangayomi-v0.6.80-ios.ipa",
           "size": 44514252
         },
@@ -297,6 +304,17 @@
       "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
       "notify": true,
       "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.6.80"
+    },
+    {
+      "appID": "com.kodjodevf.mangayomi",
+      "title": "0.6.85 - 10 Dec",
+      "identifier": "release-0.6.85",
+      "caption": "Update for Mangayomi now available!",
+      "date": "2025-12-10T13:16:58Z",
+      "tintColor": "EF4444",
+      "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
+      "notify": true,
+      "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.6.85"
     }
   ]
 }
