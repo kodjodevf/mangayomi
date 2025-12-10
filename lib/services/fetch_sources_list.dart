@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/lib.dart';
@@ -69,8 +70,9 @@ Future<void> fetchSourcesList({
                   ? ItemType.anime
                   : ItemType.manga
               ..iconUrl = "$repoUrl/icon/${e['pkg']}.png"
-              ..notes =
-                  "Requires Android Proxy Server (ApkBridge) for installing and using the extensions!";
+              ..notes = Platform.isAndroid
+                  ? null
+                  : "Requires Android Proxy Server (ApkBridge) for installing and using the extensions!";
             src.id = 'mihon-${source['id']}'.hashCode;
             yield src;
           }
