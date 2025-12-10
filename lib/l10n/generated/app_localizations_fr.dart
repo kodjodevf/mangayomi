@@ -1804,4 +1804,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String select_label_color(Object label) {
     return 'Sélectionner la couleur $label';
   }
+
+  @override
+  String get default_user_agent => 'Defaul user agent';
 }

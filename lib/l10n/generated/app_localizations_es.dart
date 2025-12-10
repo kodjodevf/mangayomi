@@ -1804,6 +1804,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String select_label_color(Object label) {
     return 'Seleccionar color de $label';
   }
+
+  @override
+  String get default_user_agent => 'Defaul user agent';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).

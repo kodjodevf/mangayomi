@@ -7,8 +7,10 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/main.dart';
+import 'package:mangayomi/modules/more/settings/general/providers/general_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/global_style.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
@@ -53,6 +55,10 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
 
   Webview? _desktopWebview;
   Future<void> _runWebViewDesktop() async {
+    String? ua = ref.watch(userAgentStateProvider);
+    if (ua == defaultUserAgent) {
+      ua = null;
+    }
     if (Platform.isLinux) {
       _desktopWebview = await WebviewWindow.create();
 
@@ -110,6 +116,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
           webViewSettings: InAppWebViewSettings(
             isInspectable: kDebugMode,
             useShouldOverrideUrlLoading: true,
+            userAgent: ua,
           ),
         ),
       );

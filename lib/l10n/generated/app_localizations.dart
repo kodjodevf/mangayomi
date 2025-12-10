@@ -3430,6 +3430,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select {label} Color'**
   String select_label_color(Object label);
+
+  /// No description provided for @default_user_agent.
+  ///
+  /// In en, this message translates to:
+  /// **'Defaul user agent'**
+  String get default_user_agent;
 }
 
 class _AppLocalizationsDelegate

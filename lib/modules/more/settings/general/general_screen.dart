@@ -35,6 +35,7 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context);
     final customDns = ref.watch(customDnsStateProvider);
+    final userAgent = ref.watch(userAgentStateProvider);
     final enableDiscordRpc = ref.watch(enableDiscordRpcStateProvider);
     final hideDiscordRpcInIncognito = ref.watch(
       hideDiscordRpcInIncognitoStateProvider,
@@ -54,6 +55,14 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
               title: Text(l10n.custom_dns),
               subtitle: Text(
                 customDns,
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
+              ),
+            ),
+            ListTile(
+              onTap: () => _showDefaultUserAgentDialog(context, ref, userAgent),
+              title: Text(context.l10n.default_user_agent),
+              subtitle: Text(
+                userAgent,
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
@@ -372,4 +381,77 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
       ),
     );
   }
+}
+
+void _showDefaultUserAgentDialog(
+  BuildContext context,
+  WidgetRef ref,
+  String ua,
+) {
+  final uaController = TextEditingController(text: ua);
+  showDialog(
+    context: context,
+    builder: (context) => StatefulBuilder(
+      builder: (context, setState) {
+        return AlertDialog(
+          title: Text(
+            context.l10n.default_user_agent,
+            style: const TextStyle(fontSize: 30),
+          ),
+          content: SizedBox(
+            width: context.width(0.8),
+            height: context.height(0.3),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: TextFormField(
+                    controller: uaController,
+                    autofocus: true,
+
+                    decoration: InputDecoration(
+                      hintText: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)...",
+                      filled: false,
+                      contentPadding: const EdgeInsets.all(12),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(width: 0.4),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: const BorderSide(),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: SizedBox(
+                    width: context.width(1),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        ref
+                            .watch(userAgentStateProvider.notifier)
+                            .set(uaController.text);
+                        if (!context.mounted) return;
+                        Navigator.pop(context);
+                      },
+                      child: Text(context.l10n.dialog_confirm),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    ),
+  );
 }

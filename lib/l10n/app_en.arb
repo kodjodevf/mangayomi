@@ -559,5 +559,6 @@
   "line_height": "Line Height",
   "show_scroll_percentage": "Show Scroll Percentage",
   "remove_extra_paragraph_spacing": "Remove Extra Paragraph Spacing",
-  "select_label_color": "Select {label} Color"
+  "select_label_color": "Select {label} Color",
+  "default_user_agent": "Defaul user agent"
 }

@@ -1799,6 +1799,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String select_label_color(Object label) {
     return 'Selecionar cor de $label';
   }
+
+  @override
+  String get default_user_agent => 'Defaul user agent';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).

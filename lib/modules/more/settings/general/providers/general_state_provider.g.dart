@@ -334,3 +334,56 @@ abstract class _$RpcShowCoverImageState extends $Notifier<bool> {
     element.handleValue(ref, created);
   }
 }
+
+@ProviderFor(UserAgentState)
+const userAgentStateProvider = UserAgentStateProvider._();
+
+final class UserAgentStateProvider
+    extends $NotifierProvider<UserAgentState, String> {
+  const UserAgentStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'userAgentStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$userAgentStateHash();
+
+  @$internal
+  @override
+  UserAgentState create() => UserAgentState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
+String _$userAgentStateHash() => r'e1e9ba333c5dc753813082190da4ee51ad587bb9';
+
+abstract class _$UserAgentState extends $Notifier<String> {
+  String build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<String, String>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String, String>,
+              String,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

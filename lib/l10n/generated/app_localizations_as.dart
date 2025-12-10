@@ -1781,4 +1781,7 @@ class AppLocalizationsAs extends AppLocalizations {
   String select_label_color(Object label) {
     return '$label ৰং নিৰ্বাচন কৰক';
   }
+
+  @override
+  String get default_user_agent => 'Defaul user agent';
 }

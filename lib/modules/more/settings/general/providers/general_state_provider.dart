@@ -123,3 +123,23 @@ class RpcShowCoverImageState extends _$RpcShowCoverImageState {
     );
   }
 }
+
+@riverpod
+class UserAgentState extends _$UserAgentState {
+  @override
+  String build() {
+    return isar.settings.getSync(227)!.userAgent!;
+  }
+
+  void set(String value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..userAgent = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
