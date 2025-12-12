@@ -449,6 +449,7 @@
     "downloaded_only": "Sadece indirilmiş",
     "downloaded_only_description": "Kütüphanenizde yalnızca indirilmiş girişleri göster",
     "concurrent_downloads": "Eş zamanlı indirmeler",
+    "logs_on": "Günlük kaydını etkinleştir",
     "share_app_logs": "Uygulama günlüklerini paylaş",
     "no_app_logs": "log.txt dosyası yok!",
     "failed": "Başarısız!",

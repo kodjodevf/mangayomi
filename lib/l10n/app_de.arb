@@ -465,6 +465,7 @@
     "downloaded_only": "Nur heruntergeladene",
     "downloaded_only_description": "Nur heruntergeladene Einträge in deiner Bibliothek anzeigen",
     "concurrent_downloads": "Gleichzeitige Downloads",
+    "logs_on": "Protokollierung aktivieren",
     "share_app_logs": "App-Protokolle teilen",
     "no_app_logs": "Keine log.txt Datei verfügbar!",
     "failed": "Fehlgeschlagen!",

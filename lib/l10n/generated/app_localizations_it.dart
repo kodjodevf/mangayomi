@@ -441,6 +441,9 @@ class AppLocalizationsIt extends AppLocalizations {
   String get check_for_update => 'Controlla aggiornamenti';
 
   @override
+  String get logs_on => 'Abilita registrazione';
+
+  @override
   String get share_app_logs => 'Condividi i log dell\'app';
 
   @override

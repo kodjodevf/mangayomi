@@ -449,6 +449,7 @@
     "downloaded_only": "Solo scaricati",
     "downloaded_only_description": "Mostra solo le voci scaricate nella tua libreria",
     "concurrent_downloads": "Download simultanei",
+    "logs_on": "Abilita registrazione",
     "share_app_logs": "Condividi i log dell'app",
     "no_app_logs": "Nessun file log.txt disponibile!",
     "failed": "Fallito!",

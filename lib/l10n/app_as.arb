@@ -305,6 +305,7 @@
   "default_subtitle_language": "ডিফল্ট উপশিৰোনাম ভাষা",
   "follow_system_theme": "ছিষ্টেম থিম অনুসৰণ কৰক",
   "concurrent_downloads": "সমসাময়িক ডাউনলোড",
+  "logs_on": "লগিং সক্ষম কৰক",
   "share_app_logs": "এপ লগ শ্বেয়াৰ কৰক",
   "no_app_logs": "কোনো log.txt ফাইল উপলব্ধ নাই!",
   "failed": "বিফল!",

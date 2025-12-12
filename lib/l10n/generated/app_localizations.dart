@@ -935,6 +935,12 @@ abstract class AppLocalizations {
   /// **'Check for update'**
   String get check_for_update;
 
+  /// No description provided for @logs_on.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable logging'**
+  String get logs_on;
+
   /// No description provided for @share_app_logs.
   ///
   /// In en, this message translates to:

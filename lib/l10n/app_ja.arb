@@ -304,6 +304,7 @@
   "default_subtitle_language": "デフォルト字幕言語",
   "follow_system_theme": "システムテーマに従う",
   "concurrent_downloads": "同時ダウンロード",
+  "logs_on": "ログを有効にする",
   "share_app_logs": "アプリログを共有",
   "no_app_logs": "log.txtファイルが利用できません！",
   "failed": "失敗！",

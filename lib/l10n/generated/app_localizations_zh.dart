@@ -428,6 +428,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get check_for_update => '检查更新';
 
   @override
+  String get logs_on => '启用日志';
+
+  @override
   String get share_app_logs => '分享应用日志';
 
   @override

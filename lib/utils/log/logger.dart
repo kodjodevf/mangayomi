@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
-
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:path/path.dart' as path;
 
@@ -12,6 +13,8 @@ class AppLogger {
 
   /// Initialize the logger
   static Future<void> init() async {
+    final enabled = isar.settings.getSync(227)?.enableLogs ?? false;
+    if (!enabled) return;
     final storage = StorageProvider();
     final directory = await storage.getDefaultDirectory();
     _logFile = File(path.join(directory!.path, 'logs.txt'));
