@@ -441,6 +441,9 @@ class AppLocalizationsId extends AppLocalizations {
   String get check_for_update => 'Periksa Pembaruan';
 
   @override
+  String get logs_on => 'Aktifkan pencatatan';
+
+  @override
   String get share_app_logs => 'Bagikan log aplikasi';
 
   @override

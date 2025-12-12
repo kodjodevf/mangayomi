@@ -127,6 +127,8 @@ class Settings {
 
   int? pagePreloadAmount;
 
+  bool? enableLogs;
+
   bool? checkForAppUpdates;
 
   bool? checkForExtensionUpdates;
@@ -357,6 +359,7 @@ class Settings {
     this.sortLibraryAnime,
     this.pagePreloadAmount = 6,
     this.scaleType = ScaleType.fitScreen,
+    this.enableLogs = false,
     this.checkForAppUpdates = true,
     this.checkForExtensionUpdates = true,
     this.backgroundColor = BackgroundColor.black,
@@ -482,6 +485,7 @@ class Settings {
           .map((e) => ChapterPageurls.fromJson(e))
           .toList();
     }
+    enableLogs = json['enableLogs'];
     checkForAppUpdates = json['checkForAppUpdates'];
     checkForExtensionUpdates = json['checkForExtensionUpdates'];
     if (json['cookiesList'] != null) {
@@ -720,6 +724,7 @@ class Settings {
         ?.map((v) => v.toJson())
         .toList(),
     'chapterPageUrlsList': chapterPageUrlsList?.map((v) => v.toJson()).toList(),
+    'enableLogs': enableLogs,
     'checkForAppUpdates': checkForAppUpdates,
     'checkForExtensionUpdates': checkForExtensionUpdates,
     'cookiesList': cookiesList,

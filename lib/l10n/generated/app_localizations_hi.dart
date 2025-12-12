@@ -437,6 +437,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get check_for_update => 'अपडेट के लिए जांचें';
 
   @override
+  String get logs_on => 'लॉगिंग सक्षम करें';
+
+  @override
   String get share_app_logs => 'ऐप लॉग साझा करें';
 
   @override

@@ -449,6 +449,7 @@
     "downloaded_only": "Solo descargados",
     "downloaded_only_description": "Mostrar solo entradas descargadas en tu biblioteca",
     "concurrent_downloads": "Descargas simultáneas",
+    "logs_on": "Activar registro",
     "share_app_logs": "Compartir registros de la aplicación",
     "no_app_logs": "¡No hay archivo log.txt disponible!",
     "failed": "¡Fallido!",

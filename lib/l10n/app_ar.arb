@@ -451,6 +451,7 @@
     "downloaded_only": "المحملة فقط",
     "downloaded_only_description": "إظهار الإدخالات المحملة فقط في مكتبتك",
     "concurrent_downloads": "التحميلات المتزامنة",
+    "logs_on": "تفعيل التسجيل",
     "share_app_logs": "مشاركة سجلات التطبيق",
     "no_app_logs": "لا يوجد ملف log.txt!",
     "failed": "فشل!",
