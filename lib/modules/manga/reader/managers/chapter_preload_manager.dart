@@ -7,16 +7,6 @@ import 'package:mangayomi/services/get_chapter_pages.dart';
 
 /// Manages the preloading and memory of chapters in the manga reader.
 class ChapterPreloadManager {
-  /// Maximum number of chapters to keep in memory
-  static const int maxChaptersInMemory = 3;
-
-  /// Maximum number of pages to keep in the preload list
-  static const int maxPagesInMemory = 200;
-
-  /// Buffer size around current index to keep
-  static const int pageBufferBefore = 30;
-  static const int pageBufferAfter = 70;
-
   /// The list of preloaded chapter data
   final List<UChapDataPreload> _pages = [];
 
@@ -34,7 +24,6 @@ class ChapterPreloadManager {
 
   /// Callbacks
   void Function()? onPagesUpdated;
-  void Function(int)? onIndexAdjusted;
 
   /// Gets the list of pages (read-only)
   List<UChapDataPreload> get pages => List.unmodifiable(_pages);
@@ -161,9 +150,6 @@ class ChapterPreloadManager {
         _chapterLoadOrder.add(chapterId);
       }
 
-      // Evict old chapters if necessary
-      await _evictOldChaptersIfNeeded();
-
       // Notify listeners
       onPagesUpdated?.call();
 
@@ -206,136 +192,6 @@ class ChapterPreloadManager {
     return true;
   }
 
-  /// Evicts old chapters to stay within memory limits.
-  Future<void> _evictOldChaptersIfNeeded() async {
-    // Evict by chapter count
-    while (_loadedChapterIds.length > maxChaptersInMemory &&
-        _chapterLoadOrder.isNotEmpty) {
-      final oldestChapterId = _chapterLoadOrder.first;
-
-      // Don't evict if current page is in this chapter
-      final currentPage = _currentIndex < _pages.length
-          ? _pages[_currentIndex]
-          : null;
-      final currentChapterId = currentPage != null
-          ? _getChapterIdentifier(currentPage.chapter)
-          : null;
-
-      if (oldestChapterId == currentChapterId) {
-        // Can't evict current chapter, try next
-        if (_chapterLoadOrder.length > 1) {
-          _chapterLoadOrder.removeFirst();
-          _chapterLoadOrder.add(oldestChapterId);
-          continue;
-        }
-        break;
-      }
-
-      await _evictChapter(oldestChapterId);
-    }
-
-    // Evict by page count if still too many
-    if (_pages.length > maxPagesInMemory) {
-      await _trimPagesToBuffer();
-    }
-  }
-
-  /// Evicts a specific chapter from memory.
-  Future<void> _evictChapter(String chapterId) async {
-    final pagesToRemove = <int>[];
-    final keysToRemoveFromCache = <String>[];
-
-    for (var i = 0; i < _pages.length; i++) {
-      final page = _pages[i];
-      if (_getChapterIdentifier(page.chapter) == chapterId) {
-        pagesToRemove.add(i);
-
-        // Clear the cropImage to free memory
-        page.cropImage = null;
-
-        // Build cache key for image cache removal
-        if (page.pageUrl?.url != null) {
-          keysToRemoveFromCache.add(page.pageUrl!.url);
-        }
-      }
-    }
-
-    // Remove pages from the end to avoid index shifting issues
-    for (var i = pagesToRemove.length - 1; i >= 0; i--) {
-      final index = pagesToRemove[i];
-      _pages.removeAt(index);
-
-      // Adjust current index if needed
-      if (_currentIndex > index) {
-        _currentIndex--;
-      }
-    }
-
-    // Remove from tracking
-    _loadedChapterIds.remove(chapterId);
-    _chapterLoadOrder.remove(chapterId);
-
-    // Notify about index adjustment
-    onIndexAdjusted?.call(_currentIndex);
-
-    if (kDebugMode) {
-      debugPrint(
-        '[ChapterPreload] Evicted chapter: $chapterId, '
-        'Removed ${pagesToRemove.length} pages',
-      );
-    }
-  }
-
-  /// Trims pages to keep only those within the buffer range.
-  Future<void> _trimPagesToBuffer() async {
-    if (_pages.length <= maxPagesInMemory) return;
-
-    final startKeep = (_currentIndex - pageBufferBefore).clamp(
-      0,
-      _pages.length,
-    );
-    final endKeep = (_currentIndex + pageBufferAfter).clamp(0, _pages.length);
-
-    final pagesToRemoveFromStart = startKeep;
-    final pagesToRemoveFromEnd = _pages.length - endKeep;
-
-    // Remove from end first
-    if (pagesToRemoveFromEnd > 0) {
-      final keysToRemove = <String>[];
-      for (var i = _pages.length - 1; i >= endKeep; i--) {
-        final page = _pages[i];
-        page.cropImage = null;
-        if (page.pageUrl?.url != null) {
-          keysToRemove.add(page.pageUrl!.url);
-        }
-      }
-      _pages.removeRange(endKeep, _pages.length);
-    }
-
-    // Remove from start
-    if (pagesToRemoveFromStart > 0) {
-      final keysToRemove = <String>[];
-      for (var i = 0; i < pagesToRemoveFromStart; i++) {
-        final page = _pages[i];
-        page.cropImage = null;
-        if (page.pageUrl?.url != null) {
-          keysToRemove.add(page.pageUrl!.url);
-        }
-      }
-      _pages.removeRange(0, pagesToRemoveFromStart);
-      _currentIndex -= pagesToRemoveFromStart;
-
-      onIndexAdjusted?.call(_currentIndex);
-    }
-
-    if (kDebugMode) {
-      debugPrint(
-        '[ChapterPreload] Trimmed pages, '
-        'New count: ${_pages.length}, Index: $_currentIndex',
-      );
-    }
-  }
-
   /// Gets a unique identifier for a chapter.
   String? _getChapterIdentifier(Chapter? chapter) {
     if (chapter == null) return null;
@@ -358,7 +214,6 @@ class ChapterPreloadManager {
 
     // Clear callbacks
     onPagesUpdated = null;
-    onIndexAdjusted = null;
 
     if (kDebugMode) {
       debugPrint('[ChapterPreload] Disposed');

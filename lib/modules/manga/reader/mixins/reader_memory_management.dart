@@ -38,7 +38,6 @@ mixin ReaderMemoryManagement {
     GetChapterPagesModel chapterData, {
     int startIndex = 0,
     VoidCallback? onPagesUpdated,
-    void Function(int)? onIndexAdjusted,
   }) {
     if (_isPreloadManagerInitialized) {
       if (kDebugMode) {
@@ -48,7 +47,6 @@ mixin ReaderMemoryManagement {
     }
 
     _preloadManager.onPagesUpdated = onPagesUpdated;
-    _preloadManager.onIndexAdjusted = onIndexAdjusted;
 
     _preloadManager.initialize(chapterData.uChapDataPreload, startIndex);
 

@@ -389,7 +389,7 @@ class _MangaChapterPageGalleryState
                               // Handle failed image loading
                               if (_failedToLoadImage.value != value &&
                                   context.mounted) {
-                                _failedToLoadImage.value = value;
+                                // _failedToLoadImage.value = value;
                               }
                             },
                             backgroundColor: backgroundColor,
@@ -904,13 +904,6 @@ class _MangaChapterPageGalleryState
           ? (pages.length / 2).ceil() + 1
           : pages.length;
       if (_currentIndex! >= 0 && _currentIndex! < pagesLength) {
-        try {
-          final idx = pages[_currentIndex!].index;
-          if (idx != null) {
-            _readerController.setPageIndex(_geCurrentIndex(idx), false);
-          }
-        } catch (_) {}
-
         if (_readerController.chapter.id != pages[_currentIndex!].chapter!.id) {
           if (mounted) {
             setState(() {
@@ -937,6 +930,12 @@ class _MangaChapterPageGalleryState
           try {
             _isNextChapterPreloading = true;
             if (!mounted) return;
+            try {
+              final idx = pages[_currentIndex!].index;
+              if (idx != null) {
+                _readerController.setPageIndex(_geCurrentIndex(idx), false);
+              }
+            } catch (_) {}
             final value = await ref.read(
               getChapterPagesProvider(
                 chapter: _readerController.getNextChapter(),
@@ -999,13 +998,6 @@ class _MangaChapterPageGalleryState
       startIndex: _currentIndex ?? 0,
       onPagesUpdated: () {
         if (mounted) setState(() {});
-      },
-      onIndexAdjusted: (newIndex) {
-        if (mounted) {
-          setState(() {
-            _currentIndex = newIndex;
-          });
-        }
       },
     );
 
