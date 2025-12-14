@@ -389,7 +389,7 @@ class _MangaChapterPageGalleryState
                               // Handle failed image loading
                               if (_failedToLoadImage.value != value &&
                                   context.mounted) {
-                                // _failedToLoadImage.value = value;
+                                _failedToLoadImage.value = value;
                               }
                             },
                             backgroundColor: backgroundColor,
