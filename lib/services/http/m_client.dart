@@ -244,7 +244,7 @@ class LoggerInterceptor extends InterceptorContract {
             url: response.request!.url.toString(),
           );
         } catch (e) {
-          throw "${response.statusCode} Failed to bypass Cloudflare";
+          throw "Failed to bypass Cloudflare.\n\n\nYou can try to bypass it manually in the webview \n\n\nstatusCode: ${response.statusCode}";
         }
       }
     }

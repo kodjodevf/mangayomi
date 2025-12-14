@@ -367,6 +367,9 @@ void hasError(Response response) {
     final errorMessage = jsonDecode(response.body)['error'];
     final code = jsonDecode(response.body)['code'];
     if (errorMessage != null && code != null) {
+      if ((code as int) == 403) {
+        throw "errorMessage: Failed to bypass Cloudflare.\n\n\nYou can try to bypass it manually in the webview \n\n\nstatusCode: 403";
+      }
       throw "errorMessage: $errorMessage \n\n\nstatusCode: $code";
     }
   } catch (e) {
