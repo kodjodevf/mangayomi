@@ -5,8 +5,6 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/router/router.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'storage_usage.g.dart';
 
@@ -21,28 +19,19 @@ class TotalChapterCacheSizeState extends _$TotalChapterCacheSizeState {
     return "0.00 B";
   }
 
-  final String _cacheImageMangaPath = join('Mangayomi', 'cacheimagemanga');
-  final String _cacheDownloadPath = join('Mangayomi', 'downloads');
+  final _storage = StorageProvider();
 
   Future<void> clearCache({bool showToast = true}) async {
-    final tempPath = (await getTemporaryDirectory()).path;
     String? msg;
     try {
-      final dir = Directory(join(tempPath, _cacheImageMangaPath));
+      final dir = await _storage.getCacheDirectory('cacheimagemanga');
       if (dir.existsSync()) {
         await dir.delete(recursive: true);
       }
       msg = "0.00 B";
     } catch (_) {}
     try {
-      final dir = Directory(join(tempPath, _cacheDownloadPath));
-      if (dir.existsSync()) {
-        await dir.delete(recursive: true);
-      }
-      msg = "0.00 B";
-    } catch (_) {}
-    try {
-      await StorageProvider().deleteTmpDirectory();
+      await _storage.deleteTmpDirectory();
     } catch (_) {}
     if (msg != null && showToast) {
       state = msg;
@@ -53,14 +42,10 @@ class TotalChapterCacheSizeState extends _$TotalChapterCacheSizeState {
   }
 
   Future<int> _getTotalDiskSpace() async {
-    final tempPath = (await getTemporaryDirectory()).path;
     try {
       return await _getdirectorySize(
-            Directory(join(tempPath, _cacheImageMangaPath)),
-          ) +
-          await _getdirectorySize(
-            Directory(join(tempPath, _cacheDownloadPath)),
-          );
+        await _storage.getCacheDirectory('cacheimagemanga'),
+      );
     } catch (_) {}
     return 0;
   }

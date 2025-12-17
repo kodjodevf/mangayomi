@@ -10,10 +10,9 @@ import 'package:intl/intl.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
+import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
 extension FileFormatter on num {
@@ -144,13 +143,8 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
 Future<File?> _getCachedImageFile(String url, {String? cacheKey}) async {
   try {
     final String key = cacheKey ?? keyToMd5(url);
-    final Directory cacheImagesDirectory = Directory(
-      join(
-        (await getTemporaryDirectory()).path,
-        'Mangayomi',
-        'cacheimagemanga',
-      ),
-    );
+    final Directory cacheImagesDirectory = await StorageProvider()
+        .getCacheDirectory('cacheimagemanga');
     if (cacheImagesDirectory.existsSync()) {
       await for (final FileSystemEntity file in cacheImagesDirectory.list()) {
         if (file.path.endsWith(key)) {
