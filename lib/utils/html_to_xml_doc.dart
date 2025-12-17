@@ -61,7 +61,7 @@
 //       var query = xpath(expression);
 //       if (query.isNotEmpty) {
 //         return query
-//             .map((e) => (e.value ?? "").trim().trimLeft().trimRight())
+//             .map((e) => (e.value ?? "").trim())
 //             .toList();
 //       }
 //     } catch (_) {}

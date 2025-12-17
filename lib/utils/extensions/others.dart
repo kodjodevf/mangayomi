@@ -125,7 +125,7 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
                             ),
                           )
                   : CustomExtendedNetworkImageProvider(
-                      data.pageUrl!.url.trim().trimLeft().trimRight(),
+                      data.pageUrl!.url.trim(),
                       cache: true,
                       cacheMaxAge: const Duration(days: 7),
                       showCloudFlareError: showCloudFlareError,

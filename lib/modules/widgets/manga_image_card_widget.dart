@@ -342,7 +342,7 @@ Future<void> pushToMangaReaderDetail({
           mangaM ??
           Manga(
             imageUrl: getManga!.imageUrl,
-            name: getManga.name!.trim().trimLeft().trimRight(),
+            name: getManga.name!.trim(),
             genre: getManga.genre?.map((e) => e.toString()).toList() ?? [],
             author: getManga.author ?? "",
             status: getManga.status ?? Status.unknown,
