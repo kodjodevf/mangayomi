@@ -5,6 +5,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/router/router.dart';
+import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'storage_usage.g.dart';
 
@@ -14,7 +15,7 @@ class TotalChapterCacheSizeState extends _$TotalChapterCacheSizeState {
   String build() {
     _getTotalDiskSpace().then((value) {
       if (!ref.mounted) return;
-      state = _formatBytes(value);
+      state = value.formattedFileSize();
     });
     return "0.00 B";
   }
@@ -63,19 +64,6 @@ class TotalChapterCacheSizeState extends _$TotalChapterCacheSizeState {
       }
     } catch (_) {}
     return 0;
-  }
-
-  String _formatBytes(int bytes) {
-    const units = ['B', 'KB', 'MB', 'GB'];
-    int unitIndex = 0;
-    double size = bytes.toDouble();
-
-    while (size >= 1024 && unitIndex < units.length - 1) {
-      size /= 1024;
-      unitIndex++;
-    }
-
-    return '${size.toStringAsFixed(2)} ${units[unitIndex]}';
   }
 }
 
