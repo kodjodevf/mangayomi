@@ -17,10 +17,15 @@ import 'package:path/path.dart' as p;
 
 extension FileFormatter on num {
   String formattedFileSize({bool base1024 = true}) {
+    if (this <= 0) return "0.00 B";
     final base = base1024 ? 1024 : 1000;
-    if (this <= 0) return "0";
-    final units = ["B", "kB", "MB", "GB", "TB"];
-    int digitGroups = (log(this) / log(base)).round();
+    final units = base1024
+        ? ["B", "KiB", "MiB", "GiB", "TiB"]
+        : ["B", "kB", "MB", "GB", "TB"];
+    int digitGroups = (log(this) / log(base)).floor().clamp(
+      0,
+      units.length - 1,
+    );
     return "${NumberFormat("#,##0.#").format(this / pow(base, digitGroups))} ${units[digitGroups]}";
   }
 }
