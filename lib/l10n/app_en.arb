@@ -143,6 +143,7 @@
   "nsfw_sources_info": "This does not prevent unofficial or potentially incorrectly flagged extensions from surfacing NSFW (18+) content within the app",
   "version": "Version",
   "check_for_update": "Check for update",
+  "logs_on": "Enable logging",
   "share_app_logs": "Share app logs",
   "no_app_logs": "No log.txt available!",
   "failed": "Failed!",

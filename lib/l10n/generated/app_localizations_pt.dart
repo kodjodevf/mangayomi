@@ -441,6 +441,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get check_for_update => 'Verificar atualização';
 
   @override
+  String get logs_on => 'Ativar registro';
+
+  @override
   String get share_app_logs => 'Compartilhar logs do aplicativo';
 
   @override
@@ -2239,6 +2242,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get check_for_update => 'Verificar atualização';
+
+  @override
+  String get logs_on => 'Ativar registro';
 
   @override
   String get share_app_logs => 'Compartilhar logs do aplicativo';

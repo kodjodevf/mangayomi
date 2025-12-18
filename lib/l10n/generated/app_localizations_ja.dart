@@ -432,6 +432,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get check_for_update => 'Check for update';
 
   @override
+  String get logs_on => 'ログを有効にする';
+
+  @override
   String get share_app_logs => 'アプリログを共有';
 
   @override

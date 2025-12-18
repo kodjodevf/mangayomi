@@ -449,6 +449,7 @@
     "downloaded_only": "Hanya yang diunduh",
     "downloaded_only_description": "Hanya tampilkan entri yang diunduh di perpustakaan Anda",
     "concurrent_downloads": "Unduhan bersamaan",
+    "logs_on": "Aktifkan pencatatan",
     "share_app_logs": "Bagikan log aplikasi",
     "no_app_logs": "Tidak ada file log.txt tersedia!",
     "failed": "Gagal!",

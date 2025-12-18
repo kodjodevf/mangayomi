@@ -437,6 +437,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get check_for_update => 'Güncelleme Kontrol Et';
 
   @override
+  String get logs_on => 'Günlük kaydını etkinleştir';
+
+  @override
   String get share_app_logs => 'Uygulama günlüklerini paylaş';
 
   @override

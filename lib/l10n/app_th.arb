@@ -452,6 +452,7 @@
   "downloaded_only": "ที่ดาวน์โหลดแล้วเท่านั้น",
   "downloaded_only_description": "แสดงเฉพาะรายการที่ดาวน์โหลดแล้วในห้องสมุดของคุณ",
   "concurrent_downloads": "ดาวน์โหลดพร้อมกัน",
+  "logs_on": "เปิดการบันทึก",
   "share_app_logs": "แชร์บันทึกแอป",
   "no_app_logs": "ไม่มีไฟล์ log.txt!",
   "failed": "ล้มเหลว!",

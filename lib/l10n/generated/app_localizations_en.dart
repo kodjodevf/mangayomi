@@ -437,6 +437,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get check_for_update => 'Check for update';
 
   @override
+  String get logs_on => 'Enable logging';
+
+  @override
   String get share_app_logs => 'Share app logs';
 
   @override

@@ -442,6 +442,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get check_for_update => 'Проверить обновления';
 
   @override
+  String get logs_on => 'Включить ведение журнала';
+
+  @override
   String get share_app_logs => 'Поделиться журналами приложения';
 
   @override

@@ -437,6 +437,9 @@ class AppLocalizationsTh extends AppLocalizations {
   String get check_for_update => 'ตรวจสอบการอัพเดท';
 
   @override
+  String get logs_on => 'เปิดการบันทึก';
+
+  @override
   String get share_app_logs => 'แชร์บันทึกแอป';
 
   @override

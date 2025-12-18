@@ -439,6 +439,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get check_for_update => 'Auf Aktualisierung prüfen';
 
   @override
+  String get logs_on => 'Protokollierung aktivieren';
+
+  @override
   String get share_app_logs => 'App-Protokolle teilen';
 
   @override

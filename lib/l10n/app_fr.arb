@@ -455,6 +455,7 @@
   "downloaded_only": "Téléchargés uniquement",
   "downloaded_only_description": "Afficher uniquement les entrées téléchargées dans votre bibliothèque",
   "concurrent_downloads": "Téléchargements simultanés",
+  "logs_on": "Activer la journalisation",
   "share_app_logs": "Partager les journaux de l'application",
   "no_app_logs": "Aucun fichier log.txt disponible !",
   "failed": "Échoué !",

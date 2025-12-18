@@ -454,6 +454,7 @@
     "downloaded_only": "仅已下载",
     "downloaded_only_description": "仅显示库中已下载的条目",
     "concurrent_downloads": "并发下载",
+    "logs_on": "启用日志",
     "share_app_logs": "分享应用日志",
     "no_app_logs": "没有可用的 log.txt 文件！",
     "failed": "失败！",

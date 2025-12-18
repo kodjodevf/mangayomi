@@ -435,6 +435,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get check_for_update => 'التحقق من التحديثات';
 
   @override
+  String get logs_on => 'تفعيل التسجيل';
+
+  @override
   String get share_app_logs => 'مشاركة سجلات التطبيق';
 
   @override

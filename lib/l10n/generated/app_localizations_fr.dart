@@ -443,6 +443,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get check_for_update => 'Rechercher des mises à jour';
 
   @override
+  String get logs_on => 'Activer la journalisation';
+
+  @override
   String get share_app_logs => 'Partager les journaux de l\'application';
 
   @override
