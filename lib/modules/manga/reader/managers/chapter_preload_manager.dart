@@ -192,6 +192,14 @@ class ChapterPreloadManager {
     return true;
   }
 
+  /// Updates the cropImage for a page at the given index.
+  void updatePageCropImage(int index, Uint8List? cropImage) {
+    if (index >= 0 && index < _pages.length) {
+      _pages[index].cropImage = cropImage;
+      onPagesUpdated?.call();
+    }
+  }
+
   /// Gets a unique identifier for a chapter.
   String? _getChapterIdentifier(Chapter? chapter) {
     if (chapter == null) return null;

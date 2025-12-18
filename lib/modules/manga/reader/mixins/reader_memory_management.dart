@@ -86,6 +86,11 @@ mixin ReaderMemoryManagement {
     return _preloadManager.addLastChapterTransition(chapter);
   }
 
+  /// Updates the cropImage for a page at the given index.
+  void updatePageCropImage(int index, Uint8List? cropImage) {
+    _preloadManager.updatePageCropImage(index, cropImage);
+  }
+
   /// Disposes the preload manager and clears all cached data.
   Future<void> disposePreloadManager() async {
     if (!_isPreloadManagerInitialized) return;

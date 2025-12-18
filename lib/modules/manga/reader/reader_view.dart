@@ -1207,9 +1207,7 @@ class _MangaChapterPageGalleryState
         cropBordersProvider(data: pages[index], cropBorder: true).future,
       );
       if (mounted) {
-        setState(() {
-          pages[index] = pages[index]..cropImage = value;
-        });
+        updatePageCropImage(index, value);
       }
     }
   }
@@ -1225,9 +1223,7 @@ class _MangaChapterPageGalleryState
           cropBordersProvider(data: pages[i], cropBorder: true).future,
         );
         if (mounted) {
-          setState(() {
-            pages[i] = pages[i]..cropImage = value;
-          });
+          updatePageCropImage(i, value);
         }
       }
     }
