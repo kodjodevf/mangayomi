@@ -10,18 +10,22 @@ import 'package:intl/intl.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
+import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
 extension FileFormatter on num {
   String formattedFileSize({bool base1024 = true}) {
+    if (this <= 0) return "0.00 B";
     final base = base1024 ? 1024 : 1000;
-    if (this <= 0) return "0";
-    final units = ["B", "kB", "MB", "GB", "TB"];
-    int digitGroups = (log(this) / log(base)).round();
+    final units = base1024
+        ? ["B", "KiB", "MiB", "GiB", "TiB"]
+        : ["B", "kB", "MB", "GB", "TB"];
+    int digitGroups = (log(this) / log(base)).floor().clamp(
+      0,
+      units.length - 1,
+    );
     return "${NumberFormat("#,##0.#").format(this / pow(base, digitGroups))} ${units[digitGroups]}";
   }
 }
@@ -121,7 +125,7 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
                             ),
                           )
                   : CustomExtendedNetworkImageProvider(
-                      data.pageUrl!.url.trim().trimLeft().trimRight(),
+                      data.pageUrl!.url.trim(),
                       cache: true,
                       cacheMaxAge: const Duration(days: 7),
                       showCloudFlareError: showCloudFlareError,
@@ -144,13 +148,8 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
 Future<File?> _getCachedImageFile(String url, {String? cacheKey}) async {
   try {
     final String key = cacheKey ?? keyToMd5(url);
-    final Directory cacheImagesDirectory = Directory(
-      join(
-        (await getTemporaryDirectory()).path,
-        'Mangayomi',
-        'cacheimagemanga',
-      ),
-    );
+    final Directory cacheImagesDirectory = await StorageProvider()
+        .getCacheDirectory('cacheimagemanga');
     if (cacheImagesDirectory.existsSync()) {
       await for (final FileSystemEntity file in cacheImagesDirectory.list()) {
         if (file.path.endsWith(key)) {

@@ -326,7 +326,7 @@ extension DocumentExtension on Document? {
     var htmlXPath = HtmlXPath.node(dom);
     var query = htmlXPath.query(xpath);
     if (query.nodes.length > 1) {
-      return query.attrs.map((e) => e!.trim().trimLeft().trimRight()).toList();
+      return query.attrs.map((e) => e!.trim()).toList();
     }
     return [];
   }
@@ -365,7 +365,7 @@ extension ElementtExtension on Element {
     var htmlXPath = HtmlXPath.node(this);
     var query = htmlXPath.query(xpath);
     if (query.nodes.length > 1) {
-      return query.attrs.map((e) => e!.trim().trimLeft().trimRight()).toList();
+      return query.attrs.map((e) => e!.trim()).toList();
     }
     return [];
   }

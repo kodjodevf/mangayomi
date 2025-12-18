@@ -75,14 +75,12 @@ class MBridge {
       var query = htmlXPath.query(xpath);
       if (query.nodes.length > 1) {
         for (var element in query.attrs) {
-          attrs.add(element!.trim().trimLeft().trimRight());
+          attrs.add(element!.trim());
         }
       }
       //Return one attr
       else if (query.nodes.length == 1) {
-        String attr = query.attr != null
-            ? query.attr!.trim().trimLeft().trimRight()
-            : "";
+        String attr = query.attr != null ? query.attr!.trim() : "";
         if (attr.isNotEmpty) {
           attrs = [attr];
         }
@@ -102,7 +100,7 @@ class MBridge {
       statusMap = element;
       for (var element in statusMap.entries) {
         if (element.key.toString().toLowerCase().contains(
-          status.toLowerCase().trim().trimLeft().trimRight(),
+          status.toLowerCase().trim(),
         )) {
           return switch (element.value as int) {
             0 => Status.ongoing,

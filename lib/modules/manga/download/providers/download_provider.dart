@@ -309,7 +309,7 @@ Future<void> downloadChapter(
             if (!file.existsSync()) {
               pages.add(
                 PageUrl(
-                  page.url.trim().trimLeft().trimRight(),
+                  page.url.trim(),
                   headers: pageHeaders,
                   fileName: p.join(
                     chapterDirectory.path,
@@ -325,7 +325,7 @@ Future<void> downloadChapter(
             if (!file.existsSync()) {
               pages.add(
                 PageUrl(
-                  page.url.trim().trimLeft().trimRight(),
+                  page.url.trim(),
                   headers: pageHeaders,
                   fileName: p.join(mangaMainDirectory.path, "$chapterName.mp4"),
                 ),

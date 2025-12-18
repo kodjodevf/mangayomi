@@ -48,7 +48,6 @@ import 'package:media_kit/generated/libmpv/bindings.dart' as generated;
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit_video/media_kit_video_controls/src/controls/extensions/duration.dart';
 import 'package:numberpicker/numberpicker.dart';
-import 'package:path/path.dart' as p;
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -930,7 +929,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     if (Platform.isAndroid && useLibass) {
       try {
         final subDir = await getApplicationDocumentsDirectory();
-        final fontPath = p.join(subDir.path, 'subfont.ttf');
+        final fontPath = path.join(subDir.path, 'subfont.ttf');
         final data = await rootBundle.load('assets/fonts/subfont.ttf');
         final bytes = data.buffer.asInt8List(
           data.offsetInBytes,
@@ -2310,7 +2309,9 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                               );
                               final dir = await StorageProvider()
                                   .getGalleryDirectory();
-                              final file = File(p.join(dir!.path, "$name.png"));
+                              final file = File(
+                                path.join(dir!.path, "$name.png"),
+                              );
                               file.writeAsBytesSync(imageBytes!);
                               if (context.mounted) {
                                 botToast(context.l10n.picture_saved, second: 3);

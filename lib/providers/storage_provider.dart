@@ -86,6 +86,20 @@ class StorageProvider {
     return Directory(tmpPath);
   }
 
+  Future<Directory> getCacheDirectory(String? imageCacheFolderName) async {
+    final cacheImagesDirectory = path.join(
+      (await getApplicationCacheDirectory()).path,
+      imageCacheFolderName ?? 'cacheimagecover',
+    );
+    return Directory(cacheImagesDirectory);
+  }
+
+  Future<Directory> createCacheDirectory(String? imageCacheFolderName) async {
+    final cachePath = await getCacheDirectory(imageCacheFolderName);
+    await createDirectorySafely(cachePath.path);
+    return cachePath;
+  }
+
   Future<String> _tempDirectoryPath() async {
     final defaultDirectory = await getDirectory();
     return path.join(defaultDirectory!.path, 'tmp');

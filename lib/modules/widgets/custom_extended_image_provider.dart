@@ -10,7 +10,6 @@ import 'package:http_client_helper/http_client_helper.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:extended_image_library/src/network/extended_network_image_provider.dart'
     as image_provider;
 
@@ -214,7 +213,7 @@ class CustomExtendedNetworkImageProvider
   @override
   final bool printError;
 
-  /// The max duration to cahce image.
+  /// The max duration to cache image.
   /// After this time the cache is expired and the image is reloaded.
   @override
   final Duration? cacheMaxAge;
@@ -317,15 +316,9 @@ class CustomExtendedNetworkImageProvider
       return cachedData;
     }
 
-    final Directory cacheImagesDirectory = Directory(
-      join(
-        (await getTemporaryDirectory()).path,
-        'Mangayomi',
-        imageCacheFolderName ?? 'cacheimagecover',
-      ),
-    );
+    final Directory cacheImagesDirectory = await StorageProvider()
+        .createCacheDirectory(imageCacheFolderName);
     Uint8List? data;
-    await StorageProvider().createDirectorySafely(cacheImagesDirectory.path);
     final File cacheFile = File(join(cacheImagesDirectory.path, md5Key));
 
     // exist, try to find cache image file
