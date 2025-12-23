@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -30,6 +31,12 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
   late Source source = isar.sources.getSync(widget.source.id!)!;
   late List<SourcePreference>? sourcePreference = () {
     try {
+      if (source.sourceCodeLanguage == SourceCodeLanguage.mihon &&
+          source.preferenceList != null) {
+        return (jsonDecode(source.preferenceList!) as List)
+            .map((e) => SourcePreference.fromJson(e))
+            .toList();
+      }
       return getSourcePreference(
         source: source,
       ).map((e) => getSourcePreferenceEntry(e.key!, source.id!)).toList();
