@@ -352,9 +352,14 @@ void _showAndroidProxyServerDialog(
                     width: context.width(1),
                     child: ElevatedButton(
                       onPressed: () {
+                        server.split('/').removeLast();
+                        final s = server.split('/');
+                        if (s.isNotEmpty && s.last.isEmpty) {
+                          s.removeLast();
+                        }
                         ref
                             .read(androidProxyServerStateProvider.notifier)
-                            .set(server);
+                            .set(s.join('/'));
                         Navigator.pop(context);
                       },
                       child: Text(context.l10n.dialog_confirm),
