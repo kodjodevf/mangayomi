@@ -258,13 +258,13 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
   }
 
   ItemType getCurrentItemType() {
-    return _tabBarController.index == 0 && !hideItems.contains("/MangaLibrary")
-        ? ItemType.manga
-        : _tabBarController.index ==
-                  1 - (hideItems.contains("/MangaLibrary") ? 1 : 0) &&
-              !hideItems.contains("/AnimeLibrary")
-        ? ItemType.anime
-        : ItemType.novel;
+    final visibleTypes = <ItemType>[
+      if (!hideItems.contains("/MangaLibrary")) ItemType.manga,
+      if (!hideItems.contains("/AnimeLibrary")) ItemType.anime,
+      if (!hideItems.contains("/NovelLibrary")) ItemType.novel,
+    ];
+
+    return visibleTypes[_tabBarController.index];
   }
 }
 
