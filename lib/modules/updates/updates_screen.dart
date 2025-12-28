@@ -34,14 +34,8 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
   bool _isLoading = false;
 
   Future<void> _updateLibrary() async {
-    setState(() {
-      _isLoading = true;
-    });
-    final itemType = _tabBarController.index == 0
-        ? ItemType.manga
-        : _tabBarController.index == 1
-        ? ItemType.anime
-        : ItemType.novel;
+    setState(() => _isLoading = true);
+    final itemType = getCurrentItemType();
     final mangaList = isar.mangas
         .filter()
         .idIsNotNull()
@@ -57,9 +51,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
       mangaList: mangaList,
       itemType: itemType,
     );
-    setState(() {
-      _isLoading = false;
-    });
+    setState(() => _isLoading = false);
   }
 
   void tabListener() {
