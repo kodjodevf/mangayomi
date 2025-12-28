@@ -167,7 +167,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
                           TextButton(
                             onPressed: () async {
                               if (mounted) Navigator.pop(context);
-                              await _clearUpdates(hideItems);
+                              await _clearUpdates();
                             },
                             child: Text(l10n.ok),
                           ),
@@ -247,14 +247,11 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
     );
   }
 
-  Future<void> _clearUpdates(List<String> hideItems) async {
+  Future<void> _clearUpdates() async {
     List<Update> updates = await isar.updates
         .filter()
         .idIsNotNull()
-        .chapter(
-          (q) =>
-              q.manga((q) => q.itemTypeEqualTo(getCurrentItemType(hideItems))),
-        )
+        .chapter((q) => q.manga((q) => q.itemTypeEqualTo(getCurrentItemType())))
         .findAll();
     final idsToDelete = <Id>[];
     isar.writeTxnSync(() {
@@ -268,7 +265,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
     await isar.writeTxn(() => isar.updates.deleteAll(idsToDelete));
   }
 
-  ItemType getCurrentItemType(List<String> hideItems) {
+  ItemType getCurrentItemType() {
     return _tabBarController.index == 0 && !hideItems.contains("/MangaLibrary")
         ? ItemType.manga
         : _tabBarController.index ==
