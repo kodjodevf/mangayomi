@@ -1,21 +1,18 @@
-import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/changed.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/custom_sliver_grouped_list_view.dart';
 import 'package:isar_community/isar.dart';
-import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/updates/widgets/update_chapter_list_tile_widget.dart';
 import 'package:mangayomi/modules/history/providers/isar_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/services/library_updater.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
 import 'package:mangayomi/modules/widgets/error_text.dart';
@@ -35,63 +32,31 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
   late final List<String> _tabList;
   late final List<String> hideItems;
   bool _isLoading = false;
+
   Future<void> _updateLibrary() async {
     setState(() {
       _isLoading = true;
     });
-    bool isDark = ref.read(themeModeStateProvider);
-    botToast(
-      context.l10n.updating_library("0", "0", "0"),
-      fontSize: 13,
-      second: 30,
-      alignY: !context.isTablet ? 0.85 : 1,
-      themeDark: isDark,
-    );
+    final itemType = _tabBarController.index == 0
+        ? ItemType.manga
+        : _tabBarController.index == 1
+        ? ItemType.anime
+        : ItemType.novel;
     final mangaList = isar.mangas
         .filter()
         .idIsNotNull()
         .favoriteEqualTo(true)
         .and()
-        .itemTypeEqualTo(
-          _tabBarController.index == 0
-              ? ItemType.manga
-              : _tabBarController.index == 1
-              ? ItemType.anime
-              : ItemType.novel,
-        )
+        .itemTypeEqualTo(itemType)
         .and()
         .isLocalArchiveEqualTo(false)
         .findAllSync();
-    int numbers = 0;
-    int failed = 0;
-
-    for (var manga in mangaList) {
-      try {
-        await ref.read(
-          updateMangaDetailProvider(
-            mangaId: manga.id,
-            isInit: false,
-            showToast: false,
-          ).future,
-        );
-      } catch (_) {
-        failed++;
-      }
-      numbers++;
-      if (mounted) {
-        botToast(
-          context.l10n.updating_library(numbers, failed, mangaList.length),
-          fontSize: 13,
-          second: 10,
-          alignY: !context.isTablet ? 0.85 : 1,
-          animationDuration: 0,
-          dismissDirections: [DismissDirection.none],
-          onlyOne: false,
-          themeDark: isDark,
-        );
-      }
-    }
-    BotToast.cleanAll();
+    await updateLibrary(
+      ref: ref,
+      context: context,
+      mangaList: mangaList,
+      itemType: itemType,
+    );
     setState(() {
       _isLoading = false;
     });
