@@ -11,6 +11,7 @@ import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_pr
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/item_type_filters.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
@@ -30,11 +31,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
   void initState() {
     super.initState();
     final hideItems = ref.read(hideItemsStateProvider);
-    _visibleTabTypes = [
-      if (!hideItems.contains("/MangaLibrary")) ItemType.manga,
-      if (!hideItems.contains("/AnimeLibrary")) ItemType.anime,
-      if (!hideItems.contains("/NovelLibrary")) ItemType.novel,
-    ];
+    _visibleTabTypes = hiddenItemTypes(hideItems);
     _tabBarController = TabController(
       length: _visibleTabTypes.length,
       vsync: this,
@@ -72,7 +69,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
             indicatorSize: TabBarIndicatorSize.label,
             controller: _tabBarController,
             tabs: _visibleTabTypes.map((type) {
-              return Tab(text: localizedItemType(type, l10n));
+              return Tab(text: type.localized(l10n));
             }).toList(),
           ),
         ),

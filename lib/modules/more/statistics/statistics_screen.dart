@@ -5,6 +5,7 @@ import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_pr
 import 'package:mangayomi/modules/more/statistics/statistics_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/utils/item_type_filters.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
 
 class StatisticsScreen extends ConsumerStatefulWidget {
@@ -24,11 +25,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
   void initState() {
     super.initState();
     hideItems = ref.read(hideItemsStateProvider);
-    _visibleTabTypes = [
-      if (!hideItems.contains("/MangaLibrary")) ItemType.manga,
-      if (!hideItems.contains("/AnimeLibrary")) ItemType.anime,
-      if (!hideItems.contains("/NovelLibrary")) ItemType.novel,
-    ];
+    _visibleTabTypes = hiddenItemTypes(hideItems);
     _tabController = TabController(
       length: _visibleTabTypes.length,
       vsync: this,
@@ -56,7 +53,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
         bottom: TabBar(
           controller: _tabController,
           tabs: _visibleTabTypes.map((type) {
-            return Tab(text: localizedItemType(type, l10n));
+            return Tab(text: type.localized(l10n));
           }).toList(),
         ),
       ),

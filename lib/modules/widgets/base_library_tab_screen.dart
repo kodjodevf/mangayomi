@@ -4,6 +4,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/item_type_filters.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
 
 abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
@@ -34,11 +35,7 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
     super.initState();
     hideItems = ref.read(hideItemsStateProvider);
 
-    visibleTabTypes = [
-      if (!hideItems.contains("/MangaLibrary")) ItemType.manga,
-      if (!hideItems.contains("/AnimeLibrary")) ItemType.anime,
-      if (!hideItems.contains("/NovelLibrary")) ItemType.novel,
-    ];
+    visibleTabTypes = hiddenItemTypes(hideItems);
 
     tabController = TabController(length: visibleTabTypes.length, vsync: this);
 
@@ -94,7 +91,7 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
           controller: tabController,
           indicatorSize: TabBarIndicatorSize.tab,
           tabs: visibleTabTypes.map((type) {
-            return buildTabLabel(type, localizedItemType(type, l10n));
+            return buildTabLabel(type, type.localized(l10n));
           }).toList(),
         ),
       ),

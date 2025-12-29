@@ -178,8 +178,8 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                   children: [
                     Text(
                       isExt
-                          ? localizedExtensions(type, l10n)
-                          : localizedSources(type, l10n),
+                          ? type.localizedExtensions(l10n)
+                          : type.localizedSources(l10n),
                     ),
                     if (isExt) ...[
                       const SizedBox(width: 8),
