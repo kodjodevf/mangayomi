@@ -89,6 +89,17 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
+    String localizedItemType(ItemType type) {
+      switch (type) {
+        case ItemType.manga:
+          return l10n.manga;
+        case ItemType.anime:
+          return l10n.anime;
+        case ItemType.novel:
+          return l10n.novel;
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -182,61 +193,29 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
         bottom: TabBar(
           indicatorSize: TabBarIndicatorSize.tab,
           controller: _tabBarController,
-          tabs: [
-            if (!hideItems.contains("/MangaLibrary"))
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Tab(text: l10n.manga),
-                  const SizedBox(width: 8),
-                  _updateNumbers(ref, ItemType.manga),
-                ],
-              ),
-            if (!hideItems.contains("/AnimeLibrary"))
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Tab(text: l10n.anime),
-                  const SizedBox(width: 8),
-                  _updateNumbers(ref, ItemType.anime),
-                ],
-              ),
-            if (!hideItems.contains("/NovelLibrary"))
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Tab(text: l10n.novel),
-                  const SizedBox(width: 8),
-                  _updateNumbers(ref, ItemType.novel),
-                ],
-              ),
-          ],
+          tabs: _visibleTabTypes.map((type) {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Tab(text: localizedItemType(type)),
+                const SizedBox(width: 8),
+                _updateNumbers(ref, type),
+              ],
+            );
+          }).toList(),
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.only(top: 10),
         child: TabBarView(
           controller: _tabBarController,
-          children: [
-            if (!hideItems.contains("/MangaLibrary"))
-              UpdateTab(
-                itemType: ItemType.manga,
-                query: _textEditingController.text,
-                isLoading: _isLoading,
-              ),
-            if (!hideItems.contains("/AnimeLibrary"))
-              UpdateTab(
-                itemType: ItemType.anime,
-                query: _textEditingController.text,
-                isLoading: _isLoading,
-              ),
-            if (!hideItems.contains("/NovelLibrary"))
-              UpdateTab(
-                itemType: ItemType.novel,
-                query: _textEditingController.text,
-                isLoading: _isLoading,
-              ),
-          ],
+          children: _visibleTabTypes.map((type) {
+            return UpdateTab(
+              itemType: type,
+              query: _textEditingController.text,
+              isLoading: _isLoading,
+            );
+          }).toList(),
         ),
       ),
     );
