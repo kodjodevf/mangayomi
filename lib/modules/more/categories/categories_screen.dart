@@ -93,16 +93,8 @@ class CategoriesTab extends ConsumerStatefulWidget {
 
 class _CategoriesTabState extends ConsumerState<CategoriesTab> {
   List<Category> _entries = [];
-  Future<void> _updateCategoriesOrder(List<Category> categories) async {
-    await isar.writeTxn(() async {
-      await isar.categorys.clear();
-      await isar.categorys.putAll(categories);
-      final cats = await isar.categorys.filter().posIsNull().findAll();
-      for (var category in cats) {
-        category.pos = category.id;
-      }
-      await isar.categorys.putAll(cats);
-    });
+  Future<void> _updateCategoriesOrder(Category a, Category b) async {
+    await isar.writeTxn(() async => await isar.categorys.putAll([a, b]));
   }
 
   @override
@@ -182,16 +174,16 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                       ),
                                       onPressed: index > 0
                                           ? () async {
-                                              final item = _entries[index - 1];
-                                              _entries.removeAt(index);
-                                              _entries.removeAt(index - 1);
-                                              int? currentPos = category.pos;
-                                              int? pos = item.pos;
-                                              await _updateCategoriesOrder([
-                                                ..._entries,
-                                                category..pos = pos,
-                                                item..pos = currentPos,
-                                              ]);
+                                              final above = _entries[index - 1];
+                                              _entries[index - 1] = category;
+                                              _entries[index] = above;
+                                              final temp = category.pos;
+                                              category.pos = above.pos;
+                                              above.pos = temp;
+                                              await _updateCategoriesOrder(
+                                                category,
+                                                above,
+                                              );
                                               setState(() {});
                                             }
                                           : null,
@@ -202,16 +194,16 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                       ),
                                       onPressed: index < _entries.length - 1
                                           ? () async {
-                                              final item = _entries[index + 1];
-                                              _entries.removeAt(index + 1);
-                                              _entries.removeAt(index);
-                                              int? currentPos = category.pos;
-                                              int? pos = item.pos;
-                                              await _updateCategoriesOrder([
-                                                ..._entries,
-                                                category..pos = pos,
-                                                item..pos = currentPos,
-                                              ]);
+                                              final below = _entries[index + 1];
+                                              _entries[index + 1] = category;
+                                              _entries[index] = below;
+                                              final temp = category.pos;
+                                              category.pos = below.pos;
+                                              below.pos = temp;
+                                              await _updateCategoriesOrder(
+                                                category,
+                                                below,
+                                              );
                                               setState(() {});
                                             }
                                           : null,
