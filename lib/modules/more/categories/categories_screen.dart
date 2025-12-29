@@ -93,14 +93,15 @@ class CategoriesTab extends ConsumerStatefulWidget {
 
 class _CategoriesTabState extends ConsumerState<CategoriesTab> {
   List<Category> _entries = [];
-  void _updateCategoriesOrder(List<Category> categories) {
-    isar.writeTxnSync(() {
-      isar.categorys.clearSync();
-      isar.categorys.putAllSync(categories);
-      final cats = isar.categorys.filter().posIsNull().findAllSync();
+  Future<void> _updateCategoriesOrder(List<Category> categories) async {
+    await isar.writeTxn(() async {
+      await isar.categorys.clear();
+      await isar.categorys.putAll(categories);
+      final cats = await isar.categorys.filter().posIsNull().findAll();
       for (var category in cats) {
-        isar.categorys.putSync(category..pos = category.id);
+        category.pos = category.id;
       }
+      await isar.categorys.putAll(cats);
     });
   }
 
@@ -180,18 +181,18 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                         Icons.arrow_drop_up_outlined,
                                       ),
                                       onPressed: index > 0
-                                          ? () {
+                                          ? () async {
                                               final item = _entries[index - 1];
                                               _entries.removeAt(index);
                                               _entries.removeAt(index - 1);
                                               int? currentPos = category.pos;
                                               int? pos = item.pos;
-                                              setState(() {});
-                                              _updateCategoriesOrder([
+                                              await _updateCategoriesOrder([
                                                 ..._entries,
                                                 category..pos = pos,
                                                 item..pos = currentPos,
                                               ]);
+                                              setState(() {});
                                             }
                                           : null,
                                     ),
@@ -200,18 +201,18 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                         Icons.arrow_drop_down_outlined,
                                       ),
                                       onPressed: index < _entries.length - 1
-                                          ? () {
+                                          ? () async {
                                               final item = _entries[index + 1];
                                               _entries.removeAt(index + 1);
                                               _entries.removeAt(index);
                                               int? currentPos = category.pos;
                                               int? pos = item.pos;
-                                              setState(() {});
-                                              _updateCategoriesOrder([
+                                              await _updateCategoriesOrder([
                                                 ..._entries,
                                                 category..pos = pos,
                                                 item..pos = currentPos,
                                               ]);
+                                              setState(() {});
                                             }
                                           : null,
                                     ),
