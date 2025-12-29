@@ -29,7 +29,7 @@ class UpdatesScreen extends ConsumerStatefulWidget {
 class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
     with TickerProviderStateMixin {
   late TabController _tabBarController;
-  late final List<String> _tabList;
+  late final List<ItemType> _visibleTabTypes;
   late final List<String> hideItems;
   bool _isLoading = false;
 
@@ -72,12 +72,15 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
   void initState() {
     super.initState();
     hideItems = ref.read(hideItemsStateProvider);
-    _tabList = [
-      if (!hideItems.contains("/MangaLibrary")) "/MangaLibrary",
-      if (!hideItems.contains("/AnimeLibrary")) "/AnimeLibrary",
-      if (!hideItems.contains("/NovelLibrary")) "/NovelLibrary",
+    _visibleTabTypes = [
+      if (!hideItems.contains("/MangaLibrary")) ItemType.manga,
+      if (!hideItems.contains("/AnimeLibrary")) ItemType.anime,
+      if (!hideItems.contains("/NovelLibrary")) ItemType.novel,
     ];
-    _tabBarController = TabController(length: _tabList.length, vsync: this);
+    _tabBarController = TabController(
+      length: _visibleTabTypes.length,
+      vsync: this,
+    );
     _tabBarController.addListener(tabListener);
   }
 
@@ -258,13 +261,7 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
   }
 
   ItemType getCurrentItemType() {
-    final visibleTypes = <ItemType>[
-      if (!hideItems.contains("/MangaLibrary")) ItemType.manga,
-      if (!hideItems.contains("/AnimeLibrary")) ItemType.anime,
-      if (!hideItems.contains("/NovelLibrary")) ItemType.novel,
-    ];
-
-    return visibleTypes[_tabBarController.index];
+    return _visibleTabTypes[_tabBarController.index];
   }
 }
 
