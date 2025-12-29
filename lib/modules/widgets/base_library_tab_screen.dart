@@ -4,6 +4,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/item_type_localization.dart';
 
 abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
     extends ConsumerState<T>
@@ -61,17 +62,6 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
-    String localizedItemType(ItemType type) {
-      switch (type) {
-        case ItemType.manga:
-          return l10n.manga;
-        case ItemType.anime:
-          return l10n.anime;
-        case ItemType.novel:
-          return l10n.novel;
-      }
-    }
-
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -104,7 +94,7 @@ abstract class BaseLibraryTabScreenState<T extends ConsumerStatefulWidget>
           controller: tabController,
           indicatorSize: TabBarIndicatorSize.tab,
           tabs: visibleTabTypes.map((type) {
-            return buildTabLabel(type, localizedItemType(type));
+            return buildTabLabel(type, localizedItemType(type, l10n));
           }).toList(),
         ),
       ),

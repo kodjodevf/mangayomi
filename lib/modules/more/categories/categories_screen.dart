@@ -11,6 +11,7 @@ import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_pr
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
 class CategoriesScreen extends ConsumerStatefulWidget {
@@ -24,17 +25,20 @@ class CategoriesScreen extends ConsumerStatefulWidget {
 class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
     with TickerProviderStateMixin {
   late TabController _tabBarController;
-  late final List<String> _tabList;
+  late final List<ItemType> _visibleTabTypes;
   @override
   void initState() {
     super.initState();
     final hideItems = ref.read(hideItemsStateProvider);
-    _tabList = [
-      if (!hideItems.contains("/MangaLibrary")) "/MangaLibrary",
-      if (!hideItems.contains("/AnimeLibrary")) "/AnimeLibrary",
-      if (!hideItems.contains("/NovelLibrary")) "/NovelLibrary",
+    _visibleTabTypes = [
+      if (!hideItems.contains("/MangaLibrary")) ItemType.manga,
+      if (!hideItems.contains("/AnimeLibrary")) ItemType.anime,
+      if (!hideItems.contains("/NovelLibrary")) ItemType.novel,
     ];
-    _tabBarController = TabController(length: _tabList.length, vsync: this);
+    _tabBarController = TabController(
+      length: _visibleTabTypes.length,
+      vsync: this,
+    );
     _tabBarController.animateTo(widget.data.$2);
   }
 
@@ -46,7 +50,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
 
   @override
   Widget build(BuildContext context) {
-    if (_tabList.isEmpty) {
+    if (_visibleTabTypes.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: Text(context.l10n.categories)),
         body: Center(child: Text("EMPTY\nMPTY\nMTY\nMT\n\n")),
@@ -55,7 +59,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
     final l10n = l10nLocalizations(context)!;
     return DefaultTabController(
       animationDuration: Duration.zero,
-      length: _tabList.length,
+      length: _visibleTabTypes.length,
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -67,23 +71,15 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
           bottom: TabBar(
             indicatorSize: TabBarIndicatorSize.label,
             controller: _tabBarController,
-            tabs: _tabList.map((route) {
-              if (route == "/MangaLibrary") return Tab(text: l10n.manga);
-              if (route == "/AnimeLibrary") return Tab(text: l10n.anime);
-              return Tab(text: l10n.novel);
+            tabs: _visibleTabTypes.map((type) {
+              return Tab(text: localizedItemType(type, l10n));
             }).toList(),
           ),
         ),
         body: TabBarView(
           controller: _tabBarController,
-          children: _tabList.map((route) {
-            if (route == "/MangaLibrary") {
-              return CategoriesTab(itemType: ItemType.manga);
-            }
-            if (route == "/AnimeLibrary") {
-              return CategoriesTab(itemType: ItemType.anime);
-            }
-            return CategoriesTab(itemType: ItemType.novel);
+          children: _visibleTabTypes.map((type) {
+            return CategoriesTab(itemType: type);
           }).toList(),
         ),
       ),
