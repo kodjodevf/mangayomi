@@ -17,15 +17,13 @@ class StatisticsScreen extends ConsumerStatefulWidget {
 
 class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     with SingleTickerProviderStateMixin {
-  late final List<String> hideItems;
   late TabController _tabController;
   late final List<ItemType> _visibleTabTypes;
 
   @override
   void initState() {
     super.initState();
-    hideItems = ref.read(hideItemsStateProvider);
-    _visibleTabTypes = hiddenItemTypes(hideItems);
+    _visibleTabTypes = hiddenItemTypes(ref.read(hideItemsStateProvider));
     _tabController = TabController(
       length: _visibleTabTypes.length,
       vsync: this,
@@ -71,12 +69,10 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     final stats = ref.watch(getStatisticsProvider(itemType: itemType));
 
     final chapterLabel = switch (itemType) {
-      ItemType.manga => l10n.chapters,
       ItemType.anime => l10n.episodes,
       _ => l10n.chapters,
     };
     final unreadLabel = switch (itemType) {
-      ItemType.manga => l10n.unread,
       ItemType.anime => l10n.unwatched,
       _ => l10n.unread,
     };

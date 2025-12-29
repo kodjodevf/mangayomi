@@ -30,8 +30,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
   @override
   void initState() {
     super.initState();
-    final hideItems = ref.read(hideItemsStateProvider);
-    _visibleTabTypes = hiddenItemTypes(hideItems);
+    _visibleTabTypes = hiddenItemTypes(ref.read(hideItemsStateProvider));
     _tabBarController = TabController(
       length: _visibleTabTypes.length,
       vsync: this,
