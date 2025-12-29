@@ -35,6 +35,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
     with TickerProviderStateMixin {
   final _textEditingController = TextEditingController();
   late TabController _tabBarController;
+  late List<ItemType> _visibleTabTypes;
+  late final List<String> hideItems;
 
   void tabListener() {
     setState(() {
@@ -46,13 +48,16 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
   @override
   void initState() {
     super.initState();
-    final hideItems = ref.read(hideItemsStateProvider);
-    final tabCount = [
-      if (!hideItems.contains("/MangaLibrary")) "/MangaLibrary",
-      if (!hideItems.contains("/AnimeLibrary")) "/AnimeLibrary",
-      if (!hideItems.contains("/NovelLibrary")) "/NovelLibrary",
-    ].length;
-    _tabBarController = TabController(length: tabCount, vsync: this);
+    hideItems = ref.read(hideItemsStateProvider);
+    _visibleTabTypes = [
+      if (!hideItems.contains("/MangaLibrary")) ItemType.manga,
+      if (!hideItems.contains("/AnimeLibrary")) ItemType.anime,
+      if (!hideItems.contains("/NovelLibrary")) ItemType.novel,
+    ];
+    _tabBarController = TabController(
+      length: _visibleTabTypes.length,
+      vsync: this,
+    );
     _tabBarController.addListener(tabListener);
   }
 
@@ -66,8 +71,18 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
   bool _isSearch = false;
   @override
   Widget build(BuildContext context) {
-    final hideItems = ref.watch(hideItemsStateProvider);
     final l10n = l10nLocalizations(context)!;
+    String localizedItemType(ItemType type) {
+      switch (type) {
+        case ItemType.manga:
+          return l10n.manga;
+        case ItemType.anime:
+          return l10n.anime;
+        case ItemType.novel:
+          return l10n.novel;
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -128,7 +143,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                           TextButton(
                             onPressed: () async {
                               if (mounted) Navigator.pop(context);
-                              await _clearHistory(hideItems);
+                              await _clearHistory();
                             },
                             child: Text(l10n.ok),
                           ),
@@ -148,57 +163,32 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
         bottom: TabBar(
           indicatorSize: TabBarIndicatorSize.tab,
           controller: _tabBarController,
-          tabs: [
-            if (!hideItems.contains("/MangaLibrary")) Tab(text: l10n.manga),
-            if (!hideItems.contains("/AnimeLibrary")) Tab(text: l10n.anime),
-            if (!hideItems.contains("/NovelLibrary")) Tab(text: l10n.novel),
-          ],
+          tabs: _visibleTabTypes.map((type) {
+            return Tab(text: localizedItemType(type));
+          }).toList(),
         ),
       ),
       body: TabBarView(
         controller: _tabBarController,
-        children: [
-          if (!hideItems.contains("/MangaLibrary"))
-            HistoryTab(
-              itemType: ItemType.manga,
-              query: _textEditingController.text,
-            ),
-          if (!hideItems.contains("/AnimeLibrary"))
-            HistoryTab(
-              itemType: ItemType.anime,
-              query: _textEditingController.text,
-            ),
-          if (!hideItems.contains("/NovelLibrary"))
-            HistoryTab(
-              itemType: ItemType.novel,
-              query: _textEditingController.text,
-            ),
-        ],
+        children: _visibleTabTypes.map((type) {
+          return HistoryTab(itemType: type, query: _textEditingController.text);
+        }).toList(),
       ),
     );
   }
 
-  Future<void> _clearHistory(List<String> hideItems) async {
+  Future<void> _clearHistory() async {
     List<History> histories = await isar.historys
         .filter()
         .idIsNotNull()
-        .chapter(
-          (q) =>
-              q.manga((q) => q.itemTypeEqualTo(getCurrentItemType(hideItems))),
-        )
+        .chapter((q) => q.manga((q) => q.itemTypeEqualTo(getCurrentItemType())))
         .findAll();
     final List<Id> idsToDelete = histories.map((h) => h.id!).toList();
     await isar.writeTxn(() => isar.historys.deleteAll(idsToDelete));
   }
 
-  ItemType getCurrentItemType(List<String> hideItems) {
-    return _tabBarController.index == 0 && !hideItems.contains("/MangaLibrary")
-        ? ItemType.manga
-        : _tabBarController.index ==
-                  1 - (hideItems.contains("/MangaLibrary") ? 1 : 0) &&
-              !hideItems.contains("/AnimeLibrary")
-        ? ItemType.anime
-        : ItemType.novel;
+  ItemType getCurrentItemType() {
+    return _visibleTabTypes[_tabBarController.index];
   }
 }
 
