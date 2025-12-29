@@ -70,12 +70,6 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     final l10n = context.l10n;
     final stats = ref.watch(getStatisticsProvider(itemType: itemType));
 
-    final title = switch (itemType) {
-      ItemType.manga => l10n.manga,
-      ItemType.anime => l10n.anime,
-      _ => l10n.novel,
-    };
-
     final chapterLabel = switch (itemType) {
       ItemType.manga => l10n.chapters,
       ItemType.anime => l10n.episodes,
@@ -125,7 +119,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
                 downloadedItems: downloadedItems,
                 averageChapters: averageChapters.toDouble(),
                 readPercentage: readPercentage.toDouble(),
-                title: title,
+                title: itemType.localized(l10n),
                 context: context,
                 unreadLabel: unreadLabel,
               ),

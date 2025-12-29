@@ -39,6 +39,7 @@ import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/global_style.dart';
+import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:path/path.dart' as p;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -1861,11 +1862,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   : Row(
                       children: [
                         Text(
-                          widget.itemType == ItemType.manga
-                              ? l10n.manga
-                              : widget.itemType == ItemType.anime
-                              ? l10n.anime
-                              : l10n.novel,
+                          widget.itemType.localized(l10n),
                           style: TextStyle(color: Theme.of(context).hintColor),
                         ),
                         const SizedBox(width: 10),

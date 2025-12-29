@@ -8,6 +8,7 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:mangayomi/utils/language.dart';
 
 class SourceListTile extends StatelessWidget {
@@ -81,11 +82,7 @@ class SourceListTile extends StatelessWidget {
         title: Text(
           !isLocal
               ? source.name!
-              : "${context.l10n.local_source} ${source.itemType == ItemType.manga
-                    ? context.l10n.manga
-                    : source.itemType == ItemType.anime
-                    ? context.l10n.anime
-                    : context.l10n.novel}",
+              : "${context.l10n.local_source} ${source.itemType.localized(context.l10n)}",
         ),
         trailing: SizedBox(
           width: 150,
