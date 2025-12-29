@@ -15,7 +15,12 @@ Future<void> updateLibrary({
   required List<Manga> mangaList,
   required ItemType itemType,
 }) async {
-  AppLogger.log("Updating $itemType library...");
+  AppLogger.log("Starting ${itemType.name} library update...");
+  if (mangaList.isEmpty) {
+    final cap = itemType.name[0].toUpperCase() + itemType.name.substring(1);
+    AppLogger.log("$cap library is empty. Nothing to update.");
+    return;
+  }
   bool isDark = ref.read(themeModeStateProvider);
   botToast(
     context.l10n.updating_library("0", "0", "0"),
@@ -37,10 +42,13 @@ Future<void> updateLibrary({
         ).future,
       );
     } catch (e) {
-      AppLogger.log("Failed to update $itemType:", logLevel: LogLevel.error);
+      AppLogger.log(
+        "Failed to update ${itemType.name}:",
+        logLevel: LogLevel.error,
+      );
       AppLogger.log(e.toString(), logLevel: LogLevel.error);
       failed++;
-      failedMangas.add(manga.name ?? "Unknown $itemType");
+      failedMangas.add(manga.name ?? "Unknown ${itemType.name}");
     }
     if (context.mounted) {
       botToast(
