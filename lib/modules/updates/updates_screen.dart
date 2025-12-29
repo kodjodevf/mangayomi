@@ -2,19 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
+import 'package:mangayomi/modules/widgets/base_library_tab_screen.dart';
 import 'package:mangayomi/modules/widgets/custom_sliver_grouped_list_view.dart';
 import 'package:isar_community/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/updates/widgets/update_chapter_list_tile_widget.dart';
 import 'package:mangayomi/modules/history/providers/isar_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/library_updater.dart';
 import 'package:mangayomi/utils/date.dart';
-import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
 import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -26,12 +25,77 @@ class UpdatesScreen extends ConsumerStatefulWidget {
   ConsumerState<UpdatesScreen> createState() => _UpdatesScreenState();
 }
 
-class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
-    with TickerProviderStateMixin {
-  late TabController _tabBarController;
-  late final List<ItemType> _visibleTabTypes;
-  late final List<String> hideItems;
+class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
   bool _isLoading = false;
+
+  @override
+  String get title => l10nLocalizations(context)!.updates;
+
+  @override
+  Widget buildTab(ItemType type) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: UpdateTab(
+        itemType: type,
+        query: textEditingController.text,
+        isLoading: _isLoading,
+      ),
+    );
+  }
+
+  @override
+  Widget buildTabLabel(ItemType type, String label) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Tab(text: label),
+        const SizedBox(width: 8),
+        _updateNumbers(ref, type),
+      ],
+    );
+  }
+
+  @override
+  List<Widget> buildExtraActions(BuildContext context) {
+    final l10n = l10nLocalizations(context)!;
+
+    return [
+      IconButton(
+        splashRadius: 20,
+        icon: Icon(Icons.refresh_outlined, color: Theme.of(context).hintColor),
+        onPressed: _updateLibrary,
+      ),
+      IconButton(
+        splashRadius: 20,
+        icon: Icon(
+          Icons.delete_sweep_outlined,
+          color: Theme.of(context).hintColor,
+        ),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (dialogContext) => AlertDialog(
+              title: Text(l10n.remove_everything),
+              content: Text(l10n.remove_all_update_msg),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: Text(l10n.cancel),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    Navigator.of(dialogContext).pop();
+                    await _clearUpdates();
+                  },
+                  child: Text(l10n.ok),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    ];
+  }
 
   Future<void> _updateLibrary() async {
     setState(() => _isLoading = true);
@@ -54,173 +118,6 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
     setState(() => _isLoading = false);
   }
 
-  void tabListener() {
-    setState(() {
-      _textEditingController.clear();
-      _isSearch = false;
-    });
-  }
-
-  @override
-  void dispose() {
-    _textEditingController.dispose();
-    _tabBarController.dispose();
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    hideItems = ref.read(hideItemsStateProvider);
-    _visibleTabTypes = [
-      if (!hideItems.contains("/MangaLibrary")) ItemType.manga,
-      if (!hideItems.contains("/AnimeLibrary")) ItemType.anime,
-      if (!hideItems.contains("/NovelLibrary")) ItemType.novel,
-    ];
-    _tabBarController = TabController(
-      length: _visibleTabTypes.length,
-      vsync: this,
-    );
-    _tabBarController.addListener(tabListener);
-  }
-
-  final _textEditingController = TextEditingController();
-  bool _isSearch = false;
-  @override
-  Widget build(BuildContext context) {
-    final l10n = l10nLocalizations(context)!;
-    String localizedItemType(ItemType type) {
-      switch (type) {
-        case ItemType.manga:
-          return l10n.manga;
-        case ItemType.anime:
-          return l10n.anime;
-        case ItemType.novel:
-          return l10n.novel;
-      }
-    }
-
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        title: _isSearch
-            ? null
-            : Text(
-                l10n.updates,
-                style: TextStyle(color: Theme.of(context).hintColor),
-              ),
-        actions: [
-          _isSearch
-              ? SeachFormTextField(
-                  onChanged: (value) {
-                    setState(() {});
-                  },
-                  onSuffixPressed: () {
-                    _textEditingController.clear();
-                    setState(() {});
-                  },
-                  onPressed: () {
-                    setState(() {
-                      _isSearch = false;
-                    });
-                    _textEditingController.clear();
-                  },
-                  controller: _textEditingController,
-                )
-              : IconButton(
-                  splashRadius: 20,
-                  onPressed: () {
-                    setState(() {
-                      _isSearch = true;
-                    });
-                  },
-                  icon: Icon(
-                    Icons.search_outlined,
-                    color: Theme.of(context).hintColor,
-                  ),
-                ),
-          IconButton(
-            splashRadius: 20,
-            onPressed: () {
-              _updateLibrary();
-            },
-            icon: Icon(
-              Icons.refresh_outlined,
-              color: Theme.of(context).hintColor,
-            ),
-          ),
-          IconButton(
-            splashRadius: 20,
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: Text(l10n.remove_everything),
-                    content: Text(l10n.remove_all_update_msg),
-                    actions: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text(l10n.cancel),
-                          ),
-                          const SizedBox(width: 15),
-                          TextButton(
-                            onPressed: () async {
-                              if (mounted) Navigator.pop(context);
-                              await _clearUpdates();
-                            },
-                            child: Text(l10n.ok),
-                          ),
-                        ],
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-            icon: Icon(
-              Icons.delete_sweep_outlined,
-              color: Theme.of(context).hintColor,
-            ),
-          ),
-        ],
-        bottom: TabBar(
-          indicatorSize: TabBarIndicatorSize.tab,
-          controller: _tabBarController,
-          tabs: _visibleTabTypes.map((type) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Tab(text: localizedItemType(type)),
-                const SizedBox(width: 8),
-                _updateNumbers(ref, type),
-              ],
-            );
-          }).toList(),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 10),
-        child: TabBarView(
-          controller: _tabBarController,
-          children: _visibleTabTypes.map((type) {
-            return UpdateTab(
-              itemType: type,
-              query: _textEditingController.text,
-              isLoading: _isLoading,
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
-
   Future<void> _clearUpdates() async {
     List<Update> updates = await isar.updates
         .filter()
@@ -237,10 +134,6 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
       }
     });
     await isar.writeTxn(() => isar.updates.deleteAll(idsToDelete));
-  }
-
-  ItemType getCurrentItemType() {
-    return _visibleTabTypes[_tabBarController.index];
   }
 }
 

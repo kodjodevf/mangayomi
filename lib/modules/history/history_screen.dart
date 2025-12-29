@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
+import 'package:mangayomi/modules/widgets/base_library_tab_screen.dart';
 import 'package:mangayomi/modules/widgets/custom_sliver_grouped_list_view.dart';
 
 import 'package:isar_community/isar.dart';
@@ -12,7 +13,6 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/history/providers/isar_providers.dart';
-import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/cached_network.dart';
@@ -20,7 +20,6 @@ import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/utils/extensions/chapter.dart';
 import 'package:mangayomi/utils/headers.dart';
-import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
 import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 
@@ -31,150 +30,50 @@ class HistoryScreen extends ConsumerStatefulWidget {
   ConsumerState<HistoryScreen> createState() => _HistoryScreenState();
 }
 
-class _HistoryScreenState extends ConsumerState<HistoryScreen>
-    with TickerProviderStateMixin {
-  final _textEditingController = TextEditingController();
-  late TabController _tabBarController;
-  late List<ItemType> _visibleTabTypes;
-  late final List<String> hideItems;
+class _HistoryScreenState extends BaseLibraryTabScreenState<HistoryScreen> {
+  @override
+  String get title => l10nLocalizations(context)!.history;
 
-  void tabListener() {
-    setState(() {
-      _textEditingController.clear();
-      _isSearch = false;
-    });
+  @override
+  Widget buildTab(ItemType type) {
+    return HistoryTab(itemType: type, query: textEditingController.text);
   }
 
   @override
-  void initState() {
-    super.initState();
-    hideItems = ref.read(hideItemsStateProvider);
-    _visibleTabTypes = [
-      if (!hideItems.contains("/MangaLibrary")) ItemType.manga,
-      if (!hideItems.contains("/AnimeLibrary")) ItemType.anime,
-      if (!hideItems.contains("/NovelLibrary")) ItemType.novel,
-    ];
-    _tabBarController = TabController(
-      length: _visibleTabTypes.length,
-      vsync: this,
-    );
-    _tabBarController.addListener(tabListener);
-  }
-
-  @override
-  void dispose() {
-    _tabBarController.dispose();
-    _textEditingController.dispose();
-    super.dispose();
-  }
-
-  bool _isSearch = false;
-  @override
-  Widget build(BuildContext context) {
+  List<Widget> buildExtraActions(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
-    String localizedItemType(ItemType type) {
-      switch (type) {
-        case ItemType.manga:
-          return l10n.manga;
-        case ItemType.anime:
-          return l10n.anime;
-        case ItemType.novel:
-          return l10n.novel;
-      }
-    }
 
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        title: _isSearch
-            ? null
-            : Text(
-                l10n.history,
-                style: TextStyle(color: Theme.of(context).hintColor),
-              ),
-        actions: [
-          _isSearch
-              ? SeachFormTextField(
-                  onChanged: (value) {
-                    setState(() {});
-                  },
-                  onSuffixPressed: () {
-                    _textEditingController.clear();
-                    setState(() {});
-                  },
-                  onPressed: () {
-                    setState(() {
-                      _isSearch = false;
-                    });
-                    _textEditingController.clear();
-                  },
-                  controller: _textEditingController,
-                )
-              : IconButton(
-                  splashRadius: 20,
-                  onPressed: () {
-                    setState(() {
-                      _isSearch = true;
-                    });
-                  },
-                  icon: Icon(Icons.search, color: Theme.of(context).hintColor),
-                ),
-          IconButton(
-            splashRadius: 20,
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: Text(l10n.remove_everything),
-                    content: Text(l10n.remove_everything_msg),
-                    actions: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text(l10n.cancel),
-                          ),
-                          const SizedBox(width: 15),
-                          TextButton(
-                            onPressed: () async {
-                              if (mounted) Navigator.pop(context);
-                              await _clearHistory();
-                            },
-                            child: Text(l10n.ok),
-                          ),
-                        ],
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-            icon: Icon(
-              Icons.delete_sweep_outlined,
-              color: Theme.of(context).hintColor,
-            ),
-          ),
-        ],
-        bottom: TabBar(
-          indicatorSize: TabBarIndicatorSize.tab,
-          controller: _tabBarController,
-          tabs: _visibleTabTypes.map((type) {
-            return Tab(text: localizedItemType(type));
-          }).toList(),
+    return [
+      IconButton(
+        splashRadius: 20,
+        icon: Icon(
+          Icons.delete_sweep_outlined,
+          color: Theme.of(context).hintColor,
         ),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (dialogContext) => AlertDialog(
+              title: Text(l10n.remove_everything),
+              content: Text(l10n.remove_everything_msg),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: Text(l10n.cancel),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    Navigator.of(dialogContext).pop();
+                    await _clearHistory();
+                  },
+                  child: Text(l10n.ok),
+                ),
+              ],
+            ),
+          );
+        },
       ),
-      body: TabBarView(
-        controller: _tabBarController,
-        children: _visibleTabTypes.map((type) {
-          return HistoryTab(itemType: type, query: _textEditingController.text);
-        }).toList(),
-      ),
-    );
+    ];
   }
 
   Future<void> _clearHistory() async {
@@ -185,10 +84,6 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
         .findAll();
     final List<Id> idsToDelete = histories.map((h) => h.id!).toList();
     await isar.writeTxn(() => isar.historys.deleteAll(idsToDelete));
-  }
-
-  ItemType getCurrentItemType() {
-    return _visibleTabTypes[_tabBarController.index];
   }
 }
 
