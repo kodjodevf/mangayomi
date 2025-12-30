@@ -233,8 +233,12 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     );
   }
 
+  final Map<String, List<Manga>> _dayCache = {};
+
   List<Manga> _getEntriesForDay(DateTime day, List<Manga> data) {
-    return data.where((e) {
+    final key = "${day.year}-${day.month}-${day.day}";
+    if (_dayCache.containsKey(key)) return _dayCache[key]!;
+    final result = data.where((e) {
       final lastChapter = e.chapters
           .filter()
           .sortByDateUploadDesc()
@@ -244,10 +248,12 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
           ? DateTime.fromMillisecondsSinceEpoch(lastDate)
           : DateTime.now();
       final temp = start.add(Duration(days: e.smartUpdateDays!));
-      final predictedDay = "${temp.year}-${temp.month}-${temp.day}";
-      final selectedDay = "${day.year}-${day.month}-${day.day}";
-      return predictedDay == selectedDay;
+      return temp.year == day.year &&
+          temp.month == day.month &&
+          temp.day == day.day;
     }).toList();
+    _dayCache[key] = result;
+    return result;
   }
 
   List<Manga> _getEntriesForRange(
