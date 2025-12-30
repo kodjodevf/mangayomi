@@ -93,8 +93,25 @@ class CategoriesTab extends ConsumerStatefulWidget {
 
 class _CategoriesTabState extends ConsumerState<CategoriesTab> {
   List<Category> _entries = [];
-  Future<void> _updateCategoriesOrder(Category a, Category b) async {
-    await isar.writeTxn(() async => await isar.categorys.putAll([a, b]));
+
+  /// Moves a category from `index` to `newIndex` in the list,
+  /// swaps their positions in memory, and persists the change in Isar.
+  Future<void> _moveCategory(int index, int newIndex) async {
+    // Prevent invalid moves (out of bounds)
+    if (newIndex < 0 || newIndex >= _entries.length) return;
+    // Grab the two category objects involved in the swap
+    final a = _entries[index];
+    final b = _entries[newIndex];
+    // Swap their positions inside the in‑memory list
+    _entries[newIndex] = a;
+    _entries[index] = b;
+    // Swap their persisted `pos` values so ordering is saved correctly
+    final temp = a.pos;
+    a.pos = b.pos;
+    b.pos = temp;
+    // Persist both updated objects in a single Isar transaction
+    await isar.writeTxn(() async => isar.categorys.putAll([a, b]));
+    setState(() {}); // Trigger a UI rebuild to reflect the updated order
   }
 
   @override
@@ -173,18 +190,8 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                         Icons.arrow_drop_up_outlined,
                                       ),
                                       onPressed: index > 0
-                                          ? () async {
-                                              final above = _entries[index - 1];
-                                              _entries[index - 1] = category;
-                                              _entries[index] = above;
-                                              final temp = category.pos;
-                                              category.pos = above.pos;
-                                              above.pos = temp;
-                                              await _updateCategoriesOrder(
-                                                category,
-                                                above,
-                                              );
-                                              setState(() {});
+                                          ? () {
+                                              _moveCategory(index, index - 1);
                                             }
                                           : null,
                                     ),
@@ -193,18 +200,8 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                         Icons.arrow_drop_down_outlined,
                                       ),
                                       onPressed: index < _entries.length - 1
-                                          ? () async {
-                                              final below = _entries[index + 1];
-                                              _entries[index + 1] = category;
-                                              _entries[index] = below;
-                                              final temp = category.pos;
-                                              category.pos = below.pos;
-                                              below.pos = temp;
-                                              await _updateCategoriesOrder(
-                                                category,
-                                                below,
-                                              );
-                                              setState(() {});
+                                          ? () {
+                                              _moveCategory(index, index + 1);
                                             }
                                           : null,
                                     ),
@@ -224,12 +221,12 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                 ),
                                 SizedBox(width: 10),
                                 IconButton(
-                                  onPressed: () {
-                                    isar.writeTxnSync(() async {
+                                  onPressed: () async {
+                                    await isar.writeTxn(() async {
                                       category.hide = !(category.hide ?? false);
                                       category.updatedAt =
                                           DateTime.now().millisecondsSinceEpoch;
-                                      isar.categorys.putSync(category);
+                                      isar.categorys.put(category);
                                     });
                                   },
                                   icon: Icon(
