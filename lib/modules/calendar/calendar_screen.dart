@@ -7,6 +7,7 @@ import 'package:isar_community/isar.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/calendar/providers/calendar_provider.dart';
+import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/modules/widgets/custom_sliver_grouped_list_view.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
@@ -15,6 +16,8 @@ import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/headers.dart';
+import 'package:mangayomi/utils/item_type_filters.dart';
+import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarScreen extends ConsumerStatefulWidget {
@@ -36,12 +39,14 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
   late ItemType? itemType = widget.itemType ?? ItemType.manga;
+  late List<ItemType> _visibleTypes;
 
   @override
   void initState() {
     super.initState();
     _selectedDay = _focusedDay;
     _selectedEntries = ValueNotifier([]);
+    _visibleTypes = hiddenItemTypes(ref.read(hideItemsStateProvider));
   }
 
   @override
@@ -107,29 +112,15 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                                     borderRadius: BorderRadius.circular(50),
                                   ),
                                 ),
-                                segments: [
-                                  ButtonSegment(
-                                    value: ItemType.manga.index,
+                                segments: _visibleTypes.map((type) {
+                                  return ButtonSegment(
+                                    value: type.index,
                                     label: Padding(
                                       padding: const EdgeInsets.all(12),
-                                      child: Text(l10n.manga),
+                                      child: Text(type.localized(l10n)),
                                     ),
-                                  ),
-                                  ButtonSegment(
-                                    value: ItemType.anime.index,
-                                    label: Padding(
-                                      padding: const EdgeInsets.all(12),
-                                      child: Text(l10n.anime),
-                                    ),
-                                  ),
-                                  ButtonSegment(
-                                    value: ItemType.novel.index,
-                                    label: Padding(
-                                      padding: const EdgeInsets.all(12),
-                                      child: Text(l10n.novel),
-                                    ),
-                                  ),
-                                ],
+                                  );
+                                }).toList(),
                                 selected: {itemType?.index},
                                 onSelectionChanged: (newSelection) {
                                   if (newSelection.isNotEmpty &&
