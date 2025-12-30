@@ -38,15 +38,21 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   DateTime? _selectedDay;
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
-  late ItemType? itemType = widget.itemType ?? ItemType.manga;
+  late ItemType? itemType;
   late List<ItemType> _visibleTypes;
 
   @override
   void initState() {
     super.initState();
+    _visibleTypes = hiddenItemTypes(ref.read(hideItemsStateProvider));
+    final initialItemType = widget.itemType ?? ItemType.manga;
+    if (_visibleTypes.contains(initialItemType)) {
+      itemType = initialItemType;
+    } else {
+      itemType = _visibleTypes.isNotEmpty ? _visibleTypes.first : null;
+    }
     _selectedDay = _focusedDay;
     _selectedEntries = ValueNotifier([]);
-    _visibleTypes = hiddenItemTypes(ref.read(hideItemsStateProvider));
   }
 
   @override
