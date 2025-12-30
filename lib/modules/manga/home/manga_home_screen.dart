@@ -25,6 +25,7 @@ import 'package:mangayomi/modules/manga/home/widget/mangas_card_selector.dart';
 import 'package:mangayomi/modules/widgets/gridview_widget.dart';
 import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
 import 'package:mangayomi/utils/global_style.dart';
+import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:marquee/marquee.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
@@ -167,11 +168,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                   Text(
                     !isLocal
                         ? "${source.name}"
-                        : "${context.l10n.local_source} ${source.itemType == ItemType.manga
-                              ? context.l10n.manga
-                              : source.itemType == ItemType.anime
-                              ? context.l10n.anime
-                              : context.l10n.novel}",
+                        : "${context.l10n.local_source} ${source.itemType.localized(context.l10n)}",
                   ),
                   source.notes != null && source.notes!.isNotEmpty
                       ? SizedBox(

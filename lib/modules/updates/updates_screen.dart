@@ -1,23 +1,19 @@
-import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/changed.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
+import 'package:mangayomi/modules/widgets/base_library_tab_screen.dart';
 import 'package:mangayomi/modules/widgets/custom_sliver_grouped_list_view.dart';
 import 'package:isar_community/isar.dart';
-import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
-import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/updates/widgets/update_chapter_list_tile_widget.dart';
 import 'package:mangayomi/modules/history/providers/isar_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/services/library_updater.dart';
 import 'package:mangayomi/utils/date.dart';
-import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
 import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -29,267 +25,104 @@ class UpdatesScreen extends ConsumerStatefulWidget {
   ConsumerState<UpdatesScreen> createState() => _UpdatesScreenState();
 }
 
-class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
-    with TickerProviderStateMixin {
-  late TabController _tabBarController;
-  late final List<String> _tabList;
-  late final List<String> hideItems;
+class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
   bool _isLoading = false;
-  Future<void> _updateLibrary() async {
-    setState(() {
-      _isLoading = true;
-    });
-    bool isDark = ref.read(themeModeStateProvider);
-    botToast(
-      context.l10n.updating_library("0", "0", "0"),
-      fontSize: 13,
-      second: 30,
-      alignY: !context.isTablet ? 0.85 : 1,
-      themeDark: isDark,
+
+  @override
+  String get title => l10nLocalizations(context)!.updates;
+
+  @override
+  Widget buildTab(ItemType type) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: UpdateTab(
+        itemType: type,
+        query: textEditingController.text,
+        isLoading: _isLoading,
+      ),
     );
+  }
+
+  @override
+  Widget buildTabLabel(ItemType type, String label) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Tab(text: label),
+        const SizedBox(width: 8),
+        _updateNumbers(ref, type),
+      ],
+    );
+  }
+
+  @override
+  List<Widget> buildExtraActions(BuildContext context) {
+    final l10n = l10nLocalizations(context)!;
+
+    return [
+      IconButton(
+        splashRadius: 20,
+        icon: Icon(Icons.refresh_outlined, color: Theme.of(context).hintColor),
+        onPressed: _updateLibrary,
+      ),
+      IconButton(
+        splashRadius: 20,
+        icon: Icon(
+          Icons.delete_sweep_outlined,
+          color: Theme.of(context).hintColor,
+        ),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (dialogContext) => AlertDialog(
+              title: Text(l10n.remove_everything),
+              content: Text(l10n.remove_all_update_msg),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: Text(l10n.cancel),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    Navigator.of(dialogContext).pop();
+                    await _clearUpdates();
+                  },
+                  child: Text(l10n.ok),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    ];
+  }
+
+  Future<void> _updateLibrary() async {
+    setState(() => _isLoading = true);
+    final itemType = getCurrentItemType();
     final mangaList = isar.mangas
         .filter()
         .idIsNotNull()
         .favoriteEqualTo(true)
         .and()
-        .itemTypeEqualTo(
-          _tabBarController.index == 0
-              ? ItemType.manga
-              : _tabBarController.index == 1
-              ? ItemType.anime
-              : ItemType.novel,
-        )
+        .itemTypeEqualTo(itemType)
         .and()
         .isLocalArchiveEqualTo(false)
         .findAllSync();
-    int numbers = 0;
-    int failed = 0;
-
-    for (var manga in mangaList) {
-      try {
-        await ref.read(
-          updateMangaDetailProvider(
-            mangaId: manga.id,
-            isInit: false,
-            showToast: false,
-          ).future,
-        );
-      } catch (_) {
-        failed++;
-      }
-      numbers++;
-      if (mounted) {
-        botToast(
-          context.l10n.updating_library(numbers, failed, mangaList.length),
-          fontSize: 13,
-          second: 10,
-          alignY: !context.isTablet ? 0.85 : 1,
-          animationDuration: 0,
-          dismissDirections: [DismissDirection.none],
-          onlyOne: false,
-          themeDark: isDark,
-        );
-      }
-    }
-    BotToast.cleanAll();
-    setState(() {
-      _isLoading = false;
-    });
-  }
-
-  void tabListener() {
-    setState(() {
-      _textEditingController.clear();
-      _isSearch = false;
-    });
-  }
-
-  @override
-  void dispose() {
-    _textEditingController.dispose();
-    _tabBarController.dispose();
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    hideItems = ref.read(hideItemsStateProvider);
-    _tabList = [
-      if (!hideItems.contains("/MangaLibrary")) "/MangaLibrary",
-      if (!hideItems.contains("/AnimeLibrary")) "/AnimeLibrary",
-      if (!hideItems.contains("/NovelLibrary")) "/NovelLibrary",
-    ];
-    _tabBarController = TabController(length: _tabList.length, vsync: this);
-    _tabBarController.addListener(tabListener);
-  }
-
-  final _textEditingController = TextEditingController();
-  bool _isSearch = false;
-  @override
-  Widget build(BuildContext context) {
-    final l10n = l10nLocalizations(context)!;
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        title: _isSearch
-            ? null
-            : Text(
-                l10n.updates,
-                style: TextStyle(color: Theme.of(context).hintColor),
-              ),
-        actions: [
-          _isSearch
-              ? SeachFormTextField(
-                  onChanged: (value) {
-                    setState(() {});
-                  },
-                  onSuffixPressed: () {
-                    _textEditingController.clear();
-                    setState(() {});
-                  },
-                  onPressed: () {
-                    setState(() {
-                      _isSearch = false;
-                    });
-                    _textEditingController.clear();
-                  },
-                  controller: _textEditingController,
-                )
-              : IconButton(
-                  splashRadius: 20,
-                  onPressed: () {
-                    setState(() {
-                      _isSearch = true;
-                    });
-                  },
-                  icon: Icon(
-                    Icons.search_outlined,
-                    color: Theme.of(context).hintColor,
-                  ),
-                ),
-          IconButton(
-            splashRadius: 20,
-            onPressed: () {
-              _updateLibrary();
-            },
-            icon: Icon(
-              Icons.refresh_outlined,
-              color: Theme.of(context).hintColor,
-            ),
-          ),
-          IconButton(
-            splashRadius: 20,
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: Text(l10n.remove_everything),
-                    content: Text(l10n.remove_all_update_msg),
-                    actions: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text(l10n.cancel),
-                          ),
-                          const SizedBox(width: 15),
-                          TextButton(
-                            onPressed: () async {
-                              if (mounted) Navigator.pop(context);
-                              await _clearUpdates(hideItems);
-                            },
-                            child: Text(l10n.ok),
-                          ),
-                        ],
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-            icon: Icon(
-              Icons.delete_sweep_outlined,
-              color: Theme.of(context).hintColor,
-            ),
-          ),
-        ],
-        bottom: TabBar(
-          indicatorSize: TabBarIndicatorSize.tab,
-          controller: _tabBarController,
-          tabs: [
-            if (!hideItems.contains("/MangaLibrary"))
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Tab(text: l10n.manga),
-                  const SizedBox(width: 8),
-                  _updateNumbers(ref, ItemType.manga),
-                ],
-              ),
-            if (!hideItems.contains("/AnimeLibrary"))
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Tab(text: l10n.anime),
-                  const SizedBox(width: 8),
-                  _updateNumbers(ref, ItemType.anime),
-                ],
-              ),
-            if (!hideItems.contains("/NovelLibrary"))
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Tab(text: l10n.novel),
-                  const SizedBox(width: 8),
-                  _updateNumbers(ref, ItemType.novel),
-                ],
-              ),
-          ],
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 10),
-        child: TabBarView(
-          controller: _tabBarController,
-          children: [
-            if (!hideItems.contains("/MangaLibrary"))
-              UpdateTab(
-                itemType: ItemType.manga,
-                query: _textEditingController.text,
-                isLoading: _isLoading,
-              ),
-            if (!hideItems.contains("/AnimeLibrary"))
-              UpdateTab(
-                itemType: ItemType.anime,
-                query: _textEditingController.text,
-                isLoading: _isLoading,
-              ),
-            if (!hideItems.contains("/NovelLibrary"))
-              UpdateTab(
-                itemType: ItemType.novel,
-                query: _textEditingController.text,
-                isLoading: _isLoading,
-              ),
-          ],
-        ),
-      ),
+    await updateLibrary(
+      ref: ref,
+      context: context,
+      mangaList: mangaList,
+      itemType: itemType,
     );
+    setState(() => _isLoading = false);
   }
 
-  Future<void> _clearUpdates(List<String> hideItems) async {
+  Future<void> _clearUpdates() async {
     List<Update> updates = await isar.updates
         .filter()
         .idIsNotNull()
-        .chapter(
-          (q) =>
-              q.manga((q) => q.itemTypeEqualTo(getCurrentItemType(hideItems))),
-        )
+        .chapter((q) => q.manga((q) => q.itemTypeEqualTo(getCurrentItemType())))
         .findAll();
     final idsToDelete = <Id>[];
     isar.writeTxnSync(() {
@@ -301,16 +134,6 @@ class _UpdatesScreenState extends ConsumerState<UpdatesScreen>
       }
     });
     await isar.writeTxn(() => isar.updates.deleteAll(idsToDelete));
-  }
-
-  ItemType getCurrentItemType(List<String> hideItems) {
-    return _tabBarController.index == 0 && !hideItems.contains("/MangaLibrary")
-        ? ItemType.manga
-        : _tabBarController.index ==
-                  1 - (hideItems.contains("/MangaLibrary") ? 1 : 0) &&
-              !hideItems.contains("/AnimeLibrary")
-        ? ItemType.anime
-        : ItemType.novel;
   }
 }
 

@@ -7,6 +7,7 @@ import 'package:isar_community/isar.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/calendar/providers/calendar_provider.dart';
+import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/modules/widgets/custom_sliver_grouped_list_view.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
@@ -15,6 +16,8 @@ import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/headers.dart';
+import 'package:mangayomi/utils/item_type_filters.dart';
+import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarScreen extends ConsumerStatefulWidget {
@@ -35,11 +38,19 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   DateTime? _selectedDay;
   DateTime? _rangeStart;
   DateTime? _rangeEnd;
-  late ItemType? itemType = widget.itemType ?? ItemType.manga;
+  late ItemType? itemType;
+  late List<ItemType> _visibleTypes;
 
   @override
   void initState() {
     super.initState();
+    _visibleTypes = hiddenItemTypes(ref.read(hideItemsStateProvider));
+    final initialItemType = widget.itemType ?? ItemType.manga;
+    if (_visibleTypes.contains(initialItemType)) {
+      itemType = initialItemType;
+    } else {
+      itemType = _visibleTypes.isNotEmpty ? _visibleTypes.first : null;
+    }
     _selectedDay = _focusedDay;
     _selectedEntries = ValueNotifier([]);
   }
@@ -69,31 +80,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                 SliverToBoxAdapter(
                   child: Column(
                     children: [
-                      ListTile(
-                        title: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 3),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.warning_amber_outlined,
-                                color: context.secondaryColor,
-                              ),
-                              const SizedBox(width: 10),
-                              Flexible(
-                                child: Text(
-                                  l10n.calendar_info,
-                                  softWrap: true,
-                                  overflow: TextOverflow.clip,
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: context.secondaryColor,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      _buildWarningTile(context),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: Row(
@@ -107,29 +94,15 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                                     borderRadius: BorderRadius.circular(50),
                                   ),
                                 ),
-                                segments: [
-                                  ButtonSegment(
-                                    value: ItemType.manga.index,
+                                segments: _visibleTypes.map((type) {
+                                  return ButtonSegment(
+                                    value: type.index,
                                     label: Padding(
                                       padding: const EdgeInsets.all(12),
-                                      child: Text(l10n.manga),
+                                      child: Text(type.localized(l10n)),
                                     ),
-                                  ),
-                                  ButtonSegment(
-                                    value: ItemType.anime.index,
-                                    label: Padding(
-                                      padding: const EdgeInsets.all(12),
-                                      child: Text(l10n.anime),
-                                    ),
-                                  ),
-                                  ButtonSegment(
-                                    value: ItemType.novel.index,
-                                    label: Padding(
-                                      padding: const EdgeInsets.all(12),
-                                      child: Text(l10n.novel),
-                                    ),
-                                  ),
-                                ],
+                                  );
+                                }).toList(),
                                 selected: {itemType?.index},
                                 onSelectionChanged: (newSelection) {
                                   if (newSelection.isNotEmpty &&
@@ -145,40 +118,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                           ],
                         ),
                       ),
-                      TableCalendar(
-                        firstDay: firstDay,
-                        lastDay: lastDay,
-                        focusedDay: _focusedDay,
-                        locale: locale.toLanguageTag(),
-                        selectedDayPredicate: (day) =>
-                            isSameDay(_selectedDay, day),
-                        rangeStartDay: _rangeStart,
-                        rangeEndDay: _rangeEnd,
-                        calendarFormat: _calendarFormat,
-                        rangeSelectionMode: _rangeSelectionMode,
-                        eventLoader: (day) => _getEntriesForDay(day, data),
-                        startingDayOfWeek: StartingDayOfWeek.monday,
-                        calendarStyle: CalendarStyle(
-                          outsideDaysVisible: true,
-                          weekendTextStyle: TextStyle(
-                            color: context.primaryColor,
-                          ),
-                        ),
-                        onDaySelected: (selectedDay, focusedDay) =>
-                            _onDaySelected(selectedDay, focusedDay, data),
-                        onRangeSelected: (start, end, focusedDay) =>
-                            _onRangeSelected(start, end, focusedDay, data),
-                        onFormatChanged: (format) {
-                          if (_calendarFormat != format) {
-                            setState(() {
-                              _calendarFormat = format;
-                            });
-                          }
-                        },
-                        onPageChanged: (focusedDay) {
-                          _focusedDay = focusedDay;
-                        },
-                      ),
+                      _buildCalendar(data, locale),
                       const SizedBox(height: 15),
                     ],
                   ),
@@ -241,8 +181,64 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     );
   }
 
+  Widget _buildWarningTile(BuildContext context) {
+    return ListTile(
+      title: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 3),
+        child: Row(
+          children: [
+            Icon(Icons.warning_amber_outlined, color: context.secondaryColor),
+            const SizedBox(width: 10),
+            Flexible(
+              child: Text(
+                context.l10n.calendar_info,
+                softWrap: true,
+                overflow: TextOverflow.clip,
+                style: TextStyle(fontSize: 13, color: context.secondaryColor),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCalendar(List<Manga> data, Locale locale) {
+    return TableCalendar(
+      firstDay: firstDay,
+      lastDay: lastDay,
+      focusedDay: _focusedDay,
+      locale: locale.toLanguageTag(),
+      selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+      rangeStartDay: _rangeStart,
+      rangeEndDay: _rangeEnd,
+      calendarFormat: _calendarFormat,
+      rangeSelectionMode: _rangeSelectionMode,
+      eventLoader: (day) => _getEntriesForDay(day, data),
+      startingDayOfWeek: StartingDayOfWeek.monday,
+      calendarStyle: CalendarStyle(
+        outsideDaysVisible: true,
+        weekendTextStyle: TextStyle(color: context.primaryColor),
+      ),
+      onDaySelected: (selectedDay, focusedDay) =>
+          _onDaySelected(selectedDay, focusedDay, data),
+      onRangeSelected: (start, end, focusedDay) =>
+          _onRangeSelected(start, end, focusedDay, data),
+      onFormatChanged: (format) {
+        if (_calendarFormat != format) {
+          setState(() => _calendarFormat = format);
+        }
+      },
+      onPageChanged: (focusedDay) => _focusedDay = focusedDay,
+    );
+  }
+
+  final Map<String, List<Manga>> _dayCache = {};
+
   List<Manga> _getEntriesForDay(DateTime day, List<Manga> data) {
-    return data.where((e) {
+    final key = "${day.year}-${day.month}-${day.day}";
+    if (_dayCache.containsKey(key)) return _dayCache[key]!;
+    final result = data.where((e) {
       final lastChapter = e.chapters
           .filter()
           .sortByDateUploadDesc()
@@ -252,10 +248,12 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
           ? DateTime.fromMillisecondsSinceEpoch(lastDate)
           : DateTime.now();
       final temp = start.add(Duration(days: e.smartUpdateDays!));
-      final predictedDay = "${temp.year}-${temp.month}-${temp.day}";
-      final selectedDay = "${day.year}-${day.month}-${day.day}";
-      return predictedDay == selectedDay;
+      return temp.year == day.year &&
+          temp.month == day.month &&
+          temp.day == day.day;
     }).toList();
+    _dayCache[key] = result;
+    return result;
   }
 
   List<Manga> _getEntriesForRange(

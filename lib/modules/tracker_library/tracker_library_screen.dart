@@ -18,6 +18,7 @@ import 'package:mangayomi/modules/tracker_library/tracker_library_section.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_section_screen.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/constant.dart';
+import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
 enum TrackerProviders {
@@ -92,7 +93,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
           (trackerProvider.syncId == TrackerProviders.simkl.syncId ||
                   trackerProvider.syncId == TrackerProviders.trakt.syncId)
               ? trackerProvider.name
-              : "${trackerProvider.name} | ${itemType == ItemType.anime ? l10n.anime : l10n.manga}",
+              : "${trackerProvider.name} | ${itemType.localized(l10n)}",
         ),
         leading: !_isSearch ? null : Container(),
         actions: [

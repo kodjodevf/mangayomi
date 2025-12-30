@@ -2,12 +2,10 @@
 
 import 'dart:io';
 import 'dart:math';
-import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar_community/isar.dart';
-import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -19,10 +17,8 @@ import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/modules/library/providers/add_torrent.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
-import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
 import 'package:mangayomi/modules/more/categories/providers/isar_providers.dart';
 import 'package:mangayomi/modules/more/providers/downloaded_only_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/bottom_select_bar.dart';
 import 'package:mangayomi/modules/widgets/category_selection_dialog.dart';
@@ -30,6 +26,7 @@ import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/services/library_updater.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/library/providers/isar_providers.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
@@ -42,6 +39,7 @@ import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/global_style.dart';
+import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:path/path.dart' as p;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -80,53 +78,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     _textEditingController.dispose();
     tabBarController?.dispose();
     super.dispose();
-  }
-
-  Future<void> _updateLibrary(List<Manga> mangaList) async {
-    bool isDark = ref.read(themeModeStateProvider);
-    botToast(
-      context.l10n.updating_library("0", "0", "0"),
-      fontSize: 13,
-      second: 30,
-      alignY: !context.isTablet ? 0.85 : 1,
-      themeDark: isDark,
-    );
-    int numbers = 0;
-    int failed = 0;
-    for (var manga in mangaList) {
-      try {
-        await ref.read(
-          updateMangaDetailProvider(
-            mangaId: manga.id,
-            isInit: false,
-            showToast: false,
-          ).future,
-        );
-      } catch (_) {
-        failed++;
-      }
-      numbers++;
-      if (mounted) {
-        botToast(
-          context.l10n.updating_library(numbers, failed, mangaList.length),
-          fontSize: 13,
-          second: 10,
-          alignY: !context.isTablet ? 0.85 : 1,
-          animationDuration: 0,
-          dismissDirections: [DismissDirection.none],
-          onlyOne: false,
-          themeDark: isDark,
-        );
-      }
-    }
-    await Future.doWhile(() async {
-      await Future.delayed(const Duration(seconds: 1));
-      if (mangaList.length == numbers) {
-        return false;
-      }
-      return true;
-    });
-    BotToast.cleanAll();
   }
 
   @override
@@ -776,7 +727,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             final entriesManga = reverse ? entries.reversed.toList() : entries;
             return RefreshIndicator(
               onRefresh: () async {
-                await _updateLibrary(data);
+                await updateLibrary(
+                  ref: ref,
+                  context: context,
+                  mangaList: data,
+                  itemType: widget.itemType,
+                );
               },
               child: displayType == DisplayType.list
                   ? LibraryListViewWidget(
@@ -867,7 +823,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
           final entriesManga = reverse ? entries.reversed.toList() : entries;
           return RefreshIndicator(
             onRefresh: () async {
-              await _updateLibrary(data);
+              await updateLibrary(
+                ref: ref,
+                context: context,
+                mangaList: data,
+                itemType: widget.itemType,
+              );
             },
             child: displayType == DisplayType.list
                 ? LibraryListViewWidget(
@@ -1901,11 +1862,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   : Row(
                       children: [
                         Text(
-                          widget.itemType == ItemType.manga
-                              ? l10n.manga
-                              : widget.itemType == ItemType.anime
-                              ? l10n.anime
-                              : l10n.novel,
+                          widget.itemType.localized(l10n),
                           style: TextStyle(color: Theme.of(context).hintColor),
                         ),
                         const SizedBox(width: 10),
@@ -2013,7 +1970,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   onSelected: (value) {
                     if (value == 0) {
                       manga.whenData((value) {
-                        _updateLibrary(value);
+                        updateLibrary(
+                          ref: ref,
+                          context: context,
+                          mangaList: value,
+                          itemType: widget.itemType,
+                        );
                       });
                     } else if (value == 1) {
                       manga.whenData((value) {
