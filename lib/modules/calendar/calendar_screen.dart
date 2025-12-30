@@ -80,31 +80,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                 SliverToBoxAdapter(
                   child: Column(
                     children: [
-                      ListTile(
-                        title: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 3),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.warning_amber_outlined,
-                                color: context.secondaryColor,
-                              ),
-                              const SizedBox(width: 10),
-                              Flexible(
-                                child: Text(
-                                  l10n.calendar_info,
-                                  softWrap: true,
-                                  overflow: TextOverflow.clip,
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: context.secondaryColor,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                      _buildWarningTile(context),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),
                         child: Row(
@@ -142,40 +118,7 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                           ],
                         ),
                       ),
-                      TableCalendar(
-                        firstDay: firstDay,
-                        lastDay: lastDay,
-                        focusedDay: _focusedDay,
-                        locale: locale.toLanguageTag(),
-                        selectedDayPredicate: (day) =>
-                            isSameDay(_selectedDay, day),
-                        rangeStartDay: _rangeStart,
-                        rangeEndDay: _rangeEnd,
-                        calendarFormat: _calendarFormat,
-                        rangeSelectionMode: _rangeSelectionMode,
-                        eventLoader: (day) => _getEntriesForDay(day, data),
-                        startingDayOfWeek: StartingDayOfWeek.monday,
-                        calendarStyle: CalendarStyle(
-                          outsideDaysVisible: true,
-                          weekendTextStyle: TextStyle(
-                            color: context.primaryColor,
-                          ),
-                        ),
-                        onDaySelected: (selectedDay, focusedDay) =>
-                            _onDaySelected(selectedDay, focusedDay, data),
-                        onRangeSelected: (start, end, focusedDay) =>
-                            _onRangeSelected(start, end, focusedDay, data),
-                        onFormatChanged: (format) {
-                          if (_calendarFormat != format) {
-                            setState(() {
-                              _calendarFormat = format;
-                            });
-                          }
-                        },
-                        onPageChanged: (focusedDay) {
-                          _focusedDay = focusedDay;
-                        },
-                      ),
+                      _buildCalendar(data, locale),
                       const SizedBox(height: 15),
                     ],
                   ),
@@ -235,6 +178,58 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
           return const ProgressCenter();
         },
       ),
+    );
+  }
+
+  Widget _buildWarningTile(BuildContext context) {
+    return ListTile(
+      title: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 3),
+        child: Row(
+          children: [
+            Icon(Icons.warning_amber_outlined, color: context.secondaryColor),
+            const SizedBox(width: 10),
+            Flexible(
+              child: Text(
+                context.l10n.calendar_info,
+                softWrap: true,
+                overflow: TextOverflow.clip,
+                style: TextStyle(fontSize: 13, color: context.secondaryColor),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCalendar(List<Manga> data, Locale locale) {
+    return TableCalendar(
+      firstDay: firstDay,
+      lastDay: lastDay,
+      focusedDay: _focusedDay,
+      locale: locale.toLanguageTag(),
+      selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+      rangeStartDay: _rangeStart,
+      rangeEndDay: _rangeEnd,
+      calendarFormat: _calendarFormat,
+      rangeSelectionMode: _rangeSelectionMode,
+      eventLoader: (day) => _getEntriesForDay(day, data),
+      startingDayOfWeek: StartingDayOfWeek.monday,
+      calendarStyle: CalendarStyle(
+        outsideDaysVisible: true,
+        weekendTextStyle: TextStyle(color: context.primaryColor),
+      ),
+      onDaySelected: (selectedDay, focusedDay) =>
+          _onDaySelected(selectedDay, focusedDay, data),
+      onRangeSelected: (start, end, focusedDay) =>
+          _onRangeSelected(start, end, focusedDay, data),
+      onFormatChanged: (format) {
+        if (_calendarFormat != format) {
+          setState(() => _calendarFormat = format);
+        }
+      },
+      onPageChanged: (focusedDay) => _focusedDay = focusedDay,
     );
   }
 
