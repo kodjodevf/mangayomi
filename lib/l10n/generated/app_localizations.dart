@@ -3442,6 +3442,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Defaul user agent'**
   String get default_user_agent;
+
+  /// No description provided for @forceLandscapeMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Force landscape mode'**
+  String get forceLandscapeMode;
+
+  /// No description provided for @forceLandscapeModeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Force the player to use landscape orientation.'**
+  String get forceLandscapeModeSubtitle;
 }
 
 class _AppLocalizationsDelegate

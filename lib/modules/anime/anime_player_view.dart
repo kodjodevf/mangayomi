@@ -882,6 +882,12 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       });
       _firstTime = false;
     }
+    if (!_isDesktop) {
+      final forceLandscape = ref.read(forceLandscapePlayerStateProvider);
+      if (forceLandscape) {
+        _setLandscapeMode(true);
+      }
+    }
     _currentPositionSub = _player.stream.position.listen(
       _unifiedPositionHandler,
     );
