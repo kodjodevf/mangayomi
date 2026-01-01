@@ -136,7 +136,7 @@ final class DownloadChapterProvider
   }
 }
 
-String _$downloadChapterHash() => r'b64c5de46eafb0e7322eb599e49de3b09f027c04';
+String _$downloadChapterHash() => r'c503cef46aa7083316b023400f0aa470ae3a3bc4';
 
 final class DownloadChapterFamily extends $Family
     with

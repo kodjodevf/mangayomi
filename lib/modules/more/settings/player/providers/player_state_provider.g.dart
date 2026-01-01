@@ -605,3 +605,56 @@ abstract class _$UseMpvConfigState extends $Notifier<bool> {
     element.handleValue(ref, created);
   }
 }
+
+@ProviderFor(ForceLandscapePlayerState)
+const forceLandscapePlayerStateProvider = ForceLandscapePlayerStateProvider._();
+
+final class ForceLandscapePlayerStateProvider
+    extends $NotifierProvider<ForceLandscapePlayerState, bool> {
+  const ForceLandscapePlayerStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'forceLandscapePlayerStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$forceLandscapePlayerStateHash();
+
+  @$internal
+  @override
+  ForceLandscapePlayerState create() => ForceLandscapePlayerState();
+
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$forceLandscapePlayerStateHash() =>
+    r'65d3e0b91d7b6d38e9f70893a8c71f13029715b5';
+
+abstract class _$ForceLandscapePlayerState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

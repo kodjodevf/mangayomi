@@ -563,5 +563,8 @@
     "line_height": "行高",
     "show_scroll_percentage": "显示滚动百分比",
     "remove_extra_paragraph_spacing": "删除额外的段落间距",
-    "select_label_color": "选择 {label} 颜色"
-}
+    "select_label_color": "选择 {label} 颜色",
+    "default_user_agent": "默认用户代理",
+    "forceLandscapeMode": "强制横屏模式",
+    "forceLandscapeModeSubtitle": "强制播放器使用横屏方向。"
+  }

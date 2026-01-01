@@ -561,5 +561,7 @@
   "show_scroll_percentage": "Show Scroll Percentage",
   "remove_extra_paragraph_spacing": "Remove Extra Paragraph Spacing",
   "select_label_color": "Select {label} Color",
-  "default_user_agent": "Defaul user agent"
+  "default_user_agent": "Defaul user agent",
+  "forceLandscapeMode": "Force landscape mode",
+  "forceLandscapeModeSubtitle": "Force the player to use landscape orientation."
 }

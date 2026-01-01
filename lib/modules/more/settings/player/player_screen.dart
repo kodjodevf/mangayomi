@@ -33,6 +33,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     final useLibass = ref.watch(useLibassStateProvider);
 
     final fullScreenPlayer = ref.watch(fullScreenPlayerStateProvider);
+    final forceLandscapePlayer = ref.watch(forceLandscapePlayerStateProvider);
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.internal_player)),
       body: SingleChildScrollView(
@@ -485,6 +486,17 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
               ),
               onChanged: (value) {
                 ref.read(fullScreenPlayerStateProvider.notifier).set(value);
+              },
+            ),
+            SwitchListTile(
+              value: forceLandscapePlayer,
+              title: Text(context.l10n.forceLandscapeMode),
+              subtitle: Text(
+                context.l10n.forceLandscapeModeSubtitle,
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
+              ),
+              onChanged: (value) {
+                ref.read(forceLandscapePlayerStateProvider.notifier).set(value);
               },
             ),
           ],
