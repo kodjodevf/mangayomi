@@ -175,17 +175,13 @@ Future<void> doBackUp(
               alignment: Alignment.topLeft,
               child: ElevatedButton(
                 onPressed: () {
-                  final box = () {
-                    try {
-                      return context.findRenderObject() as RenderBox?;
-                    } catch (e) {
-                      return null;
-                    }
-                  }();
+                  final RenderBox? box =
+                      context.findRenderObject() as RenderBox?;
                   SharePlus.instance.share(
                     ShareParams(
                       files: [XFile(p.join(path, "$name.backup"))],
-                      text: "$name.backup",
+                      subject: "$name.backup",
+                      title: "Share Mangayomi backup file",
                       sharePositionOrigin: box == null
                           ? null
                           : box.localToGlobal(Offset.zero) & box.size,
