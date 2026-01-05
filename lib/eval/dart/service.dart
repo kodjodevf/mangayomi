@@ -23,7 +23,7 @@ class DartExtensionService implements ExtensionService {
 
     interpreter.execute(
       source: source.sourceCode!.replaceAll('Client(source)', 'Client()'),
-      args: source.toMSource(),
+      positionalArgs: [source.toMSource()],
     );
     return interpreter;
   }
