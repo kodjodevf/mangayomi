@@ -11,6 +11,8 @@ import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_pr
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/item_type_filters.dart';
+import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
 class CategoriesScreen extends ConsumerStatefulWidget {
@@ -24,17 +26,15 @@ class CategoriesScreen extends ConsumerStatefulWidget {
 class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
     with TickerProviderStateMixin {
   late TabController _tabBarController;
-  late final List<String> _tabList;
+  late final List<ItemType> _visibleTabTypes;
   @override
   void initState() {
     super.initState();
-    final hideItems = ref.read(hideItemsStateProvider);
-    _tabList = [
-      if (!hideItems.contains("/MangaLibrary")) "/MangaLibrary",
-      if (!hideItems.contains("/AnimeLibrary")) "/AnimeLibrary",
-      if (!hideItems.contains("/NovelLibrary")) "/NovelLibrary",
-    ];
-    _tabBarController = TabController(length: _tabList.length, vsync: this);
+    _visibleTabTypes = hiddenItemTypes(ref.read(hideItemsStateProvider));
+    _tabBarController = TabController(
+      length: _visibleTabTypes.length,
+      vsync: this,
+    );
     _tabBarController.animateTo(widget.data.$2);
   }
 
@@ -46,7 +46,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
 
   @override
   Widget build(BuildContext context) {
-    if (_tabList.isEmpty) {
+    if (_visibleTabTypes.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: Text(context.l10n.categories)),
         body: Center(child: Text("EMPTY\nMPTY\nMTY\nMT\n\n")),
@@ -55,7 +55,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
     final l10n = l10nLocalizations(context)!;
     return DefaultTabController(
       animationDuration: Duration.zero,
-      length: _tabList.length,
+      length: _visibleTabTypes.length,
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -67,23 +67,15 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
           bottom: TabBar(
             indicatorSize: TabBarIndicatorSize.label,
             controller: _tabBarController,
-            tabs: _tabList.map((route) {
-              if (route == "/MangaLibrary") return Tab(text: l10n.manga);
-              if (route == "/AnimeLibrary") return Tab(text: l10n.anime);
-              return Tab(text: l10n.novel);
+            tabs: _visibleTabTypes.map((type) {
+              return Tab(text: type.localized(l10n));
             }).toList(),
           ),
         ),
         body: TabBarView(
           controller: _tabBarController,
-          children: _tabList.map((route) {
-            if (route == "/MangaLibrary") {
-              return CategoriesTab(itemType: ItemType.manga);
-            }
-            if (route == "/AnimeLibrary") {
-              return CategoriesTab(itemType: ItemType.anime);
-            }
-            return CategoriesTab(itemType: ItemType.novel);
+          children: _visibleTabTypes.map((type) {
+            return CategoriesTab(itemType: type);
           }).toList(),
         ),
       ),
@@ -101,15 +93,25 @@ class CategoriesTab extends ConsumerStatefulWidget {
 
 class _CategoriesTabState extends ConsumerState<CategoriesTab> {
   List<Category> _entries = [];
-  void _updateCategoriesOrder(List<Category> categories) {
-    isar.writeTxnSync(() {
-      isar.categorys.clearSync();
-      isar.categorys.putAllSync(categories);
-      final cats = isar.categorys.filter().posIsNull().findAllSync();
-      for (var category in cats) {
-        isar.categorys.putSync(category..pos = category.id);
-      }
-    });
+
+  /// Moves a category from `index` to `newIndex` in the list,
+  /// swaps their positions in memory, and persists the change in Isar.
+  Future<void> _moveCategory(int index, int newIndex) async {
+    // Prevent invalid moves (out of bounds)
+    if (newIndex < 0 || newIndex >= _entries.length) return;
+    // Grab the two category objects involved in the swap
+    final a = _entries[index];
+    final b = _entries[newIndex];
+    // Swap their positions inside the in‑memory list
+    _entries[newIndex] = a;
+    _entries[index] = b;
+    // Swap their persisted `pos` values so ordering is saved correctly
+    final temp = a.pos;
+    a.pos = b.pos;
+    b.pos = temp;
+    // Persist both updated objects in a single Isar transaction
+    await isar.writeTxn(() async => isar.categorys.putAll([a, b]));
+    setState(() {}); // Trigger a UI rebuild to reflect the updated order
   }
 
   @override
@@ -189,17 +191,7 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                       ),
                                       onPressed: index > 0
                                           ? () {
-                                              final item = _entries[index - 1];
-                                              _entries.removeAt(index);
-                                              _entries.removeAt(index - 1);
-                                              int? currentPos = category.pos;
-                                              int? pos = item.pos;
-                                              setState(() {});
-                                              _updateCategoriesOrder([
-                                                ..._entries,
-                                                category..pos = pos,
-                                                item..pos = currentPos,
-                                              ]);
+                                              _moveCategory(index, index - 1);
                                             }
                                           : null,
                                     ),
@@ -209,17 +201,7 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                       ),
                                       onPressed: index < _entries.length - 1
                                           ? () {
-                                              final item = _entries[index + 1];
-                                              _entries.removeAt(index + 1);
-                                              _entries.removeAt(index);
-                                              int? currentPos = category.pos;
-                                              int? pos = item.pos;
-                                              setState(() {});
-                                              _updateCategoriesOrder([
-                                                ..._entries,
-                                                category..pos = pos,
-                                                item..pos = currentPos,
-                                              ]);
+                                              _moveCategory(index, index + 1);
                                             }
                                           : null,
                                     ),
@@ -239,12 +221,12 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab> {
                                 ),
                                 SizedBox(width: 10),
                                 IconButton(
-                                  onPressed: () {
-                                    isar.writeTxnSync(() async {
+                                  onPressed: () async {
+                                    await isar.writeTxn(() async {
                                       category.hide = !(category.hide ?? false);
                                       category.updatedAt =
                                           DateTime.now().millisecondsSinceEpoch;
-                                      isar.categorys.putSync(category);
+                                      isar.categorys.put(category);
                                     });
                                   },
                                   icon: Icon(

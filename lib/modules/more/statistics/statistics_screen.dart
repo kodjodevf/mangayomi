@@ -5,6 +5,8 @@ import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_pr
 import 'package:mangayomi/modules/more/statistics/statistics_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/utils/item_type_filters.dart';
+import 'package:mangayomi/utils/item_type_localization.dart';
 
 class StatisticsScreen extends ConsumerStatefulWidget {
   const StatisticsScreen({super.key});
@@ -15,20 +17,17 @@ class StatisticsScreen extends ConsumerStatefulWidget {
 
 class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     with SingleTickerProviderStateMixin {
-  late final List<String> hideItems;
   late TabController _tabController;
-  late final List<String> _tabList;
+  late final List<ItemType> _visibleTabTypes;
 
   @override
   void initState() {
     super.initState();
-    hideItems = ref.read(hideItemsStateProvider);
-    _tabList = [
-      if (!hideItems.contains("/MangaLibrary")) "/MangaLibrary",
-      if (!hideItems.contains("/AnimeLibrary")) "/AnimeLibrary",
-      if (!hideItems.contains("/NovelLibrary")) "/NovelLibrary",
-    ];
-    _tabController = TabController(length: _tabList.length, vsync: this);
+    _visibleTabTypes = hiddenItemTypes(ref.read(hideItemsStateProvider));
+    _tabController = TabController(
+      length: _visibleTabTypes.length,
+      vsync: this,
+    );
   }
 
   @override
@@ -39,7 +38,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
 
   @override
   Widget build(BuildContext context) {
-    if (_tabList.isEmpty) {
+    if (_visibleTabTypes.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: Text(context.l10n.statistics)),
         body: Center(child: Text("EMPTY\nMPTY\nMTY\nMT\n\n")),
@@ -51,23 +50,15 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
         title: Text(l10n.statistics),
         bottom: TabBar(
           controller: _tabController,
-          tabs: _tabList.map((route) {
-            if (route == "/MangaLibrary") return Tab(text: l10n.manga);
-            if (route == "/AnimeLibrary") return Tab(text: l10n.anime);
-            return Tab(text: l10n.novel);
+          tabs: _visibleTabTypes.map((type) {
+            return Tab(text: type.localized(l10n));
           }).toList(),
         ),
       ),
       body: TabBarView(
         controller: _tabController,
-        children: _tabList.map((route) {
-          if (route == "/MangaLibrary") {
-            return _buildStatisticsTab(itemType: ItemType.manga);
-          }
-          if (route == "/AnimeLibrary") {
-            return _buildStatisticsTab(itemType: ItemType.anime);
-          }
-          return _buildStatisticsTab(itemType: ItemType.novel);
+        children: _visibleTabTypes.map((type) {
+          return _buildStatisticsTab(itemType: type);
         }).toList(),
       ),
     );
@@ -77,19 +68,11 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     final l10n = context.l10n;
     final stats = ref.watch(getStatisticsProvider(itemType: itemType));
 
-    final title = switch (itemType) {
-      ItemType.manga => l10n.manga,
-      ItemType.anime => l10n.anime,
-      _ => l10n.novel,
-    };
-
     final chapterLabel = switch (itemType) {
-      ItemType.manga => l10n.chapters,
       ItemType.anime => l10n.episodes,
       _ => l10n.chapters,
     };
     final unreadLabel = switch (itemType) {
-      ItemType.manga => l10n.unread,
       ItemType.anime => l10n.unwatched,
       _ => l10n.unread,
     };
@@ -132,7 +115,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
                 downloadedItems: downloadedItems,
                 averageChapters: averageChapters.toDouble(),
                 readPercentage: readPercentage.toDouble(),
-                title: title,
+                title: itemType.localized(l10n),
                 context: context,
                 unreadLabel: unreadLabel,
               ),
