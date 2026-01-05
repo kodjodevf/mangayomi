@@ -1738,5 +1738,11 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get default_user_agent => 'Defaul user agent';
+  String get default_user_agent => '默认用户代理';
+
+  @override
+  String get forceLandscapeMode => '强制横屏模式';
+
+  @override
+  String get forceLandscapeModeSubtitle => '强制播放器使用横屏方向。';
 }
