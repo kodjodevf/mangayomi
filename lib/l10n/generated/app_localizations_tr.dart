@@ -1793,4 +1793,11 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get default_user_agent => 'Defaul user agent';
+
+  @override
+  String get forceLandscapeMode => 'Force landscape mode';
+
+  @override
+  String get forceLandscapeModeSubtitle =>
+      'Force the player to use landscape orientation.';
 }
