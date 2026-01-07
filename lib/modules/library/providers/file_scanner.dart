@@ -306,20 +306,16 @@ Future<void> _scanDirectory(Ref ref, Directory? dir) async {
               : Uint8List.fromList(coverImage).getCoverImage;
           saveManga++;
         }
-        for (var chapter in book.Chapters ?? []) {
-          chaptersToSave.add(
-            Chapter(
-              mangaId: manga.id,
-              name: chapter.Title is String && chapter.Title.isEmpty
-                  ? "Book"
-                  : chapter.Title,
-              archivePath: chapterPath,
-              downloadSize: chapterFile.existsSync()
-                  ? chapterFile.lengthSync().formattedFileSize()
-                  : null,
-            )..manga.value = manga,
-          );
-        }
+        chaptersToSave.add(
+          Chapter(
+            mangaId: manga.id,
+            name: book.Title,
+            archivePath: chapterPath,
+            downloadSize: chapterFile.existsSync()
+                ? chapterFile.lengthSync().formattedFileSize()
+                : null,
+          )..manga.value = manga,
+        );
       } else {
         final chap = Chapter(
           mangaId: manga.id,

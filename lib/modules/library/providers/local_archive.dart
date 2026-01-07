@@ -85,18 +85,14 @@ Future importArchivesFromFile(
                       : Uint8List.fromList(coverImage).getCoverImage,
               );
             }
-            for (var chapter in book.Chapters ?? []) {
-              chapters.add(
-                Chapter(
-                  mangaId: mangaId,
-                  name: chapter.Title is String && chapter.Title.isEmpty
-                      ? "Book"
-                      : chapter.Title,
-                  archivePath: file.path,
-                  updatedAt: DateTime.now().millisecondsSinceEpoch,
-                )..manga.value = manga,
-              );
-            }
+            chapters.add(
+              Chapter(
+                mangaId: mangaId,
+                name: book.Title,
+                archivePath: file.path,
+                updatedAt: DateTime.now().millisecondsSinceEpoch,
+              )..manga.value = manga,
+            );
           } else {
             chapters.add(
               Chapter(
