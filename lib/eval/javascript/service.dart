@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'package:flutter_qjs/flutter_qjs.dart';
 import 'package:mangayomi/eval/javascript/dom_selector.dart';
@@ -130,25 +131,38 @@ var extention = new DefaultExtension();
 
   @override
   Future<List<PageUrl>> getPageList(String url) async {
-    return (await _extensionCallAsync<List>('getPageList(`$url`)'))
-        .map(
-          (e) => e is String
-              ? PageUrl(e.trim())
-              : PageUrl.fromJson((e as Map).toMapStringDynamic!),
-        )
-        .toList();
+    final pages = LinkedHashSet<PageUrl>(
+      equals: (a, b) => a.url == b.url,
+      hashCode: (p) => p.url.hashCode,
+    );
+
+    for (final e in await _extensionCallAsync<List>('getPageList(`$url`)')) {
+      if (e != null) {
+        final page = e is String
+            ? PageUrl(e.trim())
+            : PageUrl.fromJson((e as Map).toMapStringDynamic!);
+        pages.add(page);
+      }
+    }
+
+    return pages.toList();
   }
 
   @override
   Future<List<Video>> getVideoList(String url) async {
-    return (await _extensionCallAsync<List>('getVideoList(`$url`)'))
-        .where(
-          (element) => element['url'] != null && element['originalUrl'] != null,
-        )
-        .map((e) => Video.fromJson(e))
-        .toList()
-        .toSet()
-        .toList();
+    final videos = LinkedHashSet<Video>(
+      equals: (a, b) => a.url == b.url && a.originalUrl == b.originalUrl,
+      hashCode: (v) => Object.hash(v.url, v.originalUrl),
+    );
+
+    for (final element in await _extensionCallAsync<List>(
+      'getVideoList(`$url`)',
+    )) {
+      if (element['url'] != null && element['originalUrl'] != null) {
+        videos.add(Video.fromJson(element));
+      }
+    }
+    return videos.toList();
   }
 
   @override
