@@ -34,6 +34,7 @@ import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/isolate_service.dart';
 import 'package:mangayomi/services/m_extension_server.dart';
+import 'package:mangayomi/services/download_manager/m_downloader.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
 import 'package:mangayomi/utils/discord_rpc.dart';
 import 'package:mangayomi/utils/log/logger.dart';
@@ -83,6 +84,9 @@ void main(List<String> args) async {
 
 Future<void> _postLaunchInit(StorageProvider storage) async {
   await AppLogger.init();
+  // Initialiser le pool d'Isolates partagé (3 workers)
+  // Optimise la mémoire pour 50+ téléchargements simultanés
+  unawaited(MDownloader.initializeIsolatePool(poolSize: 3));
   final hivePath = (Platform.isIOS || Platform.isMacOS)
       ? "databases"
       : p.join("Mangayomi", "databases");

@@ -82,7 +82,7 @@ class DownloadLocationState extends _$DownloadLocationState {
 class ConcurrentDownloadsState extends _$ConcurrentDownloadsState {
   @override
   int build() {
-    return isar.settings.getSync(227)!.concurrentDownloads ?? 2;
+    return isar.settings.getSync(227)!.concurrentDownloads ?? 1;
   }
 
   void set(int value) {

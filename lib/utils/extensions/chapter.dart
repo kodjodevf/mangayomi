@@ -4,7 +4,8 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
-import 'package:mangayomi/services/download_manager/m3u8/m3u8_downloader.dart';
+import 'package:mangayomi/services/download_manager/download_isolate_pool.dart';
+import 'package:mangayomi/services/download_manager/m_downloader.dart';
 
 extension ChapterExtension on Chapter {
   Future<void> pushToReaderView(
@@ -29,9 +30,13 @@ extension ChapterExtension on Chapter {
   }
 
   void cancelDownloads(int? downloadId) {
-    final (receivePort, isolate) = isolateChapsSendPorts['$id'] ?? (null, null);
-    isolate?.kill();
-    receivePort?.close();
+    // Cancel via the Isolate pool (new system)
+    DownloadIsolatePool.instance.cancelTask('$id');
+    DownloadIsolatePool.instance.cancelTask('m3u8_$id');
+
+    // Clean the map for compatibility
+    isolateChapsSendPorts.remove('$id');
+
     isar.writeTxnSync(() {
       isar.downloads.deleteSync(id!);
       if (downloadId != null) {

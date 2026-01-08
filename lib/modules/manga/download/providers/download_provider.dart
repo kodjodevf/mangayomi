@@ -406,6 +406,7 @@ Future<void> processDownloads(Ref ref, {bool? useWifi}) async {
         final downloadItem = ongoingDownloads[index++];
         final chapter = downloadItem.chapter.value!;
         chapter.cancelDownloads(downloadItem.id);
+        await Future.delayed(const Duration(milliseconds: 500));
         ref.read(
           downloadChapterProvider(
             chapter: chapter,
