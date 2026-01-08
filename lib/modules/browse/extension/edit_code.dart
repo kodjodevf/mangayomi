@@ -93,7 +93,7 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
     _controller.text = source?.sourceCode ?? "";
     useLogger = true;
     _logSubscription = _logStreamController.stream.listen((event) async {
-      _logsNotifier.value.add(event);
+      _addLog(event);
       try {
         await Future.delayed(const Duration(milliseconds: 5));
         if (_scrollController.hasClients) {
@@ -101,6 +101,18 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
         }
       } catch (_) {}
     });
+  }
+
+  static const int _maxLogs = 200;
+
+  void _addLog((LoggerLevel, String, DateTime) log) {
+    final logs = _logsNotifier.value;
+    final newLogs = List<(LoggerLevel, String, DateTime)>.from(logs);
+    if (newLogs.length >= _maxLogs) {
+      newLogs.removeAt(0);
+    }
+    newLogs.add(log);
+    _logsNotifier.value = newLogs;
   }
 
   List<dynamic> filters = [];
