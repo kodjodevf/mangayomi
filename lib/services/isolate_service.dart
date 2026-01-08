@@ -21,6 +21,7 @@ class GetIsolateService {
   bool _isRunning = false;
   Isolate? _getIsolateService;
   ReceivePort? _receivePort;
+  StreamSubscription? _receiveSub;
   SendPort? _sendPort;
 
   Future<void> start() async {
@@ -47,7 +48,7 @@ class GetIsolateService {
     );
 
     final completer = Completer<SendPort>();
-    _receivePort!.listen((message) {
+    _receiveSub = _receivePort!.listen((message) {
       if (message is SendPort) {
         completer.complete(message);
       }
@@ -66,7 +67,10 @@ class GetIsolateService {
       }
     });
 
-    _sendPort = await completer.future;
+    _sendPort = await completer.future.timeout(
+      const Duration(seconds: 5),
+      onTimeout: () => throw StateError('Isolate handshake timed out'),
+    );
     _isRunning = true;
   }
 
@@ -175,8 +179,19 @@ class GetIsolateService {
 
     final responsePort = ReceivePort();
     final completer = Completer<T>();
+    late final StreamSubscription sub;
 
-    responsePort.listen((response) {
+    // Timeout safeguard
+    final timer = Timer(const Duration(seconds: 10), () {
+      if (!completer.isCompleted) {
+        sub.cancel();
+        responsePort.close();
+        completer.completeError('Isolate response timeout');
+      }
+    });
+    sub = responsePort.listen((response) {
+      timer.cancel();
+      sub.cancel();
       responsePort.close();
       if (response is Map<String, dynamic>) {
         if (response['success'] == true) {
@@ -184,6 +199,8 @@ class GetIsolateService {
         } else {
           completer.completeError(response['error']);
         }
+      } else {
+        completer.completeError('Invalid isolate response: $response');
       }
     });
 
@@ -210,7 +227,9 @@ class GetIsolateService {
 
     _sendPort?.send('dispose');
     _getIsolateService?.kill(priority: Isolate.immediate);
+    await _receiveSub?.cancel();
     _receivePort?.close();
+    _receiveSub = null;
     _sendPort = null;
     _getIsolateService = null;
     _receivePort = null;
