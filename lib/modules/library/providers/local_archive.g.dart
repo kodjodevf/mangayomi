@@ -10,12 +10,12 @@ part of 'local_archive.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(importArchivesFromFile)
-const importArchivesFromFileProvider = ImportArchivesFromFileFamily._();
+final importArchivesFromFileProvider = ImportArchivesFromFileFamily._();
 
 final class ImportArchivesFromFileProvider
     extends $FunctionalProvider<AsyncValue<dynamic>, dynamic, FutureOr<dynamic>>
     with $FutureModifier<dynamic>, $FutureProvider<dynamic> {
-  const ImportArchivesFromFileProvider._({
+  ImportArchivesFromFileProvider._({
     required ImportArchivesFromFileFamily super.from,
     required (Manga?, {ItemType itemType, bool init}) super.argument,
   }) : super(
@@ -65,7 +65,7 @@ final class ImportArchivesFromFileProvider
 }
 
 String _$importArchivesFromFileHash() =>
-    r'bfc12f37ab08a8f72a6fcff8d72afcff49ba5cc8';
+    r'8a26aaed0c29e76899ab37c6f64a1f8b80792e41';
 
 final class ImportArchivesFromFileFamily extends $Family
     with
@@ -73,7 +73,7 @@ final class ImportArchivesFromFileFamily extends $Family
           FutureOr<dynamic>,
           (Manga?, {ItemType itemType, bool init})
         > {
-  const ImportArchivesFromFileFamily._()
+  ImportArchivesFromFileFamily._()
     : super(
         retry: null,
         name: r'importArchivesFromFileProvider',

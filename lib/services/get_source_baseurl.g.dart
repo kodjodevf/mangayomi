@@ -10,12 +10,12 @@ part of 'get_source_baseurl.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(sourceBaseUrl)
-const sourceBaseUrlProvider = SourceBaseUrlFamily._();
+final sourceBaseUrlProvider = SourceBaseUrlFamily._();
 
 final class SourceBaseUrlProvider
     extends $FunctionalProvider<String, String, String>
     with $Provider<String> {
-  const SourceBaseUrlProvider._({
+  SourceBaseUrlProvider._({
     required SourceBaseUrlFamily super.from,
     required Source super.argument,
   }) : super(
@@ -70,7 +70,7 @@ String _$sourceBaseUrlHash() => r'ead3cca719e2530502d97613e3168e0031eecde7';
 
 final class SourceBaseUrlFamily extends $Family
     with $FunctionalFamilyOverride<String, Source> {
-  const SourceBaseUrlFamily._()
+  SourceBaseUrlFamily._()
     : super(
         retry: null,
         name: r'sourceBaseUrlProvider',

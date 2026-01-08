@@ -10,11 +10,11 @@ part of 'downloads_state_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(OnlyOnWifiState)
-const onlyOnWifiStateProvider = OnlyOnWifiStateProvider._();
+final onlyOnWifiStateProvider = OnlyOnWifiStateProvider._();
 
 final class OnlyOnWifiStateProvider
     extends $NotifierProvider<OnlyOnWifiState, bool> {
-  const OnlyOnWifiStateProvider._()
+  OnlyOnWifiStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -48,7 +48,6 @@ abstract class _$OnlyOnWifiState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -58,16 +57,16 @@ abstract class _$OnlyOnWifiState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(SaveAsCBZArchiveState)
-const saveAsCBZArchiveStateProvider = SaveAsCBZArchiveStateProvider._();
+final saveAsCBZArchiveStateProvider = SaveAsCBZArchiveStateProvider._();
 
 final class SaveAsCBZArchiveStateProvider
     extends $NotifierProvider<SaveAsCBZArchiveState, bool> {
-  const SaveAsCBZArchiveStateProvider._()
+  SaveAsCBZArchiveStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -102,7 +101,6 @@ abstract class _$SaveAsCBZArchiveState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -112,16 +110,16 @@ abstract class _$SaveAsCBZArchiveState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(DownloadLocationState)
-const downloadLocationStateProvider = DownloadLocationStateProvider._();
+final downloadLocationStateProvider = DownloadLocationStateProvider._();
 
 final class DownloadLocationStateProvider
     extends $NotifierProvider<DownloadLocationState, (String, String)> {
-  const DownloadLocationStateProvider._()
+  DownloadLocationStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -156,7 +154,6 @@ abstract class _$DownloadLocationState extends $Notifier<(String, String)> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<(String, String), (String, String)>;
     final element =
         ref.element
@@ -166,16 +163,16 @@ abstract class _$DownloadLocationState extends $Notifier<(String, String)> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(ConcurrentDownloadsState)
-const concurrentDownloadsStateProvider = ConcurrentDownloadsStateProvider._();
+final concurrentDownloadsStateProvider = ConcurrentDownloadsStateProvider._();
 
 final class ConcurrentDownloadsStateProvider
     extends $NotifierProvider<ConcurrentDownloadsState, int> {
-  const ConcurrentDownloadsStateProvider._()
+  ConcurrentDownloadsStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -203,14 +200,13 @@ final class ConcurrentDownloadsStateProvider
 }
 
 String _$concurrentDownloadsStateHash() =>
-    r'295fe3f49224fd645b01f1aa89ba79dd330fffed';
+    r'1b2df8d425fb0f0697883e9a121eace99fd4f5e4';
 
 abstract class _$ConcurrentDownloadsState extends $Notifier<int> {
   int build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<int, int>;
     final element =
         ref.element
@@ -220,6 +216,6 @@ abstract class _$ConcurrentDownloadsState extends $Notifier<int> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

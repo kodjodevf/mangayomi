@@ -10,11 +10,11 @@ part of 'pure_black_dark_mode_state_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(PureBlackDarkModeState)
-const pureBlackDarkModeStateProvider = PureBlackDarkModeStateProvider._();
+final pureBlackDarkModeStateProvider = PureBlackDarkModeStateProvider._();
 
 final class PureBlackDarkModeStateProvider
     extends $NotifierProvider<PureBlackDarkModeState, bool> {
-  const PureBlackDarkModeStateProvider._()
+  PureBlackDarkModeStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -49,7 +49,6 @@ abstract class _$PureBlackDarkModeState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -59,6 +58,6 @@ abstract class _$PureBlackDarkModeState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

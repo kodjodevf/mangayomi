@@ -10,12 +10,12 @@ part of 'download_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(addDownloadToQueue)
-const addDownloadToQueueProvider = AddDownloadToQueueFamily._();
+final addDownloadToQueueProvider = AddDownloadToQueueFamily._();
 
 final class AddDownloadToQueueProvider
     extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
     with $FutureModifier<void>, $FutureProvider<void> {
-  const AddDownloadToQueueProvider._({
+  AddDownloadToQueueProvider._({
     required AddDownloadToQueueFamily super.from,
     required Chapter super.argument,
   }) : super(
@@ -63,7 +63,7 @@ String _$addDownloadToQueueHash() =>
 
 final class AddDownloadToQueueFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<void>, Chapter> {
-  const AddDownloadToQueueFamily._()
+  AddDownloadToQueueFamily._()
     : super(
         retry: null,
         name: r'addDownloadToQueueProvider',
@@ -80,12 +80,12 @@ final class AddDownloadToQueueFamily extends $Family
 }
 
 @ProviderFor(downloadChapter)
-const downloadChapterProvider = DownloadChapterFamily._();
+final downloadChapterProvider = DownloadChapterFamily._();
 
 final class DownloadChapterProvider
     extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
     with $FutureModifier<void>, $FutureProvider<void> {
-  const DownloadChapterProvider._({
+  DownloadChapterProvider._({
     required DownloadChapterFamily super.from,
     required ({Chapter chapter, bool? useWifi, VoidCallback? callback})
     super.argument,
@@ -144,7 +144,7 @@ final class DownloadChapterFamily extends $Family
           FutureOr<void>,
           ({Chapter chapter, bool? useWifi, VoidCallback? callback})
         > {
-  const DownloadChapterFamily._()
+  DownloadChapterFamily._()
     : super(
         retry: null,
         name: r'downloadChapterProvider',
@@ -167,12 +167,12 @@ final class DownloadChapterFamily extends $Family
 }
 
 @ProviderFor(processDownloads)
-const processDownloadsProvider = ProcessDownloadsFamily._();
+final processDownloadsProvider = ProcessDownloadsFamily._();
 
 final class ProcessDownloadsProvider
     extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
     with $FutureModifier<void>, $FutureProvider<void> {
-  const ProcessDownloadsProvider._({
+  ProcessDownloadsProvider._({
     required ProcessDownloadsFamily super.from,
     required bool? super.argument,
   }) : super(
@@ -215,11 +215,11 @@ final class ProcessDownloadsProvider
   }
 }
 
-String _$processDownloadsHash() => r'caebad3bb681d7b38de4d09325310fc08bc1cd0a';
+String _$processDownloadsHash() => r'36903a1ca0140ef7d55aa68ee34d8c74573e8e71';
 
 final class ProcessDownloadsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<void>, bool?> {
-  const ProcessDownloadsFamily._()
+  ProcessDownloadsFamily._()
     : super(
         retry: null,
         name: r'processDownloadsProvider',

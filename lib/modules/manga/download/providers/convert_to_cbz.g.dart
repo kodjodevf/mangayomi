@@ -10,7 +10,7 @@ part of 'convert_to_cbz.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(convertToCBZ)
-const convertToCBZProvider = ConvertToCBZFamily._();
+final convertToCBZProvider = ConvertToCBZFamily._();
 
 final class ConvertToCBZProvider
     extends
@@ -20,7 +20,7 @@ final class ConvertToCBZProvider
           FutureOr<List<String>>
         >
     with $FutureModifier<List<String>>, $FutureProvider<List<String>> {
-  const ConvertToCBZProvider._({
+  ConvertToCBZProvider._({
     required ConvertToCBZFamily super.from,
     required (String, String, String, List<String>) super.argument,
   }) : super(
@@ -78,7 +78,7 @@ final class ConvertToCBZFamily extends $Family
           FutureOr<List<String>>,
           (String, String, String, List<String>)
         > {
-  const ConvertToCBZFamily._()
+  ConvertToCBZFamily._()
     : super(
         retry: null,
         name: r'convertToCBZProvider',

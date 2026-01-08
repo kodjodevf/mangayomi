@@ -10,11 +10,11 @@ part of 'browse_state_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(AndroidProxyServerState)
-const androidProxyServerStateProvider = AndroidProxyServerStateProvider._();
+final androidProxyServerStateProvider = AndroidProxyServerStateProvider._();
 
 final class AndroidProxyServerStateProvider
     extends $NotifierProvider<AndroidProxyServerState, String> {
-  const AndroidProxyServerStateProvider._()
+  AndroidProxyServerStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -49,7 +49,6 @@ abstract class _$AndroidProxyServerState extends $Notifier<String> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<String, String>;
     final element =
         ref.element
@@ -59,17 +58,17 @@ abstract class _$AndroidProxyServerState extends $Notifier<String> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(OnlyIncludePinnedSourceState)
-const onlyIncludePinnedSourceStateProvider =
+final onlyIncludePinnedSourceStateProvider =
     OnlyIncludePinnedSourceStateProvider._();
 
 final class OnlyIncludePinnedSourceStateProvider
     extends $NotifierProvider<OnlyIncludePinnedSourceState, bool> {
-  const OnlyIncludePinnedSourceStateProvider._()
+  OnlyIncludePinnedSourceStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -104,7 +103,6 @@ abstract class _$OnlyIncludePinnedSourceState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -114,16 +112,16 @@ abstract class _$OnlyIncludePinnedSourceState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(ExtensionsRepoState)
-const extensionsRepoStateProvider = ExtensionsRepoStateFamily._();
+final extensionsRepoStateProvider = ExtensionsRepoStateFamily._();
 
 final class ExtensionsRepoStateProvider
     extends $NotifierProvider<ExtensionsRepoState, List<Repo>> {
-  const ExtensionsRepoStateProvider._({
+  ExtensionsRepoStateProvider._({
     required ExtensionsRepoStateFamily super.from,
     required ItemType super.argument,
   }) : super(
@@ -179,7 +177,7 @@ final class ExtensionsRepoStateFamily extends $Family
           List<Repo>,
           ItemType
         > {
-  const ExtensionsRepoStateFamily._()
+  ExtensionsRepoStateFamily._()
     : super(
         retry: null,
         name: r'extensionsRepoStateProvider',
@@ -203,7 +201,6 @@ abstract class _$ExtensionsRepoState extends $Notifier<List<Repo>> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(_$args);
     final ref = this.ref as $Ref<List<Repo>, List<Repo>>;
     final element =
         ref.element
@@ -213,16 +210,16 @@ abstract class _$ExtensionsRepoState extends $Notifier<List<Repo>> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, () => build(_$args));
   }
 }
 
 @ProviderFor(AutoUpdateExtensionsState)
-const autoUpdateExtensionsStateProvider = AutoUpdateExtensionsStateProvider._();
+final autoUpdateExtensionsStateProvider = AutoUpdateExtensionsStateProvider._();
 
 final class AutoUpdateExtensionsStateProvider
     extends $NotifierProvider<AutoUpdateExtensionsState, bool> {
-  const AutoUpdateExtensionsStateProvider._()
+  AutoUpdateExtensionsStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -257,7 +254,6 @@ abstract class _$AutoUpdateExtensionsState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -267,17 +263,17 @@ abstract class _$AutoUpdateExtensionsState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(CheckForExtensionsUpdateState)
-const checkForExtensionsUpdateStateProvider =
+final checkForExtensionsUpdateStateProvider =
     CheckForExtensionsUpdateStateProvider._();
 
 final class CheckForExtensionsUpdateStateProvider
     extends $NotifierProvider<CheckForExtensionsUpdateState, bool> {
-  const CheckForExtensionsUpdateStateProvider._()
+  CheckForExtensionsUpdateStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -312,7 +308,6 @@ abstract class _$CheckForExtensionsUpdateState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -322,17 +317,17 @@ abstract class _$CheckForExtensionsUpdateState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(getRepoInfos)
-const getRepoInfosProvider = GetRepoInfosFamily._();
+final getRepoInfosProvider = GetRepoInfosFamily._();
 
 final class GetRepoInfosProvider
     extends $FunctionalProvider<AsyncValue<Repo?>, Repo?, FutureOr<Repo?>>
     with $FutureModifier<Repo?>, $FutureProvider<Repo?> {
-  const GetRepoInfosProvider._({
+  GetRepoInfosProvider._({
     required GetRepoInfosFamily super.from,
     required String super.argument,
   }) : super(
@@ -379,7 +374,7 @@ String _$getRepoInfosHash() => r'aae66dfcaadf7f59867fbc599b900862ef1dd3e7';
 
 final class GetRepoInfosFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<Repo?>, String> {
-  const GetRepoInfosFamily._()
+  GetRepoInfosFamily._()
     : super(
         retry: null,
         name: r'getRepoInfosProvider',

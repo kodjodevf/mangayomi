@@ -10,11 +10,11 @@ part of 'blend_level_state_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(BlendLevelState)
-const blendLevelStateProvider = BlendLevelStateProvider._();
+final blendLevelStateProvider = BlendLevelStateProvider._();
 
 final class BlendLevelStateProvider
     extends $NotifierProvider<BlendLevelState, double> {
-  const BlendLevelStateProvider._()
+  BlendLevelStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -48,7 +48,6 @@ abstract class _$BlendLevelState extends $Notifier<double> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<double, double>;
     final element =
         ref.element
@@ -58,6 +57,6 @@ abstract class _$BlendLevelState extends $Notifier<double> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

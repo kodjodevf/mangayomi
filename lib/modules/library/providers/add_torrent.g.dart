@@ -10,13 +10,13 @@ part of 'add_torrent.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(addTorrentFromUrlOrFromFile)
-const addTorrentFromUrlOrFromFileProvider =
+final addTorrentFromUrlOrFromFileProvider =
     AddTorrentFromUrlOrFromFileFamily._();
 
 final class AddTorrentFromUrlOrFromFileProvider
     extends $FunctionalProvider<AsyncValue<dynamic>, dynamic, FutureOr<dynamic>>
     with $FutureModifier<dynamic>, $FutureProvider<dynamic> {
-  const AddTorrentFromUrlOrFromFileProvider._({
+  AddTorrentFromUrlOrFromFileProvider._({
     required AddTorrentFromUrlOrFromFileFamily super.from,
     required (Manga?, {bool init, String? url}) super.argument,
   }) : super(
@@ -74,7 +74,7 @@ final class AddTorrentFromUrlOrFromFileFamily extends $Family
           FutureOr<dynamic>,
           (Manga?, {bool init, String? url})
         > {
-  const AddTorrentFromUrlOrFromFileFamily._()
+  AddTorrentFromUrlOrFromFileFamily._()
     : super(
         retry: null,
         name: r'addTorrentFromUrlOrFromFileProvider',

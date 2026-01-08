@@ -10,12 +10,12 @@ part of 'get_detail.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(getDetail)
-const getDetailProvider = GetDetailFamily._();
+final getDetailProvider = GetDetailFamily._();
 
 final class GetDetailProvider
     extends $FunctionalProvider<AsyncValue<MManga>, MManga, FutureOr<MManga>>
     with $FutureModifier<MManga>, $FutureProvider<MManga> {
-  const GetDetailProvider._({
+  GetDetailProvider._({
     required GetDetailFamily super.from,
     required ({String url, Source source}) super.argument,
   }) : super(
@@ -66,7 +66,7 @@ final class GetDetailFamily extends $Family
           FutureOr<MManga>,
           ({String url, Source source})
         > {
-  const GetDetailFamily._()
+  GetDetailFamily._()
     : super(
         retry: null,
         name: r'getDetailProvider',

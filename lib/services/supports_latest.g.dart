@@ -10,11 +10,11 @@ part of 'supports_latest.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(supportsLatest)
-const supportsLatestProvider = SupportsLatestFamily._();
+final supportsLatestProvider = SupportsLatestFamily._();
 
 final class SupportsLatestProvider extends $FunctionalProvider<bool, bool, bool>
     with $Provider<bool> {
-  const SupportsLatestProvider._({
+  SupportsLatestProvider._({
     required SupportsLatestFamily super.from,
     required Source super.argument,
   }) : super(
@@ -69,7 +69,7 @@ String _$supportsLatestHash() => r'e2d9b73adde86f78f1ab1c97d91ea2d3a59dc78d';
 
 final class SupportsLatestFamily extends $Family
     with $FunctionalFamilyOverride<bool, Source> {
-  const SupportsLatestFamily._()
+  SupportsLatestFamily._()
     : super(
         retry: null,
         name: r'supportsLatestProvider',

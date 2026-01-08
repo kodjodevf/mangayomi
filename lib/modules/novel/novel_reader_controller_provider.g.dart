@@ -10,11 +10,11 @@ part of 'novel_reader_controller_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(NovelReaderController)
-const novelReaderControllerProvider = NovelReaderControllerFamily._();
+final novelReaderControllerProvider = NovelReaderControllerFamily._();
 
 final class NovelReaderControllerProvider
     extends $NotifierProvider<NovelReaderController, void> {
-  const NovelReaderControllerProvider._({
+  NovelReaderControllerProvider._({
     required NovelReaderControllerFamily super.from,
     required Chapter super.argument,
   }) : super(
@@ -64,7 +64,7 @@ String _$novelReaderControllerHash() =>
 final class NovelReaderControllerFamily extends $Family
     with
         $ClassFamilyOverride<NovelReaderController, void, void, void, Chapter> {
-  const NovelReaderControllerFamily._()
+  NovelReaderControllerFamily._()
     : super(
         retry: null,
         name: r'novelReaderControllerProvider',
@@ -88,7 +88,6 @@ abstract class _$NovelReaderController extends $Notifier<void> {
   @$mustCallSuper
   @override
   void runBuild() {
-    build(chapter: _$args);
     final ref = this.ref as $Ref<void, void>;
     final element =
         ref.element
@@ -98,6 +97,6 @@ abstract class _$NovelReaderController extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, null);
+    element.handleCreate(ref, () => build(chapter: _$args));
   }
 }

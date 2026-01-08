@@ -10,7 +10,7 @@ part of 'headers.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(headers)
-const headersProvider = HeadersFamily._();
+final headersProvider = HeadersFamily._();
 
 final class HeadersProvider
     extends
@@ -20,7 +20,7 @@ final class HeadersProvider
           Map<String, String>
         >
     with $Provider<Map<String, String>> {
-  const HeadersProvider._({
+  HeadersProvider._({
     required HeadersFamily super.from,
     required ({
       String source,
@@ -104,7 +104,7 @@ final class HeadersFamily extends $Family
             String androidProxyServer,
           })
         > {
-  const HeadersFamily._()
+  HeadersFamily._()
     : super(
         retry: null,
         name: r'headersProvider',

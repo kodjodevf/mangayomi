@@ -10,12 +10,12 @@ part of 'search.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(search)
-const searchProvider = SearchFamily._();
+final searchProvider = SearchFamily._();
 
 final class SearchProvider
     extends $FunctionalProvider<AsyncValue<MPages?>, MPages?, FutureOr<MPages?>>
     with $FutureModifier<MPages?>, $FutureProvider<MPages?> {
-  const SearchProvider._({
+  SearchProvider._({
     required SearchFamily super.from,
     required ({Source source, String query, int page, List<dynamic> filterList})
     super.argument,
@@ -80,7 +80,7 @@ final class SearchFamily extends $Family
           FutureOr<MPages?>,
           ({Source source, String query, int page, List<dynamic> filterList})
         > {
-  const SearchFamily._()
+  SearchFamily._()
     : super(
         retry: null,
         name: r'searchProvider',

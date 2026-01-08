@@ -10,7 +10,7 @@ part of 'custom_buttons_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(getCustomButtonsStream)
-const getCustomButtonsStreamProvider = GetCustomButtonsStreamProvider._();
+final getCustomButtonsStreamProvider = GetCustomButtonsStreamProvider._();
 
 final class GetCustomButtonsStreamProvider
     extends
@@ -22,7 +22,7 @@ final class GetCustomButtonsStreamProvider
     with
         $FutureModifier<List<CustomButton>>,
         $StreamProvider<List<CustomButton>> {
-  const GetCustomButtonsStreamProvider._()
+  GetCustomButtonsStreamProvider._()
     : super(
         from: null,
         argument: null,

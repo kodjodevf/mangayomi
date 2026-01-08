@@ -10,7 +10,7 @@ part of 'get_html_content.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(getHtmlContent)
-const getHtmlContentProvider = GetHtmlContentFamily._();
+final getHtmlContentProvider = GetHtmlContentFamily._();
 
 final class GetHtmlContentProvider
     extends
@@ -22,7 +22,7 @@ final class GetHtmlContentProvider
     with
         $FutureModifier<(String, EpubBook?)>,
         $FutureProvider<(String, EpubBook?)> {
-  const GetHtmlContentProvider._({
+  GetHtmlContentProvider._({
     required GetHtmlContentFamily super.from,
     required Chapter super.argument,
   }) : super(
@@ -66,11 +66,11 @@ final class GetHtmlContentProvider
   }
 }
 
-String _$getHtmlContentHash() => r'3d0f33e47c2136715ed72ee14f38934eca3f0df1';
+String _$getHtmlContentHash() => r'ca2fec040211e0700e31baed0616e89ac1f20a7d';
 
 final class GetHtmlContentFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<(String, EpubBook?)>, Chapter> {
-  const GetHtmlContentFamily._()
+  GetHtmlContentFamily._()
     : super(
         retry: null,
         name: r'getHtmlContentProvider',

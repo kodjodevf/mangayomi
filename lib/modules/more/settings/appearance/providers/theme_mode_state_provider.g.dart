@@ -10,11 +10,11 @@ part of 'theme_mode_state_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(ThemeModeState)
-const themeModeStateProvider = ThemeModeStateProvider._();
+final themeModeStateProvider = ThemeModeStateProvider._();
 
 final class ThemeModeStateProvider
     extends $NotifierProvider<ThemeModeState, bool> {
-  const ThemeModeStateProvider._()
+  ThemeModeStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -48,7 +48,6 @@ abstract class _$ThemeModeState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -58,16 +57,16 @@ abstract class _$ThemeModeState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(FollowSystemThemeState)
-const followSystemThemeStateProvider = FollowSystemThemeStateProvider._();
+final followSystemThemeStateProvider = FollowSystemThemeStateProvider._();
 
 final class FollowSystemThemeStateProvider
     extends $NotifierProvider<FollowSystemThemeState, bool> {
-  const FollowSystemThemeStateProvider._()
+  FollowSystemThemeStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -102,7 +101,6 @@ abstract class _$FollowSystemThemeState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -112,6 +110,6 @@ abstract class _$FollowSystemThemeState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

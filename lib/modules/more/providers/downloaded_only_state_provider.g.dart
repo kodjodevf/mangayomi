@@ -10,11 +10,11 @@ part of 'downloaded_only_state_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(DownloadedOnlyState)
-const downloadedOnlyStateProvider = DownloadedOnlyStateProvider._();
+final downloadedOnlyStateProvider = DownloadedOnlyStateProvider._();
 
 final class DownloadedOnlyStateProvider
     extends $NotifierProvider<DownloadedOnlyState, bool> {
-  const DownloadedOnlyStateProvider._()
+  DownloadedOnlyStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -49,7 +49,6 @@ abstract class _$DownloadedOnlyState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -59,6 +58,6 @@ abstract class _$DownloadedOnlyState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

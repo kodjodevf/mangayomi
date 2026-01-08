@@ -10,7 +10,7 @@ part of 'isar_providers.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(getMangaCategorieStream)
-const getMangaCategorieStreamProvider = GetMangaCategorieStreamFamily._();
+final getMangaCategorieStreamProvider = GetMangaCategorieStreamFamily._();
 
 final class GetMangaCategorieStreamProvider
     extends
@@ -20,7 +20,7 @@ final class GetMangaCategorieStreamProvider
           Stream<List<Category>>
         >
     with $FutureModifier<List<Category>>, $StreamProvider<List<Category>> {
-  const GetMangaCategorieStreamProvider._({
+  GetMangaCategorieStreamProvider._({
     required GetMangaCategorieStreamFamily super.from,
     required ItemType super.argument,
   }) : super(
@@ -70,7 +70,7 @@ String _$getMangaCategorieStreamHash() =>
 
 final class GetMangaCategorieStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<Category>>, ItemType> {
-  const GetMangaCategorieStreamFamily._()
+  GetMangaCategorieStreamFamily._()
     : super(
         retry: null,
         name: r'getMangaCategorieStreamProvider',

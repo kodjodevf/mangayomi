@@ -10,11 +10,11 @@ part of 'auto_backup.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(BackupFrequencyState)
-const backupFrequencyStateProvider = BackupFrequencyStateProvider._();
+final backupFrequencyStateProvider = BackupFrequencyStateProvider._();
 
 final class BackupFrequencyStateProvider
     extends $NotifierProvider<BackupFrequencyState, int> {
-  const BackupFrequencyStateProvider._()
+  BackupFrequencyStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -49,7 +49,6 @@ abstract class _$BackupFrequencyState extends $Notifier<int> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<int, int>;
     final element =
         ref.element
@@ -59,17 +58,17 @@ abstract class _$BackupFrequencyState extends $Notifier<int> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(BackupFrequencyOptionsState)
-const backupFrequencyOptionsStateProvider =
+final backupFrequencyOptionsStateProvider =
     BackupFrequencyOptionsStateProvider._();
 
 final class BackupFrequencyOptionsStateProvider
     extends $NotifierProvider<BackupFrequencyOptionsState, List<int>> {
-  const BackupFrequencyOptionsStateProvider._()
+  BackupFrequencyOptionsStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -104,7 +103,6 @@ abstract class _$BackupFrequencyOptionsState extends $Notifier<List<int>> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<List<int>, List<int>>;
     final element =
         ref.element
@@ -114,16 +112,16 @@ abstract class _$BackupFrequencyOptionsState extends $Notifier<List<int>> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(AutoBackupLocationState)
-const autoBackupLocationStateProvider = AutoBackupLocationStateProvider._();
+final autoBackupLocationStateProvider = AutoBackupLocationStateProvider._();
 
 final class AutoBackupLocationStateProvider
     extends $NotifierProvider<AutoBackupLocationState, (String, String)> {
-  const AutoBackupLocationStateProvider._()
+  AutoBackupLocationStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -158,7 +156,6 @@ abstract class _$AutoBackupLocationState extends $Notifier<(String, String)> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<(String, String), (String, String)>;
     final element =
         ref.element
@@ -168,17 +165,17 @@ abstract class _$AutoBackupLocationState extends $Notifier<(String, String)> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(checkAndBackup)
-const checkAndBackupProvider = CheckAndBackupProvider._();
+final checkAndBackupProvider = CheckAndBackupProvider._();
 
 final class CheckAndBackupProvider
     extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
     with $FutureModifier<void>, $FutureProvider<void> {
-  const CheckAndBackupProvider._()
+  CheckAndBackupProvider._()
     : super(
         from: null,
         argument: null,

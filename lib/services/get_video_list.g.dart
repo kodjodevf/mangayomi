@@ -10,7 +10,7 @@ part of 'get_video_list.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(getVideoList)
-const getVideoListProvider = GetVideoListFamily._();
+final getVideoListProvider = GetVideoListFamily._();
 
 final class GetVideoListProvider
     extends
@@ -22,7 +22,7 @@ final class GetVideoListProvider
     with
         $FutureModifier<(List<Video>, bool, List<String>, Directory?)>,
         $FutureProvider<(List<Video>, bool, List<String>, Directory?)> {
-  const GetVideoListProvider._({
+  GetVideoListProvider._({
     required GetVideoListFamily super.from,
     required Chapter super.argument,
   }) : super(
@@ -73,7 +73,7 @@ final class GetVideoListFamily extends $Family
           FutureOr<(List<Video>, bool, List<String>, Directory?)>,
           Chapter
         > {
-  const GetVideoListFamily._()
+  GetVideoListFamily._()
     : super(
         retry: null,
         name: r'getVideoListProvider',

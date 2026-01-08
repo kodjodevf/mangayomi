@@ -10,12 +10,12 @@ part of 'get_popular.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(getPopular)
-const getPopularProvider = GetPopularFamily._();
+final getPopularProvider = GetPopularFamily._();
 
 final class GetPopularProvider
     extends $FunctionalProvider<AsyncValue<MPages?>, MPages?, FutureOr<MPages?>>
     with $FutureModifier<MPages?>, $FutureProvider<MPages?> {
-  const GetPopularProvider._({
+  GetPopularProvider._({
     required GetPopularFamily super.from,
     required ({Source source, int page}) super.argument,
   }) : super(
@@ -66,7 +66,7 @@ final class GetPopularFamily extends $Family
           FutureOr<MPages?>,
           ({Source source, int page})
         > {
-  const GetPopularFamily._()
+  GetPopularFamily._()
     : super(
         retry: null,
         name: r'getPopularProvider',

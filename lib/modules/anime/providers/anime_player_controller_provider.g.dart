@@ -10,11 +10,11 @@ part of 'anime_player_controller_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(AnimeStreamController)
-const animeStreamControllerProvider = AnimeStreamControllerFamily._();
+final animeStreamControllerProvider = AnimeStreamControllerFamily._();
 
 final class AnimeStreamControllerProvider
     extends $NotifierProvider<AnimeStreamController, KeepAliveLink> {
-  const AnimeStreamControllerProvider._({
+  AnimeStreamControllerProvider._({
     required AnimeStreamControllerFamily super.from,
     required Chapter super.argument,
   }) : super(
@@ -70,7 +70,7 @@ final class AnimeStreamControllerFamily extends $Family
           KeepAliveLink,
           Chapter
         > {
-  const AnimeStreamControllerFamily._()
+  AnimeStreamControllerFamily._()
     : super(
         retry: null,
         name: r'animeStreamControllerProvider',
@@ -94,7 +94,6 @@ abstract class _$AnimeStreamController extends $Notifier<KeepAliveLink> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(episode: _$args);
     final ref = this.ref as $Ref<KeepAliveLink, KeepAliveLink>;
     final element =
         ref.element
@@ -104,6 +103,6 @@ abstract class _$AnimeStreamController extends $Notifier<KeepAliveLink> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, () => build(episode: _$args));
   }
 }

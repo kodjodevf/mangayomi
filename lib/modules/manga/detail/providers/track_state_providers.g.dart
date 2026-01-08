@@ -10,10 +10,10 @@ part of 'track_state_providers.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(TrackState)
-const trackStateProvider = TrackStateFamily._();
+final trackStateProvider = TrackStateFamily._();
 
 final class TrackStateProvider extends $NotifierProvider<TrackState, Track> {
-  const TrackStateProvider._({
+  TrackStateProvider._({
     required TrackStateFamily super.from,
     required ({Track? track, ItemType? itemType, dynamic widgetRef})
     super.argument,
@@ -69,7 +69,7 @@ final class TrackStateFamily extends $Family
           Track,
           ({Track? track, ItemType? itemType, dynamic widgetRef})
         > {
-  const TrackStateFamily._()
+  TrackStateFamily._()
     : super(
         retry: null,
         name: r'trackStateProvider',
@@ -106,11 +106,6 @@ abstract class _$TrackState extends $Notifier<Track> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(
-      track: _$args.track,
-      itemType: _$args.itemType,
-      widgetRef: _$args.widgetRef,
-    );
     final ref = this.ref as $Ref<Track, Track>;
     final element =
         ref.element
@@ -120,17 +115,24 @@ abstract class _$TrackState extends $Notifier<Track> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(
+      ref,
+      () => build(
+        track: _$args.track,
+        itemType: _$args.itemType,
+        widgetRef: _$args.widgetRef,
+      ),
+    );
   }
 }
 
 @ProviderFor(LastTrackerLibraryLocationState)
-const lastTrackerLibraryLocationStateProvider =
+final lastTrackerLibraryLocationStateProvider =
     LastTrackerLibraryLocationStateProvider._();
 
 final class LastTrackerLibraryLocationStateProvider
     extends $NotifierProvider<LastTrackerLibraryLocationState, (int, bool)> {
-  const LastTrackerLibraryLocationStateProvider._()
+  LastTrackerLibraryLocationStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -166,7 +168,6 @@ abstract class _$LastTrackerLibraryLocationState
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<(int, bool), (int, bool)>;
     final element =
         ref.element
@@ -176,6 +177,6 @@ abstract class _$LastTrackerLibraryLocationState
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

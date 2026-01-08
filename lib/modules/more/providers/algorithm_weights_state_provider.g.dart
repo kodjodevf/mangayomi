@@ -10,11 +10,11 @@ part of 'algorithm_weights_state_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(AlgorithmWeightsState)
-const algorithmWeightsStateProvider = AlgorithmWeightsStateProvider._();
+final algorithmWeightsStateProvider = AlgorithmWeightsStateProvider._();
 
 final class AlgorithmWeightsStateProvider
     extends $NotifierProvider<AlgorithmWeightsState, AlgorithmWeights> {
-  const AlgorithmWeightsStateProvider._()
+  AlgorithmWeightsStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -49,7 +49,6 @@ abstract class _$AlgorithmWeightsState extends $Notifier<AlgorithmWeights> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<AlgorithmWeights, AlgorithmWeights>;
     final element =
         ref.element
@@ -59,6 +58,6 @@ abstract class _$AlgorithmWeightsState extends $Notifier<AlgorithmWeights> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

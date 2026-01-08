@@ -10,7 +10,7 @@ part of 'isar_providers.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(getAllHistoryStream)
-const getAllHistoryStreamProvider = GetAllHistoryStreamFamily._();
+final getAllHistoryStreamProvider = GetAllHistoryStreamFamily._();
 
 final class GetAllHistoryStreamProvider
     extends
@@ -20,7 +20,7 @@ final class GetAllHistoryStreamProvider
           Stream<List<History>>
         >
     with $FutureModifier<List<History>>, $StreamProvider<List<History>> {
-  const GetAllHistoryStreamProvider._({
+  GetAllHistoryStreamProvider._({
     required GetAllHistoryStreamFamily super.from,
     required ({ItemType itemType, String search}) super.argument,
   }) : super(
@@ -77,7 +77,7 @@ final class GetAllHistoryStreamFamily extends $Family
           Stream<List<History>>,
           ({ItemType itemType, String search})
         > {
-  const GetAllHistoryStreamFamily._()
+  GetAllHistoryStreamFamily._()
     : super(
         retry: null,
         name: r'getAllHistoryStreamProvider',
@@ -99,7 +99,7 @@ final class GetAllHistoryStreamFamily extends $Family
 }
 
 @ProviderFor(getAllUpdateStream)
-const getAllUpdateStreamProvider = GetAllUpdateStreamFamily._();
+final getAllUpdateStreamProvider = GetAllUpdateStreamFamily._();
 
 final class GetAllUpdateStreamProvider
     extends
@@ -109,7 +109,7 @@ final class GetAllUpdateStreamProvider
           Stream<List<Update>>
         >
     with $FutureModifier<List<Update>>, $StreamProvider<List<Update>> {
-  const GetAllUpdateStreamProvider._({
+  GetAllUpdateStreamProvider._({
     required GetAllUpdateStreamFamily super.from,
     required ({ItemType itemType, String search}) super.argument,
   }) : super(
@@ -166,7 +166,7 @@ final class GetAllUpdateStreamFamily extends $Family
           Stream<List<Update>>,
           ({ItemType itemType, String search})
         > {
-  const GetAllUpdateStreamFamily._()
+  GetAllUpdateStreamFamily._()
     : super(
         retry: null,
         name: r'getAllUpdateStreamProvider',

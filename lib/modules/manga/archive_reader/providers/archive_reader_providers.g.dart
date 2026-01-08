@@ -10,7 +10,7 @@ part of 'archive_reader_providers.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(getArchivesDataFromDirectory)
-const getArchivesDataFromDirectoryProvider =
+final getArchivesDataFromDirectoryProvider =
     GetArchivesDataFromDirectoryFamily._();
 
 final class GetArchivesDataFromDirectoryProvider
@@ -23,7 +23,7 @@ final class GetArchivesDataFromDirectoryProvider
     with
         $FutureModifier<List<(String, LocalExtensionType, Uint8List, String)>>,
         $FutureProvider<List<(String, LocalExtensionType, Uint8List, String)>> {
-  const GetArchivesDataFromDirectoryProvider._({
+  GetArchivesDataFromDirectoryProvider._({
     required GetArchivesDataFromDirectoryFamily super.from,
     required String super.argument,
   }) : super(
@@ -78,7 +78,7 @@ final class GetArchivesDataFromDirectoryFamily extends $Family
           FutureOr<List<(String, LocalExtensionType, Uint8List, String)>>,
           String
         > {
-  const GetArchivesDataFromDirectoryFamily._()
+  GetArchivesDataFromDirectoryFamily._()
     : super(
         retry: null,
         name: r'getArchivesDataFromDirectoryProvider',
@@ -95,7 +95,7 @@ final class GetArchivesDataFromDirectoryFamily extends $Family
 }
 
 @ProviderFor(getArchiveDataFromDirectory)
-const getArchiveDataFromDirectoryProvider =
+final getArchiveDataFromDirectoryProvider =
     GetArchiveDataFromDirectoryFamily._();
 
 final class GetArchiveDataFromDirectoryProvider
@@ -108,7 +108,7 @@ final class GetArchiveDataFromDirectoryProvider
     with
         $FutureModifier<List<LocalArchive>>,
         $FutureProvider<List<LocalArchive>> {
-  const GetArchiveDataFromDirectoryProvider._({
+  GetArchiveDataFromDirectoryProvider._({
     required GetArchiveDataFromDirectoryFamily super.from,
     required String super.argument,
   }) : super(
@@ -158,7 +158,7 @@ String _$getArchiveDataFromDirectoryHash() =>
 
 final class GetArchiveDataFromDirectoryFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<List<LocalArchive>>, String> {
-  const GetArchiveDataFromDirectoryFamily._()
+  GetArchiveDataFromDirectoryFamily._()
     : super(
         retry: null,
         name: r'getArchiveDataFromDirectoryProvider',
@@ -175,7 +175,7 @@ final class GetArchiveDataFromDirectoryFamily extends $Family
 }
 
 @ProviderFor(getArchivesDataFromFile)
-const getArchivesDataFromFileProvider = GetArchivesDataFromFileFamily._();
+final getArchivesDataFromFileProvider = GetArchivesDataFromFileFamily._();
 
 final class GetArchivesDataFromFileProvider
     extends
@@ -187,7 +187,7 @@ final class GetArchivesDataFromFileProvider
     with
         $FutureModifier<(String, LocalExtensionType, Uint8List, String)>,
         $FutureProvider<(String, LocalExtensionType, Uint8List, String)> {
-  const GetArchivesDataFromFileProvider._({
+  GetArchivesDataFromFileProvider._({
     required GetArchivesDataFromFileFamily super.from,
     required String super.argument,
   }) : super(
@@ -240,7 +240,7 @@ final class GetArchivesDataFromFileFamily extends $Family
           FutureOr<(String, LocalExtensionType, Uint8List, String)>,
           String
         > {
-  const GetArchivesDataFromFileFamily._()
+  GetArchivesDataFromFileFamily._()
     : super(
         retry: null,
         name: r'getArchivesDataFromFileProvider',
@@ -257,7 +257,7 @@ final class GetArchivesDataFromFileFamily extends $Family
 }
 
 @ProviderFor(getArchiveDataFromFile)
-const getArchiveDataFromFileProvider = GetArchiveDataFromFileFamily._();
+final getArchiveDataFromFileProvider = GetArchiveDataFromFileFamily._();
 
 final class GetArchiveDataFromFileProvider
     extends
@@ -267,7 +267,7 @@ final class GetArchiveDataFromFileProvider
           FutureOr<LocalArchive>
         >
     with $FutureModifier<LocalArchive>, $FutureProvider<LocalArchive> {
-  const GetArchiveDataFromFileProvider._({
+  GetArchiveDataFromFileProvider._({
     required GetArchiveDataFromFileFamily super.from,
     required String super.argument,
   }) : super(
@@ -317,7 +317,7 @@ String _$getArchiveDataFromFileHash() =>
 
 final class GetArchiveDataFromFileFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<LocalArchive>, String> {
-  const GetArchiveDataFromFileFamily._()
+  GetArchiveDataFromFileFamily._()
     : super(
         retry: null,
         name: r'getArchiveDataFromFileProvider',

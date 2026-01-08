@@ -10,10 +10,10 @@ part of 'aniskip.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(AniSkip)
-const aniSkipProvider = AniSkipProvider._();
+final aniSkipProvider = AniSkipProvider._();
 
 final class AniSkipProvider extends $NotifierProvider<AniSkip, void> {
-  const AniSkipProvider._()
+  AniSkipProvider._()
     : super(
         from: null,
         argument: null,
@@ -47,7 +47,6 @@ abstract class _$AniSkip extends $Notifier<void> {
   @$mustCallSuper
   @override
   void runBuild() {
-    build();
     final ref = this.ref as $Ref<void, void>;
     final element =
         ref.element
@@ -57,6 +56,6 @@ abstract class _$AniSkip extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, null);
+    element.handleCreate(ref, build);
   }
 }

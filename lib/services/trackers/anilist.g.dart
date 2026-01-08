@@ -10,10 +10,10 @@ part of 'anilist.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(Anilist)
-const anilistProvider = AnilistFamily._();
+final anilistProvider = AnilistFamily._();
 
 final class AnilistProvider extends $NotifierProvider<Anilist, void> {
-  const AnilistProvider._({
+  AnilistProvider._({
     required AnilistFamily super.from,
     required ({int syncId, ItemType? itemType, dynamic widgetRef})
     super.argument,
@@ -69,7 +69,7 @@ final class AnilistFamily extends $Family
           void,
           ({int syncId, ItemType? itemType, dynamic widgetRef})
         > {
-  const AnilistFamily._()
+  AnilistFamily._()
     : super(
         retry: null,
         name: r'anilistProvider',
@@ -106,11 +106,6 @@ abstract class _$Anilist extends $Notifier<void> {
   @$mustCallSuper
   @override
   void runBuild() {
-    build(
-      syncId: _$args.syncId,
-      itemType: _$args.itemType,
-      widgetRef: _$args.widgetRef,
-    );
     final ref = this.ref as $Ref<void, void>;
     final element =
         ref.element
@@ -120,6 +115,13 @@ abstract class _$Anilist extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, null);
+    element.handleCreate(
+      ref,
+      () => build(
+        syncId: _$args.syncId,
+        itemType: _$args.itemType,
+        widgetRef: _$args.widgetRef,
+      ),
+    );
   }
 }

@@ -10,11 +10,11 @@ part of 'player_decoder_state_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(HwdecModeState)
-const hwdecModeStateProvider = HwdecModeStateFamily._();
+final hwdecModeStateProvider = HwdecModeStateFamily._();
 
 final class HwdecModeStateProvider
     extends $NotifierProvider<HwdecModeState, String> {
-  const HwdecModeStateProvider._({
+  HwdecModeStateProvider._({
     required HwdecModeStateFamily super.from,
     required bool super.argument,
   }) : super(
@@ -62,7 +62,7 @@ String _$hwdecModeStateHash() => r'8186e3c5f3db0e952f629d56b2e580e546aed65e';
 
 final class HwdecModeStateFamily extends $Family
     with $ClassFamilyOverride<HwdecModeState, String, String, String, bool> {
-  const HwdecModeStateFamily._()
+  HwdecModeStateFamily._()
     : super(
         retry: null,
         name: r'hwdecModeStateProvider',
@@ -86,7 +86,6 @@ abstract class _$HwdecModeState extends $Notifier<String> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(rawValue: _$args);
     final ref = this.ref as $Ref<String, String>;
     final element =
         ref.element
@@ -96,16 +95,16 @@ abstract class _$HwdecModeState extends $Notifier<String> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, () => build(rawValue: _$args));
   }
 }
 
 @ProviderFor(EnableHardwareAccelState)
-const enableHardwareAccelStateProvider = EnableHardwareAccelStateProvider._();
+final enableHardwareAccelStateProvider = EnableHardwareAccelStateProvider._();
 
 final class EnableHardwareAccelStateProvider
     extends $NotifierProvider<EnableHardwareAccelState, bool> {
-  const EnableHardwareAccelStateProvider._()
+  EnableHardwareAccelStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -140,7 +139,6 @@ abstract class _$EnableHardwareAccelState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -150,16 +148,16 @@ abstract class _$EnableHardwareAccelState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(DebandingState)
-const debandingStateProvider = DebandingStateProvider._();
+final debandingStateProvider = DebandingStateProvider._();
 
 final class DebandingStateProvider
     extends $NotifierProvider<DebandingState, DebandingType> {
-  const DebandingStateProvider._()
+  DebandingStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -193,7 +191,6 @@ abstract class _$DebandingState extends $Notifier<DebandingType> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<DebandingType, DebandingType>;
     final element =
         ref.element
@@ -203,16 +200,16 @@ abstract class _$DebandingState extends $Notifier<DebandingType> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(UseGpuNextState)
-const useGpuNextStateProvider = UseGpuNextStateProvider._();
+final useGpuNextStateProvider = UseGpuNextStateProvider._();
 
 final class UseGpuNextStateProvider
     extends $NotifierProvider<UseGpuNextState, bool> {
-  const UseGpuNextStateProvider._()
+  UseGpuNextStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -246,7 +243,6 @@ abstract class _$UseGpuNextState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -256,16 +252,16 @@ abstract class _$UseGpuNextState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(UseYUV420PState)
-const useYUV420PStateProvider = UseYUV420PStateProvider._();
+final useYUV420PStateProvider = UseYUV420PStateProvider._();
 
 final class UseYUV420PStateProvider
     extends $NotifierProvider<UseYUV420PState, bool> {
-  const UseYUV420PStateProvider._()
+  UseYUV420PStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -299,7 +295,6 @@ abstract class _$UseYUV420PState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -309,6 +304,6 @@ abstract class _$UseYUV420PState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

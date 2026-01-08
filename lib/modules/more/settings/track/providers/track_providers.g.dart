@@ -10,10 +10,10 @@ part of 'track_providers.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(Tracks)
-const tracksProvider = TracksFamily._();
+final tracksProvider = TracksFamily._();
 
 final class TracksProvider extends $NotifierProvider<Tracks, TrackPreference?> {
-  const TracksProvider._({
+  TracksProvider._({
     required TracksFamily super.from,
     required int? super.argument,
   }) : super(
@@ -68,7 +68,7 @@ final class TracksFamily extends $Family
           TrackPreference?,
           int?
         > {
-  const TracksFamily._()
+  TracksFamily._()
     : super(
         retry: null,
         name: r'tracksProvider',
@@ -92,7 +92,6 @@ abstract class _$Tracks extends $Notifier<TrackPreference?> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(syncId: _$args);
     final ref = this.ref as $Ref<TrackPreference?, TrackPreference?>;
     final element =
         ref.element
@@ -102,17 +101,17 @@ abstract class _$Tracks extends $Notifier<TrackPreference?> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, () => build(syncId: _$args));
   }
 }
 
 @ProviderFor(UpdateProgressAfterReadingState)
-const updateProgressAfterReadingStateProvider =
+final updateProgressAfterReadingStateProvider =
     UpdateProgressAfterReadingStateProvider._();
 
 final class UpdateProgressAfterReadingStateProvider
     extends $NotifierProvider<UpdateProgressAfterReadingState, bool> {
-  const UpdateProgressAfterReadingStateProvider._()
+  UpdateProgressAfterReadingStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -147,7 +146,6 @@ abstract class _$UpdateProgressAfterReadingState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -157,6 +155,6 @@ abstract class _$UpdateProgressAfterReadingState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

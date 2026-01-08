@@ -10,12 +10,12 @@ part of 'update_manga_detail_providers.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(updateMangaDetail)
-const updateMangaDetailProvider = UpdateMangaDetailFamily._();
+final updateMangaDetailProvider = UpdateMangaDetailFamily._();
 
 final class UpdateMangaDetailProvider
     extends $FunctionalProvider<AsyncValue<dynamic>, dynamic, FutureOr<dynamic>>
     with $FutureModifier<dynamic>, $FutureProvider<dynamic> {
-  const UpdateMangaDetailProvider._({
+  UpdateMangaDetailProvider._({
     required UpdateMangaDetailFamily super.from,
     required ({int? mangaId, bool isInit, bool showToast}) super.argument,
   }) : super(
@@ -72,7 +72,7 @@ final class UpdateMangaDetailFamily extends $Family
           FutureOr<dynamic>,
           ({int? mangaId, bool isInit, bool showToast})
         > {
-  const UpdateMangaDetailFamily._()
+  UpdateMangaDetailFamily._()
     : super(
         retry: null,
         name: r'updateMangaDetailProvider',

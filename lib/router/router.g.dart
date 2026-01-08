@@ -10,12 +10,12 @@ part of 'router.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(router)
-const routerProvider = RouterProvider._();
+final routerProvider = RouterProvider._();
 
 final class RouterProvider
     extends $FunctionalProvider<GoRouter, GoRouter, GoRouter>
     with $Provider<GoRouter> {
-  const RouterProvider._()
+  RouterProvider._()
     : super(
         from: null,
         argument: null,
@@ -51,12 +51,12 @@ final class RouterProvider
 String _$routerHash() => r'fe1b18b9e03bd3df71cf66eabd78f0da3ac36247';
 
 @ProviderFor(RouterCurrentLocationState)
-const routerCurrentLocationStateProvider =
+final routerCurrentLocationStateProvider =
     RouterCurrentLocationStateProvider._();
 
 final class RouterCurrentLocationStateProvider
     extends $NotifierProvider<RouterCurrentLocationState, String?> {
-  const RouterCurrentLocationStateProvider._()
+  RouterCurrentLocationStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -91,7 +91,6 @@ abstract class _$RouterCurrentLocationState extends $Notifier<String?> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<String?, String?>;
     final element =
         ref.element
@@ -101,6 +100,6 @@ abstract class _$RouterCurrentLocationState extends $Notifier<String?> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

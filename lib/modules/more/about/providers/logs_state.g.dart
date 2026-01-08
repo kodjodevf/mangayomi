@@ -10,11 +10,11 @@ part of 'logs_state.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(logsState)
-const logsStateProvider = LogsStateProvider._();
+final logsStateProvider = LogsStateProvider._();
 
 final class LogsStateProvider extends $FunctionalProvider<bool, bool, bool>
     with $Provider<bool> {
-  const LogsStateProvider._()
+  LogsStateProvider._()
     : super(
         from: null,
         argument: null,

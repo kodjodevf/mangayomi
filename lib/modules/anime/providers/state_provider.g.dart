@@ -10,11 +10,11 @@ part of 'state_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(SubtitleSettingsState)
-const subtitleSettingsStateProvider = SubtitleSettingsStateProvider._();
+final subtitleSettingsStateProvider = SubtitleSettingsStateProvider._();
 
 final class SubtitleSettingsStateProvider
     extends $NotifierProvider<SubtitleSettingsState, PlayerSubtitleSettings> {
-  const SubtitleSettingsStateProvider._()
+  SubtitleSettingsStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -50,7 +50,6 @@ abstract class _$SubtitleSettingsState
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref =
         this.ref as $Ref<PlayerSubtitleSettings, PlayerSubtitleSettings>;
     final element =
@@ -61,6 +60,6 @@ abstract class _$SubtitleSettingsState
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

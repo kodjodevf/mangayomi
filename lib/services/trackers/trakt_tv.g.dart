@@ -10,10 +10,10 @@ part of 'trakt_tv.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(TraktTv)
-const traktTvProvider = TraktTvFamily._();
+final traktTvProvider = TraktTvFamily._();
 
 final class TraktTvProvider extends $NotifierProvider<TraktTv, void> {
-  const TraktTvProvider._({
+  TraktTvProvider._({
     required TraktTvFamily super.from,
     required ({int syncId, ItemType? itemType, dynamic widgetRef})
     super.argument,
@@ -69,7 +69,7 @@ final class TraktTvFamily extends $Family
           void,
           ({int syncId, ItemType? itemType, dynamic widgetRef})
         > {
-  const TraktTvFamily._()
+  TraktTvFamily._()
     : super(
         retry: null,
         name: r'traktTvProvider',
@@ -106,11 +106,6 @@ abstract class _$TraktTv extends $Notifier<void> {
   @$mustCallSuper
   @override
   void runBuild() {
-    build(
-      syncId: _$args.syncId,
-      itemType: _$args.itemType,
-      widgetRef: _$args.widgetRef,
-    );
     final ref = this.ref as $Ref<void, void>;
     final element =
         ref.element
@@ -120,6 +115,13 @@ abstract class _$TraktTv extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, null);
+    element.handleCreate(
+      ref,
+      () => build(
+        syncId: _$args.syncId,
+        itemType: _$args.itemType,
+        widgetRef: _$args.widgetRef,
+      ),
+    );
   }
 }

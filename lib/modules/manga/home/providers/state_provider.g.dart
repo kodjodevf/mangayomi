@@ -10,11 +10,11 @@ part of 'state_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(MangaHomeDisplayTypeState)
-const mangaHomeDisplayTypeStateProvider = MangaHomeDisplayTypeStateProvider._();
+final mangaHomeDisplayTypeStateProvider = MangaHomeDisplayTypeStateProvider._();
 
 final class MangaHomeDisplayTypeStateProvider
     extends $NotifierProvider<MangaHomeDisplayTypeState, DisplayType> {
-  const MangaHomeDisplayTypeStateProvider._()
+  MangaHomeDisplayTypeStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -49,7 +49,6 @@ abstract class _$MangaHomeDisplayTypeState extends $Notifier<DisplayType> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<DisplayType, DisplayType>;
     final element =
         ref.element
@@ -59,6 +58,6 @@ abstract class _$MangaHomeDisplayTypeState extends $Notifier<DisplayType> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

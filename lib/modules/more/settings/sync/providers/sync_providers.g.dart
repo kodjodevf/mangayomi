@@ -10,11 +10,11 @@ part of 'sync_providers.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(Synching)
-const synchingProvider = SynchingFamily._();
+final synchingProvider = SynchingFamily._();
 
 final class SynchingProvider
     extends $NotifierProvider<Synching, SyncPreference> {
-  const SynchingProvider._({
+  SynchingProvider._({
     required SynchingFamily super.from,
     required int? super.argument,
   }) : super(
@@ -69,7 +69,7 @@ final class SynchingFamily extends $Family
           SyncPreference,
           int?
         > {
-  const SynchingFamily._()
+  SynchingFamily._()
     : super(
         retry: null,
         name: r'synchingProvider',
@@ -93,7 +93,6 @@ abstract class _$Synching extends $Notifier<SyncPreference> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(syncId: _$args);
     final ref = this.ref as $Ref<SyncPreference, SyncPreference>;
     final element =
         ref.element
@@ -103,6 +102,6 @@ abstract class _$Synching extends $Notifier<SyncPreference> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, () => build(syncId: _$args));
   }
 }

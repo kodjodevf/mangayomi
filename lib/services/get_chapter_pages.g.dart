@@ -10,7 +10,7 @@ part of 'get_chapter_pages.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(getChapterPages)
-const getChapterPagesProvider = GetChapterPagesFamily._();
+final getChapterPagesProvider = GetChapterPagesFamily._();
 
 final class GetChapterPagesProvider
     extends
@@ -22,7 +22,7 @@ final class GetChapterPagesProvider
     with
         $FutureModifier<GetChapterPagesModel>,
         $FutureProvider<GetChapterPagesModel> {
-  const GetChapterPagesProvider._({
+  GetChapterPagesProvider._({
     required GetChapterPagesFamily super.from,
     required Chapter super.argument,
   }) : super(
@@ -70,7 +70,7 @@ String _$getChapterPagesHash() => r'544311ac02b1034b938bb5f85e97fe34683c26c7';
 
 final class GetChapterPagesFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<GetChapterPagesModel>, Chapter> {
-  const GetChapterPagesFamily._()
+  GetChapterPagesFamily._()
     : super(
         retry: null,
         name: r'getChapterPagesProvider',

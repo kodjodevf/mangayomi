@@ -10,10 +10,10 @@ part of 'reader_controller_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(CurrentIndex)
-const currentIndexProvider = CurrentIndexFamily._();
+final currentIndexProvider = CurrentIndexFamily._();
 
 final class CurrentIndexProvider extends $NotifierProvider<CurrentIndex, int> {
-  const CurrentIndexProvider._({
+  CurrentIndexProvider._({
     required CurrentIndexFamily super.from,
     required Chapter super.argument,
   }) : super(
@@ -61,7 +61,7 @@ String _$currentIndexHash() => r'e0b5e5b8a2afa5e8df699784009720334e1c9e80';
 
 final class CurrentIndexFamily extends $Family
     with $ClassFamilyOverride<CurrentIndex, int, int, int, Chapter> {
-  const CurrentIndexFamily._()
+  CurrentIndexFamily._()
     : super(
         retry: null,
         name: r'currentIndexProvider',
@@ -85,7 +85,6 @@ abstract class _$CurrentIndex extends $Notifier<int> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(_$args);
     final ref = this.ref as $Ref<int, int>;
     final element =
         ref.element
@@ -95,16 +94,16 @@ abstract class _$CurrentIndex extends $Notifier<int> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, () => build(_$args));
   }
 }
 
 @ProviderFor(ReaderController)
-const readerControllerProvider = ReaderControllerFamily._();
+final readerControllerProvider = ReaderControllerFamily._();
 
 final class ReaderControllerProvider
     extends $NotifierProvider<ReaderController, KeepAliveLink> {
-  const ReaderControllerProvider._({
+  ReaderControllerProvider._({
     required ReaderControllerFamily super.from,
     required Chapter super.argument,
   }) : super(
@@ -159,7 +158,7 @@ final class ReaderControllerFamily extends $Family
           KeepAliveLink,
           Chapter
         > {
-  const ReaderControllerFamily._()
+  ReaderControllerFamily._()
     : super(
         retry: null,
         name: r'readerControllerProvider',
@@ -183,7 +182,6 @@ abstract class _$ReaderController extends $Notifier<KeepAliveLink> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(chapter: _$args);
     final ref = this.ref as $Ref<KeepAliveLink, KeepAliveLink>;
     final element =
         ref.element
@@ -193,6 +191,6 @@ abstract class _$ReaderController extends $Notifier<KeepAliveLink> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, () => build(chapter: _$args));
   }
 }

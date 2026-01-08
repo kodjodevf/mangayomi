@@ -10,12 +10,12 @@ part of 'isar_providers.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(getMangaDetailStream)
-const getMangaDetailStreamProvider = GetMangaDetailStreamFamily._();
+final getMangaDetailStreamProvider = GetMangaDetailStreamFamily._();
 
 final class GetMangaDetailStreamProvider
     extends $FunctionalProvider<AsyncValue<Manga?>, Manga?, Stream<Manga?>>
     with $FutureModifier<Manga?>, $StreamProvider<Manga?> {
-  const GetMangaDetailStreamProvider._({
+  GetMangaDetailStreamProvider._({
     required GetMangaDetailStreamFamily super.from,
     required int super.argument,
   }) : super(
@@ -63,7 +63,7 @@ String _$getMangaDetailStreamHash() =>
 
 final class GetMangaDetailStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<Manga?>, int> {
-  const GetMangaDetailStreamFamily._()
+  GetMangaDetailStreamFamily._()
     : super(
         retry: null,
         name: r'getMangaDetailStreamProvider',
@@ -80,7 +80,7 @@ final class GetMangaDetailStreamFamily extends $Family
 }
 
 @ProviderFor(getChaptersStream)
-const getChaptersStreamProvider = GetChaptersStreamFamily._();
+final getChaptersStreamProvider = GetChaptersStreamFamily._();
 
 final class GetChaptersStreamProvider
     extends
@@ -90,7 +90,7 @@ final class GetChaptersStreamProvider
           Stream<List<Chapter>>
         >
     with $FutureModifier<List<Chapter>>, $StreamProvider<List<Chapter>> {
-  const GetChaptersStreamProvider._({
+  GetChaptersStreamProvider._({
     required GetChaptersStreamFamily super.from,
     required int super.argument,
   }) : super(
@@ -138,7 +138,7 @@ String _$getChaptersStreamHash() => r'0f03db54c5a639c4356a81e4bad50fa8a077ceac';
 
 final class GetChaptersStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<Chapter>>, int> {
-  const GetChaptersStreamFamily._()
+  GetChaptersStreamFamily._()
     : super(
         retry: null,
         name: r'getChaptersStreamProvider',

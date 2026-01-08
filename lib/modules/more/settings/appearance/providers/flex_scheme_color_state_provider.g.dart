@@ -10,11 +10,11 @@ part of 'flex_scheme_color_state_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(FlexSchemeColorState)
-const flexSchemeColorStateProvider = FlexSchemeColorStateProvider._();
+final flexSchemeColorStateProvider = FlexSchemeColorStateProvider._();
 
 final class FlexSchemeColorStateProvider
     extends $NotifierProvider<FlexSchemeColorState, FlexSchemeColor> {
-  const FlexSchemeColorStateProvider._()
+  FlexSchemeColorStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -49,7 +49,6 @@ abstract class _$FlexSchemeColorState extends $Notifier<FlexSchemeColor> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<FlexSchemeColor, FlexSchemeColor>;
     final element =
         ref.element
@@ -59,6 +58,6 @@ abstract class _$FlexSchemeColorState extends $Notifier<FlexSchemeColor> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

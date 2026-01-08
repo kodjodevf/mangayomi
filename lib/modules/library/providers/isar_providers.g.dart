@@ -10,7 +10,7 @@ part of 'isar_providers.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(getAllMangaStream)
-const getAllMangaStreamProvider = GetAllMangaStreamFamily._();
+final getAllMangaStreamProvider = GetAllMangaStreamFamily._();
 
 final class GetAllMangaStreamProvider
     extends
@@ -20,7 +20,7 @@ final class GetAllMangaStreamProvider
           Stream<List<Manga>>
         >
     with $FutureModifier<List<Manga>>, $StreamProvider<List<Manga>> {
-  const GetAllMangaStreamProvider._({
+  GetAllMangaStreamProvider._({
     required GetAllMangaStreamFamily super.from,
     required ({int? categoryId, ItemType itemType}) super.argument,
   }) : super(
@@ -76,7 +76,7 @@ final class GetAllMangaStreamFamily extends $Family
           Stream<List<Manga>>,
           ({int? categoryId, ItemType itemType})
         > {
-  const GetAllMangaStreamFamily._()
+  GetAllMangaStreamFamily._()
     : super(
         retry: null,
         name: r'getAllMangaStreamProvider',
@@ -98,7 +98,7 @@ final class GetAllMangaStreamFamily extends $Family
 }
 
 @ProviderFor(getAllMangaWithoutCategoriesStream)
-const getAllMangaWithoutCategoriesStreamProvider =
+final getAllMangaWithoutCategoriesStreamProvider =
     GetAllMangaWithoutCategoriesStreamFamily._();
 
 final class GetAllMangaWithoutCategoriesStreamProvider
@@ -109,7 +109,7 @@ final class GetAllMangaWithoutCategoriesStreamProvider
           Stream<List<Manga>>
         >
     with $FutureModifier<List<Manga>>, $StreamProvider<List<Manga>> {
-  const GetAllMangaWithoutCategoriesStreamProvider._({
+  GetAllMangaWithoutCategoriesStreamProvider._({
     required GetAllMangaWithoutCategoriesStreamFamily super.from,
     required ItemType super.argument,
   }) : super(
@@ -160,7 +160,7 @@ String _$getAllMangaWithoutCategoriesStreamHash() =>
 
 final class GetAllMangaWithoutCategoriesStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<Manga>>, ItemType> {
-  const GetAllMangaWithoutCategoriesStreamFamily._()
+  GetAllMangaWithoutCategoriesStreamFamily._()
     : super(
         retry: null,
         name: r'getAllMangaWithoutCategoriesStreamProvider',
@@ -181,7 +181,7 @@ final class GetAllMangaWithoutCategoriesStreamFamily extends $Family
 }
 
 @ProviderFor(getSettingsStream)
-const getSettingsStreamProvider = GetSettingsStreamProvider._();
+final getSettingsStreamProvider = GetSettingsStreamProvider._();
 
 final class GetSettingsStreamProvider
     extends
@@ -191,7 +191,7 @@ final class GetSettingsStreamProvider
           Stream<List<Settings>>
         >
     with $FutureModifier<List<Settings>>, $StreamProvider<List<Settings>> {
-  const GetSettingsStreamProvider._()
+  GetSettingsStreamProvider._()
     : super(
         from: null,
         argument: null,

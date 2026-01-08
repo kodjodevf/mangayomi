@@ -10,12 +10,12 @@ part of 'check_for_update.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(checkForUpdate)
-const checkForUpdateProvider = CheckForUpdateFamily._();
+final checkForUpdateProvider = CheckForUpdateFamily._();
 
 final class CheckForUpdateProvider
     extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
     with $FutureModifier<void>, $FutureProvider<void> {
-  const CheckForUpdateProvider._({
+  CheckForUpdateProvider._({
     required CheckForUpdateFamily super.from,
     required ({BuildContext? context, bool? manualUpdate}) super.argument,
   }) : super(
@@ -71,7 +71,7 @@ final class CheckForUpdateFamily extends $Family
           FutureOr<void>,
           ({BuildContext? context, bool? manualUpdate})
         > {
-  const CheckForUpdateFamily._()
+  CheckForUpdateFamily._()
     : super(
         retry: null,
         name: r'checkForUpdateProvider',
@@ -91,12 +91,12 @@ final class CheckForUpdateFamily extends $Family
 }
 
 @ProviderFor(checkForAppUpdates)
-const checkForAppUpdatesProvider = CheckForAppUpdatesProvider._();
+final checkForAppUpdatesProvider = CheckForAppUpdatesProvider._();
 
 final class CheckForAppUpdatesProvider
     extends $FunctionalProvider<bool, bool, bool>
     with $Provider<bool> {
-  const CheckForAppUpdatesProvider._()
+  CheckForAppUpdatesProvider._()
     : super(
         from: null,
         argument: null,

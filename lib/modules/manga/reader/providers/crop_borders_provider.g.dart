@@ -10,7 +10,7 @@ part of 'crop_borders_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(cropBorders)
-const cropBordersProvider = CropBordersFamily._();
+final cropBordersProvider = CropBordersFamily._();
 
 final class CropBordersProvider
     extends
@@ -20,7 +20,7 @@ final class CropBordersProvider
           FutureOr<Uint8List?>
         >
     with $FutureModifier<Uint8List?>, $FutureProvider<Uint8List?> {
-  const CropBordersProvider._({
+  CropBordersProvider._({
     required CropBordersFamily super.from,
     required ({UChapDataPreload data, bool cropBorder}) super.argument,
   }) : super(
@@ -76,7 +76,7 @@ final class CropBordersFamily extends $Family
           FutureOr<Uint8List?>,
           ({UChapDataPreload data, bool cropBorder})
         > {
-  const CropBordersFamily._()
+  CropBordersFamily._()
     : super(
         retry: null,
         name: r'cropBordersProvider',

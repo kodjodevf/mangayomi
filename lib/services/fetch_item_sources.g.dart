@@ -10,12 +10,12 @@ part of 'fetch_item_sources.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(fetchItemSourcesList)
-const fetchItemSourcesListProvider = FetchItemSourcesListFamily._();
+final fetchItemSourcesListProvider = FetchItemSourcesListFamily._();
 
 final class FetchItemSourcesListProvider
     extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
     with $FutureModifier<void>, $FutureProvider<void> {
-  const FetchItemSourcesListProvider._({
+  FetchItemSourcesListProvider._({
     required FetchItemSourcesListFamily super.from,
     required ({int? id, bool reFresh, ItemType itemType}) super.argument,
   }) : super(
@@ -73,7 +73,7 @@ final class FetchItemSourcesListFamily extends $Family
           FutureOr<void>,
           ({int? id, bool reFresh, ItemType itemType})
         > {
-  const FetchItemSourcesListFamily._()
+  FetchItemSourcesListFamily._()
     : super(
         retry: null,
         name: r'fetchItemSourcesListProvider',

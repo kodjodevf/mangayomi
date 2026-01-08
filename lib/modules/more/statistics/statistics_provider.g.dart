@@ -10,7 +10,7 @@ part of 'statistics_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(getStatistics)
-const getStatisticsProvider = GetStatisticsFamily._();
+final getStatisticsProvider = GetStatisticsFamily._();
 
 final class GetStatisticsProvider
     extends
@@ -20,7 +20,7 @@ final class GetStatisticsProvider
           FutureOr<StatisticsData>
         >
     with $FutureModifier<StatisticsData>, $FutureProvider<StatisticsData> {
-  const GetStatisticsProvider._({
+  GetStatisticsProvider._({
     required GetStatisticsFamily super.from,
     required ItemType super.argument,
   }) : super(
@@ -68,7 +68,7 @@ String _$getStatisticsHash() => r'f4a11dfa53b9560da765b1822fadc758a0a23cba';
 
 final class GetStatisticsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<StatisticsData>, ItemType> {
-  const GetStatisticsFamily._()
+  GetStatisticsFamily._()
     : super(
         retry: null,
         name: r'getStatisticsProvider',

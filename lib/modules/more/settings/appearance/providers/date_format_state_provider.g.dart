@@ -10,11 +10,11 @@ part of 'date_format_state_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(DateFormatState)
-const dateFormatStateProvider = DateFormatStateProvider._();
+final dateFormatStateProvider = DateFormatStateProvider._();
 
 final class DateFormatStateProvider
     extends $NotifierProvider<DateFormatState, String> {
-  const DateFormatStateProvider._()
+  DateFormatStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -48,7 +48,6 @@ abstract class _$DateFormatState extends $Notifier<String> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<String, String>;
     final element =
         ref.element
@@ -58,16 +57,16 @@ abstract class _$DateFormatState extends $Notifier<String> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(RelativeTimesTampsState)
-const relativeTimesTampsStateProvider = RelativeTimesTampsStateProvider._();
+final relativeTimesTampsStateProvider = RelativeTimesTampsStateProvider._();
 
 final class RelativeTimesTampsStateProvider
     extends $NotifierProvider<RelativeTimesTampsState, int> {
-  const RelativeTimesTampsStateProvider._()
+  RelativeTimesTampsStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -102,7 +101,6 @@ abstract class _$RelativeTimesTampsState extends $Notifier<int> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<int, int>;
     final element =
         ref.element
@@ -112,6 +110,6 @@ abstract class _$RelativeTimesTampsState extends $Notifier<int> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

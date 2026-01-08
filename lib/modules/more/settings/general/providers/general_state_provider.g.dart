@@ -10,11 +10,11 @@ part of 'general_state_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(CustomDnsState)
-const customDnsStateProvider = CustomDnsStateProvider._();
+final customDnsStateProvider = CustomDnsStateProvider._();
 
 final class CustomDnsStateProvider
     extends $NotifierProvider<CustomDnsState, String> {
-  const CustomDnsStateProvider._()
+  CustomDnsStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -48,7 +48,6 @@ abstract class _$CustomDnsState extends $Notifier<String> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<String, String>;
     final element =
         ref.element
@@ -58,16 +57,16 @@ abstract class _$CustomDnsState extends $Notifier<String> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(EnableDiscordRpcState)
-const enableDiscordRpcStateProvider = EnableDiscordRpcStateProvider._();
+final enableDiscordRpcStateProvider = EnableDiscordRpcStateProvider._();
 
 final class EnableDiscordRpcStateProvider
     extends $NotifierProvider<EnableDiscordRpcState, bool> {
-  const EnableDiscordRpcStateProvider._()
+  EnableDiscordRpcStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -102,7 +101,6 @@ abstract class _$EnableDiscordRpcState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -112,17 +110,17 @@ abstract class _$EnableDiscordRpcState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(HideDiscordRpcInIncognitoState)
-const hideDiscordRpcInIncognitoStateProvider =
+final hideDiscordRpcInIncognitoStateProvider =
     HideDiscordRpcInIncognitoStateProvider._();
 
 final class HideDiscordRpcInIncognitoStateProvider
     extends $NotifierProvider<HideDiscordRpcInIncognitoState, bool> {
-  const HideDiscordRpcInIncognitoStateProvider._()
+  HideDiscordRpcInIncognitoStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -157,7 +155,6 @@ abstract class _$HideDiscordRpcInIncognitoState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -167,17 +164,17 @@ abstract class _$HideDiscordRpcInIncognitoState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(RpcShowReadingWatchingProgressState)
-const rpcShowReadingWatchingProgressStateProvider =
+final rpcShowReadingWatchingProgressStateProvider =
     RpcShowReadingWatchingProgressStateProvider._();
 
 final class RpcShowReadingWatchingProgressStateProvider
     extends $NotifierProvider<RpcShowReadingWatchingProgressState, bool> {
-  const RpcShowReadingWatchingProgressStateProvider._()
+  RpcShowReadingWatchingProgressStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -214,7 +211,6 @@ abstract class _$RpcShowReadingWatchingProgressState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -224,16 +220,16 @@ abstract class _$RpcShowReadingWatchingProgressState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(RpcShowTitleState)
-const rpcShowTitleStateProvider = RpcShowTitleStateProvider._();
+final rpcShowTitleStateProvider = RpcShowTitleStateProvider._();
 
 final class RpcShowTitleStateProvider
     extends $NotifierProvider<RpcShowTitleState, bool> {
-  const RpcShowTitleStateProvider._()
+  RpcShowTitleStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -267,7 +263,6 @@ abstract class _$RpcShowTitleState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -277,16 +272,16 @@ abstract class _$RpcShowTitleState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(RpcShowCoverImageState)
-const rpcShowCoverImageStateProvider = RpcShowCoverImageStateProvider._();
+final rpcShowCoverImageStateProvider = RpcShowCoverImageStateProvider._();
 
 final class RpcShowCoverImageStateProvider
     extends $NotifierProvider<RpcShowCoverImageState, bool> {
-  const RpcShowCoverImageStateProvider._()
+  RpcShowCoverImageStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -321,7 +316,6 @@ abstract class _$RpcShowCoverImageState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -331,16 +325,16 @@ abstract class _$RpcShowCoverImageState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(UserAgentState)
-const userAgentStateProvider = UserAgentStateProvider._();
+final userAgentStateProvider = UserAgentStateProvider._();
 
 final class UserAgentStateProvider
     extends $NotifierProvider<UserAgentState, String> {
-  const UserAgentStateProvider._()
+  UserAgentStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -374,7 +368,6 @@ abstract class _$UserAgentState extends $Notifier<String> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<String, String>;
     final element =
         ref.element
@@ -384,6 +377,6 @@ abstract class _$UserAgentState extends $Notifier<String> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

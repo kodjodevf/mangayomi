@@ -10,7 +10,7 @@ part of 'extensions_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(getExtensionsStream)
-const getExtensionsStreamProvider = GetExtensionsStreamFamily._();
+final getExtensionsStreamProvider = GetExtensionsStreamFamily._();
 
 final class GetExtensionsStreamProvider
     extends
@@ -20,7 +20,7 @@ final class GetExtensionsStreamProvider
           Stream<List<Source>>
         >
     with $FutureModifier<List<Source>>, $StreamProvider<List<Source>> {
-  const GetExtensionsStreamProvider._({
+  GetExtensionsStreamProvider._({
     required GetExtensionsStreamFamily super.from,
     required ItemType super.argument,
   }) : super(
@@ -69,7 +69,7 @@ String _$getExtensionsStreamHash() =>
 
 final class GetExtensionsStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<Source>>, ItemType> {
-  const GetExtensionsStreamFamily._()
+  GetExtensionsStreamFamily._()
     : super(
         retry: null,
         name: r'getExtensionsStreamProvider',

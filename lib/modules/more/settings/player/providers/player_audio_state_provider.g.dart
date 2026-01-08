@@ -10,11 +10,11 @@ part of 'player_audio_state_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(AudioPreferredLangState)
-const audioPreferredLangStateProvider = AudioPreferredLangStateProvider._();
+final audioPreferredLangStateProvider = AudioPreferredLangStateProvider._();
 
 final class AudioPreferredLangStateProvider
     extends $NotifierProvider<AudioPreferredLangState, String> {
-  const AudioPreferredLangStateProvider._()
+  AudioPreferredLangStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -49,7 +49,6 @@ abstract class _$AudioPreferredLangState extends $Notifier<String> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<String, String>;
     final element =
         ref.element
@@ -59,17 +58,17 @@ abstract class _$AudioPreferredLangState extends $Notifier<String> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(EnableAudioPitchCorrectionState)
-const enableAudioPitchCorrectionStateProvider =
+final enableAudioPitchCorrectionStateProvider =
     EnableAudioPitchCorrectionStateProvider._();
 
 final class EnableAudioPitchCorrectionStateProvider
     extends $NotifierProvider<EnableAudioPitchCorrectionState, bool> {
-  const EnableAudioPitchCorrectionStateProvider._()
+  EnableAudioPitchCorrectionStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -104,7 +103,6 @@ abstract class _$EnableAudioPitchCorrectionState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -114,16 +112,16 @@ abstract class _$EnableAudioPitchCorrectionState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(AudioChannelState)
-const audioChannelStateProvider = AudioChannelStateProvider._();
+final audioChannelStateProvider = AudioChannelStateProvider._();
 
 final class AudioChannelStateProvider
     extends $NotifierProvider<AudioChannelState, AudioChannel> {
-  const AudioChannelStateProvider._()
+  AudioChannelStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -157,7 +155,6 @@ abstract class _$AudioChannelState extends $Notifier<AudioChannel> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<AudioChannel, AudioChannel>;
     final element =
         ref.element
@@ -167,16 +164,16 @@ abstract class _$AudioChannelState extends $Notifier<AudioChannel> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(VolumeBoostCapState)
-const volumeBoostCapStateProvider = VolumeBoostCapStateProvider._();
+final volumeBoostCapStateProvider = VolumeBoostCapStateProvider._();
 
 final class VolumeBoostCapStateProvider
     extends $NotifierProvider<VolumeBoostCapState, int> {
-  const VolumeBoostCapStateProvider._()
+  VolumeBoostCapStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -211,7 +208,6 @@ abstract class _$VolumeBoostCapState extends $Notifier<int> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<int, int>;
     final element =
         ref.element
@@ -221,6 +217,6 @@ abstract class _$VolumeBoostCapState extends $Notifier<int> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

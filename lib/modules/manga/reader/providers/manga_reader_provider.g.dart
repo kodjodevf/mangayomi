@@ -10,7 +10,7 @@ part of 'manga_reader_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(mangaReader)
-const mangaReaderProvider = MangaReaderFamily._();
+final mangaReaderProvider = MangaReaderFamily._();
 
 final class MangaReaderProvider
     extends
@@ -20,7 +20,7 @@ final class MangaReaderProvider
           FutureOr<ChapterWithPages>
         >
     with $FutureModifier<ChapterWithPages>, $FutureProvider<ChapterWithPages> {
-  const MangaReaderProvider._({
+  MangaReaderProvider._({
     required MangaReaderFamily super.from,
     required int super.argument,
   }) : super(
@@ -68,7 +68,7 @@ String _$mangaReaderHash() => r'cf8c44c6c3567ba4e9a0e08137ab2f29b71307eb';
 
 final class MangaReaderFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<ChapterWithPages>, int> {
-  const MangaReaderFamily._()
+  MangaReaderFamily._()
     : super(
         retry: null,
         name: r'mangaReaderProvider',

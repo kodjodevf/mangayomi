@@ -10,11 +10,11 @@ part of 'file_scanner.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(LocalFoldersState)
-const localFoldersStateProvider = LocalFoldersStateProvider._();
+final localFoldersStateProvider = LocalFoldersStateProvider._();
 
 final class LocalFoldersStateProvider
     extends $NotifierProvider<LocalFoldersState, List<String>> {
-  const LocalFoldersStateProvider._()
+  LocalFoldersStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -48,7 +48,6 @@ abstract class _$LocalFoldersState extends $Notifier<List<String>> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<List<String>, List<String>>;
     final element =
         ref.element
@@ -58,7 +57,7 @@ abstract class _$LocalFoldersState extends $Notifier<List<String>> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
@@ -81,7 +80,7 @@ abstract class _$LocalFoldersState extends $Notifier<List<String>> {
 /// ```
 
 @ProviderFor(scanLocalLibrary)
-const scanLocalLibraryProvider = ScanLocalLibraryProvider._();
+final scanLocalLibraryProvider = ScanLocalLibraryProvider._();
 
 /// Scans `Mangayomi/local` folder (if exists) for Mangas/Animes and imports in library.
 ///
@@ -121,7 +120,7 @@ final class ScanLocalLibraryProvider
   /// Archivetypes: cbz, zip, cbt, tar
   /// Other types: epub
   /// ```
-  const ScanLocalLibraryProvider._()
+  ScanLocalLibraryProvider._()
     : super(
         from: null,
         argument: null,

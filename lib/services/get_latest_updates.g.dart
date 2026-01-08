@@ -10,12 +10,12 @@ part of 'get_latest_updates.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(getLatestUpdates)
-const getLatestUpdatesProvider = GetLatestUpdatesFamily._();
+final getLatestUpdatesProvider = GetLatestUpdatesFamily._();
 
 final class GetLatestUpdatesProvider
     extends $FunctionalProvider<AsyncValue<MPages?>, MPages?, FutureOr<MPages?>>
     with $FutureModifier<MPages?>, $FutureProvider<MPages?> {
-  const GetLatestUpdatesProvider._({
+  GetLatestUpdatesProvider._({
     required GetLatestUpdatesFamily super.from,
     required ({Source source, int page}) super.argument,
   }) : super(
@@ -66,7 +66,7 @@ final class GetLatestUpdatesFamily extends $Family
           FutureOr<MPages?>,
           ({Source source, int page})
         > {
-  const GetLatestUpdatesFamily._()
+  GetLatestUpdatesFamily._()
     : super(
         retry: null,
         name: r'getLatestUpdatesProvider',

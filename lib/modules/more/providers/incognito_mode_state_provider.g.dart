@@ -10,11 +10,11 @@ part of 'incognito_mode_state_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(IncognitoModeState)
-const incognitoModeStateProvider = IncognitoModeStateProvider._();
+final incognitoModeStateProvider = IncognitoModeStateProvider._();
 
 final class IncognitoModeStateProvider
     extends $NotifierProvider<IncognitoModeState, bool> {
-  const IncognitoModeStateProvider._()
+  IncognitoModeStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -49,7 +49,6 @@ abstract class _$IncognitoModeState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -59,6 +58,6 @@ abstract class _$IncognitoModeState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

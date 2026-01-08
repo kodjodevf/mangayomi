@@ -10,12 +10,12 @@ part of 'migration.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(migration)
-const migrationProvider = MigrationProvider._();
+final migrationProvider = MigrationProvider._();
 
 final class MigrationProvider
     extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
     with $FutureModifier<void>, $FutureProvider<void> {
-  const MigrationProvider._()
+  MigrationProvider._()
     : super(
         from: null,
         argument: null,

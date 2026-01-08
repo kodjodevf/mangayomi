@@ -10,10 +10,10 @@ part of 'kitsu.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(Kitsu)
-const kitsuProvider = KitsuFamily._();
+final kitsuProvider = KitsuFamily._();
 
 final class KitsuProvider extends $NotifierProvider<Kitsu, void> {
-  const KitsuProvider._({
+  KitsuProvider._({
     required KitsuFamily super.from,
     required ({int syncId, ItemType? itemType, dynamic widgetRef})
     super.argument,
@@ -69,7 +69,7 @@ final class KitsuFamily extends $Family
           void,
           ({int syncId, ItemType? itemType, dynamic widgetRef})
         > {
-  const KitsuFamily._()
+  KitsuFamily._()
     : super(
         retry: null,
         name: r'kitsuProvider',
@@ -106,11 +106,6 @@ abstract class _$Kitsu extends $Notifier<void> {
   @$mustCallSuper
   @override
   void runBuild() {
-    build(
-      syncId: _$args.syncId,
-      itemType: _$args.itemType,
-      widgetRef: _$args.widgetRef,
-    );
     final ref = this.ref as $Ref<void, void>;
     final element =
         ref.element
@@ -120,6 +115,13 @@ abstract class _$Kitsu extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, null);
+    element.handleCreate(
+      ref,
+      () => build(
+        syncId: _$args.syncId,
+        itemType: _$args.itemType,
+        widgetRef: _$args.widgetRef,
+      ),
+    );
   }
 }

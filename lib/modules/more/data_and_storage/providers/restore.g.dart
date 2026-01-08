@@ -10,11 +10,11 @@ part of 'restore.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(doRestore)
-const doRestoreProvider = DoRestoreFamily._();
+final doRestoreProvider = DoRestoreFamily._();
 
 final class DoRestoreProvider extends $FunctionalProvider<void, void, void>
     with $Provider<void> {
-  const DoRestoreProvider._({
+  DoRestoreProvider._({
     required DoRestoreFamily super.from,
     required ({String path, BuildContext context}) super.argument,
   }) : super(
@@ -70,7 +70,7 @@ String _$doRestoreHash() => r'4e556ae822d1f48ef3519fd65393c178de14b73d';
 final class DoRestoreFamily extends $Family
     with
         $FunctionalFamilyOverride<void, ({String path, BuildContext context})> {
-  const DoRestoreFamily._()
+  DoRestoreFamily._()
     : super(
         retry: null,
         name: r'doRestoreProvider',
@@ -90,11 +90,11 @@ final class DoRestoreFamily extends $Family
 }
 
 @ProviderFor(restoreBackup)
-const restoreBackupProvider = RestoreBackupFamily._();
+final restoreBackupProvider = RestoreBackupFamily._();
 
 final class RestoreBackupProvider extends $FunctionalProvider<void, void, void>
     with $Provider<void> {
-  const RestoreBackupProvider._({
+  RestoreBackupProvider._({
     required RestoreBackupFamily super.from,
     required (Map<String, dynamic>, {bool full}) super.argument,
   }) : super(
@@ -149,7 +149,7 @@ String _$restoreBackupHash() => r'adc705e1e65dedcc919a525d7bd14f6451620c43';
 
 final class RestoreBackupFamily extends $Family
     with $FunctionalFamilyOverride<void, (Map<String, dynamic>, {bool full})> {
-  const RestoreBackupFamily._()
+  RestoreBackupFamily._()
     : super(
         retry: null,
         name: r'restoreBackupProvider',
@@ -166,12 +166,12 @@ final class RestoreBackupFamily extends $Family
 }
 
 @ProviderFor(restoreKotatsuBackup)
-const restoreKotatsuBackupProvider = RestoreKotatsuBackupFamily._();
+final restoreKotatsuBackupProvider = RestoreKotatsuBackupFamily._();
 
 final class RestoreKotatsuBackupProvider
     extends $FunctionalProvider<void, void, void>
     with $Provider<void> {
-  const RestoreKotatsuBackupProvider._({
+  RestoreKotatsuBackupProvider._({
     required RestoreKotatsuBackupFamily super.from,
     required Archive super.argument,
   }) : super(
@@ -227,7 +227,7 @@ String _$restoreKotatsuBackupHash() =>
 
 final class RestoreKotatsuBackupFamily extends $Family
     with $FunctionalFamilyOverride<void, Archive> {
-  const RestoreKotatsuBackupFamily._()
+  RestoreKotatsuBackupFamily._()
     : super(
         retry: null,
         name: r'restoreKotatsuBackupProvider',
@@ -244,12 +244,12 @@ final class RestoreKotatsuBackupFamily extends $Family
 }
 
 @ProviderFor(restoreTachiBkBackup)
-const restoreTachiBkBackupProvider = RestoreTachiBkBackupFamily._();
+final restoreTachiBkBackupProvider = RestoreTachiBkBackupFamily._();
 
 final class RestoreTachiBkBackupProvider
     extends $FunctionalProvider<void, void, void>
     with $Provider<void> {
-  const RestoreTachiBkBackupProvider._({
+  RestoreTachiBkBackupProvider._({
     required RestoreTachiBkBackupFamily super.from,
     required (String, BackupType) super.argument,
   }) : super(
@@ -305,7 +305,7 @@ String _$restoreTachiBkBackupHash() =>
 
 final class RestoreTachiBkBackupFamily extends $Family
     with $FunctionalFamilyOverride<void, (String, BackupType)> {
-  const RestoreTachiBkBackupFamily._()
+  RestoreTachiBkBackupFamily._()
     : super(
         retry: null,
         name: r'restoreTachiBkBackupProvider',

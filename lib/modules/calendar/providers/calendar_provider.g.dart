@@ -10,7 +10,7 @@ part of 'calendar_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(getCalendarStream)
-const getCalendarStreamProvider = GetCalendarStreamFamily._();
+final getCalendarStreamProvider = GetCalendarStreamFamily._();
 
 final class GetCalendarStreamProvider
     extends
@@ -20,7 +20,7 @@ final class GetCalendarStreamProvider
           Stream<List<Manga>>
         >
     with $FutureModifier<List<Manga>>, $StreamProvider<List<Manga>> {
-  const GetCalendarStreamProvider._({
+  GetCalendarStreamProvider._({
     required GetCalendarStreamFamily super.from,
     required ItemType? super.argument,
   }) : super(
@@ -68,7 +68,7 @@ String _$getCalendarStreamHash() => r'850d81742f8ac5ce88175732c0edf57a7a9295d4';
 
 final class GetCalendarStreamFamily extends $Family
     with $FunctionalFamilyOverride<Stream<List<Manga>>, ItemType?> {
-  const GetCalendarStreamFamily._()
+  GetCalendarStreamFamily._()
     : super(
         retry: null,
         name: r'getCalendarStreamProvider',

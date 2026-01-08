@@ -10,10 +10,10 @@ part of 'sync_server.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(SyncServer)
-const syncServerProvider = SyncServerFamily._();
+final syncServerProvider = SyncServerFamily._();
 
 final class SyncServerProvider extends $NotifierProvider<SyncServer, void> {
-  const SyncServerProvider._({
+  SyncServerProvider._({
     required SyncServerFamily super.from,
     required int super.argument,
   }) : super(
@@ -61,7 +61,7 @@ String _$syncServerHash() => r'088325d1503561d3ae74135e23308223f3c6bf43';
 
 final class SyncServerFamily extends $Family
     with $ClassFamilyOverride<SyncServer, void, void, void, int> {
-  const SyncServerFamily._()
+  SyncServerFamily._()
     : super(
         retry: null,
         name: r'syncServerProvider',
@@ -85,7 +85,6 @@ abstract class _$SyncServer extends $Notifier<void> {
   @$mustCallSuper
   @override
   void runBuild() {
-    build(syncId: _$args);
     final ref = this.ref as $Ref<void, void>;
     final element =
         ref.element
@@ -95,6 +94,6 @@ abstract class _$SyncServer extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, null);
+    element.handleCreate(ref, () => build(syncId: _$args));
   }
 }

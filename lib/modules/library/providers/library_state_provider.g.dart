@@ -10,11 +10,11 @@ part of 'library_state_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(LibraryDisplayTypeState)
-const libraryDisplayTypeStateProvider = LibraryDisplayTypeStateFamily._();
+final libraryDisplayTypeStateProvider = LibraryDisplayTypeStateFamily._();
 
 final class LibraryDisplayTypeStateProvider
     extends $NotifierProvider<LibraryDisplayTypeState, DisplayType> {
-  const LibraryDisplayTypeStateProvider._({
+  LibraryDisplayTypeStateProvider._({
     required LibraryDisplayTypeStateFamily super.from,
     required ({ItemType itemType, Settings settings}) super.argument,
   }) : super(
@@ -71,7 +71,7 @@ final class LibraryDisplayTypeStateFamily extends $Family
           DisplayType,
           ({ItemType itemType, Settings settings})
         > {
-  const LibraryDisplayTypeStateFamily._()
+  LibraryDisplayTypeStateFamily._()
     : super(
         retry: null,
         name: r'libraryDisplayTypeStateProvider',
@@ -101,7 +101,6 @@ abstract class _$LibraryDisplayTypeState extends $Notifier<DisplayType> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(itemType: _$args.itemType, settings: _$args.settings);
     final ref = this.ref as $Ref<DisplayType, DisplayType>;
     final element =
         ref.element
@@ -111,16 +110,19 @@ abstract class _$LibraryDisplayTypeState extends $Notifier<DisplayType> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(
+      ref,
+      () => build(itemType: _$args.itemType, settings: _$args.settings),
+    );
   }
 }
 
 @ProviderFor(LibraryGridSizeState)
-const libraryGridSizeStateProvider = LibraryGridSizeStateFamily._();
+final libraryGridSizeStateProvider = LibraryGridSizeStateFamily._();
 
 final class LibraryGridSizeStateProvider
     extends $NotifierProvider<LibraryGridSizeState, int?> {
-  const LibraryGridSizeStateProvider._({
+  LibraryGridSizeStateProvider._({
     required LibraryGridSizeStateFamily super.from,
     required ItemType super.argument,
   }) : super(
@@ -170,7 +172,7 @@ String _$libraryGridSizeStateHash() =>
 final class LibraryGridSizeStateFamily extends $Family
     with
         $ClassFamilyOverride<LibraryGridSizeState, int?, int?, int?, ItemType> {
-  const LibraryGridSizeStateFamily._()
+  LibraryGridSizeStateFamily._()
     : super(
         retry: null,
         name: r'libraryGridSizeStateProvider',
@@ -194,7 +196,6 @@ abstract class _$LibraryGridSizeState extends $Notifier<int?> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(itemType: _$args);
     final ref = this.ref as $Ref<int?, int?>;
     final element =
         ref.element
@@ -204,16 +205,16 @@ abstract class _$LibraryGridSizeState extends $Notifier<int?> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, () => build(itemType: _$args));
   }
 }
 
 @ProviderFor(MangaFilterDownloadedState)
-const mangaFilterDownloadedStateProvider = MangaFilterDownloadedStateFamily._();
+final mangaFilterDownloadedStateProvider = MangaFilterDownloadedStateFamily._();
 
 final class MangaFilterDownloadedStateProvider
     extends $NotifierProvider<MangaFilterDownloadedState, int> {
-  const MangaFilterDownloadedStateProvider._({
+  MangaFilterDownloadedStateProvider._({
     required MangaFilterDownloadedStateFamily super.from,
     required ({List<Manga> mangaList, ItemType itemType, Settings settings})
     super.argument,
@@ -271,7 +272,7 @@ final class MangaFilterDownloadedStateFamily extends $Family
           int,
           ({List<Manga> mangaList, ItemType itemType, Settings settings})
         > {
-  const MangaFilterDownloadedStateFamily._()
+  MangaFilterDownloadedStateFamily._()
     : super(
         retry: null,
         name: r'mangaFilterDownloadedStateProvider',
@@ -309,11 +310,6 @@ abstract class _$MangaFilterDownloadedState extends $Notifier<int> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(
-      mangaList: _$args.mangaList,
-      itemType: _$args.itemType,
-      settings: _$args.settings,
-    );
     final ref = this.ref as $Ref<int, int>;
     final element =
         ref.element
@@ -323,16 +319,23 @@ abstract class _$MangaFilterDownloadedState extends $Notifier<int> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(
+      ref,
+      () => build(
+        mangaList: _$args.mangaList,
+        itemType: _$args.itemType,
+        settings: _$args.settings,
+      ),
+    );
   }
 }
 
 @ProviderFor(MangaFilterUnreadState)
-const mangaFilterUnreadStateProvider = MangaFilterUnreadStateFamily._();
+final mangaFilterUnreadStateProvider = MangaFilterUnreadStateFamily._();
 
 final class MangaFilterUnreadStateProvider
     extends $NotifierProvider<MangaFilterUnreadState, int> {
-  const MangaFilterUnreadStateProvider._({
+  MangaFilterUnreadStateProvider._({
     required MangaFilterUnreadStateFamily super.from,
     required ({List<Manga> mangaList, ItemType itemType, Settings settings})
     super.argument,
@@ -390,7 +393,7 @@ final class MangaFilterUnreadStateFamily extends $Family
           int,
           ({List<Manga> mangaList, ItemType itemType, Settings settings})
         > {
-  const MangaFilterUnreadStateFamily._()
+  MangaFilterUnreadStateFamily._()
     : super(
         retry: null,
         name: r'mangaFilterUnreadStateProvider',
@@ -428,11 +431,6 @@ abstract class _$MangaFilterUnreadState extends $Notifier<int> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(
-      mangaList: _$args.mangaList,
-      itemType: _$args.itemType,
-      settings: _$args.settings,
-    );
     final ref = this.ref as $Ref<int, int>;
     final element =
         ref.element
@@ -442,16 +440,23 @@ abstract class _$MangaFilterUnreadState extends $Notifier<int> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(
+      ref,
+      () => build(
+        mangaList: _$args.mangaList,
+        itemType: _$args.itemType,
+        settings: _$args.settings,
+      ),
+    );
   }
 }
 
 @ProviderFor(MangaFilterStartedState)
-const mangaFilterStartedStateProvider = MangaFilterStartedStateFamily._();
+final mangaFilterStartedStateProvider = MangaFilterStartedStateFamily._();
 
 final class MangaFilterStartedStateProvider
     extends $NotifierProvider<MangaFilterStartedState, int> {
-  const MangaFilterStartedStateProvider._({
+  MangaFilterStartedStateProvider._({
     required MangaFilterStartedStateFamily super.from,
     required ({List<Manga> mangaList, ItemType itemType, Settings settings})
     super.argument,
@@ -509,7 +514,7 @@ final class MangaFilterStartedStateFamily extends $Family
           int,
           ({List<Manga> mangaList, ItemType itemType, Settings settings})
         > {
-  const MangaFilterStartedStateFamily._()
+  MangaFilterStartedStateFamily._()
     : super(
         retry: null,
         name: r'mangaFilterStartedStateProvider',
@@ -547,11 +552,6 @@ abstract class _$MangaFilterStartedState extends $Notifier<int> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(
-      mangaList: _$args.mangaList,
-      itemType: _$args.itemType,
-      settings: _$args.settings,
-    );
     final ref = this.ref as $Ref<int, int>;
     final element =
         ref.element
@@ -561,16 +561,23 @@ abstract class _$MangaFilterStartedState extends $Notifier<int> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(
+      ref,
+      () => build(
+        mangaList: _$args.mangaList,
+        itemType: _$args.itemType,
+        settings: _$args.settings,
+      ),
+    );
   }
 }
 
 @ProviderFor(MangaFilterBookmarkedState)
-const mangaFilterBookmarkedStateProvider = MangaFilterBookmarkedStateFamily._();
+final mangaFilterBookmarkedStateProvider = MangaFilterBookmarkedStateFamily._();
 
 final class MangaFilterBookmarkedStateProvider
     extends $NotifierProvider<MangaFilterBookmarkedState, int> {
-  const MangaFilterBookmarkedStateProvider._({
+  MangaFilterBookmarkedStateProvider._({
     required MangaFilterBookmarkedStateFamily super.from,
     required ({List<Manga> mangaList, ItemType itemType, Settings settings})
     super.argument,
@@ -628,7 +635,7 @@ final class MangaFilterBookmarkedStateFamily extends $Family
           int,
           ({List<Manga> mangaList, ItemType itemType, Settings settings})
         > {
-  const MangaFilterBookmarkedStateFamily._()
+  MangaFilterBookmarkedStateFamily._()
     : super(
         retry: null,
         name: r'mangaFilterBookmarkedStateProvider',
@@ -666,11 +673,6 @@ abstract class _$MangaFilterBookmarkedState extends $Notifier<int> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(
-      mangaList: _$args.mangaList,
-      itemType: _$args.itemType,
-      settings: _$args.settings,
-    );
     final ref = this.ref as $Ref<int, int>;
     final element =
         ref.element
@@ -680,16 +682,23 @@ abstract class _$MangaFilterBookmarkedState extends $Notifier<int> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(
+      ref,
+      () => build(
+        mangaList: _$args.mangaList,
+        itemType: _$args.itemType,
+        settings: _$args.settings,
+      ),
+    );
   }
 }
 
 @ProviderFor(MangasFilterResultState)
-const mangasFilterResultStateProvider = MangasFilterResultStateFamily._();
+final mangasFilterResultStateProvider = MangasFilterResultStateFamily._();
 
 final class MangasFilterResultStateProvider
     extends $NotifierProvider<MangasFilterResultState, bool> {
-  const MangasFilterResultStateProvider._({
+  MangasFilterResultStateProvider._({
     required MangasFilterResultStateFamily super.from,
     required ({List<Manga> mangaList, ItemType itemType, Settings settings})
     super.argument,
@@ -747,7 +756,7 @@ final class MangasFilterResultStateFamily extends $Family
           bool,
           ({List<Manga> mangaList, ItemType itemType, Settings settings})
         > {
-  const MangasFilterResultStateFamily._()
+  MangasFilterResultStateFamily._()
     : super(
         retry: null,
         name: r'mangasFilterResultStateProvider',
@@ -785,11 +794,6 @@ abstract class _$MangasFilterResultState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(
-      mangaList: _$args.mangaList,
-      itemType: _$args.itemType,
-      settings: _$args.settings,
-    );
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -799,17 +803,24 @@ abstract class _$MangasFilterResultState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(
+      ref,
+      () => build(
+        mangaList: _$args.mangaList,
+        itemType: _$args.itemType,
+        settings: _$args.settings,
+      ),
+    );
   }
 }
 
 @ProviderFor(LibraryShowCategoryTabsState)
-const libraryShowCategoryTabsStateProvider =
+final libraryShowCategoryTabsStateProvider =
     LibraryShowCategoryTabsStateFamily._();
 
 final class LibraryShowCategoryTabsStateProvider
     extends $NotifierProvider<LibraryShowCategoryTabsState, bool> {
-  const LibraryShowCategoryTabsStateProvider._({
+  LibraryShowCategoryTabsStateProvider._({
     required LibraryShowCategoryTabsStateFamily super.from,
     required ({ItemType itemType, Settings settings}) super.argument,
   }) : super(
@@ -866,7 +877,7 @@ final class LibraryShowCategoryTabsStateFamily extends $Family
           bool,
           ({ItemType itemType, Settings settings})
         > {
-  const LibraryShowCategoryTabsStateFamily._()
+  LibraryShowCategoryTabsStateFamily._()
     : super(
         retry: null,
         name: r'libraryShowCategoryTabsStateProvider',
@@ -896,7 +907,6 @@ abstract class _$LibraryShowCategoryTabsState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(itemType: _$args.itemType, settings: _$args.settings);
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -906,17 +916,20 @@ abstract class _$LibraryShowCategoryTabsState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(
+      ref,
+      () => build(itemType: _$args.itemType, settings: _$args.settings),
+    );
   }
 }
 
 @ProviderFor(LibraryDownloadedChaptersState)
-const libraryDownloadedChaptersStateProvider =
+final libraryDownloadedChaptersStateProvider =
     LibraryDownloadedChaptersStateFamily._();
 
 final class LibraryDownloadedChaptersStateProvider
     extends $NotifierProvider<LibraryDownloadedChaptersState, bool> {
-  const LibraryDownloadedChaptersStateProvider._({
+  LibraryDownloadedChaptersStateProvider._({
     required LibraryDownloadedChaptersStateFamily super.from,
     required ({ItemType itemType, Settings settings}) super.argument,
   }) : super(
@@ -973,7 +986,7 @@ final class LibraryDownloadedChaptersStateFamily extends $Family
           bool,
           ({ItemType itemType, Settings settings})
         > {
-  const LibraryDownloadedChaptersStateFamily._()
+  LibraryDownloadedChaptersStateFamily._()
     : super(
         retry: null,
         name: r'libraryDownloadedChaptersStateProvider',
@@ -1003,7 +1016,6 @@ abstract class _$LibraryDownloadedChaptersState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(itemType: _$args.itemType, settings: _$args.settings);
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -1013,16 +1025,19 @@ abstract class _$LibraryDownloadedChaptersState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(
+      ref,
+      () => build(itemType: _$args.itemType, settings: _$args.settings),
+    );
   }
 }
 
 @ProviderFor(LibraryLanguageState)
-const libraryLanguageStateProvider = LibraryLanguageStateFamily._();
+final libraryLanguageStateProvider = LibraryLanguageStateFamily._();
 
 final class LibraryLanguageStateProvider
     extends $NotifierProvider<LibraryLanguageState, bool> {
-  const LibraryLanguageStateProvider._({
+  LibraryLanguageStateProvider._({
     required LibraryLanguageStateFamily super.from,
     required ({ItemType itemType, Settings settings}) super.argument,
   }) : super(
@@ -1078,7 +1093,7 @@ final class LibraryLanguageStateFamily extends $Family
           bool,
           ({ItemType itemType, Settings settings})
         > {
-  const LibraryLanguageStateFamily._()
+  LibraryLanguageStateFamily._()
     : super(
         retry: null,
         name: r'libraryLanguageStateProvider',
@@ -1108,7 +1123,6 @@ abstract class _$LibraryLanguageState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(itemType: _$args.itemType, settings: _$args.settings);
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -1118,16 +1132,19 @@ abstract class _$LibraryLanguageState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(
+      ref,
+      () => build(itemType: _$args.itemType, settings: _$args.settings),
+    );
   }
 }
 
 @ProviderFor(LibraryLocalSourceState)
-const libraryLocalSourceStateProvider = LibraryLocalSourceStateFamily._();
+final libraryLocalSourceStateProvider = LibraryLocalSourceStateFamily._();
 
 final class LibraryLocalSourceStateProvider
     extends $NotifierProvider<LibraryLocalSourceState, bool> {
-  const LibraryLocalSourceStateProvider._({
+  LibraryLocalSourceStateProvider._({
     required LibraryLocalSourceStateFamily super.from,
     required ({ItemType itemType, Settings settings}) super.argument,
   }) : super(
@@ -1184,7 +1201,7 @@ final class LibraryLocalSourceStateFamily extends $Family
           bool,
           ({ItemType itemType, Settings settings})
         > {
-  const LibraryLocalSourceStateFamily._()
+  LibraryLocalSourceStateFamily._()
     : super(
         retry: null,
         name: r'libraryLocalSourceStateProvider',
@@ -1214,7 +1231,6 @@ abstract class _$LibraryLocalSourceState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(itemType: _$args.itemType, settings: _$args.settings);
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -1224,17 +1240,20 @@ abstract class _$LibraryLocalSourceState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(
+      ref,
+      () => build(itemType: _$args.itemType, settings: _$args.settings),
+    );
   }
 }
 
 @ProviderFor(LibraryShowNumbersOfItemsState)
-const libraryShowNumbersOfItemsStateProvider =
+final libraryShowNumbersOfItemsStateProvider =
     LibraryShowNumbersOfItemsStateFamily._();
 
 final class LibraryShowNumbersOfItemsStateProvider
     extends $NotifierProvider<LibraryShowNumbersOfItemsState, bool> {
-  const LibraryShowNumbersOfItemsStateProvider._({
+  LibraryShowNumbersOfItemsStateProvider._({
     required LibraryShowNumbersOfItemsStateFamily super.from,
     required ({ItemType itemType, Settings settings}) super.argument,
   }) : super(
@@ -1291,7 +1310,7 @@ final class LibraryShowNumbersOfItemsStateFamily extends $Family
           bool,
           ({ItemType itemType, Settings settings})
         > {
-  const LibraryShowNumbersOfItemsStateFamily._()
+  LibraryShowNumbersOfItemsStateFamily._()
     : super(
         retry: null,
         name: r'libraryShowNumbersOfItemsStateProvider',
@@ -1321,7 +1340,6 @@ abstract class _$LibraryShowNumbersOfItemsState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(itemType: _$args.itemType, settings: _$args.settings);
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -1331,17 +1349,20 @@ abstract class _$LibraryShowNumbersOfItemsState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(
+      ref,
+      () => build(itemType: _$args.itemType, settings: _$args.settings),
+    );
   }
 }
 
 @ProviderFor(LibraryShowContinueReadingButtonState)
-const libraryShowContinueReadingButtonStateProvider =
+final libraryShowContinueReadingButtonStateProvider =
     LibraryShowContinueReadingButtonStateFamily._();
 
 final class LibraryShowContinueReadingButtonStateProvider
     extends $NotifierProvider<LibraryShowContinueReadingButtonState, bool> {
-  const LibraryShowContinueReadingButtonStateProvider._({
+  LibraryShowContinueReadingButtonStateProvider._({
     required LibraryShowContinueReadingButtonStateFamily super.from,
     required ({ItemType itemType, Settings settings}) super.argument,
   }) : super(
@@ -1400,7 +1421,7 @@ final class LibraryShowContinueReadingButtonStateFamily extends $Family
           bool,
           ({ItemType itemType, Settings settings})
         > {
-  const LibraryShowContinueReadingButtonStateFamily._()
+  LibraryShowContinueReadingButtonStateFamily._()
     : super(
         retry: null,
         name: r'libraryShowContinueReadingButtonStateProvider',
@@ -1430,7 +1451,6 @@ abstract class _$LibraryShowContinueReadingButtonState extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(itemType: _$args.itemType, settings: _$args.settings);
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -1440,16 +1460,19 @@ abstract class _$LibraryShowContinueReadingButtonState extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(
+      ref,
+      () => build(itemType: _$args.itemType, settings: _$args.settings),
+    );
   }
 }
 
 @ProviderFor(SortLibraryMangaState)
-const sortLibraryMangaStateProvider = SortLibraryMangaStateFamily._();
+final sortLibraryMangaStateProvider = SortLibraryMangaStateFamily._();
 
 final class SortLibraryMangaStateProvider
     extends $NotifierProvider<SortLibraryMangaState, SortLibraryManga> {
-  const SortLibraryMangaStateProvider._({
+  SortLibraryMangaStateProvider._({
     required SortLibraryMangaStateFamily super.from,
     required ({ItemType itemType, Settings settings}) super.argument,
   }) : super(
@@ -1505,7 +1528,7 @@ final class SortLibraryMangaStateFamily extends $Family
           SortLibraryManga,
           ({ItemType itemType, Settings settings})
         > {
-  const SortLibraryMangaStateFamily._()
+  SortLibraryMangaStateFamily._()
     : super(
         retry: null,
         name: r'sortLibraryMangaStateProvider',
@@ -1538,7 +1561,6 @@ abstract class _$SortLibraryMangaState extends $Notifier<SortLibraryManga> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build(itemType: _$args.itemType, settings: _$args.settings);
     final ref = this.ref as $Ref<SortLibraryManga, SortLibraryManga>;
     final element =
         ref.element
@@ -1548,16 +1570,19 @@ abstract class _$SortLibraryMangaState extends $Notifier<SortLibraryManga> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(
+      ref,
+      () => build(itemType: _$args.itemType, settings: _$args.settings),
+    );
   }
 }
 
 @ProviderFor(MangasListState)
-const mangasListStateProvider = MangasListStateProvider._();
+final mangasListStateProvider = MangasListStateProvider._();
 
 final class MangasListStateProvider
     extends $NotifierProvider<MangasListState, List<int>> {
-  const MangasListStateProvider._()
+  MangasListStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -1591,7 +1616,6 @@ abstract class _$MangasListState extends $Notifier<List<int>> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<List<int>, List<int>>;
     final element =
         ref.element
@@ -1601,16 +1625,16 @@ abstract class _$MangasListState extends $Notifier<List<int>> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(MangasSetIsReadState)
-const mangasSetIsReadStateProvider = MangasSetIsReadStateFamily._();
+final mangasSetIsReadStateProvider = MangasSetIsReadStateFamily._();
 
 final class MangasSetIsReadStateProvider
     extends $NotifierProvider<MangasSetIsReadState, void> {
-  const MangasSetIsReadStateProvider._({
+  MangasSetIsReadStateProvider._({
     required MangasSetIsReadStateFamily super.from,
     required ({List<int> mangaIds, bool markAsRead}) super.argument,
   }) : super(
@@ -1666,7 +1690,7 @@ final class MangasSetIsReadStateFamily extends $Family
           void,
           ({List<int> mangaIds, bool markAsRead})
         > {
-  const MangasSetIsReadStateFamily._()
+  MangasSetIsReadStateFamily._()
     : super(
         retry: null,
         name: r'mangasSetIsReadStateProvider',
@@ -1696,7 +1720,6 @@ abstract class _$MangasSetIsReadState extends $Notifier<void> {
   @$mustCallSuper
   @override
   void runBuild() {
-    build(mangaIds: _$args.mangaIds, markAsRead: _$args.markAsRead);
     final ref = this.ref as $Ref<void, void>;
     final element =
         ref.element
@@ -1706,6 +1729,9 @@ abstract class _$MangasSetIsReadState extends $Notifier<void> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, null);
+    element.handleCreate(
+      ref,
+      () => build(mangaIds: _$args.mangaIds, markAsRead: _$args.markAsRead),
+    );
   }
 }
