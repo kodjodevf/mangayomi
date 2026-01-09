@@ -14,15 +14,15 @@
       "bundleIdentifier": "com.kodjodevf.mangayomi",
       "developerName": "Moustapha Kodjo Amadou",
       "subtitle": "Read manga, novels, and watch anime",
-      "version": "0.6.90",
-      "versionDate": "2025-12-23T18:21:22Z",
+      "version": "0.7.0",
+      "versionDate": "2026-01-09T10:56:42Z",
       "versionDescription": "",
-      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.90/Mangayomi-v0.6.90-ios.ipa",
+      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.7.0/Mangayomi-v0.7.0-ios.ipa",
       "localizedDescription": "Mangayomi is an open-source Flutter app for reading manga, novels, and watching anime across multiple platforms.",
       "iconURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/icons/icon_default.webp",
       "tintColor": "EF4444",
       "category": "entertainment",
-      "size": 45074046,
+      "size": 45269466,
       "screenshotURLs": [
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_0_default.webp",
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_1_default.webp",
@@ -30,9 +30,23 @@
       ],
       "versions": [
         {
+          "version": "0.7.0",
+          "date": "2026-01-09T10:56:42Z",
+          "localizedDescription": "",
+          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.7.0/Mangayomi-v0.7.0-ios.ipa",
+          "size": 45269466
+        },
+        {
+          "version": "0.6.95",
+          "date": "2026-01-08T13:43:16Z",
+          "localizedDescription": "What's Changed\r\n* Fix \"Show extensions\" Button AND Fix category rearrange bug AND hide ItemType from calendar by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/636\r\n* Add a force landscape mode on mobile by @686udjie in https://github.com/kodjodevf/mangayomi/pull/638\r\n* Fix 637: Importing .epub doesn\u2019t work\r\n* Enhance category management with animation\r\n* Refactor download management with shared isolate pool and optimize concurrent downloads\r\n\r\nNew Contributors\r\n* @686udjie made their first contribution in https://github.com/kodjodevf/mangayomi/pull/638\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.6.90...v0.6.95",
+          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.95/Mangayomi-v0.6.95-ios.ipa",
+          "size": 45267048
+        },
+        {
           "version": "0.6.90",
           "date": "2025-12-23T18:21:22Z",
-          "localizedDescription": "",
+          "localizedDescription": "What's Changed\r\n* Add log switch to about\u2022menu by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/629\r\n* Path optimizations by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/632\r\n* fix: show chanded source preference for mihon source\r\n* Chapter jump fix in vertical continuous mode\r\n* some fixes\r\n\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.6.85...v0.6.90",
           "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.6.90/Mangayomi-v0.6.90-ios.ipa",
           "size": 45074046
         },
@@ -333,6 +347,17 @@
       "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
       "notify": true,
       "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.6.90"
+    },
+    {
+      "appID": "com.kodjodevf.mangayomi",
+      "title": "0.7.0 - 09 Jan",
+      "identifier": "release-0.7.0",
+      "caption": "Update for Mangayomi now available!",
+      "date": "2026-01-09T10:56:42Z",
+      "tintColor": "EF4444",
+      "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
+      "notify": true,
+      "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.7.0"
     }
   ]
 }
