@@ -43,7 +43,8 @@ class MDownloader {
   }
 
   /// Initialize the Isolate pool (call once at app startup)
-  static Future<void> initializeIsolatePool({int poolSize = 3}) async {
+  /// poolSize = 6 workers allows 6 chapters to download in parallel
+  static Future<void> initializeIsolatePool({int poolSize = 6}) async {
     DownloadIsolatePool.configure(poolSize: poolSize);
     await DownloadIsolatePool.instance.initialize();
   }

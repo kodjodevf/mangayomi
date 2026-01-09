@@ -24,9 +24,9 @@ class DownloadIsolatePool {
   static DownloadIsolatePool? _instance;
   final List<_PoolWorker> _workers = [];
   final Queue<_DownloadTask> _taskQueue = Queue();
+  final Set<int> _availableWorkers = {}; // Track available workers by index
   final int poolSize;
   bool _initialized = false;
-  int _activeWorkers = 0;
 
   DownloadIsolatePool._({this.poolSize = 3});
 
@@ -58,6 +58,7 @@ class DownloadIsolatePool {
     for (int i = 0; i < poolSize; i++) {
       final worker = await _PoolWorker.create(i);
       _workers.add(worker);
+      _availableWorkers.add(i); // All workers start as available
     }
 
     _initialized = true;
@@ -187,13 +188,25 @@ class DownloadIsolatePool {
 
   /// Process the task queue
   void _processQueue() {
-    while (_taskQueue.isNotEmpty && _activeWorkers < _workers.length) {
+    while (_taskQueue.isNotEmpty && _availableWorkers.isNotEmpty) {
       final task = _taskQueue.removeFirst();
-      final worker = _workers[_activeWorkers];
-      _activeWorkers++;
+      final workerIndex = _availableWorkers.first;
+      _availableWorkers.remove(workerIndex);
+      final worker = _workers[workerIndex];
+
+      if (kDebugMode) {
+        print(
+          '[DownloadPool] Worker $workerIndex starting task ${task.taskId}',
+        );
+      }
 
       worker.executeTask(task).then((_) {
-        _activeWorkers--;
+        _availableWorkers.add(workerIndex); // Worker is free again
+        if (kDebugMode) {
+          print(
+            '[DownloadPool] Worker $workerIndex finished task ${task.taskId}, available workers: ${_availableWorkers.length}',
+          );
+        }
         _processQueue(); // Process the next task
       });
     }
@@ -203,7 +216,7 @@ class DownloadIsolatePool {
   int get pendingTasks => _taskQueue.length;
 
   /// Number of active workers
-  int get activeWorkers => _activeWorkers;
+  int get activeWorkers => poolSize - _availableWorkers.length;
 
   /// Close the pool
   void dispose() {
@@ -212,9 +225,9 @@ class DownloadIsolatePool {
     }
     _workers.clear();
     _taskQueue.clear();
+    _availableWorkers.clear();
     downloadTaskCancellation.clear();
     _initialized = false;
-    _activeWorkers = 0;
   }
 }
 

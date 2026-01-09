@@ -84,9 +84,7 @@ void main(List<String> args) async {
 
 Future<void> _postLaunchInit(StorageProvider storage) async {
   await AppLogger.init();
-  // Initialiser le pool d'Isolates partagé (3 workers)
-  // Optimise la mémoire pour 50+ téléchargements simultanés
-  unawaited(MDownloader.initializeIsolatePool(poolSize: 3));
+  unawaited(MDownloader.initializeIsolatePool(poolSize: 6));
   final hivePath = (Platform.isIOS || Platform.isMacOS)
       ? "databases"
       : p.join("Mangayomi", "databases");
