@@ -22,11 +22,12 @@ class MihonExtensionService implements ExtensionService {
   late String androidProxyServer;
   @override
   late Source source;
-  late InterceptedClient client;
+  late final InterceptedClient client = MClient.init();
 
-  MihonExtensionService(this.source, this.androidProxyServer) {
-    client = MClient.init();
-  }
+  MihonExtensionService(this.source, this.androidProxyServer);
+
+  @override
+  void dispose() {}
 
   @override
   Map<String, String> getHeaders() {

@@ -57,19 +57,19 @@ Future<(String, EpubBook?)> getHtmlContent(
         chapter.manga.value!.source!,
         chapter.manga.value!.sourceId,
       );
-      String? html;
       final proxyServer = ref.read(androidProxyServerStateProvider);
-      if (htmlContent != null) {
-        html = await getExtensionService(
-          source!,
-          proxyServer,
-        ).cleanHtmlContent(htmlContent);
-      } else {
-        html = await getExtensionService(
-          source!,
-          proxyServer,
-        ).getHtmlContent(chapter.manga.value!.name!, chapter.url!);
-      }
+      final html = await withExtensionService(source!, proxyServer, (
+        service,
+      ) async {
+        if (htmlContent != null) {
+          return await service.cleanHtmlContent(htmlContent);
+        } else {
+          return await service.getHtmlContent(
+            chapter.manga.value!.name!,
+            chapter.url!,
+          );
+        }
+      });
       result = (_buildHtml(html.substring(1, html.length - 1)), null);
     }
 

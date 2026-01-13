@@ -25,10 +25,12 @@ Map<String, String> headers(
     if (fromSource != null && fromSource.isNotEmpty) {
       headers.addAll((jsonDecode(fromSource) as Map).toMapStringString!);
     }
-
-    headers.addAll(
-      getExtensionService(mSource, androidProxyServer).getHeaders(),
-    );
+    final service = getExtensionService(mSource, androidProxyServer);
+    try {
+      headers.addAll(service.getHeaders());
+    } finally {
+      service.dispose();
+    }
     headers.addAll(MClient.getCookiesPref(mSource.baseUrl!));
   }
 

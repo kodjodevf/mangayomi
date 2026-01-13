@@ -191,10 +191,15 @@ Future<void> _updateSource(
       androidProxyServer,
     );
   } else {
-    headers = getExtensionService(
+    final service = getExtensionService(
       source..sourceCode = sourceCode,
       androidProxyServer,
-    ).getHeaders();
+    );
+    try {
+      headers = service.getHeaders();
+    } finally {
+      service.dispose();
+    }
   }
 
   final updatedSource = Source()

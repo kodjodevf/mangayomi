@@ -21,6 +21,7 @@ class JsExtensionService implements ExtensionService {
   @override
   late Source source;
   bool _isInitialized = false;
+  late JsDomSelector _jsDomSelector;
 
   JsExtensionService(this.source);
 
@@ -28,9 +29,9 @@ class JsExtensionService implements ExtensionService {
     if (_isInitialized) return;
     runtime = getJavascriptRuntime();
     JsHttpClient(runtime).init();
-    JsDomSelector(runtime).init();
-    JsVideosExtractors(runtime).init();
+    _jsDomSelector = JsDomSelector(runtime)..init();
     JsUtils(runtime).init();
+    JsVideosExtractors(runtime).init();
     JsPreferences(runtime, source).init();
 
     runtime.evaluate('''
@@ -83,6 +84,13 @@ async function jsonStringify(fn) {
 var extention = new DefaultExtension();
 ''');
     _isInitialized = true;
+  }
+
+  @override
+  void dispose() {
+    if (!_isInitialized) return;
+    _jsDomSelector.dispose();
+    _isInitialized = false;
   }
 
   @override
