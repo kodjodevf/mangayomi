@@ -563,5 +563,7 @@
   "select_label_color": "Select {label} Color",
   "default_user_agent": "Defaul user agent",
   "forceLandscapeMode": "Force landscape mode",
-  "forceLandscapeModeSubtitle": "Force the player to use landscape orientation."
+  "forceLandscapeModeSubtitle": "Force the player to use landscape orientation.",
+  "dns_over_https": "DNS-over-HTTPS (DoH)",
+  "dns_provider": "DNS Provider"
 }

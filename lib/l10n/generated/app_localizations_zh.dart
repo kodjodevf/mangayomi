@@ -1745,4 +1745,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get forceLandscapeModeSubtitle => '强制播放器使用横屏方向。';
+
+  @override
+  String get dns_over_https => 'DNS-over-HTTPS (DoH)';
+
+  @override
+  String get dns_provider => 'DNS Provider';
 }

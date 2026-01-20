@@ -14,6 +14,8 @@ import 'package:http/io_client.dart';
 import 'package:mangayomi/services/http/rhttp/src/model/settings.dart';
 import 'package:mangayomi/utils/log/log.dart';
 import 'package:mangayomi/services/http/rhttp/rhttp.dart' as rhttp;
+import 'package:mangayomi/services/http/doh/doh_resolver.dart';
+import 'package:mangayomi/services/http/doh/doh_providers.dart';
 
 class MClient {
   MClient();
@@ -56,18 +58,31 @@ class MClient {
     rhttp.ClientSettings? settings,
     bool showCloudFlareError = true,
   }) {
-    final clientSettings = customDns == null || customDns!.trim().isEmpty
-        ? settings
-        : settings?.copyWith(
-                dnsSettings: DnsSettings.dynamic(
-                  resolver: (host) async => [customDns!],
-                ),
-              ) ??
-              ClientSettings(
-                dnsSettings: DnsSettings.dynamic(
-                  resolver: (host) async => [customDns!],
-                ),
-              );
+    final appSettings = isar.settings.getSync(227);
+    final useDoH = appSettings?.doHEnabled ?? false;
+    final doHProviderId = appSettings?.doHProviderId;
+
+    DnsSettings? dnsSettings;
+
+    if (useDoH && doHProviderId != null) {
+      // Use DoH resolver with specific provider
+      final provider = DoHProviders.byId[doHProviderId];
+      if (provider != null) {
+        dnsSettings = DnsSettings.dynamic(
+          resolver: (host) => DoHResolver.resolve(host, provider: provider),
+        );
+      }
+    } else if (customDns != null && customDns!.trim().isNotEmpty) {
+      // Fallback to custom static DNS
+      dnsSettings = DnsSettings.dynamic(resolver: (host) async => [customDns!]);
+    }
+
+    // Apply DNS settings if configured
+    final clientSettings = dnsSettings != null
+        ? settings?.copyWith(dnsSettings: dnsSettings) ??
+              ClientSettings(dnsSettings: dnsSettings)
+        : settings;
+
     return InterceptedClient.build(
       client: httpClient(settings: clientSettings, reqcopyWith: reqcopyWith),
       retryPolicy: ResolveCloudFlareChallenge(showCloudFlareError),

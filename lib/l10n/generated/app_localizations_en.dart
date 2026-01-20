@@ -1788,4 +1788,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get forceLandscapeModeSubtitle =>
       'Force the player to use landscape orientation.';
+
+  @override
+  String get dns_over_https => 'DNS-over-HTTPS (DoH)';
+
+  @override
+  String get dns_provider => 'DNS Provider';
 }

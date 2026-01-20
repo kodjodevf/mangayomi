@@ -175,6 +175,10 @@ class Settings {
 
   String? customDns;
 
+  bool? doHEnabled;
+
+  int? doHProviderId;
+
   String? btServerAddress;
 
   int? btServerPort;
@@ -383,6 +387,8 @@ class Settings {
     this.enableAutoSkip,
     this.aniSkipTimeoutLength,
     this.customDns = "",
+    this.doHEnabled = false,
+    this.doHProviderId = 0,
     this.btServerAddress = "127.0.0.1",
     this.btServerPort,
     this.fullScreenReader = true,
@@ -590,6 +596,8 @@ class Settings {
     enableAutoSkip = json['enableAutoSkip'];
     aniSkipTimeoutLength = json['aniSkipTimeoutLength'];
     customDns = json['customDns'];
+    doHEnabled = json['doHEnabled'];
+    doHProviderId = json['doHProviderId'];
     btServerAddress = json['btServerAddress'];
     btServerPort = json['btServerPort'];
     customColorFilter = json['customColorFilter'] != null
@@ -797,6 +805,8 @@ class Settings {
     'enableAutoSkip': enableAutoSkip,
     'aniSkipTimeoutLength': aniSkipTimeoutLength,
     'customDns': customDns,
+    'doHEnabled': doHEnabled,
+    'doHProviderId': doHProviderId,
     'btServerAddress': btServerAddress,
     'btServerPort': btServerPort,
     'fullScreenReader': fullScreenReader,

@@ -6,7 +6,9 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/providers/algorithm_weights_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/general/providers/general_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/modules/more/settings/general/providers/doh_provider_notifier.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class GeneralScreen extends ConsumerStatefulWidget {
   const GeneralScreen({super.key});
@@ -45,11 +47,91 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
     );
     final rpcShowTitleState = ref.watch(rpcShowTitleStateProvider);
     final rpcShowCoverImage = ref.watch(rpcShowCoverImageStateProvider);
+    final doHState = ref.watch(doHProviderStateProvider);
+    final availableProviders = ref.watch(availableDoHProvidersProvider);
     return Scaffold(
       appBar: AppBar(title: Text(l10n!.general)),
       body: SingleChildScrollView(
         child: Column(
           children: [
+            ExpansionTile(
+              title: Text(l10n.dns_over_https),
+              initiallyExpanded: doHState.enabled,
+              trailing: IgnorePointer(
+                child: Switch(value: doHState.enabled, onChanged: (_) {}),
+              ),
+              onExpansionChanged: (value) => ref
+                  .read(doHProviderStateProvider.notifier)
+                  .setDoHEnabled(value),
+              children: [
+                ListTile(
+                  title: Text(l10n.dns_provider),
+                  subtitle: Text(
+                    availableProviders[doHState.providerId ?? 1].name,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: context.secondaryColor,
+                    ),
+                  ),
+                  onTap: () {
+                    final providerId = doHState.providerId ?? 1;
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text(l10n.dns_provider),
+                          content: SizedBox(
+                            width: context.width(0.8),
+                            child: RadioGroup(
+                              groupValue: providerId,
+                              onChanged: (value) {
+                                ref
+                                    .read(doHProviderStateProvider.notifier)
+                                    .setDoHProvider(value!);
+                                if (context.mounted) {
+                                  Navigator.pop(context);
+                                }
+                              },
+                              child: SuperListView.builder(
+                                shrinkWrap: true,
+                                itemCount: availableProviders.length,
+                                itemBuilder: (context, index) {
+                                  final provider = availableProviders[index];
+                                  return RadioListTile(
+                                    dense: true,
+                                    contentPadding: const EdgeInsets.all(0),
+                                    value: provider.id,
+                                    title: Text(provider.name),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                          actions: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                TextButton(
+                                  onPressed: () async {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                    l10n.cancel,
+                                    style: TextStyle(
+                                      color: context.primaryColor,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
             ListTile(
               onTap: () => _showCustomDnsDialog(context, ref, customDns),
               title: Text(l10n.custom_dns),

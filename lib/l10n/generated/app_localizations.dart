@@ -3454,6 +3454,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Force the player to use landscape orientation.'**
   String get forceLandscapeModeSubtitle;
+
+  /// No description provided for @dns_over_https.
+  ///
+  /// In en, this message translates to:
+  /// **'DNS-over-HTTPS (DoH)'**
+  String get dns_over_https;
+
+  /// No description provided for @dns_provider.
+  ///
+  /// In en, this message translates to:
+  /// **'DNS Provider'**
+  String get dns_provider;
 }
 
 class _AppLocalizationsDelegate
