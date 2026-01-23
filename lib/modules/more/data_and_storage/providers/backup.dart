@@ -30,170 +30,194 @@ Future<void> doBackUp(
   required String path,
   required BuildContext? context,
 }) async {
-  Map<String, dynamic> datas = {};
-  datas.addAll({"version": "2"});
-  if (list.contains(0)) {
-    final res = isar.mangas
-        .filter()
-        .idIsNotNull()
-        .favoriteEqualTo(true)
-        .isLocalArchiveEqualTo(false)
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
-    datas.addAll({"manga": res});
-  }
-  if (list.contains(1)) {
-    final res = isar.categorys
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
-    datas.addAll({"categories": res});
-  }
-  if (list.contains(2)) {
-    final res = isar.chapters
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
-    datas.addAll({"chapters": res});
-    final res_ = isar.downloads
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
-    datas.addAll({"downloads": res_});
-  }
-  if (list.contains(3)) {
-    final res = isar.tracks
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
-    datas.addAll({"tracks": res});
-  }
-  if (list.contains(4)) {
-    final res = isar.historys
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
-    datas.addAll({"history": res});
-  }
-  if (list.contains(5)) {
-    final res = isar.updates
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
-    datas.addAll({"updates": res});
-  }
-  if (list.contains(6)) {
-    final res = isar.settings
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
-    datas.addAll({"settings": res});
-  }
-  if (list.contains(7)) {
-    final res = isar.sourcePreferences
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
-    datas.addAll({"extensions_preferences": res});
-  }
-  if (list.contains(8)) {
-    final res_ = isar.trackPreferences
-        .filter()
-        .syncIdIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
-    datas.addAll({"trackPreferences": res_});
-  }
-  if (list.contains(9)) {
-    final res = isar.sources
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
-    datas.addAll({"extensions": res});
-  }
-  if (list.contains(10)) {
-    final res = isar.customButtons
-        .filter()
-        .idIsNotNull()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
-    datas.addAll({"customButtons": res});
-  }
-  final regExp = RegExp(r'[^a-zA-Z0-9 .()\-\s]');
-  final name =
-      'mangayomi_${DateTime.now().toString().replaceAll(regExp, '_').replaceAll(' ', '_')}';
-  final backupFilePath = p.join(path, "$name.backup.db");
-  final file = File(backupFilePath);
+  try {
+    Map<String, dynamic> datas = {};
+    datas.addAll({"version": "2"});
+    if (list.contains(0)) {
+      final res = isar.mangas
+          .filter()
+          .idIsNotNull()
+          .favoriteEqualTo(true)
+          .isLocalArchiveEqualTo(false)
+          .findAllSync()
+          .map((e) => e.toJson())
+          .toList();
+      datas.addAll({"manga": res});
+    }
+    if (list.contains(1)) {
+      final res = isar.categorys
+          .filter()
+          .idIsNotNull()
+          .findAllSync()
+          .map((e) => e.toJson())
+          .toList();
+      datas.addAll({"categories": res});
+    }
+    if (list.contains(2)) {
+      final res = isar.chapters
+          .filter()
+          .idIsNotNull()
+          .findAllSync()
+          .map((e) => e.toJson())
+          .toList();
+      datas.addAll({"chapters": res});
+      final res_ = isar.downloads
+          .filter()
+          .idIsNotNull()
+          .findAllSync()
+          .map((e) => e.toJson())
+          .toList();
+      datas.addAll({"downloads": res_});
+    }
+    if (list.contains(3)) {
+      final res = isar.tracks
+          .filter()
+          .idIsNotNull()
+          .findAllSync()
+          .map((e) => e.toJson())
+          .toList();
+      datas.addAll({"tracks": res});
+    }
+    if (list.contains(4)) {
+      final res = isar.historys
+          .filter()
+          .idIsNotNull()
+          .findAllSync()
+          .map((e) => e.toJson())
+          .toList();
+      datas.addAll({"history": res});
+    }
+    if (list.contains(5)) {
+      final res = isar.updates
+          .filter()
+          .idIsNotNull()
+          .findAllSync()
+          .map((e) => e.toJson())
+          .toList();
+      datas.addAll({"updates": res});
+    }
+    if (list.contains(6)) {
+      final res = isar.settings
+          .filter()
+          .idIsNotNull()
+          .findAllSync()
+          .map((e) => e.toJson())
+          .toList();
+      datas.addAll({"settings": res});
+    }
+    if (list.contains(7)) {
+      final res = isar.sourcePreferences
+          .filter()
+          .idIsNotNull()
+          .findAllSync()
+          .map((e) => e.toJson())
+          .toList();
+      datas.addAll({"extensions_preferences": res});
+    }
+    if (list.contains(8)) {
+      final res_ = isar.trackPreferences
+          .filter()
+          .syncIdIsNotNull()
+          .findAllSync()
+          .map((e) => e.toJson())
+          .toList();
+      datas.addAll({"trackPreferences": res_});
+    }
+    if (list.contains(9)) {
+      final res = isar.sources
+          .filter()
+          .idIsNotNull()
+          .findAllSync()
+          .map((e) => e.toJson())
+          .toList();
+      datas.addAll({"extensions": res});
+    }
+    if (list.contains(10)) {
+      final res = isar.customButtons
+          .filter()
+          .idIsNotNull()
+          .findAllSync()
+          .map((e) => e.toJson())
+          .toList();
+      datas.addAll({"customButtons": res});
+    }
+    final regExp = RegExp(r'[^a-zA-Z0-9 .()\-\s]');
+    final name =
+        'mangayomi_${DateTime.now().toString().replaceAll(regExp, '_').replaceAll(' ', '_')}';
+    final backupFilePath = p.join(path, "$name.backup.db");
+    final file = File(backupFilePath);
 
-  await file.writeAsString(jsonEncode(datas));
-  var encoder = ZipFileEncoder();
-  encoder.create(p.join(path, "$name.backup"));
-  await encoder.addFile(File(backupFilePath));
-  await encoder.close();
-  await Directory(backupFilePath).delete(recursive: true);
-  final assets = [
-    'assets/app_icons/icon-black.png',
-    'assets/app_icons/icon-red.png',
-  ];
-  if (context != null && context.mounted) {
-    Navigator.pop(context);
-    BotToast.showNotification(
-      animationDuration: const Duration(milliseconds: 200),
-      animationReverseDuration: const Duration(milliseconds: 200),
-      duration: const Duration(seconds: 5),
-      backButtonBehavior: BackButtonBehavior.none,
-      leading: (_) => Image.asset((assets..shuffle()).first, height: 25),
-      title: (_) => const Text(
-        "Backup created!",
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
-      trailing: Platform.isLinux
-          ? null
-          : // Don't show share button on Linux, as there is no share-feature
-            (_) => UnconstrainedBox(
-              alignment: Alignment.topLeft,
-              child: ElevatedButton(
-                onPressed: () {
-                  final RenderBox? box =
-                      context.findRenderObject() as RenderBox?;
-                  SharePlus.instance.share(
-                    ShareParams(
-                      files: [XFile(p.join(path, "$name.backup"))],
-                      subject: "$name.backup",
-                      title: "Share Mangayomi backup file",
-                      sharePositionOrigin: box == null
-                          ? null
-                          : box.localToGlobal(Offset.zero) & box.size,
-                    ),
-                  );
-                },
-                child: Text(context.l10n.share),
+    await file.writeAsString(jsonEncode(datas));
+    var encoder = ZipFileEncoder();
+    encoder.create(p.join(path, "$name.backup"));
+    await encoder.addFile(File(backupFilePath));
+    await encoder.close();
+    await Directory(backupFilePath).delete(recursive: true);
+    final assets = [
+      'assets/app_icons/icon-black.png',
+      'assets/app_icons/icon-red.png',
+    ];
+    if (context != null && context.mounted) {
+      Navigator.pop(context);
+      BotToast.showNotification(
+        animationDuration: const Duration(milliseconds: 200),
+        animationReverseDuration: const Duration(milliseconds: 200),
+        duration: const Duration(seconds: 5),
+        backButtonBehavior: BackButtonBehavior.none,
+        leading: (_) => Image.asset((assets..shuffle()).first, height: 25),
+        title: (_) => const Text(
+          "Backup created!",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        trailing: Platform.isLinux
+            ? null
+            : // Don't show share button on Linux, as there is no share-feature
+              (_) => UnconstrainedBox(
+                alignment: Alignment.topLeft,
+                child: ElevatedButton(
+                  onPressed: () {
+                    final RenderBox? box =
+                        context.findRenderObject() as RenderBox?;
+                    SharePlus.instance.share(
+                      ShareParams(
+                        files: [XFile(p.join(path, "$name.backup"))],
+                        subject: "$name.backup",
+                        title: "Share Mangayomi backup file",
+                        sharePositionOrigin: box == null
+                            ? null
+                            : box.localToGlobal(Offset.zero) & box.size,
+                      ),
+                    );
+                  },
+                  child: Text(context.l10n.share),
+                ),
               ),
-            ),
-      enableSlideOff: true,
-      onlyOne: true,
-      crossPage: true,
-    );
+        enableSlideOff: true,
+        onlyOne: true,
+        crossPage: true,
+      );
+    }
+  } catch (e) {
+    if (context?.mounted ?? false) {
+      BotToast.showNotification(
+        animationDuration: const Duration(milliseconds: 200),
+        animationReverseDuration: const Duration(milliseconds: 200),
+        duration: const Duration(seconds: 7),
+        backButtonBehavior: BackButtonBehavior.none,
+        leading: (_) => const Icon(Icons.error, color: Colors.red),
+        title: (_) => Text(
+          "Backup failed: $e",
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.red,
+          ),
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
+        ),
+        enableSlideOff: true,
+        onlyOne: true,
+        crossPage: true,
+      );
+    }
   }
 }
