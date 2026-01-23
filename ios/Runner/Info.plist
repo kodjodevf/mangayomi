@@ -7,6 +7,10 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Mangayomi needs access to your photo library to save and restore backups.</string>
+	<key>NSDocumentUsageDescription</key>
+	<string>Mangayomi needs access to your files to create and restore backups.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
