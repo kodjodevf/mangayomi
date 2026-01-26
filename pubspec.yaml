@@ -87,10 +87,6 @@ dependencies:
   protobuf: ^5.0.0
   device_info_plus: ^12.2.0
   marquee: ^2.2.3
-  epubx:
-    git:
-      url: https://github.com/kodjodevf/epubx.dart.git
-      ref: dev
   d4rt: ^0.1.9
   hive: ^2.2.3
   hive_flutter: ^1.1.0

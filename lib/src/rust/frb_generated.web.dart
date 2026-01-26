@@ -6,6 +6,7 @@
 // Static analysis wrongly picks the IO variant, thus ignore this
 // ignore_for_file: argument_type_not_assignable
 
+import 'api/epub.dart';
 import 'api/image.dart';
 import 'api/rhttp/client.dart';
 import 'api/rhttp/error.dart';
@@ -190,6 +191,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   CustomProxy dco_decode_custom_proxy(dynamic raw);
 
   @protected
+  EpubChapter dco_decode_epub_chapter(dynamic raw);
+
+  @protected
+  EpubNovel dco_decode_epub_novel(dynamic raw);
+
+  @protected
+  EpubResource dco_decode_epub_resource(dynamic raw);
+
+  @protected
   HttpHeaders dco_decode_http_headers(dynamic raw);
 
   @protected
@@ -218,6 +228,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<CustomProxy> dco_decode_list_custom_proxy(dynamic raw);
+
+  @protected
+  List<EpubChapter> dco_decode_list_epub_chapter(dynamic raw);
+
+  @protected
+  List<EpubResource> dco_decode_list_epub_resource(dynamic raw);
 
   @protected
   List<Uint8List> dco_decode_list_list_prim_u_8_strict(dynamic raw);
@@ -473,6 +489,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   CustomProxy sse_decode_custom_proxy(SseDeserializer deserializer);
 
   @protected
+  EpubChapter sse_decode_epub_chapter(SseDeserializer deserializer);
+
+  @protected
+  EpubNovel sse_decode_epub_novel(SseDeserializer deserializer);
+
+  @protected
+  EpubResource sse_decode_epub_resource(SseDeserializer deserializer);
+
+  @protected
   HttpHeaders sse_decode_http_headers(SseDeserializer deserializer);
 
   @protected
@@ -501,6 +526,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<CustomProxy> sse_decode_list_custom_proxy(SseDeserializer deserializer);
+
+  @protected
+  List<EpubChapter> sse_decode_list_epub_chapter(SseDeserializer deserializer);
+
+  @protected
+  List<EpubResource> sse_decode_list_epub_resource(
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<Uint8List> sse_decode_list_list_prim_u_8_strict(
@@ -852,6 +885,15 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_custom_proxy(CustomProxy self, SseSerializer serializer);
 
   @protected
+  void sse_encode_epub_chapter(EpubChapter self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_epub_novel(EpubNovel self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_epub_resource(EpubResource self, SseSerializer serializer);
+
+  @protected
   void sse_encode_http_headers(HttpHeaders self, SseSerializer serializer);
 
   @protected
@@ -884,6 +926,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_custom_proxy(
     List<CustomProxy> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_epub_chapter(
+    List<EpubChapter> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_epub_resource(
+    List<EpubResource> self,
     SseSerializer serializer,
   );
 

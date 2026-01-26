@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
-import 'package:epubx/epubx.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +19,7 @@ import 'package:mangayomi/modules/novel/widgets/novel_reader_settings_sheet.dart
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_html_content.dart';
+import 'package:mangayomi/src/rust/api/epub.dart';
 import 'package:mangayomi/utils/extensions/dom_extensions.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
@@ -48,7 +48,7 @@ class NovelWebView extends ConsumerStatefulWidget {
   const NovelWebView({super.key, required this.chapter, required this.result});
 
   final Chapter chapter;
-  final AsyncValue<(String, EpubBook?)> result;
+  final AsyncValue<(String, EpubNovel?)> result;
 
   @override
   ConsumerState createState() {
@@ -103,7 +103,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   }
 
   late Chapter chapter = widget.chapter;
-  EpubBook? epubBook;
+  EpubNovel? epubBook;
 
   final StreamController<double> _rebuildDetail =
       StreamController<double>.broadcast();
@@ -1201,14 +1201,13 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     if (element.localName == "img" && element.getSrc != null) {
       final src = element.getSrc!;
       final fileName = src.split("/").last;
-      final image = epubBook!.Content?.Images?.entries
+      final image = epubBook!.images
           .firstWhereOrNull(
             (img) =>
-                img.key.endsWith(fileName) ||
-                img.key.contains(fileName.replaceAll('%20', ' ')),
+                img.name.endsWith(fileName) ||
+                img.name.contains(fileName.replaceAll('%20', ' ')),
           )
-          ?.value
-          .Content;
+          ?.content;
 
       if (image != null) {
         return Padding(
@@ -1232,7 +1231,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
               ),
             ),
             fit: BoxFit.contain,
-            image: MemoryImage(image as Uint8List) as ImageProvider,
+            image: MemoryImage(image) as ImageProvider,
           ),
         );
       }

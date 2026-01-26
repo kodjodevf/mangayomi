@@ -3,6 +3,7 @@
 
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
+import 'api/epub.dart';
 import 'api/image.dart';
 import 'api/rhttp/client.dart';
 import 'api/rhttp/error.dart';
@@ -68,7 +69,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.11.1';
 
   @override
-  int get rustContentHash => 885218533;
+  int get rustContentHash => 2140434025;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -97,6 +98,11 @@ abstract class RustLibApi extends BaseApi {
     required StaticDnsSettings settings,
   });
 
+  Future<String> crateApiEpubGetChapterContent({
+    required String epubPath,
+    required String chapterPath,
+  });
+
   Stream<Uint8List> crateApiRhttpHttpMakeHttpRequestReceiveStream({
     RequestClient? client,
     ClientSettings? settings,
@@ -109,6 +115,16 @@ abstract class RustLibApi extends BaseApi {
     required FutureOr<void> Function(RhttpError) onError,
     required FutureOr<void> Function(CancellationToken) onCancelToken,
     required bool cancelable,
+  });
+
+  Future<EpubNovel> crateApiEpubParseEpubFromBytes({
+    required List<int> epubBytes,
+    required bool fullData,
+  });
+
+  Future<EpubNovel> crateApiEpubParseEpubFromPath({
+    required String epubPath,
+    required bool fullData,
   });
 
   Uint8List crateApiImageProcessCropImage({required List<int> image});
@@ -314,6 +330,41 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<String> crateApiEpubGetChapterContent({
+    required String epubPath,
+    required String chapterPath,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(epubPath, serializer);
+          sse_encode_String(chapterPath, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 7,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiEpubGetChapterContentConstMeta,
+        argValues: [epubPath, chapterPath],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiEpubGetChapterContentConstMeta =>
+      const TaskConstMeta(
+        debugName: "get_chapter_content",
+        argNames: ["epubPath", "chapterPath"],
+      );
+
+  @override
   Stream<Uint8List> crateApiRhttpHttpMakeHttpRequestReceiveStream({
     RequestClient? client,
     ClientSettings? settings,
@@ -363,7 +414,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             pdeCallFfi(
               generalizedFrbRustBinding,
               serializer,
-              funcId: 7,
+              funcId: 8,
               port: port_,
             );
           },
@@ -413,13 +464,83 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<EpubNovel> crateApiEpubParseEpubFromBytes({
+    required List<int> epubBytes,
+    required bool fullData,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_list_prim_u_8_loose(epubBytes, serializer);
+          sse_encode_bool(fullData, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 9,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_epub_novel,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiEpubParseEpubFromBytesConstMeta,
+        argValues: [epubBytes, fullData],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiEpubParseEpubFromBytesConstMeta =>
+      const TaskConstMeta(
+        debugName: "parse_epub_from_bytes",
+        argNames: ["epubBytes", "fullData"],
+      );
+
+  @override
+  Future<EpubNovel> crateApiEpubParseEpubFromPath({
+    required String epubPath,
+    required bool fullData,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(epubPath, serializer);
+          sse_encode_bool(fullData, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 10,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_epub_novel,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiEpubParseEpubFromPathConstMeta,
+        argValues: [epubPath, fullData],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiEpubParseEpubFromPathConstMeta =>
+      const TaskConstMeta(
+        debugName: "parse_epub_from_path",
+        argNames: ["epubPath", "fullData"],
+      );
+
+  @override
   Uint8List crateApiImageProcessCropImage({required List<int> image}) {
     return handler.executeSync(
       SyncTask(
         callFfi: () {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_list_prim_u_8_loose(image, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 11)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_list_prim_u_8_strict,
@@ -447,7 +568,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 9,
+            funcId: 12,
             port: port_,
           );
         },
@@ -475,7 +596,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         callFfi: () {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_box_autoadd_client_settings(settings, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 10)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13)!;
         },
         codec: SseCodec(
           decodeSuccessData:
@@ -968,6 +1089,49 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  EpubChapter dco_decode_epub_chapter(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return EpubChapter(
+      name: dco_decode_String(arr[0]),
+      content: dco_decode_String(arr[1]),
+      path: dco_decode_String(arr[2]),
+    );
+  }
+
+  @protected
+  EpubNovel dco_decode_epub_novel(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 8)
+      throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
+    return EpubNovel(
+      name: dco_decode_String(arr[0]),
+      cover: dco_decode_opt_list_prim_u_8_strict(arr[1]),
+      summary: dco_decode_opt_String(arr[2]),
+      author: dco_decode_opt_String(arr[3]),
+      artist: dco_decode_opt_String(arr[4]),
+      chapters: dco_decode_list_epub_chapter(arr[5]),
+      images: dco_decode_list_epub_resource(arr[6]),
+      stylesheets: dco_decode_list_epub_resource(arr[7]),
+    );
+  }
+
+  @protected
+  EpubResource dco_decode_epub_resource(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return EpubResource(
+      name: dco_decode_String(arr[0]),
+      content: dco_decode_list_prim_u_8_strict(arr[1]),
+    );
+  }
+
+  @protected
   HttpHeaders dco_decode_http_headers(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     switch (raw[0]) {
@@ -1049,6 +1213,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   List<CustomProxy> dco_decode_list_custom_proxy(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return (raw as List<dynamic>).map(dco_decode_custom_proxy).toList();
+  }
+
+  @protected
+  List<EpubChapter> dco_decode_list_epub_chapter(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_epub_chapter).toList();
+  }
+
+  @protected
+  List<EpubResource> dco_decode_list_epub_resource(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_epub_resource).toList();
   }
 
   @protected
@@ -1658,6 +1834,46 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  EpubChapter sse_decode_epub_chapter(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_name = sse_decode_String(deserializer);
+    var var_content = sse_decode_String(deserializer);
+    var var_path = sse_decode_String(deserializer);
+    return EpubChapter(name: var_name, content: var_content, path: var_path);
+  }
+
+  @protected
+  EpubNovel sse_decode_epub_novel(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_name = sse_decode_String(deserializer);
+    var var_cover = sse_decode_opt_list_prim_u_8_strict(deserializer);
+    var var_summary = sse_decode_opt_String(deserializer);
+    var var_author = sse_decode_opt_String(deserializer);
+    var var_artist = sse_decode_opt_String(deserializer);
+    var var_chapters = sse_decode_list_epub_chapter(deserializer);
+    var var_images = sse_decode_list_epub_resource(deserializer);
+    var var_stylesheets = sse_decode_list_epub_resource(deserializer);
+    return EpubNovel(
+      name: var_name,
+      cover: var_cover,
+      summary: var_summary,
+      author: var_author,
+      artist: var_artist,
+      chapters: var_chapters,
+      images: var_images,
+      stylesheets: var_stylesheets,
+    );
+  }
+
+  @protected
+  EpubResource sse_decode_epub_resource(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_name = sse_decode_String(deserializer);
+    var var_content = sse_decode_list_prim_u_8_strict(deserializer);
+    return EpubResource(name: var_name, content: var_content);
+  }
+
+  @protected
   HttpHeaders sse_decode_http_headers(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
@@ -1760,6 +1976,32 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var ans_ = <CustomProxy>[];
     for (var idx_ = 0; idx_ < len_; ++idx_) {
       ans_.add(sse_decode_custom_proxy(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<EpubChapter> sse_decode_list_epub_chapter(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <EpubChapter>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_epub_chapter(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<EpubResource> sse_decode_list_epub_resource(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <EpubResource>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_epub_resource(deserializer));
     }
     return ans_;
   }
@@ -2592,6 +2834,34 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_epub_chapter(EpubChapter self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.name, serializer);
+    sse_encode_String(self.content, serializer);
+    sse_encode_String(self.path, serializer);
+  }
+
+  @protected
+  void sse_encode_epub_novel(EpubNovel self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.name, serializer);
+    sse_encode_opt_list_prim_u_8_strict(self.cover, serializer);
+    sse_encode_opt_String(self.summary, serializer);
+    sse_encode_opt_String(self.author, serializer);
+    sse_encode_opt_String(self.artist, serializer);
+    sse_encode_list_epub_chapter(self.chapters, serializer);
+    sse_encode_list_epub_resource(self.images, serializer);
+    sse_encode_list_epub_resource(self.stylesheets, serializer);
+  }
+
+  @protected
+  void sse_encode_epub_resource(EpubResource self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.name, serializer);
+    sse_encode_list_prim_u_8_strict(self.content, serializer);
+  }
+
+  @protected
   void sse_encode_http_headers(HttpHeaders self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     switch (self) {
@@ -2679,6 +2949,30 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
       sse_encode_custom_proxy(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_epub_chapter(
+    List<EpubChapter> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_epub_chapter(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_epub_resource(
+    List<EpubResource> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_epub_resource(item, serializer);
     }
   }
 

@@ -1,6 +1,7 @@
 import 'dart:io';
+import 'package:mangayomi/src/rust/api/epub.dart';
 import 'package:path/path.dart' as p;
-import 'package:epubx/epubx.dart';
+// import 'package:epubx/epubx.dart';
 import 'package:html/parser.dart';
 import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -11,28 +12,29 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'get_html_content.g.dart';
 
 @riverpod
-Future<(String, EpubBook?)> getHtmlContent(
+Future<(String, EpubNovel?)> getHtmlContent(
   Ref ref, {
   required Chapter chapter,
 }) async {
   final keepAlive = ref.keepAlive();
-  (String, EpubBook?)? result;
+  (String, EpubNovel?)? result;
   try {
     if (!chapter.manga.isLoaded) {
       chapter.manga.loadSync();
     }
     if (chapter.archivePath != null && chapter.archivePath!.isNotEmpty) {
-      final htmlFile = File(chapter.archivePath!);
-      if (await htmlFile.exists()) {
-        final bytes = await htmlFile.readAsBytes();
-        final book = await EpubReader.readBook(bytes);
+      try {
+        final okk = await parseEpubFromPath(
+          epubPath: chapter.archivePath!,
+          fullData: true,
+        );
         String htmlContent = "";
-        for (var subChapter in book.Content!.Html!.values) {
-          htmlContent += "\n<hr/>\n${subChapter.Content}";
+        for (var subChapter in okk.chapters) {
+          htmlContent += "\n<hr/>\n${subChapter.content}";
         }
+        result = (_buildHtml(htmlContent), okk);
+      } catch (_) {}
 
-        result = (_buildHtml(htmlContent), book);
-      }
       result ??= (_buildHtml("Local epub file not found!"), null);
     }
     if (result == null) {

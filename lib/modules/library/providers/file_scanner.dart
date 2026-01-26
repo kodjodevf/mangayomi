@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io'; // For I/O-operations
 import 'dart:typed_data';
-import 'package:epubx/epubx.dart';
 import 'package:isar_community/isar.dart'; // Isar database package for local storage
 import 'package:mangayomi/main.dart'; // Exposes the global `isar` instance
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
+import 'package:mangayomi/src/rust/api/epub.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:path/path.dart' as p; // For manipulating file system paths
 import 'package:bot_toast/bot_toast.dart'; // For Exceptions
@@ -292,31 +292,26 @@ Future<void> _scanDirectory(Ref ref, Directory? dir) async {
     final itemName = p.basename(p.dirname(chapterPath));
     final manga = mangaByName[itemName];
     if (manga != null) {
-      final chapterFile = File(chapterPath);
       if (manga.itemType == ItemType.novel) {
-        final bytes = await chapterFile.readAsBytes();
-        final book = await EpubReader.readBook(bytes);
-        if (book.Content != null && book.Content!.Images != null) {
-          final coverImage =
-              book.Content!.Images!.containsKey("media/file0.png")
-              ? book.Content!.Images!["media/file0.png"]!.Content
-              : book.Content!.Images!.values.first.Content;
-          manga.customCoverImage = coverImage == null
-              ? null
-              : Uint8List.fromList(coverImage).getCoverImage;
+        final book = await parseEpubFromPath(
+          epubPath: chapterPath,
+          fullData: false,
+        );
+
+        if (book.cover != null) {
+          manga.customCoverImage = book.cover!.getCoverImage;
           saveManga++;
         }
         chaptersToSave.add(
           Chapter(
             mangaId: manga.id,
-            name: book.Title,
+            name: book.name,
             archivePath: chapterPath,
-            downloadSize: chapterFile.existsSync()
-                ? chapterFile.lengthSync().formattedFileSize()
-                : null,
+            downloadSize: null,
           )..manga.value = manga,
         );
       } else {
+        final chapterFile = File(chapterPath);
         final chap = Chapter(
           mangaId: manga.id,
           name:

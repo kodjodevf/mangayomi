@@ -1,6 +1,4 @@
-import 'dart:io';
 import 'dart:typed_data';
-import 'package:epubx/epubx.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
@@ -8,6 +6,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/manga/archive_reader/models/models.dart';
 import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
+import 'package:mangayomi/src/rust/api/epub.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'local_archive.g.dart';
 
@@ -71,24 +70,20 @@ Future importArchivesFromFile(
           final mangaId = await isar.mangas.put(manga);
           final List<Chapter> chapters = [];
           if (itemType == ItemType.novel) {
-            final bytes = await File(file.path!).readAsBytes();
-            final book = await EpubReader.readBook(bytes);
-            if (book.Content != null && book.Content!.Images != null) {
-              final coverImage =
-                  book.Content!.Images!.containsKey("media/file0.png")
-                  ? book.Content!.Images!["media/file0.png"]!.Content
-                  : book.Content!.Images!.values.first.Content;
+            final book = await parseEpubFromPath(
+              epubPath: file.path!,
+              fullData: false,
+            );
+
+            if (book.cover != null) {
               await isar.mangas.put(
-                manga
-                  ..customCoverImage = coverImage == null
-                      ? null
-                      : Uint8List.fromList(coverImage).getCoverImage,
+                manga..customCoverImage = book.cover!.getCoverImage,
               );
             }
             chapters.add(
               Chapter(
                 mangaId: mangaId,
-                name: book.Title,
+                name: book.name,
                 archivePath: file.path,
                 updatedAt: DateTime.now().millisecondsSinceEpoch,
               )..manga.value = manga,

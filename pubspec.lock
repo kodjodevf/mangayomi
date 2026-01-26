@@ -378,15 +378,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.3"
-  epubx:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: dev
-      resolved-ref: c8203a489fae5683001556b1d323e35f356294fb
-      url: "https://github.com/kodjodevf/epubx.dart.git"
-    source: git
-    version: "4.0.3"
   expressions:
     dependency: transitive
     description:

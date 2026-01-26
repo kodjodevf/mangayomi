@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:epubx/epubx.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_qjs/flutter_qjs.dart';
+import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:http/http.dart' as http;
+import 'package:mangayomi/src/rust/api/epub.dart';
 import 'package:path/path.dart' as p;
 import 'package:http_interceptor/http/intercepted_client.dart';
 import 'package:js_packer/js_packer.dart';
@@ -60,25 +60,25 @@ class JsUtils {
     });
     runtime.onMessage('parseEpub', (dynamic args) async {
       final bytes = await _toBytesResponse(client(), "GET", args);
-      final book = await EpubReader.readBook(bytes);
+      final book = await parseEpubFromBytes(epubBytes: bytes, fullData: true);
       final List<String> chapters = [];
-      for (var chapter in book.Chapters ?? []) {
-        final chapterTitle = chapter.Title;
+      for (var chapter in book.chapters) {
+        final chapterTitle = chapter.name;
         chapters.add(chapterTitle);
       }
       return jsonEncode({
-        "title": book.Title,
-        "author": book.Author,
+        "title": book.name,
+        "author": book.author,
         "chapters": chapters,
       });
     });
     runtime.onMessage('parseEpubChapter', (dynamic args) async {
       final bytes = await _toBytesResponse(client(), "GET", args);
-      final book = await EpubReader.readBook(bytes);
-      final chapter = book.Chapters?.where(
-        (element) => element.Title == args[3],
-      ).firstOrNull;
-      return chapter?.HtmlContent;
+      final book = await parseEpubFromBytes(epubBytes: bytes, fullData: true);
+      final chapter = book.chapters.firstWhereOrNull(
+        (element) => element.name == args[3],
+      );
+      return chapter?.content;
     });
 
     runtime.evaluate('''

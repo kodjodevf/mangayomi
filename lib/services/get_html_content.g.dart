@@ -15,13 +15,13 @@ final getHtmlContentProvider = GetHtmlContentFamily._();
 final class GetHtmlContentProvider
     extends
         $FunctionalProvider<
-          AsyncValue<(String, EpubBook?)>,
-          (String, EpubBook?),
-          FutureOr<(String, EpubBook?)>
+          AsyncValue<(String, EpubNovel?)>,
+          (String, EpubNovel?),
+          FutureOr<(String, EpubNovel?)>
         >
     with
-        $FutureModifier<(String, EpubBook?)>,
-        $FutureProvider<(String, EpubBook?)> {
+        $FutureModifier<(String, EpubNovel?)>,
+        $FutureProvider<(String, EpubNovel?)> {
   GetHtmlContentProvider._({
     required GetHtmlContentFamily super.from,
     required Chapter super.argument,
@@ -45,12 +45,12 @@ final class GetHtmlContentProvider
 
   @$internal
   @override
-  $FutureProviderElement<(String, EpubBook?)> $createElement(
+  $FutureProviderElement<(String, EpubNovel?)> $createElement(
     $ProviderPointer pointer,
   ) => $FutureProviderElement(pointer);
 
   @override
-  FutureOr<(String, EpubBook?)> create(Ref ref) {
+  FutureOr<(String, EpubNovel?)> create(Ref ref) {
     final argument = this.argument as Chapter;
     return getHtmlContent(ref, chapter: argument);
   }
@@ -66,10 +66,10 @@ final class GetHtmlContentProvider
   }
 }
 
-String _$getHtmlContentHash() => r'ca2fec040211e0700e31baed0616e89ac1f20a7d';
+String _$getHtmlContentHash() => r'dbce709ba154704c7e9d1465bdc21c926a42a723';
 
 final class GetHtmlContentFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<(String, EpubBook?)>, Chapter> {
+    with $FunctionalFamilyOverride<FutureOr<(String, EpubNovel?)>, Chapter> {
   GetHtmlContentFamily._()
     : super(
         retry: null,
