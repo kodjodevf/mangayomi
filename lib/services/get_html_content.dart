@@ -24,15 +24,15 @@ Future<(String, EpubNovel?)> getHtmlContent(
     }
     if (chapter.archivePath != null && chapter.archivePath!.isNotEmpty) {
       try {
-        final okk = await parseEpubFromPath(
+        final book = await parseEpubFromPath(
           epubPath: chapter.archivePath!,
           fullData: true,
         );
         String htmlContent = "";
-        for (var subChapter in okk.chapters) {
+        for (var subChapter in book.chapters) {
           htmlContent += "\n<hr/>\n${subChapter.content}";
         }
-        result = (_buildHtml(htmlContent), okk);
+        result = (_buildHtml(htmlContent), book);
       } catch (_) {}
 
       result ??= (_buildHtml("Local epub file not found!"), null);
