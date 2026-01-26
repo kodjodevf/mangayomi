@@ -21,6 +21,7 @@ class GetIsolateService {
   bool _isRunning = false;
   Isolate? _getIsolateService;
   ReceivePort? _receivePort;
+  StreamSubscription? _receiveSub;
   SendPort? _sendPort;
 
   Future<void> start() async {
@@ -47,7 +48,7 @@ class GetIsolateService {
     );
 
     final completer = Completer<SendPort>();
-    _receivePort!.listen((message) {
+    _receiveSub = _receivePort!.listen((message) {
       if (message is SendPort) {
         completer.complete(message);
       }
@@ -66,7 +67,10 @@ class GetIsolateService {
       }
     });
 
-    _sendPort = await completer.future;
+    _sendPort = await completer.future.timeout(
+      const Duration(seconds: 5),
+      onTimeout: () => throw StateError('Isolate handshake timed out'),
+    );
     _isRunning = true;
   }
 
@@ -94,6 +98,7 @@ class GetIsolateService {
           isolateData.sendPort.send(receivePort.sendPort);
           receivePort.listen((message) async {
             if (message is Map<String, dynamic>) {
+              final responsePort = message['responsePort'] as SendPort;
               try {
                 final url = message['url'] as String?;
                 final page = message['page'] as int?;
@@ -103,53 +108,38 @@ class GetIsolateService {
                 final proxyServer = message['proxyServer'] as String?;
                 final serviceType = message['serviceType'] as String?;
                 final useLoggerValue = message['useLogger'] as bool?;
-                final responsePort = message['responsePort'] as SendPort;
                 cfPort = message['cfPort'] as int;
                 if (useLoggerValue != null) {
                   useLogger = useLoggerValue;
                 }
-                if (serviceType == 'getDetail') {
-                  final result = await getExtensionService(
-                    source!,
-                    proxyServer ?? '',
-                  ).getDetail(url!);
-                  responsePort.send({'success': true, 'data': result});
-                } else if (serviceType == 'getPopular') {
-                  final result = await getExtensionService(
-                    source!,
-                    proxyServer ?? '',
-                  ).getPopular(page!);
-                  responsePort.send({'success': true, 'data': result});
-                } else if (serviceType == 'getLatestUpdates') {
-                  final result = await getExtensionService(
-                    source!,
-                    proxyServer ?? '',
-                  ).getLatestUpdates(page!);
-                  responsePort.send({'success': true, 'data': result});
-                } else if (serviceType == 'search') {
-                  final result = await getExtensionService(
-                    source!,
-                    proxyServer ?? '',
-                  ).search(query!, page!, filterList!);
-                  responsePort.send({'success': true, 'data': result});
-                } else if (serviceType == 'getVideoList') {
-                  final result = await getExtensionService(
-                    source!,
-                    proxyServer ?? '',
-                  ).getVideoList(url!);
-                  responsePort.send({'success': true, 'data': result});
-                } else if (serviceType == 'getPageList') {
-                  final result = await getExtensionService(
-                    source!,
-                    proxyServer ?? '',
-                  ).getPageList(url!);
-                  responsePort.send({'success': true, 'data': result});
-                }
+                final result = await withExtensionService(
+                  source!,
+                  proxyServer ?? '',
+                  (service) async {
+                    switch (serviceType) {
+                      case 'getDetail':
+                        return await service.getDetail(url!);
+                      case 'getPopular':
+                        return await service.getPopular(page!);
+                      case 'getLatestUpdates':
+                        return await service.getLatestUpdates(page!);
+                      case 'search':
+                        return await service.search(query!, page!, filterList!);
+                      case 'getVideoList':
+                        return await service.getVideoList(url!);
+                      case 'getPageList':
+                        return await service.getPageList(url!);
+                      default:
+                        throw Exception('Unknown service type: $serviceType');
+                    }
+                  },
+                );
+                responsePort.send({'success': true, 'data': result});
               } catch (e) {
-                final responsePort = message['responsePort'] as SendPort;
                 responsePort.send({'success': false, 'error': e.toString()});
+              } finally {
+                useLogger = false;
               }
-              useLogger = false;
             } else if (message == 'dispose') {
               receivePort.close();
             }
@@ -175,8 +165,19 @@ class GetIsolateService {
 
     final responsePort = ReceivePort();
     final completer = Completer<T>();
+    late final StreamSubscription sub;
 
-    responsePort.listen((response) {
+    // Timeout safeguard
+    final timer = Timer(const Duration(seconds: 10), () {
+      if (!completer.isCompleted) {
+        sub.cancel();
+        responsePort.close();
+        completer.completeError('Isolate response timeout');
+      }
+    });
+    sub = responsePort.listen((response) {
+      timer.cancel();
+      sub.cancel();
       responsePort.close();
       if (response is Map<String, dynamic>) {
         if (response['success'] == true) {
@@ -184,6 +185,8 @@ class GetIsolateService {
         } else {
           completer.completeError(response['error']);
         }
+      } else {
+        completer.completeError('Invalid isolate response: $response');
       }
     });
 
@@ -210,7 +213,9 @@ class GetIsolateService {
 
     _sendPort?.send('dispose');
     _getIsolateService?.kill(priority: Isolate.immediate);
+    await _receiveSub?.cancel();
     _receivePort?.close();
+    _receiveSub = null;
     _sendPort = null;
     _getIsolateService = null;
     _receivePort = null;

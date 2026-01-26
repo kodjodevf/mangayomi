@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar_community/isar.dart';
@@ -115,10 +114,8 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab>
     super.dispose();
   }
 
-  bool get _isDesktop {
-    if (kIsWeb) return false;
-    return Platform.isMacOS || Platform.isLinux || Platform.isWindows;
-  }
+  final bool _isDesktop =
+      Platform.isMacOS || Platform.isLinux || Platform.isWindows;
 
   /// Moves a category from `index` to `newIndex` in the list,
   /// swaps their positions in memory, and persists the change in Isar.
@@ -133,34 +130,26 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab>
       });
 
       await _swapAnimationController.forward(from: 0.0);
+    }
 
-      // Grab the two category objects involved in the swap
-      final a = _entries[index];
-      final b = _entries[newIndex];
-      // Swap their positions inside the in‑memory list
-      _entries[newIndex] = a;
-      _entries[index] = b;
-      // Swap their persisted `pos` values so ordering is saved correctly
-      final temp = a.pos;
-      a.pos = b.pos;
-      b.pos = temp;
-      // Persist both updated objects in a single Isar transaction
-      await isar.writeTxn(() async => isar.categorys.putAll([a, b]));
+    // Grab the two category objects involved in the swap
+    final a = _entries[index];
+    final b = _entries[newIndex];
+    // Swap their positions inside the in‑memory list
+    _entries[newIndex] = a;
+    _entries[index] = b;
+    // Swap their persisted `pos` values so ordering is saved correctly
+    final temp = a.pos;
+    a.pos = b.pos;
+    b.pos = temp;
+    // Persist both updated objects in a single Isar transaction
+    await isar.writeTxn(() async => isar.categorys.putAll([a, b]));
 
+    if (mounted) {
       setState(() {
         _animatingFromIndex = null;
         _animatingToIndex = null;
       });
-    } else {
-      final a = _entries[index];
-      final b = _entries[newIndex];
-      _entries[newIndex] = a;
-      _entries[index] = b;
-      final temp = a.pos;
-      a.pos = b.pos;
-      b.pos = temp;
-      await isar.writeTxn(() async => isar.categorys.putAll([a, b]));
-      setState(() {});
     }
   }
 

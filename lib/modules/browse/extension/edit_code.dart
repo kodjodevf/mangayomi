@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:json_view/json_view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/eval/interface.dart';
 import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/eval/model/m_pages.dart';
@@ -93,7 +94,7 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
     _controller.text = source?.sourceCode ?? "";
     useLogger = true;
     _logSubscription = _logStreamController.stream.listen((event) async {
-      _logsNotifier.value.add(event);
+      _addLog(event);
       try {
         await Future.delayed(const Duration(milliseconds: 5));
         if (_scrollController.hasClients) {
@@ -101,6 +102,18 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
         }
       } catch (_) {}
     });
+  }
+
+  static const int _maxLogs = 200;
+
+  void _addLog((LoggerLevel, String, DateTime) log) {
+    final logs = _logsNotifier.value;
+    final newLogs = List<(LoggerLevel, String, DateTime)>.from(logs);
+    if (newLogs.length >= _maxLogs) {
+      newLogs.removeAt(0);
+    }
+    newLogs.add(log);
+    _logsNotifier.value = newLogs;
   }
 
   List<dynamic> filters = [];
@@ -475,38 +488,33 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
                                       final proxyServer = ref.read(
                                         androidProxyServerStateProvider,
                                       );
-                                      final service = getExtensionService(
-                                        source!,
-                                        proxyServer,
-                                      );
                                       try {
+                                        Future<dynamic> Function(
+                                          ExtensionService service,
+                                        )?
+                                        serviceFunc;
                                         if (_serviceIndex == 0) {
                                           final getManga =
-                                              await getIsolateService.get<
-                                                MPages?
-                                              >(
-                                                page: _page,
-                                                source: source,
-                                                serviceType: 'getPopular',
-                                                proxyServer: ref.read(
-                                                  androidProxyServerStateProvider,
-                                                ),
-                                                useLogger: true,
-                                              );
+                                              await getIsolateService
+                                                  .get<MPages?>(
+                                                    page: _page,
+                                                    source: source,
+                                                    serviceType: 'getPopular',
+                                                    proxyServer: proxyServer,
+                                                    useLogger: true,
+                                                  );
                                           result = getManga!.toJson();
                                         } else if (_serviceIndex == 1) {
                                           final getManga =
-                                              await getIsolateService.get<
-                                                MPages?
-                                              >(
-                                                page: _page,
-                                                source: source,
-                                                serviceType: 'getLatestUpdates',
-                                                proxyServer: ref.read(
-                                                  androidProxyServerStateProvider,
-                                                ),
-                                                useLogger: true,
-                                              );
+                                              await getIsolateService
+                                                  .get<MPages?>(
+                                                    page: _page,
+                                                    source: source,
+                                                    serviceType:
+                                                        'getLatestUpdates',
+                                                    proxyServer: proxyServer,
+                                                    useLogger: true,
+                                                  );
                                           result = getManga!.toJson();
                                         } else if (_serviceIndex == 2) {
                                           final getManga =
@@ -531,24 +539,43 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
                                                     proxyServer: proxyServer,
                                                     useLogger: true,
                                                   );
-
                                           result = getManga.toJson();
                                         } else if (_serviceIndex == 4) {
-                                          result = {
-                                            "pages": (await service.getPageList(
-                                              _url,
-                                            )).map((e) => e.toJson()).toList(),
+                                          serviceFunc = (service) async {
+                                            return {
+                                              "pages":
+                                                  (await service.getPageList(
+                                                        _url,
+                                                      ))
+                                                      .map((e) => e.toJson())
+                                                      .toList(),
+                                            };
                                           };
                                         } else if (_serviceIndex == 5) {
-                                          result = (await service.getVideoList(
-                                            _url,
-                                          )).map((e) => e.toJson()).toList();
+                                          serviceFunc = (service) async {
+                                            return (await service.getVideoList(
+                                              _url,
+                                            )).map((e) => e.toJson()).toList();
+                                          };
                                         } else if (_serviceIndex == 6) {
-                                          result = (await service
-                                              .getHtmlContent("test", _url));
+                                          serviceFunc = (service) async {
+                                            return await service.getHtmlContent(
+                                              "test",
+                                              _url,
+                                            );
+                                          };
                                         } else {
-                                          result = (await service
-                                              .cleanHtmlContent(_html));
+                                          serviceFunc = (service) async {
+                                            return await service
+                                                .cleanHtmlContent(_html);
+                                          };
+                                        }
+                                        if (serviceFunc != null) {
+                                          result = await withExtensionService(
+                                            source!,
+                                            proxyServer,
+                                            serviceFunc,
+                                          );
                                         }
                                         if (context.mounted) {
                                           setState(() {

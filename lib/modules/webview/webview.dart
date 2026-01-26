@@ -28,9 +28,12 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
   MyInAppBrowser? browser;
   double _progress = 0;
   bool isNotWebviewWindow = false;
+  bool _initialized = false;
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_initialized) return;
+    _initialized = true;
     if (Platform.isLinux || Platform.isWindows) {
       _runWebViewDesktop();
     } else {
@@ -143,7 +146,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
               ),
               leading: IconButton(
                 onPressed: () {
-                  _desktopWebview!.close();
+                  if (_desktopWebview != null) _desktopWebview!.close();
 
                   Navigator.pop(context);
                 },

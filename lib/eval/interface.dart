@@ -15,6 +15,8 @@ abstract interface class ExtensionService {
   String get sourceBaseUrl;
   bool get supportsLatest;
 
+  void dispose();
+
   Map<String, String> getHeaders();
 
   Future<MPages> getPopular(int page);

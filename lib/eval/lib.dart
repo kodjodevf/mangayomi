@@ -14,3 +14,16 @@ ExtensionService getExtensionService(Source source, String androidProxyServer) {
     SourceCodeLanguage.lnreader => LNReaderExtensionService(source),
   };
 }
+
+Future<T> withExtensionService<T>(
+  Source source,
+  String proxyServer,
+  Future<T> Function(ExtensionService service) action,
+) async {
+  final service = getExtensionService(source, proxyServer);
+  try {
+    return await action(service);
+  } finally {
+    service.dispose();
+  }
+}
