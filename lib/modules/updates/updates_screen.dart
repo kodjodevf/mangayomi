@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/base_library_tab_screen.dart';
@@ -100,6 +101,12 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
   Future<void> _updateLibrary() async {
     setState(() => _isLoading = true);
     final itemType = getCurrentItemType();
+    final allowedCategories = isar.categorys
+        .filter()
+        .idIsNotNull()
+        .group((q) => q.shouldUpdateIsNull().or().shouldUpdateEqualTo(true))
+        .findAllSync()
+        .map((e) => e.id);
     final mangaList = isar.mangas
         .filter()
         .idIsNotNull()
@@ -108,7 +115,16 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
         .itemTypeEqualTo(itemType)
         .and()
         .isLocalArchiveEqualTo(false)
-        .findAllSync();
+        .findAllSync()
+        .where((e) {
+          for (final category in allowedCategories) {
+            if (e.categories?.contains(category) ?? false) {
+              return true;
+            }
+          }
+          return false;
+        })
+        .toList();
     await updateLibrary(
       ref: ref,
       context: context,

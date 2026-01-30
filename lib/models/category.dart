@@ -10,6 +10,7 @@ class Category {
   bool? forManga;
   int? pos;
   bool? hide;
+  bool? shouldUpdate;
   @enumerated
   late ItemType forItemType;
   int? updatedAt;
@@ -20,6 +21,7 @@ class Category {
     required this.forItemType,
     this.pos,
     this.hide,
+    this.shouldUpdate,
     this.updatedAt = 0,
   });
 
@@ -29,6 +31,7 @@ class Category {
     forItemType = ItemType.values[json['forItemType'] ?? 0];
     pos = json['pos'];
     hide = json['hide'];
+    shouldUpdate = json['shouldUpdate'];
     updatedAt = json['updatedAt'];
   }
 
@@ -48,6 +51,7 @@ class Category {
     'forItemType': forItemType.index,
     'pos': pos,
     'hide': hide,
+    'shouldUpdate': shouldUpdate,
     'updatedAt': updatedAt ?? 0,
   };
 }
