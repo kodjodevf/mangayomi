@@ -27,8 +27,13 @@ const CategorySchema = CollectionSchema(
     r'hide': PropertySchema(id: 2, name: r'hide', type: IsarType.bool),
     r'name': PropertySchema(id: 3, name: r'name', type: IsarType.string),
     r'pos': PropertySchema(id: 4, name: r'pos', type: IsarType.long),
-    r'updatedAt': PropertySchema(
+    r'shouldUpdate': PropertySchema(
       id: 5,
+      name: r'shouldUpdate',
+      type: IsarType.bool,
+    ),
+    r'updatedAt': PropertySchema(
+      id: 6,
       name: r'updatedAt',
       type: IsarType.long,
     ),
@@ -75,7 +80,8 @@ void _categorySerialize(
   writer.writeBool(offsets[2], object.hide);
   writer.writeString(offsets[3], object.name);
   writer.writeLong(offsets[4], object.pos);
-  writer.writeLong(offsets[5], object.updatedAt);
+  writer.writeBool(offsets[5], object.shouldUpdate);
+  writer.writeLong(offsets[6], object.updatedAt);
 }
 
 Category _categoryDeserialize(
@@ -92,7 +98,8 @@ Category _categoryDeserialize(
     id: id,
     name: reader.readStringOrNull(offsets[3]),
     pos: reader.readLongOrNull(offsets[4]),
-    updatedAt: reader.readLongOrNull(offsets[5]),
+    shouldUpdate: reader.readBoolOrNull(offsets[5]),
+    updatedAt: reader.readLongOrNull(offsets[6]),
   );
   object.forManga = reader.readBoolOrNull(offsets[1]);
   return object;
@@ -118,6 +125,8 @@ P _categoryDeserializeProp<P>(
     case 4:
       return (reader.readLongOrNull(offset)) as P;
     case 5:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 6:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -642,6 +651,33 @@ extension CategoryQueryFilter
     });
   }
 
+  QueryBuilder<Category, Category, QAfterFilterCondition> shouldUpdateIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'shouldUpdate'),
+      );
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterFilterCondition>
+  shouldUpdateIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'shouldUpdate'),
+      );
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterFilterCondition> shouldUpdateEqualTo(
+    bool? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'shouldUpdate', value: value),
+      );
+    });
+  }
+
   QueryBuilder<Category, Category, QAfterFilterCondition> updatedAtIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
@@ -785,6 +821,18 @@ extension CategoryQuerySortBy on QueryBuilder<Category, Category, QSortBy> {
     });
   }
 
+  QueryBuilder<Category, Category, QAfterSortBy> sortByShouldUpdate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'shouldUpdate', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterSortBy> sortByShouldUpdateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'shouldUpdate', Sort.desc);
+    });
+  }
+
   QueryBuilder<Category, Category, QAfterSortBy> sortByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.asc);
@@ -872,6 +920,18 @@ extension CategoryQuerySortThenBy
     });
   }
 
+  QueryBuilder<Category, Category, QAfterSortBy> thenByShouldUpdate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'shouldUpdate', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Category, Category, QAfterSortBy> thenByShouldUpdateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'shouldUpdate', Sort.desc);
+    });
+  }
+
   QueryBuilder<Category, Category, QAfterSortBy> thenByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.asc);
@@ -919,6 +979,12 @@ extension CategoryQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Category, Category, QDistinct> distinctByShouldUpdate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'shouldUpdate');
+    });
+  }
+
   QueryBuilder<Category, Category, QDistinct> distinctByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'updatedAt');
@@ -961,6 +1027,12 @@ extension CategoryQueryProperty
   QueryBuilder<Category, int?, QQueryOperations> posProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'pos');
+    });
+  }
+
+  QueryBuilder<Category, bool?, QQueryOperations> shouldUpdateProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'shouldUpdate');
     });
   }
 

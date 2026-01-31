@@ -417,6 +417,23 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab>
                     IconButton(
                       onPressed: () async {
                         await isar.writeTxn(() async {
+                          category.shouldUpdate =
+                              !(category.shouldUpdate ?? false);
+                          category.updatedAt =
+                              DateTime.now().millisecondsSinceEpoch;
+                          isar.categorys.put(category);
+                        });
+                      },
+                      icon: Icon(
+                        category.shouldUpdate ?? true
+                            ? Icons.update_outlined
+                            : Icons.update_disabled_outlined,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    IconButton(
+                      onPressed: () async {
+                        await isar.writeTxn(() async {
                           category.hide = !(category.hide ?? false);
                           category.updatedAt =
                               DateTime.now().millisecondsSinceEpoch;
