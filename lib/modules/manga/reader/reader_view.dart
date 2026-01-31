@@ -1051,10 +1051,10 @@ class _MangaChapterPageGalleryState
         setState(() {
           _readerController = ref.read(
             readerControllerProvider(
-              chapter: pages[_currentIndex!].chapter!,
+              chapter: pages[index].chapter!,
             ).notifier,
           );
-          chapter = pages[_currentIndex!].chapter!;
+          chapter = pages[index].chapter!;
           final chapterUrlModel = pages[index].chapterUrlModel;
           if (chapterUrlModel != null) {
             _chapterUrlModel = chapterUrlModel;
