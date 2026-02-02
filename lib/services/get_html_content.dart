@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:mangayomi/src/rust/api/epub.dart';
 import 'package:path/path.dart' as p;
-// import 'package:epubx/epubx.dart';
 import 'package:html/parser.dart';
 import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/models/chapter.dart';
