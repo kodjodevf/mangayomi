@@ -362,14 +362,14 @@ Future<void> pushToMangaReaderDetail({
           .sourceEqualTo(manga.source)
           .isEmptySync();
       if (empty) {
-        isar.writeTxnSync(() {
-          isar.mangas.putSync(
+        await isar.writeTxn(() async {
+          await isar.mangas.put(
             manga..updatedAt = DateTime.now().millisecondsSinceEpoch,
           );
         });
       } else {
-        isar.writeTxnSync(() {
-          isar.mangas.putSync(manga);
+        await isar.writeTxn(() async {
+          await isar.mangas.put(manga);
         });
       }
 
@@ -391,8 +391,8 @@ Future<void> pushToMangaReaderDetail({
 
   final mang = isar.mangas.getSync(mangaId);
   if (mang!.sourceId == null && !(mang.isLocalArchive ?? false)) {
-    isar.writeTxnSync(() {
-      isar.mangas.putSync(mang..sourceId = sourceId);
+    await isar.writeTxn(() async {
+      await isar.mangas.put(mang..sourceId = sourceId);
     });
   }
   final settings = isar.settings.getSync(227)!;
@@ -401,7 +401,7 @@ Future<void> pushToMangaReaderDetail({
       .where((element) => element.mangaId == mangaId)
       .toList();
   if (checkIfExist.isEmpty) {
-    isar.writeTxnSync(() {
+    await isar.writeTxn(() async {
       List<SortChapter>? sortChapterList = [];
       for (var sortChapter in settings.sortChapterList ?? []) {
         sortChapterList.add(sortChapter);
@@ -426,7 +426,7 @@ Future<void> pushToMangaReaderDetail({
         ChapterFilterDownloaded()..mangaId = mangaId,
       );
       chapterFilterUnreadList.add(ChapterFilterUnread()..mangaId = mangaId);
-      isar.settings.putSync(
+      await isar.settings.put(
         settings
           ..sortChapterList = sortChapterList
           ..chapterFilterBookmarkedList = chapterFilterBookmarkedList
@@ -437,22 +437,24 @@ Future<void> pushToMangaReaderDetail({
     });
   }
   if (!addToFavourite) {
-    if (useMaterialRoute) {
-      await Navigator.push(
-        context,
-        createRoute(page: MangaReaderDetail(mangaId: mangaId)),
-      );
+    if (context.mounted) {
+      if (useMaterialRoute) {
+        await Navigator.push(
+          context,
+          createRoute(page: MangaReaderDetail(mangaId: mangaId)),
+        );
+      } else {
+        await context.push('/manga-reader/detail', extra: mangaId);
+      }
     } else {
-      await context.push('/manga-reader/detail', extra: mangaId);
+      final getManga = isar.mangas.filter().idEqualTo(mangaId).findFirstSync()!;
+      await isar.writeTxn(() async {
+        await isar.mangas.put(
+          getManga
+            ..favorite = !getManga.favorite!
+            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+        );
+      });
     }
-  } else {
-    final getManga = isar.mangas.filter().idEqualTo(mangaId).findFirstSync()!;
-    isar.writeTxnSync(() {
-      isar.mangas.putSync(
-        getManga
-          ..favorite = !getManga.favorite!
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      );
-    });
   }
 }
