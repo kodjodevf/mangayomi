@@ -418,7 +418,7 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab>
                       onPressed: () async {
                         await isar.writeTxn(() async {
                           category.shouldUpdate =
-                              !(category.shouldUpdate ?? false);
+                              !(category.shouldUpdate ?? true);
                           category.updatedAt =
                               DateTime.now().millisecondsSinceEpoch;
                           isar.categorys.put(category);
