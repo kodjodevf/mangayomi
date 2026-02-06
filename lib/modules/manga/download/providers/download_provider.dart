@@ -355,10 +355,12 @@ Future<void> downloadChapter(
       if (!file.existsSync() && novelPage != null) {
         final source = getSource(manga.lang!, manga.source!, manga.sourceId)!;
         p.join(chapterDirectory.path, "$chapterName.html");
-        final html = await getExtensionService(
+        final html = await withExtensionService(
           source,
           ref.read(androidProxyServerStateProvider),
-        ).getHtmlContent(chapter.manga.value!.name!, chapter.url!);
+          (service) =>
+              service.getHtmlContent(chapter.manga.value!.name!, chapter.url!),
+        );
         if (html.isNotEmpty) {
           await file.writeAsString(html);
           await setProgress(

@@ -32,6 +32,7 @@ class LNReaderExtensionService implements ExtensionService {
   @override
   late Source source;
   bool _isInitialized = false;
+  late JsCheerio _jsCheerio;
 
   LNReaderExtensionService(this.source);
 
@@ -45,7 +46,7 @@ module={},exports=Function("return this")(),Object.defineProperties(module,{name
     JsHttpClient(runtime).init();
     JsLibs(runtime).init();
     JsHtmlParser(runtime).init();
-    JsCheerio(runtime).init();
+    _jsCheerio = JsCheerio(runtime)..init();
     runtime.evaluate('''
 const require = (package) => {
   switch (package) {
@@ -86,6 +87,13 @@ ${source.sourceCode}
 const extension = exports.default;
 ''');
     _isInitialized = true;
+  }
+
+  @override
+  void dispose() {
+    if (!_isInitialized) return;
+    _jsCheerio.dispose();
+    _isInitialized = false;
   }
 
   @override

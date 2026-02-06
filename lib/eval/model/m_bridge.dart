@@ -245,6 +245,7 @@ class MBridge {
   }
 
   static final Map<CloudDriveType, QuarkUcExtractor> _extractorCache = {};
+  static final Set<String> _initializedLocales = {};
 
   static QuarkUcExtractor _getExtractor(String cookie, CloudDriveType type) {
     if (!_extractorCache.containsKey(type)) {
@@ -429,7 +430,10 @@ class MBridge {
         for (var dateFormat in _dateFormats) {
           newLocale((dateFormat, locale, false));
           try {
-            initializeDateFormatting(locale);
+            if (!_initializedLocales.contains(locale)) {
+              initializeDateFormatting(locale);
+              _initializedLocales.add(locale);
+            }
             if (WordSet(["yesterday", "يوم واحد"]).startsWith(date)) {
               DateTime cal = DateTime.now().subtract(const Duration(days: 1));
               cal = DateTime(cal.year, cal.month, cal.day);
@@ -596,40 +600,42 @@ class MBridge {
     bool isOk = false;
     String response = "";
     HeadlessInAppWebView? headlessWebView;
-    headlessWebView = HeadlessInAppWebView(
-      webViewEnvironment: webViewEnvironment,
-      onWebViewCreated: (controller) {
-        controller.addJavaScriptHandler(
-          handlerName: 'setResponse',
-          callback: (args) {
-            response = args[0] as String;
-            isOk = true;
-          },
-        );
-      },
-      initialUrlRequest: URLRequest(url: WebUri(url), headers: headers),
-      onLoadStop: (controller, url) async {
-        for (var script in scripts) {
-          await controller.platform.evaluateJavascript(source: script);
-        }
-      },
-    );
-
-    headlessWebView.run();
-
-    await Future.doWhile(() async {
-      timeOut = time == t;
-      if (timeOut || isOk) {
-        return false;
-      }
-      await Future.delayed(const Duration(seconds: 1));
-      t++;
-      return true;
-    });
     try {
-      headlessWebView.dispose();
-    } catch (_) {}
+      headlessWebView = HeadlessInAppWebView(
+        webViewEnvironment: webViewEnvironment,
+        onWebViewCreated: (controller) {
+          controller.addJavaScriptHandler(
+            handlerName: 'setResponse',
+            callback: (args) {
+              response = args[0] as String;
+              isOk = true;
+            },
+          );
+        },
+        initialUrlRequest: URLRequest(url: WebUri(url), headers: headers),
+        onLoadStop: (controller, url) async {
+          for (var script in scripts) {
+            await controller.platform.evaluateJavascript(source: script);
+          }
+        },
+      );
 
+      await headlessWebView.run();
+
+      await Future.doWhile(() async {
+        timeOut = time == t;
+        if (timeOut || isOk) {
+          return false;
+        }
+        await Future.delayed(const Duration(seconds: 1));
+        t++;
+        return true;
+      });
+    } finally {
+      try {
+        await headlessWebView?.dispose();
+      } catch (_) {}
+    }
     return response;
   }
 }

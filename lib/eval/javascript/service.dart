@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'package:flutter_qjs/flutter_qjs.dart';
 import 'package:mangayomi/eval/javascript/dom_selector.dart';
@@ -20,6 +21,7 @@ class JsExtensionService implements ExtensionService {
   @override
   late Source source;
   bool _isInitialized = false;
+  late JsDomSelector _jsDomSelector;
 
   JsExtensionService(this.source);
 
@@ -27,9 +29,9 @@ class JsExtensionService implements ExtensionService {
     if (_isInitialized) return;
     runtime = getJavascriptRuntime();
     JsHttpClient(runtime).init();
-    JsDomSelector(runtime).init();
-    JsVideosExtractors(runtime).init();
+    _jsDomSelector = JsDomSelector(runtime)..init();
     JsUtils(runtime).init();
+    JsVideosExtractors(runtime).init();
     JsPreferences(runtime, source).init();
 
     runtime.evaluate('''
@@ -85,6 +87,13 @@ var extention = new DefaultExtension();
   }
 
   @override
+  void dispose() {
+    if (!_isInitialized) return;
+    _jsDomSelector.dispose();
+    _isInitialized = false;
+  }
+
+  @override
   Map<String, String> getHeaders() {
     return _extensionCall<Map>(
       'getHeaders(`${source.baseUrl ?? ''}`)',
@@ -130,25 +139,38 @@ var extention = new DefaultExtension();
 
   @override
   Future<List<PageUrl>> getPageList(String url) async {
-    return (await _extensionCallAsync<List>('getPageList(`$url`)'))
-        .map(
-          (e) => e is String
-              ? PageUrl(e.trim())
-              : PageUrl.fromJson((e as Map).toMapStringDynamic!),
-        )
-        .toList();
+    final pages = LinkedHashSet<PageUrl>(
+      equals: (a, b) => a.url == b.url,
+      hashCode: (p) => p.url.hashCode,
+    );
+
+    for (final e in await _extensionCallAsync<List>('getPageList(`$url`)')) {
+      if (e != null) {
+        final page = e is String
+            ? PageUrl(e.trim())
+            : PageUrl.fromJson((e as Map).toMapStringDynamic!);
+        pages.add(page);
+      }
+    }
+
+    return pages.toList();
   }
 
   @override
   Future<List<Video>> getVideoList(String url) async {
-    return (await _extensionCallAsync<List>('getVideoList(`$url`)'))
-        .where(
-          (element) => element['url'] != null && element['originalUrl'] != null,
-        )
-        .map((e) => Video.fromJson(e))
-        .toList()
-        .toSet()
-        .toList();
+    final videos = LinkedHashSet<Video>(
+      equals: (a, b) => a.url == b.url && a.originalUrl == b.originalUrl,
+      hashCode: (v) => Object.hash(v.url, v.originalUrl),
+    );
+
+    for (final element in await _extensionCallAsync<List>(
+      'getVideoList(`$url`)',
+    )) {
+      if (element['url'] != null && element['originalUrl'] != null) {
+        videos.add(Video.fromJson(element));
+      }
+    }
+    return videos.toList();
   }
 
   @override
