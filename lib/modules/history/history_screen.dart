@@ -337,7 +337,6 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
     Manga manga,
     int? deleteId,
   ) async {
-    await manga.chapters.load();
     isar.writeTxnSync(() {
       isar.historys.deleteSync(deleteId!);
       ref
