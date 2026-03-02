@@ -999,8 +999,8 @@ class ChapterPageurls {
   ChapterPageurls({this.chapterId, this.urls});
   ChapterPageurls.fromJson(Map<String, dynamic> json) {
     chapterId = json['chapterId'];
-    urls = json['headers']?.cast<String>();
-    urls = json['headers']?.cast<String>();
+    urls = json['urls']?.cast<String>();
+    headers = json['headers']?.cast<String>();
   }
 
   Map<String, dynamic> toJson() => {
