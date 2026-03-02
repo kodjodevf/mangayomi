@@ -1002,7 +1002,8 @@ class _MangaChapterPageGalleryState
     );
 
     _readerController.setMangaHistoryUpdate();
-    await Future.delayed(const Duration(milliseconds: 1));
+    // Use post-frame callback instead of Future.delayed(1ms) timing hack
+    await Future(() {});
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
     if (fullScreenReader) {
       if (isDesktop) {
@@ -1050,9 +1051,7 @@ class _MangaChapterPageGalleryState
       if (mounted) {
         setState(() {
           _readerController = ref.read(
-            readerControllerProvider(
-              chapter: pages[index].chapter!,
-            ).notifier,
+            readerControllerProvider(chapter: pages[index].chapter!).notifier,
           );
           chapter = pages[index].chapter!;
           final chapterUrlModel = pages[index].chapterUrlModel;
@@ -1165,7 +1164,8 @@ class _MangaChapterPageGalleryState
           _scrollDirection = Axis.vertical;
           _isReverseHorizontal = false;
         });
-        await Future.delayed(const Duration(milliseconds: 30));
+        // Wait for the next frame so the PageView rebuilds with new direction
+        await WidgetsBinding.instance.endOfFrame;
 
         _extendedController.jumpToPage(index);
       }
@@ -1180,7 +1180,8 @@ class _MangaChapterPageGalleryState
 
           _scrollDirection = Axis.horizontal;
         });
-        await Future.delayed(const Duration(milliseconds: 30));
+        // Wait for the next frame so the PageView rebuilds with new direction
+        await WidgetsBinding.instance.endOfFrame;
 
         _extendedController.jumpToPage(index);
       }
@@ -1189,7 +1190,8 @@ class _MangaChapterPageGalleryState
         setState(() {
           _isReverseHorizontal = false;
         });
-        await Future.delayed(const Duration(milliseconds: 30));
+        // Wait for the next frame so the scroll view rebuilds
+        await WidgetsBinding.instance.endOfFrame;
         _itemScrollController.scrollTo(
           index: index,
           duration: const Duration(milliseconds: 1),

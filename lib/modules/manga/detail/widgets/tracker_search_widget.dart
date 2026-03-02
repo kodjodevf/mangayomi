@@ -38,7 +38,8 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
   late List<TrackSearch>? tracks = [];
   String? _errorMsg;
   Future<void> _init() async {
-    await Future.delayed(const Duration(microseconds: 100));
+    // Yield to microtask queue so initState completes before async work
+    await Future(() {});
     try {
       tracks = await ref
           .read(

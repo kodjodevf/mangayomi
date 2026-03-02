@@ -48,7 +48,8 @@ class _SubtitlesWidgetSearchState extends ConsumerState<SubtitlesWidgetSearch> {
   }
 
   Future<void> _init() async {
-    await Future.delayed(const Duration(microseconds: 100));
+    // Yield to microtask queue so initState completes before async work
+    await Future(() {});
     try {
       titles = await fetchImdbTitles(query);
     } catch (e) {

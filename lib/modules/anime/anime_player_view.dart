@@ -2014,7 +2014,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   }
 
   void _resize(BoxFit fit) async {
-    await Future.delayed(const Duration(milliseconds: 100));
+    // Wait for the widget tree to settle before updating fit
+    await WidgetsBinding.instance.endOfFrame;
     if (mounted) {
       _key.currentState?.update(
         fit: fit,

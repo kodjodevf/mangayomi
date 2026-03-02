@@ -25,7 +25,8 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
   }
 
   Future<void> _init() async {
-    await Future.delayed(const Duration(milliseconds: 100));
+    // Wait for the widget tree to settle before loading detail
+    await WidgetsBinding.instance.endOfFrame;
     await ref.read(
       updateMangaDetailProvider(mangaId: widget.mangaId, isInit: true).future,
     );

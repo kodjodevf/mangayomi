@@ -129,7 +129,8 @@ class _ChapterListWidgetState extends State<ChapterListWidget> {
   }
 
   Future<void> _jumpTo() async {
-    await Future.delayed(const Duration(milliseconds: 5));
+    // Wait for the scroll view to layout before jumping
+    await WidgetsBinding.instance.endOfFrame;
     controller.jumpTo(
       controller.position.maxScrollExtent /
           chapterList.length *

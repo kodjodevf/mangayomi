@@ -76,7 +76,8 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
                 setState(() {
                   _query = "";
                 });
-                await Future.delayed(const Duration(milliseconds: 10));
+                // Yield a frame so the empty state is rendered before re-querying
+                await WidgetsBinding.instance.endOfFrame;
                 setState(() {
                   _query = value;
                 });

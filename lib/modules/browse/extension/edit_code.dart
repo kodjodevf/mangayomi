@@ -96,7 +96,8 @@ class _CodeEditorPageState extends ConsumerState<CodeEditorPage> {
     _logSubscription = _logStreamController.stream.listen((event) async {
       _addLog(event);
       try {
-        await Future.delayed(const Duration(milliseconds: 5));
+        // Wait for the frame to complete so maxScrollExtent is updated
+        await WidgetsBinding.instance.endOfFrame;
         if (_scrollController.hasClients) {
           _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
         }

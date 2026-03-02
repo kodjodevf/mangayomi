@@ -40,7 +40,8 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
   }
 
   Future<void> _init() async {
-    await Future.delayed(const Duration(microseconds: 100));
+    // Yield to microtask queue so initState completes before async work
+    await Future(() {});
     final findManga = await ref
         .read(
           trackStateProvider(

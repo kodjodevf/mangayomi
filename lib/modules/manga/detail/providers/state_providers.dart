@@ -373,7 +373,8 @@ class ChaptersListttState extends _$ChaptersListttState {
   }
 
   void set(List<Chapter> chapters) async {
-    await Future.delayed(const Duration(milliseconds: 10));
+    // Yield to the event loop to avoid setState during build
+    await Future(() {});
     state = chapters;
   }
 }
