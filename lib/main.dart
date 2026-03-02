@@ -54,32 +54,62 @@ String? customDns;
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isLinux && runWebViewTitleBarWidget(args)) return;
-  MediaKit.ensureInitialized();
-  await RustLib.init();
-  await imgCropIsolate.start();
-  await getIsolateService.start();
-  if (!(Platform.isAndroid || Platform.isIOS)) {
-    await windowManager.ensureInitialized();
-  }
-  if (Platform.isWindows) {
-    registerProtocolHandler("mangayomi");
-  }
-  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
-    final availableVersion = await WebViewEnvironment.getAvailableVersion();
-    if (availableVersion != null) {
-      final document = await getApplicationDocumentsDirectory();
-      webViewEnvironment = await WebViewEnvironment.create(
-        settings: WebViewEnvironmentSettings(
-          userDataFolder: p.join(document.path, 'flutter_inappwebview'),
-        ),
+
+  // Widget-layer errors (build / layout / paint)
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details); // keep default red-screen in debug
+    AppLogger.log(
+      'FlutterError: ${details.exceptionAsString()}\n${details.stack}',
+      logLevel: LogLevel.error,
+    );
+  };
+
+  // Async errors that escape the Flutter framework (PlatformDispatcher)
+  PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
+    AppLogger.log(
+      'PlatformDispatcher error: $error\n$stack',
+      logLevel: LogLevel.error,
+    );
+    return true; // handled — prevent app termination
+  };
+
+  // Zone-level catch-all for anything that slips through both layers
+  runZonedGuarded(
+    () async {
+      MediaKit.ensureInitialized();
+      await RustLib.init();
+      await imgCropIsolate.start();
+      await getIsolateService.start();
+      if (!(Platform.isAndroid || Platform.isIOS)) {
+        await windowManager.ensureInitialized();
+      }
+      if (Platform.isWindows) {
+        registerProtocolHandler("mangayomi");
+      }
+      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
+        final availableVersion = await WebViewEnvironment.getAvailableVersion();
+        if (availableVersion != null) {
+          final document = await getApplicationDocumentsDirectory();
+          webViewEnvironment = await WebViewEnvironment.create(
+            settings: WebViewEnvironmentSettings(
+              userDataFolder: p.join(document.path, 'flutter_inappwebview'),
+            ),
+          );
+        }
+      }
+      final storage = StorageProvider();
+      await storage.requestPermission();
+      isar = await storage.initDB(null, inspector: kDebugMode);
+      runApp(ProviderScope(child: MyApp(), retry: (retryCount, error) => null));
+      unawaited(_postLaunchInit(storage));
+    },
+    (Object error, StackTrace stack) {
+      AppLogger.log(
+        'runZonedGuarded error: $error\n$stack',
+        logLevel: LogLevel.error,
       );
-    }
-  }
-  final storage = StorageProvider();
-  await storage.requestPermission();
-  isar = await storage.initDB(null, inspector: kDebugMode);
-  runApp(ProviderScope(child: MyApp(), retry: (retryCount, error) => null));
-  unawaited(_postLaunchInit(storage)); // Defer non-essential async operations
+    },
+  );
 }
 
 Future<void> _postLaunchInit(StorageProvider storage) async {
