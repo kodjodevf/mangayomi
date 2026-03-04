@@ -466,8 +466,6 @@ class ShowPagesNumberState extends _$ShowPagesNumberState {
   }
 }
 
-// ── Mihon feature parity providers ──
-
 @riverpod
 class KeepScreenOnReaderState extends _$KeepScreenOnReaderState {
   @override
