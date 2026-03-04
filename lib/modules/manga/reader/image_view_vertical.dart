@@ -99,18 +99,21 @@ class ImageViewVertical extends ConsumerWidget {
         return null;
       },
     );
-    return GestureDetector(
-      onLongPress: () => onLongPressData.call(data),
-      child: isHorizontal
-          ? imageWidget
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (data.index == 0)
-                  SizedBox(height: MediaQuery.of(context).padding.top),
-                imageWidget,
-              ],
-            ),
+    return applyReaderColorFilter(
+      GestureDetector(
+        onLongPress: () => onLongPressData.call(data),
+        child: isHorizontal
+            ? imageWidget
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (data.index == 0)
+                    SizedBox(height: MediaQuery.of(context).padding.top),
+                  imageWidget,
+                ],
+              ),
+      ),
+      ref,
     );
   }
 }

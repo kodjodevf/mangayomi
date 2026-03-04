@@ -577,5 +577,21 @@
   "app_lock": "App lock",
   "require_biometric_or_device_credential": "Require biometric or device credential to open the app",
   "biometric_or_device_credential_not_available": "Biometric authentication not available on this device",
-  "app_lock_description": "When app lock is enabled, you will be asked to authenticate \nevery time you open the app or switch back to it from the background."
+  "app_lock_description": "When app lock is enabled, you will be asked to authenticate \nevery time you open the app or switch back to it from the background.",
+  "keep_screen_on": "Keep screen on",
+  "webtoon_side_padding": "Webtoon side padding",
+  "show_page_gaps": "Show page gaps",
+  "invert_colors": "Invert colors",
+  "grayscale": "Grayscale",
+  "brightness": "Brightness",
+  "contrast": "Contrast",
+  "saturation": "Saturation",
+  "navigation_layout": "Navigation layout",
+  "nav_layout_default": "Default",
+  "nav_layout_l_shaped": "L-shaped",
+  "nav_layout_kindle": "Kindle-ish",
+  "nav_layout_edge": "Edge",
+  "nav_layout_right_and_left": "Right and left",
+  "nav_layout_disabled": "Disabled",
+  "color_enhancements": "Color enhancements"
 }

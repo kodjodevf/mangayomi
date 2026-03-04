@@ -324,6 +324,35 @@ class Settings {
 
   int? libraryFilterNovelTrackingType;
 
+  // ── Manga reader: Mihon feature parity ──
+
+  /// Keep screen on while reading (wakelock)
+  bool? keepScreenOnReader;
+
+  /// Webtoon side padding percentage (0–50)
+  int? webtoonSidePadding;
+
+  /// Show gaps between pages in continuous/webtoon mode
+  bool? showPageGaps;
+
+  /// Invert page colors
+  bool? invertColors;
+
+  /// Apply grayscale filter to pages
+  bool? grayscale;
+
+  /// Image brightness adjustment (−1.0 to 1.0, 0 = neutral)
+  double? readerBrightness;
+
+  /// Image contrast adjustment (0.0 to 2.0, 1 = neutral)
+  double? readerContrast;
+
+  /// Image saturation adjustment (0.0 to 2.0, 1 = neutral)
+  double? readerSaturation;
+
+  /// Reader tap-zone navigation layout (0=Default, 1=L-shaped, 2=Kindle, 3=Edge, 4=RightAndLeft)
+  int? readerNavigationLayout;
+
   Settings({
     this.id = 227,
     this.updatedAt = 0,
@@ -471,6 +500,15 @@ class Settings {
     this.libraryFilterMangasTrackingType = 0,
     this.libraryFilterAnimeTrackingType = 0,
     this.libraryFilterNovelTrackingType = 0,
+    this.keepScreenOnReader = true,
+    this.webtoonSidePadding = 0,
+    this.showPageGaps = true,
+    this.invertColors = false,
+    this.grayscale = false,
+    this.readerBrightness = 0.0,
+    this.readerContrast = 1.0,
+    this.readerSaturation = 1.0,
+    this.readerNavigationLayout = 0,
   });
 
   Settings.fromJson(Map<String, dynamic> json) {
@@ -736,6 +774,15 @@ class Settings {
     libraryFilterMangasTrackingType = json['libraryFilterMangasTrackingType'];
     libraryFilterAnimeTrackingType = json['libraryFilterAnimeTrackingType'];
     libraryFilterNovelTrackingType = json['libraryFilterNovelTrackingType'];
+    keepScreenOnReader = json['keepScreenOnReader'];
+    webtoonSidePadding = json['webtoonSidePadding'];
+    showPageGaps = json['showPageGaps'];
+    invertColors = json['invertColors'];
+    grayscale = json['grayscale'];
+    readerBrightness = json['readerBrightness']?.toDouble();
+    readerContrast = json['readerContrast']?.toDouble();
+    readerSaturation = json['readerSaturation']?.toDouble();
+    readerNavigationLayout = json['readerNavigationLayout'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -907,6 +954,15 @@ class Settings {
     'libraryFilterMangasTrackingType': libraryFilterMangasTrackingType,
     'libraryFilterAnimeTrackingType': libraryFilterAnimeTrackingType,
     'libraryFilterNovelTrackingType': libraryFilterNovelTrackingType,
+    'keepScreenOnReader': keepScreenOnReader,
+    'webtoonSidePadding': webtoonSidePadding,
+    'showPageGaps': showPageGaps,
+    'invertColors': invertColors,
+    'grayscale': grayscale,
+    'readerBrightness': readerBrightness,
+    'readerContrast': readerContrast,
+    'readerSaturation': readerSaturation,
+    'readerNavigationLayout': readerNavigationLayout,
   };
 }
 

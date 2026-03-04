@@ -28,20 +28,23 @@ class ImageViewPaged extends ConsumerWidget {
     final scaleType = ref.watch(scaleTypeStateProvider);
     final image = data.getImageProvider(ref, true);
     final (colorBlendMode, color) = chapterColorFIlterValues(context, ref);
-    return GestureDetector(
-      onLongPress: () => onLongPressData.call(data),
-      child: ExtendedImage(
-        image: image,
-        colorBlendMode: colorBlendMode,
-        color: color,
-        fit: getBoxFit(scaleType),
-        filterQuality: FilterQuality.medium,
-        mode: ExtendedImageMode.gesture,
-        handleLoadingProgress: true,
-        loadStateChanged: loadStateChanged,
-        initGestureConfigHandler: initGestureConfigHandler,
-        onDoubleTap: onDoubleTap,
+    return applyReaderColorFilter(
+      GestureDetector(
+        onLongPress: () => onLongPressData.call(data),
+        child: ExtendedImage(
+          image: image,
+          colorBlendMode: colorBlendMode,
+          color: color,
+          fit: getBoxFit(scaleType),
+          filterQuality: FilterQuality.medium,
+          mode: ExtendedImageMode.gesture,
+          handleLoadingProgress: true,
+          loadStateChanged: loadStateChanged,
+          initGestureConfigHandler: initGestureConfigHandler,
+          onDoubleTap: onDoubleTap,
+        ),
       ),
+      ref,
     );
   }
 }

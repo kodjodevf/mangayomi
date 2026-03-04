@@ -96,6 +96,7 @@ dependencies:
       ref: main
   table_calendar: ^3.2.0
   local_auth: ^3.0.1
+  wakelock_plus: ^1.4.0
   m_extension_server:
     git:
       url: https://github.com/kodjodevf/m_extension_server.git

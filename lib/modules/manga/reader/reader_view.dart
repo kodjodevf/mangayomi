@@ -38,6 +38,7 @@ import 'package:mangayomi/modules/manga/reader/image_view_webtoon.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:window_manager/window_manager.dart';
 
 typedef DoubleClickAnimationListener = void Function();
@@ -177,6 +178,7 @@ class _MangaChapterPageGalleryState
     }
     disposePreloadManager();
     _readerController.keepAliveLink?.close();
+    WakelockPlus.disable();
     super.dispose();
   }
 
@@ -239,6 +241,14 @@ class _MangaChapterPageGalleryState
     _initCurrentIndex();
     discordRpc?.showChapterDetails(ref, chapter);
     WidgetsBinding.instance.addObserver(this);
+    _initWakelock();
+  }
+
+  void _initWakelock() {
+    final keepOn = isar.settings.getSync(227)!.keepScreenOnReader ?? true;
+    if (keepOn) {
+      WakelockPlus.enable();
+    }
   }
 
   // final double _horizontalScaleValue = 1.0;
@@ -409,6 +419,10 @@ class _MangaChapterPageGalleryState
                             ),
                             onDoubleTapDown: (offset) => _toggleScale(offset),
                             onDoubleTap: () {},
+                            webtoonSidePadding: ref.watch(
+                              webtoonSidePaddingStateProvider,
+                            ),
+                            showPageGaps: ref.watch(showPageGapsStateProvider),
                           )
                         : Material(
                             color: getBackgroundColor(backgroundColor),
@@ -700,8 +714,12 @@ class _MangaChapterPageGalleryState
                         final usePageTapZones = ref.watch(
                           usePageTapZonesStateProvider,
                         );
+                        final navigationLayout = ref.watch(
+                          readerNavigationLayoutStateProvider,
+                        );
                         return ReaderGestureHandler(
                           usePageTapZones: usePageTapZones,
+                          navigationLayout: navigationLayout,
                           isRTL: _isReverseHorizontal,
                           hasImageError: failedToLoadImage,
                           isContinuousMode: _isContinuousMode(),

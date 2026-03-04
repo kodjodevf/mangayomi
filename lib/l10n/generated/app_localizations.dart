@@ -3538,6 +3538,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'When app lock is enabled, you will be asked to authenticate \nevery time you open the app or switch back to it from the background.'**
   String get app_lock_description;
+
+  /// No description provided for @keep_screen_on.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep screen on'**
+  String get keep_screen_on;
+
+  /// No description provided for @webtoon_side_padding.
+  ///
+  /// In en, this message translates to:
+  /// **'Webtoon side padding'**
+  String get webtoon_side_padding;
+
+  /// No description provided for @show_page_gaps.
+  ///
+  /// In en, this message translates to:
+  /// **'Show page gaps'**
+  String get show_page_gaps;
+
+  /// No description provided for @invert_colors.
+  ///
+  /// In en, this message translates to:
+  /// **'Invert colors'**
+  String get invert_colors;
+
+  /// No description provided for @grayscale.
+  ///
+  /// In en, this message translates to:
+  /// **'Grayscale'**
+  String get grayscale;
+
+  /// No description provided for @brightness.
+  ///
+  /// In en, this message translates to:
+  /// **'Brightness'**
+  String get brightness;
+
+  /// No description provided for @contrast.
+  ///
+  /// In en, this message translates to:
+  /// **'Contrast'**
+  String get contrast;
+
+  /// No description provided for @saturation.
+  ///
+  /// In en, this message translates to:
+  /// **'Saturation'**
+  String get saturation;
+
+  /// No description provided for @navigation_layout.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigation layout'**
+  String get navigation_layout;
+
+  /// No description provided for @nav_layout_default.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get nav_layout_default;
+
+  /// No description provided for @nav_layout_l_shaped.
+  ///
+  /// In en, this message translates to:
+  /// **'L-shaped'**
+  String get nav_layout_l_shaped;
+
+  /// No description provided for @nav_layout_kindle.
+  ///
+  /// In en, this message translates to:
+  /// **'Kindle-ish'**
+  String get nav_layout_kindle;
+
+  /// No description provided for @nav_layout_edge.
+  ///
+  /// In en, this message translates to:
+  /// **'Edge'**
+  String get nav_layout_edge;
+
+  /// No description provided for @nav_layout_right_and_left.
+  ///
+  /// In en, this message translates to:
+  /// **'Right and left'**
+  String get nav_layout_right_and_left;
+
+  /// No description provided for @nav_layout_disabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled'**
+  String get nav_layout_disabled;
+
+  /// No description provided for @color_enhancements.
+  ///
+  /// In en, this message translates to:
+  /// **'Color enhancements'**
+  String get color_enhancements;
 }
 
 class _AppLocalizationsDelegate

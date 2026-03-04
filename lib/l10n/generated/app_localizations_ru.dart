@@ -1863,4 +1863,52 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get app_lock_description =>
       'When app lock is enabled, you will be asked to authenticate \nevery time you open the app or switch back to it from the background.';
+
+  @override
+  String get keep_screen_on => 'Keep screen on';
+
+  @override
+  String get webtoon_side_padding => 'Webtoon side padding';
+
+  @override
+  String get show_page_gaps => 'Show page gaps';
+
+  @override
+  String get invert_colors => 'Invert colors';
+
+  @override
+  String get grayscale => 'Grayscale';
+
+  @override
+  String get brightness => 'Brightness';
+
+  @override
+  String get contrast => 'Contrast';
+
+  @override
+  String get saturation => 'Saturation';
+
+  @override
+  String get navigation_layout => 'Navigation layout';
+
+  @override
+  String get nav_layout_default => 'Default';
+
+  @override
+  String get nav_layout_l_shaped => 'L-shaped';
+
+  @override
+  String get nav_layout_kindle => 'Kindle-ish';
+
+  @override
+  String get nav_layout_edge => 'Edge';
+
+  @override
+  String get nav_layout_right_and_left => 'Right and left';
+
+  @override
+  String get nav_layout_disabled => 'Disabled';
+
+  @override
+  String get color_enhancements => 'Color enhancements';
 }

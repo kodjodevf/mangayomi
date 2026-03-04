@@ -12,6 +12,19 @@ import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 
+String _navLayoutName(int index, BuildContext context) {
+  final l10n = l10nLocalizations(context)!;
+  return switch (index) {
+    0 => l10n.nav_layout_default,
+    1 => l10n.nav_layout_l_shaped,
+    2 => l10n.nav_layout_kindle,
+    3 => l10n.nav_layout_edge,
+    4 => l10n.nav_layout_right_and_left,
+    5 => l10n.nav_layout_disabled,
+    _ => l10n.nav_layout_default,
+  };
+}
+
 /// Settings modal for the manga reader using Riverpod providers directly.
 ///
 /// This is a complete replacement for the _showModalSettings() method.
@@ -114,6 +127,9 @@ class _ReadingModeTab extends ConsumerWidget {
     final readerMode = ref.watch(currentReaderModeProvider);
     final usePageTapZones = ref.watch(usePageTapZonesStateProvider);
     final cropBorders = ref.watch(cropBordersStateProvider);
+    final keepScreenOn = ref.watch(keepScreenOnReaderStateProvider);
+    final showPageGaps = ref.watch(showPageGapsStateProvider);
+    final webtoonSidePadding = ref.watch(webtoonSidePaddingStateProvider);
 
     final isContinuousMode =
         readerMode == ReaderMode.verticalContinuous ||
@@ -170,6 +186,66 @@ class _ReadingModeTab extends ConsumerWidget {
                 ref.read(usePageTapZonesStateProvider.notifier).set(value);
               },
             ),
+
+            // Keep Screen On
+            SwitchListTile(
+              value: keepScreenOn,
+              title: Text(
+                l10n.keep_screen_on,
+                style: TextStyle(
+                  color: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+                  fontSize: 14,
+                ),
+              ),
+              onChanged: (value) {
+                ref.read(keepScreenOnReaderStateProvider.notifier).set(value);
+              },
+            ),
+
+            // Show Page Gaps (only for continuous modes)
+            if (isContinuousMode)
+              SwitchListTile(
+                value: showPageGaps,
+                title: Text(
+                  l10n.show_page_gaps,
+                  style: TextStyle(
+                    color: Theme.of(
+                      context,
+                    ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+                    fontSize: 14,
+                  ),
+                ),
+                onChanged: (value) {
+                  ref.read(showPageGapsStateProvider.notifier).set(value);
+                },
+              ),
+
+            // Webtoon Side Padding (only for continuous modes)
+            if (isContinuousMode)
+              ListTile(
+                title: Text(
+                  '${l10n.webtoon_side_padding}: $webtoonSidePadding%',
+                  style: TextStyle(
+                    color: Theme.of(
+                      context,
+                    ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+                    fontSize: 14,
+                  ),
+                ),
+                subtitle: Slider(
+                  min: 0,
+                  max: 50,
+                  divisions: 50,
+                  value: webtoonSidePadding.toDouble(),
+                  onChanged: (value) {
+                    ref
+                        .read(webtoonSidePaddingStateProvider.notifier)
+                        .set(value.toInt());
+                  },
+                ),
+              ),
 
             // Auto-scroll (only for continuous modes)
             if (isContinuousMode)
@@ -240,6 +316,7 @@ class _GeneralTab extends ConsumerWidget {
     final scaleType = ref.watch(scaleTypeStateProvider);
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
     final backgroundColor = ref.watch(backgroundColorStateProvider);
+    final navigationLayout = ref.watch(readerNavigationLayoutStateProvider);
 
     return SingleChildScrollView(
       child: Padding(
@@ -279,6 +356,52 @@ class _GeneralTab extends ConsumerWidget {
                 }
               }).toList(),
               itemText: (scale) => getScaleTypeNames(context)[scale.index],
+            ),
+
+            // Navigation Layout
+            ListTile(
+              title: Text(
+                l10n.navigation_layout,
+                style: TextStyle(
+                  color: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+                  fontSize: 14,
+                ),
+              ),
+              subtitle: Text(_navLayoutName(navigationLayout, context)),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (ctx) {
+                    return SimpleDialog(
+                      title: Text(l10n.navigation_layout),
+                      children: [
+                        RadioGroup<int>(
+                          groupValue: navigationLayout,
+                          onChanged: (val) {
+                            ref
+                                .read(
+                                  readerNavigationLayoutStateProvider.notifier,
+                                )
+                                .set(val!);
+                            Navigator.pop(ctx);
+                          },
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: List.generate(6, (i) {
+                              return RadioListTile<int>(
+                                value: i,
+                                title: Text(_navLayoutName(i, context)),
+                              );
+                            }),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
             ),
 
             // Fullscreen
@@ -352,6 +475,11 @@ class _CustomFilterTab extends ConsumerWidget {
       enableCustomColorFilterStateProvider,
     );
     final colorFilterBlendMode = ref.watch(colorFilterBlendModeStateProvider);
+    final invertColors = ref.watch(invertColorsStateProvider);
+    final grayscale = ref.watch(grayscaleStateProvider);
+    final brightness = ref.watch(readerBrightnessStateProvider);
+    final contrast = ref.watch(readerContrastStateProvider);
+    final saturation = ref.watch(readerSaturationStateProvider);
 
     int r = customColorFilter?.r ?? 0;
     int g = customColorFilter?.g ?? 0;
@@ -364,6 +492,92 @@ class _CustomFilterTab extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // ── Color Enhancements ──
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Text(
+                l10n.color_enhancements,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+
+            // Invert Colors
+            SwitchListTile(
+              value: invertColors,
+              title: Text(
+                l10n.invert_colors,
+                style: TextStyle(
+                  color: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+                  fontSize: 14,
+                ),
+              ),
+              onChanged: (value) {
+                ref.read(invertColorsStateProvider.notifier).set(value);
+              },
+            ),
+
+            // Grayscale
+            SwitchListTile(
+              value: grayscale,
+              title: Text(
+                l10n.grayscale,
+                style: TextStyle(
+                  color: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+                  fontSize: 14,
+                ),
+              ),
+              onChanged: (value) {
+                ref.read(grayscaleStateProvider.notifier).set(value);
+              },
+            ),
+
+            // Brightness Slider
+            _enhancementSlider(
+              label: l10n.brightness,
+              value: brightness,
+              min: -1.0,
+              max: 1.0,
+              defaultValue: 0.0,
+              onChanged: (v) =>
+                  ref.read(readerBrightnessStateProvider.notifier).set(v),
+              context: context,
+            ),
+
+            // Contrast Slider
+            _enhancementSlider(
+              label: l10n.contrast,
+              value: contrast,
+              min: 0.0,
+              max: 2.0,
+              defaultValue: 1.0,
+              onChanged: (v) =>
+                  ref.read(readerContrastStateProvider.notifier).set(v),
+              context: context,
+            ),
+
+            // Saturation Slider
+            _enhancementSlider(
+              label: l10n.saturation,
+              value: saturation,
+              min: 0.0,
+              max: 2.0,
+              defaultValue: 1.0,
+              onChanged: (v) =>
+                  ref.read(readerSaturationStateProvider.notifier).set(v),
+              context: context,
+            ),
+
+            const Divider(height: 24),
+
+            // ── Custom RGBA Color Filter ──
+
             // Enable Custom Color Filter
             SwitchListTile(
               value: enableCustomColorFilter,
@@ -419,6 +633,63 @@ class _CustomFilterTab extends ConsumerWidget {
             ],
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _enhancementSlider({
+    required String label,
+    required double value,
+    required double min,
+    required double max,
+    required double defaultValue,
+    required ValueChanged<double> onChanged,
+    required BuildContext context,
+  }) {
+    final isDefault = (value - defaultValue).abs() < 0.01;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 80,
+            child: Text(
+              label,
+              style: TextStyle(
+                color: Theme.of(
+                  context,
+                ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+                fontSize: 14,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Slider(
+              min: min,
+              max: max,
+              value: value.clamp(min, max),
+              onChanged: onChanged,
+            ),
+          ),
+          SizedBox(
+            width: 40,
+            child: Text(
+              value.toStringAsFixed(1),
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 12),
+            ),
+          ),
+          if (!isDefault)
+            IconButton(
+              icon: const Icon(Icons.replay, size: 18),
+              onPressed: () => onChanged(defaultValue),
+              tooltip: l10nLocalizations(context)!.reset,
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+            )
+          else
+            const SizedBox(width: 32),
+        ],
       ),
     );
   }

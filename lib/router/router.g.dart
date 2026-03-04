@@ -84,7 +84,7 @@ final class RouterCurrentLocationStateProvider
 }
 
 String _$routerCurrentLocationStateHash() =>
-    r'e3248e9cbfd34a1c0576b28d9bcc01a07f644cb9';
+    r'6c20e95ab83af48f3fa42b33a27db7d2835ddd94';
 
 abstract class _$RouterCurrentLocationState extends $Notifier<String?> {
   String? build();
