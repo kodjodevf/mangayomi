@@ -253,6 +253,11 @@ class _MangaChapterPageGalleryState
 
   // final double _horizontalScaleValue = 1.0;
   bool _isNextChapterPreloading = false;
+  bool _isPrevChapterPreloading = false;
+
+  /// Guard flag: suppresses [_readProgressListener] during scroll position
+  /// adjustment after prepending previous-chapter pages.
+  bool _isAdjustingScroll = false;
 
   late int pagePreloadAmount = ref.read(pagePreloadAmountStateProvider);
   late bool _isBookmarked = _readerController.getChapterBookmarked();
@@ -912,6 +917,7 @@ class _MangaChapterPageGalleryState
   }
 
   void _readProgressListener() async {
+    if (_isAdjustingScroll) return;
     final itemPositions = _itemPositionsListener.itemPositions.value;
     if (itemPositions.isNotEmpty) {
       _currentIndex = itemPositions.first.index;
@@ -942,32 +948,18 @@ class _MangaChapterPageGalleryState
             });
           }
         }
-        if ((itemPositions.last.index == pagesLength - 1) &&
-            !_isLastPageTransition) {
-          if (_isNextChapterPreloading) return;
-          try {
-            _isNextChapterPreloading = true;
-            if (!mounted) return;
-            try {
-              final idx = pages[_currentIndex!].index;
-              if (idx != null) {
-                _readerController.setPageIndex(_geCurrentIndex(idx), false);
-              }
-            } catch (_) {}
-            final value = await ref.read(
-              getChapterPagesProvider(
-                chapter: _readerController.getNextChapter(),
-              ).future,
-            );
-            if (mounted) {
-              _preloadNextChapter(value, chapter);
-              _isNextChapterPreloading = false;
-            }
-          } on RangeError {
-            _isNextChapterPreloading = false;
-            _addLastPageTransition(chapter);
-          }
+
+        // ── Next-chapter preloading: trigger when near the end ──
+        final distToEnd = pagesLength - 1 - itemPositions.last.index;
+        if (distToEnd <= pagePreloadAmount && !_isLastPageTransition) {
+          _triggerNextChapterPreload();
         }
+
+        // ── Previous-chapter preloading: trigger when near the start ──
+        if (itemPositions.first.index <= pagePreloadAmount) {
+          _triggerPrevChapterPreload();
+        }
+
         final idx = pages[_currentIndex!].index;
         if (idx != null) {
           ref.read(currentIndexProvider(chapter).notifier).setCurrentIndex(idx);
@@ -1007,6 +999,90 @@ class _MangaChapterPageGalleryState
     } catch (_) {}
   }
 
+  // bidirectional proactive chapter preloading ──
+
+  /// Proactively starts loading both adjacent chapters at reader init.
+  void _proactivePreload() {
+    _triggerNextChapterPreload();
+    _triggerPrevChapterPreload();
+  }
+
+  /// Fires off next-chapter page fetching if not already in progress.
+  void _triggerNextChapterPreload() async {
+    if (_isNextChapterPreloading || _isLastPageTransition) return;
+    _isNextChapterPreloading = true;
+    try {
+      if (!mounted) return;
+      final nextChapter = _readerController.getNextChapter();
+      if (isChapterLoaded(nextChapter)) {
+        _isNextChapterPreloading = false;
+        return;
+      }
+      final value = await ref.read(
+        getChapterPagesProvider(chapter: nextChapter).future,
+      );
+      if (mounted) {
+        _preloadNextChapter(value, chapter);
+      }
+      _isNextChapterPreloading = false;
+    } on RangeError {
+      _isNextChapterPreloading = false;
+      _addLastPageTransition(chapter);
+    } catch (_) {
+      _isNextChapterPreloading = false;
+    }
+  }
+
+  /// Fires off previous-chapter page fetching and prepends pages.
+  void _triggerPrevChapterPreload() async {
+    if (_isPrevChapterPreloading) return;
+    _isPrevChapterPreloading = true;
+    try {
+      if (!mounted) return;
+      final prevChapter = _readerController.getPrevChapter();
+      if (isChapterLoaded(prevChapter)) {
+        _isPrevChapterPreloading = false;
+        return;
+      }
+      final value = await ref.read(
+        getChapterPagesProvider(chapter: prevChapter).future,
+      );
+      if (mounted) {
+        _handlePrevChapterPrepended(value, chapter);
+      }
+    } on RangeError {
+      // No previous chapter — nothing to prepend
+    } catch (_) {}
+    _isPrevChapterPreloading = false;
+  }
+
+  /// Prepends previous-chapter pages and adjusts scroll position to avoid jump.
+  void _handlePrevChapterPrepended(
+    GetChapterPagesModel chapterData,
+    Chapter chap,
+  ) {
+    try {
+      if (chapterData.uChapDataPreload.isEmpty || !mounted) return;
+      preloadPreviousChapter(chapterData, chap).then((prependCount) {
+        if (prependCount > 0 && mounted) {
+          _isAdjustingScroll = true;
+          _currentIndex = _currentIndex! + prependCount;
+          setState(() {});
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              if (_isContinuousMode()) {
+                _itemScrollController.jumpTo(index: _currentIndex!);
+              } else if (_extendedController.hasClients) {
+                _extendedController.jumpToPage(_currentIndex!);
+              }
+              _isAdjustingScroll = false;
+            }
+          });
+        }
+      });
+    } catch (_) {}
+  }
+
   void _initCurrentIndex() async {
     final readerMode = _readerController.getReaderMode();
 
@@ -1018,6 +1094,9 @@ class _MangaChapterPageGalleryState
         if (mounted) setState(() {});
       },
     );
+
+    // proactively start loading adjacent chapters in background
+    _proactivePreload();
 
     _readerController.setMangaHistoryUpdate();
     // Use post-frame callback instead of Future.delayed(1ms) timing hack
@@ -1087,25 +1166,15 @@ class _MangaChapterPageGalleryState
           .setCurrentIndex(pages[index].index!);
     }
 
-    if ((pages[index].pageIndex! == pages.length - 1) &&
-        !_isLastPageTransition) {
-      if (_isNextChapterPreloading) return;
-      try {
-        _isNextChapterPreloading = true;
-        if (!mounted) return;
-        final value = await ref.watch(
-          getChapterPagesProvider(
-            chapter: _readerController.getNextChapter(),
-          ).future,
-        );
-        if (mounted) {
-          _preloadNextChapter(value, chapter);
-          _isNextChapterPreloading = false;
-        }
-      } on RangeError {
-        _isNextChapterPreloading = false;
-        _addLastPageTransition(chapter);
-      }
+    // ── Next-chapter preloading: trigger when near the end ──
+    final distToEnd = pages.length - 1 - index;
+    if (distToEnd <= pagePreloadAmount && !_isLastPageTransition) {
+      _triggerNextChapterPreload();
+    }
+
+    // ── Previous-chapter preloading: trigger when near the start ──
+    if (index <= pagePreloadAmount) {
+      _triggerPrevChapterPreload();
     }
   }
 

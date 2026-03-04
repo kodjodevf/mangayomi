@@ -79,6 +79,25 @@ mixin ReaderMemoryManagement {
     );
   }
 
+  /// Preloads the previous chapter by **prepending** its pages.
+  ///
+  /// Returns the number of pages prepended (> 0 means all existing indices
+  /// shifted by that amount). The caller must adjust the scroll / page index.
+  Future<int> preloadPreviousChapter(
+    GetChapterPagesModel chapterData,
+    Chapter currentChapter,
+  ) async {
+    return await _preloadManager.preloadPrevChapter(
+      chapterData,
+      currentChapter,
+    );
+  }
+
+  /// Whether [chapter] pages are already loaded in the preload manager.
+  bool isChapterLoaded(Chapter? chapter) {
+    return _preloadManager.isChapterLoaded(chapter);
+  }
+
   /// Adds a "last chapter" transition page.
   ///
   /// Returns `true` if added successfully, `false` if already added.
