@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/modules/more/widgets/list_tile_widget.dart';
@@ -54,6 +56,12 @@ class SettingsScreen extends StatelessWidget {
               icon: Icons.explore_rounded,
               onTap: () => context.push('/browseS'),
             ),
+            if (!Platform.isLinux)
+              ListTileWidget(
+                title: l10n.security,
+                icon: Icons.security_rounded,
+                onTap: () => context.push('/security'),
+              ),
             ListTileWidget(
               title: l10n.about,
               icon: Icons.info_outline,

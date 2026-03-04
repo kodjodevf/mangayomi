@@ -25,6 +25,8 @@ class LibraryBody extends ConsumerWidget {
   final int unreadFilterType;
   final int startedFilterType;
   final int bookmarkedFilterType;
+  final int completedFilterType;
+  final int trackingFilterType;
   final bool reverse;
   final bool downloadedChapter;
   final bool continueReaderBtn;
@@ -45,6 +47,8 @@ class LibraryBody extends ConsumerWidget {
     required this.unreadFilterType,
     required this.startedFilterType,
     required this.bookmarkedFilterType,
+    required this.completedFilterType,
+    required this.trackingFilterType,
     required this.reverse,
     required this.downloadedChapter,
     required this.continueReaderBtn,
@@ -89,6 +93,8 @@ class LibraryBody extends ConsumerWidget {
             unreadFilterType: unreadFilterType,
             startedFilterType: startedFilterType,
             bookmarkedFilterType: bookmarkedFilterType,
+            completedFilterType: completedFilterType,
+            trackingFilterType: trackingFilterType,
             sortType: sortType ?? 0,
             downloadedOnly: downloadedOnly,
             searchQuery: searchQuery,
@@ -149,6 +155,8 @@ class CategoryBadge extends ConsumerWidget {
   final int unreadFilterType;
   final int startedFilterType;
   final int bookmarkedFilterType;
+  final int completedFilterType;
+  final int trackingFilterType;
   final Settings settings;
   final bool downloadedOnly;
   final String searchQuery;
@@ -162,6 +170,8 @@ class CategoryBadge extends ConsumerWidget {
     required this.unreadFilterType,
     required this.startedFilterType,
     required this.bookmarkedFilterType,
+    required this.completedFilterType,
+    required this.trackingFilterType,
     required this.settings,
     required this.downloadedOnly,
     required this.searchQuery,
@@ -188,6 +198,8 @@ class CategoryBadge extends ConsumerWidget {
             unreadFilterType: unreadFilterType,
             startedFilterType: startedFilterType,
             bookmarkedFilterType: bookmarkedFilterType,
+            completedFilterType: completedFilterType,
+            trackingFilterType: trackingFilterType,
             sortType: sortType ?? 0,
             downloadedOnly: downloadedOnly,
             searchQuery: searchQuery,

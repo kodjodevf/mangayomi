@@ -25,6 +25,7 @@ import 'package:mangayomi/services/get_chapter_pages.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/download_manager/m3u8/m3u8_downloader.dart';
 import 'package:mangayomi/services/download_manager/m3u8/models/download.dart';
+import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:mangayomi/utils/extensions/chapter.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/headers.dart';
@@ -106,12 +107,31 @@ Future<void> downloadChapter(
     Future<void> processConvert() async {
       if (!ref.read(saveAsCBZArchiveStateProvider)) return;
       try {
+        // Extract chapter number from name (e.g., "Chapter 5" → "5")
+        final chapterNumber = ChapterRecognition().parseChapterNumber(
+          chapter.manga.value!.name!,
+          chapter.name!,
+        );
+
+        final comicInfo = ComicInfoData(
+          title: chapter.name,
+          series: manga.name,
+          number: chapterNumber.toString(),
+          writer: manga.author,
+          penciller: manga.artist,
+          summary: manga.description,
+          genre: manga.genre?.join(', '),
+          translator: chapter.scanlator,
+          publishingStatusStr: manga.status.name,
+        );
+
         await ref.read(
           convertToCBZProvider(
             chapterDirectory.path,
             mangaMainDirectory!.path,
             chapter.name!,
             pages.map((e) => e.fileName!).toList(),
+            comicInfo: comicInfo,
           ).future,
         );
       } catch (error) {

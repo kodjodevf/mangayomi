@@ -310,6 +310,20 @@ class Settings {
 
   List<String>? localFolders;
 
+  bool? appLockEnabled;
+
+  int? libraryFilterMangasCompletedType;
+
+  int? libraryFilterAnimeCompletedType;
+
+  int? libraryFilterNovelCompletedType;
+
+  int? libraryFilterMangasTrackingType;
+
+  int? libraryFilterAnimeTrackingType;
+
+  int? libraryFilterNovelTrackingType;
+
   Settings({
     this.id = 227,
     this.updatedAt = 0,
@@ -450,6 +464,13 @@ class Settings {
     this.downloadedOnlyMode = false,
     this.algorithmWeights,
     this.localFolders,
+    this.appLockEnabled = false,
+    this.libraryFilterMangasCompletedType = 0,
+    this.libraryFilterAnimeCompletedType = 0,
+    this.libraryFilterNovelCompletedType = 0,
+    this.libraryFilterMangasTrackingType = 0,
+    this.libraryFilterAnimeTrackingType = 0,
+    this.libraryFilterNovelTrackingType = 0,
   });
 
   Settings.fromJson(Map<String, dynamic> json) {
@@ -708,6 +729,13 @@ class Settings {
         ? AlgorithmWeights.fromJson(json['algorithmWeights'])
         : null;
     localFolders = json['localFolders'];
+    appLockEnabled = json['appLockEnabled'];
+    libraryFilterMangasCompletedType = json['libraryFilterMangasCompletedType'];
+    libraryFilterAnimeCompletedType = json['libraryFilterAnimeCompletedType'];
+    libraryFilterNovelCompletedType = json['libraryFilterNovelCompletedType'];
+    libraryFilterMangasTrackingType = json['libraryFilterMangasTrackingType'];
+    libraryFilterAnimeTrackingType = json['libraryFilterAnimeTrackingType'];
+    libraryFilterNovelTrackingType = json['libraryFilterNovelTrackingType'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -872,6 +900,13 @@ class Settings {
     if (algorithmWeights != null)
       'algorithmWeights': algorithmWeights!.toJson(),
     'localFolders': localFolders,
+    'appLockEnabled': appLockEnabled,
+    'libraryFilterMangasCompletedType': libraryFilterMangasCompletedType,
+    'libraryFilterAnimeCompletedType': libraryFilterAnimeCompletedType,
+    'libraryFilterNovelCompletedType': libraryFilterNovelCompletedType,
+    'libraryFilterMangasTrackingType': libraryFilterMangasTrackingType,
+    'libraryFilterAnimeTrackingType': libraryFilterAnimeTrackingType,
+    'libraryFilterNovelTrackingType': libraryFilterNovelTrackingType,
   };
 }
 

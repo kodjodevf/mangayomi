@@ -41,6 +41,8 @@ import 'package:mangayomi/utils/log/logger.dart';
 import 'package:mangayomi/utils/url_protocol/api.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_provider.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
+import 'package:mangayomi/modules/more/settings/security/providers/security_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/security/app_lock_screen.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
@@ -135,7 +137,7 @@ class MyApp extends ConsumerStatefulWidget {
   ConsumerState<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends ConsumerState<MyApp> {
+class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
   late AppLinks _appLinks;
   StreamSubscription<Uri>? _linkSubscription;
   Uri? lastUri;
@@ -143,6 +145,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     initializeDateFormatting();
     customDns = ref.read(customDnsStateProvider);
     _checkTrackerRefresh();
@@ -163,6 +166,22 @@ class _MyAppState extends ConsumerState<MyApp> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.hidden) {
+      if (Platform.isLinux) {
+        return;
+      }
+      // Lock the app when going to background (if lock is enabled)
+      final lockEnabled = isar.settings.getSync(227)!.appLockEnabled ?? false;
+      if (lockEnabled) {
+        ref.read(appUnlockedStateProvider.notifier).lock();
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final followSystem = ref.watch(followSystemThemeStateProvider);
     final forcedDark = ref.watch(themeModeStateProvider);
@@ -180,7 +199,17 @@ class _MyAppState extends ConsumerState<MyApp> {
       locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      builder: BotToastInit(),
+      builder: Platform.isLinux
+          ? null
+          : (context, child) {
+              child = BotToastInit()(context, child);
+              final isUnlocked = ref.watch(appUnlockedStateProvider);
+              final lockEnabled = ref.watch(appLockEnabledStateProvider);
+              if (lockEnabled && !isUnlocked) {
+                return const AppLockScreen();
+              }
+              return child;
+            },
       routeInformationParser: router.routeInformationParser,
       routerDelegate: router.routerDelegate,
       routeInformationProvider: router.routeInformationProvider,
@@ -191,6 +220,7 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     MExtensionServerPlatform(ref).stopServer();
     _linkSubscription?.cancel();
     discordRpc?.destroy();

@@ -1806,4 +1806,44 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get dns_provider => 'DNS Provider';
+
+  @override
+  String get tracked => 'Tracked';
+
+  @override
+  String get auth_unlock_msg => 'Authenticate to unlock Mangayomi';
+
+  @override
+  String get app_locked => 'Mangayomi is locked';
+
+  @override
+  String get auth_to_continue => 'Authenticate to continue';
+
+  @override
+  String get authenticating => 'Authenticating...';
+
+  @override
+  String get unlock => 'Unlock';
+
+  @override
+  String get security => 'Security';
+
+  @override
+  String get auth_to_change_security_setting =>
+      'Authenticate to change security settings';
+
+  @override
+  String get app_lock => 'App lock';
+
+  @override
+  String get require_biometric_or_device_credential =>
+      'Require biometric or device credential to open the app';
+
+  @override
+  String get biometric_or_device_credential_not_available =>
+      'Biometric authentication not available on this device';
+
+  @override
+  String get app_lock_description =>
+      'When app lock is enabled, you will be asked to authenticate \nevery time you open the app or switch back to it from the background.';
 }

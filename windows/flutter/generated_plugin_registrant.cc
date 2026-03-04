@@ -11,6 +11,7 @@
 #include <flutter_inappwebview_windows/flutter_inappwebview_windows_plugin_c_api.h>
 #include <flutter_qjs/flutter_qjs_plugin.h>
 #include <isar_community_flutter_libs/isar_flutter_libs_plugin.h>
+#include <local_auth_windows/local_auth_plugin.h>
 #include <m_extension_server/m_extension_server_plugin_c_api.h>
 #include <media_kit_libs_windows_video/media_kit_libs_windows_video_plugin_c_api.h>
 #include <media_kit_video/media_kit_video_plugin_c_api.h>
@@ -34,6 +35,8 @@ void RegisterPlugins(flutter::PluginRegistry* registry) {
       registry->GetRegistrarForPlugin("FlutterQjsPlugin"));
   IsarFlutterLibsPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("IsarFlutterLibsPlugin"));
+  LocalAuthPluginRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("LocalAuthPlugin"));
   MExtensionServerPluginCApiRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("MExtensionServerPluginCApi"));
   MediaKitLibsWindowsVideoPluginCApiRegisterWithRegistrar(

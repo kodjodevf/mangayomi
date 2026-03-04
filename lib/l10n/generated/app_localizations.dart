@@ -3466,6 +3466,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'DNS Provider'**
   String get dns_provider;
+
+  /// No description provided for @tracked.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracked'**
+  String get tracked;
+
+  /// No description provided for @auth_unlock_msg.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticate to unlock Mangayomi'**
+  String get auth_unlock_msg;
+
+  /// No description provided for @app_locked.
+  ///
+  /// In en, this message translates to:
+  /// **'Mangayomi is locked'**
+  String get app_locked;
+
+  /// No description provided for @auth_to_continue.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticate to continue'**
+  String get auth_to_continue;
+
+  /// No description provided for @authenticating.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticating...'**
+  String get authenticating;
+
+  /// No description provided for @unlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock'**
+  String get unlock;
+
+  /// No description provided for @security.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get security;
+
+  /// No description provided for @auth_to_change_security_setting.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticate to change security settings'**
+  String get auth_to_change_security_setting;
+
+  /// No description provided for @app_lock.
+  ///
+  /// In en, this message translates to:
+  /// **'App lock'**
+  String get app_lock;
+
+  /// No description provided for @require_biometric_or_device_credential.
+  ///
+  /// In en, this message translates to:
+  /// **'Require biometric or device credential to open the app'**
+  String get require_biometric_or_device_credential;
+
+  /// No description provided for @biometric_or_device_credential_not_available.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication not available on this device'**
+  String get biometric_or_device_credential_not_available;
+
+  /// No description provided for @app_lock_description.
+  ///
+  /// In en, this message translates to:
+  /// **'When app lock is enabled, you will be asked to authenticate \nevery time you open the app or switch back to it from the background.'**
+  String get app_lock_description;
 }
 
 class _AppLocalizationsDelegate

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -56,6 +57,7 @@ import 'package:mangayomi/modules/more/settings/browse/browse_screen.dart';
 import 'package:mangayomi/modules/more/settings/general/general_screen.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/modules/more/settings/settings_screen.dart';
+import 'package:mangayomi/modules/more/settings/security/security_screen.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter/cupertino.dart';
 part 'router.g.dart';
@@ -86,6 +88,7 @@ class RouterCurrentLocationState extends _$RouterCurrentLocationState {
   bool _didSubscribe = false;
   @override
   String? build() {
+    ref.keepAlive();
     // Delay listener‐registration until after the first frame.
     if (!_didSubscribe) {
       _didSubscribe = true;
@@ -207,6 +210,7 @@ class RouterNotifier extends ChangeNotifier {
     ),
     _genericRoute(name: "downloads", child: const DownloadsScreen()),
     _genericRoute(name: "dataAndStorage", child: const DataAndStorage()),
+    _genericRoute(name: "security", child: const SecurityScreen()),
     _genericRoute(name: "manageTrackers", child: const ManageTrackersScreen()),
     _genericRoute<TrackPreference>(
       name: "trackingDetail",
@@ -280,36 +284,24 @@ class RouterNotifier extends ChangeNotifier {
           return child!;
         }
       },
-      pageBuilder: (context, state) {
-        final pageChild = builder != null ? builder(state.extra as T) : child!;
-        return transitionPage(key: state.pageKey, child: pageChild);
-      },
+      pageBuilder: (Platform.isIOS || Platform.isMacOS)
+          ? (context, state) {
+              final pageChild = builder != null
+                  ? builder(state.extra as T)
+                  : child!;
+              return transitionPage(key: state.pageKey, child: pageChild);
+            }
+          : null,
     );
   }
 }
 
 Page transitionPage({required LocalKey key, required child}) {
-  return Platform.isIOS
-      ? CupertinoPage(key: key, child: child)
-      : CustomTransition(child: child, key: key);
-}
-
-class CustomTransition extends CustomTransitionPage {
-  CustomTransition({required LocalKey super.key, required super.child})
-    : super(
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(opacity: animation, child: child);
-        },
-      );
+  return CupertinoPage(key: key, child: child);
 }
 
 Route createRoute({required Widget page}) {
-  return Platform.isIOS
+  return (Platform.isIOS || Platform.isMacOS)
       ? CupertinoPageRoute(builder: (context) => page)
-      : PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) => page,
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(opacity: animation, child: child);
-          },
-        );
+      : MaterialPageRoute(builder: (context) => page);
 }

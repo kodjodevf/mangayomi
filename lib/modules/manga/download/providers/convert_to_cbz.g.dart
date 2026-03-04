@@ -22,7 +22,8 @@ final class ConvertToCBZProvider
     with $FutureModifier<List<String>>, $FutureProvider<List<String>> {
   ConvertToCBZProvider._({
     required ConvertToCBZFamily super.from,
-    required (String, String, String, List<String>) super.argument,
+    required (String, String, String, List<String>, {ComicInfoData? comicInfo})
+    super.argument,
   }) : super(
          retry: null,
          name: r'convertToCBZProvider',
@@ -49,13 +50,22 @@ final class ConvertToCBZProvider
 
   @override
   FutureOr<List<String>> create(Ref ref) {
-    final argument = this.argument as (String, String, String, List<String>);
+    final argument =
+        this.argument
+            as (
+              String,
+              String,
+              String,
+              List<String>, {
+              ComicInfoData? comicInfo,
+            });
     return convertToCBZ(
       ref,
       argument.$1,
       argument.$2,
       argument.$3,
       argument.$4,
+      comicInfo: argument.comicInfo,
     );
   }
 
@@ -70,13 +80,13 @@ final class ConvertToCBZProvider
   }
 }
 
-String _$convertToCBZHash() => r'56f4320034ec2420c8c2c2b22a2522721181ab54';
+String _$convertToCBZHash() => r'0f75969b8eccb5932089e5e269a5bba4012842b8';
 
 final class ConvertToCBZFamily extends $Family
     with
         $FunctionalFamilyOverride<
           FutureOr<List<String>>,
-          (String, String, String, List<String>)
+          (String, String, String, List<String>, {ComicInfoData? comicInfo})
         > {
   ConvertToCBZFamily._()
     : super(
@@ -91,9 +101,16 @@ final class ConvertToCBZFamily extends $Family
     String chapterDir,
     String mangaDir,
     String chapterName,
-    List<String> pageList,
-  ) => ConvertToCBZProvider._(
-    argument: (chapterDir, mangaDir, chapterName, pageList),
+    List<String> pageList, {
+    ComicInfoData? comicInfo,
+  }) => ConvertToCBZProvider._(
+    argument: (
+      chapterDir,
+      mangaDir,
+      chapterName,
+      pageList,
+      comicInfo: comicInfo,
+    ),
     from: this,
   );
 

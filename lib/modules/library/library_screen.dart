@@ -159,6 +159,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     final bookmarkedFilterType = watchWithSettingsAndManga(
       mangaFilterBookmarkedStateProvider.call,
     );
+    final completedFilterType = watchWithSettingsAndManga(
+      mangaFilterCompletedStateProvider.call,
+    );
+    final trackingFilterType = watchWithSettingsAndManga(
+      mangaFilterTrackingStateProvider.call,
+    );
     final sortType =
         watchWithSettings(sortLibraryMangaStateProvider.call).index as int;
 
@@ -174,6 +180,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
         unreadFilterType: unreadFilterType,
         startedFilterType: startedFilterType,
         bookmarkedFilterType: bookmarkedFilterType,
+        completedFilterType: completedFilterType,
+        trackingFilterType: trackingFilterType,
         reverse: reverse,
         downloadedChapter: downloadedChapter,
         continueReaderBtn: continueReaderBtn,
@@ -195,6 +203,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
         unreadFilterType: unreadFilterType,
         startedFilterType: startedFilterType,
         bookmarkedFilterType: bookmarkedFilterType,
+        completedFilterType: completedFilterType,
+        trackingFilterType: trackingFilterType,
         settings: settings,
         downloadedOnly: downloadedOnly,
         searchQuery: searchQuery,
@@ -217,6 +227,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                       unreadFilterType: unreadFilterType,
                       startedFilterType: startedFilterType,
                       bookmarkedFilterType: bookmarkedFilterType,
+                      completedFilterType: completedFilterType,
+                      trackingFilterType: trackingFilterType,
                       sortType: sortType,
                       downloadedOnly: downloadedOnly,
                       searchQuery: searchQuery,

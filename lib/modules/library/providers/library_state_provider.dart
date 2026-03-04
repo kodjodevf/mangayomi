@@ -466,6 +466,118 @@ class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
   }
 }
 
+// ── Completed filter ──────────────────────────────────────────────────────────
+
+@riverpod
+class MangaFilterCompletedState extends _$MangaFilterCompletedState {
+  @override
+  int build({
+    required List<Manga> mangaList,
+    required ItemType itemType,
+    required Settings settings,
+  }) {
+    state = getType();
+    return getType();
+  }
+
+  int getType() {
+    switch (itemType) {
+      case ItemType.manga:
+        return settings.libraryFilterMangasCompletedType ?? 0;
+      case ItemType.anime:
+        return settings.libraryFilterAnimeCompletedType ?? 0;
+      default:
+        return settings.libraryFilterNovelCompletedType ?? 0;
+    }
+  }
+
+  void setType(int type) {
+    Settings appSettings = Settings();
+    switch (itemType) {
+      case ItemType.manga:
+        appSettings = settings..libraryFilterMangasCompletedType = type;
+        break;
+      case ItemType.anime:
+        appSettings = settings..libraryFilterAnimeCompletedType = type;
+        break;
+      default:
+        appSettings = settings..libraryFilterNovelCompletedType = type;
+    }
+    isar.writeTxnSync(() {
+      isar.settings.putSync(
+        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      );
+    });
+    state = type;
+  }
+
+  void update() {
+    if (state == 0) {
+      setType(1);
+    } else if (state == 1) {
+      setType(2);
+    } else {
+      setType(0);
+    }
+  }
+}
+
+// ── Tracking filter ───────────────────────────────────────────────────────────
+
+@riverpod
+class MangaFilterTrackingState extends _$MangaFilterTrackingState {
+  @override
+  int build({
+    required List<Manga> mangaList,
+    required ItemType itemType,
+    required Settings settings,
+  }) {
+    state = getType();
+    return getType();
+  }
+
+  int getType() {
+    switch (itemType) {
+      case ItemType.manga:
+        return settings.libraryFilterMangasTrackingType ?? 0;
+      case ItemType.anime:
+        return settings.libraryFilterAnimeTrackingType ?? 0;
+      default:
+        return settings.libraryFilterNovelTrackingType ?? 0;
+    }
+  }
+
+  void setType(int type) {
+    Settings appSettings = Settings();
+    switch (itemType) {
+      case ItemType.manga:
+        appSettings = settings..libraryFilterMangasTrackingType = type;
+        break;
+      case ItemType.anime:
+        appSettings = settings..libraryFilterAnimeTrackingType = type;
+        break;
+      default:
+        appSettings = settings..libraryFilterNovelTrackingType = type;
+    }
+    isar.writeTxnSync(() {
+      isar.settings.putSync(
+        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      );
+    });
+    state = type;
+  }
+
+  void update() {
+    if (state == 0) {
+      setType(1);
+    } else if (state == 1) {
+      setType(2);
+    } else {
+      setType(0);
+    }
+  }
+}
+
 @riverpod
 class MangasFilterResultState extends _$MangasFilterResultState {
   @override
@@ -502,10 +614,26 @@ class MangasFilterResultState extends _$MangasFilterResultState {
         settings: settings,
       ),
     );
+    final completedFilterType = ref.watch(
+      mangaFilterCompletedStateProvider(
+        mangaList: mangaList,
+        itemType: itemType,
+        settings: settings,
+      ),
+    );
+    final trackingFilterType = ref.watch(
+      mangaFilterTrackingStateProvider(
+        mangaList: mangaList,
+        itemType: itemType,
+        settings: settings,
+      ),
+    );
     return downloadFilterType == 0 &&
         unreadFilterType == 0 &&
         startedFilterType == 0 &&
-        bookmarkedFilterType == 0;
+        bookmarkedFilterType == 0 &&
+        completedFilterType == 0 &&
+        trackingFilterType == 0;
   }
 }
 

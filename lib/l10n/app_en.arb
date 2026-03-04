@@ -565,5 +565,17 @@
   "forceLandscapeMode": "Force landscape mode",
   "forceLandscapeModeSubtitle": "Force the player to use landscape orientation.",
   "dns_over_https": "DNS-over-HTTPS (DoH)",
-  "dns_provider": "DNS Provider"
+  "dns_provider": "DNS Provider",
+  "tracked": "Tracked",
+  "auth_unlock_msg": "Authenticate to unlock Mangayomi",
+  "app_locked": "Mangayomi is locked",
+  "auth_to_continue": "Authenticate to continue",
+  "authenticating": "Authenticating...",
+  "unlock": "Unlock",
+  "security": "Security",
+  "auth_to_change_security_setting": "Authenticate to change security settings",
+  "app_lock": "App lock",
+  "require_biometric_or_device_credential": "Require biometric or device credential to open the app",
+  "biometric_or_device_credential_not_available": "Biometric authentication not available on this device",
+  "app_lock_description": "When app lock is enabled, you will be asked to authenticate \nevery time you open the app or switch back to it from the background."
 }

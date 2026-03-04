@@ -137,6 +137,48 @@ class _FilterTab extends ConsumerWidget {
                 .update();
           },
         ),
+        ListTileChapterFilter(
+          label: l10n.completed,
+          type: ref.watch(
+            mangaFilterCompletedStateProvider(
+              itemType: itemType,
+              mangaList: entries,
+              settings: settings,
+            ),
+          ),
+          onTap: () {
+            ref
+                .read(
+                  mangaFilterCompletedStateProvider(
+                    itemType: itemType,
+                    mangaList: entries,
+                    settings: settings,
+                  ).notifier,
+                )
+                .update();
+          },
+        ),
+        ListTileChapterFilter(
+          label: l10n.tracked,
+          type: ref.watch(
+            mangaFilterTrackingStateProvider(
+              itemType: itemType,
+              mangaList: entries,
+              settings: settings,
+            ),
+          ),
+          onTap: () {
+            ref
+                .read(
+                  mangaFilterTrackingStateProvider(
+                    itemType: itemType,
+                    mangaList: entries,
+                    settings: settings,
+                  ).notifier,
+                )
+                .update();
+          },
+        ),
       ],
     );
   }
