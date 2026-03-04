@@ -324,33 +324,22 @@ class Settings {
 
   int? libraryFilterNovelTrackingType;
 
-  // ── Manga reader: Mihon feature parity ──
-
-  /// Keep screen on while reading (wakelock)
   bool? keepScreenOnReader;
 
-  /// Webtoon side padding percentage (0–50)
   int? webtoonSidePadding;
 
-  /// Show gaps between pages in continuous/webtoon mode
   bool? showPageGaps;
 
-  /// Invert page colors
   bool? invertColors;
 
-  /// Apply grayscale filter to pages
   bool? grayscale;
 
-  /// Image brightness adjustment (−1.0 to 1.0, 0 = neutral)
   double? readerBrightness;
 
-  /// Image contrast adjustment (0.0 to 2.0, 1 = neutral)
   double? readerContrast;
 
-  /// Image saturation adjustment (0.0 to 2.0, 1 = neutral)
   double? readerSaturation;
 
-  /// Reader tap-zone navigation layout (0=Default, 1=L-shaped, 2=Kindle, 3=Edge, 4=RightAndLeft)
   int? readerNavigationLayout;
 
   Settings({
