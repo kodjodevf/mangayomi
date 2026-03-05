@@ -1780,106 +1780,106 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get default_user_agent => 'Defaul user agent';
+  String get default_user_agent => 'وكيل المستخدم الافتراضي';
 
   @override
-  String get forceLandscapeMode => 'Force landscape mode';
+  String get forceLandscapeMode => 'فرض وضع المناظر الطبيعية';
 
   @override
   String get forceLandscapeModeSubtitle =>
-      'Force the player to use landscape orientation.';
+      'فرض المشغل لاستخدام اتجاه المناظر الطبيعية.';
 
   @override
   String get dns_over_https => 'DNS-over-HTTPS (DoH)';
 
   @override
-  String get dns_provider => 'DNS Provider';
+  String get dns_provider => 'مزود DNS';
 
   @override
-  String get tracked => 'Tracked';
+  String get tracked => 'تتبع';
 
   @override
-  String get auth_unlock_msg => 'Authenticate to unlock Mangayomi';
+  String get auth_unlock_msg => 'المصادقة لفتح قفل Mangayomi';
 
   @override
-  String get app_locked => 'Mangayomi is locked';
+  String get app_locked => 'Mangayomi مقفول';
 
   @override
-  String get auth_to_continue => 'Authenticate to continue';
+  String get auth_to_continue => 'المصادقة للمتابعة';
 
   @override
-  String get authenticating => 'Authenticating...';
+  String get authenticating => 'جاري المصادقة...';
 
   @override
-  String get unlock => 'Unlock';
+  String get unlock => 'فتح القفل';
 
   @override
-  String get security => 'Security';
+  String get security => 'الأمان';
 
   @override
   String get auth_to_change_security_setting =>
-      'Authenticate to change security settings';
+      'المصادقة لتغيير إعدادات الأمان';
 
   @override
-  String get app_lock => 'App lock';
+  String get app_lock => 'قفل التطبيق';
 
   @override
   String get require_biometric_or_device_credential =>
-      'Require biometric or device credential to open the app';
+      'يتطلب المصادقة البيومترية أو بيانات اعتماد الجهاز لفتح التطبيق';
 
   @override
   String get biometric_or_device_credential_not_available =>
-      'Biometric authentication not available on this device';
+      'المصادقة البيومترية غير متاحة على هذا الجهاز';
 
   @override
   String get app_lock_description =>
-      'When app lock is enabled, you will be asked to authenticate \nevery time you open the app or switch back to it from the background.';
+      'عند تفعيل قفل التطبيق، سيُطلب منك المصادقة\nفي كل مرة تفتح التطبيق أو تعود إليه من الخلفية.';
 
   @override
-  String get keep_screen_on => 'Keep screen on';
+  String get keep_screen_on => 'إبقاء الشاشة مضاءة';
 
   @override
-  String get webtoon_side_padding => 'Webtoon side padding';
+  String get webtoon_side_padding => 'حشو جانب الويب توون';
 
   @override
-  String get show_page_gaps => 'Show page gaps';
+  String get show_page_gaps => 'إظهار فجوات الصفحات';
 
   @override
-  String get invert_colors => 'Invert colors';
+  String get invert_colors => 'عكس الألوان';
 
   @override
-  String get grayscale => 'Grayscale';
+  String get grayscale => 'تدرج رمادي';
 
   @override
-  String get brightness => 'Brightness';
+  String get brightness => 'السطوع';
 
   @override
-  String get contrast => 'Contrast';
+  String get contrast => 'التباين';
 
   @override
-  String get saturation => 'Saturation';
+  String get saturation => 'التشبع';
 
   @override
-  String get navigation_layout => 'Navigation layout';
+  String get navigation_layout => 'تخطيط الملاحة';
 
   @override
-  String get nav_layout_default => 'Default';
+  String get nav_layout_default => 'افتراضي';
 
   @override
-  String get nav_layout_l_shaped => 'L-shaped';
+  String get nav_layout_l_shaped => 'على شكل L';
 
   @override
-  String get nav_layout_kindle => 'Kindle-ish';
+  String get nav_layout_kindle => 'Kindle';
 
   @override
-  String get nav_layout_edge => 'Edge';
+  String get nav_layout_edge => 'الحافة';
 
   @override
-  String get nav_layout_right_and_left => 'Right and left';
+  String get nav_layout_right_and_left => 'اليمين واليسار';
 
   @override
-  String get nav_layout_disabled => 'Disabled';
+  String get nav_layout_disabled => 'معطل';
 
   @override
-  String get color_enhancements => 'Color enhancements';
+  String get color_enhancements => 'تحسينات اللون';
 }

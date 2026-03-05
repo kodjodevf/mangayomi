@@ -1809,106 +1809,107 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get default_user_agent => 'Defaul user agent';
+  String get default_user_agent => 'Agent utilisateur par défaut';
 
   @override
-  String get forceLandscapeMode => 'Force landscape mode';
+  String get forceLandscapeMode => 'Forcer le mode paysage';
 
   @override
   String get forceLandscapeModeSubtitle =>
-      'Force the player to use landscape orientation.';
+      'Forcer le lecteur à utiliser l\'orientation paysage.';
 
   @override
-  String get dns_over_https => 'DNS-over-HTTPS (DoH)';
+  String get dns_over_https => 'DNS-sur-HTTPS (DoH)';
 
   @override
-  String get dns_provider => 'DNS Provider';
+  String get dns_provider => 'Fournisseur DNS';
 
   @override
-  String get tracked => 'Tracked';
+  String get tracked => 'Suivi';
 
   @override
-  String get auth_unlock_msg => 'Authenticate to unlock Mangayomi';
+  String get auth_unlock_msg =>
+      'Authentifiez-vous pour déverrouiller Mangayomi';
 
   @override
-  String get app_locked => 'Mangayomi is locked';
+  String get app_locked => 'Mangayomi est verrouillé';
 
   @override
-  String get auth_to_continue => 'Authenticate to continue';
+  String get auth_to_continue => 'Authentifiez-vous pour continuer';
 
   @override
-  String get authenticating => 'Authenticating...';
+  String get authenticating => 'Authentification en cours...';
 
   @override
-  String get unlock => 'Unlock';
+  String get unlock => 'Déverrouiller';
 
   @override
-  String get security => 'Security';
+  String get security => 'Sécurité';
 
   @override
   String get auth_to_change_security_setting =>
-      'Authenticate to change security settings';
+      'Authentifiez-vous pour modifier les paramètres de sécurité';
 
   @override
-  String get app_lock => 'App lock';
+  String get app_lock => 'Verrouillage de l\'application';
 
   @override
   String get require_biometric_or_device_credential =>
-      'Require biometric or device credential to open the app';
+      'Exiger l\'authentification biométrique ou les identifiants de l\'appareil pour ouvrir l\'application';
 
   @override
   String get biometric_or_device_credential_not_available =>
-      'Biometric authentication not available on this device';
+      'L\'authentification biométrique n\'est pas disponible sur cet appareil';
 
   @override
   String get app_lock_description =>
-      'When app lock is enabled, you will be asked to authenticate \nevery time you open the app or switch back to it from the background.';
+      'Lorsque le verrouillage de l\'application est activé, vous serez invité à vous authentifier\nchaque fois que vous ouvrez l\'application ou que vous la restaurez à partir de l\'arrière-plan.';
 
   @override
-  String get keep_screen_on => 'Keep screen on';
+  String get keep_screen_on => 'Garder l\'écran allumé';
 
   @override
-  String get webtoon_side_padding => 'Webtoon side padding';
+  String get webtoon_side_padding => 'Remplissage latéral Webtoon';
 
   @override
-  String get show_page_gaps => 'Show page gaps';
+  String get show_page_gaps => 'Afficher les écarts entre les pages';
 
   @override
-  String get invert_colors => 'Invert colors';
+  String get invert_colors => 'Inverser les couleurs';
 
   @override
-  String get grayscale => 'Grayscale';
+  String get grayscale => 'Niveaux de gris';
 
   @override
-  String get brightness => 'Brightness';
+  String get brightness => 'Luminosité';
 
   @override
-  String get contrast => 'Contrast';
+  String get contrast => 'Contraste';
 
   @override
   String get saturation => 'Saturation';
 
   @override
-  String get navigation_layout => 'Navigation layout';
+  String get navigation_layout => 'Disposition de navigation';
 
   @override
-  String get nav_layout_default => 'Default';
+  String get nav_layout_default => 'Défaut';
 
   @override
-  String get nav_layout_l_shaped => 'L-shaped';
+  String get nav_layout_l_shaped => 'En forme de L';
 
   @override
-  String get nav_layout_kindle => 'Kindle-ish';
+  String get nav_layout_kindle => 'Kindle';
 
   @override
-  String get nav_layout_edge => 'Edge';
+  String get nav_layout_edge => 'Bord';
 
   @override
-  String get nav_layout_right_and_left => 'Right and left';
+  String get nav_layout_right_and_left => 'Droite et gauche';
 
   @override
-  String get nav_layout_disabled => 'Disabled';
+  String get nav_layout_disabled => 'Désactivé';
 
   @override
-  String get color_enhancements => 'Color enhancements';
+  String get color_enhancements => 'Améliorations des couleurs';
 }

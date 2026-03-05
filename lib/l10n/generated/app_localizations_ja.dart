@@ -139,34 +139,34 @@ class AppLocalizationsJa extends AppLocalizations {
   String get tabs => 'タブ';
 
   @override
-  String get show_category_tabs => 'Show category tabs';
+  String get show_category_tabs => 'カテゴリタブを表示';
 
   @override
-  String get show_numbers_of_items => 'Show numbers of items';
+  String get show_numbers_of_items => 'アイテム数を表示';
 
   @override
   String get other => 'その他';
 
   @override
-  String get show_continue_reading_buttons => 'Show continue reading buttons';
+  String get show_continue_reading_buttons => '読み続けるボタンを表示';
 
   @override
   String get show_continue_watching_buttons => '視聴を続けるボタンを表示';
 
   @override
-  String get empty_library => 'Empty library';
+  String get empty_library => 'ライブラリが空です';
 
   @override
   String get search => '検索';
 
   @override
-  String get no_recent_updates => 'No recent updates';
+  String get no_recent_updates => '最近の更新がありません';
 
   @override
-  String get remove_everything => 'Remove everything';
+  String get remove_everything => 'すべて削除';
 
   @override
-  String get remove_everything_msg => 'Are you sure? All history will be lost';
+  String get remove_everything_msg => '本当にすべてを削除しますか？すべての履歴が失われます';
 
   @override
   String get remove_all_update_msg => '本当によろしいですか？すべての更新がクリアされます';
@@ -181,14 +181,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get remove => '削除';
 
   @override
-  String get remove_history_msg =>
-      'This will remove the read date of this chapter. Are you sure?';
+  String get remove_history_msg => 'このチャプターの読取日を削除します。よろしいですか？';
 
   @override
   String get last_used => '最後に使用';
 
   @override
-  String get pinned => 'Pinned';
+  String get pinned => 'ピン留め済み';
 
   @override
   String get sources => 'ソース';
@@ -203,7 +202,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get latest => '最新';
 
   @override
-  String get extensions => 'Extensions';
+  String get extensions => '拡張機能';
 
   @override
   String get migrate => '移行';
@@ -226,7 +225,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get incognito_mode => 'シークレットモード';
 
   @override
-  String get incognito_mode_description => 'Pauses reading history';
+  String get incognito_mode_description => '読取履歴を一時停止';
 
   @override
   String get downloaded_only => 'ダウンロード済みのみ';
@@ -235,7 +234,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get downloaded_only_description => 'ライブラリにダウンロード済みエントリのみを表示';
 
   @override
-  String get download_queue => 'Download Queue';
+  String get download_queue => 'ダウンロードキュー';
 
   @override
   String get categories => 'カテゴリ';
@@ -250,53 +249,52 @@ class AppLocalizationsJa extends AppLocalizations {
   String get about => 'について';
 
   @override
-  String get help => 'Help';
+  String get help => 'ヘルプ';
 
   @override
-  String get no_downloads => 'No Downloads';
+  String get no_downloads => 'ダウンロードなし';
 
   @override
   String get edit_categories => 'カテゴリ編集';
 
   @override
   String get edit_categories_description =>
-      'You have no categories. Tap the plus button to create one for organizing your library';
+      'カテゴリがありません。プラスボタンをタップして、ライブラリを整理するためのカテゴリを作成してください';
 
   @override
   String get add => '追加';
 
   @override
-  String get add_category => 'Add Category';
+  String get add_category => 'カテゴリを追加';
 
   @override
   String get name => '名前';
 
   @override
-  String get category_name_required => '*Required';
+  String get category_name_required => '*必須';
 
   @override
-  String get add_category_error_exist =>
-      'A category with this name already exist!';
+  String get add_category_error_exist => 'このカテゴリ名は既に存在します！';
 
   @override
-  String get delete_category => 'Delete Category';
+  String get delete_category => 'カテゴリを削除';
 
   @override
   String delete_category_msg(Object name) {
-    return 'Do you wish to delete the category $name?';
+    return 'カテゴリ$nameを削除しますか？';
   }
 
   @override
-  String get rename_category => 'Rename Category';
+  String get rename_category => 'カテゴリ名を変更';
 
   @override
   String get general => '一般';
 
   @override
-  String get general_subtitle => 'App language';
+  String get general_subtitle => 'アプリ言語';
 
   @override
-  String get app_language => 'App language';
+  String get app_language => 'アプリ言語';
 
   @override
   String get default_subtitle_language => 'デフォルト字幕言語';
@@ -305,40 +303,40 @@ class AppLocalizationsJa extends AppLocalizations {
   String get appearance => '外観';
 
   @override
-  String get appearance_subtitle => 'Theme, date & time format';
+  String get appearance_subtitle => 'テーマ、日時形式';
 
   @override
   String get theme => 'テーマ';
 
   @override
-  String get dark_mode => 'Dark mode';
+  String get dark_mode => 'ダークモード';
 
   @override
   String get follow_system_theme => 'システムテーマに従う';
 
   @override
-  String get on => 'On';
+  String get on => 'オン';
 
   @override
-  String get off => 'Off';
+  String get off => 'オフ';
 
   @override
   String get pure_black_dark_mode => '純黒ダークモード';
 
   @override
-  String get timestamp => 'Timestamp';
+  String get timestamp => 'タイムスタンプ';
 
   @override
-  String get relative_timestamp => 'Relative timestamp';
+  String get relative_timestamp => '相対タイムスタンプ';
 
   @override
-  String get relative_timestamp_short => 'Short (Today, Yesterday)';
+  String get relative_timestamp_short => '短い(今日、昨日)';
 
   @override
-  String get relative_timestamp_long => 'Long (Short+, n days ago)';
+  String get relative_timestamp_long => '長い(短い+、n日前)';
 
   @override
-  String get date_format => 'Date format';
+  String get date_format => '日付形式';
 
   @override
   String get reader => 'リーダー';
@@ -347,40 +345,40 @@ class AppLocalizationsJa extends AppLocalizations {
   String get refresh => '更新';
 
   @override
-  String get reader_subtitle => 'Reading mode, display, navigation';
+  String get reader_subtitle => '読取モード、表示、ナビゲーション';
 
   @override
-  String get default_reading_mode => 'Default reading mode';
+  String get default_reading_mode => 'デフォルト読取モード';
 
   @override
-  String get reading_mode_vertical => 'Vertical';
+  String get reading_mode_vertical => '垂直';
 
   @override
-  String get reading_mode_horizontal => 'Horizontal';
+  String get reading_mode_horizontal => '水平';
 
   @override
-  String get reading_mode_left_to_right => 'Left to Right';
+  String get reading_mode_left_to_right => '左から右へ';
 
   @override
-  String get reading_mode_right_to_left => 'Right to Left';
+  String get reading_mode_right_to_left => '右から左へ';
 
   @override
-  String get reading_mode_vertical_continuous => 'Vertical continuous';
+  String get reading_mode_vertical_continuous => '垂直連続';
 
   @override
-  String get reading_mode_webtoon => 'Webtoon';
+  String get reading_mode_webtoon => 'ウェブトゥーン';
 
   @override
-  String get double_tap_animation_speed => 'Double tap animation speed';
+  String get double_tap_animation_speed => 'ダブルタップアニメーション速度';
 
   @override
-  String get normal => 'Normal';
+  String get normal => '普通';
 
   @override
-  String get fast => 'Fast';
+  String get fast => '速い';
 
   @override
-  String get no_animation => 'No animation';
+  String get no_animation => 'アニメーションなし';
 
   @override
   String get animate_page_transitions => 'ページ遷移をアニメーション化';
@@ -392,44 +390,44 @@ class AppLocalizationsJa extends AppLocalizations {
   String get downloads => 'ダウンロード';
 
   @override
-  String get downloads_subtitle => 'Downloads settings';
+  String get downloads_subtitle => 'ダウンロード設定';
 
   @override
   String get download_location => 'ダウンロード場所';
 
   @override
-  String get custom_location => 'Custom location';
+  String get custom_location => 'カスタムロケーション';
 
   @override
   String get only_on_wifi => 'Wi-Fiのみ';
 
   @override
-  String get save_as_cbz_archive => 'Save as CBZ archive';
+  String get save_as_cbz_archive => 'CBZアーカイブとして保存';
 
   @override
   String get concurrent_downloads => '同時ダウンロード';
 
   @override
-  String get browse_subtitle => 'Sources, global search';
+  String get browse_subtitle => 'ソース、グローバル検索';
 
   @override
-  String get only_include_pinned_sources => 'Only include pinned sources';
+  String get only_include_pinned_sources => 'ピン留め済みソースのみを含める';
 
   @override
-  String get nsfw_sources => 'NSFW (+18) sources';
+  String get nsfw_sources => 'NSFW (+18) ソース';
 
   @override
-  String get nsfw_sources_show => 'Show in sources and extensions lists';
+  String get nsfw_sources_show => 'ソースと拡張機能のリストに表示';
 
   @override
   String get nsfw_sources_info =>
-      'This does not prevent unofficial or potentially incorrectly flagged extensions from surfacing NSFW (18+) content within the app';
+      'これは、非公式またはおそらく不正にフラグが付いた拡張機能がアプリ内でNSFW（18+）コンテンツをサーフェスするのを防ぎません';
 
   @override
   String get version => 'バージョン';
 
   @override
-  String get check_for_update => 'Check for update';
+  String get check_for_update => '更新を確認';
 
   @override
   String get logs_on => 'ログを有効にする';
@@ -445,17 +443,17 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String n_days_ago(Object days) {
-    return '$days days ago';
+    return '$days日前';
   }
 
   @override
-  String get today => 'Today';
+  String get today => '今日';
 
   @override
-  String get yesterday => 'Yesterday';
+  String get yesterday => '昨日';
 
   @override
-  String get a_week_ago => 'A week ago';
+  String get a_week_ago => '1週間前';
 
   @override
   String get next_week => '来週';
@@ -467,16 +465,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get completed => '完了';
 
   @override
-  String get ongoing => 'Ongoing';
+  String get ongoing => '進行中';
 
   @override
-  String get on_hiatus => 'On Hiatus';
+  String get on_hiatus => '休止中';
 
   @override
-  String get canceled => 'Canceled';
+  String get canceled => 'キャンセル';
 
   @override
-  String get publishing_finished => 'Publishing finished';
+  String get publishing_finished => '出版が終了';
 
   @override
   String get unknown => '不明';
@@ -491,28 +489,28 @@ class AppLocalizationsJa extends AppLocalizations {
   String get in_library => 'ライブラリに追加済み';
 
   @override
-  String get filter_scanlator_groups => 'Filter scanlator groups';
+  String get filter_scanlator_groups => 'スキャンレータグループをフィルター';
 
   @override
   String get reset => 'リセット';
 
   @override
-  String get by_source => 'By source';
+  String get by_source => 'ソース別';
 
   @override
-  String get by_chapter_number => 'By chapter number';
+  String get by_chapter_number => 'チャプター番号別';
 
   @override
-  String get by_episode_number => 'エピソード番号順';
+  String get by_episode_number => 'エピソード番号別';
 
   @override
-  String get by_upload_date => 'By upload date';
+  String get by_upload_date => 'アップロード日時別';
 
   @override
-  String get source_title => 'Source title';
+  String get source_title => 'ソースタイトル';
 
   @override
-  String get chapter_number => 'Chapter number';
+  String get chapter_number => 'チャプター番号';
 
   @override
   String get episode_number => 'エピソード番号';
@@ -526,13 +524,13 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get no_description => 'No description';
+  String get no_description => '説明なし';
 
   @override
   String get resume => '再開';
 
   @override
-  String get read => 'Read';
+  String get read => '読む';
 
   @override
   String get watch => '視聴';
@@ -541,19 +539,19 @@ class AppLocalizationsJa extends AppLocalizations {
   String get popular => '人気';
 
   @override
-  String get open_in_browser => 'Open in browser';
+  String get open_in_browser => 'ブラウザーで開く';
 
   @override
-  String get clear_cookie => 'Clear cookie';
+  String get clear_cookie => 'クッキーをクリア';
 
   @override
   String get show_page_number => 'ページ番号を表示';
 
   @override
-  String get from_library => 'From library';
+  String get from_library => 'ライブラリから';
 
   @override
-  String get downloaded_chapter => 'Downloaded chapter';
+  String get downloaded_chapter => 'ダウンロード済みチャプター';
 
   @override
   String page(Object page) {
@@ -561,19 +559,19 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get global_search => 'Global search';
+  String get global_search => 'グローバル検索';
 
   @override
-  String get color_blend_level => 'Color blend level';
+  String get color_blend_level => 'カラーブレンドレベル';
 
   @override
   String current(Object char) {
-    return 'Current $char';
+    return '現在の$char';
   }
 
   @override
   String finished(Object char) {
-    return 'Finished $char';
+    return '完了した$char';
   }
 
   @override
@@ -587,61 +585,61 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get no_more_chapter => 'There\'s no more chapter';
+  String get no_more_chapter => 'もうチャプターはありません';
 
   @override
-  String get no_result => 'No result';
+  String get no_result => '結果がありません';
 
   @override
-  String get send => 'Send';
+  String get send => '送信';
 
   @override
   String get delete => '削除';
 
   @override
-  String get start_downloading => 'Start downloading now';
+  String get start_downloading => '今すぐダウンロード開始';
 
   @override
   String get retry => '再試行';
 
   @override
-  String get add_chapters => 'Add Chapters';
+  String get add_chapters => 'チャプターを追加';
 
   @override
-  String get delete_chapters => 'Delete Chapter?';
+  String get delete_chapters => 'チャプターを削除しますか？';
 
   @override
-  String get default0 => 'Default';
+  String get default0 => 'デフォルト';
 
   @override
-  String get total_chapters => 'Total Chapters';
+  String get total_chapters => '総チャプター数';
 
   @override
   String get total_episodes => '総エピソード数';
 
   @override
-  String get import_local_file => 'Import Local file';
+  String get import_local_file => 'ローカルファイルをインポート';
 
   @override
-  String get import_files => 'Files';
+  String get import_files => 'ファイル';
 
   @override
-  String get nothing_read_recently => 'Nothing read recently';
+  String get nothing_read_recently => '最近読んだものがありません';
 
   @override
   String get status => 'ステータス';
 
   @override
-  String get not_started => 'Not started';
+  String get not_started => '未開始';
 
   @override
-  String get score => 'Score';
+  String get score => 'スコア';
 
   @override
-  String get start_date => 'Start date';
+  String get start_date => '開始日';
 
   @override
-  String get finish_date => 'Finish date';
+  String get finish_date => '完了日';
 
   @override
   String get reading => '読書中';
@@ -662,18 +660,18 @@ class AppLocalizationsJa extends AppLocalizations {
   String get chapters => 'チャプター';
 
   @override
-  String get add_tracker => 'Add tracking';
+  String get add_tracker => 'トラッキングを追加';
 
   @override
-  String get one_tracker => '1 tracker';
+  String get one_tracker => '1トラッカー';
 
   @override
   String n_tracker(Object n) {
-    return '$n trackers';
+    return '$nトラッカー';
   }
 
   @override
-  String get tracking => 'Tracking';
+  String get tracking => 'トラッキング';
 
   @override
   String get syncing => '同期中';
@@ -784,7 +782,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String episode_progress(Object n) {
-    return 'Progress: $n';
+    return '進行状況: $n';
   }
 
   @override
@@ -841,143 +839,143 @@ class AppLocalizationsJa extends AppLocalizations {
   String get download => 'ダウンロード';
 
   @override
-  String get new_update_available => 'New update available';
+  String get new_update_available => '新しい更新が利用可能です';
 
   @override
   String app_version(Object v) {
-    return 'App Version : v$v';
+    return 'アプリバージョン : v$v';
   }
 
   @override
-  String get searching_for_updates => 'Searching for updates...';
+  String get searching_for_updates => '更新を検索しています...';
 
   @override
-  String get no_new_updates_available => 'No new updates available';
+  String get no_new_updates_available => '新しい更新は利用できません';
 
   @override
   String get uninstall => 'アンインストール';
 
   @override
   String uninstall_extension(Object ext) {
-    return 'Uninstall $ext extension?';
+    return '$ext拡張機能をアンインストールしますか？';
   }
 
   @override
-  String get langauage => 'Language';
+  String get langauage => '言語';
 
   @override
-  String get extension_detail => 'Extension detail';
+  String get extension_detail => '拡張機能の詳細';
 
   @override
   String get scale_type => 'スケールタイプ';
 
   @override
-  String get scale_type_fit_screen => 'Fit screen';
+  String get scale_type_fit_screen => '画面にフィット';
 
   @override
-  String get scale_type_stretch => 'Stretch';
+  String get scale_type_stretch => 'ストレッチ';
 
   @override
-  String get scale_type_fit_width => 'Fit width';
+  String get scale_type_fit_width => '幅にフィット';
 
   @override
-  String get scale_type_fit_height => 'Fit height';
+  String get scale_type_fit_height => '高さにフィット';
 
   @override
-  String get scale_type_original_size => 'Original size';
+  String get scale_type_original_size => 'オリジナルサイズ';
 
   @override
-  String get scale_type_smart_fit => 'Smart fit';
+  String get scale_type_smart_fit => 'スマートフィット';
 
   @override
   String get page_preload_amount => 'ページプリロード量';
 
   @override
   String get page_preload_amount_subtitle =>
-      'The amount of pages to preload when reading. Higher values will result in a smoother reading experience, at the cost of higher cache and network usage.';
+      '読取時にプリロードするページ数。値が高いほど、スムーズな読取体験が得られます。ただし、キャッシュとネットワーク使用量が増加します。';
 
   @override
-  String get image_loading_error => 'This image couldn\'t be loaded';
+  String get image_loading_error => 'この画像を読み込めませんでした';
 
   @override
-  String get add_episodes => 'Add Episodes';
+  String get add_episodes => 'エピソードを追加';
 
   @override
-  String get video_quality => 'Quality';
+  String get video_quality => '品質';
 
   @override
-  String get video_subtitle => 'Subtitle';
+  String get video_subtitle => '字幕';
 
   @override
-  String get check_for_extension_updates => 'Check for extension updates';
+  String get check_for_extension_updates => '拡張機能の更新を確認';
 
   @override
-  String get auto_extensions_updates => 'Auto extension updates';
+  String get auto_extensions_updates => '自動拡張機能更新';
 
   @override
   String get auto_extensions_updates_subtitle =>
-      'Will automatically update the extension when a new version is available.';
+      '新しいバージョンが利用可能な場合は、拡張機能を自動的に更新します。';
 
   @override
   String get check_for_app_updates => '起動時にアプリ更新を確認';
 
   @override
-  String get reading_mode => 'Reading mode';
+  String get reading_mode => '読取モード';
 
   @override
-  String get custom_filter => 'Custom filter';
+  String get custom_filter => 'カスタムフィルター';
 
   @override
   String get background_color => '背景色';
 
   @override
-  String get white => 'White';
+  String get white => '白';
 
   @override
-  String get black => 'Black';
+  String get black => '黒';
 
   @override
-  String get grey => 'Grey';
+  String get grey => 'グレー';
 
   @override
-  String get automaic => 'Automatic';
+  String get automaic => '自動';
 
   @override
-  String get preferred_domain => 'Preferred Domain';
+  String get preferred_domain => '推奨ドメイン';
 
   @override
-  String get load_more => 'Load More';
+  String get load_more => 'もっと読み込む';
 
   @override
-  String get cancel_all_for_this_series => 'Cancel all for this series';
+  String get cancel_all_for_this_series => 'このシリーズのすべてをキャンセル';
 
   @override
-  String get login => 'Login';
+  String get login => 'ログイン';
 
   @override
   String login_into(Object tracker) {
-    return 'Login into $tracker';
+    return '$trackerにログイン';
   }
 
   @override
-  String get email_adress => 'Email Address';
+  String get email_adress => 'メールアドレス';
 
   @override
-  String get password => 'Password';
+  String get password => 'パスワード';
 
   @override
   String log_out_from(Object tracker) {
-    return 'Log out from $tracker?';
+    return '$trackerからログアウトしますか？';
   }
 
   @override
-  String get log_out => 'Log out';
+  String get log_out => 'ログアウト';
 
   @override
-  String get update_pending => 'Update pending';
+  String get update_pending => '更新保留中';
 
   @override
-  String get update_all => 'Update all';
+  String get update_all => 'すべて更新';
 
   @override
   String get backup_and_restore => 'バックアップと復元';
@@ -986,89 +984,88 @@ class AppLocalizationsJa extends AppLocalizations {
   String get create_backup => 'バックアップを作成';
 
   @override
-  String get create_backup_dialog_title => 'What do you want to backup?';
+  String get create_backup_dialog_title => '何をバックアップしたいですか？';
 
   @override
-  String get create_backup_subtitle => 'Can be used to restore current library';
+  String get create_backup_subtitle => '現在のライブラリを復元するために使用できます';
 
   @override
   String get restore_backup => 'バックアップを復元';
 
   @override
-  String get restore_backup_subtitle => 'Restore library from backup file';
+  String get restore_backup_subtitle => 'バックアップファイルからライブラリを復元';
 
   @override
-  String get automatic_backups => 'Automatic backups';
+  String get automatic_backups => '自動バックアップ';
 
   @override
-  String get backup_frequency => 'Backup frequency';
+  String get backup_frequency => 'バックアップ頻度';
 
   @override
-  String get backup_location => 'Backup location';
+  String get backup_location => 'バックアップロケーション';
 
   @override
-  String get backup_options => 'Backup options';
+  String get backup_options => 'バックアップオプション';
 
   @override
-  String get backup_options_dialog_title => 'What do you want to backup?';
+  String get backup_options_dialog_title => '何をバックアップしたいですか？';
 
   @override
-  String get backup_options_subtitle =>
-      'What information to include in the backup file?';
+  String get backup_options_subtitle => 'バックアップファイルに含める情報';
 
   @override
   String get backup_and_restore_warning_info =>
-      'You should keep copies of backups in other places as well';
+      'バックアップのコピーを他の場所にも保管することをお勧めします';
 
   @override
-  String get library_entries => 'Library entries';
+  String get library_entries => 'ライブラリエントリ';
 
   @override
-  String get chapters_and_episode => 'Chapters and episode';
+  String get chapters_and_episode => 'チャプターとエピソード';
 
   @override
-  String get every_6_hours => 'Every 6 hours';
+  String get every_6_hours => '6時間ごと';
 
   @override
-  String get every_12_hours => 'Every 12 hours';
+  String get every_12_hours => '12時間ごと';
 
   @override
-  String get daily => 'Daily';
+  String get daily => '毎日';
 
   @override
-  String get every_2_days => 'Every 2 days';
+  String get every_2_days => '2日ごと';
 
   @override
-  String get weekly => 'Weekly';
+  String get weekly => '週ごと';
 
   @override
   String get restore_backup_warning_title =>
-      'Restoring a backup will overwrite all existing data.\n\nContinue restoring?';
+      'バックアップを復元すると、すべての既存データが上書きされます。\\n\\n復元を続けますか？';
 
   @override
-  String get services => 'Services';
+  String get services => 'サービス';
 
   @override
   String get tracking_warning_info =>
-      'One-way sync to update the chapter progress in tracking services. Set up tracking for individual entries from their tracking button.';
+      'トラッキングサービスのチャプター進度を更新するための一方向同期。トラッキングボタンから個々のエントリの追跡を設定します。';
 
   @override
-  String get use_page_tap_zones => 'Use page tap zones';
+  String get use_page_tap_zones => 'ページタップゾーンを使用';
 
   @override
-  String get manage_trackers => 'Manage trackers';
+  String get manage_trackers => 'トラッカーを管理';
 
   @override
   String get restore => '復元';
 
   @override
-  String get backups => 'Backups';
+  String get backups => 'バックアップ';
 
   @override
-  String get by_scanlator => 'By scanlator';
+  String get by_scanlator => 'スキャンレーター別';
 
   @override
-  String get by_name => 'By name';
+  String get by_name => '名前別';
 
   @override
   String get installed => 'インストール済み';
@@ -1757,106 +1754,104 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get default_user_agent => 'Defaul user agent';
+  String get default_user_agent => '既定のユーザーエージェント';
 
   @override
-  String get forceLandscapeMode => 'Force landscape mode';
+  String get forceLandscapeMode => 'ランドスケープモードを強制';
 
   @override
-  String get forceLandscapeModeSubtitle =>
-      'Force the player to use landscape orientation.';
+  String get forceLandscapeModeSubtitle => 'プレーヤーを強制的にランドスケープ向きで使用させます。';
 
   @override
   String get dns_over_https => 'DNS-over-HTTPS (DoH)';
 
   @override
-  String get dns_provider => 'DNS Provider';
+  String get dns_provider => 'DNSプロバイダー';
 
   @override
-  String get tracked => 'Tracked';
+  String get tracked => '追跡中';
 
   @override
-  String get auth_unlock_msg => 'Authenticate to unlock Mangayomi';
+  String get auth_unlock_msg => 'Mangayomiのロックを解除するために認証してください';
 
   @override
-  String get app_locked => 'Mangayomi is locked';
+  String get app_locked => 'Mangayomiはロックされています';
 
   @override
-  String get auth_to_continue => 'Authenticate to continue';
+  String get auth_to_continue => '続行するために認証してください';
 
   @override
-  String get authenticating => 'Authenticating...';
+  String get authenticating => '認証中です...';
 
   @override
-  String get unlock => 'Unlock';
+  String get unlock => 'ロック解除';
 
   @override
-  String get security => 'Security';
+  String get security => 'セキュリティ';
 
   @override
-  String get auth_to_change_security_setting =>
-      'Authenticate to change security settings';
+  String get auth_to_change_security_setting => 'セキュリティ設定を変更するために認証してください';
 
   @override
-  String get app_lock => 'App lock';
+  String get app_lock => 'アプリのロック';
 
   @override
   String get require_biometric_or_device_credential =>
-      'Require biometric or device credential to open the app';
+      'アプリを開くには、生体認証またはデバイスの認証情報が必要です';
 
   @override
   String get biometric_or_device_credential_not_available =>
-      'Biometric authentication not available on this device';
+      'このデバイスでは生体認証は使用できません';
 
   @override
   String get app_lock_description =>
-      'When app lock is enabled, you will be asked to authenticate \nevery time you open the app or switch back to it from the background.';
+      'アプリのロックが有効な場合、アプリを開くたびに認証するよう求められます\\nバックグラウンドから戻る場合。';
 
   @override
-  String get keep_screen_on => 'Keep screen on';
+  String get keep_screen_on => '画面をオンに保つ';
 
   @override
-  String get webtoon_side_padding => 'Webtoon side padding';
+  String get webtoon_side_padding => 'ウェブトゥーンのサイドパディング';
 
   @override
-  String get show_page_gaps => 'Show page gaps';
+  String get show_page_gaps => 'ページギャップを表示';
 
   @override
-  String get invert_colors => 'Invert colors';
+  String get invert_colors => '色を反転';
 
   @override
-  String get grayscale => 'Grayscale';
+  String get grayscale => 'グレースケール';
 
   @override
-  String get brightness => 'Brightness';
+  String get brightness => '明るさ';
 
   @override
-  String get contrast => 'Contrast';
+  String get contrast => 'コントラスト';
 
   @override
-  String get saturation => 'Saturation';
+  String get saturation => '彩度';
 
   @override
-  String get navigation_layout => 'Navigation layout';
+  String get navigation_layout => 'ナビゲーションレイアウト';
 
   @override
-  String get nav_layout_default => 'Default';
+  String get nav_layout_default => '既定';
 
   @override
-  String get nav_layout_l_shaped => 'L-shaped';
+  String get nav_layout_l_shaped => 'L字型';
 
   @override
-  String get nav_layout_kindle => 'Kindle-ish';
+  String get nav_layout_kindle => 'Kindle';
 
   @override
-  String get nav_layout_edge => 'Edge';
+  String get nav_layout_edge => 'エッジ';
 
   @override
-  String get nav_layout_right_and_left => 'Right and left';
+  String get nav_layout_right_and_left => '右と左';
 
   @override
-  String get nav_layout_disabled => 'Disabled';
+  String get nav_layout_disabled => '無効';
 
   @override
-  String get color_enhancements => 'Color enhancements';
+  String get color_enhancements => '色の強化';
 }

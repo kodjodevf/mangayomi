@@ -1750,93 +1750,89 @@ class AppLocalizationsZh extends AppLocalizations {
   String get dns_over_https => 'DNS-over-HTTPS (DoH)';
 
   @override
-  String get dns_provider => 'DNS Provider';
+  String get dns_provider => 'DNS提供商';
 
   @override
-  String get tracked => 'Tracked';
+  String get tracked => '已追踪';
 
   @override
-  String get auth_unlock_msg => 'Authenticate to unlock Mangayomi';
+  String get auth_unlock_msg => '验证以解锁Mangayomi';
 
   @override
-  String get app_locked => 'Mangayomi is locked';
+  String get app_locked => 'Mangayomi已锁定';
 
   @override
-  String get auth_to_continue => 'Authenticate to continue';
+  String get auth_to_continue => '验证以继续';
 
   @override
-  String get authenticating => 'Authenticating...';
+  String get authenticating => '正在验证...';
 
   @override
-  String get unlock => 'Unlock';
+  String get unlock => '解锁';
 
   @override
-  String get security => 'Security';
+  String get security => '安全';
 
   @override
-  String get auth_to_change_security_setting =>
-      'Authenticate to change security settings';
+  String get auth_to_change_security_setting => '验证以更改安全设置';
 
   @override
-  String get app_lock => 'App lock';
+  String get app_lock => '应用锁';
 
   @override
-  String get require_biometric_or_device_credential =>
-      'Require biometric or device credential to open the app';
+  String get require_biometric_or_device_credential => '需要生物识别或设备凭证才能打开应用';
 
   @override
-  String get biometric_or_device_credential_not_available =>
-      'Biometric authentication not available on this device';
+  String get biometric_or_device_credential_not_available => '此设备上没有生物识别';
 
   @override
-  String get app_lock_description =>
-      'When app lock is enabled, you will be asked to authenticate \nevery time you open the app or switch back to it from the background.';
+  String get app_lock_description => '启用应用锁后，每次打开应用或从后台返回时都会要求您进行身份验证。';
 
   @override
-  String get keep_screen_on => 'Keep screen on';
+  String get keep_screen_on => '保持屏幕开启';
 
   @override
-  String get webtoon_side_padding => 'Webtoon side padding';
+  String get webtoon_side_padding => 'Webtoon侧边填充';
 
   @override
-  String get show_page_gaps => 'Show page gaps';
+  String get show_page_gaps => '显示页面间隙';
 
   @override
-  String get invert_colors => 'Invert colors';
+  String get invert_colors => '反转颜色';
 
   @override
-  String get grayscale => 'Grayscale';
+  String get grayscale => '灰度';
 
   @override
-  String get brightness => 'Brightness';
+  String get brightness => '亮度';
 
   @override
-  String get contrast => 'Contrast';
+  String get contrast => '对比度';
 
   @override
-  String get saturation => 'Saturation';
+  String get saturation => '饱和度';
 
   @override
-  String get navigation_layout => 'Navigation layout';
+  String get navigation_layout => '导航布局';
 
   @override
-  String get nav_layout_default => 'Default';
+  String get nav_layout_default => '默认';
 
   @override
-  String get nav_layout_l_shaped => 'L-shaped';
+  String get nav_layout_l_shaped => 'L形';
 
   @override
-  String get nav_layout_kindle => 'Kindle-ish';
+  String get nav_layout_kindle => 'Kindle';
 
   @override
-  String get nav_layout_edge => 'Edge';
+  String get nav_layout_edge => '边缘';
 
   @override
-  String get nav_layout_right_and_left => 'Right and left';
+  String get nav_layout_right_and_left => '右和左';
 
   @override
-  String get nav_layout_disabled => 'Disabled';
+  String get nav_layout_disabled => '已禁用';
 
   @override
-  String get color_enhancements => 'Color enhancements';
+  String get color_enhancements => '色彩增强';
 }

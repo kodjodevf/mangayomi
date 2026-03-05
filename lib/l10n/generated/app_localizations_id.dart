@@ -1792,106 +1792,106 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get default_user_agent => 'Defaul user agent';
+  String get default_user_agent => 'Agen Pengguna Bawaan';
 
   @override
-  String get forceLandscapeMode => 'Force landscape mode';
+  String get forceLandscapeMode => 'Paksa Mode Lanskap';
 
   @override
   String get forceLandscapeModeSubtitle =>
-      'Force the player to use landscape orientation.';
+      'Paksa pemain untuk menggunakan orientasi lanskap.';
 
   @override
   String get dns_over_https => 'DNS-over-HTTPS (DoH)';
 
   @override
-  String get dns_provider => 'DNS Provider';
+  String get dns_provider => 'Penyedia DNS';
 
   @override
-  String get tracked => 'Tracked';
+  String get tracked => 'Dilacak';
 
   @override
-  String get auth_unlock_msg => 'Authenticate to unlock Mangayomi';
+  String get auth_unlock_msg => 'Autentikasi untuk membuka kunci Mangayomi';
 
   @override
-  String get app_locked => 'Mangayomi is locked';
+  String get app_locked => 'Mangayomi terkunci';
 
   @override
-  String get auth_to_continue => 'Authenticate to continue';
+  String get auth_to_continue => 'Autentikasi untuk melanjutkan';
 
   @override
-  String get authenticating => 'Authenticating...';
+  String get authenticating => 'Mengautentikasi...';
 
   @override
-  String get unlock => 'Unlock';
+  String get unlock => 'Buka';
 
   @override
-  String get security => 'Security';
+  String get security => 'Keamanan';
 
   @override
   String get auth_to_change_security_setting =>
-      'Authenticate to change security settings';
+      'Autentikasi untuk mengubah pengaturan keamanan';
 
   @override
-  String get app_lock => 'App lock';
+  String get app_lock => 'Kunci Aplikasi';
 
   @override
   String get require_biometric_or_device_credential =>
-      'Require biometric or device credential to open the app';
+      'Memerlukan autentikasi biometrik atau kredensial perangkat untuk membuka aplikasi';
 
   @override
   String get biometric_or_device_credential_not_available =>
-      'Biometric authentication not available on this device';
+      'Autentikasi biometrik tidak tersedia di perangkat ini';
 
   @override
   String get app_lock_description =>
-      'When app lock is enabled, you will be asked to authenticate \nevery time you open the app or switch back to it from the background.';
+      'Ketika kunci aplikasi diaktifkan, Anda akan diminta untuk mengautentikasi\\nsetiap kali Anda membuka aplikasi atau kembali dari latar belakang.';
 
   @override
-  String get keep_screen_on => 'Keep screen on';
+  String get keep_screen_on => 'Jaga Layar Tetap Menyala';
 
   @override
-  String get webtoon_side_padding => 'Webtoon side padding';
+  String get webtoon_side_padding => 'Padding Samping Webtoon';
 
   @override
-  String get show_page_gaps => 'Show page gaps';
+  String get show_page_gaps => 'Tampilkan Celah Halaman';
 
   @override
-  String get invert_colors => 'Invert colors';
+  String get invert_colors => 'Balik Warna';
 
   @override
-  String get grayscale => 'Grayscale';
+  String get grayscale => 'Skala Abu-abu';
 
   @override
-  String get brightness => 'Brightness';
+  String get brightness => 'Kecerahan';
 
   @override
-  String get contrast => 'Contrast';
+  String get contrast => 'Kontras';
 
   @override
-  String get saturation => 'Saturation';
+  String get saturation => 'Saturasi';
 
   @override
-  String get navigation_layout => 'Navigation layout';
+  String get navigation_layout => 'Tata Letak Navigasi';
 
   @override
-  String get nav_layout_default => 'Default';
+  String get nav_layout_default => 'Bawaan';
 
   @override
-  String get nav_layout_l_shaped => 'L-shaped';
+  String get nav_layout_l_shaped => 'Bentuk L';
 
   @override
-  String get nav_layout_kindle => 'Kindle-ish';
+  String get nav_layout_kindle => 'Kindle';
 
   @override
-  String get nav_layout_edge => 'Edge';
+  String get nav_layout_edge => 'Tepi';
 
   @override
-  String get nav_layout_right_and_left => 'Right and left';
+  String get nav_layout_right_and_left => 'Kanan dan Kiri';
 
   @override
-  String get nav_layout_disabled => 'Disabled';
+  String get nav_layout_disabled => 'Dinonaktifkan';
 
   @override
-  String get color_enhancements => 'Color enhancements';
+  String get color_enhancements => 'Peningkatan Warna';
 }

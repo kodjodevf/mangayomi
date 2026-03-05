@@ -1809,106 +1809,107 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get default_user_agent => 'Defaul user agent';
+  String get default_user_agent => 'Агент пользователя по умолчанию';
 
   @override
-  String get forceLandscapeMode => 'Force landscape mode';
+  String get forceLandscapeMode => 'Принудительно переднй режим';
 
   @override
   String get forceLandscapeModeSubtitle =>
-      'Force the player to use landscape orientation.';
+      'Принудительно использовать ландшафтную ориентацию плеера.';
 
   @override
   String get dns_over_https => 'DNS-over-HTTPS (DoH)';
 
   @override
-  String get dns_provider => 'DNS Provider';
+  String get dns_provider => 'Поставщик DNS';
 
   @override
-  String get tracked => 'Tracked';
+  String get tracked => 'Отслеживается';
 
   @override
-  String get auth_unlock_msg => 'Authenticate to unlock Mangayomi';
+  String get auth_unlock_msg =>
+      'Аутентифицируйтесь, чтобы разблокировать Mangayomi';
 
   @override
-  String get app_locked => 'Mangayomi is locked';
+  String get app_locked => 'Mangayomi заблокирован';
 
   @override
-  String get auth_to_continue => 'Authenticate to continue';
+  String get auth_to_continue => 'Аутентифицируйтесь, чтобы продолжить';
 
   @override
-  String get authenticating => 'Authenticating...';
+  String get authenticating => 'Идет аутентификация...';
 
   @override
-  String get unlock => 'Unlock';
+  String get unlock => 'Разблокировать';
 
   @override
-  String get security => 'Security';
+  String get security => 'Безопасность';
 
   @override
   String get auth_to_change_security_setting =>
-      'Authenticate to change security settings';
+      'Аутентифицируйтесь, чтобы изменить настройки безопасности';
 
   @override
-  String get app_lock => 'App lock';
+  String get app_lock => 'Блокировка приложения';
 
   @override
   String get require_biometric_or_device_credential =>
-      'Require biometric or device credential to open the app';
+      'Требуется биометрическая аутентификация или учетные данные устройства для открытия приложения';
 
   @override
   String get biometric_or_device_credential_not_available =>
-      'Biometric authentication not available on this device';
+      'Биометрическая аутентификация недоступна на этом устройстве';
 
   @override
   String get app_lock_description =>
-      'When app lock is enabled, you will be asked to authenticate \nevery time you open the app or switch back to it from the background.';
+      'Когда блокировка приложения включена, вам будет предложено пройти аутентификацию\\nкаждый раз, когда вы открываете приложение или возвращаетесь из фона.';
 
   @override
-  String get keep_screen_on => 'Keep screen on';
+  String get keep_screen_on => 'Держать экран включённым';
 
   @override
-  String get webtoon_side_padding => 'Webtoon side padding';
+  String get webtoon_side_padding => 'Боковой отступ Webtoon';
 
   @override
-  String get show_page_gaps => 'Show page gaps';
+  String get show_page_gaps => 'Показывать пробелы между страницами';
 
   @override
-  String get invert_colors => 'Invert colors';
+  String get invert_colors => 'Инвертировать цвета';
 
   @override
-  String get grayscale => 'Grayscale';
+  String get grayscale => 'Оттенки серого';
 
   @override
-  String get brightness => 'Brightness';
+  String get brightness => 'Яркость';
 
   @override
-  String get contrast => 'Contrast';
+  String get contrast => 'Контраст';
 
   @override
-  String get saturation => 'Saturation';
+  String get saturation => 'Насыщенность';
 
   @override
-  String get navigation_layout => 'Navigation layout';
+  String get navigation_layout => 'Макет навигации';
 
   @override
-  String get nav_layout_default => 'Default';
+  String get nav_layout_default => 'По умолчанию';
 
   @override
-  String get nav_layout_l_shaped => 'L-shaped';
+  String get nav_layout_l_shaped => 'L-образный';
 
   @override
-  String get nav_layout_kindle => 'Kindle-ish';
+  String get nav_layout_kindle => 'Kindle';
 
   @override
-  String get nav_layout_edge => 'Edge';
+  String get nav_layout_edge => 'Краевой';
 
   @override
-  String get nav_layout_right_and_left => 'Right and left';
+  String get nav_layout_right_and_left => 'Справа и слева';
 
   @override
-  String get nav_layout_disabled => 'Disabled';
+  String get nav_layout_disabled => 'Отключена';
 
   @override
-  String get color_enhancements => 'Color enhancements';
+  String get color_enhancements => 'Улучшение цвета';
 }

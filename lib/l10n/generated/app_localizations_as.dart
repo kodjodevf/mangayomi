@@ -1778,7 +1778,7 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String get remove_extra_paragraph_spacing =>
-      'অতিৰিক্ত অনুচ্ছেদ স্পেছিং আঁতৰাওক';
+      'অতিৰিक্ত অনুচ্ছেদ স্পেছিং আঁতৰাওক';
 
   @override
   String select_label_color(Object label) {
@@ -1786,106 +1786,106 @@ class AppLocalizationsAs extends AppLocalizations {
   }
 
   @override
-  String get default_user_agent => 'Defaul user agent';
+  String get default_user_agent => 'ডিফল্ট ব্যৱহাৰকাৰী এজেন্ট';
 
   @override
-  String get forceLandscapeMode => 'Force landscape mode';
+  String get forceLandscapeMode => 'ল্যান্ডস্কেপ মোড বাধ্য কৰক';
 
   @override
   String get forceLandscapeModeSubtitle =>
-      'Force the player to use landscape orientation.';
+      'প্লেয়াৰক ল্যান্ডস্কেপ অৰিয়েন্টেশন ব্যৱহাৰ কৰিবলৈ বাধ্য কৰক।';
 
   @override
   String get dns_over_https => 'DNS-over-HTTPS (DoH)';
 
   @override
-  String get dns_provider => 'DNS Provider';
+  String get dns_provider => 'DNS প্ৰদানকাৰী';
 
   @override
-  String get tracked => 'Tracked';
+  String get tracked => 'ট্র্যাক কৰা';
 
   @override
-  String get auth_unlock_msg => 'Authenticate to unlock Mangayomi';
+  String get auth_unlock_msg => 'Mangayomi আনলক কৰিবলৈ প্রমাণ কৰক';
 
   @override
-  String get app_locked => 'Mangayomi is locked';
+  String get app_locked => 'Mangayomi লক কৰা আছে';
 
   @override
-  String get auth_to_continue => 'Authenticate to continue';
+  String get auth_to_continue => 'অব্যাহত ৰাখিবলৈ প্রমাণ কৰক';
 
   @override
-  String get authenticating => 'Authenticating...';
+  String get authenticating => 'প্রমাণ কৰা হৈ আছে...';
 
   @override
-  String get unlock => 'Unlock';
+  String get unlock => 'আনলক';
 
   @override
-  String get security => 'Security';
+  String get security => 'নিৰাপত্তা';
 
   @override
   String get auth_to_change_security_setting =>
-      'Authenticate to change security settings';
+      'নিৰাপত্তা সেটিং পৰিৱৰ্তন কৰিবলৈ প্রমাণ কৰক';
 
   @override
-  String get app_lock => 'App lock';
+  String get app_lock => 'এপ্লিকেশন লক';
 
   @override
   String get require_biometric_or_device_credential =>
-      'Require biometric or device credential to open the app';
+      'এপ্লিকেশন খোলাৰ বাবে বায়োমেট্রিক বা ডিভাইস শংসাপত্ৰ প্রয়োজন';
 
   @override
   String get biometric_or_device_credential_not_available =>
-      'Biometric authentication not available on this device';
+      'এই ডিভাইসে বায়োমেট্রিক প্রমাণ উপলব্ধ নহয়';
 
   @override
   String get app_lock_description =>
-      'When app lock is enabled, you will be asked to authenticate \nevery time you open the app or switch back to it from the background.';
+      'যেতিয়া এপ্লিকেশন লক সক্ষম থাকে, আপোনাক প্রমাণ কৰিবলৈ কোৱা হব\\nপ্রতিবাৰ যেতিয়া আপুনি এপ্লিকেশন খোলেন বা পটভূমিৰ পৰা ঘূৰি আহেন।';
 
   @override
-  String get keep_screen_on => 'Keep screen on';
+  String get keep_screen_on => 'স্ক্রীন চালু ৰাখক';
 
   @override
-  String get webtoon_side_padding => 'Webtoon side padding';
+  String get webtoon_side_padding => 'Webtoon পাৰ্শ্ব প্যাডিং';
 
   @override
-  String get show_page_gaps => 'Show page gaps';
+  String get show_page_gaps => 'পৃষ্ঠা ফাঁক দেখাওক';
 
   @override
-  String get invert_colors => 'Invert colors';
+  String get invert_colors => 'ৰং উল্টাই দিয়ক';
 
   @override
-  String get grayscale => 'Grayscale';
+  String get grayscale => 'গ্ৰেস্কেল';
 
   @override
-  String get brightness => 'Brightness';
+  String get brightness => 'উজ্জ্বলতা';
 
   @override
-  String get contrast => 'Contrast';
+  String get contrast => 'বৈপৰীত্য';
 
   @override
-  String get saturation => 'Saturation';
+  String get saturation => 'সংপৃক্ততা';
 
   @override
-  String get navigation_layout => 'Navigation layout';
+  String get navigation_layout => 'নেভিগেশন লেআউট';
 
   @override
-  String get nav_layout_default => 'Default';
+  String get nav_layout_default => 'ডিফল্ট';
 
   @override
-  String get nav_layout_l_shaped => 'L-shaped';
+  String get nav_layout_l_shaped => 'L-আকৃতি';
 
   @override
-  String get nav_layout_kindle => 'Kindle-ish';
+  String get nav_layout_kindle => 'Kindle';
 
   @override
-  String get nav_layout_edge => 'Edge';
+  String get nav_layout_edge => 'প্রান্ত';
 
   @override
-  String get nav_layout_right_and_left => 'Right and left';
+  String get nav_layout_right_and_left => 'সোঁ আৰু বাওঁ';
 
   @override
-  String get nav_layout_disabled => 'Disabled';
+  String get nav_layout_disabled => 'অক্ষম';
 
   @override
-  String get color_enhancements => 'Color enhancements';
+  String get color_enhancements => 'ৰং উন্নতি';
 }

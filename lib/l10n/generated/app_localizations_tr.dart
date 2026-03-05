@@ -1792,106 +1792,107 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
-  String get default_user_agent => 'Defaul user agent';
+  String get default_user_agent => 'Varsayılan Kullanıcı Aracısı';
 
   @override
-  String get forceLandscapeMode => 'Force landscape mode';
+  String get forceLandscapeMode => 'Yatay Modu Zorla';
 
   @override
   String get forceLandscapeModeSubtitle =>
-      'Force the player to use landscape orientation.';
+      'Oynatıcıyı yatay yönelim kullanmaya zorla.';
 
   @override
   String get dns_over_https => 'DNS-over-HTTPS (DoH)';
 
   @override
-  String get dns_provider => 'DNS Provider';
+  String get dns_provider => 'DNS Sağlayıcısı';
 
   @override
-  String get tracked => 'Tracked';
+  String get tracked => 'İzlendi';
 
   @override
-  String get auth_unlock_msg => 'Authenticate to unlock Mangayomi';
+  String get auth_unlock_msg =>
+      'Mangayomi\'yi kilitlemek için kimliğinizi doğrulayın';
 
   @override
-  String get app_locked => 'Mangayomi is locked';
+  String get app_locked => 'Mangayomi kilitli';
 
   @override
-  String get auth_to_continue => 'Authenticate to continue';
+  String get auth_to_continue => 'Devam etmek için kimliğinizi doğrulayın';
 
   @override
-  String get authenticating => 'Authenticating...';
+  String get authenticating => 'Kimlik doğrulanıyor...';
 
   @override
-  String get unlock => 'Unlock';
+  String get unlock => 'Kilit Aç';
 
   @override
-  String get security => 'Security';
+  String get security => 'Güvenlik';
 
   @override
   String get auth_to_change_security_setting =>
-      'Authenticate to change security settings';
+      'Güvenlik ayarlarını değiştirmek için kimliğinizi doğrulayın';
 
   @override
-  String get app_lock => 'App lock';
+  String get app_lock => 'Uygulama Kilidi';
 
   @override
   String get require_biometric_or_device_credential =>
-      'Require biometric or device credential to open the app';
+      'Uygulamayı açmak için biyometrik kimlik doğrulamak veya cihaz kimlik bilgileri gerekir';
 
   @override
   String get biometric_or_device_credential_not_available =>
-      'Biometric authentication not available on this device';
+      'Biyometrik kimlik doğrulama bu cihazda kullanılamaz';
 
   @override
   String get app_lock_description =>
-      'When app lock is enabled, you will be asked to authenticate \nevery time you open the app or switch back to it from the background.';
+      'Uygulama kilidi etkinleştirildiğinde, uygulamayı her açtığınızda veya arka plandan döndüğünüzde kimlik doğrulaması yapmanız istenir.';
 
   @override
-  String get keep_screen_on => 'Keep screen on';
+  String get keep_screen_on => 'Ekranı Açık Tut';
 
   @override
-  String get webtoon_side_padding => 'Webtoon side padding';
+  String get webtoon_side_padding => 'Webtoon Yan Dolgusu';
 
   @override
-  String get show_page_gaps => 'Show page gaps';
+  String get show_page_gaps => 'Sayfa Boşluklarını Göster';
 
   @override
-  String get invert_colors => 'Invert colors';
+  String get invert_colors => 'Renkleri Ters Çevir';
 
   @override
-  String get grayscale => 'Grayscale';
+  String get grayscale => 'Gri Tonlama';
 
   @override
-  String get brightness => 'Brightness';
+  String get brightness => 'Parlaklık';
 
   @override
-  String get contrast => 'Contrast';
+  String get contrast => 'Kontrast';
 
   @override
-  String get saturation => 'Saturation';
+  String get saturation => 'Doyum';
 
   @override
-  String get navigation_layout => 'Navigation layout';
+  String get navigation_layout => 'Navigasyon Düzeni';
 
   @override
-  String get nav_layout_default => 'Default';
+  String get nav_layout_default => 'Varsayılan';
 
   @override
-  String get nav_layout_l_shaped => 'L-shaped';
+  String get nav_layout_l_shaped => 'L Şekil';
 
   @override
-  String get nav_layout_kindle => 'Kindle-ish';
+  String get nav_layout_kindle => 'Kindle';
 
   @override
-  String get nav_layout_edge => 'Edge';
+  String get nav_layout_edge => 'Kenar';
 
   @override
-  String get nav_layout_right_and_left => 'Right and left';
+  String get nav_layout_right_and_left => 'Sağ ve Sol';
 
   @override
-  String get nav_layout_disabled => 'Disabled';
+  String get nav_layout_disabled => 'Devre Dışı';
 
   @override
-  String get color_enhancements => 'Color enhancements';
+  String get color_enhancements => 'Renk İyileştirmeleri';
 }

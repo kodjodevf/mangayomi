@@ -1786,106 +1786,106 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
-  String get default_user_agent => 'Defaul user agent';
+  String get default_user_agent => 'डिफ़ॉल्ट यूजर एजेंट';
 
   @override
-  String get forceLandscapeMode => 'Force landscape mode';
+  String get forceLandscapeMode => 'लैंडस्केप मोड को फोर्स करें';
 
   @override
   String get forceLandscapeModeSubtitle =>
-      'Force the player to use landscape orientation.';
+      'प्लेयर को लैंडस्केप ओरिएंटेशन का उपयोग करने के लिए मजबूर करें।';
 
   @override
   String get dns_over_https => 'DNS-over-HTTPS (DoH)';
 
   @override
-  String get dns_provider => 'DNS Provider';
+  String get dns_provider => 'DNS प्रदाता';
 
   @override
-  String get tracked => 'Tracked';
+  String get tracked => 'ट्रैक किया गया';
 
   @override
-  String get auth_unlock_msg => 'Authenticate to unlock Mangayomi';
+  String get auth_unlock_msg => 'मैंगायोमी को अनलॉक करने के लिए प्रमाणित करें';
 
   @override
-  String get app_locked => 'Mangayomi is locked';
+  String get app_locked => 'मैंगायोमी लॉक है';
 
   @override
-  String get auth_to_continue => 'Authenticate to continue';
+  String get auth_to_continue => 'जारी रखने के लिए प्रमाणित करें';
 
   @override
-  String get authenticating => 'Authenticating...';
+  String get authenticating => 'प्रमाणीकरण चल रहा है...';
 
   @override
-  String get unlock => 'Unlock';
+  String get unlock => 'अनलॉक करें';
 
   @override
-  String get security => 'Security';
+  String get security => 'सुरक्षा';
 
   @override
   String get auth_to_change_security_setting =>
-      'Authenticate to change security settings';
+      'सुरक्षा सेटिंग्स बदलने के लिए प्रमाणित करें';
 
   @override
-  String get app_lock => 'App lock';
+  String get app_lock => 'ऐप लॉक';
 
   @override
   String get require_biometric_or_device_credential =>
-      'Require biometric or device credential to open the app';
+      'ऐप खोलने के लिए बायोमेट्रिक या डिवाइस क्रेडेंशियल आवश्यक है';
 
   @override
   String get biometric_or_device_credential_not_available =>
-      'Biometric authentication not available on this device';
+      'इस डिवाइस पर बायोमेट्रिक प्रमाणन उपलब्ध नहीं है';
 
   @override
   String get app_lock_description =>
-      'When app lock is enabled, you will be asked to authenticate \nevery time you open the app or switch back to it from the background.';
+      'जब ऐप लॉक सक्षम हो, तो आपको प्रमाणित करने के लिए कहा जाएगा\\nहर बार जब आप ऐप खोलते हैं या पृष्ठभूमि से वापस आते हैं।';
 
   @override
-  String get keep_screen_on => 'Keep screen on';
+  String get keep_screen_on => 'स्क्रीन को चालू रखें';
 
   @override
-  String get webtoon_side_padding => 'Webtoon side padding';
+  String get webtoon_side_padding => 'वेबटूनन साइड पैडिंग';
 
   @override
-  String get show_page_gaps => 'Show page gaps';
+  String get show_page_gaps => 'पृष्ठ अंतराल दिखाएं';
 
   @override
-  String get invert_colors => 'Invert colors';
+  String get invert_colors => 'रंगों को उल्टा करें';
 
   @override
-  String get grayscale => 'Grayscale';
+  String get grayscale => 'ग्रेस्केल';
 
   @override
-  String get brightness => 'Brightness';
+  String get brightness => 'चमक';
 
   @override
-  String get contrast => 'Contrast';
+  String get contrast => 'विपरीतता';
 
   @override
-  String get saturation => 'Saturation';
+  String get saturation => 'संतृप्ति';
 
   @override
-  String get navigation_layout => 'Navigation layout';
+  String get navigation_layout => 'नेविगेशन लेआउट';
 
   @override
-  String get nav_layout_default => 'Default';
+  String get nav_layout_default => 'डिफ़ॉल्ट';
 
   @override
-  String get nav_layout_l_shaped => 'L-shaped';
+  String get nav_layout_l_shaped => 'L-आकार';
 
   @override
-  String get nav_layout_kindle => 'Kindle-ish';
+  String get nav_layout_kindle => 'Kindle';
 
   @override
-  String get nav_layout_edge => 'Edge';
+  String get nav_layout_edge => 'किनारा';
 
   @override
-  String get nav_layout_right_and_left => 'Right and left';
+  String get nav_layout_right_and_left => 'दाएं और बाएं';
 
   @override
-  String get nav_layout_disabled => 'Disabled';
+  String get nav_layout_disabled => 'अक्षम';
 
   @override
-  String get color_enhancements => 'Color enhancements';
+  String get color_enhancements => 'रंग बढ़ाना';
 }

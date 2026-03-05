@@ -1780,106 +1780,106 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
-  String get default_user_agent => 'Defaul user agent';
+  String get default_user_agent => 'ตัวแทนผู้ใช้เริ่มต้น';
 
   @override
-  String get forceLandscapeMode => 'Force landscape mode';
+  String get forceLandscapeMode => 'บังคับโหมดแนวนอน';
 
   @override
   String get forceLandscapeModeSubtitle =>
-      'Force the player to use landscape orientation.';
+      'บังคับให้เครื่องเล่นใช้การวางแนวแนวนอน';
 
   @override
   String get dns_over_https => 'DNS-over-HTTPS (DoH)';
 
   @override
-  String get dns_provider => 'DNS Provider';
+  String get dns_provider => 'ผู้ให้บริการ DNS';
 
   @override
-  String get tracked => 'Tracked';
+  String get tracked => 'ติดตามแล้ว';
 
   @override
-  String get auth_unlock_msg => 'Authenticate to unlock Mangayomi';
+  String get auth_unlock_msg => 'ยืนยันตัวตนเพื่อปลดล็อก Mangayomi';
 
   @override
-  String get app_locked => 'Mangayomi is locked';
+  String get app_locked => 'Mangayomi ถูกล็อก';
 
   @override
-  String get auth_to_continue => 'Authenticate to continue';
+  String get auth_to_continue => 'ยืนยันตัวตนเพื่อดำเนินการต่อ';
 
   @override
-  String get authenticating => 'Authenticating...';
+  String get authenticating => 'กำลังยืนยันตัวตน...';
 
   @override
-  String get unlock => 'Unlock';
+  String get unlock => 'ปลดล็อก';
 
   @override
-  String get security => 'Security';
+  String get security => 'ความปลอดภัย';
 
   @override
   String get auth_to_change_security_setting =>
-      'Authenticate to change security settings';
+      'ยืนยันตัวตนเพื่อเปลี่ยนการตั้งค่าความปลอดภัย';
 
   @override
-  String get app_lock => 'App lock';
+  String get app_lock => 'ล็อกแอป';
 
   @override
   String get require_biometric_or_device_credential =>
-      'Require biometric or device credential to open the app';
+      'ต้องใช้การยืนยันตัวตนแบบไบโอเมตริกหรือข้อมูลประจำตัวอุปกรณ์เพื่อเปิดแอป';
 
   @override
   String get biometric_or_device_credential_not_available =>
-      'Biometric authentication not available on this device';
+      'ไม่มีการยืนยันตัวตนแบบไบโอเมตริกในอุปกรณ์นี้';
 
   @override
   String get app_lock_description =>
-      'When app lock is enabled, you will be asked to authenticate \nevery time you open the app or switch back to it from the background.';
+      'เมื่อเปิดใช้งานล็อกแอป คุณจะได้รับการขอให้ยืนยันตัวตน\\nทุกครั้งที่คุณเปิดแอปหรือกลับมาจากพื้นหลัง';
 
   @override
-  String get keep_screen_on => 'Keep screen on';
+  String get keep_screen_on => 'เปิดหน้าจอไว้';
 
   @override
-  String get webtoon_side_padding => 'Webtoon side padding';
+  String get webtoon_side_padding => 'ช่องว่างด้านข้างของ Webtoon';
 
   @override
-  String get show_page_gaps => 'Show page gaps';
+  String get show_page_gaps => 'แสดงช่องว่างระหว่างหน้า';
 
   @override
-  String get invert_colors => 'Invert colors';
+  String get invert_colors => 'กลับสี';
 
   @override
-  String get grayscale => 'Grayscale';
+  String get grayscale => 'โทนสีเทา';
 
   @override
-  String get brightness => 'Brightness';
+  String get brightness => 'ความสว่าง';
 
   @override
-  String get contrast => 'Contrast';
+  String get contrast => 'ความเปนสัน';
 
   @override
-  String get saturation => 'Saturation';
+  String get saturation => 'ความเข้ม';
 
   @override
-  String get navigation_layout => 'Navigation layout';
+  String get navigation_layout => 'เลย์เอาต์การนำทาง';
 
   @override
-  String get nav_layout_default => 'Default';
+  String get nav_layout_default => 'ค่าเริ่มต้น';
 
   @override
-  String get nav_layout_l_shaped => 'L-shaped';
+  String get nav_layout_l_shaped => 'รูป L';
 
   @override
-  String get nav_layout_kindle => 'Kindle-ish';
+  String get nav_layout_kindle => 'Kindle';
 
   @override
-  String get nav_layout_edge => 'Edge';
+  String get nav_layout_edge => 'ขอบ';
 
   @override
-  String get nav_layout_right_and_left => 'Right and left';
+  String get nav_layout_right_and_left => 'ขวาและซ้าย';
 
   @override
-  String get nav_layout_disabled => 'Disabled';
+  String get nav_layout_disabled => 'ปิดใช้งาน';
 
   @override
-  String get color_enhancements => 'Color enhancements';
+  String get color_enhancements => 'การปรับปรุงสี';
 }
