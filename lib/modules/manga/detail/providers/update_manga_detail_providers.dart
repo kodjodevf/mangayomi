@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/main.dart';
@@ -7,8 +5,8 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/services/get_detail.dart';
-import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
+import 'package:mangayomi/utils/fetch_interval.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'update_manga_detail_providers.g.dart';
@@ -140,27 +138,15 @@ Future<dynamic> updateMangaDetail(
           oldChap.manga.saveSync();
         }
       }
-      final List<int> daysBetweenUploads = [];
-      for (var i = 0; i + 1 < chaps.length; i++) {
-        if (chaps[i].dateUpload != null && chaps[i + 1].dateUpload != null) {
-          final date1 = DateTime.fromMillisecondsSinceEpoch(
-            int.parse(chaps[i].dateUpload!),
-          );
-          final date2 = DateTime.fromMillisecondsSinceEpoch(
-            int.parse(chaps[i + 1].dateUpload!),
-          );
-          daysBetweenUploads.add(date1.difference(date2).abs().inDays);
-        }
-      }
-      if (daysBetweenUploads.isNotEmpty) {
-        final median = daysBetweenUploads.median();
+      // Calculate fetch interval:
+      // median of gaps between recent distinct chapter dates, clamped [1, 28].
+      final allChapters = isar.mangas.getSync(mangaId)!.chapters.toList();
+      if (allChapters.isNotEmpty) {
+        final interval = FetchInterval.calculateInterval(allChapters);
         isar.mangas.putSync(
           manga
             ..id = mangaId
-            ..smartUpdateDays = max(
-              median,
-              daysBetweenUploads.arithmeticMean(),
-            ),
+            ..smartUpdateDays = interval,
         );
       }
     });

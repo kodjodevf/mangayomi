@@ -401,11 +401,11 @@ class _MangaChapterPageGalleryState
                               chapterName: widget.chapter.name!,
                             ),
                             onFailedToLoadImage: (value) {
-                              // Handle failed image loading
-                              if (_failedToLoadImage.value != value &&
-                                  context.mounted) {
-                                _failedToLoadImage.value = value;
-                              }
+                              // // Handle failed image loading
+                              // if (_failedToLoadImage.value != value &&
+                              //     context.mounted) {
+                              //   _failedToLoadImage.value = value;
+                              // }
                             },
                             backgroundColor: backgroundColor,
                             isDoublePageMode:
