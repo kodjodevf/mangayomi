@@ -1,10 +1,12 @@
-import 'package:d4rt/d4rt.dart';
+import 'package:d4rt/d4rt.dart' hide Logger;
+import 'package:flutter/foundation.dart';
 import 'package:flutter_qjs/flutter_qjs.dart';
 import 'package:mangayomi/eval/model/filter.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/eval/model/m_provider.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extension_preferences_providers.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
+import 'package:mangayomi/utils/log/log.dart';
 
 class MProviderBridged {
   final mProviderBridged = BridgedClass(
@@ -341,5 +343,19 @@ class MProviderBridged {
             time: namedArgs.get<int?>('time') ?? 30,
           ),
     );
+    interpreter.registertopLevelFunction('print', (
+      visitor,
+      positionalArgs,
+      namedArgs,
+      _,
+    ) {
+      if (kDebugMode || useLogger) {
+        // ignore: avoid_print
+        print("LoggerLevel.warning:${positionalArgs[0]}");
+        Logger.add(LoggerLevel.warning, "${positionalArgs[0]}");
+      }
+
+      return null;
+    });
   }
 }
