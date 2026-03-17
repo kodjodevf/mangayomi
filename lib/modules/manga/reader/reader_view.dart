@@ -115,6 +115,12 @@ class _MangaReaderViewState extends ConsumerState<MangaReaderView> {
   }
 }
 
+class MangaChapterPageGalleryState {
+  static void setNavigatingToChapter() {
+    _MangaChapterPageGalleryState._isNavigatingToChapter = true;
+  }
+}
+
 class MangaChapterPageGallery extends ConsumerStatefulWidget {
   const MangaChapterPageGallery({
     super.key,
@@ -147,6 +153,11 @@ class _MangaChapterPageGalleryState
 
   bool isDesktop = Platform.isMacOS || Platform.isLinux || Platform.isWindows;
 
+  /// Flag to prevent fullscreen from being disabled when navigating between
+  /// chapters via pushReplacement. The old widget's dispose runs after the new
+  /// widget is created, which would clobber the new reader's fullscreen state.
+  static bool _isNavigatingToChapter = false;
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
@@ -163,7 +174,9 @@ class _MangaChapterPageGalleryState
     _photoViewScaleStateController.dispose();
     _extendedController.dispose();
     clearGestureDetailsCache();
-    if (isDesktop) {
+    if (_isNavigatingToChapter) {
+      _isNavigatingToChapter = false;
+    } else if (isDesktop) {
       setFullScreen(value: false);
     } else {
       SystemChrome.setEnabledSystemUIMode(
@@ -340,6 +353,7 @@ class _MangaChapterPageGalleryState
       onNextChapter: () {
         bool hasNextChapter = _readerController.getChapterIndex().$1 != 0;
         if (hasNextChapter) {
+          _isNavigatingToChapter = true;
           pushReplacementMangaReaderView(
             context: context,
             chapter: _readerController.getNextChapter(),
@@ -353,6 +367,7 @@ class _MangaChapterPageGalleryState
               _readerController.getChapterIndex().$2,
             );
         if (hasPrevChapter) {
+          _isNavigatingToChapter = true;
           pushReplacementMangaReaderView(
             context: context,
             chapter: _readerController.getPrevChapter(),
@@ -784,12 +799,14 @@ class _MangaChapterPageGalleryState
                       hasNextChapter:
                           _readerController.getChapterIndex().$1 != 0,
                       onPreviousChapter: () {
+                        _isNavigatingToChapter = true;
                         pushReplacementMangaReaderView(
                           context: context,
                           chapter: _readerController.getPrevChapter(),
                         );
                       },
                       onNextChapter: () {
+                        _isNavigatingToChapter = true;
                         pushReplacementMangaReaderView(
                           context: context,
                           chapter: _readerController.getNextChapter(),
