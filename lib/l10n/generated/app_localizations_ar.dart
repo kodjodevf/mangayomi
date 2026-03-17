@@ -410,6 +410,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get save_as_cbz_archive => 'حفظ كأرشيف CBZ';
 
   @override
+  String get delete_download_after_reading => 'Delete download after reading';
+
+  @override
   String get concurrent_downloads => 'التحميلات المتزامنة';
 
   @override

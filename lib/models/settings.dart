@@ -84,6 +84,8 @@ class Settings {
 
   bool? saveAsCBZArchive;
 
+  bool? deleteDownloadAfterReading;
+
   int? concurrentDownloads;
 
   String? downloadLocation;
@@ -378,6 +380,7 @@ class Settings {
     this.pureBlackDarkMode = false,
     this.downloadOnlyOnWifi = false,
     this.saveAsCBZArchive = false,
+    this.deleteDownloadAfterReading = false,
     this.concurrentDownloads = 2,
     this.downloadLocation = "",
     this.cropBorders = false,
@@ -604,6 +607,7 @@ class Settings {
     pureBlackDarkMode = json['pureBlackDarkMode'];
     relativeTimesTamps = json['relativeTimesTamps'];
     saveAsCBZArchive = json['saveAsCBZArchive'];
+    deleteDownloadAfterReading = json['deleteDownloadAfterReading'];
     scaleType =
         ScaleType.values[json['scaleType'] ?? ScaleType.fitScreen.index];
     showPagesNumber = json['showPagesNumber'];
@@ -844,6 +848,7 @@ class Settings {
     'pureBlackDarkMode': pureBlackDarkMode,
     'relativeTimesTamps': relativeTimesTamps,
     'saveAsCBZArchive': saveAsCBZArchive,
+    'deleteDownloadAfterReading': deleteDownloadAfterReading,
     'scaleType': scaleType.index,
     'showPagesNumber': showPagesNumber,
     'sortChapterList': sortChapterList?.map((v) => v.toJson()).toList(),

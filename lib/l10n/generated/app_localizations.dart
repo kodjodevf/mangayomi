@@ -887,6 +887,12 @@ abstract class AppLocalizations {
   /// **'Save as CBZ archive'**
   String get save_as_cbz_archive;
 
+  /// No description provided for @delete_download_after_reading.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete download after reading'**
+  String get delete_download_after_reading;
+
   /// No description provided for @concurrent_downloads.
   ///
   /// In en, this message translates to:

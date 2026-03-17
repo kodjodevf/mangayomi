@@ -412,6 +412,9 @@ class AppLocalizationsTh extends AppLocalizations {
   String get save_as_cbz_archive => 'จัดเก็บเป็น CBZ';
 
   @override
+  String get delete_download_after_reading => 'Delete download after reading';
+
+  @override
   String get concurrent_downloads => 'ดาวน์โหลดพร้อมกัน';
 
   @override

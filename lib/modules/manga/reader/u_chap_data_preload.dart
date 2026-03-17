@@ -20,6 +20,10 @@ class UChapDataPreload {
   String? mangaName;
   bool? isLastChapter;
 
+  /// Cached rendered dimensions (set after image first loads)
+  double? loadedHeight;
+  double? loadedWidth;
+
   UChapDataPreload(
     this.chapter,
     this.directory,

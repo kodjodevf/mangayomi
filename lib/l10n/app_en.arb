@@ -135,6 +135,7 @@
   "custom_location": "Custom location",
   "only_on_wifi": "Only on wifi",
   "save_as_cbz_archive": "Save as CBZ archive",
+  "delete_download_after_reading": "Delete download after reading",
   "concurrent_downloads": "Concurrent downloads",
   "browse_subtitle": "Sources, global search",
   "only_include_pinned_sources": "Only include pinned sources",

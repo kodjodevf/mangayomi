@@ -8,6 +8,7 @@ import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -48,6 +49,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:mangayomi/utils/window_geometry.dart';
 
 late Isar isar;
 DiscordRPC? discordRpc;
@@ -84,6 +86,7 @@ void main(List<String> args) async {
       await getIsolateService.start();
       if (!(Platform.isAndroid || Platform.isIOS)) {
         await windowManager.ensureInitialized();
+        await WindowGeometry.restore();
       }
       if (Platform.isWindows) {
         registerProtocolHandler("mangayomi");
@@ -137,7 +140,8 @@ class MyApp extends ConsumerStatefulWidget {
   ConsumerState<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
+class _MyAppState extends ConsumerState<MyApp>
+    with WidgetsBindingObserver, WindowListener {
   late AppLinks _appLinks;
   StreamSubscription<Uri>? _linkSubscription;
   Uri? lastUri;
@@ -146,6 +150,9 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    if (!(Platform.isAndroid || Platform.isIOS)) {
+      windowManager.addListener(this);
+    }
     initializeDateFormatting();
     customDns = ref.read(customDnsStateProvider);
     _checkTrackerRefresh();
@@ -199,17 +206,20 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
       locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      builder: Platform.isLinux
-          ? null
-          : (context, child) {
-              child = BotToastInit()(context, child);
-              final isUnlocked = ref.watch(appUnlockedStateProvider);
-              final lockEnabled = ref.watch(appLockEnabledStateProvider);
-              if (lockEnabled && !isUnlocked) {
-                return const AppLockScreen();
-              }
-              return child;
-            },
+      builder: (context, child) {
+        if (!Platform.isLinux) {
+          child = BotToastInit()(context, child);
+          final isUnlocked = ref.watch(appUnlockedStateProvider);
+          final lockEnabled = ref.watch(appLockEnabledStateProvider);
+          if (lockEnabled && !isUnlocked) {
+            return const AppLockScreen();
+          }
+        }
+        if (!(Platform.isAndroid || Platform.isIOS)) {
+          child = _MouseBackButtonHandler(router: router, child: child!);
+        }
+        return child!;
+      },
       routeInformationParser: router.routeInformationParser,
       routerDelegate: router.routerDelegate,
       routeInformationProvider: router.routeInformationProvider,
@@ -221,6 +231,10 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    if (!(Platform.isAndroid || Platform.isIOS)) {
+      windowManager.removeListener(this);
+      WindowGeometry.save();
+    }
     MExtensionServerPlatform(ref).stopServer();
     _linkSubscription?.cancel();
     discordRpc?.destroy();
@@ -228,6 +242,15 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
     AppLogger.dispose();
     super.dispose();
   }
+
+  @override
+  void onWindowResized() => WindowGeometry.save();
+
+  @override
+  void onWindowMoved() => WindowGeometry.save();
+
+  @override
+  void onWindowClose() => WindowGeometry.save();
 
   Future<void> _initDeepLinks() async {
     _appLinks = AppLinks();
@@ -441,6 +464,25 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
           )
           .checkRefresh();
     }
+  }
+}
+
+class _MouseBackButtonHandler extends StatelessWidget {
+  final GoRouter router;
+  final Widget child;
+
+  const _MouseBackButtonHandler({required this.router, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Listener(
+      onPointerDown: (event) {
+        if (event.buttons & kBackMouseButton != 0) {
+          if (router.canPop()) router.pop();
+        }
+      },
+      child: child,
+    );
   }
 }
 

@@ -414,6 +414,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get save_as_cbz_archive => 'Als CBZ-Archiv speichern';
 
   @override
+  String get delete_download_after_reading => 'Delete download after reading';
+
+  @override
   String get concurrent_downloads => 'Gleichzeitige Downloads';
 
   @override

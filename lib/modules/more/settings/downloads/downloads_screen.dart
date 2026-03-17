@@ -19,6 +19,9 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
   @override
   Widget build(BuildContext context) {
     final saveAsCBZArchiveState = ref.watch(saveAsCBZArchiveStateProvider);
+    final deleteDownloadAfterReading = ref.watch(
+      deleteDownloadAfterReadingStateProvider,
+    );
     final onlyOnWifiState = ref.watch(onlyOnWifiStateProvider);
     final concurrentDownloads = ref.watch(concurrentDownloadsStateProvider);
     final localFolders = ref.watch(localFoldersStateProvider);
@@ -40,6 +43,15 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
               title: Text(l10n.save_as_cbz_archive),
               onChanged: (value) {
                 ref.read(saveAsCBZArchiveStateProvider.notifier).set(value);
+              },
+            ),
+            SwitchListTile(
+              value: deleteDownloadAfterReading,
+              title: Text(l10n.delete_download_after_reading),
+              onChanged: (value) {
+                ref
+                    .read(deleteDownloadAfterReadingStateProvider.notifier)
+                    .set(value);
               },
             ),
             ListTile(

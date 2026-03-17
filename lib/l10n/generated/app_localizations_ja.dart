@@ -405,6 +405,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get save_as_cbz_archive => 'CBZアーカイブとして保存';
 
   @override
+  String get delete_download_after_reading => 'Delete download after reading';
+
+  @override
   String get concurrent_downloads => '同時ダウンロード';
 
   @override

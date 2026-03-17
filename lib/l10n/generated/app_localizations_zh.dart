@@ -404,6 +404,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get save_as_cbz_archive => '保存为CBZ档案';
 
   @override
+  String get delete_download_after_reading => 'Delete download after reading';
+
+  @override
   String get concurrent_downloads => '并发下载';
 
   @override

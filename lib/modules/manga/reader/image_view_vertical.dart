@@ -39,7 +39,20 @@ class ImageViewVertical extends ConsumerWidget {
       loadStateChanged: (state) {
         if (state.extendedImageLoadState == LoadState.completed) {
           failedToLoadImage(false);
+          final rawSize = state.extendedImageInfo?.image;
+          if (rawSize != null && data.loadedHeight == null) {
+            final screenWidth = isHorizontal
+                ? context.width(0.8)
+                : MediaQuery.of(context).size.width;
+            final aspect = rawSize.width / rawSize.height;
+            data.loadedWidth = screenWidth;
+            data.loadedHeight = screenWidth / aspect;
+          }
         }
+        final placeholderHeight = data.loadedHeight ?? context.height(0.8);
+        final placeholderWidth = isHorizontal
+            ? (data.loadedWidth ?? context.width(0.8))
+            : null;
         if (state.extendedImageLoadState == LoadState.loading) {
           final ImageChunkEvent? loadingProgress = state.loadingProgress;
           final double progress = loadingProgress?.expectedTotalBytes != null
@@ -48,8 +61,8 @@ class ImageViewVertical extends ConsumerWidget {
               : 0;
           return Container(
             color: Colors.black,
-            height: context.height(0.8),
-            width: isHorizontal ? context.width(0.8) : null,
+            height: placeholderHeight,
+            width: placeholderWidth,
             child: CircularProgressIndicatorAnimateRotate(progress: progress),
           );
         }
@@ -57,8 +70,8 @@ class ImageViewVertical extends ConsumerWidget {
           failedToLoadImage(true);
           return Container(
             color: Colors.black,
-            height: context.height(0.8),
-            width: isHorizontal ? context.width(0.8) : null,
+            height: placeholderHeight,
+            width: placeholderWidth,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

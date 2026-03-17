@@ -411,6 +411,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get save_as_cbz_archive => 'CBZ Arşivi Olarak Kaydet';
 
   @override
+  String get delete_download_after_reading => 'Delete download after reading';
+
+  @override
   String get concurrent_downloads => 'Eş zamanlı indirmeler';
 
   @override
