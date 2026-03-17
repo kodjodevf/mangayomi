@@ -864,17 +864,10 @@ class _CustomMaterialDesktopFullscreenButtonState
 
 Future<bool> setFullScreen({bool? value}) async {
   if (value != null) {
-    final isFullScreen = await windowManager.isFullScreen();
-    if (value != isFullScreen) {
-      await windowManager.setFullScreen(value);
-    }
+    await windowManager.setFullScreen(value);
     return value;
   }
   final isFullScreen = await windowManager.isFullScreen();
-  if (!isFullScreen) {
-    await windowManager.setFullScreen(true);
-  } else {
-    await windowManager.setFullScreen(false);
-  }
+  await windowManager.setFullScreen(!isFullScreen);
   return !isFullScreen;
 }

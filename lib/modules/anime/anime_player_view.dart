@@ -875,8 +875,11 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     } catch (_) {}
     if (_isDesktop && _firstTime) {
       final globalFullscreen = ref.read(fullScreenPlayerStateProvider);
-      setFullScreen(value: globalFullscreen);
-      Future.microtask(() {
+      // Delay fullscreen until after the first frame so the window is ready.
+      // On Windows, calling setFullScreen before the widget tree is built
+      // can silently fail, leaving the title bar visible.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setFullScreen(value: globalFullscreen);
         ref.read(fullscreenProvider.notifier).state = globalFullscreen;
         widget.desktopFullScreenPlayer.call(globalFullscreen);
       });
