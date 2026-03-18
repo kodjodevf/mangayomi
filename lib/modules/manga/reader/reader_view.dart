@@ -354,7 +354,7 @@ class _MangaChapterPageGalleryState
       onNextPage: () => navigationService.nextPage(
         readerMode: readerMode!,
         currentIndex: _currentIndex!,
-        maxPages: pages.length,
+        maxPages: _pageViewPageCount,
         animate: true,
       ),
       onEscape: () => _goBack(context),
@@ -472,13 +472,13 @@ class _MangaChapterPageGalleryState
                                       int index1 = index * 2;
                                       int index2 = index1 + 1;
                                       final pageList = [
-                                              index1 < pages.length
-                                                  ? pages[index1]
-                                                  : null,
-                                              index2 < pages.length
-                                                  ? pages[index2]
-                                                  : null,
-                                            ];
+                                        index1 < pages.length
+                                            ? pages[index1]
+                                            : null,
+                                        index2 < pages.length
+                                            ? pages[index2]
+                                            : null,
+                                      ];
                                       return DoublePageView.paged(
                                         pages: _isReverseHorizontal
                                             ? pageList.reversed.toList()
@@ -753,7 +753,7 @@ class _MangaChapterPageGalleryState
                           onNextPage: () => navigationService.nextPage(
                             readerMode: readerMode!,
                             currentIndex: _currentIndex!,
-                            maxPages: pages.length,
+                            maxPages: _pageViewPageCount,
                             animate: true,
                           ),
                           onDoubleTapDown: (position) => _toggleScale(position),
@@ -820,15 +820,18 @@ class _MangaChapterPageGalleryState
                       },
                       onSliderChangeEnd: (value) {
                         try {
-                          final index = pages
-                              .firstWhere(
-                                (element) =>
-                                    element.chapter == chapter &&
-                                    element.index == value,
-                              )
-                              .pageIndex;
+                          final page = pages.firstWhere(
+                            (element) =>
+                                element.chapter == chapter &&
+                                element.index == value,
+                          );
+                          int jumpIndex = page.pageIndex!;
+                          // In double page mode, convert array index to page view index
+                          if (_isDoublePageActive) {
+                            jumpIndex = _actualToPageViewIndex(jumpIndex);
+                          }
                           navigationService.jumpToPage(
-                            index: index!,
+                            index: jumpIndex,
                             readerMode: ref.read(_currentReaderMode)!,
                           );
                         } catch (_) {}
@@ -1429,6 +1432,11 @@ class _MangaChapterPageGalleryState
     if (!_isDoublePageActive) return actualIndex;
     return actualIndex ~/ 2;
   }
+
+  /// Total page count as seen by the page view controller.
+  /// In double page mode, each PV page shows 2 actual pages.
+  int get _pageViewPageCount =>
+      _isDoublePageActive ? (pages.length / 2).ceil() : pages.length;
 
   bool _isContinuousMode() {
     final readerMode = ref.watch(_currentReaderMode);

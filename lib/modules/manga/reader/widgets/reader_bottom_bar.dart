@@ -279,22 +279,11 @@ class ReaderBottomBar extends ConsumerWidget {
       builder: (context, ref, child) {
         final currentIndex = ref.watch(currentIndexProvider(chapter));
 
-        final maxValue = (_isDoublePageMode && !isHorizontalContinuous)
-            ? ((totalPages / 2).ceil() + 1).toDouble()
-            : (totalPages - 1).toDouble();
+        final maxValue = (totalPages - 1).toDouble();
 
-        final divisions = totalPages == 1
-            ? null
-            : _isDoublePageMode
-            ? (totalPages / 2).ceil() + 1
-            : totalPages - 1;
+        final divisions = totalPages <= 1 ? null : totalPages - 1;
 
-        final currentValue = min(
-          currentIndex.toDouble(),
-          (_isDoublePageMode && !isHorizontalContinuous)
-              ? ((totalPages / 2).ceil() + 1).toDouble()
-              : totalPages.toDouble(),
-        );
+        final currentValue = min(currentIndex.toDouble(), maxValue);
 
         return SliderTheme(
           data: SliderTheme.of(context).copyWith(
