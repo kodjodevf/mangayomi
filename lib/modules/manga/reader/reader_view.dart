@@ -469,18 +469,16 @@ class _MangaChapterPageGalleryState
                                       return true;
                                     },
                                     itemBuilder: (context, index) {
-                                      int index1 = index * 2 - 1;
+                                      int index1 = index * 2;
                                       int index2 = index1 + 1;
-                                      final pageList = (index == 0
-                                          ? [pages[0], null]
-                                          : [
+                                      final pageList = [
                                               index1 < pages.length
                                                   ? pages[index1]
                                                   : null,
                                               index2 < pages.length
                                                   ? pages[index2]
                                                   : null,
-                                            ]);
+                                            ];
                                       return DoublePageView.paged(
                                         pages: _isReverseHorizontal
                                             ? pageList.reversed.toList()
@@ -502,7 +500,7 @@ class _MangaChapterPageGalleryState
                                         },
                                       );
                                     },
-                                    itemCount: (pages.length / 2).ceil() + 1,
+                                    itemCount: (pages.length / 2).ceil(),
                                     onPageChanged: _onPageChanged,
                                   )
                                 : ExtendedImageGesturePageView.builder(
@@ -852,7 +850,7 @@ class _MangaChapterPageGalleryState
                           final int targetIndex;
                           if (_pageMode == PageMode.onePage) {
                             // Switching to double page: convert actual index to page view index
-                            targetIndex = pageIdx == 0 ? 0 : (pageIdx + 1) ~/ 2;
+                            targetIndex = pageIdx ~/ 2;
                           } else {
                             // Switching to single page: use the actual page index
                             targetIndex = pageIdx;
@@ -956,7 +954,7 @@ class _MangaChapterPageGalleryState
                       ReaderMode.horizontalContinuous ||
                   ref.watch(_currentReaderMode) ==
                       ReaderMode.horizontalContinuousRTL))
-          ? (pages.length / 2).ceil() + 1
+          ? (pages.length / 2).ceil()
           : pages.length;
       if (_currentIndex! >= 0 && _currentIndex! < pagesLength) {
         if (_readerController.chapter.id != pages[_currentIndex!].chapter!.id) {
@@ -1291,14 +1289,7 @@ class _MangaChapterPageGalleryState
     _failedToLoadImage.value = false;
     _readerController.setReaderMode(value);
 
-    int index =
-        (_pageMode == PageMode.doublePage &&
-            !(ref.watch(_currentReaderMode) ==
-                    ReaderMode.horizontalContinuous ||
-                ref.watch(_currentReaderMode) ==
-                    ReaderMode.horizontalContinuousRTL))
-        ? (_currentIndex! / 2).ceil()
-        : _currentIndex!;
+    int index = _pageViewToActualIndex(_currentIndex!);
     ref.read(_currentReaderMode.notifier).state = value;
     if (value == ReaderMode.vertical) {
       if (mounted) {
@@ -1404,22 +1395,14 @@ class _MangaChapterPageGalleryState
     if (_pageMode != PageMode.doublePage) {
       return "${index + 1}";
     }
-    if (index == 0) {
-      return "1";
-    }
     int pageLength = _readerController.getPageLength(_chapterUrlModel.pageUrls);
-    int index1 = index * 2;
-    int index2 = index1 + 1;
-    return !(index * 2 < pageLength) ? "$pageLength" : "$index1-$index2";
+    int page1 = index + 1;
+    int page2 = index + 2;
+    return page2 > pageLength ? "$pageLength" : "$page1-$page2";
   }
 
   int _geCurrentIndex(int index) {
-    if (_pageMode != PageMode.doublePage || index == 0) {
-      return index;
-    }
-    int pageLength = _readerController.getPageLength(_chapterUrlModel.pageUrls);
-    int index1 = index * 2;
-    return !(index * 2 < pageLength) ? pageLength - 1 : index1 - 1;
+    return index;
   }
 
   /// Whether double page mode is active (continuous or paged).
@@ -1437,16 +1420,14 @@ class _MangaChapterPageGalleryState
   ///   PV n (n>0) → pages[2n-1] (first page of the pair)
   int _pageViewToActualIndex(int pageViewIndex) {
     if (!_isDoublePageActive) return pageViewIndex;
-    if (pageViewIndex <= 0) return 0;
-    return (pageViewIndex * 2 - 1).clamp(0, pages.length - 1);
+    return (pageViewIndex * 2).clamp(0, pages.length - 1);
   }
 
   /// Converts an actual [pages] array index to a page view index
   /// for double page mode.
   int _actualToPageViewIndex(int actualIndex) {
     if (!_isDoublePageActive) return actualIndex;
-    if (actualIndex <= 0) return 0;
-    return (actualIndex + 1) ~/ 2;
+    return actualIndex ~/ 2;
   }
 
   bool _isContinuousMode() {
