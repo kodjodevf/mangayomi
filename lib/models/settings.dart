@@ -1213,6 +1213,7 @@ enum ReaderMode {
   verticalContinuous,
   webtoon,
   horizontalContinuous,
+  horizontalContinuousRTL,
 }
 
 enum NovelTextAlign { left, center, right, block }

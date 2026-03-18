@@ -8,6 +8,7 @@ import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
@@ -434,6 +435,7 @@ void _showCleanNonLibraryDialog(BuildContext context, dynamic l10n) {
                               false,
                             );
                           }
+                          isar.downloads.deleteSync(chapter.id!);
                           isar.chapters.deleteSync(chapter.id!);
                           provider.addChangedPart(
                             ActionType.removeChapter,
@@ -568,6 +570,7 @@ void _showClearLibraryDialog(BuildContext context, WidgetRef ref) {
                                       false,
                                     );
                                   }
+                                  isar.downloads.deleteSync(chapter.id!);
                                   isar.chapters.deleteSync(chapter.id!);
                                   provider.addChangedPart(
                                     ActionType.removeChapter,

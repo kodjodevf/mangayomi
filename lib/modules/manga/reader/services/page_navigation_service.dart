@@ -108,7 +108,8 @@ class PageNavigationService {
   bool _isContinuousMode(ReaderMode mode) {
     return mode == ReaderMode.verticalContinuous ||
         mode == ReaderMode.webtoon ||
-        mode == ReaderMode.horizontalContinuous;
+        mode == ReaderMode.horizontalContinuous ||
+        mode == ReaderMode.horizontalContinuousRTL;
   }
 }
 

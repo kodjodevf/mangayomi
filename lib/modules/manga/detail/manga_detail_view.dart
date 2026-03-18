@@ -890,6 +890,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               return ChapterListTileWidget(
                                 chapter: chapters[indexx],
                                 chapterList: chapterList,
+                                allChapters: chapters,
                                 sourceExist: widget.sourceExist,
                               );
                             },

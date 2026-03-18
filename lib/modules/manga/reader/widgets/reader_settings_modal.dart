@@ -134,7 +134,8 @@ class _ReadingModeTab extends ConsumerWidget {
     final isContinuousMode =
         readerMode == ReaderMode.verticalContinuous ||
         readerMode == ReaderMode.webtoon ||
-        readerMode == ReaderMode.horizontalContinuous;
+        readerMode == ReaderMode.horizontalContinuous ||
+        readerMode == ReaderMode.horizontalContinuousRTL;
 
     return SingleChildScrollView(
       child: Padding(

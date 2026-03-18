@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
@@ -20,10 +21,12 @@ import 'package:photo_view/photo_view_gallery.dart';
 class ChapterListTileWidget extends ConsumerWidget {
   final Chapter chapter;
   final List<Chapter> chapterList;
+  final List<Chapter> allChapters;
   final bool sourceExist;
   const ChapterListTileWidget({
     required this.chapterList,
     required this.chapter,
+    required this.allChapters,
     required this.sourceExist,
     super.key,
   });
@@ -243,7 +246,14 @@ class ChapterListTileWidget extends ConsumerWidget {
   void _handleInteraction(WidgetRef ref, [BuildContext? context]) {
     final isLongPressed = ref.read(isLongPressedStateProvider);
     if (isLongPressed) {
-      ref.read(chaptersListStateProvider.notifier).update(chapter);
+      // Shift-click range selection on desktop
+      if (HardwareKeyboard.instance.isShiftPressed) {
+        ref
+            .read(chaptersListStateProvider.notifier)
+            .selectRange(chapter, allChapters);
+      } else {
+        ref.read(chaptersListStateProvider.notifier).update(chapter);
+      }
     } else {
       if (context != null) {
         chapter.pushToReaderView(context, ignoreIsRead: true);

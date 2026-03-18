@@ -27,8 +27,33 @@ class DownloadQueueScreen extends ConsumerWidget {
           .watch(fireImmediately: true),
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-          final entries = snapshot.data!;
-          final allQueueLength = entries.toList().length;
+          // Filter out orphaned downloads (chapter or manga deleted)
+          final allEntries = snapshot.data!;
+          final orphanIds = <int>[];
+          final entries = <Download>[];
+          for (final d in allEntries) {
+            if (d.chapter.value == null ||
+                d.chapter.value?.manga.value == null) {
+              if (d.id != null) orphanIds.add(d.id!);
+            } else {
+              entries.add(d);
+            }
+          }
+          // Auto-clean orphaned download records
+          if (orphanIds.isNotEmpty) {
+            isar.writeTxnSync(() {
+              for (final id in orphanIds) {
+                isar.downloads.deleteSync(id);
+              }
+            });
+          }
+          if (entries.isEmpty) {
+            return Scaffold(
+              appBar: AppBar(title: Text(l10n!.download_queue)),
+              body: Center(child: Text(l10n.no_downloads)),
+            );
+          }
+          final allQueueLength = entries.length;
           return Scaffold(
             appBar: AppBar(
               title: Row(
@@ -122,9 +147,16 @@ class DownloadQueueScreen extends ConsumerWidget {
                           child: const Icon(Icons.more_vert),
                           onSelected: (value) async {
                             if (value.toString() == 'Cancel') {
-                              element.chapter.value?.cancelDownloads(
-                                element.id!,
-                              );
+                              if (element.chapter.value != null) {
+                                element.chapter.value!.cancelDownloads(
+                                  element.id!,
+                                );
+                              } else {
+                                // Orphaned download — just delete the record
+                                isar.writeTxnSync(() {
+                                  isar.downloads.deleteSync(element.id!);
+                                });
+                              }
                             } else if (value.toString() == 'CancelAll') {
                               final a = entries
                                   .where(

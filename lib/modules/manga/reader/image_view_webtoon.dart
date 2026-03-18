@@ -33,6 +33,7 @@ class ImageViewWebtoon extends StatelessWidget {
   final VoidCallback onDoubleTap;
   final int webtoonSidePadding;
   final bool showPageGaps;
+  final bool reverse;
 
   const ImageViewWebtoon({
     super.key,
@@ -58,6 +59,7 @@ class ImageViewWebtoon extends StatelessWidget {
     required this.onDoubleTap,
     this.webtoonSidePadding = 0,
     this.showPageGaps = true,
+    this.reverse = false,
   });
 
   @override
@@ -71,6 +73,7 @@ class ImageViewWebtoon extends StatelessWidget {
         onScaleEnd: (context, details, controllerValue) => onScaleEnd(details),
         child: ScrollablePositionedList.separated(
           scrollDirection: scrollDirection,
+          reverse: reverse,
           minCacheExtent: minCacheExtent,
           initialScrollIndex: initialScrollIndex,
           itemCount: pages.length,

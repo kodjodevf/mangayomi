@@ -179,6 +179,8 @@ void _removeImport(WidgetRef ref, Manga manga) {
       isar.updates.deleteSync(update.id!);
       provider.addChangedPart(ActionType.removeUpdate, update.id, "{}", false);
     }
+    // Remove associated download record to prevent ghost entries
+    isar.downloads.deleteSync(chapter.id!);
     isar.chapters.deleteSync(chapter.id!);
     provider.addChangedPart(ActionType.removeChapter, chapter.id, "{}", false);
   }

@@ -109,7 +109,8 @@ class ReaderBottomBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final readerMode = ref.watch(currentReaderModeProvider);
     final isHorizontalContinuous =
-        readerMode == ReaderMode.horizontalContinuous;
+        readerMode == ReaderMode.horizontalContinuous ||
+        readerMode == ReaderMode.horizontalContinuousRTL;
 
     return Positioned(
       bottom: 0,

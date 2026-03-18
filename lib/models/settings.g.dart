@@ -2549,6 +2549,7 @@ const _SettingsdefaultReaderModeEnumValueMap = {
   'verticalContinuous': 3,
   'webtoon': 4,
   'horizontalContinuous': 5,
+  'horizontalContinuousRTL': 6,
 };
 const _SettingsdefaultReaderModeValueEnumMap = {
   0: ReaderMode.vertical,
@@ -2557,6 +2558,7 @@ const _SettingsdefaultReaderModeValueEnumMap = {
   3: ReaderMode.verticalContinuous,
   4: ReaderMode.webtoon,
   5: ReaderMode.horizontalContinuous,
+  6: ReaderMode.horizontalContinuousRTL,
 };
 const _SettingsdisableSectionTypeEnumValueMap = {
   'all': 0,
@@ -21780,6 +21782,7 @@ const _PersonalReaderModereaderModeEnumValueMap = {
   'verticalContinuous': 3,
   'webtoon': 4,
   'horizontalContinuous': 5,
+  'horizontalContinuousRTL': 6,
 };
 const _PersonalReaderModereaderModeValueEnumMap = {
   0: ReaderMode.vertical,
@@ -21788,6 +21791,7 @@ const _PersonalReaderModereaderModeValueEnumMap = {
   3: ReaderMode.verticalContinuous,
   4: ReaderMode.webtoon,
   5: ReaderMode.horizontalContinuous,
+  6: ReaderMode.horizontalContinuousRTL,
 };
 
 extension PersonalReaderModeQueryFilter
