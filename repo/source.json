@@ -14,15 +14,15 @@
       "bundleIdentifier": "com.kodjodevf.mangayomi",
       "developerName": "Moustapha Kodjo Amadou",
       "subtitle": "Read manga, novels, and watch anime",
-      "version": "0.7.2",
-      "versionDate": "2026-03-05T15:55:28Z",
+      "version": "0.7.3",
+      "versionDate": "2026-03-23T14:34:39Z",
       "versionDescription": "",
-      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.7.2/Mangayomi-v0.7.2-ios.ipa",
+      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.7.3/Mangayomi-v0.7.3-ios.ipa",
       "localizedDescription": "Mangayomi is an open-source Flutter app for reading manga, novels, and watching anime across multiple platforms.",
       "iconURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/icons/icon_default.webp",
       "tintColor": "EF4444",
       "category": "entertainment",
-      "size": 43596384,
+      "size": 43589596,
       "screenshotURLs": [
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_0_default.webp",
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_1_default.webp",
@@ -30,9 +30,16 @@
       ],
       "versions": [
         {
+          "version": "0.7.3",
+          "date": "2026-03-23T14:34:39Z",
+          "localizedDescription": "",
+          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.7.3/Mangayomi-v0.7.3-ios.ipa",
+          "size": 43589596
+        },
+        {
           "version": "0.7.2",
           "date": "2026-03-05T15:55:28Z",
-          "localizedDescription": "",
+          "localizedDescription": "What's Changed\r\n* Fix shouldUpdate button in categories view by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/657\r\n* Improve extension service lifecycle, isolate robustness, dedupe lists, and UI/lifecycle cleanups by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/644\r\n* Improve failure message by using itemType.name by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/661\r\n* Change '\u0418\u0433\u0440\u043e\u043a' to '\u041f\u043b\u0435\u0435\u0440' in Russian localization by @userkilled in https://github.com/kodjodevf/mangayomi/pull/662\r\n* Improve Kitsu login dialog with autofill, input validation by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/664\r\n* [removing history entry removes manga from library 663](https://github.com/kodjodevf/mangayomi/issues/663)\r\n* [Refactor](https://github.com/kodjodevf/mangayomi/commit/1256e608c7599f12be9b4f1ad03d7aa71eed599f)\r\n* [feat: Implement app lock feature with biometric authentication](https://github.com/kodjodevf/mangayomi/commit/f7293802234ee00a78f1132b9ec1463f93b016c3)\r\n* [feat(reader): add navigation layout options and settings for screen behavior](https://github.com/kodjodevf/mangayomi/commit/2f0fc853161c74552bc14f187fb39f683f9eb906)\r\n* [feat(reader): implement bidirectional chapter preloading and enhance memory management](https://github.com/kodjodevf/mangayomi/commit/87028ea8f599204ac3a81d39a3e2784b72b52d9b)\r\n* [feat: Implement upcoming manga calendar feature](https://github.com/kodjodevf/mangayomi/commit/95a55d5f81c5e42075048ec53540b06f1952c496)\r\n\r\nNew Contributors\r\n* @userkilled made their first contribution in https://github.com/kodjodevf/mangayomi/pull/662\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.7.1...v0.7.2\r\n",
           "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.7.2/Mangayomi-v0.7.2-ios.ipa",
           "size": 43596384
         },
@@ -394,6 +401,17 @@
       "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
       "notify": true,
       "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.7.2"
+    },
+    {
+      "appID": "com.kodjodevf.mangayomi",
+      "title": "0.7.3 - 23 Mar",
+      "identifier": "release-0.7.3",
+      "caption": "Update for Mangayomi now available!",
+      "date": "2026-03-23T14:34:39Z",
+      "tintColor": "EF4444",
+      "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
+      "notify": true,
+      "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.7.3"
     }
   ]
 }
