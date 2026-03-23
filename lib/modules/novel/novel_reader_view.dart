@@ -57,7 +57,7 @@ class NovelWebView extends ConsumerStatefulWidget {
 }
 
 class _NovelWebViewState extends ConsumerState<NovelWebView>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   late final NovelReaderController _readerController = ref.read(
     novelReaderControllerProvider(chapter: chapter).notifier,
   );
@@ -71,6 +71,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   int fontSize = 14;
   bool isDesktop = Platform.isMacOS || Platform.isLinux || Platform.isWindows;
 
+  final Stopwatch _readingStopwatch = Stopwatch();
+
   void onScroll() {
     if (_scrollController.hasClients) {
       offset = _scrollController.offset;
@@ -81,8 +83,12 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
 
   @override
   void dispose() {
+    _readingStopwatch.stop();
+    WidgetsBinding.instance.removeObserver(this);
     _readerController.setChapterOffset(offset, maxOffset, true);
-    _readerController.setMangaHistoryUpdate();
+    _readerController.setMangaHistoryUpdate(
+      readingTimeSeconds: _readingStopwatch.elapsed.inSeconds,
+    );
     _scrollController.removeListener(onScroll);
     _scrollController.dispose();
     _rebuildDetail.close();
@@ -102,6 +108,16 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     super.dispose();
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      _readingStopwatch.stop();
+    } else if (state == AppLifecycleState.resumed) {
+      _readingStopwatch.start();
+    }
+  }
+
   late Chapter chapter = widget.chapter;
   EpubNovel? epubBook;
 
@@ -110,6 +126,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _readingStopwatch.start();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollController.addListener(onScroll);
       final initFontSize = ref.read(novelFontSizeStateProvider);

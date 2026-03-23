@@ -127,7 +127,7 @@ class AnimeStreamController extends _$AnimeStreamController {
     );
   }
 
-  void setAnimeHistoryUpdate() {
+  void setAnimeHistoryUpdate({int watchTimeSeconds = 0}) {
     if (incognitoMode) return;
     isar.writeTxnSync(() {
       Manga? anime = episode.manga.value;
@@ -162,6 +162,10 @@ class AnimeStreamController extends _$AnimeStreamController {
             ..updatedAt = DateTime.now().millisecondsSinceEpoch;
     }
     isar.writeTxnSync(() {
+      if (watchTimeSeconds > 0) {
+        history!.readingTimeSeconds =
+            (history.readingTimeSeconds ?? 0) + watchTimeSeconds;
+      }
       isar.historys.putSync(history!);
       history.chapter.saveSync();
     });

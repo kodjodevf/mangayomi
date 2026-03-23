@@ -153,6 +153,8 @@ class _MangaChapterPageGalleryState
 
   bool isDesktop = Platform.isMacOS || Platform.isLinux || Platform.isWindows;
 
+  final Stopwatch _readingStopwatch = Stopwatch();
+
   /// Flag to prevent fullscreen from being disabled when navigating between
   /// chapters via pushReplacement. The old widget's dispose runs after the new
   /// widget is created, which would clobber the new reader's fullscreen state.
@@ -161,7 +163,10 @@ class _MangaChapterPageGalleryState
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _readerController.setMangaHistoryUpdate();
+    _readingStopwatch.stop();
+    _readerController.setMangaHistoryUpdate(
+      readingTimeSeconds: _readingStopwatch.elapsed.inSeconds,
+    );
     _rebuildDetail.close();
     _doubleClickAnimationController.dispose();
     _scaleAnimationController.dispose();
@@ -203,6 +208,7 @@ class _MangaChapterPageGalleryState
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached) {
+      _readingStopwatch.stop();
       final actualIdx = _pageViewToActualIndex(_currentIndex!);
       final index = pages[actualIdx].index;
       if (index != null) {
@@ -211,6 +217,8 @@ class _MangaChapterPageGalleryState
           true,
         );
       }
+    } else if (state == AppLifecycleState.resumed) {
+      _readingStopwatch.start();
     }
   }
 
@@ -242,6 +250,7 @@ class _MangaChapterPageGalleryState
   @override
   void initState() {
     super.initState();
+    _readingStopwatch.start();
     _doubleClickAnimationController = AnimationController(
       duration: _doubleTapAnimationDuration(),
       vsync: this,

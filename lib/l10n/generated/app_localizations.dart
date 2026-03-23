@@ -3640,6 +3640,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Color enhancements'**
   String get color_enhancements;
+
+  /// No description provided for @total.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get total;
+
+  /// No description provided for @mean_per_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Mean per Title'**
+  String get mean_per_title;
+
+  /// No description provided for @completion_rate.
+  ///
+  /// In en, this message translates to:
+  /// **'Completion Rate'**
+  String get completion_rate;
+
+  /// No description provided for @watching_time.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch Time'**
+  String get watching_time;
+
+  /// No description provided for @reading_time.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading Time'**
+  String get reading_time;
+
+  /// No description provided for @average_chapters_per_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Average Chapters per {title}'**
+  String average_chapters_per_title(Object title);
+
+  /// No description provided for @read_percentage.
+  ///
+  /// In en, this message translates to:
+  /// **'Read Percentage'**
+  String get read_percentage;
+
+  /// No description provided for @entries.
+  ///
+  /// In en, this message translates to:
+  /// **'Entries'**
+  String get entries;
 }
 
 class _AppLocalizationsDelegate

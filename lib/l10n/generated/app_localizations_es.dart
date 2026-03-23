@@ -1914,6 +1914,32 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get color_enhancements => 'Mejoras de color';
+
+  @override
+  String get total => 'Total';
+
+  @override
+  String get mean_per_title => 'Mean per Title';
+
+  @override
+  String get completion_rate => 'Completion Rate';
+
+  @override
+  String get watching_time => 'Watch Time';
+
+  @override
+  String get reading_time => 'Reading Time';
+
+  @override
+  String average_chapters_per_title(Object title) {
+    return 'Average Chapters per $title';
+  }
+
+  @override
+  String get read_percentage => 'Read Percentage';
+
+  @override
+  String get entries => 'Entries';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/more/statistics/statistics_provider.dart';
@@ -95,12 +96,13 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
         final completedPercentage = totalItems > 0
             ? (completedItems / totalItems) * 100
             : 0;
+        final totalReadingTimeSeconds = stats.totalReadingTimeSeconds;
         return SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _buildSectionHeader('Entries'),
+              _buildSectionHeader(l10n.entries),
               _buildEntriesCard(
                 totalItems: totalItems,
                 completedItems: completedItems,
@@ -118,6 +120,15 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
                 title: itemType.localized(l10n),
                 context: context,
                 unreadLabel: unreadLabel,
+                l10n: l10n,
+              ),
+              const SizedBox(height: 10),
+              _buildSectionHeader(_trackingTimeLabel(itemType, l10n)),
+              _buildTrackingTimeCard(
+                totalSeconds: totalReadingTimeSeconds,
+                totalItems: totalItems,
+                itemType: itemType,
+                l10n: l10n,
               ),
             ],
           ),
@@ -153,12 +164,12 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
             ),
             _buildStatisticColumn(
               value: "$completedItems",
-              label: "Completed",
+              label: l10n.completed,
               icon: Icons.local_library_outlined,
             ),
             _buildStatisticColumn(
               value: "${completedPercentage.toStringAsFixed(1)}%",
-              label: "Completion Rate",
+              label: l10n.completion_rate,
               icon: Icons.percent,
             ),
           ],
@@ -177,6 +188,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     required String title,
     required BuildContext context,
     required String unreadLabel,
+    required AppLocalizations l10n,
   }) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
@@ -189,12 +201,12 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
               children: [
                 _buildStatisticColumn(
                   value: "$totalChapters",
-                  label: "Total",
+                  label: l10n.total,
                   icon: Icons.format_list_numbered,
                 ),
                 _buildStatisticColumn(
                   value: "$readChapters",
-                  label: "Read",
+                  label: l10n.read,
                   icon: Icons.done_all,
                 ),
                 _buildStatisticColumn(
@@ -211,7 +223,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
             ),
           ),
           ListTile(
-            title: Text("Average Chapters per $title"),
+            title: Text(l10n.average_chapters_per_title(title)),
             subtitle: Text(averageChapters.toStringAsFixed(2)),
             leading: Icon(Icons.bar_chart, color: context.primaryColor),
           ),
@@ -256,7 +268,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
             Icon(Icons.pie_chart, color: context.primaryColor),
             Padding(
               padding: EdgeInsets.all(8.0),
-              child: Text("Read Percentage"),
+              child: Text(context.l10n.read_percentage),
             ),
           ],
         ),
@@ -301,6 +313,58 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
         ),
         const SizedBox(height: 10),
       ],
+    );
+  }
+
+  String _trackingTimeLabel(ItemType itemType, AppLocalizations l10n) {
+    return switch (itemType) {
+      ItemType.anime => l10n.watching_time,
+      _ => l10n.reading_time,
+    };
+  }
+
+  String _formatDuration(int totalSeconds) {
+    if (totalSeconds <= 0) return '0m';
+    final days = totalSeconds ~/ 86400;
+    final hours = (totalSeconds % 86400) ~/ 3600;
+    final minutes = (totalSeconds % 3600) ~/ 60;
+    final parts = <String>[];
+    if (days > 0) parts.add('${days}d');
+    if (hours > 0) parts.add('${hours}h');
+    if (minutes > 0 || parts.isEmpty) parts.add('${minutes}m');
+    return parts.join(' ');
+  }
+
+  Widget _buildTrackingTimeCard({
+    required int totalSeconds,
+    required int totalItems,
+    required ItemType itemType,
+    required AppLocalizations l10n,
+  }) {
+    final averagePerTitle = totalItems > 0
+        ? (totalSeconds / totalItems).round()
+        : 0;
+    final isAnime = itemType == ItemType.anime;
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildStatisticColumn(
+              value: _formatDuration(totalSeconds),
+              label: l10n.total,
+              icon: isAnime ? Icons.play_circle_outline : Icons.auto_stories,
+            ),
+            _buildStatisticColumn(
+              value: _formatDuration(averagePerTitle),
+              label: l10n.mean_per_title,
+              icon: Icons.timer_outlined,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

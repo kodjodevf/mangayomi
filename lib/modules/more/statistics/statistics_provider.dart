@@ -2,6 +2,7 @@ import 'package:isar_community/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
+import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'statistics_provider.g.dart';
@@ -12,6 +13,7 @@ class StatisticsData {
   final int readChapters;
   final int completedItems;
   final int downloadedItems;
+  final int totalReadingTimeSeconds;
 
   const StatisticsData({
     required this.totalItems,
@@ -19,6 +21,7 @@ class StatisticsData {
     required this.readChapters,
     required this.completedItems,
     required this.downloadedItems,
+    required this.totalReadingTimeSeconds,
   });
 }
 
@@ -63,11 +66,21 @@ Future<StatisticsData> getStatistics(
     }
   }
 
+  final histories = await isar.historys
+      .filter()
+      .itemTypeEqualTo(itemType)
+      .findAll();
+  int totalReadingTimeSeconds = 0;
+  for (final h in histories) {
+    totalReadingTimeSeconds += h.readingTimeSeconds ?? 0;
+  }
+
   return StatisticsData(
     totalItems: totalItems,
     totalChapters: totalChapters,
     readChapters: readChapters,
     completedItems: completedItems,
     downloadedItems: downloadedCount,
+    totalReadingTimeSeconds: totalReadingTimeSeconds,
   );
 }

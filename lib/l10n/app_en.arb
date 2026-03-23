@@ -594,5 +594,13 @@
   "nav_layout_edge": "Edge",
   "nav_layout_right_and_left": "Right and left",
   "nav_layout_disabled": "Disabled",
-  "color_enhancements": "Color enhancements"
+  "color_enhancements": "Color enhancements",
+  "total": "Total",
+  "mean_per_title": "Mean per Title",
+  "completion_rate": "Completion Rate",
+  "watching_time": "Watch Time",
+  "reading_time": "Reading Time",
+  "average_chapters_per_title": "Average Chapters per {title}",
+  "read_percentage": "Read Percentage",
+  "entries": "Entries"
 }

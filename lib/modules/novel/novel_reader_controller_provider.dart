@@ -63,7 +63,7 @@ class NovelReaderController extends _$NovelReaderController {
     );
   }
 
-  void setMangaHistoryUpdate() {
+  void setMangaHistoryUpdate({int readingTimeSeconds = 0}) {
     if (incognitoMode) return;
     isar.writeTxnSync(() {
       Manga? manga = chapter.manga.value;
@@ -97,6 +97,10 @@ class NovelReaderController extends _$NovelReaderController {
     }
     isar.writeTxnSync(() {
       history!.updatedAt = DateTime.now().millisecondsSinceEpoch;
+      if (readingTimeSeconds > 0) {
+        history.readingTimeSeconds =
+            (history.readingTimeSeconds ?? 0) + readingTimeSeconds;
+      }
       isar.historys.putSync(history);
       history.chapter.saveSync();
     });

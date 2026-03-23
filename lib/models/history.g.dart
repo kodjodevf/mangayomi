@@ -31,8 +31,13 @@ const HistorySchema = CollectionSchema(
       enumMap: _HistoryitemTypeEnumValueMap,
     ),
     r'mangaId': PropertySchema(id: 4, name: r'mangaId', type: IsarType.long),
-    r'updatedAt': PropertySchema(
+    r'readingTimeSeconds': PropertySchema(
       id: 5,
+      name: r'readingTimeSeconds',
+      type: IsarType.long,
+    ),
+    r'updatedAt': PropertySchema(
+      id: 6,
       name: r'updatedAt',
       type: IsarType.long,
     ),
@@ -86,7 +91,8 @@ void _historySerialize(
   writer.writeBool(offsets[2], object.isManga);
   writer.writeByte(offsets[3], object.itemType.index);
   writer.writeLong(offsets[4], object.mangaId);
-  writer.writeLong(offsets[5], object.updatedAt);
+  writer.writeLong(offsets[5], object.readingTimeSeconds);
+  writer.writeLong(offsets[6], object.updatedAt);
 }
 
 History _historyDeserialize(
@@ -104,7 +110,8 @@ History _historyDeserialize(
         _HistoryitemTypeValueEnumMap[reader.readByteOrNull(offsets[3])] ??
         ItemType.manga,
     mangaId: reader.readLongOrNull(offsets[4]),
-    updatedAt: reader.readLongOrNull(offsets[5]),
+    readingTimeSeconds: reader.readLongOrNull(offsets[5]),
+    updatedAt: reader.readLongOrNull(offsets[6]),
   );
   return object;
 }
@@ -129,6 +136,8 @@ P _historyDeserializeProp<P>(
     case 4:
       return (reader.readLongOrNull(offset)) as P;
     case 5:
+      return (reader.readLongOrNull(offset)) as P;
+    case 6:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -705,6 +714,79 @@ extension HistoryQueryFilter
     });
   }
 
+  QueryBuilder<History, History, QAfterFilterCondition>
+  readingTimeSecondsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'readingTimeSeconds'),
+      );
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition>
+  readingTimeSecondsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'readingTimeSeconds'),
+      );
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition>
+  readingTimeSecondsEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'readingTimeSeconds', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition>
+  readingTimeSecondsGreaterThan(int? value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'readingTimeSeconds',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition>
+  readingTimeSecondsLessThan(int? value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'readingTimeSeconds',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<History, History, QAfterFilterCondition>
+  readingTimeSecondsBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'readingTimeSeconds',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
   QueryBuilder<History, History, QAfterFilterCondition> updatedAtIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
@@ -862,6 +944,18 @@ extension HistoryQuerySortBy on QueryBuilder<History, History, QSortBy> {
     });
   }
 
+  QueryBuilder<History, History, QAfterSortBy> sortByReadingTimeSeconds() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'readingTimeSeconds', Sort.asc);
+    });
+  }
+
+  QueryBuilder<History, History, QAfterSortBy> sortByReadingTimeSecondsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'readingTimeSeconds', Sort.desc);
+    });
+  }
+
   QueryBuilder<History, History, QAfterSortBy> sortByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.asc);
@@ -949,6 +1043,18 @@ extension HistoryQuerySortThenBy
     });
   }
 
+  QueryBuilder<History, History, QAfterSortBy> thenByReadingTimeSeconds() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'readingTimeSeconds', Sort.asc);
+    });
+  }
+
+  QueryBuilder<History, History, QAfterSortBy> thenByReadingTimeSecondsDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'readingTimeSeconds', Sort.desc);
+    });
+  }
+
   QueryBuilder<History, History, QAfterSortBy> thenByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedAt', Sort.asc);
@@ -996,6 +1102,12 @@ extension HistoryQueryWhereDistinct
     });
   }
 
+  QueryBuilder<History, History, QDistinct> distinctByReadingTimeSeconds() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'readingTimeSeconds');
+    });
+  }
+
   QueryBuilder<History, History, QDistinct> distinctByUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'updatedAt');
@@ -1038,6 +1150,12 @@ extension HistoryQueryProperty
   QueryBuilder<History, int?, QQueryOperations> mangaIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'mangaId');
+    });
+  }
+
+  QueryBuilder<History, int?, QQueryOperations> readingTimeSecondsProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'readingTimeSeconds');
     });
   }
 
