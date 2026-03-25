@@ -1003,6 +1003,10 @@ class _MangaChapterPageGalleryState
 
         final idx = pages[_currentIndex!].index;
         if (idx != null) {
+          _readerController.setPageIndex(
+            _isDoublePageActive ? idx : _geCurrentIndex(idx),
+            false,
+          );
           ref.read(currentIndexProvider(chapter).notifier).setCurrentIndex(idx);
         }
       }
