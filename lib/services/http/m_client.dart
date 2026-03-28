@@ -273,6 +273,16 @@ bool isCloudflare(BaseResponse response) {
       ["cloudflare-nginx", "cloudflare"].contains(response.headers["server"]);
 }
 
+bool _boolFromDynamic(dynamic value) {
+  if (value is bool) return value;
+  if (value is String) {
+    final normalized = value.trim().toLowerCase();
+    return normalized == "true" || normalized == "1";
+  }
+  if (value is num) return value != 0;
+  return false;
+}
+
 class ResolveCloudFlareChallenge extends RetryPolicy {
   bool showCloudFlareError;
   ResolveCloudFlareChallenge(this.showCloudFlareError);
@@ -284,19 +294,19 @@ class ResolveCloudFlareChallenge extends RetryPolicy {
     bool isCloudFlare = isCloudflare(response);
     if (isCloudFlare) {
       try {
-        return http
-            .post(
-              Uri.parse('http://localhost:$cfPort/resolve_cf'),
-              headers: {HttpHeaders.contentTypeHeader: 'application/json'},
-              body: jsonEncode({'url': response.request!.url.toString()}),
-            )
-            .then((res) {
-              if (res.statusCode == 200) {
-                final data = jsonDecode(res.body) as Map<String, dynamic>;
-                return data['result'] as bool;
-              }
-              return false;
-            });
+        final res = await http.post(
+          Uri.parse('http://localhost:$cfPort/resolve_cf'),
+          headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+          body: jsonEncode({'url': response.request!.url.toString()}),
+        );
+        if (res.statusCode == 200) {
+          final data = jsonDecode(res.body) as Map<String, dynamic>;
+          final resolved = data.containsKey('resolved')
+              ? _boolFromDynamic(data['resolved'])
+              : _boolFromDynamic(data['result']);
+          return resolved;
+        }
+        return false;
       } catch (e) {
         return false;
       }
@@ -350,7 +360,8 @@ Future<void> stopCfResolutionWebviewServer() async {
 void _handleResolveCf(HttpRequest request) async {
   int time = 0;
   bool timeOut = false;
-  bool isCloudFlare = true;
+  bool isCloudFlareChallengeActive = true;
+  bool resolved = false;
   try {
     final body = await utf8.decoder.bind(request).join();
     final data = jsonDecode(body) as Map<String, dynamic>;
@@ -371,37 +382,30 @@ void _handleResolveCf(HttpRequest request) async {
         url: flutter_inappwebview.WebUri(url),
       ),
       onLoadStop: (controller, url) async {
-        try {
-          isCloudFlare = await controller.platform.evaluateJavascript(
-            source:
-                "document.head.innerHTML.includes('#challenge-success-text')",
-          );
-        } catch (_) {
-          isCloudFlare = false;
-        }
+        isCloudFlareChallengeActive = await _isCloudflareChallengePage(
+          controller,
+        );
 
         await Future.doWhile(() async {
-          if (!timeOut && isCloudFlare) {
-            try {
-              isCloudFlare = await controller.platform.evaluateJavascript(
-                source:
-                    "document.head.innerHTML.includes('#challenge-success-text')",
-              );
-            } catch (_) {
-              isCloudFlare = false;
-            }
+          if (!timeOut && isCloudFlareChallengeActive) {
+            isCloudFlareChallengeActive = await _isCloudflareChallengePage(
+              controller,
+            );
           }
-          if (isCloudFlare) await Future.delayed(Duration(milliseconds: 300));
+          if (isCloudFlareChallengeActive) {
+            await Future.delayed(Duration(milliseconds: 300));
+          }
 
-          return isCloudFlare;
+          return isCloudFlareChallengeActive;
         });
-        if (!timeOut) {
+        if (!timeOut && !isCloudFlareChallengeActive) {
           final ua =
               await controller.evaluateJavascript(
                 source: "navigator.userAgent",
               ) ??
               "";
           await MClient.setCookie(url.toString(), ua, controller);
+          resolved = true;
         }
       },
     );
@@ -410,7 +414,7 @@ void _handleResolveCf(HttpRequest request) async {
 
     await Future.doWhile(() async {
       timeOut = time == 15;
-      if (!isCloudFlare || timeOut) {
+      if (!isCloudFlareChallengeActive || timeOut) {
         return false;
       }
       await Future.delayed(const Duration(seconds: 1));
@@ -423,12 +427,40 @@ void _handleResolveCf(HttpRequest request) async {
 
     request.response
       ..headers.contentType = ContentType.json
-      ..write(jsonEncode({'result': isCloudFlare}))
+      ..write(
+        jsonEncode({
+          // Backward compatible `result`, but now aligned with retry semantics.
+          'result': resolved,
+          'resolved': resolved,
+          'timeout': timeOut,
+        }),
+      )
       ..close();
   } catch (e) {
     request.response
       ..statusCode = HttpStatus.badRequest
       ..write(jsonEncode({'error': 'Invalid JSON'}))
       ..close();
+  }
+}
+
+Future<bool> _isCloudflareChallengePage(
+  flutter_inappwebview.InAppWebViewController controller,
+) async {
+  try {
+    final result = await controller.platform.evaluateJavascript(
+      source: """
+(() => {
+  const title = String(document.title || "");
+  const bodyText = String(document.body?.innerText || "");
+  const href = String(location.href || "");
+  const content = `\${title}\n\${bodyText}\n\${href}`;
+  return /cdn-cgi\\/challenge-platform|cf_chl|just a moment|security verification|enable javascript and cookies/i.test(content);
+})()
+""",
+    );
+    return _boolFromDynamic(result);
+  } catch (_) {
+    return false;
   }
 }
