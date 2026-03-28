@@ -957,29 +957,47 @@ class _MangaChapterPageGalleryState
 
   void _readProgressListener() async {
     if (_isAdjustingScroll) return;
-    final itemPositions = _itemPositionsListener.itemPositions.value;
-    if (itemPositions.isNotEmpty) {
-      _currentIndex = itemPositions.first.index;
-      int pagesLength =
-          (_pageMode == PageMode.doublePage &&
-              !(ref.watch(_currentReaderMode) ==
-                      ReaderMode.horizontalContinuous ||
-                  ref.watch(_currentReaderMode) ==
-                      ReaderMode.horizontalContinuousRTL))
-          ? (pages.length / 2).ceil()
-          : pages.length;
+    final itemPositions = _itemPositionsListener.itemPositions.value.toList();
+    if (itemPositions.isNotEmpty && pages.isNotEmpty) {
+      var minVisibleIndex = itemPositions.first.index;
+      var maxVisibleIndex = itemPositions.first.index;
+      for (final itemPosition in itemPositions) {
+        if (itemPosition.index < minVisibleIndex) {
+          minVisibleIndex = itemPosition.index;
+        }
+        if (itemPosition.index > maxVisibleIndex) {
+          maxVisibleIndex = itemPosition.index;
+        }
+      }
+
+      _currentIndex = minVisibleIndex;
+      final isContinuousDoublePage = _isDoublePageActive && _isContinuousMode();
+      int pagesLength = pages.length;
+      if (isContinuousDoublePage) {
+        pagesLength = pages.length == 1 ? 1 : 1 + ((pages.length - 1) / 2).ceil();
+      }
+
+      if (pagesLength <= 0) return;
+
+      final clampedVisibleIndex = minVisibleIndex.clamp(0, pagesLength - 1);
+      final currentActualIndex = isContinuousDoublePage
+          ? (clampedVisibleIndex == 0
+                ? 0
+                : (clampedVisibleIndex * 2 - 1).clamp(0, pages.length - 1))
+          : clampedVisibleIndex.clamp(0, pages.length - 1);
+
       if (_currentIndex! >= 0 && _currentIndex! < pagesLength) {
-        if (_readerController.chapter.id != pages[_currentIndex!].chapter!.id) {
+        if (_readerController.chapter.id != pages[currentActualIndex].chapter!.id) {
           if (mounted) {
             setState(() {
               _readerController = ref.read(
                 readerControllerProvider(
-                  chapter: pages[_currentIndex!].chapter!,
+                  chapter: pages[currentActualIndex].chapter!,
                 ).notifier,
               );
 
-              chapter = pages[_currentIndex!].chapter!;
-              final chapterUrlModel = pages[_currentIndex!].chapterUrlModel;
+              chapter = pages[currentActualIndex].chapter!;
+              final chapterUrlModel = pages[currentActualIndex].chapterUrlModel;
 
               if (chapterUrlModel != null) {
                 _chapterUrlModel = chapterUrlModel;
@@ -991,17 +1009,18 @@ class _MangaChapterPageGalleryState
         }
 
         // ── Next-chapter preloading: trigger when near the end ──
-        final distToEnd = pagesLength - 1 - itemPositions.last.index;
+        final distToEnd =
+            pagesLength - 1 - maxVisibleIndex.clamp(0, pagesLength - 1);
         if (distToEnd <= pagePreloadAmount && !_isLastPageTransition) {
           _triggerNextChapterPreload();
         }
 
         // ── Previous-chapter preloading: trigger when near the start ──
-        if (itemPositions.first.index <= pagePreloadAmount) {
+        if (clampedVisibleIndex <= pagePreloadAmount) {
           _triggerPrevChapterPreload();
         }
 
-        final idx = pages[_currentIndex!].index;
+        final idx = pages[currentActualIndex].index;
         if (idx != null) {
           _readerController.setPageIndex(
             _isDoublePageActive ? idx : _geCurrentIndex(idx),
