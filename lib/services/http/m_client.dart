@@ -182,17 +182,36 @@ class MCookieManager extends InterceptorContract {
 
   @override
   Future<BaseRequest> interceptRequest({required BaseRequest request}) async {
-    final cookie = MClient.getCookiesPref(request.url.toString());
-    if (cookie.isNotEmpty) {
-      final settings = await isar.settings.get(227);
-      final userAgent = settings!.userAgent!;
-      if (request.headers[HttpHeaders.cookieHeader] == null) {
-        request.headers.addAll(cookie);
-      }
-      if (request.headers[HttpHeaders.userAgentHeader] == null) {
-        request.headers[HttpHeaders.userAgentHeader] = userAgent;
+    final settings = await isar.settings.get(227);
+    final userAgent = settings?.userAgent ?? "";
+    final cachedCookie = MClient.getCookiesPref(request.url.toString());
+    String? liveCookieHeader;
+
+    if (!Platform.isLinux) {
+      try {
+        final liveCookies = await flutter_inappwebview.CookieManager.instance(
+          webViewEnvironment: webViewEnvironment,
+        ).getCookies(url: flutter_inappwebview.WebUri(request.url.toString()));
+        if (liveCookies.isNotEmpty) {
+          liveCookieHeader = liveCookies
+              .map((cookie) => "${cookie.name}=${cookie.value}")
+              .join("; ");
+        }
+      } catch (_) {}
+    }
+
+    if (request.headers[HttpHeaders.cookieHeader] == null) {
+      if (liveCookieHeader != null && liveCookieHeader.isNotEmpty) {
+        request.headers[HttpHeaders.cookieHeader] = liveCookieHeader;
+      } else if (cachedCookie.isNotEmpty) {
+        request.headers.addAll(cachedCookie);
       }
     }
+    if (request.headers[HttpHeaders.userAgentHeader] == null &&
+        userAgent.isNotEmpty) {
+      request.headers[HttpHeaders.userAgentHeader] = userAgent;
+    }
+
     try {
       if (reqcopyWith != null) {
         if (reqcopyWith!["followRedirects"] != null) {
@@ -343,13 +362,14 @@ class _CloudflareResolutionResult {
 }
 
 final Map<String, _CloudflareResolutionResult> _cloudflareResolutionCache = {};
+final RegExp _cloudflareChallengePattern = RegExp(
+  r'cdn-cgi/challenge-platform|cf_chl|just a moment|nur einen moment|security verification|sicherheitsüberprüfung|enable javascript and cookies|verify you are human|checking your browser|prüfung läuft|überprüfung wird durchgeführt|cf-turnstile|challenges\.cloudflare\.com|hcaptcha',
+  caseSensitive: false,
+);
 
 bool _containsCloudflareChallengeHtml(String html) {
   if (html.isEmpty) return false;
-  return RegExp(
-    r'cdn-cgi/challenge-platform|cf_chl|just a moment|security verification|enable javascript and cookies',
-    caseSensitive: false,
-  ).hasMatch(html);
+  return _cloudflareChallengePattern.hasMatch(html);
 }
 
 Future<_CloudflareResolutionResult?> _resolveCloudflareForUrl(
@@ -553,7 +573,7 @@ Future<bool> _isCloudflareChallengePage(
   const bodyText = String(document.body?.innerText || "");
   const href = String(location.href || "");
   const content = `\${title}\n\${bodyText}\n\${href}`;
-  return /cdn-cgi\\/challenge-platform|cf_chl|just a moment|security verification|enable javascript and cookies/i.test(content);
+  return /cdn-cgi\\/challenge-platform|cf_chl|just a moment|nur einen moment|security verification|sicherheitsüberprüfung|enable javascript and cookies|verify you are human|checking your browser|prüfung läuft|überprüfung wird durchgeführt|cf-turnstile|challenges\\.cloudflare\\.com|hcaptcha/i.test(content);
 })()
 """,
     );
