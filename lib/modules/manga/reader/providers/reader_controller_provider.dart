@@ -345,57 +345,59 @@ class ReaderController extends _$ReaderController {
 
   int getPageLength(List incognitoPageLength) {
     if (incognitoMode) return incognitoPageLength.length;
-    return getIsarSetting().chapterPageUrlsList!
-        .where((element) => element.chapterId == chapter.id)
-        .first
-        .urls!
-        .length;
+    // Use firstOrNull instead of first — never throws
+    final entry = getIsarSetting()
+        .chapterPageUrlsList
+        ?.where((element) => element.chapterId == chapter.id)
+        .firstOrNull;
+    return entry?.urls?.length ?? incognitoPageLength.length;
   }
 
   void setPageIndex(int newIndex, bool save) {
-    if (chapter.isRead!) return;
-    if (incognitoMode) return;
-    final isRead =
-        (getReaderMode() == ReaderMode.verticalContinuous ||
-            getReaderMode() == ReaderMode.webtoon)
-        ? ((newIndex + 2) >= getPageLength([]) - 1)
-              ? ((newIndex + 2) >= getPageLength([]) - 1)
-              : (newIndex + 2) >= getPageLength([])
-        : (newIndex + 2) >= getPageLength([]);
-    if (isRead || save) {
-      List<ChapterPageIndex>? chapterPageIndexs = [];
-      for (var chapterPageIndex
-          in getIsarSetting().chapterPageIndexList ?? []) {
-        if (chapterPageIndex.chapterId != chapter.id) {
-          chapterPageIndexs.add(chapterPageIndex);
-        }
+  if (incognitoMode) return;
+  // Re-read fresh from Isar — don't trust the stale build-time object
+  final freshChapter = isar.chapters.getSync(chapter.id!);
+  if (freshChapter == null || freshChapter.isRead == true) return;
+  final pageLen = getPageLength([]);
+  if (pageLen == 0) return; // pages not loaded yet, skip
+  final isRead =
+      (getReaderMode() == ReaderMode.verticalContinuous ||
+          getReaderMode() == ReaderMode.webtoon)
+      ? (newIndex + 2) >= pageLen - 1
+      : (newIndex + 2) >= pageLen;
+  if (isRead || save) {
+    List<ChapterPageIndex>? chapterPageIndexs = [];
+    for (var chapterPageIndex
+        in getIsarSetting().chapterPageIndexList ?? []) {
+      if (chapterPageIndex.chapterId != chapter.id) {
+        chapterPageIndexs.add(chapterPageIndex);
       }
-      chapterPageIndexs.add(
-        ChapterPageIndex()
-          ..chapterId = chapter.id
-          ..index = isRead ? 0 : newIndex,
+    }
+    chapterPageIndexs.add(
+      ChapterPageIndex()
+        ..chapterId = chapter.id
+        ..index = isRead ? 0 : newIndex,
+    );
+    final chap = freshChapter; // use fresh copy
+    isar.writeTxnSync(() {
+      isar.settings.putSync(
+        getIsarSetting()
+          ..chapterPageIndexList = chapterPageIndexs
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       );
-      final chap = chapter;
-      isar.writeTxnSync(() {
-        isar.settings.putSync(
-          getIsarSetting()
-            ..chapterPageIndexList = chapterPageIndexs
-            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-        );
-        chap.isRead = isRead;
-        chap.lastPageRead = isRead ? '1' : (newIndex + 1).toString();
-        chap.updatedAt = DateTime.now().millisecondsSinceEpoch;
-        isar.chapters.putSync(chap);
-      });
-      if (isRead) {
-        chapter.updateTrackChapterRead(ref);
-        if (ref.read(deleteDownloadAfterReadingStateProvider)) {
-          chapter.deleteDownloadedFiles();
-        }
+      chap.isRead = isRead;
+      chap.lastPageRead = isRead ? '1' : (newIndex + 1).toString();
+      chap.updatedAt = DateTime.now().millisecondsSinceEpoch;
+      isar.chapters.putSync(chap);
+    });
+    if (isRead) {
+      chapter.updateTrackChapterRead(ref);
+      if (ref.read(deleteDownloadAfterReadingStateProvider)) {
+        chapter.deleteDownloadedFiles();
       }
     }
   }
-
+}
   String getMangaName() {
     return getManga().name!;
   }
