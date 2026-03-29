@@ -30,10 +30,10 @@ class TrackSearchAdapter extends TypeAdapter<TrackSearch> {
       finishedReadingDate: fields[10] as int?,
       trackingUrl: fields[11] as String?,
       coverUrl: fields[12] as String?,
+      summary: fields[13] as String?,
       publishingStatus: fields[14] as String?,
       publishingType: fields[15] as String?,
       startDate: fields[16] as String?,
-      summary: fields[13] as String?,
     );
   }
 
