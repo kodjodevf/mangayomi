@@ -408,24 +408,35 @@ Future<void> downloadChapter(
 Future<void> processDownloads(Ref ref, {bool? useWifi}) async {
   final keepAlive = ref.keepAlive();
   try {
-    final ongoingDownloads = await isar.downloads
-        .filter()
-        .idIsNotNull()
-        .isDownloadEqualTo(false)
-        .isStartDownloadEqualTo(true)
-        .findAll();
     final maxConcurrentDownloads = ref.read(concurrentDownloadsStateProvider);
-    int index = 0;
-    int downloaded = 0;
     int current = 0;
+    final Set<int> dispatched = {};
+
     await Future.doWhile(() async {
       await Future.delayed(const Duration(seconds: 1));
-      if (ongoingDownloads.length == downloaded) {
+
+      // Re-query every tick — picks up any newly added manga/chapters
+      final pending = await isar.downloads
+          .filter()
+          .idIsNotNull()
+          .isDownloadEqualTo(false)
+          .isStartDownloadEqualTo(true)
+          .findAll();
+
+      final toDispatch = pending
+          .where((d) => d.id != null && !dispatched.contains(d.id))
+          .toList();
+
+      // Exit only when nothing new is queued AND all in-flight downloads finished
+      if (toDispatch.isEmpty && current == 0) {
         return false;
       }
-      if (current < maxConcurrentDownloads) {
+
+      // Dispatch as many as concurrency limit allows
+      while (current < maxConcurrentDownloads && toDispatch.isNotEmpty) {
+        final downloadItem = toDispatch.removeAt(0);
+        dispatched.add(downloadItem.id!);
         current++;
-        final downloadItem = ongoingDownloads[index++];
         final chapter = downloadItem.chapter.value!;
         chapter.cancelDownloads(downloadItem.id);
         await Future.delayed(const Duration(milliseconds: 500));
@@ -434,12 +445,12 @@ Future<void> processDownloads(Ref ref, {bool? useWifi}) async {
             chapter: chapter,
             useWifi: useWifi,
             callback: () {
-              downloaded++;
               current--;
             },
           ),
         );
       }
+
       return true;
     });
     keepAlive.close();
