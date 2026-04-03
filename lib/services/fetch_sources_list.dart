@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:isar_community/isar.dart';
-import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/eval/model/filter.dart';
 import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
@@ -10,6 +9,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+import 'package:mangayomi/services/isolate_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 Future<void> fetchSourcesList({
@@ -169,37 +169,25 @@ Future<void> _updateSource(
   bool? supportLatest;
   FilterList? filterList;
   List<SourcePreference>? preferenceList;
+  source.sourceCode = sourceCode;
   if (source.sourceCodeLanguage == SourceCodeLanguage.mihon) {
-    headers = await fetchHeadersDalvik(
-      http,
-      source..sourceCode = sourceCode,
-      androidProxyServer,
-    );
+    headers = await fetchHeadersDalvik(http, source, androidProxyServer);
     supportLatest = await fetchSupportLatestDalvik(
       http,
-      source..sourceCode = sourceCode,
+      source,
       androidProxyServer,
     );
-    filterList = await fetchFilterListDalvik(
-      http,
-      source..sourceCode = sourceCode,
-      androidProxyServer,
-    );
+    filterList = await fetchFilterListDalvik(http, source, androidProxyServer);
     preferenceList = await fetchPreferencesDalvik(
       http,
-      source..sourceCode = sourceCode,
+      source,
       androidProxyServer,
     );
   } else {
-    final service = getExtensionService(
-      source..sourceCode = sourceCode,
-      androidProxyServer,
+    headers = await getIsolateService.get<Map<String, String>>(
+      source: source,
+      serviceType: 'getHeaders',
     );
-    try {
-      headers = service.getHeaders();
-    } finally {
-      service.dispose();
-    }
   }
 
   final updatedSource = Source()

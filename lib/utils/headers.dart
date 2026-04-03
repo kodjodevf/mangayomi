@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:mangayomi/eval/javascript/http.dart';
 import 'package:mangayomi/eval/lib.dart';
-import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -31,7 +30,6 @@ Map<String, String> headers(
     } finally {
       service.dispose();
     }
-    headers.addAll(MClient.getCookiesPref(mSource.baseUrl!));
   }
 
   return headers;

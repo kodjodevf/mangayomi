@@ -34,11 +34,12 @@ class DartExtensionService implements ExtensionService {
   @override
   Map<String, String> getHeaders() {
     try {
-      return _interpreter!.invoke('headers', []) as Map<String, String>;
+      return (_interpreter!.invoke('headers', []) as Map)
+          .cast<String, String>();
     } catch (_) {
       try {
-        return _interpreter!.invoke('getHeader', [source.baseUrl!])
-            as Map<String, String>;
+        return (_interpreter!.invoke('getHeader', [source.baseUrl!]) as Map)
+            .cast<String, String>();
       } catch (_) {
         return {};
       }
