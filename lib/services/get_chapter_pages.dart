@@ -117,35 +117,28 @@ Future<GetChapterPagesModel> getChapterPages(
         }
       }
       if (!incognitoMode) {
+        List<ChapterPageurls>? chapterPageUrls = [];
+        for (var chapterPageUrl in settings.chapterPageUrlsList ?? []) {
+          if (chapterPageUrl.chapterId != chapter.id) {
+            chapterPageUrls.add(chapterPageUrl);
+          }
+        }
         final chapterPageHeaders = pageUrls
             .map((e) => e.headers == null ? null : jsonEncode(e.headers))
             .toList();
+        chapterPageUrls.add(
+          ChapterPageurls()
+            ..chapterId = chapter.id
+            ..urls = pageUrls.map((e) => e.url).toList()
+            ..chapterUrl = chapter.url
+            ..headers = chapterPageHeaders.first != null
+                ? chapterPageHeaders.map((e) => e.toString()).toList()
+                : null,
+        );
         isar.writeTxnSync(() {
-          final latestSettings = isar.settings.getSync(227);
-          if (latestSettings == null) return;
-
-          final mergedChapterPageUrls = <ChapterPageurls>[];
-          for (var chapterPageUrl in latestSettings.chapterPageUrlsList ?? []) {
-            if (chapterPageUrl.chapterId != chapter.id) {
-              mergedChapterPageUrls.add(chapterPageUrl);
-            }
-          }
-
-          mergedChapterPageUrls.add(
-            ChapterPageurls()
-              ..chapterId = chapter.id
-              ..urls = pageUrls.map((e) => e.url).toList()
-              ..chapterUrl = chapter.url
-              ..headers =
-                  chapterPageHeaders.isNotEmpty &&
-                      chapterPageHeaders.first != null
-                  ? chapterPageHeaders.map((e) => e.toString()).toList()
-                  : null,
-          );
-
           isar.settings.putSync(
-            latestSettings
-              ..chapterPageUrlsList = mergedChapterPageUrls
+            settings
+              ..chapterPageUrlsList = chapterPageUrls
               ..updatedAt = DateTime.now().millisecondsSinceEpoch,
           );
         });
