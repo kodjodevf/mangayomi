@@ -103,8 +103,8 @@ dependencies:
   wakelock_plus: ^1.4.0
   m_extension_server:
     git:
-      url: https://github.com/kodjodevf/m_extension_server.git
-      ref: master
+      url: https://github.com/Schnitzel5/m_extension_server.git
+      ref: feature/desktop-support
 
 dependency_overrides:
   ffi: ^2.1.3

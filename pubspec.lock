@@ -991,11 +991,11 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: master
-      resolved-ref: dd07e87603cc2d6cb3fc42c37def4396741c4944
-      url: "https://github.com/kodjodevf/m_extension_server.git"
+      ref: "feature/desktop-support"
+      resolved-ref: adb27979ac85ac67adee1abf62dbd6c6614007dd
+      url: "https://github.com/Schnitzel5/m_extension_server.git"
     source: git
-    version: "0.0.1"
+    version: "0.0.2"
   marquee:
     dependency: "direct main"
     description:
