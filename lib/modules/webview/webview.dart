@@ -131,20 +131,6 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
   late String _title = widget.title;
   bool _canGoback = false;
   bool _canGoForward = false;
-
-  Future<void> _syncCookieAndUaFromWebView(
-    InAppWebViewController controller,
-    WebUri? url,
-  ) async {
-    final resolvedUrl =
-        url?.toString() ?? (await controller.getUrl())?.toString() ?? "";
-    if (resolvedUrl.isEmpty) return;
-    final ua =
-        await controller.evaluateJavascript(source: "navigator.userAgent") ??
-        "";
-    await MClient.setCookie(resolvedUrl, ua.toString(), controller);
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context);
@@ -323,10 +309,9 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                                 return NavigationActionPolicy.ALLOW;
                               },
                           onLoadStop: (controller, url) async {
-                            await _syncCookieAndUaFromWebView(controller, url);
                             if (mounted) {
                               setState(() {
-                                _url = url?.toString() ?? _url;
+                                _url = url.toString();
                               });
                             }
                           },
@@ -339,9 +324,15 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                           },
                           onUpdateVisitedHistory:
                               (controller, url, isReload) async {
-                                await _syncCookieAndUaFromWebView(
+                                final ua =
+                                    await controller.evaluateJavascript(
+                                      source: "navigator.userAgent",
+                                    ) ??
+                                    "";
+                                await MClient.setCookie(
+                                  url.toString(),
+                                  ua,
                                   controller,
-                                  url,
                                 );
                                 final canGoback = await controller.canGoBack();
                                 final canGoForward = await controller
