@@ -152,7 +152,7 @@ Future<void> doBackUp(
     encoder.create(p.join(path, "$name.backup"));
     await encoder.addFile(File(backupFilePath));
     await encoder.close();
-    await Directory(backupFilePath).delete(recursive: true);
+    await File(backupFilePath).delete();
     final assets = [
       'assets/app_icons/icon-black.png',
       'assets/app_icons/icon-red.png',
