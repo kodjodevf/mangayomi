@@ -213,6 +213,236 @@ class AppLocalizationsAs extends AppLocalizations {
   String get migrate => 'স্থানান্তৰ';
 
   @override
+  String get mass_migration_title => 'Mass migration';
+
+  @override
+  String get mass_migration_preview_items => 'Preview items';
+
+  @override
+  String get mass_migration_destination_source => 'Destination source';
+
+  @override
+  String get mass_migration_no_library_items =>
+      'No library items are available for mass migration.';
+
+  @override
+  String get mass_migration_no_destination_sources =>
+      'No installed destination sources are available.';
+
+  @override
+  String get mass_migration_installed => 'Installed';
+
+  @override
+  String mass_migration_items_ready_for_review(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items ready for review',
+      one: '1 item ready for review',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String mass_migration_item_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items',
+      one: '1 item',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get mass_migration_select_destination_source =>
+      'Select destination source';
+
+  @override
+  String mass_migration_finding_matches(Object source, Object language) {
+    return 'Finding matches in $source • $language';
+  }
+
+  @override
+  String mass_migration_processing_item(int current, int total) {
+    return 'Processing item $current of $total';
+  }
+
+  @override
+  String get mass_migration_waiting_next_item =>
+      'Waiting 2 seconds before the next item...';
+
+  @override
+  String get mass_migration_waiting_next_migration =>
+      'Waiting 2 seconds before the next migration...';
+
+  @override
+  String mass_migration_matched_so_far(int count) {
+    return 'Matched so far: $count';
+  }
+
+  @override
+  String mass_migration_no_match_count(int count) {
+    return 'No match: $count';
+  }
+
+  @override
+  String mass_migration_review_matches(Object source) {
+    return 'Review matches for $source';
+  }
+
+  @override
+  String mass_migration_found_matches(int count) {
+    return 'Found matches: $count';
+  }
+
+  @override
+  String mass_migration_no_matches(int count) {
+    return 'No matches: $count';
+  }
+
+  @override
+  String mass_migration_selected_to_migrate(int count) {
+    return 'Selected to migrate: $count';
+  }
+
+  @override
+  String get mass_migration_finish_review => 'Finish review';
+
+  @override
+  String mass_migration_migrate_selected(int count) {
+    return 'Migrate selected items ($count)';
+  }
+
+  @override
+  String mass_migration_migrating_selected(Object source) {
+    return 'Migrating selected items to $source';
+  }
+
+  @override
+  String get mass_migration_no_items_selected =>
+      'No items selected for migration.';
+
+  @override
+  String mass_migration_migrating_item(int current, int total) {
+    return 'Migrating item $current of $total';
+  }
+
+  @override
+  String get mass_migration_complete => 'Mass migration complete';
+
+  @override
+  String get mass_migration_complete_success_message =>
+      'All selected items were processed successfully.';
+
+  @override
+  String get mass_migration_complete_partial_message =>
+      'Migration finished with a few items that still need manual attention.';
+
+  @override
+  String mass_migration_route_summary(Object source, Object destination) {
+    return '$source → $destination';
+  }
+
+  @override
+  String get mass_migration_processed => 'Processed';
+
+  @override
+  String get mass_migration_matched => 'Matched';
+
+  @override
+  String get mass_migration_migrated => 'Migrated';
+
+  @override
+  String get mass_migration_skipped => 'Skipped';
+
+  @override
+  String get mass_migration_failed => 'Failed';
+
+  @override
+  String get mass_migration_failed_items => 'Failed Items';
+
+  @override
+  String get mass_migration_exit => 'Exit Mass Migration';
+
+  @override
+  String get mass_migration_no_destination_match =>
+      'No destination match found';
+
+  @override
+  String mass_migration_query(Object query) {
+    return 'Query: $query';
+  }
+
+  @override
+  String get mass_migration_skip => 'Skip';
+
+  @override
+  String get mass_migration_loading => 'Loading...';
+
+  @override
+  String get mass_migration_choose_another_result => 'Choose another result';
+
+  @override
+  String get mass_migration_source_chapters => 'Source chapters';
+
+  @override
+  String get mass_migration_destination_chapters => 'Destination chapters';
+
+  @override
+  String mass_migration_chapter_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count chapters',
+      one: '1 chapter',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String mass_migration_source_chapter_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count source chapters',
+      one: '1 source chapter',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String mass_migration_destination_chapter_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count destination chapters',
+      one: '1 destination chapter',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get mass_migration_no_chapters_found => 'No chapters found.';
+
+  @override
+  String mass_migration_and_more_chapters(int count) {
+    return 'And $count more...';
+  }
+
+  @override
+  String get mass_migration_unknown_title => 'Unknown title';
+
+  @override
+  String get mass_migration_unknown_match => 'Unknown match';
+
+  @override
+  String get mass_migration_unknown_source => 'Unknown source';
+
+  @override
+  String get mass_migration_unknown_chapter => 'Unknown chapter';
+
+  @override
   String get migrate_confirm => 'অন্য উৎসলৈ স্থানান্তৰ কৰক';
 
   @override
