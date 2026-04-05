@@ -33,11 +33,12 @@ class JsExtensionService implements ExtensionService {
     JsUtils(runtime).init();
     JsVideosExtractors(runtime).init();
     JsPreferences(runtime, source).init();
+    final sourceJson = jsonEncode(source.toMSource().toJson());
 
     runtime.evaluate('''
 class MProvider {
     get source() {
-        return JSON.parse('${jsonEncode(source.toMSource().toJson())}');
+        return $sourceJson;
     }
     get supportsLatest() {
         throw new Error("supportsLatest not implemented");
@@ -96,7 +97,7 @@ var extention = new DefaultExtension();
   @override
   Map<String, String> getHeaders() {
     return _extensionCall<Map>(
-      'getHeaders(`${source.baseUrl ?? ''}`)',
+      'getHeaders(${jsonEncode(source.baseUrl ?? '')})',
       {},
     ).toMapStringString!;
   }
@@ -127,14 +128,16 @@ var extention = new DefaultExtension();
   Future<MPages> search(String query, int page, List<dynamic> filters) async {
     return MPages.fromJson(
       await _extensionCallAsync(
-        'search("$query",$page,${jsonEncode(filterValuesListToJson(filters))})',
+        'search(${jsonEncode(query)},$page,${jsonEncode(filterValuesListToJson(filters))})',
       ),
     );
   }
 
   @override
   Future<MManga> getDetail(String url) async {
-    return MManga.fromJson(await _extensionCallAsync('getDetail(`$url`)'));
+    return MManga.fromJson(
+      await _extensionCallAsync('getDetail(${jsonEncode(url)})'),
+    );
   }
 
   @override
@@ -144,7 +147,9 @@ var extention = new DefaultExtension();
       hashCode: (p) => p.url.hashCode,
     );
 
-    for (final e in await _extensionCallAsync<List>('getPageList(`$url`)')) {
+    for (final e in await _extensionCallAsync<List>(
+      'getPageList(${jsonEncode(url)})',
+    )) {
       if (e != null) {
         final page = e is String
             ? PageUrl(e.trim())
@@ -164,7 +169,7 @@ var extention = new DefaultExtension();
     );
 
     for (final element in await _extensionCallAsync<List>(
-      'getVideoList(`$url`)',
+      'getVideoList(${jsonEncode(url)})',
     )) {
       if (element['url'] != null && element['originalUrl'] != null) {
         videos.add(Video.fromJson(element));
@@ -178,7 +183,7 @@ var extention = new DefaultExtension();
     _init();
     final res = (await runtime.handlePromise(
       await runtime.evaluateAsync(
-        'jsonStringify(() => extention.getHtmlContent(`$name`, `$url`))',
+        'jsonStringify(() => extention.getHtmlContent(${jsonEncode(name)}, ${jsonEncode(url)}))',
       ),
     )).stringResult;
     return res;
@@ -189,7 +194,7 @@ var extention = new DefaultExtension();
     _init();
     final res = (await runtime.handlePromise(
       await runtime.evaluateAsync(
-        'jsonStringify(() => extention.cleanHtmlContent(`$html`))',
+        'jsonStringify(() => extention.cleanHtmlContent(${jsonEncode(html)}))',
       ),
     )).stringResult;
     return res;
