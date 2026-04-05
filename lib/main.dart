@@ -207,8 +207,8 @@ class _MyAppState extends ConsumerState<MyApp>
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       builder: (context, child) {
+        child = BotToastInit()(context, child);
         if (!Platform.isLinux) {
-          child = BotToastInit()(context, child);
           final isUnlocked = ref.watch(appUnlockedStateProvider);
           final lockEnabled = ref.watch(appLockEnabledStateProvider);
           if (lockEnabled && !isUnlocked) {
@@ -216,9 +216,9 @@ class _MyAppState extends ConsumerState<MyApp>
           }
         }
         if (!(Platform.isAndroid || Platform.isIOS)) {
-          child = _MouseBackButtonHandler(router: router, child: child!);
+          child = _MouseBackButtonHandler(router: router, child: child);
         }
-        return child!;
+        return child;
       },
       routeInformationParser: router.routeInformationParser,
       routerDelegate: router.routerDelegate,
