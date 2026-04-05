@@ -113,6 +113,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get compact_grid => 'شبكة مضغوطة';
 
   @override
+  String get compression_level => 'Compression level';
+
+  @override
+  String get compression_info =>
+      'The higher the compression, the less space the backup file takes, but it uses more CPU. Default: 6';
+
+  @override
   String get comfortable_grid => 'شبكة مريحة';
 
   @override

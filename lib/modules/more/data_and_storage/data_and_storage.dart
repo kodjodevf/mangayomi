@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/auto_backup.dart';
+import 'package:mangayomi/modules/more/data_and_storage/providers/backup_compression.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/restore.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/storage_usage.dart';
 import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
@@ -25,6 +26,7 @@ class DataAndStorage extends ConsumerWidget {
       clearChapterCacheOnAppLaunchStateProvider,
     );
     final l10n = l10nLocalizations(context)!;
+    final compression = ref.watch(backupCompressionLevelProvider);
     return Scaffold(
       appBar: AppBar(title: Text(l10n.data_and_storage)),
       body: SingleChildScrollView(
@@ -321,6 +323,38 @@ class DataAndStorage extends ConsumerWidget {
               subtitle: Text(
                 _getBackupFrequencyList(context)[backupFrequency],
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
+              ),
+            ),
+            ListTile(
+              title: Text(l10n.compression_level),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.compression_info,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: context.secondaryColor,
+                    ),
+                  ),
+                  Slider(
+                    min: 0,
+                    max: 9,
+                    divisions: 9,
+                    value: compression.toDouble(),
+                    label: compression.toString(),
+                    onChanged: (value) {
+                      ref
+                          .read(backupCompressionLevelProvider.notifier)
+                          .update(value.round());
+                    },
+                    onChangeEnd: (value) {
+                      ref
+                          .read(backupCompressionLevelProvider.notifier)
+                          .set(value.round());
+                    },
+                  ),
+                ],
               ),
             ),
             if (!Platform.isIOS)
