@@ -3688,6 +3688,240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Entries'**
   String get entries;
+
+  /// No description provided for @android_proxy_server_mihon.
+  ///
+  /// In en, this message translates to:
+  /// **'Android Proxy Server (Mihon)'**
+  String get android_proxy_server_mihon;
+
+  /// No description provided for @android_proxy_server_mihon_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Download and configure the proxy server required to use Mihon extensions.'**
+  String get android_proxy_server_mihon_description;
+
+  /// No description provided for @mihon_proxy_server.
+  ///
+  /// In en, this message translates to:
+  /// **'Mihon proxy server'**
+  String get mihon_proxy_server;
+
+  /// No description provided for @extension_server_intro_with_jre.
+  ///
+  /// In en, this message translates to:
+  /// **'Download the proxy server bundle before using Mihon extensions. The bundle includes the JRE and extension server JAR.'**
+  String get extension_server_intro_with_jre;
+
+  /// No description provided for @extension_server_intro_ios.
+  ///
+  /// In en, this message translates to:
+  /// **'Download the proxy server JAR before using Mihon extensions. iOS only needs the extension server JAR.'**
+  String get extension_server_intro_ios;
+
+  /// No description provided for @checking_files.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking files'**
+  String get checking_files;
+
+  /// No description provided for @files_installed.
+  ///
+  /// In en, this message translates to:
+  /// **'Files installed'**
+  String get files_installed;
+
+  /// No description provided for @files_missing.
+  ///
+  /// In en, this message translates to:
+  /// **'Files missing'**
+  String get files_missing;
+
+  /// No description provided for @update_files.
+  ///
+  /// In en, this message translates to:
+  /// **'Update files'**
+  String get update_files;
+
+  /// No description provided for @up_to_date.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to date'**
+  String get up_to_date;
+
+  /// No description provided for @choose_location.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose location'**
+  String get choose_location;
+
+  /// No description provided for @import_existing_jar.
+  ///
+  /// In en, this message translates to:
+  /// **'Import existing JAR'**
+  String get import_existing_jar;
+
+  /// No description provided for @detect_files_in_selected_folder.
+  ///
+  /// In en, this message translates to:
+  /// **'Detect files in selected folder'**
+  String get detect_files_in_selected_folder;
+
+  /// No description provided for @preparing_download.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing download...'**
+  String get preparing_download;
+
+  /// No description provided for @app_install_location.
+  ///
+  /// In en, this message translates to:
+  /// **'App install location'**
+  String get app_install_location;
+
+  /// No description provided for @install_location.
+  ///
+  /// In en, this message translates to:
+  /// **'Install location'**
+  String get install_location;
+
+  /// No description provided for @jre_executable.
+  ///
+  /// In en, this message translates to:
+  /// **'JRE executable'**
+  String get jre_executable;
+
+  /// No description provided for @extension_server_jar.
+  ///
+  /// In en, this message translates to:
+  /// **'Extension server JAR'**
+  String get extension_server_jar;
+
+  /// No description provided for @installed_version.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed version'**
+  String get installed_version;
+
+  /// No description provided for @latest_version.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest version'**
+  String get latest_version;
+
+  /// No description provided for @apkbridge_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Use ApkBridge when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.'**
+  String get apkbridge_description;
+
+  /// No description provided for @set_proxy_address.
+  ///
+  /// In en, this message translates to:
+  /// **'Set proxy address'**
+  String get set_proxy_address;
+
+  /// No description provided for @no_newer_proxy_server_release_available.
+  ///
+  /// In en, this message translates to:
+  /// **'No newer proxy server release is available.'**
+  String get no_newer_proxy_server_release_available;
+
+  /// No description provided for @could_not_check_proxy_server_updates.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not check for proxy server updates.'**
+  String get could_not_check_proxy_server_updates;
+
+  /// No description provided for @no_extension_server_bundle_available_for_this_platform.
+  ///
+  /// In en, this message translates to:
+  /// **'No extension server bundle is available for this platform.'**
+  String get no_extension_server_bundle_available_for_this_platform;
+
+  /// No description provided for @failed_to_download_bundle.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to download bundle ({statusCode}).'**
+  String failed_to_download_bundle(Object statusCode);
+
+  /// No description provided for @downloaded_bundle_missing_expected_files.
+  ///
+  /// In en, this message translates to:
+  /// **'The downloaded bundle does not contain the expected files.'**
+  String get downloaded_bundle_missing_expected_files;
+
+  /// No description provided for @extension_server_files_ready.
+  ///
+  /// In en, this message translates to:
+  /// **'Extension server files are ready.'**
+  String get extension_server_files_ready;
+
+  /// No description provided for @ios_extension_server_import_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'On iOS the server is installed inside the app sandbox. Use \"Import existing JAR\" to bring in a downloaded file.'**
+  String get ios_extension_server_import_hint;
+
+  /// No description provided for @select_extension_server_folder.
+  ///
+  /// In en, this message translates to:
+  /// **'Select extension server folder'**
+  String get select_extension_server_folder;
+
+  /// No description provided for @selected_folder_does_not_exist.
+  ///
+  /// In en, this message translates to:
+  /// **'The selected folder does not exist.'**
+  String get selected_folder_does_not_exist;
+
+  /// No description provided for @no_extension_server_files_found_in_selected_folder.
+  ///
+  /// In en, this message translates to:
+  /// **'No extension server files were found in the selected folder.'**
+  String get no_extension_server_files_found_in_selected_folder;
+
+  /// No description provided for @extension_server_files_linked.
+  ///
+  /// In en, this message translates to:
+  /// **'Extension server files were linked.'**
+  String get extension_server_files_linked;
+
+  /// No description provided for @select_extension_server_jar.
+  ///
+  /// In en, this message translates to:
+  /// **'Select extension server JAR'**
+  String get select_extension_server_jar;
+
+  /// No description provided for @selected_file_could_not_be_accessed.
+  ///
+  /// In en, this message translates to:
+  /// **'The selected file could not be accessed.'**
+  String get selected_file_could_not_be_accessed;
+
+  /// No description provided for @extension_server_jar_imported.
+  ///
+  /// In en, this message translates to:
+  /// **'Extension server JAR was imported.'**
+  String get extension_server_jar_imported;
+
+  /// No description provided for @could_not_launch_apk_bridge_page.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not launch the ApkBridge page.'**
+  String get could_not_launch_apk_bridge_page;
+
+  /// No description provided for @proxy_server_ip_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Server IP (e.g., 10.0.0.5 or https://example.com)'**
+  String get proxy_server_ip_hint;
+
+  /// No description provided for @not_configured.
+  ///
+  /// In en, this message translates to:
+  /// **'Not configured'**
+  String get not_configured;
 }
 
 class _AppLocalizationsDelegate

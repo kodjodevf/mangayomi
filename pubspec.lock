@@ -1000,11 +1000,11 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: master
-      resolved-ref: dd07e87603cc2d6cb3fc42c37def4396741c4944
+      ref: HEAD
+      resolved-ref: "0965c5becba2e826473330eb9ea99dc7030fcf99"
       url: "https://github.com/kodjodevf/m_extension_server.git"
     source: git
-    version: "0.0.1"
+    version: "0.0.2"
   marquee:
     dependency: "direct main"
     description:
