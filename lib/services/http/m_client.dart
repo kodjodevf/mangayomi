@@ -182,36 +182,17 @@ class MCookieManager extends InterceptorContract {
 
   @override
   Future<BaseRequest> interceptRequest({required BaseRequest request}) async {
-    final settings = await isar.settings.get(227);
-    final userAgent = settings?.userAgent ?? "";
-    final cachedCookie = MClient.getCookiesPref(request.url.toString());
-    String? liveCookieHeader;
-
-    if (!Platform.isLinux) {
-      try {
-        final liveCookies = await flutter_inappwebview.CookieManager.instance(
-          webViewEnvironment: webViewEnvironment,
-        ).getCookies(url: flutter_inappwebview.WebUri(request.url.toString()));
-        if (liveCookies.isNotEmpty) {
-          liveCookieHeader = liveCookies
-              .map((cookie) => "${cookie.name}=${cookie.value}")
-              .join("; ");
-        }
-      } catch (_) {}
-    }
-
-    if (request.headers[HttpHeaders.cookieHeader] == null) {
-      if (liveCookieHeader != null && liveCookieHeader.isNotEmpty) {
-        request.headers[HttpHeaders.cookieHeader] = liveCookieHeader;
-      } else if (cachedCookie.isNotEmpty) {
-        request.headers.addAll(cachedCookie);
+    final cookie = MClient.getCookiesPref(request.url.toString());
+    if (cookie.isNotEmpty) {
+      final settings = await isar.settings.get(227);
+      final userAgent = settings!.userAgent!;
+      if (request.headers[HttpHeaders.cookieHeader] == null) {
+        request.headers.addAll(cookie);
+      }
+      if (request.headers[HttpHeaders.userAgentHeader] == null) {
+        request.headers[HttpHeaders.userAgentHeader] = userAgent;
       }
     }
-    if (request.headers[HttpHeaders.userAgentHeader] == null &&
-        userAgent.isNotEmpty) {
-      request.headers[HttpHeaders.userAgentHeader] = userAgent;
-    }
-
     try {
       if (reqcopyWith != null) {
         if (reqcopyWith!["followRedirects"] != null) {
@@ -262,40 +243,6 @@ class LoggerInterceptor extends InterceptorContract {
   }) async {
     if (showCloudFlareError) {
       final cloudflare = isCloudflare(response);
-      if (cloudflare &&
-          !Platform.isLinux &&
-          response.request?.method.toUpperCase() == "GET") {
-        final requestUrl = response.request?.url.toString();
-        if (requestUrl != null) {
-          var resolution = _cloudflareResolutionCache.remove(requestUrl);
-          resolution ??= await _resolveCloudflareForUrl(
-            requestUrl,
-            captureBody: true,
-          );
-          final body = resolution?.body;
-          if (resolution != null &&
-              resolution.resolved &&
-              body != null &&
-              body.isNotEmpty &&
-              !_containsCloudflareChallengeHtml(body)) {
-            final fallbackContent =
-                "----- Response (fallback) -----\n${response.request?.method}: ${response.request?.url}, statusCode: 200";
-            if (kDebugMode || useLogger) {
-              // ignore: avoid_print
-              print(fallbackContent);
-              Logger.add(LoggerLevel.info, fallbackContent);
-            }
-            return http.Response(
-              body,
-              200,
-              headers: {
-                HttpHeaders.contentTypeHeader: 'text/html; charset=utf-8',
-              },
-              request: response.request,
-            );
-          }
-        }
-      }
       final content =
           "----- Response -----\n${response.request?.method}: ${response.request?.url}, statusCode: ${response.statusCode} ${cloudflare ? "Failed to bypass Cloudflare" : ""}";
 
@@ -326,70 +273,6 @@ bool isCloudflare(BaseResponse response) {
       ["cloudflare-nginx", "cloudflare"].contains(response.headers["server"]);
 }
 
-bool _boolFromDynamic(dynamic value) {
-  if (value is bool) return value;
-  if (value is String) {
-    final normalized = value.trim().toLowerCase();
-    return normalized == "true" || normalized == "1";
-  }
-  if (value is num) return value != 0;
-  return false;
-}
-
-class _CloudflareResolutionResult {
-  _CloudflareResolutionResult({
-    required this.resolved,
-    required this.timeout,
-    this.body,
-    this.finalUrl,
-  });
-
-  final bool resolved;
-  final bool timeout;
-  final String? body;
-  final String? finalUrl;
-
-  factory _CloudflareResolutionResult.fromJson(Map<String, dynamic> data) {
-    return _CloudflareResolutionResult(
-      resolved: data.containsKey('resolved')
-          ? _boolFromDynamic(data['resolved'])
-          : _boolFromDynamic(data['result']),
-      timeout: _boolFromDynamic(data['timeout']),
-      body: data['body'] is String ? data['body'] as String : null,
-      finalUrl: data['finalUrl'] is String ? data['finalUrl'] as String : null,
-    );
-  }
-}
-
-final Map<String, _CloudflareResolutionResult> _cloudflareResolutionCache = {};
-final RegExp _cloudflareChallengePattern = RegExp(
-  r'cdn-cgi/challenge-platform|cf_chl|just a moment|nur einen moment|security verification|sicherheitsüberprüfung|enable javascript and cookies|verify you are human|checking your browser|prüfung läuft|überprüfung wird durchgeführt|cf-turnstile|challenges\.cloudflare\.com|hcaptcha',
-  caseSensitive: false,
-);
-
-bool _containsCloudflareChallengeHtml(String html) {
-  if (html.isEmpty) return false;
-  return _cloudflareChallengePattern.hasMatch(html);
-}
-
-Future<_CloudflareResolutionResult?> _resolveCloudflareForUrl(
-  String requestUrl, {
-  bool captureBody = false,
-}) async {
-  try {
-    final res = await http.post(
-      Uri.parse('http://localhost:$cfPort/resolve_cf'),
-      headers: {HttpHeaders.contentTypeHeader: 'application/json'},
-      body: jsonEncode({'url': requestUrl, 'captureBody': captureBody}),
-    );
-    if (res.statusCode != 200) return null;
-    final data = jsonDecode(res.body) as Map<String, dynamic>;
-    return _CloudflareResolutionResult.fromJson(data);
-  } catch (_) {
-    return null;
-  }
-}
-
 class ResolveCloudFlareChallenge extends RetryPolicy {
   bool showCloudFlareError;
   ResolveCloudFlareChallenge(this.showCloudFlareError);
@@ -400,21 +283,23 @@ class ResolveCloudFlareChallenge extends RetryPolicy {
     if (!showCloudFlareError || Platform.isLinux) return false;
     bool isCloudFlare = isCloudflare(response);
     if (isCloudFlare) {
-      final requestUrl = response.request?.url.toString();
-      if (requestUrl == null) return false;
-      final resolution = await _resolveCloudflareForUrl(
-        requestUrl,
-        captureBody: true,
-      );
-      if (resolution != null) {
-        if (resolution.body != null &&
-            resolution.body!.isNotEmpty &&
-            !_containsCloudflareChallengeHtml(resolution.body!)) {
-          _cloudflareResolutionCache[requestUrl] = resolution;
-        }
-        return resolution.resolved;
+      try {
+        return http
+            .post(
+              Uri.parse('http://localhost:$cfPort/resolve_cf'),
+              headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+              body: jsonEncode({'url': response.request!.url.toString()}),
+            )
+            .then((res) {
+              if (res.statusCode == 200) {
+                final data = jsonDecode(res.body) as Map<String, dynamic>;
+                return data['result'] as bool;
+              }
+              return false;
+            });
+      } catch (e) {
+        return false;
       }
-      return false;
     }
 
     return false;
@@ -465,15 +350,11 @@ Future<void> stopCfResolutionWebviewServer() async {
 void _handleResolveCf(HttpRequest request) async {
   int time = 0;
   bool timeOut = false;
-  bool isCloudFlareChallengeActive = true;
-  bool resolved = false;
-  String? capturedBody;
-  String? finalUrl;
+  bool isCloudFlare = true;
   try {
     final body = await utf8.decoder.bind(request).join();
     final data = jsonDecode(body) as Map<String, dynamic>;
     final url = data['url'] as String?;
-    final captureBody = _boolFromDynamic(data['captureBody']);
 
     if (url == null) {
       request.response
@@ -490,38 +371,37 @@ void _handleResolveCf(HttpRequest request) async {
         url: flutter_inappwebview.WebUri(url),
       ),
       onLoadStop: (controller, url) async {
-        isCloudFlareChallengeActive = await _isCloudflareChallengePage(
-          controller,
-        );
+        try {
+          isCloudFlare = await controller.platform.evaluateJavascript(
+            source:
+                "document.head.innerHTML.includes('#challenge-success-text')",
+          );
+        } catch (_) {
+          isCloudFlare = false;
+        }
 
         await Future.doWhile(() async {
-          if (!timeOut && isCloudFlareChallengeActive) {
-            isCloudFlareChallengeActive = await _isCloudflareChallengePage(
-              controller,
-            );
+          if (!timeOut && isCloudFlare) {
+            try {
+              isCloudFlare = await controller.platform.evaluateJavascript(
+                source:
+                    "document.head.innerHTML.includes('#challenge-success-text')",
+              );
+            } catch (_) {
+              isCloudFlare = false;
+            }
           }
-          if (isCloudFlareChallengeActive) {
-            await Future.delayed(Duration(milliseconds: 300));
-          }
+          if (isCloudFlare) await Future.delayed(Duration(milliseconds: 300));
 
-          return isCloudFlareChallengeActive;
+          return isCloudFlare;
         });
-        if (!timeOut && !isCloudFlareChallengeActive) {
+        if (!timeOut) {
           final ua =
               await controller.evaluateJavascript(
                 source: "navigator.userAgent",
               ) ??
               "";
           await MClient.setCookie(url.toString(), ua, controller);
-          resolved = true;
-          if (captureBody) {
-            final html = await controller.evaluateJavascript(
-              source: "document.documentElement?.outerHTML ?? ''",
-            );
-            capturedBody = html?.toString();
-            finalUrl =
-                (await controller.getUrl())?.toString() ?? url.toString();
-          }
         }
       },
     );
@@ -530,7 +410,7 @@ void _handleResolveCf(HttpRequest request) async {
 
     await Future.doWhile(() async {
       timeOut = time == 15;
-      if (!isCloudFlareChallengeActive || timeOut) {
+      if (!isCloudFlare || timeOut) {
         return false;
       }
       await Future.delayed(const Duration(seconds: 1));
@@ -543,42 +423,12 @@ void _handleResolveCf(HttpRequest request) async {
 
     request.response
       ..headers.contentType = ContentType.json
-      ..write(
-        jsonEncode({
-          // Backward compatible `result`, but now aligned with retry semantics.
-          'result': resolved,
-          'resolved': resolved,
-          'timeout': timeOut,
-          'body': capturedBody,
-          'finalUrl': finalUrl,
-        }),
-      )
+      ..write(jsonEncode({'result': isCloudFlare}))
       ..close();
   } catch (e) {
     request.response
       ..statusCode = HttpStatus.badRequest
       ..write(jsonEncode({'error': 'Invalid JSON'}))
       ..close();
-  }
-}
-
-Future<bool> _isCloudflareChallengePage(
-  flutter_inappwebview.InAppWebViewController controller,
-) async {
-  try {
-    final result = await controller.platform.evaluateJavascript(
-      source: """
-(() => {
-  const title = String(document.title || "");
-  const bodyText = String(document.body?.innerText || "");
-  const href = String(location.href || "");
-  const content = `\${title}\n\${bodyText}\n\${href}`;
-  return /cdn-cgi\\/challenge-platform|cf_chl|just a moment|nur einen moment|security verification|sicherheitsüberprüfung|enable javascript and cookies|verify you are human|checking your browser|prüfung läuft|überprüfung wird durchgeführt|cf-turnstile|challenges\\.cloudflare\\.com|hcaptcha/i.test(content);
-})()
-""",
-    );
-    return _boolFromDynamic(result);
-  } catch (_) {
-    return false;
   }
 }
