@@ -509,7 +509,7 @@ class Settings {
     this.readerContrast = 1.0,
     this.readerSaturation = 1.0,
     this.readerNavigationLayout = 0,
-    this.backupCompressionLevel = 6,
+    this.backupCompressionLevel,
   });
 
   Settings.fromJson(Map<String, dynamic> json) {
