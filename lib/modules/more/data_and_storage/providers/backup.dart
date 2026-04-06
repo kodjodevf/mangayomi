@@ -150,13 +150,12 @@ Future<void> doBackUp(
     final file = File(backupFilePath);
 
     await file.writeAsString(jsonEncode(datas));
-    final bytes = await File(backupFilePath).readAsBytes();
-    final archive = Archive()
-      ..addFile(ArchiveFile(p.basename(backupFilePath), bytes.length, bytes));
-    final zipData = ZipEncoder().encode(archive, level: compression);
     final zipPath = p.join(path, "$name.backup");
-    await File(zipPath).writeAsBytes(zipData);
-    await File(backupFilePath).delete();
+    final zipEncoder = ZipFileEncoder();
+    zipEncoder.create(zipPath, level: compression);
+    await zipEncoder.addFile(file);
+    await zipEncoder.close();
+    file.delete();
     final assets = [
       'assets/app_icons/icon-black.png',
       'assets/app_icons/icon-red.png',
