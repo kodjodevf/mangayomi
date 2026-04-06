@@ -39,6 +39,8 @@
   "display": "Display",
   "display_mode": "Display mode",
   "compact_grid": "Compact grid",
+  "compression_level": "Compression level",
+  "compression_info": "The higher the compression, the less space the backup file takes, but it uses more CPU. Default: 6",
   "comfortable_grid": "Comfortable grid",
   "cover_only_grid": "Cover-only grid",
   "list": "List",

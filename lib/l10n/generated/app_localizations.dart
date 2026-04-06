@@ -311,6 +311,18 @@ abstract class AppLocalizations {
   /// **'Compact grid'**
   String get compact_grid;
 
+  /// No description provided for @compression_level.
+  ///
+  /// In en, this message translates to:
+  /// **'Compression level'**
+  String get compression_level;
+
+  /// No description provided for @compression_info.
+  ///
+  /// In en, this message translates to:
+  /// **'The higher the compression, the less space the backup file takes, but it uses more CPU. Default: 6'**
+  String get compression_info;
+
   /// No description provided for @comfortable_grid.
   ///
   /// In en, this message translates to:

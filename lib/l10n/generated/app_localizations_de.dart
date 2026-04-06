@@ -114,6 +114,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get compact_grid => 'Kompaktes Gitter';
 
   @override
+  String get compression_level => 'Kompressionsstufe';
+
+  @override
+  String get compression_info =>
+      'Je höher die Kompression, desto weniger Speicher benötigt die Backup Datei, aber desto mehr wird die CPU belastet. Standard: 6';
+
+  @override
   String get comfortable_grid => 'Bequemes Gitter';
 
   @override

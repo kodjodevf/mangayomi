@@ -38,6 +38,8 @@
     "display": "Anzeige",
     "display_mode": "Anzeigemodus",
     "compact_grid": "Kompaktes Gitter",
+    "compression_level": "Kompressionsstufe",
+    "compression_info": "Je höher die Kompression, desto weniger Speicher benötigt die Backup Datei, aber desto mehr wird die CPU belastet. Standard: 6",
     "comfortable_grid": "Bequemes Gitter",
     "cover_only_grid": "Nur-Cover-Gitter",
     "list": "Liste",
