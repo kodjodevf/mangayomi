@@ -117,8 +117,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get compression_level => 'Kompressionsstufe';
 
   @override
-  String get compression_info =>
-      'Je höher die Kompression, desto weniger Speicher benötigt die Backup Datei, aber desto mehr wird die CPU belastet. Standard: 6';
+  String compression_info(Object level) {
+    return 'Je höher die Kompression, desto weniger Speicher benötigt die Backup Datei, aber desto mehr wird die CPU belastet. Standard: $level';
+  }
 
   @override
   String get comfortable_grid => 'Bequemes Gitter';

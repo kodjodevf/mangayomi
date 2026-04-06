@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:archive/archive.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -331,7 +332,7 @@ class DataAndStorage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    l10n.compression_info,
+                    l10n.compression_info(DeflateLevel.defaultCompression),
                     style: TextStyle(
                       fontSize: 11,
                       color: context.secondaryColor,
