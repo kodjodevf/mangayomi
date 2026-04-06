@@ -69,13 +69,13 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
 
   bool get _hasUpdateAvailable =>
       _isInstalled &&
-      _latestRelease != null &&
-      compareVersions(_installedVersion, _latestRelease!.version) < 0;
+          _latestRelease != null &&
+          compareVersions(_installedVersion, _latestRelease!.version) < 0;
 
   bool get _canDownloadOrUpdate =>
       !_isDownloading &&
-      _latestRelease != null &&
-      (!_isInstalled || _hasUpdateAvailable);
+          _latestRelease != null &&
+          (!_isInstalled || _hasUpdateAvailable);
 
   bool get _canDetectFilesInSelectedFolder =>
       !_requiresJre || _selectedInstallDirectory.isNotEmpty;
@@ -122,15 +122,15 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
                         _isChecking
                             ? Icons.sync_outlined
                             : (_isInstalled
-                                  ? Icons.check_circle_outline
-                                  : Icons.error_outline),
+                            ? Icons.check_circle_outline
+                            : Icons.error_outline),
                       ),
                       label: Text(
                         _isChecking
                             ? l10n.checking_files
                             : (_isInstalled
-                                  ? l10n.files_installed
-                                  : l10n.files_missing),
+                            ? l10n.files_installed
+                            : l10n.files_missing),
                       ),
                     ),
                   ),
@@ -144,8 +144,8 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
                         _isInstalled && _hasUpdateAvailable
                             ? Icons.system_update_alt_outlined
                             : (_isInstalled
-                                  ? Icons.check_circle_outline
-                                  : Icons.download_outlined),
+                            ? Icons.check_circle_outline
+                            : Icons.download_outlined),
                       ),
                       label: Text(actionLabel),
                     ),
@@ -169,7 +169,7 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed:
-                          _isDownloading || !_canDetectFilesInSelectedFolder
+                      _isDownloading || !_canDetectFilesInSelectedFolder
                           ? null
                           : _useExistingLocation,
                       icon: const Icon(Icons.link_outlined),
@@ -202,7 +202,7 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
                     : l10n.install_location,
                 value: _selectedInstallDirectory,
                 exists:
-                    _selectedInstallDirectory.isNotEmpty &&
+                _selectedInstallDirectory.isNotEmpty &&
                     Directory(_selectedInstallDirectory).existsSync(),
               ),
               const SizedBox(height: 12),
@@ -326,8 +326,8 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
                               onConfirm: (server) {
                                 ref
                                     .read(
-                                      androidProxyServerStateProvider.notifier,
-                                    )
+                                  androidProxyServerStateProvider.notifier,
+                                )
                                     .set(server);
                               },
                             ),
@@ -384,13 +384,20 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
     _setDownloadState(isDownloading: true, receivedBytes: 0, totalBytes: 0);
     final tempDir = await Directory.systemTemp.createTemp('extension-server-');
     final bundleZip = File(path.join(tempDir.path, release.assetName));
+    final wasInstalled = _isInstalled;
     try {
       await _downloadReleaseBundle(release, bundleZip, l10n);
       final installDir = await _resolveInstallDirectory();
+      await MExtensionServerPlatform(ref).stopServer();
       await _installDownloadedBundle(bundleZip, installDir, l10n);
-      await _restartServerAndRefresh();
+      await _startServerAndRefresh();
       botToast(l10n.extension_server_files_ready);
     } catch (e) {
+      if (wasInstalled) {
+        await _startServerAndRefresh();
+      } else {
+        await _refreshStatus();
+      }
       botToast(e.toString(), second: 5);
     } finally {
       await _cleanupTempDirectory(tempDir);
@@ -492,7 +499,7 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
   }) async {
     final settings = isar.settings.getSync(227);
     isar.writeTxnSync(
-      () => isar.settings.putSync(
+          () => isar.settings.putSync(
         settings!
           ..jrePath = jrePath
           ..extensionServerPath = extensionServerPath
@@ -585,7 +592,7 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
         : (paths.jrePath.isNotEmpty && await File(paths.jrePath).exists());
     final serverExists =
         paths.extensionServerPath.isNotEmpty &&
-        await File(paths.extensionServerPath).exists();
+            await File(paths.extensionServerPath).exists();
     final isInstalled = serverExists && (!_requiresJre || jreExists);
     return _ResolvedFileState(
       jreExists: jreExists,
@@ -597,9 +604,9 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
   }
 
   Future<_LatestReleaseState> _resolveLatestReleaseState(
-    dynamic l10n,
-    _ResolvedFileState fileState,
-  ) async {
+      dynamic l10n,
+      _ResolvedFileState fileState,
+      ) async {
     try {
       final latestRelease = await _fetchLatestRelease();
       return _LatestReleaseState(
@@ -617,29 +624,29 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
   }
 
   String _releaseMessageFor(
-    _ResolvedFileState fileState,
-    ExtensionServerRelease? latestRelease,
-    dynamic l10n,
-  ) {
+      _ResolvedFileState fileState,
+      ExtensionServerRelease? latestRelease,
+      dynamic l10n,
+      ) {
     if (!fileState.isInstalled || latestRelease == null) {
       return '';
     }
     return compareVersions(fileState.installedVersion, latestRelease.version) >=
-            0
+        0
         ? l10n.no_newer_proxy_server_release_available
         : '';
   }
 
   Future<String> _resolveSelectedInstallDirectory(
-    _ConfiguredPaths paths,
-  ) async {
+      _ConfiguredPaths paths,
+      ) async {
     if (Platform.isIOS) {
       return (await _defaultInstallDirectory()).path;
     }
     return extensionServerDirectoryFromPaths(
-          jrePath: paths.jrePath,
-          extensionServerPath: paths.extensionServerPath,
-        ) ??
+      jrePath: paths.jrePath,
+      extensionServerPath: paths.extensionServerPath,
+    ) ??
         '';
   }
 
@@ -677,10 +684,10 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
   }
 
   Future<void> _downloadReleaseBundle(
-    ExtensionServerRelease release,
-    File bundleZip,
-    dynamic l10n,
-  ) async {
+      ExtensionServerRelease release,
+      File bundleZip,
+      dynamic l10n,
+      ) async {
     final client = http.Client();
     try {
       final request = http.Request('GET', Uri.parse(release.downloadUrl));
@@ -708,9 +715,9 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
   }
 
   Future<void> _writeBundleToFile(
-    http.StreamedResponse response,
-    File bundleZip,
-  ) async {
+      http.StreamedResponse response,
+      File bundleZip,
+      ) async {
     final sink = bundleZip.openWrite();
     await for (final chunk in response.stream) {
       sink.add(chunk);
@@ -728,10 +735,10 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
   }
 
   Future<void> _installDownloadedBundle(
-    File bundleZip,
-    Directory installDir,
-    dynamic l10n,
-  ) async {
+      File bundleZip,
+      Directory installDir,
+      dynamic l10n,
+      ) async {
     await _prepareInstallDirectory(installDir);
     await _extractArchive(bundleZip, installDir);
     final resolvedPaths = await _resolvePathsInDirectory(installDir);
@@ -743,7 +750,7 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
 
   Future<void> _prepareInstallDirectory(Directory installDir) async {
     if (await installDir.exists()) {
-      await installDir.delete(recursive: true);
+      await _deleteDirectoryWithRetry(installDir);
     }
     await installDir.create(recursive: true);
   }
@@ -761,9 +768,9 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
   }
 
   Future<void> _persistResolvedPaths(
-    _ResolvedPaths paths,
-    String installDirectory,
-  ) async {
+      _ResolvedPaths paths,
+      String installDirectory,
+      ) async {
     if (_requiresJre && !Platform.isWindows) {
       await Process.run('chmod', ['+x', paths.jrePath!]);
     }
@@ -776,8 +783,27 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
 
   Future<void> _restartServerAndRefresh() async {
     await MExtensionServerPlatform(ref).stopServer();
+    await _startServerAndRefresh();
+  }
+
+  Future<void> _startServerAndRefresh() async {
     await MExtensionServerPlatform(ref).startServer();
     await _refreshStatus();
+  }
+
+  Future<void> _deleteDirectoryWithRetry(Directory directory) async {
+    const retryCount = 5;
+    for (var attempt = 0; attempt < retryCount; attempt++) {
+      try {
+        await directory.delete(recursive: true);
+        break;
+      } catch (e) {
+        if (!Platform.isWindows || attempt == retryCount - 1) {
+          rethrow;
+        }
+        await Future.delayed(Duration(milliseconds: 500 * (attempt + 1)));
+      }
+    }
   }
 
   Future<void> _cleanupTempDirectory(Directory tempDir) async {
@@ -822,9 +848,9 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
   }
 
   ExtensionServerRelease? _matchReleaseForAsset(
-    List releases,
-    String assetName,
-  ) {
+      List releases,
+      String assetName,
+      ) {
     for (final item in releases) {
       final release = item as Map<String, dynamic>;
       if (_isDraftOrPrerelease(release)) {
@@ -844,9 +870,9 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
   }
 
   ExtensionServerRelease? _releaseForAsset(
-    Map<String, dynamic> release,
-    String assetName,
-  ) {
+      Map<String, dynamic> release,
+      String assetName,
+      ) {
     final assets = (release['assets'] as List?) ?? const [];
     for (final assetItem in assets) {
       final asset = assetItem as Map<String, dynamic>;
