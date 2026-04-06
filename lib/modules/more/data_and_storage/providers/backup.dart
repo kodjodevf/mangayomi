@@ -32,6 +32,7 @@ Future<void> doBackUp(
   required BuildContext? context,
 }) async {
   final compression = ref.read(backupCompressionLevelProvider);
+  final compressionLevel = compression.clamp(0, 9).toInt();
   try {
     Map<String, dynamic> datas = {};
     datas.addAll({"version": "2"});
@@ -152,7 +153,7 @@ Future<void> doBackUp(
     await file.writeAsString(jsonEncode(datas));
     final zipPath = p.join(path, "$name.backup");
     final zipEncoder = ZipFileEncoder();
-    zipEncoder.create(zipPath, level: compression);
+    zipEncoder.create(zipPath, level: compressionLevel);
     await zipEncoder.addFile(file);
     await zipEncoder.close();
     file.delete();
