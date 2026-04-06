@@ -250,7 +250,11 @@ class _MyAppState extends ConsumerState<MyApp>
   void onWindowMoved() => WindowGeometry.save();
 
   @override
-  void onWindowClose() => WindowGeometry.save();
+  void onWindowClose() {
+    WindowGeometry.save();
+    // Workaround for libepoxy error when closing app; caused by media-kit
+    if (Platform.isLinux) exit(0);
+  }
 
   Future<void> _initDeepLinks() async {
     _appLinks = AppLinks();
