@@ -215,6 +215,10 @@ class Settings {
 
   String? androidProxyServer;
 
+  String? jrePath;
+
+  String? extensionServerPath;
+
   @enumerated
   late SectionType disableSectionType;
 
@@ -469,6 +473,8 @@ class Settings {
     this.animeExtensionsRepo,
     this.novelExtensionsRepo,
     this.androidProxyServer,
+    this.jrePath = "",
+    this.extensionServerPath = "",
     this.lastTrackerLibraryLocation,
     this.mergeLibraryNavMobile = false,
     this.enableDiscordRpc = true,
@@ -741,6 +747,8 @@ class Settings {
                 .toList();
     }
     androidProxyServer = json['androidProxyServer'];
+    jrePath = json['jrePath'];
+    extensionServerPath = json['extensionServerPath'];
     lastTrackerLibraryLocation = json['lastTrackerLibraryLocation'];
     mergeLibraryNavMobile = json['mergeLibraryNavMobile'];
     enableDiscordRpc = json['enableDiscordRpc'];
@@ -926,6 +934,8 @@ class Settings {
     'animeExtensionsRepo': animeExtensionsRepo?.map((e) => e.toJson()).toList(),
     'novelExtensionsRepo': novelExtensionsRepo?.map((e) => e.toJson()).toList(),
     'androidProxyServer': androidProxyServer,
+    'jrePath': jrePath,
+    'extensionServerPath': extensionServerPath,
     'lastTrackerLibraryLocation': lastTrackerLibraryLocation,
     'mergeLibraryNavMobile': mergeLibraryNavMobile,
     'enableDiscordRpc': enableDiscordRpc,

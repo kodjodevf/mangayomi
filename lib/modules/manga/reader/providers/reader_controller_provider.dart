@@ -345,36 +345,23 @@ class ReaderController extends _$ReaderController {
 
   int getPageLength(List incognitoPageLength) {
     if (incognitoMode) return incognitoPageLength.length;
-    final chapterPageUrlsList = getIsarSetting().chapterPageUrlsList ?? [];
-    ChapterPageurls? matchedChapterPageUrls;
-    for (final chapterPageUrls in chapterPageUrlsList) {
-      if (chapterPageUrls.chapterId == chapter.id) {
-        matchedChapterPageUrls = chapterPageUrls;
-        break;
-      }
-    }
-
-    final urls = matchedChapterPageUrls?.urls;
-    if (urls == null || urls.isEmpty) {
-      return incognitoPageLength.length;
-    }
-
-    return urls.length;
+    return getIsarSetting().chapterPageUrlsList!
+        .where((element) => element.chapterId == chapter.id)
+        .first
+        .urls!
+        .length;
   }
 
   void setPageIndex(int newIndex, bool save) {
     if (chapter.isRead!) return;
     if (incognitoMode) return;
-
-    final totalPages = getPageLength([]);
-    if (totalPages <= 0) return;
-
-    final isContinuousLike =
-        getReaderMode() == ReaderMode.verticalContinuous ||
-        getReaderMode() == ReaderMode.webtoon;
-    final pagesRemaining = totalPages - (newIndex + 1);
-    final maxRemainingPagesForRead = isContinuousLike ? 2 : 1;
-    final isRead = pagesRemaining <= maxRemainingPagesForRead;
+    final isRead =
+        (getReaderMode() == ReaderMode.verticalContinuous ||
+            getReaderMode() == ReaderMode.webtoon)
+        ? ((newIndex + 2) >= getPageLength([]) - 1)
+              ? ((newIndex + 2) >= getPageLength([]) - 1)
+              : (newIndex + 2) >= getPageLength([])
+        : (newIndex + 2) >= getPageLength([]);
     if (isRead || save) {
       List<ChapterPageIndex>? chapterPageIndexs = [];
       for (var chapterPageIndex

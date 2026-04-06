@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:m_extension_server/m_extension_server.dart';
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 
 class MExtensionServerPlatform {
@@ -29,7 +31,25 @@ class MExtensionServerPlatform {
         final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
         final port = server.port;
         await server.close();
-        await MExtensionServer().startServer(port);
+        if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+          final settings = isar.settings.getSync(227);
+          final jrePath = settings?.jrePath;
+          final serverJarPath = settings?.extensionServerPath;
+          if ((jrePath?.isEmpty ?? true) || (serverJarPath?.isEmpty ?? true)) {
+            return;
+          }
+          if (!await File(jrePath!).exists() ||
+              !await File(serverJarPath!).exists()) {
+            return;
+          }
+          await MExtensionServer().startServer(
+            port,
+            jvmPath: jrePath,
+            serverJarPath: serverJarPath,
+          );
+        } else {
+          await MExtensionServer().startServer(port);
+        }
         ref
             .read(androidProxyServerStateProvider.notifier)
             .set("http://127.0.0.1:$port");

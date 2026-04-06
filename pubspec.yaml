@@ -106,7 +106,6 @@ dependencies:
   m_extension_server:
     git:
       url: https://github.com/kodjodevf/m_extension_server.git
-      ref: master
 
 dependency_overrides:
   ffi: ^2.1.3

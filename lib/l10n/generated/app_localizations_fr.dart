@@ -1948,4 +1948,141 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get entries => 'Entries';
+
+  @override
+  String get android_proxy_server_mihon => 'Android Proxy Server (Mihon)';
+
+  @override
+  String get android_proxy_server_mihon_description =>
+      'Download and configure the proxy server required to use Mihon extensions.';
+
+  @override
+  String get mihon_proxy_server => 'Mihon proxy server';
+
+  @override
+  String get extension_server_intro_with_jre =>
+      'Download the proxy server bundle before using Mihon extensions. The bundle includes the JRE and extension server JAR.';
+
+  @override
+  String get extension_server_intro_ios =>
+      'Download the proxy server JAR before using Mihon extensions. iOS only needs the extension server JAR.';
+
+  @override
+  String get checking_files => 'Checking files';
+
+  @override
+  String get files_installed => 'Files installed';
+
+  @override
+  String get files_missing => 'Files missing';
+
+  @override
+  String get update_files => 'Update files';
+
+  @override
+  String get up_to_date => 'Up to date';
+
+  @override
+  String get choose_location => 'Choose location';
+
+  @override
+  String get import_existing_jar => 'Import existing JAR';
+
+  @override
+  String get detect_files_in_selected_folder =>
+      'Detect files in selected folder';
+
+  @override
+  String get preparing_download => 'Preparing download...';
+
+  @override
+  String get app_install_location => 'App install location';
+
+  @override
+  String get install_location => 'Install location';
+
+  @override
+  String get jre_executable => 'JRE executable';
+
+  @override
+  String get extension_server_jar => 'Extension server JAR';
+
+  @override
+  String get installed_version => 'Installed version';
+
+  @override
+  String get latest_version => 'Latest version';
+
+  @override
+  String get apkbridge_description =>
+      'Use ApkBridge when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.';
+
+  @override
+  String get set_proxy_address => 'Set proxy address';
+
+  @override
+  String get no_newer_proxy_server_release_available =>
+      'No newer proxy server release is available.';
+
+  @override
+  String get could_not_check_proxy_server_updates =>
+      'Could not check for proxy server updates.';
+
+  @override
+  String get no_extension_server_bundle_available_for_this_platform =>
+      'No extension server bundle is available for this platform.';
+
+  @override
+  String failed_to_download_bundle(Object statusCode) {
+    return 'Failed to download bundle ($statusCode).';
+  }
+
+  @override
+  String get downloaded_bundle_missing_expected_files =>
+      'The downloaded bundle does not contain the expected files.';
+
+  @override
+  String get extension_server_files_ready =>
+      'Extension server files are ready.';
+
+  @override
+  String get ios_extension_server_import_hint =>
+      'On iOS the server is installed inside the app sandbox. Use \"Import existing JAR\" to bring in a downloaded file.';
+
+  @override
+  String get select_extension_server_folder => 'Select extension server folder';
+
+  @override
+  String get selected_folder_does_not_exist =>
+      'The selected folder does not exist.';
+
+  @override
+  String get no_extension_server_files_found_in_selected_folder =>
+      'No extension server files were found in the selected folder.';
+
+  @override
+  String get extension_server_files_linked =>
+      'Extension server files were linked.';
+
+  @override
+  String get select_extension_server_jar => 'Select extension server JAR';
+
+  @override
+  String get selected_file_could_not_be_accessed =>
+      'The selected file could not be accessed.';
+
+  @override
+  String get extension_server_jar_imported =>
+      'Extension server JAR was imported.';
+
+  @override
+  String get could_not_launch_apk_bridge_page =>
+      'Could not launch the ApkBridge page.';
+
+  @override
+  String get proxy_server_ip_hint =>
+      'Server IP (e.g., 10.0.0.5 or https://example.com)';
+
+  @override
+  String get not_configured => 'Not configured';
 }
