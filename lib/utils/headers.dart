@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'package:mangayomi/eval/javascript/http.dart';
 import 'package:mangayomi/eval/lib.dart';
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -29,6 +32,9 @@ Map<String, String> headers(
       headers.addAll(service.getHeaders());
     } finally {
       service.dispose();
+    }
+    if (mSource.sourceCodeLanguage == SourceCodeLanguage.mihon) {
+      headers['user-agent'] = isar.settings.getSync(227)!.userAgent!;
     }
   }
 
