@@ -7,19 +7,13 @@ import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/eval/model/m_pages.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
-import 'package:mangayomi/models/changed.dart';
-import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track_search.dart';
-import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
-import 'package:mangayomi/modules/manga/detail/providers/isar_providers.dart';
+import 'package:mangayomi/modules/mass_migration/services/mass_migration_service.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
-import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/services/get_detail.dart';
@@ -629,103 +623,13 @@ class _MigrationMangaGlobalImageCardState
   }
 
   Future<void> _migrateManga(MManga preview) async {
-    String? historyChapter;
-    String? historyDate;
-    List<Chapter> chaptersProgress = [];
-    isar.writeTxnSync(() {
-      final histories = isar.historys
-          .filter()
-          .mangaIdEqualTo(widget.oldManga.id)
-          .sortByDate()
-          .findAllSync();
-      historyChapter = _extractChapterNumber(
-        histories.lastOrNull?.chapter.value?.name ?? "",
-      );
-      historyDate = histories.lastOrNull?.date;
-      for (var history in histories) {
-        isar.historys.deleteSync(history.id!);
-        ref
-            .read(synchingProvider(syncId: 1).notifier)
-            .addChangedPart(ActionType.removeHistory, history.id, "{}", false);
-      }
-      for (var chapter in widget.oldManga.chapters) {
-        chaptersProgress.add(chapter);
-        isar.updates
-            .filter()
-            .mangaIdEqualTo(chapter.mangaId)
-            .chapterNameEqualTo(chapter.name)
-            .deleteAllSync();
-        isar.chapters.deleteSync(chapter.id!);
-        ref
-            .read(synchingProvider(syncId: 1).notifier)
-            .addChangedPart(ActionType.removeChapter, chapter.id, "{}", false);
-      }
-      widget.oldManga.name = widget.manga.name;
-      widget.oldManga.link = widget.manga.link;
-      widget.oldManga.imageUrl = widget.manga.imageUrl;
-      widget.oldManga.lang = widget.source.lang;
-      widget.oldManga.source = widget.source.name;
-      widget.oldManga.sourceId = widget.source.id;
-      widget.oldManga.artist = preview.artist;
-      widget.oldManga.author = preview.author;
-      widget.oldManga.status = preview.status ?? widget.oldManga.status;
-      widget.oldManga.description = preview.description;
-      widget.oldManga.genre = preview.genre;
-      widget.oldManga.updatedAt = DateTime.now().millisecondsSinceEpoch;
-      isar.mangas.putSync(widget.oldManga);
-    });
-    await ref.read(
-      updateMangaDetailProvider(
-        mangaId: widget.oldManga.id,
-        isInit: false,
-      ).future,
+    await migrateLibraryItem(
+      ref: ref,
+      oldManga: widget.oldManga,
+      selectedManga: widget.manga,
+      preview: preview,
+      destinationSource: widget.source,
     );
-    isar.writeTxnSync(() {
-      for (var oldChapter in chaptersProgress) {
-        final chapter = isar.chapters
-            .filter()
-            .mangaIdEqualTo(widget.oldManga.id)
-            .nameContains(
-              _extractChapterNumber(oldChapter.name ?? "") ?? ".....",
-              caseSensitive: false,
-            )
-            .findFirstSync();
-        if (chapter != null) {
-          chapter.isBookmarked = oldChapter.isBookmarked;
-          chapter.lastPageRead = oldChapter.lastPageRead;
-          chapter.isRead = oldChapter.isRead;
-          isar.chapters.putSync(chapter);
-        }
-      }
-      final chapter = isar.chapters
-          .filter()
-          .mangaIdEqualTo(widget.oldManga.id)
-          .nameContains(historyChapter ?? ".....", caseSensitive: false)
-          .findFirstSync();
-      if (chapter != null) {
-        isar.historys.putSync(
-          History(
-            mangaId: widget.oldManga.id,
-            date:
-                historyDate ?? DateTime.now().millisecondsSinceEpoch.toString(),
-            itemType: widget.oldManga.itemType,
-            chapterId: chapter.id,
-          )..chapter.value = chapter,
-        );
-      }
-    });
-    ref.invalidate(getMangaDetailStreamProvider(mangaId: widget.oldManga.id!));
-  }
-
-  String? _extractChapterNumber(String chapterName) {
-    return RegExp(
-          r'\s*(\d+\.\d+)\s*',
-          multiLine: true,
-        ).firstMatch(chapterName)?.group(0) ??
-        RegExp(
-          r'\s*(\d+)\s*',
-          multiLine: true,
-        ).firstMatch(chapterName)?.group(0);
   }
 }
 

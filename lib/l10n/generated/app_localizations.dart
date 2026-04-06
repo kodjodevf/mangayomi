@@ -503,6 +503,312 @@ abstract class AppLocalizations {
   /// **'Migrate'**
   String get migrate;
 
+  /// No description provided for @mass_migration_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Mass migration'**
+  String get mass_migration_title;
+
+  /// No description provided for @mass_migration_preview_items.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview items'**
+  String get mass_migration_preview_items;
+
+  /// No description provided for @mass_migration_destination_source.
+  ///
+  /// In en, this message translates to:
+  /// **'Destination source'**
+  String get mass_migration_destination_source;
+
+  /// No description provided for @mass_migration_no_library_items.
+  ///
+  /// In en, this message translates to:
+  /// **'No library items are available for mass migration.'**
+  String get mass_migration_no_library_items;
+
+  /// No description provided for @mass_migration_no_destination_sources.
+  ///
+  /// In en, this message translates to:
+  /// **'No installed destination sources are available.'**
+  String get mass_migration_no_destination_sources;
+
+  /// No description provided for @mass_migration_installed.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed'**
+  String get mass_migration_installed;
+
+  /// No description provided for @mass_migration_items_ready_for_review.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 item ready for review} other{{count} items ready for review}}'**
+  String mass_migration_items_ready_for_review(int count);
+
+  /// No description provided for @mass_migration_item_count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 item} other{{count} items}}'**
+  String mass_migration_item_count(int count);
+
+  /// No description provided for @mass_migration_select_destination_source.
+  ///
+  /// In en, this message translates to:
+  /// **'Select destination source'**
+  String get mass_migration_select_destination_source;
+
+  /// No description provided for @mass_migration_finding_matches.
+  ///
+  /// In en, this message translates to:
+  /// **'Finding matches in {source} • {language}'**
+  String mass_migration_finding_matches(Object source, Object language);
+
+  /// No description provided for @mass_migration_processing_item.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing item {current} of {total}'**
+  String mass_migration_processing_item(int current, int total);
+
+  /// No description provided for @mass_migration_waiting_next_item.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting 2 seconds before the next item...'**
+  String get mass_migration_waiting_next_item;
+
+  /// No description provided for @mass_migration_waiting_next_migration.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting 2 seconds before the next migration...'**
+  String get mass_migration_waiting_next_migration;
+
+  /// No description provided for @mass_migration_matched_so_far.
+  ///
+  /// In en, this message translates to:
+  /// **'Matched so far: {count}'**
+  String mass_migration_matched_so_far(int count);
+
+  /// No description provided for @mass_migration_no_match_count.
+  ///
+  /// In en, this message translates to:
+  /// **'No match: {count}'**
+  String mass_migration_no_match_count(int count);
+
+  /// No description provided for @mass_migration_review_matches.
+  ///
+  /// In en, this message translates to:
+  /// **'Review matches for {source}'**
+  String mass_migration_review_matches(Object source);
+
+  /// No description provided for @mass_migration_found_matches.
+  ///
+  /// In en, this message translates to:
+  /// **'Found matches: {count}'**
+  String mass_migration_found_matches(int count);
+
+  /// No description provided for @mass_migration_no_matches.
+  ///
+  /// In en, this message translates to:
+  /// **'No matches: {count}'**
+  String mass_migration_no_matches(int count);
+
+  /// No description provided for @mass_migration_selected_to_migrate.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected to migrate: {count}'**
+  String mass_migration_selected_to_migrate(int count);
+
+  /// No description provided for @mass_migration_finish_review.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish review'**
+  String get mass_migration_finish_review;
+
+  /// No description provided for @mass_migration_migrate_selected.
+  ///
+  /// In en, this message translates to:
+  /// **'Migrate selected items ({count})'**
+  String mass_migration_migrate_selected(int count);
+
+  /// No description provided for @mass_migration_migrating_selected.
+  ///
+  /// In en, this message translates to:
+  /// **'Migrating selected items to {source}'**
+  String mass_migration_migrating_selected(Object source);
+
+  /// No description provided for @mass_migration_no_items_selected.
+  ///
+  /// In en, this message translates to:
+  /// **'No items selected for migration.'**
+  String get mass_migration_no_items_selected;
+
+  /// No description provided for @mass_migration_migrating_item.
+  ///
+  /// In en, this message translates to:
+  /// **'Migrating item {current} of {total}'**
+  String mass_migration_migrating_item(int current, int total);
+
+  /// No description provided for @mass_migration_complete.
+  ///
+  /// In en, this message translates to:
+  /// **'Mass migration complete'**
+  String get mass_migration_complete;
+
+  /// No description provided for @mass_migration_complete_success_message.
+  ///
+  /// In en, this message translates to:
+  /// **'All selected items were processed successfully.'**
+  String get mass_migration_complete_success_message;
+
+  /// No description provided for @mass_migration_complete_partial_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Migration finished with a few items that still need manual attention.'**
+  String get mass_migration_complete_partial_message;
+
+  /// No description provided for @mass_migration_route_summary.
+  ///
+  /// In en, this message translates to:
+  /// **'{source} → {destination}'**
+  String mass_migration_route_summary(Object source, Object destination);
+
+  /// No description provided for @mass_migration_processed.
+  ///
+  /// In en, this message translates to:
+  /// **'Processed'**
+  String get mass_migration_processed;
+
+  /// No description provided for @mass_migration_matched.
+  ///
+  /// In en, this message translates to:
+  /// **'Matched'**
+  String get mass_migration_matched;
+
+  /// No description provided for @mass_migration_migrated.
+  ///
+  /// In en, this message translates to:
+  /// **'Migrated'**
+  String get mass_migration_migrated;
+
+  /// No description provided for @mass_migration_skipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Skipped'**
+  String get mass_migration_skipped;
+
+  /// No description provided for @mass_migration_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get mass_migration_failed;
+
+  /// No description provided for @mass_migration_failed_items.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed Items'**
+  String get mass_migration_failed_items;
+
+  /// No description provided for @mass_migration_exit.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit Mass Migration'**
+  String get mass_migration_exit;
+
+  /// No description provided for @mass_migration_no_destination_match.
+  ///
+  /// In en, this message translates to:
+  /// **'No destination match found'**
+  String get mass_migration_no_destination_match;
+
+  /// No description provided for @mass_migration_query.
+  ///
+  /// In en, this message translates to:
+  /// **'Query: {query}'**
+  String mass_migration_query(Object query);
+
+  /// No description provided for @mass_migration_skip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get mass_migration_skip;
+
+  /// No description provided for @mass_migration_loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get mass_migration_loading;
+
+  /// No description provided for @mass_migration_choose_another_result.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose another result'**
+  String get mass_migration_choose_another_result;
+
+  /// No description provided for @mass_migration_source_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Source chapters'**
+  String get mass_migration_source_chapters;
+
+  /// No description provided for @mass_migration_destination_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Destination chapters'**
+  String get mass_migration_destination_chapters;
+
+  /// No description provided for @mass_migration_chapter_count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 chapter} other{{count} chapters}}'**
+  String mass_migration_chapter_count(int count);
+
+  /// No description provided for @mass_migration_source_chapter_count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 source chapter} other{{count} source chapters}}'**
+  String mass_migration_source_chapter_count(int count);
+
+  /// No description provided for @mass_migration_destination_chapter_count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 destination chapter} other{{count} destination chapters}}'**
+  String mass_migration_destination_chapter_count(int count);
+
+  /// No description provided for @mass_migration_no_chapters_found.
+  ///
+  /// In en, this message translates to:
+  /// **'No chapters found.'**
+  String get mass_migration_no_chapters_found;
+
+  /// No description provided for @mass_migration_and_more_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'And {count} more...'**
+  String mass_migration_and_more_chapters(int count);
+
+  /// No description provided for @mass_migration_unknown_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown title'**
+  String get mass_migration_unknown_title;
+
+  /// No description provided for @mass_migration_unknown_match.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown match'**
+  String get mass_migration_unknown_match;
+
+  /// No description provided for @mass_migration_unknown_source.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown source'**
+  String get mass_migration_unknown_source;
+
+  /// No description provided for @mass_migration_unknown_chapter.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown chapter'**
+  String get mass_migration_unknown_chapter;
+
   /// No description provided for @migrate_confirm.
   ///
   /// In en, this message translates to:

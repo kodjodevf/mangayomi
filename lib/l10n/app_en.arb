@@ -71,6 +71,188 @@
   "latest": "Latest",
   "extensions": "Extensions",
   "migrate": "Migrate",
+  "mass_migration_title": "Mass migration",
+  "mass_migration_preview_items": "Preview items",
+  "mass_migration_destination_source": "Destination source",
+  "mass_migration_no_library_items": "No library items are available for mass migration.",
+  "mass_migration_no_destination_sources": "No installed destination sources are available.",
+  "mass_migration_installed": "Installed",
+  "mass_migration_items_ready_for_review": "{count, plural, =1{1 item ready for review} other{{count} items ready for review}}",
+  "@mass_migration_items_ready_for_review": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_item_count": "{count, plural, =1{1 item} other{{count} items}}",
+  "@mass_migration_item_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_select_destination_source": "Select destination source",
+  "mass_migration_finding_matches": "Finding matches in {source} • {language}",
+  "@mass_migration_finding_matches": {
+    "placeholders": {
+      "source": {},
+      "language": {}
+    }
+  },
+  "mass_migration_processing_item": "Processing item {current} of {total}",
+  "@mass_migration_processing_item": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_waiting_next_item": "Waiting 2 seconds before the next item...",
+  "mass_migration_waiting_next_migration": "Waiting 2 seconds before the next migration...",
+  "mass_migration_matched_so_far": "Matched so far: {count}",
+  "@mass_migration_matched_so_far": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_no_match_count": "No match: {count}",
+  "@mass_migration_no_match_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_review_matches": "Review matches for {source}",
+  "@mass_migration_review_matches": {
+    "placeholders": {
+      "source": {}
+    }
+  },
+  "mass_migration_found_matches": "Found matches: {count}",
+  "@mass_migration_found_matches": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_no_matches": "No matches: {count}",
+  "@mass_migration_no_matches": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_selected_to_migrate": "Selected to migrate: {count}",
+  "@mass_migration_selected_to_migrate": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_finish_review": "Finish review",
+  "mass_migration_migrate_selected": "Migrate selected items ({count})",
+  "@mass_migration_migrate_selected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_migrating_selected": "Migrating selected items to {source}",
+  "@mass_migration_migrating_selected": {
+    "placeholders": {
+      "source": {}
+    }
+  },
+  "mass_migration_no_items_selected": "No items selected for migration.",
+  "mass_migration_migrating_item": "Migrating item {current} of {total}",
+  "@mass_migration_migrating_item": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_complete": "Mass migration complete",
+  "mass_migration_complete_success_message": "All selected items were processed successfully.",
+  "mass_migration_complete_partial_message": "Migration finished with a few items that still need manual attention.",
+  "mass_migration_route_summary": "{source} → {destination}",
+  "@mass_migration_route_summary": {
+    "placeholders": {
+      "source": {},
+      "destination": {}
+    }
+  },
+  "mass_migration_processed": "Processed",
+  "mass_migration_matched": "Matched",
+  "mass_migration_migrated": "Migrated",
+  "mass_migration_skipped": "Skipped",
+  "mass_migration_failed": "Failed",
+  "mass_migration_failed_items": "Failed Items",
+  "mass_migration_exit": "Exit Mass Migration",
+  "mass_migration_no_destination_match": "No destination match found",
+  "mass_migration_query": "Query: {query}",
+  "@mass_migration_query": {
+    "placeholders": {
+      "query": {}
+    }
+  },
+  "mass_migration_skip": "Skip",
+  "mass_migration_loading": "Loading...",
+  "mass_migration_choose_another_result": "Choose another result",
+  "mass_migration_source_chapters": "Source chapters",
+  "mass_migration_destination_chapters": "Destination chapters",
+  "mass_migration_chapter_count": "{count, plural, =1{1 chapter} other{{count} chapters}}",
+  "@mass_migration_chapter_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_source_chapter_count": "{count, plural, =1{1 source chapter} other{{count} source chapters}}",
+  "@mass_migration_source_chapter_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_destination_chapter_count": "{count, plural, =1{1 destination chapter} other{{count} destination chapters}}",
+  "@mass_migration_destination_chapter_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_no_chapters_found": "No chapters found.",
+  "mass_migration_and_more_chapters": "And {count} more...",
+  "@mass_migration_and_more_chapters": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_unknown_title": "Unknown title",
+  "mass_migration_unknown_match": "Unknown match",
+  "mass_migration_unknown_source": "Unknown source",
+  "mass_migration_unknown_chapter": "Unknown chapter",
   "migrate_confirm": "Migrate to another source",
   "clean_database": "Clean database",
   "cleaned_database": "Database cleaned! {x} entries removed",

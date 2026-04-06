@@ -16,6 +16,7 @@ import 'package:mangayomi/modules/browse/extension/widgets/create_extension.dart
 import 'package:mangayomi/modules/browse/sources/sources_filter_screen.dart';
 import 'package:mangayomi/modules/calendar/calendar_screen.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/migrate_screen.dart';
+import 'package:mangayomi/modules/mass_migration/mass_migration_source_selection_screen.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/recommendation_screen.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/watch_order_screen.dart';
 import 'package:mangayomi/modules/more/data_and_storage/create_backup.dart';
@@ -253,6 +254,11 @@ class RouterNotifier extends ChangeNotifier {
     _genericRoute<Manga>(
       name: "migrate",
       builder: (manga) => MigrationScreen(manga: manga),
+    ),
+    _genericRoute<Manga>(
+      name: "massMigration",
+      builder: (manga) =>
+          MassMigrationSourceSelectionScreen(initialManga: manga),
     ),
     _genericRoute<(Manga, TrackSearch)>(
       name: "migrate/tracker",
