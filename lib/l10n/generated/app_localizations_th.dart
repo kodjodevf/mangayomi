@@ -113,11 +113,11 @@ class AppLocalizationsTh extends AppLocalizations {
   String get compact_grid => 'กระทัดรัด';
 
   @override
-  String get compression_level => 'Compression level';
+  String get compression_level => 'ระดับการบีบอัด';
 
   @override
   String compression_info(Object level) {
-    return 'The higher the compression, the less space the backup file takes, but it uses more CPU. Default: $level';
+    return 'การบีบอัดที่สูงขึ้น = พื้นที่น้อยลง แต่ CPU มากขึ้น ค่าเริ่มต้น: $level';
   }
 
   @override
@@ -220,10 +220,10 @@ class AppLocalizationsTh extends AppLocalizations {
   String get migrate => 'ผนวก';
 
   @override
-  String get mass_migration_title => 'Mass migration';
+  String get mass_migration_title => 'การอพยพแบบรวม';
 
   @override
-  String get mass_migration_preview_items => 'Preview items';
+  String get mass_migration_preview_items => 'ตัวอย่างรายการ';
 
   @override
   String get mass_migration_destination_source => 'Destination source';
@@ -650,7 +650,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get save_as_cbz_archive => 'จัดเก็บเป็น CBZ';
 
   @override
-  String get delete_download_after_reading => 'Delete download after reading';
+  String get delete_download_after_reading => 'ลบหลังอ่าน';
 
   @override
   String get concurrent_downloads => 'ดาวน์โหลดพร้อมกัน';
@@ -872,11 +872,11 @@ class AppLocalizationsTh extends AppLocalizations {
   String get import_files => 'ไฟล์';
 
   @override
-  String get split_epub_chapters => 'Split into chapters';
+  String get split_epub_chapters => 'แบ่งออกเป็นบท';
 
   @override
   String get split_epub_chapters_description =>
-      'Import each EPUB chapter as a separate entry';
+      'นำเข้าแต่ละบท EPUB เป็นรายการแยกต่างหาก';
 
   @override
   String get nothing_read_recently => 'ยังไม่ได้อ่านอะไรเลย';
@@ -2132,30 +2132,30 @@ class AppLocalizationsTh extends AppLocalizations {
   String get color_enhancements => 'การปรับปรุงสี';
 
   @override
-  String get total => 'Total';
+  String get total => 'รวม';
 
   @override
-  String get mean_per_title => 'Mean per Title';
+  String get mean_per_title => 'ค่าเฉลี่ยต่อชื่อเรื่อง';
 
   @override
-  String get completion_rate => 'Completion Rate';
+  String get completion_rate => 'อัตราการเสร็จสิ้น';
 
   @override
-  String get watching_time => 'Watch Time';
+  String get watching_time => 'เวลาการดู';
 
   @override
-  String get reading_time => 'Reading Time';
+  String get reading_time => 'เวลาการอ่าน';
 
   @override
   String average_chapters_per_title(Object title) {
-    return 'Average Chapters per $title';
+    return 'บทเฉลี่ยต่อชื่อเรื่อง';
   }
 
   @override
-  String get read_percentage => 'Read Percentage';
+  String get read_percentage => 'เปอร์เซ็นต์การอ่าน';
 
   @override
-  String get entries => 'Entries';
+  String get entries => 'รายการ';
 
   @override
   String get android_proxy_server_mihon => 'Android Proxy Server (Mihon)';

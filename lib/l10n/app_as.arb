@@ -591,5 +591,278 @@
   "nav_layout_edge": "প্রান্ত",
   "nav_layout_right_and_left": "সোঁ আৰু বাওঁ",
   "nav_layout_disabled": "অক্ষম",
-  "color_enhancements": "ৰং উন্নতি"
+  "color_enhancements": "ৰং উন্নতি",
+  "split_epub_chapters": "অধ্যায়লৈ বিভক্ত কৰক",
+  "split_epub_chapters_description": "প্রতিটি EPUB অধ্যায় পৃথক প্রৱেশ হিচাপে আমদানি কৰক",
+  "compression_level": "সংকোচনৰ স্তৰ",
+  "compression_info": "সংকোচন যিমানে বেছি হ’ব, বেকাপ ফাইলটোৱে সিমানেই কম ঠাই ল’ব, কিন্তু ই অধিক CPU ব্যৱহাৰ কৰিব। ডিফল্ট: {level}",
+  "mass_migration_title": "সামূহিক স্থানান্তৰ",
+  "mass_migration_preview_items": "আইটেমসমূহৰ পূৰ্ববীক্ষণ",
+  "mass_migration_destination_source": "গন্তব্য উৎস",
+  "mass_migration_no_library_items": "সামূহিক স্থানান্তৰৰ বাবে কোনো পুথিভঁৰালৰ আইটেম উপলব্ধ নহয়।",
+  "mass_migration_no_destination_sources": "কোনো ইনষ্টল কৰা গন্তব্য উৎস উপলব্ধ নহয়।",
+  "mass_migration_installed": "ইনষ্টল কৰা হৈছে",
+  "mass_migration_items_ready_for_review": "{count, plural, =1{১ টা আইটেম পৰ্যালোচনাৰ বাবে সাজু} other{{count} টা আইটেম পৰ্যালোচনাৰ বাবে সাজু}}",
+  "@mass_migration_items_ready_for_review": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_item_count": "{count, plural, =1{১ টা আইটেম} other{{count} টা আইটেম}}",
+  "@mass_migration_item_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_select_destination_source": "গন্তব্য উৎস বাছনি কৰক",
+  "mass_migration_finding_matches": "{source} • {language} ত মিল বিচাৰি থকা হৈছে",
+  "@mass_migration_finding_matches": {
+    "placeholders": {
+      "source": {},
+      "language": {}
+    }
+  },
+  "mass_migration_processing_item": "{total} ৰ ভিতৰত {current} নম্বৰ আইটেম প্ৰক্ৰিয়াকৰণ কৰা হৈছে",
+  "@mass_migration_processing_item": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_waiting_next_item": "পৰৱৰ্তী আইটেমৰ বাবে ২ চেকেণ্ড অপেক্ষা কৰা হৈছে...",
+  "mass_migration_waiting_next_migration": "পৰৱৰ্তী স্থানান্তৰৰ বাবে ২ চেকেণ্ড অপেক্ষা কৰা হৈছে...",
+  "mass_migration_matched_so_far": "এতিয়ালৈকে মিলা আইটেম: {count}",
+  "@mass_migration_matched_so_far": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_no_match_count": "মিলা নাই: {count}",
+  "@mass_migration_no_match_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_review_matches": "{source} ৰ বাবে অমিলবোৰ পৰ্যালোচনা কৰক",
+  "@mass_migration_review_matches": {
+    "placeholders": {
+      "source": {}
+    }
+  },
+  "mass_migration_found_matches": "মিলা আইটেম পোৱা গৈছে: {count}",
+  "@mass_migration_found_matches": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_no_matches": "কোনো মিল নাই: {count}",
+  "@mass_migration_no_matches": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_selected_to_migrate": "স্থানান্তৰৰ বাবে নিৰ্বাচিত: {count}",
+  "@mass_migration_selected_to_migrate": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_finish_review": "পৰ্যালোচনা সমাপ্ত কৰক",
+  "mass_migration_migrate_selected": "নিৰ্বাচিত আইটেমসমূহ স্থানান্তৰ কৰক ({count})",
+  "@mass_migration_migrate_selected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_migrating_selected": "নিৰ্বাচিত আইটেমসমূহ {source} লৈ স্থানান্তৰ কৰা হৈছে",
+  "@mass_migration_migrating_selected": {
+    "placeholders": {
+      "source": {}
+    }
+  },
+  "mass_migration_no_items_selected": "স্থানান্তৰৰ বাবে কোনো আইটেম বাছনি কৰা হোৱা নাই।",
+  "mass_migration_migrating_item": "{total} ৰ ভিতৰত {current} নম্বৰ আইটেম স্থানান্তৰ কৰা হৈছে",
+  "@mass_migration_migrating_item": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_complete": "সামূহিক স্থানান্তৰ সম্পন্ন হ’ল",
+  "mass_migration_complete_success_message": "সকলো নিৰ্বাচিত আইটেম সফলতাৰে প্ৰক্ৰিয়াকৰণ কৰা হৈছে।",
+  "mass_migration_complete_partial_message": "স্থানান্তৰ সম্পূৰ্ণ হৈছে যদিও কিছুমান আইটেমৰ বাবে এতিয়াও হাতেৰে মনোযোগ দিয়াৰ প্ৰয়োজন আছে।",
+  "mass_migration_route_summary": "{source} → {destination}",
+  "@mass_migration_route_summary": {
+    "placeholders": {
+      "source": {},
+      "destination": {}
+    }
+  },
+  "mass_migration_processed": "প্ৰক্ৰিয়াকৃত",
+  "mass_migration_matched": "মিলা",
+  "mass_migration_migrated": "স্থানান্তৰিত",
+  "mass_migration_skipped": "স্কিপ কৰা হৈছে",
+  "mass_migration_failed": "ব্যৰ্থ হৈছে",
+  "mass_migration_failed_items": "ব্যৰ্থ আইটেমসমূহ",
+  "mass_migration_exit": "সামূহিক স্থানান্তৰৰ পৰা ওলাই যাওক",
+  "mass_migration_no_destination_match": "কোনো গন্তব্য মিল পোৱা নগ’ল",
+  "mass_migration_query": "প্ৰশ্ন: {query}",
+  "@mass_migration_query": {
+    "placeholders": {
+      "query": {}
+    }
+  },
+  "mass_migration_skip": "স্কিপ কৰক",
+  "mass_migration_loading": "লোড হৈ আছে...",
+  "mass_migration_choose_another_result": "আন এটা ফলাফল বাছনি কৰক",
+  "mass_migration_source_chapters": "উৎস অধ্যায়সমূহ",
+  "mass_migration_destination_chapters": "গন্তব্য অধ্যায়সমূহ",
+  "mass_migration_chapter_count": "{count, plural, =1{১ টা অধ্যায়} other{{count} টা অধ্যায়}}",
+  "@mass_migration_chapter_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_source_chapter_count": "{count, plural, =1{১ টা উৎস অধ্যায়} other{{count} টা উৎস অধ্যায়}}",
+  "@mass_migration_source_chapter_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_destination_chapter_count": "{count, plural, =1{১ টা গন্তব্য অধ্যায়} other{{count} টা গন্তব্য অধ্যায়}}",
+  "@mass_migration_destination_chapter_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_no_chapters_found": "কোনো অধ্যায় পোৱা নগ’ল।",
+  "mass_migration_and_more_chapters": "আৰু {count} টা অধিক...",
+  "@mass_migration_and_more_chapters": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_unknown_title": "অজ্ঞাত শিৰোনাম",
+  "mass_migration_unknown_match": "অজ্ঞাত মিল",
+  "mass_migration_unknown_source": "অজ্ঞাত উৎস",
+  "mass_migration_unknown_chapter": "অজ্ঞাত অধ্যায়",
+  "delete_download_after_reading": "পঢ়াৰ পিছত ডাউনলোড কৰা ফাইল ডিলিট কৰক",
+  "total": "সৰ্বমুঠ",
+  "mean_per_title": "প্ৰতিটো শিৰোনামৰ গড়",
+  "completion_rate": "সম্পূৰ্ণ হোৱাৰ হাৰ",
+  "watching_time": "চোৱাৰ সময়",
+  "reading_time": "পঢ়াৰ সময়",
+  "average_chapters_per_title": "প্ৰতিটো শিৰোনামৰ গড় অধ্যায়",
+  "read_percentage": "পঢ়াৰ শতাংশ",
+  "entries": "প্ৰৱেশসমূহ",
+  "extension_server_intro_with_jre": "Mihon এক্সটেনচন ব্যৱহাৰ কৰাৰ আগতে প্ৰক্সী চাৰ্ভাৰ বাণ্ডিল ডাউনলোড কৰক। বাণ্ডিলটোত JRE আৰু এক্সটেনচন চাৰ্ভাৰ JAR অন্তৰ্ভুক্ত কৰা হৈছে।",
+  "extension_server_intro_ios": "Mihon এক্সটেনচন ব্যৱহাৰ কৰাৰ আগতে প্ৰক্সী চাৰ্ভাৰ JAR ডাউনলোড কৰক। iOS ৰ বাবে কেৱল এক্সটেনচন চাৰ্ভাৰ JAR প্ৰয়োজন।",
+  "checking_files": "ফাইলসমূহ পৰীক্ষা কৰি থকা হৈছে",
+  "files_installed": "ফাইলসমূহ ইনষ্টল কৰা হৈছে",
+  "files_missing": "ফাইলসমূহ নাই",
+  "update_files": "ফাইলসমূহ আপডেট কৰক",
+  "up_to_date": "শেহতীয়া",
+  "choose_location": "স্থান বাছনি কৰক",
+  "import_existing_jar": "বৰ্তমান থকা JAR আমদানি কৰক",
+  "detect_files_in_selected_folder": "নিৰ্বাচিত ফোল্ডাৰত ফাইলসমূহ চিনাক্ত কৰক",
+  "preparing_download": "ডাউনলোডৰ বাবে প্ৰস্তুতি চলাই থকা হৈছে...",
+  "app_install_location": "এপ ইনষ্টল কৰাৰ স্থান",
+  "install_location": "ইনষ্টল কৰাৰ স্থান",
+  "jre_executable": "JRE এগজিকিউটেবল",
+  "extension_server_jar": "এক্সটেনচন চাৰ্ভাৰ JAR",
+  "installed_version": "ইনষ্টল থকা সংস্কৰণ",
+  "latest_version": "শেহতীয়া সংস্কৰণ",
+  "apkbridge_description": "যেতিয়া আপোনাক এটা পৃথক এণ্ড্ৰইড ডিভাইচ প্ৰক্সীৰ প্ৰয়োজন হয় তেতিয়া ApkBridge ব্যৱহাৰ কৰক। ইয়াত প্ৰক্সী এড্ৰেছটো ছেট কৰক আৰু GitHub ৰ পৰা APK টো ডাউনলোড কৰক।",
+  "set_proxy_address": "প্ৰক্সী এড্ৰেছ ছেট কৰক",
+  "no_extension_server_bundle_available_for_this_platform": "এই প্লেটফৰ্মৰ বাবে কোনো এক্সটেনচন চাৰ্ভাৰ বাণ্ডিল উপলব্ধ নহয়।",
+  "failed_to_download_bundle": "বাণ্ডিল ডাউনলোড ব্যৰ্থ হ’ল ({statusCode})।",
+  "@failed_to_download_bundle": {
+    "placeholders": {
+      "statusCode": {}
+    }
+  },
+  "downloaded_bundle_missing_expected_files": "ডাউনলোড কৰা বাণ্ডিলটোত প্ৰত্যাশিত ফাইলসমূহ নাই।",
+  "extension_server_files_ready": "এক্সটেনচন চাৰ্ভাৰ ফাইলসমূহ সাজু হৈছে।",
+  "ios_extension_server_import_hint": "iOS ত চাৰ্ভাৰটো এপ ছেণ্ডবক্সৰ ভিতৰত ইনষ্টল কৰা হয়। ডাউনলোড কৰা ফাইল এটা আনিবলৈ \"বৰ্তমান থকা JAR আমদানি কৰক\" ব্যৱহাৰ কৰক।",
+  "select_extension_server_folder": "এক্সটেনচন চাৰ্ভাৰ ফোল্ডাৰ বাছনি কৰক",
+  "selected_folder_does_not_exist": "নিৰ্বাচিত ফোল্ডাৰটো নাই।",
+  "no_extension_server_files_found_in_selected_folder": "নিৰ্বাচিত ফোল্ডাৰত কোনো এক্সটেনচন চাৰ্ভাৰ ফাইল পোৱা নগ’ল।",
+  "extension_server_files_linked": "এক্সটেনচন চাৰ্ভাৰ ফাইলসমূহ সংযোগ কৰা হৈছে।",
+  "selected_file_could_not_be_accessed": "নিৰ্বাচিত ফাইলটো লাভ কৰিব পৰা নগ’ল।",
+  "extension_server_jar_imported": "এক্সটেনচন চাৰ্ভাৰ JAR আমদানি কৰা হৈছে।",
+  "could_not_launch_apk_bridge_page": "ApkBridge পৃষ্ঠা মুকলি কৰিব পৰা নগ’ল।",
+  "not_configured": "কনফিগাৰ কৰা হোৱা নাই",
+  "webview": "ৱেবভিউ",
+  "no_extension_server_bundle_available_for_this_platform": "No extension server bundle is available for this platform.",
+  "extension_server_intro_with_jre": "Download the proxy server bundle before using Mihon extensions. The bundle includes the JRE and extension server JAR.",
+  "failed_to_download_bundle": "Failed to download bundle ({statusCode}).",
+  "selected_folder_does_not_exist": "The selected folder does not exist.",
+  "jre_executable": "JRE executable",
+  "installed_version": "Installed version",
+  "choose_location": "Choose location",
+  "extension_server_intro_ios": "Download the proxy server JAR before using Mihon extensions. iOS only needs the extension server JAR.",
+  "import_existing_jar": "Import existing JAR",
+  "android_proxy_server_mihon_description": "Download and configure the proxy server required to use Mihon extensions.",
+  "files_missing": "Files missing",
+  "select_extension_server_folder": "Select extension server folder",
+  "up_to_date": "Up to date",
+  "preparing_download": "Preparing download...",
+  "could_not_launch_apk_bridge_page": "Could not launch the ApkBridge page.",
+  "could_not_check_proxy_server_updates": "Could not check for proxy server updates.",
+  "apkbridge_description": "Use ApkBridge when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.",
+  "install_location": "Install location",
+  "not_configured": "Not configured",
+  "detect_files_in_selected_folder": "Detect files in selected folder",
+  "ios_extension_server_import_hint": "On iOS the server is installed inside the app sandbox. Use \"Import existing JAR\" to bring in a downloaded file.",
+  "app_install_location": "App install location",
+  "files_installed": "Files installed",
+  "no_extension_server_files_found_in_selected_folder": "No extension server files were found in the selected folder.",
+  "extension_server_jar_imported": "Extension server JAR was imported.",
+  "proxy_server_ip_hint": "Server IP (e.g., 10.0.0.5 or https://example.com)",
+  "selected_file_could_not_be_accessed": "The selected file could not be accessed.",
+  "no_newer_proxy_server_release_available": "No newer proxy server release is available.",
+  "latest_version": "Latest version",
+  "extension_server_jar": "Extension server JAR",
+  "set_proxy_address": "Set proxy address",
+  "mihon_proxy_server": "Mihon proxy server",
+  "extension_server_files_linked": "Extension server files were linked.",
+  "extension_server_files_ready": "Extension server files are ready.",
+  "webview": "Webview",
+  "update_files": "Update files",
+  "checking_files": "Checking files",
+  "downloaded_bundle_missing_expected_files": "The downloaded bundle does not contain the expected files.",
+  "android_proxy_server_mihon": "Android Proxy Server (Mihon)",
+  "select_extension_server_jar": "Select extension server JAR"
 }

@@ -591,5 +591,276 @@
     "nav_layout_edge": "Borde",
     "nav_layout_right_and_left": "Derecha e izquierda",
     "nav_layout_disabled": "Deshabilitado",
-    "color_enhancements": "Mejoras de color"
+    "color_enhancements": "Mejoras de color",
+    "split_epub_chapters": "Dividir en capítulos",
+    "split_epub_chapters_description": "Importar cada capítulo EPUB como una entrada separada",
+    "compression_info": "Cuanta más compresión, menos espacio ocupa el respaldo, pero más CPU consume. Predeterminado: {level}",
+    "mass_migration_title": "Migración masiva",
+    "mass_migration_preview_items": "Vista previa de elementos",
+    "mass_migration_destination_source": "Fuente de destino",
+    "mass_migration_no_library_items": "No hay elementos de la biblioteca disponibles para migración masiva.",
+    "mass_migration_no_destination_sources": "No hay fuentes de destino instaladas.",
+    "mass_migration_installed": "Instalado",
+    "mass_migration_items_ready_for_review": "{count, plural, =1{1 elemento listo para revisión} other{{count} elementos listos para revisión}}",
+    "@mass_migration_items_ready_for_review": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_item_count": "{count, plural, =1{1 elemento} other{{count} elementos}}",
+    "@mass_migration_item_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_select_destination_source": "Seleccionar fuente de destino",
+    "mass_migration_finding_matches": "Buscando coincidencias en {source} • {language}",
+    "@mass_migration_finding_matches": {
+        "placeholders": {
+            "source": {},
+            "language": {}
+        }
+    },
+    "mass_migration_processing_item": "Procesando elemento {current} de {total}",
+    "@mass_migration_processing_item": {
+        "placeholders": {
+            "current": {
+                "type": "int"
+            },
+            "total": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_waiting_next_item": "Esperando 2 segundos antes del siguiente elemento...",
+    "mass_migration_waiting_next_migration": "Esperando 2 segundos antes de la siguiente migración...",
+    "mass_migration_matched_so_far": "Coincidencias hasta ahora: {count}",
+    "@mass_migration_matched_so_far": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_no_match_count": "Sin coincidencia: {count}",
+    "@mass_migration_no_match_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_review_matches": "Revisar coincidencias de {source}",
+    "@mass_migration_review_matches": {
+        "placeholders": {
+            "source": {}
+        }
+    },
+    "mass_migration_found_matches": "Coincidencias encontradas: {count}",
+    "@mass_migration_found_matches": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_no_matches": "Sin coincidencias: {count}",
+    "@mass_migration_no_matches": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_selected_to_migrate": "Seleccionados para migrar: {count}",
+    "@mass_migration_selected_to_migrate": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_finish_review": "Finalizar revisión",
+    "mass_migration_migrate_selected": "Migrar elementos seleccionados ({count})",
+    "@mass_migration_migrate_selected": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_migrating_selected": "Migrando elementos seleccionados a {source}",
+    "@mass_migration_migrating_selected": {
+        "placeholders": {
+            "source": {}
+        }
+    },
+    "mass_migration_no_items_selected": "No hay elementos seleccionados para migrar.",
+    "mass_migration_migrating_item": "Migrando elemento {current} de {total}",
+    "@mass_migration_migrating_item": {
+        "placeholders": {
+            "current": {
+                "type": "int"
+            },
+            "total": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_complete": "Migración masiva completada",
+    "mass_migration_complete_success_message": "Todos los elementos seleccionados fueron procesados con éxito.",
+    "mass_migration_complete_partial_message": "Migración finalizada con algunos elementos que aún requieren atención manual.",
+    "mass_migration_route_summary": "{source} → {destination}",
+    "@mass_migration_route_summary": {
+        "placeholders": {
+            "source": {},
+            "destination": {}
+        }
+    },
+    "mass_migration_processed": "Procesado",
+    "mass_migration_matched": "Coincidente",
+    "mass_migration_migrated": "Migrado",
+    "mass_migration_skipped": "Omitido",
+    "mass_migration_failed": "Fallido",
+    "mass_migration_failed_items": "Elementos fallidos",
+    "mass_migration_exit": "Salir de migración masiva",
+    "mass_migration_no_destination_match": "No se encontró coincidencia en el destino",
+    "mass_migration_query": "Consulta: {query}",
+    "@mass_migration_query": {
+        "placeholders": {
+            "query": {}
+        }
+    },
+    "mass_migration_skip": "Omitir",
+    "mass_migration_loading": "Cargando...",
+    "mass_migration_choose_another_result": "Elegir otro resultado",
+    "mass_migration_source_chapters": "Capítulos de origen",
+    "mass_migration_destination_chapters": "Capítulos de destino",
+    "mass_migration_chapter_count": "{count, plural, =1{1 capítulo} other{{count} capítulos}}",
+    "@mass_migration_chapter_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_source_chapter_count": "{count, plural, =1{1 capítulo del origen} other{{count} capítulos del origen}}",
+    "@mass_migration_source_chapter_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_destination_chapter_count": "{count, plural, =1{1 capítulo del destino} other{{count} capítulos del destino}}",
+    "@mass_migration_destination_chapter_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_no_chapters_found": "No se encontraron capítulos.",
+    "mass_migration_and_more_chapters": "Y {count} más...",
+    "@mass_migration_and_more_chapters": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_unknown_title": "Título desconocido",
+    "mass_migration_unknown_match": "Coincidencia desconocida",
+    "mass_migration_unknown_source": "Fuente desconocida",
+    "mass_migration_unknown_chapter": "Capítulo desconocido",
+    "delete_download_after_reading": "Eliminar descarga tras leer",
+    "total": "Total",
+    "mean_per_title": "Promedio por título",
+    "completion_rate": "Tasa de finalización",
+    "watching_time": "Tiempo dedicado (Anime)",
+    "reading_time": "Tiempo dedicado (Manga)",
+    "average_chapters_per_title": "Promedio de capítulos por título",
+    "read_percentage": "Porcentaje de lectura",
+    "entries": "Entradas",
+    "extension_server_intro_with_jre": "Descarga el paquete del servidor proxy antes de usar extensiones Mihon. El paquete incluye JRE y el archivo JAR del servidor.",
+    "extension_server_intro_ios": "Descarga el archivo JAR del servidor proxy antes de usar extensiones Mihon. iOS solo necesita el archivo JAR del servidor.",
+    "checking_files": "Comprobando archivos",
+    "files_installed": "Archivos instalados",
+    "files_missing": "Archivos faltantes",
+    "update_files": "Actualizar archivos",
+    "up_to_date": "Actualizado",
+    "choose_location": "Elegir ubicación",
+    "import_existing_jar": "Importar JAR existente",
+    "detect_files_in_selected_folder": "Detectar archivos en la carpeta seleccionada",
+    "preparing_download": "Preparando descarga...",
+    "app_install_location": "Ubicación de instalación de la app",
+    "install_location": "Ubicación de instalación",
+    "jre_executable": "Ejecutable JRE",
+    "extension_server_jar": "JAR de servidor de extensiones",
+    "installed_version": "Versión instalada",
+    "latest_version": "Última versión",
+    "apkbridge_description": "Usa ApkBridge cuando necesites un proxy de dispositivo Android separado. Configura la dirección del proxy aquí y descarga el APK de GitHub.",
+    "set_proxy_address": "Establecer dirección proxy",
+    "no_extension_server_bundle_available_for_this_platform": "No hay paquete de servidor de extensiones disponible para esta plataforma.",
+    "failed_to_download_bundle": "Error al descargar el paquete ({statusCode}).",
+    "@failed_to_download_bundle": {
+        "placeholders": {
+            "statusCode": {}
+        }
+    },
+    "downloaded_bundle_missing_expected_files": "El paquete descargado no contiene los archivos esperados.",
+    "extension_server_files_ready": "Archivos del servidor de extensiones listos.",
+    "ios_extension_server_import_hint": "En iOS el servidor se instala dentro del sandbox de la app. Usa \"Importar JAR existente\" para traer un archivo descargado.",
+    "select_extension_server_folder": "Seleccionar carpeta del servidor de extensiones",
+    "selected_folder_does_not_exist": "La carpeta seleccionada no existe.",
+    "no_extension_server_files_found_in_selected_folder": "No se encontraron archivos en la carpeta seleccionada.",
+    "extension_server_files_linked": "Archivos del servidor vinculados.",
+    "selected_file_could_not_be_accessed": "No se pudo acceder al archivo seleccionado.",
+    "extension_server_jar_imported": "Archivo JAR importado con éxito.",
+    "could_not_launch_apk_bridge_page": "No se pudo abrir la página de ApkBridge.",
+    "not_configured": "No configurado",
+    "webview": "Webview",
+    "mass_migration_title": "Migración masiva",
+    "mass_migration_description": "Migrar entradas de su biblioteca de una fuente a otra.",
+    "mass_migration_selection_title": "Selección de migración",
+    "mass_migration_source_selecting_description": "Seleccione una o más fuentes a las que migrar.",
+    "mass_migration_manga_selecting_description": "Seleccione los títulos para migrar a la nueva fuente.",
+    "mass_migration_status_idle": "Inactivo",
+    "mass_migration_status_searching": "Buscando...",
+    "mass_migration_status_migrating": "Migrando...",
+    "mass_migration_status_finished": "Finalizado",
+    "mass_migration_action_migrate": "Migrar",
+    "mass_migration_action_copy": "Copiar",
+    "mass_migration_action_skip_step": "Saltar paso",
+    "mass_migration_option_keep_old": "Mantener la antigua entrada después de la migración",
+    "mass_migration_dialog_title": "¿Migrar {count, plural, one{1 título} other{{count} títulos}}?",
+    "mass_migration_dialog_content": "Esto reemplazará las entradas actuales con las nuevas de la fuente seleccionada.",
+    "mass_migration_help_title": "Cómo usar la migración masiva",
+    "mass_migration_help_content": "1. Seleccione la fuente de origen.\n2. Seleccione los títulos que desea migrar.\n3. Seleccione las fuentes de destino.\n4. Verifique las coincidencias e inicie la migración.",
+    "mihon_proxy_server": "Servidor proxy Mihon",
+    "android_proxy_server_mihon_description": "Descargue y configure el servidor proxy necesario para usar las extensiones de Mihon.",
+    "could_not_check_proxy_server_updates": "No se pudo comprobar si hay actualizaciones del servidor proxy.",
+    "proxy_server_ip_hint": "IP del servidor (ej: 10.0.0.5 o https://example.com)",
+    "no_newer_proxy_server_release_available": "No hay una versión más reciente del servidor proxy disponible.",
+    "statistics_title": "Estadísticas",
+    "statistics_total_manga": "Total Manga",
+    "statistics_total_anime": "Total Anime",
+    "statistics_chapters_read": "Capítulos leídos",
+    "statistics_episodes_watched": "Episodios vistos",
+    "statistics_reading_time": "Tiempo de lectura",
+    "statistics_watching_time": "Tiempo de visualización",
+    "statistics_mean_score": "Puntuación media",
+    "statistics_score_distribution": "Distribución de puntuación",
+    "statistics_status_distribution": "Distribución de estados",
+    "statistics_reading_time_unit_hour": "{count, plural, one{1 hora} other{{count} horas}}",
+    "statistics_reading_time_unit_minute": "{count, plural, one{1 minuto} other{{count} minutos}}",
+    "statistics_reading_time_unit_day": "{count, plural, one{1 día} other{{count} días}}",
+    "statistics_no_data": "No hay suficientes datos para mostrar estadísticas.",
+    "compression_level": "Nivel de compresión",
+    "android_proxy_server_mihon": "Servidor Proxy Android (Mihon)",
+    "select_extension_server_jar": "Seleccionar JAR del servidor de extensiones"
 }

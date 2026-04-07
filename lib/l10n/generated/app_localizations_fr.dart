@@ -114,11 +114,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get compact_grid => 'Grille compacte';
 
   @override
-  String get compression_level => 'Compression level';
+  String get compression_level => 'Niveau de compression';
 
   @override
   String compression_info(Object level) {
-    return 'The higher the compression, the less space the backup file takes, but it uses more CPU. Default: $level';
+    return 'La compression plus élevée = moins d\'espace mais plus d\'utilisation CPU. Par défaut: $level';
   }
 
   @override
@@ -223,10 +223,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get migrate => 'Migrer';
 
   @override
-  String get mass_migration_title => 'Mass migration';
+  String get mass_migration_title => 'Migration massive';
 
   @override
-  String get mass_migration_preview_items => 'Preview items';
+  String get mass_migration_preview_items => 'Aperçu des éléments';
 
   @override
   String get mass_migration_destination_source => 'Destination source';
@@ -654,7 +654,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get save_as_cbz_archive => 'Enregistrer comme archive CBZ';
 
   @override
-  String get delete_download_after_reading => 'Delete download after reading';
+  String get delete_download_after_reading => 'Supprimer après la lecture';
 
   @override
   String get concurrent_downloads => 'Téléchargements simultanés';
@@ -878,11 +878,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get import_files => 'Fichiers';
 
   @override
-  String get split_epub_chapters => 'Split into chapters';
+  String get split_epub_chapters => 'Diviser en chapitres';
 
   @override
   String get split_epub_chapters_description =>
-      'Import each EPUB chapter as a separate entry';
+      'Importer chaque chapitre EPUB comme une entrée séparée';
 
   @override
   String get nothing_read_recently => 'Rien de lu recemment';
@@ -2165,37 +2165,37 @@ class AppLocalizationsFr extends AppLocalizations {
   String get total => 'Total';
 
   @override
-  String get mean_per_title => 'Mean per Title';
+  String get mean_per_title => 'Moyenne par titre';
 
   @override
-  String get completion_rate => 'Completion Rate';
+  String get completion_rate => 'Taux de réussite';
 
   @override
-  String get watching_time => 'Watch Time';
+  String get watching_time => 'Temps de visionnage';
 
   @override
-  String get reading_time => 'Reading Time';
+  String get reading_time => 'Temps de lecture';
 
   @override
   String average_chapters_per_title(Object title) {
-    return 'Average Chapters per $title';
+    return 'Chapitres moyens par titre';
   }
 
   @override
-  String get read_percentage => 'Read Percentage';
+  String get read_percentage => 'Pourcentage lu';
 
   @override
-  String get entries => 'Entries';
+  String get entries => 'Entrées';
 
   @override
-  String get android_proxy_server_mihon => 'Android Proxy Server (Mihon)';
+  String get android_proxy_server_mihon => 'Serveur proxy Android (Mihon)';
 
   @override
   String get android_proxy_server_mihon_description =>
-      'Download and configure the proxy server required to use Mihon extensions.';
+      'Téléchargez et configurez le serveur proxy requis pour utiliser les extensions Mihon.';
 
   @override
-  String get mihon_proxy_server => 'Mihon proxy server';
+  String get mihon_proxy_server => 'Serveur proxy Mihon';
 
   @override
   String get extension_server_intro_with_jre =>
@@ -2260,11 +2260,11 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get no_newer_proxy_server_release_available =>
-      'No newer proxy server release is available.';
+      'Aucune nouvelle version du serveur proxy disponible.';
 
   @override
   String get could_not_check_proxy_server_updates =>
-      'Could not check for proxy server updates.';
+      'Impossible de vérifier les mises à jour du serveur proxy.';
 
   @override
   String get no_extension_server_bundle_available_for_this_platform =>
@@ -2303,7 +2303,8 @@ class AppLocalizationsFr extends AppLocalizations {
       'Extension server files were linked.';
 
   @override
-  String get select_extension_server_jar => 'Select extension server JAR';
+  String get select_extension_server_jar =>
+      'Sélectionner le JAR du serveur d\'extension';
 
   @override
   String get selected_file_could_not_be_accessed =>
@@ -2319,7 +2320,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get proxy_server_ip_hint =>
-      'Server IP (e.g., 10.0.0.5 or https://example.com)';
+      'IP du serveur (ex: 10.0.0.5 ou https://example.com)';
 
   @override
   String get not_configured => 'Not configured';

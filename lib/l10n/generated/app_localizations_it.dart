@@ -114,11 +114,11 @@ class AppLocalizationsIt extends AppLocalizations {
   String get compact_grid => 'Griglia compatta';
 
   @override
-  String get compression_level => 'Compression level';
+  String get compression_level => 'Livello di compressione';
 
   @override
   String compression_info(Object level) {
-    return 'The higher the compression, the less space the backup file takes, but it uses more CPU. Default: $level';
+    return 'Maggiore è la compressione, minore sarà lo spazio occupato dal backup, ma richiederà più CPU. Predefinito: $level';
   }
 
   @override
@@ -223,32 +223,32 @@ class AppLocalizationsIt extends AppLocalizations {
   String get migrate => 'Migra';
 
   @override
-  String get mass_migration_title => 'Mass migration';
+  String get mass_migration_title => 'Migrazione di massa';
 
   @override
-  String get mass_migration_preview_items => 'Preview items';
+  String get mass_migration_preview_items => 'Anteprima elementi';
 
   @override
-  String get mass_migration_destination_source => 'Destination source';
+  String get mass_migration_destination_source => 'Fonte di destinazione';
 
   @override
   String get mass_migration_no_library_items =>
-      'No library items are available for mass migration.';
+      'Nessun elemento della libreria disponibile per la migrazione di massa.';
 
   @override
   String get mass_migration_no_destination_sources =>
-      'No installed destination sources are available.';
+      'Nessuna fonte di destinazione installata disponibile.';
 
   @override
-  String get mass_migration_installed => 'Installed';
+  String get mass_migration_installed => 'Installato';
 
   @override
   String mass_migration_items_ready_for_review(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count items ready for review',
-      one: '1 item ready for review',
+      other: '$count elementi pronti per la revisione',
+      one: '1 elemento pronto per la revisione',
     );
     return '$_temp0';
   }
@@ -258,96 +258,96 @@ class AppLocalizationsIt extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count items',
-      one: '1 item',
+      other: '$count elementi',
+      one: '1 elemento',
     );
     return '$_temp0';
   }
 
   @override
   String get mass_migration_select_destination_source =>
-      'Select destination source';
+      'Seleziona fonte di destinazione';
 
   @override
   String mass_migration_finding_matches(Object source, Object language) {
-    return 'Finding matches in $source • $language';
+    return 'Ricerca corrispondenze in $source • $language';
   }
 
   @override
   String mass_migration_processing_item(int current, int total) {
-    return 'Processing item $current of $total';
+    return 'Elaborazione elemento $current di $total';
   }
 
   @override
   String get mass_migration_waiting_next_item =>
-      'Waiting 2 seconds before the next item...';
+      'Attesa di 2 secondi prima del prossimo elemento...';
 
   @override
   String get mass_migration_waiting_next_migration =>
-      'Waiting 2 seconds before the next migration...';
+      'Attesa di 2 secondi prima della prossima migrazione...';
 
   @override
   String mass_migration_matched_so_far(int count) {
-    return 'Matched so far: $count';
+    return 'Corrispondenze trovate finora: $count';
   }
 
   @override
   String mass_migration_no_match_count(int count) {
-    return 'No match: $count';
+    return 'Nessuna corrispondenza: $count';
   }
 
   @override
   String mass_migration_review_matches(Object source) {
-    return 'Review matches for $source';
+    return 'Rivedi corrispondenze per $source';
   }
 
   @override
   String mass_migration_found_matches(int count) {
-    return 'Found matches: $count';
+    return 'Corrispondenze trovate: $count';
   }
 
   @override
   String mass_migration_no_matches(int count) {
-    return 'No matches: $count';
+    return 'Nessuna corrispondenza: $count';
   }
 
   @override
   String mass_migration_selected_to_migrate(int count) {
-    return 'Selected to migrate: $count';
+    return 'Selezionati per la migrazione: $count';
   }
 
   @override
-  String get mass_migration_finish_review => 'Finish review';
+  String get mass_migration_finish_review => 'Termina revisione';
 
   @override
   String mass_migration_migrate_selected(int count) {
-    return 'Migrate selected items ($count)';
+    return 'Migra elementi selezionati ($count)';
   }
 
   @override
   String mass_migration_migrating_selected(Object source) {
-    return 'Migrating selected items to $source';
+    return 'Migrazione degli elementi selezionati verso $source';
   }
 
   @override
   String get mass_migration_no_items_selected =>
-      'No items selected for migration.';
+      'Nessun elemento selezionato per la migrazione.';
 
   @override
   String mass_migration_migrating_item(int current, int total) {
-    return 'Migrating item $current of $total';
+    return 'Migrazione elemento $current di $total';
   }
 
   @override
-  String get mass_migration_complete => 'Mass migration complete';
+  String get mass_migration_complete => 'Migrazione di massa completata';
 
   @override
   String get mass_migration_complete_success_message =>
-      'All selected items were processed successfully.';
+      'Tutti gli elementi selezionati sono stati elaborati correttamente.';
 
   @override
   String get mass_migration_complete_partial_message =>
-      'Migration finished with a few items that still need manual attention.';
+      'Migrazione terminata con alcuni elementi che richiedono attenzione manuale.';
 
   @override
   String mass_migration_route_summary(Object source, Object destination) {
@@ -355,29 +355,29 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get mass_migration_processed => 'Processed';
+  String get mass_migration_processed => 'Elaborati';
 
   @override
-  String get mass_migration_matched => 'Matched';
+  String get mass_migration_matched => 'Corrispondenti';
 
   @override
-  String get mass_migration_migrated => 'Migrated';
+  String get mass_migration_migrated => 'Migrati';
 
   @override
-  String get mass_migration_skipped => 'Skipped';
+  String get mass_migration_skipped => 'Salati';
 
   @override
-  String get mass_migration_failed => 'Failed';
+  String get mass_migration_failed => 'Falliti';
 
   @override
-  String get mass_migration_failed_items => 'Failed Items';
+  String get mass_migration_failed_items => 'Elementi falliti';
 
   @override
-  String get mass_migration_exit => 'Exit Mass Migration';
+  String get mass_migration_exit => 'Esci dalla migrazione di massa';
 
   @override
   String get mass_migration_no_destination_match =>
-      'No destination match found';
+      'Nessuna corrispondenza nella destinazione';
 
   @override
   String mass_migration_query(Object query) {
@@ -385,27 +385,28 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get mass_migration_skip => 'Skip';
+  String get mass_migration_skip => 'Salta';
 
   @override
-  String get mass_migration_loading => 'Loading...';
+  String get mass_migration_loading => 'Caricamento...';
 
   @override
-  String get mass_migration_choose_another_result => 'Choose another result';
+  String get mass_migration_choose_another_result =>
+      'Scegli un altro risultato';
 
   @override
-  String get mass_migration_source_chapters => 'Source chapters';
+  String get mass_migration_source_chapters => 'Capitoli sorgente';
 
   @override
-  String get mass_migration_destination_chapters => 'Destination chapters';
+  String get mass_migration_destination_chapters => 'Capitoli destinazione';
 
   @override
   String mass_migration_chapter_count(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count chapters',
-      one: '1 chapter',
+      other: '$count capitoli',
+      one: '1 capitolo',
     );
     return '$_temp0';
   }
@@ -415,8 +416,8 @@ class AppLocalizationsIt extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count source chapters',
-      one: '1 source chapter',
+      other: '$count capitoli sorgente',
+      one: '1 capitolo sorgente',
     );
     return '$_temp0';
   }
@@ -426,31 +427,31 @@ class AppLocalizationsIt extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count destination chapters',
-      one: '1 destination chapter',
+      other: '$count capitoli destinazione',
+      one: '1 capitolo destinazione',
     );
     return '$_temp0';
   }
 
   @override
-  String get mass_migration_no_chapters_found => 'No chapters found.';
+  String get mass_migration_no_chapters_found => 'Nessun capitolo trovato.';
 
   @override
   String mass_migration_and_more_chapters(int count) {
-    return 'And $count more...';
+    return 'E altri $count...';
   }
 
   @override
-  String get mass_migration_unknown_title => 'Unknown title';
+  String get mass_migration_unknown_title => 'Titolo sconosciuto';
 
   @override
-  String get mass_migration_unknown_match => 'Unknown match';
+  String get mass_migration_unknown_match => 'Corrispondenza sconosciuta';
 
   @override
-  String get mass_migration_unknown_source => 'Unknown source';
+  String get mass_migration_unknown_source => 'Fonte sconosciuta';
 
   @override
-  String get mass_migration_unknown_chapter => 'Unknown chapter';
+  String get mass_migration_unknown_chapter => 'Capitolo sconosciuto';
 
   @override
   String get migrate_confirm => 'Migrare a un\'altra fonte';
@@ -654,7 +655,8 @@ class AppLocalizationsIt extends AppLocalizations {
   String get save_as_cbz_archive => 'Salva come archivio CBZ';
 
   @override
-  String get delete_download_after_reading => 'Delete download after reading';
+  String get delete_download_after_reading =>
+      'Elimina download dopo la lettura';
 
   @override
   String get concurrent_downloads => 'Download simultanei';
@@ -876,11 +878,11 @@ class AppLocalizationsIt extends AppLocalizations {
   String get import_files => 'File';
 
   @override
-  String get split_epub_chapters => 'Split into chapters';
+  String get split_epub_chapters => 'Dividi in capitoli';
 
   @override
   String get split_epub_chapters_description =>
-      'Import each EPUB chapter as a separate entry';
+      'Importa ogni capitolo EPUB come voce separata';
 
   @override
   String get nothing_read_recently => 'Niente letto di recente';
@@ -2158,167 +2160,169 @@ class AppLocalizationsIt extends AppLocalizations {
   String get color_enhancements => 'Miglioramenti dei colori';
 
   @override
-  String get total => 'Total';
+  String get total => 'Totale';
 
   @override
-  String get mean_per_title => 'Mean per Title';
+  String get mean_per_title => 'Media per titolo';
 
   @override
-  String get completion_rate => 'Completion Rate';
+  String get completion_rate => 'Tasso di completamento';
 
   @override
-  String get watching_time => 'Watch Time';
+  String get watching_time => 'Tempo di visione';
 
   @override
-  String get reading_time => 'Reading Time';
+  String get reading_time => 'Tempo di lettura';
 
   @override
   String average_chapters_per_title(Object title) {
-    return 'Average Chapters per $title';
+    return 'Media capitoli per titolo';
   }
 
   @override
-  String get read_percentage => 'Read Percentage';
+  String get read_percentage => 'Percentuale di lettura';
 
   @override
-  String get entries => 'Entries';
+  String get entries => 'Voci';
 
   @override
-  String get android_proxy_server_mihon => 'Android Proxy Server (Mihon)';
+  String get android_proxy_server_mihon => 'Server Proxy Android (Mihon)';
 
   @override
   String get android_proxy_server_mihon_description =>
-      'Download and configure the proxy server required to use Mihon extensions.';
+      'Scarica e configura il server proxy necessario per utilizzare le estensioni Mihon.';
 
   @override
-  String get mihon_proxy_server => 'Mihon proxy server';
+  String get mihon_proxy_server => 'Server proxy Mihon';
 
   @override
   String get extension_server_intro_with_jre =>
-      'Download the proxy server bundle before using Mihon extensions. The bundle includes the JRE and extension server JAR.';
+      'Scarica il pacchetto server proxy prima di usare le estensioni Mihon. Include JRE e JAR del server.';
 
   @override
   String get extension_server_intro_ios =>
-      'Download the proxy server JAR before using Mihon extensions. iOS only needs the extension server JAR.';
+      'Scarica il file JAR del server proxy prima di usare le estensioni Mihon. Su iOS serve solo il JAR del server.';
 
   @override
-  String get checking_files => 'Checking files';
+  String get checking_files => 'Controllo file';
 
   @override
-  String get files_installed => 'Files installed';
+  String get files_installed => 'File installati';
 
   @override
-  String get files_missing => 'Files missing';
+  String get files_missing => 'File mancanti';
 
   @override
-  String get update_files => 'Update files';
+  String get update_files => 'Aggiorna file';
 
   @override
-  String get up_to_date => 'Up to date';
+  String get up_to_date => 'Aggiornato';
 
   @override
-  String get choose_location => 'Choose location';
+  String get choose_location => 'Scegli posizione';
 
   @override
-  String get import_existing_jar => 'Import existing JAR';
+  String get import_existing_jar => 'Importa JAR esistente';
 
   @override
   String get detect_files_in_selected_folder =>
-      'Detect files in selected folder';
+      'Rileva file nella cartella selezionata';
 
   @override
-  String get preparing_download => 'Preparing download...';
+  String get preparing_download => 'Preparazione download...';
 
   @override
-  String get app_install_location => 'App install location';
+  String get app_install_location => 'Posizione installazione app';
 
   @override
-  String get install_location => 'Install location';
+  String get install_location => 'Posizione installazione';
 
   @override
-  String get jre_executable => 'JRE executable';
+  String get jre_executable => 'Eseguibile JRE';
 
   @override
-  String get extension_server_jar => 'Extension server JAR';
+  String get extension_server_jar => 'JAR server estensioni';
 
   @override
-  String get installed_version => 'Installed version';
+  String get installed_version => 'Versione installata';
 
   @override
-  String get latest_version => 'Latest version';
+  String get latest_version => 'Ultima versione';
 
   @override
   String get apkbridge_description =>
-      'Use ApkBridge when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.';
+      'Usa ApkBridge quando ti serve un proxy separato per il dispositivo Android. Imposta l\'indirizzo qui e scarica l\'APK da GitHub.';
 
   @override
-  String get set_proxy_address => 'Set proxy address';
+  String get set_proxy_address => 'Imposta indirizzo proxy';
 
   @override
   String get no_newer_proxy_server_release_available =>
-      'No newer proxy server release is available.';
+      'Nessuna nuova versione del server proxy disponibile.';
 
   @override
   String get could_not_check_proxy_server_updates =>
-      'Could not check for proxy server updates.';
+      'Impossibile verificare gli aggiornamenti del server proxy.';
 
   @override
   String get no_extension_server_bundle_available_for_this_platform =>
-      'No extension server bundle is available for this platform.';
+      'Nessun pacchetto server estensioni disponibile per questa piattaforma.';
 
   @override
   String failed_to_download_bundle(Object statusCode) {
-    return 'Failed to download bundle ($statusCode).';
+    return 'Download del pacchetto fallito ($statusCode).';
   }
 
   @override
   String get downloaded_bundle_missing_expected_files =>
-      'The downloaded bundle does not contain the expected files.';
+      'Il pacchetto scaricato non contiene i file previsti.';
 
   @override
   String get extension_server_files_ready =>
-      'Extension server files are ready.';
+      'File del server estensioni pronti.';
 
   @override
   String get ios_extension_server_import_hint =>
-      'On iOS the server is installed inside the app sandbox. Use \"Import existing JAR\" to bring in a downloaded file.';
+      'Su iOS il server è installato nella sandbox dell\'app. Usa \"Importa JAR esistente\" per caricare un file scaricato.';
 
   @override
-  String get select_extension_server_folder => 'Select extension server folder';
+  String get select_extension_server_folder =>
+      'Seleziona cartella del server estensioni';
 
   @override
   String get selected_folder_does_not_exist =>
-      'The selected folder does not exist.';
+      'La cartella selezionata non esiste.';
 
   @override
   String get no_extension_server_files_found_in_selected_folder =>
-      'No extension server files were found in the selected folder.';
+      'Nessun file trovato nella cartella selezionata.';
 
   @override
   String get extension_server_files_linked =>
-      'Extension server files were linked.';
+      'File del server estensioni collegati.';
 
   @override
-  String get select_extension_server_jar => 'Select extension server JAR';
+  String get select_extension_server_jar =>
+      'Seleziona JAR del server estensioni';
 
   @override
   String get selected_file_could_not_be_accessed =>
-      'The selected file could not be accessed.';
+      'Impossibile accedere al file selezionato.';
 
   @override
   String get extension_server_jar_imported =>
-      'Extension server JAR was imported.';
+      'JAR del server estensioni importato.';
 
   @override
   String get could_not_launch_apk_bridge_page =>
-      'Could not launch the ApkBridge page.';
+      'Impossibile aprire la pagina di ApkBridge.';
 
   @override
   String get proxy_server_ip_hint =>
-      'Server IP (e.g., 10.0.0.5 or https://example.com)';
+      'IP del server (es. 10.0.0.5 o https://example.com)';
 
   @override
-  String get not_configured => 'Not configured';
+  String get not_configured => 'Non configurato';
 
   @override
   String get webview => 'Webview';

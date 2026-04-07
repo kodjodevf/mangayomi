@@ -591,5 +591,245 @@
     "nav_layout_edge": "Kenar",
     "nav_layout_right_and_left": "Sağ ve Sol",
     "nav_layout_disabled": "Devre Dışı",
-    "color_enhancements": "Renk İyileştirmeleri"
+    "color_enhancements": "Renk İyileştirmeleri",
+    "split_epub_chapters": "Bölümlere ayır",
+    "split_epub_chapters_description": "Her EPUB bölümünü ayrı bir giriş olarak içe aktar",
+    "compression_info": "Sıkıştırma ne kadar yüksek olursa, yedekleme dosyası o kadar az yer kaplar ancak daha fazla CPU kullanır. Varsayılan: {level}",
+    "mass_migration_title": "Toplu taşıma",
+    "mass_migration_preview_items": "Öğeleri önizle",
+    "mass_migration_destination_source": "Hedef kaynak",
+    "mass_migration_no_library_items": "Toplu taşıma için uygun kütüphane öğesi yok.",
+    "mass_migration_no_destination_sources": "Yüklü hedef kaynak bulunamadı.",
+    "mass_migration_installed": "Yüklendi",
+    "mass_migration_items_ready_for_review": "{count, plural, =1{1 öğe incelenmeye hazır} other{{count} öğe incelenmeye hazır}}",
+    "@mass_migration_items_ready_for_review": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_item_count": "{count, plural, =1{1 öğe} other{{count} öğe}}",
+    "@mass_migration_item_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_select_destination_source": "Hedef kaynağı seçin",
+    "mass_migration_finding_matches": "{source} • {language} içinde eşleşmeler aranıyor",
+    "@mass_migration_finding_matches": {
+        "placeholders": {
+            "source": {},
+            "language": {}
+        }
+    },
+    "mass_migration_processing_item": "Öğe işleniyor: {current} / {total}",
+    "@mass_migration_processing_item": {
+        "placeholders": {
+            "current": {
+                "type": "int"
+            },
+            "total": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_waiting_next_item": "Sıradaki öğeden önce 2 saniye bekleniyor...",
+    "mass_migration_waiting_next_migration": "Sıradaki taşımadan önce 2 saniye bekleniyor...",
+    "mass_migration_matched_so_far": "Şu ana kadar eşleşen: {count}",
+    "@mass_migration_matched_so_far": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_no_match_count": "Eşleşme yok: {count}",
+    "@mass_migration_no_match_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_review_matches": "{source} için eşleşmeleri incele",
+    "@mass_migration_review_matches": {
+        "placeholders": {
+            "source": {}
+        }
+    },
+    "mass_migration_found_matches": "Bulunan eşleşmeler: {count}",
+    "@mass_migration_found_matches": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_no_matches": "Eşleşme yok: {count}",
+    "@mass_migration_no_matches": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_selected_to_migrate": "Taşınmak üzere seçilen: {count}",
+    "@mass_migration_selected_to_migrate": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_finish_review": "İncelemeyi bitir",
+    "mass_migration_migrate_selected": "Seçilen öğeleri taşı ({count})",
+    "@mass_migration_migrate_selected": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_migrating_selected": "Seçilen öğeler {source} kaynağına taşınıyor",
+    "@mass_migration_migrating_selected": {
+        "placeholders": {
+            "source": {}
+        }
+    },
+    "mass_migration_no_items_selected": "Taşıma için öğe seçilmedi.",
+    "mass_migration_migrating_item": "Öğe taşınıyor: {current} / {total}",
+    "@mass_migration_migrating_item": {
+        "placeholders": {
+            "current": {
+                "type": "int"
+            },
+            "total": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_complete": "Toplu taşıma tamamlandı",
+    "mass_migration_complete_success_message": "Seçilen tüm öğeler başarıyla işlendi.",
+    "mass_migration_complete_partial_message": "Taşıma bitti ancak bazı öğeler hala manuel ilgi gerektiriyor.",
+    "mass_migration_route_summary": "{source} → {destination}",
+    "@mass_migration_route_summary": {
+        "placeholders": {
+            "source": {},
+            "destination": {}
+        }
+    },
+    "mass_migration_processed": "İşlendi",
+    "mass_migration_matched": "Eşleşti",
+    "mass_migration_migrated": "Taşındı",
+    "mass_migration_skipped": "Atlandı",
+    "mass_migration_failed": "Başarısız",
+    "mass_migration_failed_items": "Başarısız Öğeler",
+    "mass_migration_exit": "Toplu Taşımadan Çık",
+    "mass_migration_no_destination_match": "Hedef eşleşmesi bulunamadı",
+    "mass_migration_query": "Sorgu: {query}",
+    "@mass_migration_query": {
+        "placeholders": {
+            "query": {}
+        }
+    },
+    "mass_migration_skip": "Atla",
+    "mass_migration_loading": "Yükleniyor...",
+    "mass_migration_choose_another_result": "Başka bir sonuç seçin",
+    "mass_migration_source_chapters": "Kaynak bölümler",
+    "mass_migration_destination_chapters": "Hedef bölümler",
+    "mass_migration_chapter_count": "{count, plural, =1{1 bölüm} other{{count} bölüm}}",
+    "@mass_migration_chapter_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_source_chapter_count": "{count, plural, =1{1 kaynak bölümü} other{{count} kaynak bölümü}}",
+    "@mass_migration_source_chapter_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_destination_chapter_count": "{count, plural, =1{1 hedef bölümü} other{{count} hedef bölümü}}",
+    "@mass_migration_destination_chapter_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_no_chapters_found": "Bölüm bulunamadı.",
+    "mass_migration_and_more_chapters": "Ve {count} tane daha...",
+    "@mass_migration_and_more_chapters": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_unknown_title": "Bilinmeyen başlık",
+    "mass_migration_unknown_match": "Bilinmeyen eşleşme",
+    "mass_migration_unknown_source": "Bilinmeyen kaynak",
+    "mass_migration_unknown_chapter": "Bilinmeyen bölüm",
+    "delete_download_after_reading": "Okuduktan sonra indirmeyi sil",
+    "total": "Toplam",
+    "mean_per_title": "Başlık başına ortalama",
+    "completion_rate": "Tamamlanma oranı",
+    "watching_time": "İzleme süresi",
+    "reading_time": "Okuma süresi",
+    "average_chapters_per_title": "Başlık başına ortalama bölüm",
+    "read_percentage": "Okuma yüzdesi",
+    "entries": "Girdiler",
+    "extension_server_intro_with_jre": "Mihon eklentilerini kullanmadan önce proxy sunucu paketini indirin. Paket, JRE ve eklenti sunucusu JAR dosyasını içerir.",
+    "extension_server_intro_ios": "Mihon eklentilerini kullanmadan önce proxy sunucusu JAR dosyasını indirin. iOS için sadece eklenti sunucusu JAR dosyası gereklidir.",
+    "checking_files": "Dosyalar kontrol ediliyor",
+    "files_installed": "Dosyalar yüklendi",
+    "files_missing": "Dosyalar eksik",
+    "update_files": "Dosyaları güncelle",
+    "up_to_date": "Güncel",
+    "choose_location": "Konum seç",
+    "import_existing_jar": "Mevcut JAR dosyasını içe aktar",
+    "detect_files_in_selected_folder": "Seçilen klasördeki dosyaları algıla",
+    "preparing_download": "İndirme hazırlanıyor...",
+    "app_install_location": "Uygulama yükleme konumu",
+    "install_location": "Yükleme konumu",
+    "jre_executable": "JRE yürütülebilir dosyası",
+    "extension_server_jar": "Eklenti sunucusu JAR'ı",
+    "installed_version": "Yüklü sürüm",
+    "latest_version": "Son sürüm",
+    "apkbridge_description": "Ayrı bir Android cihaz proxy'sine ihtiyacınız olduğunda ApkBridge kullanın. Proxy adresini buradan ayarlayın ve APK'yı GitHub'dan indirin.",
+    "set_proxy_address": "Proxy adresini ayarla",
+    "no_extension_server_bundle_available_for_this_platform": "Bu platform için sunucu paketi mevcut değil.",
+    "failed_to_download_bundle": "Paket indirme başarısız oldu ({statusCode}).",
+    "@failed_to_download_bundle": {
+        "placeholders": {
+            "statusCode": {}
+        }
+    },
+    "downloaded_bundle_missing_expected_files": "İndirilen paket beklenen dosyaları içermiyor.",
+    "extension_server_files_ready": "Eklenti sunucusu dosyaları hazır.",
+    "ios_extension_server_import_hint": "iOS'ta sunucu uygulama sandbox'ı içine yüklenir. İndirilen bir dosyayı getirmek için \"Mevcut JAR dosyasını içe aktar\" seçeneğini kullanın.",
+    "select_extension_server_folder": "Eklenti sunucusu klasörünü seçin",
+    "selected_folder_does_not_exist": "Seçilen klasör mevcut değil.",
+    "no_extension_server_files_found_in_selected_folder": "Seçilen klasörde eklenti sunucusu dosyası bulunamadı.",
+    "extension_server_files_linked": "Eklenti sunucusu dosyaları bağlandı.",
+    "selected_file_could_not_be_accessed": "Seçilen dosyaya erişilemedi.",
+    "extension_server_jar_imported": "Eklenti sunucusu JAR'ı içe aktarıldı.",
+    "could_not_launch_apk_bridge_page": "ApkBridge sayfası başlatılamadı.",
+    "not_configured": "Yapılandırılmadı",
+    "webview": "Webview",
+    "compression_level": "Sıkıştırma düzeyi",
+    "android_proxy_server_mihon": "Android Proxy Sunucusu (Mihon)",
+    "android_proxy_server_mihon_description": "Mihon eklentilerini kullanmak için gereken proxy sunucusunu indirin ve yapılandırın.",
+    "mihon_proxy_server": "Mihon proxy sunucusu",
+    "no_newer_proxy_server_release_available": "Daha yeni bir proxy sunucusu sürümü mevcut değil.",
+    "could_not_check_proxy_server_updates": "Proxy sunucusu güncellemeleri kontrol edilemedi.",
+    "select_extension_server_jar": "Eklenti sunucusu JAR dosyasını seçin",
+    "proxy_server_ip_hint": "Sunucu IP'si (örn. 10.0.0.5 veya https://example.com)"
 }

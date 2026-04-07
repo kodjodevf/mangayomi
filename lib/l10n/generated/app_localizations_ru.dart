@@ -114,11 +114,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get compact_grid => 'Компактная сетка';
 
   @override
-  String get compression_level => 'Compression level';
+  String get compression_level => 'Уровень сжатия';
 
   @override
   String compression_info(Object level) {
-    return 'The higher the compression, the less space the backup file takes, but it uses more CPU. Default: $level';
+    return 'Чем выше степень сжатия, тем меньше места занимает файл резервной копии, но используется больше ресурсов процессора. По умолчанию: $level';
   }
 
   @override
@@ -222,32 +222,34 @@ class AppLocalizationsRu extends AppLocalizations {
   String get migrate => 'Перенести';
 
   @override
-  String get mass_migration_title => 'Mass migration';
+  String get mass_migration_title => 'Массовая миграция';
 
   @override
-  String get mass_migration_preview_items => 'Preview items';
+  String get mass_migration_preview_items => 'Предпросмотр элементов';
 
   @override
-  String get mass_migration_destination_source => 'Destination source';
+  String get mass_migration_destination_source => 'Исходный код назначения';
 
   @override
   String get mass_migration_no_library_items =>
-      'No library items are available for mass migration.';
+      'Нет элементов библиотеки, доступных для массовой миграции.';
 
   @override
   String get mass_migration_no_destination_sources =>
-      'No installed destination sources are available.';
+      'Нет установленных источников назначения.';
 
   @override
-  String get mass_migration_installed => 'Installed';
+  String get mass_migration_installed => 'Установлено';
 
   @override
   String mass_migration_items_ready_for_review(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count items ready for review',
-      one: '1 item ready for review',
+      other: '$count элементов готовы к просмотру',
+      many: '$count элементов готовы к просмотру',
+      few: '$count элемента готовы к просмотру',
+      one: '$count элемент готов к просмотру',
     );
     return '$_temp0';
   }
@@ -257,96 +259,98 @@ class AppLocalizationsRu extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count items',
-      one: '1 item',
+      other: '$count элементов',
+      many: '$count элементов',
+      few: '$count элемента',
+      one: '$count элемент',
     );
     return '$_temp0';
   }
 
   @override
   String get mass_migration_select_destination_source =>
-      'Select destination source';
+      'Выберите источник назначения';
 
   @override
   String mass_migration_finding_matches(Object source, Object language) {
-    return 'Finding matches in $source • $language';
+    return 'Поиск совпадений в $source • $language';
   }
 
   @override
   String mass_migration_processing_item(int current, int total) {
-    return 'Processing item $current of $total';
+    return 'Обработка элемента $current из $total';
   }
 
   @override
   String get mass_migration_waiting_next_item =>
-      'Waiting 2 seconds before the next item...';
+      'Ожидание 2 секунд перед следующим элементом...';
 
   @override
   String get mass_migration_waiting_next_migration =>
-      'Waiting 2 seconds before the next migration...';
+      'Ожидание 2 секунд перед следующей миграцией...';
 
   @override
   String mass_migration_matched_so_far(int count) {
-    return 'Matched so far: $count';
+    return 'Найдено совпадений: $count';
   }
 
   @override
   String mass_migration_no_match_count(int count) {
-    return 'No match: $count';
+    return 'Нет совпадений: $count';
   }
 
   @override
   String mass_migration_review_matches(Object source) {
-    return 'Review matches for $source';
+    return 'Просмотр совпадений для $source';
   }
 
   @override
   String mass_migration_found_matches(int count) {
-    return 'Found matches: $count';
+    return 'Найдено совпадений: $count';
   }
 
   @override
   String mass_migration_no_matches(int count) {
-    return 'No matches: $count';
+    return 'Нет совпадений: $count';
   }
 
   @override
   String mass_migration_selected_to_migrate(int count) {
-    return 'Selected to migrate: $count';
+    return 'Выбрано для миграции: $count';
   }
 
   @override
-  String get mass_migration_finish_review => 'Finish review';
+  String get mass_migration_finish_review => 'Завершить просмотр';
 
   @override
   String mass_migration_migrate_selected(int count) {
-    return 'Migrate selected items ($count)';
+    return 'Миграция выбранных элементов ($count)';
   }
 
   @override
   String mass_migration_migrating_selected(Object source) {
-    return 'Migrating selected items to $source';
+    return 'Миграция выбранных элементов в $source';
   }
 
   @override
   String get mass_migration_no_items_selected =>
-      'No items selected for migration.';
+      'Элементы для миграции не выбраны.';
 
   @override
   String mass_migration_migrating_item(int current, int total) {
-    return 'Migrating item $current of $total';
+    return 'Миграция элемента $current из $total';
   }
 
   @override
-  String get mass_migration_complete => 'Mass migration complete';
+  String get mass_migration_complete => 'Массовая миграция завершена';
 
   @override
   String get mass_migration_complete_success_message =>
-      'All selected items were processed successfully.';
+      'Все выбранные элементы были успешно обработаны.';
 
   @override
   String get mass_migration_complete_partial_message =>
-      'Migration finished with a few items that still need manual attention.';
+      'Миграция завершена, но некоторые элементы все еще требуют ручного вмешательства.';
 
   @override
   String mass_migration_route_summary(Object source, Object destination) {
@@ -354,57 +358,59 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
-  String get mass_migration_processed => 'Processed';
+  String get mass_migration_processed => 'Обработано';
 
   @override
-  String get mass_migration_matched => 'Matched';
+  String get mass_migration_matched => 'Совпало';
 
   @override
-  String get mass_migration_migrated => 'Migrated';
+  String get mass_migration_migrated => 'Перенесено';
 
   @override
-  String get mass_migration_skipped => 'Skipped';
+  String get mass_migration_skipped => 'Пропущено';
 
   @override
-  String get mass_migration_failed => 'Failed';
+  String get mass_migration_failed => 'Ошибка';
 
   @override
-  String get mass_migration_failed_items => 'Failed Items';
+  String get mass_migration_failed_items => 'Проблемные элементы';
 
   @override
-  String get mass_migration_exit => 'Exit Mass Migration';
+  String get mass_migration_exit => 'Выйти из массовой миграции';
 
   @override
   String get mass_migration_no_destination_match =>
-      'No destination match found';
+      'Совпадений в источнике назначения не найдено';
 
   @override
   String mass_migration_query(Object query) {
-    return 'Query: $query';
+    return 'Запрос: $query';
   }
 
   @override
-  String get mass_migration_skip => 'Skip';
+  String get mass_migration_skip => 'Пропустить';
 
   @override
-  String get mass_migration_loading => 'Loading...';
+  String get mass_migration_loading => 'Загрузка...';
 
   @override
-  String get mass_migration_choose_another_result => 'Choose another result';
+  String get mass_migration_choose_another_result => 'Выбрать другой результат';
 
   @override
-  String get mass_migration_source_chapters => 'Source chapters';
+  String get mass_migration_source_chapters => 'Главы источника';
 
   @override
-  String get mass_migration_destination_chapters => 'Destination chapters';
+  String get mass_migration_destination_chapters => 'Главы назначения';
 
   @override
   String mass_migration_chapter_count(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count chapters',
-      one: '1 chapter',
+      other: '$count глав',
+      many: '$count глав',
+      few: '$count главы',
+      one: '$count глава',
     );
     return '$_temp0';
   }
@@ -414,8 +420,10 @@ class AppLocalizationsRu extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count source chapters',
-      one: '1 source chapter',
+      other: '$count глав источника',
+      many: '$count глав источника',
+      few: '$count главы источника',
+      one: '$count глава источника',
     );
     return '$_temp0';
   }
@@ -425,31 +433,33 @@ class AppLocalizationsRu extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count destination chapters',
-      one: '1 destination chapter',
+      other: '$count глав назначения',
+      many: '$count глав назначения',
+      few: '$count главы назначения',
+      one: '$count глава назначения',
     );
     return '$_temp0';
   }
 
   @override
-  String get mass_migration_no_chapters_found => 'No chapters found.';
+  String get mass_migration_no_chapters_found => 'Главы не найдены.';
 
   @override
   String mass_migration_and_more_chapters(int count) {
-    return 'And $count more...';
+    return 'И еще $count...';
   }
 
   @override
-  String get mass_migration_unknown_title => 'Unknown title';
+  String get mass_migration_unknown_title => 'Неизвестное название';
 
   @override
-  String get mass_migration_unknown_match => 'Unknown match';
+  String get mass_migration_unknown_match => 'Неизвестное совпадение';
 
   @override
-  String get mass_migration_unknown_source => 'Unknown source';
+  String get mass_migration_unknown_source => 'Неизвестный источник';
 
   @override
-  String get mass_migration_unknown_chapter => 'Unknown chapter';
+  String get mass_migration_unknown_chapter => 'Неизвестная глава';
 
   @override
   String get migrate_confirm => 'Перенести на другой источник';
@@ -653,7 +663,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get save_as_cbz_archive => 'Сохранить как архив CBZ';
 
   @override
-  String get delete_download_after_reading => 'Delete download after reading';
+  String get delete_download_after_reading => 'Удалять загрузку после чтения';
 
   @override
   String get concurrent_downloads => 'Одновременные загрузки';
@@ -877,11 +887,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get import_files => 'Файлы';
 
   @override
-  String get split_epub_chapters => 'Split into chapters';
+  String get split_epub_chapters => 'Разделить на главы';
 
   @override
   String get split_epub_chapters_description =>
-      'Import each EPUB chapter as a separate entry';
+      'Импортировать каждую главу EPUB как отдельную запись';
 
   @override
   String get nothing_read_recently => 'Недавно ничего не читалось';
@@ -2162,168 +2172,167 @@ class AppLocalizationsRu extends AppLocalizations {
   String get color_enhancements => 'Улучшение цвета';
 
   @override
-  String get total => 'Total';
+  String get total => 'Всего';
 
   @override
-  String get mean_per_title => 'Mean per Title';
+  String get mean_per_title => 'Среднее на название';
 
   @override
-  String get completion_rate => 'Completion Rate';
+  String get completion_rate => 'Процент завершения';
 
   @override
-  String get watching_time => 'Watch Time';
+  String get watching_time => 'Время просмотра';
 
   @override
-  String get reading_time => 'Reading Time';
+  String get reading_time => 'Время чтения';
 
   @override
   String average_chapters_per_title(Object title) {
-    return 'Average Chapters per $title';
+    return 'Среднее кол-во глав на название';
   }
 
   @override
-  String get read_percentage => 'Read Percentage';
+  String get read_percentage => 'Процент прочитанного';
 
   @override
-  String get entries => 'Entries';
+  String get entries => 'Записи';
 
   @override
-  String get android_proxy_server_mihon => 'Android Proxy Server (Mihon)';
+  String get android_proxy_server_mihon => 'Android прокси-сервер (Mihon)';
 
   @override
   String get android_proxy_server_mihon_description =>
-      'Download and configure the proxy server required to use Mihon extensions.';
+      'Загрузите и настройте прокси-сервер, необходимый для использования расширений Mihon.';
 
   @override
-  String get mihon_proxy_server => 'Mihon proxy server';
+  String get mihon_proxy_server => 'Прокси-сервер Mihon';
 
   @override
   String get extension_server_intro_with_jre =>
-      'Download the proxy server bundle before using Mihon extensions. The bundle includes the JRE and extension server JAR.';
+      'Загрузите пакет прокси-сервера перед использованием расширений Mihon. Пакет включает в себя JRE и JAR-файл сервера расширений.';
 
   @override
   String get extension_server_intro_ios =>
-      'Download the proxy server JAR before using Mihon extensions. iOS only needs the extension server JAR.';
+      'Загрузите JAR-файл прокси-сервера перед использованием расширений Mihon. Для iOS требуется только JAR-файл сервера расширений.';
 
   @override
-  String get checking_files => 'Checking files';
+  String get checking_files => 'Проверка файлов';
 
   @override
-  String get files_installed => 'Files installed';
+  String get files_installed => 'Файлы установлены';
 
   @override
-  String get files_missing => 'Files missing';
+  String get files_missing => 'Файлы отсутствуют';
 
   @override
-  String get update_files => 'Update files';
+  String get update_files => 'Обновить файлы';
 
   @override
-  String get up_to_date => 'Up to date';
+  String get up_to_date => 'Обновлено';
 
   @override
-  String get choose_location => 'Choose location';
+  String get choose_location => 'Выберите местоположение';
 
   @override
-  String get import_existing_jar => 'Import existing JAR';
+  String get import_existing_jar => 'Импортировать существующий JAR';
 
   @override
   String get detect_files_in_selected_folder =>
-      'Detect files in selected folder';
+      'Обнаружить файлы в выбранной папке';
 
   @override
-  String get preparing_download => 'Preparing download...';
+  String get preparing_download => 'Подготовка к загрузке...';
 
   @override
-  String get app_install_location => 'App install location';
+  String get app_install_location => 'Место установки приложения';
 
   @override
-  String get install_location => 'Install location';
+  String get install_location => 'Месть установки';
 
   @override
-  String get jre_executable => 'JRE executable';
+  String get jre_executable => 'Исполняемый файл JRE';
 
   @override
-  String get extension_server_jar => 'Extension server JAR';
+  String get extension_server_jar => 'JAR сервера расширений';
 
   @override
-  String get installed_version => 'Installed version';
+  String get installed_version => 'Установленная версия';
 
   @override
-  String get latest_version => 'Latest version';
+  String get latest_version => 'Последняя версия';
 
   @override
   String get apkbridge_description =>
-      'Use ApkBridge when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.';
+      'Используйте ApkBridge, когда вам нужен отдельный прокси-сервер для Android-устройства. Установите адрес прокси здесь и загрузите APK с GitHub.';
 
   @override
-  String get set_proxy_address => 'Set proxy address';
+  String get set_proxy_address => 'Установить адрес прокси';
 
   @override
   String get no_newer_proxy_server_release_available =>
-      'No newer proxy server release is available.';
+      'Нет доступных новых версий прокси-сервера.';
 
   @override
   String get could_not_check_proxy_server_updates =>
-      'Could not check for proxy server updates.';
+      'Не удалось проверить обновления прокси-сервера.';
 
   @override
   String get no_extension_server_bundle_available_for_this_platform =>
-      'No extension server bundle is available for this platform.';
+      'Для этой платформы нет доступного пакета сервера расширений.';
 
   @override
   String failed_to_download_bundle(Object statusCode) {
-    return 'Failed to download bundle ($statusCode).';
+    return 'Ошибка загрузки пакета ($statusCode).';
   }
 
   @override
   String get downloaded_bundle_missing_expected_files =>
-      'The downloaded bundle does not contain the expected files.';
+      'Загруженный пакет не содержит ожидаемых файлов.';
 
   @override
-  String get extension_server_files_ready =>
-      'Extension server files are ready.';
+  String get extension_server_files_ready => 'Файлы сервера расширений готовы.';
 
   @override
   String get ios_extension_server_import_hint =>
-      'On iOS the server is installed inside the app sandbox. Use \"Import existing JAR\" to bring in a downloaded file.';
+      'На iOS сервер устанавливается внутри песочницы приложения. Используйте «Импортировать существующий JAR», чтобы добавить загруженный файл.';
 
   @override
-  String get select_extension_server_folder => 'Select extension server folder';
+  String get select_extension_server_folder =>
+      'Выберите папку сервера расширений';
 
   @override
-  String get selected_folder_does_not_exist =>
-      'The selected folder does not exist.';
+  String get selected_folder_does_not_exist => 'Выбранная папка не существует.';
 
   @override
   String get no_extension_server_files_found_in_selected_folder =>
-      'No extension server files were found in the selected folder.';
+      'Файлы сервера расширений в выбранной папке не найдены.';
 
   @override
   String get extension_server_files_linked =>
-      'Extension server files were linked.';
+      'Файлы сервера расширений привязаны.';
 
   @override
-  String get select_extension_server_jar => 'Select extension server JAR';
+  String get select_extension_server_jar => 'Выбрать JAR-файл сервера';
 
   @override
   String get selected_file_could_not_be_accessed =>
-      'The selected file could not be accessed.';
+      'Не удалось получить доступ к выбранному файлу.';
 
   @override
   String get extension_server_jar_imported =>
-      'Extension server JAR was imported.';
+      'JAR-файл сервера расширений импортирован.';
 
   @override
   String get could_not_launch_apk_bridge_page =>
-      'Could not launch the ApkBridge page.';
+      'Не удалось запустить страницу ApkBridge.';
 
   @override
   String get proxy_server_ip_hint =>
-      'Server IP (e.g., 10.0.0.5 or https://example.com)';
+      'IP-адрес сервера (например, 10.0.0.5 или https://example.com)';
 
   @override
-  String get not_configured => 'Not configured';
+  String get not_configured => 'Не настроено';
 
   @override
-  String get webview => 'Webview';
+  String get webview => 'Веб-просмотр';
 }

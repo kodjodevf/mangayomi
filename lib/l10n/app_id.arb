@@ -591,5 +591,245 @@
     "nav_layout_edge": "Tepi",
     "nav_layout_right_and_left": "Kanan dan Kiri",
     "nav_layout_disabled": "Dinonaktifkan",
-    "color_enhancements": "Peningkatan Warna"
+    "color_enhancements": "Peningkatan Warna",
+    "split_epub_chapters": "Bagi menjadi bab",
+    "split_epub_chapters_description": "Impor setiap bab EPUB sebagai entri terpisah",
+    "compression_info": "Semakin tinggi kompresi, semakin sedikit ruang yang digunakan file backup, tetapi menggunakan lebih banyak CPU. Default: {level}",
+    "mass_migration_title": "Migrasi massal",
+    "mass_migration_preview_items": "Pratinjau item",
+    "mass_migration_destination_source": "Sumber tujuan",
+    "mass_migration_no_library_items": "Tidak ada item pustaka yang tersedia untuk migrasi massal.",
+    "mass_migration_no_destination_sources": "Tidak ada sumber tujuan terpasang yang tersedia.",
+    "mass_migration_installed": "Terpasang",
+    "mass_migration_items_ready_for_review": "{count, plural, =1{1 item siap ditinjau} other{{count} item siap ditinjau}}",
+    "@mass_migration_items_ready_for_review": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_item_count": "{count, plural, =1{1 item} other{{count} item}}",
+    "@mass_migration_item_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_select_destination_source": "Pilih sumber tujuan",
+    "mass_migration_finding_matches": "Mencari kecocokan di {source} • {language}",
+    "@mass_migration_finding_matches": {
+        "placeholders": {
+            "source": {},
+            "language": {}
+        }
+    },
+    "mass_migration_processing_item": "Memproses item {current} dari {total}",
+    "@mass_migration_processing_item": {
+        "placeholders": {
+            "current": {
+                "type": "int"
+            },
+            "total": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_waiting_next_item": "Menunggu 2 detik sebelum item berikutnya...",
+    "mass_migration_waiting_next_migration": "Menunggu 2 detik sebelum migrasi berikutnya...",
+    "mass_migration_matched_so_far": "Cocok sejauh ini: {count}",
+    "@mass_migration_matched_so_far": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_no_match_count": "Tidak ada kecocokan: {count}",
+    "@mass_migration_no_match_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_review_matches": "Tinjau kecocokan untuk {source}",
+    "@mass_migration_review_matches": {
+        "placeholders": {
+            "source": {}
+        }
+    },
+    "mass_migration_found_matches": "Kecocokan ditemukan: {count}",
+    "@mass_migration_found_matches": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_no_matches": "Tidak ada kecocokan: {count}",
+    "@mass_migration_no_matches": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_selected_to_migrate": "Dipilih untuk migrasi: {count}",
+    "@mass_migration_selected_to_migrate": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_finish_review": "Selesai meninjau",
+    "mass_migration_migrate_selected": "Migrasi item terpilih ({count})",
+    "@mass_migration_migrate_selected": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_migrating_selected": "Memigrasi item terpilih ke {source}",
+    "@mass_migration_migrating_selected": {
+        "placeholders": {
+            "source": {}
+        }
+    },
+    "mass_migration_no_items_selected": "Tidak ada item yang dipilih untuk migrasi.",
+    "mass_migration_migrating_item": "Memigrasi item {current} dari {total}",
+    "@mass_migration_migrating_item": {
+        "placeholders": {
+            "current": {
+                "type": "int"
+            },
+            "total": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_complete": "Migrasi massal selesai",
+    "mass_migration_complete_success_message": "Semua item terpilih berhasil diproses.",
+    "mass_migration_complete_partial_message": "Migrasi selesai dengan beberapa item yang masih memerlukan perhatian manual.",
+    "mass_migration_route_summary": "{source} → {destination}",
+    "@mass_migration_route_summary": {
+        "placeholders": {
+            "source": {},
+            "destination": {}
+        }
+    },
+    "mass_migration_processed": "Diproses",
+    "mass_migration_matched": "Cocok",
+    "mass_migration_migrated": "Dimigrasikan",
+    "mass_migration_skipped": "Dilompati",
+    "mass_migration_failed": "Gagal",
+    "mass_migration_failed_items": "Item Gagal",
+    "mass_migration_exit": "Keluar dari Migrasi Massal",
+    "mass_migration_no_destination_match": "Tidak ditemukan kecocokan tujuan",
+    "mass_migration_query": "Kueri: {query}",
+    "@mass_migration_query": {
+        "placeholders": {
+            "query": {}
+        }
+    },
+    "mass_migration_skip": "Lompati",
+    "mass_migration_loading": "Memuat...",
+    "mass_migration_choose_another_result": "Pilih hasil lain",
+    "mass_migration_source_chapters": "Bab sumber",
+    "mass_migration_destination_chapters": "Bab tujuan",
+    "mass_migration_chapter_count": "{count, plural, =1{1 bab} other{{count} bab}}",
+    "@mass_migration_chapter_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_source_chapter_count": "{count, plural, =1{1 bab sumber} other{{count} bab sumber}}",
+    "@mass_migration_source_chapter_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_destination_chapter_count": "{count, plural, =1{1 bab tujuan} other{{count} bab tujuan}}",
+    "@mass_migration_destination_chapter_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_no_chapters_found": "Tidak ada bab ditemukan.",
+    "mass_migration_and_more_chapters": "Dan {count} lagi...",
+    "@mass_migration_and_more_chapters": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_unknown_title": "Judul tidak dikenal",
+    "mass_migration_unknown_match": "Kecocokan tidak dikenal",
+    "mass_migration_unknown_source": "Sumber tidak dikenal",
+    "mass_migration_unknown_chapter": "Bab tidak dikenal",
+    "delete_download_after_reading": "Hapus unduhan setelah dibaca",
+    "total": "Total",
+    "mean_per_title": "Rerata per judul",
+    "completion_rate": "Tingkat penyelesaian",
+    "watching_time": "Waktu menonton",
+    "reading_time": "Waktu membaca",
+    "average_chapters_per_title": "Rata-rata bab per judul",
+    "read_percentage": "Persentase baca",
+    "entries": "Entri",
+    "extension_server_intro_with_jre": "Unduh bundel server proxy sebelum menggunakan ekstensi Mihon. Bundel tersebut mencakup JRE dan JAR server ekstensi.",
+    "extension_server_intro_ios": "Unduh JAR server proxy sebelum menggunakan ekstensi Mihon. iOS hanya memerlukan JAR server ekstensi.",
+    "checking_files": "Memeriksa file",
+    "files_installed": "File terpasang",
+    "files_missing": "File hilang",
+    "update_files": "Perbarui file",
+    "up_to_date": "Sudah terbaru",
+    "choose_location": "Pilih lokasi",
+    "import_existing_jar": "Impor JAR yang ada",
+    "detect_files_in_selected_folder": "Deteksi file di folder yang dipilih",
+    "preparing_download": "Menyiapkan unduhan...",
+    "app_install_location": "Lokasi pemasangan aplikasi",
+    "install_location": "Lokasi pemasangan",
+    "jre_executable": "Executable JRE",
+    "extension_server_jar": "JAR server ekstensi",
+    "installed_version": "Versi terpasang",
+    "latest_version": "Versi terbaru",
+    "apkbridge_description": "Gunakan ApkBridge saat Anda memerlukan proxy perangkat Android terpisah. Atur alamat proxy di sini dan unduh APK dari GitHub.",
+    "set_proxy_address": "Atur alamat proxy",
+    "no_extension_server_bundle_available_for_this_platform": "Tidak ada bundel server ekstensi yang tersedia untuk platform ini.",
+    "failed_to_download_bundle": "Gagal mengunduh bundel ({statusCode}).",
+    "@failed_to_download_bundle": {
+        "placeholders": {
+            "statusCode": {}
+        }
+    },
+    "downloaded_bundle_missing_expected_files": "Bundel yang diunduh tidak berisi file yang diharapkan.",
+    "extension_server_files_ready": "File server ekstensi sudah siap.",
+    "ios_extension_server_import_hint": "Di iOS, server dipasang di dalam sandbox aplikasi. Gunakan \"Impor JAR yang ada\" untuk memasukkan file yang diunduh.",
+    "select_extension_server_folder": "Pilih folder server ekstensi",
+    "selected_folder_does_not_exist": "Folder yang dipilih tidak ada.",
+    "no_extension_server_files_found_in_selected_folder": "Tidak ada file server ekstensi ditemukan di folder yang dipilih.",
+    "extension_server_files_linked": "File server ekstensi telah ditautkan.",
+    "selected_file_could_not_be_accessed": "File yang dipilih tidak dapat diakses.",
+    "extension_server_jar_imported": "JAR server ekstensi berhasil diimpor.",
+    "could_not_launch_apk_bridge_page": "Tidak dapat meluncurkan halaman ApkBridge.",
+    "not_configured": "Belum dikonfigurasi",
+    "webview": "Tampilan Web",
+    "compression_level": "Tingkat kompresi",
+    "android_proxy_server_mihon": "Server Proxy Android (Mihon)",
+    "android_proxy_server_mihon_description": "Unduh dan konfigurasikan server proxy yang diperlukan untuk menggunakan ekstensi Mihon.",
+    "mihon_proxy_server": "Server proxy Mihon",
+    "no_newer_proxy_server_release_available": "Tidak ada versi server proxy baru yang tersedia.",
+    "could_not_check_proxy_server_updates": "Tidak dapat memeriksa pembaruan server proxy.",
+    "select_extension_server_jar": "Pilih JAR server ekstensi",
+    "proxy_server_ip_hint": "IP Server (mis. 10.0.0.5 atau https://example.com)"
 }

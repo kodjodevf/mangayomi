@@ -596,5 +596,276 @@
     "nav_layout_edge": "边缘",
     "nav_layout_right_and_left": "右和左",
     "nav_layout_disabled": "已禁用",
-    "color_enhancements": "色彩增强"
+    "color_enhancements": "色彩增强",
+    "split_epub_chapters": "分章节导入",
+    "split_epub_chapters_description": "将每个EPUB章节作为单独条目导入",
+    "compression_info": "压缩率越高，备份文件占用的空间越小，但会消耗更多的CPU。默认值：{level}",
+    "mass_migration_title": "批量迁移",
+    "mass_migration_preview_items": "预览项目",
+    "mass_migration_destination_source": "目标源",
+    "mass_migration_no_library_items": "没有可供批量迁移的图库项目。",
+    "mass_migration_no_destination_sources": "没有可用的已安装目标源。",
+    "mass_migration_installed": "已安装",
+    "mass_migration_items_ready_for_review": "{count, plural, =1{1个项目准备好复检} other{{count}个项目准备好复检}}",
+    "@mass_migration_items_ready_for_review": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_item_count": "{count, plural, =1{1个项目} other{{count}个项目}}",
+    "@mass_migration_item_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_select_destination_source": "选择目标源",
+    "mass_migration_finding_matches": "正在 {source} • {language} 中寻找匹配项",
+    "@mass_migration_finding_matches": {
+        "placeholders": {
+            "source": {},
+            "language": {}
+        }
+    },
+    "mass_migration_processing_item": "正在处理第 {current} / {total} 个项目",
+    "@mass_migration_processing_item": {
+        "placeholders": {
+            "current": {
+                "type": "int"
+            },
+            "total": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_waiting_next_item": "等待2秒后处理下一个项目...",
+    "mass_migration_waiting_next_migration": "等待2秒后处理下一项迁移...",
+    "mass_migration_matched_so_far": "目前已匹配: {count}",
+    "@mass_migration_matched_so_far": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_no_match_count": "未匹配: {count}",
+    "@mass_migration_no_match_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_review_matches": "复检 {source} 的匹配项",
+    "@mass_migration_review_matches": {
+        "placeholders": {
+            "source": {}
+        }
+    },
+    "mass_migration_found_matches": "找到匹配项: {count}",
+    "@mass_migration_found_matches": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_no_matches": "未找到匹配: {count}",
+    "@mass_migration_no_matches": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_selected_to_migrate": "选定迁移: {count}",
+    "@mass_migration_selected_to_migrate": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_finish_review": "结束复检",
+    "mass_migration_migrate_selected": "迁移选定项目 ({count})",
+    "@mass_migration_migrate_selected": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_migrating_selected": "正在将选定项目迁移至 {source}",
+    "@mass_migration_migrating_selected": {
+        "placeholders": {
+            "source": {}
+        }
+    },
+    "mass_migration_no_items_selected": "未选定任何迁移项目。",
+    "mass_migration_migrating_item": "正在迁移第 {current} / {total} 个项目",
+    "@mass_migration_migrating_item": {
+        "placeholders": {
+            "current": {
+                "type": "int"
+            },
+            "total": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_complete": "批量迁移完成",
+    "mass_migration_complete_success_message": "所有选定项目均已处理成功。",
+    "mass_migration_complete_partial_message": "迁移结束，但部分项目仍需手动处理。",
+    "mass_migration_route_summary": "{source} → {destination}",
+    "@mass_migration_route_summary": {
+        "placeholders": {
+            "source": {},
+            "destination": {}
+        }
+    },
+    "mass_migration_processed": "已处理",
+    "mass_migration_matched": "已匹配",
+    "mass_migration_migrated": "已迁移",
+    "mass_migration_skipped": "已跳过",
+    "mass_migration_failed": "失败",
+    "mass_migration_failed_items": "失败项目",
+    "mass_migration_exit": "退出批量迁移",
+    "mass_migration_no_destination_match": "未找到目标匹配项",
+    "mass_migration_query": "查询条件: {query}",
+    "@mass_migration_query": {
+        "placeholders": {
+            "query": {}
+        }
+    },
+    "mass_migration_skip": "跳过",
+    "mass_migration_loading": "正在加载...",
+    "mass_migration_choose_another_result": "选择其他结果",
+    "mass_migration_source_chapters": "原章节",
+    "mass_migration_destination_chapters": "目标章节",
+    "mass_migration_chapter_count": "{count, plural, =1{1个章节} other{{count}个章节}}",
+    "@mass_migration_chapter_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_source_chapter_count": "{count, plural, =1{1个原章节} other{{count}个原章节}}",
+    "@mass_migration_source_chapter_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_destination_chapter_count": "{count, plural, =1{1个目标章节} other{{count}个目标章节}}",
+    "@mass_migration_destination_chapter_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_no_chapters_found": "未找到章节。",
+    "mass_migration_and_more_chapters": "以及更多 {count} 个...",
+    "@mass_migration_and_more_chapters": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_unknown_title": "未知标题",
+    "mass_migration_unknown_match": "未知匹配",
+    "mass_migration_unknown_source": "未知源",
+    "mass_migration_unknown_chapter": "未知章节",
+    "delete_download_after_reading": "完成阅读后删除下载内容",
+    "total": "总计",
+    "mean_per_title": "单个标题平均",
+    "completion_rate": "完成率",
+    "watching_time": "观看时间",
+    "reading_time": "阅读时间",
+    "average_chapters_per_title": "单个标题平均章节数",
+    "read_percentage": "阅读百分比",
+    "entries": "条目",
+    "extension_server_intro_with_jre": "在使用 Mihon 扩展前请先下载代理服务器包。该包内含 JRE 和扩展服务器 JAR。",
+    "extension_server_intro_ios": "在使用 Mihon 扩展前请先下载代理服务器 JAR。iOS 仅需扩展服务器 JAR。",
+    "checking_files": "正在检查文件",
+    "files_installed": "文件已安装",
+    "files_missing": "文件缺失",
+    "update_files": "更新文件",
+    "up_to_date": "已是最新",
+    "choose_location": "选择路径",
+    "import_existing_jar": "导入现有 JAR",
+    "detect_files_in_selected_folder": "在选定文件夹中检测文件",
+    "preparing_download": "正在准备下载...",
+    "app_install_location": "应用安装路径",
+    "install_location": "安装位置",
+    "jre_executable": "JRE 可执行文件",
+    "extension_server_jar": "扩展服务器 JAR",
+    "installed_version": "当前版本",
+    "latest_version": "最新版本",
+    "apkbridge_description": "当您需要独立的 Android 设备代理时，请使用 ApkBridge。在此设置代理地址，并从 GitHub 下载 APK。",
+    "set_proxy_address": "设置代理地址",
+    "no_extension_server_bundle_available_for_this_platform": "当前平台没有可用的扩展服务器包。",
+    "failed_to_download_bundle": "下载包失败 ({statusCode})。",
+    "@failed_to_download_bundle": {
+        "placeholders": {
+            "statusCode": {}
+        }
+    },
+    "downloaded_bundle_missing_expected_files": "下载的项目不包含预期文件。",
+    "extension_server_files_ready": "扩展服务器文件已就绪。",
+    "ios_extension_server_import_hint": "在 iOS 上，服务器安装在应用沙盒内。请使用“导入现有 JAR”来导入已下载的文件。",
+    "select_extension_server_folder": "选择扩展服务器文件夹",
+    "selected_folder_does_not_exist": "选定文件夹不存在。",
+    "no_extension_server_files_found_in_selected_folder": "在选定文件夹中未找到扩展服务器文件。",
+    "extension_server_files_linked": "扩展服务器文件已链接。",
+    "selected_file_could_not_be_accessed": "选定文件无法访问。",
+    "extension_server_jar_imported": "扩展服务器 JAR 已导入。",
+    "could_not_launch_apk_bridge_page": "无法启动 ApkBridge 页面。",
+    "not_configured": "未配置",
+    "webview": "Webview",
+    "mass_migration_title": "批量迁移",
+    "mass_migration_description": "将您的图库条目从一个源迁移到另一个源。",
+    "mass_migration_selection_title": "迁移选择",
+    "mass_migration_source_selecting_description": "选择要迁移到的一个或多个源。",
+    "mass_migration_manga_selecting_description": "选择要迁移到新源的标题。",
+    "mass_migration_status_idle": "空闲",
+    "mass_migration_status_searching": "正在搜索...",
+    "mass_migration_status_migrating": "正在迁移...",
+    "mass_migration_status_finished": "已完成",
+    "mass_migration_action_migrate": "迁移",
+    "mass_migration_action_copy": "复制",
+    "mass_migration_action_skip_step": "跳过步骤",
+    "mass_migration_option_keep_old": "迁移后保留旧条目",
+    "mass_migration_dialog_title": "迁移 {count, plural, other{{count} 个标题}}？",
+    "mass_migration_dialog_content": "这将从所选源中用新条目替换当前条目。",
+    "mass_migration_help_title": "如何使用批量迁移",
+    "mass_migration_help_content": "1. 选择源源。\n2. 选择您要迁移的任务标题。\n3. 选择目的地源。\n4. 检查匹配情况并开始迁移。",
+    "mihon_proxy_server": "Mihon 代理服务器",
+    "android_proxy_server_mihon_description": "下载并配置使用 Mihon 扩展所需的代理服务器。",
+    "could_not_check_proxy_server_updates": "无法检查代理服务器更新。",
+    "proxy_server_ip_hint": "服务器 IP（例如 10.0.0.5 或 https://example.com）",
+    "no_newer_proxy_server_release_available": "没有可用的新代理服务器版本。",
+    "statistics_title": "统计",
+    "statistics_total_manga": "漫画总计",
+    "statistics_total_anime": "动漫总计",
+    "statistics_chapters_read": "已读章节",
+    "statistics_episodes_watched": "已看集数",
+    "statistics_reading_time": "阅读总用时",
+    "statistics_watching_time": "观看总用时",
+    "statistics_mean_score": "平均分",
+    "statistics_score_distribution": "分值分布",
+    "statistics_status_distribution": "状态分布",
+    "statistics_reading_time_unit_hour": "{count, plural, other{{count} 小时}}",
+    "statistics_reading_time_unit_minute": "{count, plural, other{{count} 分钟}}",
+    "statistics_reading_time_unit_day": "{count, plural, other{{count} 天}}",
+    "statistics_no_data": "数据不足，无法显示统计信息。",
+    "compression_level": "压缩级别",
+    "android_proxy_server_mihon": "Android 代理服务器（Mihon）",
+    "select_extension_server_jar": "选择扩展服务器 JAR"
 }

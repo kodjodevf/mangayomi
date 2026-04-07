@@ -112,11 +112,11 @@ class AppLocalizationsJa extends AppLocalizations {
   String get compact_grid => 'コンパクトグリッド';
 
   @override
-  String get compression_level => 'Compression level';
+  String get compression_level => '圧縮レベル';
 
   @override
   String compression_info(Object level) {
-    return 'The higher the compression, the less space the backup file takes, but it uses more CPU. Default: $level';
+    return '圧縮が高い=スペースが少ないがCPUが多い。デフォルト: $level';
   }
 
   @override
@@ -216,10 +216,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get migrate => '移行';
 
   @override
-  String get mass_migration_title => 'Mass migration';
+  String get mass_migration_title => '一括移行';
 
   @override
-  String get mass_migration_preview_items => 'Preview items';
+  String get mass_migration_preview_items => 'プレビューアイテム';
 
   @override
   String get mass_migration_destination_source => 'Destination source';
@@ -643,7 +643,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get save_as_cbz_archive => 'CBZアーカイブとして保存';
 
   @override
-  String get delete_download_after_reading => 'Delete download after reading';
+  String get delete_download_after_reading => '読後に削除';
 
   @override
   String get concurrent_downloads => '同時ダウンロード';
@@ -865,11 +865,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get import_files => 'ファイル';
 
   @override
-  String get split_epub_chapters => 'Split into chapters';
+  String get split_epub_chapters => 'チャプターに分割';
 
   @override
-  String get split_epub_chapters_description =>
-      'Import each EPUB chapter as a separate entry';
+  String get split_epub_chapters_description => '各EPUBチャプターを別のエントリとしてインポート';
 
   @override
   String get nothing_read_recently => '最近読んだものがありません';
@@ -2104,30 +2103,30 @@ class AppLocalizationsJa extends AppLocalizations {
   String get color_enhancements => '色の強化';
 
   @override
-  String get total => 'Total';
+  String get total => '合計';
 
   @override
-  String get mean_per_title => 'Mean per Title';
+  String get mean_per_title => 'タイトルごとの平均';
 
   @override
-  String get completion_rate => 'Completion Rate';
+  String get completion_rate => '完了率';
 
   @override
-  String get watching_time => 'Watch Time';
+  String get watching_time => '視聴時間';
 
   @override
-  String get reading_time => 'Reading Time';
+  String get reading_time => '読書時間';
 
   @override
   String average_chapters_per_title(Object title) {
-    return 'Average Chapters per $title';
+    return 'タイトルあたりの平均章数';
   }
 
   @override
-  String get read_percentage => 'Read Percentage';
+  String get read_percentage => '読みの割合';
 
   @override
-  String get entries => 'Entries';
+  String get entries => 'エントリ';
 
   @override
   String get android_proxy_server_mihon => 'Android Proxy Server (Mihon)';

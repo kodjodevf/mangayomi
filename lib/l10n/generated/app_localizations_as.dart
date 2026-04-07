@@ -114,11 +114,11 @@ class AppLocalizationsAs extends AppLocalizations {
   String get compact_grid => 'সংক্ষিপ্ত গ্ৰিড';
 
   @override
-  String get compression_level => 'Compression level';
+  String get compression_level => 'সংকোচনৰ স্তৰ';
 
   @override
   String compression_info(Object level) {
-    return 'The higher the compression, the less space the backup file takes, but it uses more CPU. Default: $level';
+    return 'সংকোচন যিমানে বেছি হ’ব, বেকাপ ফাইলটোৱে সিমানেই কম ঠাই ল’ব, কিন্তু ই অধিক CPU ব্যৱহাৰ কৰিব। ডিফল্ট: $level';
   }
 
   @override
@@ -221,32 +221,32 @@ class AppLocalizationsAs extends AppLocalizations {
   String get migrate => 'স্থানান্তৰ';
 
   @override
-  String get mass_migration_title => 'Mass migration';
+  String get mass_migration_title => 'সামূহিক স্থানান্তৰ';
 
   @override
-  String get mass_migration_preview_items => 'Preview items';
+  String get mass_migration_preview_items => 'আইটেমসমূহৰ পূৰ্ববীক্ষণ';
 
   @override
-  String get mass_migration_destination_source => 'Destination source';
+  String get mass_migration_destination_source => 'গন্তব্য উৎস';
 
   @override
   String get mass_migration_no_library_items =>
-      'No library items are available for mass migration.';
+      'সামূহিক স্থানান্তৰৰ বাবে কোনো পুথিভঁৰালৰ আইটেম উপলব্ধ নহয়।';
 
   @override
   String get mass_migration_no_destination_sources =>
-      'No installed destination sources are available.';
+      'কোনো ইনষ্টল কৰা গন্তব্য উৎস উপলব্ধ নহয়।';
 
   @override
-  String get mass_migration_installed => 'Installed';
+  String get mass_migration_installed => 'ইনষ্টল কৰা হৈছে';
 
   @override
   String mass_migration_items_ready_for_review(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count items ready for review',
-      one: '1 item ready for review',
+      other: '$count টা আইটেম পৰ্যালোচনাৰ বাবে সাজু',
+      one: '১ টা আইটেম পৰ্যালোচনাৰ বাবে সাজু',
     );
     return '$_temp0';
   }
@@ -256,96 +256,96 @@ class AppLocalizationsAs extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count items',
-      one: '1 item',
+      other: '$count টা আইটেম',
+      one: '১ টা আইটেম',
     );
     return '$_temp0';
   }
 
   @override
   String get mass_migration_select_destination_source =>
-      'Select destination source';
+      'গন্তব্য উৎস বাছনি কৰক';
 
   @override
   String mass_migration_finding_matches(Object source, Object language) {
-    return 'Finding matches in $source • $language';
+    return '$source • $language ত মিল বিচাৰি থকা হৈছে';
   }
 
   @override
   String mass_migration_processing_item(int current, int total) {
-    return 'Processing item $current of $total';
+    return '$total ৰ ভিতৰত $current নম্বৰ আইটেম প্ৰক্ৰিয়াকৰণ কৰা হৈছে';
   }
 
   @override
   String get mass_migration_waiting_next_item =>
-      'Waiting 2 seconds before the next item...';
+      'পৰৱৰ্তী আইটেমৰ বাবে ২ চেকেণ্ড অপেক্ষা কৰা হৈছে...';
 
   @override
   String get mass_migration_waiting_next_migration =>
-      'Waiting 2 seconds before the next migration...';
+      'পৰৱৰ্তী স্থানান্তৰৰ বাবে ২ চেকেণ্ড অপেক্ষা কৰা হৈছে...';
 
   @override
   String mass_migration_matched_so_far(int count) {
-    return 'Matched so far: $count';
+    return 'এতিয়ালৈকে মিলা আইটেম: $count';
   }
 
   @override
   String mass_migration_no_match_count(int count) {
-    return 'No match: $count';
+    return 'মিলা নাই: $count';
   }
 
   @override
   String mass_migration_review_matches(Object source) {
-    return 'Review matches for $source';
+    return '$source ৰ বাবে অমিলবোৰ পৰ্যালোচনা কৰক';
   }
 
   @override
   String mass_migration_found_matches(int count) {
-    return 'Found matches: $count';
+    return 'মিলা আইটেম পোৱা গৈছে: $count';
   }
 
   @override
   String mass_migration_no_matches(int count) {
-    return 'No matches: $count';
+    return 'কোনো মিল নাই: $count';
   }
 
   @override
   String mass_migration_selected_to_migrate(int count) {
-    return 'Selected to migrate: $count';
+    return 'স্থানান্তৰৰ বাবে নিৰ্বাচিত: $count';
   }
 
   @override
-  String get mass_migration_finish_review => 'Finish review';
+  String get mass_migration_finish_review => 'পৰ্যালোচনা সমাপ্ত কৰক';
 
   @override
   String mass_migration_migrate_selected(int count) {
-    return 'Migrate selected items ($count)';
+    return 'নিৰ্বাচিত আইটেমসমূহ স্থানান্তৰ কৰক ($count)';
   }
 
   @override
   String mass_migration_migrating_selected(Object source) {
-    return 'Migrating selected items to $source';
+    return 'নিৰ্বাচিত আইটেমসমূহ $source লৈ স্থানান্তৰ কৰা হৈছে';
   }
 
   @override
   String get mass_migration_no_items_selected =>
-      'No items selected for migration.';
+      'স্থানান্তৰৰ বাবে কোনো আইটেম বাছনি কৰা হোৱা নাই।';
 
   @override
   String mass_migration_migrating_item(int current, int total) {
-    return 'Migrating item $current of $total';
+    return '$total ৰ ভিতৰত $current নম্বৰ আইটেম স্থানান্তৰ কৰা হৈছে';
   }
 
   @override
-  String get mass_migration_complete => 'Mass migration complete';
+  String get mass_migration_complete => 'সামূহিক স্থানান্তৰ সম্পন্ন হ’ল';
 
   @override
   String get mass_migration_complete_success_message =>
-      'All selected items were processed successfully.';
+      'সকলো নিৰ্বাচিত আইটেম সফলতাৰে প্ৰক্ৰিয়াকৰণ কৰা হৈছে।';
 
   @override
   String get mass_migration_complete_partial_message =>
-      'Migration finished with a few items that still need manual attention.';
+      'স্থানান্তৰ সম্পূৰ্ণ হৈছে যদিও কিছুমান আইটেমৰ বাবে এতিয়াও হাতেৰে মনোযোগ দিয়াৰ প্ৰয়োজন আছে।';
 
   @override
   String mass_migration_route_summary(Object source, Object destination) {
@@ -353,57 +353,57 @@ class AppLocalizationsAs extends AppLocalizations {
   }
 
   @override
-  String get mass_migration_processed => 'Processed';
+  String get mass_migration_processed => 'প্ৰক্ৰিয়াকৃত';
 
   @override
-  String get mass_migration_matched => 'Matched';
+  String get mass_migration_matched => 'মিলা';
 
   @override
-  String get mass_migration_migrated => 'Migrated';
+  String get mass_migration_migrated => 'স্থানান্তৰিত';
 
   @override
-  String get mass_migration_skipped => 'Skipped';
+  String get mass_migration_skipped => 'স্কিপ কৰা হৈছে';
 
   @override
-  String get mass_migration_failed => 'Failed';
+  String get mass_migration_failed => 'ব্যৰ্থ হৈছে';
 
   @override
-  String get mass_migration_failed_items => 'Failed Items';
+  String get mass_migration_failed_items => 'ব্যৰ্থ আইটেমসমূহ';
 
   @override
-  String get mass_migration_exit => 'Exit Mass Migration';
+  String get mass_migration_exit => 'সামূহিক স্থানান্তৰৰ পৰা ওলাই যাওক';
 
   @override
   String get mass_migration_no_destination_match =>
-      'No destination match found';
+      'কোনো গন্তব্য মিল পোৱা নগ’ল';
 
   @override
   String mass_migration_query(Object query) {
-    return 'Query: $query';
+    return 'প্ৰশ্ন: $query';
   }
 
   @override
-  String get mass_migration_skip => 'Skip';
+  String get mass_migration_skip => 'স্কিপ কৰক';
 
   @override
-  String get mass_migration_loading => 'Loading...';
+  String get mass_migration_loading => 'লোড হৈ আছে...';
 
   @override
-  String get mass_migration_choose_another_result => 'Choose another result';
+  String get mass_migration_choose_another_result => 'আন এটা ফলাফল বাছনি কৰক';
 
   @override
-  String get mass_migration_source_chapters => 'Source chapters';
+  String get mass_migration_source_chapters => 'উৎস অধ্যায়সমূহ';
 
   @override
-  String get mass_migration_destination_chapters => 'Destination chapters';
+  String get mass_migration_destination_chapters => 'গন্তব্য অধ্যায়সমূহ';
 
   @override
   String mass_migration_chapter_count(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count chapters',
-      one: '1 chapter',
+      other: '$count টা অধ্যায়',
+      one: '১ টা অধ্যায়',
     );
     return '$_temp0';
   }
@@ -413,8 +413,8 @@ class AppLocalizationsAs extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count source chapters',
-      one: '1 source chapter',
+      other: '$count টা উৎস অধ্যায়',
+      one: '১ টা উৎস অধ্যায়',
     );
     return '$_temp0';
   }
@@ -424,31 +424,31 @@ class AppLocalizationsAs extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count destination chapters',
-      one: '1 destination chapter',
+      other: '$count টা গন্তব্য অধ্যায়',
+      one: '১ টা গন্তব্য অধ্যায়',
     );
     return '$_temp0';
   }
 
   @override
-  String get mass_migration_no_chapters_found => 'No chapters found.';
+  String get mass_migration_no_chapters_found => 'কোনো অধ্যায় পোৱা নগ’ল।';
 
   @override
   String mass_migration_and_more_chapters(int count) {
-    return 'And $count more...';
+    return 'আৰু $count টা অধিক...';
   }
 
   @override
-  String get mass_migration_unknown_title => 'Unknown title';
+  String get mass_migration_unknown_title => 'অজ্ঞাত শিৰোনাম';
 
   @override
-  String get mass_migration_unknown_match => 'Unknown match';
+  String get mass_migration_unknown_match => 'অজ্ঞাত মিল';
 
   @override
-  String get mass_migration_unknown_source => 'Unknown source';
+  String get mass_migration_unknown_source => 'অজ্ঞাত উৎস';
 
   @override
-  String get mass_migration_unknown_chapter => 'Unknown chapter';
+  String get mass_migration_unknown_chapter => 'অজ্ঞাত অধ্যায়';
 
   @override
   String get migrate_confirm => 'অন্য উৎসলৈ স্থানান্তৰ কৰক';
@@ -650,7 +650,8 @@ class AppLocalizationsAs extends AppLocalizations {
   String get save_as_cbz_archive => 'CBZ আৰ্কাইভ হিচাপে সাঁচক';
 
   @override
-  String get delete_download_after_reading => 'Delete download after reading';
+  String get delete_download_after_reading =>
+      'পঢ়াৰ পিছত ডাউনলোড কৰা ফাইল ডিলিট কৰক';
 
   @override
   String get concurrent_downloads => 'সমসাময়িক ডাউনলোড';
@@ -872,11 +873,11 @@ class AppLocalizationsAs extends AppLocalizations {
   String get import_files => 'ফাইল';
 
   @override
-  String get split_epub_chapters => 'Split into chapters';
+  String get split_epub_chapters => 'অধ্যায়লৈ বিভক্ত কৰক';
 
   @override
   String get split_epub_chapters_description =>
-      'Import each EPUB chapter as a separate entry';
+      'প্রতিটি EPUB অধ্যায় পৃথক প্রৱেশ হিচাপে আমদানি কৰক';
 
   @override
   String get nothing_read_recently => 'শেহতীয়াকৈ একো পঢ়া নাই';
@@ -2138,30 +2139,30 @@ class AppLocalizationsAs extends AppLocalizations {
   String get color_enhancements => 'ৰং উন্নতি';
 
   @override
-  String get total => 'Total';
+  String get total => 'সৰ্বমুঠ';
 
   @override
-  String get mean_per_title => 'Mean per Title';
+  String get mean_per_title => 'প্ৰতিটো শিৰোনামৰ গড়';
 
   @override
-  String get completion_rate => 'Completion Rate';
+  String get completion_rate => 'সম্পূৰ্ণ হোৱাৰ হাৰ';
 
   @override
-  String get watching_time => 'Watch Time';
+  String get watching_time => 'চোৱাৰ সময়';
 
   @override
-  String get reading_time => 'Reading Time';
+  String get reading_time => 'পঢ়াৰ সময়';
 
   @override
   String average_chapters_per_title(Object title) {
-    return 'Average Chapters per $title';
+    return 'প্ৰতিটো শিৰোনামৰ গড় অধ্যায়';
   }
 
   @override
-  String get read_percentage => 'Read Percentage';
+  String get read_percentage => 'পঢ়াৰ শতাংশ';
 
   @override
-  String get entries => 'Entries';
+  String get entries => 'প্ৰৱেশসমূহ';
 
   @override
   String get android_proxy_server_mihon => 'Android Proxy Server (Mihon)';

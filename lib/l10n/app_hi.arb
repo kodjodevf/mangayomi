@@ -591,5 +591,303 @@
   "nav_layout_edge": "किनारा",
   "nav_layout_right_and_left": "दाएं और बाएं",
   "nav_layout_disabled": "अक्षम",
-  "color_enhancements": "रंग बढ़ाना"
+  "color_enhancements": "रंग बढ़ाना",
+  "split_epub_chapters": "अध्यायों में विभाजित करें",
+  "split_epub_chapters_description": "प्रत्येक EPUB अध्याय को अलग प्रविष्टि के रूप में आयात करें",
+  "compression_level": "संपीड़न स्तर (Compression level)",
+  "compression_info": "संपीड़न जितना अधिक होगा, बैकअप फ़ाइल उतनी ही कम जगह लेगी, लेकिन यह अधिक CPU का उपयोग करेगी। डिफ़ॉल्ट: {level}",
+  "mass_migration_title": "सामूहिक प्रवासन (Mass migration)",
+  "mass_migration_preview_items": "आइटम पूर्वावलोकन",
+  "mass_migration_destination_source": "गंतव्य स्रोत",
+  "mass_migration_no_library_items": "सामूहिक प्रवासन के लिए कोई लाइब्रेरी आइटम उपलब्ध नहीं हैं।",
+  "mass_migration_no_destination_sources": "कोई स्थापित गंतव्य स्रोत उपलब्ध नहीं हैं।",
+  "mass_migration_installed": "स्थापित",
+  "mass_migration_items_ready_for_review": "{count, plural, =1{1 आइटम समीक्षा के लिए तैयार} other{{count} आइटम समीक्षा के लिए तैयार}}",
+  "@mass_migration_items_ready_for_review": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_item_count": "{count, plural, =1{1 आइटम} other{{count} आइटम}}",
+  "@mass_migration_item_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_select_destination_source": "गंतव्य स्रोत चुनें",
+  "mass_migration_finding_matches": "{source} • {language} में मिलान खोजा जा रहा है",
+  "@mass_migration_finding_matches": {
+    "placeholders": {
+      "source": {},
+      "language": {}
+    }
+  },
+  "mass_migration_processing_item": "{total} में से {current} आइटम प्रोसेस किया जा रहा है",
+  "@mass_migration_processing_item": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_waiting_next_item": "अगले आइटम से पहले 2 सेकंड प्रतीक्षा कर रहे हैं...",
+  "mass_migration_waiting_next_migration": "अगले प्रवासन से पहले 2 सेकंड प्रतीक्षा कर रहे हैं...",
+  "mass_migration_matched_so_far": "अब तक मिलान हुआ: {count}",
+  "@mass_migration_matched_so_far": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_no_match_count": "कोई मिलान नहीं: {count}",
+  "@mass_migration_no_match_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_review_matches": "{source} के लिए मिलान की समीक्षा करें",
+  "@mass_migration_review_matches": {
+    "placeholders": {
+      "source": {}
+    }
+  },
+  "mass_migration_found_matches": "मिले मिलान: {count}",
+  "@mass_migration_found_matches": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_no_matches": "कोई मिलान नहीं: {count}",
+  "@mass_migration_no_matches": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_selected_to_migrate": "प्रवासन के लिए चयनित: {count}",
+  "@mass_migration_selected_to_migrate": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_finish_review": "समीक्षा पूरी करें",
+  "mass_migration_migrate_selected": "चयनित आइटम माइग्रेट करें ({count})",
+  "@mass_migration_migrate_selected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_migrating_selected": "चयनित आइटम को {source} पर माइग्रेट किया जा रहा है",
+  "@mass_migration_migrating_selected": {
+    "placeholders": {
+      "source": {}
+    }
+  },
+  "mass_migration_no_items_selected": "प्रवासन के लिए कोई आइटम नहीं चुना गया।",
+  "mass_migration_migrating_item": "{total} में से {current} आइटम माइग्रेट किया जा रहा है",
+  "@mass_migration_migrating_item": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_complete": "सामूहिक प्रवासन पूरा हुआ",
+  "mass_migration_complete_success_message": "सभी चयनित आइटम सफलतापूर्वक संसाधित किए गए।",
+  "mass_migration_complete_partial_message": "प्रवासन समाप्त हुआ, लेकिन कुछ आइटमों पर अभी भी मैन्युअल ध्यान देने की आवश्यकता है।",
+  "mass_migration_route_summary": "{source} → {destination}",
+  "@mass_migration_route_summary": {
+    "placeholders": {
+      "source": {},
+      "destination": {}
+    }
+  },
+  "mass_migration_processed": "संसाधित",
+  "mass_migration_matched": "मिल गया",
+  "mass_migration_migrated": "माइग्रेट किया गया",
+  "mass_migration_skipped": "छोड़ दिया",
+  "mass_migration_failed": "विफल",
+  "mass_migration_failed_items": "विफल आइटम",
+  "mass_migration_exit": "सामूहिक प्रवासन से बाहर निकलें",
+  "mass_migration_no_destination_match": "कोई गंतव्य मिलान नहीं मिला",
+  "mass_migration_query": "क्वेरी: {query}",
+  "@mass_migration_query": {
+    "placeholders": {
+      "query": {}
+    }
+  },
+  "mass_migration_skip": "छोड़ें",
+  "mass_migration_loading": "लोड हो रहा है...",
+  "mass_migration_choose_another_result": "दूसरा परिणाम चुनें",
+  "mass_migration_source_chapters": "स्रोत अध्याय",
+  "mass_migration_destination_chapters": "गंतव्य अध्याय",
+  "mass_migration_chapter_count": "{count, plural, =1{1 अध्याय} other{{count} अध्याय}}",
+  "@mass_migration_chapter_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_source_chapter_count": "{count, plural, =1{1 स्रोत अध्याय} other{{count} स्रोत अध्याय}}",
+  "@mass_migration_source_chapter_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_destination_chapter_count": "{count, plural, =1{1 गंतव्य अध्याय} other{{count} गंतव्य अध्याय}}",
+  "@mass_migration_destination_chapter_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_no_chapters_found": "कोई अध्याय नहीं मिला।",
+  "mass_migration_and_more_chapters": "और {count} अधिक...",
+  "@mass_migration_and_more_chapters": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_unknown_title": "अज्ञात शीर्षक",
+  "mass_migration_unknown_match": "अज्ञात मिलान",
+  "mass_migration_unknown_source": "अज्ञात स्रोत",
+  "mass_migration_unknown_chapter": "अज्ञात अध्याय",
+  "delete_download_after_reading": "पढ़ने के बाद डाउनलोड हटा दें",
+  "total": "कुल",
+  "mean_per_title": "प्रति शीर्षक औसत",
+  "completion_rate": "पूर्णता दर",
+  "watching_time": "देखने का समय",
+  "reading_time": "पढ़ने का समय",
+  "average_chapters_per_title": "प्रति शीर्षक औसत अध्याय",
+  "read_percentage": "पढ़ने का प्रतिशत",
+  "entries": "प्रविष्टियाँ",
+  "extension_server_intro_with_jre": "मिहोन एक्सटेंशन (Mihon extensions) का उपयोग करने से पहले प्रॉक्सी सर्वर बंडल डाउनलोड करें। बंडल में JRE और एक्सटेंशन सर्वर JAR शामिल है।",
+  "extension_server_intro_ios": "मिहोन एक्सटेंशन का उपयोग करने से पहले प्रॉक्सी सर्वर JAR डाउनलोड करें। iOS को केवल एक्सटेंशन सर्वर JAR की आवश्यकता है।",
+  "checking_files": "फ़ाइलों की जाँच की जा रही है",
+  "files_installed": "फ़ाइलें स्थापित हैं",
+  "files_missing": "फ़ाइलें गायब हैं",
+  "update_files": "फ़ाइलें अपडेट करें",
+  "up_to_date": "अप-टू-डेट",
+  "choose_location": "स्थान चुनें",
+  "import_existing_jar": "मौजूदा JAR आयात करें",
+  "detect_files_in_selected_folder": "चयनित फ़ोल्डर में फ़ाइलों का पता लगाएं",
+  "preparing_download": "डाउनलोड की तैयारी की जा रही है...",
+  "app_install_location": "ऐप स्थापना स्थान",
+  "install_location": "स्थापना स्थान",
+  "jre_executable": "JRE निष्पादन योग्य (Executable)",
+  "extension_server_jar": "एक्सटेंशन सर्वर JAR",
+  "installed_version": "स्थापित संस्करण",
+  "latest_version": "नवीनतम संस्करण",
+  "apkbridge_description": "जब आपको एक अलग एंड्रॉइड डिवाइस प्रॉक्सी की आवश्यकता हो तो ApkBridge का उपयोग करें। यहां प्रॉक्सी पता सेट करें और GitHub से APK डाउनलोड करें।",
+  "set_proxy_address": "प्रॉक्सी पता सेट करें",
+  "no_extension_server_bundle_available_for_this_platform": "इस प्लेटफ़ॉर्म के लिए कोई एक्सटेंशन सर्वर बंडल उपलब्ध नहीं है।",
+  "failed_to_download_bundle": "बंडल डाउनलोड करने में विफल रहा ({statusCode})।",
+  "@failed_to_download_bundle": {
+    "placeholders": {
+      "statusCode": {}
+    }
+  },
+  "downloaded_bundle_missing_expected_files": "डाउनलोड किए गए बंडल में अपेक्षित फ़ाइलें नहीं हैं।",
+  "extension_server_files_ready": "एक्सटेंशन सर्वर फ़ाइलें तैयार हैं।",
+  "ios_extension_server_import_hint": "iOS पर सर्वर ऐप सैंडबॉक्स के अंदर स्थापित होता है। डाउनलोड की गई फ़ाइल लाने के लिए \"मौजूदा JAR आयात करें\" का उपयोग करें।",
+  "select_extension_server_folder": "एक्सटेंशन सर्वर फ़ोल्डर चुनें",
+  "selected_folder_does_not_exist": "चयनित फ़ोल्डर मौजूद नहीं है।",
+  "no_extension_server_files_found_in_selected_folder": "चयनित फ़ोल्डर में कोई एक्सटेंशन सर्वर फ़ाइलें नहीं मिलीं।",
+  "extension_server_files_linked": "एक्सटेंशन सर्वर फ़ाइलें लिंक की गईं।",
+  "selected_file_could_not_be_accessed": "चयनित फ़ाइल तक नहीं पहुँचा जा सका।",
+  "extension_server_jar_imported": "एक्सटेंशन सर्वर JAR आयात किया गया।",
+  "could_not_launch_apk_bridge_page": "ApkBridge पृष्ठ लॉन्च नहीं किया जा सका।",
+  "not_configured": "कॉन्फ़िगर नहीं किया गया",
+  "webview": "वेबव्यू (Webview)",
+  "could_not_launch_apk_bridge_page": "Could not launch the ApkBridge page.",
+  "could_not_check_proxy_server_updates": "Could not check for proxy server updates.",
+  "apkbridge_description": "Use ApkBridge when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.",
+  "install_location": "Install location",
+  "not_configured": "Not configured",
+  "detect_files_in_selected_folder": "Detect files in selected folder",
+  "ios_extension_server_import_hint": "On iOS the server is installed inside the app sandbox. Use \"Import existing JAR\" to bring in a downloaded file.",
+  "app_install_location": "App install location",
+  "files_installed": "Files installed",
+  "no_extension_server_files_found_in_selected_folder": "No extension server files were found in the selected folder.",
+  "extension_server_jar_imported": "Extension server JAR was imported.",
+  "proxy_server_ip_hint": "Server IP (e.g., 10.0.0.5 or https://example.com)",
+  "selected_file_could_not_be_accessed": "The selected file could not be accessed.",
+  "no_newer_proxy_server_release_available": "No newer proxy server release is available.",
+  "latest_version": "Latest version",
+  "extension_server_jar": "Extension server JAR",
+  "set_proxy_address": "Set proxy address",
+  "mihon_proxy_server": "Mihon proxy server",
+  "extension_server_files_linked": "Extension server files were linked.",
+  "extension_server_files_ready": "Extension server files are ready.",
+  "webview": "Webview",
+  "update_files": "Update files",
+  "checking_files": "Checking files",
+  "downloaded_bundle_missing_expected_files": "The downloaded bundle does not contain the expected files.",
+  "android_proxy_server_mihon": "Android प्रॉक्सी सर्वर (Mihon)",
+  "select_extension_server_jar": "एक्सटेंशन सर्वर JAR चुनें",
+  "mass_migration_title": "मास माइग्रेशन",
+  "mass_migration_description": "अपनी लाइब्रेरी की प्रविष्टियों को एक स्रोत से दूसरे स्रोत पर माइग्रेट करें।",
+  "mass_migration_selection_title": "माइग्रेशन चयन",
+  "mass_migration_source_selecting_description": "माइग्रेट करने के लिए एक या अधिक स्रोतों का चयन करें।",
+  "mass_migration_manga_selecting_description": "नए स्रोत पर माइग्रेट करने के लिए शीर्षकों का चयन करें।",
+  "mass_migration_status_idle": "निष्क्रिय",
+  "mass_migration_status_searching": "खोज रहा है...",
+  "mass_migration_status_migrating": "माइग्रेट हो रहा है...",
+  "mass_migration_status_finished": "पूर्ण",
+  "mass_migration_action_migrate": "माइग्रेट करें",
+  "mass_migration_action_copy": "कॉपी करें",
+  "mass_migration_action_skip_step": "चरण छोड़ें",
+  "mass_migration_option_keep_old": "माइग्रेशन के बाद पुरानी प्रविष्टि रखें",
+  "mass_migration_dialog_title": "{count, plural, one{1 शीर्षक} other{{count} शीर्षक}} माइग्रेट करें?",
+  "mass_migration_dialog_content": "यह चुनी हुई स्रोत की नई प्रविष्टियों के साथ वर्तमान प्रविष्टियों को बदल देगा।",
+  "mass_migration_help_title": "मास माइग्रेशन का उपयोग कैसे करें",
+  "mass_migration_help_content": "1. मूल स्रोत चुनें।\n2. उन शीर्षकों को चुनें जिन्हें आप माइग्रेट करना चाहते हैं।\n3. गंतव्य स्रोत चुनें।\n4. मिलान की जांच करें और माइग्रेशन शुरू करें।",
+  "mihon_proxy_server": "Mihon प्रॉक्सी सर्वर",
+  "android_proxy_server_mihon_description": "Mihon एक्सटेंशन का उपयोग करने के लिए आवश्यक प्रॉक्सी सर्वर डाउनलोड और कॉन्फ़िगर करें।",
+  "could_not_check_proxy_server_updates": "प्रॉक्सी सर्वर अपडेट की जांच नहीं की जा सकी।",
+  "proxy_server_ip_hint": "सर्वर IP (उदा: 10.0.0.5 या https://example.com)",
+  "no_newer_proxy_server_release_available": "कोई नया प्रॉक्सी सर्वर रिलीज़ उपलब्ध नहीं है।",
+  "statistics_title": "सांख्यिकी",
+  "statistics_total_manga": "कुल मांगा",
+  "statistics_total_anime": "कुल एनिमे",
+  "statistics_chapters_read": "पढ़े गए अध्याय",
+  "statistics_episodes_watched": "देखे गए एपिसोड",
+  "statistics_reading_time": "पढ़ने का समय",
+  "statistics_watching_time": "देखने का समय",
+  "statistics_mean_score": "औसत स्कोर",
+  "statistics_score_distribution": "स्कोर वितरण",
+  "statistics_status_distribution": "स्थिति वितरण",
+  "statistics_reading_time_unit_hour": "{count, plural, one{1 घंटा} other{{count} घंटे}}",
+  "statistics_reading_time_unit_minute": "{count, plural, one{1 मिनट} other{{count} मिनट}}",
+  "statistics_reading_time_unit_day": "{count, plural, one{1 दिन} other{{count} दिन}}",
+  "statistics_no_data": "सांख्यिकी दिखाने के लिए पर्याप्त डेटा नहीं है।",
+  "compression_level": "संपीड़न स्तर",
+  "split_epub_chapters": "अध्याय में विभाजित करें",
+  "split_epub_chapters_description": "प्रत्येक EPUB अध्याय को एक अलग प्रविष्टि के रूप में आयात करें"
 }

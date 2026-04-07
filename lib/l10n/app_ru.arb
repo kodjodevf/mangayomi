@@ -591,5 +591,276 @@
     "nav_layout_edge": "Краевой",
     "nav_layout_right_and_left": "Справа и слева",
     "nav_layout_disabled": "Отключена",
-    "color_enhancements": "Улучшение цвета"
+    "color_enhancements": "Улучшение цвета",
+    "split_epub_chapters": "Разделить на главы",
+    "split_epub_chapters_description": "Импортировать каждую главу EPUB как отдельную запись",
+    "compression_info": "Чем выше степень сжатия, тем меньше места занимает файл резервной копии, но используется больше ресурсов процессора. По умолчанию: {level}",
+    "mass_migration_title": "Массовая миграция",
+    "mass_migration_preview_items": "Предпросмотр элементов",
+    "mass_migration_destination_source": "Исходный код назначения",
+    "mass_migration_no_library_items": "Нет элементов библиотеки, доступных для массовой миграции.",
+    "mass_migration_no_destination_sources": "Нет установленных источников назначения.",
+    "mass_migration_installed": "Установлено",
+    "mass_migration_items_ready_for_review": "{count, plural, one{{count} элемент готов к просмотру} few{{count} элемента готовы к просмотру} many{{count} элементов готовы к просмотру} other{{count} элементов готовы к просмотру}}",
+    "@mass_migration_items_ready_for_review": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_item_count": "{count, plural, one{{count} элемент} few{{count} элемента} many{{count} элементов} other{{count} элементов}}",
+    "@mass_migration_item_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_select_destination_source": "Выберите источник назначения",
+    "mass_migration_finding_matches": "Поиск совпадений в {source} • {language}",
+    "@mass_migration_finding_matches": {
+        "placeholders": {
+            "source": {},
+            "language": {}
+        }
+    },
+    "mass_migration_processing_item": "Обработка элемента {current} из {total}",
+    "@mass_migration_processing_item": {
+        "placeholders": {
+            "current": {
+                "type": "int"
+            },
+            "total": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_waiting_next_item": "Ожидание 2 секунд перед следующим элементом...",
+    "mass_migration_waiting_next_migration": "Ожидание 2 секунд перед следующей миграцией...",
+    "mass_migration_matched_so_far": "Найдено совпадений: {count}",
+    "@mass_migration_matched_so_far": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_no_match_count": "Нет совпадений: {count}",
+    "@mass_migration_no_match_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_review_matches": "Просмотр совпадений для {source}",
+    "@mass_migration_review_matches": {
+        "placeholders": {
+            "source": {}
+        }
+    },
+    "mass_migration_found_matches": "Найдено совпадений: {count}",
+    "@mass_migration_found_matches": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_no_matches": "Нет совпадений: {count}",
+    "@mass_migration_no_matches": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_selected_to_migrate": "Выбрано для миграции: {count}",
+    "@mass_migration_selected_to_migrate": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_finish_review": "Завершить просмотр",
+    "mass_migration_migrate_selected": "Миграция выбранных элементов ({count})",
+    "@mass_migration_migrate_selected": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_migrating_selected": "Миграция выбранных элементов в {source}",
+    "@mass_migration_migrating_selected": {
+        "placeholders": {
+            "source": {}
+        }
+    },
+    "mass_migration_no_items_selected": "Элементы для миграции не выбраны.",
+    "mass_migration_migrating_item": "Миграция элемента {current} из {total}",
+    "@mass_migration_migrating_item": {
+        "placeholders": {
+            "current": {
+                "type": "int"
+            },
+            "total": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_complete": "Массовая миграция завершена",
+    "mass_migration_complete_success_message": "Все выбранные элементы были успешно обработаны.",
+    "mass_migration_complete_partial_message": "Миграция завершена, но некоторые элементы все еще требуют ручного вмешательства.",
+    "mass_migration_route_summary": "{source} → {destination}",
+    "@mass_migration_route_summary": {
+        "placeholders": {
+            "source": {},
+            "destination": {}
+        }
+    },
+    "mass_migration_processed": "Обработано",
+    "mass_migration_matched": "Совпало",
+    "mass_migration_migrated": "Перенесено",
+    "mass_migration_skipped": "Пропущено",
+    "mass_migration_failed": "Ошибка",
+    "mass_migration_failed_items": "Проблемные элементы",
+    "mass_migration_exit": "Выйти из массовой миграции",
+    "mass_migration_no_destination_match": "Совпадений в источнике назначения не найдено",
+    "mass_migration_query": "Запрос: {query}",
+    "@mass_migration_query": {
+        "placeholders": {
+            "query": {}
+        }
+    },
+    "mass_migration_skip": "Пропустить",
+    "mass_migration_loading": "Загрузка...",
+    "mass_migration_choose_another_result": "Выбрать другой результат",
+    "mass_migration_source_chapters": "Главы источника",
+    "mass_migration_destination_chapters": "Главы назначения",
+    "mass_migration_chapter_count": "{count, plural, one{{count} глава} few{{count} главы} many{{count} глав} other{{count} глав}}",
+    "@mass_migration_chapter_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_source_chapter_count": "{count, plural, one{{count} глава источника} few{{count} главы источника} many{{count} глав источника} other{{count} глав источника}}",
+    "@mass_migration_source_chapter_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_destination_chapter_count": "{count, plural, one{{count} глава назначения} few{{count} главы назначения} many{{count} глав назначения} other{{count} глав назначения}}",
+    "@mass_migration_destination_chapter_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_no_chapters_found": "Главы не найдены.",
+    "mass_migration_and_more_chapters": "И еще {count}...",
+    "@mass_migration_and_more_chapters": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_unknown_title": "Неизвестное название",
+    "mass_migration_unknown_match": "Неизвестное совпадение",
+    "mass_migration_unknown_source": "Неизвестный источник",
+    "mass_migration_unknown_chapter": "Неизвестная глава",
+    "delete_download_after_reading": "Удалять загрузку после чтения",
+    "total": "Всего",
+    "mean_per_title": "Среднее на название",
+    "completion_rate": "Процент завершения",
+    "watching_time": "Время просмотра",
+    "reading_time": "Время чтения",
+    "average_chapters_per_title": "Среднее кол-во глав на название",
+    "read_percentage": "Процент прочитанного",
+    "entries": "Записи",
+    "extension_server_intro_with_jre": "Загрузите пакет прокси-сервера перед использованием расширений Mihon. Пакет включает в себя JRE и JAR-файл сервера расширений.",
+    "extension_server_intro_ios": "Загрузите JAR-файл прокси-сервера перед использованием расширений Mihon. Для iOS требуется только JAR-файл сервера расширений.",
+    "checking_files": "Проверка файлов",
+    "files_installed": "Файлы установлены",
+    "files_missing": "Файлы отсутствуют",
+    "update_files": "Обновить файлы",
+    "up_to_date": "Обновлено",
+    "choose_location": "Выберите местоположение",
+    "import_existing_jar": "Импортировать существующий JAR",
+    "detect_files_in_selected_folder": "Обнаружить файлы в выбранной папке",
+    "preparing_download": "Подготовка к загрузке...",
+    "app_install_location": "Место установки приложения",
+    "install_location": "Месть установки",
+    "jre_executable": "Исполняемый файл JRE",
+    "extension_server_jar": "JAR сервера расширений",
+    "installed_version": "Установленная версия",
+    "latest_version": "Последняя версия",
+    "apkbridge_description": "Используйте ApkBridge, когда вам нужен отдельный прокси-сервер для Android-устройства. Установите адрес прокси здесь и загрузите APK с GitHub.",
+    "set_proxy_address": "Установить адрес прокси",
+    "no_extension_server_bundle_available_for_this_platform": "Для этой платформы нет доступного пакета сервера расширений.",
+    "failed_to_download_bundle": "Ошибка загрузки пакета ({statusCode}).",
+    "@failed_to_download_bundle": {
+        "placeholders": {
+            "statusCode": {}
+        }
+    },
+    "downloaded_bundle_missing_expected_files": "Загруженный пакет не содержит ожидаемых файлов.",
+    "extension_server_files_ready": "Файлы сервера расширений готовы.",
+    "ios_extension_server_import_hint": "На iOS сервер устанавливается внутри песочницы приложения. Используйте «Импортировать существующий JAR», чтобы добавить загруженный файл.",
+    "select_extension_server_folder": "Выберите папку сервера расширений",
+    "selected_folder_does_not_exist": "Выбранная папка не существует.",
+    "no_extension_server_files_found_in_selected_folder": "Файлы сервера расширений в выбранной папке не найдены.",
+    "extension_server_files_linked": "Файлы сервера расширений привязаны.",
+    "selected_file_could_not_be_accessed": "Не удалось получить доступ к выбранному файлу.",
+    "extension_server_jar_imported": "JAR-файл сервера расширений импортирован.",
+    "could_not_launch_apk_bridge_page": "Не удалось запустить страницу ApkBridge.",
+    "not_configured": "Не настроено",
+    "webview": "Веб-просмотр",
+    "mass_migration_title": "Массовая миграция",
+    "mass_migration_description": "Перенесите записи из вашей библиотеки с одного источника на другой.",
+    "mass_migration_selection_title": "Выбор миграции",
+    "mass_migration_source_selecting_description": "Выберите один или несколько источников для миграции.",
+    "mass_migration_manga_selecting_description": "Выберите названия для переноса на новый источник.",
+    "mass_migration_status_idle": "Ожидание",
+    "mass_migration_status_searching": "Поиск...",
+    "mass_migration_status_migrating": "Миграция...",
+    "mass_migration_status_finished": "Завершено",
+    "mass_migration_action_migrate": "Мигрировать",
+    "mass_migration_action_copy": "Копировать",
+    "mass_migration_action_skip_step": "Пропустить шаг",
+    "mass_migration_option_keep_old": "Сохранить старую запись после миграции",
+    "mass_migration_dialog_title": "Перенести {count, plural, one{1 название} few{{count} названия} other{{count} названий}}?",
+    "mass_migration_dialog_content": "Это заменит текущие записи новыми из выбранного источника.",
+    "mass_migration_help_title": "Как использовать массовую миграцию",
+    "mass_migration_help_content": "1. Выберите исходный источник.\n2. Выберите названия, которые хотите перенести.\n3. Выберите целевые источники.\n4. Проверьте совпадения и запустите миграцию.",
+    "mihon_proxy_server": "Прокси-сервер Mihon",
+    "android_proxy_server_mihon_description": "Загрузите и настройте прокси-сервер, необходимый для использования расширений Mihon.",
+    "could_not_check_proxy_server_updates": "Не удалось проверить обновления прокси-сервера.",
+    "proxy_server_ip_hint": "IP-адрес сервера (например, 10.0.0.5 или https://example.com)",
+    "no_newer_proxy_server_release_available": "Нет доступных новых версий прокси-сервера.",
+    "statistics_title": "Статистика",
+    "statistics_total_manga": "Всего манги",
+    "statistics_total_anime": "Всего аниме",
+    "statistics_chapters_read": "Прочитано глав",
+    "statistics_episodes_watched": "Посмотрено эпизодов",
+    "statistics_reading_time": "Время чтения",
+    "statistics_watching_time": "Время просмотра",
+    "statistics_mean_score": "Средний балл",
+    "statistics_score_distribution": "Распределение оценок",
+    "statistics_status_distribution": "Распределение статусов",
+    "statistics_reading_time_unit_hour": "{count, plural, one{1 час} few{{count} часа} other{{count} часов}}",
+    "statistics_reading_time_unit_minute": "{count, plural, one{1 минута} few{{count} минуты} other{{count} минут}}",
+    "statistics_reading_time_unit_day": "{count, plural, one{1 день} few{{count} дня} other{{count} дней}}",
+    "statistics_no_data": "Недостаточно данных для статистики.",
+    "compression_level": "Уровень сжатия",
+    "android_proxy_server_mihon": "Android прокси-сервер (Mihon)",
+    "select_extension_server_jar": "Выбрать JAR-файл сервера"
 }

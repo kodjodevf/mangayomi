@@ -593,5 +593,275 @@
     "nav_layout_edge": "الحافة",
     "nav_layout_right_and_left": "اليمين واليسار",
     "nav_layout_disabled": "معطل",
-    "color_enhancements": "تحسينات اللون"
+    "color_enhancements": "تحسينات اللون",
+    "split_epub_chapters": "تقسيم إلى فصول",
+    "split_epub_chapters_description": "استيراد كل فصل EPUB كإدخال منفصل",
+    "mass_migration_title": "الهجرة الجماعية",
+    "mass_migration_description": "ترحيل إدخالات مكتبتك من مصدر إلى آخر.",
+    "mass_migration_selection_title": "اختيار الهجرة",
+    "mass_migration_source_selecting_description": "حدد مصدرًا واحدًا أو أكثر للترحيل إليه.",
+    "mass_migration_manga_selecting_description": "حدد العناوين لترحيلها إلى المصدر الجديد.",
+    "mass_migration_status_idle": "خامل",
+    "mass_migration_status_searching": "جاري البحث...",
+    "mass_migration_status_migrating": "جاري الترحيل...",
+    "mass_migration_status_finished": "انتهى",
+    "mass_migration_action_migrate": "ترحيل",
+    "mass_migration_action_copy": "نسخ",
+    "mass_migration_action_skip_step": "تخطى الخطوة",
+    "compression_info": "كلما زاد الضغط، قل حجم ملف النسخة الاحتياطية، ولكنه يستهلك المزيد من المعالج. الافتراضي: {level}",
+    "mass_migration_preview_items": "معاينة العناصر",
+    "mass_migration_destination_source": "المصدر الوجهة",
+    "mass_migration_no_library_items": "لا توجد عناصر مكتبة متاحة للهجرة الجماعية.",
+    "mass_migration_no_destination_sources": "لا توجد مصادر وجهة مثبتة متاحة.",
+    "mass_migration_installed": "تم التثبيت",
+    "mass_migration_items_ready_for_review": "{count, plural, =1{عنصر واحد جاهز للمراجعة} =2{عنصران جاهزان للمراجعة} few{{count} عناصر جاهزة للمراجعة} many{{count} عنصر جاهز للمراجعة} other{{count} عنصر جاهز للمراجعة}}",
+    "@mass_migration_items_ready_for_review": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_item_count": "{count, plural, =1{عنصر واحد} =2{عنصران} few{{count} عناصر} many{{count} عنصر} other{{count} عنصر}}",
+    "@mass_migration_item_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_select_destination_source": "اختر المصدر الوجهة",
+    "mass_migration_finding_matches": "البحث عن مطابقات في {source} • {language}",
+    "@mass_migration_finding_matches": {
+        "placeholders": {
+            "source": {},
+            "language": {}
+        }
+    },
+    "mass_migration_processing_item": "جاري معالجة العنصر {current} من {total}",
+    "@mass_migration_processing_item": {
+        "placeholders": {
+            "current": {
+                "type": "int"
+            },
+            "total": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_waiting_next_item": "الانتظار لمدة ثانيتين قبل العنصر التالي...",
+    "mass_migration_waiting_next_migration": "الانتظار لمدة ثانيتين قبل الهجرة التالية...",
+    "mass_migration_matched_so_far": "المطابقات حتى الآن: {count}",
+    "@mass_migration_matched_so_far": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_no_match_count": "لا يوجد تطابق: {count}",
+    "@mass_migration_no_match_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_review_matches": "مراجعة المطابقات لـ {source}",
+    "@mass_migration_review_matches": {
+        "placeholders": {
+            "source": {}
+        }
+    },
+    "mass_migration_found_matches": "المطابقات التي تم العثور عليها: {count}",
+    "@mass_migration_found_matches": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_no_matches": "لا توجد مطابقات: {count}",
+    "@mass_migration_no_matches": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_selected_to_migrate": "المختارة للهجرة: {count}",
+    "@mass_migration_selected_to_migrate": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_finish_review": "إنهاء المراجعة",
+    "mass_migration_migrate_selected": "هجرة العناصر المختارة ({count})",
+    "@mass_migration_migrate_selected": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_migrating_selected": "جاري هجرة العناصر المختارة إلى {source}",
+    "@mass_migration_migrating_selected": {
+        "placeholders": {
+            "source": {}
+        }
+    },
+    "mass_migration_no_items_selected": "لم يتم اختيار عناصر للهجرة.",
+    "mass_migration_migrating_item": "جاري هجرة العنصر {current} من {total}",
+    "@mass_migration_migrating_item": {
+        "placeholders": {
+            "current": {
+                "type": "int"
+            },
+            "total": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_complete": "اكتملت الهجرة الجماعية",
+    "mass_migration_complete_success_message": "تمت معالجة جميع العناصر المختارة بنجاح.",
+    "mass_migration_complete_partial_message": "انتهت الهجرة مع بقاء بعض العناصر التي لا تزال بحاجة إلى اهتمام يدوي.",
+    "mass_migration_route_summary": "{source} ← {destination}",
+    "@mass_migration_route_summary": {
+        "placeholders": {
+            "source": {},
+            "destination": {}
+        }
+    },
+    "mass_migration_processed": "تمت المعالجة",
+    "mass_migration_matched": "متطابق",
+    "mass_migration_migrated": "تمت الهجرة",
+    "mass_migration_skipped": "تم التخطي",
+    "mass_migration_failed": "فشل",
+    "mass_migration_failed_items": "العناصر الفاشلة",
+    "mass_migration_exit": "الخروج من الهجرة الجماعية",
+    "mass_migration_no_destination_match": "لم يتم العثور على تطابق في الوجهة",
+    "mass_migration_query": "الاستعلام: {query}",
+    "@mass_migration_query": {
+        "placeholders": {
+            "query": {}
+        }
+    },
+    "mass_migration_skip": "تخطي",
+    "mass_migration_loading": "جاري التحميل...",
+    "mass_migration_choose_another_result": "اختر نتيجة أخرى",
+    "mass_migration_source_chapters": "فصول المصدر",
+    "mass_migration_destination_chapters": "فصول الوجهة",
+    "mass_migration_chapter_count": "{count, plural, =1{فصل واحد} =2{فصلان} few{{count} فصول} many{{count} فصل} other{{count} فصل}}",
+    "@mass_migration_chapter_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_source_chapter_count": "{count, plural, =1{فصل مصدر واحد} =2{فصلان للمصدر} few{{count} فصول مصدر} many{{count} فصل مصدر} other{{count} فصل مصدر}}",
+    "@mass_migration_source_chapter_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_destination_chapter_count": "{count, plural, =1{فصل وجهة واحد} =2{فصلان للوجهة} few{{count} فصول وجهة} many{{count} فصل وجهة} other{{count} فصل وجهة}}",
+    "@mass_migration_destination_chapter_count": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_no_chapters_found": "لم يتم العثور على فصول.",
+    "mass_migration_and_more_chapters": "و {count} أكثر...",
+    "@mass_migration_and_more_chapters": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mass_migration_unknown_title": "عنوان غير معروف",
+    "mass_migration_unknown_match": "تطابق غير معروف",
+    "mass_migration_unknown_source": "مصدر غير معروف",
+    "mass_migration_unknown_chapter": "فصل غير معروف",
+    "delete_download_after_reading": "حذف التحميل بعد القراءة",
+    "total": "الإجمالي",
+    "mean_per_title": "المتوسط لكل عنوان",
+    "completion_rate": "معدل الإكمال",
+    "watching_time": "وقت المشاهدة",
+    "reading_time": "وقت القراءة",
+    "average_chapters_per_title": "متوسط الفصول لكل عنوان",
+    "read_percentage": "نسبة القراءة",
+    "entries": "الإدخالات",
+    "extension_server_intro_with_jre": "قم بتحميل حزمة خادم الوكيل قبل استخدام إضافات Mihon. تتضمن الحزمة JRE ومعلف JAR الخاص بخادم الإضافات.",
+    "extension_server_intro_ios": "قم بتحميل ملف JAR الخاص بخادم الوكيل قبل استخدام إضافات Mihon. يحتاج نظام iOS فقط إلى ملف JAR الخاص بخادم الإضافات.",
+    "checking_files": "جاري فحص الملفات",
+    "files_installed": "الملفات المثبتة",
+    "files_missing": "الملفات المفقودة",
+    "update_files": "تحديث الملفات",
+    "up_to_date": "محدث",
+    "choose_location": "اختر الموقع",
+    "import_existing_jar": "استيراد ملف JAR موجود",
+    "detect_files_in_selected_folder": "كشف الملفات في المجلد المختار",
+    "preparing_download": "جاري تحضير التحميل...",
+    "app_install_location": "موقع تثبيت التطبيق",
+    "install_location": "موقع التثبيت",
+    "jre_executable": "JRE قابل للتنفيذ",
+    "extension_server_jar": "ملف JAR لخادم الإضافات",
+    "installed_version": "الإصدار المثبت",
+    "latest_version": "أحدث إصدار",
+    "apkbridge_description": "استخدم ApkBridge عندما تحتاج إلى وكيل جهاز أندرويد منفصل. اضبط عنوان الوكيل هنا وقم بتحميل APK من GitHub.",
+    "set_proxy_address": "ضبط عنوان الوكيل",
+    "no_extension_server_bundle_available_for_this_platform": "لا تتوفر حزمة خادم إضافات لهذا النظام.",
+    "failed_to_download_bundle": "فشل تحميل الحزمة ({statusCode}).",
+    "@failed_to_download_bundle": {
+        "placeholders": {
+            "statusCode": {}
+        }
+    },
+    "downloaded_bundle_missing_expected_files": "الحزمة المحملة لا تحتوي على الملفات المتوقعة.",
+    "extension_server_files_ready": "ملفات خادم الإضافات جاهزة.",
+    "ios_extension_server_import_hint": "في نظام iOS يتم تثبيت الخادم داخل صندوق رمال التطبيق. استخدم \"استيراد ملف JAR موجود\" لجلب ملف محمل.",
+    "select_extension_server_folder": "اختر مجلد خادم الإضافات",
+    "selected_folder_does_not_exist": "المجلد المختار غير موجود.",
+    "no_extension_server_files_found_in_selected_folder": "لم يتم العثور على ملفات خادم الإضافات في المجلد المختار.",
+    "extension_server_files_linked": "تم ربط ملفات خادم الإضافات.",
+    "selected_file_could_not_be_accessed": "تعذر الوصول إلى الملف المختار.",
+    "extension_server_jar_imported": "تم استيراد ملف JAR لخادم الإضافات.",
+    "could_not_launch_apk_bridge_page": "تعذر تشغيل صفحة ApkBridge.",
+    "not_configured": "غير مهيأ",
+    "webview": "عرض الويب",
+    "mass_migration_option_keep_old": "الاحتفاظ بالإدخال القديم بعد الترحيل",
+    "mass_migration_dialog_title": "هل تريد ترحيل {count, plural, zero{0 عنوان} one{عنوان واحد} two{عنوانين} few{{count} عناوين} many{{count} عنوانًا} other{{count} عنوان}}؟",
+    "mass_migration_dialog_content": "سيؤدي هذا إلى استبدال الإدخالات الحالية بإدخالات جديدة من المصدر المحدد.",
+    "mass_migration_help_title": "كيفية استخدام الهجرة الجماعية",
+    "mass_migration_help_content": "1. حدد المصدر الأصلي.\n2. حدد العناوين التي تريد ترحيلها.\n3. حدد مصدر (مصادر) الوجهة.\n4. تحقق من التطابقات وابدأ الترحيل.",
+    "mihon_proxy_server": "خادم بروكسي Mihon",
+    "android_proxy_server_mihon_description": "قم بتنزيل وتكوين خادم البروكسي المطلوب لاستخدام امتدادات Mihon.",
+    "could_not_check_proxy_server_updates": "تعذر التحقق من تحديثات خادم البروكسي.",
+    "proxy_server_ip_hint": "عنوان IP للخادم (مثلاً 10.0.0.5 أو https://example.com)",
+    "no_newer_proxy_server_release_available": "لا يوجد إصدار أحدث من خادم البروكسي متاح.",
+    "statistics_title": "الإحصائيات",
+    "statistics_total_manga": "إجمالي المانجا",
+    "statistics_total_anime": "إجمالي الأنمي",
+    "statistics_chapters_read": "الفصول التي تمت قراءتها",
+    "statistics_episodes_watched": "الحلقات التي تمت مشاهدتها",
+    "statistics_reading_time": "وقت القراءة",
+    "statistics_watching_time": "وقت المشاهدة",
+    "statistics_mean_score": "متوسط النقاط",
+    "statistics_score_distribution": "توزيع النقاط",
+    "statistics_status_distribution": "توزيع الحالة",
+    "statistics_reading_time_unit_hour": "{count, plural, zero{0 ساعة} one{ساعة واحدة} two{ساعتين} few{{count} ساعات} many{{count} ساعة} other{{count} ساعة}}",
+    "statistics_reading_time_unit_minute": "{count, plural, zero{0 دقيقة} one{دقيقة واحدة} two{دقيقتين} few{{count} دقائق} many{{count} دقيقة} other{{count} دقيقة}}",
+    "statistics_reading_time_unit_day": "{count, plural, zero{0 يوم} one{يوم واحد} two{يومين} few{{count} أيام} many{{count} يومًا} other{{count} يوم}}",
+    "statistics_no_data": "بيانات غير كافية لعرض الإحصائيات.",
+    "compression_level": "مستوى الضغط",
+    "android_proxy_server_mihon": "خادم بروكسي أندرويد (Mihon)",
+    "select_extension_server_jar": "اختر ملف JAR لخادم الامتداد"
 }
