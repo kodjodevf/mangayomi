@@ -320,8 +320,8 @@ abstract class AppLocalizations {
   /// No description provided for @compression_info.
   ///
   /// In en, this message translates to:
-  /// **'The higher the compression, the less space the backup file takes, but it uses more CPU. Default: 6'**
-  String get compression_info;
+  /// **'The higher the compression, the less space the backup file takes, but it uses more CPU. Default: {level}'**
+  String compression_info(Object level);
 
   /// No description provided for @comfortable_grid.
   ///
