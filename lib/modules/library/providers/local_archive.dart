@@ -16,6 +16,7 @@ Future importArchivesFromFile(
   Manga? mManga, {
   required ItemType itemType,
   required bool init,
+  bool splitChapters = true,
 }) async {
   final keepAlile = ref.keepAlive();
   try {
@@ -72,7 +73,7 @@ Future importArchivesFromFile(
           if (itemType == ItemType.novel) {
             final book = await parseEpubFromPath(
               epubPath: file.path!,
-              fullData: false,
+              fullData: splitChapters,
             );
 
             if (book.cover != null) {
@@ -80,14 +81,32 @@ Future importArchivesFromFile(
                 manga..customCoverImage = book.cover!.getCoverImage,
               );
             }
-            chapters.add(
-              Chapter(
-                mangaId: mangaId,
-                name: book.name,
-                archivePath: file.path,
-                updatedAt: DateTime.now().millisecondsSinceEpoch,
-              )..manga.value = manga,
-            );
+            final chaps = book.chapters;
+
+            if (splitChapters && chaps.isNotEmpty) {
+              for (int i = 0; i < chaps.length; i++) {
+                final epubChapter = chaps[i];
+                chapters.add(
+                  Chapter(
+                    mangaId: mangaId,
+                    name: epubChapter.name,
+                    archivePath: file.path,
+                    url: epubChapter.path,
+                    updatedAt: DateTime.now().millisecondsSinceEpoch,
+                  )..manga.value = manga,
+                );
+              }
+            } else {
+              // Fallback: single chapter if no spine chapters found
+              chapters.add(
+                Chapter(
+                  mangaId: mangaId,
+                  name: book.name,
+                  archivePath: file.path,
+                  updatedAt: DateTime.now().millisecondsSinceEpoch,
+                )..manga.value = manga,
+              );
+            }
           } else {
             chapters.add(
               Chapter(

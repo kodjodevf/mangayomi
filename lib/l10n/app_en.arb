@@ -388,6 +388,8 @@
   "total_episodes": "Total episodes",
   "import_local_file": "Import Local file",
   "import_files": "Files",
+  "split_epub_chapters": "Split into chapters",
+  "split_epub_chapters_description": "Import each EPUB chapter as a separate entry",
   "nothing_read_recently": "Nothing read recently",
   "status": "Status",
   "not_started": "Not started",
@@ -830,5 +832,6 @@
   "extension_server_jar_imported": "Extension server JAR was imported.",
   "could_not_launch_apk_bridge_page": "Could not launch the ApkBridge page.",
   "proxy_server_ip_hint": "Server IP (e.g., 10.0.0.5 or https://example.com)",
-  "not_configured": "Not configured"
+  "not_configured": "Not configured",
+  "webview": "Webview"
 }

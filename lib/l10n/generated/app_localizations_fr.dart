@@ -878,6 +878,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get import_files => 'Fichiers';
 
   @override
+  String get split_epub_chapters => 'Split into chapters';
+
+  @override
+  String get split_epub_chapters_description =>
+      'Import each EPUB chapter as a separate entry';
+
+  @override
   String get nothing_read_recently => 'Rien de lu recemment';
 
   @override
@@ -2316,4 +2323,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get not_configured => 'Not configured';
+
+  @override
+  String get webview => 'Webview';
 }

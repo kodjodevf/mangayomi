@@ -1619,6 +1619,18 @@ abstract class AppLocalizations {
   /// **'Files'**
   String get import_files;
 
+  /// No description provided for @split_epub_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Split into chapters'**
+  String get split_epub_chapters;
+
+  /// No description provided for @split_epub_chapters_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Import each EPUB chapter as a separate entry'**
+  String get split_epub_chapters_description;
+
   /// No description provided for @nothing_read_recently.
   ///
   /// In en, this message translates to:
@@ -4240,6 +4252,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not configured'**
   String get not_configured;
+
+  /// No description provided for @webview.
+  ///
+  /// In en, this message translates to:
+  /// **'Webview'**
+  String get webview;
 }
 
 class _AppLocalizationsDelegate

@@ -196,6 +196,8 @@
     "total_episodes": "Gesamtepisoden",
     "import_local_file": "Lokale Datei importieren",
     "import_files": "Dateien",
+    "split_epub_chapters": "In Kapitel aufteilen",
+    "split_epub_chapters_description": "Jedes EPUB-Kapitel als separaten Eintrag importieren",
     "nothing_read_recently": "Kürzlich nichts gelesen",
     "status": "Status",
     "not_started": "Nicht begonnen",

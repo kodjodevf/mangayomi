@@ -17,7 +17,8 @@ final class ImportArchivesFromFileProvider
     with $FutureModifier<dynamic>, $FutureProvider<dynamic> {
   ImportArchivesFromFileProvider._({
     required ImportArchivesFromFileFamily super.from,
-    required (Manga?, {ItemType itemType, bool init}) super.argument,
+    required (Manga?, {ItemType itemType, bool init, bool splitChapters})
+    super.argument,
   }) : super(
          retry: null,
          name: r'importArchivesFromFileProvider',
@@ -43,12 +44,15 @@ final class ImportArchivesFromFileProvider
 
   @override
   FutureOr<dynamic> create(Ref ref) {
-    final argument = this.argument as (Manga?, {ItemType itemType, bool init});
+    final argument =
+        this.argument
+            as (Manga?, {ItemType itemType, bool init, bool splitChapters});
     return importArchivesFromFile(
       ref,
       argument.$1,
       itemType: argument.itemType,
       init: argument.init,
+      splitChapters: argument.splitChapters,
     );
   }
 
@@ -65,13 +69,13 @@ final class ImportArchivesFromFileProvider
 }
 
 String _$importArchivesFromFileHash() =>
-    r'52d80a07200627e1bc650b06d1fd8aed66c03e4c';
+    r'f7b2e8cb611bfc32c83e1dcffffb2ad7122f1067';
 
 final class ImportArchivesFromFileFamily extends $Family
     with
         $FunctionalFamilyOverride<
           FutureOr<dynamic>,
-          (Manga?, {ItemType itemType, bool init})
+          (Manga?, {ItemType itemType, bool init, bool splitChapters})
         > {
   ImportArchivesFromFileFamily._()
     : super(
@@ -86,8 +90,14 @@ final class ImportArchivesFromFileFamily extends $Family
     Manga? mManga, {
     required ItemType itemType,
     required bool init,
+    bool splitChapters = true,
   }) => ImportArchivesFromFileProvider._(
-    argument: (mManga, itemType: itemType, init: init),
+    argument: (
+      mManga,
+      itemType: itemType,
+      init: init,
+      splitChapters: splitChapters,
+    ),
     from: this,
   );
 

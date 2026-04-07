@@ -872,6 +872,13 @@ class AppLocalizationsHi extends AppLocalizations {
   String get import_files => 'फ़ाइलें';
 
   @override
+  String get split_epub_chapters => 'Split into chapters';
+
+  @override
+  String get split_epub_chapters_description =>
+      'Import each EPUB chapter as a separate entry';
+
+  @override
   String get nothing_read_recently => 'हाल ही में कुछ भी नहीं पढ़ा';
 
   @override
@@ -2292,4 +2299,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get not_configured => 'Not configured';
+
+  @override
+  String get webview => 'Webview';
 }

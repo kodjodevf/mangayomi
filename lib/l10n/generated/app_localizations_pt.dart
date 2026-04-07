@@ -876,6 +876,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get import_files => 'Arquivos';
 
   @override
+  String get split_epub_chapters => 'Split into chapters';
+
+  @override
+  String get split_epub_chapters_description =>
+      'Import each EPUB chapter as a separate entry';
+
+  @override
   String get nothing_read_recently => 'Nada lido recentemente';
 
   @override
@@ -2310,6 +2317,9 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get not_configured => 'Not configured';
+
+  @override
+  String get webview => 'Webview';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).

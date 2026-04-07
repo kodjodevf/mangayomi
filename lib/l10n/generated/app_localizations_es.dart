@@ -876,6 +876,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get import_files => 'Archivos';
 
   @override
+  String get split_epub_chapters => 'Split into chapters';
+
+  @override
+  String get split_epub_chapters_description =>
+      'Import each EPUB chapter as a separate entry';
+
+  @override
   String get nothing_read_recently => 'Nada leído recientemente';
 
   @override
@@ -2315,6 +2322,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get not_configured => 'Not configured';
+
+  @override
+  String get webview => 'Webview';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).

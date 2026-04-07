@@ -868,12 +868,24 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                           manga: manga,
                                                         );
                                                       } else {
+                                                        final splitChapters =
+                                                            manga.itemType ==
+                                                                ItemType.novel
+                                                            ? await _showSplitChaptersDialog(
+                                                                context,
+                                                              )
+                                                            : true;
+                                                        if (!context.mounted) {
+                                                          return;
+                                                        }
                                                         await ref.watch(
                                                           importArchivesFromFileProvider(
                                                             itemType:
                                                                 manga.itemType,
                                                             manga,
                                                             init: false,
+                                                            splitChapters:
+                                                                splitChapters,
                                                           ).future,
                                                         );
                                                       }
@@ -1859,11 +1871,19 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     if (manga!.source == "torrent") {
                                       addTorrent(context, manga: manga);
                                     } else {
+                                      final splitChapters =
+                                          manga.itemType == ItemType.novel
+                                          ? await _showSplitChaptersDialog(
+                                              context,
+                                            )
+                                          : true;
+                                      if (!context.mounted) return;
                                       await ref.watch(
                                         importArchivesFromFileProvider(
                                           itemType: manga.itemType,
                                           manga,
                                           init: false,
+                                          splitChapters: splitChapters,
                                         ).future,
                                       );
                                     }
@@ -1988,7 +2008,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'WebView',
+                        context.l10n.webview,
                         style: TextStyle(
                           fontSize: 11,
                           color: context.secondaryColor,
@@ -2563,4 +2583,26 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
       ),
     );
   }
+}
+
+Future<bool> _showSplitChaptersDialog(BuildContext context) async {
+  final l10n = l10nLocalizations(context)!;
+  return await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(l10n.split_epub_chapters),
+          content: Text(l10n.split_epub_chapters_description),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(l10n.split_epub_chapters),
+            ),
+          ],
+        ),
+      ) ??
+      true;
 }

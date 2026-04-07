@@ -28,8 +28,23 @@ Future<(String, EpubNovel?)> getHtmlContent(
           fullData: true,
         );
         String htmlContent = "";
-        for (var subChapter in book.chapters) {
-          htmlContent += "\n<hr/>\n${subChapter.content}";
+        if (chapter.url != null && chapter.url!.isNotEmpty) {
+          // Load specific chapter by its spine idref
+          final matches = book.chapters.where((c) => c.path == chapter.url);
+          if (matches.isNotEmpty) {
+            htmlContent = matches.first.content;
+          } else {
+            // Fallback: try via Rust direct access
+            htmlContent = await getChapterContent(
+              epubPath: chapter.archivePath!,
+              chapterPath: chapter.url!,
+            );
+          }
+        } else {
+          // Legacy: no chapter url, concatenate all (old single-chapter imports)
+          for (var subChapter in book.chapters) {
+            htmlContent += "\n<hr/>\n${subChapter.content}";
+          }
         }
         result = (_buildHtml(htmlContent), book);
       } catch (_) {}
