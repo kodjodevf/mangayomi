@@ -56,30 +56,30 @@ DiscordRPC? discordRpc;
 WebViewEnvironment? webViewEnvironment;
 String? customDns;
 void main(List<String> args) async {
-  WidgetsFlutterBinding.ensureInitialized();
-  if (Platform.isLinux && runWebViewTitleBarWidget(args)) return;
-
-  // Widget-layer errors (build / layout / paint)
-  FlutterError.onError = (FlutterErrorDetails details) {
-    FlutterError.presentError(details); // keep default red-screen in debug
-    AppLogger.log(
-      'FlutterError: ${details.exceptionAsString()}\n${details.stack}',
-      logLevel: LogLevel.error,
-    );
-  };
-
-  // Async errors that escape the Flutter framework (PlatformDispatcher)
-  PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
-    AppLogger.log(
-      'PlatformDispatcher error: $error\n$stack',
-      logLevel: LogLevel.error,
-    );
-    return true; // handled — prevent app termination
-  };
-
   // Zone-level catch-all for anything that slips through both layers
   runZonedGuarded(
     () async {
+      WidgetsFlutterBinding.ensureInitialized();
+      if (Platform.isLinux && runWebViewTitleBarWidget(args)) return;
+
+      // Widget-layer errors (build / layout / paint)
+      FlutterError.onError = (FlutterErrorDetails details) {
+        FlutterError.presentError(details); // keep default red-screen in debug
+        AppLogger.log(
+          'FlutterError: ${details.exceptionAsString()}\n${details.stack}',
+          logLevel: LogLevel.error,
+        );
+      };
+
+      // Async errors that escape the Flutter framework (PlatformDispatcher)
+      PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
+        AppLogger.log(
+          'PlatformDispatcher error: $error\n$stack',
+          logLevel: LogLevel.error,
+        );
+        return true; // handled — prevent app termination
+      };
+
       MediaKit.ensureInitialized();
       await RustLib.init();
       await imgCropIsolate.start();
@@ -250,7 +250,11 @@ class _MyAppState extends ConsumerState<MyApp>
   void onWindowMoved() => WindowGeometry.save();
 
   @override
-  void onWindowClose() => WindowGeometry.save();
+  void onWindowClose() {
+    WindowGeometry.save();
+    // Workaround for libepoxy error when closing app; caused by media-kit
+    if (Platform.isLinux) exit(0);
+  }
 
   Future<void> _initDeepLinks() async {
     _appLinks = AppLinks();
