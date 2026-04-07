@@ -60,9 +60,7 @@ dependencies:
   window_manager: ^0.5.1
   ffi: ^2.1.5
   ffigen: ^20.1.1
-  http_interceptor:
-    git:
-      url: https://github.com/kodjodevf/http_interceptor.git
+  http_interceptor: ^2.0.0
   js_packer: ^0.0.6
   flutter_qjs:
     git:

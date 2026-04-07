@@ -370,14 +370,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.3"
-  equatable:
-    dependency: transitive
-    description:
-      name: equatable
-      sha256: "3e0141505477fd8ad55d6eb4e7776d3fe8430be8e497ccb1521370c3f21a3e2b"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.8"
   expressions:
     dependency: transitive
     description:
@@ -773,11 +765,10 @@ packages:
   http_interceptor:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "58b5eb0c82c2ef9b374f7fa126ff863b80b6837a"
-      url: "https://github.com/kodjodevf/http_interceptor.git"
-    source: git
+      name: http_interceptor
+      sha256: "288c6ded4a2c66de2730a16b30cbd29d05d042a5e61304d9b4be0e16378f4082"
+      url: "https://pub.dev"
+    source: hosted
     version: "2.0.0"
   http_multi_server:
     dependency: transitive
@@ -1389,14 +1380,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.0"
-  qs_dart:
-    dependency: transitive
-    description:
-      name: qs_dart
-      sha256: "92ac0f9e5cebdf9c44b4eeea3cc6014e74f1fe8b7f7610b427c9377369b2e23e"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.7.3"
   quiver:
     dependency: transitive
     description:
@@ -1873,14 +1856,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.5.2"
-  validators:
-    dependency: transitive
-    description:
-      name: validators
-      sha256: "884515951f831a9c669a41ed6c4d3c61c2a0e8ec6bca761a4480b28e99cecf5d"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.0"
   vector_math:
     dependency: transitive
     description:
