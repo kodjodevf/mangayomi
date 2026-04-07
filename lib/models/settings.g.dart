@@ -796,96 +796,101 @@ const SettingsSchema = CollectionSchema(
       type: IsarType.byte,
       enumMap: _SettingsscaleTypeEnumValueMap,
     ),
-    r'showPageGaps': PropertySchema(
+    r'showNSFW': PropertySchema(
       id: 147,
+      name: r'showNSFW',
+      type: IsarType.bool,
+    ),
+    r'showPageGaps': PropertySchema(
+      id: 148,
       name: r'showPageGaps',
       type: IsarType.bool,
     ),
     r'showPagesNumber': PropertySchema(
-      id: 148,
+      id: 149,
       name: r'showPagesNumber',
       type: IsarType.bool,
     ),
     r'sortChapterList': PropertySchema(
-      id: 149,
+      id: 150,
       name: r'sortChapterList',
       type: IsarType.objectList,
 
       target: r'SortChapter',
     ),
     r'sortLibraryAnime': PropertySchema(
-      id: 150,
+      id: 151,
       name: r'sortLibraryAnime',
       type: IsarType.object,
 
       target: r'SortLibraryManga',
     ),
     r'sortLibraryManga': PropertySchema(
-      id: 151,
+      id: 152,
       name: r'sortLibraryManga',
       type: IsarType.object,
 
       target: r'SortLibraryManga',
     ),
     r'sortLibraryNovel': PropertySchema(
-      id: 152,
+      id: 153,
       name: r'sortLibraryNovel',
       type: IsarType.object,
 
       target: r'SortLibraryManga',
     ),
     r'startDatebackup': PropertySchema(
-      id: 153,
+      id: 154,
       name: r'startDatebackup',
       type: IsarType.long,
     ),
     r'themeIsDark': PropertySchema(
-      id: 154,
+      id: 155,
       name: r'themeIsDark',
       type: IsarType.bool,
     ),
     r'updateProgressAfterReading': PropertySchema(
-      id: 155,
+      id: 156,
       name: r'updateProgressAfterReading',
       type: IsarType.bool,
     ),
     r'updatedAt': PropertySchema(
-      id: 156,
+      id: 157,
       name: r'updatedAt',
       type: IsarType.long,
     ),
     r'useLibass': PropertySchema(
-      id: 157,
+      id: 158,
       name: r'useLibass',
       type: IsarType.bool,
     ),
     r'useMpvConfig': PropertySchema(
-      id: 158,
+      id: 159,
       name: r'useMpvConfig',
       type: IsarType.bool,
     ),
     r'usePageTapZones': PropertySchema(
-      id: 159,
+      id: 160,
       name: r'usePageTapZones',
       type: IsarType.bool,
     ),
     r'useYUV420P': PropertySchema(
-      id: 160,
+      id: 161,
       name: r'useYUV420P',
       type: IsarType.bool,
     ),
     r'userAgent': PropertySchema(
-      id: 161,
+      id: 162,
       name: r'userAgent',
       type: IsarType.string,
     ),
     r'volumeBoostCap': PropertySchema(
-      id: 162,
+      id: 163,
       name: r'volumeBoostCap',
       type: IsarType.long,
     ),
     r'webtoonSidePadding': PropertySchema(
-      id: 163,
+      id: 164,
       name: r'webtoonSidePadding',
       type: IsarType.long,
     ),
@@ -1633,43 +1638,44 @@ void _settingsSerialize(
   writer.writeBool(offsets[144], object.rpcShowTitle);
   writer.writeBool(offsets[145], object.saveAsCBZArchive);
   writer.writeByte(offsets[146], object.scaleType.index);
-  writer.writeBool(offsets[147], object.showPageGaps);
-  writer.writeBool(offsets[148], object.showPagesNumber);
+  writer.writeBool(offsets[147], object.showNSFW);
+  writer.writeBool(offsets[148], object.showPageGaps);
+  writer.writeBool(offsets[149], object.showPagesNumber);
   writer.writeObjectList<SortChapter>(
-    offsets[149],
+    offsets[150],
     allOffsets,
     SortChapterSchema.serialize,
     object.sortChapterList,
   );
   writer.writeObject<SortLibraryManga>(
-    offsets[150],
+    offsets[151],
     allOffsets,
     SortLibraryMangaSchema.serialize,
     object.sortLibraryAnime,
   );
   writer.writeObject<SortLibraryManga>(
-    offsets[151],
+    offsets[152],
     allOffsets,
     SortLibraryMangaSchema.serialize,
     object.sortLibraryManga,
   );
   writer.writeObject<SortLibraryManga>(
-    offsets[152],
+    offsets[153],
     allOffsets,
     SortLibraryMangaSchema.serialize,
     object.sortLibraryNovel,
   );
-  writer.writeLong(offsets[153], object.startDatebackup);
-  writer.writeBool(offsets[154], object.themeIsDark);
-  writer.writeBool(offsets[155], object.updateProgressAfterReading);
-  writer.writeLong(offsets[156], object.updatedAt);
-  writer.writeBool(offsets[157], object.useLibass);
-  writer.writeBool(offsets[158], object.useMpvConfig);
-  writer.writeBool(offsets[159], object.usePageTapZones);
-  writer.writeBool(offsets[160], object.useYUV420P);
-  writer.writeString(offsets[161], object.userAgent);
-  writer.writeLong(offsets[162], object.volumeBoostCap);
-  writer.writeLong(offsets[163], object.webtoonSidePadding);
+  writer.writeLong(offsets[154], object.startDatebackup);
+  writer.writeBool(offsets[155], object.themeIsDark);
+  writer.writeBool(offsets[156], object.updateProgressAfterReading);
+  writer.writeLong(offsets[157], object.updatedAt);
+  writer.writeBool(offsets[158], object.useLibass);
+  writer.writeBool(offsets[159], object.useMpvConfig);
+  writer.writeBool(offsets[160], object.usePageTapZones);
+  writer.writeBool(offsets[161], object.useYUV420P);
+  writer.writeString(offsets[162], object.userAgent);
+  writer.writeLong(offsets[163], object.volumeBoostCap);
+  writer.writeLong(offsets[164], object.webtoonSidePadding);
 }
 
 Settings _settingsDeserialize(
@@ -1927,40 +1933,41 @@ Settings _settingsDeserialize(
     scaleType:
         _SettingsscaleTypeValueEnumMap[reader.readByteOrNull(offsets[146])] ??
         ScaleType.fitScreen,
-    showPageGaps: reader.readBoolOrNull(offsets[147]),
-    showPagesNumber: reader.readBoolOrNull(offsets[148]),
+    showNSFW: reader.readBoolOrNull(offsets[147]),
+    showPageGaps: reader.readBoolOrNull(offsets[148]),
+    showPagesNumber: reader.readBoolOrNull(offsets[149]),
     sortChapterList: reader.readObjectList<SortChapter>(
-      offsets[149],
+      offsets[150],
       SortChapterSchema.deserialize,
       allOffsets,
       SortChapter(),
     ),
     sortLibraryAnime: reader.readObjectOrNull<SortLibraryManga>(
-      offsets[150],
-      SortLibraryMangaSchema.deserialize,
-      allOffsets,
-    ),
-    sortLibraryManga: reader.readObjectOrNull<SortLibraryManga>(
       offsets[151],
       SortLibraryMangaSchema.deserialize,
       allOffsets,
     ),
-    sortLibraryNovel: reader.readObjectOrNull<SortLibraryManga>(
+    sortLibraryManga: reader.readObjectOrNull<SortLibraryManga>(
       offsets[152],
       SortLibraryMangaSchema.deserialize,
       allOffsets,
     ),
-    startDatebackup: reader.readLongOrNull(offsets[153]),
-    themeIsDark: reader.readBoolOrNull(offsets[154]),
-    updateProgressAfterReading: reader.readBoolOrNull(offsets[155]),
-    updatedAt: reader.readLongOrNull(offsets[156]),
-    useLibass: reader.readBoolOrNull(offsets[157]),
-    useMpvConfig: reader.readBoolOrNull(offsets[158]),
-    usePageTapZones: reader.readBoolOrNull(offsets[159]),
-    useYUV420P: reader.readBoolOrNull(offsets[160]),
-    userAgent: reader.readStringOrNull(offsets[161]),
-    volumeBoostCap: reader.readLongOrNull(offsets[162]),
-    webtoonSidePadding: reader.readLongOrNull(offsets[163]),
+    sortLibraryNovel: reader.readObjectOrNull<SortLibraryManga>(
+      offsets[153],
+      SortLibraryMangaSchema.deserialize,
+      allOffsets,
+    ),
+    startDatebackup: reader.readLongOrNull(offsets[154]),
+    themeIsDark: reader.readBoolOrNull(offsets[155]),
+    updateProgressAfterReading: reader.readBoolOrNull(offsets[156]),
+    updatedAt: reader.readLongOrNull(offsets[157]),
+    useLibass: reader.readBoolOrNull(offsets[158]),
+    useMpvConfig: reader.readBoolOrNull(offsets[159]),
+    usePageTapZones: reader.readBoolOrNull(offsets[160]),
+    useYUV420P: reader.readBoolOrNull(offsets[161]),
+    userAgent: reader.readStringOrNull(offsets[162]),
+    volumeBoostCap: reader.readLongOrNull(offsets[163]),
+    webtoonSidePadding: reader.readLongOrNull(offsets[164]),
   );
   object.chapterFilterBookmarkedList = reader
       .readObjectList<ChapterFilterBookmarked>(
@@ -2448,18 +2455,13 @@ P _settingsDeserializeProp<P>(
     case 148:
       return (reader.readBoolOrNull(offset)) as P;
     case 149:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 150:
       return (reader.readObjectList<SortChapter>(
             offset,
             SortChapterSchema.deserialize,
             allOffsets,
             SortChapter(),
-          ))
-          as P;
-    case 150:
-      return (reader.readObjectOrNull<SortLibraryManga>(
-            offset,
-            SortLibraryMangaSchema.deserialize,
-            allOffsets,
           ))
           as P;
     case 151:
@@ -2477,15 +2479,20 @@ P _settingsDeserializeProp<P>(
           ))
           as P;
     case 153:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readObjectOrNull<SortLibraryManga>(
+            offset,
+            SortLibraryMangaSchema.deserialize,
+            allOffsets,
+          ))
+          as P;
     case 154:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 155:
       return (reader.readBoolOrNull(offset)) as P;
     case 156:
-      return (reader.readLongOrNull(offset)) as P;
-    case 157:
       return (reader.readBoolOrNull(offset)) as P;
+    case 157:
+      return (reader.readLongOrNull(offset)) as P;
     case 158:
       return (reader.readBoolOrNull(offset)) as P;
     case 159:
@@ -2493,10 +2500,12 @@ P _settingsDeserializeProp<P>(
     case 160:
       return (reader.readBoolOrNull(offset)) as P;
     case 161:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 162:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 163:
+      return (reader.readLongOrNull(offset)) as P;
+    case 164:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -12918,6 +12927,32 @@ extension SettingsQueryFilter
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> showNSFWIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'showNSFW'),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> showNSFWIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'showNSFW'),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> showNSFWEqualTo(
+    bool? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'showNSFW', value: value),
+      );
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterFilterCondition> showPageGapsIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
@@ -15601,6 +15636,18 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByShowNSFW() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'showNSFW', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByShowNSFWDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'showNSFW', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> sortByShowPageGaps() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'showPageGaps', Sort.asc);
@@ -17419,6 +17466,18 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByShowNSFW() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'showNSFW', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByShowNSFWDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'showNSFW', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy> thenByShowPageGaps() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'showPageGaps', Sort.asc);
@@ -18464,6 +18523,12 @@ extension SettingsQueryWhereDistinct
   QueryBuilder<Settings, Settings, QDistinct> distinctByScaleType() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'scaleType');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctByShowNSFW() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'showNSFW');
     });
   }
 
@@ -19533,6 +19598,12 @@ extension SettingsQueryProperty
   QueryBuilder<Settings, ScaleType, QQueryOperations> scaleTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'scaleType');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations> showNSFWProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'showNSFW');
     });
   }
 

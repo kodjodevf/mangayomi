@@ -27,6 +27,7 @@ class BrowseSScreen extends ConsumerWidget {
     final onlyIncludePinnedSource = ref.watch(
       onlyIncludePinnedSourceStateProvider,
     );
+    final showNSFW = ref.watch(showNSFWStateProvider);
     final checkForExtensionUpdates = ref.watch(
       checkForExtensionsUpdateStateProvider,
     );
@@ -224,6 +225,54 @@ class BrowseSScreen extends ConsumerWidget {
                           .read(onlyIncludePinnedSourceStateProvider.notifier)
                           .set(value);
                     },
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Row(
+                      children: [
+                        Text(
+                          l10n.nsfw_sources,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: context.primaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SwitchListTile(
+                    value: showNSFW,
+                    title: Text(l10n.nsfw_sources_show),
+                    onChanged: (value) {
+                      ref.read(showNSFWStateProvider.notifier).set(value);
+                    },
+                  ),
+                  ListTile(
+                    title: Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.info_outline_rounded,
+                            color: context.secondaryColor,
+                          ),
+                        ],
+                      ),
+                    ),
+                    subtitle: Text(
+                      l10n.nsfw_sources_info,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.secondaryColor,
+                      ),
+                    ),
                   ),
                 ],
               ),

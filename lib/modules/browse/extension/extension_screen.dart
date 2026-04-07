@@ -71,6 +71,7 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
     final repositories = ref.watch(
       extensionsRepoStateProvider(widget.itemType),
     );
+    final showNSFW = ref.watch(showNSFWStateProvider);
 
     final l10n = l10nLocalizations(context)!;
 
@@ -101,6 +102,9 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
                       .firstWhereOrNull((e) => e == element.repo)
                       ?.hidden ??
                   false) {
+                continue;
+              }
+              if (!showNSFW && (element.isNsfw ?? false)) {
                 continue;
               }
               final isLatestVersion = element.version == element.versionLast;

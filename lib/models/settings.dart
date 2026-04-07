@@ -350,6 +350,8 @@ class Settings {
 
   int? backupCompressionLevel;
 
+  bool? showNSFW;
+
   Settings({
     this.id = 227,
     this.updatedAt = 0,
@@ -510,6 +512,7 @@ class Settings {
     this.readerSaturation = 1.0,
     this.readerNavigationLayout = 0,
     this.backupCompressionLevel,
+    this.showNSFW = false,
   });
 
   Settings.fromJson(Map<String, dynamic> json) {
@@ -788,6 +791,7 @@ class Settings {
     readerSaturation = json['readerSaturation']?.toDouble();
     readerNavigationLayout = json['readerNavigationLayout'];
     backupCompressionLevel = json['backupCompressionLevel'];
+    showNSFW = json['showNSFW'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -972,6 +976,7 @@ class Settings {
     'readerSaturation': readerSaturation,
     'readerNavigationLayout': readerNavigationLayout,
     'backupCompressionLevel': backupCompressionLevel,
+    'showNSFW': showNSFW,
   };
 }
 

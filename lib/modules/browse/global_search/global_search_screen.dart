@@ -35,22 +35,26 @@ class GlobalSearchScreen extends ConsumerStatefulWidget {
 class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
   String _query = "";
   final _textEditingController = TextEditingController();
-  late final List<Source> sourceList =
-      ref.read(onlyIncludePinnedSourceStateProvider)
-      ? isar.sources
-            .filter()
-            .isPinnedEqualTo(true)
-            .and()
-            .itemTypeEqualTo(widget.itemType)
-            .findAllSync()
-      : isar.sources
-            .filter()
-            .idIsNotNull()
-            .and()
-            .isAddedEqualTo(true)
-            .and()
-            .itemTypeEqualTo(widget.itemType)
-            .findAllSync();
+  late final bool _showNSFW = ref.read(showNSFWStateProvider);
+  late final List<Source> sourceList = () {
+    final sources = ref.read(onlyIncludePinnedSourceStateProvider)
+        ? isar.sources
+              .filter()
+              .isPinnedEqualTo(true)
+              .and()
+              .itemTypeEqualTo(widget.itemType)
+              .findAllSync()
+        : isar.sources
+              .filter()
+              .idIsNotNull()
+              .and()
+              .isAddedEqualTo(true)
+              .and()
+              .itemTypeEqualTo(widget.itemType)
+              .findAllSync();
+    if (_showNSFW) return sources;
+    return sources.where((e) => !(e.isNsfw ?? false)).toList();
+  }();
 
   @override
   void initState() {

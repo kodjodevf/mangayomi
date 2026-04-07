@@ -7,6 +7,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/sources/widgets/source_list_tile.dart';
+import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/language.dart';
 
@@ -53,7 +54,10 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
           if (!snapshot.hasData) {
             return const SizedBox.shrink();
           }
-          List<Source> sources = snapshot.data!;
+          final showNSFW = ref.watch(showNSFWStateProvider);
+          List<Source> sources = snapshot.data!
+              .where((e) => showNSFW || !(e.isNsfw ?? false))
+              .toList();
           if (sources.isEmpty) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
