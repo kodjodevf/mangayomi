@@ -85,7 +85,7 @@ dependencies:
   screen_brightness: ^2.1.1
   flutter_html: ^3.0.0
   convert: ^3.1.2
-  connectivity_plus: ^7.1.0
+  connectivity_plus: ^7.0.0
   app_links: ^7.0.0
   win32: ^5.10.1
   protobuf: ^5.0.0
