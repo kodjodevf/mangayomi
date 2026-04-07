@@ -14,15 +14,15 @@
       "bundleIdentifier": "com.kodjodevf.mangayomi",
       "developerName": "Moustapha Kodjo Amadou",
       "subtitle": "Read manga, novels, and watch anime",
-      "version": "0.7.3",
-      "versionDate": "2026-03-23T14:34:39Z",
+      "version": "0.7.4",
+      "versionDate": "2026-04-07T15:10:10Z",
       "versionDescription": "",
-      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.7.3/Mangayomi-v0.7.3-ios.ipa",
+      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.7.4/Mangayomi-v0.7.4-ios.ipa",
       "localizedDescription": "Mangayomi is an open-source Flutter app for reading manga, novels, and watching anime across multiple platforms.",
       "iconURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/icons/icon_default.webp",
       "tintColor": "EF4444",
       "category": "entertainment",
-      "size": 43589596,
+      "size": 44983657,
       "screenshotURLs": [
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_0_default.webp",
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_1_default.webp",
@@ -30,9 +30,16 @@
       ],
       "versions": [
         {
+          "version": "0.7.4",
+          "date": "2026-04-07T15:10:10Z",
+          "localizedDescription": "",
+          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.7.4/Mangayomi-v0.7.4-ios.ipa",
+          "size": 44983657
+        },
+        {
           "version": "0.7.3",
           "date": "2026-03-23T14:34:39Z",
-          "localizedDescription": "",
+          "localizedDescription": "\u2022 [feat: add localization strings for statistics and reading time tracking](https://github.com/kodjodevf/mangayomi/commit/236a0cfc6d9456915510f84d37e8478db7210a86) https://github.com/kodjodevf/mangayomi/issues/672\r\n\r\n\u2022 [Fix slider alignment and page jumps in double page mode](https://github.com/kodjodevf/mangayomi/commit/d02d688d1fe0025d69ccf2816ef6afcbd0fcbd3c)\r\n\r\n\u2022 [Fix double page index calculation: uniform pairs (1\u20222, 3\u20224, 5\u20226)](https://github.com/kodjodevf/mangayomi/commit/d693445cb14d871434c1482ba27d8d6efc93bc65)\r\n\r\n\u2022 [Fix](https://github.com/kodjodevf/mangayomi/commit/f1dfbbaefca42e320c3115dabf4c7ff2e7c1277f) https://github.com/kodjodevf/mangayomi/issues/480[/](https://github.com/kodjodevf/mangayomi/commit/f1dfbbaefca42e320c3115dabf4c7ff2e7c1277f)https://github.com/kodjodevf/mangayomi/issues/165 https://github.com/kodjodevf/mangayomi/issues/479 https://github.com/kodjodevf/mangayomi/issues/443 https://github.com/kodjodevf/mangayomi/issues/541 https://github.com/kodjodevf/mangayomi/issues/554 https://github.com/kodjodevf/mangayomi/issues/452[: reader and download fixes](https://github.com/kodjodevf/mangayomi/commit/f1dfbbaefca42e320c3115dabf4c7ff2e7c1277f)\r\n\r\n\r\n\u2022 [feat: implement multiple bug fixes and feature requests\\n\\n\u2022](https://github.com/kodjodevf/mangayomi/commit/566da0ae06d0846b720652c8deab562ac28bef6a) https://github.com/kodjodevf/mangayomi/issues/339[: Remember window size/position on desktop (WindowGeometry utility)\\n\u2022](https://github.com/kodjodevf/mangayomi/commit/566da0ae06d0846b720652c8deab562ac28bef6a) https://github.com/kodjodevf/mangayomi/issues/256[: Add S key shortcut to skip intro in desktop anime playe\u2026](https://github.com/kodjodevf/mangayomi/commit/566da0ae06d0846b720652c8deab562ac28bef6a)\r\n\r\n\u2022 [fix](https://github.com/kodjodevf/mangayomi/commit/6f722f59c63d108ef1b43fe3be4fd32053e3b8f6) https://github.com/kodjodevf/mangayomi/issues/667\r\n\r\n\u2022 [fix](https://github.com/kodjodevf/mangayomi/commit/1f4e81e9b38d7330cbb51a293d66343bbcc78ca0) https://github.com/kodjodevf/mangayomi/issues/669\r\n\r\n\u2022 [fix](https://github.com/kodjodevf/mangayomi/commit/0abd706ec84869fae2941a42875367ffe25b3c38) https://github.com/kodjodevf/mangayomi/issues/670\r\n\r\n\r\n[feat: add logging functionality to MProviderBridged](https://github.com/kodjodevf/mangayomi/commit/7bda29d8e20dce6e56fa8b3bd1ce8ff67d251b66)\r\n\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.7.2...v0.7.3",
           "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.7.3/Mangayomi-v0.7.3-ios.ipa",
           "size": 43589596
         },
@@ -412,6 +419,17 @@
       "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
       "notify": true,
       "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.7.3"
+    },
+    {
+      "appID": "com.kodjodevf.mangayomi",
+      "title": "0.7.4 - 07 Apr",
+      "identifier": "release-0.7.4",
+      "caption": "Update for Mangayomi now available!",
+      "date": "2026-04-07T15:10:10Z",
+      "tintColor": "EF4444",
+      "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
+      "notify": true,
+      "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.7.4"
     }
   ]
 }
