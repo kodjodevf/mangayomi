@@ -132,14 +132,15 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
                 ),
               ],
             ),
-            ListTile(
-              onTap: () => _showCustomDnsDialog(context, ref, customDns),
-              title: Text(l10n.custom_dns),
-              subtitle: Text(
-                customDns,
-                style: TextStyle(fontSize: 11, color: context.secondaryColor),
+            if (!doHState.enabled)
+              ListTile(
+                onTap: () => _showCustomDnsDialog(context, ref, customDns),
+                title: Text(l10n.custom_dns),
+                subtitle: Text(
+                  customDns,
+                  style: TextStyle(fontSize: 11, color: context.secondaryColor),
+                ),
               ),
-            ),
             ListTile(
               onTap: () => _showDefaultUserAgentDialog(context, ref, userAgent),
               title: Text(context.l10n.default_user_agent),
