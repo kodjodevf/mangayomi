@@ -4,14 +4,14 @@ publish_to: "none"
 version: 0.7.3+99
 
 environment:
-  sdk: ^3.11.1
+  sdk: ^3.11.3
 
 dependencies:
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  go_router: ^17.0.1
+  go_router: ^17.2.0
   flutter_riverpod: ^3.1.0
   riverpod_annotation: ^4.0.0
   html: ^0.15.6
@@ -21,9 +21,9 @@ dependencies:
   photo_view: ^0.15.0
   grouped_list: ^6.0.0
   intl: ^0.20.2
-  google_fonts: ^7.0.0
+  google_fonts: ^8.0.2
   url_launcher: ^6.3.1
-  package_info_plus: ^9.0.0
+  package_info_plus: ^9.0.1
   permission_handler: ^12.0.1
   flutter_inappwebview:
     git:
@@ -31,12 +31,12 @@ dependencies:
       path: flutter_inappwebview
       ref: master
   draggable_menu: ^4.4.1
-  isar_community: ^3.3.0
-  isar_community_flutter_libs: ^3.3.0
-  share_plus: ^12.0.1
+  isar_community: ^3.3.2
+  isar_community_flutter_libs: ^3.3.2
+  share_plus: ^12.0.2
   xpath_selector_html_parser: ^3.0.1
-  archive: ^4.0.1
-  file_picker: ^10.3.8
+  archive: ^4.0.9
+  file_picker: ^11.0.2
   path_provider: ^2.1.5
   scrollable_positioned_list: ^0.3.8
   bot_toast: ^4.1.3
@@ -56,7 +56,7 @@ dependencies:
       url: https://github.com/kodjodevf/media-kit.git
       path: libs/universal/media_kit_libs_video
   crypto: ^3.0.7
-  cupertino_icons: ^1.0.8
+  cupertino_icons: ^1.0.9
   window_manager: ^0.5.1
   ffi: ^2.1.5
   ffigen: ^20.1.1
@@ -87,7 +87,7 @@ dependencies:
   screen_brightness: ^2.1.1
   flutter_html: ^3.0.0
   convert: ^3.1.2
-  connectivity_plus: ^7.0.0
+  connectivity_plus: ^7.1.0
   app_links: ^7.0.0
   win32: ^5.10.1
   protobuf: ^5.0.0
