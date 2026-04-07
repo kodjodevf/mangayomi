@@ -1358,7 +1358,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           GestureDetector(
             onTap: () async {
               try {
-                FilePickerResult? result = await FilePicker.platform.pickFiles(
+                FilePickerResult? result = await FilePicker.pickFiles(
                   allowMultiple: false,
                 );
 

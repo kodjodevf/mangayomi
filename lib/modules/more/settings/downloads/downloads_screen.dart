@@ -128,7 +128,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
             ),
             ListTile(
               onTap: () async {
-                final result = await FilePicker.platform.getDirectoryPath();
+                final result = await FilePicker.getDirectoryPath();
                 if (result != null) {
                   final temp = localFolders.toList();
                   temp.add(result);

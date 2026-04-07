@@ -15,7 +15,7 @@ Future addTorrentFromUrlOrFromFile(
 }) async {
   FilePickerResult? result;
   if (url == null) {
-    result = await FilePicker.platform.pickFiles(
+    result = await FilePicker.pickFiles(
       allowMultiple: true,
       type: FileType.custom,
       allowedExtensions: ['torrent'],

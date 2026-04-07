@@ -696,8 +696,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   break;
                                 case 5:
                                   try {
-                                    final result = await FilePicker.platform
-                                        .getDirectoryPath();
+                                    final result =
+                                        await FilePicker.getDirectoryPath();
                                     if (result != null) {
                                       final client = MClient.init();
                                       final coverFile = File(
@@ -2348,7 +2348,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                         Navigator.pop(context);
                                       } else if (value == 1) {
                                         FilePickerResult? result =
-                                            await FilePicker.platform.pickFiles(
+                                            await FilePicker.pickFiles(
                                               type: FileType.custom,
                                               allowedExtensions: [
                                                 'png',

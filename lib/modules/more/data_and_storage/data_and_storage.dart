@@ -53,8 +53,8 @@ class DataAndStorage extends ConsumerWidget {
                                   .set("");
                               Navigator.pop(context);
                             } else {
-                              String? result = await FilePicker.platform
-                                  .getDirectoryPath();
+                              String? result =
+                                  await FilePicker.getDirectoryPath();
 
                               if (result != null) {
                                 ref
@@ -224,10 +224,9 @@ class DataAndStorage extends ConsumerWidget {
                                         onPressed: () async {
                                           try {
                                             FilePickerResult? result =
-                                                await FilePicker.platform
-                                                    .pickFiles(
-                                                      allowMultiple: false,
-                                                    );
+                                                await FilePicker.pickFiles(
+                                                  allowMultiple: false,
+                                                );
 
                                             if (result != null &&
                                                 context.mounted) {
@@ -361,7 +360,7 @@ class DataAndStorage extends ConsumerWidget {
             if (!Platform.isIOS)
               ListTile(
                 onTap: () async {
-                  String? result = await FilePicker.platform.getDirectoryPath();
+                  String? result = await FilePicker.getDirectoryPath();
 
                   if (result != null) {
                     ref
