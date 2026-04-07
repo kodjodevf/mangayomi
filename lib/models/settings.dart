@@ -773,7 +773,7 @@ class Settings {
     algorithmWeights = json['algorithmWeights'] != null
         ? AlgorithmWeights.fromJson(json['algorithmWeights'])
         : null;
-    localFolders = (json['localFolders'] as List).cast<String>();
+    localFolders = (json['localFolders'] as List?)?.cast<String>();
     appLockEnabled = json['appLockEnabled'];
     libraryFilterMangasCompletedType = json['libraryFilterMangasCompletedType'];
     libraryFilterAnimeCompletedType = json['libraryFilterAnimeCompletedType'];
