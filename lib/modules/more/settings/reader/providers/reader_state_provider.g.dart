@@ -1654,3 +1654,212 @@ abstract class _$ReaderNavigationLayoutState extends $Notifier<int> {
     element.handleCreate(ref, build);
   }
 }
+
+@ProviderFor(TtsSpeechRateState)
+final ttsSpeechRateStateProvider = TtsSpeechRateStateProvider._();
+
+final class TtsSpeechRateStateProvider
+    extends $NotifierProvider<TtsSpeechRateState, double> {
+  TtsSpeechRateStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'ttsSpeechRateStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$ttsSpeechRateStateHash();
+
+  @$internal
+  @override
+  TtsSpeechRateState create() => TtsSpeechRateState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(double value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<double>(value),
+    );
+  }
+}
+
+String _$ttsSpeechRateStateHash() =>
+    r'c59420fd0d1b4435b556b6b93c0ce03bc3b46d2e';
+
+abstract class _$TtsSpeechRateState extends $Notifier<double> {
+  double build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<double, double>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<double, double>,
+              double,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(TtsPitchState)
+final ttsPitchStateProvider = TtsPitchStateProvider._();
+
+final class TtsPitchStateProvider
+    extends $NotifierProvider<TtsPitchState, double> {
+  TtsPitchStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'ttsPitchStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$ttsPitchStateHash();
+
+  @$internal
+  @override
+  TtsPitchState create() => TtsPitchState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(double value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<double>(value),
+    );
+  }
+}
+
+String _$ttsPitchStateHash() => r'bb784b9ae5ced137678f68918aa5d1430a0d4bc9';
+
+abstract class _$TtsPitchState extends $Notifier<double> {
+  double build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<double, double>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<double, double>,
+              double,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(TtsLanguageState)
+final ttsLanguageStateProvider = TtsLanguageStateProvider._();
+
+final class TtsLanguageStateProvider
+    extends $NotifierProvider<TtsLanguageState, String?> {
+  TtsLanguageStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'ttsLanguageStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$ttsLanguageStateHash();
+
+  @$internal
+  @override
+  TtsLanguageState create() => TtsLanguageState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String?>(value),
+    );
+  }
+}
+
+String _$ttsLanguageStateHash() => r'5a91ad875c52cb87022e44d11d3db2d68dce9976';
+
+abstract class _$TtsLanguageState extends $Notifier<String?> {
+  String? build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<String?, String?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String?, String?>,
+              String?,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(TtsVoiceState)
+final ttsVoiceStateProvider = TtsVoiceStateProvider._();
+
+final class TtsVoiceStateProvider
+    extends $NotifierProvider<TtsVoiceState, String?> {
+  TtsVoiceStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'ttsVoiceStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$ttsVoiceStateHash();
+
+  @$internal
+  @override
+  TtsVoiceState create() => TtsVoiceState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String?>(value),
+    );
+  }
+}
+
+String _$ttsVoiceStateHash() => r'c132058e15997489fe2ef2712c22688f65aa6b99';
+
+abstract class _$TtsVoiceState extends $Notifier<String?> {
+  String? build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<String?, String?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String?, String?>,
+              String?,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}

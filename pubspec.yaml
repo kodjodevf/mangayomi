@@ -104,6 +104,7 @@ dependencies:
   m_extension_server:
     git:
       url: https://github.com/kodjodevf/m_extension_server.git
+  flutter_tts: ^4.2.5
 
 dependency_overrides:
   ffi: ^2.1.3

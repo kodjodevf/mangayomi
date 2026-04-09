@@ -645,3 +645,83 @@ class ReaderNavigationLayoutState extends _$ReaderNavigationLayoutState {
     );
   }
 }
+
+@riverpod
+class TtsSpeechRateState extends _$TtsSpeechRateState {
+  @override
+  double build() {
+    return isar.settings.getSync(227)!.ttsSpeechRate ?? 0.5;
+  }
+
+  void set(double value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..ttsSpeechRate = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class TtsPitchState extends _$TtsPitchState {
+  @override
+  double build() {
+    return isar.settings.getSync(227)!.ttsPitch ?? 1.0;
+  }
+
+  void set(double value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..ttsPitch = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class TtsLanguageState extends _$TtsLanguageState {
+  @override
+  String? build() {
+    return isar.settings.getSync(227)!.ttsLanguage;
+  }
+
+  void set(String? value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..ttsLanguage = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class TtsVoiceState extends _$TtsVoiceState {
+  @override
+  String? build() {
+    return isar.settings.getSync(227)!.ttsVoice;
+  }
+
+  void set(String? value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..ttsVoice = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}

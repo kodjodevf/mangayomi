@@ -15,6 +15,9 @@ import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/novel/novel_reader_controller_provider.dart';
+import 'package:mangayomi/modules/novel/tts/novel_tts_service.dart';
+import 'package:mangayomi/modules/novel/tts/tts_player_bar.dart';
+import 'package:mangayomi/modules/novel/tts/tts_settings_tab.dart';
 import 'package:mangayomi/modules/novel/widgets/novel_reader_settings_sheet.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -70,6 +73,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   double maxOffset = 0;
   int fontSize = 14;
   bool isDesktop = Platform.isMacOS || Platform.isLinux || Platform.isWindows;
+  bool get _ttsSupported => !Platform.isLinux;
 
   final Stopwatch _readingStopwatch = Stopwatch();
 
@@ -95,6 +99,11 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     _autoScroll.value = false;
     _autoScroll.dispose();
     _autoScrollPage.dispose();
+    _ttsIndexSub?.cancel();
+    _ttsStateSub?.cancel();
+    _ttsWordSub?.cancel();
+    _ttsProgress.dispose();
+    NovelTtsService.instance.stop();
     clearGestureDetailsCache();
     if (isDesktop) {
       setFullScreen(value: false);
@@ -137,11 +146,37 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     });
     if (!isDesktop) SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     discordRpc?.showChapterDetails(ref, chapter);
+
+    _ttsIndexSub = NovelTtsService.instance.paragraphIndexStream.listen((i) {
+      _ttsProgress.value = (paragraph: i, wordStart: -1, wordEnd: -1);
+      _scrollToTtsParagraph(i);
+    });
+    _ttsStateSub = NovelTtsService.instance.stateStream.listen((s) {
+      if (s == TtsState.stopped) {
+        _ttsProgress.value = (paragraph: -1, wordStart: -1, wordEnd: -1);
+      }
+    });
+    _ttsWordSub = NovelTtsService.instance.wordProgressStream.listen((wp) {
+      _ttsProgress.value = (
+        paragraph: wp.paragraphIndex,
+        wordStart: wp.startOffset,
+        wordEnd: wp.endOffset,
+      );
+    });
   }
 
   late bool _isBookmarked = _readerController.getChapterBookmarked();
 
   bool _isView = false;
+
+  bool _showTts = false;
+  String? _currentHtmlContent;
+  final ValueNotifier<({int paragraph, int wordStart, int wordEnd})>
+  _ttsProgress = ValueNotifier((paragraph: -1, wordStart: -1, wordEnd: -1));
+  int _ttsTotalBlocks = 0;
+  StreamSubscription<int>? _ttsIndexSub;
+  StreamSubscription<TtsState>? _ttsStateSub;
+  StreamSubscription<TtsWordProgress>? _ttsWordSub;
 
   double get pixelRatio => View.of(context).devicePixelRatio;
 
@@ -186,6 +221,17 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
       }
     }
     _autoPagescroll();
+  }
+
+  void _scrollToTtsParagraph(int index) {
+    if (!_scrollController.hasClients || _ttsTotalBlocks <= 0) return;
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final targetOffset = (index / _ttsTotalBlocks) * maxScroll;
+    _scrollController.animateTo(
+      targetOffset.clamp(0.0, maxScroll),
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
@@ -266,6 +312,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                           child: Builder(
                             builder: (context) {
                               epubBook = data.$2;
+                              _currentHtmlContent = data.$1;
 
                               final padding = ref.watch(
                                 novelReaderPaddingStateProvider,
@@ -364,166 +411,293 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                         physics: const BouncingScrollPhysics(),
                                         slivers: [
                                           SliverToBoxAdapter(
-                                            child: Html(
-                                              data: data.$1,
-                                              style: {
-                                                "body": Style(
-                                                  fontSize: FontSize(
-                                                    fontSize.toDouble(),
-                                                  ),
-                                                  color: parseColor(
-                                                    customTextColor,
-                                                    fallback: Colors.white,
-                                                  ),
-                                                  backgroundColor: parseColor(
-                                                    customBackgroundColor,
-                                                    fallback: const Color(
-                                                      0xFF292832,
-                                                    ),
-                                                  ),
-                                                  margin: Margins.zero,
-                                                  padding: HtmlPaddings.all(
-                                                    padding.toDouble(),
-                                                  ),
-                                                  lineHeight: LineHeight(
-                                                    lineHeight,
-                                                  ),
-                                                  textAlign: getTextAlign(),
-                                                ),
-                                                "p": Style(
-                                                  margin: removeExtraSpacing
-                                                      ? Margins.only(bottom: 4)
-                                                      : Margins.only(bottom: 8),
-                                                  fontSize: FontSize(
-                                                    fontSize.toDouble(),
-                                                  ),
-                                                  lineHeight: LineHeight(
-                                                    lineHeight,
-                                                  ),
-                                                  textAlign: getTextAlign(),
-                                                ),
-                                                "div": Style(
-                                                  fontSize: FontSize(
-                                                    fontSize.toDouble(),
-                                                  ),
-                                                  lineHeight: LineHeight(
-                                                    lineHeight,
-                                                  ),
-                                                  textAlign: getTextAlign(),
-                                                ),
-                                                "span": Style(
-                                                  fontSize: FontSize(
-                                                    fontSize.toDouble(),
-                                                  ),
-                                                  lineHeight: LineHeight(
-                                                    lineHeight,
-                                                  ),
-                                                ),
-                                                "h1, h2, h3, h4, h5, h6": Style(
-                                                  color: parseColor(
-                                                    customTextColor,
-                                                    fallback: Colors.white,
-                                                  ),
-                                                  lineHeight: LineHeight(
-                                                    lineHeight,
-                                                  ),
-                                                  textAlign: getTextAlign(),
-                                                ),
-                                                "a": Style(
-                                                  color: Colors.blue,
-                                                  textDecoration:
-                                                      TextDecoration.underline,
-                                                ),
-                                                "img": Style(
-                                                  width: Width(
-                                                    100,
-                                                    Unit.percent,
-                                                  ),
-                                                  height: Height.auto(),
-                                                ),
-                                                "table": Style(
-                                                  border: Border.all(
-                                                    color: Colors.grey,
-                                                    width: 1,
-                                                  ),
-                                                  margin: Margins.symmetric(
-                                                    vertical: 10,
-                                                  ),
-                                                ),
-                                                "td, th": Style(
-                                                  border: Border.all(
-                                                    color: Colors.grey,
-                                                    width: 0.5,
-                                                  ),
-                                                  padding: HtmlPaddings.all(8),
-                                                ),
-                                                "th": Style(
-                                                  fontWeight: FontWeight.bold,
-                                                  backgroundColor: Colors.grey
-                                                      .withValues(alpha: 0.2),
-                                                ),
-                                                "blockquote": Style(
-                                                  border: Border(
-                                                    left: BorderSide(
-                                                      color: Colors.grey,
-                                                      width: 4,
-                                                    ),
-                                                  ),
-                                                  padding: HtmlPaddings.only(
-                                                    left: 15,
-                                                  ),
-                                                  margin: Margins.symmetric(
-                                                    vertical: 10,
-                                                  ),
-                                                  fontStyle: FontStyle.italic,
-                                                ),
-                                                "pre, code": Style(
-                                                  backgroundColor: Colors.grey
-                                                      .withValues(alpha: 0.2),
-                                                  padding: HtmlPaddings.all(8),
-                                                  fontFamily: 'monospace',
-                                                ),
-                                                "hr": Style(
-                                                  margin: Margins.symmetric(
-                                                    vertical: 20,
-                                                  ),
-                                                ),
-                                              },
-                                              extensions: [
-                                                TagExtension(
-                                                  tagsToExtend: {
-                                                    "img",
-                                                    "source",
-                                                  },
-                                                  builder: (extensionContext) {
-                                                    final element =
-                                                        extensionContext.node
-                                                            as dom.Element;
-                                                    final customWidget =
-                                                        _buildCustomWidgets(
-                                                          element,
-                                                        );
-                                                    if (customWidget != null) {
-                                                      return customWidget;
+                                            child:
+                                                ValueListenableBuilder<
+                                                  ({
+                                                    int paragraph,
+                                                    int wordStart,
+                                                    int wordEnd,
+                                                  })
+                                                >(
+                                                  valueListenable: _ttsProgress,
+                                                  builder: (context, tts, _) {
+                                                    String htmlData = data.$1;
+                                                    if (_showTts &&
+                                                        tts.paragraph >= 0) {
+                                                      final result =
+                                                          NovelTtsService
+                                                              .instance
+                                                              .highlightHtml(
+                                                                data.$1,
+                                                                tts.paragraph,
+                                                                wordStart: tts
+                                                                    .wordStart,
+                                                                wordEnd:
+                                                                    tts.wordEnd,
+                                                              );
+                                                      htmlData = result.$1;
+                                                      _ttsTotalBlocks =
+                                                          result.$2;
                                                     }
+                                                    return Html(
+                                                      data: htmlData,
+                                                      style: {
+                                                        "body": Style(
+                                                          fontSize: FontSize(
+                                                            fontSize.toDouble(),
+                                                          ),
+                                                          color: parseColor(
+                                                            customTextColor,
+                                                            fallback:
+                                                                Colors.white,
+                                                          ),
+                                                          backgroundColor:
+                                                              parseColor(
+                                                                customBackgroundColor,
+                                                                fallback:
+                                                                    const Color(
+                                                                      0xFF292832,
+                                                                    ),
+                                                              ),
+                                                          margin: Margins.zero,
+                                                          padding:
+                                                              HtmlPaddings.all(
+                                                                padding
+                                                                    .toDouble(),
+                                                              ),
+                                                          lineHeight:
+                                                              LineHeight(
+                                                                lineHeight,
+                                                              ),
+                                                          textAlign:
+                                                              getTextAlign(),
+                                                        ),
+                                                        "p": Style(
+                                                          margin:
+                                                              removeExtraSpacing
+                                                              ? Margins.only(
+                                                                  bottom: 4,
+                                                                )
+                                                              : Margins.only(
+                                                                  bottom: 8,
+                                                                ),
+                                                          fontSize: FontSize(
+                                                            fontSize.toDouble(),
+                                                          ),
+                                                          lineHeight:
+                                                              LineHeight(
+                                                                lineHeight,
+                                                              ),
+                                                          textAlign:
+                                                              getTextAlign(),
+                                                        ),
+                                                        "div": Style(
+                                                          fontSize: FontSize(
+                                                            fontSize.toDouble(),
+                                                          ),
+                                                          lineHeight:
+                                                              LineHeight(
+                                                                lineHeight,
+                                                              ),
+                                                          textAlign:
+                                                              getTextAlign(),
+                                                        ),
+                                                        "span": Style(
+                                                          fontSize: FontSize(
+                                                            fontSize.toDouble(),
+                                                          ),
+                                                          lineHeight:
+                                                              LineHeight(
+                                                                lineHeight,
+                                                              ),
+                                                        ),
+                                                        "h1, h2, h3, h4, h5, h6":
+                                                            Style(
+                                                              color: parseColor(
+                                                                customTextColor,
+                                                                fallback: Colors
+                                                                    .white,
+                                                              ),
+                                                              lineHeight:
+                                                                  LineHeight(
+                                                                    lineHeight,
+                                                                  ),
+                                                              textAlign:
+                                                                  getTextAlign(),
+                                                            ),
+                                                        "a": Style(
+                                                          color: Colors.blue,
+                                                          textDecoration:
+                                                              TextDecoration
+                                                                  .underline,
+                                                        ),
+                                                        "img": Style(
+                                                          width: Width(
+                                                            100,
+                                                            Unit.percent,
+                                                          ),
+                                                          height: Height.auto(),
+                                                        ),
+                                                        "table": Style(
+                                                          border: Border.all(
+                                                            color: Colors.grey,
+                                                            width: 1,
+                                                          ),
+                                                          margin:
+                                                              Margins.symmetric(
+                                                                vertical: 10,
+                                                              ),
+                                                        ),
+                                                        "td, th": Style(
+                                                          border: Border.all(
+                                                            color: Colors.grey,
+                                                            width: 0.5,
+                                                          ),
+                                                          padding:
+                                                              HtmlPaddings.all(
+                                                                8,
+                                                              ),
+                                                        ),
+                                                        "th": Style(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          backgroundColor:
+                                                              Colors.grey
+                                                                  .withValues(
+                                                                    alpha: 0.2,
+                                                                  ),
+                                                        ),
+                                                        "blockquote": Style(
+                                                          border: Border(
+                                                            left: BorderSide(
+                                                              color:
+                                                                  Colors.grey,
+                                                              width: 4,
+                                                            ),
+                                                          ),
+                                                          padding:
+                                                              HtmlPaddings.only(
+                                                                left: 15,
+                                                              ),
+                                                          margin:
+                                                              Margins.symmetric(
+                                                                vertical: 10,
+                                                              ),
+                                                          fontStyle:
+                                                              FontStyle.italic,
+                                                        ),
+                                                        "pre, code": Style(
+                                                          backgroundColor:
+                                                              Colors.grey
+                                                                  .withValues(
+                                                                    alpha: 0.2,
+                                                                  ),
+                                                          padding:
+                                                              HtmlPaddings.all(
+                                                                8,
+                                                              ),
+                                                          fontFamily:
+                                                              'monospace',
+                                                        ),
+                                                        "hr": Style(
+                                                          margin:
+                                                              Margins.symmetric(
+                                                                vertical: 20,
+                                                              ),
+                                                        ),
+                                                        if (_showTts &&
+                                                            tts.paragraph >= 0)
+                                                          "[data-tts-active]": Style(
+                                                            backgroundColor:
+                                                                Theme.of(
+                                                                      context,
+                                                                    )
+                                                                    .colorScheme
+                                                                    .primary
+                                                                    .withValues(
+                                                                      alpha:
+                                                                          0.10,
+                                                                    ),
+                                                            border: Border(
+                                                              left: BorderSide(
+                                                                color: Theme.of(
+                                                                  context,
+                                                                ).colorScheme.primary,
+                                                                width: 3,
+                                                              ),
+                                                            ),
+                                                            padding:
+                                                                HtmlPaddings.only(
+                                                                  left: 8,
+                                                                ),
+                                                          ),
+                                                        if (_showTts &&
+                                                            tts.paragraph >= 0)
+                                                          "[data-tts-word]": Style(
+                                                            backgroundColor:
+                                                                Theme.of(
+                                                                      context,
+                                                                    )
+                                                                    .colorScheme
+                                                                    .primary
+                                                                    .withValues(
+                                                                      alpha:
+                                                                          0.35,
+                                                                    ),
+                                                            textDecoration:
+                                                                TextDecoration
+                                                                    .underline,
+                                                            textDecorationColor:
+                                                                Theme.of(
+                                                                      context,
+                                                                    )
+                                                                    .colorScheme
+                                                                    .primary,
+                                                          ),
+                                                      },
+                                                      extensions: [
+                                                        TagExtension(
+                                                          tagsToExtend: {
+                                                            "img",
+                                                            "source",
+                                                          },
+                                                          builder: (extensionContext) {
+                                                            final element =
+                                                                extensionContext
+                                                                        .node
+                                                                    as dom.Element;
+                                                            final customWidget =
+                                                                _buildCustomWidgets(
+                                                                  element,
+                                                                );
+                                                            if (customWidget !=
+                                                                null) {
+                                                              return customWidget;
+                                                            }
 
-                                                    return const SizedBox.shrink();
+                                                            return const SizedBox.shrink();
+                                                          },
+                                                        ),
+                                                      ],
+                                                      onLinkTap:
+                                                          (
+                                                            url,
+                                                            attributes,
+                                                            element,
+                                                          ) {
+                                                            if (url != null) {
+                                                              context.push(
+                                                                "/mangawebview",
+                                                                extra: {
+                                                                  'url': url,
+                                                                  'title': url,
+                                                                },
+                                                              );
+                                                            }
+                                                          },
+                                                    );
                                                   },
                                                 ),
-                                              ],
-                                              onLinkTap:
-                                                  (url, attributes, element) {
-                                                    if (url != null) {
-                                                      context.push(
-                                                        "/mangawebview",
-                                                        extra: {
-                                                          'url': url,
-                                                          'title': url,
-                                                        },
-                                                      );
-                                                    }
-                                                  },
-                                            ),
                                           ),
                                         ],
                                       ),
@@ -596,6 +770,22 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                     _appBar(),
                     _bottomBar(backgroundColor),
                     _autoScrollPlayPauseBtn(),
+                    if (_ttsSupported &&
+                        _showTts &&
+                        _currentHtmlContent != null)
+                      Positioned(
+                        bottom: _isView ? 145 : 0,
+                        left: 0,
+                        right: 0,
+                        child: TtsPlayerBar(
+                          htmlContent: _currentHtmlContent!,
+                          onClose: () {
+                            if (mounted) {
+                              setState(() => _showTts = false);
+                            }
+                          },
+                        ),
+                      ),
                   ],
                 );
               },
@@ -1146,6 +1336,24 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                 ),
                               ),
 
+                              if (_ttsSupported)
+                                IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _showTts = !_showTts;
+                                    });
+                                  },
+                                  icon: Icon(
+                                    _showTts
+                                        ? Icons.record_voice_over
+                                        : Icons.record_voice_over_outlined,
+                                    color: _showTts
+                                        ? Theme.of(context).colorScheme.primary
+                                        : null,
+                                  ),
+                                  tooltip: context.l10n.tts,
+                                ),
+
                               IconButton(
                                 onPressed: () async {
                                   bool autoScrollAreadyFalse =
@@ -1157,6 +1365,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                     tabs: [
                                       Tab(text: context.l10n.reader),
                                       Tab(text: context.l10n.general),
+                                      if (_ttsSupported)
+                                        Tab(text: context.l10n.tts),
                                     ],
                                     children: [
                                       ReaderSettingsTab(),
@@ -1166,6 +1376,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                         readerController: _readerController,
                                         pageOffset: _pageOffset,
                                       ),
+                                      if (_ttsSupported) const TtsSettingsTab(),
                                     ],
                                     context: context,
                                     vsync: this,

@@ -833,5 +833,24 @@
   "could_not_launch_apk_bridge_page": "Could not launch the ApkBridge page.",
   "proxy_server_ip_hint": "Server IP (e.g., 10.0.0.5 or https://example.com)",
   "not_configured": "Not configured",
-  "webview": "Webview"
+  "webview": "Webview",
+  "tts": "Text-to-Speech",
+  "tts_speed": "Speed",
+  "tts_pitch": "Pitch",
+  "tts_language": "Language",
+  "tts_voice": "Voice",
+  "tts_stop": "Stop",
+  "tts_play": "Play",
+  "tts_pause": "Pause",
+  "tts_previous": "Previous paragraph",
+  "tts_next": "Next paragraph",
+  "tts_paragraph_progress": "Paragraph {current} of {total}",
+  "@tts_paragraph_progress": {
+    "placeholders": {
+      "current": {},
+      "total": {}
+    }
+  },
+  "tts_settings": "TTS Settings",
+  "tts_default": "Default"
 }

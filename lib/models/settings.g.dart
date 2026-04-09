@@ -849,48 +849,68 @@ const SettingsSchema = CollectionSchema(
       name: r'themeIsDark',
       type: IsarType.bool,
     ),
-    r'updateProgressAfterReading': PropertySchema(
+    r'ttsLanguage': PropertySchema(
       id: 156,
+      name: r'ttsLanguage',
+      type: IsarType.string,
+    ),
+    r'ttsPitch': PropertySchema(
+      id: 157,
+      name: r'ttsPitch',
+      type: IsarType.double,
+    ),
+    r'ttsSpeechRate': PropertySchema(
+      id: 158,
+      name: r'ttsSpeechRate',
+      type: IsarType.double,
+    ),
+    r'ttsVoice': PropertySchema(
+      id: 159,
+      name: r'ttsVoice',
+      type: IsarType.string,
+    ),
+    r'updateProgressAfterReading': PropertySchema(
+      id: 160,
       name: r'updateProgressAfterReading',
       type: IsarType.bool,
     ),
     r'updatedAt': PropertySchema(
-      id: 157,
+      id: 161,
       name: r'updatedAt',
       type: IsarType.long,
     ),
     r'useLibass': PropertySchema(
-      id: 158,
+      id: 162,
       name: r'useLibass',
       type: IsarType.bool,
     ),
     r'useMpvConfig': PropertySchema(
-      id: 159,
+      id: 163,
       name: r'useMpvConfig',
       type: IsarType.bool,
     ),
     r'usePageTapZones': PropertySchema(
-      id: 160,
+      id: 164,
       name: r'usePageTapZones',
       type: IsarType.bool,
     ),
     r'useYUV420P': PropertySchema(
-      id: 161,
+      id: 165,
       name: r'useYUV420P',
       type: IsarType.bool,
     ),
     r'userAgent': PropertySchema(
-      id: 162,
+      id: 166,
       name: r'userAgent',
       type: IsarType.string,
     ),
     r'volumeBoostCap': PropertySchema(
-      id: 163,
+      id: 167,
       name: r'volumeBoostCap',
       type: IsarType.long,
     ),
     r'webtoonSidePadding': PropertySchema(
-      id: 164,
+      id: 168,
       name: r'webtoonSidePadding',
       type: IsarType.long,
     ),
@@ -1387,6 +1407,18 @@ int _settingsEstimateSize(
     }
   }
   {
+    final value = object.ttsLanguage;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
+    final value = object.ttsVoice;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
+  {
     final value = object.userAgent;
     if (value != null) {
       bytesCount += 3 + value.length * 3;
@@ -1667,15 +1699,19 @@ void _settingsSerialize(
   );
   writer.writeLong(offsets[154], object.startDatebackup);
   writer.writeBool(offsets[155], object.themeIsDark);
-  writer.writeBool(offsets[156], object.updateProgressAfterReading);
-  writer.writeLong(offsets[157], object.updatedAt);
-  writer.writeBool(offsets[158], object.useLibass);
-  writer.writeBool(offsets[159], object.useMpvConfig);
-  writer.writeBool(offsets[160], object.usePageTapZones);
-  writer.writeBool(offsets[161], object.useYUV420P);
-  writer.writeString(offsets[162], object.userAgent);
-  writer.writeLong(offsets[163], object.volumeBoostCap);
-  writer.writeLong(offsets[164], object.webtoonSidePadding);
+  writer.writeString(offsets[156], object.ttsLanguage);
+  writer.writeDouble(offsets[157], object.ttsPitch);
+  writer.writeDouble(offsets[158], object.ttsSpeechRate);
+  writer.writeString(offsets[159], object.ttsVoice);
+  writer.writeBool(offsets[160], object.updateProgressAfterReading);
+  writer.writeLong(offsets[161], object.updatedAt);
+  writer.writeBool(offsets[162], object.useLibass);
+  writer.writeBool(offsets[163], object.useMpvConfig);
+  writer.writeBool(offsets[164], object.usePageTapZones);
+  writer.writeBool(offsets[165], object.useYUV420P);
+  writer.writeString(offsets[166], object.userAgent);
+  writer.writeLong(offsets[167], object.volumeBoostCap);
+  writer.writeLong(offsets[168], object.webtoonSidePadding);
 }
 
 Settings _settingsDeserialize(
@@ -1959,15 +1995,19 @@ Settings _settingsDeserialize(
     ),
     startDatebackup: reader.readLongOrNull(offsets[154]),
     themeIsDark: reader.readBoolOrNull(offsets[155]),
-    updateProgressAfterReading: reader.readBoolOrNull(offsets[156]),
-    updatedAt: reader.readLongOrNull(offsets[157]),
-    useLibass: reader.readBoolOrNull(offsets[158]),
-    useMpvConfig: reader.readBoolOrNull(offsets[159]),
-    usePageTapZones: reader.readBoolOrNull(offsets[160]),
-    useYUV420P: reader.readBoolOrNull(offsets[161]),
-    userAgent: reader.readStringOrNull(offsets[162]),
-    volumeBoostCap: reader.readLongOrNull(offsets[163]),
-    webtoonSidePadding: reader.readLongOrNull(offsets[164]),
+    ttsLanguage: reader.readStringOrNull(offsets[156]),
+    ttsPitch: reader.readDoubleOrNull(offsets[157]),
+    ttsSpeechRate: reader.readDoubleOrNull(offsets[158]),
+    ttsVoice: reader.readStringOrNull(offsets[159]),
+    updateProgressAfterReading: reader.readBoolOrNull(offsets[160]),
+    updatedAt: reader.readLongOrNull(offsets[161]),
+    useLibass: reader.readBoolOrNull(offsets[162]),
+    useMpvConfig: reader.readBoolOrNull(offsets[163]),
+    usePageTapZones: reader.readBoolOrNull(offsets[164]),
+    useYUV420P: reader.readBoolOrNull(offsets[165]),
+    userAgent: reader.readStringOrNull(offsets[166]),
+    volumeBoostCap: reader.readLongOrNull(offsets[167]),
+    webtoonSidePadding: reader.readLongOrNull(offsets[168]),
   );
   object.chapterFilterBookmarkedList = reader
       .readObjectList<ChapterFilterBookmarked>(
@@ -2490,22 +2530,30 @@ P _settingsDeserializeProp<P>(
     case 155:
       return (reader.readBoolOrNull(offset)) as P;
     case 156:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 157:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 158:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 159:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 160:
       return (reader.readBoolOrNull(offset)) as P;
     case 161:
-      return (reader.readBoolOrNull(offset)) as P;
-    case 162:
-      return (reader.readStringOrNull(offset)) as P;
-    case 163:
       return (reader.readLongOrNull(offset)) as P;
+    case 162:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 163:
+      return (reader.readBoolOrNull(offset)) as P;
     case 164:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 165:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 166:
+      return (reader.readStringOrNull(offset)) as P;
+    case 167:
+      return (reader.readLongOrNull(offset)) as P;
+    case 168:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -13238,6 +13286,516 @@ extension SettingsQueryFilter
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsLanguageIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'ttsLanguage'),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+  ttsLanguageIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'ttsLanguage'),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsLanguageEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'ttsLanguage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+  ttsLanguageGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'ttsLanguage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsLanguageLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'ttsLanguage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsLanguageBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'ttsLanguage',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsLanguageStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'ttsLanguage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsLanguageEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'ttsLanguage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsLanguageContains(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'ttsLanguage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsLanguageMatches(
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'ttsLanguage',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsLanguageIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'ttsLanguage', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+  ttsLanguageIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'ttsLanguage', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsPitchIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'ttsPitch'),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsPitchIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'ttsPitch'),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsPitchEqualTo(
+    double? value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'ttsPitch',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsPitchGreaterThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'ttsPitch',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsPitchLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'ttsPitch',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsPitchBetween(
+    double? lower,
+    double? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'ttsPitch',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+  ttsSpeechRateIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'ttsSpeechRate'),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+  ttsSpeechRateIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'ttsSpeechRate'),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsSpeechRateEqualTo(
+    double? value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'ttsSpeechRate',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+  ttsSpeechRateGreaterThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'ttsSpeechRate',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsSpeechRateLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'ttsSpeechRate',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsSpeechRateBetween(
+    double? lower,
+    double? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'ttsSpeechRate',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsVoiceIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'ttsVoice'),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsVoiceIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'ttsVoice'),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsVoiceEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'ttsVoice',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsVoiceGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'ttsVoice',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsVoiceLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'ttsVoice',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsVoiceBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'ttsVoice',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsVoiceStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'ttsVoice',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsVoiceEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'ttsVoice',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsVoiceContains(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'ttsVoice',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsVoiceMatches(
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'ttsVoice',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsVoiceIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'ttsVoice', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> ttsVoiceIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'ttsVoice', value: ''),
+      );
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterFilterCondition>
   updateProgressAfterReadingIsNull() {
     return QueryBuilder.apply(this, (query) {
@@ -15696,6 +16254,54 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByTtsLanguage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ttsLanguage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByTtsLanguageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ttsLanguage', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByTtsPitch() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ttsPitch', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByTtsPitchDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ttsPitch', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByTtsSpeechRate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ttsSpeechRate', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByTtsSpeechRateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ttsSpeechRate', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByTtsVoice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ttsVoice', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByTtsVoiceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ttsVoice', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy>
   sortByUpdateProgressAfterReading() {
     return QueryBuilder.apply(this, (query) {
@@ -17526,6 +18132,54 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByTtsLanguage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ttsLanguage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByTtsLanguageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ttsLanguage', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByTtsPitch() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ttsPitch', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByTtsPitchDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ttsPitch', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByTtsSpeechRate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ttsSpeechRate', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByTtsSpeechRateDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ttsSpeechRate', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByTtsVoice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ttsVoice', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByTtsVoiceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'ttsVoice', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy>
   thenByUpdateProgressAfterReading() {
     return QueryBuilder.apply(this, (query) {
@@ -18553,6 +19207,34 @@ extension SettingsQueryWhereDistinct
   QueryBuilder<Settings, Settings, QDistinct> distinctByThemeIsDark() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'themeIsDark');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctByTtsLanguage({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'ttsLanguage', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctByTtsPitch() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'ttsPitch');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctByTtsSpeechRate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'ttsSpeechRate');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctByTtsVoice({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'ttsVoice', caseSensitive: caseSensitive);
     });
   }
 
@@ -19656,6 +20338,30 @@ extension SettingsQueryProperty
   QueryBuilder<Settings, bool?, QQueryOperations> themeIsDarkProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'themeIsDark');
+    });
+  }
+
+  QueryBuilder<Settings, String?, QQueryOperations> ttsLanguageProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'ttsLanguage');
+    });
+  }
+
+  QueryBuilder<Settings, double?, QQueryOperations> ttsPitchProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'ttsPitch');
+    });
+  }
+
+  QueryBuilder<Settings, double?, QQueryOperations> ttsSpeechRateProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'ttsSpeechRate');
+    });
+  }
+
+  QueryBuilder<Settings, String?, QQueryOperations> ttsVoiceProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'ttsVoice');
     });
   }
 

@@ -7,6 +7,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   connectivity_plus
   flutter_inappwebview_windows
   flutter_qjs
+  flutter_tts
   isar_community_flutter_libs
   local_auth_windows
   m_extension_server

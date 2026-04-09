@@ -352,6 +352,14 @@ class Settings {
 
   bool? showNSFW;
 
+  double? ttsSpeechRate;
+
+  double? ttsPitch;
+
+  String? ttsLanguage;
+
+  String? ttsVoice;
+
   Settings({
     this.id = 227,
     this.updatedAt = 0,
@@ -513,6 +521,10 @@ class Settings {
     this.readerNavigationLayout = 0,
     this.backupCompressionLevel,
     this.showNSFW = false,
+    this.ttsSpeechRate = 0.5,
+    this.ttsPitch = 1.0,
+    this.ttsLanguage,
+    this.ttsVoice,
   });
 
   Settings.fromJson(Map<String, dynamic> json) {
@@ -792,6 +804,10 @@ class Settings {
     readerNavigationLayout = json['readerNavigationLayout'];
     backupCompressionLevel = json['backupCompressionLevel'];
     showNSFW = json['showNSFW'];
+    ttsSpeechRate = json['ttsSpeechRate']?.toDouble();
+    ttsPitch = json['ttsPitch']?.toDouble();
+    ttsLanguage = json['ttsLanguage'];
+    ttsVoice = json['ttsVoice'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -977,6 +993,10 @@ class Settings {
     'readerNavigationLayout': readerNavigationLayout,
     'backupCompressionLevel': backupCompressionLevel,
     'showNSFW': showNSFW,
+    'ttsSpeechRate': ttsSpeechRate,
+    'ttsPitch': ttsPitch,
+    'ttsLanguage': ttsLanguage,
+    'ttsVoice': ttsVoice,
   };
 }
 

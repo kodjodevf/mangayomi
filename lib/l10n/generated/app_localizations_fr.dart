@@ -2327,4 +2327,45 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get webview => 'Webview';
+
+  @override
+  String get tts => 'Synthèse vocale';
+
+  @override
+  String get tts_speed => 'Vitesse';
+
+  @override
+  String get tts_pitch => 'Tonalité';
+
+  @override
+  String get tts_language => 'Langue';
+
+  @override
+  String get tts_voice => 'Voix';
+
+  @override
+  String get tts_stop => 'Arrêter';
+
+  @override
+  String get tts_play => 'Lire';
+
+  @override
+  String get tts_pause => 'Pause';
+
+  @override
+  String get tts_previous => 'Paragraphe précédent';
+
+  @override
+  String get tts_next => 'Paragraphe suivant';
+
+  @override
+  String tts_paragraph_progress(Object current, Object total) {
+    return 'Paragraphe $current sur $total';
+  }
+
+  @override
+  String get tts_settings => 'Paramètres TTS';
+
+  @override
+  String get tts_default => 'Par défaut';
 }

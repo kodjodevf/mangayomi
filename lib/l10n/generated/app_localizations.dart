@@ -4258,6 +4258,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Webview'**
   String get webview;
+
+  /// No description provided for @tts.
+  ///
+  /// In en, this message translates to:
+  /// **'Text-to-Speech'**
+  String get tts;
+
+  /// No description provided for @tts_speed.
+  ///
+  /// In en, this message translates to:
+  /// **'Speed'**
+  String get tts_speed;
+
+  /// No description provided for @tts_pitch.
+  ///
+  /// In en, this message translates to:
+  /// **'Pitch'**
+  String get tts_pitch;
+
+  /// No description provided for @tts_language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get tts_language;
+
+  /// No description provided for @tts_voice.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice'**
+  String get tts_voice;
+
+  /// No description provided for @tts_stop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get tts_stop;
+
+  /// No description provided for @tts_play.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get tts_play;
+
+  /// No description provided for @tts_pause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get tts_pause;
+
+  /// No description provided for @tts_previous.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous paragraph'**
+  String get tts_previous;
+
+  /// No description provided for @tts_next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next paragraph'**
+  String get tts_next;
+
+  /// No description provided for @tts_paragraph_progress.
+  ///
+  /// In en, this message translates to:
+  /// **'Paragraph {current} of {total}'**
+  String tts_paragraph_progress(Object current, Object total);
+
+  /// No description provided for @tts_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'TTS Settings'**
+  String get tts_settings;
+
+  /// No description provided for @tts_default.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get tts_default;
 }
 
 class _AppLocalizationsDelegate

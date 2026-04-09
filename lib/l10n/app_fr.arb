@@ -733,5 +733,18 @@
   "statistics_reading_time_unit_day": "{count, plural, one{1 jour} other{{count} jours}}",
   "statistics_no_data": "Pas assez de données pour afficher les statistiques.",
   "split_epub_chapters": "Diviser en chapitres",
-  "split_epub_chapters_description": "Importer chaque chapitre EPUB comme une entrée séparée"
+  "split_epub_chapters_description": "Importer chaque chapitre EPUB comme une entrée séparée",
+  "tts": "Synthèse vocale",
+  "tts_speed": "Vitesse",
+  "tts_pitch": "Tonalité",
+  "tts_language": "Langue",
+  "tts_voice": "Voix",
+  "tts_stop": "Arrêter",
+  "tts_play": "Lire",
+  "tts_pause": "Pause",
+  "tts_previous": "Paragraphe précédent",
+  "tts_next": "Paragraphe suivant",
+  "tts_paragraph_progress": "Paragraphe {current} sur {total}",
+  "tts_settings": "Paramètres TTS",
+  "tts_default": "Par défaut"
 }
