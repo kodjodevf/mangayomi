@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math' as math;
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:html/parser.dart' as html_parser;
@@ -24,6 +25,7 @@ class NovelTtsService {
   NovelTtsService._();
   static final NovelTtsService instance = NovelTtsService._();
   static const _manualInterruptionWindow = Duration(milliseconds: 500);
+  bool get _isSupported => !Platform.isLinux;
 
   FlutterTts? _flutterTts;
   final _stateController = StreamController<TtsState>.broadcast();
@@ -55,6 +57,7 @@ class NovelTtsService {
   DateTime? _manualInterruptionUntil;
 
   Future<void> _ensureInitialized() async {
+    if (!_isSupported) return;
     if (_flutterTts != null) return;
     _flutterTts = FlutterTts();
 
@@ -112,6 +115,7 @@ class NovelTtsService {
   }
 
   Future<void> _stopCurrentUtterance() async {
+    if (!_isSupported) return;
     _markManualInterruption();
     await _flutterTts?.stop();
   }
@@ -164,33 +168,39 @@ class NovelTtsService {
 
   Future<void> setSpeed(double speed) async {
     _speed = speed;
+    if (!_isSupported) return;
     await _ensureInitialized();
     await _flutterTts!.setSpeechRate(speed);
   }
 
   Future<void> setPitch(double pitch) async {
     _pitch = pitch;
+    if (!_isSupported) return;
     await _ensureInitialized();
     await _flutterTts!.setPitch(pitch);
   }
 
   Future<void> setLanguage(String language) async {
     _language = language;
+    if (!_isSupported) return;
     await _ensureInitialized();
     await _flutterTts!.setLanguage(language);
   }
 
   Future<void> setVoice(Map<String, String> voice) async {
+    if (!_isSupported) return;
     await _ensureInitialized();
     await _flutterTts!.setVoice(voice);
   }
 
   Future<List<dynamic>> getLanguages() async {
+    if (!_isSupported) return [];
     await _ensureInitialized();
     return await _flutterTts!.getLanguages;
   }
 
   Future<List<dynamic>> getVoices() async {
+    if (!_isSupported) return [];
     await _ensureInitialized();
     return await _flutterTts!.getVoices;
   }
@@ -200,6 +210,13 @@ class NovelTtsService {
     int startIndex = 0,
     int startOffset = 0,
   }) async {
+    if (!_isSupported) {
+      _paragraphs = [];
+      _currentIndex = 0;
+      _resetWordProgress();
+      _setState(TtsState.stopped);
+      return;
+    }
     await _ensureInitialized();
     _paragraphs = extractParagraphs(htmlContent);
     if (_paragraphs.isEmpty) return;
@@ -223,6 +240,7 @@ class NovelTtsService {
   }
 
   Future<void> _speakCurrent({int? fromOffset}) async {
+    if (!_isSupported) return;
     if (_currentIndex >= _paragraphs.length) {
       _setState(TtsState.stopped);
       return;
@@ -257,6 +275,7 @@ class NovelTtsService {
   }
 
   Future<void> pause() async {
+    if (!_isSupported) return;
     if (_state == TtsState.playing) {
       if (_currentWordStart >= 0) {
         _resumeOffset = _currentWordStart;
@@ -275,6 +294,7 @@ class NovelTtsService {
   }
 
   Future<void> resume() async {
+    if (!_isSupported) return;
     if (_state == TtsState.paused && _paragraphs.isNotEmpty) {
       _setState(TtsState.playing);
       _emitIndex(_currentIndex);
@@ -294,10 +314,15 @@ class NovelTtsService {
     _currentIndex = 0;
     _resetWordProgress();
     _emitIndex(0);
+    if (!_isSupported) {
+      _paragraphs = [];
+      return;
+    }
     await _stopCurrentUtterance();
   }
 
   Future<void> skipNext() async {
+    if (!_isSupported) return;
     if (_currentIndex < _paragraphs.length - 1) {
       await _stopCurrentUtterance();
       _currentIndex++;
@@ -310,6 +335,7 @@ class NovelTtsService {
   }
 
   Future<void> skipPrevious() async {
+    if (!_isSupported) return;
     if (_currentIndex > 0) {
       await _stopCurrentUtterance();
       _currentIndex--;
@@ -322,6 +348,7 @@ class NovelTtsService {
   }
 
   Future<void> jumpTo(int index) async {
+    if (!_isSupported) return;
     if (index >= 0 && index < _paragraphs.length) {
       await _stopCurrentUtterance();
       _currentIndex = index;
@@ -335,6 +362,12 @@ class NovelTtsService {
 
   Future<void> dispose() async {
     _setState(TtsState.stopped);
+    if (!_isSupported) {
+      _paragraphs = [];
+      _currentIndex = 0;
+      _resetWordProgress();
+      return;
+    }
     await _flutterTts?.stop();
     _paragraphs = [];
     _currentIndex = 0;
