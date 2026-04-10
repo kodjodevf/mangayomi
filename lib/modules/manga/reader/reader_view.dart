@@ -434,7 +434,7 @@ class _MangaChapterPageGalleryState
                               chapterName: widget.chapter.name!,
                             ),
                             onFailedToLoadImage: (value) {
-                              // // Handle failed image loading
+                              // TODO: Handle failed image loading
                               // if (_failedToLoadImage.value != value &&
                               //     context.mounted) {
                               //   _failedToLoadImage.value = value;
