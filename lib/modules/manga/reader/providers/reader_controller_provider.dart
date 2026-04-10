@@ -345,11 +345,12 @@ class ReaderController extends _$ReaderController {
 
   int getPageLength(List incognitoPageLength) {
     if (incognitoMode) return incognitoPageLength.length;
-    return getIsarSetting().chapterPageUrlsList!
+    final urls = getIsarSetting().chapterPageUrlsList!
         .where((element) => element.chapterId == chapter.id)
-        .first
-        .urls!
-        .length;
+        .firstOrNull
+        ?.urls;
+    if (urls == null || urls.isEmpty) return incognitoPageLength.length;
+    return urls.length;
   }
 
   void setPageIndex(int newIndex, bool save) {
