@@ -89,11 +89,17 @@ class ImageViewWebtoon extends StatelessWidget {
   }
 
   Widget _buildItem(BuildContext context, int index) {
-    if (isDoublePageMode && !isHorizontalContinuous) {
-      return _buildDoublePageItem(context, index);
-    } else {
-      return _buildSinglePageItem(context, index);
-    }
+    final currentPage = pages[index];
+    final uniqueKey = ValueKey(
+      '${currentPage.chapter?.id ?? "trans"}-${currentPage.index ?? index}',
+    );
+
+    return KeyedSubtree(
+      key: uniqueKey,
+      child: (isDoublePageMode && !isHorizontalContinuous)
+          ? _buildDoublePageItem(context, index)
+          : _buildSinglePageItem(context, index),
+    );
   }
 
   Widget _buildSinglePageItem(BuildContext context, int index) {
