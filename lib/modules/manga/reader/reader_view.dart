@@ -346,7 +346,7 @@ class _MangaChapterPageGalleryState
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
     final cropBorders = ref.watch(cropBordersStateProvider);
     final readerMode = ref.watch(_currentReaderMode);
-    final bool isHorizontalContinuaous =
+    final bool isHorizontalContinuous =
         readerMode == ReaderMode.horizontalContinuous ||
         readerMode == ReaderMode.horizontalContinuousRTL;
     if (cropBorders) {
@@ -419,7 +419,7 @@ class _MangaChapterPageGalleryState
                             itemScrollController: _itemScrollController,
                             scrollOffsetController: _pageOffsetController,
                             itemPositionsListener: _itemPositionsListener,
-                            scrollDirection: isHorizontalContinuaous
+                            scrollDirection: isHorizontalContinuous
                                 ? Axis.horizontal
                                 : Axis.vertical,
                             minCacheExtent:
@@ -443,8 +443,8 @@ class _MangaChapterPageGalleryState
                             backgroundColor: backgroundColor,
                             isDoublePageMode:
                                 _pageMode == PageMode.doublePage &&
-                                !isHorizontalContinuaous,
-                            isHorizontalContinuous: isHorizontalContinuaous,
+                                !isHorizontalContinuous,
+                            isHorizontalContinuous: isHorizontalContinuous,
                             readerMode: ref.watch(_currentReaderMode)!,
                             photoViewController: _photoViewController,
                             photoViewScaleStateController:
@@ -468,7 +468,7 @@ class _MangaChapterPageGalleryState
                             shadowColor: getBackgroundColor(backgroundColor),
                             child:
                                 (_pageMode == PageMode.doublePage &&
-                                    !isHorizontalContinuaous)
+                                    !isHorizontalContinuous)
                                 ? ExtendedImageGesturePageView.builder(
                                     controller: _extendedController,
                                     scrollDirection: _scrollDirection,
