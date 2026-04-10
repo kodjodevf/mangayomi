@@ -263,9 +263,6 @@ class ChapterPreloadManager {
       // Prepend to pages list
       _pages.insertAll(0, prependList);
 
-      // Update current index to account for prepended pages
-      _currentIndex += prependCount;
-
       // Track the new chapter
       if (chapterId != null) {
         _loadedChapterIds.add(chapterId);
