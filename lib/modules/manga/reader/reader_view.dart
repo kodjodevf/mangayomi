@@ -344,14 +344,10 @@ class _MangaChapterPageGalleryState
   Widget build(BuildContext context) {
     final backgroundColor = ref.watch(backgroundColorStateProvider);
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
-    final cropBorders = ref.watch(cropBordersStateProvider);
     final readerMode = ref.watch(_currentReaderMode);
     final bool isHorizontalContinuous =
         readerMode == ReaderMode.horizontalContinuous ||
         readerMode == ReaderMode.horizontalContinuousRTL;
-    if (cropBorders) {
-      _processCropBorders();
-    }
 
     final l10n = l10nLocalizations(context)!;
     return ReaderKeyboardHandler(
@@ -1148,13 +1144,17 @@ class _MangaChapterPageGalleryState
   }
 
   void _initCurrentIndex() async {
+    if (ref.read(cropBordersStateProvider)) _processCropBorders();
     final readerMode = _readerController.getReaderMode();
 
     // Initialize the preload manager with bounded memory (from ReaderMemoryManagement mixin)
     initializePreloadManager(
       _chapterUrlModel,
       onPagesUpdated: () {
-        if (mounted) setState(() {});
+        if (mounted) {
+          setState(() {});
+          if (ref.read(cropBordersStateProvider)) _processCropBorders();
+        }
       },
     );
 
@@ -1372,20 +1372,29 @@ class _MangaChapterPageGalleryState
     }
   }
 
+  bool _isCropBordersProcessing = false;
   void _processCropBorders() async {
-    if (_cropBorderCheckList.length == pages.length) return;
+    if (_isCropBordersProcessing ||
+        _cropBorderCheckList.length == pages.length) {
+      return;
+    }
+    _isCropBordersProcessing = true;
 
-    for (var i = 0; i < pages.length; i++) {
-      if (!_cropBorderCheckList.contains(i)) {
-        _cropBorderCheckList.add(i);
-        if (!mounted) return;
-        final value = await ref.read(
-          cropBordersProvider(data: pages[i], cropBorder: true).future,
-        );
-        if (mounted) {
-          updatePageCropImage(i, value);
+    try {
+      for (var i = 0; i < pages.length; i++) {
+        if (!_cropBorderCheckList.contains(i)) {
+          _cropBorderCheckList.add(i);
+          if (!mounted) return;
+          final value = await ref.read(
+            cropBordersProvider(data: pages[i], cropBorder: true).future,
+          );
+          if (mounted) {
+            updatePageCropImage(i, value);
+          }
         }
       }
+    } finally {
+      _isCropBordersProcessing = false;
     }
   }
 
