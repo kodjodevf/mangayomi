@@ -129,7 +129,7 @@ Future<void> downloadChapter(
           convertToCBZProvider(
             chapterDirectory.path,
             mangaMainDirectory!.path,
-            chapter.name!,
+            chapterName,
             pages.map((e) => e.fileName!).toList(),
             comicInfo: comicInfo,
           ).future,
