@@ -353,9 +353,11 @@ class ReaderController extends _$ReaderController {
     return urls.length;
   }
 
+  int? _lastSavedIndex;
   void setPageIndex(int newIndex, bool save) {
-    if (chapter.isRead!) return;
-    if (incognitoMode) return;
+    if (chapter.isRead! || incognitoMode) return;
+    if (!save && newIndex == _lastSavedIndex) return;
+    _lastSavedIndex = newIndex;
     final isContinuousLike =
         getReaderMode() == ReaderMode.verticalContinuous ||
         getReaderMode() == ReaderMode.webtoon;
