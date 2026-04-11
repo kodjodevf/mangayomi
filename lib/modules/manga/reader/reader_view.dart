@@ -966,12 +966,11 @@ class _MangaChapterPageGalleryState
     _scrollIdleTimer = Timer(const Duration(milliseconds: 150), () {
       if (mounted) _isScrolling.value = false;
     });
+    final currentReaderMode = ref.read(_currentReaderMode);
     int pagesLength =
         (_pageMode == PageMode.doublePage &&
-            !(ref.watch(_currentReaderMode) ==
-                    ReaderMode.horizontalContinuous ||
-                ref.watch(_currentReaderMode) ==
-                    ReaderMode.horizontalContinuousRTL))
+            currentReaderMode != ReaderMode.horizontalContinuous &&
+            currentReaderMode != ReaderMode.horizontalContinuousRTL)
         ? (pages.length / 2).ceil()
         : pages.length;
     if (_currentIndex! >= 0 && _currentIndex! < pagesLength) {
