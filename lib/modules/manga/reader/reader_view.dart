@@ -958,57 +958,56 @@ class _MangaChapterPageGalleryState
   void _readProgressListener() async {
     if (_isAdjustingScroll) return;
     final itemPositions = _itemPositionsListener.itemPositions.value;
-    if (itemPositions.isNotEmpty) {
-      _currentIndex = itemPositions.first.index;
-      int pagesLength =
-          (_pageMode == PageMode.doublePage &&
-              !(ref.watch(_currentReaderMode) ==
-                      ReaderMode.horizontalContinuous ||
-                  ref.watch(_currentReaderMode) ==
-                      ReaderMode.horizontalContinuousRTL))
-          ? (pages.length / 2).ceil()
-          : pages.length;
-      if (_currentIndex! >= 0 && _currentIndex! < pagesLength) {
-        if (_readerController.chapter.id != pages[_currentIndex!].chapter!.id) {
-          if (mounted) {
-            setState(() {
-              _readerController = ref.read(
-                readerControllerProvider(
-                  chapter: pages[_currentIndex!].chapter!,
-                ).notifier,
-              );
+    if (itemPositions.isEmpty) return;
+    _currentIndex = itemPositions.first.index;
+    int pagesLength =
+        (_pageMode == PageMode.doublePage &&
+            !(ref.watch(_currentReaderMode) ==
+                    ReaderMode.horizontalContinuous ||
+                ref.watch(_currentReaderMode) ==
+                    ReaderMode.horizontalContinuousRTL))
+        ? (pages.length / 2).ceil()
+        : pages.length;
+    if (_currentIndex! >= 0 && _currentIndex! < pagesLength) {
+      if (_readerController.chapter.id != pages[_currentIndex!].chapter!.id) {
+        if (mounted) {
+          setState(() {
+            _readerController = ref.read(
+              readerControllerProvider(
+                chapter: pages[_currentIndex!].chapter!,
+              ).notifier,
+            );
 
-              chapter = pages[_currentIndex!].chapter!;
-              final chapterUrlModel = pages[_currentIndex!].chapterUrlModel;
+            chapter = pages[_currentIndex!].chapter!;
+            final chapterUrlModel = pages[_currentIndex!].chapterUrlModel;
 
-              if (chapterUrlModel != null) {
-                _chapterUrlModel = chapterUrlModel;
-              }
+            if (chapterUrlModel != null) {
+              _chapterUrlModel = chapterUrlModel;
+            }
 
-              _isBookmarked = _readerController.getChapterBookmarked();
-            });
-          }
+            _isBookmarked = _readerController.getChapterBookmarked();
+          });
         }
+      }
 
-        // ── Next-chapter preloading: trigger when near the end ──
-        final distToEnd = pagesLength - 1 - itemPositions.last.index;
-        if (distToEnd <= pagePreloadAmount && !_isLastPageTransition) {
-          _triggerNextChapterPreload();
-        }
+      // ── Next-chapter preloading: trigger when near the end ──
+      final distToEnd = pagesLength - 1 - itemPositions.last.index;
+      if (distToEnd <= pagePreloadAmount && !_isLastPageTransition) {
+        _triggerNextChapterPreload();
+      }
 
-        // ── Previous-chapter preloading: trigger when near the start ──
-        if (itemPositions.first.index <= pagePreloadAmount) {
-          _triggerPrevChapterPreload();
-        }
+      // ── Previous-chapter preloading: trigger when near the start ──
+      if (itemPositions.first.index <= pagePreloadAmount) {
+        _triggerPrevChapterPreload();
+      }
 
-        final idx = pages[_currentIndex!].index;
-        if (idx != null) {
-          _readerController.setPageIndex(
-            _isDoublePageActive ? idx : _geCurrentIndex(idx),
-            false,
-          );
-          ref.read(currentIndexProvider(chapter).notifier).setCurrentIndex(idx);
-        }
+      final idx = pages[_currentIndex!].index;
+      if (idx != null) {
+        _readerController.setPageIndex(
+          _isDoublePageActive ? idx : _geCurrentIndex(idx),
+          false,
+        );
+        ref.read(currentIndexProvider(chapter).notifier).setCurrentIndex(idx);
       }
     }
   }
@@ -1108,24 +1107,35 @@ class _MangaChapterPageGalleryState
   ) {
     try {
       if (chapterData.uChapDataPreload.isEmpty || !mounted) return;
+
+      // Record the CURRENT visible top index BEFORE prepending
+      final currentVisibleItems = _itemPositionsListener.itemPositions.value;
+      final oldTopIndex = currentVisibleItems.isNotEmpty
+          ? currentVisibleItems.first.index
+          : _currentIndex ?? 0;
+
       preloadPreviousChapter(chapterData, chap).then((prependCount) {
         if (prependCount > 0 && mounted) {
           _isAdjustingScroll = true;
+
+          // New index = old visible index + how many items we just prepended
+          final newIndex = oldTopIndex + prependCount;
+
           // In double page mode, _currentIndex stores the page view index,
           // so convert the prepended page count to page view units.
           if (_isDoublePageActive) {
             // Recompute the page view index from the new actual index.
-            final oldActual = _pageViewToActualIndex(_currentIndex!);
+            final oldActual = _pageViewToActualIndex(oldTopIndex);
             final newActual = oldActual + prependCount;
             _currentIndex = _actualToPageViewIndex(newActual);
           } else {
-            _currentIndex = _currentIndex! + prependCount;
+            _currentIndex = newIndex;
           }
           setState(() {});
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) {
               if (_isContinuousMode()) {
-                _itemScrollController.jumpTo(index: _currentIndex!);
+                _itemScrollController.jumpTo(index: newIndex);
               } else if (_extendedController.hasClients) {
                 _extendedController.jumpToPage(_currentIndex!);
               }
@@ -1143,7 +1153,6 @@ class _MangaChapterPageGalleryState
     // Initialize the preload manager with bounded memory (from ReaderMemoryManagement mixin)
     initializePreloadManager(
       _chapterUrlModel,
-      startIndex: _currentIndex ?? 0,
       onPagesUpdated: () {
         if (mounted) setState(() {});
       },

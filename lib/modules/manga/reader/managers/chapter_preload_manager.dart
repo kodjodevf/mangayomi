@@ -20,9 +20,6 @@ class ChapterPreloadManager {
   /// Queue of chapter IDs in order of loading (for LRU eviction)
   final Queue<String> _chapterLoadOrder = Queue();
 
-  /// Current reading index
-  int _currentIndex = 0;
-
   /// Separate flags to allow concurrent prev/next preloading
   bool _isPreloadingNext = false;
   bool _isPreloadingPrev = false;
@@ -36,9 +33,6 @@ class ChapterPreloadManager {
   /// Gets the current number of pages
   int get pageCount => _pages.length;
 
-  /// Gets the current index
-  int get currentIndex => _currentIndex;
-
   /// Gets the loaded chapter count
   int get loadedChapterCount => _loadedChapterIds.length;
 
@@ -48,13 +42,6 @@ class ChapterPreloadManager {
   /// Whether a next chapter preload is in progress.
   bool get isPreloadingNext => _isPreloadingNext;
 
-  /// Sets the current reading index
-  set currentIndex(int value) {
-    if (value >= 0 && value < _pages.length) {
-      _currentIndex = value;
-    }
-  }
-
   /// Returns `true` if pages from [chapter] are already in memory.
   bool isChapterLoaded(Chapter? chapter) {
     final id = _getChapterIdentifier(chapter);
@@ -62,13 +49,12 @@ class ChapterPreloadManager {
   }
 
   /// Initializes the manager with the first chapter's pages.
-  void initialize(List<UChapDataPreload> initialPages, int startIndex) {
+  void initialize(List<UChapDataPreload> initialPages) {
     _pages.clear();
     _loadedChapterIds.clear();
     _chapterLoadOrder.clear();
 
     _pages.addAll(initialPages);
-    _currentIndex = startIndex;
 
     // Track the initial chapter
     if (initialPages.isNotEmpty) {
