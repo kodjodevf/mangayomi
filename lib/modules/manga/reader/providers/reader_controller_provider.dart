@@ -67,6 +67,9 @@ class ReaderController extends _$ReaderController {
   }
 
   final incognitoMode = isar.settings.getSync(227)!.incognitoMode!;
+  Settings? _cachedSettings;
+  void _invalidateSettingsCache() => _cachedSettings = null;
+
   ReaderMode getReaderMode() {
     final personalReaderModeList =
         getIsarSetting().personalReaderModeList ?? [];
@@ -113,6 +116,7 @@ class ReaderController extends _$ReaderController {
           ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       ),
     );
+    _invalidateSettingsCache();
   }
 
   PageMode getPageMode() {
@@ -146,6 +150,7 @@ class ReaderController extends _$ReaderController {
           ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       ),
     );
+    _invalidateSettingsCache();
   }
 
   void setPageMode(PageMode newPageMode) {
@@ -167,6 +172,7 @@ class ReaderController extends _$ReaderController {
           ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       ),
     );
+    _invalidateSettingsCache();
   }
 
   void setShowPageNumber(bool value) {
@@ -178,17 +184,14 @@ class ReaderController extends _$ReaderController {
             ..updatedAt = DateTime.now().millisecondsSinceEpoch,
         ),
       );
+      _invalidateSettingsCache();
     }
   }
 
-  Settings getIsarSetting() {
-    return isar.settings.getSync(227)!;
-  }
+  Settings getIsarSetting() => _cachedSettings ??= isar.settings.getSync(227)!;
 
   bool getShowPageNumber() {
-    if (!incognitoMode) {
-      return getIsarSetting().showPagesNumber!;
-    }
+    if (!incognitoMode) return getIsarSetting().showPagesNumber!;
     return true;
   }
 
@@ -389,6 +392,7 @@ class ReaderController extends _$ReaderController {
         chap.updatedAt = DateTime.now().millisecondsSinceEpoch;
         isar.chapters.putSync(chap);
       });
+      _invalidateSettingsCache();
       if (isRead) {
         chapter.updateTrackChapterRead(ref);
         if (ref.read(deleteDownloadAfterReadingStateProvider)) {
@@ -471,10 +475,9 @@ extension ChapterExtensions on Chapter {
 extension MangaExtensions on Manga {
   List<Chapter> getFilteredChapterList() {
     final data = this.chapters.toList().reversed.toList();
+    final settings = isar.settings.getSync(227)!;
     final filterUnread =
-        (isar.settings
-                    .getSync(227)!
-                    .chapterFilterUnreadList!
+        (settings.chapterFilterUnreadList!
                     .where((element) => element.mangaId == id)
                     .toList()
                     .firstOrNull ??
@@ -482,18 +485,14 @@ extension MangaExtensions on Manga {
             .type!;
 
     final filterBookmarked =
-        (isar.settings
-                    .getSync(227)!
-                    .chapterFilterBookmarkedList!
+        (settings.chapterFilterBookmarkedList!
                     .where((element) => element.mangaId == id)
                     .toList()
                     .firstOrNull ??
                 ChapterFilterBookmarked(mangaId: id, type: 0))
             .type!;
     final filterDownloaded =
-        (isar.settings
-                    .getSync(227)!
-                    .chapterFilterDownloadedList!
+        (settings.chapterFilterDownloadedList!
                     .where((element) => element.mangaId == id)
                     .toList()
                     .firstOrNull ??
@@ -501,9 +500,7 @@ extension MangaExtensions on Manga {
             .type!;
 
     final sortChapter =
-        (isar.settings
-                    .getSync(227)!
-                    .sortChapterList!
+        (settings.sortChapterList!
                     .where((element) => element.mangaId == id)
                     .toList()
                     .firstOrNull ??
