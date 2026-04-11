@@ -2028,7 +2028,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get default_user_agent => 'Defaul user agent';
+  String get default_user_agent => 'Default user agent';
 
   @override
   String get forceLandscapeMode => 'Force landscape mode';

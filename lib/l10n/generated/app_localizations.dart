@@ -3776,7 +3776,7 @@ abstract class AppLocalizations {
   /// No description provided for @default_user_agent.
   ///
   /// In en, this message translates to:
-  /// **'Defaul user agent'**
+  /// **'Default user agent'**
   String get default_user_agent;
 
   /// No description provided for @forceLandscapeMode.
