@@ -1479,7 +1479,7 @@ class _MangaChapterPageGalleryState
       _isDoublePageActive ? (pages.length / 2).ceil() : pages.length;
 
   bool _isContinuousMode() {
-    final readerMode = ref.watch(_currentReaderMode);
+    final readerMode = ref.read(_currentReaderMode);
     return readerMode == ReaderMode.verticalContinuous ||
         readerMode == ReaderMode.webtoon ||
         readerMode == ReaderMode.horizontalContinuous ||
