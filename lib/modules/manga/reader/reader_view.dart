@@ -152,6 +152,8 @@ class _MangaChapterPageGalleryState
   );
 
   bool isDesktop = Platform.isMacOS || Platform.isLinux || Platform.isWindows;
+  final ValueNotifier<bool> _isScrolling = ValueNotifier(false);
+  Timer? _scrollIdleTimer;
 
   final Stopwatch _readingStopwatch = Stopwatch();
 
@@ -174,6 +176,8 @@ class _MangaChapterPageGalleryState
     _autoScroll.value = false;
     _autoScroll.dispose();
     _autoScrollPage.dispose();
+    _scrollIdleTimer?.cancel();
+    _isScrolling.dispose();
     _itemPositionsListener.itemPositions.removeListener(_readProgressListener);
     _photoViewController.dispose();
     _photoViewScaleStateController.dispose();
@@ -458,6 +462,7 @@ class _MangaChapterPageGalleryState
                             ),
                             showPageGaps: ref.watch(showPageGapsStateProvider),
                             reverse: _isReverseHorizontal,
+                            isScrolling: _isScrolling,
                           )
                         : Material(
                             color: getBackgroundColor(backgroundColor),
@@ -956,6 +961,11 @@ class _MangaChapterPageGalleryState
     final itemPositions = _itemPositionsListener.itemPositions.value;
     if (itemPositions.isEmpty) return;
     _currentIndex = itemPositions.first.index;
+    if (!_isScrolling.value) _isScrolling.value = true;
+    _scrollIdleTimer?.cancel();
+    _scrollIdleTimer = Timer(const Duration(milliseconds: 150), () {
+      if (mounted) _isScrolling.value = false;
+    });
     int pagesLength =
         (_pageMode == PageMode.doublePage &&
             !(ref.watch(_currentReaderMode) ==

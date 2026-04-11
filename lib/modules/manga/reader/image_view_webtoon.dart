@@ -34,6 +34,7 @@ class ImageViewWebtoon extends StatelessWidget {
   final int webtoonSidePadding;
   final bool showPageGaps;
   final bool reverse;
+  final ValueNotifier<bool> isScrolling;
 
   const ImageViewWebtoon({
     super.key,
@@ -57,6 +58,7 @@ class ImageViewWebtoon extends StatelessWidget {
     required this.onScaleEnd,
     required this.onDoubleTapDown,
     required this.onDoubleTap,
+    required this.isScrolling,
     this.webtoonSidePadding = 0,
     this.showPageGaps = true,
     this.reverse = false,
@@ -130,6 +132,7 @@ class ImageViewWebtoon extends StatelessWidget {
           failedToLoadImage: onFailedToLoadImage,
           onLongPressData: onLongPressData,
           isHorizontal: isHorizontalContinuous,
+          isScrolling: isScrolling,
         ),
       ),
     );
