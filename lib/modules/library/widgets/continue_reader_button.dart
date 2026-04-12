@@ -20,63 +20,26 @@ class ContinueReaderButton extends ConsumerWidget {
           .filter()
           .mangaIdEqualTo(entry.id!)
           .watch(fireImmediately: true),
-      builder: (context, snapshot) {
-        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+      builder: (context, snapshot) => GestureDetector(
+        onTap: () {
           final incognitoMode = ref.read(incognitoModeStateProvider);
-          final entries = snapshot.data!;
-          if (entries.isNotEmpty && !incognitoMode) {
-            return GestureDetector(
-              onTap: () {
-                entries.first.chapter.value!.pushToReaderView(context);
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: context.primaryColor.withValues(alpha: 0.9),
-                ),
-                child: const Padding(
-                  padding: EdgeInsets.all(7),
-                  child: Icon(Icons.play_arrow, size: 19, color: Colors.white),
-                ),
-              ),
-            );
+          if (snapshot.hasData && snapshot.data!.isNotEmpty && !incognitoMode) {
+            snapshot.data!.first.chapter.value!.pushToReaderView(context);
+          } else {
+            entry.chapters.first.pushToReaderView(context);
           }
-          return GestureDetector(
-            onTap: () {
-              entry.chapters.toList().reversed.toList().last.pushToReaderView(
-                context,
-              );
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                color: context.primaryColor.withValues(alpha: 0.9),
-              ),
-              child: const Padding(
-                padding: EdgeInsets.all(7),
-                child: Icon(Icons.play_arrow, size: 19, color: Colors.white),
-              ),
-            ),
-          );
-        }
-        return GestureDetector(
-          onTap: () {
-            entry.chapters.toList().reversed.toList().last.pushToReaderView(
-              context,
-            );
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: context.primaryColor.withValues(alpha: 0.9),
-            ),
-            child: const Padding(
-              padding: EdgeInsets.all(7),
-              child: Icon(Icons.play_arrow, size: 19, color: Colors.white),
-            ),
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: context.primaryColor.withValues(alpha: 0.9),
           ),
-        );
-      },
+          child: const Padding(
+            padding: EdgeInsets.all(7),
+            child: Icon(Icons.play_arrow, size: 19, color: Colors.white),
+          ),
+        ),
+      ),
     );
   }
 }
