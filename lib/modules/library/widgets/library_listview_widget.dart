@@ -49,7 +49,7 @@ class LibraryListViewWidget extends StatelessWidget {
             return Material(
               borderRadius: BorderRadius.circular(5),
               color: Colors.transparent,
-              clipBehavior: Clip.antiAliasWithSaveLayer,
+              clipBehavior: Clip.antiAlias,
               child: InkWell(
                 onTap: () async {
                   if (isLongPressed) {
