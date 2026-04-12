@@ -452,8 +452,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             BottomSelectButton(
               icon: Icon(Icons.label_outline_rounded, color: color),
               onPressed: () {
-                final mangaIdsList = ref.watch(mangasListStateProvider);
-                final List<Manga> bulkMangas = mangaIdsList
+                final List<Manga> bulkMangas = mangaIds
                     .map((id) => isar.mangas.getSync(id)!)
                     .toList();
                 showCategorySelectionDialog(
