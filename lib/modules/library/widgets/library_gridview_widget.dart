@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar_community/isar.dart';
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/modules/library/providers/isar_providers.dart';
@@ -194,7 +193,6 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                                   .findAllSync();
                                             }
                                           }
-
                                           return Row(
                                             children: [
                                               if (nbrDown.isNotEmpty &&
@@ -302,14 +300,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                 return StreamBuilder(
                                   stream: isar.historys
                                       .filter()
-                                      .idIsNotNull()
-                                      .and()
-                                      .chapter(
-                                        (q) => q.manga(
-                                          (q) =>
-                                              q.itemTypeEqualTo(entry.itemType),
-                                        ),
-                                      )
+                                      .mangaIdEqualTo(entry.id!)
                                       .watch(fireImmediately: true),
                                   builder: (context, snapshot) {
                                     if (snapshot.hasData &&
@@ -317,12 +308,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                       final incognitoMode = ref.watch(
                                         incognitoModeStateProvider,
                                       );
-                                      final entries = snapshot.data!
-                                          .where(
-                                            (element) =>
-                                                element.mangaId == entry.id,
-                                          )
-                                          .toList();
+                                      final entries = snapshot.data!;
                                       if (entries.isNotEmpty &&
                                           !incognitoMode) {
                                         return GestureDetector(
