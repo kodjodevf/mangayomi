@@ -507,6 +507,16 @@ extension MangaExtensions on Manga {
                 SortChapter(mangaId: id, index: 1, reverse: false))
             .index;
     final filterScanlator = _getFilterScanlator(this) ?? [];
+    final chapterIds = data.map((c) => c.id).whereType<int>().toList();
+    final downloadedIds = (filterDownloaded == 0 || chapterIds.isEmpty)
+        ? const <int>{}
+        : isar.downloads
+              .filter()
+              .anyOf(chapterIds, (q, id) => q.idEqualTo(id))
+              .isDownloadEqualTo(true)
+              .findAllSync()
+              .map((d) => d.id!)
+              .toSet();
     List<Chapter>? chapterList;
     chapterList = data
         .where(
@@ -524,17 +534,9 @@ extension MangaExtensions on Manga {
               : true,
         )
         .where((element) {
-          final modelChapDownload = isar.downloads
-              .filter()
-              .idEqualTo(element.id)
-              .findAllSync();
-          return filterDownloaded == 1
-              ? modelChapDownload.isNotEmpty &&
-                    modelChapDownload.first.isDownload == true
-              : filterDownloaded == 2
-              ? !(modelChapDownload.isNotEmpty &&
-                    modelChapDownload.first.isDownload == true)
-              : true;
+          if (filterDownloaded == 0) return true;
+          final isDownloaded = downloadedIds.contains(element.id);
+          return filterDownloaded == 1 ? isDownloaded : !isDownloaded;
         })
         .where((element) => !filterScanlator.contains(element.scanlator))
         .toList();
