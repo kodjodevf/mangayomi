@@ -178,27 +178,21 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                         builder: (context, ref, child) {
                                           List nbrDown = [];
                                           if (widget.downloadedChapter) {
-                                            isar.txnSync(() {
-                                              for (
-                                                var i = 0;
-                                                i < entry.chapters.length;
-                                                i++
-                                              ) {
-                                                final entries = isar.downloads
-                                                    .filter()
-                                                    .idEqualTo(
-                                                      entry.chapters
-                                                          .toList()[i]
-                                                          .id,
-                                                    )
-                                                    .findAllSync();
-
-                                                if (entries.isNotEmpty &&
-                                                    entries.first.isDownload!) {
-                                                  nbrDown.add(1);
-                                                }
-                                              }
-                                            });
+                                            final chapterIds = entry.chapters
+                                                .toList()
+                                                .map((c) => c.id)
+                                                .whereType<int>()
+                                                .toList();
+                                            if (chapterIds.isNotEmpty) {
+                                              nbrDown = isar.downloads
+                                                  .filter()
+                                                  .anyOf(
+                                                    chapterIds,
+                                                    (q, id) => q.idEqualTo(id),
+                                                  )
+                                                  .isDownloadEqualTo(true)
+                                                  .findAllSync();
+                                            }
                                           }
 
                                           return Row(

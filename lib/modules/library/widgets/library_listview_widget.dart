@@ -208,28 +208,22 @@ class LibraryListViewWidget extends StatelessWidget {
                                         ),
                                         child: Consumer(
                                           builder: (context, ref, child) {
-                                            List nbrDown = [];
-                                            isar.txnSync(() {
-                                              for (
-                                                var i = 0;
-                                                i < entry.chapters.length;
-                                                i++
-                                              ) {
-                                                final entries = isar.downloads
-                                                    .filter()
-                                                    .idEqualTo(
-                                                      entry.chapters
-                                                          .toList()[i]
-                                                          .id,
-                                                    )
-                                                    .findAllSync();
-
-                                                if (entries.isNotEmpty &&
-                                                    entries.first.isDownload!) {
-                                                  nbrDown.add(entries.first);
-                                                }
-                                              }
-                                            });
+                                            final chapterIds = entry.chapters
+                                                .toList()
+                                                .map((c) => c.id)
+                                                .whereType<int>()
+                                                .toList();
+                                            List nbrDown = chapterIds.isNotEmpty
+                                                ? isar.downloads
+                                                      .filter()
+                                                      .anyOf(
+                                                        chapterIds,
+                                                        (q, id) =>
+                                                            q.idEqualTo(id),
+                                                      )
+                                                      .isDownloadEqualTo(true)
+                                                      .findAllSync()
+                                                : [];
                                             if (nbrDown.isNotEmpty) {
                                               return Container(
                                                 decoration: BoxDecoration(
