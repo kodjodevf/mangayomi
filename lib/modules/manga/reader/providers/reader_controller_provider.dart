@@ -564,7 +564,7 @@ extension MangaExtensions on Manga {
             : a.name!.compareTo(b.name!);
       });
     }
-    return chapterList;
+    return chapters;
   }
 }
 
