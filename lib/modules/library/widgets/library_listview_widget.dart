@@ -23,7 +23,7 @@ class LibraryListViewWidget extends StatelessWidget {
   final List<Manga> entriesManga;
   final bool language;
   final bool downloadedChapter;
-  final List<int> mangaIdsList;
+  final Set<int> mangaIdsList;
   final bool continueReaderBtn;
   final bool localSource;
   const LibraryListViewWidget({

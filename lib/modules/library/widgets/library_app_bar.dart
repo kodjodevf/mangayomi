@@ -226,7 +226,7 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
 /// AppBar shown when items are long-pressed for bulk selection.
 class _SelectionAppBar extends ConsumerWidget {
   final ItemType itemType;
-  final List<int> mangaIdsList;
+  final Set<int> mangaIdsList;
   final List<Manga> data;
 
   const _SelectionAppBar({

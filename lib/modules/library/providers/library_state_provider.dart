@@ -902,51 +902,40 @@ class SortLibraryMangaState extends _$SortLibraryMangaState {
 @riverpod
 class MangasListState extends _$MangasListState {
   @override
-  List<int> build() {
-    return [];
-  }
+  Set<int> build() => {};
 
   void update(Manga value) {
-    var newList = state.reversed.toList();
-    if (newList.contains(value.id)) {
-      newList.remove(value.id);
+    var newSet = Set<int>.from(state);
+    if (newSet.contains(value.id)) {
+      newSet.remove(value.id);
     } else {
-      newList.add(value.id!);
+      newSet.add(value.id!);
     }
-    if (newList.isEmpty) {
+    if (newSet.isEmpty) {
       ref.read(isLongPressedStateProvider.notifier).update(false);
     }
-    state = newList;
+    state = newSet;
   }
 
-  void selectAll(Manga value) {
-    var newList = state.reversed.toList();
-    if (!newList.contains(value.id)) {
-      newList.add(value.id!);
-    }
-
-    state = newList;
-  }
+  void selectAll(Manga value) => state = {...state, value.id!};
 
   void selectSome(Manga value) {
-    var newList = state.reversed.toList();
-    if (newList.contains(value.id)) {
-      newList.remove(value.id);
+    final newSet = Set<int>.from(state);
+    if (newSet.contains(value.id)) {
+      newSet.remove(value.id);
     } else {
-      newList.add(value.id!);
+      newSet.add(value.id!);
     }
-    state = newList;
+    state = newSet;
   }
 
-  void clear() {
-    state = [];
-  }
+  void clear() => state = {};
 }
 
 @riverpod
 class MangasSetIsReadState extends _$MangasSetIsReadState {
   @override
-  void build({required List<int> mangaIds, required bool markAsRead}) {}
+  void build({required Set<int> mangaIds, required bool markAsRead}) {}
 
   void set() {
     final allChapters = <Chapter>[];

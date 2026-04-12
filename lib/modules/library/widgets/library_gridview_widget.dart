@@ -24,7 +24,7 @@ import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
 class LibraryGridViewWidget extends StatefulWidget {
   final bool isCoverOnlyGrid;
   final bool isComfortableGrid;
-  final List<int> mangaIdsList;
+  final Set<int> mangaIdsList;
   final List<Manga> entriesManga;
   final bool language;
   final bool downloadedChapter;

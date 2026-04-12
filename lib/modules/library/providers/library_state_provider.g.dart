@@ -1823,7 +1823,7 @@ abstract class _$SortLibraryMangaState extends $Notifier<SortLibraryManga> {
 final mangasListStateProvider = MangasListStateProvider._();
 
 final class MangasListStateProvider
-    extends $NotifierProvider<MangasListState, List<int>> {
+    extends $NotifierProvider<MangasListState, Set<int>> {
   MangasListStateProvider._()
     : super(
         from: null,
@@ -1843,27 +1843,27 @@ final class MangasListStateProvider
   MangasListState create() => MangasListState();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(List<int> value) {
+  Override overrideWithValue(Set<int> value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<List<int>>(value),
+      providerOverride: $SyncValueProvider<Set<int>>(value),
     );
   }
 }
 
-String _$mangasListStateHash() => r'bbd2e3600ec22a774b1774ae3c221815e52bfef6';
+String _$mangasListStateHash() => r'61c6477ea43c6113caa89ef13984cd4370d303ee';
 
-abstract class _$MangasListState extends $Notifier<List<int>> {
-  List<int> build();
+abstract class _$MangasListState extends $Notifier<Set<int>> {
+  Set<int> build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final ref = this.ref as $Ref<List<int>, List<int>>;
+    final ref = this.ref as $Ref<Set<int>, Set<int>>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<List<int>, List<int>>,
-              List<int>,
+              AnyNotifier<Set<int>, Set<int>>,
+              Set<int>,
               Object?,
               Object?
             >;
@@ -1878,7 +1878,7 @@ final class MangasSetIsReadStateProvider
     extends $NotifierProvider<MangasSetIsReadState, void> {
   MangasSetIsReadStateProvider._({
     required MangasSetIsReadStateFamily super.from,
-    required ({List<int> mangaIds, bool markAsRead}) super.argument,
+    required ({Set<int> mangaIds, bool markAsRead}) super.argument,
   }) : super(
          retry: null,
          name: r'mangasSetIsReadStateProvider',
@@ -1921,7 +1921,7 @@ final class MangasSetIsReadStateProvider
 }
 
 String _$mangasSetIsReadStateHash() =>
-    r'2a1b1005e2ed5068d36188a3fb969d21b64bfef6';
+    r'a2c64ecdf03b3d27282c63d8cadbc1cc44943e39';
 
 final class MangasSetIsReadStateFamily extends $Family
     with
@@ -1930,7 +1930,7 @@ final class MangasSetIsReadStateFamily extends $Family
           void,
           void,
           void,
-          ({List<int> mangaIds, bool markAsRead})
+          ({Set<int> mangaIds, bool markAsRead})
         > {
   MangasSetIsReadStateFamily._()
     : super(
@@ -1942,7 +1942,7 @@ final class MangasSetIsReadStateFamily extends $Family
       );
 
   MangasSetIsReadStateProvider call({
-    required List<int> mangaIds,
+    required Set<int> mangaIds,
     required bool markAsRead,
   }) => MangasSetIsReadStateProvider._(
     argument: (mangaIds: mangaIds, markAsRead: markAsRead),
@@ -1954,11 +1954,11 @@ final class MangasSetIsReadStateFamily extends $Family
 }
 
 abstract class _$MangasSetIsReadState extends $Notifier<void> {
-  late final _$args = ref.$arg as ({List<int> mangaIds, bool markAsRead});
-  List<int> get mangaIds => _$args.mangaIds;
+  late final _$args = ref.$arg as ({Set<int> mangaIds, bool markAsRead});
+  Set<int> get mangaIds => _$args.mangaIds;
   bool get markAsRead => _$args.markAsRead;
 
-  void build({required List<int> mangaIds, required bool markAsRead});
+  void build({required Set<int> mangaIds, required bool markAsRead});
   @$mustCallSuper
   @override
   void runBuild() {
