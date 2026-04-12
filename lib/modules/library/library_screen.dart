@@ -70,7 +70,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   void dispose() {
     _textEditingController.dispose();
     tabBarController?.dispose();
-    _searchDebounce?.cancel;
+    _searchDebounce?.cancel();
     super.dispose();
   }
 
