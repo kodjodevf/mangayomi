@@ -309,6 +309,7 @@ class _TtsSettingsTabState extends ConsumerState<TtsSettingsTab> {
                 },
               ),
             ),
+          SizedBox(height: 100),
         ],
       ),
     );
