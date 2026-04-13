@@ -11,6 +11,56 @@ import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/ffi/torrent_server_ffi.dart' as libmtorrentserver_ffi;
 
+String _buildQueryString(Map<String, List<String>> parameters) {
+  final segments = <String>[];
+  parameters.forEach((key, values) {
+    for (final value in values) {
+      segments.add(
+        '${Uri.encodeQueryComponent(key)}=${Uri.encodeQueryComponent(value)}',
+      );
+    }
+  });
+  return segments.join('&');
+}
+
+List<String> _normalizeHttpUrls(Iterable<String> values) {
+  final normalized = <String>[];
+  final seen = <String>{};
+  for (final value in values) {
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) continue;
+    final uri = Uri.tryParse(trimmed);
+    if (uri == null) continue;
+    if (uri.scheme != 'http' && uri.scheme != 'https') continue;
+    final normalizedValue = uri.toString();
+    if (seen.add(normalizedValue)) {
+      normalized.add(normalizedValue);
+    }
+  }
+  return normalized;
+}
+
+(List<String>, List<String>) _extractMagnetFallbacks(String magnetUrl) {
+  final uri = Uri.tryParse(magnetUrl);
+  if (uri == null || uri.scheme != 'magnet') {
+    return (const [], const []);
+  }
+
+  final sources = _normalizeHttpUrls([
+    ...uri.queryParametersAll['xs'] ?? const [],
+    ...uri.queryParametersAll['as'] ?? const [],
+  ]);
+  final webseeds = _normalizeHttpUrls(uri.queryParametersAll['ws'] ?? const []);
+  return (sources, webseeds);
+}
+
+List<String> _mergeTorrentFallbacks(
+  Iterable<String> base,
+  Iterable<String> discovered,
+) {
+  return _normalizeHttpUrls([...base, ...discovered]);
+}
+
 class MTorrentServer {
   final http = MClient.init();
   Future<bool> removeTorrent(String? inforHash) async {
@@ -41,7 +91,12 @@ class MTorrentServer {
     }
   }
 
-  Future<String> getInfohash(String url, bool isFilePath) async {
+  Future<String> getInfohash(
+    String url,
+    bool isFilePath, {
+    List<String> sources = const [],
+    List<String> webseeds = const [],
+  }) async {
     try {
       final torrentByte = isFilePath
           ? File(url).readAsBytesSync()
@@ -54,6 +109,10 @@ class MTorrentServer {
       request.files.add(
         MultipartFile.fromBytes('file', torrentByte, filename: 'file.torrent'),
       );
+      request.fields.addAll({
+        for (final source in sources) 'source': source,
+        for (final webseed in webseeds) 'webseed': webseed,
+      });
       final response = await http.send(request);
       return await response.stream.bytesToString();
     } catch (e) {
@@ -63,8 +122,10 @@ class MTorrentServer {
 
   Future<(List<Video>, String?)> getTorrentPlaylist(
     String? url,
-    String? archivePath,
-  ) async {
+    String? archivePath, {
+    List<String> sources = const [],
+    List<String> webseeds = const [],
+  }) async {
     try {
       final isFilePath = archivePath?.isNotEmpty ?? false;
       final isRunning = await check();
@@ -86,13 +147,41 @@ class MTorrentServer {
       }
       url = isFilePath ? archivePath! : url!;
       bool isMagnet = url.startsWith("magnet:?");
+      final magnetFallbacks = _extractMagnetFallbacks(url);
+      final mergedSources = _mergeTorrentFallbacks(sources, magnetFallbacks.$1);
+      final mergedWebseeds = _mergeTorrentFallbacks(
+        webseeds,
+        magnetFallbacks.$2,
+      );
+      final remoteTorrentSources = !isMagnet && !isFilePath
+          ? _normalizeHttpUrls([url])
+          : const <String>[];
+      final effectiveSources = _mergeTorrentFallbacks(
+        mergedSources,
+        remoteTorrentSources,
+      );
       String finalUrl = "";
       String? infohash;
       if (!isMagnet) {
-        infohash = await getInfohash(url, isFilePath);
-        finalUrl = "$_baseUrl/torrent/play?infohash=$infohash";
+        infohash = await getInfohash(
+          url,
+          isFilePath,
+          sources: effectiveSources,
+          webseeds: mergedWebseeds,
+        );
+        finalUrl =
+            '$_baseUrl/torrent/play?${_buildQueryString({
+              'infohash': [infohash],
+              if (effectiveSources.isNotEmpty) 'source': effectiveSources,
+              if (mergedWebseeds.isNotEmpty) 'webseed': mergedWebseeds,
+            })}';
       } else {
-        finalUrl = "$_baseUrl/torrent/play?magnet=$url";
+        finalUrl =
+            '$_baseUrl/torrent/play?${_buildQueryString({
+              'magnet': [url],
+              if (effectiveSources.isNotEmpty) 'source': effectiveSources,
+              if (mergedWebseeds.isNotEmpty) 'webseed': mergedWebseeds,
+            })}';
       }
 
       final masterPlaylist = (await http.get(Uri.parse(finalUrl))).body;

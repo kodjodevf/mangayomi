@@ -5,6 +5,7 @@ import (
 	"context"
 	"io"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
 
@@ -15,6 +16,7 @@ type fakeTorrentReader struct {
 	pos           int64
 	responsive    bool
 	readaheadFunc torrent.ReadaheadFunc
+	ctx           context.Context
 }
 
 func (f *fakeTorrentReader) Read(p []byte) (int, error) {
@@ -36,6 +38,10 @@ func (f *fakeTorrentReader) Close() error {
 
 func (f *fakeTorrentReader) ReadContext(_ context.Context, p []byte) (int, error) {
 	return f.Read(p)
+}
+
+func (f *fakeTorrentReader) SetContext(ctx context.Context) {
+	f.ctx = ctx
 }
 
 func (f *fakeTorrentReader) SetReadahead(_ int64) {}
@@ -117,6 +123,43 @@ func TestIsAllowedOriginOnlyAcceptsLocalOrigins(t *testing.T) {
 	}
 }
 
+func TestNewTorrentHTTPTransportIsTunedForFallbacks(t *testing.T) {
+	transport := newTorrentHTTPTransport()
+	if transport == nil {
+		t.Fatal("expected a transport instance")
+	}
+	if !transport.ForceAttemptHTTP2 {
+		t.Fatal("expected HTTP/2 to be enabled")
+	}
+	if transport.MaxIdleConnsPerHost < 16 {
+		t.Fatalf("expected connection pooling per host, got %d", transport.MaxIdleConnsPerHost)
+	}
+	if transport.ResponseHeaderTimeout != httpResponseHeaderTimeout {
+		t.Fatalf("expected response header timeout %s, got %s", httpResponseHeaderTimeout, transport.ResponseHeaderTimeout)
+	}
+}
+
+func TestCollectTorrentFallbacksIncludesLegacyMagnetParams(t *testing.T) {
+	values, err := url.ParseQuery(
+		"magnet=magnet%3A%3Fxt%3Durn%3Abtih%3Aabc123%26dn%3DExample&xs=https%3A%2F%2Fmeta.example%2Fmovie.torrent&as=https%3A%2F%2Fbackup.example%2Fmovie.torrent&ws=https%3A%2F%2Fcdn.example%2Fmovie.mkv&source=https%3A%2F%2Fexplicit.example%2Fmovie.torrent&webseed=https%3A%2F%2Fexplicit-cdn.example%2Fmovie.mkv",
+	)
+	if err != nil {
+		t.Fatalf("ParseQuery failed: %v", err)
+	}
+
+	sources, webseeds := collectTorrentFallbacks(values)
+
+	if len(sources) != 3 {
+		t.Fatalf("expected 3 sources, got %d: %#v", len(sources), sources)
+	}
+	if len(webseeds) != 2 {
+		t.Fatalf("expected 2 webseeds, got %d: %#v", len(webseeds), webseeds)
+	}
+	if values.Get("magnet") != "magnet:?xt=urn:btih:abc123&dn=Example" {
+		t.Fatalf("expected magnet payload to stay intact, got %q", values.Get("magnet"))
+	}
+}
+
 func TestConfigureStreamReaderBoostsReadaheadAfterLargeSeek(t *testing.T) {
 	fakeReader := &fakeTorrentReader{}
 	streamReader := configureStreamReader(fakeReader, 1<<30, true)
@@ -126,6 +169,12 @@ func TestConfigureStreamReaderBoostsReadaheadAfterLargeSeek(t *testing.T) {
 	}
 	if fakeReader.readaheadFunc == nil {
 		t.Fatal("expected stream reader to install a readahead function")
+	}
+
+	ctx := context.Background()
+	fakeReader.SetContext(ctx)
+	if fakeReader.ctx != ctx {
+		t.Fatal("expected reader context to be stored")
 	}
 
 	baseReadahead := fakeReader.readaheadFunc(torrent.ReadaheadContext{})

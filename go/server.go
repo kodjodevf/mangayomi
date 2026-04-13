@@ -33,14 +33,20 @@ var (
 )
 
 const (
-	maxJSONBodyBytes     int64 = 1 << 20
-	maxTorrentUploadSize int64 = 100 << 20
-	minStreamReadahead         = 1 << 20
-	baseStreamReadahead        = 4 << 20
-	maxStreamReadahead         = 32 << 20
-	seekBoostThreshold         = 4 << 20
-	seekBoostWindow            = 32 << 20
-	seekBoostReadahead         = 16 << 20
+	maxJSONBodyBytes          int64 = 1 << 20
+	maxTorrentUploadSize      int64 = 100 << 20
+	minStreamReadahead              = 1 << 20
+	baseStreamReadahead             = 4 << 20
+	maxStreamReadahead              = 32 << 20
+	seekBoostThreshold              = 4 << 20
+	seekBoostWindow                 = 32 << 20
+	seekBoostReadahead              = 16 << 20
+	httpConnectTimeout              = 5 * time.Second
+	httpKeepAlive                   = 30 * time.Second
+	httpIdleConnTimeout             = 90 * time.Second
+	httpTLSHandshakeTimeout         = 5 * time.Second
+	httpResponseHeaderTimeout       = 15 * time.Second
+	httpClientTimeout               = 45 * time.Second
 )
 
 // WorkerPool manages a pool of goroutines for concurrent tasks
@@ -140,6 +146,12 @@ func Start(config *Config) (int, error) {
 
 	torrentcliCfg = torrent.NewDefaultClientConfig()
 	torrentcliCfg.DataDir = sanitizedConfig.Path
+	torrentHTTPTransport := newTorrentHTTPTransport()
+	torrentcliCfg.WebTransport = torrentHTTPTransport
+	torrentcliCfg.MetainfoSourcesClient = &http.Client{
+		Transport: torrentHTTPTransport,
+		Timeout:   httpClientTimeout,
+	}
 
 	// Performance optimizations
 	torrentcliCfg.DisableUTP = false
@@ -147,10 +159,13 @@ func Start(config *Config) (int, error) {
 	torrentcliCfg.NoDefaultPortForwarding = false
 	torrentcliCfg.DisablePEX = false
 	torrentcliCfg.AcceptPeerConnections = true
+	torrentcliCfg.DropDuplicatePeerIds = true
 	torrentcliCfg.EstablishedConnsPerTorrent = 80
 	torrentcliCfg.HalfOpenConnsPerTorrent = 25
 	torrentcliCfg.TorrentPeersHighWater = 200
 	torrentcliCfg.TorrentPeersLowWater = 50
+	torrentcliCfg.HandshakesTimeout = 8 * time.Second
+	torrentcliCfg.PieceHashersPerTorrent = pieceHashersPerTorrent()
 	torrentcliCfg.Seed = false
 
 	log.Printf("[INFO] Download directory: %s", torrentcliCfg.DataDir)
@@ -228,6 +243,35 @@ func configureCORS() *cors.Cors {
 		AllowCredentials: false,
 		MaxAge:           86400, // 24h cache
 	})
+}
+
+func pieceHashersPerTorrent() int {
+	workers := runtime.NumCPU() / 2
+	if workers < 2 {
+		workers = 2
+	}
+	if workers > 8 {
+		workers = 8
+	}
+	return workers
+}
+
+func newTorrentHTTPTransport() *http.Transport {
+	return &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
+		DialContext: (&net.Dialer{
+			Timeout:   httpConnectTimeout,
+			KeepAlive: httpKeepAlive,
+		}).DialContext,
+		ForceAttemptHTTP2:     true,
+		MaxIdleConns:          128,
+		MaxIdleConnsPerHost:   32,
+		MaxConnsPerHost:       64,
+		IdleConnTimeout:       httpIdleConnTimeout,
+		TLSHandshakeTimeout:   httpTLSHandshakeTimeout,
+		ResponseHeaderTimeout: httpResponseHeaderTimeout,
+		ExpectContinueTimeout: time.Second,
+	}
 }
 
 func setupGracefulShutdown(server *http.Server) {
@@ -573,7 +617,7 @@ func getInfoWithTimeout(t *torrent.Torrent, timeout time.Duration) error {
 	}
 }
 
-func initMagnet(w http.ResponseWriter, magnet string, alldn, alltr []string) *torrent.Torrent {
+func initMagnet(w http.ResponseWriter, magnet string, alldn, alltr, sources, webseeds []string) *torrent.Torrent {
 	var sb strings.Builder
 	sb.WriteString(magnet)
 
@@ -599,8 +643,68 @@ func initMagnet(w http.ResponseWriter, magnet string, alldn, alltr []string) *to
 
 	// Cache metadata
 	cacheTorrentMetadata(t)
+	applyTorrentFallbacks(t, sources, webseeds)
 
 	return t
+}
+
+func normalizeHTTPURLs(values []string) []string {
+	if len(values) == 0 {
+		return nil
+	}
+
+	urls := make([]string, 0, len(values))
+	seen := make(map[string]struct{}, len(values))
+	for _, value := range values {
+		value = strings.TrimSpace(value)
+		if value == "" {
+			continue
+		}
+
+		parsedURL, err := url.Parse(value)
+		if err != nil {
+			continue
+		}
+		if parsedURL.Scheme != "http" && parsedURL.Scheme != "https" {
+			continue
+		}
+
+		normalizedURL := parsedURL.String()
+		if _, exists := seen[normalizedURL]; exists {
+			continue
+		}
+		seen[normalizedURL] = struct{}{}
+		urls = append(urls, normalizedURL)
+	}
+
+	return urls
+}
+
+func applyTorrentFallbacks(t *torrent.Torrent, sources, webseeds []string) {
+	if t == nil {
+		return
+	}
+
+	normalizedSources := normalizeHTTPURLs(sources)
+	if len(normalizedSources) > 0 {
+		t.AddSources(normalizedSources)
+	}
+
+	normalizedWebseeds := normalizeHTTPURLs(webseeds)
+	if len(normalizedWebseeds) > 0 {
+		t.AddWebSeeds(normalizedWebseeds)
+	}
+}
+
+func collectTorrentFallbacks(values url.Values) ([]string, []string) {
+	sources := append([]string{}, values["source"]...)
+	sources = append(sources, values["xs"]...)
+	sources = append(sources, values["as"]...)
+
+	webseeds := append([]string{}, values["webseed"]...)
+	webseeds = append(webseeds, values["ws"]...)
+
+	return sources, webseeds
 }
 
 func getTorrent(w http.ResponseWriter, infoHash string) *torrent.Torrent {
@@ -750,7 +854,7 @@ func addMagnet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	t := initMagnet(w, amBody.Magnet, []string{}, []string{})
+	t := initMagnet(w, amBody.Magnet, []string{}, []string{}, amBody.Sources, amBody.Webseeds)
 	if t == nil {
 		return
 	}
@@ -824,6 +928,7 @@ func streamTorrent(w http.ResponseWriter, r *http.Request) {
 
 	tFile.SetPriority(torrent.PiecePriorityHigh)
 	fileReader := tFile.NewReader()
+	fileReader.SetContext(r.Context())
 	streamReader := configureStreamReader(fileReader, tFile.Length(), r.Header.Get("Range") != "")
 	defer streamReader.Close()
 
@@ -1176,6 +1281,7 @@ func AddTorrent(w http.ResponseWriter, r *http.Request) {
 
 	// Cache metadata
 	cacheTorrentMetadata(torrent)
+	applyTorrentFallbacks(torrent, r.MultipartForm.Value["source"], r.MultipartForm.Value["webseed"])
 
 	w.Header().Set("Content-Type", "text/plain")
 	w.Write([]byte(torrent.InfoHash().HexString()))
@@ -1191,6 +1297,7 @@ func playTorrent(w http.ResponseWriter, r *http.Request) {
 	magnet, magOk := r.URL.Query()["magnet"]
 	displayName := r.URL.Query()["dn"]
 	trackers := r.URL.Query()["tr"]
+	sources, webseeds := collectTorrentFallbacks(r.URL.Query())
 	files, fOk := r.URL.Query()["file"]
 
 	if !magOk && !ihOk {
@@ -1200,11 +1307,12 @@ func playTorrent(w http.ResponseWriter, r *http.Request) {
 
 	var t *torrent.Torrent
 	if magOk && !ihOk {
-		t = initMagnet(w, magnet[0], displayName, trackers)
+		t = initMagnet(w, magnet[0], displayName, trackers, sources, webseeds)
 	}
 
 	if ihOk && !magOk {
 		t = getTorrent(w, infoHash[0])
+		applyTorrentFallbacks(t, sources, webseeds)
 	}
 
 	if t == nil {
@@ -1244,6 +1352,8 @@ type addMagnetBody struct {
 	Magnet   string
 	AllFiles bool
 	Files    []string
+	Sources  []string
+	Webseeds []string
 }
 
 type addMagnetRes struct {
