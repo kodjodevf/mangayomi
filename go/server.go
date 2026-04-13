@@ -3,6 +3,8 @@ package server
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"io"
 	"log"
 	"net"
 	"net/http"
@@ -30,11 +32,23 @@ var (
 	workerPool *WorkerPool
 )
 
+const (
+	maxJSONBodyBytes     int64 = 1 << 20
+	maxTorrentUploadSize int64 = 100 << 20
+	minStreamReadahead         = 1 << 20
+	baseStreamReadahead        = 4 << 20
+	maxStreamReadahead         = 32 << 20
+	seekBoostThreshold         = 4 << 20
+	seekBoostWindow            = 32 << 20
+	seekBoostReadahead         = 16 << 20
+)
+
 // WorkerPool manages a pool of goroutines for concurrent tasks
 type WorkerPool struct {
 	workers  int
 	jobQueue chan func()
-	quit     chan bool
+	mu       sync.RWMutex
+	stopped  bool
 	wg       sync.WaitGroup
 }
 
@@ -46,8 +60,7 @@ func NewWorkerPool(workers int) *WorkerPool {
 
 	pool := &WorkerPool{
 		workers:  workers,
-		jobQueue: make(chan func(), workers*2),
-		quit:     make(chan bool),
+		jobQueue: make(chan func(), workers*8),
 	}
 
 	pool.start()
@@ -65,29 +78,39 @@ func (p *WorkerPool) start() {
 // worker executes the jobs
 func (p *WorkerPool) worker() {
 	defer p.wg.Done()
-	for {
-		select {
-		case job := <-p.jobQueue:
-			job()
-		case <-p.quit:
-			return
-		}
+	for job := range p.jobQueue {
+		job()
 	}
 }
 
 // Submit submits a job to the pool
-func (p *WorkerPool) Submit(job func()) {
-	select {
-	case p.jobQueue <- job:
-	default:
-		// If pool is full, execute directly
-		go job()
+func (p *WorkerPool) Submit(job func()) bool {
+	if job == nil {
+		return false
 	}
+
+	p.mu.RLock()
+	defer p.mu.RUnlock()
+
+	if p.stopped {
+		return false
+	}
+
+	p.jobQueue <- job
+	return true
 }
 
 // Stop stops the pool
 func (p *WorkerPool) Stop() {
-	close(p.quit)
+	p.mu.Lock()
+	if p.stopped {
+		p.mu.Unlock()
+		return
+	}
+	p.stopped = true
+	close(p.jobQueue)
+	p.mu.Unlock()
+
 	p.wg.Wait()
 }
 
@@ -107,11 +130,16 @@ type FileMetadata struct {
 }
 
 func Start(config *Config) (int, error) {
+	sanitizedConfig, err := sanitizeConfig(config)
+	if err != nil {
+		return 0, err
+	}
+
 	// Initialize worker pool
 	workerPool = NewWorkerPool(runtime.NumCPU() * 2)
 
 	torrentcliCfg = torrent.NewDefaultClientConfig()
-	torrentcliCfg.DataDir = filepath.Clean(config.Path)
+	torrentcliCfg.DataDir = sanitizedConfig.Path
 
 	// Performance optimizations
 	torrentcliCfg.DisableUTP = false
@@ -123,14 +151,17 @@ func Start(config *Config) (int, error) {
 	torrentcliCfg.HalfOpenConnsPerTorrent = 25
 	torrentcliCfg.TorrentPeersHighWater = 200
 	torrentcliCfg.TorrentPeersLowWater = 50
+	torrentcliCfg.Seed = false
 
 	log.Printf("[INFO] Download directory: %s", torrentcliCfg.DataDir)
 	log.Printf("[INFO] Worker pool size: %d", workerPool.workers)
 
-	var err error
 	torrentCli, err = torrent.NewClient(torrentcliCfg)
 	if err != nil {
-		log.Fatalf("[ERROR] BitTorrent client creation failed: %s", err)
+		if workerPool != nil {
+			workerPool.Stop()
+		}
+		return 0, err
 	}
 
 	// Optimized DNS configuration
@@ -140,8 +171,12 @@ func Start(config *Config) (int, error) {
 	mux := setupRoutes()
 	c := configureCORS()
 
-	listener, err := net.Listen("tcp", config.Address)
+	listener, err := net.Listen("tcp", sanitizedConfig.Address)
 	if err != nil {
+		cleanupTorrents()
+		if workerPool != nil {
+			workerPool.Stop()
+		}
 		return 0, err
 	}
 	addr := listener.Addr().(*net.TCPAddr)
@@ -150,7 +185,7 @@ func Start(config *Config) (int, error) {
 	server := &http.Server{
 		Handler:           c.Handler(mux),
 		ReadTimeout:       30 * time.Second,
-		WriteTimeout:      30 * time.Second,
+		WriteTimeout:      0,
 		IdleTimeout:       120 * time.Second,
 		ReadHeaderTimeout: 10 * time.Second,
 		MaxHeaderBytes:    1 << 20, // 1MB
@@ -184,9 +219,13 @@ func setupRoutes() *http.ServeMux {
 
 func configureCORS() *cors.Cors {
 	return cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"},
-		AllowedMethods:   []string{"GET", "POST", "DELETE"},
-		AllowCredentials: true,
+		AllowOriginFunc: func(origin string) bool {
+			return isAllowedOrigin(origin)
+		},
+		AllowedMethods:   []string{"GET", "POST", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Content-Type", "Range"},
+		ExposedHeaders:   []string{"Accept-Ranges", "Content-Length", "Content-Range", "Content-Type"},
+		AllowCredentials: false,
 		MaxAge:           86400, // 24h cache
 	})
 }
@@ -220,17 +259,137 @@ func setupGracefulShutdown(server *http.Server) {
 }
 
 func cleanupTorrents() {
+	if torrentCli == nil {
+		return
+	}
+
 	log.Println("[INFO] Cleaning up torrents...")
 	for _, t := range torrentCli.Torrents() {
 		log.Printf("[INFO] Removing torrent: [%s]", t.Name())
 		t.Drop()
-		if err := os.RemoveAll(filepath.Join(torrentcliCfg.DataDir, t.Name())); err != nil {
+		if err := removeTorrentData(t.Name()); err != nil {
 			log.Printf("[ERROR] Failed to remove torrent files [%s]: %s", t.Name(), err)
 		}
 	}
-	if torrentCli != nil {
-		torrentCli.Close()
+	torrentCli.Close()
+}
+
+func sanitizeConfig(config *Config) (*Config, error) {
+	if config == nil {
+		return nil, errors.New("config is required")
 	}
+
+	dataDir := strings.TrimSpace(config.Path)
+	if dataDir == "" {
+		return nil, errors.New("config path is required")
+	}
+
+	absDataDir, err := filepath.Abs(filepath.Clean(dataDir))
+	if err != nil {
+		return nil, err
+	}
+
+	if err := os.MkdirAll(absDataDir, 0o755); err != nil {
+		return nil, err
+	}
+
+	address := strings.TrimSpace(config.Address)
+	if address == "" {
+		address = "127.0.0.1:0"
+	}
+
+	normalizedAddress, err := normalizeListenAddress(address)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Config{
+		Address: normalizedAddress,
+		Path:    absDataDir,
+	}, nil
+}
+
+func normalizeListenAddress(address string) (string, error) {
+	host, port, err := net.SplitHostPort(address)
+	if err != nil {
+		return "", err
+	}
+
+	host = strings.TrimSpace(host)
+	switch host {
+	case "", "0.0.0.0", "::", "[::]":
+		host = "127.0.0.1"
+	case "localhost":
+		return net.JoinHostPort(host, port), nil
+	default:
+		ip := net.ParseIP(host)
+		if ip == nil || !ip.IsLoopback() {
+			return "", errors.New("listen address must use localhost or a loopback IP")
+		}
+	}
+
+	return net.JoinHostPort(host, port), nil
+}
+
+func isAllowedOrigin(origin string) bool {
+	if origin == "" || origin == "null" {
+		return true
+	}
+
+	parsedOrigin, err := url.Parse(origin)
+	if err != nil {
+		return false
+	}
+
+	hostname := parsedOrigin.Hostname()
+	if hostname == "localhost" {
+		return true
+	}
+
+	ip := net.ParseIP(hostname)
+	return ip != nil && ip.IsLoopback()
+}
+
+func resolveTorrentDataPath(baseDir, torrentName string) (string, error) {
+	baseDir = filepath.Clean(baseDir)
+	if baseDir == "" || baseDir == "." {
+		return "", errors.New("invalid data directory")
+	}
+
+	torrentName = strings.TrimSpace(torrentName)
+	if torrentName == "" {
+		return "", errors.New("empty torrent name")
+	}
+	if filepath.IsAbs(torrentName) {
+		return "", errors.New("absolute torrent path is not allowed")
+	}
+
+	targetPath := filepath.Clean(filepath.Join(baseDir, torrentName))
+	relPath, err := filepath.Rel(baseDir, targetPath)
+	if err != nil {
+		return "", err
+	}
+	if relPath == "." || relPath == "" {
+		return "", errors.New("refusing to remove data directory")
+	}
+	if relPath == ".." || strings.HasPrefix(relPath, ".."+string(os.PathSeparator)) {
+		return "", errors.New("torrent path escapes data directory")
+	}
+
+	return targetPath, nil
+}
+
+func removeTorrentData(torrentName string) error {
+	if torrentcliCfg == nil {
+		return errors.New("torrent client config is not initialized")
+	}
+
+	targetPath, err := resolveTorrentDataPath(torrentcliCfg.DataDir, torrentName)
+	if err != nil {
+		return err
+	}
+
+	return os.RemoveAll(targetPath)
 }
 
 func safenDisplayPath(displayPath string) string {
@@ -370,14 +529,23 @@ func httpJSONError(w http.ResponseWriter, error string, code int) {
 }
 
 func parseRequestBody(w http.ResponseWriter, r *http.Request, v interface{}) error {
-	defer r.Body.Close()
-	decoder := json.NewDecoder(r.Body)
+	body := http.MaxBytesReader(w, r.Body, maxJSONBodyBytes)
+	defer body.Close()
+
+	decoder := json.NewDecoder(body)
 	decoder.DisallowUnknownFields() // Additional security
 	err := decoder.Decode(v)
 	if err != nil {
 		httpJSONError(w, "Request JSON body decode error", http.StatusBadRequest)
+		return err
 	}
-	return err
+
+	if err := decoder.Decode(&struct{}{}); err != io.EOF {
+		httpJSONError(w, "Request body must contain a single JSON object", http.StatusBadRequest)
+		return errors.New("request body contains multiple JSON values")
+	}
+
+	return nil
 }
 
 func makeJSONResponse(w http.ResponseWriter, v interface{}) {
@@ -654,30 +822,142 @@ func streamTorrent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	tFile.SetPriority(torrent.PiecePriorityHigh)
 	fileReader := tFile.NewReader()
-	defer fileReader.Close()
+	streamReader := configureStreamReader(fileReader, tFile.Length(), r.Header.Get("Range") != "")
+	defer streamReader.Close()
 
-	readaheadSize := calculateReadahead(tFile.Length())
-	fileReader.SetReadahead(readaheadSize)
+	tFile.Download()
 
 	// Headers for optimized streaming
 	w.Header().Set("Accept-Ranges", "bytes")
 	w.Header().Set("Content-Type", getContentType(fileName))
 	w.Header().Set("Cache-Control", "public, max-age=3600")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
 
-	http.ServeContent(w, r, tFile.DisplayPath(), time.Now(), fileReader)
+	http.ServeContent(w, r, tFile.DisplayPath(), time.Now(), streamReader)
 }
 
-// calculateReadahead calculates optimal readahead size
-func calculateReadahead(fileSize int64) int64 {
-	switch {
-	case fileSize < 100*1024*1024: // < 100MB
-		return fileSize / 20 // 5%
-	case fileSize < 1024*1024*1024: // < 1GB
-		return fileSize / 50 // 2%
-	default:
-		return fileSize / 100 // 1%
+type streamReader struct {
+	reader torrent.Reader
+	size   int64
+
+	mu             sync.RWMutex
+	currentPos     int64
+	seekBoostUntil int64
+	hasRange       bool
+}
+
+func configureStreamReader(fileReader torrent.Reader, fileSize int64, hasRange bool) *streamReader {
+	streamReader := &streamReader{
+		reader:   fileReader,
+		size:     fileSize,
+		hasRange: hasRange,
 	}
+
+	fileReader.SetResponsive()
+	fileReader.SetReadaheadFunc(func(ctx torrent.ReadaheadContext) int64 {
+		streamReader.mu.RLock()
+		seekBoostUntil := streamReader.seekBoostUntil
+		streamReader.mu.RUnlock()
+
+		contiguousRead := ctx.CurrentPos - ctx.ContiguousReadStartPos
+		if contiguousRead < 0 {
+			contiguousRead = 0
+		}
+
+		readahead := int64(baseStreamReadahead)
+		if streamReader.hasRange {
+			readahead = baseStreamReadahead / 2
+		}
+		if seekBoostUntil > ctx.CurrentPos && readahead < seekBoostReadahead {
+			readahead = seekBoostReadahead
+		}
+
+		readahead += contiguousRead / 2
+		if readahead > maxStreamReadahead {
+			readahead = maxStreamReadahead
+		}
+
+		fileBound := fileSize / 20
+		if streamReader.hasRange {
+			fileBound = fileSize / 40
+		}
+		if fileBound > 0 && readahead > fileBound {
+			readahead = fileBound
+		}
+		if readahead < minStreamReadahead {
+			readahead = minStreamReadahead
+		}
+
+		return readahead
+	})
+
+	return streamReader
+}
+
+func (s *streamReader) Read(p []byte) (int, error) {
+	n, err := s.reader.Read(p)
+	if n > 0 {
+		s.mu.Lock()
+		s.currentPos += int64(n)
+		s.mu.Unlock()
+	}
+	return n, err
+}
+
+func (s *streamReader) Seek(offset int64, whence int) (int64, error) {
+	s.mu.RLock()
+	currentPos := s.currentPos
+	s.mu.RUnlock()
+
+	targetPos := resolveSeekPosition(currentPos, s.size, offset, whence)
+	newPos, err := s.reader.Seek(offset, whence)
+	if err != nil {
+		return 0, err
+	}
+
+	s.mu.Lock()
+	if shouldBoostSeek(currentPos, targetPos, s.hasRange) {
+		s.seekBoostUntil = newPos + seekBoostWindow
+		if s.seekBoostUntil > s.size {
+			s.seekBoostUntil = s.size
+		}
+	} else if newPos >= s.seekBoostUntil {
+		s.seekBoostUntil = 0
+	}
+	s.currentPos = newPos
+	s.mu.Unlock()
+
+	return newPos, nil
+}
+
+func (s *streamReader) Close() error {
+	return s.reader.Close()
+}
+
+func resolveSeekPosition(currentPos, size, offset int64, whence int) int64 {
+	switch whence {
+	case io.SeekStart:
+		return offset
+	case io.SeekCurrent:
+		return currentPos + offset
+	case io.SeekEnd:
+		return size + offset
+	default:
+		return currentPos
+	}
+}
+
+func shouldBoostSeek(currentPos, targetPos int64, hasRange bool) bool {
+	jumpDistance := currentPos - targetPos
+	if jumpDistance < 0 {
+		jumpDistance = -jumpDistance
+	}
+	if jumpDistance >= seekBoostThreshold {
+		return true
+	}
+	return hasRange && currentPos == 0 && targetPos > 0
 }
 
 // getContentType determines file MIME type
@@ -775,26 +1055,27 @@ func removeTorrent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	name := t.Name()
-
-	// Immediate response before cleanup
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Torrent removal initiated"))
-
-	// Asynchronous deletion after response
-	workerPool.Submit(func() {
+	if workerPool == nil || !workerPool.Submit(func() {
 		t.Drop()
 
 		// Clean cache
 		torrentCache.Delete(infoHash)
 
 		// Remove files
-		if err := os.RemoveAll(filepath.Join(torrentcliCfg.DataDir, name)); err != nil {
+		if err := removeTorrentData(name); err != nil {
 			log.Printf("[ERROR] Failed to remove torrent files [%s]: %s", name, err)
 			return
 		}
 
 		log.Printf("[INFO] Successfully removed torrent: %s", name)
-	})
+	}) {
+		httpJSONError(w, "Torrent removal unavailable", http.StatusServiceUnavailable)
+		return
+	}
+
+	// Immediate response before cleanup
+	w.WriteHeader(http.StatusAccepted)
+	w.Write([]byte("Torrent removal initiated"))
 }
 
 func listTorrents(w http.ResponseWriter, r *http.Request) {
@@ -859,7 +1140,12 @@ func listTorrents(w http.ResponseWriter, r *http.Request) {
 
 func AddTorrent(w http.ResponseWriter, r *http.Request) {
 	// Limit upload file size
-	r.ParseMultipartForm(100 << 20) // 100MB max
+	r.Body = http.MaxBytesReader(w, r.Body, maxTorrentUploadSize)
+	if err := r.ParseMultipartForm(maxTorrentUploadSize); err != nil {
+		log.Printf("[ERROR] Multipart form parse error: %s", err)
+		httpJSONError(w, "Invalid multipart form", http.StatusBadRequest)
+		return
+	}
 
 	file, _, err := r.FormFile("file")
 	if err != nil {
