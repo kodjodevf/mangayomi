@@ -540,7 +540,7 @@ extension MangaExtensions on Manga {
         })
         .where((element) => !filterScanlator.contains(element.scanlator))
         .toList();
-    List<Chapter> chapters = sortChapter == 1
+    List<Chapter> chapters = sortChapter == 0
         ? chapterList.reversed.toList()
         : chapterList;
     if (sortChapter == 0) {
