@@ -67,6 +67,9 @@ class ReaderController extends _$ReaderController {
   }
 
   final incognitoMode = isar.settings.getSync(227)!.incognitoMode!;
+  Settings? _cachedSettings;
+  void _invalidateSettingsCache() => _cachedSettings = null;
+
   ReaderMode getReaderMode() {
     final personalReaderModeList =
         getIsarSetting().personalReaderModeList ?? [];
@@ -113,6 +116,7 @@ class ReaderController extends _$ReaderController {
           ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       ),
     );
+    _invalidateSettingsCache();
   }
 
   PageMode getPageMode() {
@@ -146,6 +150,7 @@ class ReaderController extends _$ReaderController {
           ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       ),
     );
+    _invalidateSettingsCache();
   }
 
   void setPageMode(PageMode newPageMode) {
@@ -167,6 +172,7 @@ class ReaderController extends _$ReaderController {
           ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       ),
     );
+    _invalidateSettingsCache();
   }
 
   void setShowPageNumber(bool value) {
@@ -178,17 +184,14 @@ class ReaderController extends _$ReaderController {
             ..updatedAt = DateTime.now().millisecondsSinceEpoch,
         ),
       );
+      _invalidateSettingsCache();
     }
   }
 
-  Settings getIsarSetting() {
-    return isar.settings.getSync(227)!;
-  }
+  Settings getIsarSetting() => _cachedSettings ??= isar.settings.getSync(227)!;
 
   bool getShowPageNumber() {
-    if (!incognitoMode) {
-      return getIsarSetting().showPagesNumber!;
-    }
+    if (!incognitoMode) return getIsarSetting().showPagesNumber!;
     return true;
   }
 
@@ -353,9 +356,11 @@ class ReaderController extends _$ReaderController {
     return urls.length;
   }
 
+  int? _lastSavedIndex;
   void setPageIndex(int newIndex, bool save) {
-    if (chapter.isRead!) return;
-    if (incognitoMode) return;
+    if (chapter.isRead! || incognitoMode) return;
+    if (!save && newIndex == _lastSavedIndex) return;
+    _lastSavedIndex = newIndex;
     final isContinuousLike =
         getReaderMode() == ReaderMode.verticalContinuous ||
         getReaderMode() == ReaderMode.webtoon;
@@ -387,6 +392,7 @@ class ReaderController extends _$ReaderController {
         chap.updatedAt = DateTime.now().millisecondsSinceEpoch;
         isar.chapters.putSync(chap);
       });
+      _invalidateSettingsCache();
       if (isRead) {
         chapter.updateTrackChapterRead(ref);
         if (ref.read(deleteDownloadAfterReadingStateProvider)) {
@@ -469,10 +475,9 @@ extension ChapterExtensions on Chapter {
 extension MangaExtensions on Manga {
   List<Chapter> getFilteredChapterList() {
     final data = this.chapters.toList().reversed.toList();
+    final settings = isar.settings.getSync(227)!;
     final filterUnread =
-        (isar.settings
-                    .getSync(227)!
-                    .chapterFilterUnreadList!
+        (settings.chapterFilterUnreadList!
                     .where((element) => element.mangaId == id)
                     .toList()
                     .firstOrNull ??
@@ -480,18 +485,14 @@ extension MangaExtensions on Manga {
             .type!;
 
     final filterBookmarked =
-        (isar.settings
-                    .getSync(227)!
-                    .chapterFilterBookmarkedList!
+        (settings.chapterFilterBookmarkedList!
                     .where((element) => element.mangaId == id)
                     .toList()
                     .firstOrNull ??
                 ChapterFilterBookmarked(mangaId: id, type: 0))
             .type!;
     final filterDownloaded =
-        (isar.settings
-                    .getSync(227)!
-                    .chapterFilterDownloadedList!
+        (settings.chapterFilterDownloadedList!
                     .where((element) => element.mangaId == id)
                     .toList()
                     .firstOrNull ??
@@ -499,15 +500,23 @@ extension MangaExtensions on Manga {
             .type!;
 
     final sortChapter =
-        (isar.settings
-                    .getSync(227)!
-                    .sortChapterList!
+        (settings.sortChapterList!
                     .where((element) => element.mangaId == id)
                     .toList()
                     .firstOrNull ??
                 SortChapter(mangaId: id, index: 1, reverse: false))
             .index;
     final filterScanlator = _getFilterScanlator(this) ?? [];
+    final chapterIds = data.map((c) => c.id).whereType<int>().toList();
+    final downloadedIds = (filterDownloaded == 0 || chapterIds.isEmpty)
+        ? const <int>{}
+        : isar.downloads
+              .filter()
+              .anyOf(chapterIds, (q, id) => q.idEqualTo(id))
+              .isDownloadEqualTo(true)
+              .findAllSync()
+              .map((d) => d.id!)
+              .toSet();
     List<Chapter>? chapterList;
     chapterList = data
         .where(
@@ -525,21 +534,13 @@ extension MangaExtensions on Manga {
               : true,
         )
         .where((element) {
-          final modelChapDownload = isar.downloads
-              .filter()
-              .idEqualTo(element.id)
-              .findAllSync();
-          return filterDownloaded == 1
-              ? modelChapDownload.isNotEmpty &&
-                    modelChapDownload.first.isDownload == true
-              : filterDownloaded == 2
-              ? !(modelChapDownload.isNotEmpty &&
-                    modelChapDownload.first.isDownload == true)
-              : true;
+          if (filterDownloaded == 0) return true;
+          final isDownloaded = downloadedIds.contains(element.id);
+          return filterDownloaded == 1 ? isDownloaded : !isDownloaded;
         })
         .where((element) => !filterScanlator.contains(element.scanlator))
         .toList();
-    List<Chapter> chapters = sortChapter == 1
+    List<Chapter> chapters = sortChapter == 0
         ? chapterList.reversed.toList()
         : chapterList;
     if (sortChapter == 0) {
@@ -565,7 +566,7 @@ extension MangaExtensions on Manga {
             : a.name!.compareTo(b.name!);
       });
     }
-    return chapterList;
+    return chapters;
   }
 }
 

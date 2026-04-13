@@ -77,7 +77,7 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
         bottomLeft: Radius.circular(20),
         bottomRight: Radius.circular(20),
       ),
-      clipBehavior: Clip.antiAliasWithSaveLayer,
+      clipBehavior: Clip.antiAlias,
       child: _isLoading
           ? SizedBox(
               height: context.height(0.3),
@@ -123,8 +123,7 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
                                             5,
                                           ),
                                           color: Colors.transparent,
-                                          clipBehavior:
-                                              Clip.antiAliasWithSaveLayer,
+                                          clipBehavior: Clip.antiAlias,
                                           child: Ink.image(
                                             height: 120,
                                             width: 80,

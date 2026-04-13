@@ -34,6 +34,7 @@ class ImageViewWebtoon extends StatelessWidget {
   final int webtoonSidePadding;
   final bool showPageGaps;
   final bool reverse;
+  final ValueNotifier<bool> isScrolling;
 
   const ImageViewWebtoon({
     super.key,
@@ -57,6 +58,7 @@ class ImageViewWebtoon extends StatelessWidget {
     required this.onScaleEnd,
     required this.onDoubleTapDown,
     required this.onDoubleTap,
+    required this.isScrolling,
     this.webtoonSidePadding = 0,
     this.showPageGaps = true,
     this.reverse = false,
@@ -89,11 +91,17 @@ class ImageViewWebtoon extends StatelessWidget {
   }
 
   Widget _buildItem(BuildContext context, int index) {
-    if (isDoublePageMode && !isHorizontalContinuous) {
-      return _buildDoublePageItem(context, index);
-    } else {
-      return _buildSinglePageItem(context, index);
-    }
+    final currentPage = pages[index];
+    final uniqueKey = ValueKey(
+      '${currentPage.chapter?.id ?? "trans"}-${currentPage.index ?? index}',
+    );
+
+    return KeyedSubtree(
+      key: uniqueKey,
+      child: (isDoublePageMode && !isHorizontalContinuous)
+          ? _buildDoublePageItem(context, index)
+          : _buildSinglePageItem(context, index),
+    );
   }
 
   Widget _buildSinglePageItem(BuildContext context, int index) {
@@ -124,6 +132,7 @@ class ImageViewWebtoon extends StatelessWidget {
           failedToLoadImage: onFailedToLoadImage,
           onLongPressData: onLongPressData,
           isHorizontal: isHorizontalContinuous,
+          isScrolling: isScrolling,
         ),
       ),
     );

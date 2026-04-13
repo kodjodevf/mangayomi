@@ -212,7 +212,7 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
           child: Material(
             borderRadius: BorderRadius.circular(5),
             color: Colors.transparent,
-            clipBehavior: Clip.antiAliasWithSaveLayer,
+            clipBehavior: Clip.antiAlias,
             child: InkWell(
               onTap: () {
                 pushToMangaReaderDetail(
@@ -258,7 +258,7 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
                         Material(
                           borderRadius: BorderRadius.circular(5),
                           color: Colors.transparent,
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          clipBehavior: Clip.antiAlias,
                           child: Image(
                             height: 55,
                             width: 40,

@@ -20,23 +20,13 @@ mixin ReaderMemoryManagement {
   /// Gets the total page count.
   int get pageCount => _preloadManager.pageCount;
 
-  /// Gets the current page index.
-  int get currentPageIndex => _preloadManager.currentIndex;
-
-  /// Sets the current page index.
-  set currentPageIndex(int value) {
-    _preloadManager.currentIndex = value;
-  }
-
   /// Initializes the preload manager with initial chapter data.
   ///
   /// [chapterData] - The initial chapter pages to load.
-  /// [startIndex] - The initial page index (default: 0).
   /// [onPagesUpdated] - Callback when pages are added/removed.
   /// [onIndexAdjusted] - Callback when current index needs adjustment.
   void initializePreloadManager(
     GetChapterPagesModel chapterData, {
-    int startIndex = 0,
     VoidCallback? onPagesUpdated,
   }) {
     if (_isPreloadManagerInitialized) {
@@ -48,7 +38,7 @@ mixin ReaderMemoryManagement {
 
     _preloadManager.onPagesUpdated = onPagesUpdated;
 
-    _preloadManager.initialize(chapterData.uChapDataPreload, startIndex);
+    _preloadManager.initialize(chapterData.uChapDataPreload);
 
     _isPreloadManagerInitialized = true;
 

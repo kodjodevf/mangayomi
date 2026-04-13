@@ -25,7 +25,7 @@ class UpdateChapterListTileWidget extends ConsumerWidget {
     return Material(
       borderRadius: BorderRadius.circular(5),
       color: Colors.transparent,
-      clipBehavior: Clip.antiAliasWithSaveLayer,
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () async {
           chapter.pushToReaderView(context, ignoreIsRead: true);

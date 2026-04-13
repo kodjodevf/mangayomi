@@ -76,7 +76,7 @@ class _SubtitlesWidgetSearchState extends ConsumerState<SubtitlesWidgetSearch> {
         bottomLeft: Radius.circular(20),
         bottomRight: Radius.circular(20),
       ),
-      clipBehavior: Clip.antiAliasWithSaveLayer,
+      clipBehavior: Clip.antiAlias,
       child: _isLoading
           ? SizedBox(
               height: context.height(0.3),
@@ -229,7 +229,7 @@ class _SubtitlesWidgetSearchState extends ConsumerState<SubtitlesWidgetSearch> {
                       Material(
                         borderRadius: BorderRadius.circular(5),
                         color: Colors.transparent,
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                        clipBehavior: Clip.antiAlias,
                         child: Ink.image(
                           height: 120,
                           width: 80,
