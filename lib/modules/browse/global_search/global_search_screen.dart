@@ -156,7 +156,7 @@ class _SourceSearchScreenState extends ConsumerState<SourceSearchScreen> {
           source: widget.source,
           page: 1,
           query: widget.query,
-          filterList: [],
+          filterList: const [],
         ).future,
       );
       if (mounted) {

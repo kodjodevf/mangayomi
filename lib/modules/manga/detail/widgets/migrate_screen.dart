@@ -173,7 +173,7 @@ class _MigrationSourceSearchScreenState
           source: widget.source,
           page: 1,
           query: widget.query,
-          filterList: [],
+          filterList: const [],
         ).future,
       );
       if (mounted) {
