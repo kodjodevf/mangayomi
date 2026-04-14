@@ -11,6 +11,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/utils.dart';
@@ -60,6 +61,9 @@ Future<GetChapterPagesModel> getChapterPages(
 
     List<Uint8List?> archiveImages = [];
     final isLocalArchive = (chapter.archivePath ?? '').isNotEmpty;
+    final resolvedArchivePath = isLocalArchive
+        ? await resolveLocalArchivePath(chapter.archivePath!)
+        : null;
     if (!chapter.manga.value!.isLocalArchive!) {
       final source = getSource(
         chapter.manga.value!.lang!,
@@ -100,7 +104,7 @@ Future<GetChapterPagesModel> getChapterPages(
               .exists() ||
           isLocalArchive) {
         final path = isLocalArchive
-            ? chapter.archivePath
+            ? resolvedArchivePath
             : p.join(mangaDirectory.path, "${chapter.name}.cbz");
         final local = await ref.read(
           getArchiveDataFromFileProvider(path!).future,

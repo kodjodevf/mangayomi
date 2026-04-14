@@ -10,6 +10,7 @@ import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/changed.dart';
+import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
@@ -192,9 +193,10 @@ String _deleteImport(Manga manga, String mangaDirectory) {
   for (var chapter in manga.chapters) {
     final path = chapter.archivePath;
     if (path == null) continue;
-    final chapterFile = File(path);
+    final resolvedPath = await resolveLocalArchivePath(path);
+    final chapterFile = File(resolvedPath);
     if (mangaDirectory.isEmpty) {
-      mangaDirectory = p.dirname(path);
+      mangaDirectory = p.dirname(resolvedPath);
     }
     try {
       if (chapterFile.existsSync()) {

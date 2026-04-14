@@ -141,6 +141,26 @@ class AllowConcurrentDownloadsState extends _$AllowConcurrentDownloadsState {
 }
 
 @riverpod
+class AskDownloadDestinationState extends _$AskDownloadDestinationState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.askDownloadDestination ?? true;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..askDownloadDestination = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
 class DownloadDelaySecondsState extends _$DownloadDelaySecondsState {
   @override
   int build() {

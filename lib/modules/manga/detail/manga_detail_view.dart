@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -15,18 +14,25 @@ import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/manga/detail/tv/tv_anime_detail_view.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/library/library_screen.dart';
 import 'package:mangayomi/modules/library/providers/library_filter_provider.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
+import 'package:mangayomi/modules/library/providers/file_scanner.dart';
+import 'package:mangayomi/modules/manga/detail/providers/export_metadata.dart';
+import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_search_widget.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracking_menu.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/modules/more/providers/algorithm_weights_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_library_screen.dart';
 import 'package:mangayomi/modules/widgets/bottom_select_bar.dart';
 import 'package:mangayomi/modules/widgets/category_selection_dialog.dart';
@@ -34,7 +40,6 @@ import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
-import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/riverpod.dart';
 import 'package:mangayomi/utils/utils.dart';
@@ -254,6 +259,79 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
       ),
     );
   }
+
+
+  Future<void> _downloadChaptersWithDestination(
+    BuildContext context,
+    List<Chapter> chapters,
+  ) async {
+    final chaptersToDownload = chapters.where((chapter) {
+      final entry = isar.downloads
+          .filter()
+          .idEqualTo(chapter.id)
+          .findFirstSync();
+      return entry == null || !entry.isDownload!;
+    }).toList();
+    if (chaptersToDownload.isEmpty) return;
+
+    final shouldAsk = ref.read(askDownloadDestinationStateProvider);
+    if (!shouldAsk) {
+      await _queueDownloads(
+        chaptersToDownload,
+        localFolder: await getDownloadLocalFolder(),
+      );
+      return;
+    }
+
+    final folders = await getAllLocalFolders();
+    if (folders.isEmpty || !context.mounted) return;
+    if (folders.length == 1) {
+      await _queueDownloads(chaptersToDownload, localFolder: folders.first);
+      return;
+    }
+
+    final selectedFolder = await _showDownloadDestinationDialog(
+      context,
+      folders,
+    );
+    if (selectedFolder == null) return;
+    await _queueDownloads(chaptersToDownload, localFolder: selectedFolder);
+  }
+
+  Future<void> _queueDownloads(
+    List<Chapter> chapters, {
+    LocalFolder? localFolder,
+  }) async {
+    for (final chapter in chapters) {
+      await ref.read(addDownloadToQueueProvider(chapter: chapter).future);
+    }
+    ref.read(processDownloadsProvider(localFolder: localFolder));
+  }
+
+  Future<LocalFolder?> _showDownloadDestinationDialog(
+    BuildContext context,
+    List<LocalFolder> folders,
+  ) {
+    return showDialog<LocalFolder>(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: const Text("Select download destination"),
+        children: folders
+            .map(
+              (folder) => SimpleDialogOption(
+                onPressed: () => Navigator.pop(context, folder),
+                child: ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(folder.name ?? ""),
+                  subtitle: Text(folder.path ?? ""),
+                ),
+              ),
+            )
+            .toList(),
+      ),
+    );
+  }
+
 
   Widget _buildWidget({required List<Chapter> chapters}) {
     final chapterList = ref.watch(chaptersListStateProvider);
@@ -486,9 +564,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   ),
                                 ];
                               },
-                              onSelected: (value) {
+                              onSelected: (value) async {
                                 final chapters = widget.manga!
                                     .getSortedFilteredChapters();
+                                final chaptersToDownload = <Chapter>[];
                                 if (value == 0 ||
                                     value == 1 ||
                                     value == 2 ||
@@ -499,18 +578,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                       );
                                   if (lastChapterReadIndex == -1 ||
                                       chapters.length == 1) {
-                                    final chapter = chapters.first;
-                                    final entry = isar.downloads
-                                        .filter()
-                                        .idEqualTo(chapter.id)
-                                        .findFirstSync();
-                                    if (entry == null || !entry.isDownload!) {
-                                      ref.watch(
-                                        addDownloadToQueueProvider(
-                                          chapter: chapter,
-                                        ),
-                                      );
-                                      ref.watch(processDownloadsProvider());
+                                    if (chapters.isNotEmpty) {
+                                      chaptersToDownload.add(chapters.first);
                                     }
                                   } else {
                                     final length = switch (value) {
@@ -527,62 +596,23 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                               null) {
                                         final chapter =
                                             chapters[lastChapterReadIndex + i];
-                                        final entry = isar.downloads
-                                            .filter()
-                                            .idEqualTo(chapter.id)
-                                            .findFirstSync();
-                                        if (entry == null ||
-                                            !entry.isDownload!) {
-                                          ref.watch(
-                                            addDownloadToQueueProvider(
-                                              chapter: chapter,
-                                            ),
-                                          );
-                                        }
+                                        chaptersToDownload.add(chapter);
                                       }
                                     }
-                                    ref.watch(processDownloadsProvider());
                                   }
                                 } else if (value == 4) {
-                                  final List<Chapter> unreadChapters = widget
-                                      .manga!
-                                      .getSortedFilteredChapters()
-                                      .where(
-                                        (element) => !(element.isRead ?? false),
-                                      )
-                                      .toList();
-                                  for (var chapter in unreadChapters) {
-                                    final entry = isar.downloads.getSync(
-                                      chapter.id!,
-                                    );
-                                    if (entry == null || !entry.isDownload!) {
-                                      ref.watch(
-                                        addDownloadToQueueProvider(
-                                          chapter: chapter,
-                                        ),
-                                      );
-                                    }
-                                  }
-                                  ref.watch(processDownloadsProvider());
+                                  chaptersToDownload.addAll(
+                                    chapters.where(
+                                      (element) => !(element.isRead ?? false),
+                                    ),
+                                  );
                                 } else if (value == 5) {
-                                  final List<Chapter> allChapters = widget
-                                      .manga!
-                                      .getSortedFilteredChapters();
-                                  for (var chapter in allChapters) {
-                                    final entry = isar.downloads
-                                        .filter()
-                                        .idEqualTo(chapter.id)
-                                        .findFirstSync();
-                                    if (entry == null || !entry.isDownload!) {
-                                      ref.watch(
-                                        addDownloadToQueueProvider(
-                                          chapter: chapter,
-                                        ),
-                                      );
-                                    }
-                                  }
-                                  ref.watch(processDownloadsProvider());
+                                  chaptersToDownload.addAll(chapters);
                                 }
+                                await _downloadChaptersWithDestination(
+                                  context,
+                                  chaptersToDownload,
+                                );
                               },
                             ),
                           ],
@@ -969,22 +999,11 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                   if (!isLocalArchive && isDownloaded.isEmpty && !isTv)
                     BottomSelectButton(
                       icon: Icon(Icons.download_outlined, color: color),
-                      onPressed: () {
-                        for (var chapter in ref.watch(
-                          chaptersListStateProvider,
-                        )) {
-                          final entries = isar.downloads
-                              .filter()
-                              .idEqualTo(chapter.id)
-                              .findAllSync();
-                          if (entries.isEmpty || !entries.first.isDownload!) {
-                            ref.read(
-                              addDownloadToQueueProvider(chapter: chapter),
-                            );
-                          }
-                        }
-                        ref.watch(processDownloadsProvider());
-
+                      onPressed: () async {
+                        await _downloadChaptersWithDestination(
+                          context,
+                          ref.read(chaptersListStateProvider),
+                        );
                         ref
                             .read(isLongPressedStateProvider.notifier)
                             .update(false);

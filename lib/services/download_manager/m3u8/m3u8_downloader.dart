@@ -25,6 +25,7 @@ class M3u8Downloader {
   final int concurrentDownloads;
   final Chapter chapter;
   final List<Track>? subtitles;
+  final String? subDownloadDir;
 
   static var httpClient = MClient.httpClient(
     settings: const ClientSettings(
@@ -41,6 +42,7 @@ class M3u8Downloader {
     required this.chapter,
     this.concurrentDownloads = 1,
     required this.subtitles,
+    this.subDownloadDir,
   });
 
   void _log(String message) {
@@ -91,7 +93,9 @@ class M3u8Downloader {
   }
 
   Future<void> download(void Function(DownloadProgress) onProgress) async {
-    final tempDir = path.join(downloadDir, 'temp');
+    final tempName =
+        '.tmp_${chapter.name!.replaceForbiddenCharacters('_').trim()}_${chapter.id ?? chapter.url.hashCode}';
+    final tempDir = path.join(downloadDir, tempName);
     await StorageProvider().createDirectorySafely(tempDir);
 
     try {
@@ -109,8 +113,9 @@ class M3u8Downloader {
         onProgress,
       );
       for (var element in subtitles ?? <Track>[]) {
+        final subtitlesBase = subDownloadDir ?? downloadDir;
         final subtitleFile = File(
-          path.join('${downloadDir}_subtitles', '${element.label}.srt'),
+          path.join('${subtitlesBase}_subtitles', '${element.label}.srt'),
         );
         if (subtitleFile.existsSync()) {
           _log('Subtitle file already exists: ${element.label}');

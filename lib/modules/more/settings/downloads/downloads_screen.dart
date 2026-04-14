@@ -2,12 +2,14 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
+import 'package:path/path.dart' as p;
 
 class DownloadsScreen extends ConsumerStatefulWidget {
   const DownloadsScreen({super.key});
@@ -30,6 +32,12 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
     );
     final downloadDelaySeconds = ref.watch(downloadDelaySecondsStateProvider);
     final localFolders = ref.watch(localFoldersStateProvider);
+    final downloadLocalFolderName = ref.watch(
+      downloadLocalFolderNameStateProvider,
+    );
+    final askDownloadDestination = ref.watch(
+      askDownloadDestinationStateProvider,
+    );
     final l10n = l10nLocalizations(context);
     return Scaffold(
       appBar: AppBar(title: Text(l10n!.downloads)),
@@ -213,19 +221,71 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
               onTap: () async => ref.read(scanLocalLibraryProvider.future),
               title: Text(context.l10n.rescan_local_folder),
             ),
+            SwitchListTile(
+              value: askDownloadDestination,
+              title: const Text("Ask for download destination"),
+              subtitle: const Text(
+                "Choose a local folder each time a download starts.",
+              ),
+              onChanged: (value) {
+                ref
+                    .read(askDownloadDestinationStateProvider.notifier)
+                    .set(value);
+              },
+            ),
             ListTile(
               onTap: () async {
                 final result = await FilePicker.getDirectoryPath();
                 if (result != null) {
+                  if (!context.mounted) return;
+                  final name = await _showLocalFolderNameDialog(
+                    context,
+                    LocalFolder.fromPath(path: result).name ??
+                        p.basename(result),
+                  );
+                  if (name == null || name.trim().isEmpty) return;
                   final temp = localFolders.toList();
-                  temp.add(result);
+                  temp.add(LocalFolder(name: name.trim(), path: result));
                   ref.read(localFoldersStateProvider.notifier).set(temp);
                 }
               },
               title: Text(context.l10n.add_local_folder),
             ),
+            FutureBuilder(
+              future: getAllLocalFolders(),
+              builder: (context, snapshot) {
+                final folders = snapshot.data ?? [];
+                final selectedFolder =
+                    folders
+                        .where(
+                          (folder) => folder.name == downloadLocalFolderName,
+                        )
+                        .firstOrNull ??
+                    folders.firstOrNull;
+                return ListTile(
+                  enabled: folders.isNotEmpty,
+                  title: Text(context.l10n.local_folder),
+                  subtitle: Text(
+                    selectedFolder == null
+                        ? ""
+                        : "${selectedFolder.name} - ${selectedFolder.path}",
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: context.secondaryColor,
+                    ),
+                  ),
+                  onTap: folders.isEmpty
+                      ? null
+                      : () => _showDownloadFolderDialog(
+                          context,
+                          folders,
+                          selectedFolder?.name,
+                        ),
+                );
+              },
+            ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -236,25 +296,27 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                         Text(
                           context.l10n.local_folder,
                           style: TextStyle(
-                            fontSize: 13,
-                            color: context.primaryColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         ),
-                        const SizedBox(width: 20),
-                        OutlinedButton.icon(
+                        const Spacer(),
+                        IconButton.outlined(
+                          tooltip: context.l10n.local_folder_structure,
                           onPressed: () => _showHelpDialog(context),
-                          label: const Icon(Icons.question_mark),
+                          icon: const Icon(Icons.question_mark),
                         ),
                       ],
                     ),
                   ),
                   FutureBuilder(
-                    future: getLocalLibrary(),
+                    future: getDefaultLocalFolder(),
                     builder: (context, snapshot) => snapshot.data?.path != null
                         ? _buildLocalFolder(
                             l10n,
                             localFolders,
-                            snapshot.data!.path,
+                            snapshot.data!,
                             isDefault: true,
                           )
                         : Container(),
@@ -267,6 +329,64 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Future<String?> _showLocalFolderNameDialog(
+    BuildContext context,
+    String initialName,
+  ) async {
+    final controller = TextEditingController(text: initialName);
+    return showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.l10n.name),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: InputDecoration(labelText: context.l10n.name),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(context.l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, controller.text),
+            child: Text(context.l10n.ok),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDownloadFolderDialog(
+    BuildContext context,
+    List<LocalFolder> folders,
+    String? selectedName,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: const Text("Default download location"),
+        children: folders
+            .map(
+              (folder) => ListTile(
+                leading: folder.name == selectedName
+                    ? const Icon(Icons.check)
+                    : const SizedBox(width: 24),
+                title: Text(folder.name ?? ""),
+                subtitle: Text(folder.path ?? ""),
+                onTap: () {
+                  ref
+                      .read(downloadLocalFolderNameStateProvider.notifier)
+                      .set(folder.name);
+                  Navigator.pop(context);
+                },
+              ),
+            )
+            .toList(),
       ),
     );
   }
@@ -400,102 +520,95 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
 
   Widget _buildLocalFolder(
     AppLocalizations l10n,
-    List<String> localFolders,
-    String folder, {
+    List<LocalFolder> localFolders,
+    LocalFolder folder, {
     bool isDefault = false,
   }) {
-    return Padding(
-      key: Key('folder_${folder.hashCode}'),
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: Card(
-        child: Column(
+    final folderName = folder.name ?? "";
+    final folderPath = folder.path ?? "";
+    return Card(
+      key: Key('folder_${folderName}_${folderPath.hashCode}'),
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: Theme.of(
+            context,
+          ).colorScheme.primary.withValues(alpha: 0.12),
+          child: Icon(
+            isDefault ? Icons.home_outlined : Icons.folder_outlined,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        title: Row(
           children: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                shadowColor: Colors.transparent,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(0),
-                    bottomRight: Radius.circular(0),
-                    topRight: Radius.circular(10),
-                    topLeft: Radius.circular(10),
-                  ),
-                ),
-              ),
-              onPressed: null,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  const Icon(Icons.label_outline_rounded),
-                  const SizedBox(width: 10),
-                  Expanded(child: Text(folder)),
-                ],
+            Expanded(
+              child: Text(
+                folderName,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             if (!isDefault)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return StatefulBuilder(
-                                builder: (context, setState) {
-                                  return AlertDialog(
-                                    title: Text(l10n.delete),
-                                    content: Text("${l10n.delete} $folder"),
-                                    actions: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text(l10n.cancel),
-                                          ),
-                                          const SizedBox(width: 15),
-                                          TextButton(
-                                            onPressed: () {
-                                              final temp = localFolders
-                                                  .toList();
-                                              temp.removeAt(
-                                                temp.indexOf(folder),
-                                              );
-                                              ref
-                                                  .read(
-                                                    localFoldersStateProvider
-                                                        .notifier,
-                                                  )
-                                                  .set(temp);
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text(l10n.ok),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                          );
-                        },
-                        icon: const Icon(Icons.delete_outlined),
-                      ),
-                    ],
-                  ),
-                ],
+              const Chip(
+                label: Text("Custom"),
+                visualDensity: VisualDensity.compact,
+                padding: EdgeInsets.zero,
               ),
           ],
         ),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Text(
+            folderPath,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontSize: 12, color: context.secondaryColor),
+          ),
+        ),
+        trailing: isDefault
+            ? const Chip(
+                label: Text("Default"),
+                visualDensity: VisualDensity.compact,
+                padding: EdgeInsets.zero,
+              )
+            : IconButton(
+                tooltip: l10n.delete,
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text(l10n.delete),
+                        content: Text("$folderName\n$folderPath"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(l10n.cancel),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              final temp = localFolders.toList();
+                              temp.removeWhere(
+                                (element) =>
+                                    element.name == folder.name &&
+                                    element.path == folder.path,
+                              );
+                              ref
+                                  .read(localFoldersStateProvider.notifier)
+                                  .set(temp);
+                              Navigator.pop(context);
+                            },
+                            child: Text(l10n.ok),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                icon: const Icon(Icons.delete_outline),
+              ),
       ),
     );
   }
