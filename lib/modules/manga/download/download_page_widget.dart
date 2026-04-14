@@ -124,7 +124,7 @@ class ChapterPageDownload extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text("Select download destination"),
+        title: Text(context.l10n.select_download_destination),
         children: folders
             .map(
               (folder) => SimpleDialogOption(

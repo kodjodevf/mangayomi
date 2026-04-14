@@ -217,20 +217,47 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
-            ListTile(
-              onTap: () async => ref.read(scanLocalLibraryProvider.future),
-              title: Text(context.l10n.rescan_local_folder),
-            ),
             SwitchListTile(
               value: askDownloadDestination,
-              title: const Text("Ask for download destination"),
-              subtitle: const Text(
-                "Choose a local folder each time a download starts.",
-              ),
+              title: Text(context.l10n.ask_download_destination),
+              subtitle: Text(context.l10n.ask_download_destination_desc),
               onChanged: (value) {
                 ref
                     .read(askDownloadDestinationStateProvider.notifier)
                     .set(value);
+              },
+            ),
+            FutureBuilder(
+              future: getAllLocalFolders(),
+              builder: (context, snapshot) {
+                final folders = snapshot.data ?? [];
+                final selectedFolder =
+                    folders
+                        .where(
+                          (folder) => folder.name == downloadLocalFolderName,
+                    )
+                        .firstOrNull ??
+                        folders.firstOrNull;
+                return ListTile(
+                  enabled: folders.isNotEmpty,
+                  title: Text(context.l10n.default_download_destination),
+                  subtitle: Text(
+                    selectedFolder == null
+                        ? ""
+                        : "${selectedFolder.name} - ${selectedFolder.path}",
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: context.secondaryColor,
+                    ),
+                  ),
+                  onTap: folders.isEmpty
+                      ? null
+                      : () => _showDownloadFolderDialog(
+                    context,
+                    folders,
+                    selectedFolder?.name,
+                  ),
+                );
               },
             ),
             ListTile(
@@ -251,38 +278,9 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
               },
               title: Text(context.l10n.add_local_folder),
             ),
-            FutureBuilder(
-              future: getAllLocalFolders(),
-              builder: (context, snapshot) {
-                final folders = snapshot.data ?? [];
-                final selectedFolder =
-                    folders
-                        .where(
-                          (folder) => folder.name == downloadLocalFolderName,
-                        )
-                        .firstOrNull ??
-                    folders.firstOrNull;
-                return ListTile(
-                  enabled: folders.isNotEmpty,
-                  title: Text(context.l10n.local_folder),
-                  subtitle: Text(
-                    selectedFolder == null
-                        ? ""
-                        : "${selectedFolder.name} - ${selectedFolder.path}",
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: context.secondaryColor,
-                    ),
-                  ),
-                  onTap: folders.isEmpty
-                      ? null
-                      : () => _showDownloadFolderDialog(
-                          context,
-                          folders,
-                          selectedFolder?.name,
-                        ),
-                );
-              },
+            ListTile(
+              onTap: () async => ref.read(scanLocalLibraryProvider.future),
+              title: Text(context.l10n.rescan_local_folder),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 20),
@@ -310,19 +308,22 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                       ],
                     ),
                   ),
-                  FutureBuilder(
+                  FutureBuilder<LocalFolder?>(
                     future: getDefaultLocalFolder(),
-                    builder: (context, snapshot) => snapshot.data?.path != null
-                        ? _buildLocalFolder(
+                    builder: (context, snapshot) => Column(
+                      children: [
+                        if (snapshot.data?.path != null)
+                          _buildLocalFolder(
                             l10n,
                             localFolders,
                             snapshot.data!,
                             isDefault: true,
-                          )
-                        : Container(),
-                  ),
-                  ...localFolders.map(
-                    (e) => _buildLocalFolder(l10n, localFolders, e),
+                          ),
+                        ...localFolders.map(
+                          (e) => _buildLocalFolder(l10n, localFolders, e),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -369,7 +370,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: const Text("Default download location"),
+        title: Text(context.l10n.default_download_destination),
         children: folders
             .map(
               (folder) => ListTile(
@@ -529,49 +530,58 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
     return Card(
       key: Key('folder_${folderName}_${folderPath.hashCode}'),
       margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: Theme.of(
-            context,
-          ).colorScheme.primary.withValues(alpha: 0.12),
-          child: Icon(
-            isDefault ? Icons.home_outlined : Icons.folder_outlined,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
-        title: Row(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: Row(
           children: [
-            Expanded(
-              child: Text(
-                folderName,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+            CircleAvatar(
+              backgroundColor: Theme.of(
+                context,
+              ).colorScheme.primary.withValues(alpha: 0.12),
+              child: Icon(
+                isDefault ? Icons.home_outlined : Icons.folder_outlined,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
-            if (!isDefault)
-              const Chip(
-                label: Text("Custom"),
-                visualDensity: VisualDensity.compact,
-                padding: EdgeInsets.zero,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Flexible(
+                        fit: FlexFit.loose,
+                        child: Text(
+                          folderName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      if (isDefault)
+                        _buildFolderLabel(l10n.default0)
+                      else
+                        _buildFolderLabel(l10n.custom),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    folderPath,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: context.secondaryColor,
+                    ),
+                  ),
+                ],
               ),
-          ],
-        ),
-        subtitle: Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: Text(
-            folderPath,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(fontSize: 12, color: context.secondaryColor),
-          ),
-        ),
-        trailing: isDefault
-            ? const Chip(
-                label: Text("Default"),
-                visualDensity: VisualDensity.compact,
-                padding: EdgeInsets.zero,
-              )
-            : IconButton(
+            ),
+            const SizedBox(width: 8),
+            if (!isDefault)
+              IconButton(
                 tooltip: l10n.delete,
                 onPressed: () {
                   showDialog(
@@ -609,6 +619,30 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                 },
                 icon: const Icon(Icons.delete_outline),
               ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFolderLabel(String label) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minWidth: 58, maxWidth: 82),
+      child: Container(
+        height: 22,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.labelSmall,
+        ),
       ),
     );
   }

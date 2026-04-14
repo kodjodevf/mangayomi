@@ -9,6 +9,7 @@ import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
 import 'package:mangayomi/src/rust/api/epub.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
+import 'package:mangayomi/utils/localized_message.dart';
 import 'package:path/path.dart' as p; // For manipulating file system paths
 import 'package:bot_toast/bot_toast.dart'; // For Exceptions
 import 'package:mangayomi/models/manga.dart'; // Has Manga model and ItemType enum
@@ -242,7 +243,9 @@ Future<void> _scanDirectory(
           coverBytes = await _readMangaFolderCover(ref, subDirs, files);
         }
       } catch (e) {
-        BotToast.showText(text: "Error reading cover image: $e");
+        BotToast.showText(
+          text: localizedMessage((l10n) => l10n.error_reading_cover_image(e)),
+        );
       }
     } else if (itemType == ItemType.manga && manga.customCoverImage == null) {
       coverBytes = await _readMangaFolderCover(ref, subDirs, files);
@@ -276,7 +279,9 @@ Future<void> _scanDirectory(
             : Status.unknown;
         manga.lastUpdate = dateNow;
       } catch (e) {
-        BotToast.showText(text: "Error reading metadata: $e");
+        BotToast.showText(
+          text: localizedMessage((l10n) => l10n.error_reading_metadata(e)),
+        );
       }
     }
 
@@ -428,7 +433,11 @@ Future<void> _scanDirectory(
       );
     }
   } catch (e) {
-    BotToast.showText(text: "Error saving chapter/episode to library: $e");
+    BotToast.showText(
+      text: localizedMessage(
+        (l10n) => l10n.error_saving_chapter_episode_to_library(e),
+      ),
+    );
   }
   try {
     if (chaptersToSave.isNotEmpty) {
@@ -484,7 +493,11 @@ Future<Uint8List?> _readMangaFolderCover(
     try {
       return await imageFile.readAsBytes();
     } catch (e) {
-      BotToast.showText(text: "Error reading chapter cover image: $e");
+      BotToast.showText(
+        text: localizedMessage(
+          (l10n) => l10n.error_reading_chapter_cover_image(e),
+        ),
+      );
     }
   }
 
@@ -497,7 +510,11 @@ Future<Uint8List?> _readMangaFolderCover(
       );
       return data.$3;
     } catch (e) {
-      BotToast.showText(text: "Error reading archive cover image: $e");
+      BotToast.showText(
+        text: localizedMessage(
+          (l10n) => l10n.error_reading_archive_cover_image(e),
+        ),
+      );
     }
   }
   return null;
@@ -569,7 +586,9 @@ Future<Directory?> getLocalLibrary() async {
     final dir = await StorageProvider().getDefaultDirectory();
     return dir == null ? null : Directory(p.join(dir.path, 'local'));
   } catch (e) {
-    BotToast.showText(text: "Error getting local library: $e");
+    BotToast.showText(
+      text: localizedMessage((l10n) => l10n.error_getting_local_library(e)),
+    );
     return null;
   }
 }
@@ -722,24 +741,28 @@ String _normalizePath(String path) {
 
 /// Returns if file is a json
 bool _isJson(String path) {
+  if (_isHiddenSystemFile(path)) return false;
   final ext = p.extension(path).toLowerCase();
   return ext == '.json';
 }
 
 /// Returns if file is an image
 bool _isImage(String path) {
+  if (_isHiddenSystemFile(path)) return false;
   final ext = p.extension(path).toLowerCase();
   return ext == '.jpg' || ext == '.jpeg' || ext == '.png' || ext == '.webp';
 }
 
 /// Returns if file is an archive
 bool _isArchive(String path) {
+  if (_isHiddenSystemFile(path)) return false;
   final ext = p.extension(path).toLowerCase();
   return ext == '.cbz' || ext == '.zip' || ext == '.cbt' || ext == '.tar';
 }
 
 /// Returns if file is a video
 bool _isVideo(String path) {
+  if (_isHiddenSystemFile(path)) return false;
   final ext = p.extension(path).toLowerCase();
   const videoExtensions = {
     '.mp4',
@@ -755,6 +778,12 @@ bool _isVideo(String path) {
 
 /// Returns if file is an epub or html
 bool _isEpub(String path) {
+  if (_isHiddenSystemFile(path)) return false;
   final ext = p.extension(path).toLowerCase();
   return ext == '.epub';
+}
+
+bool _isHiddenSystemFile(String path) {
+  final name = path.replaceAll('\\', '/').split('/').last;
+  return name.startsWith('.');
 }

@@ -327,7 +327,13 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
                                 contentPadding: const EdgeInsets.all(0),
                                 value: values[index],
                                 title: Row(
-                                  children: [Text("x${values[index]}")],
+                                  children: [
+                                    Text(
+                                      context.l10n.playback_speed_multiplier(
+                                        values[index],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               );
                             },

@@ -275,6 +275,14 @@
   "add": "Add",
   "add_category": "Add Category",
   "name": "Name",
+  "label_value": "{label}: {value}",
+  "@label_value": {
+    "placeholders": {
+      "label": {},
+      "value": {}
+    }
+  },
+  "url": "URL",
   "category_name_required": "*Required",
   "add_category_error_exist": "A category with this name already exist!",
   "delete_category": "Delete Category",
@@ -327,6 +335,12 @@
   "nsfw_sources_show": "Show in sources and extensions lists",
   "nsfw_sources_info": "This does not prevent unofficial or potentially incorrectly flagged extensions from surfacing NSFW (18+) content within the app",
   "version": "Version",
+  "beta_version": "Beta ({version})",
+  "@beta_version": {
+    "placeholders": {
+      "version": {}
+    }
+  },
   "check_for_update": "Check for update",
   "logs_on": "Enable logging",
   "share_app_logs": "Share app logs",
@@ -344,6 +358,15 @@
   "canceled": "Canceled",
   "publishing_finished": "Publishing finished",
   "unknown": "Unknown",
+  "empty_placeholder": "EMPTY\nMPTY\nMTY\nMT\n\n",
+  "error": "Error",
+  "error_with_message": "Error: {error}",
+  "@error_with_message": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "no_pages_available": "Error: no pages available",
   "set_categories": "Set categories",
   "edit": "Edit",
   "in_library": "In library",
@@ -354,6 +377,32 @@
   "by_episode_number": "By episode number",
   "by_upload_date": "By upload date",
   "source_title": "Source title",
+  "create_extension": "Create Extension",
+  "choose_extension_language": "Choose extension language",
+  "lang": "Lang",
+  "base_url": "BaseUrl",
+  "api_url_optional": "ApiUrl (optional)",
+  "icon_url": "iconUrl",
+  "source_icon_url": "Source icon url",
+  "notes": "notes",
+  "extension_name_example": "ex: myAnime",
+  "language_code_example": "ex: en",
+  "base_url_example": "ex: https://example.com",
+  "api_url_example": "ex: https://api.example.com",
+  "extension_notes_example": "ex: this extension requires login",
+  "type": "Type",
+  "target": "Target",
+  "source_type_single": "single",
+  "source_type_multi": "multi",
+  "source_type_torrent": "torrent",
+  "source_language_dart": "Dart",
+  "source_language_javascript": "JavaScript",
+  "source_language_lnreader_compiled_js": "LNReader compiled JS",
+  "source_created_successfully": "Source created successfully",
+  "source_already_exists": "Source already exists",
+  "error_when_creating_source": "Error when creating source",
+  "cookies_deleted": "Cookies deleted!",
+  "delete_all_cookies": "Delete all cookies",
   "chapter_number": "Chapter number",
   "episode_number": "Episode number",
   "share": "Share",
@@ -741,8 +790,85 @@
   "local_folder": "Local folders",
   "add_local_folder": "Add local folder",
   "rescan_local_folder": "Rescan all local folders now",
+  "default_download_destination": "Default download destination",
+  "ask_download_destination": "Ask for download destination",
+  "ask_download_destination_desc": "Choose a local folder each time a download starts.",
+  "select_download_destination": "Select download destination",
+  "clear_local_library": "Clear local library",
+  "clear_local_library_desc": "Remove local folder and archive entries from the library.",
+  "clear_local_library_msg": "This will remove local folder and archive entries from your library. It will not delete files from disk.",
+  "custom": "Custom",
+  "no_local_folder_available_for_downloads": "No local folder is available for downloads",
+  "failed_to_create_cbz": "Failed to create CBZ: {error}",
+  "@failed_to_create_cbz": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "error_reading_cover_image": "Error reading cover image: {error}",
+  "@error_reading_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "error_reading_metadata": "Error reading metadata: {error}",
+  "@error_reading_metadata": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "error_saving_chapter_episode_to_library": "Error saving chapter/episode to library: {error}",
+  "@error_saving_chapter_episode_to_library": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "error_reading_chapter_cover_image": "Error reading chapter cover image: {error}",
+  "@error_reading_chapter_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "error_reading_archive_cover_image": "Error reading archive cover image: {error}",
+  "@error_reading_archive_cover_image": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "error_getting_local_library": "Error getting local library: {error}",
+  "@error_getting_local_library": {
+    "placeholders": {
+      "error": {}
+    }
+  },
   "export_metadata": "Export metadata",
   "exported": "Exported",
+  "failed_to_export_metadata": "Failed to export metadata: {error}",
+  "@failed_to_export_metadata": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "cloudflare_resolution_webview_server_start_failed": "Couldn't start Cloudflare Resolution Webview Server.",
+  "tracker_token_expired": "{tracker} Token expired",
+  "@tracker_token_expired": {
+    "placeholders": {
+      "tracker": {}
+    }
+  },
+  "video_list_empty": "Video list is empty",
+  "playback_speed_multiplier": "x{value}",
+  "@playback_speed_multiplier": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "could_not_launch_url": "Could not launch {url}",
+  "@could_not_launch_url": {
+    "placeholders": {
+      "url": {}
+    }
+  },
   "text_size": "Text Size :",
   "text_align": "Text Align",
   "line_height": "Line Height",

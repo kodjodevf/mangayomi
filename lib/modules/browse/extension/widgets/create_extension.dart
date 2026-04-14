@@ -27,29 +27,35 @@ class _CreateExtensionState extends State<CreateExtension> {
   late String _notes = widget.editSource?.notes ?? "";
   late int _sourceTypeIndex = widget.editSource == null
       ? 0
-      : _sourceTypes
+      : _sourceTypeValues
             .indexOf(widget.editSource!.typeSource ?? "")
-            .clamp(0, _sourceTypes.length - 1);
+            .clamp(0, _sourceTypeValues.length - 1);
   late int _itemTypeIndex = widget.editSource?.itemType.index ?? 0;
   late int _languageIndex = switch (widget.editSource?.sourceCodeLanguage) {
     SourceCodeLanguage.javascript => 1,
     SourceCodeLanguage.lnreader => 2,
     _ => 0,
   };
-  final List<String> _sourceTypes = ["single", "multi", "torrent"];
-  final List<String> _itemTypes = ["Manga", "Anime", "Novel"];
-  final List<String> _languages = [
-    "Dart",
-    "JavaScript",
-    "LNReader compiled JS",
-  ];
+  static const List<String> _sourceTypeValues = ["single", "multi", "torrent"];
   late SourceCodeLanguage _sourceCodeLanguage =
       widget.editSource?.sourceCodeLanguage ?? SourceCodeLanguage.dart;
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final sourceTypeLabels = [
+      l10n.source_type_single,
+      l10n.source_type_multi,
+      l10n.source_type_torrent,
+    ];
+    final itemTypeLabels = [l10n.manga, l10n.anime, l10n.novel];
+    final languageLabels = [
+      l10n.source_language_dart,
+      l10n.source_language_javascript,
+      l10n.source_language_lnreader_compiled_js,
+    ];
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditMode ? "Edit Extension" : "Create Extension"),
+        title: Text(_isEditMode ? "Edit Extension" : l10n.create_extension),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -60,7 +66,7 @@ class _CreateExtensionState extends State<CreateExtension> {
                 padding: const EdgeInsets.symmetric(horizontal: 17),
                 child: Row(
                   children: [
-                    const Text("Choose extension language"),
+                    Text(l10n.choose_extension_language),
                     if (_isEditMode) ...[
                       const SizedBox(width: 6),
                       Icon(
@@ -76,13 +82,13 @@ class _CreateExtensionState extends State<CreateExtension> {
                         isExpanded: true,
                         value: _languageIndex,
                         hint: Text(
-                          _languages[_languageIndex],
+                          languageLabels[_languageIndex],
                           style: const TextStyle(fontSize: 13),
                         ),
-                        items: _languages
+                        items: languageLabels
                             .map(
                               (e) => DropdownMenuItem(
-                                value: _languages.indexOf(e),
+                                value: languageLabels.indexOf(e),
                                 child: Text(
                                   e,
                                   style: const TextStyle(fontSize: 13),
@@ -113,9 +119,9 @@ class _CreateExtensionState extends State<CreateExtension> {
                 ),
               ),
               _textEditing(
-                "Name",
+                l10n.name,
                 context,
-                "ex: myAnime",
+                l10n.extension_name_example,
                 (v) {
                   setState(() {
                     _name = v;
@@ -125,9 +131,9 @@ class _CreateExtensionState extends State<CreateExtension> {
                 enabled: !_isEditMode,
               ),
               _textEditing(
-                "Lang",
+                l10n.lang,
                 context,
-                "ex: en",
+                l10n.language_code_example,
                 (v) {
                   setState(() {
                     _lang = v;
@@ -136,15 +142,15 @@ class _CreateExtensionState extends State<CreateExtension> {
                 initialValue: _lang,
                 enabled: !_isEditMode,
               ),
-              _textEditing("BaseUrl", context, "ex: https://example.com", (v) {
+              _textEditing(l10n.base_url, context, l10n.base_url_example, (v) {
                 setState(() {
                   _baseUrl = v;
                 });
               }, initialValue: _baseUrl),
               _textEditing(
-                "ApiUrl (optional)",
+                l10n.api_url_optional,
                 context,
-                "ex: https://api.example.com",
+                l10n.api_url_example,
                 (v) {
                   setState(() {
                     _apiUrl = v;
@@ -152,15 +158,15 @@ class _CreateExtensionState extends State<CreateExtension> {
                 },
                 initialValue: _apiUrl,
               ),
-              _textEditing("iconUrl", context, "Source icon url", (v) {
+              _textEditing(l10n.icon_url, context, l10n.source_icon_url, (v) {
                 setState(() {
                   _iconUrl = v;
                 });
               }, initialValue: _iconUrl),
               _textEditing(
-                "notes",
+                l10n.notes,
                 context,
-                "ex: this extension requires login",
+                l10n.extension_notes_example,
                 (v) {
                   setState(() {
                     _notes = v;
@@ -172,7 +178,7 @@ class _CreateExtensionState extends State<CreateExtension> {
                 padding: const EdgeInsets.symmetric(horizontal: 17),
                 child: Row(
                   children: [
-                    const Text("Type"),
+                    Text(l10n.type),
                     if (_isEditMode) ...[
                       const SizedBox(width: 6),
                       Icon(
@@ -188,13 +194,13 @@ class _CreateExtensionState extends State<CreateExtension> {
                         isExpanded: true,
                         value: _sourceTypeIndex,
                         hint: Text(
-                          _sourceTypes[_sourceTypeIndex],
+                          sourceTypeLabels[_sourceTypeIndex],
                           style: const TextStyle(fontSize: 13),
                         ),
-                        items: _sourceTypes
+                        items: sourceTypeLabels
                             .map(
                               (e) => DropdownMenuItem(
-                                value: _sourceTypes.indexOf(e),
+                                value: sourceTypeLabels.indexOf(e),
                                 child: Text(
                                   e,
                                   style: const TextStyle(fontSize: 13),
@@ -218,7 +224,7 @@ class _CreateExtensionState extends State<CreateExtension> {
                 padding: const EdgeInsets.symmetric(horizontal: 17),
                 child: Row(
                   children: [
-                    const Text("Target"),
+                    Text(l10n.target),
                     if (_isEditMode) ...[
                       const SizedBox(width: 6),
                       Icon(
@@ -234,13 +240,13 @@ class _CreateExtensionState extends State<CreateExtension> {
                         isExpanded: true,
                         value: _itemTypeIndex,
                         hint: Text(
-                          _itemTypes[_itemTypeIndex],
+                          itemTypeLabels[_itemTypeIndex],
                           style: const TextStyle(fontSize: 13),
                         ),
-                        items: _itemTypes
+                        items: itemTypeLabels
                             .map(
                               (e) => DropdownMenuItem(
-                                value: _itemTypes.indexOf(e),
+                                value: itemTypeLabels.indexOf(e),
                                 child: Text(
                                   e,
                                   style: const TextStyle(fontSize: 13),
@@ -309,7 +315,7 @@ class _CreateExtensionState extends State<CreateExtension> {
                               baseUrl: _baseUrl,
                               apiUrl: _apiUrl,
                               iconUrl: _iconUrl,
-                              typeSource: _sourceTypes[_sourceTypeIndex],
+                              typeSource: _sourceTypeValues[_sourceTypeIndex],
                               itemType: ItemType.values.elementAt(
                                 _itemTypeIndex,
                               ),
@@ -333,15 +339,15 @@ class _CreateExtensionState extends State<CreateExtension> {
                               );
                             });
                             Navigator.pop(context);
-                            botToast("Source created successfully");
+                            botToast(l10n.source_created_successfully);
                           } else {
-                            botToast("Source already exists");
+                            botToast(l10n.source_already_exists);
                           }
                         } catch (e) {
                           botToast(
                             _isEditMode
                                 ? "Error when updating source"
-                                : "Error when creating source",
+                                : l10n.error_when_creating_source,
                           );
                         }
                       }

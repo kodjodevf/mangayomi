@@ -367,9 +367,9 @@ class _MyAppState extends ConsumerState<MyApp>
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("${l10n.name}: ${repoName ?? 'Unknown'}"),
+                    Text(l10n.label_value(l10n.name, repoName ?? l10n.unknown)),
                     const SizedBox(height: 8),
-                    Text("URL: ${repoUrl ?? 'Unknown'}"),
+                    Text(l10n.label_value(l10n.url, repoUrl ?? l10n.unknown)),
                   ],
                 ),
                 actions: [

@@ -209,7 +209,7 @@ class SyncScreen extends ConsumerWidget {
                               'Could not launch $serverUrl',
                               logLevel: LogLevel.error,
                             );
-                            botToast('Could not launch $serverUrl');
+                            botToast(l10n.could_not_launch_url(serverUrl));
                           }
                         },
                         label: Text(l10n.get_sync_server),

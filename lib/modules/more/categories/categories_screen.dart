@@ -56,7 +56,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
     if (_visibleTabTypes.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: Text(context.l10n.categories)),
-        body: Center(child: Text("EMPTY\nMPTY\nMTY\nMT\n\n")),
+        body: Center(child: Text(context.l10n.empty_placeholder)),
       );
     }
     final l10n = l10nLocalizations(context)!;

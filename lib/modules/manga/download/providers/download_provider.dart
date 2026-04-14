@@ -36,6 +36,7 @@ import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/headers.dart';
+import 'package:mangayomi/utils/localized_message.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:path/path.dart' as p;
@@ -134,7 +135,11 @@ Future<void> downloadChapter(
     final targetLocalFolder = localFolder ?? await getDownloadLocalFolder();
     final targetPath = targetLocalFolder?.path;
     if (targetPath == null || targetPath.isEmpty) {
-      botToast("No local folder is available for downloads");
+      botToast(
+        localizedMessage(
+          (l10n) => l10n.no_local_folder_available_for_downloads,
+        ),
+      );
       keepAlive.close();
       return;
     }
@@ -255,7 +260,7 @@ Future<void> downloadChapter(
           ).future,
         );
       } catch (error) {
-        botToast("Failed to create CBZ: $error");
+        botToast(localizedMessage((l10n) => l10n.failed_to_create_cbz(error)));
       }
     }
 
