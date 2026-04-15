@@ -14,15 +14,15 @@
       "bundleIdentifier": "com.kodjodevf.mangayomi",
       "developerName": "Moustapha Kodjo Amadou",
       "subtitle": "Read manga, novels, and watch anime",
-      "version": "0.7.50",
-      "versionDate": "2026-04-14T16:43:29Z",
+      "version": "0.7.55",
+      "versionDate": "2026-04-15T13:10:17Z",
       "versionDescription": "",
-      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.7.50/Mangayomi-v0.7.50-ios.ipa",
+      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.7.55/Mangayomi-v0.7.55-ios.ipa",
       "localizedDescription": "Mangayomi is an open-source Flutter app for reading manga, novels, and watching anime across multiple platforms.",
       "iconURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/icons/icon_default.webp",
       "tintColor": "EF4444",
       "category": "entertainment",
-      "size": 48006758,
+      "size": 48006980,
       "screenshotURLs": [
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_0_default.webp",
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_1_default.webp",
@@ -30,9 +30,16 @@
       ],
       "versions": [
         {
+          "version": "0.7.55",
+          "date": "2026-04-15T13:10:17Z",
+          "localizedDescription": "",
+          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.7.55/Mangayomi-v0.7.55-ios.ipa",
+          "size": 48006980
+        },
+        {
           "version": "0.7.50",
           "date": "2026-04-14T16:43:29Z",
-          "localizedDescription": "",
+          "localizedDescription": "What's Changed\r\n* make ts readable by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/693\r\n* add Novel TTS\r\n* fix spelling by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/694\r\n* Potential fix for gray screen bug on vertical reading mode by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/695\r\n* Pass sanitized chapterName instead chapter.name by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/696\r\n* fix page jumps in vertical/webtoon mode + performance improvements in library/reader by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/697\r\n* enhance BT server functionality and performance\r\n\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.7.45...v0.7.50",
           "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.7.50/Mangayomi-v0.7.50-ios.ipa",
           "size": 48006758
         },
@@ -466,6 +473,17 @@
       "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
       "notify": true,
       "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.7.50"
+    },
+    {
+      "appID": "com.kodjodevf.mangayomi",
+      "title": "0.7.55 - 15 Apr",
+      "identifier": "release-0.7.55",
+      "caption": "Update for Mangayomi now available!",
+      "date": "2026-04-15T13:10:17Z",
+      "tintColor": "EF4444",
+      "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
+      "notify": true,
+      "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.7.55"
     }
   ]
 }
