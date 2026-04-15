@@ -17,7 +17,7 @@ import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_pr
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/services/get_detail.dart';
-import 'package:mangayomi/services/search_.dart';
+import 'package:mangayomi/services/search.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
