@@ -208,16 +208,24 @@ class _MyAppState extends ConsumerState<MyApp>
       supportedLocales: AppLocalizations.supportedLocales,
       builder: (context, child) {
         child = BotToastInit()(context, child);
+        final appChild = child;
+        if (!(Platform.isAndroid || Platform.isIOS)) {
+          child = _MouseBackButtonHandler(router: router, child: appChild);
+        } else {
+          child = appChild;
+        }
+
         if (!Platform.isLinux) {
           final isUnlocked = ref.watch(appUnlockedStateProvider);
           final lockEnabled = ref.watch(appLockEnabledStateProvider);
           if (lockEnabled && !isUnlocked) {
-            return const AppLockScreen();
+            return Stack(
+              fit: StackFit.expand,
+              children: [child, const AppLockScreen()],
+            );
           }
         }
-        if (!(Platform.isAndroid || Platform.isIOS)) {
-          child = _MouseBackButtonHandler(router: router, child: child);
-        }
+
         return child;
       },
       routeInformationParser: router.routeInformationParser,
