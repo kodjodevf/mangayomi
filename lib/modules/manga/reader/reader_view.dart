@@ -166,8 +166,8 @@ class _MangaChapterPageGalleryState
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _readingStopwatch.stop();
-    _readerController.setMangaHistoryUpdate(
-      readingTimeSeconds: _readingStopwatch.elapsed.inSeconds,
+    _readerController.setHistoryUpdate(
+      elapsedSeconds: _readingStopwatch.elapsed.inSeconds,
     );
     _rebuildDetail.close();
     _doubleClickAnimationController.dispose();
@@ -1170,7 +1170,7 @@ class _MangaChapterPageGalleryState
     // proactively start loading adjacent chapters in background
     _proactivePreload();
 
-    _readerController.setMangaHistoryUpdate();
+    _readerController.setHistoryUpdate();
     // Use post-frame callback instead of Future.delayed(1ms) timing hack
     await Future(() {});
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
