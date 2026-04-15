@@ -173,17 +173,25 @@ const extension = exports.default;
 
   @override
   Future<MManga> getDetail(String url) async {
+    List<ChapterItem>? chapters = [];
     final item = SourceNovel.fromJson(
       await _extensionCallAsync('parseNovel(${jsonEncode(url)})', {}),
     );
-    final chapters = SourcePage.fromJson(
-      await _extensionCallAsync(
-        'parsePage(${jsonEncode(item.path)}, ${jsonEncode('1')})',
-        {},
-      ),
-    );
+    chapters = item.chapters;
+    if (chapters?.isEmpty ?? true) {
+      final sourcePage = SourcePage.fromJson(
+        await _extensionCallAsync(
+          'parsePage(${jsonEncode(item.path)}, ${jsonEncode('1')})',
+          {},
+        ),
+      );
+      if (sourcePage.chapters.isNotEmpty) {
+        chapters = sourcePage.chapters;
+      }
+    }
+
     final chaps =
-        ((chapters.chapters.isNotEmpty ? chapters.chapters : item.chapters)
+        chapters
             ?.map(
               (e) => MChapter(
                 name: e.name,
@@ -198,7 +206,7 @@ const extension = exports.default;
               ),
             )
             .toList() ??
-        []);
+        [];
     return MManga(
       name: item.name,
       imageUrl: item.cover,
