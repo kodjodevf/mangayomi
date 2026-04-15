@@ -154,7 +154,7 @@ class _MangaChapterPageGalleryState
   bool isDesktop = Platform.isMacOS || Platform.isLinux || Platform.isWindows;
   final ValueNotifier<bool> _isScrolling = ValueNotifier(false);
   Timer? _scrollIdleTimer;
-
+  bool _firstLaunch = true;
   final Stopwatch _readingStopwatch = Stopwatch();
 
   /// Flag to prevent fullscreen from being disabled when navigating between
@@ -1188,11 +1188,6 @@ class _MangaChapterPageGalleryState
       });
     }
     _setReaderMode(readerMode, ref);
-    // if (pageCount > 0 && _currentIndex != null && _currentIndex! < pageCount) {
-    //   ref
-    //       .read(currentIndexProvider(chapter).notifier)
-    //       .setCurrentIndex(pages[_currentIndex!].index!);
-    // }
 
     if (readerMode != ReaderMode.verticalContinuous &&
         readerMode != ReaderMode.webtoon) {
@@ -1216,6 +1211,12 @@ class _MangaChapterPageGalleryState
     final cropBorders = ref.watch(cropBordersStateProvider);
     if (cropBorders) {
       _processCropBordersByIndex(index);
+    }
+    if (_firstLaunch) {
+      Future.delayed(const Duration(milliseconds: 100)).then((_) {
+        _firstLaunch = false;
+      });
+      return;
     }
     final idx = pages[prevActualIndex].index;
     if (idx != null) {
