@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:d4rt/d4rt.dart';
-import 'package:flutter_qjs/flutter_qjs.dart';
 import 'package:http_interceptor/http_interceptor.dart';
+import 'package:js_interpreter/js_interpreter.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:http/http.dart' as http;
 
 class JsHttpClient {
-  late JavascriptRuntime runtime;
+  late JSInterpreter runtime;
   JsHttpClient(this.runtime);
 
   void init() {
@@ -33,7 +33,7 @@ class JsHttpClient {
     runtime.onMessage('http_patch', (dynamic args) async {
       return await _toHttpResponse(client(), "PATCH", args);
     });
-    runtime.evaluate('''
+    runtime.eval('''
 class Response {
   constructor(url, result) {
     this.url = url;
@@ -73,9 +73,9 @@ class Response {
 
 async function fetchApi(url, init) {
   const method = init?.method ? init.method.toLowerCase() : "get";
-  const result = await sendMessage(
+  const result = await sendMessageAsync(
     "http_" + method,
-    JSON.stringify([url, init?.headers, init?.body])
+    url, init?.headers, init?.body
   );
   return new Response(url, result);
 }

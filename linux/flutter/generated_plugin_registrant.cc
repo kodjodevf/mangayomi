@@ -7,7 +7,6 @@
 #include "generated_plugin_registrant.h"
 
 #include <desktop_webview_window/desktop_webview_window_plugin.h>
-#include <flutter_qjs/flutter_qjs_plugin.h>
 #include <gtk/gtk_plugin.h>
 #include <isar_community_flutter_libs/isar_flutter_libs_plugin.h>
 #include <m_extension_server/m_extension_server_plugin.h>
@@ -23,9 +22,6 @@ void fl_register_plugins(FlPluginRegistry* registry) {
   g_autoptr(FlPluginRegistrar) desktop_webview_window_registrar =
       fl_plugin_registry_get_registrar_for_plugin(registry, "DesktopWebviewWindowPlugin");
   desktop_webview_window_plugin_register_with_registrar(desktop_webview_window_registrar);
-  g_autoptr(FlPluginRegistrar) flutter_qjs_registrar =
-      fl_plugin_registry_get_registrar_for_plugin(registry, "FlutterQjsPlugin");
-  flutter_qjs_plugin_register_with_registrar(flutter_qjs_registrar);
   g_autoptr(FlPluginRegistrar) gtk_registrar =
       fl_plugin_registry_get_registrar_for_plugin(registry, "GtkPlugin");
   gtk_plugin_register_with_registrar(gtk_registrar);

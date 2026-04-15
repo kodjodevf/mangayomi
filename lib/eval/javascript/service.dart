@@ -1,6 +1,5 @@
-import 'dart:collection';
 import 'dart:convert';
-import 'package:flutter_qjs/flutter_qjs.dart';
+import 'package:js_interpreter/js_interpreter.dart';
 import 'package:mangayomi/eval/javascript/dom_selector.dart';
 import 'package:mangayomi/eval/javascript/extractors.dart';
 import 'package:mangayomi/eval/javascript/http.dart';
@@ -17,7 +16,7 @@ import 'package:mangayomi/models/video.dart';
 import '../interface.dart';
 
 class JsExtensionService implements ExtensionService {
-  late JavascriptRuntime runtime;
+  late JSInterpreter runtime;
   @override
   late Source source;
   bool _isInitialized = false;
@@ -27,7 +26,7 @@ class JsExtensionService implements ExtensionService {
 
   void _init() {
     if (_isInitialized) return;
-    runtime = getJavascriptRuntime();
+    runtime = JSInterpreter();
     JsHttpClient(runtime).init();
     _jsDomSelector = JsDomSelector(runtime)..init();
     JsUtils(runtime).init();
@@ -35,7 +34,7 @@ class JsExtensionService implements ExtensionService {
     JsPreferences(runtime, source).init();
     final sourceJson = jsonEncode(source.toMSource().toJson());
 
-    runtime.evaluate('''
+    runtime.eval('''
 class MProvider {
     get source() {
         return $sourceJson;
@@ -81,7 +80,7 @@ async function jsonStringify(fn) {
     return JSON.stringify(await fn());
 }
 ''');
-    runtime.evaluate('''${source.sourceCode}
+    runtime.eval('''${source.sourceCode}
 var extention = new DefaultExtension();
 ''');
     _isInitialized = true;
@@ -97,7 +96,7 @@ var extention = new DefaultExtension();
   @override
   Map<String, String> getHeaders() {
     return _extensionCall<Map>(
-      'getHeaders(${jsonEncode(source.baseUrl ?? '')})',
+      'getHeaders(`${source.baseUrl ?? ''}`)',
       {},
     ).toMapStringString!;
   }
@@ -128,75 +127,54 @@ var extention = new DefaultExtension();
   Future<MPages> search(String query, int page, List<dynamic> filters) async {
     return MPages.fromJson(
       await _extensionCallAsync(
-        'search(${jsonEncode(query)},$page,${jsonEncode(filterValuesListToJson(filters))})',
+        'search("$query",$page,${jsonEncode(filterValuesListToJson(filters))})',
       ),
     );
   }
 
   @override
   Future<MManga> getDetail(String url) async {
-    return MManga.fromJson(
-      await _extensionCallAsync('getDetail(${jsonEncode(url)})'),
-    );
+    return MManga.fromJson(await _extensionCallAsync('getDetail(`$url`)'));
   }
 
   @override
   Future<List<PageUrl>> getPageList(String url) async {
-    final pages = LinkedHashSet<PageUrl>(
-      equals: (a, b) => a.url == b.url,
-      hashCode: (p) => p.url.hashCode,
-    );
-
-    for (final e in await _extensionCallAsync<List>(
-      'getPageList(${jsonEncode(url)})',
-    )) {
-      if (e != null) {
-        final page = e is String
-            ? PageUrl(e.trim())
-            : PageUrl.fromJson((e as Map).toMapStringDynamic!);
-        pages.add(page);
-      }
-    }
-
-    return pages.toList();
+    return (await _extensionCallAsync<List>('getPageList(`$url`)'))
+        .map(
+          (e) => e is String
+              ? PageUrl(e.trim())
+              : PageUrl.fromJson((e as Map).toMapStringDynamic!),
+        )
+        .toList();
   }
 
   @override
   Future<List<Video>> getVideoList(String url) async {
-    final videos = LinkedHashSet<Video>(
-      equals: (a, b) => a.url == b.url && a.originalUrl == b.originalUrl,
-      hashCode: (v) => Object.hash(v.url, v.originalUrl),
-    );
-
-    for (final element in await _extensionCallAsync<List>(
-      'getVideoList(${jsonEncode(url)})',
-    )) {
-      if (element['url'] != null && element['originalUrl'] != null) {
-        videos.add(Video.fromJson(element));
-      }
-    }
-    return videos.toList();
+    return (await _extensionCallAsync<List>('getVideoList(`$url`)'))
+        .where(
+          (element) => element['url'] != null && element['originalUrl'] != null,
+        )
+        .map((e) => Video.fromJson(e))
+        .toList()
+        .toSet()
+        .toList();
   }
 
   @override
   Future<String> getHtmlContent(String name, String url) async {
     _init();
-    final res = (await runtime.handlePromise(
-      await runtime.evaluateAsync(
-        'jsonStringify(() => extention.getHtmlContent(${jsonEncode(name)}, ${jsonEncode(url)}))',
-      ),
-    )).stringResult;
+    final res = await runtime.evalAsyncToDart(
+      'jsonStringify(() => extention.getHtmlContent(`$name`, `$url`))',
+    );
     return res;
   }
 
   @override
   Future<String> cleanHtmlContent(String html) async {
     _init();
-    final res = (await runtime.handlePromise(
-      await runtime.evaluateAsync(
-        'jsonStringify(() => extention.cleanHtmlContent(${jsonEncode(html)}))',
-      ),
-    )).stringResult;
+    final res = await runtime.evalAsyncToDart(
+      'jsonStringify(() => extention.cleanHtmlContent(`$html`))',
+    );
     return res;
   }
 
@@ -225,9 +203,8 @@ var extention = new DefaultExtension();
     _init();
 
     try {
-      final res = runtime.evaluate('JSON.stringify(extention.$call)');
-
-      return jsonDecode(res.stringResult) as T;
+      final res = runtime.evalToDart('JSON.stringify(extention.$call)');
+      return jsonDecode(res) as T;
     } catch (_) {
       if (def != null) {
         return def;
@@ -241,11 +218,11 @@ var extention = new DefaultExtension();
     _init();
 
     try {
-      final promised = await runtime.handlePromise(
-        await runtime.evaluateAsync('jsonStringify(() => extention.$call)'),
+      final promised = await runtime.evalAsyncToDart(
+        'jsonStringify(() => extention.$call)',
       );
 
-      return jsonDecode(promised.stringResult) as T;
+      return jsonDecode(promised) as T;
     } catch (e) {
       rethrow;
     }

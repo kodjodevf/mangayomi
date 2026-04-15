@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter_qjs/flutter_qjs.dart';
 import 'package:http_interceptor/http_interceptor.dart';
+import 'package:js_interpreter/js_interpreter.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:http/http.dart' as http;
 
 class JsHttpClient {
-  late JavascriptRuntime runtime;
+  late JSInterpreter runtime;
   JsHttpClient(this.runtime);
 
   void init() {
@@ -34,56 +34,56 @@ class JsHttpClient {
     runtime.onMessage('http_patch', (dynamic args) async {
       return await _toHttpResponse(client(args[1]), "PATCH", args);
     });
-    runtime.evaluate('''
+    runtime.eval('''
 class Client {
     constructor(reqcopyWith) {
         this.reqcopyWith = reqcopyWith;
     }
     async head(url, headers) {
         headers = headers;
-        const result = await sendMessage(
+        const result = await sendMessageAsync(
             "http_head",
-            JSON.stringify([null, this.reqcopyWith, url, headers])
+            null, this.reqcopyWith, url, headers
         );
         return JSON.parse(result);
     }
     async get(url, headers) {
         headers = headers;
-        const result = await sendMessage(
+        const result = await sendMessageAsync(
             "http_get",
-            JSON.stringify([null, this.reqcopyWith, url, headers])
+            null, this.reqcopyWith, url, headers
         );
         return JSON.parse(result);
     }
     async post(url, headers, body) {
         headers = headers;
-        const result = await sendMessage(
+        const result = await sendMessageAsync(
             "http_post",
-            JSON.stringify([null, this.reqcopyWith, url, headers, body])
+            null, this.reqcopyWith, url, headers, body
         );
         return JSON.parse(result);
     }
     async put(url, headers, body) {
         headers = headers;
-        const result = await sendMessage(
+        const result = await sendMessageAsync(
             "http_post",
-            JSON.stringify([null, this.reqcopyWith, url, headers, body])
+            null, this.reqcopyWith, url, headers, body
         );
         return JSON.parse(result);
     }
     async delete(url, headers, body) {
         headers = headers;
-        const result = await sendMessage(
+        const result = await sendMessageAsync(
             "http_post",
-            JSON.stringify([null, this.reqcopyWith, url, headers, body])
+            null, this.reqcopyWith, url, headers, body
         );
         return JSON.parse(result);
     }
     async patch(url, headers, body) {
         headers = headers;
-        const result = await sendMessage(
+        const result = await sendMessageAsync(
             "http_post",
-            JSON.stringify([null, this.reqcopyWith, url, headers, body])
+            null, this.reqcopyWith, url, headers, body
         );
         return JSON.parse(result);
     }

@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_qjs/flutter_qjs.dart';
+import 'package:js_interpreter/js_interpreter.dart';
 import 'package:mangayomi/utils/log/log.dart';
 
 class JsLibs {
-  late JavascriptRuntime runtime;
+  late JSInterpreter runtime;
   JsLibs(this.runtime);
 
   void init() {
@@ -22,24 +22,24 @@ class JsLibs {
       return Uri.decodeComponent(args[0]);
     });
 
-    runtime.evaluate('''
+    runtime.eval('''
 console.log = function (message) {
     if (typeof message === "object") {
          message = JSON.stringify(message);
       }
-    sendMessage("log", JSON.stringify([message.toString()]));
+    sendMessage("log", message.toString());
 };
 console.warn = function (message) {
     if (typeof message === "object") {
          message = JSON.stringify(message);
       }
-    sendMessage("log", JSON.stringify([message.toString()]));
+    sendMessage("log", message.toString());
 };
 console.error = function (message) {
     if (typeof message === "object") {
          message = JSON.stringify(message);
       }
-    sendMessage("log", JSON.stringify([message.toString()]));
+    sendMessage("log", message.toString());
 };
 String.prototype.substringAfter = function(pattern) {
     const startIndex = this.indexOf(pattern);
@@ -150,13 +150,13 @@ const isXCheckboxValue = q => {
 function urlencode(input) {
     return sendMessage(
         "urlencode",
-        JSON.stringify([input])
+        input
     );
 }
 function urldecode(input) {
     return sendMessage(
         "urldecode",
-        JSON.stringify([input])
+        input
     );
 }
 ''');

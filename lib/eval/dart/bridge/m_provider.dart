@@ -1,6 +1,6 @@
 import 'package:d4rt/d4rt.dart' hide Logger;
 import 'package:flutter/foundation.dart';
-import 'package:flutter_qjs/flutter_qjs.dart';
+import 'package:js_interpreter/js_interpreter.dart';
 import 'package:mangayomi/eval/model/filter.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/eval/model/m_provider.dart';
@@ -298,12 +298,12 @@ class MProviderBridged {
     interpreter.registertopLevelFunction(
       'evalJs',
       (visitor, positionalArgs, namedArgs, _) =>
-          getJavascriptRuntime().evaluateAsync(positionalArgs[0] as String),
+          JSInterpreter().evalAsyncToDart(positionalArgs[0] as String),
     );
     interpreter.registertopLevelFunction(
       'evalJsSync',
       (visitor, positionalArgs, namedArgs, _) =>
-          getJavascriptRuntime().evaluate(positionalArgs[0] as String),
+          JSInterpreter().evalToDart(positionalArgs[0] as String),
     );
     interpreter.registertopLevelFunction(
       'regExp',

@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter_qjs/flutter_qjs.dart';
+import 'package:js_interpreter/js_interpreter.dart';
 import 'package:mangayomi/eval/lnreader/http.dart';
 import 'package:mangayomi/eval/lnreader/m_plugin.dart';
 import 'package:mangayomi/eval/model/filter.dart';
@@ -18,17 +18,16 @@ import 'js_htmlparser.dart';
 import 'js_libs.dart';
 import 'js_polyfills.dart';
 
-JavascriptRuntime getJavascriptRuntime({
+JSInterpreter getJavascriptRuntime({
   Map<String, dynamic>? extraArgs = const {},
 }) {
-  JavascriptRuntime runtime;
-  runtime = QuickJsRuntime2(stackSize: 1024 * 1024 * 4);
-  runtime.enableHandlePromises();
+  JSInterpreter runtime;
+  runtime = JSInterpreter();
   return runtime;
 }
 
 class LNReaderExtensionService implements ExtensionService {
-  late JavascriptRuntime runtime;
+  late JSInterpreter runtime;
   @override
   late Source source;
   bool _isInitialized = false;
@@ -39,7 +38,7 @@ class LNReaderExtensionService implements ExtensionService {
   void _init() {
     if (_isInitialized) return;
     runtime = getJavascriptRuntime();
-    runtime.evaluate('''
+    runtime.eval('''
 module={},exports=Function("return this")(),Object.defineProperties(module,{namespace:{set:function(a){exports=a}},exports:{set:function(a){for(var b in a)a.hasOwnProperty(b)&&(exports[b]=a[b])},get:function(){return exports}}});
 ''');
     JsPolyfills(runtime).init();
@@ -47,7 +46,7 @@ module={},exports=Function("return this")(),Object.defineProperties(module,{name
     JsLibs(runtime).init();
     JsHtmlParser(runtime).init();
     _jsCheerio = JsCheerio(runtime)..init();
-    runtime.evaluate('''
+    runtime.eval('''
 const require = (package) => {
   switch (package) {
     case "htmlparser2":
@@ -82,7 +81,7 @@ const require = (package) => {
   }
 };
 ''');
-    runtime.evaluate('''
+    runtime.eval('''
 ${source.sourceCode}
 const extension = exports.default;
 ''');
@@ -154,10 +153,7 @@ const extension = exports.default;
   @override
   Future<MPages> search(String query, int page, List<dynamic> filters) async {
     final items =
-        ((await _extensionCallAsync(
-              'searchNovels(${jsonEncode(query)},$page)',
-              [],
-            )))
+        ((await _extensionCallAsync('searchNovels("$query",$page)', [])))
             .map((e) => NovelItem.fromJson(e))
             .map(
               (e) => MManga(
@@ -173,17 +169,22 @@ const extension = exports.default;
 
   @override
   Future<MManga> getDetail(String url) async {
+    List<ChapterItem>? chapters = [];
     final item = SourceNovel.fromJson(
-      await _extensionCallAsync('parseNovel(${jsonEncode(url)})', {}),
+      await _extensionCallAsync('parseNovel(`$url`)', {}),
     );
-    final chapters = SourcePage.fromJson(
-      await _extensionCallAsync(
-        'parsePage(${jsonEncode(item.path)}, ${jsonEncode('1')})',
-        {},
-      ),
-    );
+    chapters = item.chapters;
+    if (chapters?.isEmpty ?? true) {
+      final sourcePage = SourcePage.fromJson(
+        await _extensionCallAsync('parsePage(`${item.path}`, `1`)', {}),
+      );
+      if (sourcePage.chapters.isNotEmpty) {
+        chapters = sourcePage.chapters;
+      }
+    }
+
     final chaps =
-        ((chapters.chapters.isNotEmpty ? chapters.chapters : item.chapters)
+        chapters
             ?.map(
               (e) => MChapter(
                 name: e.name,
@@ -198,7 +199,7 @@ const extension = exports.default;
               ),
             )
             .toList() ??
-        []);
+        [];
     return MManga(
       name: item.name,
       imageUrl: item.cover,
@@ -229,11 +230,9 @@ const extension = exports.default;
   @override
   Future<String> getHtmlContent(String name, String url) async {
     _init();
-    final res = (await runtime.handlePromise(
-      await runtime.evaluateAsync(
-        'jsonStringify(() => extension.parseChapter(${jsonEncode(url)}))',
-      ),
-    )).stringResult;
+    final res = await runtime.evalAsyncToDart(
+      'jsonStringify(() => extension.parseChapter(`$url`))',
+    );
     return res;
   }
 
@@ -267,9 +266,9 @@ const extension = exports.default;
     _init();
 
     try {
-      final res = runtime.evaluate('JSON.stringify(extension.$call)');
+      final res = runtime.evalToDart('JSON.stringify(extension.$call)');
 
-      return jsonDecode(res.stringResult) as T;
+      return jsonDecode(res) as T;
     } catch (_) {
       if (def != null) {
         return def;
@@ -280,13 +279,12 @@ const extension = exports.default;
 
   Future<T> _extensionCallAsync<T>(String call, T def) async {
     _init();
-
     try {
-      final promised = await runtime.handlePromise(
-        await runtime.evaluateAsync('jsonStringify(() => extension.$call)'),
+      final promised = await runtime.evalAsyncToDart(
+        'jsonStringify(() => extension.$call)',
       );
 
-      return jsonDecode(promised.stringResult) as T;
+      return jsonDecode(promised) as T;
     } catch (e) {
       if (def != null) {
         return def;

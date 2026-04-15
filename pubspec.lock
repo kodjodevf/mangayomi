@@ -582,15 +582,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.33"
-  flutter_qjs:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: main
-      resolved-ref: f1e4993b631725f7611f80a3f0ba21eea127d945
-      url: "https://github.com/kodjodevf/flutter_qjs.git"
-    source: git
-    version: "0.0.1"
   flutter_riverpod:
     dependency: "direct main"
     description:
@@ -883,6 +874,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.2"
+  js_interpreter:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: main
+      resolved-ref: e2c50ce32381c9b985323f29c78594b0707dc2a4
+      url: "https://github.com/kodjodevf/js_interpreter.git"
+    source: git
+    version: "0.0.3"
   js_packer:
     dependency: "direct main"
     description:

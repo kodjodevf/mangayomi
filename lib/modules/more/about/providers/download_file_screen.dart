@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_app_installer/flutter_app_installer.dart';
-import 'package:flutter_qjs/quickjs/ffi.dart';
+import 'package:d4rt/d4rt.dart' hide Permission;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:mangayomi/providers/l10n_providers.dart';

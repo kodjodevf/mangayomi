@@ -1,11 +1,11 @@
-import 'package:flutter_qjs/flutter_qjs.dart';
+import 'package:js_interpreter/js_interpreter.dart';
 
 class JsHtmlParser {
-  late JavascriptRuntime runtime;
+  late JSInterpreter runtime;
   JsHtmlParser(this.runtime);
 
   void init() {
-    runtime.evaluate('''
+    runtime.eval('''
 class Parser {
     constructor(options = {}) {
         this.options = options;

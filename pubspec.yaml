@@ -62,10 +62,6 @@ dependencies:
   ffigen: ^20.1.1
   http_interceptor: ^2.0.0
   js_packer: ^0.0.6
-  flutter_qjs:
-    git:
-      url: https://github.com/kodjodevf/flutter_qjs.git
-      ref: main
   http: ^1.6.0
   re_editor: ^0.8.0
   re_highlight: ^0.0.3
@@ -105,6 +101,10 @@ dependencies:
     git:
       url: https://github.com/kodjodevf/m_extension_server.git
   flutter_tts: ^4.2.5
+  js_interpreter:
+    git:
+      url: https://github.com/kodjodevf/js_interpreter.git
+      ref: main
 
 dependency_overrides:
   ffi: ^2.1.3

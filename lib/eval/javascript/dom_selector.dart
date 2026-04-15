@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'package:flutter_qjs/flutter_qjs.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
+import 'package:js_interpreter/js_interpreter.dart';
 import 'package:mangayomi/utils/extensions/dom_extensions.dart';
 
 class JsDomSelector {
-  late JavascriptRuntime runtime;
+  late JSInterpreter runtime;
   JsDomSelector(this.runtime);
   final Map<int, Element?> _elements = {};
   int _elementKey = 0;
@@ -187,7 +187,7 @@ class JsDomSelector {
       return jsonEncode(elementKeys);
     });
 
-    runtime.evaluate('''
+    runtime.eval('''
 class Document {
     constructor(html) {
         this.html = html;
@@ -195,7 +195,7 @@ class Document {
     getElement(type) {
         const key = sendMessage(
             "get_doc_element",
-            JSON.stringify([this.html, type])
+            this.html, type
         );
         return new Element(key);
     }
@@ -214,7 +214,7 @@ class Document {
     getString(type) {
         return sendMessage(
             "get_doc_string",
-            JSON.stringify([this.html, type]));
+            this.html, type);
     }
     get text() {
         return this.getString('text');
@@ -225,14 +225,14 @@ class Document {
     selectFirst(selector) {
         const key = sendMessage(
             "doc_select_first",
-            JSON.stringify([this.html, selector])
+            this.html, selector
         );
         return new Element(key);
     }
     select(selector) {
         let elements = [];
         JSON.parse(
-            sendMessage("doc_select", JSON.stringify([this.html, selector]))
+            sendMessage("doc_select", this.html, selector)
         ).forEach((key) => {
             elements.push(new Element(key));
         });
@@ -241,13 +241,13 @@ class Document {
     xpathFirst(xpath) {
         return sendMessage(
             "doc_xpath_first",
-            JSON.stringify([this.html, xpath])
+            this.html, xpath
         );
     }
     xpath(xpath) {
         return JSON.parse(sendMessage(
             "doc_xpath",
-            JSON.stringify([this.html, xpath]))
+            this.html, xpath)
         );
     }
     getElementsListBy(type, name) {
@@ -255,7 +255,7 @@ class Document {
         let elements = [];
         JSON.parse(sendMessage(
             "doc_get_elements_by",
-            JSON.stringify([this.html, type, name]))
+            this.html, type, name)
         ).forEach((key) => {
             elements.push(new Element(key));
         });
@@ -273,20 +273,20 @@ class Document {
     getElementById(id) {
         const key = sendMessage(
             "doc_get_element_by_id",
-            JSON.stringify([this.html, id])
+            this.html, id
         );
         return new Element(key);
     }
     attr(attr) {
         return sendMessage(
             "doc_attr",
-            JSON.stringify([this.html, attr])
+            this.html, attr
         );
     }
     hasAttr(attr) {
         return sendMessage(
             "doc_has_attr",
-            JSON.stringify([this.html, attr])
+            this.html, attr
         );
     }
 }
@@ -298,7 +298,7 @@ class Element {
     getString(type) {
         return sendMessage(
             "get_element_string",
-            JSON.stringify([type, this.key])
+            type, this.key
         );
     }
     get text() {
@@ -334,7 +334,7 @@ class Element {
     getElementSibling(type) {
         const key = sendMessage(
             "ele_element_sibling",
-            JSON.stringify([type, this.key])
+            type, this.key
         );
         return new Element(key);
     }
@@ -349,7 +349,7 @@ class Element {
         let elements = [];
         JSON.parse(sendMessage(
             "ele_get_elements_by",
-            JSON.stringify([type, name, this.key]))
+            type, name, this.key)
         ).forEach((key) => {
             elements.push(new Element(key));
         });
@@ -367,32 +367,32 @@ class Element {
     xpath(xpath) {
         return JSON.parse(sendMessage(
             "xpath",
-            JSON.stringify([xpath, this.key]))
+            xpath, this.key)
         );
     }
     attr(attr) {
         return sendMessage(
             "ele_attr",
-            JSON.stringify([attr, this.key])
+            attr, this.key
         );
     }
     xpathFirst(xpath) {
         return sendMessage(
             "xpathFirst",
-            JSON.stringify([xpath, this.key])
+            xpath, this.key
         );
     }
     selectFirst(selector) {
         const key = sendMessage(
             "ele_selectFirst",
-            JSON.stringify([selector, this.key])
+            selector, this.key
         );
         return new Element(key);
     }
     select(selector) {
         let elements = [];
         JSON.parse(
-            sendMessage("ele_select", JSON.stringify([selector, this.key]))
+            sendMessage("ele_select", selector, this.key)
         ).forEach((key) => {
             elements.push(new Element(key));
         });
@@ -401,7 +401,7 @@ class Element {
     hasAttr(attr) {
         return sendMessage(
             "ele_has_attr",
-            JSON.stringify([this.html, attr])
+            this.html, attr
         );
     }
 }

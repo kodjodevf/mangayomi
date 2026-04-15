@@ -170,13 +170,20 @@ class GetIsolateService {
     late final StreamSubscription sub;
 
     // Timeout safeguard
-    final timer = Timer(const Duration(seconds: 40), () {
-      if (!completer.isCompleted) {
-        sub.cancel();
-        responsePort.close();
-        completer.completeError('Isolate response timeout');
-      }
-    });
+    final timer = Timer(
+      Duration(
+        seconds: source?.sourceCodeLanguage == SourceCodeLanguage.lnreader
+            ? 80
+            : 40,
+      ),
+      () {
+        if (!completer.isCompleted) {
+          sub.cancel();
+          responsePort.close();
+          completer.completeError('Isolate response timeout');
+        }
+      },
+    );
     sub = responsePort.listen((response) {
       timer.cancel();
       sub.cancel();

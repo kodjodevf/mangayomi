@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:archive/archive_io.dart';
 import 'package:bot_toast/bot_toast.dart';
+import 'package:d4rt/d4rt.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/eval/model/source_preference.dart';

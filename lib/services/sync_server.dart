@@ -1,4 +1,4 @@
-import 'package:flutter_qjs/quickjs/ffi.dart';
+import 'package:d4rt/d4rt.dart';
 import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';

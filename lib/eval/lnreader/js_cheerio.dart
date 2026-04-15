@@ -1,12 +1,11 @@
 import 'dart:convert';
-
-import 'package:flutter_qjs/flutter_qjs.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
+import 'package:js_interpreter/js_interpreter.dart';
 import 'package:mangayomi/utils/extensions/dom_extensions.dart';
 
 class JsCheerio {
-  late JavascriptRuntime runtime;
+  late JSInterpreter runtime;
   final Map<int, Element?> _elements = {};
   int _elementKey = 0;
 
@@ -155,14 +154,14 @@ class JsCheerio {
       return result;
     });
 
-    runtime.evaluate('''
+    runtime.eval('''
 class Element {
   constructor(key) {
     this._key = key;
   }
 
   _call(method, args = []) {
-    return sendMessage("element_call", JSON.stringify([method, this._key, args]));
+    return sendMessage("element_call", method, this._key, args);
   }
 
   text() { return this._call("text"); }
@@ -383,7 +382,7 @@ class Stub {
 }
 
 function load(html) {
-  const rootKey = sendMessage("load", JSON.stringify([html]));
+  const rootKey = sendMessage("load", html);
   const root = new Element(rootKey);
 
   const \$ = function(input) {

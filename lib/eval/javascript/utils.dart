@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:d4rt/d4rt.dart' hide Logger;
 import 'package:flutter/foundation.dart';
-import 'package:flutter_qjs/flutter_qjs.dart';
-import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:http/http.dart' as http;
+import 'package:js_interpreter/js_interpreter.dart';
 import 'package:mangayomi/src/rust/api/epub.dart';
 import 'package:path/path.dart' as p;
 import 'package:http_interceptor/http/intercepted_client.dart';
@@ -16,7 +16,7 @@ import 'package:mangayomi/utils/cryptoaes/js_unpacker.dart';
 import 'package:mangayomi/utils/log/log.dart';
 
 class JsUtils {
-  late JavascriptRuntime runtime;
+  late JSInterpreter runtime;
   JsUtils(this.runtime);
 
   void init() {
@@ -28,6 +28,7 @@ class JsUtils {
       if (kDebugMode || useLogger) {
         // ignore: avoid_print
         print("LoggerLevel.warning:${args[0]}");
+        print('object2232');
         Logger.add(LoggerLevel.warning, "${args[0]}");
       }
 
@@ -81,7 +82,7 @@ class JsUtils {
       return chapter?.content;
     });
 
-    runtime.evaluate('''
+    runtime.eval('''
 console.log = function (message) {
     if (typeof message === "object") {
          message = JSON.stringify(message);
@@ -179,19 +180,19 @@ function parseDates(value, dateFormat, dateFormatLocale) {
     );
 }
 async function evaluateJavascriptViaWebview(url, headers, scripts) {
-    return await sendMessage(
+    return await sendMessageAsync(
         "evaluateJavascriptViaWebview",
         JSON.stringify([url, headers, scripts])
     );
 }
 async function parseEpub(bookName, url, headers) {
-    return JSON.parse(await sendMessage(
+    return JSON.parse(await sendMessageAsync(
         "parseEpub",
         JSON.stringify([bookName, url, headers])
     ));
 }
 async function parseEpubChapter(bookName, url, headers, chapterTitle) {
-    return await sendMessage(
+    return await sendMessageAsync(
         "parseEpubChapter",
         JSON.stringify([bookName, url, headers, chapterTitle])
     );

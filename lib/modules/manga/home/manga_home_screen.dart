@@ -605,87 +605,95 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                   ),
                 );
               },
-              error: (error, stackTrace) => Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                if (_selectedIndex == 2 &&
-                                        (_isSearch && _query.isNotEmpty) ||
-                                    _isFiltering) {
-                                  ref.invalidate(
-                                    searchProvider(
-                                      source: source,
-                                      query: _query,
-                                      page: 1,
-                                      filterList: filters,
-                                    ),
-                                  );
-                                } else if (_selectedIndex == 1 &&
-                                    !_isSearch &&
-                                    _query.isEmpty) {
-                                  ref.invalidate(
-                                    getLatestUpdatesProvider(
-                                      source: source,
-                                      page: 1,
-                                    ),
-                                  );
-                                } else if (_selectedIndex == 0 &&
-                                    !_isSearch &&
-                                    _query.isEmpty) {
-                                  ref.invalidate(
-                                    getPopularProvider(source: source, page: 1),
-                                  );
-                                }
-                              },
-                              icon: const Icon(Icons.refresh),
-                            ),
-                            Text(l10n.refresh),
-                          ],
-                        ),
-                        const SizedBox(width: 20),
-                        Column(
-                          children: [
-                            IconButton(
-                              onPressed: () async {
-                                final baseUrl = ref.watch(
-                                  sourceBaseUrlProvider(source: source),
-                                );
-                                Map<String, dynamic> data = {
-                                  'url': baseUrl,
-                                  'sourceId': source.id.toString(),
-                                  'title': '',
-                                  "hasCloudFlare":
-                                      source.hasCloudflare ?? false,
-                                };
-                                context.push("/mangawebview", extra: data);
-                              },
-                              icon: Icon(
-                                Icons.public,
-                                size: 22,
-                                color: context.secondaryColor,
+              error: (error, stackTrace) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Column(
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  if (_selectedIndex == 2 &&
+                                          (_isSearch && _query.isNotEmpty) ||
+                                      _isFiltering) {
+                                    ref.invalidate(
+                                      searchProvider(
+                                        source: source,
+                                        query: _query,
+                                        page: 1,
+                                        filterList: filters,
+                                      ),
+                                    );
+                                  } else if (_selectedIndex == 1 &&
+                                      !_isSearch &&
+                                      _query.isEmpty) {
+                                    ref.invalidate(
+                                      getLatestUpdatesProvider(
+                                        source: source,
+                                        page: 1,
+                                      ),
+                                    );
+                                  } else if (_selectedIndex == 0 &&
+                                      !_isSearch &&
+                                      _query.isEmpty) {
+                                    ref.invalidate(
+                                      getPopularProvider(
+                                        source: source,
+                                        page: 1,
+                                      ),
+                                    );
+                                  }
+                                },
+                                icon: const Icon(Icons.refresh),
                               ),
-                            ),
-                            const Text("Webview"),
-                          ],
-                        ),
-                      ],
+                              Text(l10n.refresh),
+                            ],
+                          ),
+                          const SizedBox(width: 20),
+                          Column(
+                            children: [
+                              IconButton(
+                                onPressed: () async {
+                                  final baseUrl = ref.watch(
+                                    sourceBaseUrlProvider(source: source),
+                                  );
+                                  Map<String, dynamic> data = {
+                                    'url': baseUrl,
+                                    'sourceId': source.id.toString(),
+                                    'title': '',
+                                    "hasCloudFlare":
+                                        source.hasCloudflare ?? false,
+                                  };
+                                  context.push("/mangawebview", extra: data);
+                                },
+                                icon: Icon(
+                                  Icons.public,
+                                  size: 22,
+                                  color: context.secondaryColor,
+                                ),
+                              ),
+                              const Text("Webview"),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(error.toString(), textAlign: TextAlign.center),
-                  ),
-                ],
-              ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        error.toString(),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                );
+              },
               loading: () => const Center(child: CircularProgressIndicator()),
             ),
     );
