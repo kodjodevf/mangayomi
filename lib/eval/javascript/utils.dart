@@ -28,7 +28,6 @@ class JsUtils {
       if (kDebugMode || useLogger) {
         // ignore: avoid_print
         print("LoggerLevel.warning:${args[0]}");
-        print('object2232');
         Logger.add(LoggerLevel.warning, "${args[0]}");
       }
 
