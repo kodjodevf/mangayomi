@@ -4,7 +4,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
+import 'package:mangayomi/utils/extensions/manga.dart';
 
 /// Shared navigation and history logic used by [ReaderController],
 /// [NovelReaderController], and [AnimeStreamController].

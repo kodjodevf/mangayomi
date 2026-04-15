@@ -5,7 +5,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/chapter_controller_mixin.dart';
-import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
+import 'package:mangayomi/utils/extensions/chapter.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:mangayomi/services/aniskip.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
