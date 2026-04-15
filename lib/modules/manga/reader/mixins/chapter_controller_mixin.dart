@@ -44,12 +44,12 @@ mixin ChapterControllerMixin {
   // ---------------------------------------------------------------------------
 
   (int, bool) getChapterIndex() => _chapterIndexWithOffset(0);
-  (int, bool) getPrevChapterIndex() => _chapterIndexWithOffset(1);
-  (int, bool) getNextChapterIndex() => _chapterIndexWithOffset(-1);
+  Chapter getPrevChapter() => _chapterWithOffset(-1);
+  Chapter getNextChapter() => _chapterWithOffset(1);
 
   /// Finds this [chapter] in either the filtered list or the raw list and
   /// returns [index + offset]. The boolean indicates whether the filtered list
-  /// was used (true) or the full reversed list (false).
+  /// was used (true) or the full list (false).
   (int, bool) _chapterIndexWithOffset(int offset) {
     final manga = getManga();
 
@@ -60,25 +60,26 @@ mixin ChapterControllerMixin {
       return null;
     }
 
-    final index = findIn(manga.getFilteredChapterList());
+    final index = findIn(manga.getChapterListForReading());
     if (index != null) return (index, true);
-
-    final all = manga.chapters.toList().reversed.toList();
+    // Fallback to raw list if chapter was filtered out.
+    final all = manga.chapters.toList();
     return (findIn(all)!, false);
   }
 
   Chapter _chapterWithOffset(int offset) {
     final idx = _chapterIndexWithOffset(offset);
-    return idx.$2
-        ? getManga().getFilteredChapterList()[idx.$1]
-        : getManga().chapters.toList().reversed.toList()[idx.$1];
+    final list = idx.$2
+        ? getManga().getChapterListForReading()
+        : getManga().chapters.toList();
+    if (idx.$1 < 0 || idx.$1 >= list.length) {
+      throw RangeError('No chapter at offset $offset from ${chapter.id}');
+    }
+    return list[idx.$1];
   }
 
-  Chapter getPrevChapter() => _chapterWithOffset(1);
-  Chapter getNextChapter() => _chapterWithOffset(-1);
-
   int getChaptersLength(bool isInFilterList) => isInFilterList
-      ? getManga().getFilteredChapterList().length
+      ? getManga().getChapterListForReading().length
       : getManga().chapters.length;
 
   // ---------------------------------------------------------------------------

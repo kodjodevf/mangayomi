@@ -19,9 +19,9 @@ extension ChapterExtension on Chapter {
     if (ignoreIsRead || !isRead!) {
       await pushMangaReaderView(context: context, chapter: this);
     } else {
-      final filteredChaps = manga.value!.getFilteredChapterList();
+      final filteredChaps = manga.value!.getChapterListForReading();
       bool exist = false;
-      for (var filteredChap in filteredChaps.reversed) {
+      for (var filteredChap in filteredChaps) {
         if (filteredChap.toJson().toString() == toJson().toString()) {
           exist = true;
         }

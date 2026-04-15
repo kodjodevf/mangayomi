@@ -40,8 +40,6 @@ class AnimeStreamController extends _$AnimeStreamController
   // ---------------------------------------------------------------------------
 
   (int, bool) getEpisodeIndex() => getChapterIndex();
-  (int, bool) getPrevEpisodeIndex() => getPrevChapterIndex();
-  (int, bool) getNextEpisodeIndex() => getNextChapterIndex();
 
   Chapter getPrevEpisode() => getPrevChapter();
   Chapter getNextEpisode() => getNextChapter();

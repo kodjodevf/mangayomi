@@ -294,40 +294,37 @@ extension ChapterExtensions on Chapter {
 }
 
 extension MangaExtensions on Manga {
-  List<Chapter> getFilteredChapterList() {
-    final data = this.chapters.toList().reversed.toList();
+  // ── For the READER: always ascending story order, filters applied ──────────
+  List<Chapter> getChapterListForReading() {
     final settings = isar.settings.getSync(227)!;
+
     final filterUnread =
         (settings.chapterFilterUnreadList!
-                    .where((element) => element.mangaId == id)
-                    .toList()
+                    .where((e) => e.mangaId == id)
                     .firstOrNull ??
                 ChapterFilterUnread(mangaId: id, type: 0))
             .type!;
 
     final filterBookmarked =
         (settings.chapterFilterBookmarkedList!
-                    .where((element) => element.mangaId == id)
-                    .toList()
+                    .where((e) => e.mangaId == id)
                     .firstOrNull ??
                 ChapterFilterBookmarked(mangaId: id, type: 0))
             .type!;
+
     final filterDownloaded =
         (settings.chapterFilterDownloadedList!
-                    .where((element) => element.mangaId == id)
-                    .toList()
+                    .where((e) => e.mangaId == id)
                     .firstOrNull ??
                 ChapterFilterDownloaded(mangaId: id, type: 0))
             .type!;
 
-    final sortChapter =
-        (settings.sortChapterList!
-                    .where((element) => element.mangaId == id)
-                    .toList()
-                    .firstOrNull ??
-                SortChapter(mangaId: id, index: 1, reverse: false))
-            .index;
     final filterScanlator = _getFilterScanlator(this) ?? [];
+
+    // Canonical ascending order (ch1 ... chN) — reader always moves forward.
+    final data = chapters
+        .toList(); // keep DB/insertion order, assumed ascending
+
     final chapterIds = data.map((c) => c.id).whereType<int>().toList();
     final downloadedIds = (filterDownloaded == 0 || chapterIds.isEmpty)
         ? const <int>{}
@@ -338,56 +335,68 @@ extension MangaExtensions on Manga {
               .findAllSync()
               .map((d) => d.id!)
               .toSet();
-    List<Chapter>? chapterList;
-    chapterList = data
+
+    return data
         .where(
-          (element) => filterUnread == 1
-              ? element.isRead == false
+          (e) => filterUnread == 1
+              ? e.isRead == false
               : filterUnread == 2
-              ? element.isRead == true
+              ? e.isRead == true
               : true,
         )
         .where(
-          (element) => filterBookmarked == 1
-              ? element.isBookmarked == true
+          (e) => filterBookmarked == 1
+              ? e.isBookmarked == true
               : filterBookmarked == 2
-              ? element.isBookmarked == false
+              ? e.isBookmarked == false
               : true,
         )
-        .where((element) {
+        .where((e) {
           if (filterDownloaded == 0) return true;
-          final isDownloaded = downloadedIds.contains(element.id);
-          return filterDownloaded == 1 ? isDownloaded : !isDownloaded;
+          final dl = downloadedIds.contains(e.id);
+          return filterDownloaded == 1 ? dl : !dl;
         })
-        .where((element) => !filterScanlator.contains(element.scanlator))
+        .where((e) => !filterScanlator.contains(e.scanlator))
         .toList();
-    List<Chapter> chapters = sortChapter == 0
-        ? chapterList.reversed.toList()
-        : chapterList;
-    if (sortChapter == 0) {
-      chapters.sort((a, b) {
-        return (a.scanlator == null ||
-                b.scanlator == null ||
-                a.dateUpload == null ||
-                b.dateUpload == null)
-            ? 0
-            : a.scanlator!.compareTo(b.scanlator!) |
-                  a.dateUpload!.compareTo(b.dateUpload!);
-      });
-    } else if (sortChapter == 2) {
-      chapters.sort((a, b) {
-        return (a.dateUpload == null || b.dateUpload == null)
-            ? 0
-            : int.parse(a.dateUpload!).compareTo(int.parse(b.dateUpload!));
-      });
-    } else if (sortChapter == 3) {
-      chapters.sort((a, b) {
-        return (a.name == null || b.name == null)
-            ? 0
-            : a.name!.compareTo(b.name!);
-      });
+  }
+
+  // ── For the UI LIST: filters + user-chosen sort + reverse ─────────────────
+  List<Chapter> getFilteredChapterList() {
+    final settings = isar.settings.getSync(227)!;
+
+    final sortChapterEntry =
+        settings.sortChapterList!.where((e) => e.mangaId == id).firstOrNull ??
+        SortChapter(mangaId: id, index: 1, reverse: false);
+    final sortIndex = sortChapterEntry.index!;
+    final reverse = sortChapterEntry.reverse!;
+
+    // Start from the reading list so filter logic lives in one place.
+    List<Chapter> list = getChapterListForReading();
+
+    switch (sortIndex) {
+      case 0: // by scanlator, then date
+        list.sort((a, b) {
+          if (a.scanlator == null || b.scanlator == null) return 0;
+          final s = a.scanlator!.compareTo(b.scanlator!);
+          if (s != 0) return s;
+          if (a.dateUpload == null || b.dateUpload == null) return 0;
+          return int.parse(a.dateUpload!).compareTo(int.parse(b.dateUpload!));
+        });
+      case 1: // by chapter number - reading list is already ascending
+        break;
+      case 2: // by upload date
+        list.sort((a, b) {
+          if (a.dateUpload == null || b.dateUpload == null) return 0;
+          return int.parse(a.dateUpload!).compareTo(int.parse(b.dateUpload!));
+        });
+      case 3: // by name
+        list.sort((a, b) {
+          if (a.name == null || b.name == null) return 0;
+          return a.name!.compareTo(b.name!);
+        });
     }
-    return chapters;
+
+    return reverse ? list.reversed.toList() : list;
   }
 }
 
