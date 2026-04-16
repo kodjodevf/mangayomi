@@ -96,6 +96,7 @@ extension MangaExtensions on Manga {
           if (a.dateUpload == null || b.dateUpload == null) return 0;
           return int.parse(a.dateUpload!).compareTo(int.parse(b.dateUpload!));
         });
+        break;
       case 1: // by chapter number - reading list is already ascending
         break;
       case 2: // by upload date
@@ -103,11 +104,13 @@ extension MangaExtensions on Manga {
           if (a.dateUpload == null || b.dateUpload == null) return 0;
           return int.parse(a.dateUpload!).compareTo(int.parse(b.dateUpload!));
         });
+        break;
       case 3: // by name
         list.sort((a, b) {
           if (a.name == null || b.name == null) return 0;
           return a.name!.compareTo(b.name!);
         });
+        break;
     }
 
     return reverse ? list.reversed.toList() : list;
