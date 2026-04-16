@@ -171,12 +171,15 @@ const extension = exports.default;
   Future<MManga> getDetail(String url) async {
     List<ChapterItem>? chapters = [];
     final item = SourceNovel.fromJson(
-      await _extensionCallAsync('parseNovel(`$url`)', {}),
+      await _extensionCallAsync('parseNovel(${jsonEncode(url)})', {}),
     );
     chapters = item.chapters;
     if (chapters?.isEmpty ?? true) {
       final sourcePage = SourcePage.fromJson(
-        await _extensionCallAsync('parsePage(`${item.path}`, `1`)', {}),
+        await _extensionCallAsync(
+          'parsePage(${jsonEncode(item.path)}, ${jsonEncode('1')})',
+          {},
+        ),
       );
       if (sourcePage.chapters.isNotEmpty) {
         chapters = sourcePage.chapters;
