@@ -1061,7 +1061,10 @@ class _MangaChapterPageGalleryState
     if (_isNextChapterPreloading || _isLastPageTransition) return;
     _isNextChapterPreloading = true;
     try {
-      if (!mounted) return;
+      if (!mounted) {
+        _isNextChapterPreloading = false;
+        return;
+      }
       final nextChapter = _readerController.getNextChapter();
       if (isChapterLoaded(nextChapter)) {
         _isNextChapterPreloading = false;
