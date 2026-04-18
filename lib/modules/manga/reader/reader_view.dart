@@ -24,6 +24,7 @@ import 'package:mangayomi/modules/manga/reader/widgets/page_indicator.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/image_actions_dialog.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:mangayomi/utils/riverpod.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/services/get_chapter_pages.dart';
@@ -1170,6 +1171,10 @@ class _MangaChapterPageGalleryState
       },
     );
 
+    // Kick off ordered prefetch before the first frame so lower-indexed pages
+    // win the HTTP race against the simultaneous widget-driven loads.
+    _prefetchPagesInOrder(); // intentionally not awaited
+
     // proactively start loading adjacent chapters in background
     _proactivePreload();
 
@@ -1202,6 +1207,46 @@ class _MangaChapterPageGalleryState
             readerMode == ReaderMode.rtl ||
             readerMode == ReaderMode.vertical)) {
       _onPageChanged(0);
+    }
+  }
+
+  /// Warms Flutter's [ImageCache] in page order before the widget tree renders.
+  ///
+  /// [ScrollablePositionedList] builds all items within [minCacheExtent] in a
+  /// single frame, firing every network request simultaneously, which means
+  /// pages complete in arbitrary (server-response) order.  By resolving each
+  /// provider sequentially here — starting before that first frame — we seed
+  /// the cache so that earlier pages win the HTTP race: lower-indexed pages
+  /// start their requests first and are therefore ready sooner.
+  ///
+  /// For pages already within the cache extent the widget will attach to the
+  /// already-pending Future (Flutter deduplicates by provider key), so no
+  /// extra requests are made.  Pages beyond the cache extent are fetched
+  /// strictly one at a time in reading order, so the reader never sees a
+  /// later page appear before an earlier one.
+  ///
+  /// This is fully async — [await] inside a fire-and-forget call — so the
+  /// UI stays interactive throughout.
+  Future<void> _prefetchPagesInOrder() async {
+    final startIdx = (_currentIndex ?? 0).clamp(0, pages.length - 1);
+
+    // Visit pages from the opening position forward, then backward.
+    final indices = [
+      for (var i = startIdx; i < pages.length; i++) i,
+      for (var i = startIdx - 1; i >= 0; i--) i,
+    ];
+
+    for (final i in indices) {
+      if (!mounted) return;
+      final page = pages[i];
+      if (page.isTransitionPage) continue;
+      try {
+        // Awaiting ensures page[i] finishes (or fails) before page[i+1]
+        // starts downloading, giving strict reading-order priority.
+        await precacheImage(page.getImageProvider(ref, true), context);
+      } catch (_) {
+        // Swallow errors: network failures, widget disposal, etc.
+      }
     }
   }
 
