@@ -90,8 +90,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     _readingStopwatch.stop();
     WidgetsBinding.instance.removeObserver(this);
     _readerController.setChapterOffset(offset, maxOffset, true);
-    _readerController.setMangaHistoryUpdate(
-      readingTimeSeconds: _readingStopwatch.elapsed.inSeconds,
+    _readerController.setHistoryUpdate(
+      elapsedSeconds: _readingStopwatch.elapsed.inSeconds,
     );
     _scrollController.removeListener(onScroll);
     _scrollController.dispose();
