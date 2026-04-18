@@ -117,10 +117,37 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
   void dispose() {
+    _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     _textEditingController.dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      if (_mangaList.isNotEmpty &&
+          _hasNextPage &&
+          !_isLoading &&
+          !(_getManga?.isLoading ?? false)) {
+        setState(() => _isLoading = true);
+        _loadMore().then((value) {
+          if (mounted && value != null) {
+            setState(() {
+              _mangaList.addAll(value.list);
+              _isLoading = false;
+            });
+          }
+        });
+      }
+    }
   }
 
   late final _textEditingController = TextEditingController(text: widget.query);
@@ -519,30 +546,6 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                 if (data!.list.isEmpty) {
                   return Center(child: Text(l10n.no_result));
                 }
-                _scrollController.addListener(() {
-                  if (_scrollController.position.pixels ==
-                      _scrollController.position.maxScrollExtent) {
-                    if (_mangaList.isNotEmpty &&
-                        (_hasNextPage) &&
-                        !_isLoading &&
-                        !_getManga!.isLoading) {
-                      if (mounted) {
-                        setState(() {
-                          _isLoading = true;
-                        });
-                      }
-                      _loadMore().then((value) {
-                        if (mounted && value != null) {
-                          setState(() {
-                            _mangaList.addAll(value.list);
-                            _isLoading = false;
-                          });
-                        }
-                      });
-                    }
-                  }
-                });
-
                 _length = source.isFullData!
                     ? _fullDataLength
                     : _mangaList.length;
