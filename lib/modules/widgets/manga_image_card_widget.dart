@@ -22,6 +22,7 @@ class MangaImageCardWidget extends ConsumerWidget {
   final ItemType itemType;
   final bool isComfortableGrid;
   final MManga? getMangaDetail;
+  final Manga? libraryManga;
 
   const MangaImageCardWidget({
     required this.source,
@@ -29,57 +30,150 @@ class MangaImageCardWidget extends ConsumerWidget {
     required this.getMangaDetail,
     required this.isComfortableGrid,
     required this.itemType,
+    this.libraryManga,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return StreamBuilder(
-      stream: isar.mangas
-          .filter()
-          .langEqualTo(source.lang)
-          .nameEqualTo(getMangaDetail!.name)
-          .sourceEqualTo(source.name)
-          .watch(fireImmediately: true),
-      builder: (context, snapshot) {
-        bool hasData = snapshot.hasData;
-        final mangaList = hasData
-            ? snapshot.data!
-                  .where(
-                    (element) => element.sourceId == null
-                        ? true
-                        : element.sourceId == source.id,
-                  )
-                  .toList()
-            : [];
-        hasData = hasData && mangaList.isNotEmpty;
-        return CoverViewWidget(
-          bottomTextWidget: BottomTextWidget(
-            maxLines: 1,
-            text: getMangaDetail!.name!,
-            isComfortableGrid: isComfortableGrid,
-          ),
-          isComfortableGrid: isComfortableGrid,
-          image: hasData && mangaList.first.customCoverImage != null
-              ? MemoryImage(mangaList.first.customCoverImage as Uint8List)
-                    as ImageProvider
-              : CustomExtendedNetworkImageProvider(
-                  toImgUrl(
-                    hasData
-                        ? mangaList.first.customCoverFromTracker ??
-                              mangaList.first.imageUrl ??
-                              ""
-                        : getMangaDetail!.imageUrl ?? "",
-                  ),
-                  headers: ref.watch(
-                    headersProvider(
-                      source: source.name!,
-                      lang: source.lang!,
-                      sourceId: source.id,
-                    ),
-                  ),
-                  cache: true,
-                  cacheMaxAge: const Duration(days: 7),
+    final hasData = libraryManga != null;
+    return CoverViewWidget(
+      bottomTextWidget: BottomTextWidget(
+        maxLines: 1,
+        text: getMangaDetail!.name!,
+        isComfortableGrid: isComfortableGrid,
+      ),
+      isComfortableGrid: isComfortableGrid,
+      image: hasData && libraryManga!.customCoverImage != null
+          ? MemoryImage(libraryManga!.customCoverImage as Uint8List)
+                as ImageProvider
+          : CustomExtendedNetworkImageProvider(
+              toImgUrl(
+                hasData
+                    ? libraryManga!.customCoverFromTracker ??
+                          libraryManga!.imageUrl ??
+                          ""
+                    : getMangaDetail!.imageUrl ?? "",
+              ),
+              headers: ref.watch(
+                headersProvider(
+                  source: source.name!,
+                  lang: source.lang!,
+                  sourceId: source.id,
                 ),
+              ),
+              cache: true,
+              cacheMaxAge: const Duration(days: 7),
+            ),
+      onTap: () => pushToMangaReaderDetail(
+        ref: ref,
+        context: context,
+        getManga: getMangaDetail!,
+        lang: source.lang!,
+        source: source.name!,
+        itemType: itemType,
+        sourceId: source.id,
+      ),
+      onLongPress: () => pushToMangaReaderDetail(
+        ref: ref,
+        context: context,
+        getManga: getMangaDetail!,
+        lang: source.lang!,
+        source: source.name!,
+        itemType: itemType,
+        addToFavourite: true,
+        sourceId: source.id,
+      ),
+      onSecondaryTap: () => pushToMangaReaderDetail(
+        ref: ref,
+        context: context,
+        getManga: getMangaDetail!,
+        lang: source.lang!,
+        source: source.name!,
+        itemType: itemType,
+        addToFavourite: true,
+        sourceId: source.id,
+      ),
+      children: [
+        Container(
+          color: hasData && libraryManga!.favorite!
+              ? Colors.black.withValues(alpha: 0.5)
+              : null,
+        ),
+        if (hasData && libraryManga!.favorite!)
+          Positioned(
+            top: 0,
+            left: 0,
+            child: Padding(
+              padding: const EdgeInsets.all(4),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: context.primaryColor,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: Icon(
+                    Icons.collections_bookmark_outlined,
+                    size: 16,
+                    color: context.dynamicWhiteBlackColor,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        if (!isComfortableGrid)
+          BottomTextWidget(
+            isTorrent: source.isTorrent,
+            text: getMangaDetail!.name!,
+          ),
+      ],
+    );
+  }
+}
+
+class MangaImageCardListTileWidget extends ConsumerWidget {
+  final Source source;
+  final ItemType itemType;
+  final MManga? getMangaDetail;
+  final Manga? libraryManga;
+
+  const MangaImageCardListTileWidget({
+    required this.source,
+    super.key,
+    required this.itemType,
+    required this.getMangaDetail,
+    this.libraryManga,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final hasData = libraryManga != null;
+    final image = hasData && libraryManga!.customCoverImage != null
+        ? MemoryImage(libraryManga!.customCoverImage as Uint8List)
+              as ImageProvider
+        : CustomExtendedNetworkImageProvider(
+            toImgUrl(
+              hasData
+                  ? libraryManga!.customCoverFromTracker ??
+                        libraryManga!.imageUrl ??
+                        ""
+                  : getMangaDetail!.imageUrl ?? "",
+            ),
+            headers: ref.watch(
+              headersProvider(
+                source: source.name!,
+                lang: source.lang!,
+                sourceId: source.id,
+              ),
+            ),
+          );
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Material(
+        borderRadius: BorderRadius.circular(5),
+        color: Colors.transparent,
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
           onTap: () {
             pushToMangaReaderDetail(
               ref: ref,
@@ -115,18 +209,46 @@ class MangaImageCardWidget extends ConsumerWidget {
               sourceId: source.id,
             );
           },
-          children: [
-            Container(
-              color: hasData && mangaList.first.favorite!
-                  ? Colors.black.withValues(alpha: 0.5)
-                  : null,
-            ),
-            if (hasData && mangaList.first.favorite!)
-              Positioned(
-                top: 0,
-                left: 0,
-                child: Padding(
-                  padding: const EdgeInsets.all(4),
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Stack(
+                  children: [
+                    Material(
+                      borderRadius: BorderRadius.circular(5),
+                      color: Colors.transparent,
+                      clipBehavior: Clip.antiAlias,
+                      child: Image(
+                        height: 55,
+                        width: 40,
+                        fit: BoxFit.cover,
+                        image: image,
+                      ),
+                    ),
+                    Container(
+                      height: 55,
+                      width: 40,
+                      color: hasData && libraryManga!.favorite!
+                          ? Colors.black.withValues(alpha: 0.5)
+                          : null,
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  getMangaDetail!.name!,
+                  maxLines: 2,
+                  style: TextStyle(
+                    overflow: TextOverflow.ellipsis,
+                    color: context.textColor,
+                  ),
+                ),
+              ),
+              if (hasData && libraryManga!.favorite!)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Container(
                     decoration: BoxDecoration(
                       color: context.primaryColor,
@@ -142,174 +264,10 @@ class MangaImageCardWidget extends ConsumerWidget {
                     ),
                   ),
                 ),
-              ),
-            if (!isComfortableGrid)
-              BottomTextWidget(
-                isTorrent: source.isTorrent,
-                text: getMangaDetail!.name!,
-              ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-class MangaImageCardListTileWidget extends ConsumerWidget {
-  final Source source;
-  final ItemType itemType;
-  final MManga? getMangaDetail;
-
-  const MangaImageCardListTileWidget({
-    required this.source,
-    super.key,
-    required this.itemType,
-    required this.getMangaDetail,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return StreamBuilder(
-      stream: isar.mangas
-          .filter()
-          .langEqualTo(source.lang)
-          .nameEqualTo(getMangaDetail!.name)
-          .sourceEqualTo(source.name)
-          .watch(fireImmediately: true),
-      builder: (context, snapshot) {
-        bool hasData = snapshot.hasData;
-        final mangaList = hasData
-            ? snapshot.data!
-                  .where(
-                    (element) => element.sourceId == null
-                        ? true
-                        : element.sourceId == source.id,
-                  )
-                  .toList()
-            : [];
-        hasData = hasData && mangaList.isNotEmpty;
-        final image = hasData && mangaList.first.customCoverImage != null
-            ? MemoryImage(mangaList.first.customCoverImage as Uint8List)
-                  as ImageProvider
-            : CustomExtendedNetworkImageProvider(
-                toImgUrl(
-                  hasData
-                      ? mangaList.first.customCoverFromTracker ??
-                            mangaList.first.imageUrl ??
-                            ""
-                      : getMangaDetail!.imageUrl ?? "",
-                ),
-                headers: ref.watch(
-                  headersProvider(
-                    source: source.name!,
-                    lang: source.lang!,
-                    sourceId: source.id,
-                  ),
-                ),
-              );
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Material(
-            borderRadius: BorderRadius.circular(5),
-            color: Colors.transparent,
-            clipBehavior: Clip.antiAlias,
-            child: InkWell(
-              onTap: () {
-                pushToMangaReaderDetail(
-                  ref: ref,
-                  context: context,
-                  getManga: getMangaDetail!,
-                  lang: source.lang!,
-                  source: source.name!,
-                  itemType: itemType,
-                  sourceId: source.id,
-                );
-              },
-              onLongPress: () {
-                pushToMangaReaderDetail(
-                  ref: ref,
-                  context: context,
-                  getManga: getMangaDetail!,
-                  lang: source.lang!,
-                  source: source.name!,
-                  itemType: itemType,
-                  addToFavourite: true,
-                  sourceId: source.id,
-                );
-              },
-              onSecondaryTap: () {
-                pushToMangaReaderDetail(
-                  ref: ref,
-                  context: context,
-                  getManga: getMangaDetail!,
-                  lang: source.lang!,
-                  source: source.name!,
-                  itemType: itemType,
-                  addToFavourite: true,
-                  sourceId: source.id,
-                );
-              },
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Stack(
-                      children: [
-                        Material(
-                          borderRadius: BorderRadius.circular(5),
-                          color: Colors.transparent,
-                          clipBehavior: Clip.antiAlias,
-                          child: Image(
-                            height: 55,
-                            width: 40,
-                            fit: BoxFit.cover,
-                            image: image,
-                          ),
-                        ),
-                        Container(
-                          height: 55,
-                          width: 40,
-                          color: hasData && mangaList.first.favorite!
-                              ? Colors.black.withValues(alpha: 0.5)
-                              : null,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      getMangaDetail!.name!,
-                      maxLines: 2,
-                      style: TextStyle(
-                        overflow: TextOverflow.ellipsis,
-                        color: context.textColor,
-                      ),
-                    ),
-                  ),
-                  if (hasData && mangaList.first.favorite!)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: context.primaryColor,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(4),
-                          child: Icon(
-                            Icons.collections_bookmark_outlined,
-                            size: 16,
-                            color: context.dynamicWhiteBlackColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
