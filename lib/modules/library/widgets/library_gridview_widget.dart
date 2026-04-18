@@ -1,9 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/download.dart';
+import 'package:mangayomi/modules/library/providers/library_filter_provider.dart';
 import 'package:mangayomi/modules/library/providers/isar_providers.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -173,27 +171,24 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                       padding: const EdgeInsets.only(right: 5),
                                       child: Consumer(
                                         builder: (context, ref, child) {
-                                          List nbrDown = [];
+                                          int downloadCount = 0;
                                           if (widget.downloadedChapter) {
-                                            final chapterIds = entry.chapters
-                                                .toList()
-                                                .map((c) => c.id)
-                                                .whereType<int>()
-                                                .toList();
-                                            if (chapterIds.isNotEmpty) {
-                                              nbrDown = isar.downloads
-                                                  .filter()
-                                                  .anyOf(
-                                                    chapterIds,
-                                                    (q, id) => q.idEqualTo(id),
-                                                  )
-                                                  .isDownloadEqualTo(true)
-                                                  .findAllSync();
-                                            }
+                                            final downloadedIds = ref.watch(
+                                              downloadedChapterIdsProvider,
+                                            );
+                                            downloadCount = entry.chapters
+                                                .where(
+                                                  (c) =>
+                                                      c.id != null &&
+                                                      downloadedIds.contains(
+                                                        c.id,
+                                                      ),
+                                                )
+                                                .length;
                                           }
                                           return Row(
                                             children: [
-                                              if (nbrDown.isNotEmpty &&
+                                              if (downloadCount > 0 &&
                                                   widget.downloadedChapter)
                                                 Container(
                                                   decoration: BoxDecoration(
@@ -219,7 +214,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                                           right: 3,
                                                         ),
                                                     child: Text(
-                                                      nbrDown.length.toString(),
+                                                      downloadCount.toString(),
                                                     ),
                                                   ),
                                                 ),
@@ -229,10 +224,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                                 ),
                                                 child: Text(
                                                   entry.chapters
-                                                      .where(
-                                                        (element) =>
-                                                            !element.isRead!,
-                                                      )
+                                                      .where((e) => !e.isRead!)
                                                       .length
                                                       .toString(),
                                                   style: TextStyle(
