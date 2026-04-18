@@ -402,6 +402,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.1"
+  external_path:
+    dependency: "direct main"
+    description:
+      name: external_path
+      sha256: "68a18a2aa51ec012d7013ea2a80305dc5372f3577a2bbcc7dcc5550b25a5a73b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
   fading_edge_scrollview:
     dependency: transitive
     description:

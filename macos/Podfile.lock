@@ -13,6 +13,8 @@ PODS:
   - flutter_inappwebview_macos (0.0.1):
     - FlutterMacOS
     - OrderedSet (~> 6.0.3)
+  - flutter_local_notifications (0.0.1):
+    - FlutterMacOS
   - flutter_qjs (0.0.1):
     - FlutterMacOS
   - flutter_tts (0.0.1):
@@ -60,6 +62,7 @@ DEPENDENCIES:
   - file_picker (from `Flutter/ephemeral/.symlinks/plugins/file_picker/darwin`)
   - flutter_discord_rpc_fork (from `Flutter/ephemeral/.symlinks/plugins/flutter_discord_rpc_fork/macos`)
   - flutter_inappwebview_macos (from `Flutter/ephemeral/.symlinks/plugins/flutter_inappwebview_macos/macos`)
+  - flutter_local_notifications (from `Flutter/ephemeral/.symlinks/plugins/flutter_local_notifications/macos`)
   - flutter_qjs (from `Flutter/ephemeral/.symlinks/plugins/flutter_qjs/macos`)
   - flutter_tts (from `Flutter/ephemeral/.symlinks/plugins/flutter_tts/macos`)
   - flutter_web_auth_2 (from `Flutter/ephemeral/.symlinks/plugins/flutter_web_auth_2/macos`)
@@ -97,6 +100,8 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/flutter_discord_rpc_fork/macos
   flutter_inappwebview_macos:
     :path: Flutter/ephemeral/.symlinks/plugins/flutter_inappwebview_macos/macos
+  flutter_local_notifications:
+    :path: Flutter/ephemeral/.symlinks/plugins/flutter_local_notifications/macos
   flutter_qjs:
     :path: Flutter/ephemeral/.symlinks/plugins/flutter_qjs/macos
   flutter_tts:
@@ -143,6 +148,7 @@ SPEC CHECKSUMS:
   file_picker: 70164d9778c42c47218d6cd79ce435de0856b11a
   flutter_discord_rpc_fork: 9f54b8cb8643b2fb84c685509e2eca403e284652
   flutter_inappwebview_macos: e69b76dd5c46a6d9471f195f3d8d36f11b3ab7a4
+  flutter_local_notifications: 7e5a17a1dbc00d83dc10d43c2c4c05f2ceed233c
   flutter_qjs: cb2d0cba9deade1d03b89f6c432eac126f39482a
   flutter_tts: ae915565cc6948444b513acc8ee021993281e027
   flutter_web_auth_2: 62b08da29f15a20fa63f144234622a1488d45b65

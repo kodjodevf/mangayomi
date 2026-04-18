@@ -7,6 +7,7 @@ import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/utils/local_directory_access.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:path/path.dart' as p;
@@ -235,9 +236,9 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                     folders
                         .where(
                           (folder) => folder.name == downloadLocalFolderName,
-                    )
+                        )
                         .firstOrNull ??
-                        folders.firstOrNull;
+                    folders.firstOrNull;
                 return ListTile(
                   enabled: folders.isNotEmpty,
                   title: Text(context.l10n.default_download_destination),
@@ -253,16 +254,18 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                   onTap: folders.isEmpty
                       ? null
                       : () => _showDownloadFolderDialog(
-                    context,
-                    folders,
-                    selectedFolder?.name,
-                  ),
+                          context,
+                          folders,
+                          selectedFolder?.name,
+                        ),
                 );
               },
             ),
             ListTile(
               onTap: () async {
-                final result = await FilePicker.getDirectoryPath();
+                final result =
+                    await LocalDirectoryAccess.pickDirectory() ??
+                    await FilePicker.getDirectoryPath();
                 if (result != null) {
                   if (!context.mounted) return;
                   final name = await _showLocalFolderNameDialog(

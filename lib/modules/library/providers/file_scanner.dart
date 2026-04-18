@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'dart:io'; // For I/O-operations
-import 'dart:typed_data';
 import 'dart:ui' as ui;
+import 'package:external_path/external_path.dart';
+import 'package:flutter/foundation.dart';
 import 'package:isar_community/isar.dart'; // Isar database package for local storage
 import 'package:mangayomi/main.dart'; // Exposes the global `isar` instance
 import 'package:mangayomi/models/settings.dart';
@@ -9,6 +10,7 @@ import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
 import 'package:mangayomi/src/rust/api/epub.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
+import 'package:mangayomi/utils/local_directory_access.dart';
 import 'package:mangayomi/utils/localized_message.dart';
 import 'package:path/path.dart' as p; // For manipulating file system paths
 import 'package:bot_toast/bot_toast.dart'; // For Exceptions
@@ -97,11 +99,50 @@ Future<void> _scanDirectory(
   LocalFolder localFolder,
   List<LocalFolder> localFolders,
 ) async {
-  final dirPath = localFolder.path;
-  if (dirPath == null || dirPath.isEmpty) return;
-  final dir = Directory(dirPath);
+  final folderName = localFolder.name?.trim();
+  final dirPath = localFolder.path?.trim();
+  debugPrint(
+    '[LocalLibraryScanner] _scanDirectory start: '
+    'name=${folderName?.isNotEmpty == true ? folderName : '<empty>'}, '
+    'path=${dirPath?.isNotEmpty == true ? dirPath : '<empty>'}, '
+    'platform=${Platform.operatingSystem}, '
+    'platformVersion=${Platform.operatingSystemVersion}, '
+    'configuredFolders=${localFolders.length}',
+  );
+  debugPrint(
+    '[LocalLibraryScanner] configured local folders: '
+    '${localFolders.map(_debugLocalFolder).join(' | ')}',
+  );
+  if (dirPath == null || dirPath.isEmpty) {
+    debugPrint(
+      '[LocalLibraryScanner] _scanDirectory skipped: empty path for '
+      'folder=${folderName?.isNotEmpty == true ? folderName : '<empty>'}',
+    );
+    return;
+  }
+
+  final resolvedDirectory = await _resolveLocalDirectoryPath(
+    dirPath,
+    logContext: '_scanDirectory',
+  );
+  final resolvedDirPath = resolvedDirectory.path;
+  final dir = Directory(resolvedDirPath);
+  if (resolvedDirPath != dirPath) {
+    debugPrint(
+      '[LocalLibraryScanner] _scanDirectory using resolved path: '
+      'original=$dirPath, resolved=$resolvedDirPath',
+    );
+  }
+  localFolder = LocalFolder(name: localFolder.name, path: resolvedDirPath);
+  localFolders = _replaceLocalFolder(localFolders, dirPath, localFolder);
   // Don't do anything if /local doesn't exist
-  if (!await dir.exists()) return;
+  if (!resolvedDirectory.probe.exists) {
+    debugPrint(
+      '[LocalLibraryScanner] _scanDirectory skipped: directory does not exist '
+      'or is not accessible: $dirPath',
+    );
+    return;
+  }
 
   final dateNow = DateTime.now().millisecondsSinceEpoch;
 
@@ -163,16 +204,39 @@ Future<void> _scanDirectory(
     }
   }
 
+  final titleEntities = await _listLocalDirectory(
+    dir,
+    logContext: '_scanDirectory root',
+  );
+  final titleFolders = await _localDirectories(
+    titleEntities,
+    logContext: '_scanDirectory root',
+  );
+  debugPrint(
+    '[LocalLibraryScanner] _scanDirectory root entries: '
+    'path=$resolvedDirPath, total=${titleEntities.length}, '
+    'folders=${titleFolders.length}, '
+    'preview=${_debugEntityPreview(titleEntities)}',
+  );
+
   // Iterate over each sub-directory (each representing a title, Manga or Anime)
-  await for (final folder in dir.list()) {
-    if (folder is! Directory) continue;
+  for (final folder in titleFolders) {
     final title = p.basename(folder.path); // Anime/Manga title
     String relativePath = getLocalVirtualPath(localFolder, folder.path);
 
     // List all folders and files inside a Manga/Anime title
-    final children = await folder.list().toList();
-    final subDirs = children.whereType<Directory>().toList();
-    final files = children.whereType<File>().toList();
+    final children = await _listLocalDirectory(
+      folder,
+      logContext: '_scanDirectory title',
+    );
+    final subDirs = await _localDirectories(
+      children,
+      logContext: '_scanDirectory title=$title',
+    );
+    final files = await _localFiles(
+      children,
+      logContext: '_scanDirectory title=$title',
+    );
 
     // Determine itemtype. Only directories with image files are manga chapters;
     // subtitle/temp folders must not make anime entries look like manga.
@@ -187,6 +251,14 @@ Future<void> _scanDirectory(
     final hasArchives = files.any((f) => _isArchive(f.path));
     final hasVideos = files.any((f) => _isVideo(f.path));
     final hasEpubs = files.any((f) => _isEpub(f.path));
+    debugPrint(
+      '[LocalLibraryScanner] _scanDirectory title scan: '
+      'title=$title, relativePath=$relativePath, children=${children.length}, '
+      'folders=${subDirs.length}, files=${files.length}, '
+      'imageFolders=${imageChapterDirs.length}, archives=$hasArchives, '
+      'videos=$hasVideos, epubs=$hasEpubs, '
+      'preview=${_debugEntityPreview(children)}',
+    );
     late ItemType itemType;
     if (hasImagesFolders || hasArchives) {
       itemType = ItemType.manga;
@@ -195,6 +267,10 @@ Future<void> _scanDirectory(
     } else if (hasEpubs) {
       itemType = ItemType.novel;
     } else {
+      debugPrint(
+        '[LocalLibraryScanner] _scanDirectory title skipped: '
+        'no supported local content found for $title',
+      );
       continue; // nothing to import from this folder
     }
     // Does Manga/Anime already exist in library?
@@ -308,6 +384,12 @@ Future<void> _scanDirectory(
       addNewChapters(epubs, false);
     }
   }
+
+  debugPrint(
+    '[LocalLibraryScanner] _scanDirectory scan summary: '
+    'folder=$resolvedDirPath, processedMangas=${processedMangas.length}, '
+    'newMangas=$newMangas, newChapters=${newChapters.length}',
+  );
 
   final changedMangas = <Manga>[];
   for (var manga in processedMangas) {
@@ -522,15 +604,22 @@ Future<Uint8List?> _readMangaFolderCover(
 
 Future<File?> _firstImageFileInDirectory(Directory dir) async {
   try {
+    final entities = await _listLocalDirectory(
+      dir,
+      logContext: '_firstImageFileInDirectory',
+    );
     final imageFiles =
-        await dir
-              .list()
-              .where((entity) => entity is File && _isImage(entity.path))
-              .cast<File>()
-              .toList()
+        (await _localFiles(
+            entities,
+            logContext: '_firstImageFileInDirectory',
+          )).where((file) => _isImage(file.path)).toList()
           ..sort((a, b) => a.path.compareTo(b.path));
     return imageFiles.firstOrNull;
-  } catch (_) {
+  } catch (e) {
+    debugPrint(
+      '[LocalLibraryScanner] _firstImageFileInDirectory failed: '
+      'path=${dir.path}, error=$e',
+    );
     return null;
   }
 }
@@ -696,7 +785,11 @@ Future<String> resolveLocalArchivePath(String archivePath) async {
     orElse: () => LocalFolder(),
   );
   if (folder.path == null || folder.path!.isEmpty) return archivePath;
-  return p.joinAll([folder.path!, ...parts.skip(1)]);
+  final resolvedFolder = await _resolveLocalDirectoryPath(
+    folder.path!,
+    logContext: 'resolveLocalArchivePath',
+  );
+  return p.joinAll([resolvedFolder.path, ...parts.skip(1)]);
 }
 
 List<LocalFolder> _normalizeLocalFolders(List<LocalFolder> folders) {
@@ -733,6 +826,405 @@ String? _resolveDownloadFolderName(String? name, List<LocalFolder> folders) {
     return name;
   }
   return folders.firstOrNull?.name;
+}
+
+Future<List<FileSystemEntity>> _listLocalDirectory(
+  Directory directory, {
+  required String logContext,
+}) async {
+  if (Platform.isIOS) {
+    try {
+      final entries = await LocalDirectoryAccess.listDirectory(directory.path);
+      if (entries != null) {
+        debugPrint(
+          '[LocalLibraryScanner] $logContext native iOS list: '
+          'path=${directory.path}, entries=${entries.length}, '
+          'preview=${entries.take(8).map((e) => '${e.type}:${p.basename(e.path)}').join(', ')}',
+        );
+        return entries.map((entry) {
+          if (entry.isDirectory) return Directory(entry.path);
+          if (entry.isFile) return File(entry.path);
+          return FileSystemEntity.typeSync(entry.path) ==
+                  FileSystemEntityType.directory
+              ? Directory(entry.path)
+              : File(entry.path);
+        }).toList();
+      }
+    } catch (e, stackTrace) {
+      debugPrint(
+        '[LocalLibraryScanner] $logContext native iOS list failed: '
+        'path=${directory.path}, error=$e\n$stackTrace',
+      );
+    }
+  }
+
+  try {
+    return await directory.list(followLinks: true).toList();
+  } catch (e, stackTrace) {
+    debugPrint(
+      '[LocalLibraryScanner] $logContext list failed: '
+      'path=${directory.path}, error=$e\n$stackTrace',
+    );
+    return [];
+  }
+}
+
+Future<List<Directory>> _localDirectories(
+  List<FileSystemEntity> entities, {
+  required String logContext,
+}) async {
+  final dirs = <Directory>[];
+  for (final entity in entities) {
+    if (entity is Directory ||
+        await _localEntityType(entity, logContext: logContext) ==
+            FileSystemEntityType.directory) {
+      dirs.add(entity is Directory ? entity : Directory(entity.path));
+    }
+  }
+  return dirs;
+}
+
+Future<List<File>> _localFiles(
+  List<FileSystemEntity> entities, {
+  required String logContext,
+}) async {
+  final files = <File>[];
+  for (final entity in entities) {
+    if (entity is File ||
+        await _localEntityType(entity, logContext: logContext) ==
+            FileSystemEntityType.file) {
+      files.add(entity is File ? entity : File(entity.path));
+    }
+  }
+  return files;
+}
+
+Future<FileSystemEntityType> _localEntityType(
+  FileSystemEntity entity, {
+  required String logContext,
+}) async {
+  try {
+    return await FileSystemEntity.type(entity.path, followLinks: true);
+  } catch (e) {
+    debugPrint(
+      '[LocalLibraryScanner] $logContext entity type failed: '
+      'path=${entity.path}, runtimeType=${entity.runtimeType}, error=$e',
+    );
+    return FileSystemEntityType.notFound;
+  }
+}
+
+String _debugEntityPreview(List<FileSystemEntity> entities) {
+  if (entities.isEmpty) return '<empty>';
+  return entities
+      .take(8)
+      .map((entity) => '${entity.runtimeType}:${p.basename(entity.path)}')
+      .join(', ');
+}
+
+List<LocalFolder> _replaceLocalFolder(
+  List<LocalFolder> folders,
+  String originalPath,
+  LocalFolder replacement,
+) {
+  var replaced = false;
+  final updated = folders.map((folder) {
+    if (!replaced &&
+        folder.name == replacement.name &&
+        folder.path?.trim() == originalPath) {
+      replaced = true;
+      return replacement;
+    }
+    return folder;
+  }).toList();
+  return replaced ? updated : [replacement, ...updated];
+}
+
+Future<_ResolvedLocalDirectory> _resolveLocalDirectoryPath(
+  String dirPath, {
+  required String logContext,
+}) async {
+  var probe = await _probeLocalDirectory(dirPath);
+  _logDirectoryProbe(logContext, 'initial', probe);
+  if (probe.exists) {
+    return _ResolvedLocalDirectory(path: dirPath, probe: probe);
+  }
+
+  if (Platform.isAndroid) {
+    final permissionGranted = await StorageProvider().requestPermission();
+    debugPrint(
+      '[LocalLibraryScanner] $logContext Android storage permission retry: '
+      'granted=$permissionGranted, path=$dirPath',
+    );
+    if (permissionGranted) {
+      probe = await _probeLocalDirectory(dirPath);
+      _logDirectoryProbe(logContext, 'after-permission', probe);
+      if (probe.exists) {
+        return _ResolvedLocalDirectory(path: dirPath, probe: probe);
+      }
+    }
+  }
+
+  final directCandidates = _directAndroidDirectoryCandidates(dirPath);
+  debugPrint(
+    '[LocalLibraryScanner] $logContext direct Android candidates: '
+    '${directCandidates.isEmpty ? '<none>' : directCandidates.join(' | ')}',
+  );
+  for (final candidate in directCandidates) {
+    final candidateProbe = await _probeLocalDirectory(candidate);
+    _logDirectoryProbe(logContext, 'direct-android-candidate', candidateProbe);
+    if (candidateProbe.exists) {
+      return _ResolvedLocalDirectory(path: candidate, probe: candidateProbe);
+    }
+  }
+
+  final externalPathCandidates = await _safeExternalPathDirectoryCandidates(
+    dirPath,
+    logContext: logContext,
+  );
+  for (final candidate in externalPathCandidates) {
+    final candidateProbe = await _probeLocalDirectory(candidate);
+    _logDirectoryProbe(logContext, 'external_path-candidate', candidateProbe);
+    if (candidateProbe.exists) {
+      return _ResolvedLocalDirectory(path: candidate, probe: candidateProbe);
+    }
+  }
+
+  return _ResolvedLocalDirectory(path: dirPath, probe: probe);
+}
+
+Future<_DirectoryProbe> _probeLocalDirectory(String dirPath) async {
+  final dir = Directory(dirPath);
+  final parent = dir.parent;
+  bool dirExists = false;
+  bool parentExists = false;
+  FileStat? dirStat;
+  Object? dirExistsError;
+  Object? parentExistsError;
+  Object? dirStatError;
+  try {
+    dirExists = await dir.exists();
+  } catch (e) {
+    dirExistsError = e;
+  }
+  try {
+    parentExists = await parent.exists();
+  } catch (e) {
+    parentExistsError = e;
+  }
+  try {
+    dirStat = await dir.stat();
+  } catch (e) {
+    dirStatError = e;
+  }
+  return _DirectoryProbe(
+    path: dirPath,
+    absolutePath: dir.absolute.path,
+    normalizedPath: _normalizePath(dirPath),
+    parentPath: parent.path,
+    exists: dirExists,
+    parentExists: parentExists,
+    stat: dirStat,
+    existsError: dirExistsError,
+    parentExistsError: parentExistsError,
+    statError: dirStatError,
+  );
+}
+
+void _logDirectoryProbe(
+  String logContext,
+  String stage,
+  _DirectoryProbe probe,
+) {
+  debugPrint(
+    '[LocalLibraryScanner] $logContext directory probe [$stage]: '
+    'path=${probe.path}, '
+    'absolutePath=${probe.absolutePath}, '
+    'normalizedPath=${probe.normalizedPath}, '
+    'parent=${probe.parentPath}, '
+    'exists=${probe.exists}, '
+    'parentExists=${probe.parentExists}, '
+    'statType=${probe.stat?.type}, '
+    'statMode=${probe.stat?.modeString()}, '
+    'modified=${probe.stat?.modified.toIso8601String()}',
+  );
+  if (probe.existsError != null ||
+      probe.parentExistsError != null ||
+      probe.statError != null) {
+    debugPrint(
+      '[LocalLibraryScanner] $logContext directory probe errors [$stage]: '
+      'existsError=${probe.existsError}, '
+      'parentExistsError=${probe.parentExistsError}, '
+      'statError=${probe.statError}',
+    );
+  }
+}
+
+Future<List<String>> _externalPathDirectoryCandidates(String dirPath) async {
+  if (!Platform.isAndroid && !Platform.isIOS) return [];
+  final roots = await _externalPathRoots();
+  final normalizedOriginal = _normalizePath(dirPath);
+  final suffixes = _externalPathSuffixes(dirPath);
+  final candidates = <String>{};
+  for (final root in roots) {
+    final normalizedRoot = _normalizePath(root);
+    if (normalizedOriginal == normalizedRoot) {
+      candidates.add(root);
+    }
+    for (final suffix in suffixes) {
+      candidates.add(p.join(root, suffix));
+    }
+  }
+  return candidates
+      .where((candidate) => _normalizePath(candidate) != normalizedOriginal)
+      .toList();
+}
+
+Future<List<String>> _safeExternalPathDirectoryCandidates(
+  String dirPath, {
+  required String logContext,
+}) async {
+  try {
+    final candidates = await _externalPathDirectoryCandidates(dirPath);
+    debugPrint(
+      '[LocalLibraryScanner] $logContext external_path candidates: '
+      '${candidates.isEmpty ? '<none>' : candidates.join(' | ')}',
+    );
+    return candidates;
+  } catch (e, stackTrace) {
+    debugPrint(
+      '[LocalLibraryScanner] $logContext external_path candidates failed: $e\n'
+      '$stackTrace',
+    );
+    return [];
+  }
+}
+
+List<String> _directAndroidDirectoryCandidates(String dirPath) {
+  if (!Platform.isAndroid) return [];
+  final normalizedOriginal = _normalizePath(dirPath);
+  final parts = normalizedOriginal
+      .split('/')
+      .where((part) => part.isNotEmpty)
+      .toList();
+  if (parts.length < 3 || parts.first != 'storage') return [];
+
+  final volume = parts[1];
+  if (volume == 'emulated' || volume == 'self') return [];
+
+  final suffix = p.joinAll(parts.skip(2));
+  return [
+        p.join('/mnt/media_rw', volume, suffix),
+        p.join('/mnt/runtime/default', volume, suffix),
+        p.join('/mnt/runtime/read', volume, suffix),
+        p.join('/mnt/runtime/write', volume, suffix),
+      ]
+      .where((candidate) => _normalizePath(candidate) != normalizedOriginal)
+      .toList();
+}
+
+Future<List<String>> _externalPathRoots() async {
+  final roots = <String>{};
+  try {
+    roots.addAll(
+      (await ExternalPath.getExternalStorageDirectories() ?? [])
+          .map((path) => path.trim())
+          .where((path) => path.isNotEmpty),
+    );
+  } catch (e) {
+    debugPrint(
+      '[LocalLibraryScanner] external_path getExternalStorageDirectories '
+      'failed: $e',
+    );
+  }
+
+  for (final type in _externalPathPublicDirectoryTypes()) {
+    try {
+      final path = await ExternalPath.getExternalStoragePublicDirectory(type);
+      if (path.trim().isNotEmpty) roots.add(path.trim());
+    } catch (e) {
+      debugPrint(
+        '[LocalLibraryScanner] external_path public directory failed: '
+        'type=$type, error=$e',
+      );
+    }
+  }
+  debugPrint(
+    '[LocalLibraryScanner] external_path roots: '
+    '${roots.isEmpty ? '<none>' : roots.join(' | ')}',
+  );
+  return roots.toList();
+}
+
+List<String> _externalPathSuffixes(String dirPath) {
+  final parts = _normalizePath(
+    dirPath,
+  ).split('/').where((part) => part.isNotEmpty).toList();
+  final suffixes = <String>{};
+  if (parts.length > 2 && parts[0] == 'storage') {
+    suffixes.add(p.joinAll(parts.skip(2)));
+  }
+  if (parts.length > 3 && parts[0] == 'mnt' && parts[1] == 'media_rw') {
+    suffixes.add(p.joinAll(parts.skip(3)));
+  }
+  if (parts.isNotEmpty) suffixes.add(parts.last);
+  return suffixes.where((suffix) => suffix.trim().isNotEmpty).toList();
+}
+
+String _debugLocalFolder(LocalFolder folder) {
+  final name = folder.name?.trim();
+  final path = folder.path?.trim();
+  return 'name=${name?.isNotEmpty == true ? name : '<empty>'}, '
+      'path=${path?.isNotEmpty == true ? path : '<empty>'}';
+}
+
+List<String> _externalPathPublicDirectoryTypes() {
+  if (Platform.isAndroid) {
+    return [ExternalPath.DIRECTORY_DOCUMENTS, ExternalPath.DIRECTORY_DOWNLOAD];
+  }
+  if (Platform.isIOS) {
+    return [
+      ExternalPath.DIRECTORY_DOCUMENTS,
+      ExternalPath.DIRECTORY_DOWNLOAD,
+      ExternalPath.DIRECTORY_CACHES,
+      ExternalPath.DIRECTORY_LIBRARY,
+      ExternalPath.DIRECTORY_APPLICATION_SUPPORT,
+    ];
+  }
+  return [];
+}
+
+class _ResolvedLocalDirectory {
+  final String path;
+  final _DirectoryProbe probe;
+
+  const _ResolvedLocalDirectory({required this.path, required this.probe});
+}
+
+class _DirectoryProbe {
+  final String path;
+  final String absolutePath;
+  final String normalizedPath;
+  final String parentPath;
+  final bool exists;
+  final bool parentExists;
+  final FileStat? stat;
+  final Object? existsError;
+  final Object? parentExistsError;
+  final Object? statError;
+
+  const _DirectoryProbe({
+    required this.path,
+    required this.absolutePath,
+    required this.normalizedPath,
+    required this.parentPath,
+    required this.exists,
+    required this.parentExists,
+    required this.stat,
+    required this.existsError,
+    required this.parentExistsError,
+    required this.statError,
+  });
 }
 
 String _normalizePath(String path) {
