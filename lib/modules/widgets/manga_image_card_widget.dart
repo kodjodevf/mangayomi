@@ -174,41 +174,35 @@ class MangaImageCardListTileWidget extends ConsumerWidget {
         color: Colors.transparent,
         clipBehavior: Clip.antiAlias,
         child: InkWell(
-          onTap: () {
-            pushToMangaReaderDetail(
-              ref: ref,
-              context: context,
-              getManga: getMangaDetail!,
-              lang: source.lang!,
-              source: source.name!,
-              itemType: itemType,
-              sourceId: source.id,
-            );
-          },
-          onLongPress: () {
-            pushToMangaReaderDetail(
-              ref: ref,
-              context: context,
-              getManga: getMangaDetail!,
-              lang: source.lang!,
-              source: source.name!,
-              itemType: itemType,
-              addToFavourite: true,
-              sourceId: source.id,
-            );
-          },
-          onSecondaryTap: () {
-            pushToMangaReaderDetail(
-              ref: ref,
-              context: context,
-              getManga: getMangaDetail!,
-              lang: source.lang!,
-              source: source.name!,
-              itemType: itemType,
-              addToFavourite: true,
-              sourceId: source.id,
-            );
-          },
+          onTap: () => pushToMangaReaderDetail(
+            ref: ref,
+            context: context,
+            getManga: getMangaDetail!,
+            lang: source.lang!,
+            source: source.name!,
+            itemType: itemType,
+            sourceId: source.id,
+          ),
+          onLongPress: () => pushToMangaReaderDetail(
+            ref: ref,
+            context: context,
+            getManga: getMangaDetail!,
+            lang: source.lang!,
+            source: source.name!,
+            itemType: itemType,
+            addToFavourite: true,
+            sourceId: source.id,
+          ),
+          onSecondaryTap: () => pushToMangaReaderDetail(
+            ref: ref,
+            context: context,
+            getManga: getMangaDetail!,
+            lang: source.lang!,
+            source: source.name!,
+            itemType: itemType,
+            addToFavourite: true,
+            sourceId: source.id,
+          ),
           child: Row(
             children: [
               Padding(
@@ -285,14 +279,14 @@ Future<void> pushToMangaReaderDetail({
   bool useMaterialRoute = false,
   bool addToFavourite = false,
 }) async {
-  int? mangaId;
-  mangaId = isar.mangas
-      .filter()
-      .isLocalArchiveEqualTo(true)
-      .sourceEqualTo("local")
-      .nameEqualTo(getManga?.name)
-      .findFirstSync()
-      ?.id;
+  int? mangaId =
+      (await isar.mangas
+              .filter()
+              .isLocalArchiveEqualTo(true)
+              .sourceEqualTo("local")
+              .nameEqualTo(getManga?.name)
+              .findFirst())
+          ?.id;
 
   if (mangaId == null) {
     if (archiveId == null) {
@@ -313,85 +307,65 @@ Future<void> pushToMangaReaderDetail({
             artist: getManga.artist ?? '',
             sourceId: sourceId,
           );
-      final empty = isar.mangas
+      final empty = await isar.mangas
           .filter()
           .langEqualTo(lang)
           .nameEqualTo(manga.name)
           .sourceEqualTo(manga.source)
-          .isEmptySync();
+          .isEmpty();
       if (empty) {
         await isar.writeTxn(() async {
           await isar.mangas.put(
             manga..updatedAt = DateTime.now().millisecondsSinceEpoch,
           );
         });
-      } else {
-        await isar.writeTxn(() async {
-          await isar.mangas.put(manga);
-        });
       }
 
-      mangaId = isar.mangas
+      final foundMangas = await isar.mangas
           .filter()
           .langEqualTo(lang)
           .nameEqualTo(manga.name)
           .sourceEqualTo(manga.source)
-          .findAllSync()
-          .firstWhere(
-            (element) =>
-                element.sourceId == null ? true : element.sourceId == sourceId,
-          )
+          .findAll();
+      mangaId = foundMangas
+          .firstWhere((e) => e.sourceId == null || e.sourceId == sourceId)
           .id!;
     } else {
       mangaId = archiveId;
     }
   }
 
-  final mang = isar.mangas.getSync(mangaId);
+  final mang = await isar.mangas.get(mangaId);
   if (mang!.sourceId == null && !(mang.isLocalArchive ?? false)) {
     await isar.writeTxn(() async {
       await isar.mangas.put(mang..sourceId = sourceId);
     });
   }
-  final settings = isar.settings.getSync(227)!;
-  final sortList = settings.sortChapterList ?? [];
-  final checkIfExist = sortList
-      .where((element) => element.mangaId == mangaId)
-      .toList();
-  if (checkIfExist.isEmpty) {
+  final settings = await isar.settings.get(227);
+  final exists =
+      settings!.sortChapterList?.any((e) => e.mangaId == mangaId) ?? false;
+  if (!exists) {
     await isar.writeTxn(() async {
-      List<SortChapter>? sortChapterList = [];
-      for (var sortChapter in settings.sortChapterList ?? []) {
-        sortChapterList.add(sortChapter);
-      }
-      List<ChapterFilterBookmarked>? chapterFilterBookmarkedList = [];
-      for (var sortChapter in settings.chapterFilterBookmarkedList ?? []) {
-        chapterFilterBookmarkedList.add(sortChapter);
-      }
-      List<ChapterFilterDownloaded>? chapterFilterDownloadedList = [];
-      for (var sortChapter in settings.chapterFilterDownloadedList ?? []) {
-        chapterFilterDownloadedList.add(sortChapter);
-      }
-      List<ChapterFilterUnread>? chapterFilterUnreadList = [];
-      for (var sortChapter in settings.chapterFilterUnreadList ?? []) {
-        chapterFilterUnreadList.add(sortChapter);
-      }
-      sortChapterList.add(SortChapter()..mangaId = mangaId);
-      chapterFilterBookmarkedList.add(
-        ChapterFilterBookmarked()..mangaId = mangaId,
-      );
-      chapterFilterDownloadedList.add(
-        ChapterFilterDownloaded()..mangaId = mangaId,
-      );
-      chapterFilterUnreadList.add(ChapterFilterUnread()..mangaId = mangaId);
-      await isar.settings.put(
-        settings
-          ..sortChapterList = sortChapterList
-          ..chapterFilterBookmarkedList = chapterFilterBookmarkedList
-          ..chapterFilterDownloadedList = chapterFilterDownloadedList
-          ..chapterFilterUnreadList = chapterFilterUnreadList
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      );
+      settings
+        ..sortChapterList = [
+          ...(settings.sortChapterList ?? []),
+          SortChapter()..mangaId = mangaId,
+        ]
+        ..chapterFilterBookmarkedList = [
+          ...(settings.chapterFilterBookmarkedList ?? []),
+          ChapterFilterBookmarked()..mangaId = mangaId,
+        ]
+        ..chapterFilterDownloadedList = [
+          ...(settings.chapterFilterDownloadedList ?? []),
+          ChapterFilterDownloaded()..mangaId = mangaId,
+        ]
+        ..chapterFilterUnreadList = [
+          ...(settings.chapterFilterUnreadList ?? []),
+          ChapterFilterUnread()..mangaId = mangaId,
+        ]
+        ..updatedAt = DateTime.now().millisecondsSinceEpoch;
+
+      await isar.settings.put(settings);
     });
   }
   if (!addToFavourite) {
@@ -404,15 +378,15 @@ Future<void> pushToMangaReaderDetail({
       } else {
         await context.push('/manga-reader/detail', extra: mangaId);
       }
-    } else {
-      final getManga = isar.mangas.filter().idEqualTo(mangaId).findFirstSync()!;
-      await isar.writeTxn(() async {
-        await isar.mangas.put(
-          getManga
-            ..favorite = !getManga.favorite!
-            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-        );
-      });
     }
+  } else {
+    final getManga = await isar.mangas.get(mangaId);
+    await isar.writeTxn(() async {
+      await isar.mangas.put(
+        getManga!
+          ..favorite = !getManga.favorite!
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      );
+    });
   }
 }
