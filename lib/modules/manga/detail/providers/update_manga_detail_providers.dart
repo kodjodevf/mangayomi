@@ -159,12 +159,3 @@ Future<dynamic> updateMangaDetail(
     return;
   }
 }
-
-extension DefaultValueExtension on String? {
-  String? trimmedOrDefault(String? defaultValue) {
-    if (this?.trim().isNotEmpty ?? false) {
-      return this!.trim();
-    }
-    return defaultValue;
-  }
-}
