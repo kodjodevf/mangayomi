@@ -132,12 +132,18 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
         .listen((mangas) {
           if (mounted) {
             setState(() {
-              _libraryIndex = {
-                for (final m in mangas.where(
-                  (e) => e.sourceId == null || e.sourceId == source.id,
-                ))
-                  if (m.name != null) m.name!: m,
-              };
+              _libraryIndex = {};
+              for (final m in mangas.where(
+                (e) => e.sourceId == null || e.sourceId == source.id,
+              )) {
+                if (m.name == null) continue;
+                final existing = _libraryIndex[m.name!];
+                // Prefer the record with the lower id (first inserted = real entry).
+                // Guards against pre-existing duplicate records in the DB.
+                if (existing == null || m.id! < existing.id!) {
+                  _libraryIndex[m.name!] = m;
+                }
+              }
             });
           }
         });
