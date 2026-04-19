@@ -4,7 +4,7 @@ import "BackupEpisode.proto";
 import "BackupHistory.proto";
 
 message BackupAnime {
-    int32 source = 1;
+    int64 source = 1;
     string url = 2;
     string title = 3;
     optional string artist = 4;
@@ -13,10 +13,22 @@ message BackupAnime {
     repeated string genre = 7;
     int32 status = 8;
     optional string thumbnailUrl = 9;
-    int32 dateAdded = 13;
+    int64 dateAdded = 13;
     repeated BackupEpisode episodes = 16;
-    repeated int32 categories = 17;
+    repeated int64 categories = 17;
+    bool favorite = 100;
+    int32 episodeFlags = 101;
     optional int32 viewer_flags = 103;
     repeated BackupHistory history = 104;
-    optional int32 lastModifiedAt = 106;
+    int32 updateStrategy = 105;
+    int64 lastModifiedAt = 106;
+    optional int64 favoriteModifiedAt = 107;
+    int64 version = 109;
+    optional string backgroundUrl = 500;
+    optional int64 parentId = 502;
+    optional int64 id = 503;
+    int64 seasonFlags = 504;
+    double seasonNumber = 505;
+    int64 seasonSourceOrder = 506;
+    int32 fetchType = 507;
 }

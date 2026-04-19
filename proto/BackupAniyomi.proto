@@ -8,8 +8,17 @@ import "BackupSource.proto";
 message BackupAniyomi {
     repeated BackupManga backupManga = 1;
     repeated BackupCategory backupCategories = 2;
-    repeated BackupAnime backupAnime = 3;
-    repeated BackupCategory backupAnimeCategories = 4;
+
+    // Legacy Aniyomi backups stored anime fields alongside the Mihon fields.
+    repeated BackupAnime legacyBackupAnime = 3;
+    repeated BackupCategory legacyBackupAnimeCategories = 4;
+
     repeated BackupSource backupSources = 101;
-    repeated BackupSource backupAnimeSources = 103;
+    repeated BackupSource legacyBackupAnimeSources = 103;
+
+    // New Aniyomi backups moved Aniyomi-only fields to a separate range.
+    bool isLegacy = 500;
+    repeated BackupAnime backupAnime = 501;
+    repeated BackupCategory backupAnimeCategories = 502;
+    repeated BackupSource backupAnimeSources = 503;
 }

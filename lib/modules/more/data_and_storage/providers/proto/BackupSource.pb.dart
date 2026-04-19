@@ -1,63 +1,62 @@
+// This is a generated file - do not edit.
 //
-//  Generated code. Do not modify.
-//  source: BackupSource.proto
-//
-// @dart = 2.12
+// Generated from BackupSource.proto.
+
+// @dart = 3.3
 
 // ignore_for_file: annotate_overrides, camel_case_types, comment_references
-// ignore_for_file: constant_identifier_names, library_prefixes
-// ignore_for_file: non_constant_identifier_names, prefer_final_fields
-// ignore_for_file: unnecessary_import, unnecessary_this, unused_import
+// ignore_for_file: constant_identifier_names
+// ignore_for_file: curly_braces_in_flow_control_structures
+// ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
+// ignore_for_file: non_constant_identifier_names
 
 import 'dart:core' as $core;
 
+import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
+
+export 'package:protobuf/protobuf.dart' show GeneratedMessageGenericExtensions;
 
 class BackupSource extends $pb.GeneratedMessage {
   factory BackupSource({
     $core.String? name,
-    $core.int? sourceId,
+    $fixnum.Int64? sourceId,
   }) {
-    final $result = create();
-    if (name != null) {
-      $result.name = name;
-    }
-    if (sourceId != null) {
-      $result.sourceId = sourceId;
-    }
-    return $result;
+    final result = create();
+    if (name != null) result.name = name;
+    if (sourceId != null) result.sourceId = sourceId;
+    return result;
   }
-  BackupSource._() : super();
-  factory BackupSource.fromBuffer($core.List<$core.int> i,
-          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromBuffer(i, r);
-  factory BackupSource.fromJson($core.String i,
-          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
-      create()..mergeFromJson(i, r);
+
+  BackupSource._();
+
+  factory BackupSource.fromBuffer($core.List<$core.int> data,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromBuffer(data, registry);
+  factory BackupSource.fromJson($core.String json,
+          [$pb.ExtensionRegistry registry = $pb.ExtensionRegistry.EMPTY]) =>
+      create()..mergeFromJson(json, registry);
 
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(
       _omitMessageNames ? '' : 'BackupSource',
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'name')
-    ..a<$core.int>(2, _omitFieldNames ? '' : 'sourceId', $pb.PbFieldType.O3,
-        protoName: 'sourceId')
+    ..aInt64(2, _omitFieldNames ? '' : 'sourceId', protoName: 'sourceId')
     ..hasRequiredFields = false;
 
-  @$core.Deprecated('Using this can add significant overhead to your binary. '
-      'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
-      'Will be removed in next major version')
-  BackupSource clone() => BackupSource()..mergeFromMessage(this);
-  @$core.Deprecated('Using this can add significant overhead to your binary. '
-      'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
-      'Will be removed in next major version')
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
+  BackupSource clone() => deepCopy();
+  @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
   BackupSource copyWith(void Function(BackupSource) updates) =>
       super.copyWith((message) => updates(message as BackupSource))
           as BackupSource;
 
+  @$core.override
   $pb.BuilderInfo get info_ => _i;
 
   @$core.pragma('dart2js:noInline')
   static BackupSource create() => BackupSource._();
+  @$core.override
   BackupSource createEmptyInstance() => create();
   static $pb.PbList<BackupSource> createRepeated() =>
       $pb.PbList<BackupSource>();
@@ -69,28 +68,23 @@ class BackupSource extends $pb.GeneratedMessage {
   @$pb.TagNumber(1)
   $core.String get name => $_getSZ(0);
   @$pb.TagNumber(1)
-  set name($core.String v) {
-    $_setString(0, v);
-  }
-
+  set name($core.String value) => $_setString(0, value);
   @$pb.TagNumber(1)
   $core.bool hasName() => $_has(0);
   @$pb.TagNumber(1)
-  void clearName() => clearField(1);
+  void clearName() => $_clearField(1);
 
   @$pb.TagNumber(2)
-  $core.int get sourceId => $_getIZ(1);
+  $fixnum.Int64 get sourceId => $_getI64(1);
   @$pb.TagNumber(2)
-  set sourceId($core.int v) {
-    $_setSignedInt32(1, v);
-  }
-
+  set sourceId($fixnum.Int64 value) => $_setInt64(1, value);
   @$pb.TagNumber(2)
   $core.bool hasSourceId() => $_has(1);
   @$pb.TagNumber(2)
-  void clearSourceId() => clearField(2);
+  void clearSourceId() => $_clearField(2);
 }
 
-const _omitFieldNames = $core.bool.fromEnvironment('protobuf.omit_field_names');
-const _omitMessageNames =
+const $core.bool _omitFieldNames =
+    $core.bool.fromEnvironment('protobuf.omit_field_names');
+const $core.bool _omitMessageNames =
     $core.bool.fromEnvironment('protobuf.omit_message_names');
