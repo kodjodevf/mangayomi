@@ -142,6 +142,7 @@ class ChapterTransitionPage extends StatelessWidget {
 
   Widget _buildHorizontalLayout(BuildContext context) {
     final l10n = context.l10n;
+    final theme = Theme.of(context);
 
     // For LTR: [current] → [next]
     // For RTL: [next] ← [current]
@@ -150,7 +151,6 @@ class ChapterTransitionPage extends StatelessWidget {
       label: l10n.chapter_completed,
       name: currentChapter.name ?? 'Chapter ${currentChapter.id}',
       isPrimary: false,
-      width: 200,
     );
 
     final Widget arrowIcon = Icon(
@@ -159,8 +159,8 @@ class ChapterTransitionPage extends StatelessWidget {
           : Icons.check_circle_outline,
       size: 36,
       color: nextChapter != null
-          ? Theme.of(context).colorScheme.primary
-          : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+          ? theme.colorScheme.primary
+          : theme.colorScheme.onSurface.withValues(alpha: 0.6),
     );
 
     final Widget nextCard = nextChapter != null
@@ -169,9 +169,8 @@ class ChapterTransitionPage extends StatelessWidget {
             label: l10n.next_chapter,
             name: nextChapter!.name ?? 'Chapter ${nextChapter!.id}',
             isPrimary: true,
-            width: 200,
           )
-        : _buildEndOfMangaCard(context, width: 200);
+        : _buildEndOfMangaCard(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -179,14 +178,14 @@ class ChapterTransitionPage extends StatelessWidget {
         Icon(
           Icons.auto_stories_outlined,
           size: 40,
-          color: Theme.of(context).colorScheme.primary,
+          color: theme.colorScheme.primary,
         ),
         const SizedBox(height: 16),
         Text(
           l10n.end_of_chapter,
-          style: Theme.of(
-            context,
-          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+          style: theme.textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 20),
@@ -195,18 +194,18 @@ class ChapterTransitionPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: _isRTL
               ? [
-                  nextCard,
+                  Flexible(child: nextCard),
                   const SizedBox(width: 12),
                   arrowIcon,
                   const SizedBox(width: 12),
-                  currentCard,
+                  Flexible(child: currentCard),
                 ]
               : [
-                  currentCard,
+                  Flexible(child: currentCard),
                   const SizedBox(width: 12),
                   arrowIcon,
                   const SizedBox(width: 12),
-                  nextCard,
+                  Flexible(child: nextCard),
                 ],
         ),
         const SizedBox(height: 16),
@@ -214,10 +213,8 @@ class ChapterTransitionPage extends StatelessWidget {
           nextChapter != null
               ? l10n.continue_to_next_chapter
               : l10n.return_to_the_list_of_chapters,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: Theme.of(
-              context,
-            ).colorScheme.onSurface.withValues(alpha: 0.6),
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
           textAlign: TextAlign.center,
         ),
@@ -232,7 +229,6 @@ class ChapterTransitionPage extends StatelessWidget {
     required String label,
     required String name,
     required bool isPrimary,
-    double? width,
   }) {
     final theme = Theme.of(context);
     final bgColor = isPrimary
@@ -247,7 +243,6 @@ class ChapterTransitionPage extends StatelessWidget {
     final nameColor = isPrimary ? theme.colorScheme.onPrimaryContainer : null;
 
     return SizedBox(
-      width: width,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
@@ -260,7 +255,9 @@ class ChapterTransitionPage extends StatelessWidget {
           children: [
             Text(
               label,
+              textAlign: TextAlign.center,
               style: theme.textTheme.labelMedium?.copyWith(color: labelColor),
+              maxLines: 2,
             ),
             const SizedBox(height: 6),
             Text(
@@ -270,7 +267,7 @@ class ChapterTransitionPage extends StatelessWidget {
                 color: nameColor,
               ),
               textAlign: TextAlign.center,
-              maxLines: 2,
+              maxLines: 3,
               overflow: TextOverflow.ellipsis,
             ),
           ],
@@ -279,11 +276,10 @@ class ChapterTransitionPage extends StatelessWidget {
     );
   }
 
-  Widget _buildEndOfMangaCard(BuildContext context, {double? width}) {
+  Widget _buildEndOfMangaCard(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
     return SizedBox(
-      width: width,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
