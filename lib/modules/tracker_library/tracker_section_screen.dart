@@ -37,6 +37,7 @@ class _TrackerSectionScreenState extends State<TrackerSectionScreen> {
     _trackStreamSub = isar.tracks
         .filter()
         .itemTypeEqualTo(widget.section.itemType)
+        .mangaIdIsNotNull()
         .watch(fireImmediately: true)
         .listen((tracks) {
           if (mounted) {
