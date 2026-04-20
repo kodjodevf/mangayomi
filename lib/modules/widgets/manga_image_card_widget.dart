@@ -327,9 +327,22 @@ Future<void> pushToMangaReaderDetail({
           .nameEqualTo(manga.name)
           .sourceEqualTo(manga.source)
           .findAll();
-      mangaId = foundMangas
-          .firstWhere((e) => e.sourceId == null || e.sourceId == sourceId)
-          .id!;
+      Manga? matchedManga;
+      for (final foundManga in foundMangas) {
+        if (foundManga.sourceId == null || foundManga.sourceId == sourceId) {
+          matchedManga = foundManga;
+          break;
+        }
+      }
+      if (matchedManga == null) {
+        await isar.writeTxn(() async {
+          await isar.mangas.put(
+            manga..updatedAt = DateTime.now().millisecondsSinceEpoch,
+          );
+        });
+        matchedManga = manga;
+      }
+      mangaId = matchedManga.id!;
     } else {
       mangaId = archiveId;
     }
