@@ -2,5 +2,5 @@ syntax = "proto3";
 
 message BackupSource {
     string name = 1;
-    int32 sourceId = 2;
+    int64 sourceId = 2;
 }

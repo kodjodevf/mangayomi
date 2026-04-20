@@ -1,13 +1,14 @@
+// This is a generated file - do not edit.
 //
-//  Generated code. Do not modify.
-//  source: BackupEpisode.proto
-//
-// @dart = 2.12
+// Generated from BackupEpisode.proto.
+
+// @dart = 3.3
 
 // ignore_for_file: annotate_overrides, camel_case_types, comment_references
-// ignore_for_file: constant_identifier_names, library_prefixes
-// ignore_for_file: non_constant_identifier_names, prefer_final_fields
-// ignore_for_file: unnecessary_import, unnecessary_this, unused_import
+// ignore_for_file: constant_identifier_names
+// ignore_for_file: curly_braces_in_flow_control_structures
+// ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
+// ignore_for_file: non_constant_identifier_names, unused_import
 
 import 'dart:convert' as $convert;
 import 'dart:core' as $core;
@@ -30,17 +31,38 @@ const BackupEpisode$json = {
     },
     {'1': 'seen', '3': 4, '4': 1, '5': 8, '10': 'seen'},
     {'1': 'bookmark', '3': 5, '4': 1, '5': 8, '10': 'bookmark'},
-    {'1': 'lastSecondSeen', '3': 6, '4': 1, '5': 5, '10': 'lastSecondSeen'},
-    {'1': 'dateFetch', '3': 7, '4': 1, '5': 5, '10': 'dateFetch'},
-    {'1': 'dateUpload', '3': 8, '4': 1, '5': 5, '10': 'dateUpload'},
+    {'1': 'lastSecondSeen', '3': 6, '4': 1, '5': 3, '10': 'lastSecondSeen'},
+    {'1': 'dateFetch', '3': 7, '4': 1, '5': 3, '10': 'dateFetch'},
+    {'1': 'dateUpload', '3': 8, '4': 1, '5': 3, '10': 'dateUpload'},
     {'1': 'episodeNumber', '3': 9, '4': 1, '5': 2, '10': 'episodeNumber'},
-    {'1': 'sourceOrder', '3': 10, '4': 1, '5': 5, '10': 'sourceOrder'},
-    {'1': 'lastModifiedAt', '3': 11, '4': 1, '5': 5, '10': 'lastModifiedAt'},
-    {'1': 'version', '3': 12, '4': 1, '5': 5, '10': 'version'},
-    {'1': 'totalSeconds', '3': 16, '4': 1, '5': 5, '10': 'totalSeconds'},
+    {'1': 'sourceOrder', '3': 10, '4': 1, '5': 3, '10': 'sourceOrder'},
+    {'1': 'lastModifiedAt', '3': 11, '4': 1, '5': 3, '10': 'lastModifiedAt'},
+    {'1': 'version', '3': 12, '4': 1, '5': 3, '10': 'version'},
+    {'1': 'totalSeconds', '3': 16, '4': 1, '5': 3, '10': 'totalSeconds'},
+    {'1': 'fillermark', '3': 501, '4': 1, '5': 8, '10': 'fillermark'},
+    {
+      '1': 'summary',
+      '3': 502,
+      '4': 1,
+      '5': 9,
+      '9': 1,
+      '10': 'summary',
+      '17': true
+    },
+    {
+      '1': 'previewUrl',
+      '3': 503,
+      '4': 1,
+      '5': 9,
+      '9': 2,
+      '10': 'previewUrl',
+      '17': true
+    },
   ],
   '8': [
     {'1': '_scanlator'},
+    {'1': '_summary'},
+    {'1': '_previewUrl'},
   ],
 };
 
@@ -48,9 +70,12 @@ const BackupEpisode$json = {
 final $typed_data.Uint8List backupEpisodeDescriptor = $convert.base64Decode(
     'Cg1CYWNrdXBFcGlzb2RlEhAKA3VybBgBIAEoCVIDdXJsEhIKBG5hbWUYAiABKAlSBG5hbWUSIQ'
     'oJc2NhbmxhdG9yGAMgASgJSABSCXNjYW5sYXRvcogBARISCgRzZWVuGAQgASgIUgRzZWVuEhoK'
-    'CGJvb2ttYXJrGAUgASgIUghib29rbWFyaxImCg5sYXN0U2Vjb25kU2VlbhgGIAEoBVIObGFzdF'
-    'NlY29uZFNlZW4SHAoJZGF0ZUZldGNoGAcgASgFUglkYXRlRmV0Y2gSHgoKZGF0ZVVwbG9hZBgI'
-    'IAEoBVIKZGF0ZVVwbG9hZBIkCg1lcGlzb2RlTnVtYmVyGAkgASgCUg1lcGlzb2RlTnVtYmVyEi'
-    'AKC3NvdXJjZU9yZGVyGAogASgFUgtzb3VyY2VPcmRlchImCg5sYXN0TW9kaWZpZWRBdBgLIAEo'
-    'BVIObGFzdE1vZGlmaWVkQXQSGAoHdmVyc2lvbhgMIAEoBVIHdmVyc2lvbhIiCgx0b3RhbFNlY2'
-    '9uZHMYECABKAVSDHRvdGFsU2Vjb25kc0IMCgpfc2NhbmxhdG9y');
+    'CGJvb2ttYXJrGAUgASgIUghib29rbWFyaxImCg5sYXN0U2Vjb25kU2VlbhgGIAEoA1IObGFzdF'
+    'NlY29uZFNlZW4SHAoJZGF0ZUZldGNoGAcgASgDUglkYXRlRmV0Y2gSHgoKZGF0ZVVwbG9hZBgI'
+    'IAEoA1IKZGF0ZVVwbG9hZBIkCg1lcGlzb2RlTnVtYmVyGAkgASgCUg1lcGlzb2RlTnVtYmVyEi'
+    'AKC3NvdXJjZU9yZGVyGAogASgDUgtzb3VyY2VPcmRlchImCg5sYXN0TW9kaWZpZWRBdBgLIAEo'
+    'A1IObGFzdE1vZGlmaWVkQXQSGAoHdmVyc2lvbhgMIAEoA1IHdmVyc2lvbhIiCgx0b3RhbFNlY2'
+    '9uZHMYECABKANSDHRvdGFsU2Vjb25kcxIfCgpmaWxsZXJtYXJrGPUDIAEoCFIKZmlsbGVybWFy'
+    'axIeCgdzdW1tYXJ5GPYDIAEoCUgBUgdzdW1tYXJ5iAEBEiQKCnByZXZpZXdVcmwY9wMgASgJSA'
+    'JSCnByZXZpZXdVcmyIAQFCDAoKX3NjYW5sYXRvckIKCghfc3VtbWFyeUINCgtfcHJldmlld1Vy'
+    'bA==');
