@@ -22,7 +22,7 @@ class TrackerLibraryImageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasData = libraryTrack != null;
+    final hasData = libraryTrack?.mangaId != null;
     return GestureDetector(
       onTap: () => _showCard(context, libraryTrack?.mangaId),
       child: Padding(
