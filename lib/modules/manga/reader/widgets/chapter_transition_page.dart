@@ -189,24 +189,26 @@ class ChapterTransitionPage extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 20),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: _isRTL
-              ? [
-                  Flexible(child: nextCard),
-                  const SizedBox(width: 12),
-                  arrowIcon,
-                  const SizedBox(width: 12),
-                  Flexible(child: currentCard),
-                ]
-              : [
-                  Flexible(child: currentCard),
-                  const SizedBox(width: 12),
-                  arrowIcon,
-                  const SizedBox(width: 12),
-                  Flexible(child: nextCard),
-                ],
+        IntrinsicHeight(
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: _isRTL
+                ? [
+                    Expanded(child: nextCard),
+                    const SizedBox(width: 12),
+                    Center(child: arrowIcon),
+                    const SizedBox(width: 12),
+                    Expanded(child: currentCard),
+                  ]
+                : [
+                    Expanded(child: currentCard),
+                    const SizedBox(width: 12),
+                    Center(child: arrowIcon),
+                    const SizedBox(width: 12),
+                    Expanded(child: nextCard),
+                  ],
+          ),
         ),
         const SizedBox(height: 16),
         Text(
@@ -252,6 +254,7 @@ class ChapterTransitionPage extends StatelessWidget {
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               label,
