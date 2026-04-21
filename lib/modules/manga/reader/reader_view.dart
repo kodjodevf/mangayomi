@@ -291,7 +291,7 @@ class _MangaChapterPageGalleryState
 
   // final double _horizontalScaleValue = 1.0;
   bool _isNextChapterPreloading = false;
-  bool _isPrevChapterPreloading = false;
+  // bool _isPrevChapterPreloading = false;
 
   /// Guard flag: suppresses [_readProgressListener] during scroll position
   /// adjustment after prepending previous-chapter pages.
