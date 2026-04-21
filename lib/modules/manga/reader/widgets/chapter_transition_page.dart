@@ -30,32 +30,51 @@ class ChapterTransitionPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Theme.of(context).scaffoldBackgroundColor,
-      child: Center(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return FittedBox(
-              fit: BoxFit.scaleDown,
-              child: ConstrainedBox(
-                // Give the content a natural maximum size to fit within.
-                // FittedBox will scale it down if the available space is smaller.
-                constraints: BoxConstraints(
-                  maxWidth: _isVertical
-                      ? constraints.maxWidth.clamp(100.0, 480.0)
-                      : constraints.maxWidth.clamp(100.0, double.infinity),
-                  maxHeight: constraints.maxHeight.clamp(
-                    100.0,
-                    double.infinity,
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(24.0),
-                  child: _isVertical
-                      ? _buildVerticalLayout(context)
-                      : _buildHorizontalLayout(context),
-                ),
+      child: _isVertical
+          ? _buildVerticalScaffold(context)
+          : _buildHorizontalScaffold(context),
+    );
+  }
+
+  // ── Vertical: FittedBox path (width is always capped to 480) ──────────────
+
+  Widget _buildVerticalScaffold(BuildContext context) {
+    return Center(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return FittedBox(
+            fit: BoxFit.scaleDown,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: constraints.maxWidth.clamp(100.0, 480.0),
+                maxHeight: constraints.maxHeight.clamp(100.0, double.infinity),
               ),
-            );
-          },
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: _buildVerticalLayout(context),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  // ── Horizontal: MediaQuery path (Row/Expanded always get a real width) ────
+
+  Widget _buildHorizontalScaffold(BuildContext context) {
+    // Use the actual screen width so Expanded children always have a
+    // finite constraint.  FittedBox is deliberately NOT used here because
+    // it would pass infinite width down to the Row.
+    final screenWidth = MediaQuery.of(context).size.width;
+    return Center(
+      child: SizedBox(
+        width: screenWidth,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: _buildHorizontalLayout(context),
+          ),
         ),
       ),
     );
@@ -189,25 +208,29 @@ class ChapterTransitionPage extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 20),
-        IntrinsicHeight(
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: _isRTL
-                ? [
-                    Expanded(child: nextCard),
-                    const SizedBox(width: 12),
-                    Center(child: arrowIcon),
-                    const SizedBox(width: 12),
-                    Expanded(child: currentCard),
-                  ]
-                : [
-                    Expanded(child: currentCard),
-                    const SizedBox(width: 12),
-                    Center(child: arrowIcon),
-                    const SizedBox(width: 12),
-                    Expanded(child: nextCard),
-                  ],
+        Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: _isRTL
+                    ? [
+                        Expanded(child: nextCard),
+                        const SizedBox(width: 12),
+                        Center(child: arrowIcon),
+                        const SizedBox(width: 12),
+                        Expanded(child: currentCard),
+                      ]
+                    : [
+                        Expanded(child: currentCard),
+                        const SizedBox(width: 12),
+                        Center(child: arrowIcon),
+                        const SizedBox(width: 12),
+                        Expanded(child: nextCard),
+                      ],
+              ),
+            ),
           ),
         ),
         const SizedBox(height: 16),
@@ -244,37 +267,35 @@ class ChapterTransitionPage extends StatelessWidget {
         : theme.colorScheme.onSurface.withValues(alpha: 0.7);
     final nameColor = isPrimary ? theme.colorScheme.onPrimaryContainer : null;
 
-    return SizedBox(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: borderColor),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.labelMedium?.copyWith(color: labelColor),
-              maxLines: 2,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: borderColor),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.labelMedium?.copyWith(color: labelColor),
+            maxLines: 2,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            name,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: nameColor,
             ),
-            const SizedBox(height: 6),
-            Text(
-              name,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: nameColor,
-              ),
-              textAlign: TextAlign.center,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
+            textAlign: TextAlign.center,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
     );
   }
@@ -282,43 +303,41 @@ class ChapterTransitionPage extends StatelessWidget {
   Widget _buildEndOfMangaCard(BuildContext context) {
     final l10n = context.l10n;
     final theme = Theme.of(context);
-    return SizedBox(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: theme.colorScheme.outline.withValues(alpha: 0.3),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: theme.colorScheme.outline.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.last_page,
+            size: 24,
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.last_page,
-              size: 24,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+          const SizedBox(height: 6),
+          Text(
+            l10n.no_next_chapter,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             ),
-            const SizedBox(height: 6),
-            Text(
-              l10n.no_next_chapter,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
-              ),
-              textAlign: TextAlign.center,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            l10n.you_have_finished_reading,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
-            const SizedBox(height: 4),
-            Text(
-              l10n.you_have_finished_reading,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
