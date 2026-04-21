@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
@@ -15,7 +13,7 @@ import 'package:mangayomi/modules/mass_migration/models/mass_migration_models.da
 import 'package:mangayomi/modules/manga/detail/providers/isar_providers.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/services/get_detail.dart';
-import 'package:mangayomi/services/search_.dart';
+import 'package:mangayomi/services/search.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 
 Future<void> migrateLibraryItem({

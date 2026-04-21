@@ -21,7 +21,7 @@ Future<void> checkForUpdate(
   bool? manualUpdate,
 }) async {
   manualUpdate = manualUpdate ?? false;
-  final checkForUpdates = ref.watch(checkForAppUpdatesProvider);
+  final checkForUpdates = ref.read(checkForAppUpdatesProvider);
   if (!checkForUpdates && !manualUpdate) return;
   final l10n = l10nLocalizations(context!)!;
 

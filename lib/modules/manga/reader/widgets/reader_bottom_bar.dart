@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
@@ -6,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show ProviderListenable;
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/custom_value_indicator_shape.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
@@ -62,9 +62,8 @@ class ReaderBottomBar extends ConsumerWidget {
   /// (StateProvider, NotifierProvider, etc.)
   final ProviderListenable<ReaderMode?> currentReaderModeProvider;
 
-  /// Provider family for watching current page index
-  /// Type: CurrentIndexFamily (from reader_controller_provider.g.dart)
-  final CurrentIndexFamily currentIndexProvider;
+  /// Session-local current page index for the visible reader state.
+  final ValueListenable<int> currentPageListenable;
 
   /// Current page mode (nullable for safety)
   final PageMode? currentPageMode;
@@ -95,7 +94,7 @@ class ReaderBottomBar extends ConsumerWidget {
     this.onPageModeToggle,
     required this.onSettingsPressed,
     required this.currentReaderModeProvider,
-    required this.currentIndexProvider,
+    required this.currentPageListenable,
     required this.currentPageMode,
     required this.isReverseHorizontal,
     required this.totalPages,
@@ -194,15 +193,17 @@ class ReaderBottomBar extends ConsumerWidget {
                         child: Center(
                           child: Consumer(
                             builder: (context, ref, child) {
-                              final currentIndex = ref.watch(
-                                currentIndexProvider(chapter),
-                              );
-                              return Text(
-                                currentIndexLabel(currentIndex),
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              return ValueListenableBuilder<int>(
+                                valueListenable: currentPageListenable,
+                                builder: (context, currentIndex, child) {
+                                  return Text(
+                                    currentIndexLabel(currentIndex),
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  );
+                                },
                               );
                             },
                           ),
@@ -277,34 +278,37 @@ class ReaderBottomBar extends ConsumerWidget {
   ) {
     return Consumer(
       builder: (context, ref, child) {
-        final currentIndex = ref.watch(currentIndexProvider(chapter));
+        return ValueListenableBuilder<int>(
+          valueListenable: currentPageListenable,
+          builder: (context, currentIndex, child) {
+            final maxValue = (totalPages - 1).toDouble();
 
-        final maxValue = (totalPages - 1).toDouble();
+            final divisions = totalPages <= 1 ? null : totalPages - 1;
 
-        final divisions = totalPages <= 1 ? null : totalPages - 1;
+            final currentValue = min(currentIndex.toDouble(), maxValue);
 
-        final currentValue = min(currentIndex.toDouble(), maxValue);
-
-        return SliderTheme(
-          data: SliderTheme.of(context).copyWith(
-            valueIndicatorShape: CustomValueIndicatorShape(
-              tranform: isReverseHorizontal,
-            ),
-            overlayShape: const RoundSliderOverlayShape(overlayRadius: 5.0),
-          ),
-          child: Slider(
-            onChanged: (value) {
-              onSliderChanged(value.toInt(), ref);
-            },
-            onChangeEnd: (newValue) {
-              onSliderChangeEnd(newValue.toInt());
-            },
-            divisions: divisions,
-            value: currentValue,
-            label: currentIndexLabel(currentIndex),
-            min: 0,
-            max: maxValue,
-          ),
+            return SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                valueIndicatorShape: CustomValueIndicatorShape(
+                  tranform: isReverseHorizontal,
+                ),
+                overlayShape: const RoundSliderOverlayShape(overlayRadius: 5.0),
+              ),
+              child: Slider(
+                onChanged: (value) {
+                  onSliderChanged(value.toInt(), ref);
+                },
+                onChangeEnd: (newValue) {
+                  onSliderChangeEnd(newValue.toInt());
+                },
+                divisions: divisions,
+                value: currentValue,
+                label: currentIndexLabel(currentIndex),
+                min: 0,
+                max: maxValue,
+              ),
+            );
+          },
         );
       },
     );

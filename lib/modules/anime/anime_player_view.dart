@@ -279,7 +279,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   final ValueNotifier<double> _playbackSpeed = ValueNotifier(1.0);
   final ValueNotifier<bool> _isDoubleSpeed = ValueNotifier(false);
   late final ValueNotifier<Duration> _currentPosition = ValueNotifier(
-    _streamController.geTCurrentPosition(),
+    _streamController.getCurrentPosition(),
   );
   final ValueNotifier<Duration?> _currentTotalDuration = ValueNotifier(null);
   final ValueNotifier<bool> _showFitLabel = ValueNotifier(false);
@@ -899,11 +899,11 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     _completed;
     _currentTotalDurationSub;
     _loadAndroidFont().then((_) {
-      _openMedia(_video.value!, _streamController.geTCurrentPosition());
+      _openMedia(_video.value!, _streamController.getCurrentPosition());
       if (widget.isTorrent) {
         Future.delayed(const Duration(seconds: 10)).then((_) {
           if (mounted) {
-            _openMedia(_video.value!, _streamController.geTCurrentPosition());
+            _openMedia(_video.value!, _streamController.getCurrentPosition());
           }
         });
       }
@@ -1020,8 +1020,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       _currentTotalDuration.value,
       save: save,
     );
-    _streamController.setAnimeHistoryUpdate(
-      watchTimeSeconds: saveWatchTime ? _watchStopwatch.elapsed.inSeconds : 0,
+    _streamController.setHistoryUpdate(
+      elapsedSeconds: saveWatchTime ? _watchStopwatch.elapsed.inSeconds : 0,
     );
   }
 
