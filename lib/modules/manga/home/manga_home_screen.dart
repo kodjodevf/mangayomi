@@ -2,8 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/eval/model/m_pages.dart';
+import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
@@ -67,6 +69,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   late bool isLocal = source.name == "local" && source.lang == "";
   late List<dynamic> filters = isLocal ? [] : getFilterList(source: source);
   final List<MManga> _mangaList = [];
+  late StreamSubscription<List<Manga>> _mangaStreamSub;
+  Map<String, Manga> _libraryIndex = {};
   List<TypeMangaSelector> _types(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
     return [
@@ -84,16 +88,16 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
         _fullDataLength = _fullDataLength + 50;
       } else {
         if (_selectedIndex == 0 && !_isSearch && _query.isEmpty) {
-          mangaRes = await ref.watch(
+          mangaRes = await ref.read(
             getPopularProvider(source: source, page: _page + 1).future,
           );
         } else if (_selectedIndex == 1 && !_isSearch && _query.isEmpty) {
-          mangaRes = await ref.watch(
+          mangaRes = await ref.read(
             getLatestUpdatesProvider(source: source, page: _page + 1).future,
           );
         } else if (_selectedIndex == 2 && (_isSearch && _query.isNotEmpty) ||
             _isFiltering) {
-          mangaRes = await ref.watch(
+          mangaRes = await ref.read(
             searchProvider(
               source: source,
               query: _query,
@@ -117,10 +121,61 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+    _mangaStreamSub = isar.mangas
+        .filter()
+        .sourceEqualTo(source.name)
+        .langEqualTo(source.lang)
+        .watch(fireImmediately: true)
+        .listen((mangas) {
+          if (mounted) {
+            setState(() {
+              _libraryIndex = {};
+              for (final m in mangas.where(
+                (e) => e.sourceId == null || e.sourceId == source.id,
+              )) {
+                if (m.name == null) continue;
+                final existing = _libraryIndex[m.name!];
+                // Prefer the record with the lower id (first inserted = real entry).
+                // Guards against pre-existing duplicate records in the DB.
+                if (existing == null || m.id! < existing.id!) {
+                  _libraryIndex[m.name!] = m;
+                }
+              }
+            });
+          }
+        });
+  }
+
+  @override
   void dispose() {
+    _mangaStreamSub.cancel();
+    _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     _textEditingController.dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      if (_mangaList.isNotEmpty &&
+          _hasNextPage &&
+          !_isLoading &&
+          !(_getManga?.isLoading ?? false)) {
+        setState(() => _isLoading = true);
+        _loadMore().then((value) {
+          if (mounted && value != null) {
+            setState(() {
+              _mangaList.addAll(value.list);
+              _isLoading = false;
+            });
+          }
+        });
+      }
+    }
   }
 
   late final _textEditingController = TextEditingController(text: widget.query);
@@ -519,30 +574,6 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                 if (data!.list.isEmpty) {
                   return Center(child: Text(l10n.no_result));
                 }
-                _scrollController.addListener(() {
-                  if (_scrollController.position.pixels ==
-                      _scrollController.position.maxScrollExtent) {
-                    if (_mangaList.isNotEmpty &&
-                        (_hasNextPage) &&
-                        !_isLoading &&
-                        !_getManga!.isLoading) {
-                      if (mounted) {
-                        setState(() {
-                          _isLoading = true;
-                        });
-                      }
-                      _loadMore().then((value) {
-                        if (mounted && value != null) {
-                          setState(() {
-                            _mangaList.addAll(value.list);
-                            _isLoading = false;
-                          });
-                        }
-                      });
-                    }
-                  }
-                });
-
                 _length = source.isFullData!
                     ? _fullDataLength
                     : _mangaList.length;
@@ -568,6 +599,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                     itemType: source.itemType,
                                     manga: _mangaList[index],
                                     source: source,
+                                    libraryManga:
+                                        _libraryIndex[_mangaList[index].name],
                                   );
                                 },
                               )
@@ -595,6 +628,9 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                         manga: _mangaList[index],
                                         source: source,
                                         isComfortableGrid: isComfortableGrid,
+                                        libraryManga:
+                                            _libraryIndex[_mangaList[index]
+                                                .name],
                                       );
                                     },
                                   );
@@ -697,45 +733,44 @@ class MangaHomeImageCard extends ConsumerStatefulWidget {
   final ItemType itemType;
   final Source source;
   final bool isComfortableGrid;
+  final Manga? libraryManga;
   const MangaHomeImageCard({
     super.key,
     required this.manga,
     required this.source,
     required this.itemType,
     required this.isComfortableGrid,
+    this.libraryManga,
   });
 
   @override
   ConsumerState<MangaHomeImageCard> createState() => _MangaHomeImageCardState();
 }
 
-class _MangaHomeImageCardState extends ConsumerState<MangaHomeImageCard>
-    with AutomaticKeepAliveClientMixin<MangaHomeImageCard> {
+class _MangaHomeImageCardState extends ConsumerState<MangaHomeImageCard> {
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-
     return MangaImageCardWidget(
       getMangaDetail: widget.manga,
       source: widget.source,
       itemType: widget.itemType,
       isComfortableGrid: widget.isComfortableGrid,
+      libraryManga: widget.libraryManga,
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }
 
 class MangaHomeImageCardListTile extends ConsumerStatefulWidget {
   final MManga manga;
   final ItemType itemType;
   final Source source;
+  final Manga? libraryManga;
   const MangaHomeImageCardListTile({
     super.key,
     required this.manga,
     required this.source,
     required this.itemType,
+    this.libraryManga,
   });
 
   @override
@@ -744,19 +779,14 @@ class MangaHomeImageCardListTile extends ConsumerStatefulWidget {
 }
 
 class _MangaHomeImageCardListTileState
-    extends ConsumerState<MangaHomeImageCardListTile>
-    with AutomaticKeepAliveClientMixin<MangaHomeImageCardListTile> {
+    extends ConsumerState<MangaHomeImageCardListTile> {
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-
     return MangaImageCardListTileWidget(
       getMangaDetail: widget.manga,
       source: widget.source,
       itemType: widget.itemType,
+      libraryManga: widget.libraryManga,
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }
