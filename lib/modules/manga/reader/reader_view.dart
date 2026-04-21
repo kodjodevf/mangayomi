@@ -155,7 +155,6 @@ class _MangaChapterPageGalleryState
   bool isDesktop = Platform.isMacOS || Platform.isLinux || Platform.isWindows;
   final ValueNotifier<bool> _isScrolling = ValueNotifier(false);
   Timer? _scrollIdleTimer;
-  bool _firstLaunch = true;
   final Stopwatch _readingStopwatch = Stopwatch();
 
   /// Flag to prevent fullscreen from being disabled when navigating between
@@ -177,6 +176,7 @@ class _MangaChapterPageGalleryState
     _autoScroll.value = false;
     _autoScroll.dispose();
     _autoScrollPage.dispose();
+    _currentPageDisplayIndex.dispose();
     _scrollIdleTimer?.cancel();
     _isScrolling.dispose();
     _itemPositionsListener.itemPositions.removeListener(_readProgressListener);
@@ -195,11 +195,11 @@ class _MangaChapterPageGalleryState
       );
     }
     discordRpc?.showIdleText();
-    final actualIdx = _pageViewToActualIndex(_currentIndex!);
+    final actualIdx = _pageViewToActualIndexSync(_currentIndex!);
     final index = pages[actualIdx].index;
     if (index != null) {
       _readerController.setPageIndex(
-        _isDoublePageActive ? index : _geCurrentIndex(index),
+        _isDoublePageActiveSync ? index : _geCurrentIndex(index),
         true,
       );
     }
@@ -238,6 +238,9 @@ class _MangaChapterPageGalleryState
   final _failedToLoadImage = ValueNotifier<bool>(false);
 
   late int? _currentIndex = _readerController.getPageIndex();
+  late final ValueNotifier<int> _currentPageDisplayIndex = ValueNotifier(
+    _readerController.getPageIndex(),
+  );
 
   late final ItemScrollController _itemScrollController =
       ItemScrollController();
@@ -301,6 +304,9 @@ class _MangaChapterPageGalleryState
   final _currentReaderMode = StateProvider<ReaderMode?>(() => null);
   PageMode? _pageMode;
   bool _isView = false;
+
+  /// Cached reader mode to safely access in dispose without ref.read()
+  ReaderMode? _cachedReaderMode;
   Alignment _scalePosition = Alignment.center;
   final PhotoViewController _photoViewController = PhotoViewController();
   final PhotoViewScaleStateController _photoViewScaleStateController =
@@ -829,6 +835,7 @@ class _MangaChapterPageGalleryState
                         );
                       },
                       onSliderChanged: (value, ref) {
+                        _currentPageDisplayIndex.value = value;
                         ref
                             .read(currentIndexProvider(chapter).notifier)
                             .setCurrentIndex(value);
@@ -912,7 +919,7 @@ class _MangaChapterPageGalleryState
                         },
                       ),
                       currentReaderModeProvider: _currentReaderMode,
-                      currentIndexProvider: currentIndexProvider,
+                      currentPageListenable: _currentPageDisplayIndex,
                       currentPageMode: _pageMode,
                       isReverseHorizontal: _isReverseHorizontal,
                       totalPages: _readerController.getPageLength(
@@ -922,8 +929,8 @@ class _MangaChapterPageGalleryState
                       backgroundColor: _backgroundColor,
                     ),
                     PageIndicator(
-                      chapter: chapter,
                       isUiVisible: _isView,
+                      currentPageListenable: _currentPageDisplayIndex,
                       totalPages: _readerController.getPageLength(
                         _chapterUrlModel.pageUrls,
                       ),
@@ -1013,6 +1020,7 @@ class _MangaChapterPageGalleryState
 
       final idx = pages[_currentIndex!].index;
       if (idx != null) {
+        _currentPageDisplayIndex.value = idx;
         _readerController.setPageIndex(
           _isDoublePageActive ? idx : _geCurrentIndex(idx),
           false,
@@ -1163,6 +1171,7 @@ class _MangaChapterPageGalleryState
   void _initCurrentIndex() async {
     if (ref.read(cropBordersStateProvider)) _processCropBorders();
     final readerMode = _readerController.getReaderMode();
+    _currentPageDisplayIndex.value = _readerController.getPageIndex();
 
     // Initialize the preload manager with bounded memory (from ReaderMemoryManagement mixin)
     initializePreloadManager(
@@ -1259,16 +1268,9 @@ class _MangaChapterPageGalleryState
     // pages array index for correct lookups.
     final int actualIndex = _pageViewToActualIndex(index);
     final int prevActualIndex = _pageViewToActualIndex(_currentIndex!);
-
     final cropBorders = ref.watch(cropBordersStateProvider);
     if (cropBorders) {
       _processCropBordersByIndex(index);
-    }
-    if (_firstLaunch) {
-      Future.delayed(const Duration(milliseconds: 100)).then((_) {
-        _firstLaunch = false;
-      });
-      return;
     }
     final idx = pages[prevActualIndex].index;
     if (idx != null) {
@@ -1298,6 +1300,7 @@ class _MangaChapterPageGalleryState
     clearGestureDetailsCache();
     _currentIndex = index;
     if (pages[actualIndex].index != null) {
+      _currentPageDisplayIndex.value = pages[actualIndex].index!;
       ref
           .read(currentIndexProvider(chapter).notifier)
           .setCurrentIndex(pages[actualIndex].index!);
@@ -1375,6 +1378,9 @@ class _MangaChapterPageGalleryState
 
     _failedToLoadImage.value = false;
     _readerController.setReaderMode(value);
+
+    // Cache the reader mode for safe access in dispose
+    _cachedReaderMode = value;
 
     int index = _pageViewToActualIndex(_currentIndex!);
     ref.read(_currentReaderMode.notifier).state = value;
@@ -1503,10 +1509,18 @@ class _MangaChapterPageGalleryState
 
   /// Whether double page mode is active (continuous or paged).
   /// Horizontal continuous mode does NOT use double page layout.
+  /// Uses ref.read() so cannot be called during dispose.
   bool get _isDoublePageActive =>
       _pageMode == PageMode.doublePage &&
       ref.read(_currentReaderMode) != ReaderMode.horizontalContinuous &&
       ref.read(_currentReaderMode) != ReaderMode.horizontalContinuousRTL;
+
+  /// Safe version of _isDoublePageActive that uses cached reader mode.
+  /// Safe to call during dispose without Riverpod assertion errors.
+  bool get _isDoublePageActiveSync =>
+      _pageMode == PageMode.doublePage &&
+      _cachedReaderMode != ReaderMode.horizontalContinuous &&
+      _cachedReaderMode != ReaderMode.horizontalContinuousRTL;
 
   /// Converts a page view index (from ExtendedPageController) to the actual
   /// index in the [pages] array for double page mode.
@@ -1516,6 +1530,12 @@ class _MangaChapterPageGalleryState
   ///   PV n (n>0) → pages[2n-1] (first page of the pair)
   int _pageViewToActualIndex(int pageViewIndex) {
     if (!_isDoublePageActive) return pageViewIndex;
+    return (pageViewIndex * 2).clamp(0, pages.length - 1);
+  }
+
+  /// Safe version that uses cached reader mode for use in dispose.
+  int _pageViewToActualIndexSync(int pageViewIndex) {
+    if (!_isDoublePageActiveSync) return pageViewIndex;
     return (pageViewIndex * 2).clamp(0, pages.length - 1);
   }
 
