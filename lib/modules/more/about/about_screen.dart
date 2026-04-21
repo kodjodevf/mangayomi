@@ -86,18 +86,18 @@ class AboutScreen extends ConsumerWidget {
                       SwitchListTile(
                         title: Text(l10n.logs_on),
                         value: enableLogs,
-                        onChanged: (value) {
-                          isar.writeTxnSync(() {
-                            final settings = isar.settings.getSync(227);
-                            isar.settings.putSync(
+                        onChanged: (value) async {
+                          await isar.writeTxn(() async {
+                            final settings = await isar.settings.get(227);
+                            await isar.settings.put(
                               settings!..enableLogs = value,
                             );
                           });
                           ref.invalidate(logsStateProvider);
                           if (value) {
-                            AppLogger.init();
+                            await AppLogger.init();
                           } else {
-                            AppLogger.dispose();
+                            await AppLogger.dispose();
                           }
                         },
                       ),
