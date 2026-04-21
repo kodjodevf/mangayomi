@@ -1001,10 +1001,10 @@ class _MangaChapterPageGalleryState
         _triggerNextChapterPreload();
       }
 
-      // ── Previous-chapter preloading: trigger when near the start ──
-      if (itemPositions.first.index <= pagePreloadAmount) {
-        _triggerPrevChapterPreload();
-      }
+      // // ── Previous-chapter preloading: trigger when near the start ──
+      // if (itemPositions.first.index <= pagePreloadAmount) {
+      //   _triggerPrevChapterPreload();
+      // }
 
       final idx = pages[_currentIndex!].index;
       if (idx != null) {
@@ -1053,7 +1053,7 @@ class _MangaChapterPageGalleryState
   /// Proactively starts loading both adjacent chapters at reader init.
   void _proactivePreload() {
     _triggerNextChapterPreload();
-    _triggerPrevChapterPreload();
+    // _triggerPrevChapterPreload();
   }
 
   /// Fires off next-chapter page fetching if not already in progress.
@@ -1081,76 +1081,76 @@ class _MangaChapterPageGalleryState
       _isNextChapterPreloading = false;
     }
   }
+  // TODO: Need more optimization
+  // /// Fires off previous-chapter page fetching and prepends pages.
+  // void _triggerPrevChapterPreload() async {
+  //   if (_isPrevChapterPreloading) return;
+  //   _isPrevChapterPreloading = true;
+  //   try {
+  //     if (!mounted) return;
+  //     final prevChapter = _readerController.getPrevChapter();
+  //     if (isChapterLoaded(prevChapter)) {
+  //       _isPrevChapterPreloading = false;
+  //       return;
+  //     }
+  //     final value = await ref.read(
+  //       getChapterPagesProvider(chapter: prevChapter).future,
+  //     );
+  //     if (mounted) {
+  //       _handlePrevChapterPrepended(value, chapter);
+  //     }
+  //   } on RangeError {
+  //     // No previous chapter — nothing to prepend
+  //   } catch (_) {}
+  //   _isPrevChapterPreloading = false;
+  // }
 
-  /// Fires off previous-chapter page fetching and prepends pages.
-  void _triggerPrevChapterPreload() async {
-    if (_isPrevChapterPreloading) return;
-    _isPrevChapterPreloading = true;
-    try {
-      if (!mounted) return;
-      final prevChapter = _readerController.getPrevChapter();
-      if (isChapterLoaded(prevChapter)) {
-        _isPrevChapterPreloading = false;
-        return;
-      }
-      final value = await ref.read(
-        getChapterPagesProvider(chapter: prevChapter).future,
-      );
-      if (mounted) {
-        _handlePrevChapterPrepended(value, chapter);
-      }
-    } on RangeError {
-      // No previous chapter — nothing to prepend
-    } catch (_) {}
-    _isPrevChapterPreloading = false;
-  }
+  // /// Prepends previous-chapter pages and adjusts scroll position to avoid jump.
+  // void _handlePrevChapterPrepended(
+  //   GetChapterPagesModel chapterData,
+  //   Chapter chap,
+  // ) {
+  //   try {
+  //     if (chapterData.uChapDataPreload.isEmpty || !mounted) return;
 
-  /// Prepends previous-chapter pages and adjusts scroll position to avoid jump.
-  void _handlePrevChapterPrepended(
-    GetChapterPagesModel chapterData,
-    Chapter chap,
-  ) {
-    try {
-      if (chapterData.uChapDataPreload.isEmpty || !mounted) return;
+  //     // Record the CURRENT visible top index BEFORE prepending
+  //     final currentVisibleItems = _itemPositionsListener.itemPositions.value;
+  //     final oldTopIndex = currentVisibleItems.isNotEmpty
+  //         ? currentVisibleItems.first.index
+  //         : _currentIndex ?? 0;
 
-      // Record the CURRENT visible top index BEFORE prepending
-      final currentVisibleItems = _itemPositionsListener.itemPositions.value;
-      final oldTopIndex = currentVisibleItems.isNotEmpty
-          ? currentVisibleItems.first.index
-          : _currentIndex ?? 0;
+  //     preloadPreviousChapter(chapterData, chap).then((prependCount) {
+  //       if (prependCount > 0 && mounted) {
+  //         _isAdjustingScroll = true;
 
-      preloadPreviousChapter(chapterData, chap).then((prependCount) {
-        if (prependCount > 0 && mounted) {
-          _isAdjustingScroll = true;
+  //         // New index = old visible index + how many items we just prepended
+  //         final newIndex = oldTopIndex + prependCount;
 
-          // New index = old visible index + how many items we just prepended
-          final newIndex = oldTopIndex + prependCount;
-
-          // In double page mode, _currentIndex stores the page view index,
-          // so convert the prepended page count to page view units.
-          if (_isDoublePageActive) {
-            // Recompute the page view index from the new actual index.
-            final oldActual = _pageViewToActualIndex(oldTopIndex);
-            final newActual = oldActual + prependCount;
-            _currentIndex = _actualToPageViewIndex(newActual);
-          } else {
-            _currentIndex = newIndex;
-          }
-          setState(() {});
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) {
-              if (_isContinuousMode()) {
-                _itemScrollController.jumpTo(index: newIndex);
-              } else if (_extendedController.hasClients) {
-                _extendedController.jumpToPage(_currentIndex!);
-              }
-              _isAdjustingScroll = false;
-            }
-          });
-        }
-      });
-    } catch (_) {}
-  }
+  //         // In double page mode, _currentIndex stores the page view index,
+  //         // so convert the prepended page count to page view units.
+  //         if (_isDoublePageActive) {
+  //           // Recompute the page view index from the new actual index.
+  //           final oldActual = _pageViewToActualIndex(oldTopIndex);
+  //           final newActual = oldActual + prependCount;
+  //           _currentIndex = _actualToPageViewIndex(newActual);
+  //         } else {
+  //           _currentIndex = newIndex;
+  //         }
+  //         setState(() {});
+  //         WidgetsBinding.instance.addPostFrameCallback((_) {
+  //           if (mounted) {
+  //             if (_isContinuousMode()) {
+  //               _itemScrollController.jumpTo(index: newIndex);
+  //             } else if (_extendedController.hasClients) {
+  //               _extendedController.jumpToPage(_currentIndex!);
+  //             }
+  //             _isAdjustingScroll = false;
+  //           }
+  //         });
+  //       }
+  //     });
+  //   } catch (_) {}
+  // }
 
   void _initCurrentIndex() async {
     if (ref.read(cropBordersStateProvider)) _processCropBorders();
@@ -1257,10 +1257,10 @@ class _MangaChapterPageGalleryState
       _triggerNextChapterPreload();
     }
 
-    // ── Previous-chapter preloading: trigger when near the start ──
-    if (actualIndex <= pagePreloadAmount) {
-      _triggerPrevChapterPreload();
-    }
+    // // ── Previous-chapter preloading: trigger when near the start ──
+    // if (actualIndex <= pagePreloadAmount) {
+    //   _triggerPrevChapterPreload();
+    // }
   }
 
   late final _pageOffset = ValueNotifier(
