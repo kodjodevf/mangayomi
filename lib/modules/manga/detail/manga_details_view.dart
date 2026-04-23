@@ -14,7 +14,7 @@ import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/modules/manga/detail/manga_detail_view.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
-import 'package:mangayomi/utils/extensions/chapter.dart';
+import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 
 class MangaDetailsView extends ConsumerStatefulWidget {
   final Manga manga;
