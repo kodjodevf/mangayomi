@@ -900,14 +900,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                         chapterLength: chapters.length,
                                       );
                               }
-                              int reverseIndex =
-                                  chapters.length -
-                                  chapters.reversed.toList().indexOf(
-                                    chapters.reversed.toList()[finalIndex],
-                                  ) -
-                                  1;
                               final indexx = reverse
-                                  ? reverseIndex
+                                  ? (chapters.length - 1 - finalIndex)
                                   : finalIndex;
                               return ChapterListTileWidget(
                                 chapter: chapters[indexx],
