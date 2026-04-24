@@ -22,6 +22,7 @@ import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_search_widget.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_widget.dart';
+import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/modules/more/providers/algorithm_weights_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
@@ -201,8 +202,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     required int sortChapter,
     required List<String> filterScanlator,
   }) {
-    List<Chapter>? chapterList;
-    chapterList = data
+    final chapterList = data
         .where(
           (element) => filterUnread == 1
               ? element.isRead == false
@@ -232,33 +232,38 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         })
         .where((element) => !filterScanlator.contains(element.scanlator))
         .toList();
-    List<Chapter> chapters = sortChapter == 1
-        ? chapterList.reversed.toList()
-        : chapterList;
-    if (sortChapter == 0) {
-      chapters.sort((a, b) {
-        return (a.scanlator == null ||
-                b.scanlator == null ||
-                a.dateUpload == null ||
-                b.dateUpload == null)
-            ? 0
-            : a.scanlator!.compareTo(b.scanlator!) |
-                  a.dateUpload!.compareTo(b.dateUpload!);
-      });
-    } else if (sortChapter == 2) {
-      chapters.sort((a, b) {
-        return (a.dateUpload == null || b.dateUpload == null)
-            ? 0
-            : int.parse(a.dateUpload!).compareTo(int.parse(b.dateUpload!));
-      });
-    } else if (sortChapter == 3) {
-      chapters.sort((a, b) {
-        return (a.name == null || b.name == null)
-            ? 0
-            : a.name!.compareTo(b.name!);
-      });
+
+    final recognition = ChapterRecognition();
+    final mangaTitle = widget.manga!.name ?? '';
+    int chapNum(Chapter c) =>
+        recognition.parseChapterNumber(mangaTitle, c.name ?? '');
+
+    switch (sortChapter) {
+      case 0: // by scanlator, then chapter number
+        chapterList.sort((a, b) {
+          final s = (a.scanlator ?? '').compareTo(b.scanlator ?? '');
+          if (s != 0) return s;
+          return chapNum(a).compareTo(chapNum(b));
+        });
+        break;
+      case 1: // by chapter number
+        chapterList.sort((a, b) => chapNum(a).compareTo(chapNum(b)));
+        break;
+      case 2: // by upload date
+        chapterList.sort((a, b) {
+          if (a.dateUpload == null || b.dateUpload == null) return 0;
+          return int.parse(a.dateUpload!).compareTo(int.parse(b.dateUpload!));
+        });
+        break;
+      case 3: // by name
+        chapterList.sort((a, b) {
+          if (a.name == null || b.name == null) return 0;
+          return a.name!.compareTo(b.name!);
+        });
+        break;
     }
-    return chapterList;
+
+    return chapterList.reversed.toList();
   }
 
   Widget _buildWidget({

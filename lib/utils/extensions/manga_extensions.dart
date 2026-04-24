@@ -4,6 +4,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/utils/chapter_recognition.dart';
 
 extension MangaExtensions on Manga {
   // ── For the READER: always ascending story order, filters applied ──────────
@@ -89,19 +90,26 @@ extension MangaExtensions on Manga {
     // Start from the reading list so filter logic lives in one place.
     List<Chapter> list = getChapterListForReading();
 
+    // Cache recognition instance — parseChapterNumber is called O(n log n)
+    // times during sort, so avoid constructing it inside the comparator.
+    final recognition = ChapterRecognition();
+    final mangaTitle = name ?? '';
+
+    // Returns the parsed chapter number for a chapter, used as the primary
+    // numeric sort key for cases 0 and 1.
+    int chapNum(Chapter c) =>
+        recognition.parseChapterNumber(mangaTitle, c.name ?? '');
+
     switch (sortIndex) {
-      case 0: // by scanlator, then date
+      case 0: // by scanlator, then chapter number
         list.sort((a, b) {
-          if (a.scanlator == null || b.scanlator == null) return 0;
-          final s = a.scanlator!.compareTo(b.scanlator!);
+          final s = (a.scanlator ?? '').compareTo(b.scanlator ?? '');
           if (s != 0) return s;
-          if (a.dateUpload == null || b.dateUpload == null) return 0;
-          return (int.tryParse(a.dateUpload!) ?? 0).compareTo(
-            int.tryParse(b.dateUpload!) ?? 0,
-          );
+          return chapNum(a).compareTo(chapNum(b));
         });
         break;
-      case 1: // by chapter number - reading list is already ascending
+      case 1: // by chapter number
+        list.sort((a, b) => chapNum(a).compareTo(chapNum(b)));
         break;
       case 2: // by upload date
         list.sort((a, b) {
