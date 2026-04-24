@@ -44,8 +44,8 @@ mixin ChapterControllerMixin {
   // ---------------------------------------------------------------------------
 
   (int, bool) getChapterIndex() => _chapterIndexWithOffset(0);
-  Chapter getPrevChapter() => _chapterWithOffset(1);
-  Chapter getNextChapter() => _chapterWithOffset(-1);
+  Chapter getPrevChapter() => _chapterWithOffset(-1);
+  Chapter getNextChapter() => _chapterWithOffset(1);
 
   /// Finds this [chapter] in either the filtered list or the raw list and
   /// returns [index + offset]. The boolean indicates whether the filtered list

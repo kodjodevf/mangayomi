@@ -72,8 +72,6 @@ extension MangaExtensions on Manga {
           return filterDownloaded == 1 ? dl : !dl;
         })
         .where((e) => !filterScanlator.contains(e.scanlator))
-        .toList()
-        .reversed
         .toList();
   }
 
