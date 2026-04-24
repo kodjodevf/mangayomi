@@ -77,6 +77,15 @@ extension StringExtensions on String {
   }
 }
 
+extension DefaultValueExtension on String? {
+  String? trimmedOrDefault(String? defaultValue) {
+    if (this?.trim().isNotEmpty ?? false) {
+      return this!.trim();
+    }
+    return defaultValue;
+  }
+}
+
 extension NativeStringExtensions on List<String> {
   Pointer<Pointer<Int8>> strListToPointer() {
     final strings = this;
