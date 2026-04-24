@@ -107,7 +107,8 @@ Future<dynamic> updateMangaDetail(
       final newChapters = <Chapter>[];
 
       for (final chap in chaps) {
-        final url = chap.url!.trim();
+        final url = chap.url?.trim();
+        if (url == null || url.isEmpty) continue;
         final existing = existingByUrl[url];
 
         if (existing == null) {
