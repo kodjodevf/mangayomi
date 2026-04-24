@@ -97,7 +97,7 @@ Future<dynamic> updateMangaDetail(
       final readByNumber = <int, bool>{};
       for (final c in existingChapters) {
         if (c.name == null) continue;
-        final num = recognition.parseChapterNumber(manga.name!, c.name!);
+        final num = recognition.parseChapterNumber(manga.name ?? '', c.name!);
         if (num > 0) {
           readByNumber[num] =
               (readByNumber[num] ?? false) || (c.isRead ?? false);
