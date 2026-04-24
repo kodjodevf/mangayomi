@@ -251,8 +251,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         break;
       case 2: // by upload date
         chapterList.sort((a, b) {
-          if (a.dateUpload == null || b.dateUpload == null) return 0;
-          return int.parse(a.dateUpload!).compareTo(int.parse(b.dateUpload!));
+          return (int.tryParse(a.dateUpload ?? '') ?? 0).compareTo(
+            int.tryParse(b.dateUpload ?? '') ?? 0,
+          );
         });
         break;
       case 3: // by name
