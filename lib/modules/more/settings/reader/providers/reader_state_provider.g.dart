@@ -1338,6 +1338,60 @@ abstract class _$ShowPageGapsState extends $Notifier<bool> {
   }
 }
 
+@ProviderFor(AutoReadDuplicateChaptersState)
+final autoReadDuplicateChaptersStateProvider =
+    AutoReadDuplicateChaptersStateProvider._();
+
+final class AutoReadDuplicateChaptersStateProvider
+    extends $NotifierProvider<AutoReadDuplicateChaptersState, bool> {
+  AutoReadDuplicateChaptersStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'autoReadDuplicateChaptersStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$autoReadDuplicateChaptersStateHash();
+
+  @$internal
+  @override
+  AutoReadDuplicateChaptersState create() => AutoReadDuplicateChaptersState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$autoReadDuplicateChaptersStateHash() =>
+    r'288816e17fefa753c690cc43a40cfbcf5352b9df';
+
+abstract class _$AutoReadDuplicateChaptersState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(InvertColorsState)
 final invertColorsStateProvider = InvertColorsStateProvider._();
 

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
+import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/chapter_reader_settings_mixin.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/chapter_controller_mixin.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -204,17 +206,45 @@ class ReaderController extends _$ReaderController
           ..chapterId = chapter.id
           ..index = isRead ? 0 : newIndex,
       );
+      final autoReadDuplChap = ref.read(autoReadDuplicateChaptersStateProvider);
+      final now = DateTime.now().millisecondsSinceEpoch;
+      // When the chapter is finished, mark every other scanlation of the same
+      // chapter number as read too, in the same transaction.
+      final List<Chapter> siblings = [];
+      if (isRead && autoReadDuplChap) {
+        final manga = chapter.manga.value;
+        if (manga != null) {
+          final chapterNumber = ChapterRecognition().parseChapterNumber(
+            manga.name!,
+            chapter.name!,
+          );
+          for (final c in manga.chapters) {
+            if (c.id == chapter.id || (c.isRead ?? false)) continue;
+            final n = ChapterRecognition().parseChapterNumber(
+              manga.name!,
+              c.name!,
+            );
+            if (n == chapterNumber) {
+              c.isRead = true;
+              c.lastPageRead = '1';
+              c.updatedAt = now;
+              siblings.add(c);
+            }
+          }
+        }
+      }
       final chap = chapter;
       isar.writeTxnSync(() {
         isar.settings.putSync(
           getIsarSetting()
             ..chapterPageIndexList = chapterPageIndexs
-            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+            ..updatedAt = now,
         );
         chap.isRead = isRead;
         chap.lastPageRead = isRead ? '1' : (newIndex + 1).toString();
-        chap.updatedAt = DateTime.now().millisecondsSinceEpoch;
+        chap.updatedAt = now;
         isar.chapters.putSync(chap);
+        if (siblings.isNotEmpty) isar.chapters.putAllSync(siblings);
       });
       onSettingsMutated();
       if (isRead) {

@@ -1333,6 +1333,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get markEpisodeAsSeenSetting => 'エピソードを視聴済みにするタイミング';
 
   @override
+  String get mark_duplicate_chapters_read =>
+      'Mark duplicate chapter numbers as read';
+
+  @override
   String get default_skip_intro_length => 'デフォルトイントロスキップ長';
 
   @override

@@ -1352,6 +1352,10 @@ class AppLocalizationsId extends AppLocalizations {
       'Pada titik mana menandai episode sebagai terlihat';
 
   @override
+  String get mark_duplicate_chapters_read =>
+      'Mark duplicate chapter numbers as read';
+
+  @override
   String get default_skip_intro_length => 'Panjang lewati intro default';
 
   @override

@@ -2513,6 +2513,12 @@ abstract class AppLocalizations {
   /// **'At what point to mark the episode as seen'**
   String get markEpisodeAsSeenSetting;
 
+  /// No description provided for @mark_duplicate_chapters_read.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark duplicate chapter numbers as read'**
+  String get mark_duplicate_chapters_read;
+
   /// No description provided for @default_skip_intro_length.
   ///
   /// In en, this message translates to:

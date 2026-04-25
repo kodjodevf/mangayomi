@@ -527,6 +527,26 @@ class ShowPageGapsState extends _$ShowPageGapsState {
 }
 
 @riverpod
+class AutoReadDuplicateChaptersState extends _$AutoReadDuplicateChaptersState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.autoReadDuplicateChapters ?? false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..autoReadDuplicateChapters = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
 class InvertColorsState extends _$InvertColorsState {
   @override
   bool build() {

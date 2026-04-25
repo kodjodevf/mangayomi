@@ -1356,6 +1356,10 @@ class AppLocalizationsPt extends AppLocalizations {
       'Em que ponto marcar o episódio como visto';
 
   @override
+  String get mark_duplicate_chapters_read =>
+      'Mark duplicate chapter numbers as read';
+
+  @override
   String get default_skip_intro_length =>
       'Duração padrão para pular a introdução';
 
