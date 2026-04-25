@@ -315,10 +315,17 @@ class ChapterTransitionPage extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.last_page,
-            size: 24,
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+          RotatedBox(
+            quarterTurns: _isVertical
+                ? 1 // turn 90° clockwise, so Icon is pointing down
+                : _isRTL
+                ? 2 // turn 180°, so Icon is pointing left
+                : 0, // no rotation, Icon points to the right.
+            child: Icon(
+              Icons.last_page,
+              size: 24,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+            ),
           ),
           const SizedBox(height: 6),
           Text(
