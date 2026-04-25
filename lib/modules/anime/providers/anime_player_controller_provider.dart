@@ -127,7 +127,7 @@ class AnimeStreamController extends _$AnimeStreamController
           .read(aniSkipProvider.notifier)
           .getResult(
             id,
-            ChapterRecognition().parseChapterNumber(
+            ChapterRecognition().parseEpisodeNumber(
               episode.manga.value!.name!,
               episode.name!,
             ),

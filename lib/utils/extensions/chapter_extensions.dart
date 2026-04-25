@@ -96,7 +96,7 @@ extension ChapterExtension on Chapter {
     );
     if (!updateProgressAfterReading) return;
     final manga = this.manga.value!;
-    final chapterNumber = ChapterRecognition().parseChapterNumber(
+    final chapterNumber = ChapterRecognition().parseEpisodeNumber(
       manga.name!,
       name!,
     );
