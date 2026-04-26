@@ -33,6 +33,13 @@ mixin ChapterControllerMixin {
   // (which is more efficient since incognito status never changes mid-session).
   bool get incognitoMode => isar.settings.getSync(227)!.incognitoMode!;
 
+  bool get hasNextChapter => getChapterIndex().$1 != 0;
+
+  bool get hasPreviousChapter {
+    final idx = getChapterIndex();
+    return idx.$1 + 1 != getChaptersLength(idx.$2);
+  }
+
   Settings getIsarSetting() => isar.settings.getSync(227)!;
 
   String getMangaName() => getManga().name!;

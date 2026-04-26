@@ -44,6 +44,9 @@ class AnimeStreamController extends _$AnimeStreamController
   Chapter getPrevEpisode() => getPrevChapter();
   Chapter getNextEpisode() => getNextChapter();
 
+  bool get hasPreviousEpisode => hasPreviousChapter;
+  bool get hasNextEpisode => hasNextChapter;
+
   int getEpisodesLength(bool isInFilterList) =>
       getChaptersLength(isInFilterList);
 

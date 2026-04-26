@@ -354,11 +354,8 @@ class _MangaChapterPageGalleryState
   /// If the reader is already at the first or last chapter (depending on
   /// the direction), the method returns without navigating.
   void _goToChapter(bool next) {
-    final idx = _readerController.getChapterIndex();
-    if (next && idx.$1 == 0) return;
-    if (!next && idx.$1 + 1 == _readerController.getChaptersLength(idx.$2)) {
-      return;
-    }
+    if (next && !_readerController.hasNextChapter) return;
+    if (!next && !_readerController.hasPreviousChapter) return;
     _isNavigatingToChapter = true;
     pushReplacementMangaReaderView(
       context: context,
@@ -806,13 +803,8 @@ class _MangaChapterPageGalleryState
                     ReaderBottomBar(
                       chapter: chapter,
                       isVisible: _isView,
-                      hasPreviousChapter:
-                          _readerController.getChapterIndex().$1 + 1 !=
-                          _readerController.getChaptersLength(
-                            _readerController.getChapterIndex().$2,
-                          ),
-                      hasNextChapter:
-                          _readerController.getChapterIndex().$1 != 0,
+                      hasPreviousChapter: _readerController.hasPreviousChapter,
+                      hasNextChapter: _readerController.hasNextChapter,
                       onPreviousChapter: () => _goToChapter(false),
                       onNextChapter: () => _goToChapter(true),
                       onSliderChanged: (value, ref) {

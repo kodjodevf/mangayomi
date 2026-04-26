@@ -307,7 +307,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         discordRpc?.updateChapterTimestamp(_currentPosition.value, duration);
       });
 
-  bool get hasNextEpisode => _streamController.getEpisodeIndex().$1 != 0;
+  bool get hasNextEpisode => _streamController.hasNextEpisode;
 
   late final StreamSubscription<bool> _completed = _player.stream.completed
       .listen((val) {
@@ -1569,11 +1569,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   }
 
   Widget _desktopBottomButtonBar(BuildContext context) {
-    bool hasPrevEpisode =
-        _streamController.getEpisodeIndex().$1 + 1 !=
-        _streamController.getEpisodesLength(
-          _streamController.getEpisodeIndex().$2,
-        );
     final skipDuration = ref.watch(defaultDoubleTapToSkipLengthStateProvider);
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -1583,7 +1578,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           children: [
             Row(
               children: [
-                if (hasPrevEpisode)
+                if (_streamController.hasPreviousEpisode)
                   IconButton(
                     onPressed: () {
                       pushToNewEpisode(
