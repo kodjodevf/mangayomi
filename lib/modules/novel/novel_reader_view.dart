@@ -12,6 +12,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/auto_scroll_button.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_app_bar.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/novel/novel_reader_controller_provider.dart';
@@ -767,7 +768,16 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                     _gestureTopBottom(ref.watch(novelTapToScrollStateProvider)),
                     _appBar(),
                     _bottomBar(backgroundColor),
-                    _autoScrollPlayPauseBtn(),
+                    ReaderAutoScrollButton(
+                      isContinuousMode: true,
+                      isUiVisible: _isView,
+                      autoScrollPage: _autoScrollPage,
+                      autoScroll: _autoScroll,
+                      onToggle: () {
+                        _autoPagescroll();
+                        _autoScroll.value = !_autoScroll.value;
+                      },
+                    ),
                     if (_ttsSupported &&
                         _showTts &&
                         _currentHtmlContent != null)
@@ -797,32 +807,6 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
           ),
         ),
       ),
-    );
-  }
-
-  Widget _autoScrollPlayPauseBtn() {
-    return Positioned(
-      bottom: 0,
-      right: 0,
-      child: !_isView
-          ? ValueListenableBuilder(
-              valueListenable: _autoScrollPage,
-              builder: (context, valueT, child) => valueT
-                  ? ValueListenableBuilder(
-                      valueListenable: _autoScroll,
-                      builder: (context, value, child) => IconButton(
-                        onPressed: () {
-                          _autoPagescroll();
-                          _autoScroll.value = !value;
-                        },
-                        icon: Icon(
-                          value ? Icons.pause_circle : Icons.play_circle,
-                        ),
-                      ),
-                    )
-                  : const SizedBox.shrink(),
-            )
-          : const SizedBox.shrink(),
     );
   }
 
