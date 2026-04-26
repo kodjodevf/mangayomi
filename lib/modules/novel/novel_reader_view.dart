@@ -102,6 +102,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     _autoScroll.value = false;
     _autoScroll.dispose();
     _autoScrollPage.dispose();
+    _keyboardFocusNode.dispose();
     _ttsIndexSub?.cancel();
     _ttsStateSub?.cancel();
     _ttsWordSub?.cancel();
@@ -168,7 +169,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   late bool _isBookmarked = _readerController.getChapterBookmarked();
 
   bool _isView = false;
-
+  final _keyboardFocusNode = FocusNode();
   bool _showTts = false;
   String? _currentHtmlContent;
   final ValueNotifier<({int paragraph, int wordStart, int wordEnd})>
@@ -782,6 +783,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
           ),
         ),
       ),
+      focusNode: _keyboardFocusNode,
     );
   }
 

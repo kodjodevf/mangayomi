@@ -176,6 +176,7 @@ class _MangaChapterPageGalleryState
     _currentPageDisplayIndex.dispose();
     _scrollIdleTimer?.cancel();
     _isScrolling.dispose();
+    _keyboardFocusNode.dispose();
     _itemPositionsListener.itemPositions.removeListener(_readProgressListener);
     _photoViewController.dispose();
     _photoViewScaleStateController.dispose();
@@ -298,6 +299,7 @@ class _MangaChapterPageGalleryState
   final _currentReaderMode = StateProvider<ReaderMode?>(() => null);
   PageMode? _pageMode;
   bool _isView = false;
+  final _keyboardFocusNode = FocusNode();
 
   /// Cached reader mode to safely access in dispose without ref.read()
   ReaderMode? _cachedReaderMode;
@@ -395,6 +397,7 @@ class _MangaChapterPageGalleryState
       onPreviousChapter: () => _goToChapter(false),
     ).wrapWithKeyboardListener(
       isReverseHorizontal: _isReverseHorizontal,
+      focusNode: _keyboardFocusNode,
       child: NotificationListener<UserScrollNotification>(
         onNotification: (notification) {
           if (notification.direction == ScrollDirection.idle) {
