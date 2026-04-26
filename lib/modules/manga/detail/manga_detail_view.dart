@@ -115,7 +115,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     ref.watch(chapterFilterUnreadStateProvider(mangaId: widget.manga!.id!));
     ref.watch(chapterFilterBookmarkedStateProvider(mangaId: widget.manga!.id!));
     ref.watch(chapterFilterDownloadedStateProvider(mangaId: widget.manga!.id!));
-    ref.watch(sortChapterStateProvider(mangaId: widget.manga!.id!));
     final chapters = ref.watch(
       getChaptersStreamProvider(mangaId: widget.manga!.id!),
     );
