@@ -1948,7 +1948,10 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     );
   }
 
+  BoxFit? _lastFit;
   void _resize(BoxFit fit) async {
+    if (fit == _lastFit) return;
+    _lastFit = fit;
     // Wait for the widget tree to settle before updating fit
     await WidgetsBinding.instance.endOfFrame;
     if (mounted) {
