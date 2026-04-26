@@ -373,7 +373,8 @@ class _MangaChapterPageGalleryState
     final backgroundColor = ref.watch(backgroundColorStateProvider);
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
     final readerMode = ref.watch(_currentReaderMode);
-    final bool isHorizontalContinuous = readerMode!.isHorizontalContinuous;
+    if (readerMode == null) return const SizedBox.shrink();
+    final bool isHorizontalContinuous = readerMode.isHorizontalContinuous;
 
     final l10n = l10nLocalizations(context)!;
     return ReaderKeyboardHandler(
