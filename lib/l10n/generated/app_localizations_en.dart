@@ -1348,6 +1348,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'At what point to mark the episode as seen';
 
   @override
+  String get mark_duplicate_chapters_read =>
+      'Mark duplicate chapter numbers as read';
+
+  @override
   String get default_skip_intro_length => 'Default Skip intro length';
 
   @override

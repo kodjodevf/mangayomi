@@ -1369,6 +1369,10 @@ class AppLocalizationsRu extends AppLocalizations {
       'В какой момент отметить эпизод как просмотренный';
 
   @override
+  String get mark_duplicate_chapters_read =>
+      'Mark duplicate chapter numbers as read';
+
+  @override
   String get default_skip_intro_length =>
       'Стандартная длина пропуска вступления';
 

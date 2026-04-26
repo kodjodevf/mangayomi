@@ -1348,6 +1348,10 @@ class AppLocalizationsTh extends AppLocalizations {
       'กำหนดจุดที่จะทำเครื่องหมายตอนว่าดูแล้ว';
 
   @override
+  String get mark_duplicate_chapters_read =>
+      'Mark duplicate chapter numbers as read';
+
+  @override
   String get default_skip_intro_length => 'ค่าพื้นฐานความยาวการเข้าอินโทร';
 
   @override

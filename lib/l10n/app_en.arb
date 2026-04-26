@@ -537,6 +537,7 @@
   "video_audio_info": "Preferred languages, pitch correction, audio channels",
   "player": "Player",
   "markEpisodeAsSeenSetting": "At what point to mark the episode as seen",
+  "mark_duplicate_chapters_read": "Mark duplicate chapter numbers as read",
   "default_skip_intro_length": "Default Skip intro length",
   "default_playback_speed_length": "Default Playback speed length",
   "updateProgressAfterReading": "Update progress after reading",

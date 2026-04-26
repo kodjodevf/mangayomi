@@ -1317,6 +1317,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get markEpisodeAsSeenSetting => '标记剧集为已看的时间点';
 
   @override
+  String get mark_duplicate_chapters_read =>
+      'Mark duplicate chapter numbers as read';
+
+  @override
   String get default_skip_intro_length => '默认跳过介绍长度';
 
   @override

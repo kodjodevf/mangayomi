@@ -63,7 +63,7 @@ final class CheckForUpdateProvider
   }
 }
 
-String _$checkForUpdateHash() => r'644316334ac3e95d37f54d7197d744c9de1260b6';
+String _$checkForUpdateHash() => r'8064f08768f4d98997201a2f07ba160c721a6a3f';
 
 final class CheckForUpdateFamily extends $Family
     with

@@ -1348,6 +1348,10 @@ class AppLocalizationsHi extends AppLocalizations {
       'एपिसोड को कब देखा गया के रूप में चिह्नित करना है';
 
   @override
+  String get mark_duplicate_chapters_read =>
+      'Mark duplicate chapter numbers as read';
+
+  @override
   String get default_skip_intro_length => 'डिफ़ॉल्ट परिचय छोड़ने की अवधि';
 
   @override
