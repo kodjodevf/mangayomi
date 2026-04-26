@@ -10,6 +10,7 @@ import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/ffi/torrent_server_ffi.dart' as libmtorrentserver_ffi;
+import 'package:mangayomi/utils/platform_utils.dart';
 
 String _buildQueryString(Map<String, List<String>> parameters) {
   final segments = <String>[];
@@ -133,7 +134,7 @@ class MTorrentServer {
         final path = (await StorageProvider().getBtDirectory())!.path;
         final config = jsonEncode({"path": path, "address": "127.0.0.1:0"});
         int port = 0;
-        if (Platform.isAndroid || Platform.isIOS) {
+        if (isMobile) {
           const channel = MethodChannel(
             'com.kodjodevf.mangayomi.libmtorrentserver',
           );

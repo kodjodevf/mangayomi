@@ -14,6 +14,7 @@ import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/http/rhttp/src/model/settings.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/log/logger.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:path/path.dart' as path;
 import 'package:super_sliver_list/super_sliver_list.dart';
 
@@ -118,7 +119,7 @@ class _SubtitlesWidgetSearchState extends ConsumerState<SubtitlesWidgetSearch> {
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       child: TextFormField(
                         onTap: () {
-                          if (Platform.isAndroid || Platform.isIOS) {
+                          if (isMobile) {
                             setState(() {
                               hide = true;
                             });

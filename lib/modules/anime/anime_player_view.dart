@@ -2367,6 +2367,5 @@ mixin _AlwaysOnTopStateMixin<T extends StatefulWidget> on State<T> {
   }
 
   // Whether the platform support AlwaysOnTop feature.
-  bool _supportAlwaysOnTop() =>
-      !kIsWeb && (Platform.isLinux || Platform.isMacOS || Platform.isWindows);
+  bool _supportAlwaysOnTop() => !kIsWeb && isDesktop;
 }
