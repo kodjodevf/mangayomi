@@ -360,6 +360,17 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     return text.isEmpty ? null : text;
   }
 
+  Future<void> _seekTo(int absoluteSeconds) async {
+    _tempPosition.value = Duration(seconds: absoluteSeconds);
+    await _player.seek(Duration(seconds: absoluteSeconds));
+    _tempPosition.value = null;
+  }
+
+  Future<void> _seekBy(int deltaSeconds) async {
+    final pos = _currentPosition.value.inSeconds + deltaSeconds;
+    await _seekTo(pos);
+  }
+
   Future<void> _handleMpvNodeEvents(
     String propName,
     Pointer<generated.mpv_node> value,
@@ -492,31 +503,21 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         final text = _readMpvString(value);
         if (text == null) break;
         final data = int.parse(text.replaceAll("\"", ""));
-        final pos = _currentPosition.value.inSeconds + data;
-        _tempPosition.value = Duration(seconds: pos);
-        await _player.seek(Duration(seconds: pos));
-        _tempPosition.value = null;
+        await _seekBy(data);
         nativePlayer.setProperty("user-data/aniyomi/seek_by", "");
         break;
       case "aniyomi/seek_to":
         final text = _readMpvString(value);
         if (text == null) break;
         final data = int.parse(text.replaceAll("\"", ""));
-        _tempPosition.value = Duration(seconds: data);
-        await _player.seek(Duration(seconds: data));
-        _tempPosition.value = null;
+        await _seekTo(data);
         nativePlayer.setProperty("user-data/aniyomi/seek_to", "");
         break;
       case "aniyomi/seek_by_with_text":
         final text = _readMpvString(value);
         if (text == null) break;
         final data = text.split("|");
-        final pos =
-            _currentPosition.value.inSeconds +
-            int.parse(data[0].replaceAll("\"", ""));
-        _tempPosition.value = Duration(seconds: pos);
-        await _player.seek(Duration(seconds: pos));
-        _tempPosition.value = null;
+        await _seekBy(int.parse(data[0].replaceAll("\"", "")));
         (_player.platform as NativePlayer).command(["show-text", data[1]]);
         nativePlayer.setProperty("user-data/aniyomi/seek_by_with_text", "");
         break;
@@ -524,10 +525,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         final text = _readMpvString(value);
         if (text == null) break;
         final data = text.split("|");
-        final pos = int.parse(data[0].replaceAll("\"", ""));
-        _tempPosition.value = Duration(seconds: pos);
-        await _player.seek(Duration(seconds: pos));
-        _tempPosition.value = null;
+        await _seekTo(int.parse(data[0].replaceAll("\"", "")));
         (_player.platform as NativePlayer).command(["show-text", data[1]]);
         nativePlayer.setProperty("user-data/aniyomi/seek_to_with_text", "");
         break;
@@ -1491,21 +1489,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
               ? ElevatedButton(
                   onPressed:
                       value?.onPress ??
-                      () async {
-                        _tempPosition.value = Duration(
-                          seconds:
-                              defaultSkipIntroLength +
-                              _currentPosition.value.inSeconds,
-                        );
-                        await _player.seek(
-                          Duration(
-                            seconds:
-                                _currentPosition.value.inSeconds +
-                                defaultSkipIntroLength,
-                          ),
-                        );
-                        _tempPosition.value = null;
-                      },
+                      () async => await _seekBy(defaultSkipIntroLength),
                   onLongPress: value?.onLongPress,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -1628,19 +1612,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                   height: 50,
                   width: 50,
                   child: IconButton(
-                    onPressed: () async {
-                      _tempPosition.value = Duration(
-                        seconds:
-                            skipDuration - _currentPosition.value.inSeconds,
-                      );
-                      await _player.seek(
-                        Duration(
-                          seconds:
-                              _currentPosition.value.inSeconds - skipDuration,
-                        ),
-                      );
-                      _tempPosition.value = null;
-                    },
+                    onPressed: () async => await _seekBy(-skipDuration),
                     icon: Stack(
                       children: [
                         const Positioned.fill(
@@ -1672,19 +1644,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                   height: 50,
                   width: 50,
                   child: IconButton(
-                    onPressed: () async {
-                      _tempPosition.value = Duration(
-                        seconds:
-                            skipDuration + _currentPosition.value.inSeconds,
-                      );
-                      await _player.seek(
-                        Duration(
-                          seconds:
-                              _currentPosition.value.inSeconds + skipDuration,
-                        ),
-                      );
-                      _tempPosition.value = null;
-                    },
+                    onPressed: () async => await _seekBy(skipDuration),
                     icon: Stack(
                       children: [
                         const Positioned.fill(
