@@ -185,9 +185,7 @@ class ReaderController extends _$ReaderController
     if (chapter.isRead! || incognitoMode) return;
     if (!save && newIndex == _lastSavedIndex) return;
     _lastSavedIndex = newIndex;
-    final isContinuousLike =
-        getReaderMode() == ReaderMode.verticalContinuous ||
-        getReaderMode() == ReaderMode.webtoon;
+    final isContinuousLike = getReaderMode().isVerticalContinuous;
     final isRead = isContinuousLike
         ? (newIndex + 2) >= getPageLength([]) - 1
         : (newIndex + 2) >= getPageLength([]);

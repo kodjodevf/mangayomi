@@ -377,19 +377,17 @@ class _MangaChapterPageGalleryState
     final backgroundColor = ref.watch(backgroundColorStateProvider);
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
     final readerMode = ref.watch(_currentReaderMode);
-    final bool isHorizontalContinuous =
-        readerMode == ReaderMode.horizontalContinuous ||
-        readerMode == ReaderMode.horizontalContinuousRTL;
+    final bool isHorizontalContinuous = readerMode!.isHorizontalContinuous;
 
     final l10n = l10nLocalizations(context)!;
     return ReaderKeyboardHandler(
       onPreviousPage: () => navigationService.previousPage(
-        readerMode: readerMode!,
+        readerMode: readerMode,
         currentIndex: _currentIndex!,
         animate: animatePageTransitions,
       ),
       onNextPage: () => navigationService.nextPage(
-        readerMode: readerMode!,
+        readerMode: readerMode,
         currentIndex: _currentIndex!,
         maxPages: _pageViewPageCount,
         animate: animatePageTransitions,
@@ -419,7 +417,7 @@ class _MangaChapterPageGalleryState
               builder: (context, failedToLoadImage, child) {
                 return Stack(
                   children: [
-                    _isContinuousMode()
+                    readerMode.isContinuous
                         ? ImageViewWebtoon(
                             pages: pages,
                             itemScrollController: _itemScrollController,
@@ -760,15 +758,15 @@ class _MangaChapterPageGalleryState
                           navigationLayout: navigationLayout,
                           isRTL: _isReverseHorizontal,
                           hasImageError: failedToLoadImage,
-                          isContinuousMode: _isContinuousMode(),
+                          isContinuousMode: readerMode.isContinuous,
                           onToggleUI: _isViewFunction,
                           onPreviousPage: () => navigationService.previousPage(
-                            readerMode: readerMode!,
+                            readerMode: readerMode,
                             currentIndex: _currentIndex!,
                             animate: animatePageTransitions,
                           ),
                           onNextPage: () => navigationService.nextPage(
-                            readerMode: readerMode!,
+                            readerMode: readerMode,
                             currentIndex: _currentIndex!,
                             maxPages: _pageViewPageCount,
                             animate: animatePageTransitions,
@@ -921,7 +919,7 @@ class _MangaChapterPageGalleryState
                       formatCurrentIndex: _currentIndexLabel,
                     ),
                     ReaderAutoScrollButton(
-                      isContinuousMode: _isContinuousMode(),
+                      isContinuousMode: readerMode.isContinuous,
                       isUiVisible: _isView,
                       autoScrollPage: _autoScrollPage,
                       autoScroll: _autoScroll,
@@ -1529,11 +1527,8 @@ class _MangaChapterPageGalleryState
   int get _pageViewPageCount =>
       _isDoublePageActive ? (pages.length / 2).ceil() : pages.length;
 
-  bool _isContinuousMode() {
-    final readerMode = ref.read(_currentReaderMode);
-    return readerMode == ReaderMode.verticalContinuous ||
-        readerMode == ReaderMode.webtoon ||
-        readerMode == ReaderMode.horizontalContinuous ||
-        readerMode == ReaderMode.horizontalContinuousRTL;
+  bool _isContinuousMode([ReaderMode? mode]) {
+    final readerMode = mode ?? ref.read(_currentReaderMode);
+    return readerMode!.isContinuous;
   }
 }

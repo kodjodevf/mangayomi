@@ -17,20 +17,11 @@ class ChapterTransitionPage extends StatelessWidget {
     required this.readerMode,
   });
 
-  bool get _isVertical =>
-      readerMode == ReaderMode.vertical ||
-      readerMode == ReaderMode.verticalContinuous ||
-      readerMode == ReaderMode.webtoon;
-
-  bool get _isRTL =>
-      readerMode == ReaderMode.rtl ||
-      readerMode == ReaderMode.horizontalContinuousRTL;
-
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Theme.of(context).scaffoldBackgroundColor,
-      child: _isVertical
+      child: readerMode.isVertical
           ? _buildVerticalScaffold(context)
           : _buildHorizontalScaffold(context),
     );
@@ -174,7 +165,9 @@ class ChapterTransitionPage extends StatelessWidget {
 
     final Widget arrowIcon = Icon(
       nextChapter != null
-          ? (_isRTL ? Icons.keyboard_arrow_left : Icons.keyboard_arrow_right)
+          ? (readerMode.isRTL
+                ? Icons.keyboard_arrow_left
+                : Icons.keyboard_arrow_right)
           : Icons.check_circle_outline,
       size: 36,
       color: nextChapter != null
@@ -214,7 +207,7 @@ class ChapterTransitionPage extends StatelessWidget {
             child: IntrinsicHeight(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: _isRTL
+                children: readerMode.isRTL
                     ? [
                         Expanded(child: nextCard),
                         const SizedBox(width: 12),
@@ -316,9 +309,9 @@ class ChapterTransitionPage extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           RotatedBox(
-            quarterTurns: _isVertical
+            quarterTurns: readerMode.isVertical
                 ? 1 // turn 90° clockwise, so Icon is pointing down
-                : _isRTL
+                : readerMode.isRTL
                 ? 2 // turn 180°, so Icon is pointing left
                 : 0, // no rotation, Icon points to the right.
             child: Icon(
