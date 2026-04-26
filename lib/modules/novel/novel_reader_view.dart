@@ -12,7 +12,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
-import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/reader_app_bar.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/novel/novel_reader_controller_provider.dart';
 import 'package:mangayomi/modules/novel/tts/novel_tts_service.dart';
@@ -936,117 +936,49 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   }
 
   Widget _appBar() {
-    if (!_isView && Platform.isIOS) {
-      return const SizedBox.shrink();
-    }
-    final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
-    double height = _isView
-        ? Platform.isIOS
-              ? 120
-              : !fullScreenReader && !isDesktop
-              ? 55
-              : 80
-        : 0;
-    return Positioned(
-      top: 0,
-      child: AnimatedContainer(
-        width: context.width(1),
-        height: height,
-        curve: Curves.ease,
-        duration: const Duration(milliseconds: 200),
-        child: PreferredSize(
-          preferredSize: Size.fromHeight(height),
-          child: AppBar(
-            centerTitle: false,
-            automaticallyImplyLeading: false,
-            titleSpacing: 0,
-            leading: BackButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            title: ListTile(
-              dense: true,
-              title: SizedBox(
-                width: context.width(0.8),
-                child: Text(
-                  '${_readerController.getMangaName()} ',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              subtitle: SizedBox(
-                width: context.width(0.8),
-                child: Text(
-                  _readerController.getChapterTitle(),
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ),
-            actions: [
-              btnToShowChapterListDialog(
-                context,
-                context.l10n.chapters,
-                widget.chapter,
-              ),
-              IconButton(
-                onPressed: () {
-                  _readerController.setChapterBookmarked();
-                  setState(() {
-                    _isBookmarked = !_isBookmarked;
-                  });
-                },
-                icon: Icon(
-                  _isBookmarked
-                      ? Icons.bookmark
-                      : Icons.bookmark_border_outlined,
-                ),
-              ),
-              if ((chapter.manga.value!.isLocalArchive ?? false) == false)
-                IconButton(
-                  onPressed: () async {
-                    final manga = chapter.manga.value!;
-                    final source = getSource(
-                      manga.lang!,
-                      manga.source!,
-                      manga.sourceId,
-                    )!;
-                    String url = chapter.url!.startsWith('/')
-                        ? "${source.baseUrl}/${chapter.url!}"
-                        : chapter.url!;
-                    Map<String, dynamic> data = {
-                      'url': url,
-                      'sourceId': source.id.toString(),
-                      'title': chapter.name!,
-                    };
-                    if (Platform.isLinux) {
-                      final urll = Uri.parse(url);
-                      if (!await launchUrl(
-                        urll,
-                        mode: LaunchMode.inAppBrowserView,
-                      )) {
-                        if (!await launchUrl(
-                          urll,
-                          mode: LaunchMode.externalApplication,
-                        )) {
-                          throw 'Could not launch $url';
-                        }
-                      }
-                    } else {
-                      context.push("/mangawebview", extra: data);
-                    }
+    return ReaderAppBar(
+      chapter: chapter,
+      mangaName: _readerController.getMangaName(),
+      chapterTitle: _readerController.getChapterTitle(),
+      isVisible: _isView,
+      isBookmarked: _isBookmarked,
+      backgroundColor: _backgroundColor,
+      onBackPressed: () => Navigator.pop(context),
+      onBookmarkPressed: () {
+        _readerController.setChapterBookmarked();
+        setState(() => _isBookmarked = !_isBookmarked);
+      },
+      onWebViewPressed: (chapter.manga.value!.isLocalArchive ?? false)
+          ? null
+          : () async {
+              final manga = chapter.manga.value!;
+              final source = getSource(
+                manga.lang!,
+                manga.source!,
+                manga.sourceId,
+              )!;
+              final url = chapter.url!.startsWith('/')
+                  ? '${source.baseUrl}/${chapter.url!}'
+                  : chapter.url!;
+              if (Platform.isLinux) {
+                final uri = Uri.parse(url);
+                await launchUrl(
+                  uri,
+                  mode: LaunchMode.inAppBrowserView,
+                ).catchError(
+                  (_) => launchUrl(uri, mode: LaunchMode.externalApplication),
+                );
+              } else {
+                context.push(
+                  '/mangawebview',
+                  extra: {
+                    'url': url,
+                    'sourceId': source.id.toString(),
+                    'title': chapter.name!,
                   },
-                  icon: const Icon(Icons.public),
-                ),
-            ],
-            backgroundColor: _backgroundColor(context),
-          ),
-        ),
-      ),
+                );
+              }
+            },
     );
   }
 
