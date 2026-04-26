@@ -129,7 +129,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         return true;
       },
       child: chapters.when(
-        data: (data) {
+        data: (_) {
           List<Chapter> chapters = widget.manga!.getFilteredChapterList();
           ref.read(chaptersListttStateProvider.notifier).set(chapters);
           return _buildWidget(chapters: chapters);
