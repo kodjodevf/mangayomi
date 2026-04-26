@@ -918,7 +918,7 @@ List<Widget> mobilePrimaryButtonBar(
       ),
     ),
     const Spacer(),
-    CustomPlayOrPauseButton(controller: controller, isDesktop: false),
+    CustomPlayOrPauseButton(controller: controller),
     const Spacer(),
     IconButton(
       onPressed: hasNextEpisode

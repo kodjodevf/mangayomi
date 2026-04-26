@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:io';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -150,7 +150,6 @@ class _MangaChapterPageGalleryState
     readerControllerProvider(chapter: chapter).notifier,
   );
 
-  bool isDesktop = Platform.isMacOS || Platform.isLinux || Platform.isWindows;
   final ValueNotifier<bool> _isScrolling = ValueNotifier(false);
   Timer? _scrollIdleTimer;
   final Stopwatch _readingStopwatch = Stopwatch();

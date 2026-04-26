@@ -43,6 +43,7 @@ import 'package:mangayomi/services/get_video_list.dart';
 import 'package:mangayomi/services/torrent_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/utils/system_ui.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit/generated/libmpv/bindings.dart' as generated;
@@ -56,8 +57,6 @@ import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:window_manager/window_manager.dart' show windowManager;
 
 import 'widgets/search_subtitles.dart';
-
-bool _isDesktop = Platform.isMacOS || Platform.isLinux || Platform.isWindows;
 
 class AnimePlayerView extends riv.ConsumerStatefulWidget {
   final int episodeId;
@@ -73,7 +72,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
   bool desktopFullScreenPlayer = false;
   @override
   void dispose() {
-    if (_isDesktop) {
+    if (isDesktop) {
       setFullScreen(value: desktopFullScreenPlayer);
     }
     for (var infoHash in _infoHashList) {
@@ -319,7 +318,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         }
         // If the last episode of an Anime has ended, exit fullscreen mode
         final isFullScreen = ref.read(fullscreenProvider);
-        if (!hasNextEpisode && val && _isDesktop && isFullScreen) {
+        if (!hasNextEpisode && val && isDesktop && isFullScreen) {
           setFullScreen(value: false);
           ref.read(fullscreenProvider.notifier).state = false;
           widget.desktopFullScreenPlayer.call(false);
@@ -840,7 +839,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         "$defaultSkipIntroLength",
       );
     } catch (_) {}
-    if (_isDesktop && _firstTime) {
+    if (isDesktop && _firstTime) {
       final globalFullscreen = ref.read(fullScreenPlayerStateProvider);
       // Delay fullscreen until after the first frame so the window is ready.
       // On Windows, calling setFullScreen before the widget tree is built
@@ -852,7 +851,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       });
       _firstTime = false;
     }
-    if (!_isDesktop) {
+    if (!isDesktop) {
       final forceLandscape = ref.read(forceLandscapePlayerStateProvider);
       if (forceLandscape) {
         _setLandscapeMode(true);
@@ -971,7 +970,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     _skipPhase.dispose();
     _subDelayController.dispose();
     _subSpeedController.dispose();
-    if (!_isDesktop) _setLandscapeMode(false);
+    if (!isDesktop) _setLandscapeMode(false);
     discordRpc?.showIdleText();
     discordRpc?.showOriginalTimestamp();
     _streamController.keepAliveLink?.close();
@@ -1594,10 +1593,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                     },
                     icon: const Icon(Icons.skip_previous, color: Colors.white),
                   ),
-                CustomPlayOrPauseButton(
-                  controller: _controller,
-                  isDesktop: _isDesktop,
-                ),
+                CustomPlayOrPauseButton(controller: _controller),
                 if (hasNextEpisode)
                   IconButton(
                     onPressed: () async {
@@ -1802,7 +1798,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     return Row(
       children: [
         IconButton(
-          padding: _isDesktop ? EdgeInsets.zero : const EdgeInsets.all(5),
+          padding: isDesktop ? EdgeInsets.zero : const EdgeInsets.all(5),
           onPressed: () => _videoSettingDraggableMenu(context),
           icon: const Icon(Icons.video_settings, color: Colors.white),
         ),
@@ -1829,7 +1825,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             _changeFitLabel(ref);
           },
         ),
-        if (_isDesktop)
+        if (isDesktop)
           CustomMaterialDesktopFullscreenButton(
             controller: _controller,
             desktopFullScreenPlayer: widget.desktopFullScreenPlayer,
@@ -1853,16 +1849,14 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     final fullScreen = ref.watch(fullscreenProvider);
     return Padding(
       padding: EdgeInsets.only(
-        top: !_isDesktop && !fullScreen
-            ? MediaQuery.of(context).padding.top
-            : 0,
+        top: !isDesktop && !fullScreen ? MediaQuery.of(context).padding.top : 0,
       ),
       child: Row(
         children: [
           BackButton(
             color: Colors.white,
             onPressed: () {
-              if (_isDesktop && fullScreen) {
+              if (isDesktop && fullScreen) {
                 setFullScreen(value: !fullScreen);
                 ref.read(fullscreenProvider.notifier).state = !fullScreen;
                 widget.desktopFullScreenPlayer.call(!fullScreen);
@@ -1979,7 +1973,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           ),
           fit: fit,
           key: _key,
-          controls: (state) => _isDesktop
+          controls: (state) => isDesktop
               ? DesktopControllerWidget(
                   videoController: _controller,
                   topButtonBarWidget: _topButtonBar(context),
