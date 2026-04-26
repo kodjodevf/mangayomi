@@ -12,6 +12,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
+import 'package:mangayomi/modules/manga/reader/mixins/reader_gestures.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/auto_scroll_button.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/reader_app_bar.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
@@ -233,61 +234,35 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     );
   }
 
+  /// Goes to either next or previous chapter
+  ///
+  /// The [next] parameter determines the navigation direction:
+  /// - `true` -> navigate to next chapter
+  /// - `false` -> navigate to previous chapter
+  ///
+  /// If the reader is already at the first or last chapter (depending on
+  /// the direction), the method returns without navigating.
+  void _goToChapter(bool next) {
+    if (next && !_readerController.hasNextChapter) return;
+    if (!next && !_readerController.hasPreviousChapter) return;
+    pushReplacementMangaReaderView(
+      context: context,
+      chapter: next
+          ? _readerController.getNextChapter()
+          : _readerController.getPrevChapter(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final backgroundColor = ref.watch(backgroundColorStateProvider);
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
-    return KeyboardListener(
-      autofocus: true,
-      focusNode: FocusNode(),
-      onKeyEvent: (event) {
-        bool isLogicalKeyPressed(LogicalKeyboardKey key) =>
-            HardwareKeyboard.instance.isLogicalKeyPressed(key);
-        bool hasNextChapter = _readerController.getChapterIndex().$1 != 0;
-        bool hasPrevChapter =
-            _readerController.getChapterIndex().$1 + 1 !=
-            _readerController.getChaptersLength(
-              _readerController.getChapterIndex().$2,
-            );
-        final action = switch (event.logicalKey) {
-          LogicalKeyboardKey.f11 =>
-            (!isLogicalKeyPressed(LogicalKeyboardKey.f11))
-                ? _setFullScreen()
-                : null,
-          LogicalKeyboardKey.escape =>
-            (!isLogicalKeyPressed(LogicalKeyboardKey.escape))
-                ? _goBack(context)
-                : null,
-          LogicalKeyboardKey.backspace =>
-            (!isLogicalKeyPressed(LogicalKeyboardKey.backspace))
-                ? _goBack(context)
-                : null,
-          LogicalKeyboardKey.keyN || LogicalKeyboardKey.pageDown =>
-            ((!isLogicalKeyPressed(LogicalKeyboardKey.keyN) ||
-                    !isLogicalKeyPressed(LogicalKeyboardKey.pageDown)))
-                ? switch (hasNextChapter) {
-                    true => pushReplacementMangaReaderView(
-                      context: context,
-                      chapter: _readerController.getNextChapter(),
-                    ),
-                    _ => null,
-                  }
-                : null,
-          LogicalKeyboardKey.keyP || LogicalKeyboardKey.pageUp =>
-            ((!isLogicalKeyPressed(LogicalKeyboardKey.keyP) ||
-                    !isLogicalKeyPressed(LogicalKeyboardKey.pageUp)))
-                ? switch (hasPrevChapter) {
-                    true => pushReplacementMangaReaderView(
-                      context: context,
-                      chapter: _readerController.getPrevChapter(),
-                    ),
-                    _ => null,
-                  }
-                : null,
-          _ => null,
-        };
-        action;
-      },
+    return ReaderKeyboardHandler(
+      onEscape: () => _goBack(context),
+      onFullScreen: () => _setFullScreen(),
+      onNextChapter: () => _goToChapter(true),
+      onPreviousChapter: () => _goToChapter(false),
+    ).wrapWithKeyboardListener(
       child: NotificationListener<UserScrollNotification>(
         onNotification: (notification) {
           if (notification.direction == ScrollDirection.idle) {
@@ -970,12 +945,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     if (!_isView && Platform.isIOS) {
       return const SizedBox.shrink();
     }
-    bool hasPrevChapter =
-        _readerController.getChapterIndex().$1 + 1 !=
-        _readerController.getChaptersLength(
-          _readerController.getChapterIndex().$2,
-        );
-    bool hasNextChapter = _readerController.getChapterIndex().$1 != 0;
+    bool hasPrevChapter = _readerController.hasPreviousChapter;
+    bool hasNextChapter = _readerController.hasNextChapter;
     final bodyLargeColor = Theme.of(context).textTheme.bodyLarge!.color;
     return Positioned(
       bottom: 0,
