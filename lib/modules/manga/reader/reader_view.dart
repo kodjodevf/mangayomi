@@ -37,6 +37,7 @@ import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/modules/manga/reader/providers/manga_reader_provider.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_webtoon.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
+import 'package:mangayomi/utils/system_ui.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -102,10 +103,7 @@ class _MangaReaderViewState extends ConsumerState<MangaReaderView> {
         leading: BackButton(
           onPressed: () {
             if (restoreUi) {
-              SystemChrome.setEnabledSystemUIMode(
-                SystemUiMode.manual,
-                overlays: SystemUiOverlay.values,
-              );
+              restoreSystemUI();
             }
             Navigator.of(context).pop();
           },
@@ -189,10 +187,7 @@ class _MangaChapterPageGalleryState
     } else if (isDesktop) {
       setFullScreen(value: false);
     } else {
-      SystemChrome.setEnabledSystemUIMode(
-        SystemUiMode.manual,
-        overlays: SystemUiOverlay.values,
-      );
+      restoreSystemUI();
     }
     discordRpc?.showIdleText();
     final actualIdx = _pageViewToActualIndexSync(_currentIndex!);
@@ -1467,10 +1462,7 @@ class _MangaChapterPageGalleryState
   }
 
   void _goBack(BuildContext context) {
-    SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.manual,
-      overlays: SystemUiOverlay.values,
-    );
+    restoreSystemUI();
     Navigator.pop(context);
   }
 
@@ -1483,10 +1475,7 @@ class _MangaChapterPageGalleryState
     }
     if (fullScreenReader) {
       if (_isView) {
-        SystemChrome.setEnabledSystemUIMode(
-          SystemUiMode.manual,
-          overlays: SystemUiOverlay.values,
-        );
+        restoreSystemUI();
       } else {
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
       }

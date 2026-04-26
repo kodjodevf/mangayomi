@@ -43,6 +43,7 @@ import 'package:mangayomi/services/get_video_list.dart';
 import 'package:mangayomi/services/torrent_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
+import 'package:mangayomi/utils/system_ui.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit/generated/libmpv/bindings.dart' as generated;
 import 'package:media_kit_video/media_kit_video.dart';
@@ -78,10 +79,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
     for (var infoHash in _infoHashList) {
       MTorrentServer().removeTorrent(infoHash);
     }
-    SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.manual,
-      overlays: SystemUiOverlay.values,
-    );
+    restoreSystemUI();
     super.dispose();
   }
 
@@ -129,10 +127,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
           title: const Text(''),
           leading: BackButton(
             onPressed: () {
-              SystemChrome.setEnabledSystemUIMode(
-                SystemUiMode.manual,
-                overlays: SystemUiOverlay.values,
-              );
+              restoreSystemUI();
               Navigator.pop(context);
             },
           ),
@@ -148,10 +143,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
             leading: BackButton(
               color: Colors.white,
               onPressed: () {
-                SystemChrome.setEnabledSystemUIMode(
-                  SystemUiMode.manual,
-                  overlays: SystemUiOverlay.values,
-                );
+                restoreSystemUI();
                 Navigator.pop(context);
               },
             ),
@@ -1940,10 +1932,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                 ref.read(fullscreenProvider.notifier).state = !fullScreen;
                 widget.desktopFullScreenPlayer.call(!fullScreen);
               } else {
-                SystemChrome.setEnabledSystemUIMode(
-                  SystemUiMode.manual,
-                  overlays: SystemUiOverlay.values,
-                );
+                restoreSystemUI();
               }
               if (mounted) {
                 // Set variable to true, so the player uses the global

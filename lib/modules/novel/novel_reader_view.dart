@@ -24,6 +24,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_html_content.dart';
 import 'package:mangayomi/src/rust/api/epub.dart';
 import 'package:mangayomi/utils/extensions/dom_extensions.dart';
+import 'package:mangayomi/utils/system_ui.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -108,10 +109,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     if (isDesktop) {
       setFullScreen(value: false);
     } else {
-      SystemChrome.setEnabledSystemUIMode(
-        SystemUiMode.manual,
-        overlays: SystemUiOverlay.values,
-      );
+      restoreSystemUI();
     }
     discordRpc?.showIdleText();
     super.dispose();
@@ -840,10 +838,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
         leading: BackButton(
           onPressed: () {
             if (restoreUi) {
-              SystemChrome.setEnabledSystemUIMode(
-                SystemUiMode.manual,
-                overlays: SystemUiOverlay.values,
-              );
+              restoreSystemUI();
             }
             Navigator.of(context).pop();
           },
@@ -854,10 +849,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
   }
 
   void _goBack(BuildContext context) {
-    SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.manual,
-      overlays: SystemUiOverlay.values,
-    );
+    restoreSystemUI();
     Navigator.pop(context);
   }
 
@@ -1414,10 +1406,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     }
     if (fullScreenReader) {
       if (_isView) {
-        SystemChrome.setEnabledSystemUIMode(
-          SystemUiMode.manual,
-          overlays: SystemUiOverlay.values,
-        );
+        restoreSystemUI();
       } else {
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
       }
