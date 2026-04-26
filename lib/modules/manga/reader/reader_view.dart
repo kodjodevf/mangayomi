@@ -346,6 +346,29 @@ class _MangaChapterPageGalleryState
     ref.read(fullScreenReaderStateProvider.notifier).set(!value!);
   }
 
+  /// Goes to either next or previous chapter
+  ///
+  /// The [next] parameter determines the navigation direction:
+  /// - `true` -> navigate to next chapter
+  /// - `false` -> navigate to previous chapter
+  ///
+  /// If the reader is already at the first or last chapter (depending on
+  /// the direction), the method returns without navigating.
+  void _goToChapter(bool next) {
+    final idx = _readerController.getChapterIndex();
+    if (next && idx.$1 == 0) return;
+    if (!next && idx.$1 + 1 == _readerController.getChaptersLength(idx.$2)) {
+      return;
+    }
+    _isNavigatingToChapter = true;
+    pushReplacementMangaReaderView(
+      context: context,
+      chapter: next
+          ? _readerController.getNextChapter()
+          : _readerController.getPrevChapter(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final animatePageTransitions = ref.watch(
@@ -373,30 +396,8 @@ class _MangaChapterPageGalleryState
       ),
       onEscape: () => _goBack(context),
       onFullScreen: () => _setFullScreen(),
-      onNextChapter: () {
-        bool hasNextChapter = _readerController.getChapterIndex().$1 != 0;
-        if (hasNextChapter) {
-          _isNavigatingToChapter = true;
-          pushReplacementMangaReaderView(
-            context: context,
-            chapter: _readerController.getNextChapter(),
-          );
-        }
-      },
-      onPreviousChapter: () {
-        bool hasPrevChapter =
-            _readerController.getChapterIndex().$1 + 1 !=
-            _readerController.getChaptersLength(
-              _readerController.getChapterIndex().$2,
-            );
-        if (hasPrevChapter) {
-          _isNavigatingToChapter = true;
-          pushReplacementMangaReaderView(
-            context: context,
-            chapter: _readerController.getPrevChapter(),
-          );
-        }
-      },
+      onNextChapter: () => _goToChapter(true),
+      onPreviousChapter: () => _goToChapter(false),
     ).wrapWithKeyboardListener(
       isReverseHorizontal: _isReverseHorizontal,
       child: NotificationListener<UserScrollNotification>(
@@ -815,20 +816,8 @@ class _MangaChapterPageGalleryState
                           ),
                       hasNextChapter:
                           _readerController.getChapterIndex().$1 != 0,
-                      onPreviousChapter: () {
-                        _isNavigatingToChapter = true;
-                        pushReplacementMangaReaderView(
-                          context: context,
-                          chapter: _readerController.getPrevChapter(),
-                        );
-                      },
-                      onNextChapter: () {
-                        _isNavigatingToChapter = true;
-                        pushReplacementMangaReaderView(
-                          context: context,
-                          chapter: _readerController.getNextChapter(),
-                        );
-                      },
+                      onPreviousChapter: () => _goToChapter(false),
+                      onNextChapter: () => _goToChapter(true),
                       onSliderChanged: (value, ref) {
                         _currentPageDisplayIndex.value = value;
                         ref
