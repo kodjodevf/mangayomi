@@ -33,12 +33,21 @@ extension MangaExtensions on Manga {
             .type!;
 
     final scanlators = settings.filterScanlatorList ?? [];
-    final filter = scanlators.where((e) => e.mangaId == id).toList();
+    final filter = scanlators.where((e) => e.mangaId == id);
     final filterScanlator = filter.firstOrNull?.scanlators ?? [];
+    final recognition = ChapterRecognition();
+    final mangaTitle = name ?? '';
 
-    // Canonical ascending order (ch1 ... chN) — reader always moves forward.
-    final data = chapters
-        .toList(); // keep DB/insertion order, assumed ascending
+    // Memoize so each chapter name is parsed at most once during the sort.
+    final numCache = <int?, int>{};
+    int chapNum(Chapter c) => numCache[c.id] ??= recognition.parseChapterNumber(
+      mangaTitle,
+      c.name ?? '',
+    );
+
+    // Sort by chapter number — DB insertion order is NOT guaranteed to be ascending
+    final data = chapters.toList()
+      ..sort((a, b) => chapNum(a).compareTo(chapNum(b)));
 
     final chapterIds = data.map((c) => c.id).whereType<int>().toList();
     final downloadedIds = (filterDownloaded == 0 || chapterIds.isEmpty)
@@ -83,31 +92,28 @@ extension MangaExtensions on Manga {
         settings.sortChapterList!.where((e) => e.mangaId == id).firstOrNull ??
         SortChapter(mangaId: id, index: 1);
     final sortIndex = sortChapterEntry.index!;
-    final reverse = !sortChapterEntry.reverse!;
+    final reverse = sortChapterEntry.reverse!;
 
     // Start from the reading list so filter logic lives in one place.
     List<Chapter> list = getChapterListForReading();
 
-    // Cache recognition instance — parseChapterNumber is called O(n log n)
-    // times during sort, so avoid constructing it inside the comparator.
-    final recognition = ChapterRecognition();
-    final mangaTitle = name ?? '';
-
-    // Returns the parsed chapter number for a chapter, used as the primary
-    // numeric sort key for cases 0 and 1.
-    int chapNum(Chapter c) =>
-        recognition.parseChapterNumber(mangaTitle, c.name ?? '');
-
     switch (sortIndex) {
       case 0: // by scanlator, then chapter number
+        // Cache recognition instance — parseChapterNumber is called O(n log n)
+        // times during sort, so avoid constructing it inside the comparator.
+        final recognition = ChapterRecognition();
+        final mangaTitle = name ?? '';
+
+        // Returns the parsed chapter number for a chapter, used as the primary
+        // numeric sort key for cases 0 and 1.
+        final numCache = <int?, int>{};
+        int chapNum(Chapter c) => numCache[c.id] ??= recognition
+            .parseChapterNumber(mangaTitle, c.name ?? '');
         list.sort((a, b) {
           final s = (a.scanlator ?? '').compareTo(b.scanlator ?? '');
           if (s != 0) return s;
           return chapNum(a).compareTo(chapNum(b));
         });
-        break;
-      case 1: // by chapter number
-        list.sort((a, b) => chapNum(a).compareTo(chapNum(b)));
         break;
       case 2: // by upload date
         list.sort((a, b) {
@@ -123,8 +129,12 @@ extension MangaExtensions on Manga {
           return a.name!.compareTo(b.name!);
         });
         break;
+      case 1:
+      default:
+        // getChapterListForReading already sorted by chapter number; nothing to do.
+        break;
     }
 
-    return reverse ? list.reversed.toList() : list;
+    return reverse ? list : list.reversed.toList();
   }
 }
