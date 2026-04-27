@@ -353,9 +353,6 @@ class _MangaChapterPageGalleryState
 
   @override
   Widget build(BuildContext context) {
-    final animatePageTransitions = ref.watch(
-      animatePageTransitionsStateProvider,
-    );
     final backgroundColor = ref.watch(backgroundColorStateProvider);
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
     final readerMode = ref.watch(_currentReaderMode);
@@ -365,17 +362,8 @@ class _MangaChapterPageGalleryState
 
     final l10n = l10nLocalizations(context)!;
     return ReaderKeyboardHandler(
-      onPreviousPage: () => navigationService.previousPage(
-        readerMode: readerMode!,
-        currentIndex: _currentIndex!,
-        animate: animatePageTransitions,
-      ),
-      onNextPage: () => navigationService.nextPage(
-        readerMode: readerMode!,
-        currentIndex: _currentIndex!,
-        maxPages: _pageViewPageCount,
-        animate: animatePageTransitions,
-      ),
+      onPreviousPage: () => _handlePageNavigation(forward: false),
+      onNextPage: () => _handlePageNavigation(forward: true),
       onEscape: () => _goBack(context),
       onFullScreen: () => _setFullScreen(),
       onNextChapter: () {
@@ -766,17 +754,10 @@ class _MangaChapterPageGalleryState
                           hasImageError: failedToLoadImage,
                           isContinuousMode: _isContinuousMode(),
                           onToggleUI: _isViewFunction,
-                          onPreviousPage: () => navigationService.previousPage(
-                            readerMode: readerMode!,
-                            currentIndex: _currentIndex!,
-                            animate: animatePageTransitions,
-                          ),
-                          onNextPage: () => navigationService.nextPage(
-                            readerMode: readerMode!,
-                            currentIndex: _currentIndex!,
-                            maxPages: _pageViewPageCount,
-                            animate: animatePageTransitions,
-                          ),
+                          onPreviousPage: () =>
+                              _handlePageNavigation(forward: false),
+                          onNextPage: () =>
+                              _handlePageNavigation(forward: true),
                           onDoubleTapDown: (position) => _toggleScale(position),
                           onDoubleTap: () {},
                           onSecondaryTapDown: (position) =>
@@ -954,6 +935,43 @@ class _MangaChapterPageGalleryState
         ),
       ),
     );
+  }
+
+  void _handlePageNavigation({required bool forward}) {
+    final readerMode = ref.read(_currentReaderMode);
+    final animatePageTransitions = ref.read(
+      animatePageTransitionsStateProvider,
+    );
+    if (readerMode == null || _currentIndex == null) return;
+
+    if (readerMode == ReaderMode.webtoon) {
+      final viewportHeight = MediaQuery.sizeOf(context).height;
+      final offset = viewportHeight * 0.60 * (forward ? 1 : -1);
+      final duration = animatePageTransitions
+          ? const Duration(milliseconds: 160)
+          : const Duration(milliseconds: 10);
+      _pageOffsetController.animateScroll(
+        offset: offset,
+        duration: duration,
+        curve: Curves.easeInOut,
+      );
+      return;
+    }
+
+    if (forward) {
+      navigationService.nextPage(
+        readerMode: readerMode,
+        currentIndex: _currentIndex!,
+        maxPages: _pageViewPageCount,
+        animate: animatePageTransitions,
+      );
+    } else {
+      navigationService.previousPage(
+        readerMode: readerMode,
+        currentIndex: _currentIndex!,
+        animate: animatePageTransitions,
+      );
+    }
   }
 
   Duration? _doubleTapAnimationDuration() {
