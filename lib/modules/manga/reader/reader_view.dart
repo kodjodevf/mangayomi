@@ -1361,11 +1361,9 @@ class _MangaChapterPageGalleryState
   void _setReaderMode(ReaderMode value, WidgetRef ref) async {
     if (!value.isVerticalContinuous) {
       _autoScroll.value = false;
-    } else {
-      if (_autoScrollPage.value) {
-        _autoPagescroll();
-        _autoScroll.value = true;
-      }
+    } else if (_autoScrollPage.value) {
+      _autoPagescroll();
+      _autoScroll.value = true;
     }
 
     _failedToLoadImage.value = false;
@@ -1376,46 +1374,27 @@ class _MangaChapterPageGalleryState
 
     int index = _pageViewToActualIndex(_currentIndex!);
     ref.read(_currentReaderMode.notifier).state = value;
-    if (value == ReaderMode.vertical) {
-      if (mounted) {
-        setState(() {
-          _scrollDirection = Axis.vertical;
-          _isReverseHorizontal = false;
-        });
-        // Wait for the next frame so the PageView rebuilds with new direction
-        await WidgetsBinding.instance.endOfFrame;
+    if (!mounted) return;
+    setState(() {
+      _isReverseHorizontal = value.isRTL;
 
-        _extendedController.jumpToPage(index);
+      if (value == ReaderMode.vertical) {
+        _scrollDirection = Axis.vertical;
+      } else if (value.isHorizontalPaged) {
+        _scrollDirection = Axis.horizontal;
       }
-    } else if (value.isHorizontalPaged) {
-      if (mounted) {
-        setState(() {
-          if (value == ReaderMode.rtl) {
-            _isReverseHorizontal = true;
-          } else {
-            _isReverseHorizontal = false;
-          }
+    });
+    // Wait for the next frame so the scroll view rebuilds
+    await WidgetsBinding.instance.endOfFrame;
 
-          _scrollDirection = Axis.horizontal;
-        });
-        // Wait for the next frame so the PageView rebuilds with new direction
-        await WidgetsBinding.instance.endOfFrame;
-
-        _extendedController.jumpToPage(index);
-      }
+    if (value == ReaderMode.vertical || value.isHorizontalPaged) {
+      _extendedController.jumpToPage(index);
     } else {
-      if (mounted) {
-        setState(() {
-          _isReverseHorizontal = value == ReaderMode.horizontalContinuousRTL;
-        });
-        // Wait for the next frame so the scroll view rebuilds
-        await WidgetsBinding.instance.endOfFrame;
-        _itemScrollController.scrollTo(
-          index: index,
-          duration: const Duration(milliseconds: 1),
-          curve: Curves.ease,
-        );
-      }
+      _itemScrollController.scrollTo(
+        index: index,
+        duration: const Duration(milliseconds: 1),
+        curve: Curves.ease,
+      );
     }
   }
 
