@@ -822,8 +822,7 @@ class _MangaChapterPageGalleryState
                       },
                       onPageModeToggle: () async {
                         final readerMode = ref.read(_currentReaderMode);
-                        if (!(readerMode == ReaderMode.horizontalContinuous ||
-                            readerMode == ReaderMode.horizontalContinuousRTL)) {
+                        if (!(readerMode?.isHorizontalContinuous ?? false)) {
                           // Get the actual page index being viewed
                           final actualIdx = _pageViewToActualIndex(
                             _currentIndex!,
@@ -921,9 +920,11 @@ class _MangaChapterPageGalleryState
     );
     if (readerMode == null || _currentIndex == null) return;
 
-    if (readerMode == ReaderMode.webtoon) {
-      final viewportHeight = MediaQuery.sizeOf(context).height;
-      final offset = viewportHeight * 0.60 * (forward ? 1 : -1);
+    if (readerMode.isContinuous) {
+      final isHorizontal = readerMode.isHorizontalContinuous;
+      final viewportSize = MediaQuery.sizeOf(context);
+      final dimension = isHorizontal ? viewportSize.width : viewportSize.height;
+      final offset = dimension * 0.60 * (forward ? 1 : -1);
       final duration = animatePageTransitions
           ? const Duration(milliseconds: 160)
           : const Duration(milliseconds: 10);
@@ -976,8 +977,7 @@ class _MangaChapterPageGalleryState
     final currentReaderMode = ref.read(_currentReaderMode);
     int pagesLength =
         (_pageMode == PageMode.doublePage &&
-            currentReaderMode != ReaderMode.horizontalContinuous &&
-            currentReaderMode != ReaderMode.horizontalContinuousRTL)
+            !(currentReaderMode?.isHorizontalContinuous ?? false))
         ? (pages.length / 2).ceil()
         : pages.length;
     if (_currentIndex! >= 0 && _currentIndex! < pagesLength) {
@@ -1205,15 +1205,12 @@ class _MangaChapterPageGalleryState
     }
     _setReaderMode(readerMode, ref);
 
-    if (readerMode != ReaderMode.verticalContinuous &&
-        readerMode != ReaderMode.webtoon) {
+    if (!readerMode.isVerticalContinuous) {
       _autoScroll.value = false;
     }
     _autoPagescroll();
     if (_readerController.getPageLength(_chapterUrlModel.pageUrls) == 1 &&
-        (readerMode == ReaderMode.ltr ||
-            readerMode == ReaderMode.rtl ||
-            readerMode == ReaderMode.vertical)) {
+        (readerMode.isHorizontalPaged || readerMode == ReaderMode.vertical)) {
       _onPageChanged(0);
     }
   }
@@ -1362,13 +1359,11 @@ class _MangaChapterPageGalleryState
   }
 
   void _setReaderMode(ReaderMode value, WidgetRef ref) async {
-    if (value != ReaderMode.verticalContinuous && value != ReaderMode.webtoon) {
+    if (!value.isVerticalContinuous) {
       _autoScroll.value = false;
-    } else {
-      if (_autoScrollPage.value) {
-        _autoPagescroll();
-        _autoScroll.value = true;
-      }
+    } else if (_autoScrollPage.value) {
+      _autoPagescroll();
+      _autoScroll.value = true;
     }
 
     _failedToLoadImage.value = false;
@@ -1379,46 +1374,27 @@ class _MangaChapterPageGalleryState
 
     int index = _pageViewToActualIndex(_currentIndex!);
     ref.read(_currentReaderMode.notifier).state = value;
-    if (value == ReaderMode.vertical) {
-      if (mounted) {
-        setState(() {
-          _scrollDirection = Axis.vertical;
-          _isReverseHorizontal = false;
-        });
-        // Wait for the next frame so the PageView rebuilds with new direction
-        await WidgetsBinding.instance.endOfFrame;
+    if (!mounted) return;
+    setState(() {
+      _isReverseHorizontal = value.isRTL;
 
-        _extendedController.jumpToPage(index);
+      if (value == ReaderMode.vertical) {
+        _scrollDirection = Axis.vertical;
+      } else if (value.isHorizontalPaged) {
+        _scrollDirection = Axis.horizontal;
       }
-    } else if (value == ReaderMode.ltr || value == ReaderMode.rtl) {
-      if (mounted) {
-        setState(() {
-          if (value == ReaderMode.rtl) {
-            _isReverseHorizontal = true;
-          } else {
-            _isReverseHorizontal = false;
-          }
+    });
+    // Wait for the next frame so the scroll view rebuilds
+    await WidgetsBinding.instance.endOfFrame;
 
-          _scrollDirection = Axis.horizontal;
-        });
-        // Wait for the next frame so the PageView rebuilds with new direction
-        await WidgetsBinding.instance.endOfFrame;
-
-        _extendedController.jumpToPage(index);
-      }
+    if (value == ReaderMode.vertical || value.isHorizontalPaged) {
+      _extendedController.jumpToPage(index);
     } else {
-      if (mounted) {
-        setState(() {
-          _isReverseHorizontal = value == ReaderMode.horizontalContinuousRTL;
-        });
-        // Wait for the next frame so the scroll view rebuilds
-        await WidgetsBinding.instance.endOfFrame;
-        _itemScrollController.scrollTo(
-          index: index,
-          duration: const Duration(milliseconds: 1),
-          curve: Curves.ease,
-        );
-      }
+      _itemScrollController.scrollTo(
+        index: index,
+        duration: const Duration(milliseconds: 1),
+        curve: Curves.ease,
+      );
     }
   }
 
@@ -1501,15 +1477,13 @@ class _MangaChapterPageGalleryState
   /// Uses ref.read() so cannot be called during dispose.
   bool get _isDoublePageActive =>
       _pageMode == PageMode.doublePage &&
-      ref.read(_currentReaderMode) != ReaderMode.horizontalContinuous &&
-      ref.read(_currentReaderMode) != ReaderMode.horizontalContinuousRTL;
+      !(ref.read(_currentReaderMode)?.isHorizontalContinuous ?? false);
 
   /// Safe version of _isDoublePageActive that uses cached reader mode.
   /// Safe to call during dispose without Riverpod assertion errors.
   bool get _isDoublePageActiveSync =>
       _pageMode == PageMode.doublePage &&
-      _cachedReaderMode != ReaderMode.horizontalContinuous &&
-      _cachedReaderMode != ReaderMode.horizontalContinuousRTL;
+      !(_cachedReaderMode?.isHorizontalContinuous ?? false);
 
   /// Converts a page view index (from ExtendedPageController) to the actual
   /// index in the [pages] array for double page mode.

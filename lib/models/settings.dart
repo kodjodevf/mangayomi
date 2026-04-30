@@ -1262,15 +1262,28 @@ enum ReaderMode {
 }
 
 extension ReaderModeExtension on ReaderMode {
+  /// Vertical continuous || Webtoon || Horizontal continuous || Horizontal continuous (RTL)
   bool get isContinuous => isVerticalContinuous || isHorizontalContinuous;
+
+  /// Vertical || Vertical continuous || Webtoon
   bool get isVertical => this == ReaderMode.vertical || isVerticalContinuous;
+
+  /// Vertical continuous || Webtoon
   bool get isVerticalContinuous =>
       this == ReaderMode.verticalContinuous || this == ReaderMode.webtoon;
+
+  /// Horizontal continuous || Horizontal continuous (RTL)
   bool get isHorizontalContinuous =>
       this == ReaderMode.horizontalContinuous ||
       this == ReaderMode.horizontalContinuousRTL;
+
+  /// Right to Left || Horizontal continuous (RTL)
   bool get isRTL =>
       this == ReaderMode.rtl || this == ReaderMode.horizontalContinuousRTL;
+
+  /// Left to Right || Right to Left
+  bool get isHorizontalPaged =>
+      this == ReaderMode.ltr || this == ReaderMode.rtl;
 }
 
 enum NovelTextAlign { left, center, right, block }
