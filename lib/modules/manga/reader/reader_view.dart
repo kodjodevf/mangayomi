@@ -920,9 +920,11 @@ class _MangaChapterPageGalleryState
     );
     if (readerMode == null || _currentIndex == null) return;
 
-    if (readerMode == ReaderMode.webtoon) {
-      final viewportHeight = MediaQuery.sizeOf(context).height;
-      final offset = viewportHeight * 0.60 * (forward ? 1 : -1);
+    if (readerMode.isContinuous) {
+      final isHorizontal = readerMode.isHorizontalContinuous;
+      final viewportSize = MediaQuery.sizeOf(context);
+      final dimension = isHorizontal ? viewportSize.width : viewportSize.height;
+      final offset = dimension * 0.60 * (forward ? 1 : -1);
       final duration = animatePageTransitions
           ? const Duration(milliseconds: 160)
           : const Duration(milliseconds: 10);
