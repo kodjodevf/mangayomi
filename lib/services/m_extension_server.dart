@@ -6,6 +6,7 @@ import 'package:m_extension_server/m_extension_server.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class MExtensionServerPlatform {
   WidgetRef ref;
@@ -31,7 +32,7 @@ class MExtensionServerPlatform {
         final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
         final port = server.port;
         await server.close();
-        if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+        if (isDesktop) {
           final settings = isar.settings.getSync(227);
           final jrePath = settings?.jrePath;
           final serverJarPath = settings?.extensionServerPath;

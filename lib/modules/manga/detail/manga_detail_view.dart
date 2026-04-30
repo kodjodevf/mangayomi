@@ -22,7 +22,8 @@ import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_search_widget.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_widget.dart';
-import 'package:mangayomi/utils/extensions/chapter.dart';
+import 'package:mangayomi/utils/extensions/manga_extensions.dart';
+import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/modules/more/providers/algorithm_weights_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
@@ -107,22 +108,13 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   late final isLocalArchive = widget.manga!.isLocalArchive ?? false;
   @override
   Widget build(BuildContext context) {
-    final scanlators = ref.watch(scanlatorsFilterStateProvider(widget.manga!));
-    final reverse = ref
-        .watch(sortChapterStateProvider(mangaId: widget.manga!.id!))
-        .reverse!;
-    final filterUnread = ref.watch(
-      chapterFilterUnreadStateProvider(mangaId: widget.manga!.id!),
-    );
-    final filterBookmarked = ref.watch(
-      chapterFilterBookmarkedStateProvider(mangaId: widget.manga!.id!),
-    );
-    final filterDownloaded = ref.watch(
-      chapterFilterDownloadedStateProvider(mangaId: widget.manga!.id!),
-    );
-    final sortChapter =
-        ref.watch(sortChapterStateProvider(mangaId: widget.manga!.id!)).index
-            as int;
+    // Watch all sort/filter providers so the list rebuilds whenever
+    // the user changes settings in _showDraggableMenu().
+    ref.watch(scanlatorsFilterStateProvider(widget.manga!));
+    ref.watch(sortChapterStateProvider(mangaId: widget.manga!.id!));
+    ref.watch(chapterFilterUnreadStateProvider(mangaId: widget.manga!.id!));
+    ref.watch(chapterFilterBookmarkedStateProvider(mangaId: widget.manga!.id!));
+    ref.watch(chapterFilterDownloadedStateProvider(mangaId: widget.manga!.id!));
     final chapters = ref.watch(
       getChaptersStreamProvider(mangaId: widget.manga!.id!),
     );
@@ -137,134 +129,22 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         return true;
       },
       child: chapters.when(
-        data: (data) {
-          List<Chapter> chapters = _filterAndSortChapter(
-            data: data.reversed.toList(),
-            filterUnread: filterUnread,
-            filterBookmarked: filterBookmarked,
-            filterDownloaded: filterDownloaded,
-            sortChapter: sortChapter,
-            filterScanlator: scanlators.$2,
-          );
+        data: (_) {
+          List<Chapter> chapters = widget.manga!.getFilteredChapterList();
           ref.read(chaptersListttStateProvider.notifier).set(chapters);
-          return _buildWidget(chapters: chapters, reverse: reverse);
+          return _buildWidget(chapters: chapters);
         },
         error: (Object error, StackTrace stackTrace) {
           return ErrorText(error);
         },
         loading: () {
-          return _buildWidget(
-            chapters: widget.manga!.chapters.toList().reversed.toList(),
-            reverse: reverse,
-          );
+          return _buildWidget(chapters: widget.manga!.chapters.toList());
         },
       ),
     );
   }
 
-  List<Chapter> _getFilteredAndSortedChapters() {
-    final filterScanlator = ref.read(
-      scanlatorsFilterStateProvider(widget.manga!),
-    );
-    final filterUnread = ref.read(
-      chapterFilterUnreadStateProvider(mangaId: widget.manga!.id!),
-    );
-    final filterBookmarked = ref.read(
-      chapterFilterBookmarkedStateProvider(mangaId: widget.manga!.id!),
-    );
-    final filterDownloaded = ref.read(
-      chapterFilterDownloadedStateProvider(mangaId: widget.manga!.id!),
-    );
-    final sortChapter =
-        ref.read(sortChapterStateProvider(mangaId: widget.manga!.id!)).index
-            as int;
-    final chapters = isar.chapters
-        .filter()
-        .idIsNotNull()
-        .mangaIdEqualTo(widget.manga!.id!)
-        .findAllSync();
-    return _filterAndSortChapter(
-      data: chapters,
-      filterUnread: filterUnread,
-      filterBookmarked: filterBookmarked,
-      filterDownloaded: filterDownloaded,
-      sortChapter: sortChapter,
-      filterScanlator: filterScanlator.$2,
-    );
-  }
-
-  List<Chapter> _filterAndSortChapter({
-    required List<Chapter> data,
-    required int filterUnread,
-    required int filterBookmarked,
-    required int filterDownloaded,
-    required int sortChapter,
-    required List<String> filterScanlator,
-  }) {
-    List<Chapter>? chapterList;
-    chapterList = data
-        .where(
-          (element) => filterUnread == 1
-              ? element.isRead == false
-              : filterUnread == 2
-              ? element.isRead == true
-              : true,
-        )
-        .where(
-          (element) => filterBookmarked == 1
-              ? element.isBookmarked == true
-              : filterBookmarked == 2
-              ? element.isBookmarked == false
-              : true,
-        )
-        .where((element) {
-          final modelChapDownload = isar.downloads
-              .filter()
-              .idEqualTo(element.id)
-              .findAllSync();
-          return filterDownloaded == 1
-              ? modelChapDownload.isNotEmpty &&
-                    modelChapDownload.first.isDownload == true
-              : filterDownloaded == 2
-              ? !(modelChapDownload.isNotEmpty &&
-                    modelChapDownload.first.isDownload == true)
-              : true;
-        })
-        .where((element) => !filterScanlator.contains(element.scanlator))
-        .toList();
-    List<Chapter> chapters = sortChapter == 1
-        ? chapterList.reversed.toList()
-        : chapterList;
-    if (sortChapter == 0) {
-      chapters.sort((a, b) {
-        return (a.scanlator == null ||
-                b.scanlator == null ||
-                a.dateUpload == null ||
-                b.dateUpload == null)
-            ? 0
-            : a.scanlator!.compareTo(b.scanlator!) |
-                  a.dateUpload!.compareTo(b.dateUpload!);
-      });
-    } else if (sortChapter == 2) {
-      chapters.sort((a, b) {
-        return (a.dateUpload == null || b.dateUpload == null)
-            ? 0
-            : int.parse(a.dateUpload!).compareTo(int.parse(b.dateUpload!));
-      });
-    } else if (sortChapter == 3) {
-      chapters.sort((a, b) {
-        return (a.name == null || b.name == null)
-            ? 0
-            : a.name!.compareTo(b.name!);
-      });
-    }
-    return chapterList;
-  }
-
-  Widget _buildWidget({
-    required List<Chapter> chapters,
-    required bool reverse,
-  }) {
+  Widget _buildWidget({required List<Chapter> chapters}) {
     final chapterList = ref.watch(chaptersListStateProvider);
     final isLongPressed = ref.watch(isLongPressedStateProvider);
     final checkCategoryList = isar.categorys
@@ -492,8 +372,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 ];
                               },
                               onSelected: (value) {
-                                final chapters =
-                                    _getFilteredAndSortedChapters();
+                                final chapters = widget.manga!
+                                    .getFilteredChapterList();
                                 if (value == 0 ||
                                     value == 1 ||
                                     value == 2 ||
@@ -549,13 +429,13 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     ref.watch(processDownloadsProvider());
                                   }
                                 } else if (value == 4) {
-                                  final List<Chapter> unreadChapters =
-                                      _getFilteredAndSortedChapters()
-                                          .where(
-                                            (element) =>
-                                                !(element.isRead ?? false),
-                                          )
-                                          .toList();
+                                  final List<Chapter> unreadChapters = widget
+                                      .manga!
+                                      .getFilteredChapterList()
+                                      .where(
+                                        (element) => !(element.isRead ?? false),
+                                      )
+                                      .toList();
                                   isar.chapters
                                       .filter()
                                       .idIsNotNull()
@@ -577,8 +457,9 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   }
                                   ref.watch(processDownloadsProvider());
                                 } else if (value == 5) {
-                                  final List<Chapter> allChapters =
-                                      _getFilteredAndSortedChapters();
+                                  final List<Chapter> allChapters = widget
+                                      .manga!
+                                      .getFilteredChapterList();
                                   for (var chapter in allChapters) {
                                     final entry = isar.downloads
                                         .filter()
@@ -900,17 +781,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                         chapterLength: chapters.length,
                                       );
                               }
-                              int reverseIndex =
-                                  chapters.length -
-                                  chapters.reversed.toList().indexOf(
-                                    chapters.reversed.toList()[finalIndex],
-                                  ) -
-                                  1;
-                              final indexx = reverse
-                                  ? reverseIndex
-                                  : finalIndex;
                               return ChapterListTileWidget(
-                                chapter: chapters[indexx],
+                                chapter: chapters[finalIndex],
                                 chapterList: chapterList,
                                 allChapters: chapters,
                                 sourceExist: widget.sourceExist,

@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:io';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -37,6 +37,7 @@ import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/modules/manga/reader/providers/manga_reader_provider.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_webtoon.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
+import 'package:mangayomi/utils/system_ui.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -102,10 +103,7 @@ class _MangaReaderViewState extends ConsumerState<MangaReaderView> {
         leading: BackButton(
           onPressed: () {
             if (restoreUi) {
-              SystemChrome.setEnabledSystemUIMode(
-                SystemUiMode.manual,
-                overlays: SystemUiOverlay.values,
-              );
+              restoreSystemUI();
             }
             Navigator.of(context).pop();
           },
@@ -152,7 +150,6 @@ class _MangaChapterPageGalleryState
     readerControllerProvider(chapter: chapter).notifier,
   );
 
-  bool isDesktop = Platform.isMacOS || Platform.isLinux || Platform.isWindows;
   final ValueNotifier<bool> _isScrolling = ValueNotifier(false);
   Timer? _scrollIdleTimer;
   final Stopwatch _readingStopwatch = Stopwatch();
@@ -179,6 +176,7 @@ class _MangaChapterPageGalleryState
     _currentPageDisplayIndex.dispose();
     _scrollIdleTimer?.cancel();
     _isScrolling.dispose();
+    _keyboardFocusNode.dispose();
     _itemPositionsListener.itemPositions.removeListener(_readProgressListener);
     _photoViewController.dispose();
     _photoViewScaleStateController.dispose();
@@ -189,10 +187,7 @@ class _MangaChapterPageGalleryState
     } else if (isDesktop) {
       setFullScreen(value: false);
     } else {
-      SystemChrome.setEnabledSystemUIMode(
-        SystemUiMode.manual,
-        overlays: SystemUiOverlay.values,
-      );
+      restoreSystemUI();
     }
     discordRpc?.showIdleText();
     final actualIdx = _pageViewToActualIndexSync(_currentIndex!);
@@ -304,6 +299,7 @@ class _MangaChapterPageGalleryState
   final _currentReaderMode = StateProvider<ReaderMode?>(() => null);
   PageMode? _pageMode;
   bool _isView = false;
+  final _keyboardFocusNode = FocusNode();
 
   /// Cached reader mode to safely access in dispose without ref.read()
   ReaderMode? _cachedReaderMode;
@@ -351,14 +347,33 @@ class _MangaChapterPageGalleryState
     ref.read(fullScreenReaderStateProvider.notifier).set(!value!);
   }
 
+  /// Goes to either next or previous chapter
+  ///
+  /// The [next] parameter determines the navigation direction:
+  /// - `true` -> navigate to next chapter
+  /// - `false` -> navigate to previous chapter
+  ///
+  /// If the reader is already at the first or last chapter (depending on
+  /// the direction), the method returns without navigating.
+  void _goToChapter(bool next) {
+    if (next && !_readerController.hasNextChapter) return;
+    if (!next && !_readerController.hasPreviousChapter) return;
+    _isNavigatingToChapter = true;
+    pushReplacementMangaReaderView(
+      context: context,
+      chapter: next
+          ? _readerController.getNextChapter()
+          : _readerController.getPrevChapter(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final backgroundColor = ref.watch(backgroundColorStateProvider);
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
     final readerMode = ref.watch(_currentReaderMode);
-    final bool isHorizontalContinuous =
-        readerMode == ReaderMode.horizontalContinuous ||
-        readerMode == ReaderMode.horizontalContinuousRTL;
+    if (readerMode == null) return const SizedBox.shrink();
+    final bool isHorizontalContinuous = readerMode.isHorizontalContinuous;
 
     final l10n = l10nLocalizations(context)!;
     return ReaderKeyboardHandler(
@@ -366,32 +381,11 @@ class _MangaChapterPageGalleryState
       onNextPage: () => _handlePageNavigation(forward: true),
       onEscape: () => _goBack(context),
       onFullScreen: () => _setFullScreen(),
-      onNextChapter: () {
-        bool hasNextChapter = _readerController.getChapterIndex().$1 != 0;
-        if (hasNextChapter) {
-          _isNavigatingToChapter = true;
-          pushReplacementMangaReaderView(
-            context: context,
-            chapter: _readerController.getNextChapter(),
-          );
-        }
-      },
-      onPreviousChapter: () {
-        bool hasPrevChapter =
-            _readerController.getChapterIndex().$1 + 1 !=
-            _readerController.getChaptersLength(
-              _readerController.getChapterIndex().$2,
-            );
-        if (hasPrevChapter) {
-          _isNavigatingToChapter = true;
-          pushReplacementMangaReaderView(
-            context: context,
-            chapter: _readerController.getPrevChapter(),
-          );
-        }
-      },
+      onNextChapter: () => _goToChapter(true),
+      onPreviousChapter: () => _goToChapter(false),
     ).wrapWithKeyboardListener(
       isReverseHorizontal: _isReverseHorizontal,
+      focusNode: _keyboardFocusNode,
       child: NotificationListener<UserScrollNotification>(
         onNotification: (notification) {
           if (notification.direction == ScrollDirection.idle) {
@@ -411,7 +405,7 @@ class _MangaChapterPageGalleryState
               builder: (context, failedToLoadImage, child) {
                 return Stack(
                   children: [
-                    _isContinuousMode()
+                    readerMode.isContinuous
                         ? ImageViewWebtoon(
                             pages: pages,
                             itemScrollController: _itemScrollController,
@@ -752,7 +746,7 @@ class _MangaChapterPageGalleryState
                           navigationLayout: navigationLayout,
                           isRTL: _isReverseHorizontal,
                           hasImageError: failedToLoadImage,
-                          isContinuousMode: _isContinuousMode(),
+                          isContinuousMode: readerMode.isContinuous,
                           onToggleUI: _isViewFunction,
                           onPreviousPage: () =>
                               _handlePageNavigation(forward: false),
@@ -794,27 +788,10 @@ class _MangaChapterPageGalleryState
                     ReaderBottomBar(
                       chapter: chapter,
                       isVisible: _isView,
-                      hasPreviousChapter:
-                          _readerController.getChapterIndex().$1 + 1 !=
-                          _readerController.getChaptersLength(
-                            _readerController.getChapterIndex().$2,
-                          ),
-                      hasNextChapter:
-                          _readerController.getChapterIndex().$1 != 0,
-                      onPreviousChapter: () {
-                        _isNavigatingToChapter = true;
-                        pushReplacementMangaReaderView(
-                          context: context,
-                          chapter: _readerController.getPrevChapter(),
-                        );
-                      },
-                      onNextChapter: () {
-                        _isNavigatingToChapter = true;
-                        pushReplacementMangaReaderView(
-                          context: context,
-                          chapter: _readerController.getNextChapter(),
-                        );
-                      },
+                      hasPreviousChapter: _readerController.hasPreviousChapter,
+                      hasNextChapter: _readerController.hasNextChapter,
+                      onPreviousChapter: () => _goToChapter(false),
+                      onNextChapter: () => _goToChapter(true),
                       onSliderChanged: (value, ref) {
                         _currentPageDisplayIndex.value = value;
                         ref
@@ -918,7 +895,7 @@ class _MangaChapterPageGalleryState
                       formatCurrentIndex: _currentIndexLabel,
                     ),
                     ReaderAutoScrollButton(
-                      isContinuousMode: _isContinuousMode(),
+                      isContinuousMode: readerMode.isContinuous,
                       isUiVisible: _isView,
                       autoScrollPage: _autoScrollPage,
                       autoScroll: _autoScroll,
@@ -1485,10 +1462,7 @@ class _MangaChapterPageGalleryState
   }
 
   void _goBack(BuildContext context) {
-    SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.manual,
-      overlays: SystemUiOverlay.values,
-    );
+    restoreSystemUI();
     Navigator.pop(context);
   }
 
@@ -1501,10 +1475,7 @@ class _MangaChapterPageGalleryState
     }
     if (fullScreenReader) {
       if (_isView) {
-        SystemChrome.setEnabledSystemUIMode(
-          SystemUiMode.manual,
-          overlays: SystemUiOverlay.values,
-        );
+        restoreSystemUI();
       } else {
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
       }
@@ -1569,11 +1540,8 @@ class _MangaChapterPageGalleryState
   int get _pageViewPageCount =>
       _isDoublePageActive ? (pages.length / 2).ceil() : pages.length;
 
-  bool _isContinuousMode() {
-    final readerMode = ref.read(_currentReaderMode);
-    return readerMode == ReaderMode.verticalContinuous ||
-        readerMode == ReaderMode.webtoon ||
-        readerMode == ReaderMode.horizontalContinuous ||
-        readerMode == ReaderMode.horizontalContinuousRTL;
+  bool _isContinuousMode([ReaderMode? mode]) {
+    final readerMode = mode ?? ref.read(_currentReaderMode);
+    return readerMode!.isContinuous;
   }
 }

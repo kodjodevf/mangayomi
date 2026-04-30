@@ -9,7 +9,7 @@ import 'package:mangayomi/modules/manga/reader/mixins/chapter_controller_mixin.d
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
-import 'package:mangayomi/utils/extensions/chapter.dart';
+import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'reader_controller_provider.g.dart';
 
@@ -187,9 +187,7 @@ class ReaderController extends _$ReaderController
     if (chapter.isRead! || incognitoMode) return;
     if (!save && newIndex == _lastSavedIndex) return;
     _lastSavedIndex = newIndex;
-    final isContinuousLike =
-        getReaderMode() == ReaderMode.verticalContinuous ||
-        getReaderMode() == ReaderMode.webtoon;
+    final isContinuousLike = getReaderMode().isVerticalContinuous;
     final isRead = isContinuousLike
         ? (newIndex + 2) >= getPageLength([]) - 1
         : (newIndex + 2) >= getPageLength([]);

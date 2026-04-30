@@ -1261,6 +1261,18 @@ enum ReaderMode {
   horizontalContinuousRTL,
 }
 
+extension ReaderModeExtension on ReaderMode {
+  bool get isContinuous => isVerticalContinuous || isHorizontalContinuous;
+  bool get isVertical => this == ReaderMode.vertical || isVerticalContinuous;
+  bool get isVerticalContinuous =>
+      this == ReaderMode.verticalContinuous || this == ReaderMode.webtoon;
+  bool get isHorizontalContinuous =>
+      this == ReaderMode.horizontalContinuous ||
+      this == ReaderMode.horizontalContinuousRTL;
+  bool get isRTL =>
+      this == ReaderMode.rtl || this == ReaderMode.horizontalContinuousRTL;
+}
+
 enum NovelTextAlign { left, center, right, block }
 
 enum PageMode { onePage, doublePage }

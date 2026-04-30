@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar_community/isar.dart';
@@ -114,16 +114,13 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab>
     super.dispose();
   }
 
-  final bool _isDesktop =
-      Platform.isMacOS || Platform.isLinux || Platform.isWindows;
-
   /// Moves a category from `index` to `newIndex` in the list,
   /// swaps their positions in memory, and persists the change in Isar.
   Future<void> _moveCategory(int index, int newIndex) async {
     // Prevent invalid moves (out of bounds)
     if (newIndex < 0 || newIndex >= _entries.length) return;
 
-    if (_isDesktop && mounted) {
+    if (isDesktop && mounted) {
       setState(() {
         _animatingFromIndex = index;
         _animatingToIndex = newIndex;
@@ -185,7 +182,7 @@ class _CategoriesTabState extends ConsumerState<CategoriesTab>
 
               Widget itemWidget = _buildCategoryCard(context, category, index);
 
-              if (_isDesktop &&
+              if (isDesktop &&
                   _animatingFromIndex != null &&
                   _animatingToIndex != null) {
                 if (index == _animatingFromIndex ||

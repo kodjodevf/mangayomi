@@ -4,7 +4,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
-import 'package:mangayomi/utils/extensions/manga.dart';
+import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 import 'package:mangayomi/modules/manga/reader/reader_view.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/date.dart';

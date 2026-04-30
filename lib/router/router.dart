@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -295,7 +295,7 @@ class RouterNotifier extends ChangeNotifier {
           return child!;
         }
       },
-      pageBuilder: (Platform.isIOS || Platform.isMacOS)
+      pageBuilder: isApple
           ? (context, state) {
               final pageChild = builder != null
                   ? builder(state.extra as T)
@@ -312,7 +312,7 @@ Page transitionPage({required LocalKey key, required child}) {
 }
 
 Route createRoute({required Widget page}) {
-  return (Platform.isIOS || Platform.isMacOS)
+  return isApple
       ? CupertinoPageRoute(builder: (context) => page)
       : MaterialPageRoute(builder: (context) => page);
 }

@@ -30,7 +30,7 @@ class PageNavigationService {
   }) {
     if (index < 0) return;
 
-    if (_isContinuousMode(readerMode)) {
+    if (readerMode.isContinuous) {
       _navigateContinuous(index, animate);
     } else {
       _navigatePaged(index, animate);
@@ -70,7 +70,7 @@ class PageNavigationService {
   void jumpToPage({required int index, required ReaderMode readerMode}) {
     if (index < 0) return;
 
-    if (_isContinuousMode(readerMode)) {
+    if (readerMode.isContinuous) {
       itemScrollController.jumpTo(index: index);
     } else {
       if (extendedController.hasClients) {
@@ -103,13 +103,6 @@ class PageNavigationService {
     } else {
       extendedController.jumpToPage(index);
     }
-  }
-
-  bool _isContinuousMode(ReaderMode mode) {
-    return mode == ReaderMode.verticalContinuous ||
-        mode == ReaderMode.webtoon ||
-        mode == ReaderMode.horizontalContinuous ||
-        mode == ReaderMode.horizontalContinuousRTL;
   }
 }
 

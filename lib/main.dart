@@ -39,6 +39,7 @@ import 'package:mangayomi/services/download_manager/m_downloader.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
 import 'package:mangayomi/utils/discord_rpc.dart';
 import 'package:mangayomi/utils/log/logger.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/utils/url_protocol/api.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_provider.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
@@ -84,7 +85,7 @@ void main(List<String> args) async {
       await RustLib.init();
       await imgCropIsolate.start();
       await getIsolateService.start();
-      if (!(Platform.isAndroid || Platform.isIOS)) {
+      if (!isMobile) {
         await windowManager.ensureInitialized();
         await WindowGeometry.restore();
       }
@@ -120,13 +121,10 @@ void main(List<String> args) async {
 Future<void> _postLaunchInit(StorageProvider storage) async {
   await AppLogger.init();
   unawaited(MDownloader.initializeIsolatePool(poolSize: 6));
-  final hivePath = (Platform.isIOS || Platform.isMacOS)
-      ? "databases"
-      : p.join("Mangayomi", "databases");
+  final hivePath = isApple ? "databases" : p.join("Mangayomi", "databases");
   await Hive.initFlutter(Platform.isAndroid ? "" : hivePath);
   Hive.registerAdapter(TrackSearchAdapter());
-  if ((Platform.isMacOS || Platform.isLinux || Platform.isWindows) &&
-      !kDebugMode) {
+  if (isDesktop && !kDebugMode) {
     discordRpc = DiscordRPC(applicationId: "1395040506677039157");
     await discordRpc?.initialize();
   }
@@ -151,9 +149,7 @@ class _MyAppState extends ConsumerState<MyApp>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    if (!(Platform.isAndroid || Platform.isIOS)) {
-      windowManager.addListener(this);
-    }
+    if (!isMobile) windowManager.addListener(this);
     initializeDateFormatting();
     customDns = ref.read(customDnsStateProvider);
     _checkTrackerRefresh();
@@ -210,7 +206,7 @@ class _MyAppState extends ConsumerState<MyApp>
       builder: (context, child) {
         child = BotToastInit()(context, child);
         final appChild = child;
-        if (!(Platform.isAndroid || Platform.isIOS)) {
+        if (!isMobile) {
           child = _MouseBackButtonHandler(router: router, child: appChild);
         } else {
           child = appChild;
@@ -240,7 +236,7 @@ class _MyAppState extends ConsumerState<MyApp>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    if (!(Platform.isAndroid || Platform.isIOS)) {
+    if (!isMobile) {
       windowManager.removeListener(this);
       WindowGeometry.save();
     }

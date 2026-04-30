@@ -43,6 +43,8 @@ import 'package:mangayomi/services/get_video_list.dart';
 import 'package:mangayomi/services/torrent_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
+import 'package:mangayomi/utils/system_ui.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit/generated/libmpv/bindings.dart' as generated;
 import 'package:media_kit_video/media_kit_video.dart';
@@ -55,8 +57,6 @@ import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:window_manager/window_manager.dart' show windowManager;
 
 import 'widgets/search_subtitles.dart';
-
-bool _isDesktop = Platform.isMacOS || Platform.isLinux || Platform.isWindows;
 
 class AnimePlayerView extends riv.ConsumerStatefulWidget {
   final int episodeId;
@@ -72,16 +72,13 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
   bool desktopFullScreenPlayer = false;
   @override
   void dispose() {
-    if (_isDesktop) {
+    if (isDesktop) {
       setFullScreen(value: desktopFullScreenPlayer);
     }
     for (var infoHash in _infoHashList) {
       MTorrentServer().removeTorrent(infoHash);
     }
-    SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.manual,
-      overlays: SystemUiOverlay.values,
-    );
+    restoreSystemUI();
     super.dispose();
   }
 
@@ -129,10 +126,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
           title: const Text(''),
           leading: BackButton(
             onPressed: () {
-              SystemChrome.setEnabledSystemUIMode(
-                SystemUiMode.manual,
-                overlays: SystemUiOverlay.values,
-              );
+              restoreSystemUI();
               Navigator.pop(context);
             },
           ),
@@ -148,10 +142,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
             leading: BackButton(
               color: Colors.white,
               onPressed: () {
-                SystemChrome.setEnabledSystemUIMode(
-                  SystemUiMode.manual,
-                  overlays: SystemUiOverlay.values,
-                );
+                restoreSystemUI();
                 Navigator.pop(context);
               },
             ),
@@ -316,7 +307,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         discordRpc?.updateChapterTimestamp(_currentPosition.value, duration);
       });
 
-  bool get hasNextEpisode => _streamController.getEpisodeIndex().$1 != 0;
+  bool get hasNextEpisode => _streamController.hasNextEpisode;
 
   late final StreamSubscription<bool> _completed = _player.stream.completed
       .listen((val) {
@@ -327,7 +318,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         }
         // If the last episode of an Anime has ended, exit fullscreen mode
         final isFullScreen = ref.read(fullscreenProvider);
-        if (!hasNextEpisode && val && _isDesktop && isFullScreen) {
+        if (!hasNextEpisode && val && isDesktop && isFullScreen) {
           setFullScreen(value: false);
           ref.read(fullscreenProvider.notifier).state = false;
           widget.desktopFullScreenPlayer.call(false);
@@ -362,6 +353,23 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     }
   }
 
+  String? _readMpvString(Pointer<generated.mpv_node> value) {
+    if (value.ref.format != generated.mpv_format.MPV_FORMAT_STRING) return null;
+    final text = value.ref.u.string.cast<Utf8>().toDartString();
+    return text.isEmpty ? null : text;
+  }
+
+  Future<void> _seekTo(int absoluteSeconds) async {
+    _tempPosition.value = Duration(seconds: absoluteSeconds);
+    await _player.seek(Duration(seconds: absoluteSeconds));
+    _tempPosition.value = null;
+  }
+
+  Future<void> _seekBy(int deltaSeconds) async {
+    final pos = _currentPosition.value.inSeconds + deltaSeconds;
+    await _seekTo(pos);
+  }
+
   Future<void> _handleMpvNodeEvents(
     String propName,
     Pointer<generated.mpv_node> value,
@@ -369,272 +377,230 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
     final nativePlayer = _player.platform as NativePlayer;
     switch (propName.substring(10)) {
       case "aniyomi/show_text":
-        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
-          final text = value.ref.u.string.cast<Utf8>().toDartString();
-          if (text.isEmpty) break;
-          botToast(
-            text,
-            alignY: -0.99,
-            second: 2,
-            dismissDirections: const [
-              DismissDirection.vertical,
-              DismissDirection.horizontal,
-            ],
-            showIcon: false,
-          );
-          nativePlayer.setProperty("user-data/aniyomi/show_text", "");
-        }
+        final text = _readMpvString(value);
+        if (text == null) break;
+        botToast(
+          text,
+          alignY: -0.99,
+          second: 2,
+          dismissDirections: const [
+            DismissDirection.vertical,
+            DismissDirection.horizontal,
+          ],
+          showIcon: false,
+        );
+        nativePlayer.setProperty("user-data/aniyomi/show_text", "");
         break;
       case "aniyomi/toggle_ui":
-        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
-          final text = value.ref.u.string.cast<Utf8>().toDartString();
-          if (text.isEmpty) break;
-          switch (text) {
-            // WIP
-            case "show":
-              break;
-            case "hide":
-              break;
-            case "toggle":
-              break;
-          }
-          nativePlayer.setProperty("user-data/aniyomi/toggle_ui", "");
+        final text = _readMpvString(value);
+        if (text == null) break;
+        switch (text) {
+          // WIP
+          case "show":
+            break;
+          case "hide":
+            break;
+          case "toggle":
+            break;
         }
+        nativePlayer.setProperty("user-data/aniyomi/toggle_ui", "");
         break;
       case "aniyomi/show_panel":
-        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
-          final text = value.ref.u.string.cast<Utf8>().toDartString();
-          if (text.isEmpty) break;
-          switch (text) {
-            // WIP
-            case "subtitle_settings":
-              break;
-            case "subtitle_delay":
-              break;
-            case "audio_delay":
-              break;
-            case "video_filters":
-              break;
-          }
-          nativePlayer.setProperty("user-data/aniyomi/show_panel", "");
+        final text = _readMpvString(value);
+        if (text == null) break;
+        switch (text) {
+          // WIP
+          case "subtitle_settings":
+            break;
+          case "subtitle_delay":
+            break;
+          case "audio_delay":
+            break;
+          case "video_filters":
+            break;
         }
+        nativePlayer.setProperty("user-data/aniyomi/show_panel", "");
         break;
       case "aniyomi/software_keyboard":
-        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
-          final text = value.ref.u.string.cast<Utf8>().toDartString();
-          if (text.isEmpty) break;
-          switch (text) {
-            // WIP
-            case "show":
-              break;
-            case "hide":
-              break;
-            case "toggle":
-              break;
-          }
-          nativePlayer.setProperty("user-data/aniyomi/software_keyboard", "");
+        final text = _readMpvString(value);
+        if (text == null) break;
+        switch (text) {
+          // WIP
+          case "show":
+            break;
+          case "hide":
+            break;
+          case "toggle":
+            break;
         }
+        nativePlayer.setProperty("user-data/aniyomi/software_keyboard", "");
         break;
       case "aniyomi/set_button_title":
-        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
-          final text = value.ref.u.string.cast<Utf8>().toDartString();
-          if (text.isEmpty) break;
-          final temp = _customButton.value;
-          if (temp == null) break;
-          _customButton.value = temp..currentTitle = text;
-          nativePlayer.setProperty("user-data/aniyomi/set_button_title", "");
-        }
+        final text = _readMpvString(value);
+        if (text == null) break;
+        final temp = _customButton.value;
+        if (temp == null) break;
+        _customButton.value = temp..currentTitle = text;
+        nativePlayer.setProperty("user-data/aniyomi/set_button_title", "");
         break;
       case "aniyomi/reset_button_title":
-        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
-          final text = value.ref.u.string.cast<Utf8>().toDartString();
-          if (text.isEmpty) break;
-          final temp = _customButton.value;
-          if (temp == null) break;
-          _customButton.value = temp..currentTitle = temp.button.title ?? "";
-          nativePlayer.setProperty("user-data/aniyomi/reset_button_title", "");
-        }
+        final text = _readMpvString(value);
+        if (text == null) break;
+        final temp = _customButton.value;
+        if (temp == null) break;
+        _customButton.value = temp..currentTitle = temp.button.title ?? "";
+        nativePlayer.setProperty("user-data/aniyomi/reset_button_title", "");
         break;
       case "aniyomi/toggle_button":
-        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
-          final text = value.ref.u.string.cast<Utf8>().toDartString();
-          if (text.isEmpty) break;
-          final temp = _customButton.value;
-          if (temp == null) break;
-          switch (text) {
-            case "show":
-              _customButton.value = temp..visible = true;
-              break;
-            case "hide":
-              _customButton.value = temp..visible = false;
-              break;
-            case "toggle":
-              _customButton.value = temp..visible = !temp.visible;
-              break;
-          }
-          nativePlayer.setProperty("user-data/aniyomi/toggle_button", "");
+        final text = _readMpvString(value);
+        if (text == null) break;
+        final temp = _customButton.value;
+        if (temp == null) break;
+        switch (text) {
+          case "show":
+            _customButton.value = temp..visible = true;
+            break;
+          case "hide":
+            _customButton.value = temp..visible = false;
+            break;
+          case "toggle":
+            _customButton.value = temp..visible = !temp.visible;
+            break;
         }
+        nativePlayer.setProperty("user-data/aniyomi/toggle_button", "");
         break;
       case "aniyomi/switch_episode":
-        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
-          final text = value.ref.u.string.cast<Utf8>().toDartString();
-          if (text.isEmpty) break;
-          switch (text) {
-            case "n":
-              pushToNewEpisode(context, _streamController.getNextEpisode());
-              break;
-            case "p":
-              pushToNewEpisode(context, _streamController.getPrevEpisode());
-              break;
-          }
-          nativePlayer.setProperty("user-data/aniyomi/switch_episode", "");
+        final text = _readMpvString(value);
+        if (text == null) break;
+        switch (text) {
+          case "n":
+            pushToNewEpisode(context, _streamController.getNextEpisode());
+            break;
+          case "p":
+            pushToNewEpisode(context, _streamController.getPrevEpisode());
+            break;
         }
+        nativePlayer.setProperty("user-data/aniyomi/switch_episode", "");
         break;
       case "aniyomi/pause":
-        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
-          final text = value.ref.u.string.cast<Utf8>().toDartString();
-          if (text.isEmpty) break;
-          switch (text) {
-            case "pause":
-              await _player.pause();
-              break;
-            case "unpause":
-              await _player.play();
-              break;
-            case "pauseunpause":
-              await _player.playOrPause();
-              break;
-          }
-          nativePlayer.setProperty("user-data/aniyomi/pause", "");
+        final text = _readMpvString(value);
+        if (text == null) break;
+        switch (text) {
+          case "pause":
+            await _player.pause();
+            break;
+          case "unpause":
+            await _player.play();
+            break;
+          case "pauseunpause":
+            await _player.playOrPause();
+            break;
         }
+        nativePlayer.setProperty("user-data/aniyomi/pause", "");
         break;
       case "aniyomi/seek_by":
-        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
-          final text = value.ref.u.string.cast<Utf8>().toDartString();
-          if (text.isEmpty) break;
-          final data = int.parse(text.replaceAll("\"", ""));
-          final pos = _currentPosition.value.inSeconds + data;
-          _tempPosition.value = Duration(seconds: pos);
-          await _player.seek(Duration(seconds: pos));
-          _tempPosition.value = null;
-          nativePlayer.setProperty("user-data/aniyomi/seek_by", "");
-        }
+        final text = _readMpvString(value);
+        if (text == null) break;
+        final data = int.parse(text.replaceAll("\"", ""));
+        await _seekBy(data);
+        nativePlayer.setProperty("user-data/aniyomi/seek_by", "");
         break;
       case "aniyomi/seek_to":
-        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
-          final text = value.ref.u.string.cast<Utf8>().toDartString();
-          if (text.isEmpty) break;
-          final data = int.parse(text.replaceAll("\"", ""));
-          _tempPosition.value = Duration(seconds: data);
-          await _player.seek(Duration(seconds: data));
-          _tempPosition.value = null;
-          nativePlayer.setProperty("user-data/aniyomi/seek_to", "");
-        }
+        final text = _readMpvString(value);
+        if (text == null) break;
+        final data = int.parse(text.replaceAll("\"", ""));
+        await _seekTo(data);
+        nativePlayer.setProperty("user-data/aniyomi/seek_to", "");
         break;
       case "aniyomi/seek_by_with_text":
-        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
-          final text = value.ref.u.string.cast<Utf8>().toDartString();
-          if (text.isEmpty) break;
-          final data = text.split("|");
-          final pos =
-              _currentPosition.value.inSeconds +
-              int.parse(data[0].replaceAll("\"", ""));
-          _tempPosition.value = Duration(seconds: pos);
-          await _player.seek(Duration(seconds: pos));
-          _tempPosition.value = null;
-          (_player.platform as NativePlayer).command(["show-text", data[1]]);
-          nativePlayer.setProperty("user-data/aniyomi/seek_by_with_text", "");
-        }
+        final text = _readMpvString(value);
+        if (text == null) break;
+        final data = text.split("|");
+        await _seekBy(int.parse(data[0].replaceAll("\"", "")));
+        (_player.platform as NativePlayer).command(["show-text", data[1]]);
+        nativePlayer.setProperty("user-data/aniyomi/seek_by_with_text", "");
         break;
       case "aniyomi/seek_to_with_text":
-        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
-          final text = value.ref.u.string.cast<Utf8>().toDartString();
-          if (text.isEmpty) break;
-          final data = text.split("|");
-          final pos = int.parse(data[0].replaceAll("\"", ""));
-          _tempPosition.value = Duration(seconds: pos);
-          await _player.seek(Duration(seconds: pos));
-          _tempPosition.value = null;
-          (_player.platform as NativePlayer).command(["show-text", data[1]]);
-          nativePlayer.setProperty("user-data/aniyomi/seek_to_with_text", "");
-        }
+        final text = _readMpvString(value);
+        if (text == null) break;
+        final data = text.split("|");
+        await _seekTo(int.parse(data[0].replaceAll("\"", "")));
+        (_player.platform as NativePlayer).command(["show-text", data[1]]);
+        nativePlayer.setProperty("user-data/aniyomi/seek_to_with_text", "");
         break;
       case "aniyomi/launch_int_picker":
-        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
-          final text = value.ref.u.string.cast<Utf8>().toDartString();
-          if (text.isEmpty) break;
-          final data = text.split("|");
-          final start = int.parse(data[2]);
-          final stop = int.parse(data[3]);
-          final step = int.parse(data[4]);
-          int currentValue = start;
-          await showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: Text(data[0]),
-                content: StatefulBuilder(
-                  builder: (context, setState) => SizedBox(
-                    height: 200,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        NumberPicker(
-                          value: currentValue,
-                          minValue: start,
-                          maxValue: stop,
-                          step: step,
-                          haptics: true,
-                          textMapper: (numberText) =>
-                              data[1].replaceAll("%d", numberText),
-                          onChanged: (value) =>
-                              setState(() => currentValue = value),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                actions: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+        final text = _readMpvString(value);
+        if (text == null) break;
+        final data = text.split("|");
+        final start = int.parse(data[2]);
+        final stop = int.parse(data[3]);
+        final step = int.parse(data[4]);
+        int currentValue = start;
+        await showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(data[0]),
+              content: StatefulBuilder(
+                builder: (context, setState) => SizedBox(
+                  height: 200,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      TextButton(
-                        onPressed: () async {
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          context.l10n.cancel,
-                          style: TextStyle(color: context.primaryColor),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () async {
-                          final namePtr = data[5].toNativeUtf8();
-                          final valuePtr = calloc<Int64>(1)
-                            ..value = currentValue;
-                          nativePlayer.mpv.mpv_set_property(
-                            nativePlayer.ctx,
-                            namePtr.cast(),
-                            generated.mpv_format.MPV_FORMAT_INT64,
-                            valuePtr.cast(),
-                          );
-                          malloc.free(namePtr);
-                          malloc.free(valuePtr);
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          context.l10n.ok,
-                          style: TextStyle(color: context.primaryColor),
-                        ),
+                      NumberPicker(
+                        value: currentValue,
+                        minValue: start,
+                        maxValue: stop,
+                        step: step,
+                        haptics: true,
+                        textMapper: (numberText) =>
+                            data[1].replaceAll("%d", numberText),
+                        onChanged: (value) =>
+                            setState(() => currentValue = value),
                       ),
                     ],
                   ),
-                ],
-              );
-            },
-          );
-          nativePlayer.setProperty("user-data/aniyomi/launch_int_picker", "");
-        }
+                ),
+              ),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () async {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        context.l10n.cancel,
+                        style: TextStyle(color: context.primaryColor),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        final namePtr = data[5].toNativeUtf8();
+                        final valuePtr = calloc<Int64>(1)..value = currentValue;
+                        nativePlayer.mpv.mpv_set_property(
+                          nativePlayer.ctx,
+                          namePtr.cast(),
+                          generated.mpv_format.MPV_FORMAT_INT64,
+                          valuePtr.cast(),
+                        );
+                        malloc.free(namePtr);
+                        malloc.free(valuePtr);
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        context.l10n.ok,
+                        style: TextStyle(color: context.primaryColor),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
+        nativePlayer.setProperty("user-data/aniyomi/launch_int_picker", "");
         break;
       case "mangayomi/chapter_titles":
         if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
@@ -653,10 +619,8 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
         }
         break;
       case "mangayomi/selected_shader":
-        if (value.ref.format == generated.mpv_format.MPV_FORMAT_STRING) {
-          final text = value.ref.u.string.cast<Utf8>().toDartString();
-          _selectedShader.value = text;
-        }
+        final text = _readMpvString(value);
+        _selectedShader.value = text ?? '';
         break;
     }
   }
@@ -875,7 +839,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         "$defaultSkipIntroLength",
       );
     } catch (_) {}
-    if (_isDesktop && _firstTime) {
+    if (isDesktop && _firstTime) {
       final globalFullscreen = ref.read(fullScreenPlayerStateProvider);
       // Delay fullscreen until after the first frame so the window is ready.
       // On Windows, calling setFullScreen before the widget tree is built
@@ -887,7 +851,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       });
       _firstTime = false;
     }
-    if (!_isDesktop) {
+    if (!isDesktop) {
       final forceLandscape = ref.read(forceLandscapePlayerStateProvider);
       if (forceLandscape) {
         _setLandscapeMode(true);
@@ -1006,7 +970,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     _skipPhase.dispose();
     _subDelayController.dispose();
     _subSpeedController.dispose();
-    if (!_isDesktop) _setLandscapeMode(false);
+    if (!isDesktop) _setLandscapeMode(false);
     discordRpc?.showIdleText();
     discordRpc?.showOriginalTimestamp();
     _streamController.keepAliveLink?.close();
@@ -1524,21 +1488,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
               ? ElevatedButton(
                   onPressed:
                       value?.onPress ??
-                      () async {
-                        _tempPosition.value = Duration(
-                          seconds:
-                              defaultSkipIntroLength +
-                              _currentPosition.value.inSeconds,
-                        );
-                        await _player.seek(
-                          Duration(
-                            seconds:
-                                _currentPosition.value.inSeconds +
-                                defaultSkipIntroLength,
-                          ),
-                        );
-                        _tempPosition.value = null;
-                      },
+                      () async => await _seekBy(defaultSkipIntroLength),
                   onLongPress: value?.onLongPress,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -1619,11 +1569,6 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   }
 
   Widget _desktopBottomButtonBar(BuildContext context) {
-    bool hasPrevEpisode =
-        _streamController.getEpisodeIndex().$1 + 1 !=
-        _streamController.getEpisodesLength(
-          _streamController.getEpisodeIndex().$2,
-        );
     final skipDuration = ref.watch(defaultDoubleTapToSkipLengthStateProvider);
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -1633,7 +1578,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           children: [
             Row(
               children: [
-                if (hasPrevEpisode)
+                if (_streamController.hasPreviousEpisode)
                   IconButton(
                     onPressed: () {
                       pushToNewEpisode(
@@ -1643,10 +1588,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                     },
                     icon: const Icon(Icons.skip_previous, color: Colors.white),
                   ),
-                CustomPlayOrPauseButton(
-                  controller: _controller,
-                  isDesktop: _isDesktop,
-                ),
+                CustomPlayOrPauseButton(controller: _controller),
                 if (hasNextEpisode)
                   IconButton(
                     onPressed: () async {
@@ -1661,19 +1603,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                   height: 50,
                   width: 50,
                   child: IconButton(
-                    onPressed: () async {
-                      _tempPosition.value = Duration(
-                        seconds:
-                            skipDuration - _currentPosition.value.inSeconds,
-                      );
-                      await _player.seek(
-                        Duration(
-                          seconds:
-                              _currentPosition.value.inSeconds - skipDuration,
-                        ),
-                      );
-                      _tempPosition.value = null;
-                    },
+                    onPressed: () async => await _seekBy(-skipDuration),
                     icon: Stack(
                       children: [
                         const Positioned.fill(
@@ -1705,19 +1635,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                   height: 50,
                   width: 50,
                   child: IconButton(
-                    onPressed: () async {
-                      _tempPosition.value = Duration(
-                        seconds:
-                            skipDuration + _currentPosition.value.inSeconds,
-                      );
-                      await _player.seek(
-                        Duration(
-                          seconds:
-                              _currentPosition.value.inSeconds + skipDuration,
-                        ),
-                      );
-                      _tempPosition.value = null;
-                    },
+                    onPressed: () async => await _seekBy(skipDuration),
                     icon: Stack(
                       children: [
                         const Positioned.fill(
@@ -1875,7 +1793,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     return Row(
       children: [
         IconButton(
-          padding: _isDesktop ? EdgeInsets.zero : const EdgeInsets.all(5),
+          padding: isDesktop ? EdgeInsets.zero : const EdgeInsets.all(5),
           onPressed: () => _videoSettingDraggableMenu(context),
           icon: const Icon(Icons.video_settings, color: Colors.white),
         ),
@@ -1902,7 +1820,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             _changeFitLabel(ref);
           },
         ),
-        if (_isDesktop)
+        if (isDesktop)
           CustomMaterialDesktopFullscreenButton(
             controller: _controller,
             desktopFullScreenPlayer: widget.desktopFullScreenPlayer,
@@ -1926,24 +1844,19 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     final fullScreen = ref.watch(fullscreenProvider);
     return Padding(
       padding: EdgeInsets.only(
-        top: !_isDesktop && !fullScreen
-            ? MediaQuery.of(context).padding.top
-            : 0,
+        top: !isDesktop && !fullScreen ? MediaQuery.of(context).padding.top : 0,
       ),
       child: Row(
         children: [
           BackButton(
             color: Colors.white,
             onPressed: () {
-              if (_isDesktop && fullScreen) {
+              if (isDesktop && fullScreen) {
                 setFullScreen(value: !fullScreen);
                 ref.read(fullscreenProvider.notifier).state = !fullScreen;
                 widget.desktopFullScreenPlayer.call(!fullScreen);
               } else {
-                SystemChrome.setEnabledSystemUIMode(
-                  SystemUiMode.manual,
-                  overlays: SystemUiOverlay.values,
-                );
+                restoreSystemUI();
               }
               if (mounted) {
                 // Set variable to true, so the player uses the global
@@ -2024,7 +1937,10 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     );
   }
 
+  BoxFit? _lastFit;
   void _resize(BoxFit fit) async {
+    if (fit == _lastFit) return;
+    _lastFit = fit;
     // Wait for the widget tree to settle before updating fit
     await WidgetsBinding.instance.endOfFrame;
     if (mounted) {
@@ -2052,7 +1968,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           ),
           fit: fit,
           key: _key,
-          controls: (state) => _isDesktop
+          controls: (state) => isDesktop
               ? DesktopControllerWidget(
                   videoController: _controller,
                   topButtonBarWidget: _topButtonBar(context),
@@ -2446,6 +2362,5 @@ mixin _AlwaysOnTopStateMixin<T extends StatefulWidget> on State<T> {
   }
 
   // Whether the platform support AlwaysOnTop feature.
-  bool _supportAlwaysOnTop() =>
-      !kIsWeb && (Platform.isLinux || Platform.isMacOS || Platform.isWindows);
+  bool _supportAlwaysOnTop() => !kIsWeb && isDesktop;
 }

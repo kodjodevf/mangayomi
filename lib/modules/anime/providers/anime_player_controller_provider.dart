@@ -5,7 +5,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/modules/manga/reader/mixins/chapter_controller_mixin.dart';
-import 'package:mangayomi/utils/extensions/chapter.dart';
+import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:mangayomi/services/aniskip.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
@@ -43,6 +43,9 @@ class AnimeStreamController extends _$AnimeStreamController
 
   Chapter getPrevEpisode() => getPrevChapter();
   Chapter getNextEpisode() => getNextChapter();
+
+  bool get hasPreviousEpisode => hasPreviousChapter;
+  bool get hasNextEpisode => hasNextChapter;
 
   int getEpisodesLength(bool isInFilterList) =>
       getChaptersLength(isInFilterList);
@@ -127,7 +130,7 @@ class AnimeStreamController extends _$AnimeStreamController
           .read(aniSkipProvider.notifier)
           .getResult(
             id,
-            ChapterRecognition().parseChapterNumber(
+            ChapterRecognition().parseEpisodeNumber(
               episode.manga.value!.name!,
               episode.name!,
             ),

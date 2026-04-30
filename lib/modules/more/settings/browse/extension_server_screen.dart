@@ -18,6 +18,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/services/m_extension_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:path/path.dart' as path;
 import 'package:url_launcher/url_launcher.dart';
 
@@ -56,14 +57,11 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
 
   bool get _requiresJre => !Platform.isIOS;
 
-  bool get _showExtensionServerSection =>
-      !Platform.isAndroid && !Platform.isIOS;
+  bool get _showExtensionServerSection => !isMobile;
 
-  bool get _showAndroidProxyServerSection =>
-      Platform.isAndroid || Platform.isIOS;
+  bool get _showAndroidProxyServerSection => isMobile;
 
-  bool get _showDesktopAdvancedApkBridgeSection =>
-      Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+  bool get _showDesktopAdvancedApkBridgeSection => isDesktop;
 
   bool get _isInstalled => _serverExists && (!_requiresJre || _jreExists);
 
