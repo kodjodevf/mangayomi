@@ -6,6 +6,7 @@ import 'package:mangayomi/modules/manga/reader/providers/color_filter_provider.d
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 // ── Color matrix utilities (5×4 row-major, 20 elements) ──
 
@@ -197,7 +198,7 @@ Widget customColorFilterListTile(
         Expanded(
           child: SliderTheme(
             data: SliderTheme.of(context).copyWith(
-              trackHeight: context.isDesktop ? null : 3,
+              trackHeight: isDesktop ? null : 3,
               overlayShape: const RoundSliderOverlayShape(overlayRadius: 5.0),
             ),
             child: Slider(

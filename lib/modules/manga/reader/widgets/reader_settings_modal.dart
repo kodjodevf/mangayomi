@@ -131,12 +131,6 @@ class _ReadingModeTab extends ConsumerWidget {
     final showPageGaps = ref.watch(showPageGapsStateProvider);
     final webtoonSidePadding = ref.watch(webtoonSidePaddingStateProvider);
 
-    final isContinuousMode =
-        readerMode == ReaderMode.verticalContinuous ||
-        readerMode == ReaderMode.webtoon ||
-        readerMode == ReaderMode.horizontalContinuous ||
-        readerMode == ReaderMode.horizontalContinuousRTL;
-
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20),
@@ -206,7 +200,7 @@ class _ReadingModeTab extends ConsumerWidget {
             ),
 
             // Show Page Gaps (only for continuous modes)
-            if (isContinuousMode)
+            if (readerMode.isContinuous)
               SwitchListTile(
                 value: showPageGaps,
                 title: Text(
@@ -224,7 +218,7 @@ class _ReadingModeTab extends ConsumerWidget {
               ),
 
             // Webtoon Side Padding (only for continuous modes)
-            if (isContinuousMode)
+            if (readerMode.isContinuous)
               ListTile(
                 title: Text(
                   '${l10n.webtoon_side_padding}: $webtoonSidePadding%',
@@ -249,7 +243,7 @@ class _ReadingModeTab extends ConsumerWidget {
               ),
 
             // Auto-scroll (only for continuous modes)
-            if (isContinuousMode)
+            if (readerMode.isContinuous)
               ValueListenableBuilder(
                 valueListenable: autoScrollPage,
                 builder: (context, valueT, child) {

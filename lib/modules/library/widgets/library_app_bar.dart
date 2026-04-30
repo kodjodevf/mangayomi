@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -76,7 +76,6 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
             ),
           );
     final l10n = l10nLocalizations(context)!;
-    final isMobile = Platform.isIOS || Platform.isAndroid;
 
     if (isLongPressed) {
       return manga.when(

@@ -10,7 +10,7 @@ import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
-import 'package:mangayomi/utils/extensions/manga.dart';
+import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/download_manager/download_isolate_pool.dart';
@@ -96,7 +96,7 @@ extension ChapterExtension on Chapter {
     );
     if (!updateProgressAfterReading) return;
     final manga = this.manga.value!;
-    final chapterNumber = ChapterRecognition().parseChapterNumber(
+    final chapterNumber = ChapterRecognition().parseEpisodeNumber(
       manga.name!,
       name!,
     );

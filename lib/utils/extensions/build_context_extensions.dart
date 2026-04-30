@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 
 extension BuildContextExtensions on BuildContext {
@@ -21,14 +19,6 @@ extension BuildContextExtensions on BuildContext {
 
   Color get dynamicBlackWhiteColor {
     return isLight ? Colors.white : Colors.black;
-  }
-
-  bool get isDesktop {
-    return Platform.isMacOS || Platform.isLinux || Platform.isWindows;
-  }
-
-  bool get isMobile {
-    return Platform.isIOS || Platform.isAndroid;
   }
 
   Color get textColor {

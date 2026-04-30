@@ -4,7 +4,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/utils/extensions/manga.dart';
+import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 
 /// Shared navigation and history logic used by [ReaderController],
 /// [NovelReaderController], and [AnimeStreamController].
@@ -33,6 +33,13 @@ mixin ChapterControllerMixin {
   // (which is more efficient since incognito status never changes mid-session).
   bool get incognitoMode => isar.settings.getSync(227)!.incognitoMode!;
 
+  bool get hasNextChapter {
+    final idx = getChapterIndex();
+    return idx.$1 < getChaptersLength(idx.$2) - 1;
+  }
+
+  bool get hasPreviousChapter => getChapterIndex().$1 > 0;
+
   Settings getIsarSetting() => isar.settings.getSync(227)!;
 
   String getMangaName() => getManga().name!;
@@ -44,8 +51,8 @@ mixin ChapterControllerMixin {
   // ---------------------------------------------------------------------------
 
   (int, bool) getChapterIndex() => _chapterIndexWithOffset(0);
-  Chapter getPrevChapter() => _chapterWithOffset(1);
-  Chapter getNextChapter() => _chapterWithOffset(-1);
+  Chapter getPrevChapter() => _chapterWithOffset(-1);
+  Chapter getNextChapter() => _chapterWithOffset(1);
 
   /// Finds this [chapter] in either the filtered list or the raw list and
   /// returns [index + offset]. The boolean indicates whether the filtered list

@@ -8,6 +8,7 @@ import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_pr
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/utils/utils.dart';
 
 /// The app bar for the manga reader.
@@ -65,8 +66,6 @@ class ReaderAppBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
-    final isDesktop =
-        Platform.isMacOS || Platform.isLinux || Platform.isWindows;
     final isLocalArchive = chapter.manga.value?.isLocalArchive ?? false;
 
     double height = isVisible
