@@ -1271,6 +1271,8 @@ extension ReaderModeExtension on ReaderMode {
       this == ReaderMode.horizontalContinuousRTL;
   bool get isRTL =>
       this == ReaderMode.rtl || this == ReaderMode.horizontalContinuousRTL;
+  bool get isHorizontalPaged =>
+      this == ReaderMode.ltr || this == ReaderMode.rtl;
 }
 
 enum NovelTextAlign { left, center, right, block }

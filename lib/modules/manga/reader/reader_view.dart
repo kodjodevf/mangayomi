@@ -822,8 +822,7 @@ class _MangaChapterPageGalleryState
                       },
                       onPageModeToggle: () async {
                         final readerMode = ref.read(_currentReaderMode);
-                        if (!(readerMode == ReaderMode.horizontalContinuous ||
-                            readerMode == ReaderMode.horizontalContinuousRTL)) {
+                        if (!(readerMode?.isHorizontalContinuous ?? false)) {
                           // Get the actual page index being viewed
                           final actualIdx = _pageViewToActualIndex(
                             _currentIndex!,
@@ -976,8 +975,7 @@ class _MangaChapterPageGalleryState
     final currentReaderMode = ref.read(_currentReaderMode);
     int pagesLength =
         (_pageMode == PageMode.doublePage &&
-            currentReaderMode != ReaderMode.horizontalContinuous &&
-            currentReaderMode != ReaderMode.horizontalContinuousRTL)
+            !(currentReaderMode?.isHorizontalContinuous ?? false))
         ? (pages.length / 2).ceil()
         : pages.length;
     if (_currentIndex! >= 0 && _currentIndex! < pagesLength) {
@@ -1205,15 +1203,12 @@ class _MangaChapterPageGalleryState
     }
     _setReaderMode(readerMode, ref);
 
-    if (readerMode != ReaderMode.verticalContinuous &&
-        readerMode != ReaderMode.webtoon) {
+    if (!readerMode.isVerticalContinuous) {
       _autoScroll.value = false;
     }
     _autoPagescroll();
     if (_readerController.getPageLength(_chapterUrlModel.pageUrls) == 1 &&
-        (readerMode == ReaderMode.ltr ||
-            readerMode == ReaderMode.rtl ||
-            readerMode == ReaderMode.vertical)) {
+        (readerMode.isHorizontalPaged || readerMode == ReaderMode.vertical)) {
       _onPageChanged(0);
     }
   }
@@ -1362,7 +1357,7 @@ class _MangaChapterPageGalleryState
   }
 
   void _setReaderMode(ReaderMode value, WidgetRef ref) async {
-    if (value != ReaderMode.verticalContinuous && value != ReaderMode.webtoon) {
+    if (!value.isVerticalContinuous) {
       _autoScroll.value = false;
     } else {
       if (_autoScrollPage.value) {
@@ -1390,7 +1385,7 @@ class _MangaChapterPageGalleryState
 
         _extendedController.jumpToPage(index);
       }
-    } else if (value == ReaderMode.ltr || value == ReaderMode.rtl) {
+    } else if (value.isHorizontalPaged) {
       if (mounted) {
         setState(() {
           if (value == ReaderMode.rtl) {
@@ -1501,15 +1496,13 @@ class _MangaChapterPageGalleryState
   /// Uses ref.read() so cannot be called during dispose.
   bool get _isDoublePageActive =>
       _pageMode == PageMode.doublePage &&
-      ref.read(_currentReaderMode) != ReaderMode.horizontalContinuous &&
-      ref.read(_currentReaderMode) != ReaderMode.horizontalContinuousRTL;
+      !(ref.read(_currentReaderMode)?.isHorizontalContinuous ?? false);
 
   /// Safe version of _isDoublePageActive that uses cached reader mode.
   /// Safe to call during dispose without Riverpod assertion errors.
   bool get _isDoublePageActiveSync =>
       _pageMode == PageMode.doublePage &&
-      _cachedReaderMode != ReaderMode.horizontalContinuous &&
-      _cachedReaderMode != ReaderMode.horizontalContinuousRTL;
+      !(_cachedReaderMode?.isHorizontalContinuous ?? false);
 
   /// Converts a page view index (from ExtendedPageController) to the actual
   /// index in the [pages] array for double page mode.
