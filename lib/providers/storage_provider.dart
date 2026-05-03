@@ -52,7 +52,7 @@ class StorageProvider {
     if (Platform.isAndroid) {
       directory = Directory("/storage/emulated/0/Mangayomi/");
     } else {
-      final dir = await getApplicationDocumentsDirectory();
+      final dir = await getApplicationSupportDirectory();
       // The documents dir in iOS is already named "Mangayomi".
       // Appending "Mangayomi" to the documents dir would create
       // unnecessarily nested Mangayomi/Mangayomi/ folder.
@@ -133,7 +133,7 @@ class StorageProvider {
         dPath.isEmpty ? "/storage/emulated/0/Mangayomi/" : "$dPath/",
       );
     } else {
-      final dir = await getApplicationDocumentsDirectory();
+      final dir = await getApplicationSupportDirectory();
       final p = dPath.isEmpty ? dir.path : dPath;
       // The documents dir in iOS is already named "Mangayomi".
       // Appending "Mangayomi" to the documents dir would create
@@ -181,7 +181,7 @@ class StorageProvider {
   }
 
   Future<Directory?> getDatabaseDirectory() async {
-    final dir = await getApplicationDocumentsDirectory();
+    final dir = await getApplicationSupportDirectory();
     String dbDir;
     if (Platform.isAndroid) return dir;
     if (Platform.isIOS) {
