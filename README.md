@@ -22,7 +22,7 @@ Features include:
 * Reading manga, webtoons, comics, novels, animes, movies, and more.
 * Local reading of content.
 * A configurable reader with multiple viewers, reading directions and other settings.
-* Tracker support for anime and manga: [MyAnimeList](https://myanimelist.net/), [AniList](https://anilist.co/) and [Kitsu](https://kitsu.io/) support.
+* Tracker support for anime and manga: [MyAnimeList](https://myanimelist.net/), [AniList](https://anilist.co/), [SIMKL](https://simkl.com/), [trakt](https://app.trakt.tv/) and [Kitsu](https://kitsu.io/) support.
 * Categories to organize your library.
 * Light and dark themes.
 * Create backups locally to read offline or to your desired cloud service.

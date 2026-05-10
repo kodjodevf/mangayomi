@@ -2,6 +2,7 @@ syntax = "proto3";
 
 message BackupCategory {
     string name = 1;
-    int32 order = 2;
-    int32 flags = 100;
+    int64 order = 2;
+    int64 id = 3;
+    int64 flags = 100;
 }

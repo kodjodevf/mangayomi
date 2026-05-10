@@ -1,12 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/modules/more/about/providers/download_file_screen.dart';
-import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
@@ -14,43 +10,29 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'check_for_update.g.dart';
 
-@riverpod
-Future<void> checkForUpdate(
-  Ref ref, {
-  BuildContext? context,
-  bool? manualUpdate,
-}) async {
-  manualUpdate = manualUpdate ?? false;
-  final checkForUpdates = ref.watch(checkForAppUpdatesProvider);
-  if (!checkForUpdates && !manualUpdate) return;
-  final l10n = l10nLocalizations(context!)!;
+/// Convenience alias: (version, body, htmlUrl, assets).
+typedef UpdateInfo = (String, String, String, List<dynamic>);
 
-  if (manualUpdate) {
-    BotToast.showText(text: l10n.searching_for_updates);
-  }
+/// Automatic update-check provider.
+///
+/// Respects the user's [checkForAppUpdatesProvider] preference.  Returns
+/// [UpdateInfo] when a newer version exists, `null` otherwise.
+@riverpod
+Future<UpdateInfo?> checkForUpdate(Ref ref) async {
+  if (!ref.read(checkForAppUpdatesProvider)) return null;
+  return _getUpdateIfAvailable();
+}
+
+/// Compares the running version against the latest release.
+/// Returns [UpdateInfo] when an update is available, or `null` when already
+/// up-to-date.  Throws if the network request fails.
+Future<UpdateInfo?> _getUpdateIfAvailable() async {
   final info = await PackageInfo.fromPlatform();
   if (kDebugMode) {
     log(info.data.toString());
   }
-  final updateAvailable = await _checkUpdate();
-  if (compareVersions(info.version, updateAvailable.$1) < 0) {
-    if (manualUpdate) {
-      BotToast.showText(text: l10n.new_update_available);
-      await Future.delayed(const Duration(seconds: 1));
-    }
-    if (context.mounted) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return DownloadFileScreen(updateAvailable: updateAvailable);
-        },
-      );
-    }
-  } else if (compareVersions(info.version, updateAvailable.$1) == 0) {
-    if (manualUpdate) {
-      BotToast.showText(text: l10n.no_new_updates_available);
-    }
-  }
+  final latest = await _fetchLatestRelease();
+  return compareVersions(info.version, latest.$1) < 0 ? latest : null;
 }
 
 @riverpod
@@ -58,27 +40,23 @@ bool checkForAppUpdates(Ref ref) {
   return isar.settings.getSync(227)?.checkForAppUpdates ?? true;
 }
 
-Future<(String, String, String, List<dynamic>)> _checkUpdate() async {
+/// Performs an update check unconditionally, ignoring the auto-update setting.
+Future<UpdateInfo?> performManualUpdateCheck() => _getUpdateIfAvailable();
+
+Future<UpdateInfo> _fetchLatestRelease() async {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
-  try {
-    final res = await http.get(
-      Uri.parse(
-        "https://api.github.com/repos/kodjodevf/Mangayomi/releases?page=1&per_page=10",
-      ),
-    );
-    List resListJson = jsonDecode(res.body) as List;
-    return (
-      resListJson.first["name"]
-          .toString()
-          .substringAfter('v')
-          .substringBefore('-'),
-      resListJson.first["body"].toString(),
-      resListJson.first["html_url"].toString(),
-      (resListJson.first["assets"] as List)
-          .map((asset) => asset["browser_download_url"])
-          .toList(),
-    );
-  } catch (e) {
-    rethrow;
-  }
+  final res = await http.get(
+    Uri.parse(
+      'https://api.github.com/repos/kodjodevf/Mangayomi/releases/latest',
+    ),
+  );
+  final release = jsonDecode(res.body) as Map<String, dynamic>;
+  return (
+    release['name'].toString().substringAfter('v').substringBefore('-'),
+    release['body'].toString(),
+    release['html_url'].toString(),
+    (release['assets'] as List)
+        .map((asset) => asset['browser_download_url'])
+        .toList(),
+  );
 }

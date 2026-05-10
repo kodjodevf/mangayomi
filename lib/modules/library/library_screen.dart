@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/main.dart';
@@ -54,6 +55,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   final _textEditingController = TextEditingController();
   TabController? tabBarController;
   int _tabIndex = 0;
+  Timer? _searchDebounce;
 
   @override
   void initState() {
@@ -68,6 +70,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   void dispose() {
     _textEditingController.dispose();
     tabBarController?.dispose();
+    _searchDebounce?.cancel();
     super.dispose();
   }
 
@@ -129,9 +132,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     final showCategoryTabs = watchWithSettings(
       libraryShowCategoryTabsStateProvider.call,
     );
-    final reverse = watchWithSettings(
-      sortLibraryMangaStateProvider.call,
-    ).reverse!;
+    final reverse =
+        watchWithSettings(sortLibraryMangaStateProvider.call).reverse ?? false;
     final continueReaderBtn = watchWithSettings(
       libraryShowContinueReadingButtonStateProvider.call,
     );
@@ -159,8 +161,14 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     final bookmarkedFilterType = watchWithSettingsAndManga(
       mangaFilterBookmarkedStateProvider.call,
     );
+    final completedFilterType = watchWithSettingsAndManga(
+      mangaFilterCompletedStateProvider.call,
+    );
+    final trackingFilterType = watchWithSettingsAndManga(
+      mangaFilterTrackingStateProvider.call,
+    );
     final sortType =
-        watchWithSettings(sortLibraryMangaStateProvider.call).index as int;
+        watchWithSettings(sortLibraryMangaStateProvider.call).index ?? 0;
 
     final searchQuery = _textEditingController.text;
 
@@ -174,6 +182,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
         unreadFilterType: unreadFilterType,
         startedFilterType: startedFilterType,
         bookmarkedFilterType: bookmarkedFilterType,
+        completedFilterType: completedFilterType,
+        trackingFilterType: trackingFilterType,
         reverse: reverse,
         downloadedChapter: downloadedChapter,
         continueReaderBtn: continueReaderBtn,
@@ -195,6 +205,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
         unreadFilterType: unreadFilterType,
         startedFilterType: startedFilterType,
         bookmarkedFilterType: bookmarkedFilterType,
+        completedFilterType: completedFilterType,
+        trackingFilterType: trackingFilterType,
         settings: settings,
         downloadedOnly: downloadedOnly,
         searchQuery: searchQuery,
@@ -217,6 +229,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                       unreadFilterType: unreadFilterType,
                       startedFilterType: startedFilterType,
                       bookmarkedFilterType: bookmarkedFilterType,
+                      completedFilterType: completedFilterType,
+                      trackingFilterType: trackingFilterType,
                       sortType: sortType,
                       downloadedOnly: downloadedOnly,
                       searchQuery: searchQuery,
@@ -254,7 +268,15 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                       textEditingController: _textEditingController,
                       onSearchToggle: () =>
                           setState(() => _isSearch = !_isSearch),
-                      onSearchClear: () => setState(() {}),
+                      onSearchClear: () {
+                        _searchDebounce?.cancel();
+                        _searchDebounce = Timer(
+                          const Duration(milliseconds: 300),
+                          () {
+                            if (mounted) setState(() {});
+                          },
+                        );
+                      },
                       onIgnoreFiltersChanged: (val) =>
                           setState(() => _ignoreFiltersOnSearch = val),
                       vsync: this,
@@ -334,7 +356,12 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
           ignoreFiltersOnSearch: _ignoreFiltersOnSearch,
           textEditingController: _textEditingController,
           onSearchToggle: () => setState(() => _isSearch = !_isSearch),
-          onSearchClear: () => setState(() {}),
+          onSearchClear: () {
+            _searchDebounce?.cancel();
+            _searchDebounce = Timer(const Duration(milliseconds: 300), () {
+              if (mounted) setState(() {});
+            });
+          },
           onIgnoreFiltersChanged: (val) =>
               setState(() => _ignoreFiltersOnSearch = val),
           vsync: this,
@@ -424,8 +451,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
             BottomSelectButton(
               icon: Icon(Icons.label_outline_rounded, color: color),
               onPressed: () {
-                final mangaIdsList = ref.watch(mangasListStateProvider);
-                final List<Manga> bulkMangas = mangaIdsList
+                final List<Manga> bulkMangas = mangaIds
                     .map((id) => isar.mangas.getSync(id)!)
                     .toList();
                 showCategorySelectionDialog(

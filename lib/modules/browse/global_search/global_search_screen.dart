@@ -11,7 +11,7 @@ import 'package:mangayomi/modules/manga/home/manga_home_screen.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/models/source.dart';
-import 'package:mangayomi/services/search_.dart';
+import 'package:mangayomi/services/search.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/constant.dart';
@@ -35,22 +35,26 @@ class GlobalSearchScreen extends ConsumerStatefulWidget {
 class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
   String _query = "";
   final _textEditingController = TextEditingController();
-  late final List<Source> sourceList =
-      ref.read(onlyIncludePinnedSourceStateProvider)
-      ? isar.sources
-            .filter()
-            .isPinnedEqualTo(true)
-            .and()
-            .itemTypeEqualTo(widget.itemType)
-            .findAllSync()
-      : isar.sources
-            .filter()
-            .idIsNotNull()
-            .and()
-            .isAddedEqualTo(true)
-            .and()
-            .itemTypeEqualTo(widget.itemType)
-            .findAllSync();
+  late final bool _showNSFW = ref.read(showNSFWStateProvider);
+  late final List<Source> sourceList = () {
+    final sources = ref.read(onlyIncludePinnedSourceStateProvider)
+        ? isar.sources
+              .filter()
+              .isPinnedEqualTo(true)
+              .and()
+              .itemTypeEqualTo(widget.itemType)
+              .findAllSync()
+        : isar.sources
+              .filter()
+              .idIsNotNull()
+              .and()
+              .isAddedEqualTo(true)
+              .and()
+              .itemTypeEqualTo(widget.itemType)
+              .findAllSync();
+    if (_showNSFW) return sources;
+    return sources.where((e) => !(e.isNsfw ?? false)).toList();
+  }();
 
   @override
   void initState() {
@@ -152,7 +156,7 @@ class _SourceSearchScreenState extends ConsumerState<SourceSearchScreen> {
           source: widget.source,
           page: 1,
           query: widget.query,
-          filterList: [],
+          filterList: const [],
         ).future,
       );
       if (mounted) {

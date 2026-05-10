@@ -8,6 +8,7 @@ import 'package:desktop_webview_window/desktop_webview_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -38,50 +39,55 @@ import 'package:mangayomi/services/download_manager/m_downloader.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
 import 'package:mangayomi/utils/discord_rpc.dart';
 import 'package:mangayomi/utils/log/logger.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/utils/url_protocol/api.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_provider.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
+import 'package:mangayomi/modules/more/settings/security/providers/security_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/security/app_lock_screen.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:mangayomi/utils/window_geometry.dart';
 
 late Isar isar;
 DiscordRPC? discordRpc;
 WebViewEnvironment? webViewEnvironment;
 String? customDns;
 void main(List<String> args) async {
-  WidgetsFlutterBinding.ensureInitialized();
-  if (Platform.isLinux && runWebViewTitleBarWidget(args)) return;
-
-  // Widget-layer errors (build / layout / paint)
-  FlutterError.onError = (FlutterErrorDetails details) {
-    FlutterError.presentError(details); // keep default red-screen in debug
-    AppLogger.log(
-      'FlutterError: ${details.exceptionAsString()}\n${details.stack}',
-      logLevel: LogLevel.error,
-    );
-  };
-
-  // Async errors that escape the Flutter framework (PlatformDispatcher)
-  PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
-    AppLogger.log(
-      'PlatformDispatcher error: $error\n$stack',
-      logLevel: LogLevel.error,
-    );
-    return true; // handled — prevent app termination
-  };
-
   // Zone-level catch-all for anything that slips through both layers
   runZonedGuarded(
     () async {
+      WidgetsFlutterBinding.ensureInitialized();
+      if (Platform.isLinux && runWebViewTitleBarWidget(args)) return;
+
+      // Widget-layer errors (build / layout / paint)
+      FlutterError.onError = (FlutterErrorDetails details) {
+        FlutterError.presentError(details); // keep default red-screen in debug
+        AppLogger.log(
+          'FlutterError: ${details.exceptionAsString()}\n${details.stack}',
+          logLevel: LogLevel.error,
+        );
+      };
+
+      // Async errors that escape the Flutter framework (PlatformDispatcher)
+      PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
+        AppLogger.log(
+          'PlatformDispatcher error: $error\n$stack',
+          logLevel: LogLevel.error,
+        );
+        return true; // handled — prevent app termination
+      };
+
       MediaKit.ensureInitialized();
       await RustLib.init();
       await imgCropIsolate.start();
       await getIsolateService.start();
-      if (!(Platform.isAndroid || Platform.isIOS)) {
+      if (!isMobile) {
         await windowManager.ensureInitialized();
+        await WindowGeometry.restore();
       }
       if (Platform.isWindows) {
         registerProtocolHandler("mangayomi");
@@ -115,12 +121,10 @@ void main(List<String> args) async {
 Future<void> _postLaunchInit(StorageProvider storage) async {
   await AppLogger.init();
   unawaited(MDownloader.initializeIsolatePool(poolSize: 6));
-  final hivePath = (Platform.isIOS || Platform.isMacOS)
-      ? "databases"
-      : p.join("Mangayomi", "databases");
+  final hivePath = isApple ? "databases" : p.join("Mangayomi", "databases");
   await Hive.initFlutter(Platform.isAndroid ? "" : hivePath);
   Hive.registerAdapter(TrackSearchAdapter());
-  if (Platform.isMacOS || Platform.isLinux || Platform.isWindows) {
+  if (isDesktop && !kDebugMode) {
     discordRpc = DiscordRPC(applicationId: "1395040506677039157");
     await discordRpc?.initialize();
   }
@@ -135,7 +139,8 @@ class MyApp extends ConsumerStatefulWidget {
   ConsumerState<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends ConsumerState<MyApp> {
+class _MyAppState extends ConsumerState<MyApp>
+    with WidgetsBindingObserver, WindowListener {
   late AppLinks _appLinks;
   StreamSubscription<Uri>? _linkSubscription;
   Uri? lastUri;
@@ -143,6 +148,8 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    if (!isMobile) windowManager.addListener(this);
     initializeDateFormatting();
     customDns = ref.read(customDnsStateProvider);
     _checkTrackerRefresh();
@@ -163,6 +170,22 @@ class _MyAppState extends ConsumerState<MyApp> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.hidden) {
+      if (Platform.isLinux) {
+        return;
+      }
+      // Lock the app when going to background (if lock is enabled)
+      final lockEnabled = isar.settings.getSync(227)!.appLockEnabled ?? false;
+      if (lockEnabled) {
+        ref.read(appUnlockedStateProvider.notifier).lock();
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final followSystem = ref.watch(followSystemThemeStateProvider);
     final forcedDark = ref.watch(themeModeStateProvider);
@@ -180,7 +203,28 @@ class _MyAppState extends ConsumerState<MyApp> {
       locale: locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      builder: BotToastInit(),
+      builder: (context, child) {
+        child = BotToastInit()(context, child);
+        final appChild = child;
+        if (!isMobile) {
+          child = _MouseBackButtonHandler(router: router, child: appChild);
+        } else {
+          child = appChild;
+        }
+
+        if (!Platform.isLinux) {
+          final isUnlocked = ref.watch(appUnlockedStateProvider);
+          final lockEnabled = ref.watch(appLockEnabledStateProvider);
+          if (lockEnabled && !isUnlocked) {
+            return Stack(
+              fit: StackFit.expand,
+              children: [child, const AppLockScreen()],
+            );
+          }
+        }
+
+        return child;
+      },
       routeInformationParser: router.routeInformationParser,
       routerDelegate: router.routerDelegate,
       routeInformationProvider: router.routeInformationProvider,
@@ -191,12 +235,30 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    if (!isMobile) {
+      windowManager.removeListener(this);
+      WindowGeometry.save();
+    }
     MExtensionServerPlatform(ref).stopServer();
     _linkSubscription?.cancel();
     discordRpc?.destroy();
     stopCfResolutionWebviewServer();
     AppLogger.dispose();
     super.dispose();
+  }
+
+  @override
+  void onWindowResized() => WindowGeometry.save();
+
+  @override
+  void onWindowMoved() => WindowGeometry.save();
+
+  @override
+  void onWindowClose() {
+    WindowGeometry.save();
+    // Workaround for libepoxy error when closing app; caused by media-kit
+    if (Platform.isLinux) exit(0);
   }
 
   Future<void> _initDeepLinks() async {
@@ -411,6 +473,25 @@ class _MyAppState extends ConsumerState<MyApp> {
           )
           .checkRefresh();
     }
+  }
+}
+
+class _MouseBackButtonHandler extends StatelessWidget {
+  final GoRouter router;
+  final Widget child;
+
+  const _MouseBackButtonHandler({required this.router, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Listener(
+      onPointerDown: (event) {
+        if (event.buttons & kBackMouseButton != 0) {
+          if (router.canPop()) router.pop();
+        }
+      },
+      child: child,
+    );
   }
 }
 

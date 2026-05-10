@@ -114,6 +114,14 @@ class AppLocalizationsId extends AppLocalizations {
   String get compact_grid => 'Grid Kompak';
 
   @override
+  String get compression_level => 'Tingkat kompresi';
+
+  @override
+  String compression_info(Object level) {
+    return 'Semakin tinggi kompresi, semakin sedikit ruang yang digunakan file backup, tetapi menggunakan lebih banyak CPU. Default: $level';
+  }
+
+  @override
   String get comfortable_grid => 'Grid Nyaman';
 
   @override
@@ -213,6 +221,235 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get migrate => 'Migrasi';
+
+  @override
+  String get mass_migration_title => 'Migrasi massal';
+
+  @override
+  String get mass_migration_preview_items => 'Pratinjau item';
+
+  @override
+  String get mass_migration_destination_source => 'Sumber tujuan';
+
+  @override
+  String get mass_migration_no_library_items =>
+      'Tidak ada item pustaka yang tersedia untuk migrasi massal.';
+
+  @override
+  String get mass_migration_no_destination_sources =>
+      'Tidak ada sumber tujuan terpasang yang tersedia.';
+
+  @override
+  String get mass_migration_installed => 'Terpasang';
+
+  @override
+  String mass_migration_items_ready_for_review(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count item siap ditinjau',
+      one: '1 item siap ditinjau',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String mass_migration_item_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count item',
+      one: '1 item',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get mass_migration_select_destination_source => 'Pilih sumber tujuan';
+
+  @override
+  String mass_migration_finding_matches(Object source, Object language) {
+    return 'Mencari kecocokan di $source • $language';
+  }
+
+  @override
+  String mass_migration_processing_item(int current, int total) {
+    return 'Memproses item $current dari $total';
+  }
+
+  @override
+  String get mass_migration_waiting_next_item =>
+      'Menunggu 2 detik sebelum item berikutnya...';
+
+  @override
+  String get mass_migration_waiting_next_migration =>
+      'Menunggu 2 detik sebelum migrasi berikutnya...';
+
+  @override
+  String mass_migration_matched_so_far(int count) {
+    return 'Cocok sejauh ini: $count';
+  }
+
+  @override
+  String mass_migration_no_match_count(int count) {
+    return 'Tidak ada kecocokan: $count';
+  }
+
+  @override
+  String mass_migration_review_matches(Object source) {
+    return 'Tinjau kecocokan untuk $source';
+  }
+
+  @override
+  String mass_migration_found_matches(int count) {
+    return 'Kecocokan ditemukan: $count';
+  }
+
+  @override
+  String mass_migration_no_matches(int count) {
+    return 'Tidak ada kecocokan: $count';
+  }
+
+  @override
+  String mass_migration_selected_to_migrate(int count) {
+    return 'Dipilih untuk migrasi: $count';
+  }
+
+  @override
+  String get mass_migration_finish_review => 'Selesai meninjau';
+
+  @override
+  String mass_migration_migrate_selected(int count) {
+    return 'Migrasi item terpilih ($count)';
+  }
+
+  @override
+  String mass_migration_migrating_selected(Object source) {
+    return 'Memigrasi item terpilih ke $source';
+  }
+
+  @override
+  String get mass_migration_no_items_selected =>
+      'Tidak ada item yang dipilih untuk migrasi.';
+
+  @override
+  String mass_migration_migrating_item(int current, int total) {
+    return 'Memigrasi item $current dari $total';
+  }
+
+  @override
+  String get mass_migration_complete => 'Migrasi massal selesai';
+
+  @override
+  String get mass_migration_complete_success_message =>
+      'Semua item terpilih berhasil diproses.';
+
+  @override
+  String get mass_migration_complete_partial_message =>
+      'Migrasi selesai dengan beberapa item yang masih memerlukan perhatian manual.';
+
+  @override
+  String mass_migration_route_summary(Object source, Object destination) {
+    return '$source → $destination';
+  }
+
+  @override
+  String get mass_migration_processed => 'Diproses';
+
+  @override
+  String get mass_migration_matched => 'Cocok';
+
+  @override
+  String get mass_migration_migrated => 'Dimigrasikan';
+
+  @override
+  String get mass_migration_skipped => 'Dilompati';
+
+  @override
+  String get mass_migration_failed => 'Gagal';
+
+  @override
+  String get mass_migration_failed_items => 'Item Gagal';
+
+  @override
+  String get mass_migration_exit => 'Keluar dari Migrasi Massal';
+
+  @override
+  String get mass_migration_no_destination_match =>
+      'Tidak ditemukan kecocokan tujuan';
+
+  @override
+  String mass_migration_query(Object query) {
+    return 'Kueri: $query';
+  }
+
+  @override
+  String get mass_migration_skip => 'Lompati';
+
+  @override
+  String get mass_migration_loading => 'Memuat...';
+
+  @override
+  String get mass_migration_choose_another_result => 'Pilih hasil lain';
+
+  @override
+  String get mass_migration_source_chapters => 'Bab sumber';
+
+  @override
+  String get mass_migration_destination_chapters => 'Bab tujuan';
+
+  @override
+  String mass_migration_chapter_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count bab',
+      one: '1 bab',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String mass_migration_source_chapter_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count bab sumber',
+      one: '1 bab sumber',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String mass_migration_destination_chapter_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count bab tujuan',
+      one: '1 bab tujuan',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get mass_migration_no_chapters_found => 'Tidak ada bab ditemukan.';
+
+  @override
+  String mass_migration_and_more_chapters(int count) {
+    return 'Dan $count lagi...';
+  }
+
+  @override
+  String get mass_migration_unknown_title => 'Judul tidak dikenal';
+
+  @override
+  String get mass_migration_unknown_match => 'Kecocokan tidak dikenal';
+
+  @override
+  String get mass_migration_unknown_source => 'Sumber tidak dikenal';
+
+  @override
+  String get mass_migration_unknown_chapter => 'Bab tidak dikenal';
 
   @override
   String get migrate_confirm => 'Migrasi ke sumber lain';
@@ -413,6 +650,9 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get save_as_cbz_archive => 'Simpan sebagai Arsip CBZ';
+
+  @override
+  String get delete_download_after_reading => 'Hapus unduhan setelah dibaca';
 
   @override
   String get concurrent_downloads => 'Unduhan bersamaan';
@@ -633,6 +873,13 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get import_files => 'File';
+
+  @override
+  String get split_epub_chapters => 'Bagi menjadi bab';
+
+  @override
+  String get split_epub_chapters_description =>
+      'Impor setiap bab EPUB sebagai entri terpisah';
 
   @override
   String get nothing_read_recently => 'Tidak ada yang dibaca baru-baru ini';
@@ -1103,6 +1350,10 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get markEpisodeAsSeenSetting =>
       'Pada titik mana menandai episode sebagai terlihat';
+
+  @override
+  String get mark_duplicate_chapters_read =>
+      'Mark duplicate chapter numbers as read';
 
   @override
   String get default_skip_intro_length => 'Panjang lewati intro default';
@@ -1792,18 +2043,311 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String get default_user_agent => 'Defaul user agent';
+  String get default_user_agent => 'Agen Pengguna Bawaan';
 
   @override
-  String get forceLandscapeMode => 'Force landscape mode';
+  String get forceLandscapeMode => 'Paksa Mode Lanskap';
 
   @override
   String get forceLandscapeModeSubtitle =>
-      'Force the player to use landscape orientation.';
+      'Paksa pemain untuk menggunakan orientasi lanskap.';
 
   @override
   String get dns_over_https => 'DNS-over-HTTPS (DoH)';
 
   @override
-  String get dns_provider => 'DNS Provider';
+  String get dns_provider => 'Penyedia DNS';
+
+  @override
+  String get tracked => 'Dilacak';
+
+  @override
+  String get auth_unlock_msg => 'Autentikasi untuk membuka kunci Mangayomi';
+
+  @override
+  String get app_locked => 'Mangayomi terkunci';
+
+  @override
+  String get auth_to_continue => 'Autentikasi untuk melanjutkan';
+
+  @override
+  String get authenticating => 'Mengautentikasi...';
+
+  @override
+  String get unlock => 'Buka';
+
+  @override
+  String get security => 'Keamanan';
+
+  @override
+  String get auth_to_change_security_setting =>
+      'Autentikasi untuk mengubah pengaturan keamanan';
+
+  @override
+  String get app_lock => 'Kunci Aplikasi';
+
+  @override
+  String get require_biometric_or_device_credential =>
+      'Memerlukan autentikasi biometrik atau kredensial perangkat untuk membuka aplikasi';
+
+  @override
+  String get biometric_or_device_credential_not_available =>
+      'Autentikasi biometrik tidak tersedia di perangkat ini';
+
+  @override
+  String get app_lock_description =>
+      'Ketika kunci aplikasi diaktifkan, Anda akan diminta untuk mengautentikasi\\nsetiap kali Anda membuka aplikasi atau kembali dari latar belakang.';
+
+  @override
+  String get keep_screen_on => 'Jaga Layar Tetap Menyala';
+
+  @override
+  String get webtoon_side_padding => 'Padding Samping Webtoon';
+
+  @override
+  String get show_page_gaps => 'Tampilkan Celah Halaman';
+
+  @override
+  String get invert_colors => 'Balik Warna';
+
+  @override
+  String get grayscale => 'Skala Abu-abu';
+
+  @override
+  String get brightness => 'Kecerahan';
+
+  @override
+  String get contrast => 'Kontras';
+
+  @override
+  String get saturation => 'Saturasi';
+
+  @override
+  String get navigation_layout => 'Tata Letak Navigasi';
+
+  @override
+  String get nav_layout_default => 'Bawaan';
+
+  @override
+  String get nav_layout_l_shaped => 'Bentuk L';
+
+  @override
+  String get nav_layout_kindle => 'Kindle';
+
+  @override
+  String get nav_layout_edge => 'Tepi';
+
+  @override
+  String get nav_layout_right_and_left => 'Kanan dan Kiri';
+
+  @override
+  String get nav_layout_disabled => 'Dinonaktifkan';
+
+  @override
+  String get color_enhancements => 'Peningkatan Warna';
+
+  @override
+  String get total => 'Total';
+
+  @override
+  String get mean_per_title => 'Rerata per judul';
+
+  @override
+  String get completion_rate => 'Tingkat penyelesaian';
+
+  @override
+  String get watching_time => 'Waktu menonton';
+
+  @override
+  String get reading_time => 'Waktu membaca';
+
+  @override
+  String average_chapters_per_title(Object title) {
+    return 'Rata-rata bab per judul';
+  }
+
+  @override
+  String get read_percentage => 'Persentase baca';
+
+  @override
+  String get entries => 'Entri';
+
+  @override
+  String get android_proxy_server_mihon => 'Server Proxy Android (Mihon)';
+
+  @override
+  String get android_proxy_server_mihon_description =>
+      'Unduh dan konfigurasikan server proxy yang diperlukan untuk menggunakan ekstensi Mihon.';
+
+  @override
+  String get mihon_proxy_server => 'Server proxy Mihon';
+
+  @override
+  String get extension_server_intro_with_jre =>
+      'Unduh bundel server proxy sebelum menggunakan ekstensi Mihon. Bundel tersebut mencakup JRE dan JAR server ekstensi.';
+
+  @override
+  String get extension_server_intro_ios =>
+      'Unduh JAR server proxy sebelum menggunakan ekstensi Mihon. iOS hanya memerlukan JAR server ekstensi.';
+
+  @override
+  String get checking_files => 'Memeriksa file';
+
+  @override
+  String get files_installed => 'File terpasang';
+
+  @override
+  String get files_missing => 'File hilang';
+
+  @override
+  String get update_files => 'Perbarui file';
+
+  @override
+  String get up_to_date => 'Sudah terbaru';
+
+  @override
+  String get choose_location => 'Pilih lokasi';
+
+  @override
+  String get import_existing_jar => 'Impor JAR yang ada';
+
+  @override
+  String get detect_files_in_selected_folder =>
+      'Deteksi file di folder yang dipilih';
+
+  @override
+  String get preparing_download => 'Menyiapkan unduhan...';
+
+  @override
+  String get app_install_location => 'Lokasi pemasangan aplikasi';
+
+  @override
+  String get install_location => 'Lokasi pemasangan';
+
+  @override
+  String get jre_executable => 'Executable JRE';
+
+  @override
+  String get extension_server_jar => 'JAR server ekstensi';
+
+  @override
+  String get installed_version => 'Versi terpasang';
+
+  @override
+  String get latest_version => 'Versi terbaru';
+
+  @override
+  String get apkbridge_description =>
+      'Gunakan ApkBridge saat Anda memerlukan proxy perangkat Android terpisah. Atur alamat proxy di sini dan unduh APK dari GitHub.';
+
+  @override
+  String get set_proxy_address => 'Atur alamat proxy';
+
+  @override
+  String get no_newer_proxy_server_release_available =>
+      'Tidak ada versi server proxy baru yang tersedia.';
+
+  @override
+  String get could_not_check_proxy_server_updates =>
+      'Tidak dapat memeriksa pembaruan server proxy.';
+
+  @override
+  String get no_extension_server_bundle_available_for_this_platform =>
+      'Tidak ada bundel server ekstensi yang tersedia untuk platform ini.';
+
+  @override
+  String failed_to_download_bundle(Object statusCode) {
+    return 'Gagal mengunduh bundel ($statusCode).';
+  }
+
+  @override
+  String get downloaded_bundle_missing_expected_files =>
+      'Bundel yang diunduh tidak berisi file yang diharapkan.';
+
+  @override
+  String get extension_server_files_ready => 'File server ekstensi sudah siap.';
+
+  @override
+  String get ios_extension_server_import_hint =>
+      'Di iOS, server dipasang di dalam sandbox aplikasi. Gunakan \"Impor JAR yang ada\" untuk memasukkan file yang diunduh.';
+
+  @override
+  String get select_extension_server_folder => 'Pilih folder server ekstensi';
+
+  @override
+  String get selected_folder_does_not_exist => 'Folder yang dipilih tidak ada.';
+
+  @override
+  String get no_extension_server_files_found_in_selected_folder =>
+      'Tidak ada file server ekstensi ditemukan di folder yang dipilih.';
+
+  @override
+  String get extension_server_files_linked =>
+      'File server ekstensi telah ditautkan.';
+
+  @override
+  String get select_extension_server_jar => 'Pilih JAR server ekstensi';
+
+  @override
+  String get selected_file_could_not_be_accessed =>
+      'File yang dipilih tidak dapat diakses.';
+
+  @override
+  String get extension_server_jar_imported =>
+      'JAR server ekstensi berhasil diimpor.';
+
+  @override
+  String get could_not_launch_apk_bridge_page =>
+      'Tidak dapat meluncurkan halaman ApkBridge.';
+
+  @override
+  String get proxy_server_ip_hint =>
+      'IP Server (mis. 10.0.0.5 atau https://example.com)';
+
+  @override
+  String get not_configured => 'Belum dikonfigurasi';
+
+  @override
+  String get webview => 'Tampilan Web';
+
+  @override
+  String get tts => 'Text-to-Speech';
+
+  @override
+  String get tts_speed => 'Speed';
+
+  @override
+  String get tts_pitch => 'Pitch';
+
+  @override
+  String get tts_language => 'Language';
+
+  @override
+  String get tts_voice => 'Voice';
+
+  @override
+  String get tts_stop => 'Stop';
+
+  @override
+  String get tts_play => 'Play';
+
+  @override
+  String get tts_pause => 'Pause';
+
+  @override
+  String get tts_previous => 'Previous paragraph';
+
+  @override
+  String get tts_next => 'Next paragraph';
+
+  @override
+  String tts_paragraph_progress(Object current, Object total) {
+    return 'Paragraph $current of $total';
+  }
+
+  @override
+  String get tts_settings => 'TTS Settings';
+
+  @override
+  String get tts_default => 'Default';
 }

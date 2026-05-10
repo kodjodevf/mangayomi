@@ -4,7 +4,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
-import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
+import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'library_state_provider.g.dart';
@@ -466,6 +466,118 @@ class MangaFilterBookmarkedState extends _$MangaFilterBookmarkedState {
   }
 }
 
+// ── Completed filter ──────────────────────────────────────────────────────────
+
+@riverpod
+class MangaFilterCompletedState extends _$MangaFilterCompletedState {
+  @override
+  int build({
+    required List<Manga> mangaList,
+    required ItemType itemType,
+    required Settings settings,
+  }) {
+    state = getType();
+    return getType();
+  }
+
+  int getType() {
+    switch (itemType) {
+      case ItemType.manga:
+        return settings.libraryFilterMangasCompletedType ?? 0;
+      case ItemType.anime:
+        return settings.libraryFilterAnimeCompletedType ?? 0;
+      default:
+        return settings.libraryFilterNovelCompletedType ?? 0;
+    }
+  }
+
+  void setType(int type) {
+    Settings appSettings = Settings();
+    switch (itemType) {
+      case ItemType.manga:
+        appSettings = settings..libraryFilterMangasCompletedType = type;
+        break;
+      case ItemType.anime:
+        appSettings = settings..libraryFilterAnimeCompletedType = type;
+        break;
+      default:
+        appSettings = settings..libraryFilterNovelCompletedType = type;
+    }
+    isar.writeTxnSync(() {
+      isar.settings.putSync(
+        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      );
+    });
+    state = type;
+  }
+
+  void update() {
+    if (state == 0) {
+      setType(1);
+    } else if (state == 1) {
+      setType(2);
+    } else {
+      setType(0);
+    }
+  }
+}
+
+// ── Tracking filter ───────────────────────────────────────────────────────────
+
+@riverpod
+class MangaFilterTrackingState extends _$MangaFilterTrackingState {
+  @override
+  int build({
+    required List<Manga> mangaList,
+    required ItemType itemType,
+    required Settings settings,
+  }) {
+    state = getType();
+    return getType();
+  }
+
+  int getType() {
+    switch (itemType) {
+      case ItemType.manga:
+        return settings.libraryFilterMangasTrackingType ?? 0;
+      case ItemType.anime:
+        return settings.libraryFilterAnimeTrackingType ?? 0;
+      default:
+        return settings.libraryFilterNovelTrackingType ?? 0;
+    }
+  }
+
+  void setType(int type) {
+    Settings appSettings = Settings();
+    switch (itemType) {
+      case ItemType.manga:
+        appSettings = settings..libraryFilterMangasTrackingType = type;
+        break;
+      case ItemType.anime:
+        appSettings = settings..libraryFilterAnimeTrackingType = type;
+        break;
+      default:
+        appSettings = settings..libraryFilterNovelTrackingType = type;
+    }
+    isar.writeTxnSync(() {
+      isar.settings.putSync(
+        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      );
+    });
+    state = type;
+  }
+
+  void update() {
+    if (state == 0) {
+      setType(1);
+    } else if (state == 1) {
+      setType(2);
+    } else {
+      setType(0);
+    }
+  }
+}
+
 @riverpod
 class MangasFilterResultState extends _$MangasFilterResultState {
   @override
@@ -502,10 +614,26 @@ class MangasFilterResultState extends _$MangasFilterResultState {
         settings: settings,
       ),
     );
+    final completedFilterType = ref.watch(
+      mangaFilterCompletedStateProvider(
+        mangaList: mangaList,
+        itemType: itemType,
+        settings: settings,
+      ),
+    );
+    final trackingFilterType = ref.watch(
+      mangaFilterTrackingStateProvider(
+        mangaList: mangaList,
+        itemType: itemType,
+        settings: settings,
+      ),
+    );
     return downloadFilterType == 0 &&
         unreadFilterType == 0 &&
         startedFilterType == 0 &&
-        bookmarkedFilterType == 0;
+        bookmarkedFilterType == 0 &&
+        completedFilterType == 0 &&
+        trackingFilterType == 0;
   }
 }
 
@@ -767,58 +895,47 @@ class SortLibraryMangaState extends _$SortLibraryMangaState {
   }
 
   bool isReverse() {
-    return state.reverse!;
+    return state.reverse ?? false;
   }
 }
 
 @riverpod
 class MangasListState extends _$MangasListState {
   @override
-  List<int> build() {
-    return [];
-  }
+  Set<int> build() => {};
 
   void update(Manga value) {
-    var newList = state.reversed.toList();
-    if (newList.contains(value.id)) {
-      newList.remove(value.id);
+    var newSet = Set<int>.from(state);
+    if (newSet.contains(value.id)) {
+      newSet.remove(value.id);
     } else {
-      newList.add(value.id!);
+      newSet.add(value.id!);
     }
-    if (newList.isEmpty) {
+    if (newSet.isEmpty) {
       ref.read(isLongPressedStateProvider.notifier).update(false);
     }
-    state = newList;
+    state = newSet;
   }
 
-  void selectAll(Manga value) {
-    var newList = state.reversed.toList();
-    if (!newList.contains(value.id)) {
-      newList.add(value.id!);
-    }
-
-    state = newList;
-  }
+  void selectAll(Manga value) => state = {...state, value.id!};
 
   void selectSome(Manga value) {
-    var newList = state.reversed.toList();
-    if (newList.contains(value.id)) {
-      newList.remove(value.id);
+    final newSet = Set<int>.from(state);
+    if (newSet.contains(value.id)) {
+      newSet.remove(value.id);
     } else {
-      newList.add(value.id!);
+      newSet.add(value.id!);
     }
-    state = newList;
+    state = newSet;
   }
 
-  void clear() {
-    state = [];
-  }
+  void clear() => state = {};
 }
 
 @riverpod
 class MangasSetIsReadState extends _$MangasSetIsReadState {
   @override
-  void build({required List<int> mangaIds, required bool markAsRead}) {}
+  void build({required Set<int> mangaIds, required bool markAsRead}) {}
 
   void set() {
     final allChapters = <Chapter>[];

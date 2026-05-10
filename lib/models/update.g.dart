@@ -50,7 +50,7 @@ const UpdateSchema = CollectionSchema(
   getId: _updateGetId,
   getLinks: _updateGetLinks,
   attach: _updateAttach,
-  version: '3.3.0',
+  version: '3.3.2',
 );
 
 int _updateEstimateSize(

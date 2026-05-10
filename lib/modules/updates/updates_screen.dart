@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/base_library_tab_screen.dart';
@@ -99,39 +98,26 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
   }
 
   Future<void> _updateLibrary() async {
-    setState(() => _isLoading = true);
-    final itemType = getCurrentItemType();
-    final allowedCategories = isar.categorys
-        .filter()
-        .idIsNotNull()
-        .group((q) => q.shouldUpdateIsNull().or().shouldUpdateEqualTo(true))
-        .findAllSync()
-        .map((e) => e.id);
-    final mangaList = isar.mangas
-        .filter()
-        .idIsNotNull()
-        .favoriteEqualTo(true)
-        .and()
-        .itemTypeEqualTo(itemType)
-        .and()
-        .isLocalArchiveEqualTo(false)
-        .findAllSync()
-        .where((e) {
-          for (final category in allowedCategories) {
-            if (e.categories?.contains(category) ?? false) {
-              return true;
-            }
-          }
-          return false;
-        })
-        .toList();
-    await updateLibrary(
-      ref: ref,
-      context: context,
-      mangaList: mangaList,
-      itemType: itemType,
-    );
-    setState(() => _isLoading = false);
+    try {
+      setState(() => _isLoading = true);
+      final itemType = getCurrentItemType();
+      final mangaList = await isar.mangas
+          .filter()
+          .idIsNotNull()
+          .favoriteEqualTo(true)
+          .itemTypeEqualTo(itemType)
+          .isLocalArchiveEqualTo(false)
+          .findAll();
+      if (!mounted) return;
+      await updateLibrary(
+        ref: ref,
+        context: context,
+        mangaList: mangaList,
+        itemType: itemType,
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   Future<void> _clearUpdates() async {
@@ -140,6 +126,7 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
         .idIsNotNull()
         .chapter((q) => q.manga((q) => q.itemTypeEqualTo(getCurrentItemType())))
         .findAll();
+    if (updates.isEmpty) return;
     final idsToDelete = <Id>[];
     isar.writeTxnSync(() {
       for (var update in updates) {
@@ -149,7 +136,7 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
             .addChangedPart(ActionType.removeUpdate, update.id, "{}", false);
       }
     });
-    await isar.writeTxn(() => isar.updates.deleteAll(idsToDelete));
+    await isar.writeTxn(() async => await isar.updates.deleteAll(idsToDelete));
   }
 }
 
@@ -289,25 +276,18 @@ Widget _updateNumbers(WidgetRef ref, ItemType itemType) {
     stream: isar.updates
         .filter()
         .idIsNotNull()
-        .and()
         .chapter((q) => q.manga((q) => q.itemTypeEqualTo(itemType)))
         .watch(fireImmediately: true),
     builder: (context, snapshot) {
-      if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-        final entries = snapshot.data!.toList();
-        return entries.isEmpty
-            ? SizedBox.shrink()
-            : Badge(
-                backgroundColor: Theme.of(context).focusColor,
-                label: Text(
-                  entries.length.toString(),
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.bodySmall!.color,
-                  ),
-                ),
-              );
-      }
-      return Container();
+      final count = snapshot.data?.length ?? 0;
+      if (count == 0) return const SizedBox.shrink();
+      return Badge(
+        backgroundColor: Theme.of(context).focusColor,
+        label: Text(
+          count.toString(),
+          style: TextStyle(color: Theme.of(context).textTheme.bodySmall!.color),
+        ),
+      );
     },
   );
 }

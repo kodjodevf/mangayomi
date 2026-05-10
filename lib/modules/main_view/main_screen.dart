@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:io';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +11,7 @@ import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/modules/more/about/providers/download_file_screen.dart';
 import 'package:mangayomi/modules/more/providers/downloaded_only_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
@@ -118,7 +119,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   void _initializeProviders() {
     Future.microtask(() {
       if (mounted) {
-        ref.read(checkForUpdateProvider(context: context));
         for (var type in ItemType.values) {
           ref.read(
             fetchItemSourcesListProvider(
@@ -169,6 +169,17 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   bool isLibSwitch = false;
   @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue<UpdateInfo?>>(checkForUpdateProvider, (_, next) {
+      next.whenData((updateInfo) {
+        if (updateInfo != null && context.mounted) {
+          showDialog(
+            context: context,
+            builder: (_) => DownloadFileScreen(updateAvailable: updateInfo),
+          );
+        }
+      });
+    });
+
     ref.listen<Locale>(l10nLocaleStateProvider, (previous, next) {
       _clearCache();
       setState(() {});
@@ -544,7 +555,7 @@ class _DownloadedOnlyBar extends StatelessWidget {
     return Material(
       child: AnimatedContainer(
         height: downloadedOnly
-            ? Platform.isAndroid || Platform.isIOS
+            ? isMobile
                   ? MediaQuery.of(context).padding.top * 2
                   : 50
             : 0,
@@ -583,7 +594,7 @@ class _IncognitoModeBar extends StatelessWidget {
     return Material(
       child: AnimatedContainer(
         height: incognitoMode
-            ? Platform.isAndroid || Platform.isIOS
+            ? isMobile
                   ? MediaQuery.of(context).padding.top * 2
                   : 50
             : 0,

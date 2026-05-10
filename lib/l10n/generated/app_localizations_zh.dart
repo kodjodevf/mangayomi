@@ -112,6 +112,14 @@ class AppLocalizationsZh extends AppLocalizations {
   String get compact_grid => '紧凑网格';
 
   @override
+  String get compression_level => '压缩级别';
+
+  @override
+  String compression_info(Object level) {
+    return '压缩率越高，备份文件占用的空间越小，但会消耗更多的CPU。默认值：$level';
+  }
+
+  @override
   String get comfortable_grid => '舒适网格';
 
   @override
@@ -206,6 +214,227 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get migrate => '迁移';
+
+  @override
+  String get mass_migration_title => '批量迁移';
+
+  @override
+  String get mass_migration_preview_items => '预览项目';
+
+  @override
+  String get mass_migration_destination_source => '目标源';
+
+  @override
+  String get mass_migration_no_library_items => '没有可供批量迁移的图库项目。';
+
+  @override
+  String get mass_migration_no_destination_sources => '没有可用的已安装目标源。';
+
+  @override
+  String get mass_migration_installed => '已安装';
+
+  @override
+  String mass_migration_items_ready_for_review(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count个项目准备好复检',
+      one: '1个项目准备好复检',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String mass_migration_item_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count个项目',
+      one: '1个项目',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get mass_migration_select_destination_source => '选择目标源';
+
+  @override
+  String mass_migration_finding_matches(Object source, Object language) {
+    return '正在 $source • $language 中寻找匹配项';
+  }
+
+  @override
+  String mass_migration_processing_item(int current, int total) {
+    return '正在处理第 $current / $total 个项目';
+  }
+
+  @override
+  String get mass_migration_waiting_next_item => '等待2秒后处理下一个项目...';
+
+  @override
+  String get mass_migration_waiting_next_migration => '等待2秒后处理下一项迁移...';
+
+  @override
+  String mass_migration_matched_so_far(int count) {
+    return '目前已匹配: $count';
+  }
+
+  @override
+  String mass_migration_no_match_count(int count) {
+    return '未匹配: $count';
+  }
+
+  @override
+  String mass_migration_review_matches(Object source) {
+    return '复检 $source 的匹配项';
+  }
+
+  @override
+  String mass_migration_found_matches(int count) {
+    return '找到匹配项: $count';
+  }
+
+  @override
+  String mass_migration_no_matches(int count) {
+    return '未找到匹配: $count';
+  }
+
+  @override
+  String mass_migration_selected_to_migrate(int count) {
+    return '选定迁移: $count';
+  }
+
+  @override
+  String get mass_migration_finish_review => '结束复检';
+
+  @override
+  String mass_migration_migrate_selected(int count) {
+    return '迁移选定项目 ($count)';
+  }
+
+  @override
+  String mass_migration_migrating_selected(Object source) {
+    return '正在将选定项目迁移至 $source';
+  }
+
+  @override
+  String get mass_migration_no_items_selected => '未选定任何迁移项目。';
+
+  @override
+  String mass_migration_migrating_item(int current, int total) {
+    return '正在迁移第 $current / $total 个项目';
+  }
+
+  @override
+  String get mass_migration_complete => '批量迁移完成';
+
+  @override
+  String get mass_migration_complete_success_message => '所有选定项目均已处理成功。';
+
+  @override
+  String get mass_migration_complete_partial_message => '迁移结束，但部分项目仍需手动处理。';
+
+  @override
+  String mass_migration_route_summary(Object source, Object destination) {
+    return '$source → $destination';
+  }
+
+  @override
+  String get mass_migration_processed => '已处理';
+
+  @override
+  String get mass_migration_matched => '已匹配';
+
+  @override
+  String get mass_migration_migrated => '已迁移';
+
+  @override
+  String get mass_migration_skipped => '已跳过';
+
+  @override
+  String get mass_migration_failed => '失败';
+
+  @override
+  String get mass_migration_failed_items => '失败项目';
+
+  @override
+  String get mass_migration_exit => '退出批量迁移';
+
+  @override
+  String get mass_migration_no_destination_match => '未找到目标匹配项';
+
+  @override
+  String mass_migration_query(Object query) {
+    return '查询条件: $query';
+  }
+
+  @override
+  String get mass_migration_skip => '跳过';
+
+  @override
+  String get mass_migration_loading => '正在加载...';
+
+  @override
+  String get mass_migration_choose_another_result => '选择其他结果';
+
+  @override
+  String get mass_migration_source_chapters => '原章节';
+
+  @override
+  String get mass_migration_destination_chapters => '目标章节';
+
+  @override
+  String mass_migration_chapter_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count个章节',
+      one: '1个章节',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String mass_migration_source_chapter_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count个原章节',
+      one: '1个原章节',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String mass_migration_destination_chapter_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count个目标章节',
+      one: '1个目标章节',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get mass_migration_no_chapters_found => '未找到章节。';
+
+  @override
+  String mass_migration_and_more_chapters(int count) {
+    return '以及更多 $count 个...';
+  }
+
+  @override
+  String get mass_migration_unknown_title => '未知标题';
+
+  @override
+  String get mass_migration_unknown_match => '未知匹配';
+
+  @override
+  String get mass_migration_unknown_source => '未知源';
+
+  @override
+  String get mass_migration_unknown_chapter => '未知章节';
 
   @override
   String get migrate_confirm => '迁移到另一个来源';
@@ -402,6 +631,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get save_as_cbz_archive => '保存为CBZ档案';
+
+  @override
+  String get delete_download_after_reading => '完成阅读后删除下载内容';
 
   @override
   String get concurrent_downloads => '并发下载';
@@ -620,6 +852,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get import_files => '文件';
+
+  @override
+  String get split_epub_chapters => '分章节导入';
+
+  @override
+  String get split_epub_chapters_description => '将每个EPUB章节作为单独条目导入';
 
   @override
   String get nothing_read_recently => '最近未阅读';
@@ -1077,6 +1315,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get markEpisodeAsSeenSetting => '标记剧集为已看的时间点';
+
+  @override
+  String get mark_duplicate_chapters_read =>
+      'Mark duplicate chapter numbers as read';
 
   @override
   String get default_skip_intro_length => '默认跳过介绍长度';
@@ -1750,5 +1992,286 @@ class AppLocalizationsZh extends AppLocalizations {
   String get dns_over_https => 'DNS-over-HTTPS (DoH)';
 
   @override
-  String get dns_provider => 'DNS Provider';
+  String get dns_provider => 'DNS提供商';
+
+  @override
+  String get tracked => '已追踪';
+
+  @override
+  String get auth_unlock_msg => '验证以解锁Mangayomi';
+
+  @override
+  String get app_locked => 'Mangayomi已锁定';
+
+  @override
+  String get auth_to_continue => '验证以继续';
+
+  @override
+  String get authenticating => '正在验证...';
+
+  @override
+  String get unlock => '解锁';
+
+  @override
+  String get security => '安全';
+
+  @override
+  String get auth_to_change_security_setting => '验证以更改安全设置';
+
+  @override
+  String get app_lock => '应用锁';
+
+  @override
+  String get require_biometric_or_device_credential => '需要生物识别或设备凭证才能打开应用';
+
+  @override
+  String get biometric_or_device_credential_not_available => '此设备上没有生物识别';
+
+  @override
+  String get app_lock_description => '启用应用锁后，每次打开应用或从后台返回时都会要求您进行身份验证。';
+
+  @override
+  String get keep_screen_on => '保持屏幕开启';
+
+  @override
+  String get webtoon_side_padding => 'Webtoon侧边填充';
+
+  @override
+  String get show_page_gaps => '显示页面间隙';
+
+  @override
+  String get invert_colors => '反转颜色';
+
+  @override
+  String get grayscale => '灰度';
+
+  @override
+  String get brightness => '亮度';
+
+  @override
+  String get contrast => '对比度';
+
+  @override
+  String get saturation => '饱和度';
+
+  @override
+  String get navigation_layout => '导航布局';
+
+  @override
+  String get nav_layout_default => '默认';
+
+  @override
+  String get nav_layout_l_shaped => 'L形';
+
+  @override
+  String get nav_layout_kindle => 'Kindle';
+
+  @override
+  String get nav_layout_edge => '边缘';
+
+  @override
+  String get nav_layout_right_and_left => '右和左';
+
+  @override
+  String get nav_layout_disabled => '已禁用';
+
+  @override
+  String get color_enhancements => '色彩增强';
+
+  @override
+  String get total => '总计';
+
+  @override
+  String get mean_per_title => '单个标题平均';
+
+  @override
+  String get completion_rate => '完成率';
+
+  @override
+  String get watching_time => '观看时间';
+
+  @override
+  String get reading_time => '阅读时间';
+
+  @override
+  String average_chapters_per_title(Object title) {
+    return '单个标题平均章节数';
+  }
+
+  @override
+  String get read_percentage => '阅读百分比';
+
+  @override
+  String get entries => '条目';
+
+  @override
+  String get android_proxy_server_mihon => 'Android 代理服务器（Mihon）';
+
+  @override
+  String get android_proxy_server_mihon_description =>
+      '下载并配置使用 Mihon 扩展所需的代理服务器。';
+
+  @override
+  String get mihon_proxy_server => 'Mihon 代理服务器';
+
+  @override
+  String get extension_server_intro_with_jre =>
+      '在使用 Mihon 扩展前请先下载代理服务器包。该包内含 JRE 和扩展服务器 JAR。';
+
+  @override
+  String get extension_server_intro_ios =>
+      '在使用 Mihon 扩展前请先下载代理服务器 JAR。iOS 仅需扩展服务器 JAR。';
+
+  @override
+  String get checking_files => '正在检查文件';
+
+  @override
+  String get files_installed => '文件已安装';
+
+  @override
+  String get files_missing => '文件缺失';
+
+  @override
+  String get update_files => '更新文件';
+
+  @override
+  String get up_to_date => '已是最新';
+
+  @override
+  String get choose_location => '选择路径';
+
+  @override
+  String get import_existing_jar => '导入现有 JAR';
+
+  @override
+  String get detect_files_in_selected_folder => '在选定文件夹中检测文件';
+
+  @override
+  String get preparing_download => '正在准备下载...';
+
+  @override
+  String get app_install_location => '应用安装路径';
+
+  @override
+  String get install_location => '安装位置';
+
+  @override
+  String get jre_executable => 'JRE 可执行文件';
+
+  @override
+  String get extension_server_jar => '扩展服务器 JAR';
+
+  @override
+  String get installed_version => '当前版本';
+
+  @override
+  String get latest_version => '最新版本';
+
+  @override
+  String get apkbridge_description =>
+      '当您需要独立的 Android 设备代理时，请使用 ApkBridge。在此设置代理地址，并从 GitHub 下载 APK。';
+
+  @override
+  String get set_proxy_address => '设置代理地址';
+
+  @override
+  String get no_newer_proxy_server_release_available => '没有可用的新代理服务器版本。';
+
+  @override
+  String get could_not_check_proxy_server_updates => '无法检查代理服务器更新。';
+
+  @override
+  String get no_extension_server_bundle_available_for_this_platform =>
+      '当前平台没有可用的扩展服务器包。';
+
+  @override
+  String failed_to_download_bundle(Object statusCode) {
+    return '下载包失败 ($statusCode)。';
+  }
+
+  @override
+  String get downloaded_bundle_missing_expected_files => '下载的项目不包含预期文件。';
+
+  @override
+  String get extension_server_files_ready => '扩展服务器文件已就绪。';
+
+  @override
+  String get ios_extension_server_import_hint =>
+      '在 iOS 上，服务器安装在应用沙盒内。请使用“导入现有 JAR”来导入已下载的文件。';
+
+  @override
+  String get select_extension_server_folder => '选择扩展服务器文件夹';
+
+  @override
+  String get selected_folder_does_not_exist => '选定文件夹不存在。';
+
+  @override
+  String get no_extension_server_files_found_in_selected_folder =>
+      '在选定文件夹中未找到扩展服务器文件。';
+
+  @override
+  String get extension_server_files_linked => '扩展服务器文件已链接。';
+
+  @override
+  String get select_extension_server_jar => '选择扩展服务器 JAR';
+
+  @override
+  String get selected_file_could_not_be_accessed => '选定文件无法访问。';
+
+  @override
+  String get extension_server_jar_imported => '扩展服务器 JAR 已导入。';
+
+  @override
+  String get could_not_launch_apk_bridge_page => '无法启动 ApkBridge 页面。';
+
+  @override
+  String get proxy_server_ip_hint =>
+      '服务器 IP（例如 10.0.0.5 或 https://example.com）';
+
+  @override
+  String get not_configured => '未配置';
+
+  @override
+  String get webview => 'Webview';
+
+  @override
+  String get tts => 'Text-to-Speech';
+
+  @override
+  String get tts_speed => 'Speed';
+
+  @override
+  String get tts_pitch => 'Pitch';
+
+  @override
+  String get tts_language => 'Language';
+
+  @override
+  String get tts_voice => 'Voice';
+
+  @override
+  String get tts_stop => 'Stop';
+
+  @override
+  String get tts_play => 'Play';
+
+  @override
+  String get tts_pause => 'Pause';
+
+  @override
+  String get tts_previous => 'Previous paragraph';
+
+  @override
+  String get tts_next => 'Next paragraph';
+
+  @override
+  String tts_paragraph_progress(Object current, Object total) {
+    return 'Paragraph $current of $total';
+  }
+
+  @override
+  String get tts_settings => 'TTS Settings';
+
+  @override
+  String get tts_default => 'Default';
 }

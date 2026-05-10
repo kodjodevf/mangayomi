@@ -6,11 +6,11 @@ message BackupChapter {
     optional string scanlator = 3;
     bool read = 4;
     bool bookmark = 5;
-    int32 lastPageRead = 6;
-    int32 dateFetch = 7;
-    int32 dateUpload = 8;
+    int64 lastPageRead = 6;
+    int64 dateFetch = 7;
+    int64 dateUpload = 8;
     float chapterNumber = 9;
-    int32 sourceOrder = 10;
-    int32 lastModifiedAt = 11;
-    int32 version = 12;
+    int64 sourceOrder = 10;
+    int64 lastModifiedAt = 11;
+    int64 version = 12;
 }

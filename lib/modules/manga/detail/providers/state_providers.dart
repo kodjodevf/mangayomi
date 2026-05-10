@@ -47,6 +47,30 @@ class ChaptersListState extends _$ChaptersListState {
     state = newList;
   }
 
+  /// Select all chapters between the last selected and [clicked] in [allChapters].
+  void selectRange(Chapter clicked, List<Chapter> allChapters) {
+    if (state.isEmpty) {
+      update(clicked);
+      return;
+    }
+    final lastSelected = state.last;
+    final lastIdx = allChapters.indexOf(lastSelected);
+    final clickedIdx = allChapters.indexOf(clicked);
+    if (lastIdx == -1 || clickedIdx == -1) {
+      update(clicked);
+      return;
+    }
+    final start = lastIdx < clickedIdx ? lastIdx : clickedIdx;
+    final end = lastIdx < clickedIdx ? clickedIdx : lastIdx;
+    var newList = List<Chapter>.from(state);
+    for (int i = start; i <= end; i++) {
+      if (!newList.contains(allChapters[i])) {
+        newList.add(allChapters[i]);
+      }
+    }
+    state = newList;
+  }
+
   void clear() {
     state = [];
   }

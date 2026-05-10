@@ -11,8 +11,10 @@ import device_info_plus
 import file_picker
 import flutter_inappwebview_macos
 import flutter_qjs
+import flutter_tts
 import flutter_web_auth_2
 import isar_community_flutter_libs
+import local_auth_darwin
 import m_extension_server
 import media_kit_libs_macos_video
 import media_kit_video
@@ -33,8 +35,10 @@ func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   FilePickerPlugin.register(with: registry.registrar(forPlugin: "FilePickerPlugin"))
   InAppWebViewFlutterPlugin.register(with: registry.registrar(forPlugin: "InAppWebViewFlutterPlugin"))
   FlutterQjsPlugin.register(with: registry.registrar(forPlugin: "FlutterQjsPlugin"))
+  FlutterTtsPlugin.register(with: registry.registrar(forPlugin: "FlutterTtsPlugin"))
   FlutterWebAuth2Plugin.register(with: registry.registrar(forPlugin: "FlutterWebAuth2Plugin"))
   IsarFlutterLibsPlugin.register(with: registry.registrar(forPlugin: "IsarFlutterLibsPlugin"))
+  LocalAuthPlugin.register(with: registry.registrar(forPlugin: "LocalAuthPlugin"))
   MExtensionServerPlugin.register(with: registry.registrar(forPlugin: "MExtensionServerPlugin"))
   MediaKitLibsMacosVideoPlugin.register(with: registry.registrar(forPlugin: "MediaKitLibsMacosVideoPlugin"))
   MediaKitVideoPlugin.register(with: registry.registrar(forPlugin: "MediaKitVideoPlugin"))

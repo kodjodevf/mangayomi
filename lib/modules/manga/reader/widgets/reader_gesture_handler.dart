@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
-/// Manages gesture detection zones and tap handling for the reader.
+/// Navigation layout variants matching Mihon.
 ///
-/// The reader screen is divided into zones:
+///  0 = Default  – current three-column + top/bottom zones
+///  1 = L-shaped – top-left = prev, bottom-right = next, rest = UI
+///  2 = Kindle   – top = UI, bottom split left = prev / right = next
+///  3 = Edge     – thin side strips for prev/next, rest = UI
+///  4 = Right & Left – simple two-zone left = prev / right = next
+///  5 = Disabled – full screen = toggle UI
 ///
-/// For horizontal reading (LTR):
+/// For horizontal reading (LTR), the default layout is:
 /// ```
 /// ┌─────────────────────────┐
 /// │     TOP (prev page)     │
@@ -30,6 +35,9 @@ class ReaderGestureHandler extends StatelessWidget {
 
   /// Whether the reader is in continuous scroll mode
   final bool isContinuousMode;
+
+  /// Navigation layout index (0-5), see class docs.
+  final int navigationLayout;
 
   /// Callback when UI should be toggled
   final VoidCallback onToggleUI;
@@ -61,6 +69,7 @@ class ReaderGestureHandler extends StatelessWidget {
     required this.onToggleUI,
     required this.onPreviousPage,
     required this.onNextPage,
+    this.navigationLayout = 0,
     this.onDoubleTapDown,
     this.onDoubleTap,
     this.onSecondaryTapDown,
@@ -69,122 +78,176 @@ class ReaderGestureHandler extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return switch (navigationLayout) {
+      1 => _buildLShaped(context),
+      2 => _buildKindle(context),
+      3 => _buildEdge(context),
+      4 => _buildRightAndLeft(context),
+      5 => _buildDisabled(context),
+      _ => _buildDefault(context),
+    };
+  }
+
+  // ── helpers ──
+
+  VoidCallback _prev() => isRTL ? onNextPage : onPreviousPage;
+  VoidCallback _next() => isRTL ? onPreviousPage : onNextPage;
+
+  _ZoneGestureDetector _zone(VoidCallback onTap) => _ZoneGestureDetector(
+    onTap: usePageTapZones ? onTap : onToggleUI,
+    onDoubleTapDown: isContinuousMode ? onDoubleTapDown : null,
+    onDoubleTap: isContinuousMode ? onDoubleTap : null,
+    onSecondaryTapDown: isContinuousMode ? onSecondaryTapDown : null,
+    onSecondaryTap: isContinuousMode ? onSecondaryTap : null,
+  );
+
+  _ZoneGestureDetector _uiZone() => _ZoneGestureDetector(
+    onTap: onToggleUI,
+    onDoubleTapDown: isContinuousMode ? onDoubleTapDown : null,
+    onDoubleTap: isContinuousMode ? onDoubleTap : null,
+    onSecondaryTapDown: isContinuousMode ? onSecondaryTapDown : null,
+    onSecondaryTap: isContinuousMode ? onSecondaryTap : null,
+  );
+
+  // ── Layout 0: Default (original 3-col + top/bottom) ──
+
+  Widget _buildDefault(BuildContext context) {
     return Stack(
       children: [
-        // Horizontal zones (left, center, right)
-        _buildHorizontalZones(context),
-
-        // Vertical zones (top, center, bottom)
-        _buildVerticalZones(context),
+        _buildDefaultHorizontalZones(context),
+        _buildDefaultVerticalZones(context),
       ],
     );
   }
 
-  Widget _buildHorizontalZones(BuildContext context) {
+  Widget _buildDefaultHorizontalZones(BuildContext context) {
     return Row(
       children: [
-        // Left zone
-        Expanded(
-          flex: 2,
-          child: _ZoneGestureDetector(
-            onTap: () {
-              if (usePageTapZones) {
-                isRTL ? onNextPage() : onPreviousPage();
-              } else {
-                onToggleUI();
-              }
-            },
-            onDoubleTapDown: isContinuousMode ? onDoubleTapDown : null,
-            onDoubleTap: isContinuousMode ? onDoubleTap : null,
-            onSecondaryTapDown: isContinuousMode ? onSecondaryTapDown : null,
-            onSecondaryTap: isContinuousMode ? onSecondaryTap : null,
-          ),
-        ),
-
-        // Center zone
+        Expanded(flex: 2, child: _zone(_prev())),
         Expanded(
           flex: 2,
           child: hasImageError
               ? SizedBox(width: context.width(1), height: context.height(0.7))
-              : _ZoneGestureDetector(
-                  onTap: onToggleUI,
-                  onDoubleTapDown: isContinuousMode ? onDoubleTapDown : null,
-                  onDoubleTap: isContinuousMode ? onDoubleTap : null,
-                  onSecondaryTapDown: isContinuousMode
-                      ? onSecondaryTapDown
-                      : null,
-                  onSecondaryTap: isContinuousMode ? onSecondaryTap : null,
-                ),
+              : _uiZone(),
         ),
+        Expanded(flex: 2, child: _zone(_next())),
+      ],
+    );
+  }
 
-        // Right zone
+  Widget _buildDefaultVerticalZones(BuildContext context) {
+    return Column(
+      children: [
         Expanded(
           flex: 2,
-          child: _ZoneGestureDetector(
-            onTap: () {
-              if (usePageTapZones) {
-                isRTL ? onPreviousPage() : onNextPage();
-              } else {
-                onToggleUI();
-              }
-            },
-            onDoubleTapDown: isContinuousMode ? onDoubleTapDown : null,
-            onDoubleTap: isContinuousMode ? onDoubleTap : null,
-            onSecondaryTapDown: isContinuousMode ? onSecondaryTapDown : null,
-            onSecondaryTap: isContinuousMode ? onSecondaryTap : null,
+          child: _zone(hasImageError ? onToggleUI : onPreviousPage),
+        ),
+        const Expanded(flex: 5, child: SizedBox.shrink()),
+        Expanded(
+          flex: 2,
+          child: _zone(hasImageError ? onToggleUI : onNextPage),
+        ),
+      ],
+    );
+  }
+
+  // ── Layout 1: L-shaped ──
+  // ┌───────┬───────────────┐
+  // │ PREV  │               │
+  // ├───────┘               │
+  // │          UI           │
+  // │               ┌───────┤
+  // │               │ NEXT  │
+  // └───────────────┴───────┘
+
+  Widget _buildLShaped(BuildContext context) {
+    return Column(
+      children: [
+        Expanded(
+          flex: 1,
+          child: Row(
+            children: [
+              Expanded(flex: 1, child: _zone(_prev())),
+              Expanded(flex: 2, child: _uiZone()),
+            ],
+          ),
+        ),
+        Expanded(flex: 2, child: _uiZone()),
+        Expanded(
+          flex: 1,
+          child: Row(
+            children: [
+              Expanded(flex: 2, child: _uiZone()),
+              Expanded(flex: 1, child: _zone(_next())),
+            ],
           ),
         ),
       ],
     );
   }
 
-  Widget _buildVerticalZones(BuildContext context) {
+  // ── Layout 2: Kindle ──
+  // ┌───────────────────────┐
+  // │       UI (toggle)     │
+  // ├───────────┬───────────┤
+  // │   PREV    │   NEXT    │
+  // └───────────┴───────────┘
+
+  Widget _buildKindle(BuildContext context) {
     return Column(
       children: [
-        // Top zone
+        Expanded(flex: 1, child: _uiZone()),
         Expanded(
-          flex: 2,
-          child: _ZoneGestureDetector(
-            onTap: () {
-              if (hasImageError) {
-                onToggleUI();
-              } else if (usePageTapZones) {
-                onPreviousPage();
-              } else {
-                onToggleUI();
-              }
-            },
-            onDoubleTapDown: isContinuousMode ? onDoubleTapDown : null,
-            onDoubleTap: isContinuousMode ? onDoubleTap : null,
-            onSecondaryTapDown: isContinuousMode ? onSecondaryTapDown : null,
-            onSecondaryTap: isContinuousMode ? onSecondaryTap : null,
-          ),
-        ),
-
-        // Center zone (transparent, handled by horizontal zones)
-        const Expanded(flex: 5, child: SizedBox.shrink()),
-
-        // Bottom zone
-        Expanded(
-          flex: 2,
-          child: _ZoneGestureDetector(
-            onTap: () {
-              if (hasImageError) {
-                onToggleUI();
-              } else if (usePageTapZones) {
-                onNextPage();
-              } else {
-                onToggleUI();
-              }
-            },
-            onDoubleTapDown: isContinuousMode ? onDoubleTapDown : null,
-            onDoubleTap: isContinuousMode ? onDoubleTap : null,
-            onSecondaryTapDown: isContinuousMode ? onSecondaryTapDown : null,
-            onSecondaryTap: isContinuousMode ? onSecondaryTap : null,
+          flex: 3,
+          child: Row(
+            children: [
+              Expanded(child: _zone(_prev())),
+              Expanded(child: _zone(_next())),
+            ],
           ),
         ),
       ],
     );
+  }
+
+  // ── Layout 3: Edge ──
+  // ┌──┬──────────────┬──┐
+  // │P │              │N │
+  // │R │     UI       │E │
+  // │E │   (toggle)   │X │
+  // │V │              │T │
+  // └──┴──────────────┴──┘
+
+  Widget _buildEdge(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(flex: 1, child: _zone(_prev())),
+        Expanded(flex: 5, child: _uiZone()),
+        Expanded(flex: 1, child: _zone(_next())),
+      ],
+    );
+  }
+
+  // ── Layout 4: Right and Left ──
+  // ┌───────────┬───────────┐
+  // │           │           │
+  // │   PREV    │   NEXT    │
+  // │           │           │
+  // └───────────┴───────────┘
+
+  Widget _buildRightAndLeft(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(child: _zone(_prev())),
+        Expanded(child: _zone(_next())),
+      ],
+    );
+  }
+
+  // ── Layout 5: Disabled ──
+
+  Widget _buildDisabled(BuildContext context) {
+    return SizedBox.expand(child: _uiZone());
   }
 }
 

@@ -33,7 +33,7 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
-
+ios/build
 
 # Symbolication related
 app.*.symbols

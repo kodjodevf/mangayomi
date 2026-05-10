@@ -114,6 +114,60 @@ abstract class _$SaveAsCBZArchiveState extends $Notifier<bool> {
   }
 }
 
+@ProviderFor(DeleteDownloadAfterReadingState)
+final deleteDownloadAfterReadingStateProvider =
+    DeleteDownloadAfterReadingStateProvider._();
+
+final class DeleteDownloadAfterReadingStateProvider
+    extends $NotifierProvider<DeleteDownloadAfterReadingState, bool> {
+  DeleteDownloadAfterReadingStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'deleteDownloadAfterReadingStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$deleteDownloadAfterReadingStateHash();
+
+  @$internal
+  @override
+  DeleteDownloadAfterReadingState create() => DeleteDownloadAfterReadingState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$deleteDownloadAfterReadingStateHash() =>
+    r'23f5d5e4a51a1cb6ae78db5a015ca5e1cc6e98e3';
+
+abstract class _$DeleteDownloadAfterReadingState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(DownloadLocationState)
 final downloadLocationStateProvider = DownloadLocationStateProvider._();
 

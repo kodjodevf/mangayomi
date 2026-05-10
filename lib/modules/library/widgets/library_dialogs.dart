@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar_community/isar.dart';
@@ -27,8 +28,8 @@ void showDeleteMangaDialog({
   required WidgetRef ref,
   required ItemType itemType,
 }) {
-  List<int> fromLibList = [];
-  List<int> downloadedChapsList = [];
+  Set<int> fromLibList = {};
+  Set<int> downloadedChapsList = {};
   showDialog(
     context: context,
     builder: (context) {
@@ -53,10 +54,10 @@ void showDeleteMangaDialog({
                         label: l10n.from_library,
                         onTap: () {
                           setState(() {
-                            if (fromLibList == mangaIdsList) {
-                              fromLibList = [];
+                            if (setEquals(fromLibList, mangaIdsList)) {
+                              fromLibList = {};
                             } else {
-                              fromLibList = mangaIdsList;
+                              fromLibList = {...mangaIdsList};
                             }
                           });
                         },
@@ -68,10 +69,10 @@ void showDeleteMangaDialog({
                             : l10n.downloaded_episodes,
                         onTap: () {
                           setState(() {
-                            if (downloadedChapsList == mangaIdsList) {
-                              downloadedChapsList = [];
+                            if (setEquals(downloadedChapsList, mangaIdsList)) {
+                              downloadedChapsList = {};
                             } else {
-                              downloadedChapsList = mangaIdsList;
+                              downloadedChapsList = {...mangaIdsList};
                             }
                           });
                         },
@@ -179,6 +180,8 @@ void _removeImport(WidgetRef ref, Manga manga) {
       isar.updates.deleteSync(update.id!);
       provider.addChangedPart(ActionType.removeUpdate, update.id, "{}", false);
     }
+    // Remove associated download record to prevent ghost entries
+    isar.downloads.deleteSync(chapter.id!);
     isar.chapters.deleteSync(chapter.id!);
     provider.addChangedPart(ActionType.removeChapter, chapter.id, "{}", false);
   }
@@ -261,6 +264,7 @@ void showImportLocalDialog(BuildContext context, ItemType itemType) {
     ItemType.novel => ".epub",
   };
   bool isLoading = false;
+  bool splitChapters = true;
   showDialog(
     context: context,
     barrierDismissible: !isLoading,
@@ -272,50 +276,75 @@ void showImportLocalDialog(BuildContext context, ItemType itemType) {
             return Consumer(
               builder: (context, ref, child) {
                 return SizedBox(
-                  height: 100,
+                  height: itemType == ItemType.novel ? 150 : 100,
                   child: Stack(
                     children: [
-                      Row(
+                      Column(
                         children: [
+                          if (itemType == ItemType.novel)
+                            SwitchListTile(
+                              dense: true,
+                              contentPadding: EdgeInsets.zero,
+                              title: Text(
+                                l10n.split_epub_chapters,
+                                style: const TextStyle(fontSize: 13),
+                              ),
+                              subtitle: Text(
+                                l10n.split_epub_chapters_description,
+                                style: const TextStyle(fontSize: 10),
+                              ),
+                              value: splitChapters,
+                              onChanged: (v) =>
+                                  setState(() => splitChapters = v),
+                            ),
                           Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(3),
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                                onPressed: () async {
-                                  setState(() => isLoading = true);
-                                  await ref.watch(
-                                    importArchivesFromFileProvider(
-                                      itemType: itemType,
-                                      null,
-                                      init: true,
-                                    ).future,
-                                  );
-                                  setState(() => isLoading = false);
-                                  if (!context.mounted) return;
-                                  Navigator.pop(context);
-                                },
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    const Icon(Icons.archive_outlined),
-                                    Text(
-                                      "${l10n.import_files} ( $filesText )",
-                                      style: TextStyle(
-                                        color: Theme.of(
-                                          context,
-                                        ).textTheme.bodySmall!.color,
-                                        fontSize: 10,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(3),
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                        ),
+                                      ),
+                                      onPressed: () async {
+                                        setState(() => isLoading = true);
+                                        await ref.watch(
+                                          importArchivesFromFileProvider(
+                                            itemType: itemType,
+                                            null,
+                                            init: true,
+                                            splitChapters: splitChapters,
+                                          ).future,
+                                        );
+                                        setState(() => isLoading = false);
+                                        if (!context.mounted) return;
+                                        Navigator.pop(context);
+                                      },
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          const Icon(Icons.archive_outlined),
+                                          Text(
+                                            "${l10n.import_files} ( $filesText )",
+                                            style: TextStyle(
+                                              color: Theme.of(
+                                                context,
+                                              ).textTheme.bodySmall!.color,
+                                              fontSize: 10,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
                           ),
                         ],

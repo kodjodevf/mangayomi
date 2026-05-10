@@ -363,19 +363,19 @@ class ElementCollection {
 
 class Stub {
   text() {
-    return null;
+    return "";
   }
   html() {
-    return null;
+    return "";
   }
   outerHtml() {
-    return null;
+    return "";
   }
   val() {
-    return null;
+    return "";
   }
   attr(name) {
-    return null;
+    return "";
   }
   hasClass(cls) {
     return false;

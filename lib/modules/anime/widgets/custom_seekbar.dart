@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:mangayomi/modules/anime/widgets/custom_track_shape.dart';
@@ -61,7 +61,6 @@ class CustomSeekBarState extends State<CustomSeekBar> {
     buffer = player.state.buffer;
   }
 
-  final isDesktop = Platform.isMacOS || Platform.isWindows || Platform.isLinux;
   @override
   Widget build(BuildContext context) {
     final maxValue = max(duration.inMilliseconds.toDouble(), 0).toDouble();

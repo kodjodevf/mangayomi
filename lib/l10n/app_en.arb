@@ -39,6 +39,8 @@
   "display": "Display",
   "display_mode": "Display mode",
   "compact_grid": "Compact grid",
+  "compression_level": "Compression level",
+  "compression_info": "The higher the compression, the less space the backup file takes, but it uses more CPU. Default: {level}",
   "comfortable_grid": "Comfortable grid",
   "cover_only_grid": "Cover-only grid",
   "list": "List",
@@ -71,6 +73,188 @@
   "latest": "Latest",
   "extensions": "Extensions",
   "migrate": "Migrate",
+  "mass_migration_title": "Mass migration",
+  "mass_migration_preview_items": "Preview items",
+  "mass_migration_destination_source": "Destination source",
+  "mass_migration_no_library_items": "No library items are available for mass migration.",
+  "mass_migration_no_destination_sources": "No installed destination sources are available.",
+  "mass_migration_installed": "Installed",
+  "mass_migration_items_ready_for_review": "{count, plural, =1{1 item ready for review} other{{count} items ready for review}}",
+  "@mass_migration_items_ready_for_review": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_item_count": "{count, plural, =1{1 item} other{{count} items}}",
+  "@mass_migration_item_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_select_destination_source": "Select destination source",
+  "mass_migration_finding_matches": "Finding matches in {source} • {language}",
+  "@mass_migration_finding_matches": {
+    "placeholders": {
+      "source": {},
+      "language": {}
+    }
+  },
+  "mass_migration_processing_item": "Processing item {current} of {total}",
+  "@mass_migration_processing_item": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_waiting_next_item": "Waiting 2 seconds before the next item...",
+  "mass_migration_waiting_next_migration": "Waiting 2 seconds before the next migration...",
+  "mass_migration_matched_so_far": "Matched so far: {count}",
+  "@mass_migration_matched_so_far": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_no_match_count": "No match: {count}",
+  "@mass_migration_no_match_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_review_matches": "Review matches for {source}",
+  "@mass_migration_review_matches": {
+    "placeholders": {
+      "source": {}
+    }
+  },
+  "mass_migration_found_matches": "Found matches: {count}",
+  "@mass_migration_found_matches": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_no_matches": "No matches: {count}",
+  "@mass_migration_no_matches": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_selected_to_migrate": "Selected to migrate: {count}",
+  "@mass_migration_selected_to_migrate": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_finish_review": "Finish review",
+  "mass_migration_migrate_selected": "Migrate selected items ({count})",
+  "@mass_migration_migrate_selected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_migrating_selected": "Migrating selected items to {source}",
+  "@mass_migration_migrating_selected": {
+    "placeholders": {
+      "source": {}
+    }
+  },
+  "mass_migration_no_items_selected": "No items selected for migration.",
+  "mass_migration_migrating_item": "Migrating item {current} of {total}",
+  "@mass_migration_migrating_item": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_complete": "Mass migration complete",
+  "mass_migration_complete_success_message": "All selected items were processed successfully.",
+  "mass_migration_complete_partial_message": "Migration finished with a few items that still need manual attention.",
+  "mass_migration_route_summary": "{source} → {destination}",
+  "@mass_migration_route_summary": {
+    "placeholders": {
+      "source": {},
+      "destination": {}
+    }
+  },
+  "mass_migration_processed": "Processed",
+  "mass_migration_matched": "Matched",
+  "mass_migration_migrated": "Migrated",
+  "mass_migration_skipped": "Skipped",
+  "mass_migration_failed": "Failed",
+  "mass_migration_failed_items": "Failed Items",
+  "mass_migration_exit": "Exit Mass Migration",
+  "mass_migration_no_destination_match": "No destination match found",
+  "mass_migration_query": "Query: {query}",
+  "@mass_migration_query": {
+    "placeholders": {
+      "query": {}
+    }
+  },
+  "mass_migration_skip": "Skip",
+  "mass_migration_loading": "Loading...",
+  "mass_migration_choose_another_result": "Choose another result",
+  "mass_migration_source_chapters": "Source chapters",
+  "mass_migration_destination_chapters": "Destination chapters",
+  "mass_migration_chapter_count": "{count, plural, =1{1 chapter} other{{count} chapters}}",
+  "@mass_migration_chapter_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_source_chapter_count": "{count, plural, =1{1 source chapter} other{{count} source chapters}}",
+  "@mass_migration_source_chapter_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_destination_chapter_count": "{count, plural, =1{1 destination chapter} other{{count} destination chapters}}",
+  "@mass_migration_destination_chapter_count": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_no_chapters_found": "No chapters found.",
+  "mass_migration_and_more_chapters": "And {count} more...",
+  "@mass_migration_and_more_chapters": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mass_migration_unknown_title": "Unknown title",
+  "mass_migration_unknown_match": "Unknown match",
+  "mass_migration_unknown_source": "Unknown source",
+  "mass_migration_unknown_chapter": "Unknown chapter",
   "migrate_confirm": "Migrate to another source",
   "clean_database": "Clean database",
   "cleaned_database": "Database cleaned! {x} entries removed",
@@ -135,6 +319,7 @@
   "custom_location": "Custom location",
   "only_on_wifi": "Only on wifi",
   "save_as_cbz_archive": "Save as CBZ archive",
+  "delete_download_after_reading": "Delete download after reading",
   "concurrent_downloads": "Concurrent downloads",
   "browse_subtitle": "Sources, global search",
   "only_include_pinned_sources": "Only include pinned sources",
@@ -203,6 +388,8 @@
   "total_episodes": "Total episodes",
   "import_local_file": "Import Local file",
   "import_files": "Files",
+  "split_epub_chapters": "Split into chapters",
+  "split_epub_chapters_description": "Import each EPUB chapter as a separate entry",
   "nothing_read_recently": "Nothing read recently",
   "status": "Status",
   "not_started": "Not started",
@@ -350,6 +537,7 @@
   "video_audio_info": "Preferred languages, pitch correction, audio channels",
   "player": "Player",
   "markEpisodeAsSeenSetting": "At what point to mark the episode as seen",
+  "mark_duplicate_chapters_read": "Mark duplicate chapter numbers as read",
   "default_skip_intro_length": "Default Skip intro length",
   "default_playback_speed_length": "Default Playback speed length",
   "updateProgressAfterReading": "Update progress after reading",
@@ -561,9 +749,109 @@
   "show_scroll_percentage": "Show Scroll Percentage",
   "remove_extra_paragraph_spacing": "Remove Extra Paragraph Spacing",
   "select_label_color": "Select {label} Color",
-  "default_user_agent": "Defaul user agent",
+  "default_user_agent": "Default user agent",
   "forceLandscapeMode": "Force landscape mode",
   "forceLandscapeModeSubtitle": "Force the player to use landscape orientation.",
   "dns_over_https": "DNS-over-HTTPS (DoH)",
-  "dns_provider": "DNS Provider"
+  "dns_provider": "DNS Provider",
+  "tracked": "Tracked",
+  "auth_unlock_msg": "Authenticate to unlock Mangayomi",
+  "app_locked": "Mangayomi is locked",
+  "auth_to_continue": "Authenticate to continue",
+  "authenticating": "Authenticating...",
+  "unlock": "Unlock",
+  "security": "Security",
+  "auth_to_change_security_setting": "Authenticate to change security settings",
+  "app_lock": "App lock",
+  "require_biometric_or_device_credential": "Require biometric or device credential to open the app",
+  "biometric_or_device_credential_not_available": "Biometric authentication not available on this device",
+  "app_lock_description": "When app lock is enabled, you will be asked to authenticate \nevery time you open the app or switch back to it from the background.",
+  "keep_screen_on": "Keep screen on",
+  "webtoon_side_padding": "Webtoon side padding",
+  "show_page_gaps": "Show page gaps",
+  "invert_colors": "Invert colors",
+  "grayscale": "Grayscale",
+  "brightness": "Brightness",
+  "contrast": "Contrast",
+  "saturation": "Saturation",
+  "navigation_layout": "Navigation layout",
+  "nav_layout_default": "Default",
+  "nav_layout_l_shaped": "L-shaped",
+  "nav_layout_kindle": "Kindle-ish",
+  "nav_layout_edge": "Edge",
+  "nav_layout_right_and_left": "Right and left",
+  "nav_layout_disabled": "Disabled",
+  "color_enhancements": "Color enhancements",
+  "total": "Total",
+  "mean_per_title": "Mean per Title",
+  "completion_rate": "Completion Rate",
+  "watching_time": "Watch Time",
+  "reading_time": "Reading Time",
+  "average_chapters_per_title": "Average Chapters per {title}",
+  "read_percentage": "Read Percentage",
+  "entries": "Entries",
+  "android_proxy_server_mihon": "Android Proxy Server (Mihon)",
+  "android_proxy_server_mihon_description": "Download and configure the proxy server required to use Mihon extensions.",
+  "mihon_proxy_server": "Mihon proxy server",
+  "extension_server_intro_with_jre": "Download the proxy server bundle before using Mihon extensions. The bundle includes the JRE and extension server JAR.",
+  "extension_server_intro_ios": "Download the proxy server JAR before using Mihon extensions. iOS only needs the extension server JAR.",
+  "checking_files": "Checking files",
+  "files_installed": "Files installed",
+  "files_missing": "Files missing",
+  "update_files": "Update files",
+  "up_to_date": "Up to date",
+  "choose_location": "Choose location",
+  "import_existing_jar": "Import existing JAR",
+  "detect_files_in_selected_folder": "Detect files in selected folder",
+  "preparing_download": "Preparing download...",
+  "app_install_location": "App install location",
+  "install_location": "Install location",
+  "jre_executable": "JRE executable",
+  "extension_server_jar": "Extension server JAR",
+  "installed_version": "Installed version",
+  "latest_version": "Latest version",
+  "apkbridge_description": "Use ApkBridge when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.",
+  "set_proxy_address": "Set proxy address",
+  "no_newer_proxy_server_release_available": "No newer proxy server release is available.",
+  "could_not_check_proxy_server_updates": "Could not check for proxy server updates.",
+  "no_extension_server_bundle_available_for_this_platform": "No extension server bundle is available for this platform.",
+  "failed_to_download_bundle": "Failed to download bundle ({statusCode}).",
+  "@failed_to_download_bundle": {
+    "placeholders": {
+      "statusCode": {}
+    }
+  },
+  "downloaded_bundle_missing_expected_files": "The downloaded bundle does not contain the expected files.",
+  "extension_server_files_ready": "Extension server files are ready.",
+  "ios_extension_server_import_hint": "On iOS the server is installed inside the app sandbox. Use \"Import existing JAR\" to bring in a downloaded file.",
+  "select_extension_server_folder": "Select extension server folder",
+  "selected_folder_does_not_exist": "The selected folder does not exist.",
+  "no_extension_server_files_found_in_selected_folder": "No extension server files were found in the selected folder.",
+  "extension_server_files_linked": "Extension server files were linked.",
+  "select_extension_server_jar": "Select extension server JAR",
+  "selected_file_could_not_be_accessed": "The selected file could not be accessed.",
+  "extension_server_jar_imported": "Extension server JAR was imported.",
+  "could_not_launch_apk_bridge_page": "Could not launch the ApkBridge page.",
+  "proxy_server_ip_hint": "Server IP (e.g., 10.0.0.5 or https://example.com)",
+  "not_configured": "Not configured",
+  "webview": "Webview",
+  "tts": "Text-to-Speech",
+  "tts_speed": "Speed",
+  "tts_pitch": "Pitch",
+  "tts_language": "Language",
+  "tts_voice": "Voice",
+  "tts_stop": "Stop",
+  "tts_play": "Play",
+  "tts_pause": "Pause",
+  "tts_previous": "Previous paragraph",
+  "tts_next": "Next paragraph",
+  "tts_paragraph_progress": "Paragraph {current} of {total}",
+  "@tts_paragraph_progress": {
+    "placeholders": {
+      "current": {},
+      "total": {}
+    }
+  },
+  "tts_settings": "TTS Settings",
+  "tts_default": "Default"
 }

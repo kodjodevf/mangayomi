@@ -114,6 +114,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get compact_grid => 'Cuadrícula compacta';
 
   @override
+  String get compression_level => 'Nivel de compresión';
+
+  @override
+  String compression_info(Object level) {
+    return 'Cuanta más compresión, menos espacio ocupa el respaldo, pero más CPU consume. Predeterminado: $level';
+  }
+
+  @override
   String get comfortable_grid => 'Cuadrícula cómoda';
 
   @override
@@ -213,6 +221,236 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get migrate => 'Migrar';
+
+  @override
+  String get mass_migration_title => 'Migración masiva';
+
+  @override
+  String get mass_migration_preview_items => 'Vista previa de elementos';
+
+  @override
+  String get mass_migration_destination_source => 'Fuente de destino';
+
+  @override
+  String get mass_migration_no_library_items =>
+      'No hay elementos de la biblioteca disponibles para migración masiva.';
+
+  @override
+  String get mass_migration_no_destination_sources =>
+      'No hay fuentes de destino instaladas.';
+
+  @override
+  String get mass_migration_installed => 'Instalado';
+
+  @override
+  String mass_migration_items_ready_for_review(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count elementos listos para revisión',
+      one: '1 elemento listo para revisión',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String mass_migration_item_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count elementos',
+      one: '1 elemento',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get mass_migration_select_destination_source =>
+      'Seleccionar fuente de destino';
+
+  @override
+  String mass_migration_finding_matches(Object source, Object language) {
+    return 'Buscando coincidencias en $source • $language';
+  }
+
+  @override
+  String mass_migration_processing_item(int current, int total) {
+    return 'Procesando elemento $current de $total';
+  }
+
+  @override
+  String get mass_migration_waiting_next_item =>
+      'Esperando 2 segundos antes del siguiente elemento...';
+
+  @override
+  String get mass_migration_waiting_next_migration =>
+      'Esperando 2 segundos antes de la siguiente migración...';
+
+  @override
+  String mass_migration_matched_so_far(int count) {
+    return 'Coincidencias hasta ahora: $count';
+  }
+
+  @override
+  String mass_migration_no_match_count(int count) {
+    return 'Sin coincidencia: $count';
+  }
+
+  @override
+  String mass_migration_review_matches(Object source) {
+    return 'Revisar coincidencias de $source';
+  }
+
+  @override
+  String mass_migration_found_matches(int count) {
+    return 'Coincidencias encontradas: $count';
+  }
+
+  @override
+  String mass_migration_no_matches(int count) {
+    return 'Sin coincidencias: $count';
+  }
+
+  @override
+  String mass_migration_selected_to_migrate(int count) {
+    return 'Seleccionados para migrar: $count';
+  }
+
+  @override
+  String get mass_migration_finish_review => 'Finalizar revisión';
+
+  @override
+  String mass_migration_migrate_selected(int count) {
+    return 'Migrar elementos seleccionados ($count)';
+  }
+
+  @override
+  String mass_migration_migrating_selected(Object source) {
+    return 'Migrando elementos seleccionados a $source';
+  }
+
+  @override
+  String get mass_migration_no_items_selected =>
+      'No hay elementos seleccionados para migrar.';
+
+  @override
+  String mass_migration_migrating_item(int current, int total) {
+    return 'Migrando elemento $current de $total';
+  }
+
+  @override
+  String get mass_migration_complete => 'Migración masiva completada';
+
+  @override
+  String get mass_migration_complete_success_message =>
+      'Todos los elementos seleccionados fueron procesados con éxito.';
+
+  @override
+  String get mass_migration_complete_partial_message =>
+      'Migración finalizada con algunos elementos que aún requieren atención manual.';
+
+  @override
+  String mass_migration_route_summary(Object source, Object destination) {
+    return '$source → $destination';
+  }
+
+  @override
+  String get mass_migration_processed => 'Procesado';
+
+  @override
+  String get mass_migration_matched => 'Coincidente';
+
+  @override
+  String get mass_migration_migrated => 'Migrado';
+
+  @override
+  String get mass_migration_skipped => 'Omitido';
+
+  @override
+  String get mass_migration_failed => 'Fallido';
+
+  @override
+  String get mass_migration_failed_items => 'Elementos fallidos';
+
+  @override
+  String get mass_migration_exit => 'Salir de migración masiva';
+
+  @override
+  String get mass_migration_no_destination_match =>
+      'No se encontró coincidencia en el destino';
+
+  @override
+  String mass_migration_query(Object query) {
+    return 'Consulta: $query';
+  }
+
+  @override
+  String get mass_migration_skip => 'Omitir';
+
+  @override
+  String get mass_migration_loading => 'Cargando...';
+
+  @override
+  String get mass_migration_choose_another_result => 'Elegir otro resultado';
+
+  @override
+  String get mass_migration_source_chapters => 'Capítulos de origen';
+
+  @override
+  String get mass_migration_destination_chapters => 'Capítulos de destino';
+
+  @override
+  String mass_migration_chapter_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count capítulos',
+      one: '1 capítulo',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String mass_migration_source_chapter_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count capítulos del origen',
+      one: '1 capítulo del origen',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String mass_migration_destination_chapter_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count capítulos del destino',
+      one: '1 capítulo del destino',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get mass_migration_no_chapters_found => 'No se encontraron capítulos.';
+
+  @override
+  String mass_migration_and_more_chapters(int count) {
+    return 'Y $count más...';
+  }
+
+  @override
+  String get mass_migration_unknown_title => 'Título desconocido';
+
+  @override
+  String get mass_migration_unknown_match => 'Coincidencia desconocida';
+
+  @override
+  String get mass_migration_unknown_source => 'Fuente desconocida';
+
+  @override
+  String get mass_migration_unknown_chapter => 'Capítulo desconocido';
 
   @override
   String get migrate_confirm => 'Migrar a otra fuente';
@@ -414,6 +652,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get save_as_cbz_archive => 'Guardar como archivo CBZ';
+
+  @override
+  String get delete_download_after_reading => 'Eliminar descarga tras leer';
 
   @override
   String get concurrent_downloads => 'Descargas simultáneas';
@@ -633,6 +874,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get import_files => 'Archivos';
+
+  @override
+  String get split_epub_chapters => 'Dividir en capítulos';
+
+  @override
+  String get split_epub_chapters_description =>
+      'Importar cada capítulo EPUB como una entrada separada';
 
   @override
   String get nothing_read_recently => 'Nada leído recientemente';
@@ -1108,6 +1356,10 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get markEpisodeAsSeenSetting =>
       'En qué punto marcar el episodio como visto';
+
+  @override
+  String get mark_duplicate_chapters_read =>
+      'Mark duplicate chapter numbers as read';
 
   @override
   String get default_skip_intro_length =>
@@ -1809,20 +2061,317 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get default_user_agent => 'Defaul user agent';
+  String get default_user_agent => 'Agente de usuario predeterminado';
 
   @override
-  String get forceLandscapeMode => 'Force landscape mode';
+  String get forceLandscapeMode => 'Forzar modo horizontal';
 
   @override
   String get forceLandscapeModeSubtitle =>
-      'Force the player to use landscape orientation.';
+      'Fuerza el reproductor a usar la orientación horizontal.';
 
   @override
   String get dns_over_https => 'DNS-over-HTTPS (DoH)';
 
   @override
-  String get dns_provider => 'DNS Provider';
+  String get dns_provider => 'Proveedor DNS';
+
+  @override
+  String get tracked => 'Rastreado';
+
+  @override
+  String get auth_unlock_msg => 'Autentifícate para desbloquear Mangayomi';
+
+  @override
+  String get app_locked => 'Mangayomi está bloqueado';
+
+  @override
+  String get auth_to_continue => 'Autentifícate para continuar';
+
+  @override
+  String get authenticating => 'Autenticando...';
+
+  @override
+  String get unlock => 'Desbloquear';
+
+  @override
+  String get security => 'Seguridad';
+
+  @override
+  String get auth_to_change_security_setting =>
+      'Autentifícate para cambiar la configuración de seguridad';
+
+  @override
+  String get app_lock => 'Bloqueo de aplicación';
+
+  @override
+  String get require_biometric_or_device_credential =>
+      'Se requiere autenticación biométrica o credenciales del dispositivo para abrir la aplicación';
+
+  @override
+  String get biometric_or_device_credential_not_available =>
+      'La autenticación biométrica no está disponible en este dispositivo';
+
+  @override
+  String get app_lock_description =>
+      'Cuando el bloqueo de aplicación está habilitado, se te pedirá que te autentiques\ncada vez que abras la aplicación o regreses desde el fondo.';
+
+  @override
+  String get keep_screen_on => 'Mantener pantalla encendida';
+
+  @override
+  String get webtoon_side_padding => 'Relleno lateral de Webtoon';
+
+  @override
+  String get show_page_gaps => 'Mostrar espacios entre páginas';
+
+  @override
+  String get invert_colors => 'Invertir colores';
+
+  @override
+  String get grayscale => 'Escala de grises';
+
+  @override
+  String get brightness => 'Brillo';
+
+  @override
+  String get contrast => 'Contraste';
+
+  @override
+  String get saturation => 'Saturación';
+
+  @override
+  String get navigation_layout => 'Diseño de navegación';
+
+  @override
+  String get nav_layout_default => 'Predeterminado';
+
+  @override
+  String get nav_layout_l_shaped => 'Forma de L';
+
+  @override
+  String get nav_layout_kindle => 'Kindle';
+
+  @override
+  String get nav_layout_edge => 'Borde';
+
+  @override
+  String get nav_layout_right_and_left => 'Derecha e izquierda';
+
+  @override
+  String get nav_layout_disabled => 'Deshabilitado';
+
+  @override
+  String get color_enhancements => 'Mejoras de color';
+
+  @override
+  String get total => 'Total';
+
+  @override
+  String get mean_per_title => 'Promedio por título';
+
+  @override
+  String get completion_rate => 'Tasa de finalización';
+
+  @override
+  String get watching_time => 'Tiempo dedicado (Anime)';
+
+  @override
+  String get reading_time => 'Tiempo dedicado (Manga)';
+
+  @override
+  String average_chapters_per_title(Object title) {
+    return 'Promedio de capítulos por título';
+  }
+
+  @override
+  String get read_percentage => 'Porcentaje de lectura';
+
+  @override
+  String get entries => 'Entradas';
+
+  @override
+  String get android_proxy_server_mihon => 'Servidor Proxy Android (Mihon)';
+
+  @override
+  String get android_proxy_server_mihon_description =>
+      'Descargue y configure el servidor proxy necesario para usar las extensiones de Mihon.';
+
+  @override
+  String get mihon_proxy_server => 'Servidor proxy Mihon';
+
+  @override
+  String get extension_server_intro_with_jre =>
+      'Descarga el paquete del servidor proxy antes de usar extensiones Mihon. El paquete incluye JRE y el archivo JAR del servidor.';
+
+  @override
+  String get extension_server_intro_ios =>
+      'Descarga el archivo JAR del servidor proxy antes de usar extensiones Mihon. iOS solo necesita el archivo JAR del servidor.';
+
+  @override
+  String get checking_files => 'Comprobando archivos';
+
+  @override
+  String get files_installed => 'Archivos instalados';
+
+  @override
+  String get files_missing => 'Archivos faltantes';
+
+  @override
+  String get update_files => 'Actualizar archivos';
+
+  @override
+  String get up_to_date => 'Actualizado';
+
+  @override
+  String get choose_location => 'Elegir ubicación';
+
+  @override
+  String get import_existing_jar => 'Importar JAR existente';
+
+  @override
+  String get detect_files_in_selected_folder =>
+      'Detectar archivos en la carpeta seleccionada';
+
+  @override
+  String get preparing_download => 'Preparando descarga...';
+
+  @override
+  String get app_install_location => 'Ubicación de instalación de la app';
+
+  @override
+  String get install_location => 'Ubicación de instalación';
+
+  @override
+  String get jre_executable => 'Ejecutable JRE';
+
+  @override
+  String get extension_server_jar => 'JAR de servidor de extensiones';
+
+  @override
+  String get installed_version => 'Versión instalada';
+
+  @override
+  String get latest_version => 'Última versión';
+
+  @override
+  String get apkbridge_description =>
+      'Usa ApkBridge cuando necesites un proxy de dispositivo Android separado. Configura la dirección del proxy aquí y descarga el APK de GitHub.';
+
+  @override
+  String get set_proxy_address => 'Establecer dirección proxy';
+
+  @override
+  String get no_newer_proxy_server_release_available =>
+      'No hay una versión más reciente del servidor proxy disponible.';
+
+  @override
+  String get could_not_check_proxy_server_updates =>
+      'No se pudo comprobar si hay actualizaciones del servidor proxy.';
+
+  @override
+  String get no_extension_server_bundle_available_for_this_platform =>
+      'No hay paquete de servidor de extensiones disponible para esta plataforma.';
+
+  @override
+  String failed_to_download_bundle(Object statusCode) {
+    return 'Error al descargar el paquete ($statusCode).';
+  }
+
+  @override
+  String get downloaded_bundle_missing_expected_files =>
+      'El paquete descargado no contiene los archivos esperados.';
+
+  @override
+  String get extension_server_files_ready =>
+      'Archivos del servidor de extensiones listos.';
+
+  @override
+  String get ios_extension_server_import_hint =>
+      'En iOS el servidor se instala dentro del sandbox de la app. Usa \"Importar JAR existente\" para traer un archivo descargado.';
+
+  @override
+  String get select_extension_server_folder =>
+      'Seleccionar carpeta del servidor de extensiones';
+
+  @override
+  String get selected_folder_does_not_exist =>
+      'La carpeta seleccionada no existe.';
+
+  @override
+  String get no_extension_server_files_found_in_selected_folder =>
+      'No se encontraron archivos en la carpeta seleccionada.';
+
+  @override
+  String get extension_server_files_linked =>
+      'Archivos del servidor vinculados.';
+
+  @override
+  String get select_extension_server_jar =>
+      'Seleccionar JAR del servidor de extensiones';
+
+  @override
+  String get selected_file_could_not_be_accessed =>
+      'No se pudo acceder al archivo seleccionado.';
+
+  @override
+  String get extension_server_jar_imported =>
+      'Archivo JAR importado con éxito.';
+
+  @override
+  String get could_not_launch_apk_bridge_page =>
+      'No se pudo abrir la página de ApkBridge.';
+
+  @override
+  String get proxy_server_ip_hint =>
+      'IP del servidor (ej: 10.0.0.5 o https://example.com)';
+
+  @override
+  String get not_configured => 'No configurado';
+
+  @override
+  String get webview => 'Webview';
+
+  @override
+  String get tts => 'Text-to-Speech';
+
+  @override
+  String get tts_speed => 'Speed';
+
+  @override
+  String get tts_pitch => 'Pitch';
+
+  @override
+  String get tts_language => 'Language';
+
+  @override
+  String get tts_voice => 'Voice';
+
+  @override
+  String get tts_stop => 'Stop';
+
+  @override
+  String get tts_play => 'Play';
+
+  @override
+  String get tts_pause => 'Pause';
+
+  @override
+  String get tts_previous => 'Previous paragraph';
+
+  @override
+  String get tts_next => 'Next paragraph';
+
+  @override
+  String tts_paragraph_progress(Object current, Object total) {
+    return 'Paragraph $current of $total';
+  }
+
+  @override
+  String get tts_settings => 'TTS Settings';
+
+  @override
+  String get tts_default => 'Default';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
@@ -1935,6 +2484,14 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String get compact_grid => 'Cuadrícula compacta';
 
   @override
+  String get compression_level => 'Nivel de compresión';
+
+  @override
+  String compression_info(Object level) {
+    return 'Cuanta más compresión, menos espacio ocupa el respaldo, pero más CPU consume. Predeterminado: $level';
+  }
+
+  @override
   String get comfortable_grid => 'Cuadrícula cómoda';
 
   @override
@@ -2034,6 +2591,236 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get migrate => 'Migrar';
+
+  @override
+  String get mass_migration_title => 'Migración masiva';
+
+  @override
+  String get mass_migration_preview_items => 'Vista previa';
+
+  @override
+  String get mass_migration_destination_source => 'Fuente de destino';
+
+  @override
+  String get mass_migration_no_library_items =>
+      'No hay elementos de la biblioteca disponibles para migración masiva.';
+
+  @override
+  String get mass_migration_no_destination_sources =>
+      'No hay fuentes de destino instaladas.';
+
+  @override
+  String get mass_migration_installed => 'Instalado';
+
+  @override
+  String mass_migration_items_ready_for_review(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count elementos listos para revisión',
+      one: '1 elemento listo para revisión',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String mass_migration_item_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count elementos',
+      one: '1 elemento',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get mass_migration_select_destination_source =>
+      'Seleccionar fuente de destino';
+
+  @override
+  String mass_migration_finding_matches(Object source, Object language) {
+    return 'Buscando coincidencias en $source • $language';
+  }
+
+  @override
+  String mass_migration_processing_item(int current, int total) {
+    return 'Procesando elemento $current de $total';
+  }
+
+  @override
+  String get mass_migration_waiting_next_item =>
+      'Esperando 2 segundos antes del siguiente elemento...';
+
+  @override
+  String get mass_migration_waiting_next_migration =>
+      'Esperando 2 segundos antes de la siguiente migración...';
+
+  @override
+  String mass_migration_matched_so_far(int count) {
+    return 'Coincidencias hasta ahora: $count';
+  }
+
+  @override
+  String mass_migration_no_match_count(int count) {
+    return 'Sin coincidencia: $count';
+  }
+
+  @override
+  String mass_migration_review_matches(Object source) {
+    return 'Revisar coincidencias de $source';
+  }
+
+  @override
+  String mass_migration_found_matches(int count) {
+    return 'Coincidencias encontradas: $count';
+  }
+
+  @override
+  String mass_migration_no_matches(int count) {
+    return 'Sin coincidencias: $count';
+  }
+
+  @override
+  String mass_migration_selected_to_migrate(int count) {
+    return 'Seleccionados para migrar: $count';
+  }
+
+  @override
+  String get mass_migration_finish_review => 'Finalizar revisión';
+
+  @override
+  String mass_migration_migrate_selected(int count) {
+    return 'Migrar elementos seleccionados ($count)';
+  }
+
+  @override
+  String mass_migration_migrating_selected(Object source) {
+    return 'Migrando elementos seleccionados a $source';
+  }
+
+  @override
+  String get mass_migration_no_items_selected =>
+      'No hay elementos seleccionados para migrar.';
+
+  @override
+  String mass_migration_migrating_item(int current, int total) {
+    return 'Migrando elemento $current de $total';
+  }
+
+  @override
+  String get mass_migration_complete => 'Migración masiva completada';
+
+  @override
+  String get mass_migration_complete_success_message =>
+      'Todos los elementos seleccionados fueron procesados con éxito.';
+
+  @override
+  String get mass_migration_complete_partial_message =>
+      'Migración finalizada con algunos elementos que aún requieren atención manual.';
+
+  @override
+  String mass_migration_route_summary(Object source, Object destination) {
+    return '$source → $destination';
+  }
+
+  @override
+  String get mass_migration_processed => 'Procesado';
+
+  @override
+  String get mass_migration_matched => 'Coincidente';
+
+  @override
+  String get mass_migration_migrated => 'Migrado';
+
+  @override
+  String get mass_migration_skipped => 'Omitido';
+
+  @override
+  String get mass_migration_failed => 'Fallido';
+
+  @override
+  String get mass_migration_failed_items => 'Elementos fallidos';
+
+  @override
+  String get mass_migration_exit => 'Salir de migración masiva';
+
+  @override
+  String get mass_migration_no_destination_match =>
+      'No se encontró coincidencia en el destino';
+
+  @override
+  String mass_migration_query(Object query) {
+    return 'Consulta: $query';
+  }
+
+  @override
+  String get mass_migration_skip => 'Omitir';
+
+  @override
+  String get mass_migration_loading => 'Cargando...';
+
+  @override
+  String get mass_migration_choose_another_result => 'Elegir otro resultado';
+
+  @override
+  String get mass_migration_source_chapters => 'Capítulos del origen';
+
+  @override
+  String get mass_migration_destination_chapters => 'Capítulos del destino';
+
+  @override
+  String mass_migration_chapter_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count capítulos',
+      one: '1 capítulo',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String mass_migration_source_chapter_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count capítulos del origen',
+      one: '1 capítulo del origen',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String mass_migration_destination_chapter_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count capítulos del destino',
+      one: '1 capítulo del destino',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get mass_migration_no_chapters_found => 'No se encontraron capítulos.';
+
+  @override
+  String mass_migration_and_more_chapters(int count) {
+    return 'Y $count más...';
+  }
+
+  @override
+  String get mass_migration_unknown_title => 'Título desconocido';
+
+  @override
+  String get mass_migration_unknown_match => 'Coincidencia desconocida';
+
+  @override
+  String get mass_migration_unknown_source => 'Fuente desconocida';
+
+  @override
+  String get mass_migration_unknown_chapter => 'Capítulo desconocido';
 
   @override
   String get migrate_confirm => 'Migrar a otra fuente';
@@ -2235,6 +3022,9 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get save_as_cbz_archive => 'Guardar como archivo CBZ';
+
+  @override
+  String get delete_download_after_reading => 'Eliminar descarga tras leer';
 
   @override
   String get concurrent_downloads => 'Descargas simultáneas';
@@ -2454,6 +3244,13 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
 
   @override
   String get import_files => 'Archivos';
+
+  @override
+  String get split_epub_chapters => 'Dividir en capítulos';
+
+  @override
+  String get split_epub_chapters_description =>
+      'Importar cada capítulo EPUB como una entrada separada';
 
   @override
   String get nothing_read_recently => 'Nada leído recientemente';
@@ -3629,4 +4426,275 @@ class AppLocalizationsEs419 extends AppLocalizationsEs {
   String select_label_color(Object label) {
     return 'Seleccionar color de $label';
   }
+
+  @override
+  String get default_user_agent => 'Agente de usuario predeterminado';
+
+  @override
+  String get forceLandscapeMode => 'Forzar modo horizontal';
+
+  @override
+  String get forceLandscapeModeSubtitle =>
+      'Fuerza el reproductor a usar la orientación horizontal.';
+
+  @override
+  String get dns_over_https => 'DNS-over-HTTPS (DoH)';
+
+  @override
+  String get dns_provider => 'Proveedor DNS';
+
+  @override
+  String get tracked => 'Rastreado';
+
+  @override
+  String get auth_unlock_msg => 'Autentifícate para desbloquear Mangayomi';
+
+  @override
+  String get app_locked => 'Mangayomi está bloqueado';
+
+  @override
+  String get auth_to_continue => 'Autentifícate para continuar';
+
+  @override
+  String get authenticating => 'Autenticando...';
+
+  @override
+  String get unlock => 'Desbloquear';
+
+  @override
+  String get security => 'Seguridad';
+
+  @override
+  String get auth_to_change_security_setting =>
+      'Autentifícate para cambiar la configuración de seguridad';
+
+  @override
+  String get app_lock => 'Bloqueo de aplicación';
+
+  @override
+  String get require_biometric_or_device_credential =>
+      'Se requiere autenticación biométrica o credenciales del dispositivo para abrir la aplicación';
+
+  @override
+  String get biometric_or_device_credential_not_available =>
+      'La autenticación biométrica no está disponible en este dispositivo';
+
+  @override
+  String get app_lock_description =>
+      'Cuando el bloqueo de aplicación está habilitado, se te pedirá que te autentiques\\ncada vez que abras la aplicación o regreses desde el fondo.';
+
+  @override
+  String get keep_screen_on => 'Mantener pantalla encendida';
+
+  @override
+  String get webtoon_side_padding => 'Relleno lateral de Webtoon';
+
+  @override
+  String get show_page_gaps => 'Mostrar espacios entre páginas';
+
+  @override
+  String get invert_colors => 'Invertir colores';
+
+  @override
+  String get grayscale => 'Escala de grises';
+
+  @override
+  String get brightness => 'Brillo';
+
+  @override
+  String get contrast => 'Contraste';
+
+  @override
+  String get saturation => 'Saturación';
+
+  @override
+  String get navigation_layout => 'Diseño de navegación';
+
+  @override
+  String get nav_layout_default => 'Predeterminado';
+
+  @override
+  String get nav_layout_l_shaped => 'Forma de L';
+
+  @override
+  String get nav_layout_kindle => 'Kindle';
+
+  @override
+  String get nav_layout_edge => 'Borde';
+
+  @override
+  String get nav_layout_right_and_left => 'Derecha e izquierda';
+
+  @override
+  String get nav_layout_disabled => 'Deshabilitado';
+
+  @override
+  String get color_enhancements => 'Mejoras de color';
+
+  @override
+  String get total => 'Total';
+
+  @override
+  String get mean_per_title => 'Promedio por título';
+
+  @override
+  String get completion_rate => 'Tasa de finalización';
+
+  @override
+  String get watching_time => 'Tiempo dedicado (Anime)';
+
+  @override
+  String get reading_time => 'Tiempo dedicado (Manga)';
+
+  @override
+  String average_chapters_per_title(Object title) {
+    return 'Promedio de capítulos por título';
+  }
+
+  @override
+  String get read_percentage => 'Porcentaje de lectura';
+
+  @override
+  String get entries => 'Entradas';
+
+  @override
+  String get android_proxy_server_mihon => 'Servidor Proxy Android (Mihon)';
+
+  @override
+  String get android_proxy_server_mihon_description =>
+      'Descargue y configure el servidor proxy necesario para usar las extensiones de Mihon.';
+
+  @override
+  String get mihon_proxy_server => 'Servidor proxy Mihon';
+
+  @override
+  String get extension_server_intro_with_jre =>
+      'Descarga el paquete del servidor proxy antes de usar extensiones Mihon. El paquete incluye JRE y el archivo JAR del servidor.';
+
+  @override
+  String get extension_server_intro_ios =>
+      'Descarga el archivo JAR del servidor proxy antes de usar extensiones Mihon. iOS solo necesita el archivo JAR del servidor.';
+
+  @override
+  String get checking_files => 'Comprobando archivos';
+
+  @override
+  String get files_installed => 'Archivos instalados';
+
+  @override
+  String get files_missing => 'Archivos faltantes';
+
+  @override
+  String get update_files => 'Actualizar archivos';
+
+  @override
+  String get up_to_date => 'Actualizado';
+
+  @override
+  String get choose_location => 'Elegir ubicación';
+
+  @override
+  String get import_existing_jar => 'Importar JAR existente';
+
+  @override
+  String get detect_files_in_selected_folder =>
+      'Detectar archivos en la carpeta seleccionada';
+
+  @override
+  String get preparing_download => 'Preparando descarga...';
+
+  @override
+  String get app_install_location => 'Ubicación de instalación de la app';
+
+  @override
+  String get install_location => 'Ubicación de instalación';
+
+  @override
+  String get jre_executable => 'Ejecutable JRE';
+
+  @override
+  String get extension_server_jar => 'JAR de servidor de extensiones';
+
+  @override
+  String get installed_version => 'Versión instalada';
+
+  @override
+  String get latest_version => 'Última versión';
+
+  @override
+  String get apkbridge_description =>
+      'Usa ApkBridge cuando necesites un proxy de dispositivo Android separado. Configura la dirección del proxy aquí y descarga el APK de GitHub.';
+
+  @override
+  String get set_proxy_address => 'Establecer dirección proxy';
+
+  @override
+  String get no_newer_proxy_server_release_available =>
+      'No hay una versión más reciente del servidor proxy disponible.';
+
+  @override
+  String get could_not_check_proxy_server_updates =>
+      'No se pudo comprobar si hay actualizaciones del servidor proxy.';
+
+  @override
+  String get no_extension_server_bundle_available_for_this_platform =>
+      'No hay paquete de servidor de extensiones disponible para esta plataforma.';
+
+  @override
+  String failed_to_download_bundle(Object statusCode) {
+    return 'Error al descargar el paquete ($statusCode).';
+  }
+
+  @override
+  String get downloaded_bundle_missing_expected_files =>
+      'El paquete descargado no contiene los archivos esperados.';
+
+  @override
+  String get extension_server_files_ready =>
+      'Archivos del servidor de extensiones listos.';
+
+  @override
+  String get ios_extension_server_import_hint =>
+      'En iOS el servidor se instala dentro del sandbox de la app. Usa \"Importar JAR existente\" para traer un archivo descargado.';
+
+  @override
+  String get select_extension_server_folder =>
+      'Seleccionar carpeta del servidor de extensiones';
+
+  @override
+  String get selected_folder_does_not_exist =>
+      'La carpeta seleccionada no existe.';
+
+  @override
+  String get no_extension_server_files_found_in_selected_folder =>
+      'No se encontraron archivos en la carpeta seleccionada.';
+
+  @override
+  String get extension_server_files_linked =>
+      'Archivos del servidor vinculados.';
+
+  @override
+  String get select_extension_server_jar =>
+      'Seleccionar JAR del servidor de extensiones';
+
+  @override
+  String get selected_file_could_not_be_accessed =>
+      'No se pudo acceder al archivo seleccionado.';
+
+  @override
+  String get extension_server_jar_imported => 'Archivo JAR importado.';
+
+  @override
+  String get could_not_launch_apk_bridge_page =>
+      'No se pudo abrir la página de ApkBridge.';
+
+  @override
+  String get proxy_server_ip_hint =>
+      'IP del servidor (ej: 10.0.0.5 o https://example.com)';
+
+  @override
+  String get not_configured => 'No configurado';
+
+  @override
+  String get webview => 'Webview';
 }

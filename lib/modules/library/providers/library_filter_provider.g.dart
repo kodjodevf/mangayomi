@@ -18,8 +18,9 @@ final downloadedChapterIdsProvider = DownloadedChapterIdsProvider._();
 /// Returns a [Set<int>] for O(1) lookup instead of per-chapter queries.
 
 final class DownloadedChapterIdsProvider
-    extends $FunctionalProvider<Set<int>, Set<int>, Set<int>>
-    with $Provider<Set<int>> {
+    extends
+        $FunctionalProvider<AsyncValue<Set<int>>, Set<int>, Stream<Set<int>>>
+    with $FutureModifier<Set<int>>, $StreamProvider<Set<int>> {
   /// Pre-fetches all downloaded chapter IDs in a single Isar query.
   /// Returns a [Set<int>] for O(1) lookup instead of per-chapter queries.
   DownloadedChapterIdsProvider._()
@@ -38,12 +39,51 @@ final class DownloadedChapterIdsProvider
 
   @$internal
   @override
+  $StreamProviderElement<Set<int>> $createElement($ProviderPointer pointer) =>
+      $StreamProviderElement(pointer);
+
+  @override
+  Stream<Set<int>> create(Ref ref) {
+    return downloadedChapterIds(ref);
+  }
+}
+
+String _$downloadedChapterIdsHash() =>
+    r'ff409df987e776e8c150e541c5aa48b1d5f9e9b9';
+
+/// Pre-fetches all manga IDs that have at least one tracking entry.
+
+@ProviderFor(trackedMangaIds)
+final trackedMangaIdsProvider = TrackedMangaIdsProvider._();
+
+/// Pre-fetches all manga IDs that have at least one tracking entry.
+
+final class TrackedMangaIdsProvider
+    extends $FunctionalProvider<Set<int>, Set<int>, Set<int>>
+    with $Provider<Set<int>> {
+  /// Pre-fetches all manga IDs that have at least one tracking entry.
+  TrackedMangaIdsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'trackedMangaIdsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$trackedMangaIdsHash();
+
+  @$internal
+  @override
   $ProviderElement<Set<int>> $createElement($ProviderPointer pointer) =>
       $ProviderElement(pointer);
 
   @override
   Set<int> create(Ref ref) {
-    return downloadedChapterIds(ref);
+    return trackedMangaIds(ref);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -55,29 +95,19 @@ final class DownloadedChapterIdsProvider
   }
 }
 
-String _$downloadedChapterIdsHash() =>
-    r'a51ff78fb0ad2548c719d1ca400ae474fc01e683';
+String _$trackedMangaIdsHash() => r'8fd052ae3ff4e9fe47e66d5e24cd57233aa03d0a';
 
 /// Filters and sorts a list of [Manga] based on library filter/sort settings.
-///
-/// Uses [downloadedChapterIds] for O(1) download lookups instead of
-/// per-chapter Isar queries (previous behavior was O(chapters × manga)).
 
 @ProviderFor(filteredLibraryManga)
 final filteredLibraryMangaProvider = FilteredLibraryMangaFamily._();
 
 /// Filters and sorts a list of [Manga] based on library filter/sort settings.
-///
-/// Uses [downloadedChapterIds] for O(1) download lookups instead of
-/// per-chapter Isar queries (previous behavior was O(chapters × manga)).
 
 final class FilteredLibraryMangaProvider
     extends $FunctionalProvider<List<Manga>, List<Manga>, List<Manga>>
     with $Provider<List<Manga>> {
   /// Filters and sorts a list of [Manga] based on library filter/sort settings.
-  ///
-  /// Uses [downloadedChapterIds] for O(1) download lookups instead of
-  /// per-chapter Isar queries (previous behavior was O(chapters × manga)).
   FilteredLibraryMangaProvider._({
     required FilteredLibraryMangaFamily super.from,
     required ({
@@ -86,6 +116,8 @@ final class FilteredLibraryMangaProvider
       int unreadFilterType,
       int startedFilterType,
       int bookmarkedFilterType,
+      int completedFilterType,
+      int trackingFilterType,
       int sortType,
       bool downloadedOnly,
       String searchQuery,
@@ -125,6 +157,8 @@ final class FilteredLibraryMangaProvider
               int unreadFilterType,
               int startedFilterType,
               int bookmarkedFilterType,
+              int completedFilterType,
+              int trackingFilterType,
               int sortType,
               bool downloadedOnly,
               String searchQuery,
@@ -137,6 +171,8 @@ final class FilteredLibraryMangaProvider
       unreadFilterType: argument.unreadFilterType,
       startedFilterType: argument.startedFilterType,
       bookmarkedFilterType: argument.bookmarkedFilterType,
+      completedFilterType: argument.completedFilterType,
+      trackingFilterType: argument.trackingFilterType,
       sortType: argument.sortType,
       downloadedOnly: argument.downloadedOnly,
       searchQuery: argument.searchQuery,
@@ -164,12 +200,9 @@ final class FilteredLibraryMangaProvider
 }
 
 String _$filteredLibraryMangaHash() =>
-    r'34cd87ea154cc617e85572ede503b81fb36f2a97';
+    r'17c6f370c3120277379c3bbb22c31a19ff028682';
 
 /// Filters and sorts a list of [Manga] based on library filter/sort settings.
-///
-/// Uses [downloadedChapterIds] for O(1) download lookups instead of
-/// per-chapter Isar queries (previous behavior was O(chapters × manga)).
 
 final class FilteredLibraryMangaFamily extends $Family
     with
@@ -181,6 +214,8 @@ final class FilteredLibraryMangaFamily extends $Family
             int unreadFilterType,
             int startedFilterType,
             int bookmarkedFilterType,
+            int completedFilterType,
+            int trackingFilterType,
             int sortType,
             bool downloadedOnly,
             String searchQuery,
@@ -197,9 +232,6 @@ final class FilteredLibraryMangaFamily extends $Family
       );
 
   /// Filters and sorts a list of [Manga] based on library filter/sort settings.
-  ///
-  /// Uses [downloadedChapterIds] for O(1) download lookups instead of
-  /// per-chapter Isar queries (previous behavior was O(chapters × manga)).
 
   FilteredLibraryMangaProvider call({
     required List<Manga> data,
@@ -207,6 +239,8 @@ final class FilteredLibraryMangaFamily extends $Family
     required int unreadFilterType,
     required int startedFilterType,
     required int bookmarkedFilterType,
+    required int completedFilterType,
+    required int trackingFilterType,
     required int sortType,
     required bool downloadedOnly,
     required String searchQuery,
@@ -218,6 +252,8 @@ final class FilteredLibraryMangaFamily extends $Family
       unreadFilterType: unreadFilterType,
       startedFilterType: startedFilterType,
       bookmarkedFilterType: bookmarkedFilterType,
+      completedFilterType: completedFilterType,
+      trackingFilterType: trackingFilterType,
       sortType: sortType,
       downloadedOnly: downloadedOnly,
       searchQuery: searchQuery,

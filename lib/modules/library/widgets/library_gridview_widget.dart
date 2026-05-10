@@ -1,21 +1,16 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar_community/isar.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/models/download.dart';
-import 'package:mangayomi/models/history.dart';
+import 'package:mangayomi/modules/library/providers/library_filter_provider.dart';
 import 'package:mangayomi/modules/library/providers/isar_providers.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/modules/library/widgets/continue_reader_button.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/constant.dart';
-import 'package:mangayomi/utils/extensions/chapter.dart';
 import 'package:mangayomi/utils/headers.dart';
-import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 import 'package:mangayomi/modules/widgets/bottom_text_widget.dart';
 import 'package:mangayomi/modules/widgets/cover_view_widget.dart';
 import 'package:mangayomi/modules/widgets/gridview_widget.dart';
@@ -24,7 +19,7 @@ import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
 class LibraryGridViewWidget extends StatefulWidget {
   final bool isCoverOnlyGrid;
   final bool isComfortableGrid;
-  final List<int> mangaIdsList;
+  final Set<int> mangaIdsList;
   final List<Manga> entriesManga;
   final bool language;
   final bool downloadedChapter;
@@ -176,34 +171,29 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                       padding: const EdgeInsets.only(right: 5),
                                       child: Consumer(
                                         builder: (context, ref, child) {
-                                          List nbrDown = [];
+                                          int downloadCount = 0;
                                           if (widget.downloadedChapter) {
-                                            isar.txnSync(() {
-                                              for (
-                                                var i = 0;
-                                                i < entry.chapters.length;
-                                                i++
-                                              ) {
-                                                final entries = isar.downloads
-                                                    .filter()
-                                                    .idEqualTo(
-                                                      entry.chapters
-                                                          .toList()[i]
-                                                          .id,
+                                            final downloadedIds =
+                                                ref
+                                                    .watch(
+                                                      downloadedChapterIdsProvider,
                                                     )
-                                                    .findAllSync();
-
-                                                if (entries.isNotEmpty &&
-                                                    entries.first.isDownload!) {
-                                                  nbrDown.add(1);
-                                                }
-                                              }
-                                            });
+                                                    .asData
+                                                    ?.value ??
+                                                const <int>{};
+                                            downloadCount = entry.chapters
+                                                .where(
+                                                  (c) =>
+                                                      c.id != null &&
+                                                      downloadedIds.contains(
+                                                        c.id,
+                                                      ),
+                                                )
+                                                .length;
                                           }
-
                                           return Row(
                                             children: [
-                                              if (nbrDown.isNotEmpty &&
+                                              if (downloadCount > 0 &&
                                                   widget.downloadedChapter)
                                                 Container(
                                                   decoration: BoxDecoration(
@@ -229,7 +219,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                                           right: 3,
                                                         ),
                                                     child: Text(
-                                                      nbrDown.length.toString(),
+                                                      downloadCount.toString(),
                                                     ),
                                                   ),
                                                 ),
@@ -239,10 +229,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                                 ),
                                                 child: Text(
                                                   entry.chapters
-                                                      .where(
-                                                        (element) =>
-                                                            !element.isRead!,
-                                                      )
+                                                      .where((e) => !e.isRead!)
                                                       .length
                                                       .toString(),
                                                   style: TextStyle(
@@ -303,116 +290,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                           right: 0,
                           child: Padding(
                             padding: const EdgeInsets.all(9),
-                            child: Consumer(
-                              builder: (context, ref, child) {
-                                return StreamBuilder(
-                                  stream: isar.historys
-                                      .filter()
-                                      .idIsNotNull()
-                                      .and()
-                                      .chapter(
-                                        (q) => q.manga(
-                                          (q) =>
-                                              q.itemTypeEqualTo(entry.itemType),
-                                        ),
-                                      )
-                                      .watch(fireImmediately: true),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasData &&
-                                        snapshot.data!.isNotEmpty) {
-                                      final incognitoMode = ref.watch(
-                                        incognitoModeStateProvider,
-                                      );
-                                      final entries = snapshot.data!
-                                          .where(
-                                            (element) =>
-                                                element.mangaId == entry.id,
-                                          )
-                                          .toList();
-                                      if (entries.isNotEmpty &&
-                                          !incognitoMode) {
-                                        return GestureDetector(
-                                          onTap: () {
-                                            entries.first.chapter.value!
-                                                .pushToReaderView(context);
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                              color: context.primaryColor
-                                                  .withValues(alpha: 0.9),
-                                            ),
-                                            child: const Padding(
-                                              padding: EdgeInsets.all(7),
-                                              child: Icon(
-                                                Icons.play_arrow,
-                                                size: 19,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                      return GestureDetector(
-                                        onTap: () {
-                                          entry.chapters
-                                              .toList()
-                                              .reversed
-                                              .toList()
-                                              .last
-                                              .pushToReaderView(context);
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                              5,
-                                            ),
-                                            color: context.primaryColor
-                                                .withValues(alpha: 0.9),
-                                          ),
-                                          child: const Padding(
-                                            padding: EdgeInsets.all(7),
-                                            child: Icon(
-                                              Icons.play_arrow,
-                                              size: 19,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                    return GestureDetector(
-                                      onTap: () {
-                                        entry.chapters
-                                            .toList()
-                                            .reversed
-                                            .toList()
-                                            .last
-                                            .pushToReaderView(context);
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                            5,
-                                          ),
-                                          color: context.primaryColor
-                                              .withValues(alpha: 0.9),
-                                        ),
-                                        child: const Padding(
-                                          padding: EdgeInsets.all(7),
-                                          child: Icon(
-                                            Icons.play_arrow,
-                                            size: 19,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                            ),
+                            child: ContinueReaderButton(entry: entry),
                           ),
                         ),
                     ],

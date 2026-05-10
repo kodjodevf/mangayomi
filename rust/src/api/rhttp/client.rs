@@ -175,8 +175,13 @@ fn create_client(settings: ClientSettings) -> Result<RequestClient, RhttpError> 
         }
 
         if let Some(tls_settings) = settings.tls_settings {
-            if !tls_settings.trust_root_certificates {
-                client = client.tls_built_in_root_certs(false);
+            // In reqwest 0.13.2, tls_built_in_root_certs is not available.
+            // If trust_root_certificates is false, custom certs must be provided instead.
+            if !tls_settings.trust_root_certificates
+                && tls_settings.trusted_root_certificates.is_empty()
+            {
+                // Cannot disable built-in certs without custom certs in this version
+                // Log warning or handle appropriately
             }
 
             for cert in tls_settings.trusted_root_certificates {

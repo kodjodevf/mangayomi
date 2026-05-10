@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,30 +7,26 @@ import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/modules/more/settings/player/custom_button_screen.dart';
+import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
-import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
-import 'package:mangayomi/utils/log/logger.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class BrowseSScreen extends ConsumerWidget {
-  static const apkUrl =
-      "https://github.com/Schnitzel5/ApkBridge/releases/latest";
-
   const BrowseSScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final androidProxyServer = ref.watch(androidProxyServerStateProvider);
     final onlyIncludePinnedSource = ref.watch(
       onlyIncludePinnedSourceStateProvider,
     );
+    final showNSFW = ref.watch(showNSFWStateProvider);
     final checkForExtensionUpdates = ref.watch(
       checkForExtensionsUpdateStateProvider,
     );
@@ -60,38 +55,23 @@ class BrowseSScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  if (!Platform.isAndroid)
-                    ListTile(
-                      onTap: () => _showAndroidProxyServerDialog(
-                        context,
-                        ref,
-                        androidProxyServer,
-                      ),
-                      title: Text(l10n.android_proxy_server),
-                      subtitle: Text(
-                        androidProxyServer,
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: context.secondaryColor,
-                        ),
-                      ),
-                      trailing: OutlinedButton.icon(
-                        onPressed: () async {
-                          if (!await launchUrl(
-                            Uri.parse(apkUrl),
-                            mode: LaunchMode.externalApplication,
-                          )) {
-                            AppLogger.log(
-                              'Could not launch $apkUrl',
-                              logLevel: LogLevel.error,
-                            );
-                            botToast('Could not launch $apkUrl');
-                          }
-                        },
-                        label: Text(l10n.get_apk_bridge),
-                        icon: const Icon(Icons.download_outlined),
+                  ListTile(
+                    onTap: () => context.push('/extensionServer'),
+                    title: Text(
+                      isMobile
+                          ? l10n.android_proxy_server
+                          : l10n.android_proxy_server_mihon,
+                    ),
+                    subtitle: Text(
+                      isMobile
+                          ? l10n.apkbridge_description
+                          : l10n.android_proxy_server_mihon_description,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.secondaryColor,
                       ),
                     ),
+                  ),
                   ListTile(
                     onTap: () {
                       context.push(
@@ -248,6 +228,54 @@ class BrowseSScreen extends ConsumerWidget {
                 ],
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Row(
+                      children: [
+                        Text(
+                          l10n.nsfw_sources,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: context.primaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SwitchListTile(
+                    value: showNSFW,
+                    title: Text(l10n.nsfw_sources_show),
+                    onChanged: (value) {
+                      ref.read(showNSFWStateProvider.notifier).set(value);
+                    },
+                  ),
+                  ListTile(
+                    title: Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.info_outline_rounded,
+                            color: context.secondaryColor,
+                          ),
+                        ],
+                      ),
+                    ),
+                    subtitle: Text(
+                      l10n.nsfw_sources_info,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.secondaryColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -291,87 +319,6 @@ void _showClearAllSourcesDialog(BuildContext context, dynamic l10n) {
         ],
       );
     },
-  );
-}
-
-void _showAndroidProxyServerDialog(
-  BuildContext context,
-  WidgetRef ref,
-  String proxyServer,
-) {
-  final serverController = TextEditingController(text: proxyServer);
-  String server = proxyServer;
-  showDialog(
-    context: context,
-    builder: (context) => StatefulBuilder(
-      builder: (context, setState) {
-        return AlertDialog(
-          title: Text(
-            context.l10n.android_proxy_server,
-            style: const TextStyle(fontSize: 30),
-          ),
-          content: SizedBox(
-            width: context.width(0.8),
-            height: context.height(0.3),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: TextFormField(
-                    controller: serverController,
-                    autofocus: true,
-                    onChanged: (value) => setState(() {
-                      server = value;
-                    }),
-                    decoration: InputDecoration(
-                      hintText:
-                          "Server IP (e.g., 10.0.0.5 or https://example.com)",
-                      filled: false,
-                      contentPadding: const EdgeInsets.all(12),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(width: 0.4),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        borderSide: const BorderSide(),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: SizedBox(
-                    width: context.width(1),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        server.split('/').removeLast();
-                        final s = server.split('/');
-                        if (s.isNotEmpty && s.last.isEmpty) {
-                          s.removeLast();
-                        }
-                        ref
-                            .read(androidProxyServerStateProvider.notifier)
-                            .set(s.join('/'));
-                        Navigator.pop(context);
-                      },
-                      child: Text(context.l10n.dialog_confirm),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    ),
   );
 }
 
@@ -434,6 +381,7 @@ void _showCleanNonLibraryDialog(BuildContext context, dynamic l10n) {
                               false,
                             );
                           }
+                          isar.downloads.deleteSync(chapter.id!);
                           isar.chapters.deleteSync(chapter.id!);
                           provider.addChangedPart(
                             ActionType.removeChapter,
@@ -568,6 +516,7 @@ void _showClearLibraryDialog(BuildContext context, WidgetRef ref) {
                                       false,
                                     );
                                   }
+                                  isar.downloads.deleteSync(chapter.id!);
                                   isar.chapters.deleteSync(chapter.id!);
                                   provider.addChangedPart(
                                     ActionType.removeChapter,

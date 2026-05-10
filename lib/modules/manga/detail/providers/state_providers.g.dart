@@ -41,7 +41,7 @@ final class ChaptersListStateProvider
   }
 }
 
-String _$chaptersListStateHash() => r'251609214d127964e84d4616d2c3a7afa4fd80b4';
+String _$chaptersListStateHash() => r'97d80d2c95bea4bbcce4cbcaccec28dc0bd6ec92';
 
 abstract class _$ChaptersListState extends $Notifier<List<Chapter>> {
   List<Chapter> build();

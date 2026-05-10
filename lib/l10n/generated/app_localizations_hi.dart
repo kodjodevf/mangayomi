@@ -114,6 +114,14 @@ class AppLocalizationsHi extends AppLocalizations {
   String get compact_grid => 'संक्षिप्त ग्रिड';
 
   @override
+  String get compression_level => 'संपीड़न स्तर';
+
+  @override
+  String compression_info(Object level) {
+    return 'संपीड़न जितना अधिक होगा, बैकअप फ़ाइल उतनी ही कम जगह लेगी, लेकिन यह अधिक CPU का उपयोग करेगी। डिफ़ॉल्ट: $level';
+  }
+
+  @override
   String get comfortable_grid => 'आरामदायक ग्रिड';
 
   @override
@@ -211,6 +219,235 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get migrate => 'स्थानांतरण';
+
+  @override
+  String get mass_migration_title => 'मास माइग्रेशन';
+
+  @override
+  String get mass_migration_preview_items => 'आइटम पूर्वावलोकन';
+
+  @override
+  String get mass_migration_destination_source => 'गंतव्य स्रोत';
+
+  @override
+  String get mass_migration_no_library_items =>
+      'सामूहिक प्रवासन के लिए कोई लाइब्रेरी आइटम उपलब्ध नहीं हैं।';
+
+  @override
+  String get mass_migration_no_destination_sources =>
+      'कोई स्थापित गंतव्य स्रोत उपलब्ध नहीं हैं।';
+
+  @override
+  String get mass_migration_installed => 'स्थापित';
+
+  @override
+  String mass_migration_items_ready_for_review(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count आइटम समीक्षा के लिए तैयार',
+      one: '1 आइटम समीक्षा के लिए तैयार',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String mass_migration_item_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count आइटम',
+      one: '1 आइटम',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get mass_migration_select_destination_source => 'गंतव्य स्रोत चुनें';
+
+  @override
+  String mass_migration_finding_matches(Object source, Object language) {
+    return '$source • $language में मिलान खोजा जा रहा है';
+  }
+
+  @override
+  String mass_migration_processing_item(int current, int total) {
+    return '$total में से $current आइटम प्रोसेस किया जा रहा है';
+  }
+
+  @override
+  String get mass_migration_waiting_next_item =>
+      'अगले आइटम से पहले 2 सेकंड प्रतीक्षा कर रहे हैं...';
+
+  @override
+  String get mass_migration_waiting_next_migration =>
+      'अगले प्रवासन से पहले 2 सेकंड प्रतीक्षा कर रहे हैं...';
+
+  @override
+  String mass_migration_matched_so_far(int count) {
+    return 'अब तक मिलान हुआ: $count';
+  }
+
+  @override
+  String mass_migration_no_match_count(int count) {
+    return 'कोई मिलान नहीं: $count';
+  }
+
+  @override
+  String mass_migration_review_matches(Object source) {
+    return '$source के लिए मिलान की समीक्षा करें';
+  }
+
+  @override
+  String mass_migration_found_matches(int count) {
+    return 'मिले मिलान: $count';
+  }
+
+  @override
+  String mass_migration_no_matches(int count) {
+    return 'कोई मिलान नहीं: $count';
+  }
+
+  @override
+  String mass_migration_selected_to_migrate(int count) {
+    return 'प्रवासन के लिए चयनित: $count';
+  }
+
+  @override
+  String get mass_migration_finish_review => 'समीक्षा पूरी करें';
+
+  @override
+  String mass_migration_migrate_selected(int count) {
+    return 'चयनित आइटम माइग्रेट करें ($count)';
+  }
+
+  @override
+  String mass_migration_migrating_selected(Object source) {
+    return 'चयनित आइटम को $source पर माइग्रेट किया जा रहा है';
+  }
+
+  @override
+  String get mass_migration_no_items_selected =>
+      'प्रवासन के लिए कोई आइटम नहीं चुना गया।';
+
+  @override
+  String mass_migration_migrating_item(int current, int total) {
+    return '$total में से $current आइटम माइग्रेट किया जा रहा है';
+  }
+
+  @override
+  String get mass_migration_complete => 'सामूहिक प्रवासन पूरा हुआ';
+
+  @override
+  String get mass_migration_complete_success_message =>
+      'सभी चयनित आइटम सफलतापूर्वक संसाधित किए गए।';
+
+  @override
+  String get mass_migration_complete_partial_message =>
+      'प्रवासन समाप्त हुआ, लेकिन कुछ आइटमों पर अभी भी मैन्युअल ध्यान देने की आवश्यकता है।';
+
+  @override
+  String mass_migration_route_summary(Object source, Object destination) {
+    return '$source → $destination';
+  }
+
+  @override
+  String get mass_migration_processed => 'संसाधित';
+
+  @override
+  String get mass_migration_matched => 'मिल गया';
+
+  @override
+  String get mass_migration_migrated => 'माइग्रेट किया गया';
+
+  @override
+  String get mass_migration_skipped => 'छोड़ दिया';
+
+  @override
+  String get mass_migration_failed => 'विफल';
+
+  @override
+  String get mass_migration_failed_items => 'विफल आइटम';
+
+  @override
+  String get mass_migration_exit => 'सामूहिक प्रवासन से बाहर निकलें';
+
+  @override
+  String get mass_migration_no_destination_match =>
+      'कोई गंतव्य मिलान नहीं मिला';
+
+  @override
+  String mass_migration_query(Object query) {
+    return 'क्वेरी: $query';
+  }
+
+  @override
+  String get mass_migration_skip => 'छोड़ें';
+
+  @override
+  String get mass_migration_loading => 'लोड हो रहा है...';
+
+  @override
+  String get mass_migration_choose_another_result => 'दूसरा परिणाम चुनें';
+
+  @override
+  String get mass_migration_source_chapters => 'स्रोत अध्याय';
+
+  @override
+  String get mass_migration_destination_chapters => 'गंतव्य अध्याय';
+
+  @override
+  String mass_migration_chapter_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count अध्याय',
+      one: '1 अध्याय',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String mass_migration_source_chapter_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count स्रोत अध्याय',
+      one: '1 स्रोत अध्याय',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String mass_migration_destination_chapter_count(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count गंतव्य अध्याय',
+      one: '1 गंतव्य अध्याय',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get mass_migration_no_chapters_found => 'कोई अध्याय नहीं मिला।';
+
+  @override
+  String mass_migration_and_more_chapters(int count) {
+    return 'और $count अधिक...';
+  }
+
+  @override
+  String get mass_migration_unknown_title => 'अज्ञात शीर्षक';
+
+  @override
+  String get mass_migration_unknown_match => 'अज्ञात मिलान';
+
+  @override
+  String get mass_migration_unknown_source => 'अज्ञात स्रोत';
+
+  @override
+  String get mass_migration_unknown_chapter => 'अज्ञात अध्याय';
 
   @override
   String get migrate_confirm => 'दूसरे स्रोत में माइग्रेट करें';
@@ -410,6 +647,9 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get save_as_cbz_archive => 'सीबीजेड आर्काइव के रूप में सहेजें';
+
+  @override
+  String get delete_download_after_reading => 'पढ़ने के बाद डाउनलोड हटा दें';
 
   @override
   String get concurrent_downloads => 'समवर्ती डाउनलोड';
@@ -629,6 +869,13 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get import_files => 'फ़ाइलें';
+
+  @override
+  String get split_epub_chapters => 'अध्याय में विभाजित करें';
+
+  @override
+  String get split_epub_chapters_description =>
+      'प्रत्येक EPUB अध्याय को एक अलग प्रविष्टि के रूप में आयात करें';
 
   @override
   String get nothing_read_recently => 'हाल ही में कुछ भी नहीं पढ़ा';
@@ -1099,6 +1346,10 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get markEpisodeAsSeenSetting =>
       'एपिसोड को कब देखा गया के रूप में चिह्नित करना है';
+
+  @override
+  String get mark_duplicate_chapters_read =>
+      'Mark duplicate chapter numbers as read';
 
   @override
   String get default_skip_intro_length => 'डिफ़ॉल्ट परिचय छोड़ने की अवधि';
@@ -1786,18 +2037,312 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
-  String get default_user_agent => 'Defaul user agent';
+  String get default_user_agent => 'डिफ़ॉल्ट यूजर एजेंट';
 
   @override
-  String get forceLandscapeMode => 'Force landscape mode';
+  String get forceLandscapeMode => 'लैंडस्केप मोड को फोर्स करें';
 
   @override
   String get forceLandscapeModeSubtitle =>
-      'Force the player to use landscape orientation.';
+      'प्लेयर को लैंडस्केप ओरिएंटेशन का उपयोग करने के लिए मजबूर करें।';
 
   @override
   String get dns_over_https => 'DNS-over-HTTPS (DoH)';
 
   @override
-  String get dns_provider => 'DNS Provider';
+  String get dns_provider => 'DNS प्रदाता';
+
+  @override
+  String get tracked => 'ट्रैक किया गया';
+
+  @override
+  String get auth_unlock_msg => 'मैंगायोमी को अनलॉक करने के लिए प्रमाणित करें';
+
+  @override
+  String get app_locked => 'मैंगायोमी लॉक है';
+
+  @override
+  String get auth_to_continue => 'जारी रखने के लिए प्रमाणित करें';
+
+  @override
+  String get authenticating => 'प्रमाणीकरण चल रहा है...';
+
+  @override
+  String get unlock => 'अनलॉक करें';
+
+  @override
+  String get security => 'सुरक्षा';
+
+  @override
+  String get auth_to_change_security_setting =>
+      'सुरक्षा सेटिंग्स बदलने के लिए प्रमाणित करें';
+
+  @override
+  String get app_lock => 'ऐप लॉक';
+
+  @override
+  String get require_biometric_or_device_credential =>
+      'ऐप खोलने के लिए बायोमेट्रिक या डिवाइस क्रेडेंशियल आवश्यक है';
+
+  @override
+  String get biometric_or_device_credential_not_available =>
+      'इस डिवाइस पर बायोमेट्रिक प्रमाणन उपलब्ध नहीं है';
+
+  @override
+  String get app_lock_description =>
+      'जब ऐप लॉक सक्षम हो, तो आपको प्रमाणित करने के लिए कहा जाएगा\\nहर बार जब आप ऐप खोलते हैं या पृष्ठभूमि से वापस आते हैं।';
+
+  @override
+  String get keep_screen_on => 'स्क्रीन को चालू रखें';
+
+  @override
+  String get webtoon_side_padding => 'वेबटूनन साइड पैडिंग';
+
+  @override
+  String get show_page_gaps => 'पृष्ठ अंतराल दिखाएं';
+
+  @override
+  String get invert_colors => 'रंगों को उल्टा करें';
+
+  @override
+  String get grayscale => 'ग्रेस्केल';
+
+  @override
+  String get brightness => 'चमक';
+
+  @override
+  String get contrast => 'विपरीतता';
+
+  @override
+  String get saturation => 'संतृप्ति';
+
+  @override
+  String get navigation_layout => 'नेविगेशन लेआउट';
+
+  @override
+  String get nav_layout_default => 'डिफ़ॉल्ट';
+
+  @override
+  String get nav_layout_l_shaped => 'L-आकार';
+
+  @override
+  String get nav_layout_kindle => 'Kindle';
+
+  @override
+  String get nav_layout_edge => 'किनारा';
+
+  @override
+  String get nav_layout_right_and_left => 'दाएं और बाएं';
+
+  @override
+  String get nav_layout_disabled => 'अक्षम';
+
+  @override
+  String get color_enhancements => 'रंग बढ़ाना';
+
+  @override
+  String get total => 'कुल';
+
+  @override
+  String get mean_per_title => 'प्रति शीर्षक औसत';
+
+  @override
+  String get completion_rate => 'पूर्णता दर';
+
+  @override
+  String get watching_time => 'देखने का समय';
+
+  @override
+  String get reading_time => 'पढ़ने का समय';
+
+  @override
+  String average_chapters_per_title(Object title) {
+    return 'प्रति शीर्षक औसत अध्याय';
+  }
+
+  @override
+  String get read_percentage => 'पढ़ने का प्रतिशत';
+
+  @override
+  String get entries => 'प्रविष्टियाँ';
+
+  @override
+  String get android_proxy_server_mihon => 'Android प्रॉक्सी सर्वर (Mihon)';
+
+  @override
+  String get android_proxy_server_mihon_description =>
+      'Mihon एक्सटेंशन का उपयोग करने के लिए आवश्यक प्रॉक्सी सर्वर डाउनलोड और कॉन्फ़िगर करें।';
+
+  @override
+  String get mihon_proxy_server => 'Mihon प्रॉक्सी सर्वर';
+
+  @override
+  String get extension_server_intro_with_jre =>
+      'मिहोन एक्सटेंशन (Mihon extensions) का उपयोग करने से पहले प्रॉक्सी सर्वर बंडल डाउनलोड करें। बंडल में JRE और एक्सटेंशन सर्वर JAR शामिल है।';
+
+  @override
+  String get extension_server_intro_ios =>
+      'मिहोन एक्सटेंशन का उपयोग करने से पहले प्रॉक्सी सर्वर JAR डाउनलोड करें। iOS को केवल एक्सटेंशन सर्वर JAR की आवश्यकता है।';
+
+  @override
+  String get checking_files => 'Checking files';
+
+  @override
+  String get files_installed => 'Files installed';
+
+  @override
+  String get files_missing => 'फ़ाइलें गायब हैं';
+
+  @override
+  String get update_files => 'Update files';
+
+  @override
+  String get up_to_date => 'अप-टू-डेट';
+
+  @override
+  String get choose_location => 'स्थान चुनें';
+
+  @override
+  String get import_existing_jar => 'मौजूदा JAR आयात करें';
+
+  @override
+  String get detect_files_in_selected_folder =>
+      'Detect files in selected folder';
+
+  @override
+  String get preparing_download => 'डाउनलोड की तैयारी की जा रही है...';
+
+  @override
+  String get app_install_location => 'App install location';
+
+  @override
+  String get install_location => 'Install location';
+
+  @override
+  String get jre_executable => 'JRE निष्पादन योग्य (Executable)';
+
+  @override
+  String get extension_server_jar => 'Extension server JAR';
+
+  @override
+  String get installed_version => 'स्थापित संस्करण';
+
+  @override
+  String get latest_version => 'Latest version';
+
+  @override
+  String get apkbridge_description =>
+      'Use ApkBridge when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.';
+
+  @override
+  String get set_proxy_address => 'Set proxy address';
+
+  @override
+  String get no_newer_proxy_server_release_available =>
+      'कोई नया प्रॉक्सी सर्वर रिलीज़ उपलब्ध नहीं है।';
+
+  @override
+  String get could_not_check_proxy_server_updates =>
+      'प्रॉक्सी सर्वर अपडेट की जांच नहीं की जा सकी।';
+
+  @override
+  String get no_extension_server_bundle_available_for_this_platform =>
+      'इस प्लेटफ़ॉर्म के लिए कोई एक्सटेंशन सर्वर बंडल उपलब्ध नहीं है।';
+
+  @override
+  String failed_to_download_bundle(Object statusCode) {
+    return 'बंडल डाउनलोड करने में विफल रहा ($statusCode)।';
+  }
+
+  @override
+  String get downloaded_bundle_missing_expected_files =>
+      'The downloaded bundle does not contain the expected files.';
+
+  @override
+  String get extension_server_files_ready =>
+      'Extension server files are ready.';
+
+  @override
+  String get ios_extension_server_import_hint =>
+      'On iOS the server is installed inside the app sandbox. Use \"Import existing JAR\" to bring in a downloaded file.';
+
+  @override
+  String get select_extension_server_folder => 'एक्सटेंशन सर्वर फ़ोल्डर चुनें';
+
+  @override
+  String get selected_folder_does_not_exist => 'चयनित फ़ोल्डर मौजूद नहीं है।';
+
+  @override
+  String get no_extension_server_files_found_in_selected_folder =>
+      'No extension server files were found in the selected folder.';
+
+  @override
+  String get extension_server_files_linked =>
+      'Extension server files were linked.';
+
+  @override
+  String get select_extension_server_jar => 'एक्सटेंशन सर्वर JAR चुनें';
+
+  @override
+  String get selected_file_could_not_be_accessed =>
+      'The selected file could not be accessed.';
+
+  @override
+  String get extension_server_jar_imported =>
+      'Extension server JAR was imported.';
+
+  @override
+  String get could_not_launch_apk_bridge_page =>
+      'Could not launch the ApkBridge page.';
+
+  @override
+  String get proxy_server_ip_hint =>
+      'सर्वर IP (उदा: 10.0.0.5 या https://example.com)';
+
+  @override
+  String get not_configured => 'Not configured';
+
+  @override
+  String get webview => 'Webview';
+
+  @override
+  String get tts => 'Text-to-Speech';
+
+  @override
+  String get tts_speed => 'Speed';
+
+  @override
+  String get tts_pitch => 'Pitch';
+
+  @override
+  String get tts_language => 'Language';
+
+  @override
+  String get tts_voice => 'Voice';
+
+  @override
+  String get tts_stop => 'Stop';
+
+  @override
+  String get tts_play => 'Play';
+
+  @override
+  String get tts_pause => 'Pause';
+
+  @override
+  String get tts_previous => 'Previous paragraph';
+
+  @override
+  String get tts_next => 'Next paragraph';
+
+  @override
+  String tts_paragraph_progress(Object current, Object total) {
+    return 'Paragraph $current of $total';
+  }
+
+  @override
+  String get tts_settings => 'TTS Settings';
+
+  @override
+  String get tts_default => 'Default';
 }
