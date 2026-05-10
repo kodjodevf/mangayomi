@@ -1,0 +1,212 @@
+
+\section{Dependencies and Libraries}
+
+Mangayomi, the open-source application for managing manga, anime, and novel content, relies on a curated stack of third-party libraries. Each choice trades off implementation effort against maintainability, performance, and platform coverage: the UI layer must scale to large libraries and long reading sessions; persistence must stay consistent across updates; playback must tolerate heterogeneous sources and codecs. Below are the primary libraries referenced in project documentation and their high-level purposes (exact versions belong in \texttt{pubspec.yaml} at report time):
+
+\begin{itemize}
+    \item \textbf{flutter}: Core UI framework and runtime---single Dart codebase, consistent widgets, and platform embedding for mobile and desktop targets.
+    \item \textbf{flutter\_localizations}: SDK bindings for \texttt{intl}, delegates, and locale resolution so translated strings integrate with Material widgets.
+    \item \textbf{go\_router}: Declarative, URL-oriented navigation with redirects and nested routes, aligned with \texttt{MaterialApp.router}.
+    \item \textbf{flutter\_riverpod}: Reactive state and dependency injection scoped to the widget tree, with explicit provider graphs.
+    \item \textbf{riverpod\_annotation}: Code-generation hooks for Riverpod, reducing hand-written provider boilerplate and keeping definitions consistent.
+    \item \textbf{photo\_view}: Interactive image viewing (zoom, pan, gallery paging) tuned for manga-style full-page artwork.
+    \item \textbf{isar\_community}: Embedded object database with indexed queries and isolate-friendly access for large local catalogs.
+    \item \textbf{flutter\_web\_auth\_2}: In-app browser / custom-tab style OAuth flows for trackers and cloud services.
+    \item \textbf{file\_picker}: Native file-system pickers for imports, archives, and side-loaded content.
+    \item \textbf{hive\_flutter}: Lightweight key--value boxes for caches and secondary blobs without expanding the relational schema.
+    \item \textbf{flutter\_discord\_rpc\_fork}: Rich Presence on desktop so activity can surface in Discord when enabled.
+    \item \textbf{media\_kit}: Video/audio pipeline built around libmpv-style playback and platform codec bundles.
+    \item \textbf{encrypt}: Symmetric crypto helpers for protecting sensitive configuration or payloads at rest.
+\end{itemize}
+
+The following figures reproduce excerpts from \texttt{pubspec.yaml} and related tooling output as a visual index of how dependencies are declared and grouped in the repository.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\linewidth]{images/Dependencies1.png}
+\caption{First set of dependencies related to core functionality}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.65\linewidth]{images/Dependencies2.png}
+\caption{Additional dependencies for multimedia and system integration}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.55\linewidth]{images/Dependencies3.png}
+\caption{More dependencies for specific functionalities like Discord integration}
+\end{figure}
+
+\label{sec:core-libraries}
+
+The remainder of this section concentrates on the libraries that most visibly shape architecture: Flutter itself, localization, Riverpod, routing, Isar, the media stack, \texttt{photo\_view}, and Hive. For each, we summarize \emph{what problem it solves}, \emph{why it is a reasonable fit for Mangayomi}, and \emph{where to inspect concrete usage}. Screenshots illustrate representative wiring in source form rather than runtime UI.
+
+\subsection{Flutter (\texttt{flutter})}
+\label{subsec:flutter}
+
+Flutter is the cross-platform UI toolkit and runtime used to build Mangayomi for Android, iOS, desktop, and other supported targets. It provides the widget composition model, layer-based rendering (Skia or Impeller depending on target), accessibility semantics, text layout, and platform channels for calling into native APIs. Choosing Flutter trades maximum native UI fidelity on each OS for a unified feature set and faster iteration when shipping reader, browser, and player flows that share large amounts of logic.
+
+\textbf{Benefits in this project.} One Dart codebase reduces duplication for navigation, settings, and database access; hot reload accelerates UI iteration on long-scrolling lists and the reader; and the ecosystem (Material, animations, desktop windowing plugins) aligns with a productivity-style desktop app alongside mobile.
+
+The application bootstraps with \texttt{WidgetsFlutterBinding.ensureInitialized()}, wraps the tree in Riverpod's \texttt{ProviderScope}, and exposes the UI through \texttt{MaterialApp.router}, wiring declarative routing and theming. Global error reporting is configured so framework and asynchronous failures are logged consistently before the UI runs.
+
+\textbf{Where to look.} \texttt{lib/main.dart} (application entry, \texttt{runApp}, \texttt{MaterialApp.router}); module screens under \texttt{lib/modules/}.
+
+\begin{figure}
+  \includegraphics[width=0.92\textwidth]{images/material_router_image.png}
+  \caption{Flutter shell: \texttt{MaterialApp.router} integrating themes, localization, and \texttt{go\_router}.}
+  \label{fig:flutter-shell}
+\end{figure}
+
+\subsection{Internationalization (\texttt{flutter\_localizations})}
+\label{subsec:l10n}
+
+The Flutter localization SDK connects translation tables to the widget layer: \texttt{localizationsDelegates} load the right \texttt{AppLocalizations} implementation per \texttt{Locale}, \texttt{supportedLocales} defines the catalog the app advertises, and widgets resolve strings via \texttt{Localizations.of} (often wrapped as \texttt{context.l10n}).
+
+\textbf{Benefits in this project.} Translators work in ARB files while developers keep a single message API in code; adding a locale is mostly data plus generation, without scattering string literals. Runtime locale changes (as driven by settings) propagate through \texttt{MaterialApp}'s \texttt{locale} without rewriting feature modules.
+
+\texttt{AppLocalizations} (generated under \texttt{lib/l10n/generated/}) feeds \texttt{localizationsDelegates} and \texttt{supportedLocales}. User-facing strings in flows such as deep-link handlers read \texttt{context.l10n} so dialogs and toasts respect the active locale chosen in settings.
+
+\textbf{Where to look.} \texttt{lib/main.dart} (\texttt{localizationsDelegates}, \texttt{supportedLocales}, \texttt{locale}); \texttt{lib/providers/l10n\_providers.dart}; ARB sources under \texttt{lib/l10n/}.
+
+\begin{figure}[htbp]
+  \centering
+   \includegraphics[width=0.92\textwidth]{images/l10n_in_app.png}
+  \caption{Localization wiring in the root widget and example consumer of generated messages.}
+  \label{fig:l10n-delegates}
+\end{figure}
+
+\subsection{State management (\texttt{flutter\_riverpod}, \texttt{riverpod\_annotation})}
+\label{subsec:riverpod}
+
+\texttt{flutter\_riverpod} models application state as composable \emph{providers}: widgets \texttt{watch} derived values and rebuild when upstream data changes, while \texttt{read} performs one-off access or imperative calls. Unlike some older patterns tied tightly to \texttt{BuildContext}, Riverpod encourages explicit dependency graphs, overrides in tests, and family providers parameterized by IDs (chapters, sources, tracks).
+
+\textbf{Benefits in this project.} Feature modules stay decoupled: theme, locale, downloader, and tracker logic expose providers instead of singletons; generated code (\texttt{riverpod\_generator} via \texttt{riverpod\_annotation}) keeps notifier classes and provider variables in sync and catches renames at compile time.
+
+The entire widget tree sits under \texttt{ProviderScope}. Providers encapsulate navigation state, theme, locale, repository-style services, and feature-specific notifiers. The router itself is exposed as a generated provider (\texttt{@riverpod GoRouter router}), so navigation stays synchronized with other state reads.
+
+\textbf{Where to look.}
+\texttt{lib/main.dart} (\texttt{ProviderScope}); \texttt{lib/router/router.dart} (\texttt{@riverpod}, \texttt{part 'router.g.dart'}); feature providers under \texttt{lib/modules/*/providers/} and \texttt{lib/providers/}.
+
+\begin{figure}[htbp]
+  \centering
+ \includegraphics[width=0.92\textwidth]{images/state_management.png}
+  \caption{Riverpod: generated providers and consumption from widgets.}
+  \label{fig:riverpod-provider}
+\end{figure}
+
+
+\subsection{Routing (\texttt{go\_router})}
+\label{subsec:go-router}
+
+\textbf{Role.}
+\texttt{go\_router} maps locations (paths and query parameters) to page builders, supports redirects for auth or migration guards, and can express nested branches (tabs, shells) in one configuration object.
+
+\textbf{Benefits in this project.} Deep links and OS-level intents can target stable routes; back-stack behavior and restoration integrate with \texttt{MaterialApp.router}; the route table remains a single source of truth instead of imperative \texttt{Navigator.push} chains scattered across modules.
+
+\textbf{Usage in Mangayomi.}
+A central \texttt{GoRouter} instance declares the screen graph (library, browse, reader, player, settings, etc.). \texttt{MaterialApp.router} consumes \texttt{routeInformationParser}, \texttt{routerDelegate}, and \texttt{routeInformationProvider}. Individual screens call \texttt{context.go} / \texttt{push} patterns via \texttt{go\_router} imports for typed navigation without manual \texttt{Navigator} stacks everywhere.
+
+\textbf{Where to look.}
+\texttt{lib/router/router.dart} (\texttt{GoRouter} factory, route list); \texttt{lib/router/router.g.dart} (generated provider); representative screens such as \texttt{lib/modules/main\_view/main\_screen.dart}, \texttt{lib/modules/manga/detail/manga\_detail\_view.dart}.
+
+\begin{figure}[htbp]
+  \centering
+ \includegraphics[width=0.92\textwidth]{images/routing.png}
+  \caption{Declarative routing: central \texttt{GoRouter} configuration.}
+  \label{fig:go-router-config}
+\end{figure}
+
+\subsection{Structured local database (\texttt{isar\_community})}
+\label{subsec:isar}
+
+\textbf{Role.}
+Isar (Community edition in this project) is an embedded, object-oriented database optimized for Flutter and Dart isolates. Collections are defined with annotated models and queried with fluent builders; transactions batch writes safely; indexes accelerate filters on large libraries (titles, sources, dates).
+
+\textbf{Benefits in this project.} Pure-Dart queries avoid shipping SQL strings; binary storage suits offline-first manga catalogs; isolate workers can open the same schema for imports, searches, or maintenance without blocking the UI thread.
+
+\textbf{Usage in Mangayomi.}
+\texttt{StorageProvider.initDB} opens a named database file and registers schemas for manga, chapters, categories, downloads, sources, settings, tracks, sync preferences, and related entities. A global \texttt{late Isar isar} reference is populated during startup; background isolates reopen the database where needed for heavy work. This layer is the authoritative store for library content and user preferences that must survive restarts.
+
+\textbf{Where to look.}
+\texttt{lib/providers/storage\_provider.dart} (\texttt{Isar.open}, schema list); \texttt{lib/main.dart} (assignment to global \texttt{isar}); \texttt{lib/models/*.dart} and generated \texttt{*.g.dart} mirrors; \texttt{lib/services/isolate\_service.dart} (isolate-side open).
+
+\begin{figure}[htbp]
+  \centering
+ \includegraphics[width=0.92\textwidth]{images/isar.png}
+  \caption{Isar: opening the database and registering core entity schemas.}
+  \label{fig:isar-open}
+\end{figure}
+
+\subsection{Media playback (\texttt{media\_kit}, \texttt{media\_kit\_video}, native libs)}
+\label{subsec:media-kit}
+
+\textbf{Role.}
+The \texttt{media\_kit} family wraps \texttt{libmpv}-style playback: a \texttt{Player} drives audio/video streams, exposes tracks and subtitles, and forwards hardware decoding options; \texttt{media\_kit\_video} binds the texture to Flutter and hosts controller overlays. Companion \texttt{media\_kit\_libs\_*} packages ship native binaries per platform.
+
+\textbf{Benefits in this project.} Streaming anime from arbitrary URLs benefits from mpv's demuxing and codec breadth; unified APIs cover desktop and mobile instead of maintaining separate players; shader and subtitle pipelines can be tuned through player options aligned with user settings.
+
+\textbf{Usage in Mangayomi.}
+\texttt{MediaKit.ensureInitialized()} runs during startup before the UI mounts, ensuring native engines are ready. The anime player module constructs a \texttt{Player}, feeds it episode URLs or local files, and embeds \texttt{Video} widgets with custom controls (desktop and mobile layouts). Settings for decoder and UI behavior tie into the same playback path.
+
+\textbf{Where to look.}
+\texttt{lib/main.dart} (early initialization); \texttt{lib/modules/anime/anime\_player\_view.dart} (\texttt{Player}, \texttt{Video} composition); auxiliary widgets under \texttt{lib/modules/anime/widgets/}.
+
+\begin{figure}[htbp]
+  \centering
+ \includegraphics[width=0.92\textwidth]{images/media_kit.png}
+  \caption{Media stack: initialization and player widget integration for streaming.}
+  \label{fig:media-kit-player}
+\end{figure}
+
+\subsection{Zoomable manga and image galleries (\texttt{photo\_view})}
+\label{subsec:photo-view}
+
+\textbf{Role.}
+\texttt{photo\_view} layers gesture handling and transform math on top of Flutter's image pipeline: users can pinch-zoom and pan within a page, and gallery builders stitch multiple pages with consistent physics.
+
+\textbf{Benefits in this project.} Manga pages exceed screen size by design; \texttt{photo\_view} avoids reimplementing scale bounds, double-tap zoom, and hero-style transitions that would be error-prone in raw \texttt{GestureDetector} code.
+
+\textbf{Usage in Mangayomi.}
+The manga reader uses \texttt{PhotoViewGallery} / \texttt{PhotoViewGalleryPageOptions} for paged reading modes and zoom restoration; detail screens reuse the same constructs for expandable cover art or related image strips.
+
+\textbf{Where to look.}
+\texttt{lib/modules/manga/reader/widgets/double\_page\_view.dart}; \texttt{lib/modules/manga/detail/manga\_detail\_view.dart}; \texttt{lib/modules/manga/detail/widgets/watch\_order\_screen.dart}.
+
+\begin{figure}[htbp]
+  \centering
+ \includegraphics[width=0.92\textwidth]{images/photo_gallery.png}
+  \caption{Reader UX: zoomable page gallery built with \texttt{photo\_view}.}
+  \label{fig:photo-view-gallery}
+\end{figure}
+
+\subsection{Lightweight key--value storage (\texttt{hive\_flutter})}
+\label{subsec:hive}
+
+\textbf{Role.}
+Hive offers fast, schema-light local storage backed by boxes on disk; adapters map Dart types to compact binary records. \texttt{hive\_flutter} resolves application documents directories and initializes the engine for mobile and desktop.
+
+\textbf{Benefits in this project.} Ephemeral or denormalized caches (e.g., tracker API responses keyed by provider and section) can persist without migrating Isar schemas; startup cost stays low when only a small box is needed.
+
+\textbf{Usage in Mangayomi.}
+After the core app is running, \texttt{Hive.initFlutter} targets a consistent database subdirectory (path varies by OS), and typed adapters---for example \texttt{TrackSearchAdapter}---register for tracker search caches. This complements Isar by handling small, box-oriented data without expanding the relational model. Screen code opens named boxes such as \texttt{"tracker\_library"} for reads, writes, and selective invalidation.
+
+\textbf{Where to look.}
+\texttt{lib/main.dart} (\texttt{\_postLaunchInit}, \texttt{Hive.initFlutter}, \texttt{registerAdapter}); \texttt{lib/modules/tracker\_library/tracker\_library\_screen.dart} and \texttt{tracker\_section\_screen.dart} (\texttt{Hive.openBox}).
+
+\begin{figure}[htbp]
+  \centering
+ \includegraphics[width=0.92\textwidth]{images/hive.png}
+  \caption{Hive: secondary local store for tracker-related boxes.}
+  \label{fig:hive-init}
+\end{figure}
+
+\vspace{0.75em}
+\noindent\textbf{Dependency versions and reproducibility.}
+Pin exact versions or Git revisions from the project root file \texttt{pubspec.yaml} (and any \texttt{dependency\_overrides}) at the time of writing. Several media and tooling packages in Mangayomi are pulled from Git forks; capturing the commit SHA in the appendix preserves a one-to-one match between the document, the checkout, and the screenshots.
+
+\noindent\textbf{Scope note.}
+The subsections above highlight the architectural spine libraries. Many other entries in the bulleted list (OAuth, Discord RPC, encryption, file picking) wrap narrow platform or security capabilities so feature code stays declarative and testable; those may be expanded in appendices if needed.
+

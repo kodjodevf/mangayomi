@@ -1,0 +1,166 @@
+\section{Caching strategies in Mangayomi}
+\label{sec:caching-mangayomi}
+
+This section evaluates how Mangayomi applies caching in practice. For each mechanism below, the analysis states \textbf{what structure the developers chose}, explains \textbf{which parts of the supplied code snippets matter}, argues \textbf{why that structure fits this application}, and estimates \textbf{the typical storage footprint} associated with it. General benefits of caching (faster UI, less bandwidth, safer memory use, offline reuse) follow the usual mobile-development rationale and are assumed here.
+
+\subsection*{Overview of caching structures used}
+
+\begin{center}
+\begin{tabular}{@{}clp{0.52\linewidth}@{}}
+\hline
+\textbf{\#} & \textbf{Structure / mechanism} & \textbf{Role (short)} \\
+\hline
+1 & Isar + embedded \texttt{ChapterPageurls} & Persist chapter page URLs and headers for reuse \\
+\hline
+2 & Hive boxes (\texttt{TrackSearch}, \texttt{tracker\_library}) & Lightweight key-value persistence \\
+\hline
+3 & In-memory \texttt{\_LRUCache} (decoded image bytes) & LRU RAM cap for decoded images \\
+\hline
+4 & Disk cache + \texttt{\_CacheManager} eviction & On-disk images with max size + oldest-first eviction \\
+\hline
+5 & Folder \texttt{cacheimagemanga} + usage provider & Named cache directory; size shown / cleared in UI \\
+\hline
+6 & \texttt{ChapterPreloadManager} & In-reader preload with LRU-oriented chapter tracking \\
+\hline
+\end{tabular}
+\end{center}
+
+% ---------------------------------------------------------------------------
+\subsection{Structure 1: Isar database and embedded chapter page URL list}
+
+\subsubsection*{Identification}
+The primary application database is \textbf{Isar}. Within the \texttt{Settings} document, developers embedded a list of \texttt{ChapterPageurls} records. Each record stores a chapter identifier, the chapter URL used when the list was resolved, the ordered list of image URLs for every page, and optional per-page HTTP headers (serialised as strings). This layer is an \textbf{application-level cache of the result of ``get page list''}: once the extension has returned URLs, they can be reused without repeating that remote call while the chapter URL is unchanged.
+
+\subsubsection*{Explanation of the code snippets}
+The snippet from \texttt{models/settings.dart} (or equivalent generated schema) showing class \texttt{ChapterPageurls} highlights the fields that define what is cached: \texttt{chapterId} ties the cache entry to a chapter row; \texttt{chapterUrl} allows invalidation when the source changes the link; \texttt{urls} is the ordered page list; \texttt{headers} stores header maps needed for sites that require custom headers per request.
+
+The snippet from \texttt{services/get\_chapter\_pages.dart} shows the write path: existing entries for other chapters are preserved, the current chapter's URLs are appended, and \texttt{isar.settings.putSync} persists the updated list \textbf{unless incognito mode is active}. The relevant logic is the merge of \texttt{chapterPageUrlsList}, the construction of \texttt{ChapterPageurls} from \texttt{pageUrls}, and the synchronous transaction. Those lines are the proof that this cache is updated after a successful network resolution of pages.
+
+\subsubsection*{Rationale for this structure}
+Isar was already the canonical store for library and settings data, so embedding small repeated structures avoids a second database technology solely for URL lists. Persisting URLs (not full image binaries) keeps the DB compact while still enabling offline reopening of chapters that were loaded at least once online. Incognito bypass ensures private sessions do not leave traces in this cache.
+
+\subsubsection*{Expected cache storage (Isar \texttt{chapterPageUrlsList} component)}
+Storage scales with the \textbf{number of chapters cached} and the \textbf{length of URL strings}. A typical chapter might expose twenty to forty HTTPS URLs of roughly one hundred to two hundred characters each, plus occasional header JSON. One chapter therefore contributes on the order of \textbf{tens of kilobytes}. Even after caching page lists for \textbf{dozens or a few hundred} chapters across many titles, this portion of the Isar file usually remains in the \textbf{low megabyte range}, unless URLs are unusually long or headers are very large. It is orders of magnitude smaller than stored images.
+
+\MarcoCaptura{capture_caching/chapter_page_url.png}{Class \texttt{ChapterPageurls}: fields that define what Isar stores per chapter.}
+\MarcoCaptura{capture_caching/get_chapter_pages.png}{Persisting merged \texttt{chapterPageUrlsList} after resolving \texttt{pageUrls} (non-incognito).}
+
+% ---------------------------------------------------------------------------
+\subsection{Structure 2: Hive (small key-value stores)}
+
+\subsubsection*{Identification}
+\textbf{Hive} provides file-backed key-value boxes with minimal boilerplate. Mangayomi initialises Hive at application startup and registers type adapters (for example \texttt{TrackSearchAdapter}). Feature code opens named boxes such as \texttt{tracker\_library} where a map-like API is sufficient.
+
+\subsubsection*{Explanation of the code snippets}
+The startup snippet shows \texttt{Hive.initFlutter} with a platform-dependent path and \texttt{Hive.registerAdapter} for types that Hive serialises directly. Those lines establish where Hive files live and which models are allowed in boxes.
+
+The tracker snippet shows \texttt{Hive.openBox("tracker\_library")}. The relevant part is the \textbf{box name} (isolates this data from other Hive data) and subsequent read/write of keys/values representing tracker-related UI or migration state. Together, they demonstrate that this cache is \textbf{not} the main library schema but an auxiliary store.
+
+\subsubsection*{Rationale for this structure}
+For small, self-contained features, Hive avoids extending the Isar schema with tables that would be rarely queried alongside manga rows. Lazy box opening also keeps startup cost lower than loading every Isar collection upfront. Adapters give typed storage without manual JSON parsing in every call site.
+
+\subsubsection*{Expected cache storage (Hive boxes)}
+Tracker and search helper data typically consist of short strings, identifiers, and compact JSON blobs. Even with frequent updates, the on-disk Hive files for these boxes commonly stay in the range of \textbf{a few kilobytes to a few hundred kilobytes}. They are negligible compared with image caches unless the box is abused to store large blobs (which these snippets do not suggest).
+
+\MarcoCaptura{images/hive.png}{Hive initialisation and adapter registration at startup.}
+\MarcoCaptura{capture_caching/hive_tracker.png}{Opening and using the \texttt{tracker\_library} Hive box.}
+
+% ---------------------------------------------------------------------------
+\subsection{Structure 3: In-memory LRU cache for decoded images (\texttt{\_LRUCache})}
+
+\subsubsection*{Identification}
+File \texttt{custom\_extended\_image\_provider.dart} implements a generic \texttt{\_LRUCache<K,V>} using a Dart \texttt{Map} where \texttt{get} promotes an entry to most-recent and \texttt{put} inserts then evicts until a budget is met. A global instance caches decoded image bytes as \texttt{Uint8List} with a \textbf{maximum weighted size of fifty megabytes} (\texttt{maxSize: 50 * 1024 * 1024}, \texttt{sizeOf} returning byte length).
+
+\subsubsection*{Explanation of the code snippets}
+The definition snippet shows how eviction works: either by \textbf{item count} when no \texttt{sizeOf} is provided, or by \textbf{summed byte weight} when \texttt{sizeOf} is set. The global \texttt{\_memoryCache} line is the contract: decoded bitmap payloads cannot occupy more than fifty megabytes of RAM in aggregate for this layer.
+
+The usage snippet (where \texttt{\_memoryCache.get}/\texttt{put} are called around decode) shows that this cache sits on the \textbf{hot path} for displaying pages: hits avoid repeating decode work; misses fetch or decode then register bytes under the URL key.
+
+\subsubsection*{Rationale for this structure}
+Decoded images are far larger than URL strings. Keeping unbounded decoded buffers would risk out-of-memory crashes on mid-range devices. LRU eviction matches standard mobile guidance: retain recently viewed pages (vertical scroll within a chapter) and drop older bitmaps. Using \textbf{byte-weighted} eviction rather than a raw entry count matches image-cache guidance where item ``weight'' must reflect kilobytes, not object count.
+
+\subsubsection*{Expected cache storage (memory LRU)}
+This layer has a \textbf{hard upper bound of fifty megabytes} by design. Under light reading, actual occupancy stays well below that; under continuous scrolling through many large pages, occupancy \textbf{converges toward the cap} as new pages push out older ones. The meaningful ``average'' for reporting is therefore: \textbf{steady-state usage typically ranges from a few megabytes up to nearly fifty megabytes} depending on session intensity, not an unbounded growth curve.
+
+\MarcoCaptura{capture_caching/lru_definition.png}{Implementation of \texttt{\_LRUCache}: get/put and byte-weighted eviction.}
+\MarcoCaptura{capture_caching/lru_usage.png}{Global \texttt{\_memoryCache} with fifty-megabyte budget and integration with image load path.}
+
+% ---------------------------------------------------------------------------
+\subsection{Structure 4: Disk image cache with maximum size and oldest-file eviction}
+
+\subsubsection*{Identification}
+The same feature module defines \texttt{\_CacheManager} with a constant \texttt{\_maxCacheSize} of \textbf{five hundred megabytes}. Method \texttt{getCacheSize} totals file lengths under a directory; \texttt{evictOldestIfNeeded} lists files, sorts by \textbf{last access time}, and deletes from oldest until total size is under the cap.
+
+\subsubsection*{Explanation of the code snippets}
+The first image should show the \textbf{five hundred megabyte} constant and the overall flow: measure directory, compare to cap, sort metadata, delete files in age order. The second image should show where this manager is invoked relative to writing a downloaded image file (so eviction runs after new data lands). The relevant lines are the size check, the sort key (\texttt{lastAccessed}), and the delete loop---together they implement \textbf{disk LRU approximately} without maintaining an explicit LRU list for every block.
+
+\subsubsection*{Rationale for this structure}
+Network images must survive process restarts to avoid re-downloading entire chapters. A disk tier complements the fifty-megabyte RAM LRU: cold pages can be reloaded from flash. A fixed megabyte ceiling prevents the cache directory from filling device storage; eviction by access time balances fairness when the user jumps between series.
+
+\subsubsection*{Expected cache storage (managed disk tier)}
+The code sets an \textbf{upper bound of five hundred megabytes} for this eviction policy on that cache directory. In practice, average footprint depends on reading habits: casual use might sit at \textbf{tens of megabytes}; heavy readers approach the ceiling until eviction stabilises usage. Reporting can state that \textbf{typical long-session usage oscillates below five hundred megabytes with an informal band of roughly twenty--two hundred megabytes} for everyday reading before aggressive eviction, acknowledging that the exact figure is session-dependent.
+
+\MarcoCaptura{capture_caching/cache_manager.png}{\texttt{\_CacheManager}: five-hundred-megabyte cap and eviction helpers.}
+\MarcoCaptura{capture_caching/cache_size.png}{Eviction loop: delete oldest-accessed files until under limit.}
+
+% ---------------------------------------------------------------------------
+\subsection{Structure 5: Named folder \texttt{cacheimagemanga} and UI-reported size}
+
+\subsubsection*{Identification}
+\texttt{StorageProvider.getCacheDirectory} joins the OS application cache directory with a folder name such as \texttt{cacheimagemanga}. Provider \texttt{TotalChapterCacheSizeState} recursively sums file sizes in that folder for display and implements \texttt{clearCache} by deleting the directory tree.
+
+\subsubsection*{Explanation of the code snippets}
+The \texttt{getCacheDirectory} snippet highlights the path construction: \textbf{system cache root} plus \textbf{logical folder name}. That separation lets the app expose one coherent ``chapter image cache'' to the user independent of databases.
+
+The storage-usage snippet highlights \texttt{\_getdirectorySize}: recursive listing restricted to files, accumulation of \texttt{lengthSync}. That is the empirical measurement backing any UI label such as ``cache size''. \texttt{clearCache} deletes \texttt{cacheimagemanga} and optionally toast feedback---relevant because it defines what ``clear cache'' actually removes.
+
+\subsubsection*{Rationale for this structure}
+Users need a \textbf{transparent} bucket that can be cleared without wiping Isar databases or downloaded chapter archives. Binding reporting to a named directory makes support and settings screens honest: the number shown matches a concrete filesystem subtree.
+
+\subsubsection*{Expected cache storage (\texttt{cacheimagemanga})}
+This folder aggregates cached image files tied to reader behaviour; its size should \textbf{correlate with} the disk manager tier but may not be identical if other code paths write into the same tree. Measured values on a test device after moderate reading often fall in the \textbf{tens of megabytes}; after sustained use without clearing, sizes approaching \textbf{hundreds of megabytes} are plausible until eviction or manual clear. The assignment should cite \textbf{one or two measured values} from the device under test (Settings screen or debugger) to anchor these ranges numerically.
+
+\MarcoCaptura{capture_caching/cache_directory.png}{\texttt{getCacheDirectory}: building the path under the app cache root.}
+\MarcoCaptura{capture_caching/clean_cache.png}{Computing total size of \texttt{cacheimagemanga} and clearing it.}
+
+% ---------------------------------------------------------------------------
+\subsection{Structure 6: Chapter preload manager (reader RAM)}
+
+\subsubsection*{Identification}
+\texttt{ChapterPreloadManager} keeps a linear list of \texttt{UChapDataPreload} entries representing pages (including transition pages between chapters), tracks which chapter identifiers are loaded, and maintains \texttt{\_chapterLoadOrder} described in comments as supporting LRU-style eviction of chapters. Preload paths add the next chapter's decoded page structures into the same list and notify listeners.
+
+\subsubsection*{Explanation of the code snippets}
+The screenshot should capture: field declarations (\texttt{\_pages}, \texttt{\_loadedChapterIds}, \texttt{\_chapterLoadOrder}), the comment tying the queue to LRU ordering, and \texttt{preloadNextChapter} appending new pages after a transition page. The important idea is that this object holds \textbf{reader session state in RAM}---references to chapter models, paths, and page descriptors---rather than raw network buffers alone.
+
+\subsubsection*{Rationale for this structure}
+Sequential reading benefits from having the next chapter ready without a visible stall. Tracking load order supports dropping old chapters from memory when the user moves forward, aligning with bounded RAM goals. This layer works \textbf{together with} the LRU image cache: preload brings items into the pipeline; the LRU caps decoded bytes.
+
+\subsubsection*{Expected cache storage (preload manager)}
+This structure does not allocate a fixed megabyte quota in the excerpted code; footprint scales with \textbf{how many pages and chapters remain attached to \texttt{\_pages}}. In typical use (current chapter plus one prefetched chapter, normal page counts), the extra RAM beyond shared image caches is often on the order of \textbf{a few megabytes to a few tens of megabytes} of Dart objects and references, depending on resolution and preload depth settings in the reader. It remains subordinate to the \textbf{fifty-megabyte decoded LRU} and the \textbf{five-hundred-megabyte disk} ceilings for actual image bytes.
+
+\textit{Optional additional snippet:} If the report requires explicit preload limits, capture reader settings or provider constants that set ``pages to preload'' from \texttt{reader\_controller\_provider} / settings strings---those lines quantify how aggressively this manager fills memory.
+
+\MarcoCaptura{capture_caching/chapter_preload_fields.png}{Fields \texttt{\_pages}, \texttt{\_loadedChapterIds}, \texttt{\_chapterLoadOrder} and LRU-oriented comments (adjust filename if your screenshot differs).}
+\MarcoCaptura{capture_caching/chapter_preload_next.png}{\texttt{preloadNextChapter}: appending transition and next-chapter pages (adjust filename if your screenshot differs).}
+
+% ---------------------------------------------------------------------------
+\subsection{Synthesis: why the combination fits Mangayomi}
+
+Images dominate bandwidth and RAM; therefore the stack pairs \textbf{tight RAM LRU} with \textbf{large disk cache + eviction}. Long-lived navigation metadata (page URLs) lives in \textbf{Isar} so offline reopen works. Ephemeral tracker data fits \textbf{Hive} without bloating the main schema. The reader's \textbf{preload manager} optimises perceived latency within the same memory budget philosophy.
+
+\subsection*{Summary table of typical storage bands}
+
+\begin{center}
+\begin{tabular}{@{}lp{0.72\linewidth}@{}}
+\hline
+\textbf{Mechanism} & \textbf{Typical footprint (reasoned)} \\
+\hline
+Isar \texttt{chapterPageUrlsList} & Low MB total for many chapters (mostly strings). \\
+Hive auxiliary boxes & KB--low MB combined. \\
+RAM \texttt{\_LRUCache} & Up to $\sim$50\,MB by design; often lower in short sessions. \\
+Disk \texttt{\_CacheManager} tier & Up to $\sim$500\,MB cap; steady use often tens--low hundreds MB before eviction. \\
+\texttt{cacheimagemanga} directory & Aligns with image cache usage; measure on device for exact numbers. \\
+\texttt{ChapterPreloadManager} & Session RAM, typically small relative to image LRU; scales with preload depth. \\
+\hline
+\end{tabular}
+\end{center}

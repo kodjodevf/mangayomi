@@ -1,0 +1,133 @@
+\section{Technical audit: Mangayomi}
+\label{sec:technical-audit}
+
+This section records issues identified while reviewing the third-party codebase and exercising the application against the themes of the semester (connectivity and lifecycle, local storage and eventual connectivity, performance and caching, builds and profiling, safety and security). Findings are ordered by severity for maintainers; each item states what was observed, where it lives in code, why it matters relative to those themes, and what would improve it. A short mapping table links each finding to the corresponding micro-sprint topics for traceability.
+
+\subsection*{Scope and method}
+The audit combined static reading of Dart sources under \texttt{lib/}, configuration of HTTP/TLS clients, and behaviour already documented during offline and extension tests (pull-to-refresh failures, extensions screen with raw \texttt{SocketException} text, transient library update messages). Not every line of the repository was inspected; the items below are reproducible from the cited files.
+
+\begin{center}
+\begin{tabular}{@{}clp{0.48\linewidth}@{}}
+\hline
+\textbf{ID} & \textbf{Course theme (MS)} & \textbf{Finding (short)} \\
+\hline
+A1 & MS9--10 Eventual connectivity, quality of failure & Low-level exceptions shown to end users \\
+\hline
+A2 & MS9--10, MS13 Reliability & Extension fetch errors swallowed in a tight loop \\
+\hline
+A3 & MS15 Safety \& security & TLS certificate verification defaulted off for the Rust HTTP path \\
+\hline
+A4 & MS11--12 Performance, responsiveness & Synchronous Isar transactions on the chapter load path \\
+\hline
+A5 & MS10--11 Storage/cache reliability & Silent \texttt{catch} around cache measurement and deletion \\
+\hline
+A6 & MS9--10, MS11 Local server & Extension proxy server failures only visible in debug prints \\
+\hline
+\end{tabular}
+\end{center}
+
+% ---------------------------------------------------------------------------
+\subsection*{A1 --- User-visible technical exception strings}
+\paragraph{Observation.}
+When the network is unavailable or unstable, several surfaces show raw exception classes (e.g.\ \texttt{ClientException}, \texttt{SocketException}, \emph{failed host lookup}) instead of a short status in the application's own language layer. The same pattern appears on pull-to-refresh in the title detail view: the gesture completes, but the user briefly sees stack-level wording. That behaviour was reproduced on device during the connectivity test log; it is not hypothetical.
+
+\paragraph{Location and relevant code.}
+Error text ultimately originates from propagating Dart/HTTP failures into widgets that render the \texttt{toString()} of the error object, rather than mapping to a small set of user-facing states. Screenshots of the UI (extensions list, detail refresh) are stronger evidence than a single line of code because the defect is interaction-level; a useful still is the detail or extensions view in airplane mode.
+
+\paragraph{Why this is a technical issue.}
+For eventual connectivity (MS9--10), ``offline'' should be a first-class state, not an internal exception dump. Showing class names trains users to blame the app, hides whether the fault is DNS, TLS, or user airplaned mode, and complicates support. Quality scenarios for recovery (retry, work-offline hint) are harder to meet if the primary signal is opaque.
+
+\paragraph{Recommendation.}
+Introduce a single mapping layer from \texttt{Dart} \texttt{SocketException}, \texttt{HttpException}, and timeout types to normalised enums (offline, timeout, server error). Widgets bind to those enums only. Optional: central \texttt{ErrorMapper} used by Riverpod providers before \texttt{state = AsyncError}.
+
+\paragraph{Suggested evidence (UI).}
+Insert a screenshot of the Extensions or global-search screen in airplane mode if the build still shows long exception text. File name example: \texttt{capture\_audit/ui\_extensions\_offline.png}. Replace the \texttt{MarcoCaptura} line in your main file with your own \texttt{figure} if needed.
+
+% ---------------------------------------------------------------------------
+\subsection*{A2 --- Swallowed errors during extension repository fetch}
+\paragraph{Observation.}
+The provider that walks all configured extension repositories and calls \texttt{fetchSourcesList} wraps each call in \texttt{try \{ \ldots \} catch (\_) \{\}} with an empty body. Any failure---HTTP 500, malformed JSON, timeout---disappears. The UI may simply show no new extensions with no explanation.
+
+\paragraph{Location.}
+\texttt{lib/services/fetch\_item\_sources.dart}, lines around the \texttt{for (Repo repo in repos)} loop and the empty catch.
+
+\paragraph{Why this is a technical issue.}
+From a reliability and profiling standpoint (MS13), silent failure prevents distinguishing ``no repos configured'' from ``all repos unreachable''. Developers lose telemetry; users lose actionable feedback. It also skews perceived ``eventual connectivity'': the app looks idle when the network layer actually failed.
+
+\paragraph{Recommendation.}
+At minimum, log structured errors (\texttt{AppLogger}) with repo URL and exception type. Optionally aggregate into \texttt{AsyncValue} so the Extensions screen can show ``Last sync failed'' with retry. Empty catches should be rare and justified in a comment.
+
+\paragraph{Suggested evidence (code).}
+Capture \texttt{lib/services/fetch\_item\_sources.dart} from the \texttt{for (Repo repo} loop through the empty \texttt{catch (\_) \{\}}. File name example: \texttt{capture\_audit/fetch\_item\_sources.png}.
+
+% ---------------------------------------------------------------------------
+\subsection*{A3 --- TLS certificate verification disabled by default on the Rust HTTP client path}
+\paragraph{Observation.}
+When the app builds the Rust-compatible HTTP client (\texttt{rhttp}), \texttt{TlsSettings.verifyCertificates} is set from \texttt{reqcopyWith["verifyCertificates"]} and \textbf{defaults to false} when that map entry is absent. That means the common path accepts any server certificate unless callers explicitly opt in to verification.
+
+\paragraph{Location.}
+\texttt{lib/services/http/m\_client.dart}, inside \texttt{httpClient}, where \texttt{rhttp.ClientSettings} is constructed (\texttt{tlsSettings: rhttp.TlsSettings(verifyCertificates: \ldots)}).
+
+\paragraph{Why this is a technical issue.}
+Under MS15 (safety and security), disabling verification opens straightforward person-in-the-middle attacks on Wi-Fi hotspots or compromised DNS, especially for an app that loads arbitrary third-party sources and images. Even if motivated by scraping sites with broken certificates, the secure default should be ``verify'' with a deliberate user toggle for advanced cases.
+
+\paragraph{Recommendation.}
+Default \texttt{verifyCertificates} to \texttt{true}; expose a dangerous-setting switch with explicit warning text if compatibility demands an override. Audit all \texttt{MClient.init} call sites that pass \texttt{reqcopyWith}.
+
+\paragraph{Suggested evidence (code).}
+Capture \texttt{lib/services/http/m\_client.dart} where \texttt{TlsSettings(verifyCertificates: reqcopyWith?["verifyCertificates"] ?? false)} appears. File name example: \texttt{capture\_audit/m\_client\_tls.png}.
+
+% ---------------------------------------------------------------------------
+\subsection*{A4 --- Synchronous database writes while resolving chapter pages}
+\paragraph{Observation.}
+After resolving page URLs for a chapter, the code persists the URL list into Isar using \texttt{writeTxnSync} inside the chapter-loading flow (same execution path that prepares the reader). Synchronous transactions block the calling isolate until the write completes.
+
+\paragraph{Location.}
+\texttt{lib/services/get\_chapter\_pages.dart}, block that merges \texttt{chapterPageUrlsList} and calls \texttt{isar.writeTxnSync(() \{ isar.settings.putSync(\ldots); \});}.
+
+\paragraph{Why this is a technical issue.}
+MS11--12 emphasise perceived performance and frame pacing. Heavy or frequent synchronous writes on the UI isolate can contribute to jank during chapter opens, especially on low-end devices or large \texttt{chapterPageUrlsList} blobs. The design trades correctness-at-rest for immediate durability, which is reasonable, but the cost should be measured.
+
+\paragraph{Recommendation.}
+Benchmark with Flutter DevTools (CPU, frame timeline). If spikes appear, defer persistence with \texttt{writeTxn} async after the first frame, or batch URL updates. Keep sync writes only where reads must see the write immediately on the next line.
+
+\paragraph{Suggested evidence (code).}
+Capture \texttt{lib/services/get\_chapter\_pages.dart} around \texttt{isar.writeTxnSync} and \texttt{putSync} for \texttt{chapterPageUrlsList}. File name example: \texttt{capture\_audit/get\_chapter\_pages\_sync.png}.
+
+% ---------------------------------------------------------------------------
+\subsection*{A5 --- Silent failures in chapter image cache accounting and cleanup}
+\paragraph{Observation.}
+The provider that totals disk usage for the \texttt{cacheimagemanga} folder and clears it wraps filesystem operations in empty \texttt{catch} blocks. If deletion fails (permissions, locked file), the user may still see ``\texttt{0.00 B}'' or hear a success toast while old files remain.
+
+\paragraph{Location.}
+\texttt{lib/modules/more/data\_and\_storage/providers/storage\_usage.dart}, methods \texttt{clearCache}, \texttt{\_getTotalDiskSpace}, \texttt{\_getdirectorySize}.
+
+\paragraph{Why this is a technical issue.}
+For local storage and caching (MS10--11), cache size is a trust signal. Silent failure misleads users about free space and makes duplicate bug reports when storage pressure continues. It also hides platform permission regressions.
+
+\paragraph{Recommendation.}
+Surface failure through the same toast channel with a distinct message, or fall back to last known size. Log the exception with path context.
+
+\paragraph{Suggested evidence (code).}
+Capture \texttt{lib/modules/more/data\_and\_storage/providers/storage\_usage.dart} showing \texttt{clearCache} and \texttt{\_getdirectorySize} with empty \texttt{catch} blocks. File name example: \texttt{capture\_audit/storage\_usage.png}.
+
+% ---------------------------------------------------------------------------
+\subsection*{A6 --- Extension server startup errors hidden outside debug mode}
+\paragraph{Observation.}
+The local HTTP helper used for extension bridging (\texttt{MExtensionServerPlatform.startServer}) catches startup failures and only prints them when \texttt{kDebugMode} is true. In release builds, failure can be silent; the proxy URL in settings may stay invalid without an obvious signal.
+
+\paragraph{Location.}
+\texttt{lib/services/m\_extension\_server.dart}, \texttt{startServer} method.
+
+\paragraph{Why this is a technical issue.}
+Connects to MS9--10 (local services as part of connectivity story) and MS13 debugging practice: production users on desktop rely on that server path for some extension operations. If binding to the loopback port fails, the fault should surface in UI or logs accessible from ``About'', not only debug consoles.
+
+\paragraph{Recommendation.}
+Log through \texttt{AppLogger} at error level regardless of build mode, or expose a one-line status under Browse settings.
+
+\paragraph{Suggested evidence (code).}
+Capture \texttt{lib/services/m\_extension\_server.dart} in \texttt{startServer}, including the \texttt{catch} and \texttt{kDebugMode} print. File name example: \texttt{capture\_audit/m\_extension\_server.png}.
+
+% ---------------------------------------------------------------------------
+\subsection*{Risk summary}
+No single finding implies the application is unusable; together they show a pattern---\textbf{exceptions either escape to the UI as raw text or disappear entirely}. Fixing A1 and A2 improves perceived reliability under poor networks; fixing A3 reduces security exposure; A4--A6 tighten behaviour around storage and auxiliary services. Prioritisation for a small team would typically be A3 (security default), then A1 (user trust), then A2/A5 (observability).

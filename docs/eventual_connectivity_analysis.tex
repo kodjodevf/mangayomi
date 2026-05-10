@@ -1,0 +1,185 @@
+\section{Eventual connectivity (ECn) in Mangayomi: strategies, anti-patterns, and fixes}
+
+This part evaluates the third-party app \textbf{Mangayomi} from an \textbf{eventual connectivity (ECn)} viewpoint: behaviour when the network is missing, flaky, or expensive should still let people \emph{use what they already have}, show \emph{clear recoverable states}, and avoid \emph{wasting time or data} on actions that cannot succeed offline.
+
+The review names \textbf{good ECn strategies}, lists \textbf{anti-patterns} (behaviour that breaks ECn expectations), links each point to \textbf{screenshot evidence}, states \textbf{how to reproduce} it, explains \textbf{why} each anti-pattern is harmful under ECn, and gives \textbf{concrete fixes}. Assumes your main document already loads \texttt{graphicx} and defines \texttt{\textbackslash MarcoCaptura\{file\}\{caption\}} (or replace those lines with your own \texttt{figure} environments).
+
+\subsection{Test setup (how sources were loaded)}
+\label{sec:ecn-setup}
+
+Extension catalogues were added under \textbf{More} $\rightarrow$ \textbf{Settings} $\rightarrow$ \textbf{Browse}: \textbf{manga extensions repo} --- \url{https://raw.githubusercontent.com/kodjodevf/mangayomi-extensions/main/index.json}; \textbf{novel extensions repo} --- \url{https://raw.githubusercontent.com/kodjodevf/mangayomi-extensions/main/novel_index.json}. Sources such as \textbf{MangaDex} and \textbf{Web Novel Translations} supplied titles including \emph{A bride's story}, \emph{Trauma Center}, and \emph{RNG gamer} for repeatable tests.
+
+\subsection{Summary: good ECn strategies vs.\ anti-patterns}
+
+\begin{center}
+\begin{tabular}{@{}p{0.42\linewidth}p{0.52\linewidth}@{}}
+\hline
+\textbf{Supports ECn (good strategy)} & \textbf{Anti-pattern / ECn issue (bad or weak)} \\
+\hline
+\textbf{Offline-first library and detail:} saved series stay usable without network (\nameref{sec:ecn-good-library}). &
+\textbf{Leaky errors on manual refresh:} pull-to-refresh shows raw \texttt{ClientException} / \texttt{SocketException} instead of a calm offline state (\nameref{sec:ecn-ap-pull}). \\
+\hline
+\textbf{Reuse of resolved chapter pages:} reopen a chapter offline after loading it online (\nameref{sec:ecn-good-cache}). &
+\textbf{Opaque retry feedback:} \texttt{Failed Updating Library (1/2)} appears then vanishes without stable status (\nameref{sec:ecn-ap-retry}). \\
+\hline
+\textbf{User-controlled mobile data protection:} ``Wi-Fi only'' blocks downloads on cellular (\nameref{sec:ecn-good-wifi}). &
+\textbf{Technical errors as UI for missing network:} Extensions / global search show exception-style text (\nameref{sec:ecn-ap-extensions}). \\
+\hline
+--- &
+\textbf{WebView without a connectivity guard:} generic browser error instead of blocking upfront (\nameref{sec:ecn-ap-webview}). \\
+\hline
+--- &
+\textbf{Cold offline chapter:} never-opened chapter shows low-level errors, not ``connect first'' (\nameref{sec:ecn-ap-cold}). \\
+\hline
+\end{tabular}
+\end{center}
+
+\noindent\textbf{Note.} Sync against a custom server was \textbf{not} tested in this session; no screenshot or reproduction is claimed for it.
+
+\subsection{Good ECn strategies observed}
+\label{sec:ecn-good}
+
+\subsubsection{Offline-first library and detail (local persistence)}
+\label{sec:ecn-good-library}
+\textbf{Strategy.} Locally stored library entries and metadata remain available for browsing when the network is gone.
+
+\textbf{Why this supports ECn.} Disconnecting does not wipe the catalogue the user built; ``no signal'' does not mean ``empty app''. Local state stays valid across outages.
+
+\textbf{Evidence (screenshots).} File names: \texttt{manga\_biblioteca\_offline\_normal.png}, \texttt{novel\_biblioteca\_offline\_normal.png}.
+
+\MarcoCaptura{capture/manga_biblioteca_offline_normal.png}{Offline library or manga detail: locally stored content still visible.}
+\MarcoCaptura{capture/novel_biblioteca_offline_normal.png}{Offline library or novel detail: locally stored content still visible.}
+
+\textbf{How to reproduce.} With connectivity, add titles to the library (e.g.\ manga \emph{A bride's story} via heart / in library; novels \emph{Trauma Center}, \emph{RNG gamer}). Confirm detail loads. Enable airplane mode or disable Wi-Fi and mobile data. Open library and a saved title.
+
+\textbf{Observed behaviour.} Same stored content remains readable as before offline.
+
+\subsubsection{Reuse of resolved chapter content (saved page list)}
+\label{sec:ecn-good-cache}
+\textbf{Strategy.} After a chapter fully loads once online, reopening it offline reuses the resolved page list instead of requiring a live fetch.
+
+\textbf{Why this supports ECn.} Repeat reading offline is the main ECn benefit for readers: network becomes optional for material already fetched once.
+
+\textbf{Evidence (screenshots).} \texttt{capitulo\_relectura\_con\_red.png} (online reference), \texttt{capitulo\_relectura\_sin\_red.png} (same chapter offline).
+
+\MarcoCaptura{capture/capitulo_relectura_con_red.png}{Chapter loaded with connectivity (reference).}
+\MarcoCaptura{capture/capitulo_relectura_sin_red.png}{Same chapter reopened offline after prior load.}
+
+\textbf{How to reproduce.} Wi-Fi on: open a chapter and scroll until pages load. Leave reader, enable airplane mode, reopen the \emph{same} chapter.
+
+\textbf{Observed behaviour.} Chapter readable fully offline.
+
+\subsubsection{Explicit network-cost control (Wi-Fi-only downloads)}
+\label{sec:ecn-good-wifi}
+\textbf{Strategy.} User can forbid chapter downloads on mobile data; the app enforces it.
+
+\textbf{Why this supports ECn.} ECn includes \emph{metered} links, not only full offline. Blocking cellular downloads respects intent and avoids bill shock.
+
+\textbf{Evidence (screenshots).} \texttt{settings\_only\_wifi.png}, \texttt{only\_wifi\_alert\_download.png}.
+
+\MarcoCaptura{capture/settings_only_wifi.png}{Downloads: Wi-Fi-only option enabled.}
+\MarcoCaptura{capture/only_wifi_alert_download.png}{Download attempt on mobile data: warning or block.}
+
+\textbf{How to reproduce.} Enable \textbf{Only on Wi-Fi} under \textbf{More} $\rightarrow$ \textbf{Settings} $\rightarrow$ \textbf{Downloads}. Turn off Wi-Fi, keep mobile data, try to download a chapter.
+
+\textbf{Observed behaviour.} Download blocked or clearly warned.
+
+\subsection{Anti-patterns and ECn issues (screenshots, reproduction, why it is bad, fixes)}
+\label{sec:ecn-antipatterns}
+
+\subsubsection{Anti-pattern: leaking implementation errors to the user (pull-to-refresh on detail)}
+\label{sec:ecn-ap-pull}
+\textbf{Anti-pattern name.} \emph{Implementation detail exposed as primary UI} --- users see exception types instead of a connectivity outcome.
+
+\textbf{What happens.} Pull-to-refresh on series detail surfaces errors like \texttt{ClientException} / \texttt{SocketException}; the banner closes. Cached local detail still shows underneath, but the first thing the user reads looks like a crash.
+
+\textbf{Evidence (screenshots).} \texttt{manga\_pull\_refresh\_detalle\_exception.png}, \texttt{NOVEL\_pull\_refresh\_detalle\_exception.png}.
+
+\MarcoCaptura{capture/manga_pull_refresh_detalle_exception.png}{Pull-to-refresh on manga detail: exception text visible.}
+\MarcoCaptura{capture/NOVEL_pull_refresh_detalle_exception.png}{Pull-to-refresh on novel detail: same pattern.}
+
+\textbf{How to reproduce.} With connectivity, open manga or novel detail; pull to refresh until refresh completes or fails.
+
+\textbf{Why this is bad for ECn.} ECn needs clear states: ``synced'', ``offline, showing cache'', ``retry''. Exception class names do not answer that; they scare non-developers and feel like a broken build even when data is fine.
+
+\textbf{How to fix.} Map failures to one short message (\emph{Can't refresh --- showing saved info}) plus \textbf{Retry}; optional ``Technical details'' for debugging only.
+
+\subsubsection{Anti-pattern: disappearing, unexplained retry state (library / updates)}
+\label{sec:ecn-ap-retry}
+\textbf{Anti-pattern name.} \emph{Transient failure with no durable status} --- the user cannot tell what failed or what to do next.
+
+\textbf{What happens.} Library refresh shows \texttt{Failed Updating Library (1/2)}, the UI spins, then the message disappears. Similar behaviour appeared in Updates and related refresh flows.
+
+\textbf{Evidence (screenshot).} \texttt{reintento.png}.
+
+\MarcoCaptura{capture/reintento.png}{Library or updates refresh: transient failure message.}
+
+\textbf{How to reproduce.} On normal connectivity, trigger library refresh, Updates refresh/download, or other forced updates until the message appears.
+
+\textbf{Why this is weak for ECn.} Under flaky networks, users need to know whether work is pending, partially done, or abandoned. A toast that vanishes leaves no \emph{eventual} guarantee---only momentary noise.
+
+\textbf{How to fix.} Persistent row or icon: \emph{Last updated: \ldots}, \emph{Could not refresh}, \textbf{Retry}; queue refresh when connectivity returns.
+
+\subsubsection{Anti-pattern: raw network exceptions as the main screen (Extensions and global search)}
+\label{sec:ecn-ap-extensions}
+\textbf{Anti-pattern name.} \emph{Treating ``offline'' as an error storm} --- many stack-like lines instead of one calm empty state.
+
+\textbf{What happens.} Offline, Extensions and global extension search list \texttt{ClientException}, \texttt{SocketException}, \emph{failed host lookup} per extension.
+
+\textbf{Evidence (screenshots).} \texttt{error\_reload.png}; \texttt{error\_reload\_2.png} (search offline).
+
+\MarcoCaptura{capture/error_reload.png}{Extensions screen offline: technical exception text.}
+\MarcoCaptura{capture/error_reload_2.png}{Global extension search offline: repeated errors.}
+
+\textbf{How to reproduce.} Airplane mode or data off: open manga/novel \textbf{Extensions}; optionally Browse's globe-with-magnifier search.
+
+\textbf{Why this is bad for ECn.} Offline should be \emph{normal}, not exceptional. Users infer the app is defective and get no single action (\textbf{Retry when online}).
+
+\textbf{How to fix.} One consolidated offline panel with short copy and retry; hide per-extension traces outside developer mode.
+
+\subsubsection{Anti-pattern: launching WebView without checking connectivity}
+\label{sec:ecn-ap-webview}
+\textbf{Anti-pattern name.} \emph{Optimistic navigation into a doomed WebView}.
+
+\textbf{What happens.} From library, WebView opens offline and shows a generic browser error (\texttt{ERR\_INTERNET\_DISCONNECTED}).
+
+\textbf{Evidence (screenshot).} \texttt{webview\_sin\_red.png}.
+
+\MarcoCaptura{capture/webview_sin_red.png}{WebView offline: browser-style disconnect error.}
+
+\textbf{How to reproduce.} Add a title online; go offline; open title and tap WebView.
+
+\textbf{Why this is weak for ECn.} Users waste a tap and a full-screen error for something the app could predict. ECn-friendly flows block or explain \emph{before} opening components that always need the network.
+
+\textbf{How to fix.} Lightweight connectivity check (or short HEAD) before opening WebView; if offline, in-app message only.
+
+\subsubsection{Anti-pattern: cold chapter offline with no user-facing explanation}
+\label{sec:ecn-ap-cold}
+\textbf{Anti-pattern name.} \emph{Failure mode indistinguishable from a bug} --- exception strings instead of ``needs initial download''.
+
+\textbf{What happens.} A chapter never opened before, opened offline with no cached pages, shows raw exception-style text instead of explaining that pages must be fetched online first.
+
+\textbf{Evidence (screenshot).} \texttt{no\_pages\_available.png}.
+
+\MarcoCaptura{capture/no_pages_available.png}{Never-opened chapter offline: technical error instead of guided message.}
+
+\textbf{How to reproduce.} Pick an unopened chapter (or reset app data if acceptable); disable connectivity; open that chapter.
+
+\textbf{Why this is bad for ECn.} ECn requires separating ``cannot fetch yet (offline)'' from ``source empty'' or ``blocked''. Raw exceptions hide the real remedy (\emph{connect once to load}).
+
+\textbf{How to fix.} Dedicated empty state: \emph{This chapter is not downloaded yet --- connect to load pages} with \textbf{Retry}; never show exception classes in the main reader layer.
+
+\subsection{Recommendations (mapped to anti-patterns)}
+\label{sec:ecn-recommendations}
+
+\begin{enumerate}\itemsep3pt
+  \item \textbf{Against \nameref{sec:ecn-ap-pull} and \nameref{sec:ecn-ap-extensions}:} Add an error-presentation layer---user copy + retry; developer logs elsewhere.
+  \item \textbf{Against \nameref{sec:ecn-ap-retry}:} Replace vanishing toasts with durable status (timestamp, pending retry, manual retry).
+  \item \textbf{Against \nameref{sec:ecn-ap-webview}:} Gate WebView behind a connectivity check or explicit user override.
+  \item \textbf{Against \nameref{sec:ecn-ap-cold}:} First-load offline = guided message, not exceptions.
+  \item \textbf{Preserve \nameref{sec:ecn-good-library}, \nameref{sec:ecn-good-cache}, \nameref{sec:ecn-good-wifi}:} These already match ECn; avoid regressions while fixing messaging.
+\end{enumerate}
+
+\subsection*{Closing}
+
+Mangayomi demonstrates strong \textbf{local-first} behaviour and \textbf{reuse of loaded chapters}, plus sensible \textbf{Wi-Fi-only} controls. The ECn gaps are mostly \textbf{interaction and messaging anti-patterns}: exposing low-level errors, unclear retry state, unguarded WebView, and cold-load confusion. Fixing those presentation issues would align the user experience with ECn expectations without rewriting core storage logic.

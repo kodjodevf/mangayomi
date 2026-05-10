@@ -1,0 +1,78 @@
+Aquí tienes un resumen estructurado basado en los documentos proporcionados para que puedas cumplir con éxito los puntos de tu checklist sobre conectividad eventual (Eventual Connectivity):
+
+### 1. Estrategias de Conectividad Eventual (Eventual Connectivity Strategies)
+Las estrategias se dividen en cómo la aplicación **gestiona/almacena** los datos y en cómo los **obtiene (fetching)** de la red:
+
+[cite_start]**Estrategias de Caché y Recuperación (Data Caching + Retrieving)[cite: 242, 243]:**
+* **Cache, falling back to network (Offline first):** Es la más usada. [cite_start]Primero se consulta el almacenamiento local o caché; si los datos no están, se solicitan al servidor[cite: 243, 244].
+* [cite_start]**Network only:** Siempre se hace la petición a la red porque las acciones no son repetibles (no idempotentes) o resulta muy costoso almacenarlas localmente[cite: 245].
+* [cite_start]**Network falling back to cache:** Intenta mostrar siempre la información más actualizada de la red; si falla, recurre a mostrar una versión antigua guardada en caché[cite: 245, 246].
+* [cite_start]**Cached on network response:** Los datos se obtienen de la red e inmediatamente se duplican y guardan en el almacenamiento local[cite: 246].
+* [cite_start]**Cache then network:** Primero se muestra rápidamente la información guardada en caché y, cuando la petición a la red finalmente responde, se actualizan tanto los datos en caché como la interfaz[cite: 246, 247].
+* [cite_start]**Generic fallback:** Si tanto la caché como la red fallan, se muestra un recurso local por defecto (por ejemplo, una imagen o texto genérico)[cite: 247, 248].
+
+[cite_start]**Estrategias de Fetching (Cuándo se actualizan los datos)[cite: 250, 251, 252]:**
+* [cite_start]**At launch time:** La información se descarga al abrir la app (usualmente con un *splash screen*)[cite: 250].
+* [cite_start]**At launch time (background fetch):** Un proceso en segundo plano actualiza los datos sin bloquear al usuario[cite: 251].
+* [cite_start]**Pull (on demand):** El usuario solicita los datos explícitamente (ej. deslizando hacia abajo para recargar)[cite: 251].
+* [cite_start]**Expiration policy:** Los datos expiran y se actualizan automáticamente cada cierta cantidad de minutos/segundos[cite: 251].
+* [cite_start]**Via notification (Push):** El servidor envía una notificación a la app indicándole que hay datos nuevos por recuperar[cite: 252].
+
+---
+
+### 2, 3 y 4. Antipatrones: Identificación, por qué son malos, reproducción y solución
+[cite_start]A continuación se detalla cómo se ven en la app, su impacto negativo, y cómo auditarlos y repararlos[cite: 255]:
+
+* **Anti-pattern #1: Blocked App (App Bloqueada)**
+    * [cite_start]**Cómo se ve:** La aplicación arroja un error fatal (*crash*) o se congela por completo al encontrar un problema de red[cite: 257].
+    * **Por qué es malo:** Asume incorrectamente que siempre hay conexión. [cite_start]No se capturan las excepciones (errores no esperados) interrumpiendo abruptamente el flujo del usuario[cite: 258].
+    * **Cómo reproducir:** Apaga el WiFi/Datos justo antes de que la app realice un llamado a un servidor (ej. al darle "Login").
+    * [cite_start]**Cómo arreglar:** Implementar bloques *try/catch* en las llamadas de red para capturar excepciones y mostrar un mensaje amistoso en lugar de dejar que la aplicación falle[cite: 258].
+
+* **Anti-pattern #2: Stuck Progress Notification (Cargador atascado)**
+    * [cite_start]**Cómo se ve:** El ícono o barra de carga (spinner) se queda girando infinitamente y solo desaparece si el usuario cambia de vista a la fuerza[cite: 260].
+    * [cite_start]**Por qué es malo:** La app no se da cuenta de que perdió conexión, engañando al usuario con una falsa ilusión de carga continua[cite: 261].
+    * [cite_start]**Cómo reproducir:** Iniciar la carga de una lista de elementos y apagar el router o ponerse en modo avión en medio del proceso[cite: 259, 260].
+    * [cite_start]**Cómo arreglar:** Implementar "Timeouts" (tiempos máximos de espera) en las peticiones HTTP y esconder explícitamente el indicador de carga cuando el intento falle, alertando al usuario[cite: 261].
+
+* **Anti-pattern #3: Non-informative Message (Mensaje no informativo)**
+    * [cite_start]**Cómo se ve:** Aparecen alertas genéricas como "Failed", "Error" o "No se pudo conectar"[cite: 262, 263].
+    * [cite_start]**Por qué es malo:** No le explican al usuario *por qué* sucedió el error ni le dan alternativas para solucionarlo[cite: 264].
+    * **Cómo reproducir:** Utilizar funciones básicas de la aplicación sin internet y leer qué dicen los cuadros de error.
+    * [cite_start]**Cómo arreglar:** Sustituir errores genéricos por mensajes explicativos: *"Revise su conexión a internet y vuelva a intentarlo"*[cite: 264].
+
+* **Anti-pattern #4: Lost Content Save (Contenido perdido)**
+    * [cite_start]**Cómo se ve:** Pantallas que muestran contenido incompleto, vacío o borroso donde debería existir información[cite: 264, 265].
+    * [cite_start]**Por qué es malo:** Se presentan inconsistencias de interfaz porque no hay ningún contenido de repuesto previsto para estados sin conexión[cite: 265].
+    * [cite_start]**Cómo reproducir:** Abrir el detalle de un perfil o un artículo sin conexión y observar espacios en blanco vacíos[cite: 264, 265].
+    * **Cómo arreglar:** Implementar estrategias de "Generic fallback" para mostrar recursos locales predeterminados, o usar "Empty States" bien diseñados.
+
+* **Anti-pattern #5: Non-existent Result Notification (Falta de notificación de resultado)**
+    * [cite_start]**Cómo se ve:** Al realizar una acción sin conexión (ej. guardar un formulario), no ocurre nada[cite: 266].
+    * [cite_start]**Por qué es malo:** El usuario no sabe si su acción se completó o se perdió y se verá forzado a refrescar para verificar el comportamiento real[cite: 266].
+    * [cite_start]**Cómo reproducir:** Presionar un botón para interactuar (dar "like" o responder un mensaje) desconectado y ver si hay algún *feedback*[cite: 266].
+    * **Cómo arreglar:** Proveer retroalimentación visual (ej. *"Acción encolada, se ejecutará al recuperar internet"*).
+
+* **Anti-pattern #6 & #10: Redirection w/o Connectivity Check (Redirección a ciegas)**
+    * [cite_start]**Cómo se ve:** Al tocar una opción, la app te lleva a una nueva vista (usualmente un Webview o componente de navegador) que está en blanco o con el error de "Estás desconectado" del propio sistema operativo[cite: 267, 268].
+    * [cite_start]**Por qué es malo:** La app redirigió a un contexto inútil sin verificar de antemano si era posible cargar esa vista[cite: 268].
+    * [cite_start]**Cómo reproducir:** Hacer tap en un enlace externo o vista web embebida sin internet[cite: 267].
+    * **Cómo arreglar:** Ejecutar una comprobación de red (*connectivity check*) inmediatamente antes de iniciar la redirección; si no hay red, detener el evento y avisar.
+
+* **Anti-pattern #7: Unavailable functionality after connection recovery (Función deshabilitada tras recuperar conexión)**
+    * [cite_start]**Cómo se ve:** Un botón de "Registrarse" o "Enviar" que se deshabilitó al perder señal, permanece deshabilitado incluso después de recuperar la conexión[cite: 268].
+    * [cite_start]**Por qué es malo:** Rompe completamente el flujo, obligando al usuario a retroceder o reiniciar la app[cite: 268].
+    * **Cómo reproducir:** Entrar a una vista en modo avión, confirmar que el botón de envío está bloqueado, quitar el modo avión, y verificar si el botón revive.
+    * **Cómo arreglar:** Suscribir la interfaz a eventos (*listeners*) de estado de red para que se re-habilite proactivamente cuando la conectividad se restaura.
+
+* **Anti-pattern #8: Unclear Behavior (Comportamiento extraño/poco claro)**
+    * [cite_start]**Cómo se ve:** La UI se comporta de manera extraña: se abren cosas solas, el teclado tapa el texto, o crashea un componente secundario al invocar opciones dependientes de la red[cite: 269, 270].
+    * [cite_start]**Por qué es malo:** Confunde severamente, pues la razón del error resulta incomprensible[cite: 270].
+    * **Cómo reproducir:** Enviar múltiples peticiones simultáneas seguidas de cortes intermitentes de red.
+    * **Cómo arreglar:** Cuidar el manejo del estado general de la interfaz durante las peticiones y cancelar animaciones/interacciones ambiguas si falla la red.
+
+* **Anti-pattern #9: Unexpected result from background process (Resultado inesperado del segundo plano)**
+    * [cite_start]**Cómo se ve:** Llegan descargas u operaciones de golpe tiempo después de que el usuario las solicitó, o no hay indicación inicial de que algo se estaba procesando[cite: 271, 272].
+    * [cite_start]**Por qué es malo:** El proceso sí se pone en cola por debajo de la mesa para luego ejecutarse, pero nunca se le notifica la situación al usuario, generando sorpresas más adelante (o *spam* de notificaciones)[cite: 273].
+    * [cite_start]**Cómo reproducir:** Iniciar descargas sin red, seguir usando la app, activar WiFi y notar de repente múltiples notificaciones "Descargado"[cite: 271, 272].
+    * **Cómo arreglar:** Asegurarse de notificar al usuario sobre qué procesos se encolan para después: *"Descarga en espera, se reanudará con conexión WiFi"*.

@@ -1,0 +1,71 @@
+Here are comprehensive study notes based on the provided document, structured specifically to help you complete your assignment on evaluating caching strategies. 
+
+
+### **Introduction: The Purpose of Caching**
+[cite_start]Before diving into specific structures, it is important to state the core benefits of caching in mobile apps: it provides a faster experience for the user, reduces internet data usage, lowers the load on backend servers, and enables a better offline experience[cite: 3, 4].
+
+---
+
+### **a. Identify the Caching Structures**
+Depending on the platform and specific needs of the third-party app you are analyzing, developers might choose from the following caching structures mentioned in the document:
+
+* **Android Memory Cache Structures**:
+    * [cite_start]**`LruCache<K, V>`**: An optimized map that evicts the least-recently-used items when memory is full[cite: 9]. [cite_start]It is implemented internally as a `LinkedHashMap` to maintain insertion or access order[cite: 36, 39]. 
+    * **`SparseArray<E>`**: Maps integer keys to objects. [cite_start]It avoids the overhead of boxing/unboxing integers, making it more memory efficient than a standard map, though slower[cite: 44, 46].
+    * [cite_start]**`ArrayMap<K, E>`**: A memory-efficient alternative to HashMap for generic keys that uses an array of hashes and an array of key-value pairs[cite: 41, 42].
+    * [cite_start]**`HashMap<K, V>`**: Standard Java map, recommended only for large collections (more than thousands of items) to guarantee constant-time lookup performance[cite: 39].
+* **iOS Cache Structures**:
+    * [cite_start]**`NSCache<K, V>`**: The iOS equivalent that holds strong references and utilizes auto-eviction policies when the system is low on memory[cite: 59].
+* **Third-Party / Cross-Platform Cache Managers**:
+    * [cite_start]**Flutter**: `flutter_cache_manager` (for files) and `cached_network_image` (for bitmaps)[cite: 53, 55].
+    * [cite_start]**Image Libraries**: Picasso or Glide, which handle deep multi-layer (Memory + Disk) caching logic automatically[cite: 61, 80].
+
+
+---
+
+### **b. Describe with Well-Explained Snippets of Code**
+*When writing your assignment, use actual code from the app you are analyzing. You can use the following template to describe the code blocks.*
+
+**Snippet Example 1: Implementing an LRU Cache for Bitmaps (Android)**
+```java
+// 1. Calculate the maximum available Virtual Machine (VM) memory.
+[cite_start]final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024); [cite: 18]
+
+// 2. Define the cache size dynamically. Here, it is set to 1/8th of the max memory.
+[cite_start]final int cacheSize = maxMemory / 8; [cite: 19]
+
+// 3. Initialize the LRU Cache.
+[cite_start]memoryCache = new LruCache<String, Bitmap>(cacheSize) { [cite: 20]
+    @Override
+    protected int sizeOf(String key, Bitmap bitmap) {
+        // 4. Measure the size of each item in kilobytes rather than item count.
+        [cite_start]return bitmap.getByteCount() / 1024; [cite: 20, 21]
+    }
+};
+```
+* [cite_start]**Explanation of Code**: The snippet highlights how developers must manually declare the `cacheSize` during implementation because `LruCache` has a strict user-predefined size limit[cite: 14, 15]. [cite_start]The `sizeOf` override ensures the system calculates the weight of the images in kilobytes rather than just counting the number of objects[cite: 20].
+
+**Snippet Example 2: Flutter Network Image Caching**
+```dart
+CachedNetworkImage(
+    placeholder: (context, url) => CircularProgressIndicator(),
+    imageUrl: 'https://picsum.photos/250?image=9',
+[cite_start]); [cite: 57]
+```
+* **Explanation of Code**: This snippet shows how Flutter handles image caching at the widget level. [cite_start]It automatically uses local cache, only falling back to a network request if the image isn't available[cite: 56].
+
+---
+
+### **c. Analyze and Explain Why Developers Used Those Structures**
+* **Why `LruCache` / `NSCache`?** Mobile devices have strict memory limits. [cite_start]If an app attempts to load too many heavy objects (like images) into memory, the OS throws an Out Of Memory (OOM) exception, causing a crash[cite: 5, 14, 16]. [cite_start]Developers use LRU-based structures because they automatically delete the oldest, unused data ("Least Recently Used") to make space for new data, keeping the app crash-free[cite: 9, 13].
+* [cite_start]**Why `SparseArray` or `ArrayMap` instead of `HashMap`?** In Android, `HashMap` creates a heavy memory footprint due to object allocation overhead and autoboxing (e.g., converting a primitive `int` to an `Integer` object)[cite: 46, 53]. [cite_start]Developers use `SparseArray` or `ArrayMap` for collections with less than 1,000 items because they rely on binary search arrays, skipping the need to allocate heavy wrapper objects, thus saving memory[cite: 42, 45, 50].
+
+
+---
+
+### **d. Analyze and Describe the Average Amount of Cache Storage**
+The exact cache storage size depends on the implementation, but you can evaluate it based on these standard practices outlined in the document:
+
+* **Dynamic OS-Based Limits (LruCache):** Developers usually do not hardcode a fixed megabyte value. Instead, they assign a percentage of the total available VM memory dynamically at runtime. [cite_start]A common baseline practice is reserving **1/8th (12.5%) of the available memory** for the cache[cite: 19]. 
+* [cite_start]**Default Limits set by Third-Party Libraries (e.g., Picasso):** If the app uses standard tools like Picasso, the defaults are typically set to use **15% of the available application RAM** for the memory cache, and **2% of the device's storage space (capped between 5MB and 50MB)** for the persistent disk cache[cite: 80]. 
+* **Risks of Poor Sizing:** If a developer sets the size too small, there will be frequent evictions (items deleted too quickly, causing unnecessary network re-downloads). [cite_start]If set too large, it dramatically increases the risk of OOM crashes[cite: 15, 16].

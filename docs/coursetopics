@@ -1,0 +1,44 @@
+MS1: Problem Identification & Constraints
+Identify real problems that could be solved with a software system that (i) uses mobile devices and apps, and (ii) achieves/considers a pre-defined set of design restrictions.
+
+MS2: Context & Solution Analysis
+You will explore different methods and models for analyzing the context of a problem and describing potential solutions.
+
+MS3: App Definition & User Personas
+This week you will start to define your app. You will begin by putting all the insights that you have together, figuring out who are going to be your users and, at last, explicitly define what your app is going to be like.
+
+MS4: First Sprint Wrap-up & Scenarios
+In this week we will finish the first sprint and therefore the first challenge of the course. You will work on the analytics engine and will define both functional and quality scenarios.
+
+MS5: UI/UX & User Validation
+During this week you will (i) design the UI/UX models of your solutions, (ii) consolidate the solution design, and (iii) validate your proposals with real users.
+
+MS6: Introduction to Coding
+You are hungry for code. Fair enough, we will give you some.
+
+MS7: App Architecture & Patterns
+Now is the time to learn about architecture, programming designs and patterns and architecture for apps.
+
+MS8: Midterm 1
+It's midterm time, brace yourselves and do your best.
+
+MS9: Analytics, Connectivity & Lifecycle
+During this MS we will talk about Analytics Pipeline, eventual connectivity, activities stack and lifeCycle.
+
+MS10: Local Storage & Eventual Connectivity
+In this MS we will talk about local storage in mobile devices and Eventual Connectivity.
+
+MS11: Performance & Caching
+This micro-sprint will be about Performance and Caching.
+
+MS12: Builds & Runs Performance
+During this micro-sprint, we will review performance, builds and runs.
+
+MS13: Profiling & Bug Fixing (Sprint 3)
+During this MS we will be reviewing profiling, bugs and performance. Here you can find the link to your Sprint 3 deliverable.
+
+MS14: Optimization Execution Modes
+In this MS we will talk about Execution modes, Optimization and Micro-Optimizations.
+
+MS15: Safety, Security & Sprint 3 Presentations
+During this MS we will review safety issues and do a laboratory on this, also, the presentations of sprint 3 will be made, do your best
