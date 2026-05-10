@@ -1179,3 +1179,741 @@ abstract class _$ShowPagesNumberState extends $Notifier<dynamic> {
     element.handleCreate(ref, build);
   }
 }
+
+@ProviderFor(KeepScreenOnReaderState)
+final keepScreenOnReaderStateProvider = KeepScreenOnReaderStateProvider._();
+
+final class KeepScreenOnReaderStateProvider
+    extends $NotifierProvider<KeepScreenOnReaderState, bool> {
+  KeepScreenOnReaderStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'keepScreenOnReaderStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$keepScreenOnReaderStateHash();
+
+  @$internal
+  @override
+  KeepScreenOnReaderState create() => KeepScreenOnReaderState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$keepScreenOnReaderStateHash() =>
+    r'af1380082a36e449c1c7bed4ea750568362fdf91';
+
+abstract class _$KeepScreenOnReaderState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(WebtoonSidePaddingState)
+final webtoonSidePaddingStateProvider = WebtoonSidePaddingStateProvider._();
+
+final class WebtoonSidePaddingStateProvider
+    extends $NotifierProvider<WebtoonSidePaddingState, int> {
+  WebtoonSidePaddingStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'webtoonSidePaddingStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$webtoonSidePaddingStateHash();
+
+  @$internal
+  @override
+  WebtoonSidePaddingState create() => WebtoonSidePaddingState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
+  }
+}
+
+String _$webtoonSidePaddingStateHash() =>
+    r'18c3373c23ea9a4cd394d61c184e1258ad529e8c';
+
+abstract class _$WebtoonSidePaddingState extends $Notifier<int> {
+  int build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<int, int>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<int, int>,
+              int,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(ShowPageGapsState)
+final showPageGapsStateProvider = ShowPageGapsStateProvider._();
+
+final class ShowPageGapsStateProvider
+    extends $NotifierProvider<ShowPageGapsState, bool> {
+  ShowPageGapsStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'showPageGapsStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$showPageGapsStateHash();
+
+  @$internal
+  @override
+  ShowPageGapsState create() => ShowPageGapsState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$showPageGapsStateHash() => r'323f636fb897e977d93159f836ddc5ec707a03d6';
+
+abstract class _$ShowPageGapsState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(AutoReadDuplicateChaptersState)
+final autoReadDuplicateChaptersStateProvider =
+    AutoReadDuplicateChaptersStateProvider._();
+
+final class AutoReadDuplicateChaptersStateProvider
+    extends $NotifierProvider<AutoReadDuplicateChaptersState, bool> {
+  AutoReadDuplicateChaptersStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'autoReadDuplicateChaptersStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$autoReadDuplicateChaptersStateHash();
+
+  @$internal
+  @override
+  AutoReadDuplicateChaptersState create() => AutoReadDuplicateChaptersState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$autoReadDuplicateChaptersStateHash() =>
+    r'288816e17fefa753c690cc43a40cfbcf5352b9df';
+
+abstract class _$AutoReadDuplicateChaptersState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(InvertColorsState)
+final invertColorsStateProvider = InvertColorsStateProvider._();
+
+final class InvertColorsStateProvider
+    extends $NotifierProvider<InvertColorsState, bool> {
+  InvertColorsStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'invertColorsStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$invertColorsStateHash();
+
+  @$internal
+  @override
+  InvertColorsState create() => InvertColorsState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$invertColorsStateHash() => r'5ea55fa4eace6cefb7f2a2fcbaada1e7bcd9365d';
+
+abstract class _$InvertColorsState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(GrayscaleState)
+final grayscaleStateProvider = GrayscaleStateProvider._();
+
+final class GrayscaleStateProvider
+    extends $NotifierProvider<GrayscaleState, bool> {
+  GrayscaleStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'grayscaleStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$grayscaleStateHash();
+
+  @$internal
+  @override
+  GrayscaleState create() => GrayscaleState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$grayscaleStateHash() => r'33f6b38bd7de6fb19d8f4eda1358a6bb674e1d47';
+
+abstract class _$GrayscaleState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(ReaderBrightnessState)
+final readerBrightnessStateProvider = ReaderBrightnessStateProvider._();
+
+final class ReaderBrightnessStateProvider
+    extends $NotifierProvider<ReaderBrightnessState, double> {
+  ReaderBrightnessStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'readerBrightnessStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$readerBrightnessStateHash();
+
+  @$internal
+  @override
+  ReaderBrightnessState create() => ReaderBrightnessState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(double value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<double>(value),
+    );
+  }
+}
+
+String _$readerBrightnessStateHash() =>
+    r'59be73514f974e078677dad602142edac445689c';
+
+abstract class _$ReaderBrightnessState extends $Notifier<double> {
+  double build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<double, double>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<double, double>,
+              double,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(ReaderContrastState)
+final readerContrastStateProvider = ReaderContrastStateProvider._();
+
+final class ReaderContrastStateProvider
+    extends $NotifierProvider<ReaderContrastState, double> {
+  ReaderContrastStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'readerContrastStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$readerContrastStateHash();
+
+  @$internal
+  @override
+  ReaderContrastState create() => ReaderContrastState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(double value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<double>(value),
+    );
+  }
+}
+
+String _$readerContrastStateHash() =>
+    r'b423bd15b635bac656e895a6e3b32bc639969e31';
+
+abstract class _$ReaderContrastState extends $Notifier<double> {
+  double build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<double, double>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<double, double>,
+              double,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(ReaderSaturationState)
+final readerSaturationStateProvider = ReaderSaturationStateProvider._();
+
+final class ReaderSaturationStateProvider
+    extends $NotifierProvider<ReaderSaturationState, double> {
+  ReaderSaturationStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'readerSaturationStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$readerSaturationStateHash();
+
+  @$internal
+  @override
+  ReaderSaturationState create() => ReaderSaturationState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(double value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<double>(value),
+    );
+  }
+}
+
+String _$readerSaturationStateHash() =>
+    r'a3918acbb99c3a631256553c553c34abff198a18';
+
+abstract class _$ReaderSaturationState extends $Notifier<double> {
+  double build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<double, double>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<double, double>,
+              double,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(ReaderNavigationLayoutState)
+final readerNavigationLayoutStateProvider =
+    ReaderNavigationLayoutStateProvider._();
+
+final class ReaderNavigationLayoutStateProvider
+    extends $NotifierProvider<ReaderNavigationLayoutState, int> {
+  ReaderNavigationLayoutStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'readerNavigationLayoutStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$readerNavigationLayoutStateHash();
+
+  @$internal
+  @override
+  ReaderNavigationLayoutState create() => ReaderNavigationLayoutState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
+  }
+}
+
+String _$readerNavigationLayoutStateHash() =>
+    r'680c09d930c2f50a7a949c53196cafa082fe47b8';
+
+abstract class _$ReaderNavigationLayoutState extends $Notifier<int> {
+  int build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<int, int>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<int, int>,
+              int,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(TtsSpeechRateState)
+final ttsSpeechRateStateProvider = TtsSpeechRateStateProvider._();
+
+final class TtsSpeechRateStateProvider
+    extends $NotifierProvider<TtsSpeechRateState, double> {
+  TtsSpeechRateStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'ttsSpeechRateStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$ttsSpeechRateStateHash();
+
+  @$internal
+  @override
+  TtsSpeechRateState create() => TtsSpeechRateState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(double value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<double>(value),
+    );
+  }
+}
+
+String _$ttsSpeechRateStateHash() =>
+    r'c59420fd0d1b4435b556b6b93c0ce03bc3b46d2e';
+
+abstract class _$TtsSpeechRateState extends $Notifier<double> {
+  double build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<double, double>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<double, double>,
+              double,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(TtsPitchState)
+final ttsPitchStateProvider = TtsPitchStateProvider._();
+
+final class TtsPitchStateProvider
+    extends $NotifierProvider<TtsPitchState, double> {
+  TtsPitchStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'ttsPitchStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$ttsPitchStateHash();
+
+  @$internal
+  @override
+  TtsPitchState create() => TtsPitchState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(double value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<double>(value),
+    );
+  }
+}
+
+String _$ttsPitchStateHash() => r'bb784b9ae5ced137678f68918aa5d1430a0d4bc9';
+
+abstract class _$TtsPitchState extends $Notifier<double> {
+  double build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<double, double>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<double, double>,
+              double,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(TtsLanguageState)
+final ttsLanguageStateProvider = TtsLanguageStateProvider._();
+
+final class TtsLanguageStateProvider
+    extends $NotifierProvider<TtsLanguageState, String?> {
+  TtsLanguageStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'ttsLanguageStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$ttsLanguageStateHash();
+
+  @$internal
+  @override
+  TtsLanguageState create() => TtsLanguageState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String?>(value),
+    );
+  }
+}
+
+String _$ttsLanguageStateHash() => r'5a91ad875c52cb87022e44d11d3db2d68dce9976';
+
+abstract class _$TtsLanguageState extends $Notifier<String?> {
+  String? build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<String?, String?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String?, String?>,
+              String?,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(TtsVoiceState)
+final ttsVoiceStateProvider = TtsVoiceStateProvider._();
+
+final class TtsVoiceStateProvider
+    extends $NotifierProvider<TtsVoiceState, String?> {
+  TtsVoiceStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'ttsVoiceStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$ttsVoiceStateHash();
+
+  @$internal
+  @override
+  TtsVoiceState create() => TtsVoiceState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String?>(value),
+    );
+  }
+}
+
+String _$ttsVoiceStateHash() => r'c132058e15997489fe2ef2712c22688f65aa6b99';
+
+abstract class _$TtsVoiceState extends $Notifier<String?> {
+  String? build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<String?, String?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String?, String?>,
+              String?,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}

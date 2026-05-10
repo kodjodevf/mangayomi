@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -77,7 +76,7 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
         bottomLeft: Radius.circular(20),
         bottomRight: Radius.circular(20),
       ),
-      clipBehavior: Clip.antiAliasWithSaveLayer,
+      clipBehavior: Clip.antiAlias,
       child: _isLoading
           ? SizedBox(
               height: context.height(0.3),
@@ -123,8 +122,7 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
                                             5,
                                           ),
                                           color: Colors.transparent,
-                                          clipBehavior:
-                                              Clip.antiAliasWithSaveLayer,
+                                          clipBehavior: Clip.antiAlias,
                                           child: Ink.image(
                                             height: 120,
                                             width: 80,
@@ -211,7 +209,7 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       child: TextFormField(
                         onTap: () {
-                          if (Platform.isAndroid || Platform.isIOS) {
+                          if (isMobile) {
                             setState(() {
                               hide = true;
                             });

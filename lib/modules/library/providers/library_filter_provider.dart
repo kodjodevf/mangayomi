@@ -2,25 +2,29 @@ import 'package:isar_community/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/models/track.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'library_filter_provider.g.dart';
 
 /// Pre-fetches all downloaded chapter IDs in a single Isar query.
 /// Returns a [Set<int>] for O(1) lookup instead of per-chapter queries.
 @riverpod
-Set<int> downloadedChapterIds(Ref ref) {
-  final downloads = isar.downloads
+Stream<Set<int>> downloadedChapterIds(Ref ref) {
+  return isar.downloads
       .filter()
       .isDownloadEqualTo(true)
-      .idProperty()
-      .findAllSync();
-  return downloads.whereType<int>().toSet();
+      .watch(fireImmediately: true)
+      .map((list) => list.map((d) => d.id).whereType<int>().toSet());
+}
+
+/// Pre-fetches all manga IDs that have at least one tracking entry.
+@riverpod
+Set<int> trackedMangaIds(Ref ref) {
+  final tracks = isar.tracks.where().findAllSync();
+  return tracks.map((t) => t.mangaId).whereType<int>().toSet();
 }
 
 /// Filters and sorts a list of [Manga] based on library filter/sort settings.
-///
-/// Uses [downloadedChapterIds] for O(1) download lookups instead of
-/// per-chapter Isar queries (previous behavior was O(chapters × manga)).
 @riverpod
 List<Manga> filteredLibraryManga(
   Ref ref, {
@@ -29,12 +33,16 @@ List<Manga> filteredLibraryManga(
   required int unreadFilterType,
   required int startedFilterType,
   required int bookmarkedFilterType,
+  required int completedFilterType,
+  required int trackingFilterType,
   required int sortType,
   required bool downloadedOnly,
   required String searchQuery,
   required bool ignoreFiltersOnSearch,
 }) {
-  final downloadedIds = ref.watch(downloadedChapterIdsProvider);
+  final downloadedIds =
+      ref.watch(downloadedChapterIdsProvider).asData?.value ?? const <int>{};
+  final trackedIds = ref.watch(trackedMangaIdsProvider);
 
   return _filterAndSortManga(
     data: data,
@@ -42,11 +50,14 @@ List<Manga> filteredLibraryManga(
     unreadFilterType: unreadFilterType,
     startedFilterType: startedFilterType,
     bookmarkedFilterType: bookmarkedFilterType,
+    completedFilterType: completedFilterType,
+    trackingFilterType: trackingFilterType,
     sortType: sortType,
     downloadedOnly: downloadedOnly,
     searchQuery: searchQuery,
     ignoreFiltersOnSearch: ignoreFiltersOnSearch,
     downloadedIds: downloadedIds,
+    trackedIds: trackedIds,
   );
 }
 
@@ -71,11 +82,14 @@ List<Manga> _filterAndSortManga({
   required int unreadFilterType,
   required int startedFilterType,
   required int bookmarkedFilterType,
+  required int completedFilterType,
+  required int trackingFilterType,
   required int sortType,
   required bool downloadedOnly,
   required String searchQuery,
   required bool ignoreFiltersOnSearch,
   required Set<int> downloadedIds,
+  required Set<int> trackedIds,
 }) {
   List<Manga> mangas;
 
@@ -119,6 +133,24 @@ List<Manga> _filterAndSortManga({
           (chap) => !chap.isBookmarked!,
         );
         if (!allNotBookmarked) return false;
+      }
+
+      // Filter by completed status
+      if (completedFilterType == 1) {
+        if (element.status != Status.completed) return false;
+      } else if (completedFilterType == 2) {
+        if (element.status == Status.completed) return false;
+      }
+
+      // Filter by tracking
+      if (trackingFilterType == 1) {
+        if (element.id == null || !trackedIds.contains(element.id)) {
+          return false;
+        }
+      } else if (trackingFilterType == 2) {
+        if (element.id != null && trackedIds.contains(element.id)) {
+          return false;
+        }
       }
 
       // Search filter

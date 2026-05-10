@@ -40,7 +40,6 @@ Future<GetChapterPagesModel> getChapterPages(
 }) async {
   final keepAlive = ref.keepAlive();
   try {
-    List<UChapDataPreload> uChapDataPreloadp = [];
     Directory? path;
     List<PageUrl> pageUrls = [];
     List<bool> isLocaleList = [];
@@ -85,6 +84,14 @@ Future<GetChapterPagesModel> getChapterPages(
         );
       }
     }
+
+    final chapterModel = GetChapterPagesModel(
+      path: path,
+      pageUrls: pageUrls,
+      isLocaleList: isLocaleList,
+      archiveImages: archiveImages,
+      uChapDataPreload: [],
+    );
 
     if (pageUrls.isNotEmpty || isLocalArchive) {
       if (await File(
@@ -144,7 +151,7 @@ Future<GetChapterPagesModel> getChapterPages(
         });
       }
       for (var i = 0; i < pageUrls.length; i++) {
-        uChapDataPreloadp.add(
+        chapterModel.uChapDataPreload.add(
           UChapDataPreload(
             chapter,
             path,
@@ -152,26 +159,14 @@ Future<GetChapterPagesModel> getChapterPages(
             isLocaleList[i],
             archiveImages[i],
             i,
-            GetChapterPagesModel(
-              path: path,
-              pageUrls: pageUrls,
-              isLocaleList: isLocaleList,
-              archiveImages: archiveImages,
-              uChapDataPreload: uChapDataPreloadp,
-            ),
+            chapterModel,
             i,
           ),
         );
       }
     }
     keepAlive.close();
-    return GetChapterPagesModel(
-      path: path,
-      pageUrls: pageUrls,
-      isLocaleList: isLocaleList,
-      archiveImages: archiveImages,
-      uChapDataPreload: uChapDataPreloadp,
-    );
+    return chapterModel;
   } catch (e) {
     keepAlive.close();
     rethrow;

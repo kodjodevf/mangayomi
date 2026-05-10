@@ -63,6 +63,26 @@ class OnlyIncludePinnedSourceState extends _$OnlyIncludePinnedSourceState {
 }
 
 @riverpod
+class ShowNSFWState extends _$ShowNSFWState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.showNSFW ?? false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..showNSFW = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
 class ExtensionsRepoState extends _$ExtensionsRepoState {
   @override
   List<Repo> build(ItemType itemType) {

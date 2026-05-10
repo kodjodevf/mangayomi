@@ -43,7 +43,7 @@ const TrackPreferenceSchema = CollectionSchema(
   getId: _trackPreferenceGetId,
   getLinks: _trackPreferenceGetLinks,
   attach: _trackPreferenceAttach,
-  version: '3.3.0',
+  version: '3.3.2',
 );
 
 int _trackPreferenceEstimateSize(

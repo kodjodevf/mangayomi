@@ -47,6 +47,27 @@ class SaveAsCBZArchiveState extends _$SaveAsCBZArchiveState {
 }
 
 @riverpod
+class DeleteDownloadAfterReadingState
+    extends _$DeleteDownloadAfterReadingState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.deleteDownloadAfterReading ?? false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..deleteDownloadAfterReading = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
 class DownloadLocationState extends _$DownloadLocationState {
   @override
   (String, String) build() {

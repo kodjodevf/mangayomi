@@ -38,11 +38,12 @@ extension LetExtension<T> on T {
 
 extension MedianExtension on List<int> {
   int median() {
-    var middle = length ~/ 2;
-    if (length % 2 == 1) {
-      return this[middle];
+    final sorted = List<int>.from(this)..sort();
+    var middle = sorted.length ~/ 2;
+    if (sorted.length % 2 == 1) {
+      return sorted[middle];
     } else {
-      return ((this[middle - 1] + this[middle]) / 2).round();
+      return ((sorted[middle - 1] + sorted[middle]) / 2).round();
     }
   }
 

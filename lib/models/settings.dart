@@ -84,6 +84,8 @@ class Settings {
 
   bool? saveAsCBZArchive;
 
+  bool? deleteDownloadAfterReading;
+
   int? concurrentDownloads;
 
   String? downloadLocation;
@@ -213,6 +215,10 @@ class Settings {
 
   String? androidProxyServer;
 
+  String? jrePath;
+
+  String? extensionServerPath;
+
   @enumerated
   late SectionType disableSectionType;
 
@@ -310,6 +316,52 @@ class Settings {
 
   List<String>? localFolders;
 
+  bool? appLockEnabled;
+
+  int? libraryFilterMangasCompletedType;
+
+  int? libraryFilterAnimeCompletedType;
+
+  int? libraryFilterNovelCompletedType;
+
+  int? libraryFilterMangasTrackingType;
+
+  int? libraryFilterAnimeTrackingType;
+
+  int? libraryFilterNovelTrackingType;
+
+  bool? keepScreenOnReader;
+
+  int? webtoonSidePadding;
+
+  bool? showPageGaps;
+
+  bool? autoReadDuplicateChapters;
+
+  bool? invertColors;
+
+  bool? grayscale;
+
+  double? readerBrightness;
+
+  double? readerContrast;
+
+  double? readerSaturation;
+
+  int? readerNavigationLayout;
+
+  int? backupCompressionLevel;
+
+  bool? showNSFW;
+
+  double? ttsSpeechRate;
+
+  double? ttsPitch;
+
+  String? ttsLanguage;
+
+  String? ttsVoice;
+
   Settings({
     this.id = 227,
     this.updatedAt = 0,
@@ -346,6 +398,7 @@ class Settings {
     this.pureBlackDarkMode = false,
     this.downloadOnlyOnWifi = false,
     this.saveAsCBZArchive = false,
+    this.deleteDownloadAfterReading = false,
     this.concurrentDownloads = 2,
     this.downloadLocation = "",
     this.cropBorders = false,
@@ -432,6 +485,8 @@ class Settings {
     this.animeExtensionsRepo,
     this.novelExtensionsRepo,
     this.androidProxyServer,
+    this.jrePath = "",
+    this.extensionServerPath = "",
     this.lastTrackerLibraryLocation,
     this.mergeLibraryNavMobile = false,
     this.enableDiscordRpc = true,
@@ -450,6 +505,29 @@ class Settings {
     this.downloadedOnlyMode = false,
     this.algorithmWeights,
     this.localFolders,
+    this.appLockEnabled = false,
+    this.libraryFilterMangasCompletedType = 0,
+    this.libraryFilterAnimeCompletedType = 0,
+    this.libraryFilterNovelCompletedType = 0,
+    this.libraryFilterMangasTrackingType = 0,
+    this.libraryFilterAnimeTrackingType = 0,
+    this.libraryFilterNovelTrackingType = 0,
+    this.keepScreenOnReader = true,
+    this.webtoonSidePadding = 0,
+    this.showPageGaps = true,
+    this.autoReadDuplicateChapters = false,
+    this.invertColors = false,
+    this.grayscale = false,
+    this.readerBrightness = 0.0,
+    this.readerContrast = 1.0,
+    this.readerSaturation = 1.0,
+    this.readerNavigationLayout = 0,
+    this.backupCompressionLevel,
+    this.showNSFW = false,
+    this.ttsSpeechRate = 0.5,
+    this.ttsPitch = 1.0,
+    this.ttsLanguage,
+    this.ttsVoice,
   });
 
   Settings.fromJson(Map<String, dynamic> json) {
@@ -556,6 +634,7 @@ class Settings {
     pureBlackDarkMode = json['pureBlackDarkMode'];
     relativeTimesTamps = json['relativeTimesTamps'];
     saveAsCBZArchive = json['saveAsCBZArchive'];
+    deleteDownloadAfterReading = json['deleteDownloadAfterReading'];
     scaleType =
         ScaleType.values[json['scaleType'] ?? ScaleType.fitScreen.index];
     showPagesNumber = json['showPagesNumber'];
@@ -686,6 +765,8 @@ class Settings {
                 .toList();
     }
     androidProxyServer = json['androidProxyServer'];
+    jrePath = json['jrePath'];
+    extensionServerPath = json['extensionServerPath'];
     lastTrackerLibraryLocation = json['lastTrackerLibraryLocation'];
     mergeLibraryNavMobile = json['mergeLibraryNavMobile'];
     enableDiscordRpc = json['enableDiscordRpc'];
@@ -707,7 +788,30 @@ class Settings {
     algorithmWeights = json['algorithmWeights'] != null
         ? AlgorithmWeights.fromJson(json['algorithmWeights'])
         : null;
-    localFolders = json['localFolders'];
+    localFolders = (json['localFolders'] as List?)?.cast<String>();
+    appLockEnabled = json['appLockEnabled'];
+    libraryFilterMangasCompletedType = json['libraryFilterMangasCompletedType'];
+    libraryFilterAnimeCompletedType = json['libraryFilterAnimeCompletedType'];
+    libraryFilterNovelCompletedType = json['libraryFilterNovelCompletedType'];
+    libraryFilterMangasTrackingType = json['libraryFilterMangasTrackingType'];
+    libraryFilterAnimeTrackingType = json['libraryFilterAnimeTrackingType'];
+    libraryFilterNovelTrackingType = json['libraryFilterNovelTrackingType'];
+    keepScreenOnReader = json['keepScreenOnReader'];
+    webtoonSidePadding = json['webtoonSidePadding'];
+    showPageGaps = json['showPageGaps'];
+    autoReadDuplicateChapters = json['autoReadDuplicateChapters'];
+    invertColors = json['invertColors'];
+    grayscale = json['grayscale'];
+    readerBrightness = json['readerBrightness']?.toDouble();
+    readerContrast = json['readerContrast']?.toDouble();
+    readerSaturation = json['readerSaturation']?.toDouble();
+    readerNavigationLayout = json['readerNavigationLayout'];
+    backupCompressionLevel = json['backupCompressionLevel'];
+    showNSFW = json['showNSFW'];
+    ttsSpeechRate = json['ttsSpeechRate']?.toDouble();
+    ttsPitch = json['ttsPitch']?.toDouble();
+    ttsLanguage = json['ttsLanguage'];
+    ttsVoice = json['ttsVoice'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -780,6 +884,7 @@ class Settings {
     'pureBlackDarkMode': pureBlackDarkMode,
     'relativeTimesTamps': relativeTimesTamps,
     'saveAsCBZArchive': saveAsCBZArchive,
+    'deleteDownloadAfterReading': deleteDownloadAfterReading,
     'scaleType': scaleType.index,
     'showPagesNumber': showPagesNumber,
     'sortChapterList': sortChapterList?.map((v) => v.toJson()).toList(),
@@ -853,6 +958,8 @@ class Settings {
     'animeExtensionsRepo': animeExtensionsRepo?.map((e) => e.toJson()).toList(),
     'novelExtensionsRepo': novelExtensionsRepo?.map((e) => e.toJson()).toList(),
     'androidProxyServer': androidProxyServer,
+    'jrePath': jrePath,
+    'extensionServerPath': extensionServerPath,
     'lastTrackerLibraryLocation': lastTrackerLibraryLocation,
     'mergeLibraryNavMobile': mergeLibraryNavMobile,
     'enableDiscordRpc': enableDiscordRpc,
@@ -872,6 +979,29 @@ class Settings {
     if (algorithmWeights != null)
       'algorithmWeights': algorithmWeights!.toJson(),
     'localFolders': localFolders,
+    'appLockEnabled': appLockEnabled,
+    'libraryFilterMangasCompletedType': libraryFilterMangasCompletedType,
+    'libraryFilterAnimeCompletedType': libraryFilterAnimeCompletedType,
+    'libraryFilterNovelCompletedType': libraryFilterNovelCompletedType,
+    'libraryFilterMangasTrackingType': libraryFilterMangasTrackingType,
+    'libraryFilterAnimeTrackingType': libraryFilterAnimeTrackingType,
+    'libraryFilterNovelTrackingType': libraryFilterNovelTrackingType,
+    'keepScreenOnReader': keepScreenOnReader,
+    'webtoonSidePadding': webtoonSidePadding,
+    'showPageGaps': showPageGaps,
+    'autoReadDuplicateChapters': autoReadDuplicateChapters,
+    'invertColors': invertColors,
+    'grayscale': grayscale,
+    'readerBrightness': readerBrightness,
+    'readerContrast': readerContrast,
+    'readerSaturation': readerSaturation,
+    'readerNavigationLayout': readerNavigationLayout,
+    'backupCompressionLevel': backupCompressionLevel,
+    'showNSFW': showNSFW,
+    'ttsSpeechRate': ttsSpeechRate,
+    'ttsPitch': ttsPitch,
+    'ttsLanguage': ttsLanguage,
+    'ttsVoice': ttsVoice,
   };
 }
 
@@ -1128,6 +1258,32 @@ enum ReaderMode {
   verticalContinuous,
   webtoon,
   horizontalContinuous,
+  horizontalContinuousRTL,
+}
+
+extension ReaderModeExtension on ReaderMode {
+  /// Vertical continuous || Webtoon || Horizontal continuous || Horizontal continuous (RTL)
+  bool get isContinuous => isVerticalContinuous || isHorizontalContinuous;
+
+  /// Vertical || Vertical continuous || Webtoon
+  bool get isVertical => this == ReaderMode.vertical || isVerticalContinuous;
+
+  /// Vertical continuous || Webtoon
+  bool get isVerticalContinuous =>
+      this == ReaderMode.verticalContinuous || this == ReaderMode.webtoon;
+
+  /// Horizontal continuous || Horizontal continuous (RTL)
+  bool get isHorizontalContinuous =>
+      this == ReaderMode.horizontalContinuous ||
+      this == ReaderMode.horizontalContinuousRTL;
+
+  /// Right to Left || Horizontal continuous (RTL)
+  bool get isRTL =>
+      this == ReaderMode.rtl || this == ReaderMode.horizontalContinuousRTL;
+
+  /// Left to Right || Right to Left
+  bool get isHorizontalPaged =>
+      this == ReaderMode.ltr || this == ReaderMode.rtl;
 }
 
 enum NovelTextAlign { left, center, right, block }

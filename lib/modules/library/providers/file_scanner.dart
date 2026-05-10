@@ -295,21 +295,37 @@ Future<void> _scanDirectory(Ref ref, Directory? dir) async {
       if (manga.itemType == ItemType.novel) {
         final book = await parseEpubFromPath(
           epubPath: chapterPath,
-          fullData: false,
+          fullData: true,
         );
 
         if (book.cover != null) {
           manga.customCoverImage = book.cover!.getCoverImage;
           saveManga++;
         }
-        chaptersToSave.add(
-          Chapter(
-            mangaId: manga.id,
-            name: book.name,
-            archivePath: chapterPath,
-            downloadSize: null,
-          )..manga.value = manga,
-        );
+        final chaps = book.chapters;
+        if (chaps.isNotEmpty) {
+          for (int i = 0; i < chaps.length; i++) {
+            final epubChapter = chaps[i];
+            chaptersToSave.add(
+              Chapter(
+                mangaId: manga.id,
+                name: epubChapter.name,
+                archivePath: chapterPath,
+                url: epubChapter.path,
+                downloadSize: null,
+              )..manga.value = manga,
+            );
+          }
+        } else {
+          chaptersToSave.add(
+            Chapter(
+              mangaId: manga.id,
+              name: book.name,
+              archivePath: chapterPath,
+              downloadSize: null,
+            )..manga.value = manga,
+          );
+        }
       } else {
         final chapterFile = File(chapterPath);
         final chap = Chapter(

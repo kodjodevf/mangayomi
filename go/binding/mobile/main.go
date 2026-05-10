@@ -10,6 +10,9 @@ import (
 //export Start
 func Start(mcfg string) (int, error) {
 	var config server.Config
-	json.Unmarshal([]byte(mcfg), &config)
+	if err := json.Unmarshal([]byte(mcfg), &config); err != nil {
+		return 0, err
+	}
+
 	return server.Start(&config)
 }

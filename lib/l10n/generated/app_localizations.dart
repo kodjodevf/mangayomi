@@ -311,6 +311,18 @@ abstract class AppLocalizations {
   /// **'Compact grid'**
   String get compact_grid;
 
+  /// No description provided for @compression_level.
+  ///
+  /// In en, this message translates to:
+  /// **'Compression level'**
+  String get compression_level;
+
+  /// No description provided for @compression_info.
+  ///
+  /// In en, this message translates to:
+  /// **'The higher the compression, the less space the backup file takes, but it uses more CPU. Default: {level}'**
+  String compression_info(Object level);
+
   /// No description provided for @comfortable_grid.
   ///
   /// In en, this message translates to:
@@ -502,6 +514,312 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Migrate'**
   String get migrate;
+
+  /// No description provided for @mass_migration_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Mass migration'**
+  String get mass_migration_title;
+
+  /// No description provided for @mass_migration_preview_items.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview items'**
+  String get mass_migration_preview_items;
+
+  /// No description provided for @mass_migration_destination_source.
+  ///
+  /// In en, this message translates to:
+  /// **'Destination source'**
+  String get mass_migration_destination_source;
+
+  /// No description provided for @mass_migration_no_library_items.
+  ///
+  /// In en, this message translates to:
+  /// **'No library items are available for mass migration.'**
+  String get mass_migration_no_library_items;
+
+  /// No description provided for @mass_migration_no_destination_sources.
+  ///
+  /// In en, this message translates to:
+  /// **'No installed destination sources are available.'**
+  String get mass_migration_no_destination_sources;
+
+  /// No description provided for @mass_migration_installed.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed'**
+  String get mass_migration_installed;
+
+  /// No description provided for @mass_migration_items_ready_for_review.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 item ready for review} other{{count} items ready for review}}'**
+  String mass_migration_items_ready_for_review(int count);
+
+  /// No description provided for @mass_migration_item_count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 item} other{{count} items}}'**
+  String mass_migration_item_count(int count);
+
+  /// No description provided for @mass_migration_select_destination_source.
+  ///
+  /// In en, this message translates to:
+  /// **'Select destination source'**
+  String get mass_migration_select_destination_source;
+
+  /// No description provided for @mass_migration_finding_matches.
+  ///
+  /// In en, this message translates to:
+  /// **'Finding matches in {source} • {language}'**
+  String mass_migration_finding_matches(Object source, Object language);
+
+  /// No description provided for @mass_migration_processing_item.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing item {current} of {total}'**
+  String mass_migration_processing_item(int current, int total);
+
+  /// No description provided for @mass_migration_waiting_next_item.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting 2 seconds before the next item...'**
+  String get mass_migration_waiting_next_item;
+
+  /// No description provided for @mass_migration_waiting_next_migration.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting 2 seconds before the next migration...'**
+  String get mass_migration_waiting_next_migration;
+
+  /// No description provided for @mass_migration_matched_so_far.
+  ///
+  /// In en, this message translates to:
+  /// **'Matched so far: {count}'**
+  String mass_migration_matched_so_far(int count);
+
+  /// No description provided for @mass_migration_no_match_count.
+  ///
+  /// In en, this message translates to:
+  /// **'No match: {count}'**
+  String mass_migration_no_match_count(int count);
+
+  /// No description provided for @mass_migration_review_matches.
+  ///
+  /// In en, this message translates to:
+  /// **'Review matches for {source}'**
+  String mass_migration_review_matches(Object source);
+
+  /// No description provided for @mass_migration_found_matches.
+  ///
+  /// In en, this message translates to:
+  /// **'Found matches: {count}'**
+  String mass_migration_found_matches(int count);
+
+  /// No description provided for @mass_migration_no_matches.
+  ///
+  /// In en, this message translates to:
+  /// **'No matches: {count}'**
+  String mass_migration_no_matches(int count);
+
+  /// No description provided for @mass_migration_selected_to_migrate.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected to migrate: {count}'**
+  String mass_migration_selected_to_migrate(int count);
+
+  /// No description provided for @mass_migration_finish_review.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish review'**
+  String get mass_migration_finish_review;
+
+  /// No description provided for @mass_migration_migrate_selected.
+  ///
+  /// In en, this message translates to:
+  /// **'Migrate selected items ({count})'**
+  String mass_migration_migrate_selected(int count);
+
+  /// No description provided for @mass_migration_migrating_selected.
+  ///
+  /// In en, this message translates to:
+  /// **'Migrating selected items to {source}'**
+  String mass_migration_migrating_selected(Object source);
+
+  /// No description provided for @mass_migration_no_items_selected.
+  ///
+  /// In en, this message translates to:
+  /// **'No items selected for migration.'**
+  String get mass_migration_no_items_selected;
+
+  /// No description provided for @mass_migration_migrating_item.
+  ///
+  /// In en, this message translates to:
+  /// **'Migrating item {current} of {total}'**
+  String mass_migration_migrating_item(int current, int total);
+
+  /// No description provided for @mass_migration_complete.
+  ///
+  /// In en, this message translates to:
+  /// **'Mass migration complete'**
+  String get mass_migration_complete;
+
+  /// No description provided for @mass_migration_complete_success_message.
+  ///
+  /// In en, this message translates to:
+  /// **'All selected items were processed successfully.'**
+  String get mass_migration_complete_success_message;
+
+  /// No description provided for @mass_migration_complete_partial_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Migration finished with a few items that still need manual attention.'**
+  String get mass_migration_complete_partial_message;
+
+  /// No description provided for @mass_migration_route_summary.
+  ///
+  /// In en, this message translates to:
+  /// **'{source} → {destination}'**
+  String mass_migration_route_summary(Object source, Object destination);
+
+  /// No description provided for @mass_migration_processed.
+  ///
+  /// In en, this message translates to:
+  /// **'Processed'**
+  String get mass_migration_processed;
+
+  /// No description provided for @mass_migration_matched.
+  ///
+  /// In en, this message translates to:
+  /// **'Matched'**
+  String get mass_migration_matched;
+
+  /// No description provided for @mass_migration_migrated.
+  ///
+  /// In en, this message translates to:
+  /// **'Migrated'**
+  String get mass_migration_migrated;
+
+  /// No description provided for @mass_migration_skipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Skipped'**
+  String get mass_migration_skipped;
+
+  /// No description provided for @mass_migration_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get mass_migration_failed;
+
+  /// No description provided for @mass_migration_failed_items.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed Items'**
+  String get mass_migration_failed_items;
+
+  /// No description provided for @mass_migration_exit.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit Mass Migration'**
+  String get mass_migration_exit;
+
+  /// No description provided for @mass_migration_no_destination_match.
+  ///
+  /// In en, this message translates to:
+  /// **'No destination match found'**
+  String get mass_migration_no_destination_match;
+
+  /// No description provided for @mass_migration_query.
+  ///
+  /// In en, this message translates to:
+  /// **'Query: {query}'**
+  String mass_migration_query(Object query);
+
+  /// No description provided for @mass_migration_skip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get mass_migration_skip;
+
+  /// No description provided for @mass_migration_loading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get mass_migration_loading;
+
+  /// No description provided for @mass_migration_choose_another_result.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose another result'**
+  String get mass_migration_choose_another_result;
+
+  /// No description provided for @mass_migration_source_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Source chapters'**
+  String get mass_migration_source_chapters;
+
+  /// No description provided for @mass_migration_destination_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Destination chapters'**
+  String get mass_migration_destination_chapters;
+
+  /// No description provided for @mass_migration_chapter_count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 chapter} other{{count} chapters}}'**
+  String mass_migration_chapter_count(int count);
+
+  /// No description provided for @mass_migration_source_chapter_count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 source chapter} other{{count} source chapters}}'**
+  String mass_migration_source_chapter_count(int count);
+
+  /// No description provided for @mass_migration_destination_chapter_count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 destination chapter} other{{count} destination chapters}}'**
+  String mass_migration_destination_chapter_count(int count);
+
+  /// No description provided for @mass_migration_no_chapters_found.
+  ///
+  /// In en, this message translates to:
+  /// **'No chapters found.'**
+  String get mass_migration_no_chapters_found;
+
+  /// No description provided for @mass_migration_and_more_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'And {count} more...'**
+  String mass_migration_and_more_chapters(int count);
+
+  /// No description provided for @mass_migration_unknown_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown title'**
+  String get mass_migration_unknown_title;
+
+  /// No description provided for @mass_migration_unknown_match.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown match'**
+  String get mass_migration_unknown_match;
+
+  /// No description provided for @mass_migration_unknown_source.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown source'**
+  String get mass_migration_unknown_source;
+
+  /// No description provided for @mass_migration_unknown_chapter.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown chapter'**
+  String get mass_migration_unknown_chapter;
 
   /// No description provided for @migrate_confirm.
   ///
@@ -886,6 +1204,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save as CBZ archive'**
   String get save_as_cbz_archive;
+
+  /// No description provided for @delete_download_after_reading.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete download after reading'**
+  String get delete_download_after_reading;
 
   /// No description provided for @concurrent_downloads.
   ///
@@ -1294,6 +1618,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Files'**
   String get import_files;
+
+  /// No description provided for @split_epub_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Split into chapters'**
+  String get split_epub_chapters;
+
+  /// No description provided for @split_epub_chapters_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Import each EPUB chapter as a separate entry'**
+  String get split_epub_chapters_description;
 
   /// No description provided for @nothing_read_recently.
   ///
@@ -2176,6 +2512,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'At what point to mark the episode as seen'**
   String get markEpisodeAsSeenSetting;
+
+  /// No description provided for @mark_duplicate_chapters_read.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark duplicate chapter numbers as read'**
+  String get mark_duplicate_chapters_read;
 
   /// No description provided for @default_skip_intro_length.
   ///
@@ -3440,7 +3782,7 @@ abstract class AppLocalizations {
   /// No description provided for @default_user_agent.
   ///
   /// In en, this message translates to:
-  /// **'Defaul user agent'**
+  /// **'Default user agent'**
   String get default_user_agent;
 
   /// No description provided for @forceLandscapeMode.
@@ -3466,6 +3808,540 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'DNS Provider'**
   String get dns_provider;
+
+  /// No description provided for @tracked.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracked'**
+  String get tracked;
+
+  /// No description provided for @auth_unlock_msg.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticate to unlock Mangayomi'**
+  String get auth_unlock_msg;
+
+  /// No description provided for @app_locked.
+  ///
+  /// In en, this message translates to:
+  /// **'Mangayomi is locked'**
+  String get app_locked;
+
+  /// No description provided for @auth_to_continue.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticate to continue'**
+  String get auth_to_continue;
+
+  /// No description provided for @authenticating.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticating...'**
+  String get authenticating;
+
+  /// No description provided for @unlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock'**
+  String get unlock;
+
+  /// No description provided for @security.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get security;
+
+  /// No description provided for @auth_to_change_security_setting.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticate to change security settings'**
+  String get auth_to_change_security_setting;
+
+  /// No description provided for @app_lock.
+  ///
+  /// In en, this message translates to:
+  /// **'App lock'**
+  String get app_lock;
+
+  /// No description provided for @require_biometric_or_device_credential.
+  ///
+  /// In en, this message translates to:
+  /// **'Require biometric or device credential to open the app'**
+  String get require_biometric_or_device_credential;
+
+  /// No description provided for @biometric_or_device_credential_not_available.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication not available on this device'**
+  String get biometric_or_device_credential_not_available;
+
+  /// No description provided for @app_lock_description.
+  ///
+  /// In en, this message translates to:
+  /// **'When app lock is enabled, you will be asked to authenticate \nevery time you open the app or switch back to it from the background.'**
+  String get app_lock_description;
+
+  /// No description provided for @keep_screen_on.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep screen on'**
+  String get keep_screen_on;
+
+  /// No description provided for @webtoon_side_padding.
+  ///
+  /// In en, this message translates to:
+  /// **'Webtoon side padding'**
+  String get webtoon_side_padding;
+
+  /// No description provided for @show_page_gaps.
+  ///
+  /// In en, this message translates to:
+  /// **'Show page gaps'**
+  String get show_page_gaps;
+
+  /// No description provided for @invert_colors.
+  ///
+  /// In en, this message translates to:
+  /// **'Invert colors'**
+  String get invert_colors;
+
+  /// No description provided for @grayscale.
+  ///
+  /// In en, this message translates to:
+  /// **'Grayscale'**
+  String get grayscale;
+
+  /// No description provided for @brightness.
+  ///
+  /// In en, this message translates to:
+  /// **'Brightness'**
+  String get brightness;
+
+  /// No description provided for @contrast.
+  ///
+  /// In en, this message translates to:
+  /// **'Contrast'**
+  String get contrast;
+
+  /// No description provided for @saturation.
+  ///
+  /// In en, this message translates to:
+  /// **'Saturation'**
+  String get saturation;
+
+  /// No description provided for @navigation_layout.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigation layout'**
+  String get navigation_layout;
+
+  /// No description provided for @nav_layout_default.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get nav_layout_default;
+
+  /// No description provided for @nav_layout_l_shaped.
+  ///
+  /// In en, this message translates to:
+  /// **'L-shaped'**
+  String get nav_layout_l_shaped;
+
+  /// No description provided for @nav_layout_kindle.
+  ///
+  /// In en, this message translates to:
+  /// **'Kindle-ish'**
+  String get nav_layout_kindle;
+
+  /// No description provided for @nav_layout_edge.
+  ///
+  /// In en, this message translates to:
+  /// **'Edge'**
+  String get nav_layout_edge;
+
+  /// No description provided for @nav_layout_right_and_left.
+  ///
+  /// In en, this message translates to:
+  /// **'Right and left'**
+  String get nav_layout_right_and_left;
+
+  /// No description provided for @nav_layout_disabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled'**
+  String get nav_layout_disabled;
+
+  /// No description provided for @color_enhancements.
+  ///
+  /// In en, this message translates to:
+  /// **'Color enhancements'**
+  String get color_enhancements;
+
+  /// No description provided for @total.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get total;
+
+  /// No description provided for @mean_per_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Mean per Title'**
+  String get mean_per_title;
+
+  /// No description provided for @completion_rate.
+  ///
+  /// In en, this message translates to:
+  /// **'Completion Rate'**
+  String get completion_rate;
+
+  /// No description provided for @watching_time.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch Time'**
+  String get watching_time;
+
+  /// No description provided for @reading_time.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading Time'**
+  String get reading_time;
+
+  /// No description provided for @average_chapters_per_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Average Chapters per {title}'**
+  String average_chapters_per_title(Object title);
+
+  /// No description provided for @read_percentage.
+  ///
+  /// In en, this message translates to:
+  /// **'Read Percentage'**
+  String get read_percentage;
+
+  /// No description provided for @entries.
+  ///
+  /// In en, this message translates to:
+  /// **'Entries'**
+  String get entries;
+
+  /// No description provided for @android_proxy_server_mihon.
+  ///
+  /// In en, this message translates to:
+  /// **'Android Proxy Server (Mihon)'**
+  String get android_proxy_server_mihon;
+
+  /// No description provided for @android_proxy_server_mihon_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Download and configure the proxy server required to use Mihon extensions.'**
+  String get android_proxy_server_mihon_description;
+
+  /// No description provided for @mihon_proxy_server.
+  ///
+  /// In en, this message translates to:
+  /// **'Mihon proxy server'**
+  String get mihon_proxy_server;
+
+  /// No description provided for @extension_server_intro_with_jre.
+  ///
+  /// In en, this message translates to:
+  /// **'Download the proxy server bundle before using Mihon extensions. The bundle includes the JRE and extension server JAR.'**
+  String get extension_server_intro_with_jre;
+
+  /// No description provided for @extension_server_intro_ios.
+  ///
+  /// In en, this message translates to:
+  /// **'Download the proxy server JAR before using Mihon extensions. iOS only needs the extension server JAR.'**
+  String get extension_server_intro_ios;
+
+  /// No description provided for @checking_files.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking files'**
+  String get checking_files;
+
+  /// No description provided for @files_installed.
+  ///
+  /// In en, this message translates to:
+  /// **'Files installed'**
+  String get files_installed;
+
+  /// No description provided for @files_missing.
+  ///
+  /// In en, this message translates to:
+  /// **'Files missing'**
+  String get files_missing;
+
+  /// No description provided for @update_files.
+  ///
+  /// In en, this message translates to:
+  /// **'Update files'**
+  String get update_files;
+
+  /// No description provided for @up_to_date.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to date'**
+  String get up_to_date;
+
+  /// No description provided for @choose_location.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose location'**
+  String get choose_location;
+
+  /// No description provided for @import_existing_jar.
+  ///
+  /// In en, this message translates to:
+  /// **'Import existing JAR'**
+  String get import_existing_jar;
+
+  /// No description provided for @detect_files_in_selected_folder.
+  ///
+  /// In en, this message translates to:
+  /// **'Detect files in selected folder'**
+  String get detect_files_in_selected_folder;
+
+  /// No description provided for @preparing_download.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing download...'**
+  String get preparing_download;
+
+  /// No description provided for @app_install_location.
+  ///
+  /// In en, this message translates to:
+  /// **'App install location'**
+  String get app_install_location;
+
+  /// No description provided for @install_location.
+  ///
+  /// In en, this message translates to:
+  /// **'Install location'**
+  String get install_location;
+
+  /// No description provided for @jre_executable.
+  ///
+  /// In en, this message translates to:
+  /// **'JRE executable'**
+  String get jre_executable;
+
+  /// No description provided for @extension_server_jar.
+  ///
+  /// In en, this message translates to:
+  /// **'Extension server JAR'**
+  String get extension_server_jar;
+
+  /// No description provided for @installed_version.
+  ///
+  /// In en, this message translates to:
+  /// **'Installed version'**
+  String get installed_version;
+
+  /// No description provided for @latest_version.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest version'**
+  String get latest_version;
+
+  /// No description provided for @apkbridge_description.
+  ///
+  /// In en, this message translates to:
+  /// **'Use ApkBridge when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.'**
+  String get apkbridge_description;
+
+  /// No description provided for @set_proxy_address.
+  ///
+  /// In en, this message translates to:
+  /// **'Set proxy address'**
+  String get set_proxy_address;
+
+  /// No description provided for @no_newer_proxy_server_release_available.
+  ///
+  /// In en, this message translates to:
+  /// **'No newer proxy server release is available.'**
+  String get no_newer_proxy_server_release_available;
+
+  /// No description provided for @could_not_check_proxy_server_updates.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not check for proxy server updates.'**
+  String get could_not_check_proxy_server_updates;
+
+  /// No description provided for @no_extension_server_bundle_available_for_this_platform.
+  ///
+  /// In en, this message translates to:
+  /// **'No extension server bundle is available for this platform.'**
+  String get no_extension_server_bundle_available_for_this_platform;
+
+  /// No description provided for @failed_to_download_bundle.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to download bundle ({statusCode}).'**
+  String failed_to_download_bundle(Object statusCode);
+
+  /// No description provided for @downloaded_bundle_missing_expected_files.
+  ///
+  /// In en, this message translates to:
+  /// **'The downloaded bundle does not contain the expected files.'**
+  String get downloaded_bundle_missing_expected_files;
+
+  /// No description provided for @extension_server_files_ready.
+  ///
+  /// In en, this message translates to:
+  /// **'Extension server files are ready.'**
+  String get extension_server_files_ready;
+
+  /// No description provided for @ios_extension_server_import_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'On iOS the server is installed inside the app sandbox. Use \"Import existing JAR\" to bring in a downloaded file.'**
+  String get ios_extension_server_import_hint;
+
+  /// No description provided for @select_extension_server_folder.
+  ///
+  /// In en, this message translates to:
+  /// **'Select extension server folder'**
+  String get select_extension_server_folder;
+
+  /// No description provided for @selected_folder_does_not_exist.
+  ///
+  /// In en, this message translates to:
+  /// **'The selected folder does not exist.'**
+  String get selected_folder_does_not_exist;
+
+  /// No description provided for @no_extension_server_files_found_in_selected_folder.
+  ///
+  /// In en, this message translates to:
+  /// **'No extension server files were found in the selected folder.'**
+  String get no_extension_server_files_found_in_selected_folder;
+
+  /// No description provided for @extension_server_files_linked.
+  ///
+  /// In en, this message translates to:
+  /// **'Extension server files were linked.'**
+  String get extension_server_files_linked;
+
+  /// No description provided for @select_extension_server_jar.
+  ///
+  /// In en, this message translates to:
+  /// **'Select extension server JAR'**
+  String get select_extension_server_jar;
+
+  /// No description provided for @selected_file_could_not_be_accessed.
+  ///
+  /// In en, this message translates to:
+  /// **'The selected file could not be accessed.'**
+  String get selected_file_could_not_be_accessed;
+
+  /// No description provided for @extension_server_jar_imported.
+  ///
+  /// In en, this message translates to:
+  /// **'Extension server JAR was imported.'**
+  String get extension_server_jar_imported;
+
+  /// No description provided for @could_not_launch_apk_bridge_page.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not launch the ApkBridge page.'**
+  String get could_not_launch_apk_bridge_page;
+
+  /// No description provided for @proxy_server_ip_hint.
+  ///
+  /// In en, this message translates to:
+  /// **'Server IP (e.g., 10.0.0.5 or https://example.com)'**
+  String get proxy_server_ip_hint;
+
+  /// No description provided for @not_configured.
+  ///
+  /// In en, this message translates to:
+  /// **'Not configured'**
+  String get not_configured;
+
+  /// No description provided for @webview.
+  ///
+  /// In en, this message translates to:
+  /// **'Webview'**
+  String get webview;
+
+  /// No description provided for @tts.
+  ///
+  /// In en, this message translates to:
+  /// **'Text-to-Speech'**
+  String get tts;
+
+  /// No description provided for @tts_speed.
+  ///
+  /// In en, this message translates to:
+  /// **'Speed'**
+  String get tts_speed;
+
+  /// No description provided for @tts_pitch.
+  ///
+  /// In en, this message translates to:
+  /// **'Pitch'**
+  String get tts_pitch;
+
+  /// No description provided for @tts_language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get tts_language;
+
+  /// No description provided for @tts_voice.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice'**
+  String get tts_voice;
+
+  /// No description provided for @tts_stop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get tts_stop;
+
+  /// No description provided for @tts_play.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get tts_play;
+
+  /// No description provided for @tts_pause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get tts_pause;
+
+  /// No description provided for @tts_previous.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous paragraph'**
+  String get tts_previous;
+
+  /// No description provided for @tts_next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next paragraph'**
+  String get tts_next;
+
+  /// No description provided for @tts_paragraph_progress.
+  ///
+  /// In en, this message translates to:
+  /// **'Paragraph {current} of {total}'**
+  String tts_paragraph_progress(Object current, Object total);
+
+  /// No description provided for @tts_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'TTS Settings'**
+  String get tts_settings;
+
+  /// No description provided for @tts_default.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get tts_default;
 }
 
 class _AppLocalizationsDelegate

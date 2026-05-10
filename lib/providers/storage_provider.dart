@@ -69,6 +69,13 @@ class StorageProvider {
     return Directory(dbDir);
   }
 
+  Future<Directory?> getExtensionServerDirectory() async {
+    final defaultDirectory = await getDefaultDirectory();
+    String dbDir = path.join(defaultDirectory!.path, 'extension_server');
+    await Directory(dbDir).create(recursive: true);
+    return Directory(dbDir);
+  }
+
   Future<Directory?> getBtDirectory() async {
     final dbDir = await _btDirectoryPath();
     await createDirectorySafely(dbDir);

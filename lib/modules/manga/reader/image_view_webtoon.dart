@@ -31,6 +31,10 @@ class ImageViewWebtoon extends StatelessWidget {
   final Function(ScaleEndDetails) onScaleEnd;
   final Function(Offset) onDoubleTapDown;
   final VoidCallback onDoubleTap;
+  final int webtoonSidePadding;
+  final bool showPageGaps;
+  final bool reverse;
+  final ValueNotifier<bool> isScrolling;
 
   const ImageViewWebtoon({
     super.key,
@@ -54,6 +58,10 @@ class ImageViewWebtoon extends StatelessWidget {
     required this.onScaleEnd,
     required this.onDoubleTapDown,
     required this.onDoubleTap,
+    required this.isScrolling,
+    this.webtoonSidePadding = 0,
+    this.showPageGaps = true,
+    this.reverse = false,
   });
 
   @override
@@ -67,6 +75,7 @@ class ImageViewWebtoon extends StatelessWidget {
         onScaleEnd: (context, details, controllerValue) => onScaleEnd(details),
         child: ScrollablePositionedList.separated(
           scrollDirection: scrollDirection,
+          reverse: reverse,
           minCacheExtent: minCacheExtent,
           initialScrollIndex: initialScrollIndex,
           itemCount: pages.length,
@@ -82,15 +91,24 @@ class ImageViewWebtoon extends StatelessWidget {
   }
 
   Widget _buildItem(BuildContext context, int index) {
-    if (isDoublePageMode && !isHorizontalContinuous) {
-      return _buildDoublePageItem(context, index);
-    } else {
-      return _buildSinglePageItem(context, index);
-    }
+    final currentPage = pages[index];
+    final uniqueKey = ValueKey(
+      '${currentPage.chapter?.id ?? "trans"}-${currentPage.index ?? index}',
+    );
+
+    return KeyedSubtree(
+      key: uniqueKey,
+      child: (isDoublePageMode && !isHorizontalContinuous)
+          ? _buildDoublePageItem(context, index)
+          : _buildSinglePageItem(context, index),
+    );
   }
 
   Widget _buildSinglePageItem(BuildContext context, int index) {
     final currentPage = pages[index];
+    final double sidePad = webtoonSidePadding > 0
+        ? MediaQuery.of(context).size.width * webtoonSidePadding / 100
+        : 0;
 
     if (currentPage.isTransitionPage) {
       return GestureDetector(
@@ -101,15 +119,21 @@ class ImageViewWebtoon extends StatelessWidget {
       );
     }
 
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onDoubleTapDown: (details) => onDoubleTapDown(details.globalPosition),
-      onDoubleTap: onDoubleTap,
-      child: ImageViewVertical(
-        data: currentPage,
-        failedToLoadImage: onFailedToLoadImage,
-        onLongPressData: onLongPressData,
-        isHorizontal: isHorizontalContinuous,
+    return Padding(
+      padding: isHorizontalContinuous
+          ? EdgeInsets.zero
+          : EdgeInsets.symmetric(horizontal: sidePad),
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onDoubleTapDown: (details) => onDoubleTapDown(details.globalPosition),
+        onDoubleTap: onDoubleTap,
+        child: ImageViewVertical(
+          data: currentPage,
+          failedToLoadImage: onFailedToLoadImage,
+          onLongPressData: onLongPressData,
+          isHorizontal: isHorizontalContinuous,
+          isScrolling: isScrolling,
+        ),
       ),
     );
   }
@@ -144,7 +168,7 @@ class ImageViewWebtoon extends StatelessWidget {
   }
 
   Widget _buildSeparator(BuildContext context, int index) {
-    if (readerMode == ReaderMode.webtoon) {
+    if (!showPageGaps || readerMode == ReaderMode.webtoon) {
       return const SizedBox.shrink();
     }
 

@@ -32,7 +32,7 @@ class CoverViewWidget extends StatelessWidget {
             child: Material(
               borderRadius: BorderRadius.circular(5),
               color: Colors.transparent,
-              clipBehavior: Clip.antiAliasWithSaveLayer,
+              clipBehavior: Clip.antiAlias,
               child: InkWell(
                 onTap: onTap,
                 onLongPress: onLongPress,

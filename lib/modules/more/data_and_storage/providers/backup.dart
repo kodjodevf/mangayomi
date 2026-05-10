@@ -17,6 +17,7 @@ import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/update.dart';
+import 'package:mangayomi/modules/more/data_and_storage/providers/backup_compression.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:share_plus/share_plus.dart';
@@ -30,6 +31,8 @@ Future<void> doBackUp(
   required String path,
   required BuildContext? context,
 }) async {
+  final compression = ref.read(backupCompressionLevelProvider);
+  final compressionLevel = compression.clamp(0, 9).toInt();
   try {
     Map<String, dynamic> datas = {};
     datas.addAll({"version": "2"});
@@ -148,11 +151,12 @@ Future<void> doBackUp(
     final file = File(backupFilePath);
 
     await file.writeAsString(jsonEncode(datas));
-    var encoder = ZipFileEncoder();
-    encoder.create(p.join(path, "$name.backup"));
-    await encoder.addFile(File(backupFilePath));
-    await encoder.close();
-    await Directory(backupFilePath).delete(recursive: true);
+    final zipPath = p.join(path, "$name.backup");
+    final zipEncoder = ZipFileEncoder();
+    zipEncoder.create(zipPath, level: compressionLevel);
+    await zipEncoder.addFile(file);
+    await zipEncoder.close();
+    file.delete();
     final assets = [
       'assets/app_icons/icon-black.png',
       'assets/app_icons/icon-red.png',

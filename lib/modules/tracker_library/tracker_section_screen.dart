@@ -1,5 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:isar_community/isar.dart';
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_library_card.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_library_section.dart';
@@ -19,23 +23,53 @@ class _TrackerSectionScreenState extends State<TrackerSectionScreen> {
   String _errorMessage = "";
   bool _isLoading = true;
   List<TrackSearch> _tracks = [];
+  late StreamSubscription<List<Track>> _trackStreamSub;
+  Map<int, Track> _trackIndex = {};
 
   @override
   void initState() {
     super.initState();
     _fetchData();
+    _subscribeToTracks();
+  }
+
+  void _subscribeToTracks() {
+    _trackStreamSub = isar.tracks
+        .filter()
+        .itemTypeEqualTo(widget.section.itemType)
+        .mangaIdIsNotNull()
+        .watch(fireImmediately: true)
+        .listen((tracks) {
+          if (mounted) {
+            setState(() {
+              _trackIndex = {
+                for (final t in tracks)
+                  if (t.mediaId != null) t.mediaId!: t,
+              };
+            });
+          }
+        });
   }
 
   @override
   void didUpdateWidget(covariant TrackerSectionScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (oldWidget.section.itemType != widget.section.itemType) {
+      _trackStreamSub.cancel();
+      _subscribeToTracks();
+    }
     _fetchData();
+  }
+
+  @override
+  void dispose() {
+    _trackStreamSub.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
-
     return Scaffold(
       body: SizedBox(
         height: 260,
@@ -57,9 +91,11 @@ class _TrackerSectionScreenState extends State<TrackerSectionScreen> {
                             scrollDirection: Axis.horizontal,
                             itemCount: _tracks.length,
                             itemBuilder: (context, index) {
+                              final track = _tracks[index];
                               return TrackerLibraryImageCard(
-                                track: _tracks[index],
+                                track: track,
                                 itemType: widget.section.itemType,
+                                libraryTrack: _trackIndex[track.mediaId],
                               );
                             },
                           );
@@ -78,17 +114,13 @@ class _TrackerSectionScreenState extends State<TrackerSectionScreen> {
     final box = await Hive.openBox("tracker_library");
     final key =
         "${widget.section.syncId}-${widget.section.itemType.name}-${widget.section.name}";
-    if (_checkCache(box, key)) {
-      return;
-    }
+    if (_checkCache(box, key)) return;
     try {
       _errorMessage = "";
       _tracks = await widget.section.func() ?? [];
       box.put(key, _tracks);
       if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
+        setState(() => _isLoading = false);
       }
     } catch (e) {
       if (mounted) {
@@ -106,11 +138,7 @@ class _TrackerSectionScreenState extends State<TrackerSectionScreen> {
       if (temp is List<TrackSearch>) {
         _errorMessage = "";
         _tracks = temp;
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
+        if (mounted) setState(() => _isLoading = false);
         return true;
       }
     }

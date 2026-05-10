@@ -129,6 +129,8 @@ class GetIsolateService {
                         return await service.getVideoList(url!);
                       case 'getPageList':
                         return await service.getPageList(url!);
+                      case 'getHeaders':
+                        return Future.value(service.getHeaders());
                       default:
                         throw Exception('Unknown service type: $serviceType');
                     }
@@ -191,15 +193,15 @@ class GetIsolateService {
     });
 
     _sendPort!.send({
-      'url': url,
-      'page': page,
-      'query': query,
-      'filterList': filterList,
-      'serviceType': serviceType,
-      'source': source,
-      'proxyServer': proxyServer,
+      'url': ?url,
+      'page': ?page,
+      'query': ?query,
+      'filterList': ?filterList,
+      'serviceType': ?serviceType,
+      'source': ?source,
+      'proxyServer': ?proxyServer,
       'responsePort': responsePort.sendPort,
-      'useLogger': useLogger,
+      'useLogger': ?useLogger,
       'cfPort': cfPort,
     });
 
