@@ -113,9 +113,19 @@ void main(List<String> args) async {
       }
       final storage = StorageProvider();
       await storage.requestPermission();
-      isar = await storage.initDB(null, inspector: kDebugMode);
-      runApp(ProviderScope(child: MyApp(), retry: (retryCount, error) => null));
-      unawaited(_postLaunchInit(storage));
+      Object? startupError;
+      try {
+        isar = await storage.initDB(null, inspector: kDebugMode);
+      } catch (e, st) {
+        AppLogger.log('DB init failed: $e\n$st', logLevel: LogLevel.error);
+        startupError = e;
+      }
+      runApp(
+        startupError != null
+            ? _StartupErrorApp(error: startupError.toString())
+            : ProviderScope(child: MyApp(), retry: (retryCount, error) => null),
+      );
+      if (startupError == null) unawaited(_postLaunchInit(storage));
     },
     (Object error, StackTrace stack) {
       AppLogger.log(
@@ -124,6 +134,40 @@ void main(List<String> args) async {
       );
     },
   );
+}
+
+class _StartupErrorApp extends StatelessWidget {
+  final String error;
+  const _StartupErrorApp({required this.error});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                const SizedBox(height: 16),
+                const Text(
+                  'Failed to start Mangayomi',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                SelectableText(
+                  error,
+                  style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 Future<void> _postLaunchInit(StorageProvider storage) async {
