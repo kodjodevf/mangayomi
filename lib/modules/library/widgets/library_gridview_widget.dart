@@ -176,15 +176,20 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                             final downloadedIds = ref.watch(
                                               downloadedChapterIdsProvider,
                                             );
-                                            downloadCount = entry.chapters
-                                                .where(
-                                                  (c) =>
-                                                      c.id != null &&
-                                                      downloadedIds.contains(
-                                                        c.id,
-                                                      ),
-                                                )
-                                                .length;
+                                            var count = 0;
+                                            final chapters = entry.chapters.toList();  // ← convert once per entry
+                                            for (
+                                              var i = 0;
+                                              i < chapters.length;
+                                              i++
+                                            ) {
+                                              final id = chapters[i].id;
+                                              if (id != null &&
+                                                  downloadedIds.contains(id)) {
+                                                count++;
+                                              }
+                                            }
+                                            downloadCount = count;
                                           }
                                           return Row(
                                             children: [
