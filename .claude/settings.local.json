@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Rename-Item *)",
+      "Bash(awk -F',' 'NR>1 {print $3, $1, $2}' \"C:/Users/usuario/Documents/Projects/mangayomi-app-reference/docs/main-1-main-2_2026-05-16_22_28_01.046.csv\")",
+      "Bash(awk *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\usuario\\\\Documents\\\\Projects\\\\mangayomi-app-reference\\\\lib\" -Directory)",
+      "Bash(Select-Object Name)"
+    ]
+  }
+}
