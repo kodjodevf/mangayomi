@@ -278,7 +278,7 @@ class M3u8Downloader {
       index++;
       final tsUrl = line.startsWith('http')
           ? line
-          : '$host${line.replaceFirst("/", "")}';
+          : '$host/${line.replaceFirst("/", "")}';
       tsList.add(TsInfo('TS_$index', tsUrl));
     }
     return tsList;
@@ -318,7 +318,7 @@ class M3u8Downloader {
 
     String? uri = match.group(1);
     if (uri != null && !uri.contains('http')) {
-      uri = '$host$uri';
+      uri = '$host/${uri.replaceFirst("/", "")}';
     }
 
     final ivStr = match.group(2);
