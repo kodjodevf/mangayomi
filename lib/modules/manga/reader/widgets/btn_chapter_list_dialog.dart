@@ -109,7 +109,8 @@ class ChapterListWidget extends StatefulWidget {
 
 class _ChapterListWidgetState extends State<ChapterListWidget> {
   final controller = ScrollController();
-  late final chapterList = widget.chapter.manga.value!.getFilteredChapterList();
+  late final chapterList = widget.chapter.manga.value!
+      .getSortedFilteredChapters();
   late final currentChapIndex = chapterList.indexWhere(
     (element) =>
         element.name == widget.chapter.name &&
