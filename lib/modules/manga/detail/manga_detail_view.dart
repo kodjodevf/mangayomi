@@ -130,7 +130,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
       },
       child: chapters.when(
         data: (_) {
-          List<Chapter> chapters = widget.manga!.getFilteredChapterList();
+          List<Chapter> chapters = widget.manga!.getSortedFilteredChapters();
           ref.read(chaptersListttStateProvider.notifier).set(chapters);
           return _buildWidget(chapters: chapters);
         },
@@ -373,7 +373,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               },
                               onSelected: (value) {
                                 final chapters = widget.manga!
-                                    .getFilteredChapterList();
+                                    .getSortedFilteredChapters();
                                 if (value == 0 ||
                                     value == 1 ||
                                     value == 2 ||
@@ -431,7 +431,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 } else if (value == 4) {
                                   final List<Chapter> unreadChapters = widget
                                       .manga!
-                                      .getFilteredChapterList()
+                                      .getSortedFilteredChapters()
                                       .where(
                                         (element) => !(element.isRead ?? false),
                                       )
@@ -459,7 +459,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                 } else if (value == 5) {
                                   final List<Chapter> allChapters = widget
                                       .manga!
-                                      .getFilteredChapterList();
+                                      .getSortedFilteredChapters();
                                   for (var chapter in allChapters) {
                                     final entry = isar.downloads
                                         .filter()

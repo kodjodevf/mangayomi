@@ -7,8 +7,10 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 
 extension MangaExtensions on Manga {
-  // ── For the READER: always ascending story order, filters applied ──────────
-  List<Chapter> getChapterListForReading() {
+  /// Filtered chapters respecting the user's active filters (unread,
+  /// bookmarked, downloaded, scanlator). Sorted by chapter number ascending.
+  /// Base list — no user-chosen sort, no deduplication.
+  List<Chapter> getFilteredChapters() {
     final settings = isar.settings.getSync(227)!;
 
     final filterUnread =
@@ -84,8 +86,9 @@ extension MangaExtensions on Manga {
         .toList();
   }
 
-  // ── For the UI LIST: filters + user-chosen sort + reverse ─────────────────
-  List<Chapter> getFilteredChapterList() {
+  /// Filtered chapters for display in the chapter list UI: same filters as
+  /// [getFilteredChapters] with the user's chosen sort order and direction applied.
+  List<Chapter> getSortedFilteredChapters() {
     final settings = isar.settings.getSync(227)!;
 
     final sortChapterEntry =
@@ -94,8 +97,8 @@ extension MangaExtensions on Manga {
     final sortIndex = sortChapterEntry.index!;
     final reverse = sortChapterEntry.reverse!;
 
-    // Start from the reading list so filter logic lives in one place.
-    List<Chapter> list = getChapterListForReading();
+    // Build on getFilteredChapters so filter logic lives in one place.
+    List<Chapter> list = getFilteredChapters();
 
     switch (sortIndex) {
       case 0: // by scanlator, then chapter number
@@ -131,10 +134,28 @@ extension MangaExtensions on Manga {
         break;
       case 1:
       default:
-        // getChapterListForReading already sorted by chapter number; nothing to do.
+        // getFilteredChapters already sorted by chapter number; nothing to do.
         break;
     }
 
     return reverse ? list : list.reversed.toList();
+  }
+
+  /// Filtered chapters ready for sequential reading: same filters as
+  /// [getFilteredChapters] but with duplicate chapter numbers collapsed to a
+  /// single entry so the reader advances to the next story chapter rather than
+  /// another scanlator's copy of the same one.
+  List<Chapter> getChapterListForReading() {
+    final list = getFilteredChapters();
+    final mangaTitle = name ?? '';
+    final recognition = ChapterRecognition();
+    final seen = <int>{};
+    return list
+        .where(
+          (c) => seen.add(
+            recognition.parseChapterNumber(mangaTitle, c.name ?? ''),
+          ),
+        )
+        .toList();
   }
 }
