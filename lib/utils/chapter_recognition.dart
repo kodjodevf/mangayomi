@@ -4,7 +4,7 @@ class ChapterRecognition {
   );
   static final _unwantedWhiteSpace = RegExp(r"\s(?=extra|special|omake)");
   static final _seasonKeyword = RegExp(
-    r"\b(?:staffel|season|saison|temporada)\s*([0-9]+)",
+    r"\b(?:staffel|season|saison|temporada|s)\s*([0-9]+)",
   );
   static final _episodeKeyword = RegExp(
     r"\b(?:folge|episode|ep\.?)\s*([0-9]+(?:\.[0-9]+)?)",
