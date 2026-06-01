@@ -41,7 +41,7 @@ ImageProvider resolveCoverImage(Manga entry, WidgetRef ref) {
 void handleLongOrSecondaryTap(bool isLongPressed, WidgetRef ref, Manga entry) {
   ref.read(mangasListStateProvider.notifier).update(entry);
   if (!isLongPressed) {
-    ref.read(isLongPressedStateProvider.notifier).update(isLongPressed);
+    ref.read(isLongPressedStateProvider.notifier).update(!isLongPressed);
   }
 }
 
