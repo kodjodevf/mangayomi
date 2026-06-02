@@ -182,7 +182,7 @@ class AboutScreen extends ConsumerWidget {
                             },
                             icon: const Padding(
                               padding: EdgeInsets.only(left: 2.5, right: 2.5),
-                              child: Icon(FontAwesomeIcons.github),
+                              child: FaIcon(FontAwesomeIcons.github),
                             ),
                           ),
                           IconButton(
@@ -195,7 +195,7 @@ class AboutScreen extends ConsumerWidget {
                             },
                             icon: const Padding(
                               padding: EdgeInsets.only(right: 5),
-                              child: Icon(FontAwesomeIcons.discord),
+                              child: FaIcon(FontAwesomeIcons.discord),
                             ),
                           ),
                         ],
