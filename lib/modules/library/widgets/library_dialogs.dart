@@ -95,28 +95,26 @@ void showDeleteMangaDialog({
                           // Downloaded Chapters
                           if (deleteDownloads) {
                             for (var manga in mangasList) {
-                              if (!(manga.isLocalArchive ?? false)) {
-                                String mangaDirectory = "";
-                                if (manga.isLocalArchive ?? false) {
-                                  mangaDirectory = _deleteImport(
-                                    manga,
-                                    mangaDirectory,
-                                  );
-                                  isar.writeTxnSync(() {
-                                    _removeImport(ref, manga);
-                                  });
-                                } else {
-                                  mangaDirectory = await _deleteDownload(
-                                    manga,
-                                    mangaDirectory,
-                                  );
-                                }
-                                if (mangaDirectory.isNotEmpty) {
-                                  final path = Directory(mangaDirectory);
-                                  if (path.existsSync() &&
-                                      path.listSync().isEmpty) {
-                                    path.deleteSync(recursive: true);
-                                  }
+                              String mangaDirectory = "";
+                              if (manga.isLocalArchive ?? false) {
+                                mangaDirectory = _deleteImport(
+                                  manga,
+                                  mangaDirectory,
+                                );
+                                isar.writeTxnSync(() {
+                                  _removeImport(ref, manga);
+                                });
+                              } else {
+                                mangaDirectory = await _deleteDownload(
+                                  manga,
+                                  mangaDirectory,
+                                );
+                              }
+                              if (mangaDirectory.isNotEmpty) {
+                                final path = Directory(mangaDirectory);
+                                if (path.existsSync() &&
+                                    path.listSync().isEmpty) {
+                                  path.deleteSync(recursive: true);
                                 }
                               }
                             }
