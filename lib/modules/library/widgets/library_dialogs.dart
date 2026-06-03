@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar_community/isar.dart';
@@ -28,8 +27,8 @@ void showDeleteMangaDialog({
   required WidgetRef ref,
   required ItemType itemType,
 }) {
-  Set<int> fromLibList = {};
-  Set<int> downloadedChapsList = {};
+  bool deleteFromLib = false;
+  bool deleteDownloads = false;
   showDialog(
     context: context,
     builder: (context) {
@@ -52,31 +51,17 @@ void showDeleteMangaDialog({
                     children: [
                       ListTileChapterFilter(
                         label: l10n.from_library,
-                        onTap: () {
-                          setState(() {
-                            if (setEquals(fromLibList, mangaIdsList)) {
-                              fromLibList = {};
-                            } else {
-                              fromLibList = {...mangaIdsList};
-                            }
-                          });
-                        },
-                        type: fromLibList.isNotEmpty ? 1 : 0,
+                        onTap: () =>
+                            setState(() => deleteFromLib = !deleteFromLib),
+                        type: deleteFromLib ? 1 : 0,
                       ),
                       ListTileChapterFilter(
                         label: itemType != ItemType.anime
                             ? l10n.downloaded_chapters
                             : l10n.downloaded_episodes,
-                        onTap: () {
-                          setState(() {
-                            if (setEquals(downloadedChapsList, mangaIdsList)) {
-                              downloadedChapsList = {};
-                            } else {
-                              downloadedChapsList = {...mangaIdsList};
-                            }
-                          });
-                        },
-                        type: downloadedChapsList.isNotEmpty ? 1 : 0,
+                        onTap: () =>
+                            setState(() => deleteDownloads = !deleteDownloads),
+                        type: deleteDownloads ? 1 : 0,
                       ),
                     ],
                   ),
@@ -93,7 +78,7 @@ void showDeleteMangaDialog({
                       TextButton(
                         onPressed: () async {
                           // From Library
-                          if (fromLibList.isNotEmpty) {
+                          if (deleteFromLib) {
                             isar.writeTxnSync(() {
                               for (var manga in mangasList) {
                                 if (manga.isLocalArchive ?? false) {
@@ -108,7 +93,7 @@ void showDeleteMangaDialog({
                             });
                           }
                           // Downloaded Chapters
-                          if (downloadedChapsList.isNotEmpty) {
+                          if (deleteDownloads) {
                             for (var manga in mangasList) {
                               if (!(manga.isLocalArchive ?? false)) {
                                 String mangaDirectory = "";
