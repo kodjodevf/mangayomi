@@ -319,6 +319,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             PopupMenuButton(
                               popUpAnimationStyle: popupAnimationStyle,
                               icon: const Icon(Icons.download_outlined),
+                              tooltip: l10n.download,
                               itemBuilder: (context) {
                                 return [
                                   PopupMenuItem<int>(
