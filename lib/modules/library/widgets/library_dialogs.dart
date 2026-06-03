@@ -82,8 +82,12 @@ void showDeleteMangaDialog({
                             isar.writeTxnSync(() {
                               for (var manga in mangasList) {
                                 if (manga.isLocalArchive ?? false) {
+                                  // Local archives have no remote source, so removing from the
+                                  // library means wiping every related Isar record entirely.
                                   _removeImport(ref, manga);
                                 } else {
+                                  // Regular manga: just unfavourite so it disappears from the
+                                  // library without losing chapter/history data.
                                   manga.favorite = false;
                                   manga.updatedAt =
                                       DateTime.now().millisecondsSinceEpoch;
@@ -97,6 +101,9 @@ void showDeleteMangaDialog({
                             for (var manga in mangasList) {
                               String mangaDirectory = "";
                               if (manga.isLocalArchive ?? false) {
+                                // For local archives the archive file IS the chapter — there is
+                                // nothing to re-download. So we delete the physical files and
+                                // remove all Isar records, mirroring a full library removal.
                                 mangaDirectory = _deleteImport(
                                   manga,
                                   mangaDirectory,
@@ -105,11 +112,16 @@ void showDeleteMangaDialog({
                                   _removeImport(ref, manga);
                                 });
                               } else {
+                                // Regular manga: delete downloaded files and their download
+                                // records, but leave the manga and chapter metadata intact so
+                                // the user can re-download later.
                                 mangaDirectory = await _deleteDownload(
                                   manga,
                                   mangaDirectory,
                                 );
                               }
+                              // If the manga's base directory is now empty,
+                              // remove it too so we don't leave orphaned folders on disk.
                               if (mangaDirectory.isNotEmpty) {
                                 final path = Directory(mangaDirectory);
                                 if (path.existsSync() &&
@@ -142,6 +154,9 @@ void showDeleteMangaDialog({
   );
 }
 
+/// Removes a local-archive manga and all related records from Isar:
+/// history, updates, downloads, chapters, and the manga itself.
+/// Also notifies the sync provider so the removal is propagated.
 void _removeImport(WidgetRef ref, Manga manga) {
   final provider = ref.read(synchingProvider(syncId: 1).notifier);
   final histories = isar.historys
@@ -172,6 +187,9 @@ void _removeImport(WidgetRef ref, Manga manga) {
   provider.addChangedPart(ActionType.removeItem, manga.id, "{}", false);
 }
 
+/// Deletes the physical archive files (zip/cbz/mp4/epub) for a local-archive
+/// manga from disk. Returns the parent directory path so the caller can clean
+/// up the now-empty folder afterwards.
 String _deleteImport(Manga manga, String mangaDirectory) {
   for (var chapter in manga.chapters) {
     final path = chapter.archivePath;
