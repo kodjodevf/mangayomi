@@ -19,7 +19,7 @@ import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
-import 'package:mangayomi/utils/extensions/string_extensions.dart';
+import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:path/path.dart' as p;
 
 /// Shows a dialog for deleting selected manga from library and/or device.
@@ -206,51 +206,19 @@ String _deleteImport(Manga manga, String mangaDirectory) {
   return mangaDirectory;
 }
 
+/// Deletes the downloaded chapter files for a regular (non-local-archive)
+/// manga from disk, then cleans up the corresponding Isar download records.
+/// Returns the manga's base directory path so the caller can remove the
+/// folder if it is left empty.
 Future<String> _deleteDownload(Manga manga, String mangaDirectory) async {
-  final storageProvider = StorageProvider();
   Directory? mangaDir;
-  final idsToDelete = <int>{};
-  final downloadedIds = (await isar.downloads.where().idProperty().findAll())
-      .toSet();
-
-  if (downloadedIds.isEmpty) return mangaDirectory;
-
   for (var chapter in manga.chapters) {
-    if (chapter.id == null || !downloadedIds.contains(chapter.id)) continue;
-
-    mangaDir ??= await storageProvider.getMangaMainDirectory(chapter);
-    final chapterDir = await storageProvider.getMangaChapterDirectory(
-      chapter,
-      mangaMainDirectory: mangaDir,
-    );
-    File? file;
-
-    if (mangaDirectory.isEmpty) mangaDirectory = mangaDir!.path;
-    if (manga.itemType == ItemType.manga) {
-      file = File(p.join(mangaDir!.path, "${chapter.name}.cbz"));
-    } else if (manga.itemType == ItemType.anime) {
-      file = File(
-        p.join(
-          mangaDir!.path,
-          "${chapter.name!.replaceForbiddenCharacters(' ')}.mp4",
-        ),
-      );
+    if (chapter.id == null) continue;
+    await chapter.deleteDownloadedFiles();
+    if (mangaDirectory.isEmpty) {
+      mangaDir ??= await StorageProvider().getMangaMainDirectory(chapter);
+      if (mangaDir != null) mangaDirectory = mangaDir.path;
     }
-
-    try {
-      if (file != null && file.existsSync()) {
-        file.deleteSync();
-      }
-      if (chapterDir!.existsSync()) {
-        chapterDir.deleteSync(recursive: true);
-      }
-    } catch (_) {}
-    idsToDelete.add(chapter.id!);
-  }
-  if (idsToDelete.isNotEmpty) {
-    isar.writeTxnSync(() {
-      isar.downloads.deleteAllSync(idsToDelete.toList());
-    });
   }
   return mangaDirectory;
 }
