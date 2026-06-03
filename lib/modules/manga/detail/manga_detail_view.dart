@@ -1299,33 +1299,29 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
             );
           },
         ),
-        Consumer(
-          builder: (context, ref, chil) {
-            return RadioGroup(
-              groupValue: "e",
-              onChanged: (value) {},
-              child: Column(
-                children: [
-                  RadioListTile(
-                    dense: true,
-                    title: Text(l10n.source_title),
-                    value: "e",
-                    selected: true,
-                  ),
-                  RadioListTile(
-                    dense: true,
-                    title: Text(
-                      widget.itemType != ItemType.anime
-                          ? l10n.chapter_number
-                          : l10n.episode_number,
-                    ),
-                    value: "ej",
-                    selected: false,
-                  ),
-                ],
+        RadioGroup(
+          groupValue: "e",
+          onChanged: (value) {},
+          child: Column(
+            children: [
+              RadioListTile(
+                dense: true,
+                title: Text(l10n.source_title),
+                value: "e",
+                selected: true,
               ),
-            );
-          },
+              RadioListTile(
+                dense: true,
+                title: Text(
+                  widget.itemType != ItemType.anime
+                      ? l10n.chapter_number
+                      : l10n.episode_number,
+                ),
+                value: "ej",
+                selected: false,
+              ),
+            ],
+          ),
         ),
       ],
       context: context,
