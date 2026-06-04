@@ -118,28 +118,36 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     final chapters = ref.watch(
       getChaptersStreamProvider(mangaId: widget.manga!.id!),
     );
-    return NotificationListener<UserScrollNotification>(
-      onNotification: (notification) {
-        if (notification.direction == ScrollDirection.forward) {
-          widget.isExtended(true);
-        }
-        if (notification.direction == ScrollDirection.reverse) {
-          widget.isExtended(false);
-        }
-        return true;
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) return;
+        // Reset chapter selection so the top/bottom bars don't bleed into the library screen
+        ref.read(isLongPressedStateProvider.notifier).update(false);
+        ref.read(chaptersListStateProvider.notifier).clear();
       },
-      child: chapters.when(
-        data: (_) {
-          List<Chapter> chapters = widget.manga!.getSortedFilteredChapters();
-          ref.read(chaptersListttStateProvider.notifier).set(chapters);
-          return _buildWidget(chapters: chapters);
+      child: NotificationListener<UserScrollNotification>(
+        onNotification: (notification) {
+          if (notification.direction == ScrollDirection.forward) {
+            widget.isExtended(true);
+          }
+          if (notification.direction == ScrollDirection.reverse) {
+            widget.isExtended(false);
+          }
+          return true;
         },
-        error: (Object error, StackTrace stackTrace) {
-          return ErrorText(error);
-        },
-        loading: () {
-          return _buildWidget(chapters: widget.manga!.chapters.toList());
-        },
+        child: chapters.when(
+          data: (_) {
+            List<Chapter> chapters = widget.manga!.getSortedFilteredChapters();
+            ref.read(chaptersListttStateProvider.notifier).set(chapters);
+            return _buildWidget(chapters: chapters);
+          },
+          error: (Object error, StackTrace stackTrace) {
+            return ErrorText(error);
+          },
+          loading: () {
+            return _buildWidget(chapters: widget.manga!.chapters.toList());
+          },
+        ),
       ),
     );
   }
