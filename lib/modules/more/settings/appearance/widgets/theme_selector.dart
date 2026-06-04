@@ -98,7 +98,7 @@ class _ThemeSelectorState extends ConsumerState<ThemeSelector> {
                           child: CircleAvatar(
                             radius: 14,
                             backgroundColor: theme.primaryColorLight,
-                            child: Icon(
+                            child: FaIcon(
                               FontAwesomeIcons.check,
                               color: context.secondaryColor,
                               size: 16,
