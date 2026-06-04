@@ -1015,7 +1015,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                           });
                                         }
                                         for (final chapter in isDownloaded) {
-                                          chapter.deleteDownloadedFiles();
+                                          await chapter.deleteDownloadedFiles();
                                         }
                                         if (!mounted) return;
                                         ref
