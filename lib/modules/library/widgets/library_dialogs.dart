@@ -213,8 +213,14 @@ String _deleteImport(Manga manga, String mangaDirectory) {
 /// folder if it is left empty.
 Future<String> _deleteDownload(Manga manga, String mangaDirectory) async {
   Directory? mangaDir;
+  final downloadedIds = (await isar.downloads.where().idProperty().findAll())
+      .toSet();
+
+  if (downloadedIds.isEmpty) return mangaDirectory;
+
   for (var chapter in manga.chapters) {
-    if (chapter.id == null) continue;
+    if (chapter.id == null || !downloadedIds.contains(chapter.id)) continue;
+
     await chapter.deleteDownloadedFiles();
     if (mangaDirectory.isEmpty) {
       mangaDir ??= await StorageProvider().getMangaMainDirectory(chapter);
