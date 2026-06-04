@@ -809,7 +809,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
               final l10n = l10nLocalizations(context)!;
               final color = Theme.of(context).textTheme.bodyLarge!.color!;
               final downloadedIds =
-                  ref.watch(downloadedChapterIdsProvider).value ?? <int>{};
+                  ref.watch(downloadedChapterIdsProvider).asData?.value ??
+                  const <int>{};
               final isDownloaded = chap
                   .where((c) => downloadedIds.contains(c.id))
                   .toSet();
