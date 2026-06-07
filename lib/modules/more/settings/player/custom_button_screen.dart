@@ -114,7 +114,7 @@ class _CustomButtonScreenState extends ConsumerState<CustomButtonScreen> {
                   ],
                 );
               },
-              onReorder: (oldIndex, newIndex) async {
+              onReorderItem: (oldIndex, newIndex) async {
                 if (oldIndex < newIndex) {
                   final draggedItemPos = data[oldIndex].pos;
                   for (var i = oldIndex; i < newIndex - 1; i++) {

@@ -78,7 +78,7 @@ class _CustomNavigationSettingsState
               ],
             );
           },
-          onReorder: (oldIndex, newIndex) {
+          onReorderItem: (oldIndex, newIndex) {
             if (oldIndex < newIndex) {
               final draggedItem = navigationOrder[oldIndex];
               for (var i = oldIndex; i < newIndex - 1; i++) {

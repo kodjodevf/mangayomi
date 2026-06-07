@@ -20,9 +20,7 @@ class _LRUCache<K, V> {
   int _currentSize = 0;
   final int Function(V)? _sizeOf;
 
-  _LRUCache({required int maxSize, int Function(V)? sizeOf})
-    : _maxSize = maxSize,
-      _sizeOf = sizeOf;
+  _LRUCache({required this._maxSize, this._sizeOf});
 
   V? get(K key) {
     final value = _cache.remove(key);
