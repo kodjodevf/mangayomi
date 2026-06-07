@@ -52,11 +52,24 @@ class JsUtils {
       return JSPacker(args[0]).unpack() ?? "";
     });
     runtime.onMessage('evaluateJavascriptViaWebview', (dynamic args) async {
-      return await MBridge.evaluateJavascriptViaWebview(
-        args[0]!,
-        (args[1]! as Map).toMapStringString!,
-        (args[2]! as List).map((e) => e.toString()).toList(),
-      );
+      return http
+          .post(
+            Uri.parse('http://localhost:$cfPort/evaluateJavascriptViaWebview'),
+            headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+            body: jsonEncode({
+              'url': args[0]!,
+              'headers': (args[1]! as Map).toMapStringString!,
+              'scripts': (args[2]! as List).map((e) => e.toString()).toList(),
+              "time": args[3] ?? 30,
+            }),
+          )
+          .then((res) {
+            if (res.statusCode == 200) {
+              final data = jsonDecode(res.body) as Map<String, dynamic>;
+              return data['result'] as bool;
+            }
+            return false;
+          });
     });
     runtime.onMessage('parseEpub', (dynamic args) async {
       final bytes = await _toBytesResponse(client(), "GET", args);

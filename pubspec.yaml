@@ -135,6 +135,8 @@ dev_dependencies:
   #   path: plugins/hive_generator
 
 flutter:
+  config:
+    enable-swift-package-manager: false
   uses-material-design: true
   generate: true
 

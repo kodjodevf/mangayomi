@@ -310,7 +310,7 @@ int cfPort = 0;
 HttpServer? _cfServer;
 
 /// Cloudflare Resolution Webview Server
-Future<void> cfResolutionWebviewServer() async {
+Future<void> webviewServer() async {
   try {
     _cfServer = await HttpServer.bind(InternetAddress.loopbackIPv4, cfPort);
     cfPort = _cfServer!.port;
@@ -318,6 +318,9 @@ Future<void> cfResolutionWebviewServer() async {
       (HttpRequest request) {
         if (request.method == 'POST' && request.uri.path == '/resolve_cf') {
           _handleResolveCf(request);
+        } else if (request.method == 'POST' &&
+            request.uri.path == '/evaluateJavascriptViaWebview') {
+          _evaluateJavascriptViaWebview(request);
         } else {
           request.response
             ..statusCode = HttpStatus.notFound
@@ -336,7 +339,7 @@ Future<void> cfResolutionWebviewServer() async {
   }
 }
 
-Future<void> stopCfResolutionWebviewServer() async {
+Future<void> stopwebviewServer() async {
   final server = _cfServer;
   if (server == null) return;
   try {
@@ -426,6 +429,79 @@ void _handleResolveCf(HttpRequest request) async {
       ..write(jsonEncode({'result': isCloudFlare}))
       ..close();
   } catch (e) {
+    request.response
+      ..statusCode = HttpStatus.badRequest
+      ..write(jsonEncode({'error': 'Invalid JSON'}))
+      ..close();
+  }
+}
+
+Future<void> _evaluateJavascriptViaWebview(HttpRequest request) async {
+  try {
+    final body = await utf8.decoder.bind(request).join();
+    final data = jsonDecode(body) as Map<String, dynamic>;
+    final url = data['url'] as String;
+    final headers =
+        (data['headers'] as Map<String, dynamic>?)?.map(
+          (key, value) => MapEntry(key, value.toString()),
+        ) ??
+        {};
+    final scripts =
+        (data['scripts'] as List<dynamic>?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        [];
+    final time = data['time'] as int? ?? 30;
+
+    int t = 0;
+    bool timeOut = false;
+    bool isOk = false;
+    String response = "";
+    flutter_inappwebview.HeadlessInAppWebView? headlessWebView;
+    try {
+      headlessWebView = flutter_inappwebview.HeadlessInAppWebView(
+        webViewEnvironment: webViewEnvironment,
+        onWebViewCreated: (controller) {
+          controller.addJavaScriptHandler(
+            handlerName: 'setResponse',
+            callback: (args) {
+              response = args[0] as String;
+              isOk = true;
+            },
+          );
+        },
+        initialUrlRequest: flutter_inappwebview.URLRequest(
+          url: flutter_inappwebview.WebUri(url),
+          headers: headers,
+        ),
+        onLoadStop: (controller, url) async {
+          for (var script in scripts) {
+            await controller.platform.evaluateJavascript(source: script);
+          }
+        },
+      );
+
+      await headlessWebView.run();
+
+      await Future.doWhile(() async {
+        timeOut = time == t;
+        if (timeOut || isOk) {
+          return false;
+        }
+        await Future.delayed(const Duration(seconds: 1));
+        t++;
+        return true;
+      });
+    } finally {
+      try {
+        await headlessWebView?.dispose();
+      } catch (_) {}
+    }
+    request.response
+      ..headers.contentType = ContentType.json
+      ..write(jsonEncode({'result': response}))
+      ..close();
+  } catch (_) {
     request.response
       ..statusCode = HttpStatus.badRequest
       ..write(jsonEncode({'error': 'Invalid JSON'}))

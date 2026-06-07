@@ -1,10 +1,15 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:d4rt/d4rt.dart' hide Logger;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_qjs/flutter_qjs.dart';
+import 'package:http/http.dart' as http;
 import 'package:mangayomi/eval/model/filter.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/eval/model/m_provider.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extension_preferences_providers.dart';
+import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/log/log.dart';
 
@@ -335,13 +340,24 @@ class MProviderBridged {
     );
     interpreter.registertopLevelFunction(
       'evaluateJavascriptViaWebview',
-      (visitor, positionalArgs, namedArgs, _) =>
-          MBridge.evaluateJavascriptViaWebview(
-            positionalArgs[0] as String,
-            (positionalArgs[1] as Map).cast(),
-            (positionalArgs[2] as List).cast(),
-            time: namedArgs.get<int?>('time') ?? 30,
-          ),
+      (visitor, positionalArgs, namedArgs, _) => http
+          .post(
+            Uri.parse('http://localhost:$cfPort/evaluateJavascriptViaWebview'),
+            headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+            body: jsonEncode({
+              'url': positionalArgs[0] as String,
+              'headers': (positionalArgs[1] as Map).cast<String, String>(),
+              'scripts': (positionalArgs[2] as List).cast(),
+              "time": namedArgs.get<int?>('time') ?? 30,
+            }),
+          )
+          .then((res) {
+            if (res.statusCode == 200) {
+              final data = jsonDecode(res.body) as Map<String, dynamic>;
+              return data['result'] as bool;
+            }
+            return false;
+          }),
     );
     interpreter.registertopLevelFunction('print', (
       visitor,
