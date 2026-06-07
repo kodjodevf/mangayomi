@@ -14,15 +14,15 @@
       "bundleIdentifier": "com.kodjodevf.mangayomi",
       "developerName": "Moustapha Kodjo Amadou",
       "subtitle": "Read manga, novels, and watch anime",
-      "version": "0.7.75",
-      "versionDate": "2026-05-11T08:58:54Z",
+      "version": "0.7.80",
+      "versionDate": "2026-06-07T17:17:02Z",
       "versionDescription": "",
-      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.7.75/Mangayomi-v0.7.75-ios.ipa",
+      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.7.80/Mangayomi-v0.7.80-ios.ipa",
       "localizedDescription": "Mangayomi is an open-source Flutter app for reading manga, novels, and watching anime across multiple platforms.",
       "iconURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/icons/icon_default.webp",
       "tintColor": "EF4444",
       "category": "entertainment",
-      "size": 47937763,
+      "size": 47981955,
       "screenshotURLs": [
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_0_default.webp",
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_1_default.webp",
@@ -30,9 +30,16 @@
       ],
       "versions": [
         {
+          "version": "0.7.80",
+          "date": "2026-06-07T17:17:02Z",
+          "localizedDescription": "",
+          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.7.80/Mangayomi-v0.7.80-ios.ipa",
+          "size": 47981955
+        },
+        {
           "version": "0.7.75",
           "date": "2026-05-11T08:58:54Z",
-          "localizedDescription": "",
+          "localizedDescription": "What's Changed\r\n* Improve _handlePageNavigation() by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/717\r\n* Fix android app crash with certain Mihon extensions\r\n* Fix downloadedChapterIdsProvider by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/720\r\n* Fix null pointer exception by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/722\r\n* Improve updates by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/721\r\n* fix(downloads): unstall anime downloads on URLs with query strings + 206 responses by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/724\r\n* perf(statistics): aggregate inside Isar to fix 543 crash on large libraries by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/726\r\n* perf(images): cap decoded image cache by platform (refs 609) by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/727\r\n* Make Code More Readable by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/719\r\n* New file to reduce code duplication by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/723\r\n* perf(library): decode covers at thumbnail resolution to cut image\u2022cache RAM (refs 609) by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/728\r\n* fix(macos): host libmdbx DB under Application Support to avoid TCC EACCES on launch by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/725\r\n\r\nNew Contributors\r\n* @mrandhawa14 made their first contribution in https://github.com/kodjodevf/mangayomi/pull/724\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.7.70...v0.7.75",
           "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.7.75/Mangayomi-v0.7.75-ios.ipa",
           "size": 47937763
         },
@@ -538,6 +545,17 @@
       "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
       "notify": true,
       "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.7.75"
+    },
+    {
+      "appID": "com.kodjodevf.mangayomi",
+      "title": "0.7.80 - 07 Jun",
+      "identifier": "release-0.7.80",
+      "caption": "Update for Mangayomi now available!",
+      "date": "2026-06-07T17:17:02Z",
+      "tintColor": "EF4444",
+      "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
+      "notify": true,
+      "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.7.80"
     }
   ]
 }
