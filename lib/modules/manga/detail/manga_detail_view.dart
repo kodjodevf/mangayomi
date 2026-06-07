@@ -18,6 +18,7 @@ import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/library/library_screen.dart';
+import 'package:mangayomi/modules/library/providers/library_filter_provider.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_search_widget.dart';
@@ -815,6 +816,12 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                   chap.isNotEmpty && chap.first.isRead! && getLength1;
               final l10n = l10nLocalizations(context)!;
               final color = Theme.of(context).textTheme.bodyLarge!.color!;
+              final downloadedIds =
+                  ref.watch(downloadedChapterIdsProvider).asData?.value ??
+                  const <int>{};
+              final isDownloaded = chap
+                  .where((c) => downloadedIds.contains(c.id))
+                  .toSet();
               return BottomSelectBar(
                 isVisible: isLongPressed,
                 actions: [
@@ -918,7 +925,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                         ref.read(chaptersListStateProvider.notifier).clear();
                       },
                     ),
-                  if (!isLocalArchive)
+                  // If not local archive and not downloaded, show download button
+                  if (!isLocalArchive && isDownloaded.isEmpty)
                     BottomSelectButton(
                       icon: Icon(Icons.download_outlined, color: color),
                       onPressed: () {
@@ -943,7 +951,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                         ref.read(chaptersListStateProvider.notifier).clear();
                       },
                     ),
-                  if (isLocalArchive)
+                  // show delete button if local archive or downloaded
+                  if (isLocalArchive || isDownloaded.isNotEmpty)
                     BottomSelectButton(
                       icon: Icon(Icons.delete_outline_outlined, color: color),
                       onPressed: () {
@@ -970,7 +979,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                           builder: (context) {
                             return AlertDialog(
                               title: Text(l10n.delete_chapters),
-                              content: isLastChapters
+                              content: isLocalArchive && isLastChapters
                                   ? Row(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -1003,14 +1012,19 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                     TextButton(
                                       onPressed: () async {
                                         final navigator = Navigator.of(context);
-                                        await isar.writeTxn(() async {
-                                          final idsToDelete = selectedChapters
-                                              .map((c) => c.id!)
-                                              .toList();
-                                          await isar.chapters.deleteAll(
-                                            idsToDelete,
-                                          );
-                                        });
+                                        if (isLocalArchive) {
+                                          await isar.writeTxn(() async {
+                                            final idsToDelete = selectedChapters
+                                                .map((c) => c.id!)
+                                                .toList();
+                                            await isar.chapters.deleteAll(
+                                              idsToDelete,
+                                            );
+                                          });
+                                        }
+                                        for (final chapter in isDownloaded) {
+                                          await chapter.deleteDownloadedFiles();
+                                        }
                                         if (!mounted) return;
                                         ref
                                             .read(
@@ -1025,7 +1039,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                             )
                                             .clear();
                                         navigator.pop();
-                                        if (isLastChapters) {
+                                        if (isLocalArchive && isLastChapters) {
                                           navigator.pop();
                                           Future.delayed(
                                             const Duration(milliseconds: 350),

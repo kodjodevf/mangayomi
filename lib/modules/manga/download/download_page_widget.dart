@@ -64,43 +64,6 @@ class ChapterPageDownload extends ConsumerWidget {
     }
   }
 
-  void _deleteFile(int downloadId) async {
-    final storageProvider = StorageProvider();
-    final mangaDir = await storageProvider.getMangaMainDirectory(chapter);
-    final path = await storageProvider.getMangaChapterDirectory(
-      chapter,
-      mangaMainDirectory: mangaDir,
-    );
-
-    try {
-      try {
-        final cbzFile = File(p.join(mangaDir!.path, "${chapter.name}.cbz"));
-        if (cbzFile.existsSync()) {
-          cbzFile.deleteSync();
-        }
-      } catch (_) {}
-      try {
-        final mp4File = File(
-          p.join(
-            mangaDir!.path,
-            "${chapter.name!.replaceForbiddenCharacters(' ')}.mp4",
-          ),
-        );
-        if (mp4File.existsSync()) {
-          mp4File.deleteSync();
-        }
-      } catch (_) {}
-      try {
-        final htmlFile = File(p.join(mangaDir!.path, "${chapter.name}.html"));
-        if (htmlFile.existsSync()) {
-          htmlFile.deleteSync();
-        }
-      } catch (_) {}
-      path!.deleteSync(recursive: true);
-    } catch (_) {}
-    chapter.cancelDownloads(downloadId);
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = l10nLocalizations(context)!;
@@ -132,7 +95,7 @@ class ChapterPageDownload extends ConsumerWidget {
                         if (value == 0) {
                           _sendFile(context);
                         } else if (value == 1) {
-                          _deleteFile(download.id!);
+                          chapter.deleteDownloadedFiles();
                         }
                       },
                       itemBuilder: (context) => [
