@@ -81,10 +81,10 @@ class ChapterListTileWidget extends ConsumerWidget {
           color: Colors.white,
         ),
       ),
-      child: Container(
+      child: Material(
         color: chapterList.contains(chapter)
             ? context.primaryColor.withValues(alpha: 0.4)
-            : null,
+            : Colors.transparent,
         child: GestureDetector(
           onLongPress: () => _handleInteraction(ref),
           onSecondaryTap: () => _handleInteraction(ref),
