@@ -1,4 +1,5 @@
 import 'package:d4rt/d4rt.dart';
+import 'package:flutter/foundation.dart';
 import 'package:mangayomi/eval/dart/bridge/registrer.dart';
 import 'package:mangayomi/eval/model/filter.dart';
 import 'package:mangayomi/eval/javascript/http.dart';
@@ -113,7 +114,11 @@ class DartExtensionService implements ExtensionService {
     List<dynamic> list = [];
     try {
       list = _interpreter!.invoke('getFilterList', []) as List;
-    } catch (_) {}
+    } catch (e, st) {
+      if (kDebugMode) {
+        print('[DartExtensionService] getFilterList failed: $e\n$st');
+      }
+    }
 
     return FilterList(_toValueList(list));
   }

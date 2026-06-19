@@ -1,29 +1,29 @@
 String regHrefMatcher(String input) {
   RegExp exp = RegExp(r'href="([^"]+)"');
   Iterable<Match> matches = exp.allMatches(input);
-  String? firstMatch = matches.first.group(1);
-  return firstMatch!;
+  if (matches.isEmpty) return '';
+  return matches.first.group(1) ?? '';
 }
 
 String regDataSrcMatcher(String input) {
   RegExp exp = RegExp(r'data-src="([^"]+)"');
   Iterable<Match> matches = exp.allMatches(input);
-  String? firstMatch = matches.first.group(1);
-  return firstMatch!;
+  if (matches.isEmpty) return '';
+  return matches.first.group(1) ?? '';
 }
 
 String regSrcMatcher(String input) {
   RegExp exp = RegExp(r'src="([^"]+)"');
   Iterable<Match> matches = exp.allMatches(input);
-  String? firstMatch = matches.first.group(1);
-  return firstMatch!;
+  if (matches.isEmpty) return '';
+  return matches.first.group(1) ?? '';
 }
 
 String regImgMatcher(String input) {
   RegExp exp = RegExp(r'img="([^"]+)"');
   Iterable<Match> matches = exp.allMatches(input);
-  String? firstMatch = matches.first.group(1);
-  return firstMatch!;
+  if (matches.isEmpty) return '';
+  return matches.first.group(1) ?? '';
 }
 
 String regCustomMatcher(String input, String source, int group) {

@@ -145,6 +145,7 @@ class _MangaChapterPageGalleryState
         PageNavigationMixin {
   late AnimationController _scaleAnimationController;
   late Animation<double> _animation;
+  late VoidCallback _scaleAnimationListener;
 
   late ReaderController _readerController = ref.read(
     readerControllerProvider(chapter: chapter).notifier,
@@ -167,6 +168,7 @@ class _MangaChapterPageGalleryState
       elapsedSeconds: _readingStopwatch.elapsed.inSeconds,
     );
     _rebuildDetail.close();
+    _animation.removeListener(_scaleAnimationListener);
     _doubleClickAnimationController.dispose();
     _scaleAnimationController.dispose();
     _failedToLoadImage.dispose();
@@ -265,7 +267,9 @@ class _MangaChapterPageGalleryState
     _animation = Tween(begin: 1.0, end: 2.0).animate(
       CurvedAnimation(curve: Curves.ease, parent: _scaleAnimationController),
     );
-    _animation.addListener(() => _photoViewController.scale = _animation.value);
+    _scaleAnimationListener = () =>
+        _photoViewController.scale = _animation.value;
+    _animation.addListener(_scaleAnimationListener);
     _itemPositionsListener.itemPositions.addListener(_readProgressListener);
     initPageNavigation(
       itemScrollController: _itemScrollController,

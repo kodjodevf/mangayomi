@@ -126,7 +126,9 @@ class StorageProvider {
       final setting = isar.settings.getSync(227);
       dPath = setting?.downloadLocation ?? "";
     } catch (e) {
-      debugPrint("Could not get downloadLocation from Isar settings: $e");
+      if (kDebugMode) {
+        debugPrint("Could not get downloadLocation from Isar settings: $e");
+      }
     }
     if (Platform.isAndroid) {
       directory = Directory(
@@ -223,22 +225,23 @@ class StorageProvider {
       final newDir = Directory(newDbDir);
       if (await newDir.exists()) {
         // Only migrate when the new location is empty — never overwrite.
-        final entries = await newDir
-            .list(followLinks: false)
-            .take(1)
-            .toList();
+        final entries = await newDir.list(followLinks: false).take(1).toList();
         if (entries.isNotEmpty) return;
       }
       await Directory(path.dirname(newDbDir)).create(recursive: true);
       await legacyDir.rename(newDbDir);
-      debugPrint(
-        '[storage] Migrated macOS DB from ${legacyDir.path} to $newDbDir',
-      );
+      if (kDebugMode) {
+        debugPrint(
+          '[storage] Migrated macOS DB from ${legacyDir.path} to $newDbDir',
+        );
+      }
     } catch (e) {
       // Migration is best-effort. Falling back to a fresh DB is preferable
       // to crashing on launch — the user can manually move the legacy
       // ~/Documents/Mangayomi/databases/ contents if needed.
-      debugPrint('[storage] macOS DB migration skipped: $e');
+      if (kDebugMode) {
+        debugPrint('[storage] macOS DB migration skipped: $e');
+      }
     }
   }
 
@@ -262,10 +265,14 @@ class StorageProvider {
         try {
           await dir.create(recursive: true);
         } catch (e) {
-          debugPrint('Initial directory creation failed for $dirPath: $e');
+          if (kDebugMode) {
+            debugPrint('Initial directory creation failed for $dirPath: $e');
+          }
         }
       } else {
-        debugPrint('Permission denied. Cannot create: $dirPath');
+        if (kDebugMode) {
+          debugPrint('Permission denied. Cannot create: $dirPath');
+        }
       }
     }
   }
@@ -316,10 +323,14 @@ class StorageProvider {
             await isar.writeTxn(() async => isar.settings.put(Settings()));
           }
         } catch (e) {
-          debugPrint("Failed after retry with permission: $e");
+          if (kDebugMode) {
+            debugPrint("Failed after retry with permission: $e");
+          }
         }
       } else {
-        debugPrint("Permission denied during Database init fallback.");
+        if (kDebugMode) {
+          debugPrint("Permission denied during Database init fallback.");
+        }
       }
     }
 

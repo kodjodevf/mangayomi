@@ -62,12 +62,16 @@ Future<List<LocalArchive>> _extractArchivesFromDirectory(
           final archive = await _extractArchive(path);
           archives.add(archive);
         } catch (e) {
-          debugPrint('Error extracting archive at $path: $e');
+          if (kDebugMode) {
+            debugPrint('Error extracting archive at $path: $e');
+          }
         }
       },
     );
   } catch (e) {
-    debugPrint('Error scanning directory $directoryPath: $e');
+    if (kDebugMode) {
+      debugPrint('Error scanning directory $directoryPath: $e');
+    }
   }
 
   return archives;
@@ -91,12 +95,16 @@ _extractArchiveMetadataFromDirectory(String directoryPath) async {
           final data = await _extractArchiveMetadata(path);
           metadata.add(data);
         } catch (e) {
-          debugPrint('Error extracting metadata at $path: $e');
+          if (kDebugMode) {
+            debugPrint('Error extracting metadata at $path: $e');
+          }
         }
       },
     );
   } catch (e) {
-    debugPrint('Error scanning directory $directoryPath: $e');
+    if (kDebugMode) {
+      debugPrint('Error scanning directory $directoryPath: $e');
+    }
   }
 
   return metadata;
@@ -121,7 +129,9 @@ Future<void> _scanDirectoryRecursive(
       }
     }
   } catch (e) {
-    debugPrint('Error scanning directory ${dir.path}: $e');
+    if (kDebugMode) {
+      debugPrint('Error scanning directory ${dir.path}: $e');
+    }
   }
 }
 
@@ -148,7 +158,9 @@ Future<LocalArchive> _extractArchive(String path) async {
     // Handle archive file
     return _extractFromArchiveFile(path);
   } catch (e) {
-    debugPrint('Error extracting archive from $path: $e');
+    if (kDebugMode) {
+      debugPrint('Error extracting archive from $path: $e');
+    }
     rethrow;
   }
 }
@@ -250,7 +262,9 @@ Future<(String, LocalExtensionType, Uint8List, String)> _extractArchiveMetadata(
     // Handle archive file
     return _extractMetadataFromArchiveFile(path);
   } catch (e) {
-    debugPrint('Error extracting metadata from $path: $e');
+    if (kDebugMode) {
+      debugPrint('Error extracting metadata from $path: $e');
+    }
     rethrow;
   }
 }

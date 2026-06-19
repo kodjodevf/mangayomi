@@ -329,12 +329,18 @@ Future<void> webviewServer() async {
         }
       },
       onError: (e, st) {
-        debugPrint("CF server listener error: $e\n$st");
+        if (kDebugMode) {
+          debugPrint("CF server listener error: $e\n$st");
+        }
       },
       cancelOnError: false,
     );
   } catch (e, st) {
-    debugPrint("Couldn't start Cloudflare Resolution Webview Server: $e\n$st");
+    if (kDebugMode) {
+      debugPrint(
+        "Couldn't start Cloudflare Resolution Webview Server: $e\n$st",
+      );
+    }
     botToast("Couldn't start Cloudflare Resolution Webview Server.");
   }
 }

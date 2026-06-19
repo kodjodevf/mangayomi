@@ -78,6 +78,7 @@ class _DoublePageViewState extends State<DoublePageView>
   // Controllers for paged mode zoom
   late AnimationController _scaleAnimationController;
   late Animation<double> _animation;
+  late VoidCallback _animationListener;
   Alignment _scalePosition = Alignment.center;
   final PhotoViewController _photoViewController = PhotoViewController();
   final PhotoViewScaleStateController _photoViewScaleStateController =
@@ -124,15 +125,17 @@ class _DoublePageViewState extends State<DoublePageView>
       _animation = Tween(begin: 1.0, end: 2.0).animate(
         CurvedAnimation(curve: Curves.ease, parent: _scaleAnimationController),
       );
-      _animation.addListener(() {
+      _animationListener = () {
         _photoViewController.scale = _animation.value;
-      });
+      };
+      _animation.addListener(_animationListener);
     }
   }
 
   @override
   void dispose() {
     if (widget.isPagedMode) {
+      _animation.removeListener(_animationListener);
       _scaleAnimationController.dispose();
       _photoViewController.dispose();
       _photoViewScaleStateController.dispose();
