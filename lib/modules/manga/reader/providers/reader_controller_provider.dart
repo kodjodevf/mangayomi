@@ -185,12 +185,13 @@ class ReaderController extends _$ReaderController
   int? _lastSavedIndex;
   void setPageIndex(int newIndex, bool save) {
     if (chapter.isRead! || incognitoMode) return;
-    if (!save && newIndex == _lastSavedIndex) return;
+    final pageLength = getPageLength([]);
+    if (pageLength == 0 || (!save && newIndex == _lastSavedIndex)) return;
     _lastSavedIndex = newIndex;
     final isContinuousLike = getReaderMode().isVerticalContinuous;
     final isRead = isContinuousLike
-        ? (newIndex + 2) >= getPageLength([]) - 1
-        : (newIndex + 2) >= getPageLength([]);
+        ? (newIndex + 2) >= pageLength - 1
+        : (newIndex + 2) >= pageLength;
     if (isRead || save) {
       List<ChapterPageIndex>? chapterPageIndexs = [];
       for (var chapterPageIndex
