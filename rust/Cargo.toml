@@ -7,7 +7,7 @@ edition = "2021"
 crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
-flutter_rust_bridge = { version = "=2.11.1", features = ["chrono"] }
+flutter_rust_bridge = { version = "=2.12.0", features = ["chrono"] }
 image = "0.25.10"
 chrono = "0.4.44"
 futures-util = "0.3.31"
@@ -16,3 +16,6 @@ tokio = { version = "1.50.0", features = ["full"] }
 tokio-util = "0.7.16"
 epub = "2.1.5"
 zip = "8.5.0"
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }

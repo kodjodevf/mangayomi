@@ -1759,7 +1759,7 @@ final class SortLibraryMangaStateProvider
 }
 
 String _$sortLibraryMangaStateHash() =>
-    r'9cf913f9ad66fa19fad1d8b86afdcf52d990c5ee';
+    r'35674a265f9519d33ec9ffc2c013ea995529784a';
 
 final class SortLibraryMangaStateFamily extends $Family
     with
