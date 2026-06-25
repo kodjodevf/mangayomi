@@ -108,7 +108,6 @@ extension ChapterExtension on Chapter {
         .mangaIdEqualTo(manga.id!)
         .findAllSync();
 
-    if (tracks.isEmpty) return;
     for (var track in tracks) {
       final service = isar.trackPreferences
           .filter()
