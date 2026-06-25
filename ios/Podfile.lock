@@ -51,11 +51,16 @@ PODS:
     - swift-collections (~> 1.1.1)
   - flutter_qjs (0.0.1):
     - Flutter
+  - flutter_tts (0.0.1):
+    - Flutter
   - flutter_web_auth_2 (3.0.0):
     - Flutter
   - InternalCollectionsUtilities (1.1.1)
   - isar_community_flutter_libs (1.0.0):
     - Flutter
+  - local_auth_darwin (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - m_extension_server (0.0.1):
     - Flutter
   - media_kit_libs_ios_video (1.0.4):
@@ -108,8 +113,10 @@ DEPENDENCIES:
   - flutter_discord_rpc_fork (from `.symlinks/plugins/flutter_discord_rpc_fork/ios`)
   - flutter_inappwebview_ios (from `.symlinks/plugins/flutter_inappwebview_ios/ios`)
   - flutter_qjs (from `.symlinks/plugins/flutter_qjs/ios`)
+  - flutter_tts (from `.symlinks/plugins/flutter_tts/ios`)
   - flutter_web_auth_2 (from `.symlinks/plugins/flutter_web_auth_2/ios`)
   - isar_community_flutter_libs (from `.symlinks/plugins/isar_community_flutter_libs/ios`)
+  - local_auth_darwin (from `.symlinks/plugins/local_auth_darwin/darwin`)
   - m_extension_server (from `.symlinks/plugins/m_extension_server/ios`)
   - media_kit_libs_ios_video (from `.symlinks/plugins/media_kit_libs_ios_video/ios`)
   - media_kit_video (from `.symlinks/plugins/media_kit_video/ios`)
@@ -148,10 +155,14 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_inappwebview_ios/ios"
   flutter_qjs:
     :path: ".symlinks/plugins/flutter_qjs/ios"
+  flutter_tts:
+    :path: ".symlinks/plugins/flutter_tts/ios"
   flutter_web_auth_2:
     :path: ".symlinks/plugins/flutter_web_auth_2/ios"
   isar_community_flutter_libs:
     :path: ".symlinks/plugins/isar_community_flutter_libs/ios"
+  local_auth_darwin:
+    :path: ".symlinks/plugins/local_auth_darwin/darwin"
   m_extension_server:
     :path: ".symlinks/plugins/m_extension_server/ios"
   media_kit_libs_ios_video:
@@ -186,9 +197,11 @@ SPEC CHECKSUMS:
   flutter_discord_rpc_fork: 970cf2beca17870caf8645556de01ae2b8587bb6
   flutter_inappwebview_ios: 9cde7869829d54b4110df350f3eedd192c5a4aea
   flutter_qjs: 1d5918f42171154e88dd545dd45f126c0291976f
+  flutter_tts: 35ac3c7d42412733e795ea96ad2d7e05d0a75113
   flutter_web_auth_2: 3464a7c16dc6480b6194fc89913bae6e82f28405
   InternalCollectionsUtilities: af3f471602c4a67cbcb0bee0a80f6f55a33ae453
   isar_community_flutter_libs: bede843185a61a05ff364a05c9b23209523f7e0d
+  local_auth_darwin: c3ee6cce0a8d56be34c8ccb66ba31f7f180aaebb
   m_extension_server: 6946ec189542b271dbd15629b9498595f1036761
   media_kit_libs_ios_video: 5a18affdb97d1f5d466dc79988b13eff6c5e2854
   media_kit_video: 1746e198cb697d1ffb734b1d05ec429d1fcd1474
