@@ -1,7 +1,12 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:path/path.dart' as p;
+import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
@@ -290,6 +295,7 @@ class _MangaChapterPageGalleryState
 
   // final double _horizontalScaleValue = 1.0;
   bool _isNextChapterPreloading = false;
+  int _prefetchSessionId = 0;
   // bool _isPrevChapterPreloading = false;
 
   /// Guard flag: suppresses [_readProgressListener] during scroll position
@@ -1151,27 +1157,87 @@ class _MangaChapterPageGalleryState
   ///
   /// This is fully async — [await] inside a fire-and-forget call — so the
   /// UI stays interactive throughout.
-  Future<void> _prefetchPagesInOrder() async {
-    final startIdx = (_currentIndex ?? 0).clamp(0, pages.length - 1);
-
-    // Visit pages from the opening position forward, then backward.
-    final indices = [
-      for (var i = startIdx; i < pages.length; i++) i,
-      for (var i = startIdx - 1; i >= 0; i--) i,
-    ];
-
-    for (final i in indices) {
-      if (!mounted) return;
-      final page = pages[i];
-      if (page.isTransitionPage) continue;
-      try {
-        // Awaiting ensures page[i] finishes (or fails) before page[i+1]
-        // starts downloading, giving strict reading-order priority.
-        await precacheImage(page.getImageProvider(ref, true), context);
-      } catch (_) {
-        // Swallow errors: network failures, widget disposal, etc.
+  Future<void> _checkAndReloadEvictedPages(Chapter currentChapter) async {
+    final chapterId = currentChapter.id;
+    bool needsReload = false;
+    for (final page in pages) {
+      if (page.chapter?.id == chapterId &&
+          !page.isTransitionPage &&
+          page.isLocale == true &&
+          page.archiveImage == null) {
+        needsReload = true;
+        break;
       }
     }
+
+    if (needsReload) {
+      final isLocalArchive = (currentChapter.archivePath ?? '').isNotEmpty;
+      final storageProvider = StorageProvider();
+      final mangaDirectory = await storageProvider.getMangaMainDirectory(currentChapter);
+      final archivePath = isLocalArchive
+          ? currentChapter.archivePath
+          : (mangaDirectory != null ? p.join(mangaDirectory.path, "${currentChapter.name}.cbz") : null);
+
+      if (archivePath != null && await File(archivePath).exists()) {
+        try {
+          final local = await ref.read(getArchiveDataFromFileProvider(archivePath).future);
+          final images = local.images ?? [];
+          int imgIdx = 0;
+          for (final page in pages) {
+            if (page.chapter?.id == currentChapter.id && !page.isTransitionPage) {
+              if (imgIdx < images.length) {
+                page.archiveImage = images[imgIdx].image;
+              }
+              imgIdx++;
+            }
+          }
+          preloadManager.markChapterAsLoaded(currentChapter);
+          if (mounted) {
+            setState(() {});
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            debugPrint('Error reloading evicted chapter pages: $e');
+          }
+        }
+      }
+    }
+  }
+
+  Future<void> _prefetchPagesInOrder() async {
+    final sessionId = ++_prefetchSessionId;
+    final startIdx = (_currentIndex ?? 0).clamp(0, pages.length - 1);
+
+    final preloadAmount = ref.read(pagePreloadAmountStateProvider);
+    final forwardLimit = (startIdx + preloadAmount).clamp(0, pages.length - 1);
+    final backwardLimit = (startIdx - 2).clamp(0, pages.length - 1);
+
+    final indices = [
+      for (var i = startIdx; i <= forwardLimit; i++) i,
+      for (var i = startIdx - 1; i >= backwardLimit; i--) i,
+    ];
+
+    final queue = List<int>.from(indices);
+
+    Future<void> worker() async {
+      while (queue.isNotEmpty) {
+        if (sessionId != _prefetchSessionId || !mounted) return;
+        final i = queue.removeAt(0);
+        final page = pages[i];
+        if (page.isTransitionPage) continue;
+        try {
+          await precacheImage(page.getImageProvider(ref, true), context);
+        } catch (_) {
+          // Swallow errors: network failures, widget disposal, etc.
+        }
+      }
+    }
+
+    await Future.wait([
+      worker(),
+      worker(),
+      worker(),
+    ]);
   }
 
   Future<void> _onPageChanged(int index) async {
@@ -1227,6 +1293,18 @@ class _MangaChapterPageGalleryState
     // if (actualIndex <= pagePreloadAmount) {
     //   _triggerPrevChapterPreload();
     // }
+
+    // Ensure the current chapter's pages are reloaded if they were evicted
+    await _checkAndReloadEvictedPages(chapter);
+
+    // Evict old chapters' pages to free memory
+    final evictedIndices = preloadManager.evictOldChapters(chapter);
+    for (final evictedIdx in evictedIndices) {
+      _cropBorderCheckList.remove(evictedIdx);
+    }
+
+    // Prefetch pages in order for the new page window
+    _prefetchPagesInOrder();
   }
 
   late final _pageOffset = ValueNotifier(

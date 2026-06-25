@@ -318,6 +318,64 @@ class ChapterPreloadManager {
     return 'id:${chapter.id}';
   }
 
+  /// Evicts old chapters when the loaded chapters exceed the threshold.
+  /// Returns the indices of the pages that were evicted.
+  List<int> evictOldChapters(Chapter currentChapter) {
+    final currentId = _getChapterIdentifier(currentChapter);
+    if (currentId == null) return [];
+
+    final loadedIdsInOrder = <String>[];
+    for (final page in _pages) {
+      if (page.isTransitionPage || page.chapter == null) continue;
+      final id = _getChapterIdentifier(page.chapter);
+      if (id != null && !loadedIdsInOrder.contains(id)) {
+        loadedIdsInOrder.add(id);
+      }
+    }
+
+    final currentIndex = loadedIdsInOrder.indexOf(currentId);
+    if (currentIndex == -1) return [];
+
+    final idsToKeep = <String>{currentId};
+    if (currentIndex - 1 >= 0) {
+      idsToKeep.add(loadedIdsInOrder[currentIndex - 1]);
+    }
+    if (currentIndex + 1 < loadedIdsInOrder.length) {
+      idsToKeep.add(loadedIdsInOrder[currentIndex + 1]);
+    }
+
+    final evictedIndices = <int>[];
+    final idsToEvict = _loadedChapterIds.difference(idsToKeep);
+    for (final id in idsToEvict) {
+      if (kDebugMode) {
+        debugPrint('[ChapterPreload] Evicting chapter data for $id');
+      }
+      for (int i = 0; i < _pages.length; i++) {
+        final page = _pages[i];
+        if (page.isTransitionPage || page.chapter == null) continue;
+        if (_getChapterIdentifier(page.chapter) == id) {
+          page.archiveImage = null;
+          page.cropImage = null;
+          evictedIndices.add(i);
+        }
+      }
+      _loadedChapterIds.remove(id);
+      _chapterLoadOrder.remove(id);
+    }
+    return evictedIndices;
+  }
+
+  /// Marks a chapter as loaded again (used after reloading evicted pages).
+  void markChapterAsLoaded(Chapter chapter) {
+    final chapterId = _getChapterIdentifier(chapter);
+    if (chapterId != null) {
+      _loadedChapterIds.add(chapterId);
+      if (!_chapterLoadOrder.contains(chapterId)) {
+        _chapterLoadOrder.add(chapterId);
+      }
+    }
+  }
+
   /// Disposes of all resources.
   Future<void> dispose() async {
     // Clear pages
