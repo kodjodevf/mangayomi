@@ -294,7 +294,7 @@ class _MangaChapterPageGalleryState
 
   /// Guard flag: suppresses [_readProgressListener] during scroll position
   /// adjustment after prepending previous-chapter pages.
-  final bool _isAdjustingScroll = false;
+  final bool _isAdjustingScroll = false; // TODO. The variable is never changed
 
   late int pagePreloadAmount = ref.read(pagePreloadAmountStateProvider);
   late bool _isBookmarked = _readerController.getChapterBookmarked();

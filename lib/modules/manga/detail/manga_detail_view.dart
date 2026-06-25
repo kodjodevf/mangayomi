@@ -23,6 +23,7 @@ import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_search_widget.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_widget.dart';
+import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/modules/more/providers/algorithm_weights_state_provider.dart';
@@ -863,18 +864,28 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                       final chapters = ref.watch(chaptersListStateProvider);
                       final List<Chapter> updatedChapters = [];
                       final now = DateTime.now().millisecondsSinceEpoch;
+                      Chapter? highestChapter;
+                      int highestNum = -1;
+                      final recognition = ChapterRecognition();
+                      final mangaTitle = widget.manga!.name ?? '';
                       for (var chapter in chapters) {
                         chapter.isRead = !chapter.isRead!;
-                        if (!chapter.isRead!) {
-                          chapter.lastPageRead = "1";
-                        }
+                        if (!chapter.isRead!) chapter.lastPageRead = "1";
                         chapter.updatedAt = now;
                         chapter.manga.value = widget.manga;
                         updatedChapters.add(chapter);
                         if (chapter.isRead!) {
-                          chapter.updateTrackChapterRead(ref);
+                          final num = recognition.parseEpisodeNumber(
+                            mangaTitle,
+                            chapter.name ?? '',
+                          );
+                          if (num > highestNum) {
+                            highestNum = num;
+                            highestChapter = chapter;
+                          }
                         }
                       }
+                      highestChapter?.updateTrackChapterRead(ref);
                       isar.writeTxnSync(() {
                         isar.chapters.putAllSync(updatedChapters);
                         isar.mangas.putSync(widget.manga!);
