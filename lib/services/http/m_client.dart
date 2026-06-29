@@ -16,6 +16,7 @@ import 'package:mangayomi/utils/log/log.dart';
 import 'package:mangayomi/services/http/rhttp/rhttp.dart' as rhttp;
 import 'package:mangayomi/services/http/doh/doh_resolver.dart';
 import 'package:mangayomi/services/http/doh/doh_providers.dart';
+import 'package:mangayomi/services/http/doh/doh_custom_store.dart';
 
 class MClient {
   MClient();
@@ -65,8 +66,13 @@ class MClient {
     DnsSettings? dnsSettings;
 
     if (useDoH && doHProviderId != null) {
-      // Use DoH resolver with specific provider
-      final provider = DoHProviders.byId[doHProviderId];
+      // Use DoH resolver with the selected provider — either a preset or, when
+      // the custom sentinel id is set, one built from the user's saved URL.
+      final provider = doHProviderId == DoHProviders.customId
+          ? (DohCustomStore.url.trim().isNotEmpty
+                ? DoHProviders.custom(DohCustomStore.url.trim())
+                : null)
+          : DoHProviders.byId[doHProviderId];
       if (provider != null) {
         dnsSettings = DnsSettings.dynamic(
           resolver: (host) => DoHResolver.resolve(host, provider: provider),
