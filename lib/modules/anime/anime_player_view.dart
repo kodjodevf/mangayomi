@@ -21,6 +21,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/video.dart' as vid;
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
+import 'package:mangayomi/modules/anime/providers/auto_play_next_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/aniskip_countdown_btn.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/anime/widgets/play_or_pause_button.dart';
@@ -311,7 +312,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
 
   late final StreamSubscription<bool> _completed = _player.stream.completed
       .listen((val) {
-        if (hasNextEpisode && val) {
+        if (hasNextEpisode && val && ref.read(autoPlayNextEpisodeProvider)) {
           if (mounted) {
             pushToNewEpisode(context, _streamController.getNextEpisode());
           }
@@ -1896,6 +1897,23 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           ),
           Row(
             children: [
+              Consumer(
+                builder: (context, ref, _) {
+                  final autoPlay = ref.watch(autoPlayNextEpisodeProvider);
+                  return IconButton(
+                    tooltip: autoPlay
+                        ? 'Autoplay next episode: on'
+                        : 'Autoplay next episode: off',
+                    icon: Icon(
+                      Icons.playlist_play,
+                      color: autoPlay ? Colors.white : Colors.white38,
+                    ),
+                    onPressed: () => ref
+                        .read(autoPlayNextEpisodeProvider.notifier)
+                        .toggle(),
+                  );
+                },
+              ),
               if (_supportAlwaysOnTop())
                 IconButton(
                   icon: Icon(
