@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/services/http/doh/doh_custom_store.dart';
 import 'package:mangayomi/services/http/doh/doh_providers.dart';
 
 class DoHProviderState {
@@ -57,6 +58,23 @@ class DoHProviderNotifier extends Notifier<DoHProviderState> {
       isar.settings.putSync(settings);
     });
     state = state.copyWith(enabled: true, providerId: providerId);
+  }
+
+  /// Selects a user-supplied custom DoH endpoint: persists the [url] (Hive)
+  /// and points the existing provider-id setting at the custom sentinel.
+  void setCustomDoH(String url) {
+    DohCustomStore.setUrl(url.trim());
+
+    final settings = isar.settings.getSync(227)!;
+    settings.doHProviderId = DoHProviders.customId;
+    settings.doHEnabled = true;
+    isar.writeTxnSync(() {
+      isar.settings.putSync(settings);
+    });
+    state = state.copyWith(
+      enabled: true,
+      providerId: DoHProviders.customId,
+    );
   }
 }
 
