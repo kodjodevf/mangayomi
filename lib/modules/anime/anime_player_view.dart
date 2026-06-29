@@ -826,6 +826,14 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             : "libmpv",
       ),
     );
+    // Picture-in-Picture is implemented natively by the media_kit fork
+    // (VideoOutputPIP) and only exposed on iOS 15+. Enabling auto-PiP makes the
+    // player float into a PiP window when the app is backgrounded instead of
+    // pausing. The call awaits the controller's platform init internally, so
+    // it is safe to fire here without awaiting.
+    if (Platform.isIOS) {
+      _controller.enableAutoPictureInPicture();
+    }
     // If player is being launched the first time,
     // use global "Use Fullscreen" setting.
     // Else (if user already watches an episode and just changes it),
@@ -1555,11 +1563,16 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _seekToWidget(),
                 _chapterMarkWidget(),
-                _buildSettingsButtons(context),
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    reverse: true,
+                    child: _buildSettingsButtons(context),
+                  ),
+                ),
               ],
             ),
           ),
@@ -1814,6 +1827,15 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                   )
                   .toList(),
         ),
+        if (Platform.isIOS && _controller.isPictureInPictureAvailable())
+          IconButton(
+            tooltip: 'Picture in Picture',
+            icon: const Icon(
+              Icons.picture_in_picture_alt,
+              color: Colors.white,
+            ),
+            onPressed: () => _controller.enterPictureInPicture(),
+          ),
         IconButton(
           icon: const Icon(Icons.fit_screen_outlined, color: Colors.white),
           onPressed: () async {
