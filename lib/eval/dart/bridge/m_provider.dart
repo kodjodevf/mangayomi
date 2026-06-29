@@ -103,6 +103,15 @@ class MProviderBridged {
       ),
     );
     interpreter.registertopLevelFunction(
+      'decryptAESGCM',
+      (visitor, positionalArgs, namedArgs, _) => MBridge.decryptAESGCM(
+        positionalArgs[0] as String,
+        positionalArgs[1] as String,
+        positionalArgs[2] as String,
+        positionalArgs[3] as String,
+      ),
+    );
+    interpreter.registertopLevelFunction(
       'deobfuscateJsPassword',
       (visitor, positionalArgs, namedArgs, _) =>
           MBridge.deobfuscateJsPassword(positionalArgs[0] as String),

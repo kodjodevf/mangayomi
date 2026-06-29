@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -33,6 +34,7 @@ import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:xpath_selector_html_parser/xpath_selector_html_parser.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:convert/convert.dart' show hex;
 import 'package:mangayomi/services/anime_extractors/quarkuc_extractor.dart';
 
 class WordSet {
@@ -564,6 +566,40 @@ class MBridge {
       subtitles: subtitles ?? [],
       audios: audios ?? [],
     );
+  }
+
+  /// AES-GCM decryption for extensions (parity with Java's
+  /// `Cipher.getInstance("AES/GCM/NoPadding")`).
+  ///
+  /// - [encrypted] : base64 ciphertext (without the auth tag)
+  /// - [keyHex]    : hex-encoded key (16/24/32 bytes → AES-128/192/256)
+  /// - [ivHex]     : hex-encoded IV / nonce (typically 12 bytes for GCM)
+  /// - [tagHex]    : hex-encoded 16-byte authentication tag
+  ///
+  /// Returns the decrypted UTF-8 string, or the original [encrypted] input if
+  /// decryption/authentication fails (mirrors [cryptoHandler]'s behavior).
+  static String decryptAESGCM(
+    String encrypted,
+    String keyHex,
+    String ivHex,
+    String tagHex,
+  ) {
+    try {
+      final key = encrypt.Key(Uint8List.fromList(hex.decode(keyHex)));
+      final iv = encrypt.IV(Uint8List.fromList(hex.decode(ivHex)));
+      // PointyCastle's GCM (and Java's AES/GCM/NoPadding) expect the 128-bit
+      // auth tag appended to the ciphertext, so concatenate the two.
+      final dataWithTag = Uint8List.fromList([
+        ...base64.decode(encrypted),
+        ...hex.decode(tagHex),
+      ]);
+      final encrypter = encrypt.Encrypter(
+        encrypt.AES(key, mode: encrypt.AESMode.gcm),
+      );
+      return encrypter.decrypt(encrypt.Encrypted(dataWithTag), iv: iv);
+    } catch (_) {
+      return encrypted;
+    }
   }
 
   static String cryptoHandler(
