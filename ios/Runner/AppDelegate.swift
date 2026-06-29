@@ -1,13 +1,10 @@
 import UIKit
 import Flutter
 import Libmtorrentserver
-import workmanager_apple
 import UniformTypeIdentifiers
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate, UIDocumentPickerDelegate, UIAdaptivePresentationControllerDelegate {
-  private let backgroundLibraryUpdateTaskId =
-    "com.kodjodevf.mangayomi.background_library_update"
   private var activeBackgroundTasks: [String: UIBackgroundTaskIdentifier] = [:]
   private let localDirectoryBookmarksKey =
     "com.kodjodevf.mangayomi.local_directory_bookmarks"
@@ -18,10 +15,6 @@ import UniformTypeIdentifiers
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    WorkmanagerPlugin.registerPeriodicTask(
-      withIdentifier: backgroundLibraryUpdateTaskId,
-      frequency: NSNumber(value: 15 * 60)
-    )
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
