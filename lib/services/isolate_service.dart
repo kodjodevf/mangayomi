@@ -17,38 +17,25 @@ class _IsolateData {
   _IsolateData({required this.sendPort, required this.rootIsolateToken});
 }
 
-class GetIsolateService {
-  bool _isRunning = false;
-  Isolate? _getIsolateService;
-  ReceivePort? _receivePort;
-  StreamSubscription? _receiveSub;
-  SendPort? _sendPort;
+class _IsolateWorker {
+  Isolate? isolate;
+  ReceivePort? receivePort;
+  StreamSubscription? receiveSub;
+  SendPort? sendPort;
+  bool isBusy = false;
 
-  Future<void> start() async {
-    if (!_isRunning) {
-      try {
-        await _initGetIsolateService();
-      } catch (_) {
-        await stop();
-      }
-    }
-  }
-
-  Future<void> _initGetIsolateService() async {
-    _receivePort = ReceivePort();
-
-    final rootToken = RootIsolateToken.instance!;
-
-    _getIsolateService = await Isolate.spawn(
-      _getIsolateServiceEntryPoint,
+  Future<void> start(RootIsolateToken rootToken) async {
+    receivePort = ReceivePort();
+    isolate = await Isolate.spawn(
+      GetIsolateService._getIsolateServiceEntryPoint,
       _IsolateData(
-        sendPort: _receivePort!.sendPort,
+        sendPort: receivePort!.sendPort,
         rootIsolateToken: rootToken,
       ),
     );
 
     final completer = Completer<SendPort>();
-    _receiveSub = _receivePort!.listen((message) {
+    receiveSub = receivePort!.listen((message) {
       if (message is SendPort) {
         completer.complete(message);
       }
@@ -67,11 +54,40 @@ class GetIsolateService {
       }
     });
 
-    _sendPort = await completer.future.timeout(
+    sendPort = await completer.future.timeout(
       const Duration(seconds: 5),
       onTimeout: () => throw StateError('Isolate handshake timed out'),
     );
-    _isRunning = true;
+  }
+
+  Future<void> stop() async {
+    sendPort?.send('dispose');
+    isolate?.kill(priority: Isolate.immediate);
+    await receiveSub?.cancel();
+    receivePort?.close();
+  }
+}
+
+class GetIsolateService {
+  bool _isRunning = false;
+  final List<_IsolateWorker> _workers = [];
+  final List<Completer<_IsolateWorker>> _pendingWorkers = [];
+  static const int _poolSize = 4;
+
+  Future<void> start() async {
+    if (!_isRunning) {
+      try {
+        final rootToken = RootIsolateToken.instance!;
+        for (int i = 0; i < _poolSize; i++) {
+          final worker = _IsolateWorker();
+          await worker.start(rootToken);
+          _workers.add(worker);
+        }
+        _isRunning = true;
+      } catch (_) {
+        await stop();
+      }
+    }
   }
 
   static Future<void> _getIsolateServiceEntryPoint(
@@ -149,6 +165,30 @@ class GetIsolateService {
         });
   }
 
+  Future<_IsolateWorker> _getAvailableWorker() async {
+    if (!_isRunning) {
+      throw Exception('Isolate service not running');
+    }
+    for (final worker in _workers) {
+      if (!worker.isBusy) {
+        worker.isBusy = true;
+        return worker;
+      }
+    }
+    final completer = Completer<_IsolateWorker>();
+    _pendingWorkers.add(completer);
+    return completer.future;
+  }
+
+  void _releaseWorker(_IsolateWorker worker) {
+    worker.isBusy = false;
+    if (_pendingWorkers.isNotEmpty) {
+      final next = _pendingWorkers.removeAt(0);
+      worker.isBusy = true;
+      next.complete(worker);
+    }
+  }
+
   Future<T> get<T>({
     String? url,
     int? page,
@@ -161,26 +201,29 @@ class GetIsolateService {
     String? androidProxyServer,
     bool? useLogger,
   }) async {
-    if (_sendPort == null) {
-      throw Exception('Isolate not running');
+    if (!_isRunning) {
+      await start();
     }
 
+    final worker = await _getAvailableWorker();
     final responsePort = ReceivePort();
     final completer = Completer<T>();
     late final StreamSubscription sub;
 
-    // Timeout safeguard
     final timer = Timer(const Duration(seconds: 40), () {
       if (!completer.isCompleted) {
         sub.cancel();
         responsePort.close();
+        _releaseWorker(worker);
         completer.completeError('Isolate response timeout');
       }
     });
+
     sub = responsePort.listen((response) {
       timer.cancel();
       sub.cancel();
       responsePort.close();
+      _releaseWorker(worker);
       if (response is Map<String, dynamic>) {
         if (response['success'] == true) {
           completer.complete(response['data'] as T);
@@ -192,18 +235,26 @@ class GetIsolateService {
       }
     });
 
-    _sendPort!.send({
-      'url': ?url,
-      'page': ?page,
-      'query': ?query,
-      'filterList': ?filterList,
-      'serviceType': ?serviceType,
-      'source': ?source,
-      'proxyServer': ?proxyServer,
-      'responsePort': responsePort.sendPort,
-      'useLogger': ?useLogger,
-      'cfPort': cfPort,
-    });
+    try {
+      worker.sendPort!.send({
+        'url': ?url,
+        'page': ?page,
+        'query': ?query,
+        'filterList': ?filterList,
+        'serviceType': ?serviceType,
+        'source': ?source,
+        'proxyServer': ?proxyServer,
+        'responsePort': responsePort.sendPort,
+        'useLogger': ?useLogger,
+        'cfPort': cfPort,
+      });
+    } catch (e) {
+      timer.cancel();
+      sub.cancel();
+      responsePort.close();
+      _releaseWorker(worker);
+      completer.completeError(e);
+    }
 
     return completer.future;
   }
@@ -213,14 +264,16 @@ class GetIsolateService {
       return;
     }
 
-    _sendPort?.send('dispose');
-    _getIsolateService?.kill(priority: Isolate.immediate);
-    await _receiveSub?.cancel();
-    _receivePort?.close();
-    _receiveSub = null;
-    _sendPort = null;
-    _getIsolateService = null;
-    _receivePort = null;
+    for (final worker in _workers) {
+      await worker.stop();
+    }
+    _workers.clear();
+    for (final pending in _pendingWorkers) {
+      if (!pending.isCompleted) {
+        pending.completeError(StateError('Isolate service stopped'));
+      }
+    }
+    _pendingWorkers.clear();
     _isRunning = false;
   }
 }
