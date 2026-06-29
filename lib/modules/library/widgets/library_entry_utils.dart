@@ -20,17 +20,25 @@ ImageProvider resolveCoverImage(Manga entry, WidgetRef ref) {
   if (entry.customCoverImage != null) {
     return MemoryImage(entry.customCoverImage as Uint8List);
   }
+  // An orphaned/corrupted entry can have a null source or lang (e.g. its
+  // source was uninstalled, or a legacy record). Skip source headers in that
+  // case instead of force-unwrapping — otherwise the whole tile throws while
+  // building and the entry becomes an un-removable "gray square". See #708.
+  final canUseSourceHeaders =
+      !(entry.isLocalArchive ?? false) &&
+      entry.source != null &&
+      entry.lang != null;
   return coverProvider(
     toImgUrl(entry.customCoverFromTracker ?? entry.imageUrl ?? ''),
-    headers: (entry.isLocalArchive ?? false)
-        ? null
-        : ref.watch(
+    headers: canUseSourceHeaders
+        ? ref.watch(
             headersProvider(
               source: entry.source!,
               lang: entry.lang!,
               sourceId: entry.sourceId,
             ),
-          ),
+          )
+        : null,
   );
 }
 
@@ -65,9 +73,9 @@ Future<void> onTapEntry({
     ref: ref,
     archiveId: isLocalArchive ? entry.id : null,
     context: context,
-    lang: entry.lang!,
+    lang: entry.lang ?? '',
     mangaM: entry,
-    source: entry.source!,
+    source: entry.source ?? '',
     sourceId: entry.sourceId,
   );
 
