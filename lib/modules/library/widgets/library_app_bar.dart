@@ -204,9 +204,9 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
                       ? randomManga.id
                       : null,
                   context: context,
-                  lang: randomManga.lang!,
+                  lang: randomManga.lang ?? '',
                   mangaM: randomManga,
-                  source: randomManga.source!,
+                  source: randomManga.source ?? '',
                   sourceId: randomManga.sourceId,
                 );
               });

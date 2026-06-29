@@ -130,7 +130,8 @@ class LibraryListViewWidget extends StatelessWidget {
                                         ),
                                       ),
                                     ),
-                                    if (language && entry.lang!.isNotEmpty)
+                                    if (language &&
+                                        (entry.lang?.isNotEmpty ?? false))
                                       EntryBadgeChip(
                                         label: entry.lang!.toUpperCase(),
                                       ),

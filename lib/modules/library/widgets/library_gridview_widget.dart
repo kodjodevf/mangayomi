@@ -122,7 +122,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                       ),
 
                       // ── Top-right: Language ──
-                      if (widget.language && entry.lang!.isNotEmpty)
+                      if (widget.language && (entry.lang?.isNotEmpty ?? false))
                         Positioned(
                           top: 0,
                           right: 0,
