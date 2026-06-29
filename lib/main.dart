@@ -90,35 +90,41 @@ void main(List<String> args) async {
         return true; // handled — prevent app termination
       };
 
-      MediaKit.ensureInitialized();
-      await RustLib.init();
-      await imgCropIsolate.start();
-      await getIsolateService.start();
-      if (!isMobile) {
-        await windowManager.ensureInitialized();
-        await WindowGeometry.restore();
-      }
-      if (Platform.isWindows) {
-        registerProtocolHandler("mangayomi");
-      }
-      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
-        final availableVersion = await WebViewEnvironment.getAvailableVersion();
-        if (availableVersion != null) {
-          final document = await getApplicationDocumentsDirectory();
-          webViewEnvironment = await WebViewEnvironment.create(
-            settings: WebViewEnvironmentSettings(
-              userDataFolder: p.join(document.path, 'flutter_inappwebview'),
-            ),
-          );
-        }
-      }
       final storage = StorageProvider();
-      await storage.requestPermission();
       Object? startupError;
+      // Guard the whole pre-runApp init, not just the database. A failure in
+      // any of these steps (native rust bridge, background isolates, window
+      // manager, WebView env, database) used to escape main() before runApp()
+      // and leave a blank, unresponsive window. Catching here guarantees
+      // runApp() is always reached so the user sees the error instead.
       try {
+        MediaKit.ensureInitialized();
+        await RustLib.init();
+        await imgCropIsolate.start();
+        await getIsolateService.start();
+        if (!isMobile) {
+          await windowManager.ensureInitialized();
+          await WindowGeometry.restore();
+        }
+        if (Platform.isWindows) {
+          registerProtocolHandler("mangayomi");
+        }
+        if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
+          final availableVersion =
+              await WebViewEnvironment.getAvailableVersion();
+          if (availableVersion != null) {
+            final document = await getApplicationDocumentsDirectory();
+            webViewEnvironment = await WebViewEnvironment.create(
+              settings: WebViewEnvironmentSettings(
+                userDataFolder: p.join(document.path, 'flutter_inappwebview'),
+              ),
+            );
+          }
+        }
+        await storage.requestPermission();
         isar = await storage.initDB(null, inspector: kDebugMode);
       } catch (e, st) {
-        AppLogger.log('DB init failed: $e\n$st', logLevel: LogLevel.error);
+        AppLogger.log('Startup init failed: $e\n$st', logLevel: LogLevel.error);
         startupError = e;
       }
       runApp(

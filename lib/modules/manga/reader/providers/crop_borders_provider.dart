@@ -59,7 +59,15 @@ class ImageCropIsolate {
       }
     });
 
-    _sendPort = await completer.future;
+    // Bound the isolate handshake so a failure inside the isolate entry point
+    // (e.g. RustLib.init throwing on a missing / mismatched native library)
+    // can't hang the await forever. Without this timeout that hang happens
+    // before runApp() and surfaces as a blank, unresponsive window on launch.
+    _sendPort = await completer.future.timeout(
+      const Duration(seconds: 5),
+      onTimeout: () =>
+          throw StateError('Image-crop isolate handshake timed out'),
+    );
     _isRunning = true;
   }
 

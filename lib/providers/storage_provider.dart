@@ -27,6 +27,8 @@ class StorageProvider {
   StorageProvider._internal();
   factory StorageProvider() => _instance;
 
+  static const _dbName = "mangayomiDb";
+
   Future<bool> requestPermission() async {
     if (!Platform.isAndroid) return true;
     Permission permission = Permission.manageExternalStorage;
@@ -278,35 +280,27 @@ class StorageProvider {
   }
 
   Future<Isar> initDB(String? path, {bool inspector = false}) async {
-    Directory? dir;
-    if (path == null) {
-      dir = await getDatabaseDirectory();
-    } else {
-      dir = Directory(path);
-    }
+    final Directory dir = path == null
+        ? (await getDatabaseDirectory())!
+        : Directory(path);
 
-    final isar = await Isar.open(
-      [
-        MangaSchema,
-        ChangedPartSchema,
-        ChapterSchema,
-        CategorySchema,
-        CustomButtonSchema,
-        UpdateSchema,
-        HistorySchema,
-        DownloadSchema,
-        SourceSchema,
-        SettingsSchema,
-        TrackPreferenceSchema,
-        TrackSchema,
-        SyncPreferenceSchema,
-        SourcePreferenceSchema,
-        SourcePreferenceStringValueSchema,
-      ],
-      directory: dir!.path,
-      name: "mangayomiDb",
-      inspector: inspector,
-    );
+    // Open the database, recovering automatically from a corrupt or
+    // schema-incompatible file. This commonly happens after reinstalling over
+    // an older build: the leftover database can no longer be opened and
+    // Isar.open throws. Before this guard the exception escaped main() ahead of
+    // runApp(), leaving a blank, unresponsive window. We instead archive the
+    // bad database and open a fresh one so the app still launches; the old
+    // files are renamed (not deleted) for manual recovery.
+    Isar isar;
+    try {
+      isar = await _openIsar(dir, inspector);
+    } catch (e, st) {
+      if (kDebugMode) {
+        debugPrint('Isar.open failed, recovering corrupt DB: $e\n$st');
+      }
+      await _backupCorruptDatabase(dir);
+      isar = await _openIsar(dir, inspector);
+    }
     try {
       final settings = await isar.settings.filter().idEqualTo(227).findFirst();
       if (settings == null) {
@@ -382,5 +376,54 @@ end""",
     }
 
     return isar;
+  }
+
+  Future<Isar> _openIsar(Directory dir, bool inspector) {
+    return Isar.open(
+      [
+        MangaSchema,
+        ChangedPartSchema,
+        ChapterSchema,
+        CategorySchema,
+        CustomButtonSchema,
+        UpdateSchema,
+        HistorySchema,
+        DownloadSchema,
+        SourceSchema,
+        SettingsSchema,
+        TrackPreferenceSchema,
+        TrackSchema,
+        SyncPreferenceSchema,
+        SourcePreferenceSchema,
+        SourcePreferenceStringValueSchema,
+      ],
+      directory: dir.path,
+      name: _dbName,
+      inspector: inspector,
+    );
+  }
+
+  /// Moves a corrupt / schema-incompatible database aside so [initDB] can open
+  /// a fresh one. Files are renamed (kept as `.corrupt-<ts>.bak`) rather than
+  /// deleted so the user can recover their data manually. Best-effort: any
+  /// failure here must not block launch, so if a file can't be renamed we fall
+  /// back to deleting it (e.g. a stale lock) and otherwise swallow the error.
+  Future<void> _backupCorruptDatabase(Directory dir) async {
+    final stamp = DateTime.now().millisecondsSinceEpoch;
+    for (final suffix in const ['.isar', '.isar.lock']) {
+      final file = File(path.join(dir.path, '$_dbName$suffix'));
+      try {
+        if (await file.exists()) {
+          await file.rename('${file.path}.corrupt-$stamp.bak');
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          debugPrint('Could not archive corrupt DB file ${file.path}: $e');
+        }
+        try {
+          if (await file.exists()) await file.delete();
+        } catch (_) {}
+      }
+    }
   }
 }
