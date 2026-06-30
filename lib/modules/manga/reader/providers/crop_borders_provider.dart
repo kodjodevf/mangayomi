@@ -131,10 +131,9 @@ class ImageCropIsolate {
   }
 
   Future<void> stop() async {
-    if (!_isRunning) {
-      return;
-    }
-
+    // No `_isRunning` guard: a failed handshake (e.g. the 5s timeout) throws
+    // before `_isRunning` is set, so this must still tear down the spawned
+    // isolate + ReceivePort to avoid leaking orphans. All calls are null-safe.
     _sendPort?.send('dispose');
     _rustIsolate?.kill(priority: Isolate.immediate);
     _receivePort?.close();

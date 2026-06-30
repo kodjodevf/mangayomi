@@ -420,9 +420,15 @@ end""",
         if (kDebugMode) {
           debugPrint('Could not archive corrupt DB file ${file.path}: $e');
         }
-        try {
-          if (await file.exists()) await file.delete();
-        } catch (_) {}
+        // Fallback delete only ever applies to the disposable lock file — never
+        // the `.isar` data file. A failed rename must not destroy user data
+        // (it stays put, and a still-failing reopen surfaces the error screen
+        // rather than causing irreversible loss).
+        if (suffix == '.isar.lock') {
+          try {
+            if (await file.exists()) await file.delete();
+          } catch (_) {}
+        }
       }
     }
   }
