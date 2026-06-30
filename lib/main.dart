@@ -112,6 +112,9 @@ void main(List<String> args) async {
           );
         }
       }
+      // Detect Android TV once, before the UI builds, so form-factor branches
+      // can read `isTv`. No-op on other platforms. See #729.
+      await initIsTv();
       final storage = StorageProvider();
       await storage.requestPermission();
       Object? startupError;
