@@ -2311,10 +2311,11 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         const SingleActivator(LogicalKeyboardKey.mediaPause): () {
           _player.pause();
         },
+        // Seek via J/L and the dedicated media keys only. Arrow keys are left
+        // unbound so they keep driving d-pad focus traversal on Android TV
+        // (and arrow-key focus movement with a keyboard) instead of seeking.
         const SingleActivator(LogicalKeyboardKey.keyJ): () => seekBy(-10),
         const SingleActivator(LogicalKeyboardKey.keyL): () => seekBy(10),
-        const SingleActivator(LogicalKeyboardKey.arrowLeft): () => seekBy(-5),
-        const SingleActivator(LogicalKeyboardKey.arrowRight): () => seekBy(5),
         const SingleActivator(LogicalKeyboardKey.mediaRewind): () => seekBy(-10),
         const SingleActivator(LogicalKeyboardKey.mediaFastForward): () =>
             seekBy(10),
