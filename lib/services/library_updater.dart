@@ -63,14 +63,37 @@ Future<void> updateLibrary({
   await Future.delayed(const Duration(seconds: 1));
   BotToast.cleanAll();
   if (context.mounted && failedMangas.isNotEmpty) {
-    final failedListText = failedMangas.map((m) => "• $m").join('\n');
     final plural = failed == 1 ? itemtype : "${itemtype}s";
-    botToast(
-      "Failed to update $failed $plural:\n$failedListText",
-      fontSize: 13,
-      second: 10,
-      alignY: !context.isTablet ? 0.85 : 1,
-      themeDark: isDark,
+    // Show the failures in a dismissible dialog rather than a transient toast,
+    // so the list can be reviewed at the user's pace and isn't missed when many
+    // entries fail. See #623.
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Failed to update $failed $plural"),
+        content: SizedBox(
+          width: context.width(0.8),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: context.height(0.5)),
+            // ListView.builder so rows are built lazily — a large library with
+            // many failed updates won't build one widget per entry up front.
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: failedMangas.length,
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Text("• ${failedMangas[index]}"),
+              ),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(context.l10n.ok),
+          ),
+        ],
+      ),
     );
   }
 }
