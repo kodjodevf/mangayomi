@@ -46,7 +46,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
   @override
   void dispose() {
     if (Platform.isLinux) {
-      _desktopWebview?.close();
+      _closeDesktopWebview();
     } else {
       if (browser != null) {
         if (browser!.isOpened()) browser!.close();
@@ -57,6 +57,32 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
   }
 
   Webview? _desktopWebview;
+  Timer? _cookieTimer;
+  bool _webviewClosed = false;
+  bool _routePopped = false;
+
+  /// Closes the native desktop WebView window at most once. On Linux the close
+  /// can be triggered from three places for a single teardown (the in-app
+  /// button, the `onClose` callback after the user closes the window, and
+  /// `dispose()`). Closing more than once removes the WebView's FlView and then
+  /// the GTK embedder paints the now-invalid view on the next frame → SIGSEGV.
+  /// Guarding it keeps the app from aggravating that. See #752.
+  void _closeDesktopWebview() {
+    if (_webviewClosed) return;
+    _webviewClosed = true;
+    _desktopWebview?.close();
+  }
+
+  /// Pops this route at most once and stops the cookie poll.
+  void _popWebviewRoute() {
+    if (_routePopped) return;
+    _routePopped = true;
+    _cookieTimer?.cancel();
+    if (mounted) {
+      Navigator.pop(context);
+    }
+  }
+
   Future<void> _runWebViewDesktop() async {
     String? ua = ref.watch(userAgentStateProvider);
     if (ua == defaultUserAgent) {
@@ -65,7 +91,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
     if (Platform.isLinux) {
       _desktopWebview = await WebviewWindow.create();
 
-      final timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+      _cookieTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
         try {
           final cookieList = await _desktopWebview!.getAllCookies();
           final ua =
@@ -83,10 +109,10 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
         ..setBrightness(Brightness.dark)
         ..launch(widget.url)
         ..onClose.whenComplete(() {
-          timer.cancel();
-          if (mounted) {
-            Navigator.pop(context);
-          }
+          // The native window has already closed itself; mark it so dispose()
+          // doesn't try to close it again, then pop this route once.
+          _webviewClosed = true;
+          _popWebviewRoute();
         });
     } else {
       browser = MyInAppBrowser(
@@ -146,9 +172,8 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
               ),
               leading: IconButton(
                 onPressed: () {
-                  if (_desktopWebview != null) _desktopWebview!.close();
-
-                  Navigator.pop(context);
+                  _closeDesktopWebview();
+                  _popWebviewRoute();
                 },
                 icon: const Icon(Icons.close),
               ),
