@@ -27,8 +27,10 @@ class AutoPlayNextEpisode extends Notifier<bool> {
   @override
   bool build() {
     if (Hive.isBoxOpen(_playerPrefsBox)) {
-      return Hive.box(_playerPrefsBox).get(_autoPlayNextKey, defaultValue: true)
-          as bool;
+      // Read defensively: a missing or non-bool value (corrupt / hand-edited
+      // box) falls back to the default rather than throwing during build.
+      final value = Hive.box(_playerPrefsBox).get(_autoPlayNextKey);
+      if (value is bool) return value;
     }
     return true;
   }
