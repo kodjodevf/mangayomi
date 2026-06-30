@@ -33,6 +33,27 @@ class _CoverViewWidgetState extends State<CoverViewWidget> {
   // Android TV — and keyboard users anywhere — a clearly visible focus target.
   bool _focused = false;
 
+  @override
+  void initState() {
+    super.initState();
+    // Track highlight-mode changes so the ring is dropped immediately if the
+    // user switches to touch input while a card is focused (it must never show
+    // for touch), not only when focus is lost.
+    FocusManager.instance.addHighlightModeListener(_onHighlightModeChanged);
+  }
+
+  @override
+  void dispose() {
+    FocusManager.instance.removeHighlightModeListener(_onHighlightModeChanged);
+    super.dispose();
+  }
+
+  void _onHighlightModeChanged(FocusHighlightMode mode) {
+    if (mode != FocusHighlightMode.traditional && _focused) {
+      setState(() => _focused = false);
+    }
+  }
+
   void _onFocusChange(bool hasFocus) {
     final show =
         hasFocus &&
@@ -44,6 +65,10 @@ class _CoverViewWidgetState extends State<CoverViewWidget> {
 
   @override
   Widget build(BuildContext context) {
+    // Comfortable grid renders the label below the card, so it must not also be
+    // placed inside the card. Render it once, and only when provided.
+    final showBottomText =
+        widget.isComfortableGrid && widget.bottomTextWidget != null;
     return Padding(
       padding: const EdgeInsets.all(5),
       child: Column(
@@ -52,7 +77,9 @@ class _CoverViewWidgetState extends State<CoverViewWidget> {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 120),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(7),
+                // Outer radius = inner clip radius (5) + border width (3) so the
+                // ring's corners stay concentric with the card and don't clip.
+                borderRadius: BorderRadius.circular(8),
                 border: Border.all(
                   color: _focused ? context.primaryColor : Colors.transparent,
                   width: 3,
@@ -73,12 +100,9 @@ class _CoverViewWidgetState extends State<CoverViewWidget> {
                         : Colors.transparent,
                     child: widget.image == null
                         ? widget.isComfortableGrid
-                              ? Column(
-                                  children: [
-                                    ...widget.children,
-                                    widget.bottomTextWidget!,
-                                  ],
-                                )
+                              // bottomTextWidget is rendered once below the card,
+                              // so it's not duplicated inside here anymore.
+                              ? Column(children: widget.children)
                               : Stack(children: widget.children)
                         : Ink.image(
                             fit: BoxFit.cover,
@@ -90,7 +114,7 @@ class _CoverViewWidgetState extends State<CoverViewWidget> {
               ),
             ),
           ),
-          if (widget.isComfortableGrid) widget.bottomTextWidget!,
+          if (showBottomText) widget.bottomTextWidget!,
         ],
       ),
     );
