@@ -73,17 +73,17 @@ Future<void> updateLibrary({
         title: Text("Failed to update $failed $plural"),
         content: SizedBox(
           width: context.width(0.8),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                for (final name in failedMangas)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2),
-                    child: Text("• $name"),
-                  ),
-              ],
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: context.height(0.5)),
+            // ListView.builder so rows are built lazily — a large library with
+            // many failed updates won't build one widget per entry up front.
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: failedMangas.length,
+              itemBuilder: (context, index) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Text("• ${failedMangas[index]}"),
+              ),
             ),
           ),
         ),
