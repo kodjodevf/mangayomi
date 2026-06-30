@@ -113,7 +113,11 @@ void main(List<String> args) async {
         }
       }
       final storage = StorageProvider();
-      await storage.requestPermission();
+      // Don't force the Android "all files access" (MANAGE_EXTERNAL_STORAGE)
+      // prompt at launch. The database lives in scoped app storage, so the app
+      // can start, browse and read online without it. The permission is still
+      // requested lazily by `createDirectorySafely` / `initDB` the first time a
+      // public path actually needs to be written (e.g. a download). See #740.
       Object? startupError;
       try {
         isar = await storage.initDB(null, inspector: kDebugMode);
