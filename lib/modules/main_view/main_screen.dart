@@ -18,6 +18,7 @@ import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.da
 import 'package:mangayomi/modules/widgets/loading_icon.dart';
 import 'package:mangayomi/services/fetch_item_sources.dart';
 import 'package:mangayomi/modules/main_view/providers/migration.dart';
+import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/more/about/providers/check_for_update.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/auto_backup.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -29,6 +30,11 @@ import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 
 final libLocationRegex = RegExp(r"^/(Manga|Anime|Novel)Library$");
+
+/// Nav destinations kept off the anime-only TV layout (the manga & novel
+/// libraries). True means "keep this destination".
+bool _isNotHiddenLibOnTv(String nav) =>
+    nav != "/MangaLibrary" && nav != "/NovelLibrary";
 
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key, required this.child});
@@ -87,9 +93,12 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         .autoSyncFrequency;
     final hiddenItems = ref.read(hideItemsStateProvider);
 
-    _defaultLocation = _navigationOrder
-        .where((e) => !hiddenItems.contains(e))
-        .first;
+    // On the anime-only TV layout, never land on a hidden manga/novel library.
+    final order = ref.read(animeOnlyTvModeProvider)
+        ? _navigationOrder.where(_isNotHiddenLibOnTv).toList()
+        : _navigationOrder;
+    final visible = order.where((e) => !hiddenItems.contains(e)).toList();
+    _defaultLocation = visible.isNotEmpty ? visible.first : "/AnimeLibrary";
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
@@ -209,6 +218,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                   : navigationOrder
                         .where((nav) => !hideItems.contains(nav))
                         .toList();
+
+              // Anime-only TV layout: drop the manga & novel library tabs.
+              if (ref.watch(animeOnlyTvModeProvider)) {
+                dest = dest.where(_isNotHiddenLibOnTv).toList();
+              }
 
               if (mergeLibraryNavMobile && !context.isTablet && !isLibSwitch) {
                 dest = dest
