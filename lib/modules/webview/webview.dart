@@ -45,6 +45,10 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
 
   @override
   void dispose() {
+    // Always stop the cookie poll, even if the route is popped externally
+    // (e.g. router/back) without going through _popWebviewRoute — otherwise the
+    // periodic timer keeps hitting a closed WebView and pins this State.
+    _cookieTimer?.cancel();
     if (Platform.isLinux) {
       _closeDesktopWebview();
     } else {
@@ -91,7 +95,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
     if (Platform.isLinux) {
       _desktopWebview = await WebviewWindow.create();
 
-      _cookieTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+      _cookieTimer = Timer.periodic(const Duration(seconds: 1), (_) async {
         try {
           final cookieList = await _desktopWebview!.getAllCookies();
           final ua =
