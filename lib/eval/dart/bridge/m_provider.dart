@@ -108,7 +108,9 @@ class MProviderBridged {
         positionalArgs[0] as String,
         positionalArgs[1] as String,
         positionalArgs[2] as String,
-        positionalArgs[3] as String,
+        // tagHex is optional (empty when the tag is already appended); coerce a
+        // null/missing arg to "" so the call can't throw before the try/catch.
+        positionalArgs[3] as String? ?? '',
       ),
     );
     interpreter.registertopLevelFunction(

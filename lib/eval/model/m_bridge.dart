@@ -571,10 +571,13 @@ class MBridge {
   /// AES-GCM decryption for extensions (parity with Java's
   /// `Cipher.getInstance("AES/GCM/NoPadding")`).
   ///
-  /// - [encrypted] : base64 ciphertext (without the auth tag)
+  /// - [encrypted] : base64 ciphertext. If the 16-byte GCM auth tag is already
+  ///                 appended to it (as Java's `Cipher.doFinal` produces),
+  ///                 pass an empty [tagHex].
   /// - [keyHex]    : hex-encoded key (16/24/32 bytes → AES-128/192/256)
   /// - [ivHex]     : hex-encoded IV / nonce (typically 12 bytes for GCM)
-  /// - [tagHex]    : hex-encoded 16-byte authentication tag
+  /// - [tagHex]    : hex-encoded auth tag (usually 16 bytes), appended to the
+  ///                 ciphertext before decryption; empty if already appended
   ///
   /// Returns the decrypted UTF-8 string, or the original [encrypted] input if
   /// decryption/authentication fails (mirrors [cryptoHandler]'s behavior).
