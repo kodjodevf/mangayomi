@@ -81,7 +81,9 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
                     ),
                   ),
                   onTap: () {
-                    final providerId = doHState.providerId ?? 1;
+                    // Default to Cloudflare (id 0) to match the subtitle, so the
+                    // dialog doesn't preselect a different provider than shown.
+                    final providerId = doHState.providerId ?? 0;
                     final rootContext = context;
                     showDialog(
                       context: context,
@@ -426,7 +428,11 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) {
-          final isValid = url.trim().startsWith('https://');
+          final parsed = Uri.tryParse(url.trim());
+          final isValid =
+              parsed != null &&
+              parsed.scheme == 'https' &&
+              parsed.host.isNotEmpty;
           return AlertDialog(
             title: const Text('Custom DoH URL', style: TextStyle(fontSize: 24)),
             content: SizedBox(

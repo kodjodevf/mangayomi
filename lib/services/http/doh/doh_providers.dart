@@ -37,7 +37,7 @@ final class DoHProviders {
   /// Sentinel id for a user-supplied custom DoH endpoint. Kept well clear of
   /// the preset ids so it survives in the existing `doHProviderId` setting
   /// without needing a new schema field. The URL itself lives in
-  /// [DohCustomStore]; build the provider with [custom].
+  /// `DohCustomStore`; build the provider with [custom].
   static const int customId = 999;
 
   /// Builds a [DoHProvider] from a user-supplied [url]. Bootstrap IPs are only

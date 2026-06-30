@@ -18,9 +18,12 @@ class DohCustomStore {
   }
 
   /// The saved custom DoH URL, or an empty string if none / box not open.
-  static String get url => Hive.isBoxOpen(_boxName)
-      ? (Hive.box(_boxName).get(_urlKey, defaultValue: '') as String)
-      : '';
+  /// Reads defensively so a missing or non-String value can't throw.
+  static String get url {
+    if (!Hive.isBoxOpen(_boxName)) return '';
+    final value = Hive.box(_boxName).get(_urlKey);
+    return value is String ? value : '';
+  }
 
   /// Persists [value] as the custom DoH URL (best-effort if the box is open).
   static void setUrl(String value) {
