@@ -464,7 +464,7 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
                           ? () {
                               CfProxyStore.setUrl(trimmed);
                               Navigator.pop(dialogContext);
-                              setState(() {});
+                              if (mounted) setState(() {});
                             }
                           : null,
                       child: Text(context.l10n.dialog_confirm),

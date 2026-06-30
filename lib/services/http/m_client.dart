@@ -346,7 +346,7 @@ Future<bool> _solveWithCfProxy(String proxyUrl, String targetUrl) async {
     final cookie = cookieList
         .whereType<Map>()
         .map((c) => "${c['name']}=${c['value']}")
-        .join(';');
+        .join('; ');
     if (cookie.isEmpty) return false;
 
     final ua = (solution['userAgent'] as String?) ?? '';

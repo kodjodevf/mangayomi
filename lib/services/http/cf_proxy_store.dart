@@ -13,9 +13,14 @@ class CfProxyStore {
 
   /// Opens the backing box. Called once during app startup.
   static Future<void> openBox() async {
-    if (!Hive.isBoxOpen(_boxName)) {
-      await Hive.openBox(_boxName);
-    }
+    // Best-effort: this is an optional preference store, so a failure to open
+    // (corruption, permissions, …) must not block startup. Reads then fall
+    // back to "no proxy configured".
+    try {
+      if (!Hive.isBoxOpen(_boxName)) {
+        await Hive.openBox(_boxName);
+      }
+    } catch (_) {}
   }
 
   /// The saved proxy URL, or an empty string if none / box not open.
