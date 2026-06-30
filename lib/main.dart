@@ -147,12 +147,25 @@ class _StartupErrorApp extends StatelessWidget {
   final String error;
   const _StartupErrorApp({required this.error});
 
+  /// True when the database failed to open because its directory lives on an
+  /// NFS-exported (MNT_EXPORTED) filesystem. libmdbx (used by Isar) refuses to
+  /// open there and returns `MdbxError (15): Block device required`. This is a
+  /// libmdbx limitation, not something Mangayomi can work around in-app, so we
+  /// surface the cause + fix instead of just the raw code. See issue #652.
+  bool get _isExportedFsError {
+    final e = error.toLowerCase();
+    return e.contains('mdbxerror') &&
+        (e.contains('block device required') ||
+            e.contains('mdbxerror (15)') ||
+            e.contains('mnt_exported'));
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         body: Center(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -164,6 +177,20 @@ class _StartupErrorApp extends StatelessWidget {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
+                if (_isExportedFsError) ...[
+                  const Text(
+                    "The database can't be opened because its data folder is on "
+                    "a filesystem exported over NFS (MNT_EXPORTED). This is a "
+                    "limitation of the underlying database (libmdbx), not "
+                    "Mangayomi.\n\n"
+                    "To fix it, stop exporting that location over NFS and "
+                    "relaunch. On macOS this usually means removing the entry "
+                    "from /etc/exports and running `sudo nfsd disable`.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 13),
+                  ),
+                  const SizedBox(height: 12),
+                ],
                 SelectableText(
                   error,
                   style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
