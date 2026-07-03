@@ -10,6 +10,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/modules/browse/extension/extension_screen.dart';
 import 'package:mangayomi/modules/browse/sources/sources_screen.dart';
+import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
@@ -33,22 +34,26 @@ class BrowseTab {
 class _BrowseScreenState extends ConsumerState<BrowseScreen>
     with TickerProviderStateMixin {
   late final hideItems = ref.read(hideItemsStateProvider);
+  // On the anime-only TV layout, hide manga & novel from Browse too (both
+  // sources and extensions) so only anime shows — matching the anime-only
+  // library. Defaults to isTv, user-overridable via the same provider. See #729.
+  late final _animeOnly = ref.read(animeOnlyTvModeProvider);
   final _textEditingController = TextEditingController();
   late TabController _tabBarController;
 
   late final List<BrowseTab> _tabList = [
-    if (!hideItems.contains("/MangaLibrary"))
+    if (!_animeOnly && !hideItems.contains("/MangaLibrary"))
       BrowseTab(ItemType.manga, BrowseTabKind.sources),
     if (!hideItems.contains("/AnimeLibrary"))
       BrowseTab(ItemType.anime, BrowseTabKind.sources),
-    if (!hideItems.contains("/NovelLibrary"))
+    if (!_animeOnly && !hideItems.contains("/NovelLibrary"))
       BrowseTab(ItemType.novel, BrowseTabKind.sources),
 
-    if (!hideItems.contains("/MangaLibrary"))
+    if (!_animeOnly && !hideItems.contains("/MangaLibrary"))
       BrowseTab(ItemType.manga, BrowseTabKind.extensions),
     if (!hideItems.contains("/AnimeLibrary"))
       BrowseTab(ItemType.anime, BrowseTabKind.extensions),
-    if (!hideItems.contains("/NovelLibrary"))
+    if (!_animeOnly && !hideItems.contains("/NovelLibrary"))
       BrowseTab(ItemType.novel, BrowseTabKind.extensions),
   ];
 
@@ -88,7 +93,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
     final l10n = l10nLocalizations(context)!;
     return DefaultTabController(
       animationDuration: Duration.zero,
-      length: 6,
+      length: _tabList.length,
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
