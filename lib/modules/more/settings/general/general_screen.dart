@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -430,7 +431,7 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     child: TextFormField(
                       controller: controller,
-                      autofocus: true,
+                      autofocus: !isTv,
                       keyboardType: TextInputType.url,
                       onChanged: (value) => setLocalState(() => url = value),
                       decoration: InputDecoration(
@@ -506,7 +507,7 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     child: TextFormField(
                       controller: dnsController,
-                      autofocus: true,
+                      autofocus: !isTv,
                       onChanged: (value) => setState(() {
                         dns = value;
                       }),
@@ -579,7 +580,7 @@ void _showDefaultUserAgentDialog(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: TextFormField(
                     controller: uaController,
-                    autofocus: true,
+                    autofocus: !isTv,
 
                     decoration: InputDecoration(
                       hintText: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)...",
