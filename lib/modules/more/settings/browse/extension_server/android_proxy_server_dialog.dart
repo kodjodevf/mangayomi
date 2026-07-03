@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
@@ -30,7 +31,7 @@ void showAndroidProxyServerDialog(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: TextFormField(
                     controller: serverController,
-                    autofocus: true,
+                    autofocus: !isTv,
                     onChanged: (value) => setState(() {
                       server = value;
                     }),

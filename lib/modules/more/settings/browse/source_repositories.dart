@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
@@ -330,7 +331,7 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                 title: Text(l10n.add_extensions_repo),
                 content: TextFormField(
                   controller: controller,
-                  autofocus: true,
+                  autofocus: !isTv,
                   keyboardType: TextInputType.url,
                   onChanged: (value) => setState(() {}),
                   validator: (value) {

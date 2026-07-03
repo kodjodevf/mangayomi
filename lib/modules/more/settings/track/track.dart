@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -237,7 +238,7 @@ Future<void> _showDialogLogin(BuildContext context, WidgetRef ref) async {
                         AutofillHints.email,
                         AutofillHints.username,
                       ],
-                      autofocus: true,
+                      autofocus: !isTv,
                       onChanged: (_) => setState(updateCanLogin),
                       onFieldSubmitted: (_) => passwordFocusNode.requestFocus(),
                       decoration: InputDecoration(
