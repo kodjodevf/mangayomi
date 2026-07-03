@@ -8,6 +8,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/log/logger.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/services/update_errors_provider.dart';
 
 Future<void> updateLibrary({
   required WidgetRef ref,
@@ -30,7 +31,7 @@ Future<void> updateLibrary({
     themeDark: isDark,
   );
   int failed = 0;
-  List<String> failedMangas = [];
+  List<UpdateError> failures = [];
   for (var i = 0; i < mangaList.length; i++) {
     final manga = mangaList[i];
     try {
@@ -45,7 +46,13 @@ Future<void> updateLibrary({
       AppLogger.log("Failed to update $itemtype:", logLevel: LogLevel.error);
       AppLogger.log(e.toString(), logLevel: LogLevel.error);
       failed++;
-      failedMangas.add(manga.name ?? "Unknown $itemtype");
+      failures.add(
+        UpdateError(
+          mangaId: manga.id!,
+          name: manga.name ?? "Unknown $itemtype",
+          error: e.toString(),
+        ),
+      );
     }
     if (context.mounted) {
       botToast(
@@ -62,8 +69,12 @@ Future<void> updateLibrary({
   }
   await Future.delayed(const Duration(seconds: 1));
   BotToast.cleanAll();
-  if (context.mounted && failedMangas.isNotEmpty) {
-    final failedListText = failedMangas.map((m) => "• $m").join('\n');
+  // Persist this run's failures (empty list clears any previous ones) so they
+  // can be reviewed and migrated away later from the Updates tab's error
+  // screen, instead of only in this transient toast.
+  ref.read(updateErrorsProvider.notifier).set(failures);
+  if (context.mounted && failures.isNotEmpty) {
+    final failedListText = failures.map((m) => "• ${m.name}").join('\n');
     final plural = failed == 1 ? itemtype : "${itemtype}s";
     botToast(
       "Failed to update $failed $plural:\n$failedListText",
