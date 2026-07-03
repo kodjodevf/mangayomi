@@ -51,9 +51,6 @@ jobs:
       - name: Setup ninja
         uses: seanmiddleditch/gha-setup-ninja@master
 
-      - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen'
-
       - name: Setup Android keystore
         run: |
           echo "${{ secrets.SIGNING_KEY_STORE_BASE64 }}" | base64 -di > android/app/upload-keystore.jks
@@ -195,9 +192,6 @@ jobs:
           workspaces: rust
           cache-on-failure: true
 
-      - name: Install flutter_rust_bridge_codegen
-        run: cargo install flutter_rust_bridge_codegen
-
       - name: Select Xcode 16.4
         run: sudo xcode-select --switch /Applications/Xcode_16.4.app
 
@@ -257,9 +251,6 @@ jobs:
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen'
-
       - name: flutter pub get
         run: flutter pub get
 
@@ -299,9 +290,6 @@ jobs:
 
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
-
-      - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen'
 
       - name: flutter pub get
         run: flutter pub get
@@ -366,9 +354,6 @@ jobs:
 
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
-
-      - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen'
 
       - name: flutter pub get
         run: flutter pub get
@@ -512,9 +497,6 @@ jobs:
 
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
-
-      - name: Install the CLI tool
-        run: cargo install 'flutter_rust_bridge_codegen'
 
       - name: flutter pub get
         run: flutter pub get
