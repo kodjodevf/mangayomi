@@ -73,8 +73,9 @@ extension MangaExtensions on Manga {
     final downloadedIds = (filterDownloaded == 0 || chapterIds.isEmpty)
         ? const <int>{}
         : isar.downloads
-              .filter()
+              .where()
               .anyOf(chapterIds, (q, id) => q.idEqualTo(id))
+              .filter()
               .isDownloadEqualTo(true)
               .findAllSync()
               .map((d) => d.id!)

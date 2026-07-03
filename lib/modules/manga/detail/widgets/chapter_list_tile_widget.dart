@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
+import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:marquee/marquee.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -308,6 +309,9 @@ class ChapterListTileWidget extends ConsumerWidget {
     final imageProvider = CustomExtendedNetworkImageProvider(
       toImgUrl(imageUrl ?? ""),
     );
+    // Decode the 50x65 preview at thumbnail resolution; the full-resolution
+    // provider is only handed to the zoom dialog.
+    final thumbnailProvider = coverProvider(toImgUrl(imageUrl ?? ""));
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
       child: GestureDetector(
@@ -320,7 +324,10 @@ class ChapterListTileWidget extends ConsumerWidget {
           child: Container(
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(5)),
-              image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+              image: DecorationImage(
+                image: thumbnailProvider,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
         ),

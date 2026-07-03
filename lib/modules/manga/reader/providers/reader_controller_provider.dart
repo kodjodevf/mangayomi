@@ -170,18 +170,25 @@ class ReaderController extends _$ReaderController
         ? (newIndex + 2) >= pageLength - 1
         : (newIndex + 2) >= pageLength;
     if (isRead || save) {
+      // Zero-index entries mean "start from the beginning", exactly like a
+      // missing entry (see getPageIndex), so they are pruned instead of kept —
+      // this stops the list (and the settings row) growing with every chapter
+      // ever finished.
       List<ChapterPageIndex>? chapterPageIndexs = [];
       for (var chapterPageIndex
           in getIsarSetting().chapterPageIndexList ?? []) {
-        if (chapterPageIndex.chapterId != chapter.id) {
+        if (chapterPageIndex.chapterId != chapter.id &&
+            (chapterPageIndex.index ?? 0) > 0) {
           chapterPageIndexs.add(chapterPageIndex);
         }
       }
-      chapterPageIndexs.add(
-        ChapterPageIndex()
-          ..chapterId = chapter.id
-          ..index = isRead ? 0 : newIndex,
-      );
+      if (!isRead && newIndex > 0) {
+        chapterPageIndexs.add(
+          ChapterPageIndex()
+            ..chapterId = chapter.id
+            ..index = newIndex,
+        );
+      }
       final autoReadDuplChap = ref.read(autoReadDuplicateChaptersStateProvider);
       final now = DateTime.now().millisecondsSinceEpoch;
       // When the chapter is finished, mark every other scanlation of the same

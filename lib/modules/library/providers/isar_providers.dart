@@ -23,6 +23,7 @@ Stream<List<Manga>> getAllMangaStream(
             .where()
             .favoriteItemTypeEqualTo(true, itemType)
             .filter()
+            .categoriesIsNotEmpty()
             .categoriesElementEqualTo(categoryId)
             .watch(fireImmediately: true);
 }

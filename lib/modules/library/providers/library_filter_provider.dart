@@ -13,7 +13,7 @@ part 'library_filter_provider.g.dart';
 @riverpod
 Stream<Set<int>> downloadedChapterIds(Ref ref) {
   return isar.downloads
-      .filter()
+      .where()
       .isDownloadEqualTo(true)
       .watch(fireImmediately: true)
       .map((list) => list.map((d) => d.id).whereType<int>().toSet());
@@ -156,6 +156,15 @@ List<Manga> filteredLibraryManga(
         final bVal = b.id != null ? (totalCounts[b.id] ?? 0) : 0;
         return aVal.compareTo(bVal);
       });
+    } else if (sortType == 5) {
+      final lastUpload = {
+        for (final manga in mangas)
+          manga.id: manga.chapters.lastOrNull?.dateUpload ?? "",
+      };
+      mangas.sort(
+        (a, b) =>
+            (lastUpload[a.id] ?? "").compareTo(lastUpload[b.id] ?? ""),
+      );
     } else {
       mangas.sort((a, b) {
         switch (sortType) {
@@ -165,10 +174,6 @@ List<Manga> filteredLibraryManga(
             return a.lastRead!.compareTo(b.lastRead!);
           case 2:
             return a.lastUpdate?.compareTo(b.lastUpdate ?? 0) ?? 0;
-          case 5:
-            return (a.chapters.lastOrNull?.dateUpload ?? "").compareTo(
-              b.chapters.lastOrNull?.dateUpload ?? "",
-            );
           case 6:
             return a.dateAdded?.compareTo(b.dateAdded ?? 0) ?? 0;
           default:

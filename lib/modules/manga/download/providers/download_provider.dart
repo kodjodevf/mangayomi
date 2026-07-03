@@ -264,17 +264,32 @@ Future<void> downloadChapter(
       }
     }
 
+    int lastPersistedPercent = -1;
+    var lastPersistTime = DateTime.fromMillisecondsSinceEpoch(0);
     Future<void> setProgress(DownloadProgress progress) async {
       if (progress.isCompleted && itemType == ItemType.manga) {
         await processConvert();
       }
+      final percent = progress.completed == 0 || progress.total == 0
+          ? 0
+          : (progress.completed / progress.total * 100).toInt();
+      // Progress events arrive per network chunk (hundreds per video);
+      // persisting each one floods the UI isolate with sync transactions.
+      // Only write when the visible percentage changes (rate-limited) or on
+      // completion.
+      final now = DateTime.now();
+      if (!progress.isCompleted &&
+          (percent == lastPersistedPercent ||
+              now.difference(lastPersistTime).inMilliseconds < 500)) {
+        return;
+      }
+      lastPersistedPercent = percent;
+      lastPersistTime = now;
       final download = isar.downloads.getSync(chapter.id!);
       if (download == null) {
         final download = Download(
           id: chapter.id,
-          succeeded: progress.completed == 0
-              ? 0
-              : (progress.completed / progress.total * 100).toInt(),
+          succeeded: percent,
           failed: 0,
           total: 100,
           isDownload: progress.isCompleted,
@@ -283,21 +298,16 @@ Future<void> downloadChapter(
         isar.writeTxnSync(() {
           isar.downloads.putSync(download..chapter.value = chapter);
         });
-      } else {
-        final download = isar.downloads.getSync(chapter.id!);
-        if (download != null && progress.total != 0) {
-          isar.writeTxnSync(() {
-            isar.downloads.putSync(
-              download
-                ..succeeded = progress.completed == 0
-                    ? 0
-                    : (progress.completed / progress.total * 100).toInt()
-                ..total = 100
-                ..failed = 0
-                ..isDownload = progress.isCompleted,
-            );
-          });
-        }
+      } else if (progress.total != 0) {
+        isar.writeTxnSync(() {
+          isar.downloads.putSync(
+            download
+              ..succeeded = percent
+              ..total = 100
+              ..failed = 0
+              ..isDownload = progress.isCompleted,
+          );
+        });
       }
     }
 

@@ -7,10 +7,5 @@ part 'supports_latest.g.dart';
 @riverpod
 bool supportsLatest(Ref ref, {required Source source}) {
   final androidProxy = ref.read(androidProxyServerStateProvider);
-  final service = getExtensionService(source, androidProxy);
-  try {
-    return service.supportsLatest;
-  } finally {
-    service.dispose();
-  }
+  return getCachedExtensionService(source, androidProxy).supportsLatest;
 }

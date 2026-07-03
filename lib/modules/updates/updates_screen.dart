@@ -188,11 +188,16 @@ class _UpdateTabState extends ConsumerState<UpdateTab>
       children: [
         update.when(
           data: (entries) {
-            final lastUpdatedList = entries
-                .map((e) => e.chapter.value!.manga.value!.lastUpdate!)
-                .toList();
-            lastUpdatedList.sort((a, b) => b.compareTo(a));
-            final lastUpdated = lastUpdatedList.firstOrNull;
+            // Single pass for the max — this runs on every rebuild and only
+            // feeds the "last updated" header line.
+            int? lastUpdated;
+            for (final e in entries) {
+              final value = e.chapter.value?.manga.value?.lastUpdate;
+              if (value != null &&
+                  (lastUpdated == null || value > lastUpdated)) {
+                lastUpdated = value;
+              }
+            }
             if (entries.isNotEmpty) {
               return CustomScrollView(
                 slivers: [

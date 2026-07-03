@@ -33,7 +33,6 @@ import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/services/http/m_client.dart';
-import 'package:mangayomi/services/isolate_service.dart';
 import 'package:mangayomi/services/m_extension_server.dart';
 import 'package:mangayomi/services/download_manager/m_downloader.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
@@ -68,9 +67,7 @@ void main(List<String> args) async {
 
       // Cap the decoded image cache so a large library grid can't fill the
       // default 100 MB ceiling with full-resolution covers and OOM constrained
-      // mobile heaps. Mobile gets a tight 64 MB; desktop keeps 256 MB. The
-      // encoded-bytes LRU in CustomExtendedNetworkImageProvider (50 MB) is a
-      // separate cache and is not affected by this setting.
+      // mobile heaps. Mobile gets a tight 64 MB; desktop keeps 256 MB.
       PaintingBinding.instance.imageCache.maximumSizeBytes = isMobile
           ? 64 << 20
           : 256 << 20;
@@ -98,8 +95,8 @@ void main(List<String> args) async {
       // Detect Android TV / leanback so the UI can branch on form factor.
       // No-op on other platforms. See #729.
       await initIsTv();
-      await getIsolateService.start();
-      await ffiImageDecoder.start();
+      // Expensive worker isolates start lazily on first use instead of delaying
+      // the first frame.
       if (!isMobile) {
         await windowManager.ensureInitialized();
         await WindowGeometry.restore();
@@ -215,10 +212,18 @@ class _MyAppState extends ConsumerState<MyApp>
     if (!isMobile) windowManager.addListener(this);
     initializeDateFormatting();
     customDns = ref.read(customDnsStateProvider);
-    _checkTrackerRefresh();
     _initDeepLinks();
     _setupMpvConfig();
-    unawaited(ref.read(scanLocalLibraryProvider.future));
+
+    // Tracker refresh and the local-library filesystem scan compete with the
+    // first paint for network/CPU; run them shortly after the UI is up.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(seconds: 2), () {
+        if (!mounted) return;
+        _checkTrackerRefresh();
+        unawaited(ref.read(scanLocalLibraryProvider.future));
+      });
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       MExtensionServerPlatform(ref).startServer();

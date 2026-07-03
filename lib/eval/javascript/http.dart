@@ -11,9 +11,15 @@ class JsHttpClient {
   JsHttpClient(this.runtime);
 
   void init() {
+    // MClient.init reads the settings row and builds a new interceptor stack;
+    // doing that per request added measurable overhead to every source call.
+    // Reuse one client per distinct request options for this runtime's life.
+    final clientCache = <String, InterceptedClient>{};
     InterceptedClient client(dynamic reqcopyWith) {
-      return MClient.init(
-        reqcopyWith: (reqcopyWith as Map?)?.toMapStringDynamic,
+      final map = (reqcopyWith as Map?)?.toMapStringDynamic;
+      return clientCache.putIfAbsent(
+        jsonEncode(map ?? const <String, dynamic>{}),
+        () => MClient.init(reqcopyWith: map),
       );
     }
 

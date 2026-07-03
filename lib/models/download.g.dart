@@ -41,7 +41,21 @@ const DownloadSchema = CollectionSchema(
   deserialize: _downloadDeserialize,
   deserializeProp: _downloadDeserializeProp,
   idName: r'id',
-  indexes: {},
+  indexes: {
+    r'isDownload': IndexSchema(
+      id: 4131428251817365704,
+      name: r'isDownload',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'isDownload',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+      ],
+    ),
+  },
   links: {
     r'chapter': LinkSchema(
       id: -5548652258422470046,
@@ -138,6 +152,14 @@ extension DownloadQueryWhereSort on QueryBuilder<Download, Download, QWhere> {
       return query.addWhereClause(const IdWhereClause.any());
     });
   }
+
+  QueryBuilder<Download, Download, QAfterWhere> anyIsDownload() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'isDownload'),
+      );
+    });
+  }
 }
 
 extension DownloadQueryWhere on QueryBuilder<Download, Download, QWhereClause> {
@@ -206,6 +228,81 @@ extension DownloadQueryWhere on QueryBuilder<Download, Download, QWhereClause> {
           includeUpper: includeUpper,
         ),
       );
+    });
+  }
+
+  QueryBuilder<Download, Download, QAfterWhereClause> isDownloadIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'isDownload', value: [null]),
+      );
+    });
+  }
+
+  QueryBuilder<Download, Download, QAfterWhereClause> isDownloadIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'isDownload',
+          lower: [null],
+          includeLower: false,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Download, Download, QAfterWhereClause> isDownloadEqualTo(
+    bool? isDownload,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'isDownload', value: [isDownload]),
+      );
+    });
+  }
+
+  QueryBuilder<Download, Download, QAfterWhereClause> isDownloadNotEqualTo(
+    bool? isDownload,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isDownload',
+                lower: [],
+                upper: [isDownload],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isDownload',
+                lower: [isDownload],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isDownload',
+                lower: [isDownload],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isDownload',
+                lower: [],
+                upper: [isDownload],
+                includeUpper: false,
+              ),
+            );
+      }
     });
   }
 }

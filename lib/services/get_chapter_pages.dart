@@ -60,6 +60,7 @@ Future<GetChapterPagesModel> getChapterPages(
     );
 
     List<Uint8List?> archiveImages = [];
+    bool pagesFromCache = false;
     final isLocalArchive = (chapter.archivePath ?? '').isNotEmpty;
     final resolvedArchivePath = isLocalArchive
         ? await resolveLocalArchivePath(chapter.archivePath!)
@@ -72,6 +73,7 @@ Future<GetChapterPagesModel> getChapterPages(
       )!;
       if ((isarPageUrls?.urls?.isNotEmpty ?? false) &&
           (isarPageUrls?.chapterUrl ?? chapter.url) == chapter.url) {
+        pagesFromCache = true;
         for (var i = 0; i < isarPageUrls!.urls!.length; i++) {
           Map<String, String>? headers;
           if (isarPageUrls.headers?.isNotEmpty ?? false) {
@@ -127,8 +129,19 @@ Future<GetChapterPagesModel> getChapterPages(
         for (var i = 0; i < archiveImages.length; i++) {
           pageUrls.add(PageUrl(""));
         }
+        // Archives store placeholder urls only for the page count; skip the
+        // write when the stored entry already matches.
+        if ((isarPageUrls?.urls?.length ?? -1) == pageUrls.length &&
+            (isarPageUrls?.chapterUrl ?? chapter.url) == chapter.url) {
+          pagesFromCache = true;
+        }
       }
-      if (!incognitoMode) {
+      // Persisting the page-URL cache rewrites the entire (large) settings
+      // row, so only do it when there is something new to store — never when
+      // the pages came from that cache. The cache is also capped to the most
+      // recent chapters so the row doesn't grow with reading history.
+      if (!incognitoMode && !pagesFromCache) {
+        const maxCachedChapters = 40;
         List<ChapterPageurls>? chapterPageUrls = [];
         for (var chapterPageUrl in settings.chapterPageUrlsList ?? []) {
           if (chapterPageUrl.chapterId != chapter.id) {
@@ -147,6 +160,12 @@ Future<GetChapterPagesModel> getChapterPages(
                 ? chapterPageHeaders.map((e) => e.toString()).toList()
                 : null,
         );
+        if (chapterPageUrls.length > maxCachedChapters) {
+          chapterPageUrls.removeRange(
+            0,
+            chapterPageUrls.length - maxCachedChapters,
+          );
+        }
         isar.writeTxnSync(() {
           isar.settings.putSync(
             settings

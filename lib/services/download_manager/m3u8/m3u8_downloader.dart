@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'dart:async';
-
+import 'dart:isolate';
 import 'package:flutter/foundation.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/video.dart';
@@ -239,28 +239,32 @@ class M3u8Downloader {
 
   Future<void> _mergeTsToMp4(String fileName, String directory) async {
     try {
-      final dir = Directory(directory);
-      final files = await dir
-          .list()
-          .where((entity) => entity.path.endsWith('.ts'))
-          .toList();
+      // Sustained file I/O — run in a worker isolate so merging a long
+      // episode doesn't stall the UI thread after the download finishes.
+      await Isolate.run(() async {
+        final dir = Directory(directory);
+        final files = await dir
+            .list()
+            .where((entity) => entity.path.endsWith('.ts'))
+            .toList();
 
-      files.sort((a, b) {
-        final aIndex = int.parse(
-          a.path.substringAfter("TS_").substringBefore("."),
-        );
-        final bIndex = int.parse(
-          b.path.substringAfter("TS_").substringBefore("."),
-        );
-        return aIndex.compareTo(bIndex);
+        files.sort((a, b) {
+          final aIndex = int.parse(
+            a.path.substringAfter("TS_").substringBefore("."),
+          );
+          final bIndex = int.parse(
+            b.path.substringAfter("TS_").substringBefore("."),
+          );
+          return aIndex.compareTo(bIndex);
+        });
+
+        final outFile = File(fileName).openWrite();
+        for (var file in files) {
+          final inFile = File(file.path).openRead();
+          await outFile.addStream(inFile);
+        }
+        await outFile.close();
       });
-
-      final outFile = File(fileName).openWrite();
-      for (var file in files) {
-        final inFile = File(file.path).openRead();
-        await outFile.addStream(inFile);
-      }
-      await outFile.close();
     } catch (e) {
       throw M3u8DownloaderException('Failed to merge TS files', e);
     }
