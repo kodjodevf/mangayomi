@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
+import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -265,6 +268,26 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
     );
   }
 
+  /// #774: when a repo is removed, drop its *not-installed* sources so they
+  /// don't linger as placeholders with a dead install button. Installed
+  /// sources (non-empty [Source.sourceCode]) are kept so users don't lose them.
+  void _removeOrphanSources(Repo removedRepo) {
+    final repoUrl = removedRepo.jsonUrl;
+    if (repoUrl == null) return;
+    final orphanIds = isar.sources
+        .filter()
+        .itemTypeEqualTo(widget.itemType)
+        .findAllSync()
+        .where(
+          (s) => s.repo?.jsonUrl == repoUrl && (s.sourceCode?.isEmpty ?? true),
+        )
+        .map((s) => s.id!)
+        .toList();
+    if (orphanIds.isNotEmpty) {
+      isar.writeTxnSync(() => isar.sources.deleteAllSync(orphanIds));
+    }
+  }
+
   void _showRemoveRepoDialog(BuildContext context, int index) {
     showDialog(
       context: context,
@@ -288,10 +311,11 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                     const SizedBox(width: 15),
                     TextButton(
                       onPressed: () {
+                        final removedRepo = _entries[index];
                         final mangaRepos = ref
                             .read(extensionsRepoStateProvider(widget.itemType))
                             .toList();
-                        mangaRepos.removeWhere((url) => url == _entries[index]);
+                        mangaRepos.removeWhere((url) => url == removedRepo);
                         ref
                             .read(
                               extensionsRepoStateProvider(
@@ -299,6 +323,7 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                               ).notifier,
                             )
                             .set(mangaRepos);
+                        _removeOrphanSources(removedRepo);
                         ref.watch(extensionsRepoStateProvider(widget.itemType));
                         if (context.mounted) {
                           Navigator.pop(context);
