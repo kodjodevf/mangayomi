@@ -5,6 +5,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/library/widgets/continue_reader_button.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/modules/library/widgets/library_entry_utils.dart';
 import 'package:mangayomi/modules/widgets/bottom_text_widget.dart';
 import 'package:mangayomi/modules/widgets/cover_view_widget.dart';
@@ -16,6 +17,7 @@ class LibraryGridViewWidget extends StatefulWidget {
   final Set<int> mangaIdsList;
   final List<Manga> entriesManga;
   final bool language;
+  final bool sourceBadge;
   final bool downloadedChapter;
   final bool continueReaderBtn;
   final bool localSource;
@@ -26,6 +28,7 @@ class LibraryGridViewWidget extends StatefulWidget {
     required this.isCoverOnlyGrid,
     this.isComfortableGrid = false,
     required this.language,
+    this.sourceBadge = false,
     required this.downloadedChapter,
     required this.continueReaderBtn,
     required this.mangaIdsList,
@@ -57,6 +60,9 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
             return Padding(
               padding: const EdgeInsets.all(2),
               child: CoverViewWidget(
+                // On TV, make the first cover the content's focus target so the
+                // d-pad reliably lands on the grid (not the app bar).
+                autofocus: isTv && index == 0,
                 isLongPressed: widget.mangaIdsList.contains(entry.id),
                 isComfortableGrid: widget.isComfortableGrid,
                 bottomTextWidget: BottomTextWidget(
@@ -122,7 +128,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                       ),
 
                       // ── Top-right: Language ──
-                      if (widget.language && entry.lang!.isNotEmpty)
+                      if (widget.language && (entry.lang?.isNotEmpty ?? false))
                         Positioned(
                           top: 0,
                           right: 0,
@@ -153,6 +159,35 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                       child: Padding(
                         padding: const EdgeInsets.all(9),
                         child: ContinueReaderButton(entry: entry),
+                      ),
+                    ),
+
+                  // ── Bottom-left: Source ──
+                  if (widget.sourceBadge && (entry.source ?? '').isNotEmpty)
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: Container(
+                          constraints: const BoxConstraints(maxWidth: 96),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 4,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: context.themeData.cardColor,
+                            borderRadius: const BorderRadius.only(
+                              topRight: Radius.circular(3),
+                            ),
+                          ),
+                          child: Text(
+                            entry.source!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 10),
+                          ),
+                        ),
                       ),
                     ),
                 ],

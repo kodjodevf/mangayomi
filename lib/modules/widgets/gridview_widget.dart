@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class GridViewWidget extends StatelessWidget {
   final ScrollController? controller;
@@ -27,7 +28,9 @@ class GridViewWidget extends StatelessWidget {
         gridDelegate: (gridSize == null || gridSize == 0)
             ? SliverGridDelegateWithMaxCrossAxisExtent(
                 childAspectRatio: childAspectRatio!,
-                maxCrossAxisExtent: 220,
+                // Denser default on TV — from across a room 220px covers show
+                // only ~4 huge tiles; 150 gives more, smaller covers.
+                maxCrossAxisExtent: isTv ? 150 : 220,
               )
             : SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: gridSize!,

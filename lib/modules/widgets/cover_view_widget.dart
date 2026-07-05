@@ -10,6 +10,9 @@ class CoverViewWidget extends StatefulWidget {
   final VoidCallback onTap;
   final VoidCallback? onLongPress;
   final VoidCallback? onSecondaryTap;
+  // On TV, the first cover autofocuses so the grid becomes the content scope's
+  // focus target (otherwise d-pad focus never reaches it).
+  final bool autofocus;
   const CoverViewWidget({
     super.key,
     required this.children,
@@ -20,6 +23,7 @@ class CoverViewWidget extends StatefulWidget {
     this.onLongPress,
     this.isLongPressed,
     this.onSecondaryTap,
+    this.autofocus = false,
   });
 
   @override
@@ -90,6 +94,7 @@ class _CoverViewWidgetState extends State<CoverViewWidget> {
                 color: Colors.transparent,
                 clipBehavior: Clip.antiAlias,
                 child: InkWell(
+                  autofocus: widget.autofocus,
                   onTap: widget.onTap,
                   onLongPress: widget.onLongPress,
                   onSecondaryTap: widget.onSecondaryTap,
