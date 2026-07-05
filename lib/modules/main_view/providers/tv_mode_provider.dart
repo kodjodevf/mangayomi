@@ -6,6 +6,7 @@ import 'package:mangayomi/utils/platform_utils.dart';
 /// A stored `bool` forces it on/off; absent means "auto" (follow [isTv]).
 const _boxName = 'tv_prefs';
 const _overrideKey = 'anime_only_override';
+const _playerStyleKey = 'tv_player_style';
 
 /// Opens the backing box. Called once at startup.
 Future<void> openTvPrefsBox() async {
@@ -37,6 +38,31 @@ class AnimeOnlyTvMode extends Notifier<bool> {
     state = value;
     if (Hive.isBoxOpen(_boxName)) {
       Hive.box(_boxName).put(_overrideKey, value);
+    }
+  }
+}
+
+/// Which controls to use for the anime player on TV: `true` = the dedicated
+/// Netflix-style TV player (default), `false` = the original desktop player.
+/// Only consulted when [isTv]; phones/desktops are unaffected.
+final tvPlayerStyleProvider = NotifierProvider<TvPlayerStyle, bool>(
+  TvPlayerStyle.new,
+);
+
+class TvPlayerStyle extends Notifier<bool> {
+  @override
+  bool build() {
+    if (Hive.isBoxOpen(_boxName)) {
+      final v = Hive.box(_boxName).get(_playerStyleKey);
+      if (v is bool) return v;
+    }
+    return true; // default: TV player
+  }
+
+  void set(bool value) {
+    state = value;
+    if (Hive.isBoxOpen(_boxName)) {
+      Hive.box(_boxName).put(_playerStyleKey, value);
     }
   }
 }

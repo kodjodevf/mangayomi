@@ -23,6 +23,8 @@ import 'package:mangayomi/models/video.dart' as vid;
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
 import 'package:mangayomi/modules/anime/providers/auto_play_next_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/aniskip_countdown_btn.dart';
+import 'package:mangayomi/modules/anime/widgets/tv_player_controls.dart';
+import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/anime/widgets/play_or_pause_button.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
@@ -827,6 +829,14 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             : "libmpv",
       ),
     );
+    // Picture-in-Picture is implemented natively by the media_kit fork
+    // (VideoOutputPIP) and only exposed on iOS 15+. Enabling auto-PiP makes the
+    // player float into a PiP window when the app is backgrounded instead of
+    // pausing. The call awaits the controller's platform init internally, so
+    // it is safe to fire here without awaiting.
+    if (Platform.isIOS) {
+      _controller.enableAutoPictureInPicture();
+    }
     // If player is being launched the first time,
     // use global "Use Fullscreen" setting.
     // Else (if user already watches an episode and just changes it),
@@ -953,8 +963,13 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     });
   }
 
+  // Bumped on each d-pad key (see _onPlayerKey) so the mobile controls reveal
+  // themselves on a TV remote.
+  final ValueNotifier<int> _revealControls = ValueNotifier(0);
+
   @override
   void dispose() {
+    _revealControls.dispose();
     _watchStopwatch.stop();
     _currentPosition.removeListener(_updateRpcTimestamp);
     _subDelayController.removeListener(_onSubDelayChanged);
@@ -1553,6 +1568,65 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     );
   }
 
+  Widget _tvControls() {
+    return TvPlayerControls(
+      player: _player,
+      revealControls: _revealControls,
+      title: widget.episode.manga.value?.name ?? '',
+      episodeLabel: widget.episode.name ?? '',
+      onBack: () => Navigator.maybePop(context),
+      onRestart: () => _player.seek(Duration.zero),
+      onSettings: () => _videoSettingDraggableMenu(context),
+      hasNext: hasNextEpisode,
+      onNext: hasNextEpisode
+          ? () => pushToNewEpisode(context, _streamController.getNextEpisode())
+          : null,
+      qualityListenable: _video,
+      buildQualityOptions: _buildTvQualityOptions,
+    );
+  }
+
+  // The source video list is the real dub/sub control (entries like "1080p Sub"
+  // / "1080p Dub"); switching re-opens the stream at that source. Mirrors
+  // _videoQualityWidget's selection logic for the TV pill bar.
+  List<TvTrackOption> _buildTvQualityOptions() {
+    if (widget.isLocal || widget.videos.isEmpty) return const <TvTrackOption>[];
+    final currentTitle = _video.value?.videoTrack?.title;
+    return [
+      for (final video in widget.videos)
+        TvTrackOption(
+          label: _shortQuality(video.quality),
+          selected: currentTitle == video.quality,
+          onSelect: () {
+            if (_video.value?.videoTrack?.title == video.quality) return;
+            final prefs = VideoPrefs(
+              videoTrack: VideoTrack(video.url, video.quality, video.quality),
+              headers: video.headers,
+              isLocal: false,
+            );
+            _video.value = prefs;
+            _player.stop();
+            _openMedia(prefs);
+            _initSubtitleAndAudio = true;
+          },
+        ),
+    ];
+  }
+
+  // Shorten a source quality label like "1080p (Sub)" to "1080-sub"/"1080-dub".
+  String _shortQuality(String raw) {
+    final lower = raw.toLowerCase();
+    final res = RegExp(r'(\d{3,4})\s*p?').firstMatch(lower)?.group(1);
+    final tag = lower.contains('sub')
+        ? 'sub'
+        : lower.contains('dub')
+        ? 'dub'
+        : null;
+    if (res != null && tag != null) return '$res-$tag';
+    if (res != null) return '${res}p';
+    return raw;
+  }
+
   Widget _mobileBottomButtonBar(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 30),
@@ -1562,11 +1636,16 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _seekToWidget(),
                 _chapterMarkWidget(),
-                _buildSettingsButtons(context),
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    reverse: true,
+                    child: _buildSettingsButtons(context),
+                  ),
+                ),
               ],
             ),
           ),
@@ -1821,6 +1900,15 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                   )
                   .toList(),
         ),
+        if (Platform.isIOS && _controller.isPictureInPictureAvailable())
+          IconButton(
+            tooltip: 'Picture in Picture',
+            icon: const Icon(
+              Icons.picture_in_picture_alt,
+              color: Colors.white,
+            ),
+            onPressed: () => _controller.enterPictureInPicture(),
+          ),
         IconButton(
           icon: const Icon(Icons.fit_screen_outlined, color: Colors.white),
           onPressed: () async {
@@ -1832,7 +1920,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             controller: _controller,
             desktopFullScreenPlayer: widget.desktopFullScreenPlayer,
           )
-        else
+        // A TV is always fullscreen, so the toggle is useless there — hide it.
+        else if (!isTv)
           IconButton(
             icon: Icon(isFullscreen ? Icons.fullscreen_exit : Icons.fullscreen),
             iconSize: 25,
@@ -1906,17 +1995,28 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
               Consumer(
                 builder: (context, ref, _) {
                   final autoPlay = ref.watch(autoPlayNextEpisodeProvider);
-                  return IconButton(
-                    tooltip: autoPlay
+                  // Same drawn play/pause switch as the TV player, for a
+                  // consistent autoplay toggle across all players.
+                  return Tooltip(
+                    message: autoPlay
                         ? 'Autoplay next episode: on'
                         : 'Autoplay next episode: off',
-                    icon: Icon(
-                      Icons.playlist_play,
-                      color: autoPlay ? Colors.white : Colors.white38,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(20),
+                      onTap: () => ref
+                          .read(autoPlayNextEpisodeProvider.notifier)
+                          .toggle(),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 8,
+                        ),
+                        child: AutoplaySwitch(
+                          on: autoPlay,
+                          accent: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
                     ),
-                    onPressed: () => ref
-                        .read(autoPlayNextEpisodeProvider.notifier)
-                        .toggle(),
                   );
                 },
               ),
@@ -1992,7 +2092,9 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           ),
           fit: fit,
           key: _key,
-          controls: (state) => isDesktop
+          controls: (state) => (isTv && ref.read(tvPlayerStyleProvider))
+              ? _tvControls()
+              : (isDesktop || isTv)
               ? DesktopControllerWidget(
                   videoController: _controller,
                   topButtonBarWidget: _topButtonBar(context),
@@ -2012,6 +2114,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                   defaultSkipIntroLength: skipIntroLength,
                   desktopFullScreenPlayer: widget.desktopFullScreenPlayer,
                   chapterMarks: _chapterMarks,
+                  revealControls: _revealControls,
                 )
               : MobileControllerWidget(
                   videoController: _controller,
@@ -2019,6 +2122,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                   videoStatekey: _key,
                   bottomButtonBarWidget: _mobileBottomButtonBar(context),
                   streamController: _streamController,
+                  revealControls: _revealControls,
                   doubleSpeed: (value) {
                     _isDoubleSpeed.value = value ?? false;
                   },
@@ -2354,8 +2458,30 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           }
         },
       },
-      child: Focus(autofocus: true, child: child),
+      child: Focus(autofocus: true, onKeyEvent: _onPlayerKey, child: child),
     );
+  }
+
+  // On a TV remote / keyboard, reveal the on-screen controls when the user
+  // presses the d-pad. The arrow keys stay unbound above (so they still drive
+  // focus traversal between the control buttons) — we just bump [_revealControls]
+  // so the controls become visible and the focus is on something the user can
+  // see. Returns ignored so traversal + the media shortcuts still run.
+  KeyEventResult _onPlayerKey(FocusNode node, KeyEvent event) {
+    if (event is KeyDownEvent || event is KeyRepeatEvent) {
+      final k = event.logicalKey;
+      final isNav =
+          k == LogicalKeyboardKey.arrowUp ||
+          k == LogicalKeyboardKey.arrowDown ||
+          k == LogicalKeyboardKey.arrowLeft ||
+          k == LogicalKeyboardKey.arrowRight ||
+          k == LogicalKeyboardKey.select ||
+          k == LogicalKeyboardKey.enter ||
+          k == LogicalKeyboardKey.numpadEnter ||
+          k == LogicalKeyboardKey.gameButtonA;
+      if (isNav) _revealControls.value++;
+    }
+    return KeyEventResult.ignored;
   }
 }
 
