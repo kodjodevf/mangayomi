@@ -2,7 +2,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/blend_level_state_provider.dart';
+import 'package:mangayomi/modules/widgets/tv_escapable_slider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class BlendLevelSlider extends ConsumerWidget {
   const BlendLevelSlider({super.key});
@@ -21,16 +23,25 @@ class BlendLevelSlider extends ConsumerWidget {
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
-        Slider(
-          min: 0.0,
-          max: 40.0,
-          divisions: max(39, 1),
-          value: blendLevel,
-          onChanged: (value) =>
-              ref.read(blendLevelStateProvider.notifier).setBlendLevel(value),
-          onChangeEnd: (value) => ref
+        TvEscapableSlider(
+          enabled: isTv,
+          onDecrease: () => ref
               .read(blendLevelStateProvider.notifier)
-              .setBlendLevel(value, end: true),
+              .setBlendLevel((blendLevel - 1).clamp(0.0, 40.0), end: true),
+          onIncrease: () => ref
+              .read(blendLevelStateProvider.notifier)
+              .setBlendLevel((blendLevel + 1).clamp(0.0, 40.0), end: true),
+          child: Slider(
+            min: 0.0,
+            max: 40.0,
+            divisions: max(39, 1),
+            value: blendLevel,
+            onChanged: (value) =>
+                ref.read(blendLevelStateProvider.notifier).setBlendLevel(value),
+            onChangeEnd: (value) => ref
+                .read(blendLevelStateProvider.notifier)
+                .setBlendLevel(value, end: true),
+          ),
         ),
       ],
     );

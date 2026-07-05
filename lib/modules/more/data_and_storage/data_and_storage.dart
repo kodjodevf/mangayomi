@@ -12,6 +12,8 @@ import 'package:mangayomi/modules/more/data_and_storage/providers/storage_usage.
 import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/modules/widgets/tv_escapable_slider.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
 class DataAndStorage extends ConsumerWidget {
@@ -337,22 +339,31 @@ class DataAndStorage extends ConsumerWidget {
                       color: context.secondaryColor,
                     ),
                   ),
-                  Slider(
-                    min: 0,
-                    max: 9,
-                    divisions: 9,
-                    value: compression.toDouble(),
-                    label: compression.toString(),
-                    onChanged: (value) {
-                      ref
-                          .read(backupCompressionLevelProvider.notifier)
-                          .update(value.round());
-                    },
-                    onChangeEnd: (value) {
-                      ref
-                          .read(backupCompressionLevelProvider.notifier)
-                          .set(value.round());
-                    },
+                  TvEscapableSlider(
+                    enabled: isTv,
+                    onDecrease: () => ref
+                        .read(backupCompressionLevelProvider.notifier)
+                        .set((compression - 1).clamp(0, 9)),
+                    onIncrease: () => ref
+                        .read(backupCompressionLevelProvider.notifier)
+                        .set((compression + 1).clamp(0, 9)),
+                    child: Slider(
+                      min: 0,
+                      max: 9,
+                      divisions: 9,
+                      value: compression.toDouble(),
+                      label: compression.toString(),
+                      onChanged: (value) {
+                        ref
+                            .read(backupCompressionLevelProvider.notifier)
+                            .update(value.round());
+                      },
+                      onChangeEnd: (value) {
+                        ref
+                            .read(backupCompressionLevelProvider.notifier)
+                            .set(value.round());
+                      },
+                    ),
                   ),
                 ],
               ),
