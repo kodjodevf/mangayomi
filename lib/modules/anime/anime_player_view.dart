@@ -854,7 +854,13 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     }
     if (!isDesktop) {
       final forceLandscape = ref.read(forceLandscapePlayerStateProvider);
-      if (forceLandscape) {
+      // Preserve the player orientation across episode changes. Playing the next
+      // episode pushes a fresh player, and the old one's dispose() resets the
+      // orientation to portrait. So if the viewer is still in fullscreen — from
+      // the force-landscape setting or a manual toggle that persists across
+      // episodes (fullscreenProvider is global) — re-apply landscape here rather
+      // than stranding them in portrait with the fullscreen button still active.
+      if (forceLandscape || ref.read(fullscreenProvider)) {
         _setLandscapeMode(true);
       }
     }
