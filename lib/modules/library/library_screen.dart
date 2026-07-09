@@ -13,6 +13,8 @@ import 'package:mangayomi/modules/library/providers/library_state_provider.dart'
 import 'package:mangayomi/modules/library/widgets/library_app_bar.dart';
 import 'package:mangayomi/modules/library/widgets/library_body.dart';
 import 'package:mangayomi/modules/library/widgets/library_dialogs.dart';
+import 'package:mangayomi/modules/library/tv_home/tv_anime_home_view.dart';
+import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/more/categories/providers/isar_providers.dart';
 import 'package:mangayomi/modules/more/providers/downloaded_only_state_provider.dart';
@@ -22,6 +24,7 @@ import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 /// Main library screen — refactored from 2309 lines to ~350 lines.
@@ -88,6 +91,13 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   }
 
   Widget _buildWithSettings(Settings settings) {
+    // The anime library on TV is its own screen — a hero + rows home built for
+    // a d-pad, rather than the flat grid. Togglable in Appearance.
+    if (isTv &&
+        widget.itemType == ItemType.anime &&
+        ref.watch(tvHomeStyleProvider)) {
+      return TvAnimeHomeView(settings: settings);
+    }
     final categories = ref.watch(
       getMangaCategorieStreamProvider(itemType: widget.itemType),
     );

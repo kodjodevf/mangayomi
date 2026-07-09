@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class CoverViewWidget extends StatefulWidget {
   final List<Widget> children;
@@ -10,6 +11,12 @@ class CoverViewWidget extends StatefulWidget {
   final VoidCallback onTap;
   final VoidCallback? onLongPress;
   final VoidCallback? onSecondaryTap;
+  // Notifies the parent when this card gains/loses focus — used by the TV home
+  // rows to scroll the focused card into view. Fires on any focus change,
+  // independent of the internal ring (which is gated to d-pad/keyboard input).
+  final ValueChanged<bool>? onFocusChange;
+  // 0..1 watch/read progress; when > 0 draws a thin bar along the cover bottom.
+  final double progress;
   const CoverViewWidget({
     super.key,
     required this.children,
@@ -20,6 +27,8 @@ class CoverViewWidget extends StatefulWidget {
     this.onLongPress,
     this.isLongPressed,
     this.onSecondaryTap,
+    this.onFocusChange,
+    this.progress = 0,
   });
 
   @override
@@ -49,15 +58,23 @@ class _CoverViewWidgetState extends State<CoverViewWidget> {
   }
 
   void _onHighlightModeChanged(FocusHighlightMode mode) {
-    if (mode != FocusHighlightMode.traditional && _focused) {
+    // On TV the ring must persist regardless of highlight mode (input is d-pad
+    // only); elsewhere drop it the moment input switches away from keyboard.
+    if (!isTv && mode != FocusHighlightMode.traditional && _focused) {
       setState(() => _focused = false);
     }
   }
 
   void _onFocusChange(bool hasFocus) {
+    widget.onFocusChange?.call(hasFocus);
+    // On TV always show the ring when focused so something is always visibly
+    // focused; elsewhere only for keyboard/d-pad (traditional) so touch input
+    // never shows it.
     final show =
         hasFocus &&
-        FocusManager.instance.highlightMode == FocusHighlightMode.traditional;
+        (isTv ||
+            FocusManager.instance.highlightMode ==
+                FocusHighlightMode.traditional);
     if (mounted && show != _focused) {
       setState(() => _focused = show);
     }
@@ -75,7 +92,11 @@ class _CoverViewWidgetState extends State<CoverViewWidget> {
         children: [
           Expanded(
             child: AnimatedContainer(
-              duration: const Duration(milliseconds: 120),
+              duration: const Duration(milliseconds: 130),
+              curve: Curves.easeOut,
+              // Focus "pop" — the focused cover lifts slightly, TV-style.
+              transform: Matrix4.identity()..scale(_focused ? 1.06 : 1.0),
+              transformAlignment: Alignment.center,
               decoration: BoxDecoration(
                 // Outer radius = inner clip radius (5) + border width (3) so the
                 // ring's corners stay concentric with the card and don't clip.
@@ -107,7 +128,27 @@ class _CoverViewWidgetState extends State<CoverViewWidget> {
                         : Ink.image(
                             fit: BoxFit.cover,
                             image: widget.image!,
-                            child: Stack(children: widget.children),
+                            child: Stack(
+                              children: [
+                                ...widget.children,
+                                if (widget.progress > 0)
+                                  Positioned(
+                                    left: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                    child: LinearProgressIndicator(
+                                      value: widget.progress.clamp(0.0, 1.0),
+                                      minHeight: 3,
+                                      backgroundColor: Colors.black.withValues(
+                                        alpha: 0.35,
+                                      ),
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        context.primaryColor,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
                           ),
                   ),
                 ),

@@ -6,6 +6,8 @@ import 'package:mangayomi/utils/platform_utils.dart';
 /// A stored `bool` forces it on/off; absent means "auto" (follow [isTv]).
 const _boxName = 'tv_prefs';
 const _overrideKey = 'anime_only_override';
+const _tvHomeStyleKey = 'tv_home_style';
+const _genreRowsKey = 'tv_home_genre_rows';
 
 /// Opens the backing box. Called once at startup.
 Future<void> openTvPrefsBox() async {
@@ -37,6 +39,56 @@ class AnimeOnlyTvMode extends Notifier<bool> {
     state = value;
     if (Hive.isBoxOpen(_boxName)) {
       Hive.box(_boxName).put(_overrideKey, value);
+    }
+  }
+}
+
+/// Whether the anime library uses the TV home (hero + rows) instead of the flat
+/// grid. Defaults to [isTv], and is togglable in Appearance so a TV user can
+/// always fall back to the grid.
+final tvHomeStyleProvider = NotifierProvider<TvHomeStyle, bool>(
+  TvHomeStyle.new,
+);
+
+class TvHomeStyle extends Notifier<bool> {
+  @override
+  bool build() {
+    if (Hive.isBoxOpen(_boxName)) {
+      final v = Hive.box(_boxName).get(_tvHomeStyleKey);
+      if (v is bool) return v;
+    }
+    return isTv;
+  }
+
+  void set(bool value) {
+    state = value;
+    if (Hive.isBoxOpen(_boxName)) {
+      Hive.box(_boxName).put(_tvHomeStyleKey, value);
+    }
+  }
+}
+
+/// Whether the TV home shows its genre rows. They're the one place a title can
+/// appear in more than one row, so anyone who finds that repetitive can switch
+/// them off from the filter/sort/display sheet. On by default.
+final tvHomeGenreRowsProvider = NotifierProvider<TvHomeGenreRows, bool>(
+  TvHomeGenreRows.new,
+);
+
+class TvHomeGenreRows extends Notifier<bool> {
+  @override
+  bool build() {
+    if (Hive.isBoxOpen(_boxName)) {
+      final v = Hive.box(_boxName).get(_genreRowsKey);
+      if (v is bool) return v;
+    }
+    return true;
+  }
+
+  void set(bool value) {
+    state = value;
+    if (Hive.isBoxOpen(_boxName)) {
+      Hive.box(_boxName).put(_genreRowsKey, value);
     }
   }
 }
