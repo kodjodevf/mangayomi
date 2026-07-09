@@ -66,9 +66,11 @@ class JsUtils {
           .then((res) {
             if (res.statusCode == 200) {
               final data = jsonDecode(res.body) as Map<String, dynamic>;
-              return data['result'] as bool;
+              // Extension scripts use this bridge to return extracted values,
+              // not only Cloudflare challenge status.
+              return data['result'];
             }
-            return false;
+            return null;
           });
     });
     runtime.onMessage('parseEpub', (dynamic args) async {

@@ -354,9 +354,10 @@ class MProviderBridged {
           .then((res) {
             if (res.statusCode == 200) {
               final data = jsonDecode(res.body) as Map<String, dynamic>;
-              return data['result'] as bool;
+              // Preserve payloads returned by extension WebView scripts.
+              return data['result'];
             }
-            return false;
+            return null;
           }),
     );
     interpreter.registertopLevelFunction('print', (
