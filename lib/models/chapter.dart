@@ -32,6 +32,8 @@ class Chapter {
 
   String? description;
 
+  int? sourceOrder;
+
   /// video size
   String? downloadSize;
 
@@ -56,6 +58,7 @@ class Chapter {
     this.isFiller = false,
     this.thumbnailUrl,
     this.description,
+    this.sourceOrder,
     this.downloadSize,
     this.duration,
     this.updatedAt = 0,
@@ -75,6 +78,7 @@ class Chapter {
     isFiller = json['isFiller'] ?? false;
     thumbnailUrl = json['thumbnailUrl'];
     description = json['description'];
+    sourceOrder = json['sourceOrder'];
     downloadSize = json['downloadSize'];
     duration = json['duration'];
     updatedAt = json['updatedAt'];
@@ -94,6 +98,7 @@ class Chapter {
     'isFiller': isFiller,
     'thumbnailUrl': thumbnailUrl,
     'description': description,
+    'sourceOrder': sourceOrder,
     'downloadSize': downloadSize,
     'duration': duration,
     'updatedAt': updatedAt ?? 0,
