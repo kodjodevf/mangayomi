@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -28,6 +29,8 @@ class TvPlayerControls extends StatefulWidget {
     required this.onNext,
     required this.qualityListenable,
     required this.buildQualityOptions,
+    required this.speedListenable,
+    required this.onSetSpeed,
   });
 
   final Player player;
@@ -43,6 +46,10 @@ class TvPlayerControls extends StatefulWidget {
   // dub/sub control here. Rebuilt when [qualityListenable] fires.
   final Listenable qualityListenable;
   final List<TvTrackOption> Function() buildQualityOptions;
+  // Playback speed: routed through the parent so its own speed notifier (used by
+  // the hold-to-2x gesture) stays in sync rather than calling setRate directly.
+  final ValueListenable<double> speedListenable;
+  final ValueChanged<double> onSetSpeed;
 
   @override
   State<TvPlayerControls> createState() => _TvPlayerControlsState();
@@ -53,6 +60,11 @@ class _TvPlayerControlsState extends State<TvPlayerControls> {
   Timer? _hideTimer;
   final FocusScopeNode _scope = FocusScopeNode(debugLabel: 'tvPlayer');
   final FocusNode _playFocus = FocusNode(debugLabel: 'tvPlayerPlayPause');
+  // Always in the tree, even while hidden (when the controls collapse to an
+  // empty box and leave no focusable node). Focus parks here on hide so a key
+  // press can still wake the panel — otherwise, on a keyboard, once it hides
+  // there's nothing focused to receive the wake key.
+  final FocusNode _rootFocus = FocusNode(debugLabel: 'tvPlayerRoot');
   static const _hideAfter = Duration(seconds: 4);
 
   @override
@@ -71,14 +83,24 @@ class _TvPlayerControlsState extends State<TvPlayerControls> {
     _hideTimer?.cancel();
     _scope.dispose();
     _playFocus.dispose();
+    _rootFocus.dispose();
     super.dispose();
   }
 
+  // True while the player is the topmost route. When a dialog (speed / settings)
+  // is open on top, the panel must not hide or touch focus — doing so steals
+  // focus out of the dialog and back to the play button behind it.
+  bool get _isTopRoute => ModalRoute.of(context)?.isCurrent ?? true;
+
   void _reveal() {
     if (!mounted) return;
-    if (!_visible) setState(() => _visible = true);
+    final wasHidden = !_visible;
+    if (wasHidden) setState(() => _visible = true);
+    // Always extend the hide timer (so a moving mouse keeps controls up), but
+    // only grab focus on the hidden→visible edge — otherwise a stream of mouse
+    // hover events would re-request focus every frame.
     _startHideTimer();
-    if (!_scope.hasFocus) {
+    if (wasHidden && !_scope.hasFocus && _isTopRoute) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         (_playFocus.canRequestFocus ? _playFocus : _scope).requestFocus();
@@ -88,9 +110,27 @@ class _TvPlayerControlsState extends State<TvPlayerControls> {
 
   void _startHideTimer() {
     _hideTimer?.cancel();
-    _hideTimer = Timer(_hideAfter, () {
-      if (mounted) setState(() => _visible = false);
-    });
+    _hideTimer = Timer(_hideAfter, _onHideTimer);
+  }
+
+  void _onHideTimer() {
+    if (!mounted) return;
+    // A dialog is open on top — keep the panel and don't touch focus; re-arm so
+    // it hides once the player is back on top.
+    if (!_isTopRoute) {
+      _startHideTimer();
+      return;
+    }
+    _hideNow();
+  }
+
+  // Hide the control panel and park focus on the root node so a key press can
+  // still wake it (Back also dismisses the panel before leaving the player).
+  void _hideNow() {
+    _hideTimer?.cancel();
+    if (!mounted || !_visible) return;
+    setState(() => _visible = false);
+    _rootFocus.requestFocus();
   }
 
   @override
@@ -102,8 +142,40 @@ class _TvPlayerControlsState extends State<TvPlayerControls> {
     final size = MediaQuery.of(context).size;
     final safeH = size.width * 0.08;
     final safeV = size.height * 0.05;
-    return FocusScope(
-      node: _scope,
+    // Back dismisses the visible control panel before it leaves the player:
+    // block the pop while the panel shows and hide it instead; a second Back
+    // (panel already hidden) exits normally. The on-screen back arrow still
+    // exits outright — it pops directly, bypassing this.
+    return PopScope(
+      canPop: !_visible,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop && _visible) _hideNow();
+      },
+      child: Focus(
+        focusNode: _rootFocus,
+        // While the panel is hidden this node holds focus; any d-pad / select
+        // key wakes the panel (and is consumed so it doesn't also act). While
+        // visible it defers to the focused control. Back is left alone so it
+        // still exits.
+        onKeyEvent: (node, event) {
+          if (_visible) return KeyEventResult.ignored;
+          if (event is KeyDownEvent || event is KeyRepeatEvent) {
+            final k = event.logicalKey;
+            final wake =
+                k == LogicalKeyboardKey.arrowUp ||
+                k == LogicalKeyboardKey.arrowDown ||
+                k == LogicalKeyboardKey.arrowLeft ||
+                k == LogicalKeyboardKey.arrowRight ||
+                _isSelect(k);
+            if (wake) {
+              _reveal();
+              return KeyEventResult.handled;
+            }
+          }
+          return KeyEventResult.ignored;
+        },
+        child: FocusScope(
+          node: _scope,
       // Only build the controls (and their per-frame StreamBuilders) while
       // visible. Otherwise the seek/time streams rebuild ~4x/sec during
       // playback and jank the Fire TV — hidden means nothing to render.
@@ -239,20 +311,24 @@ class _TvPlayerControlsState extends State<TvPlayerControls> {
                         ],
                       ],
                     ),
-                    const SizedBox(height: 14),
-                    // Quality | Subtitles | Audio pills (current one checked).
+                    const SizedBox(height: 4),
+                    // Quality | Subtitles | Speed | Settings pills.
                     _PillBar(
                       player: widget.player,
                       accent: accent,
                       qualityListenable: widget.qualityListenable,
                       buildQualityOptions: widget.buildQualityOptions,
                       onSettings: widget.onSettings,
+                      speedListenable: widget.speedListenable,
+                      onSetSpeed: widget.onSetSpeed,
                     ),
                   ],
                 ),
               ),
             ],
           ),
+        ),
+      ),
     );
   }
 }
@@ -379,6 +455,8 @@ class _PillBar extends StatelessWidget {
     required this.qualityListenable,
     required this.buildQualityOptions,
     required this.onSettings,
+    required this.speedListenable,
+    required this.onSetSpeed,
   });
 
   final Player player;
@@ -386,6 +464,8 @@ class _PillBar extends StatelessWidget {
   final Listenable qualityListenable;
   final List<TvTrackOption> Function() buildQualityOptions;
   final VoidCallback onSettings;
+  final ValueListenable<double> speedListenable;
+  final ValueChanged<double> onSetSpeed;
 
   @override
   Widget build(BuildContext context) {
@@ -455,9 +535,17 @@ class _PillBar extends StatelessWidget {
                   if (i > 0) children.add(const _PillDivider());
                   children.addAll(groups[i]);
                 }
-                // Gear pill at the end of the row (moved here from the top bar),
-                // sized to match the track pills.
+                // Speed group, then the gear, both sized to match the track
+                // pills.
                 if (children.isNotEmpty) children.add(const _PillDivider());
+                children.add(
+                  _SpeedPill(
+                    accent: accent,
+                    speedListenable: speedListenable,
+                    onSetSpeed: onSetSpeed,
+                  ),
+                );
+                children.add(const _PillDivider());
                 children.add(
                   _TrackPill(
                     accent: accent,
@@ -479,6 +567,196 @@ class _PillBar extends StatelessWidget {
           },
         );
       },
+    );
+  }
+}
+
+/// Playback-speed pill: shows the current rate, opens a d-pad-focusable list of
+/// presets. Highlighted (like a selected track) whenever it isn't 1×.
+class _SpeedPill extends StatelessWidget {
+  const _SpeedPill({
+    required this.accent,
+    required this.speedListenable,
+    required this.onSetSpeed,
+  });
+
+  final Color accent;
+  final ValueListenable<double> speedListenable;
+  final ValueChanged<double> onSetSpeed;
+
+  static const _presets = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
+
+  static String _fmt(double r) {
+    final s = r == r.roundToDouble() ? r.toStringAsFixed(0) : r.toString();
+    return '$s×';
+  }
+
+  void _showMenu(BuildContext context, double current) {
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => _SpeedMenu(
+        accent: accent,
+        presets: _presets,
+        current: current,
+        onPick: onSetSpeed,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<double>(
+      valueListenable: speedListenable,
+      builder: (context, rate, _) => _TrackPill(
+        accent: accent,
+        icon: Icons.speed,
+        label: _fmt(rate),
+        selected: (rate - 1.0).abs() > 0.001,
+        onTap: () => _showMenu(context, rate),
+      ),
+    );
+  }
+}
+
+/// The playback-speed picker. Owns its focus containment: Up/Down move within
+/// the list and are *always* consumed (clamped at the ends), so d-pad focus
+/// can't escape past the edges to the controls behind the still-open dialog —
+/// which was letting the speed pill re-open a second dialog on top of this one.
+class _SpeedMenu extends StatefulWidget {
+  const _SpeedMenu({
+    required this.accent,
+    required this.presets,
+    required this.current,
+    required this.onPick,
+  });
+
+  final Color accent;
+  final List<double> presets;
+  final double current;
+  final ValueChanged<double> onPick;
+
+  @override
+  State<_SpeedMenu> createState() => _SpeedMenuState();
+}
+
+class _SpeedMenuState extends State<_SpeedMenu> {
+  late final List<FocusNode> _nodes = List.generate(
+    widget.presets.length,
+    (_) => FocusNode(),
+  );
+  late int _index;
+
+  @override
+  void initState() {
+    super.initState();
+    final sel = widget.presets.indexWhere(
+      (s) => (s - widget.current).abs() < 0.001,
+    );
+    _index = sel >= 0 ? sel : widget.presets.length ~/ 2;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _nodes[_index].requestFocus();
+    });
+  }
+
+  @override
+  void dispose() {
+    for (final n in _nodes) {
+      n.dispose();
+    }
+    super.dispose();
+  }
+
+  void _move(int delta) {
+    final next = (_index + delta).clamp(0, _nodes.length - 1);
+    if (next != _index) {
+      setState(() => _index = next);
+      _nodes[next].requestFocus();
+    }
+  }
+
+  void _pick(int i) {
+    widget.onPick(widget.presets[i]);
+    Navigator.pop(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Playback speed'),
+      contentPadding: const EdgeInsets.symmetric(vertical: 8),
+      content: SizedBox(
+        width: 300,
+        child: FocusTraversalGroup(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (var i = 0; i < widget.presets.length; i++)
+                Focus(
+                  focusNode: _nodes[i],
+                  onKeyEvent: (node, event) {
+                    if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+                      return KeyEventResult.ignored;
+                    }
+                    final k = event.logicalKey;
+                    if (k == LogicalKeyboardKey.arrowDown) {
+                      _move(1);
+                      return KeyEventResult.handled;
+                    }
+                    if (k == LogicalKeyboardKey.arrowUp) {
+                      _move(-1);
+                      return KeyEventResult.handled;
+                    }
+                    // Swallow Left/Right too, so neither can escape sideways.
+                    if (k == LogicalKeyboardKey.arrowLeft ||
+                        k == LogicalKeyboardKey.arrowRight) {
+                      return KeyEventResult.handled;
+                    }
+                    if (event is KeyDownEvent && _isSelect(k)) {
+                      _pick(i);
+                      return KeyEventResult.handled;
+                    }
+                    return KeyEventResult.ignored;
+                  },
+                  child: Padding(
+                    // Inset so the highlight is a rounded pill inside the
+                    // dialog — a full-bleed square looked broken on the last
+                    // row against the dialog's rounded corner.
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+                    child: InkWell(
+                      onTap: () => _pick(i),
+                      borderRadius: BorderRadius.circular(10),
+                      child: Ink(
+                        decoration: BoxDecoration(
+                          color: i == _index
+                              ? widget.accent.withValues(alpha: 0.18)
+                              : null,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(_SpeedPill._fmt(widget.presets[i])),
+                            ),
+                            if ((widget.presets[i] - widget.current).abs() <
+                                0.001)
+                              Icon(Icons.check, color: widget.accent),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -706,7 +984,43 @@ class _TvSeekBar extends StatefulWidget {
 
 class _TvSeekBarState extends State<_TvSeekBar> {
   bool _focused = false;
-  static const _step = Duration(seconds: 10);
+
+  // Own a node when the parent doesn't supply one, so a mouse click can focus
+  // the bar (and hand keyboard seeking over to it) on desktop.
+  FocusNode? _ownNode;
+  FocusNode get _node => widget.focusNode ?? (_ownNode ??= FocusNode());
+
+  @override
+  void dispose() {
+    _ownNode?.dispose();
+    super.dispose();
+  }
+
+  // Hold-to-accelerate: a held arrow fires key repeats, and each consecutive
+  // repeat in the same direction grows the seek step, so a long hold covers
+  // ground fast while a single tap still nudges ±10s. Reset on release or when
+  // the direction flips.
+  static const _baseStep = 10; // seconds
+  static const _maxStep = 90;
+  int _holdCount = 0;
+  LogicalKeyboardKey? _holdDir;
+
+  Duration _stepFor(LogicalKeyboardKey dir) {
+    if (_holdDir != dir) {
+      _holdDir = dir;
+      _holdCount = 0;
+    } else {
+      _holdCount++;
+    }
+    // +10s per 3 repeats held: 10 → 20 → 30 … capped.
+    final secs = (_baseStep + (_holdCount ~/ 3) * 10).clamp(_baseStep, _maxStep);
+    return Duration(seconds: secs);
+  }
+
+  void _endHold() {
+    _holdDir = null;
+    _holdCount = 0;
+  }
 
   void _seek(Duration delta) {
     var target = widget.player.state.position + delta;
@@ -716,20 +1030,41 @@ class _TvSeekBarState extends State<_TvSeekBar> {
     widget.player.seek(target);
   }
 
+  // Mouse tap / drag on the bar seeks to that fraction of the duration.
+  void _seekToFraction(double frac) {
+    final dur = widget.player.state.duration;
+    if (dur <= Duration.zero) return;
+    if (!_node.hasFocus) _node.requestFocus();
+    widget.player.seek(dur * frac.clamp(0.0, 1.0));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Focus(
-      focusNode: widget.focusNode,
-      onFocusChange: (f) => setState(() => _focused = f),
+      focusNode: _node,
+      onFocusChange: (f) {
+        setState(() => _focused = f);
+        if (!f) _endHold();
+      },
       onKeyEvent: (node, event) {
-        if (event is KeyDownEvent || event is KeyRepeatEvent) {
-          final k = event.logicalKey;
-          if (k == LogicalKeyboardKey.arrowLeft) {
-            _seek(-_step);
+        final k = event.logicalKey;
+        final isLeft = k == LogicalKeyboardKey.arrowLeft;
+        final isRight = k == LogicalKeyboardKey.arrowRight;
+        // Releasing an arrow ends the hold ramp.
+        if (event is KeyUpEvent) {
+          if (isLeft || isRight) {
+            _endHold();
             return KeyEventResult.handled;
           }
-          if (k == LogicalKeyboardKey.arrowRight) {
-            _seek(_step);
+          return KeyEventResult.ignored;
+        }
+        if (event is KeyDownEvent || event is KeyRepeatEvent) {
+          if (isLeft) {
+            _seek(-_stepFor(k));
+            return KeyEventResult.handled;
+          }
+          if (isRight) {
+            _seek(_stepFor(k));
             return KeyEventResult.handled;
           }
           // OK/Select toggles play/pause (Netflix model — no separate button).
@@ -759,7 +1094,14 @@ class _TvSeekBarState extends State<_TvSeekBar> {
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   final w = constraints.maxWidth;
-                  return Stack(
+                  return GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTapDown: (d) => _seekToFraction(d.localPosition.dx / w),
+                    onHorizontalDragStart: (d) =>
+                        _seekToFraction(d.localPosition.dx / w),
+                    onHorizontalDragUpdate: (d) =>
+                        _seekToFraction(d.localPosition.dx / w),
+                    child: Stack(
                     children: [
                       // Track + progress, vertically centred.
                       Align(
@@ -801,6 +1143,7 @@ class _TvSeekBarState extends State<_TvSeekBar> {
                           ),
                         ),
                     ],
+                    ),
                   );
                 },
               ),

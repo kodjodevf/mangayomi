@@ -1574,7 +1574,10 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       revealControls: _revealControls,
       title: widget.episode.manga.value?.name ?? '',
       episodeLabel: widget.episode.name ?? '',
-      onBack: () => Navigator.maybePop(context),
+      // Direct pop, not maybePop: the on-screen back arrow always exits the
+      // player, bypassing the PopScope that makes the remote Back hide the
+      // panel first.
+      onBack: () => Navigator.pop(context),
       onRestart: () => _player.seek(Duration.zero),
       onSettings: () => _videoSettingDraggableMenu(context),
       hasNext: hasNextEpisode,
@@ -1583,6 +1586,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           : null,
       qualityListenable: _video,
       buildQualityOptions: _buildTvQualityOptions,
+      speedListenable: _playbackSpeed,
+      onSetSpeed: _setPlaybackSpeed,
     );
   }
 
@@ -2458,7 +2463,17 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           }
         },
       },
-      child: Focus(autofocus: true, onKeyEvent: _onPlayerKey, child: child),
+      child: MouseRegion(
+        // Desktop debugging: a mouse has no d-pad, so let hover and clicks
+        // reveal the auto-hiding controls (bumping the same notifier the remote
+        // does). No-op on a TV, which sends no pointer-hover events.
+        onEnter: (_) => _revealControls.value++,
+        onHover: (_) => _revealControls.value++,
+        child: Listener(
+          onPointerDown: (_) => _revealControls.value++,
+          child: Focus(autofocus: true, onKeyEvent: _onPlayerKey, child: child),
+        ),
+      ),
     );
   }
 
