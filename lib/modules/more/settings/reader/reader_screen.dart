@@ -29,6 +29,7 @@ class ReaderScreen extends ConsumerWidget {
     final keepScreenOn = ref.watch(keepScreenOnReaderStateProvider);
     final autoReadDuplChap = ref.watch(autoReadDuplicateChaptersStateProvider);
     final showPageGaps = ref.watch(showPageGapsStateProvider);
+    final showPagesNumber = ref.watch(showPagesNumberStateProvider);
     final webtoonSidePadding = ref.watch(webtoonSidePaddingStateProvider);
     final navigationLayout = ref.watch(readerNavigationLayoutStateProvider);
     return Scaffold(
@@ -409,6 +410,13 @@ class ReaderScreen extends ConsumerWidget {
               title: Text(context.l10n.show_page_gaps),
               onChanged: (value) {
                 ref.read(showPageGapsStateProvider.notifier).set(value);
+              },
+            ),
+            SwitchListTile(
+              value: showPagesNumber,
+              title: Text(context.l10n.show_page_number),
+              onChanged: (value) {
+                ref.read(showPagesNumberStateProvider.notifier).set(value);
               },
             ),
             SwitchListTile(
