@@ -93,7 +93,7 @@ class _TvPlayerSettingsPanelState extends ConsumerState<TvPlayerSettingsPanel> {
   Widget build(BuildContext context) {
     final accent = context.primaryColor;
     final size = MediaQuery.of(context).size;
-    final width = (size.width * 0.34).clamp(340.0, 460.0);
+    final width = (size.width * 0.26).clamp(300.0, 380.0);
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
@@ -295,10 +295,12 @@ class _NavRowState extends State<_NavRow> {
       child: GestureDetector(
         onTap: widget.onTap,
         child: Container(
-          color: _focused
-              ? widget.accent.withValues(alpha: 0.18)
-              : Colors.transparent,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+          decoration: BoxDecoration(
+            color: _focused ? widget.accent.withValues(alpha: 0.18) : null,
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Row(
             children: [
               Icon(widget.icon, size: 20, color: widget.accent),
@@ -352,10 +354,12 @@ class _OptionRowState extends State<_OptionRow> {
       child: GestureDetector(
         onTap: widget.onTap,
         child: Container(
-          color: _focused
-              ? widget.accent.withValues(alpha: 0.18)
-              : Colors.transparent,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: _focused ? widget.accent.withValues(alpha: 0.18) : null,
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Row(
             children: [
               Expanded(
@@ -389,15 +393,18 @@ bool _isSelect(LogicalKeyboardKey k) =>
 
 /// Wraps the docked video as a single focusable unit: a rounded accent ring
 /// when focused (reached by pressing Left out of the panel), and Select toggles
-/// play/pause so the video can be paused without leaving settings.
+/// play/pause. When focused it shows the current play/pause state in the centre
+/// so it's clear what Select will do (and that it changed).
 class TvVideoFocusFrame extends StatefulWidget {
   const TvVideoFocusFrame({
     super.key,
     required this.accent,
+    required this.player,
     required this.onSelect,
     required this.child,
   });
   final Color accent;
+  final Player player;
   final VoidCallback onSelect;
   final Widget child;
 
@@ -430,7 +437,36 @@ class _TvVideoFocusFrameState extends State<TvVideoFocusFrame> {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(11),
-          child: widget.child,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              widget.child,
+              if (_focused)
+                Center(
+                  child: StreamBuilder<bool>(
+                    stream: widget.player.stream.playing,
+                    initialData: widget.player.state.playing,
+                    builder: (context, snap) {
+                      final playing = snap.data ?? true;
+                      return DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.5),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(14),
+                          child: Icon(
+                            playing ? Icons.pause : Icons.play_arrow,
+                            color: Colors.white,
+                            size: 40,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );

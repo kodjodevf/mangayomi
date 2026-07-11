@@ -2106,7 +2106,9 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             visible: false,
             style: subtileTextStyle(ref),
           ),
-          fit: fit,
+          // Docked in the split view, always contain so the whole frame shows
+          // at its true aspect ratio rather than cropping to the narrower slot.
+          fit: splitSettings ? BoxFit.contain : fit,
           key: _key,
           controls: (state) => (isTv && ref.read(tvPlayerStyleProvider))
               ? (_tvSettingsOpen ? const SizedBox.shrink() : _tvControls())
@@ -2231,6 +2233,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
               padding: const EdgeInsets.all(16),
               child: TvVideoFocusFrame(
                 accent: accent,
+                player: _player,
                 onSelect: () => _player.playOrPause(),
                 child: player,
               ),
