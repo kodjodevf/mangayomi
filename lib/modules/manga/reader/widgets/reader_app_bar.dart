@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/services/get_source_baseurl.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/btn_chapter_list_dialog.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
-import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/utils/utils.dart';
 
@@ -142,14 +142,14 @@ class ReaderAppBar extends ConsumerWidget {
 }
 
 /// Builds the web view navigation data.
-Map<String, dynamic>? buildWebViewData(Chapter chapter) {
+Map<String, dynamic>? buildWebViewData(Chapter chapter, String baseUrl) {
   final manga = chapter.manga.value;
   if (manga == null) return null;
 
   final source = getSource(manga.lang!, manga.source!, manga.sourceId);
   if (source == null) return null;
 
-  final url = "${source.baseUrl}${chapter.url!.getUrlWithoutDomain}";
+  final url = buildSourceUrl(baseUrl, chapter.url!);
 
   return {'url': url, 'sourceId': source.id.toString(), 'title': chapter.name!};
 }

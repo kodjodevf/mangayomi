@@ -24,6 +24,7 @@ import 'package:mangayomi/modules/novel/widgets/novel_reader_settings_sheet.dart
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_html_content.dart';
+import 'package:mangayomi/services/get_source_baseurl.dart';
 import 'package:mangayomi/src/rust/api/epub.dart';
 import 'package:mangayomi/utils/extensions/dom_extensions.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
@@ -918,9 +919,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                 manga.source!,
                 manga.sourceId,
               )!;
-              final url = chapter.url!.startsWith('/')
-                  ? '${source.baseUrl}/${chapter.url!}'
-                  : chapter.url!;
+              final baseUrl = ref.read(sourceBaseUrlProvider(source: source));
+              final url = buildSourceUrl(baseUrl, chapter.url!);
               if (Platform.isLinux) {
                 final uri = Uri.parse(url);
                 await launchUrl(
