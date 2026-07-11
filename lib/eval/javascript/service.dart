@@ -16,6 +16,18 @@ import 'package:mangayomi/models/video.dart';
 
 import '../interface.dart';
 
+String resolveJavaScriptSourceBaseUrl(
+  String fallback,
+  String Function() resolveRuntimeBaseUrl,
+) {
+  try {
+    final value = resolveRuntimeBaseUrl().trim();
+    return value.isEmpty ? fallback : value;
+  } catch (_) {
+    return fallback;
+  }
+}
+
 class JsExtensionService implements ExtensionService {
   late JavascriptRuntime runtime;
   @override
@@ -109,7 +121,11 @@ var extention = new DefaultExtension();
 
   @override
   String get sourceBaseUrl {
-    return source.baseUrl!;
+    final fallback = source.baseUrl ?? '';
+    return resolveJavaScriptSourceBaseUrl(
+      fallback,
+      () => _extensionCall<String>('getBaseUrl()', ''),
+    );
   }
 
   @override
