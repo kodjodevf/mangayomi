@@ -11,6 +11,11 @@ import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 /// that category's page (Back returns). Surfaces the player's existing quality /
 /// subtitle / audio widgets plus speed, shaders, decoder and mpv stats — all
 /// d-pad-focusable.
+/// One selectable option in a track/quality list: its label, whether it's the
+/// current selection, and the action to switch to it (no route pop — the panel
+/// stays open).
+typedef TvTrackOptionData = ({String label, bool selected, VoidCallback onTap});
+
 class TvPlayerSettingsPanel extends ConsumerStatefulWidget {
   const TvPlayerSettingsPanel({
     super.key,
@@ -18,9 +23,9 @@ class TvPlayerSettingsPanel extends ConsumerStatefulWidget {
     required this.speedListenable,
     required this.onSetSpeed,
     required this.selectedShaderListenable,
-    required this.qualityWidget,
-    required this.subtitleWidget,
-    required this.audioWidget,
+    required this.qualityOptions,
+    required this.subtitleOptions,
+    required this.audioOptions,
     required this.onClose,
   });
 
@@ -28,9 +33,9 @@ class TvPlayerSettingsPanel extends ConsumerStatefulWidget {
   final ValueListenable<double> speedListenable;
   final ValueChanged<double> onSetSpeed;
   final ValueListenable<String> selectedShaderListenable;
-  final Widget qualityWidget;
-  final Widget subtitleWidget;
-  final Widget audioWidget;
+  final List<TvTrackOptionData> Function() qualityOptions;
+  final List<TvTrackOptionData> Function() subtitleOptions;
+  final List<TvTrackOptionData> Function() audioOptions;
   final VoidCallback onClose;
 
   @override
@@ -198,11 +203,11 @@ class _TvPlayerSettingsPanelState extends ConsumerState<TvPlayerSettingsPanel> {
           ),
         );
       case 'quality':
-        return SingleChildScrollView(child: widget.qualityWidget);
+        return _trackList(accent, widget.qualityOptions(), 'No other quality');
       case 'subtitles':
-        return SingleChildScrollView(child: widget.subtitleWidget);
+        return _trackList(accent, widget.subtitleOptions(), 'No subtitles');
       case 'audio':
-        return SingleChildScrollView(child: widget.audioWidget);
+        return _trackList(accent, widget.audioOptions(), 'No audio tracks');
       case 'shaders':
         return ValueListenableBuilder<String>(
           valueListenable: widget.selectedShaderListenable,
@@ -251,6 +256,28 @@ class _TvPlayerSettingsPanelState extends ConsumerState<TvPlayerSettingsPanel> {
       default:
         return const SizedBox.shrink();
     }
+  }
+
+  Widget _trackList(Color accent, List<TvTrackOptionData> options, String empty) {
+    if (options.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Text(empty, style: TextStyle(color: Theme.of(context).hintColor)),
+        ),
+      );
+    }
+    return ListView(
+      children: [
+        for (final o in options)
+          _OptionRow(
+            accent: accent,
+            label: o.label,
+            selected: o.selected,
+            onTap: o.onTap,
+          ),
+      ],
+    );
   }
 
   static String _fmtSpeed(double r) {

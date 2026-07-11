@@ -1468,6 +1468,194 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     );
   }
 
+  // d-pad-focusable option data for the TV settings panel — the same track
+  // switching the bottom-sheet widgets do, minus the Navigator.pop (the panel
+  // is not a route). Records: (label, selected, onTap).
+  List<({String label, bool selected, VoidCallback onTap})> _tvQualityOptions() {
+    List<VideoPrefs> videoQuality = _player.state.tracks.video
+        .where(
+          (element) => element.w != null && element.h != null && widget.isLocal,
+        )
+        .toList()
+        .map((e) => VideoPrefs(videoTrack: e, isLocal: true))
+        .toList();
+    if (widget.videos.isNotEmpty && !widget.isLocal) {
+      for (var video in widget.videos) {
+        videoQuality.add(
+          VideoPrefs(
+            videoTrack: VideoTrack(video.url, video.quality, video.quality),
+            headers: video.headers,
+            isLocal: false,
+          ),
+        );
+      }
+    }
+    return videoQuality.map((quality) {
+      final selected =
+          _video.value!.videoTrack!.title == quality.videoTrack!.title ||
+          widget.isLocal;
+      return (
+        label: widget.isLocal ? _firstVid.quality : quality.videoTrack!.title!,
+        selected: selected,
+        onTap: () {
+          if (_video.value?.videoTrack?.id == quality.videoTrack?.id) return;
+          _video.value = quality;
+          _player.stop();
+          if (quality.isLocal) {
+            if (widget.isLocal) {
+              _player.setVideoTrack(quality.videoTrack!);
+            } else {
+              _openMedia(quality);
+            }
+          } else {
+            _openMedia(quality);
+          }
+          _initSubtitleAndAudio = true;
+        },
+      );
+    }).toList();
+  }
+
+  List<({String label, bool selected, VoidCallback onTap})> _tvSubtitleOptions() {
+    List<VideoPrefs> videoSubtitle = _player.state.tracks.subtitle
+        .toList()
+        .map((e) => VideoPrefs(isLocal: true, subtitle: e))
+        .toList();
+    List<String> subs = [];
+    if (widget.videos.isNotEmpty) {
+      for (var video in widget.videos) {
+        for (var sub in video.subtitles ?? []) {
+          if (!subs.contains(sub.file)) {
+            final file = sub.file!;
+            final label = sub.label;
+            videoSubtitle.add(
+              VideoPrefs(
+                isLocal: widget.isLocal,
+                subtitle: (file.startsWith("http") || file.startsWith("file"))
+                    ? SubtitleTrack.uri(file, title: label, language: label)
+                    : SubtitleTrack.data(file, title: label, language: label),
+              ),
+            );
+            subs.add(sub.file!);
+          }
+        }
+      }
+    }
+    final subtitle = _player.state.track.subtitle;
+    videoSubtitle = videoSubtitle
+        .map((e) {
+          e.title =
+              e.subtitle?.title ??
+              e.subtitle?.language ??
+              e.subtitle?.channels ??
+              "";
+          return e;
+        })
+        .toList()
+        .where((element) => element.title!.isNotEmpty)
+        .toList();
+    videoSubtitle.sort((a, b) => a.title!.compareTo(b.title!));
+    videoSubtitle.insert(
+      0,
+      VideoPrefs(isLocal: false, subtitle: SubtitleTrack.no()),
+    );
+    final List<VideoPrefs> last = [];
+    for (var element in videoSubtitle) {
+      final key = element.title ??
+          element.subtitle?.title ??
+          element.subtitle?.language ??
+          element.subtitle?.channels ??
+          "None";
+      final contains = last.any((sub) =>
+          (sub.title ??
+              sub.subtitle?.title ??
+              sub.subtitle?.language ??
+              sub.subtitle?.channels ??
+              "None") ==
+          key);
+      if (!contains) last.add(element);
+    }
+    return last.toSet().toList().map((sub) {
+      final title = sub.title ??
+          sub.subtitle?.title ??
+          sub.subtitle?.language ??
+          sub.subtitle?.channels ??
+          "None";
+      final selected = (title ==
+              (subtitle.title ??
+                  subtitle.language ??
+                  subtitle.channels ??
+                  "None")) ||
+          (subtitle.id == "no" && title == "None");
+      return (
+        label: title == "None" ? "Off" : title,
+        selected: selected,
+        onTap: () {
+          try {
+            _player.setSubtitleTrack(sub.subtitle!);
+          } catch (_) {}
+        },
+      );
+    }).toList();
+  }
+
+  List<({String label, bool selected, VoidCallback onTap})> _tvAudioOptions() {
+    List<VideoPrefs> videoAudio = _player.state.tracks.audio
+        .toList()
+        .map((e) => VideoPrefs(isLocal: true, audio: e))
+        .toList();
+    List<String> audios = [];
+    if (widget.videos.isNotEmpty && !widget.isLocal) {
+      for (var video in widget.videos) {
+        for (var audio in video.audios ?? []) {
+          if (!audios.contains(audio.file)) {
+            videoAudio.add(
+              VideoPrefs(
+                isLocal: false,
+                audio: AudioTrack.uri(
+                  audio.file!,
+                  title: audio.label,
+                  language: audio.label,
+                ),
+              ),
+            );
+            audios.add(audio.file!);
+          }
+        }
+      }
+    }
+    final audio = _player.state.track.audio;
+    videoAudio = videoAudio
+        .map((e) {
+          e.title =
+              e.audio?.title ?? e.audio?.language ?? e.audio?.channels ?? "";
+          return e;
+        })
+        .toList()
+        .where((element) => element.title!.isNotEmpty)
+        .toList();
+    videoAudio.sort((a, b) => a.title!.compareTo(b.title!));
+    videoAudio.insert(0, VideoPrefs(isLocal: false, audio: AudioTrack.no()));
+    return videoAudio.toSet().toList().map((aud) {
+      final title = aud.title ??
+          aud.audio?.title ??
+          aud.audio?.language ??
+          aud.audio?.channels ??
+          "None";
+      final selected =
+          (aud.audio == audio) || (audio.id == "no" && title == "None");
+      return (
+        label: title == "None" ? "Off" : title,
+        selected: selected,
+        onTap: () {
+          try {
+            _player.setAudioTrack(aud.audio!);
+          } catch (_) {}
+        },
+      );
+    }).toList();
+  }
+
   Future<void> _setPlaybackSpeed(double speed) async {
     await _player.setRate(speed);
     _playbackSpeed.value = speed;
@@ -2244,9 +2432,9 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             speedListenable: _playbackSpeed,
             onSetSpeed: _setPlaybackSpeed,
             selectedShaderListenable: _selectedShader,
-            qualityWidget: _videoQualityWidget(context),
-            subtitleWidget: _videoSubtitle(context, (_) {}),
-            audioWidget: _videoAudios(context),
+            qualityOptions: _tvQualityOptions,
+            subtitleOptions: _tvSubtitleOptions,
+            audioOptions: _tvAudioOptions,
             onClose: () => setState(() => _tvSettingsOpen = false),
           ),
         ],
