@@ -35,23 +35,6 @@ class PlayerOverviewScreen extends StatelessWidget {
                   );
                 },
               ),
-            if (isTv)
-              Consumer(
-                builder: (context, ref, _) {
-                  final advanced = ref.watch(tvAdvancedSettingsProvider);
-                  return SwitchListTile(
-                    secondary: const Icon(Icons.tune),
-                    title: const Text('Advanced settings panel (beta)'),
-                    subtitle: const Text(
-                      'On: the gear docks the video left and opens an extensive '
-                      'settings panel on the right.  Off: the simple menu.',
-                    ),
-                    value: advanced,
-                    onChanged: (v) =>
-                        ref.read(tvAdvancedSettingsProvider.notifier).set(v),
-                  );
-                },
-              ),
             ListTileWidget(
               title: l10n.internal_player,
               subtitle: l10n.internal_player_info,

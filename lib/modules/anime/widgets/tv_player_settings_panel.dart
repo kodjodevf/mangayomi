@@ -26,6 +26,8 @@ class TvPlayerSettingsPanel extends ConsumerStatefulWidget {
     required this.qualityOptions,
     required this.subtitleOptions,
     required this.audioOptions,
+    required this.headerFocusNode,
+    required this.onExitLeft,
     required this.onClose,
   });
 
@@ -36,6 +38,12 @@ class TvPlayerSettingsPanel extends ConsumerStatefulWidget {
   final List<TvTrackOptionData> Function() qualityOptions;
   final List<TvTrackOptionData> Function() subtitleOptions;
   final List<TvTrackOptionData> Function() audioOptions;
+  // The header's focus node is owned by the player so it can be re-focused every
+  // time the panel opens (autofocus only fires once per scope).
+  final FocusNode headerFocusNode;
+  // Left out of the panel goes to the video — an explicit hand-off, because
+  // geometric directional focus across the split was losing focus entirely.
+  final VoidCallback onExitLeft;
   final VoidCallback onClose;
 
   @override
@@ -104,22 +112,36 @@ class _TvPlayerSettingsPanelState extends ConsumerState<TvPlayerSettingsPanel> {
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _handleBack();
       },
-      child: FocusTraversalGroup(
-        child: Container(
-          width: width,
-          color: Theme.of(context).colorScheme.surface,
-          child: SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _header(context),
-                const Divider(height: 1),
-                Expanded(
-                  child: _open == null
-                      ? _categoryList(context, accent)
-                      : _page(context, accent, _open!),
-                ),
-              ],
+      // Intercept Left before the default directional traversal (onKeyEvent
+      // runs ahead of Shortcuts/Actions) and hand focus to the video explicitly.
+      child: Focus(
+        canRequestFocus: false,
+        skipTraversal: true,
+        onKeyEvent: (node, event) {
+          if ((event is KeyDownEvent || event is KeyRepeatEvent) &&
+              event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+            widget.onExitLeft();
+            return KeyEventResult.handled;
+          }
+          return KeyEventResult.ignored;
+        },
+        child: FocusTraversalGroup(
+          child: Container(
+            width: width,
+            color: Theme.of(context).colorScheme.surface,
+            child: SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _header(context),
+                  const Divider(height: 1),
+                  Expanded(
+                    child: _open == null
+                        ? _categoryList(context, accent)
+                        : _page(context, accent, _open!),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -134,7 +156,7 @@ class _TvPlayerSettingsPanelState extends ConsumerState<TvPlayerSettingsPanel> {
       child: Row(
         children: [
           IconButton(
-            autofocus: true,
+            focusNode: widget.headerFocusNode,
             onPressed: _handleBack,
             icon: Icon(_open == null ? Icons.close : Icons.arrow_back),
           ),
@@ -427,12 +449,17 @@ class TvVideoFocusFrame extends StatefulWidget {
     super.key,
     required this.accent,
     required this.player,
+    required this.focusNode,
     required this.onSelect,
+    required this.onExitRight,
     required this.child,
   });
   final Color accent;
   final Player player;
+  final FocusNode focusNode;
   final VoidCallback onSelect;
+  // Right off the video hands focus back into the settings panel.
+  final VoidCallback onExitRight;
   final Widget child;
 
   @override
@@ -445,8 +472,15 @@ class _TvVideoFocusFrameState extends State<TvVideoFocusFrame> {
   @override
   Widget build(BuildContext context) {
     return Focus(
+      focusNode: widget.focusNode,
       onFocusChange: (f) => setState(() => _focused = f),
       onKeyEvent: (node, event) {
+        if (event is KeyDownEvent || event is KeyRepeatEvent) {
+          if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
+            widget.onExitRight();
+            return KeyEventResult.handled;
+          }
+        }
         if (event is KeyDownEvent && _isSelect(event.logicalKey)) {
           widget.onSelect();
           return KeyEventResult.handled;
