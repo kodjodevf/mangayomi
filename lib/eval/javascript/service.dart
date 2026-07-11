@@ -103,6 +103,7 @@ var extention = new DefaultExtension();
   void dispose() {
     if (!_isInitialized) return;
     _jsDomSelector.dispose();
+    runtime.dispose();
     _isInitialized = false;
   }
 
