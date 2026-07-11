@@ -24,6 +24,7 @@ import 'package:mangayomi/modules/anime/providers/anime_player_controller_provid
 import 'package:mangayomi/modules/anime/providers/auto_play_next_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/aniskip_countdown_btn.dart';
 import 'package:mangayomi/modules/anime/widgets/tv_player_controls.dart';
+import 'package:mangayomi/modules/anime/widgets/tv_player_settings_panel.dart';
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/anime/widgets/play_or_pause_button.dart';
@@ -966,6 +967,9 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   // Bumped on each d-pad key (see _onPlayerKey) so the mobile controls reveal
   // themselves on a TV remote.
   final ValueNotifier<int> _revealControls = ValueNotifier(0);
+  // TV-only: when the advanced settings panel is open the video docks left and
+  // the panel slides in on the right (YouTube-style), instead of a bottom sheet.
+  bool _tvSettingsOpen = false;
 
   @override
   void dispose() {
@@ -1579,7 +1583,13 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       // panel first.
       onBack: () => Navigator.pop(context),
       onRestart: () => _player.seek(Duration.zero),
-      onSettings: () => _videoSettingDraggableMenu(context),
+      onSettings: () {
+        if (isTv && ref.read(tvAdvancedSettingsProvider)) {
+          setState(() => _tvSettingsOpen = true);
+        } else {
+          _videoSettingDraggableMenu(context);
+        }
+      },
       hasNext: hasNextEpisode,
       onNext: hasNextEpisode
           ? () => pushToNewEpisode(context, _streamController.getNextEpisode())
@@ -2088,7 +2098,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     final enableAutoSkip = ref.read(enableAutoSkipStateProvider);
     final aniSkipTimeoutLength = ref.read(aniSkipTimeoutLengthStateProvider);
     final skipIntroLength = ref.read(defaultSkipIntroLengthStateProvider);
-    return Stack(
+    final splitSettings = isTv && _tvSettingsOpen;
+    final Widget player = Stack(
       children: [
         Video(
           subtitleViewConfiguration: SubtitleViewConfiguration(
@@ -2098,7 +2109,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           fit: fit,
           key: _key,
           controls: (state) => (isTv && ref.read(tvPlayerStyleProvider))
-              ? _tvControls()
+              ? (_tvSettingsOpen ? const SizedBox.shrink() : _tvControls())
               : (isDesktop || isTv)
               ? DesktopControllerWidget(
                   videoController: _controller,
@@ -2134,8 +2145,10 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                   chapterMarks: _chapterMarks,
                 ),
           controller: _controller,
-          width: context.width(1),
-          height: context.height(1),
+          // When docked left for the settings panel, fill the (narrower) slot
+          // the Row gives us rather than forcing full-screen width.
+          width: splitSettings ? null : context.width(1),
+          height: splitSettings ? null : context.height(1),
           resumeUponEnteringForegroundMode: true,
         ),
         Stack(
@@ -2203,6 +2216,38 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             ),
           ),
       ],
+    );
+    if (!splitSettings) return player;
+    // YouTube-style split: video docks left (a single focusable unit — Left
+    // from the panel focuses it, Select toggles play/pause), a gap, then the
+    // settings panel on the right.
+    final accent = Theme.of(context).colorScheme.primary;
+    return ColoredBox(
+      color: Colors.black,
+      child: Row(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: TvVideoFocusFrame(
+                accent: accent,
+                onSelect: () => _player.playOrPause(),
+                child: player,
+              ),
+            ),
+          ),
+          TvPlayerSettingsPanel(
+            player: _player,
+            speedListenable: _playbackSpeed,
+            onSetSpeed: _setPlaybackSpeed,
+            selectedShaderListenable: _selectedShader,
+            qualityWidget: _videoQualityWidget(context),
+            subtitleWidget: _videoSubtitle(context, (_) {}),
+            audioWidget: _videoAudios(context),
+            onClose: () => setState(() => _tvSettingsOpen = false),
+          ),
+        ],
+      ),
     );
   }
 

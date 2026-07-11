@@ -7,6 +7,7 @@ import 'package:mangayomi/utils/platform_utils.dart';
 const _boxName = 'tv_prefs';
 const _overrideKey = 'anime_only_override';
 const _playerStyleKey = 'tv_player_style';
+const _advancedSettingsKey = 'tv_advanced_settings';
 
 /// Opens the backing box. Called once at startup.
 Future<void> openTvPrefsBox() async {
@@ -63,6 +64,31 @@ class TvPlayerStyle extends Notifier<bool> {
     state = value;
     if (Hive.isBoxOpen(_boxName)) {
       Hive.box(_boxName).put(_playerStyleKey, value);
+    }
+  }
+}
+
+/// Whether the TV player opens its settings as a YouTube-style side panel (video
+/// docks left, an extensive settings panel slides in from the right) instead of
+/// the bottom-sheet menu. Off by default; only consulted on TV.
+final tvAdvancedSettingsProvider = NotifierProvider<TvAdvancedSettings, bool>(
+  TvAdvancedSettings.new,
+);
+
+class TvAdvancedSettings extends Notifier<bool> {
+  @override
+  bool build() {
+    if (Hive.isBoxOpen(_boxName)) {
+      final v = Hive.box(_boxName).get(_advancedSettingsKey);
+      if (v is bool) return v;
+    }
+    return false;
+  }
+
+  void set(bool value) {
+    state = value;
+    if (Hive.isBoxOpen(_boxName)) {
+      Hive.box(_boxName).put(_advancedSettingsKey, value);
     }
   }
 }
