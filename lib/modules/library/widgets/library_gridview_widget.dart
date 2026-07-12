@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -102,10 +103,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                       Padding(
                                         padding: const EdgeInsets.only(left: 3),
                                         child: Text(
-                                          entry.chapters
-                                              .where((e) => !e.isRead!)
-                                              .length
-                                              .toString(),
+                                          entry.unreadChaptersCount.toString(),
                                           style: TextStyle(
                                             color:
                                                 context.dynamicBlackWhiteColor,

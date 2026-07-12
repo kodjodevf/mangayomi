@@ -7,6 +7,26 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 
 extension MangaExtensions on Manga {
+  /// Number of unread chapters, excluding chapters from scanlators the user has
+  /// filtered out for this manga. Mirrors the chapter list's scanlator filter,
+  /// so the library "unread" badge and the unread sort reflect what the user
+  /// actually sees rather than counting duplicate chapters from hidden
+  /// scanlators (#796).
+  int get unreadChaptersCount {
+    final filter = isar.settings
+        .getSync(227)
+        ?.filterScanlatorList
+        ?.where((e) => e.mangaId == id)
+        .firstOrNull
+        ?.scanlators;
+    if (filter == null || filter.isEmpty) {
+      return chapters.where((c) => !(c.isRead ?? false)).length;
+    }
+    return chapters
+        .where((c) => !(c.isRead ?? false) && !filter.contains(c.scanlator))
+        .length;
+  }
+
   /// Filtered chapters respecting the user's active filters (unread,
   /// bookmarked, downloaded, scanlator). Sorted by chapter number ascending.
   /// Base list — no user-chosen sort, no deduplication.
