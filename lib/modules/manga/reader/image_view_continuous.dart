@@ -1,0 +1,182 @@
+import 'package:flutter/material.dart';
+import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/modules/manga/reader/continuous_reader_layout_policy.dart';
+import 'package:mangayomi/modules/manga/reader/image_view_vertical.dart';
+import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/double_page_view.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/transition_view_vertical.dart';
+import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+
+/// Shared scrolling engine for continuous reader modes.
+class ImageViewContinuous extends StatelessWidget {
+  final List<UChapDataPreload> pages;
+  final ItemScrollController itemScrollController;
+  final ScrollOffsetController scrollOffsetController;
+  final ItemPositionsListener itemPositionsListener;
+  final Axis scrollDirection;
+  final double minCacheExtent;
+  final int initialScrollIndex;
+  final ScrollPhysics physics;
+  final Function(UChapDataPreload data) onLongPressData;
+  final Function(bool) onFailedToLoadImage;
+  final BackgroundColor backgroundColor;
+  final bool isDoublePageMode;
+  final bool isHorizontalContinuous;
+  final PhotoViewController photoViewController;
+  final PhotoViewScaleStateController photoViewScaleStateController;
+  final Alignment scalePosition;
+  final Function(ScaleEndDetails) onScaleEnd;
+  final Function(Offset) onDoubleTapDown;
+  final VoidCallback onDoubleTap;
+  final ContinuousReaderLayoutPolicy layoutPolicy;
+  final bool reverse;
+  final ValueNotifier<bool> isScrolling;
+
+  const ImageViewContinuous({
+    super.key,
+    required this.pages,
+    required this.itemScrollController,
+    required this.scrollOffsetController,
+    required this.itemPositionsListener,
+    required this.scrollDirection,
+    required this.minCacheExtent,
+    required this.initialScrollIndex,
+    required this.physics,
+    required this.onLongPressData,
+    required this.onFailedToLoadImage,
+    required this.backgroundColor,
+    required this.isDoublePageMode,
+    required this.isHorizontalContinuous,
+    required this.photoViewController,
+    required this.photoViewScaleStateController,
+    required this.scalePosition,
+    required this.onScaleEnd,
+    required this.onDoubleTapDown,
+    required this.onDoubleTap,
+    required this.layoutPolicy,
+    required this.isScrolling,
+    this.reverse = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return PhotoViewGallery.builder(
+      itemCount: 1,
+      builder: (_, _) => PhotoViewGalleryPageOptions.customChild(
+        controller: photoViewController,
+        scaleStateController: photoViewScaleStateController,
+        basePosition: scalePosition,
+        onScaleEnd: (context, details, controllerValue) => onScaleEnd(details),
+        child: ScrollablePositionedList.separated(
+          scrollDirection: scrollDirection,
+          reverse: reverse,
+          minCacheExtent: minCacheExtent,
+          initialScrollIndex: initialScrollIndex,
+          itemCount: pages.length,
+          physics: physics,
+          itemScrollController: itemScrollController,
+          scrollOffsetController: scrollOffsetController,
+          itemPositionsListener: itemPositionsListener,
+          itemBuilder: (context, index) => _buildItem(context, index),
+          separatorBuilder: _buildSeparator,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildItem(BuildContext context, int index) {
+    final currentPage = pages[index];
+    final uniqueKey = ValueKey(
+      '${currentPage.chapter?.id ?? "trans"}-${currentPage.index ?? index}',
+    );
+
+    return KeyedSubtree(
+      key: uniqueKey,
+      child: (isDoublePageMode && !isHorizontalContinuous)
+          ? _buildDoublePageItem(context, index)
+          : _buildSinglePageItem(context, index),
+    );
+  }
+
+  Widget _buildSinglePageItem(BuildContext context, int index) {
+    final currentPage = pages[index];
+    final sidePaddingPercent = layoutPolicy.sidePaddingPercent;
+    final double sidePad = sidePaddingPercent > 0
+        ? MediaQuery.sizeOf(context).width * sidePaddingPercent / 100
+        : 0;
+
+    if (currentPage.isTransitionPage) {
+      return GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onDoubleTapDown: (details) => onDoubleTapDown(details.globalPosition),
+        onDoubleTap: onDoubleTap,
+        child: TransitionViewVertical(data: currentPage),
+      );
+    }
+
+    return Padding(
+      padding: isHorizontalContinuous
+          ? EdgeInsets.zero
+          : EdgeInsets.symmetric(horizontal: sidePad),
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onDoubleTapDown: (details) => onDoubleTapDown(details.globalPosition),
+        onDoubleTap: onDoubleTap,
+        child: ImageViewVertical(
+          data: currentPage,
+          failedToLoadImage: onFailedToLoadImage,
+          onLongPressData: onLongPressData,
+          isHorizontal: isHorizontalContinuous,
+          isScrolling: isScrolling,
+          fillAvailableWidth: layoutPolicy.fillAvailableWidth,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDoublePageItem(BuildContext context, int index) {
+    final pageLength = pages.length;
+    if (index >= pageLength) {
+      return const SizedBox.shrink();
+    }
+
+    final int index1 = index * 2 - 1;
+    final int index2 = index1 + 1;
+
+    final List<UChapDataPreload?> datas = index == 0
+        ? [pages[0], null]
+        : [
+            index1 < pageLength ? pages[index1] : null,
+            index2 < pageLength ? pages[index2] : null,
+          ];
+
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onDoubleTapDown: (details) => onDoubleTapDown(details.globalPosition),
+      onDoubleTap: onDoubleTap,
+      child: DoublePageView.vertical(
+        pages: datas,
+        backgroundColor: backgroundColor,
+        onFailedToLoadImage: onFailedToLoadImage,
+        onLongPressData: onLongPressData,
+      ),
+    );
+  }
+
+  Widget _buildSeparator(BuildContext context, int index) {
+    if (!layoutPolicy.showPageGaps) {
+      return const SizedBox.shrink();
+    }
+
+    if (isHorizontalContinuous) {
+      return VerticalDivider(
+        color: getBackgroundColor(backgroundColor),
+        width: 6,
+      );
+    }
+    return Divider(color: getBackgroundColor(backgroundColor), height: 6);
+  }
+}

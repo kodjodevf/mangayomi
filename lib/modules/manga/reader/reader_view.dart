@@ -35,7 +35,11 @@ import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/services/get_chapter_pages.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_paged.dart';
+import 'package:mangayomi/modules/manga/reader/continuous_reader_layout_policy.dart';
+import 'package:mangayomi/modules/manga/reader/image_view_continuous.dart';
+import 'package:mangayomi/modules/manga/reader/image_view_vertical_continuous.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
+import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/transition_view_paged.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
@@ -415,56 +419,10 @@ class _MangaChapterPageGalleryState
                 return Stack(
                   children: [
                     readerMode.usesContinuousScroller
-                        ? ImageViewWebtoon(
-                            pages: pages,
-                            itemScrollController: _itemScrollController,
-                            scrollOffsetController: _pageOffsetController,
-                            itemPositionsListener: _itemPositionsListener,
-                            scrollDirection: isHorizontalContinuous
-                                ? Axis.horizontal
-                                : Axis.vertical,
-                            minCacheExtent: isHorizontalContinuous
-                                ? pagePreloadAmount * context.width(1)
-                                : pagePreloadAmount * context.height(1),
-                            initialScrollIndex: _readerController
-                                .getPageIndex(),
-                            physics: const ClampingScrollPhysics(),
-                            onLongPressData: (data) => ImageActionsDialog.show(
-                              context: context,
-                              data: data,
-                              manga: widget.chapter.manga.value!,
-                              chapterName: widget.chapter.name!,
-                            ),
-                            onFailedToLoadImage: (value) {
-                              // TODO: Handle failed image loading
-                              // if (_failedToLoadImage.value != value &&
-                              //     context.mounted) {
-                              //   _failedToLoadImage.value = value;
-                              // }
-                            },
+                        ? _buildContinuousReader(
+                            readerMode: readerMode,
+                            pagePreloadAmount: pagePreloadAmount,
                             backgroundColor: backgroundColor,
-                            isDoublePageMode:
-                                _pageMode == PageMode.doublePage &&
-                                !isHorizontalContinuous,
-                            isHorizontalContinuous: isHorizontalContinuous,
-                            readerMode: ref.watch(_currentReaderMode)!,
-                            photoViewController: _photoViewController,
-                            photoViewScaleStateController:
-                                _photoViewScaleStateController,
-                            scalePosition: _scalePosition,
-                            onScaleEnd: (details) => _onScaleEnd(
-                              context,
-                              details,
-                              _photoViewController.value,
-                            ),
-                            onDoubleTapDown: (offset) => _toggleScale(offset),
-                            onDoubleTap: () {},
-                            webtoonSidePadding: ref.watch(
-                              webtoonSidePaddingStateProvider,
-                            ),
-                            showPageGaps: ref.watch(showPageGapsStateProvider),
-                            reverse: _isReverseHorizontal,
-                            isScrolling: _isScrolling,
                           )
                         : Material(
                             color: getBackgroundColor(backgroundColor),
@@ -707,6 +665,98 @@ class _MangaChapterPageGalleryState
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildContinuousReader({
+    required ReaderMode readerMode,
+    required int pagePreloadAmount,
+    required BackgroundColor backgroundColor,
+  }) {
+    void onLongPress(UChapDataPreload data) => ImageActionsDialog.show(
+      context: context,
+      data: data,
+      manga: widget.chapter.manga.value!,
+      chapterName: widget.chapter.name!,
+    );
+
+    void onScaleEnd(ScaleEndDetails details) =>
+        _onScaleEnd(context, details, _photoViewController.value);
+
+    if (readerMode.isVerticalContinuous) {
+      return ImageViewVerticalContinuous(
+        pages: pages,
+        itemScrollController: _itemScrollController,
+        scrollOffsetController: _pageOffsetController,
+        itemPositionsListener: _itemPositionsListener,
+        minCacheExtent: pagePreloadAmount * context.height(1),
+        initialScrollIndex: _readerController.getPageIndex(),
+        physics: const ClampingScrollPhysics(),
+        onLongPressData: onLongPress,
+        onFailedToLoadImage: (_) {},
+        backgroundColor: backgroundColor,
+        isDoublePageMode: _pageMode == PageMode.doublePage,
+        photoViewController: _photoViewController,
+        photoViewScaleStateController: _photoViewScaleStateController,
+        scalePosition: _scalePosition,
+        onScaleEnd: onScaleEnd,
+        onDoubleTapDown: _toggleScale,
+        onDoubleTap: () {},
+        isScrolling: _isScrolling,
+        scaleType: ref.watch(scaleTypeStateProvider),
+        showPageGaps: ref.watch(showPageGapsStateProvider),
+      );
+    }
+
+    if (readerMode.isWebtoon) {
+      return ImageViewWebtoon(
+        pages: pages,
+        itemScrollController: _itemScrollController,
+        scrollOffsetController: _pageOffsetController,
+        itemPositionsListener: _itemPositionsListener,
+        minCacheExtent: pagePreloadAmount * context.height(1),
+        initialScrollIndex: _readerController.getPageIndex(),
+        physics: const ClampingScrollPhysics(),
+        onLongPressData: onLongPress,
+        onFailedToLoadImage: (_) {},
+        backgroundColor: backgroundColor,
+        isDoublePageMode: _pageMode == PageMode.doublePage,
+        photoViewController: _photoViewController,
+        photoViewScaleStateController: _photoViewScaleStateController,
+        scalePosition: _scalePosition,
+        onScaleEnd: onScaleEnd,
+        onDoubleTapDown: _toggleScale,
+        onDoubleTap: () {},
+        isScrolling: _isScrolling,
+        webtoonSidePadding: ref.watch(webtoonSidePaddingStateProvider),
+      );
+    }
+
+    return ImageViewContinuous(
+      pages: pages,
+      itemScrollController: _itemScrollController,
+      scrollOffsetController: _pageOffsetController,
+      itemPositionsListener: _itemPositionsListener,
+      scrollDirection: Axis.horizontal,
+      minCacheExtent: pagePreloadAmount * context.width(1),
+      initialScrollIndex: _readerController.getPageIndex(),
+      physics: const ClampingScrollPhysics(),
+      onLongPressData: onLongPress,
+      onFailedToLoadImage: (_) {},
+      backgroundColor: backgroundColor,
+      isDoublePageMode: false,
+      isHorizontalContinuous: true,
+      photoViewController: _photoViewController,
+      photoViewScaleStateController: _photoViewScaleStateController,
+      scalePosition: _scalePosition,
+      onScaleEnd: onScaleEnd,
+      onDoubleTapDown: _toggleScale,
+      onDoubleTap: () {},
+      layoutPolicy: ContinuousReaderLayoutPolicy.horizontal(
+        showPageGaps: ref.watch(showPageGapsStateProvider),
+      ),
+      reverse: _isReverseHorizontal,
+      isScrolling: _isScrolling,
     );
   }
 
@@ -1173,25 +1223,18 @@ class _MangaChapterPageGalleryState
     if (needsReload) {
       final isLocalArchive = (currentChapter.archivePath ?? '').isNotEmpty;
       final storageProvider = StorageProvider();
-      final mangaDirectory = await storageProvider.getMangaMainDirectory(
-        currentChapter,
-      );
+      final mangaDirectory = await storageProvider.getMangaMainDirectory(currentChapter);
       final archivePath = isLocalArchive
           ? currentChapter.archivePath
-          : (mangaDirectory != null
-                ? p.join(mangaDirectory.path, "${currentChapter.name}.cbz")
-                : null);
+          : (mangaDirectory != null ? p.join(mangaDirectory.path, "${currentChapter.name}.cbz") : null);
 
       if (archivePath != null && await File(archivePath).exists()) {
         try {
-          final local = await ref.read(
-            getArchiveDataFromFileProvider(archivePath).future,
-          );
+          final local = await ref.read(getArchiveDataFromFileProvider(archivePath).future);
           final images = local.images ?? [];
           int imgIdx = 0;
           for (final page in pages) {
-            if (page.chapter?.id == currentChapter.id &&
-                !page.isTransitionPage) {
+            if (page.chapter?.id == currentChapter.id && !page.isTransitionPage) {
               if (imgIdx < images.length) {
                 page.archiveImage = images[imgIdx].image;
               }
@@ -1240,7 +1283,11 @@ class _MangaChapterPageGalleryState
       }
     }
 
-    await Future.wait([worker(), worker(), worker()]);
+    await Future.wait([
+      worker(),
+      worker(),
+      worker(),
+    ]);
   }
 
   Future<void> _onPageChanged(int index) async {

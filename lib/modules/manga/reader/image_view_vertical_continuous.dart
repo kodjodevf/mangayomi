@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/manga/reader/continuous_reader_layout_policy.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_continuous.dart';
 
-class ImageViewWebtoon extends ImageViewContinuous {
-  ImageViewWebtoon({
+class ImageViewVerticalContinuous extends ImageViewContinuous {
+  ImageViewVerticalContinuous({
     super.key,
     required super.pages,
     required super.itemScrollController,
@@ -23,13 +24,15 @@ class ImageViewWebtoon extends ImageViewContinuous {
     required super.onDoubleTapDown,
     required super.onDoubleTap,
     required super.isScrolling,
-    required int webtoonSidePadding,
+    required ScaleType scaleType,
+    required bool showPageGaps,
   }) : super(
          scrollDirection: Axis.vertical,
          isHorizontalContinuous: false,
          reverse: false,
-         layoutPolicy: ContinuousReaderLayoutPolicy.webtoon(
-           sidePaddingPercent: webtoonSidePadding,
+         layoutPolicy: ContinuousReaderLayoutPolicy.verticalContinuous(
+           scaleType: scaleType,
+           showPageGaps: showPageGaps,
          ),
        );
 }
