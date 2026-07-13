@@ -698,5 +698,53 @@
   "checking_files": "Checking files",
   "downloaded_bundle_missing_expected_files": "The downloaded bundle does not contain the expected files.",
   "android_proxy_server_mihon": "Android Proxy Server (Mihon)",
-  "select_extension_server_jar": "Select extension server JAR"
+  "select_extension_server_jar": "Select extension server JAR",
+  "webtoon_disable_zoom_out": "ปิดการใช้งานการซูมออกสำหรับเว็บตูน",
+  "webtoon_double_tap_zoom_enabled": "แตะสองครั้งเพื่อซูมเว็บตูน",
+  "navigate_to_pan": "เลื่อนภาพที่ซูมก่อนเปลี่ยนหน้า",
+  "navigate_to_pan_subtitle": "เลื่อนภาพที่ซูมก่อนจะทำการเปลี่ยนหน้าถัดไป",
+  "split_wide_pages": "แบ่งหน้าคู่",
+  "dual_page_invert": "สลับหน้าคู่ที่ถูกแบ่ง",
+  "dual_page_rotate_to_fit": "หมุนเพื่อปรับให้พอดี",
+  "dual_page_rotate_to_fit_invert": "กลับทิศทางการหมุน",
+  "landscape_zoom": "ซูมแนวนอนอัตโนมัติ",
+  "zoom_start_position": "ตำแหน่งเริ่มต้นของการซูม",
+  "zoom_start_left": "ซ้าย",
+  "zoom_start_right": "ขวา",
+  "zoom_start_center": "ตรงกลาง",
+  "automatic_background": "สีพื้นหลังอัตโนมัติ",
+  "tapping_inversion": "การกลับด้านการแตะ",
+  "tapping_inversion_none": "ไม่มี",
+  "tapping_inversion_horizontal": "แนวนอน",
+  "tapping_inversion_vertical": "แนวตั้ง",
+  "tapping_inversion_both": "ทั้งสองแบบ",
+  "flash_on_page_change": "กะพริบเมื่อเปลี่ยนหน้า",
+  "flash_on_page_change_subtitle": "ตัวช่วยป้องกันหน้าจอ AMOLED เบิร์น",
+  "flash_color": "สีของการกะพริบ",
+  "flash_color_black": "สีดำ",
+  "flash_color_white": "สีขาว",
+  "flash_color_white_black": "สีขาวและสีดำ",
+  "flash_interval": "ช่วงการกะพริบ: ทุก {n} หน้า",
+  "@flash_interval": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "flash_duration": "ระยะเวลาการกะพริบ: {n} มิลลิวินาที",
+  "@flash_duration": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "show_navigation_overlay_on_start": "แสดงพื้นที่แตะเพื่อเลื่อนหน้าเมื่อเริ่มอ่าน",
+  "reader_hide_threshold": "ความเร็วการเลื่อนเพื่อซ่อนเมนู",
+  "reader_hide_threshold_highest": "เร็วที่สุด (5 px)",
+  "reader_hide_threshold_high": "เร็ว (13 px)",
+  "reader_hide_threshold_low": "ช้า (31 px)",
+  "reader_hide_threshold_lowest": "ช้าที่สุด (47 px)",
+  "error_no_pages_available": "เกิดข้อผิดพลาด: ไม่มีหน้าที่พร้อมใช้งาน"
 }

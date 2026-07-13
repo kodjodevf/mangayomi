@@ -2372,4 +2372,113 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tts_default => 'Par défaut';
+
+  @override
+  String get webtoon_disable_zoom_out => 'Désactiver le zoom arrière Webtoon';
+
+  @override
+  String get webtoon_double_tap_zoom_enabled =>
+      'Double-tap pour zoomer Webtoon';
+
+  @override
+  String get navigate_to_pan => 'Naviguer vers le panoramique';
+
+  @override
+  String get navigate_to_pan_subtitle =>
+      'Déplace d\'abord l\'image zoomée avant de tourner la page';
+
+  @override
+  String get split_wide_pages => 'Découper les pages doubles';
+
+  @override
+  String get dual_page_invert => 'Inverser les demi-pages découpées';
+
+  @override
+  String get dual_page_rotate_to_fit => 'Faire pivoter pour adapter';
+
+  @override
+  String get dual_page_rotate_to_fit_invert => 'Inverser le sens de rotation';
+
+  @override
+  String get landscape_zoom => 'Zoom paysage automatique';
+
+  @override
+  String get zoom_start_position => 'Position de départ du zoom';
+
+  @override
+  String get zoom_start_left => 'Gauche';
+
+  @override
+  String get zoom_start_right => 'Droite';
+
+  @override
+  String get zoom_start_center => 'Centre';
+
+  @override
+  String get automatic_background => 'Arrière-plan automatique';
+
+  @override
+  String get tapping_inversion => 'Inversion du tap';
+
+  @override
+  String get tapping_inversion_none => 'Aucune';
+
+  @override
+  String get tapping_inversion_horizontal => 'Horizontale';
+
+  @override
+  String get tapping_inversion_vertical => 'Verticale';
+
+  @override
+  String get tapping_inversion_both => 'Les deux';
+
+  @override
+  String get flash_on_page_change => 'Flash au changement de page';
+
+  @override
+  String get flash_on_page_change_subtitle => 'Assistant anti-rétention AMOLED';
+
+  @override
+  String get flash_color => 'Couleur du flash';
+
+  @override
+  String get flash_color_black => 'Noir';
+
+  @override
+  String get flash_color_white => 'Blanc';
+
+  @override
+  String get flash_color_white_black => 'Blanc & Noir';
+
+  @override
+  String flash_interval(String n) {
+    return 'Intervalle de flash : $n pages';
+  }
+
+  @override
+  String flash_duration(String n) {
+    return 'Durée de flash : $n ms';
+  }
+
+  @override
+  String get show_navigation_overlay_on_start =>
+      'Afficher les zones de navigation au démarrage';
+
+  @override
+  String get reader_hide_threshold => 'Seuil de masquage de l\'interface';
+
+  @override
+  String get reader_hide_threshold_highest => 'Le plus sensible (5 px)';
+
+  @override
+  String get reader_hide_threshold_high => 'Sensible (13 px)';
+
+  @override
+  String get reader_hide_threshold_low => 'Faible (31 px)';
+
+  @override
+  String get reader_hide_threshold_lowest => 'Le moins sensible (47 px)';
+
+  @override
+  String get error_no_pages_available => 'Erreur : aucune page disponible';
 }

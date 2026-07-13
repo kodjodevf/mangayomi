@@ -745,3 +745,345 @@ class TtsVoiceState extends _$TtsVoiceState {
     );
   }
 }
+
+@riverpod
+class SplitWidePagesState extends _$SplitWidePagesState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.splitWidePages ?? false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..splitWidePages = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class DualPageInvertState extends _$DualPageInvertState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.dualPageInvert ?? false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..dualPageInvert = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class DualPageRotateToFitState extends _$DualPageRotateToFitState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.dualPageRotateToFit ?? false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..dualPageRotateToFit = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class DualPageRotateToFitInvertState extends _$DualPageRotateToFitInvertState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.dualPageRotateToFitInvert ?? false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..dualPageRotateToFitInvert = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class LandscapeZoomState extends _$LandscapeZoomState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.landscapeZoom ?? false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..landscapeZoom = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class ZoomStartPositionState extends _$ZoomStartPositionState {
+  @override
+  int build() {
+    return isar.settings.getSync(227)!.zoomStartPosition ?? 1;
+  }
+
+  void set(int value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..zoomStartPosition = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class AutomaticBackgroundState extends _$AutomaticBackgroundState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.automaticBackground ?? false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..automaticBackground = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class NavigateToPanState extends _$NavigateToPanState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.navigateToPan ?? true;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..navigateToPan = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class TappingInversionState extends _$TappingInversionState {
+  @override
+  int build() {
+    return isar.settings.getSync(227)!.tappingInversion ?? 0;
+  }
+
+  void set(int value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..tappingInversion = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class FlashOnPageChangeState extends _$FlashOnPageChangeState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.flashOnPageChange ?? false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..flashOnPageChange = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class FlashDurationState extends _$FlashDurationState {
+  @override
+  int build() {
+    return isar.settings.getSync(227)!.flashDuration ?? 100;
+  }
+
+  void set(int value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..flashDuration = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class FlashIntervalState extends _$FlashIntervalState {
+  @override
+  int build() {
+    return isar.settings.getSync(227)!.flashInterval ?? 1;
+  }
+
+  void set(int value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..flashInterval = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class FlashColorState extends _$FlashColorState {
+  @override
+  int build() {
+    return isar.settings.getSync(227)!.flashColor ?? 0;
+  }
+
+  void set(int value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..flashColor = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class ShowNavigationOverlayOnStartState
+    extends _$ShowNavigationOverlayOnStartState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.showNavigationOverlayOnStart ?? false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..showNavigationOverlayOnStart = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class WebtoonDisableZoomOutState extends _$WebtoonDisableZoomOutState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.webtoonDisableZoomOut ?? false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..webtoonDisableZoomOut = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class WebtoonDoubleTapZoomEnabledState
+    extends _$WebtoonDoubleTapZoomEnabledState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.webtoonDoubleTapZoomEnabled ?? true;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..webtoonDoubleTapZoomEnabled = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
+class ReaderHideThresholdState extends _$ReaderHideThresholdState {
+  @override
+  int build() {
+    return isar.settings.getSync(227)!.readerHideThreshold ?? 1;
+  }
+
+  void set(int value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..readerHideThreshold = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}

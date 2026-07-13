@@ -4342,6 +4342,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Default'**
   String get tts_default;
+
+  /// No description provided for @webtoon_disable_zoom_out.
+  ///
+  /// In en, this message translates to:
+  /// **'Webtoon disable zoom out'**
+  String get webtoon_disable_zoom_out;
+
+  /// No description provided for @webtoon_double_tap_zoom_enabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Webtoon double tap zoom'**
+  String get webtoon_double_tap_zoom_enabled;
+
+  /// No description provided for @navigate_to_pan.
+  ///
+  /// In en, this message translates to:
+  /// **'Navigate to pan'**
+  String get navigate_to_pan;
+
+  /// No description provided for @navigate_to_pan_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Move zoomed image before turning page'**
+  String get navigate_to_pan_subtitle;
+
+  /// No description provided for @split_wide_pages.
+  ///
+  /// In en, this message translates to:
+  /// **'Split wide pages'**
+  String get split_wide_pages;
+
+  /// No description provided for @dual_page_invert.
+  ///
+  /// In en, this message translates to:
+  /// **'Invert cut half pages'**
+  String get dual_page_invert;
+
+  /// No description provided for @dual_page_rotate_to_fit.
+  ///
+  /// In en, this message translates to:
+  /// **'Rotate to fit'**
+  String get dual_page_rotate_to_fit;
+
+  /// No description provided for @dual_page_rotate_to_fit_invert.
+  ///
+  /// In en, this message translates to:
+  /// **'Invert rotation direction'**
+  String get dual_page_rotate_to_fit_invert;
+
+  /// No description provided for @landscape_zoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic landscape zoom'**
+  String get landscape_zoom;
+
+  /// No description provided for @zoom_start_position.
+  ///
+  /// In en, this message translates to:
+  /// **'Zoom start position'**
+  String get zoom_start_position;
+
+  /// No description provided for @zoom_start_left.
+  ///
+  /// In en, this message translates to:
+  /// **'Left'**
+  String get zoom_start_left;
+
+  /// No description provided for @zoom_start_right.
+  ///
+  /// In en, this message translates to:
+  /// **'Right'**
+  String get zoom_start_right;
+
+  /// No description provided for @zoom_start_center.
+  ///
+  /// In en, this message translates to:
+  /// **'Center'**
+  String get zoom_start_center;
+
+  /// No description provided for @automatic_background.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic background'**
+  String get automatic_background;
+
+  /// No description provided for @tapping_inversion.
+  ///
+  /// In en, this message translates to:
+  /// **'Tapping Inversion'**
+  String get tapping_inversion;
+
+  /// No description provided for @tapping_inversion_none.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get tapping_inversion_none;
+
+  /// No description provided for @tapping_inversion_horizontal.
+  ///
+  /// In en, this message translates to:
+  /// **'Horizontal'**
+  String get tapping_inversion_horizontal;
+
+  /// No description provided for @tapping_inversion_vertical.
+  ///
+  /// In en, this message translates to:
+  /// **'Vertical'**
+  String get tapping_inversion_vertical;
+
+  /// No description provided for @tapping_inversion_both.
+  ///
+  /// In en, this message translates to:
+  /// **'Both'**
+  String get tapping_inversion_both;
+
+  /// No description provided for @flash_on_page_change.
+  ///
+  /// In en, this message translates to:
+  /// **'Flash on page change'**
+  String get flash_on_page_change;
+
+  /// No description provided for @flash_on_page_change_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AMOLED anti-retention helper'**
+  String get flash_on_page_change_subtitle;
+
+  /// No description provided for @flash_color.
+  ///
+  /// In en, this message translates to:
+  /// **'Flash Color'**
+  String get flash_color;
+
+  /// No description provided for @flash_color_black.
+  ///
+  /// In en, this message translates to:
+  /// **'Black'**
+  String get flash_color_black;
+
+  /// No description provided for @flash_color_white.
+  ///
+  /// In en, this message translates to:
+  /// **'White'**
+  String get flash_color_white;
+
+  /// No description provided for @flash_color_white_black.
+  ///
+  /// In en, this message translates to:
+  /// **'White & Black'**
+  String get flash_color_white_black;
+
+  /// No description provided for @flash_interval.
+  ///
+  /// In en, this message translates to:
+  /// **'Flash Interval: {n} pages'**
+  String flash_interval(String n);
+
+  /// No description provided for @flash_duration.
+  ///
+  /// In en, this message translates to:
+  /// **'Flash Duration: {n} ms'**
+  String flash_duration(String n);
+
+  /// No description provided for @show_navigation_overlay_on_start.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Navigation Overlay on startup'**
+  String get show_navigation_overlay_on_start;
+
+  /// No description provided for @reader_hide_threshold.
+  ///
+  /// In en, this message translates to:
+  /// **'Reader Hide Threshold'**
+  String get reader_hide_threshold;
+
+  /// No description provided for @reader_hide_threshold_highest.
+  ///
+  /// In en, this message translates to:
+  /// **'Highest (5 px)'**
+  String get reader_hide_threshold_highest;
+
+  /// No description provided for @reader_hide_threshold_high.
+  ///
+  /// In en, this message translates to:
+  /// **'High (13 px)'**
+  String get reader_hide_threshold_high;
+
+  /// No description provided for @reader_hide_threshold_low.
+  ///
+  /// In en, this message translates to:
+  /// **'Low (31 px)'**
+  String get reader_hide_threshold_low;
+
+  /// No description provided for @reader_hide_threshold_lowest.
+  ///
+  /// In en, this message translates to:
+  /// **'Lowest (47 px)'**
+  String get reader_hide_threshold_lowest;
+
+  /// No description provided for @error_no_pages_available.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: no pages available'**
+  String get error_no_pages_available;
 }
 
 class _AppLocalizationsDelegate

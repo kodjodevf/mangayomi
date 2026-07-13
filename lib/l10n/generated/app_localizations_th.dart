@@ -2341,4 +2341,114 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get tts_default => 'Default';
+
+  @override
+  String get webtoon_disable_zoom_out => 'ปิดการใช้งานการซูมออกสำหรับเว็บตูน';
+
+  @override
+  String get webtoon_double_tap_zoom_enabled => 'แตะสองครั้งเพื่อซูมเว็บตูน';
+
+  @override
+  String get navigate_to_pan => 'เลื่อนภาพที่ซูมก่อนเปลี่ยนหน้า';
+
+  @override
+  String get navigate_to_pan_subtitle =>
+      'เลื่อนภาพที่ซูมก่อนจะทำการเปลี่ยนหน้าถัดไป';
+
+  @override
+  String get split_wide_pages => 'แบ่งหน้าคู่';
+
+  @override
+  String get dual_page_invert => 'สลับหน้าคู่ที่ถูกแบ่ง';
+
+  @override
+  String get dual_page_rotate_to_fit => 'หมุนเพื่อปรับให้พอดี';
+
+  @override
+  String get dual_page_rotate_to_fit_invert => 'กลับทิศทางการหมุน';
+
+  @override
+  String get landscape_zoom => 'ซูมแนวนอนอัตโนมัติ';
+
+  @override
+  String get zoom_start_position => 'ตำแหน่งเริ่มต้นของการซูม';
+
+  @override
+  String get zoom_start_left => 'ซ้าย';
+
+  @override
+  String get zoom_start_right => 'ขวา';
+
+  @override
+  String get zoom_start_center => 'ตรงกลาง';
+
+  @override
+  String get automatic_background => 'สีพื้นหลังอัตโนมัติ';
+
+  @override
+  String get tapping_inversion => 'การกลับด้านการแตะ';
+
+  @override
+  String get tapping_inversion_none => 'ไม่มี';
+
+  @override
+  String get tapping_inversion_horizontal => 'แนวนอน';
+
+  @override
+  String get tapping_inversion_vertical => 'แนวตั้ง';
+
+  @override
+  String get tapping_inversion_both => 'ทั้งสองแบบ';
+
+  @override
+  String get flash_on_page_change => 'กะพริบเมื่อเปลี่ยนหน้า';
+
+  @override
+  String get flash_on_page_change_subtitle =>
+      'ตัวช่วยป้องกันหน้าจอ AMOLED เบิร์น';
+
+  @override
+  String get flash_color => 'สีของการกะพริบ';
+
+  @override
+  String get flash_color_black => 'สีดำ';
+
+  @override
+  String get flash_color_white => 'สีขาว';
+
+  @override
+  String get flash_color_white_black => 'สีขาวและสีดำ';
+
+  @override
+  String flash_interval(String n) {
+    return 'ช่วงการกะพริบ: ทุก $n หน้า';
+  }
+
+  @override
+  String flash_duration(String n) {
+    return 'ระยะเวลาการกะพริบ: $n มิลลิวินาที';
+  }
+
+  @override
+  String get show_navigation_overlay_on_start =>
+      'แสดงพื้นที่แตะเพื่อเลื่อนหน้าเมื่อเริ่มอ่าน';
+
+  @override
+  String get reader_hide_threshold => 'ความเร็วการเลื่อนเพื่อซ่อนเมนู';
+
+  @override
+  String get reader_hide_threshold_highest => 'เร็วที่สุด (5 px)';
+
+  @override
+  String get reader_hide_threshold_high => 'เร็ว (13 px)';
+
+  @override
+  String get reader_hide_threshold_low => 'ช้า (31 px)';
+
+  @override
+  String get reader_hide_threshold_lowest => 'ช้าที่สุด (47 px)';
+
+  @override
+  String get error_no_pages_available =>
+      'เกิดข้อผิดพลาด: ไม่มีหน้าที่พร้อมใช้งาน';
 }

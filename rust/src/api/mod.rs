@@ -3,7 +3,6 @@
 //
 
 pub mod epub;
-pub mod image;
 pub mod rhttp;
 
 pub use epub::{EpubChapter, EpubNovel, EpubResource};

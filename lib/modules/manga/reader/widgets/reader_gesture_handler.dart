@@ -39,6 +39,9 @@ class ReaderGestureHandler extends StatelessWidget {
   /// Navigation layout index (0-5), see class docs.
   final int navigationLayout;
 
+  /// Tapping zone inversion mode (0 = None, 1 = Horizontal, 2 = Vertical, 3 = Both)
+  final int tappingInversion;
+
   /// Callback when UI should be toggled
   final VoidCallback onToggleUI;
 
@@ -70,6 +73,7 @@ class ReaderGestureHandler extends StatelessWidget {
     required this.onPreviousPage,
     required this.onNextPage,
     this.navigationLayout = 0,
+    this.tappingInversion = 0,
     this.onDoubleTapDown,
     this.onDoubleTap,
     this.onSecondaryTapDown,
@@ -89,6 +93,11 @@ class ReaderGestureHandler extends StatelessWidget {
   }
 
   // ── helpers ──
+
+  bool get _shouldInvertHorizontal =>
+      tappingInversion == 1 || tappingInversion == 3;
+  bool get _shouldInvertVertical =>
+      tappingInversion == 2 || tappingInversion == 3;
 
   VoidCallback _prev() => isRTL ? onNextPage : onPreviousPage;
   VoidCallback _next() => isRTL ? onPreviousPage : onNextPage;
@@ -121,31 +130,32 @@ class ReaderGestureHandler extends StatelessWidget {
   }
 
   Widget _buildDefaultHorizontalZones(BuildContext context) {
+    final leftAction = _shouldInvertHorizontal ? _next() : _prev();
+    final rightAction = _shouldInvertHorizontal ? _prev() : _next();
     return Row(
       children: [
-        Expanded(flex: 2, child: _zone(_prev())),
+        Expanded(flex: 2, child: _zone(leftAction)),
         Expanded(
           flex: 2,
           child: hasImageError
               ? SizedBox(width: context.width(1), height: context.height(0.7))
               : _uiZone(),
         ),
-        Expanded(flex: 2, child: _zone(_next())),
+        Expanded(flex: 2, child: _zone(rightAction)),
       ],
     );
   }
 
   Widget _buildDefaultVerticalZones(BuildContext context) {
+    final topAction = _shouldInvertVertical ? onNextPage : onPreviousPage;
+    final bottomAction = _shouldInvertVertical ? onPreviousPage : onNextPage;
     return Column(
       children: [
-        Expanded(
-          flex: 2,
-          child: _zone(hasImageError ? onToggleUI : onPreviousPage),
-        ),
+        Expanded(flex: 2, child: _zone(hasImageError ? onToggleUI : topAction)),
         const Expanded(flex: 5, child: SizedBox.shrink()),
         Expanded(
           flex: 2,
-          child: _zone(hasImageError ? onToggleUI : onNextPage),
+          child: _zone(hasImageError ? onToggleUI : bottomAction),
         ),
       ],
     );
@@ -161,13 +171,19 @@ class ReaderGestureHandler extends StatelessWidget {
   // └───────────────┴───────┘
 
   Widget _buildLShaped(BuildContext context) {
+    final action1 = (_shouldInvertHorizontal ^ _shouldInvertVertical)
+        ? _next()
+        : _prev();
+    final action2 = (_shouldInvertHorizontal ^ _shouldInvertVertical)
+        ? _prev()
+        : _next();
     return Column(
       children: [
         Expanded(
           flex: 1,
           child: Row(
             children: [
-              Expanded(flex: 1, child: _zone(_prev())),
+              Expanded(flex: 1, child: _zone(action1)),
               Expanded(flex: 2, child: _uiZone()),
             ],
           ),
@@ -178,7 +194,7 @@ class ReaderGestureHandler extends StatelessWidget {
           child: Row(
             children: [
               Expanded(flex: 2, child: _uiZone()),
-              Expanded(flex: 1, child: _zone(_next())),
+              Expanded(flex: 1, child: _zone(action2)),
             ],
           ),
         ),
@@ -194,6 +210,8 @@ class ReaderGestureHandler extends StatelessWidget {
   // └───────────┴───────────┘
 
   Widget _buildKindle(BuildContext context) {
+    final leftAction = _shouldInvertHorizontal ? _next() : _prev();
+    final rightAction = _shouldInvertHorizontal ? _prev() : _next();
     return Column(
       children: [
         Expanded(flex: 1, child: _uiZone()),
@@ -201,8 +219,8 @@ class ReaderGestureHandler extends StatelessWidget {
           flex: 3,
           child: Row(
             children: [
-              Expanded(child: _zone(_prev())),
-              Expanded(child: _zone(_next())),
+              Expanded(child: _zone(leftAction)),
+              Expanded(child: _zone(rightAction)),
             ],
           ),
         ),
@@ -219,11 +237,13 @@ class ReaderGestureHandler extends StatelessWidget {
   // └──┴──────────────┴──┘
 
   Widget _buildEdge(BuildContext context) {
+    final leftAction = _shouldInvertHorizontal ? _next() : _prev();
+    final rightAction = _shouldInvertHorizontal ? _prev() : _next();
     return Row(
       children: [
-        Expanded(flex: 1, child: _zone(_prev())),
+        Expanded(flex: 1, child: _zone(leftAction)),
         Expanded(flex: 5, child: _uiZone()),
-        Expanded(flex: 1, child: _zone(_next())),
+        Expanded(flex: 1, child: _zone(rightAction)),
       ],
     );
   }
@@ -236,10 +256,12 @@ class ReaderGestureHandler extends StatelessWidget {
   // └───────────┴───────────┘
 
   Widget _buildRightAndLeft(BuildContext context) {
+    final leftAction = _shouldInvertHorizontal ? _next() : _prev();
+    final rightAction = _shouldInvertHorizontal ? _prev() : _next();
     return Row(
       children: [
-        Expanded(child: _zone(_prev())),
-        Expanded(child: _zone(_next())),
+        Expanded(child: _zone(leftAction)),
+        Expanded(child: _zone(rightAction)),
       ],
     );
   }

@@ -1,4 +1,3 @@
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -10,7 +9,7 @@ import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 /// - Continuous modes (vertical continuous, webtoon, horizontal continuous)
 class PageNavigationService {
   final ItemScrollController itemScrollController;
-  final ExtendedPageController extendedController;
+  final PageController extendedController;
 
   const PageNavigationService({
     required this.itemScrollController,
@@ -113,7 +112,7 @@ mixin PageNavigationMixin<T extends StatefulWidget> on State<T> {
   /// Initializes the navigation service with the required controllers.
   void initPageNavigation({
     required ItemScrollController itemScrollController,
-    required ExtendedPageController extendedController,
+    required PageController extendedController,
   }) {
     _navigationService = PageNavigationService(
       itemScrollController: itemScrollController,

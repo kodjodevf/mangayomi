@@ -2349,4 +2349,111 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get tts_default => 'Default';
+
+  @override
+  String get webtoon_disable_zoom_out => 'تعطيل التصغير في الويب تون';
+
+  @override
+  String get webtoon_double_tap_zoom_enabled =>
+      'النقر المزدوج للتكبير في الويب تون';
+
+  @override
+  String get navigate_to_pan => 'التنقل للسحب';
+
+  @override
+  String get navigate_to_pan_subtitle => 'تحريك الصورة المكبرة قبل قلب الصفحة';
+
+  @override
+  String get split_wide_pages => 'تقسيم الصفحات العريضة';
+
+  @override
+  String get dual_page_invert => 'عكس نصفي الصفحات المقسمة';
+
+  @override
+  String get dual_page_rotate_to_fit => 'التدوير للملاءمة';
+
+  @override
+  String get dual_page_rotate_to_fit_invert => 'عكس اتجاه التدوير';
+
+  @override
+  String get landscape_zoom => 'تكبير تلقائي للوضع الأفقي';
+
+  @override
+  String get zoom_start_position => 'موضع بدء التكبير';
+
+  @override
+  String get zoom_start_left => 'اليسار';
+
+  @override
+  String get zoom_start_right => 'اليمين';
+
+  @override
+  String get zoom_start_center => 'الوسط';
+
+  @override
+  String get automatic_background => 'خلفية تلقائية';
+
+  @override
+  String get tapping_inversion => 'عكس النقر';
+
+  @override
+  String get tapping_inversion_none => 'لا شيء';
+
+  @override
+  String get tapping_inversion_horizontal => 'أفقي';
+
+  @override
+  String get tapping_inversion_vertical => 'عمودي';
+
+  @override
+  String get tapping_inversion_both => 'كلاهما';
+
+  @override
+  String get flash_on_page_change => 'وميض عند تغيير الصفحة';
+
+  @override
+  String get flash_on_page_change_subtitle => 'مساعد منع احتراق شاشة AMOLED';
+
+  @override
+  String get flash_color => 'لون الوميض';
+
+  @override
+  String get flash_color_black => 'أسود';
+
+  @override
+  String get flash_color_white => 'أبيض';
+
+  @override
+  String get flash_color_white_black => 'أبيض وأسود';
+
+  @override
+  String flash_interval(String n) {
+    return 'معدل الوميض: كل $n صفحات';
+  }
+
+  @override
+  String flash_duration(String n) {
+    return 'مدة الوميض: $n مللي ثانية';
+  }
+
+  @override
+  String get show_navigation_overlay_on_start => 'إظهار واجهة التنقل عند البدء';
+
+  @override
+  String get reader_hide_threshold => 'حد إخفاء القارئ';
+
+  @override
+  String get reader_hide_threshold_highest => 'الأعلى (5 بكسل)';
+
+  @override
+  String get reader_hide_threshold_high => 'مرتفع (13 بكسل)';
+
+  @override
+  String get reader_hide_threshold_low => 'منخفض (31 بكسل)';
+
+  @override
+  String get reader_hide_threshold_lowest => 'الأدنى (47 بكسل)';
+
+  @override
+  String get error_no_pages_available => 'خطأ: لا توجد صفحات متاحة';
 }

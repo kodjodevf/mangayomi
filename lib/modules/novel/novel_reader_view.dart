@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_qjs/quickjs/ffi.dart';
@@ -108,7 +107,6 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
     _ttsWordSub?.cancel();
     _ttsProgress.dispose();
     NovelTtsService.instance.stop();
-    clearGestureDetailsCache();
     if (isDesktop) {
       setFullScreen(value: false);
     } else {

@@ -5,7 +5,7 @@ publish_to: "none"
 version: 0.7.80+107
 
 environment:
-  sdk: ^3.12.0
+  sdk: ^3.12.2
 
 dependencies:
   flutter:
@@ -107,6 +107,9 @@ dependencies:
     git:
       url: https://github.com/kodjodevf/m_extension_server.git
   flutter_tts: ^4.2.5
+  code_assets: ^1.2.1
+  hooks: ^2.0.2
+  native_toolchain_c: ^0.19.2
 
 dependency_overrides:
   ffi: ^2.1.3

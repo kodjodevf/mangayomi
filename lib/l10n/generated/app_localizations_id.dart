@@ -2350,4 +2350,114 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get tts_default => 'Default';
+
+  @override
+  String get webtoon_disable_zoom_out => 'Nonaktifkan perkecil Webtoon';
+
+  @override
+  String get webtoon_double_tap_zoom_enabled =>
+      'Ketuk ganda untuk zoom Webtoon';
+
+  @override
+  String get navigate_to_pan => 'Navigasi untuk menggeser';
+
+  @override
+  String get navigate_to_pan_subtitle =>
+      'Pindahkan gambar dizoom sebelum membalik halaman';
+
+  @override
+  String get split_wide_pages => 'Bagi halaman ganda';
+
+  @override
+  String get dual_page_invert => 'Balikkan potongan setengah halaman';
+
+  @override
+  String get dual_page_rotate_to_fit => 'Putar agar pas';
+
+  @override
+  String get dual_page_rotate_to_fit_invert => 'Balikkan arah rotasi';
+
+  @override
+  String get landscape_zoom => 'Zoom lanskap otomatis';
+
+  @override
+  String get zoom_start_position => 'Posisi awal zoom';
+
+  @override
+  String get zoom_start_left => 'Kiri';
+
+  @override
+  String get zoom_start_right => 'Kanan';
+
+  @override
+  String get zoom_start_center => 'Tengah';
+
+  @override
+  String get automatic_background => 'Latar belakang otomatis';
+
+  @override
+  String get tapping_inversion => 'Inversi pengetukan';
+
+  @override
+  String get tapping_inversion_none => 'Tidak ada';
+
+  @override
+  String get tapping_inversion_horizontal => 'Horizontal';
+
+  @override
+  String get tapping_inversion_vertical => 'Vertikal';
+
+  @override
+  String get tapping_inversion_both => 'Keduanya';
+
+  @override
+  String get flash_on_page_change => 'Flash saat ganti halaman';
+
+  @override
+  String get flash_on_page_change_subtitle => 'Pembantu anti-retensi AMOLED';
+
+  @override
+  String get flash_color => 'Warna flash';
+
+  @override
+  String get flash_color_black => 'Hitam';
+
+  @override
+  String get flash_color_white => 'Putih';
+
+  @override
+  String get flash_color_white_black => 'Putih & Hitam';
+
+  @override
+  String flash_interval(String n) {
+    return 'Interval flash: $n halaman';
+  }
+
+  @override
+  String flash_duration(String n) {
+    return 'Durasi flash: $n ms';
+  }
+
+  @override
+  String get show_navigation_overlay_on_start =>
+      'Tampilkan overlay navigasi saat memulai';
+
+  @override
+  String get reader_hide_threshold => 'Ambang batas menyembunyikan pembaca';
+
+  @override
+  String get reader_hide_threshold_highest => 'Tertinggi (5 px)';
+
+  @override
+  String get reader_hide_threshold_high => 'Tinggi (13 px)';
+
+  @override
+  String get reader_hide_threshold_low => 'Rendah (31 px)';
+
+  @override
+  String get reader_hide_threshold_lowest => 'Terendah (47 px)';
+
+  @override
+  String get error_no_pages_available =>
+      'Kesalahan: tidak ada halaman tersedia';
 }

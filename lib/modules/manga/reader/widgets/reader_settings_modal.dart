@@ -127,9 +127,23 @@ class _ReadingModeTab extends ConsumerWidget {
     final readerMode = ref.watch(currentReaderModeProvider);
     final usePageTapZones = ref.watch(usePageTapZonesStateProvider);
     final cropBorders = ref.watch(cropBordersStateProvider);
+    final splitWidePages = ref.watch(splitWidePagesStateProvider);
     final keepScreenOn = ref.watch(keepScreenOnReaderStateProvider);
     final showPageGaps = ref.watch(showPageGapsStateProvider);
     final webtoonSidePadding = ref.watch(webtoonSidePaddingStateProvider);
+    final dualPageInvert = ref.watch(dualPageInvertStateProvider);
+    final dualPageRotateToFit = ref.watch(dualPageRotateToFitStateProvider);
+    final dualPageRotateToFitInvert = ref.watch(
+      dualPageRotateToFitInvertStateProvider,
+    );
+    final landscapeZoom = ref.watch(landscapeZoomStateProvider);
+    final zoomStartPosition = ref.watch(zoomStartPositionStateProvider);
+    final automaticBackground = ref.watch(automaticBackgroundStateProvider);
+    final webtoonDisableZoomOut = ref.watch(webtoonDisableZoomOutStateProvider);
+    final webtoonDoubleTapZoomEnabled = ref.watch(
+      webtoonDoubleTapZoomEnabledStateProvider,
+    );
+    final navigateToPan = ref.watch(navigateToPanStateProvider);
 
     return SingleChildScrollView(
       child: Padding(
@@ -162,6 +176,185 @@ class _ReadingModeTab extends ConsumerWidget {
               ),
               onChanged: (value) {
                 ref.read(cropBordersStateProvider.notifier).set(value);
+              },
+            ),
+
+            if (readerMode.isContinuous) ...[
+              SwitchListTile(
+                value: webtoonDisableZoomOut,
+                title: Text(
+                  l10n.webtoon_disable_zoom_out,
+                  style: TextStyle(
+                    color: Theme.of(
+                      context,
+                    ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+                    fontSize: 14,
+                  ),
+                ),
+                onChanged: (value) {
+                  ref
+                      .read(webtoonDisableZoomOutStateProvider.notifier)
+                      .set(value);
+                },
+              ),
+              SwitchListTile(
+                value: webtoonDoubleTapZoomEnabled,
+                title: Text(
+                  l10n.webtoon_double_tap_zoom_enabled,
+                  style: TextStyle(
+                    color: Theme.of(
+                      context,
+                    ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+                    fontSize: 14,
+                  ),
+                ),
+                onChanged: (value) {
+                  ref
+                      .read(webtoonDoubleTapZoomEnabledStateProvider.notifier)
+                      .set(value);
+                },
+              ),
+            ],
+
+            if (!readerMode.isContinuous)
+              SwitchListTile(
+                value: navigateToPan,
+                title: Text(
+                  l10n.navigate_to_pan,
+                  style: TextStyle(
+                    color: Theme.of(
+                      context,
+                    ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+                    fontSize: 14,
+                  ),
+                ),
+                subtitle: Text(
+                  l10n.navigate_to_pan_subtitle,
+                  style: const TextStyle(fontSize: 11),
+                ),
+                onChanged: (value) {
+                  ref.read(navigateToPanStateProvider.notifier).set(value);
+                },
+              ),
+
+            SwitchListTile(
+              value: splitWidePages,
+              title: Text(
+                l10n.split_wide_pages,
+                style: TextStyle(
+                  color: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+                  fontSize: 14,
+                ),
+              ),
+              onChanged: (value) {
+                ref.read(splitWidePagesStateProvider.notifier).set(value);
+              },
+            ),
+
+            if (splitWidePages)
+              SwitchListTile(
+                value: dualPageInvert,
+                title: Text(
+                  l10n.dual_page_invert,
+                  style: TextStyle(
+                    color: Theme.of(
+                      context,
+                    ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+                    fontSize: 14,
+                  ),
+                ),
+                onChanged: (value) {
+                  ref.read(dualPageInvertStateProvider.notifier).set(value);
+                },
+              ),
+
+            SwitchListTile(
+              value: dualPageRotateToFit,
+              title: Text(
+                l10n.dual_page_rotate_to_fit,
+                style: TextStyle(
+                  color: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+                  fontSize: 14,
+                ),
+              ),
+              onChanged: (value) {
+                ref.read(dualPageRotateToFitStateProvider.notifier).set(value);
+              },
+            ),
+
+            if (dualPageRotateToFit)
+              SwitchListTile(
+                value: dualPageRotateToFitInvert,
+                title: Text(
+                  l10n.dual_page_rotate_to_fit_invert,
+                  style: TextStyle(
+                    color: Theme.of(
+                      context,
+                    ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+                    fontSize: 14,
+                  ),
+                ),
+                onChanged: (value) {
+                  ref
+                      .read(dualPageRotateToFitInvertStateProvider.notifier)
+                      .set(value);
+                },
+              ),
+
+            if (!readerMode.isContinuous)
+              SwitchListTile(
+                value: landscapeZoom,
+                title: Text(
+                  l10n.landscape_zoom,
+                  style: TextStyle(
+                    color: Theme.of(
+                      context,
+                    ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+                    fontSize: 14,
+                  ),
+                ),
+                onChanged: (value) {
+                  ref.read(landscapeZoomStateProvider.notifier).set(value);
+                },
+              ),
+
+            if (!readerMode.isContinuous && landscapeZoom)
+              CustomPopupMenuButton<int>(
+                label: l10n.zoom_start_position,
+                title: switch (zoomStartPosition) {
+                  0 => l10n.zoom_start_left,
+                  1 => l10n.zoom_start_right,
+                  _ => l10n.zoom_start_center,
+                },
+                onSelected: (value) {
+                  ref.read(zoomStartPositionStateProvider.notifier).set(value);
+                },
+                value: zoomStartPosition,
+                list: const [0, 1, 2],
+                itemText: (pos) => switch (pos) {
+                  0 => l10n.zoom_start_left,
+                  1 => l10n.zoom_start_right,
+                  _ => l10n.zoom_start_center,
+                },
+              ),
+
+            SwitchListTile(
+              value: automaticBackground,
+              title: Text(
+                l10n.automatic_background,
+                style: TextStyle(
+                  color: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+                  fontSize: 14,
+                ),
+              ),
+              onChanged: (value) {
+                ref.read(automaticBackgroundStateProvider.notifier).set(value);
               },
             ),
 
@@ -313,6 +506,16 @@ class _GeneralTab extends ConsumerWidget {
     final backgroundColor = ref.watch(backgroundColorStateProvider);
     final navigationLayout = ref.watch(readerNavigationLayoutStateProvider);
 
+    final tappingInversion = ref.watch(tappingInversionStateProvider);
+    final flashOnPageChange = ref.watch(flashOnPageChangeStateProvider);
+    final flashColor = ref.watch(flashColorStateProvider);
+    final flashInterval = ref.watch(flashIntervalStateProvider);
+    final flashDuration = ref.watch(flashDurationStateProvider);
+    final showNavigationOverlayOnStart = ref.watch(
+      showNavigationOverlayOnStartStateProvider,
+    );
+    final readerHideThreshold = ref.watch(readerHideThresholdStateProvider);
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20),
@@ -390,6 +593,261 @@ class _GeneralTab extends ConsumerWidget {
                                 title: Text(_navLayoutName(i, context)),
                               );
                             }),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+
+            // Tapping Inversion
+            ListTile(
+              title: Text(
+                l10n.tapping_inversion,
+                style: TextStyle(
+                  color: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+                  fontSize: 14,
+                ),
+              ),
+              subtitle: Text(switch (tappingInversion) {
+                1 => l10n.tapping_inversion_horizontal,
+                2 => l10n.tapping_inversion_vertical,
+                3 => l10n.tapping_inversion_both,
+                _ => l10n.tapping_inversion_none,
+              }),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (ctx) {
+                    return SimpleDialog(
+                      title: Text(l10n.tapping_inversion),
+                      children: [
+                        RadioGroup<int>(
+                          groupValue: tappingInversion,
+                          onChanged: (val) {
+                            ref
+                                .read(tappingInversionStateProvider.notifier)
+                                .set(val!);
+                            Navigator.pop(ctx);
+                          },
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              RadioListTile<int>(
+                                value: 0,
+                                title: Text(l10n.tapping_inversion_none),
+                              ),
+                              RadioListTile<int>(
+                                value: 1,
+                                title: Text(l10n.tapping_inversion_horizontal),
+                              ),
+                              RadioListTile<int>(
+                                value: 2,
+                                title: Text(l10n.tapping_inversion_vertical),
+                              ),
+                              RadioListTile<int>(
+                                value: 3,
+                                title: Text(l10n.tapping_inversion_both),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+
+            // Flash on Page Change
+            SwitchListTile(
+              value: flashOnPageChange,
+              title: Text(
+                l10n.flash_on_page_change,
+                style: TextStyle(
+                  color: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+                  fontSize: 14,
+                ),
+              ),
+              subtitle: Text(
+                l10n.flash_on_page_change_subtitle,
+                style: const TextStyle(fontSize: 11),
+              ),
+              onChanged: (value) {
+                ref.read(flashOnPageChangeStateProvider.notifier).set(value);
+              },
+            ),
+            if (flashOnPageChange) ...[
+              ListTile(
+                title: Text(
+                  l10n.flash_color,
+                  style: TextStyle(
+                    color: Theme.of(
+                      context,
+                    ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+                    fontSize: 14,
+                  ),
+                ),
+                subtitle: Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Row(
+                    children: [
+                      ChoiceChip(
+                        label: Text(l10n.flash_color_black),
+                        selected: flashColor == 0,
+                        onSelected: (val) {
+                          if (val) {
+                            ref.read(flashColorStateProvider.notifier).set(0);
+                          }
+                        },
+                      ),
+                      const SizedBox(width: 8),
+                      ChoiceChip(
+                        label: Text(l10n.flash_color_white),
+                        selected: flashColor == 1,
+                        onSelected: (val) {
+                          if (val) {
+                            ref.read(flashColorStateProvider.notifier).set(1);
+                          }
+                        },
+                      ),
+                      const SizedBox(width: 8),
+                      ChoiceChip(
+                        label: Text(l10n.flash_color_white_black),
+                        selected: flashColor == 2,
+                        onSelected: (val) {
+                          if (val) {
+                            ref.read(flashColorStateProvider.notifier).set(2);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  l10n.flash_interval(flashInterval.toString()),
+                  style: TextStyle(
+                    color: Theme.of(
+                      context,
+                    ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+                    fontSize: 14,
+                  ),
+                ),
+                subtitle: Slider(
+                  min: 1,
+                  max: 10,
+                  divisions: 9,
+                  value: flashInterval.toDouble(),
+                  onChanged: (val) {
+                    ref
+                        .read(flashIntervalStateProvider.notifier)
+                        .set(val.toInt());
+                  },
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  l10n.flash_duration(flashDuration.toString()),
+                  style: TextStyle(
+                    color: Theme.of(
+                      context,
+                    ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+                    fontSize: 14,
+                  ),
+                ),
+                subtitle: Slider(
+                  min: 50,
+                  max: 500,
+                  divisions: 9,
+                  value: flashDuration.toDouble(),
+                  onChanged: (val) {
+                    ref
+                        .read(flashDurationStateProvider.notifier)
+                        .set(val.toInt());
+                  },
+                ),
+              ),
+            ],
+
+            // Show Navigation Overlay
+            SwitchListTile(
+              value: showNavigationOverlayOnStart,
+              title: Text(
+                l10n.show_navigation_overlay_on_start,
+                style: TextStyle(
+                  color: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+                  fontSize: 14,
+                ),
+              ),
+              onChanged: (value) {
+                ref
+                    .read(showNavigationOverlayOnStartStateProvider.notifier)
+                    .set(value);
+              },
+            ),
+
+            // Reader Hide Threshold
+            ListTile(
+              title: Text(
+                l10n.reader_hide_threshold,
+                style: TextStyle(
+                  color: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+                  fontSize: 14,
+                ),
+              ),
+              subtitle: Text(switch (readerHideThreshold) {
+                0 => l10n.reader_hide_threshold_highest,
+                1 => l10n.reader_hide_threshold_high,
+                2 => l10n.reader_hide_threshold_low,
+                _ => l10n.reader_hide_threshold_lowest,
+              }),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (ctx) {
+                    return SimpleDialog(
+                      title: Text(l10n.reader_hide_threshold),
+                      children: [
+                        RadioGroup<int>(
+                          groupValue: readerHideThreshold,
+                          onChanged: (val) {
+                            ref
+                                .read(readerHideThresholdStateProvider.notifier)
+                                .set(val!);
+                            Navigator.pop(ctx);
+                          },
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              RadioListTile<int>(
+                                value: 0,
+                                title: Text(l10n.reader_hide_threshold_highest),
+                              ),
+                              RadioListTile<int>(
+                                value: 1,
+                                title: Text(l10n.reader_hide_threshold_high),
+                              ),
+                              RadioListTile<int>(
+                                value: 2,
+                                title: Text(l10n.reader_hide_threshold_low),
+                              ),
+                              RadioListTile<int>(
+                                value: 3,
+                                title: Text(l10n.reader_hide_threshold_lowest),
+                              ),
+                            ],
                           ),
                         ),
                       ],

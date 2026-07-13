@@ -23,7 +23,6 @@ import 'package:mangayomi/models/track.dart' as track;
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
-import 'package:mangayomi/modules/manga/reader/providers/crop_borders_provider.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/storage_usage.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/general/providers/general_state_provider.dart';
@@ -51,6 +50,7 @@ import 'package:window_manager/window_manager.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:mangayomi/utils/window_geometry.dart';
+import 'package:mangayomi/modules/manga/reader/subsampling_scale_image_view/subsampling_scale_image_view.dart';
 
 late Isar isar;
 DiscordRPC? discordRpc;
@@ -92,8 +92,8 @@ void main(List<String> args) async {
 
       MediaKit.ensureInitialized();
       await RustLib.init();
-      await imgCropIsolate.start();
       await getIsolateService.start();
+      await ffiImageDecoder.start();
       if (!isMobile) {
         await windowManager.ensureInitialized();
         await WindowGeometry.restore();

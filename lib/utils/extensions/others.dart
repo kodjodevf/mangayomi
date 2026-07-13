@@ -1,14 +1,14 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
-import 'package:extended_image/extended_image.dart';
+import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
-import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/headers.dart';
@@ -76,6 +76,30 @@ extension ImageProviderExtension on ImageProvider {
 }
 
 extension UChapDataPreloadExtensions on UChapDataPreload {
+  Future<String?> get getLocalFilePath async {
+    if (isTransitionPage) return null;
+    if (archiveImage != null) {
+      final tempDir = Directory.systemTemp;
+      final tempFile = File(
+        p.join(tempDir.path, 'mangayomi_archive_${index ?? pageIndex}.jpg'),
+      );
+      if (!tempFile.existsSync()) {
+        tempFile.writeAsBytesSync(archiveImage!);
+      }
+      return tempFile.path;
+    }
+    if (isLocale == true && directory != null && index != null) {
+      return p.join(directory!.path, "${padIndex(index!)}.jpg");
+    }
+    if (pageUrl != null) {
+      final cachedImage = await _getCachedImageFile(pageUrl!.url);
+      if (cachedImage != null) {
+        return cachedImage.path;
+      }
+    }
+    return null;
+  }
+
   Future<Uint8List?> get getImageBytes async {
     Uint8List? imageBytes;
     if (archiveImage != null) {
@@ -111,37 +135,34 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
 
     final isLocale = data.isLocale!;
     final archiveImage = data.archiveImage;
-    final cropBorders = ref.watch(cropBordersStateProvider);
-    return cropBorders && data.cropImage != null
-        ? ExtendedMemoryImageProvider(data.cropImage!)
-        : (isLocale
-                  ? archiveImage != null
-                        ? ExtendedMemoryImageProvider(archiveImage)
-                        : ExtendedFileImageProvider(
-                            File(
-                              p.join(
-                                data.directory!.path,
-                                "${padIndex(data.index!)}.jpg",
-                              ),
-                            ),
-                          )
-                  : CustomExtendedNetworkImageProvider(
-                      data.pageUrl!.url.trim(),
-                      cache: true,
-                      cacheMaxAge: const Duration(days: 7),
-                      showCloudFlareError: showCloudFlareError,
-                      imageCacheFolderName: "cacheimagemanga",
-                      headers: {
-                        ...data.pageUrl!.headers ?? {},
-                        ...ref.watch(
-                          headersProvider(
-                            source: data.chapter!.manga.value!.source!,
-                            lang: data.chapter!.manga.value!.lang!,
-                            sourceId: data.chapter!.manga.value!.sourceId,
-                          ),
-                        ),
-                      },
-                    ))
+    return isLocale
+        ? archiveImage != null
+              ? MemoryImage(archiveImage)
+              : FileImage(
+                  File(
+                    p.join(
+                      data.directory!.path,
+                      "${padIndex(data.index!)}.jpg",
+                    ),
+                  ),
+                )
+        : CustomExtendedNetworkImageProvider(
+                data.pageUrl!.url.trim(),
+                cache: true,
+                cacheMaxAge: const Duration(days: 7),
+                showCloudFlareError: showCloudFlareError,
+                imageCacheFolderName: "cacheimagemanga",
+                headers: {
+                  ...data.pageUrl!.headers ?? {},
+                  ...ref.watch(
+                    headersProvider(
+                      source: data.chapter!.manga.value!.source!,
+                      lang: data.chapter!.manga.value!.lang!,
+                      sourceId: data.chapter!.manga.value!.sourceId,
+                    ),
+                  ),
+                },
+              )
               as ImageProvider<Object>;
   }
 }
@@ -163,3 +184,6 @@ Future<File?> _getCachedImageFile(String url, {String? cacheKey}) async {
   }
   return null;
 }
+
+/// get md5 from key
+String keyToMd5(String key) => md5.convert(utf8.encode(key)).toString();

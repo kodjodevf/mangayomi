@@ -746,5 +746,53 @@
   "tts_next": "Paragraphe suivant",
   "tts_paragraph_progress": "Paragraphe {current} sur {total}",
   "tts_settings": "Paramètres TTS",
-  "tts_default": "Par défaut"
+  "tts_default": "Par défaut",
+  "webtoon_disable_zoom_out": "Désactiver le zoom arrière Webtoon",
+  "webtoon_double_tap_zoom_enabled": "Double-tap pour zoomer Webtoon",
+  "navigate_to_pan": "Naviguer vers le panoramique",
+  "navigate_to_pan_subtitle": "Déplace d'abord l'image zoomée avant de tourner la page",
+  "split_wide_pages": "Découper les pages doubles",
+  "dual_page_invert": "Inverser les demi-pages découpées",
+  "dual_page_rotate_to_fit": "Faire pivoter pour adapter",
+  "dual_page_rotate_to_fit_invert": "Inverser le sens de rotation",
+  "landscape_zoom": "Zoom paysage automatique",
+  "zoom_start_position": "Position de départ du zoom",
+  "zoom_start_left": "Gauche",
+  "zoom_start_right": "Droite",
+  "zoom_start_center": "Centre",
+  "automatic_background": "Arrière-plan automatique",
+  "tapping_inversion": "Inversion du tap",
+  "tapping_inversion_none": "Aucune",
+  "tapping_inversion_horizontal": "Horizontale",
+  "tapping_inversion_vertical": "Verticale",
+  "tapping_inversion_both": "Les deux",
+  "flash_on_page_change": "Flash au changement de page",
+  "flash_on_page_change_subtitle": "Assistant anti-rétention AMOLED",
+  "flash_color": "Couleur du flash",
+  "flash_color_black": "Noir",
+  "flash_color_white": "Blanc",
+  "flash_color_white_black": "Blanc & Noir",
+  "flash_interval": "Intervalle de flash : {n} pages",
+  "@flash_interval": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "flash_duration": "Durée de flash : {n} ms",
+  "@flash_duration": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "show_navigation_overlay_on_start": "Afficher les zones de navigation au démarrage",
+  "reader_hide_threshold": "Seuil de masquage de l'interface",
+  "reader_hide_threshold_highest": "Le plus sensible (5 px)",
+  "reader_hide_threshold_high": "Sensible (13 px)",
+  "reader_hide_threshold_low": "Faible (31 px)",
+  "reader_hide_threshold_lowest": "Le moins sensible (47 px)",
+  "error_no_pages_available": "Erreur : aucune page disponible"
 }

@@ -2348,4 +2348,112 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String get tts_default => 'Default';
+
+  @override
+  String get webtoon_disable_zoom_out => 'Webtoon disable zoom out';
+
+  @override
+  String get webtoon_double_tap_zoom_enabled => 'Webtoon double tap zoom';
+
+  @override
+  String get navigate_to_pan => 'Navigate to pan';
+
+  @override
+  String get navigate_to_pan_subtitle =>
+      'Move zoomed image before turning page';
+
+  @override
+  String get split_wide_pages => 'Split wide pages';
+
+  @override
+  String get dual_page_invert => 'Invert cut half pages';
+
+  @override
+  String get dual_page_rotate_to_fit => 'Rotate to fit';
+
+  @override
+  String get dual_page_rotate_to_fit_invert => 'Invert rotation direction';
+
+  @override
+  String get landscape_zoom => 'Automatic landscape zoom';
+
+  @override
+  String get zoom_start_position => 'Zoom start position';
+
+  @override
+  String get zoom_start_left => 'Left';
+
+  @override
+  String get zoom_start_right => 'Right';
+
+  @override
+  String get zoom_start_center => 'Center';
+
+  @override
+  String get automatic_background => 'Automatic background';
+
+  @override
+  String get tapping_inversion => 'Tapping Inversion';
+
+  @override
+  String get tapping_inversion_none => 'None';
+
+  @override
+  String get tapping_inversion_horizontal => 'Horizontal';
+
+  @override
+  String get tapping_inversion_vertical => 'Vertical';
+
+  @override
+  String get tapping_inversion_both => 'Both';
+
+  @override
+  String get flash_on_page_change => 'Flash on page change';
+
+  @override
+  String get flash_on_page_change_subtitle => 'AMOLED anti-retention helper';
+
+  @override
+  String get flash_color => 'Flash Color';
+
+  @override
+  String get flash_color_black => 'Black';
+
+  @override
+  String get flash_color_white => 'White';
+
+  @override
+  String get flash_color_white_black => 'White & Black';
+
+  @override
+  String flash_interval(String n) {
+    return 'Flash Interval: $n pages';
+  }
+
+  @override
+  String flash_duration(String n) {
+    return 'Flash Duration: $n ms';
+  }
+
+  @override
+  String get show_navigation_overlay_on_start =>
+      'Show Navigation Overlay on startup';
+
+  @override
+  String get reader_hide_threshold => 'Reader Hide Threshold';
+
+  @override
+  String get reader_hide_threshold_highest => 'Highest (5 px)';
+
+  @override
+  String get reader_hide_threshold_high => 'High (13 px)';
+
+  @override
+  String get reader_hide_threshold_low => 'Low (31 px)';
+
+  @override
+  String get reader_hide_threshold_lowest => 'Lowest (47 px)';
+
+  @override
+  String get error_no_pages_available => 'Error: no pages available';
 }

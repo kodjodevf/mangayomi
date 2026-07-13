@@ -362,6 +362,25 @@ class Settings {
 
   String? ttsVoice;
 
+  bool? splitWidePages;
+
+  bool? dualPageInvert;
+  bool? dualPageRotateToFit;
+  bool? dualPageRotateToFitInvert;
+  bool? landscapeZoom;
+  int? zoomStartPosition;
+  bool? automaticBackground;
+  bool? navigateToPan;
+  int? tappingInversion;
+  bool? flashOnPageChange;
+  int? flashDuration;
+  int? flashInterval;
+  int? flashColor;
+  bool? showNavigationOverlayOnStart;
+  bool? webtoonDisableZoomOut;
+  bool? webtoonDoubleTapZoomEnabled;
+  int? readerHideThreshold;
+
   Settings({
     this.id = 227,
     this.updatedAt = 0,
@@ -528,6 +547,23 @@ class Settings {
     this.ttsPitch = 1.0,
     this.ttsLanguage,
     this.ttsVoice,
+    this.splitWidePages = false,
+    this.dualPageInvert = false,
+    this.dualPageRotateToFit = false,
+    this.dualPageRotateToFitInvert = false,
+    this.landscapeZoom = false,
+    this.zoomStartPosition = 1,
+    this.automaticBackground = false,
+    this.navigateToPan = true,
+    this.tappingInversion = 0,
+    this.flashOnPageChange = false,
+    this.flashDuration = 100,
+    this.flashInterval = 1,
+    this.flashColor = 0,
+    this.showNavigationOverlayOnStart = false,
+    this.webtoonDisableZoomOut = false,
+    this.webtoonDoubleTapZoomEnabled = true,
+    this.readerHideThreshold = 1,
   });
 
   Settings.fromJson(Map<String, dynamic> json) {
@@ -812,6 +848,23 @@ class Settings {
     ttsPitch = json['ttsPitch']?.toDouble();
     ttsLanguage = json['ttsLanguage'];
     ttsVoice = json['ttsVoice'];
+    splitWidePages = json['splitWidePages'];
+    dualPageInvert = json['dualPageInvert'];
+    dualPageRotateToFit = json['dualPageRotateToFit'];
+    dualPageRotateToFitInvert = json['dualPageRotateToFitInvert'];
+    landscapeZoom = json['landscapeZoom'];
+    zoomStartPosition = json['zoomStartPosition'];
+    automaticBackground = json['automaticBackground'];
+    navigateToPan = json['navigateToPan'];
+    tappingInversion = json['tappingInversion'];
+    flashOnPageChange = json['flashOnPageChange'];
+    flashDuration = json['flashDuration'];
+    flashInterval = json['flashInterval'];
+    flashColor = json['flashColor'];
+    showNavigationOverlayOnStart = json['showNavigationOverlayOnStart'];
+    webtoonDisableZoomOut = json['webtoonDisableZoomOut'];
+    webtoonDoubleTapZoomEnabled = json['webtoonDoubleTapZoomEnabled'];
+    readerHideThreshold = json['readerHideThreshold'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -1002,6 +1055,23 @@ class Settings {
     'ttsPitch': ttsPitch,
     'ttsLanguage': ttsLanguage,
     'ttsVoice': ttsVoice,
+    'splitWidePages': splitWidePages,
+    'dualPageInvert': dualPageInvert,
+    'dualPageRotateToFit': dualPageRotateToFit,
+    'dualPageRotateToFitInvert': dualPageRotateToFitInvert,
+    'landscapeZoom': landscapeZoom,
+    'zoomStartPosition': zoomStartPosition,
+    'automaticBackground': automaticBackground,
+    'navigateToPan': navigateToPan,
+    'tappingInversion': tappingInversion,
+    'flashOnPageChange': flashOnPageChange,
+    'flashDuration': flashDuration,
+    'flashInterval': flashInterval,
+    'flashColor': flashColor,
+    'showNavigationOverlayOnStart': showNavigationOverlayOnStart,
+    'webtoonDisableZoomOut': webtoonDisableZoomOut,
+    'webtoonDoubleTapZoomEnabled': webtoonDoubleTapZoomEnabled,
+    'readerHideThreshold': readerHideThreshold,
   };
 }
 

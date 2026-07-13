@@ -853,5 +853,53 @@
     }
   },
   "tts_settings": "TTS Settings",
-  "tts_default": "Default"
+  "tts_default": "Default",
+  "webtoon_disable_zoom_out": "Webtoon disable zoom out",
+  "webtoon_double_tap_zoom_enabled": "Webtoon double tap zoom",
+  "navigate_to_pan": "Navigate to pan",
+  "navigate_to_pan_subtitle": "Move zoomed image before turning page",
+  "split_wide_pages": "Split wide pages",
+  "dual_page_invert": "Invert cut half pages",
+  "dual_page_rotate_to_fit": "Rotate to fit",
+  "dual_page_rotate_to_fit_invert": "Invert rotation direction",
+  "landscape_zoom": "Automatic landscape zoom",
+  "zoom_start_position": "Zoom start position",
+  "zoom_start_left": "Left",
+  "zoom_start_right": "Right",
+  "zoom_start_center": "Center",
+  "automatic_background": "Automatic background",
+  "tapping_inversion": "Tapping Inversion",
+  "tapping_inversion_none": "None",
+  "tapping_inversion_horizontal": "Horizontal",
+  "tapping_inversion_vertical": "Vertical",
+  "tapping_inversion_both": "Both",
+  "flash_on_page_change": "Flash on page change",
+  "flash_on_page_change_subtitle": "AMOLED anti-retention helper",
+  "flash_color": "Flash Color",
+  "flash_color_black": "Black",
+  "flash_color_white": "White",
+  "flash_color_white_black": "White & Black",
+  "flash_interval": "Flash Interval: {n} pages",
+  "@flash_interval": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "flash_duration": "Flash Duration: {n} ms",
+  "@flash_duration": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "show_navigation_overlay_on_start": "Show Navigation Overlay on startup",
+  "reader_hide_threshold": "Reader Hide Threshold",
+  "reader_hide_threshold_highest": "Highest (5 px)",
+  "reader_hide_threshold_high": "High (13 px)",
+  "reader_hide_threshold_low": "Low (31 px)",
+  "reader_hide_threshold_lowest": "Lowest (47 px)",
+  "error_no_pages_available": "Error: no pages available"
 }

@@ -804,5 +804,53 @@
   "checking_files": "Checking files",
   "downloaded_bundle_missing_expected_files": "The downloaded bundle does not contain the expected files.",
   "android_proxy_server_mihon": "Android Proxy Server (Mihon)",
-  "select_extension_server_jar": "Select extension server JAR"
+  "select_extension_server_jar": "Select extension server JAR",
+  "webtoon_disable_zoom_out": "Webtoonの縮小を無効化",
+  "webtoon_double_tap_zoom_enabled": "Webtoonダブルタップズーム",
+  "navigate_to_pan": "ナビゲーションをスクロールに変換",
+  "navigate_to_pan_subtitle": "ページをめくる前に拡大した画像を移動する",
+  "split_wide_pages": "見開きページを分割",
+  "dual_page_invert": "分割した半ページの左右を反転",
+  "dual_page_rotate_to_fit": "画面に合わせて回転",
+  "dual_page_rotate_to_fit_invert": "回転方向を反転",
+  "landscape_zoom": "横画面自動ズーム",
+  "zoom_start_position": "ズーム開始位置",
+  "zoom_start_left": "左",
+  "zoom_start_right": "右",
+  "zoom_start_center": "中央",
+  "automatic_background": "自動背景色",
+  "tapping_inversion": "タップ反転",
+  "tapping_inversion_none": "なし",
+  "tapping_inversion_horizontal": "横方向",
+  "tapping_inversion_vertical": "縦方向",
+  "tapping_inversion_both": "両方",
+  "flash_on_page_change": "ページ切り替え時に点滅",
+  "flash_on_page_change_subtitle": "AMOLED焼き付き防止アシスタント",
+  "flash_color": "点滅の色",
+  "flash_color_black": "黒",
+  "flash_color_white": "白",
+  "flash_color_white_black": "白 & 黒",
+  "flash_interval": "点滅間隔：{n}ページ",
+  "@flash_interval": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "flash_duration": "点滅時間：{n}ミリ秒",
+  "@flash_duration": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "show_navigation_overlay_on_start": "起動時にナビゲーションオーバーレイを表示",
+  "reader_hide_threshold": "リーダーを隠す閾値",
+  "reader_hide_threshold_highest": "最も高い (5 px)",
+  "reader_hide_threshold_high": "高い (13 px)",
+  "reader_hide_threshold_low": "低い (31 px)",
+  "reader_hide_threshold_lowest": "最も低い (47 px)",
+  "error_no_pages_available": "エラー：利用可能なページがありません"
 }

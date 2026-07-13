@@ -55,9 +55,8 @@ Future<StatisticsData> getStatistics(
   final downloadedCount = await isar.downloads
       .filter()
       .chapter(
-        (q) => q.manga(
-          (m) => m.favoriteEqualTo(true).itemTypeEqualTo(itemType),
-        ),
+        (q) =>
+            q.manga((m) => m.favoriteEqualTo(true).itemTypeEqualTo(itemType)),
       )
       .isDownloadEqualTo(true)
       .count();
@@ -76,10 +75,7 @@ Future<StatisticsData> getStatistics(
 
   int completedItems = 0;
   for (final id in completedFavouriteIds) {
-    final total = await isar.chapters
-        .filter()
-        .mangaIdEqualTo(id)
-        .count();
+    final total = await isar.chapters.filter().mangaIdEqualTo(id).count();
     if (total == 0) continue;
     final unread = await isar.chapters
         .filter()

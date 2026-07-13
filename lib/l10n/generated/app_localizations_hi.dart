@@ -2345,4 +2345,113 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get tts_default => 'Default';
+
+  @override
+  String get webtoon_disable_zoom_out => 'वेबटून ज़ूम आउट अक्षम करें';
+
+  @override
+  String get webtoon_double_tap_zoom_enabled =>
+      'वेबटून ज़ूम के लिए डबल-टैप करें';
+
+  @override
+  String get navigate_to_pan => 'पैन करने के लिए नेविगेट करें';
+
+  @override
+  String get navigate_to_pan_subtitle =>
+      'पेज पलटने से पहले ज़ूम की गई छवि को स्थानांतरित करें';
+
+  @override
+  String get split_wide_pages => 'चौड़े पन्नों को विभाजित करें';
+
+  @override
+  String get dual_page_invert => 'विभाजित पन्नों के हिस्सों को उलटें';
+
+  @override
+  String get dual_page_rotate_to_fit => 'फिट करने के लिए घुमाएं';
+
+  @override
+  String get dual_page_rotate_to_fit_invert => 'घूर्णन की दिशा उलटें';
+
+  @override
+  String get landscape_zoom => 'स्वचालित लैंडस्केप ज़ूम';
+
+  @override
+  String get zoom_start_position => 'ज़ूम प्रारंभ स्थिति';
+
+  @override
+  String get zoom_start_left => 'बायें';
+
+  @override
+  String get zoom_start_right => 'दायें';
+
+  @override
+  String get zoom_start_center => 'केंद्र';
+
+  @override
+  String get automatic_background => 'स्वचालित पृष्ठभूमि';
+
+  @override
+  String get tapping_inversion => 'टैपिंग प्रतिलोम';
+
+  @override
+  String get tapping_inversion_none => 'कोई नहीं';
+
+  @override
+  String get tapping_inversion_horizontal => 'क्षैतिज';
+
+  @override
+  String get tapping_inversion_vertical => 'लंबवत';
+
+  @override
+  String get tapping_inversion_both => 'दोनों';
+
+  @override
+  String get flash_on_page_change => 'पेज बदलने पर फ़्लैश';
+
+  @override
+  String get flash_on_page_change_subtitle => 'AMOLED एंटी-रिटेंशन सहायक';
+
+  @override
+  String get flash_color => 'फ़्लैश का रंग';
+
+  @override
+  String get flash_color_black => 'काला';
+
+  @override
+  String get flash_color_white => 'सफेद';
+
+  @override
+  String get flash_color_white_black => 'सफेद और काला';
+
+  @override
+  String flash_interval(String n) {
+    return 'फ़्लैश अंतराल: $n पन्ने';
+  }
+
+  @override
+  String flash_duration(String n) {
+    return 'फ़्लैश अवधि: $n ms';
+  }
+
+  @override
+  String get show_navigation_overlay_on_start =>
+      'स्टार्टअप पर नेविगेशन ओवरले दिखाएं';
+
+  @override
+  String get reader_hide_threshold => 'रीडर छिपाने की सीमा';
+
+  @override
+  String get reader_hide_threshold_highest => 'उच्चतम (5 px)';
+
+  @override
+  String get reader_hide_threshold_high => 'उच्च (13 px)';
+
+  @override
+  String get reader_hide_threshold_low => 'निम्न (31 px)';
+
+  @override
+  String get reader_hide_threshold_lowest => 'न्यूनतम (47 px)';
+
+  @override
+  String get error_no_pages_available => 'त्रुटि: कोई पन्ने उपलब्ध नहीं हैं';
 }
