@@ -188,7 +188,7 @@ class ReaderController extends _$ReaderController
     final pageLength = getPageLength([]);
     if (pageLength == 0 || (!save && newIndex == _lastSavedIndex)) return;
     _lastSavedIndex = newIndex;
-    final isContinuousLike = getReaderMode().isVerticalContinuous;
+    final isContinuousLike = getReaderMode().usesVerticalContinuousScroller;
     final isRead = isContinuousLike
         ? (newIndex + 2) >= pageLength - 1
         : (newIndex + 2) >= pageLength;

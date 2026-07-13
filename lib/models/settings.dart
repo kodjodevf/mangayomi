@@ -1263,19 +1263,32 @@ enum ReaderMode {
 
 extension ReaderModeExtension on ReaderMode {
   /// Vertical continuous || Webtoon || Horizontal continuous || Horizontal continuous (RTL)
-  bool get isContinuous => isVerticalContinuous || isHorizontalContinuous;
-
-  /// Vertical || Vertical continuous || Webtoon
-  bool get isVertical => this == ReaderMode.vertical || isVerticalContinuous;
+  bool get usesContinuousScroller =>
+      isVerticalContinuous || isWebtoon || isHorizontalContinuous;
 
   /// Vertical continuous || Webtoon
-  bool get isVerticalContinuous =>
-      this == ReaderMode.verticalContinuous || this == ReaderMode.webtoon;
+  bool get usesVerticalContinuousScroller => isVerticalContinuous || isWebtoon;
+
+  /// Vertical || Vertical continuous || Webtoon
+  bool get isVertical =>
+      this == ReaderMode.vertical || usesVerticalContinuousScroller;
+
+  /// Vertical continuous
+  bool get isVerticalContinuous => this == ReaderMode.verticalContinuous;
+
+  /// Webtoon
+  bool get isWebtoon => this == ReaderMode.webtoon;
 
   /// Horizontal continuous || Horizontal continuous (RTL)
   bool get isHorizontalContinuous =>
       this == ReaderMode.horizontalContinuous ||
       this == ReaderMode.horizontalContinuousRTL;
+
+  /// Reader modes that can show a gap between pages.
+  bool get supportsPageGaps => isVerticalContinuous || isHorizontalContinuous;
+
+  /// Webtoon-only side padding setting.
+  bool get supportsWebtoonSidePadding => isWebtoon;
 
   /// Right to Left || Horizontal continuous (RTL)
   bool get isRTL =>

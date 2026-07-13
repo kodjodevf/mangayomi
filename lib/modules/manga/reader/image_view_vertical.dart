@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/color_filter_widget.dart';
+import 'package:mangayomi/modules/manga/reader/widgets/continuous_image_width.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -15,6 +16,7 @@ class ImageViewVertical extends ConsumerWidget {
   final Function(UChapDataPreload data) onLongPressData;
   final bool isHorizontal;
   final ValueNotifier<bool> isScrolling;
+  final bool fillAvailableWidth;
 
   final Function(bool) failedToLoadImage;
 
@@ -25,6 +27,7 @@ class ImageViewVertical extends ConsumerWidget {
     required this.failedToLoadImage,
     required this.isHorizontal,
     required this.isScrolling,
+    this.fillAvailableWidth = false,
   });
 
   @override
@@ -129,7 +132,10 @@ class ImageViewVertical extends ConsumerWidget {
                 children: [
                   if (data.index == 0)
                     SizedBox(height: MediaQuery.of(context).padding.top),
-                  imageWidget,
+                  ContinuousImageWidth(
+                    fillAvailableWidth: fillAvailableWidth,
+                    child: imageWidget,
+                  ),
                 ],
               ),
       ),
