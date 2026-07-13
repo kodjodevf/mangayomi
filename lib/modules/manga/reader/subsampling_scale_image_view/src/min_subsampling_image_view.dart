@@ -91,7 +91,6 @@ class _MinSubsamplingImageState extends ConsumerState<MinSubsamplingImage> {
     ffiImageDecoder.cancel(this);
 
     if (widget.data.decodedImage != null && !refresh) {
-      _uiImage?.dispose();
       _uiImage = widget.data.decodedImage!.clone();
       if (mounted) {
         setState(() {
@@ -110,9 +109,6 @@ class _MinSubsamplingImageState extends ConsumerState<MinSubsamplingImage> {
         _loadingProgress = null;
       });
     }
-
-    _uiImage?.dispose();
-    _uiImage = null;
 
     final String? path = await widget.data.getLocalFilePath;
     if (path != null) {
@@ -298,7 +294,7 @@ class _MinSubsamplingImageState extends ConsumerState<MinSubsamplingImage> {
         ? (widget.data.loadedWidth ?? context.width(0.8))
         : null;
 
-    if (_isLoading) {
+    if (_isLoading && _uiImage == null) {
       final double progress = _loadingProgress?.expectedTotalBytes != null
           ? _loadingProgress!.cumulativeBytesLoaded /
                 _loadingProgress!.expectedTotalBytes!
