@@ -414,7 +414,7 @@ class _MangaChapterPageGalleryState
               builder: (context, failedToLoadImage, child) {
                 return Stack(
                   children: [
-                    readerMode.isContinuous
+                    readerMode.usesContinuousScroller
                         ? ImageViewWebtoon(
                             pages: pages,
                             itemScrollController: _itemScrollController,
@@ -543,7 +543,7 @@ class _MangaChapterPageGalleryState
                           navigationLayout: navigationLayout,
                           isRTL: _isReverseHorizontal,
                           hasImageError: failedToLoadImage,
-                          isContinuousMode: readerMode.isContinuous,
+                          isContinuousMode: readerMode.usesContinuousScroller,
                           onToggleUI: _isViewFunction,
                           onPreviousPage: () =>
                               _handlePageNavigation(forward: false),
@@ -691,7 +691,7 @@ class _MangaChapterPageGalleryState
                       formatCurrentIndex: _currentIndexLabel,
                     ),
                     ReaderAutoScrollButton(
-                      isContinuousMode: readerMode.isContinuous,
+                      isContinuousMode: readerMode.usesContinuousScroller,
                       isUiVisible: _isView,
                       autoScrollPage: _autoScrollPage,
                       autoScroll: _autoScroll,
@@ -845,7 +845,7 @@ class _MangaChapterPageGalleryState
     );
     if (readerMode == null || _currentIndex == null) return;
 
-    if (readerMode.isContinuous) {
+    if (readerMode.usesContinuousScroller) {
       final isHorizontal = readerMode.isHorizontalContinuous;
       final viewportSize = MediaQuery.sizeOf(context);
       final dimension = isHorizontal ? viewportSize.width : viewportSize.height;
@@ -1130,7 +1130,7 @@ class _MangaChapterPageGalleryState
     }
     _setReaderMode(readerMode, ref);
 
-    if (!readerMode.isVerticalContinuous) {
+    if (!readerMode.usesVerticalContinuousScroller) {
       _autoScroll.value = false;
     }
     _autoPagescroll();
@@ -1173,18 +1173,25 @@ class _MangaChapterPageGalleryState
     if (needsReload) {
       final isLocalArchive = (currentChapter.archivePath ?? '').isNotEmpty;
       final storageProvider = StorageProvider();
-      final mangaDirectory = await storageProvider.getMangaMainDirectory(currentChapter);
+      final mangaDirectory = await storageProvider.getMangaMainDirectory(
+        currentChapter,
+      );
       final archivePath = isLocalArchive
           ? currentChapter.archivePath
-          : (mangaDirectory != null ? p.join(mangaDirectory.path, "${currentChapter.name}.cbz") : null);
+          : (mangaDirectory != null
+                ? p.join(mangaDirectory.path, "${currentChapter.name}.cbz")
+                : null);
 
       if (archivePath != null && await File(archivePath).exists()) {
         try {
-          final local = await ref.read(getArchiveDataFromFileProvider(archivePath).future);
+          final local = await ref.read(
+            getArchiveDataFromFileProvider(archivePath).future,
+          );
           final images = local.images ?? [];
           int imgIdx = 0;
           for (final page in pages) {
-            if (page.chapter?.id == currentChapter.id && !page.isTransitionPage) {
+            if (page.chapter?.id == currentChapter.id &&
+                !page.isTransitionPage) {
               if (imgIdx < images.length) {
                 page.archiveImage = images[imgIdx].image;
               }
@@ -1233,11 +1240,7 @@ class _MangaChapterPageGalleryState
       }
     }
 
-    await Future.wait([
-      worker(),
-      worker(),
-      worker(),
-    ]);
+    await Future.wait([worker(), worker(), worker()]);
   }
 
   Future<void> _onPageChanged(int index) async {
@@ -1356,7 +1359,7 @@ class _MangaChapterPageGalleryState
   }
 
   void _setReaderMode(ReaderMode value, WidgetRef ref) async {
-    if (!value.isVerticalContinuous) {
+    if (!value.usesVerticalContinuousScroller) {
       _autoScroll.value = false;
     } else if (_autoScrollPage.value) {
       _autoPagescroll();
@@ -1513,6 +1516,6 @@ class _MangaChapterPageGalleryState
 
   bool _isContinuousMode([ReaderMode? mode]) {
     final readerMode = mode ?? ref.read(_currentReaderMode);
-    return readerMode!.isContinuous;
+    return readerMode!.usesContinuousScroller;
   }
 }

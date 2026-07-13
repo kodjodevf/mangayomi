@@ -30,7 +30,7 @@ class PageNavigationService {
   }) {
     if (index < 0) return;
 
-    if (readerMode.isContinuous) {
+    if (readerMode.usesContinuousScroller) {
       _navigateContinuous(index, animate);
     } else {
       _navigatePaged(index, animate);
@@ -70,7 +70,7 @@ class PageNavigationService {
   void jumpToPage({required int index, required ReaderMode readerMode}) {
     if (index < 0) return;
 
-    if (readerMode.isContinuous) {
+    if (readerMode.usesContinuousScroller) {
       itemScrollController.jumpTo(index: index);
     } else {
       if (extendedController.hasClients) {
