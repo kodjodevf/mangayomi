@@ -7,10 +7,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/anime/providers/auto_play_next_provider.dart';
 import 'package:media_kit/media_kit.dart';
 
-/// A dedicated, Netflix-style controls overlay for the anime player on TV.
+/// A dedicated controls overlay for the anime player on TV.
 ///
-/// Only the essentials are on screen — play/pause, prev/next episode, a seek
-/// bar with times, and audio/subtitle access — everything else lives behind the
+/// Only the essentials are on screen - play/pause, prev/next episode, a seek
+/// bar with times, and audio/subtitle access - everything else lives behind the
 /// gear. Built for the d-pad: theme-coloured focus highlight on every control,
 /// the seek bar seeks a small fixed amount on Left/Right and lets Up/Down move
 /// focus away, and the reveal/auto-hide is driven by [revealControls] (bumped by
@@ -42,7 +42,7 @@ class TvPlayerControls extends StatefulWidget {
   final VoidCallback onSettings;
   final bool hasNext;
   final VoidCallback? onNext;
-  // Quality = the source video list (e.g. "1080p Sub"/"1080p Dub") — the real
+  // Quality = the source video list (e.g. "1080p Sub"/"1080p Dub") - the real
   // dub/sub control here. Rebuilt when [qualityListenable] fires.
   final Listenable qualityListenable;
   final List<TvTrackOption> Function() buildQualityOptions;
@@ -62,7 +62,7 @@ class _TvPlayerControlsState extends State<TvPlayerControls> {
   final FocusNode _playFocus = FocusNode(debugLabel: 'tvPlayerPlayPause');
   // Always in the tree, even while hidden (when the controls collapse to an
   // empty box and leave no focusable node). Focus parks here on hide so a key
-  // press can still wake the panel — otherwise, on a keyboard, once it hides
+  // press can still wake the panel - otherwise, on a keyboard, once it hides
   // there's nothing focused to receive the wake key.
   final FocusNode _rootFocus = FocusNode(debugLabel: 'tvPlayerRoot');
   static const _hideAfter = Duration(seconds: 4);
@@ -72,7 +72,7 @@ class _TvPlayerControlsState extends State<TvPlayerControls> {
     super.initState();
     widget.revealControls.addListener(_reveal);
     // Re-arm the hide timer on every key event (see _onAnyKey): a control's own
-    // handler consumes its key, so an ancestor Focus would never see it — a
+    // handler consumes its key, so an ancestor Focus would never see it - a
     // hardware-keyboard handler is the only spot that catches *all* presses.
     HardwareKeyboard.instance.addHandler(_onAnyKey);
     _startHideTimer();
@@ -103,7 +103,7 @@ class _TvPlayerControlsState extends State<TvPlayerControls> {
   }
 
   // True while the player is the topmost route. When a dialog (speed / settings)
-  // is open on top, the panel must not hide or touch focus — doing so steals
+  // is open on top, the panel must not hide or touch focus - doing so steals
   // focus out of the dialog and back to the play button behind it.
   bool get _isTopRoute => ModalRoute.of(context)?.isCurrent ?? true;
 
@@ -112,7 +112,7 @@ class _TvPlayerControlsState extends State<TvPlayerControls> {
     final wasHidden = !_visible;
     if (wasHidden) setState(() => _visible = true);
     // Always extend the hide timer (so a moving mouse keeps controls up), but
-    // only grab focus on the hidden→visible edge — otherwise a stream of mouse
+    // only grab focus on the hidden→visible edge - otherwise a stream of mouse
     // hover events would re-request focus every frame.
     _startHideTimer();
     if (wasHidden && !_scope.hasFocus && _isTopRoute) {
@@ -130,7 +130,7 @@ class _TvPlayerControlsState extends State<TvPlayerControls> {
 
   void _onHideTimer() {
     if (!mounted) return;
-    // A dialog is open on top — keep the panel and don't touch focus; re-arm so
+    // A dialog is open on top - keep the panel and don't touch focus; re-arm so
     // it hides once the player is back on top.
     if (!_isTopRoute) {
       _startHideTimer();
@@ -151,8 +151,8 @@ class _TvPlayerControlsState extends State<TvPlayerControls> {
   @override
   Widget build(BuildContext context) {
     final accent = Theme.of(context).colorScheme.primary;
-    // TV overscan-safe margins (~5% per side, Netflix-generous). Only the
-    // interactive controls/title are inset — the scrim stays full-bleed, per
+    // TV overscan-safe margins (~5% per side, generous). Only the
+    // interactive controls/title are inset - the scrim stays full-bleed, per
     // Android TV layout guidance.
     final size = MediaQuery.of(context).size;
     final safeH = size.width * 0.08;
@@ -160,7 +160,7 @@ class _TvPlayerControlsState extends State<TvPlayerControls> {
     // Back dismisses the visible control panel before it leaves the player:
     // block the pop while the panel shows and hide it instead; a second Back
     // (panel already hidden) exits normally. The on-screen back arrow still
-    // exits outright — it pops directly, bypassing this.
+    // exits outright - it pops directly, bypassing this.
     return PopScope(
       canPop: !_visible,
       onPopInvokedWithResult: (didPop, result) {
@@ -199,7 +199,7 @@ class _TvPlayerControlsState extends State<TvPlayerControls> {
           node: _scope,
       // Only build the controls (and their per-frame StreamBuilders) while
       // visible. Otherwise the seek/time streams rebuild ~4x/sec during
-      // playback and jank the Fire TV — hidden means nothing to render.
+      // playback and jank the Fire TV - hidden means nothing to render.
       child: !_visible
           ? const SizedBox.expand()
           : Stack(
@@ -242,7 +242,7 @@ class _TvPlayerControlsState extends State<TvPlayerControls> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    // Autoplay-next — YouTube-style labelled switch.
+                    // Autoplay-next labelled switch.
                     Consumer(
                       builder: (context, ref, _) {
                         final on = ref.watch(autoPlayNextEpisodeProvider);
@@ -418,8 +418,8 @@ class _TvFocusableState extends State<_TvFocusable> {
   }
 }
 
-/// Focusable play/pause button — highlighted when focused, and the default
-/// focus on reveal. OK on the seek bar also toggles it (Netflix convenience).
+/// Focusable play/pause button - highlighted when focused, and the default
+/// focus on reveal. OK on the seek bar also toggles it (a TV convenience).
 class _PlayPauseButton extends StatelessWidget {
   const _PlayPauseButton({
     required this.player,
@@ -516,7 +516,7 @@ class _PillBar extends StatelessWidget {
 
                 final groups = <List<Widget>>[];
 
-                // Quality group — the real dub/sub control.
+                // Quality group - the real dub/sub control.
                 if (quality.isNotEmpty) {
                   groups.add([
                     for (final q in quality)
@@ -530,7 +530,7 @@ class _PillBar extends StatelessWidget {
                   ]);
                 }
 
-                // Subtitle group — real tracks only, toggleable (re-clicking the
+                // Subtitle group - real tracks only, toggleable (re-clicking the
                 // selected one turns subtitles off). No separate "off" pill, and
                 // hidden entirely for sub-quality streams.
                 if (!subQualitySelected && subs.isNotEmpty) {
@@ -641,7 +641,7 @@ class _SpeedPill extends StatelessWidget {
 
 /// The playback-speed picker. Owns its focus containment: Up/Down move within
 /// the list and are *always* consumed (clamped at the ends), so d-pad focus
-/// can't escape past the edges to the controls behind the still-open dialog —
+/// can't escape past the edges to the controls behind the still-open dialog -
 /// which was letting the speed pill re-open a second dialog on top of this one.
 class _SpeedMenu extends StatefulWidget {
   const _SpeedMenu({
@@ -740,7 +740,7 @@ class _SpeedMenuState extends State<_SpeedMenu> {
                   },
                   child: Padding(
                     // Inset so the highlight is a rounded pill inside the
-                    // dialog — a full-bleed square looked broken on the last
+                    // dialog - a full-bleed square looked broken on the last
                     // row against the dialog's rounded corner.
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8,
@@ -796,7 +796,7 @@ class _PillDivider extends StatelessWidget {
   }
 }
 
-/// A compact YouTube-style autoplay switch, focusable for the d-pad. Shared by
+/// A compact autoplay switch, focusable for the d-pad. Shared by
 /// the TV player and the mobile/desktop player so the toggle is visually
 /// identical across platforms.
 class AutoplayToggle extends StatefulWidget {
@@ -850,7 +850,7 @@ class AutoplayToggleState extends State<AutoplayToggle> {
 }
 
 /// A drawn play/pause autoplay toggle (no asset): a pill track with a circular
-/// black knob that slides right + shows ▶ when on, left + shows ⏸ when off —
+/// black knob that slides right + shows ▶ when on, left + shows ⏸ when off -
 /// matching the reference toggle style.
 class AutoplaySwitch extends StatelessWidget {
   const AutoplaySwitch({super.key, required this.on, required this.accent});
@@ -1091,7 +1091,7 @@ class _TvSeekBarState extends State<_TvSeekBar> {
             _seek(_stepFor(k));
             return KeyEventResult.handled;
           }
-          // OK/Select toggles play/pause (Netflix model — no separate button).
+          // OK/Select toggles play/pause (no separate button).
           if (event is KeyDownEvent && _isSelect(k)) {
             widget.player.playOrPause();
             return KeyEventResult.handled;
@@ -1145,7 +1145,7 @@ class _TvSeekBarState extends State<_TvSeekBar> {
                           ),
                         ),
                       ),
-                      // Scrubber handle at the current position when focused —
+                      // Scrubber handle at the current position when focused -
                       // the focus affordance instead of an outline.
                       if (_focused)
                         Positioned(
@@ -1215,8 +1215,7 @@ class _PositionText extends StatelessWidget {
   }
 }
 
-/// Right-side timestamp counts DOWN — time remaining (e.g. "-45:32"), like
-/// Netflix.
+/// Right-side timestamp counts DOWN, the time remaining (e.g. "-45:32").
 class _RemainingText extends StatelessWidget {
   const _RemainingText({required this.player});
   final Player player;

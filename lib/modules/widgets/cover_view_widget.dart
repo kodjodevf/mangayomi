@@ -14,7 +14,7 @@ class CoverViewWidget extends StatefulWidget {
   // On TV, the first cover autofocuses so the grid becomes the content scope's
   // focus target (otherwise d-pad focus never reaches it).
   final bool autofocus;
-  // Notifies the parent when this card gains/loses focus — used by the TV home
+  // Notifies the parent when this card gains/loses focus - used by the TV home
   // rows to scroll the focused card into view. Fires on any focus change,
   // independent of the internal ring (which is gated to d-pad/keyboard input).
   final ValueChanged<bool>? onFocusChange;
@@ -43,7 +43,7 @@ class _CoverViewWidgetState extends State<CoverViewWidget> {
   // Whether the card should draw a focus ring. Only set when focus arrives via
   // keyboard / d-pad navigation (FocusHighlightMode.traditional), so touch
   // input on phones/tablets never shows a ring. Gives d-pad/remote users on
-  // Android TV — and keyboard users anywhere — a clearly visible focus target.
+  // Android TV - and keyboard users anywhere - a clearly visible focus target.
   bool _focused = false;
 
   @override
@@ -98,7 +98,7 @@ class _CoverViewWidgetState extends State<CoverViewWidget> {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 130),
               curve: Curves.easeOut,
-              // Focus "pop" — the focused cover lifts slightly, TV-style.
+              // Focus "pop" - the focused cover lifts slightly, TV-style.
               transform: Matrix4.identity()..scale(_focused ? 1.06 : 1.0),
               transformAlignment: Alignment.center,
               decoration: BoxDecoration(

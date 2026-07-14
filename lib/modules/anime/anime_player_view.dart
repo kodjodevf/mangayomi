@@ -859,9 +859,9 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       final forceLandscape = ref.read(forceLandscapePlayerStateProvider);
       // Preserve the player orientation across episode changes. Playing the next
       // episode pushes a fresh player, and the old one's dispose() resets the
-      // orientation to portrait. So if the viewer is still in fullscreen — from
+      // orientation to portrait. So if the viewer is still in fullscreen - from
       // the force-landscape setting or a manual toggle that persists across
-      // episodes (fullscreenProvider is global) — re-apply landscape here rather
+      // episodes (fullscreenProvider is global) - re-apply landscape here rather
       // than stranding them in portrait with the fullscreen button still active.
       if (forceLandscape || ref.read(fullscreenProvider)) {
         _setLandscapeMode(true);
@@ -960,7 +960,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   // themselves on a TV remote.
   final ValueNotifier<int> _revealControls = ValueNotifier(0);
   // TV-only: when the advanced settings panel is open the video docks left and
-  // the panel slides in on the right (YouTube-style), instead of a bottom sheet.
+  // the panel slides in on the right, instead of a bottom sheet.
   bool _tvSettingsOpen = false;
   // Owned focus anchors for the split view so Left/Right cross deterministically
   // (geometric directional focus was losing focus entirely).
@@ -1467,7 +1467,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   }
 
 
-  // d-pad-focusable option data for the TV settings panel — the same track
+  // d-pad-focusable option data for the TV settings panel - the same track
   // switching the bottom-sheet widgets do, minus the Navigator.pop (the panel
   // is not a route). Records: (label, selected, onTap).
   List<({String label, bool selected, VoidCallback onTap})> _tvQualityOptions() {
@@ -2118,7 +2118,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             controller: _controller,
             desktopFullScreenPlayer: widget.desktopFullScreenPlayer,
           )
-        // A TV is always fullscreen, so the toggle is useless there — hide it.
+        // A TV is always fullscreen, so the toggle is useless there - hide it.
         else if (!isTv)
           IconButton(
             icon: Icon(isFullscreen ? Icons.fullscreen_exit : Icons.fullscreen),
@@ -2394,7 +2394,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       ],
     );
     if (!splitSettings) return player;
-    // YouTube-style split: video docks left (a single focusable unit — Left
+    // Split layout: video docks left (a single focusable unit, Left
     // from the panel focuses it, Select toggles play/pause), a gap, then the
     // settings panel on the right.
     final accent = Theme.of(context).colorScheme.primary;
@@ -2705,7 +2705,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
 
   // On a TV remote / keyboard, reveal the on-screen controls when the user
   // presses the d-pad. The arrow keys stay unbound above (so they still drive
-  // focus traversal between the control buttons) — we just bump [_revealControls]
+  // focus traversal between the control buttons) - we just bump [_revealControls]
   // so the controls become visible and the focus is on something the user can
   // see. Returns ignored so traversal + the media shortcuts still run.
   KeyEventResult _onPlayerKey(FocusNode node, KeyEvent event) {

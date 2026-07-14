@@ -28,7 +28,7 @@ class GridViewWidget extends StatelessWidget {
         gridDelegate: (gridSize == null || gridSize == 0)
             ? SliverGridDelegateWithMaxCrossAxisExtent(
                 childAspectRatio: childAspectRatio!,
-                // Denser default on TV — from across a room 220px covers show
+                // Denser default on TV - from across a room 220px covers show
                 // only ~4 huge tiles; 150 gives more, smaller covers.
                 maxCrossAxisExtent: isTv ? 150 : 220,
               )

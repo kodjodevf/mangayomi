@@ -16,7 +16,7 @@ final bool isApple = Platform.isMacOS || Platform.isIOS;
 ///
 /// Defaults to false and is hydrated once at startup by [initIsTv] (Android
 /// only); it stays false on every other platform. Nothing branches on this
-/// yet — it's the detection foundation for Android TV support (see #729).
+/// yet - it's the detection foundation for Android TV support (see #729).
 bool isTv = false;
 
 /// Asks the native side whether this is a TV / leanback device and caches the

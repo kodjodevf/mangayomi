@@ -669,9 +669,9 @@ class _TabletLayout extends StatefulWidget {
 
 class _TabletLayoutState extends State<_TabletLayout> {
   // Explicit focus scopes for the rail and the routed content, used on Android
-  // TV only. Directional (d-pad) focus traversal doesn't cross into the rail —
+  // TV only. Directional (d-pad) focus traversal doesn't cross into the rail -
   // the routed page lives in its own FocusScope and arrows only move focus
-  // within it — so we move focus between the two scopes ourselves. A scope
+  // within it - so we move focus between the two scopes ourselves. A scope
   // wraps the whole rail because NavigationRail doesn't expose its
   // destinations' focus nodes.
   final FocusScopeNode _railScope = FocusScopeNode(debugLabel: 'navRailScope');
@@ -705,7 +705,7 @@ class _TabletLayoutState extends State<_TabletLayout> {
       return KeyEventResult.handled;
     }
     if (key == LogicalKeyboardKey.arrowRight && _railScope.hasFocus) {
-      // Focus the content scope — it restores its focusedChild, which for the
+      // Focus the content scope - it restores its focusedChild, which for the
       // library grid is the first cover (autofocused on TV). That fixes both
       // "focus never lands on the grid" and the anime-tab "hold Left to reach
       // the rail" (Left from a cover reaches the rail in one press).
@@ -740,7 +740,7 @@ class _TabletLayoutState extends State<_TabletLayout> {
     Widget navRail = NavigationRail(
       labelType: NavigationRailLabelType.all,
       useIndicator: true,
-      // The Android TV experience is still beta — flag it in the rail.
+      // The Android TV experience is still beta - flag it in the rail.
       leading: isTv
           ? Padding(
               padding: const EdgeInsets.symmetric(vertical: 12),

@@ -135,7 +135,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                   )
                 : Row(
                     children: [
-                      // Feed entry point temporarily disabled in this build —
+                      // Feed entry point temporarily disabled in this build -
                       // it crashes on first load and its focus needs work (#782).
                       // The FeedScreen code is kept for when we resume it.
                       if (isExtensionTab)

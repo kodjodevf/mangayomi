@@ -92,7 +92,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
 
   Widget _buildWithSettings(Settings settings) {
     // On Android TV the anime library shows the dedicated rows-based home
-    // instead of the flat grid — a d-pad-first, cover-forward shelf. Toggleable
+    // instead of the flat grid - a d-pad-first, cover-forward shelf. Toggleable
     // via tvHomeStyleProvider; every other surface keeps the grid.
     if (isTv &&
         widget.itemType == ItemType.anime &&
@@ -379,7 +379,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
         ),
         // A single category doesn't need the tab bar + TabBarView. The
         // TabBarView (a PageView) blocks directional d-pad focus from crossing
-        // into/out of the grid — which is why the anime tab couldn't reach the
+        // into/out of the grid - which is why the anime tab couldn't reach the
         // grid while Browse (a direct grid) works. So for one category, render
         // the grid directly like Browse; keep the tabs only for 2+ categories.
         body: tabCount <= 1

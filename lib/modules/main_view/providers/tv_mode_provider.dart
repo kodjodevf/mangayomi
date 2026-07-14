@@ -18,8 +18,8 @@ Future<void> openTvPrefsBox() async {
 }
 
 /// Whether to show the anime-only TV layout (manga + novel libraries hidden,
-/// anime-first). Defaults to [isTv] — i.e. on for Android TV, off everywhere
-/// else — and can be explicitly overridden by the user as an escape hatch, so
+/// anime-first). Defaults to [isTv] - i.e. on for Android TV, off everywhere
+/// else - and can be explicitly overridden by the user as an escape hatch, so
 /// a wrong detection can never strand someone with manga hidden.
 final animeOnlyTvModeProvider = NotifierProvider<AnimeOnlyTvMode, bool>(
   AnimeOnlyTvMode.new,
@@ -45,7 +45,7 @@ class AnimeOnlyTvMode extends Notifier<bool> {
 }
 
 /// Which controls to use for the anime player on TV: `true` = the dedicated
-/// Netflix-style TV player (default), `false` = the original desktop player.
+/// dedicated TV player (default), `false` = the original desktop player.
 /// Only consulted when [isTv]; phones/desktops are unaffected.
 final tvPlayerStyleProvider = NotifierProvider<TvPlayerStyle, bool>(
   TvPlayerStyle.new,

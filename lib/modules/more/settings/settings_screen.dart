@@ -28,7 +28,7 @@ class SettingsScreen extends StatelessWidget {
               icon: Icons.color_lens_rounded,
               onTap: () => context.push('/appearance'),
             ),
-            // Reader is manga/novel-only — hide it on the anime-only layout.
+            // Reader is manga/novel-only - hide it on the anime-only layout.
             Consumer(
               builder: (context, ref, _) {
                 if (ref.watch(animeOnlyTvModeProvider)) {

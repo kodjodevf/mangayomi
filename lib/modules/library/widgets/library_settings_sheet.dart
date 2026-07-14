@@ -464,7 +464,7 @@ class _DisplayTab extends ConsumerWidget {
             ),
           ),
 
-          // TV home section — only the anime home has these rows.
+          // TV home section - only the anime home has these rows.
           if (isTv && itemType == ItemType.anime) ...[
             Padding(
               padding: const EdgeInsets.only(left: 20, right: 20, top: 10),

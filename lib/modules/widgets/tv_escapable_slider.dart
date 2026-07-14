@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 /// Makes a Material [Slider] usable with a TV remote.
 ///
 /// A Material Slider grabs *all four* arrow keys to change its value, so on a
-/// d-pad you can focus it but never move away — it's a trap. This wrapper owns
+/// d-pad you can focus it but never move away - it's a trap. This wrapper owns
 /// the focus instead: Left/Right adjust the value (via [onDecrease]/[onIncrease])
 /// and Up/Down/Select fall through so focus can leave. The inner slider is
 /// excluded from focus so it can't swallow the keys. Off-TV ([enabled] false)
