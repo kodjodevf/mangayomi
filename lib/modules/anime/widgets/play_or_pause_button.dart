@@ -8,8 +8,13 @@ import 'package:media_kit_video/media_kit_video.dart';
 /// A material design play/pause button.
 class CustomPlayOrPauseButton extends StatefulWidget {
   final VideoController controller;
+  final FocusNode? focusNode;
 
-  const CustomPlayOrPauseButton({super.key, required this.controller});
+  const CustomPlayOrPauseButton({
+    super.key,
+    required this.controller,
+    this.focusNode,
+  });
 
   @override
   CustomPlayOrPauseButtonState createState() => CustomPlayOrPauseButtonState();
@@ -56,6 +61,7 @@ class CustomPlayOrPauseButtonState extends State<CustomPlayOrPauseButton>
   @override
   Widget build(BuildContext context) {
     return IconButton(
+      focusNode: widget.focusNode,
       onPressed: widget.controller.player.playOrPause,
       iconSize: iconSize,
       color: Colors.white,

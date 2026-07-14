@@ -25,6 +25,8 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
   final GlobalKey<VideoState> videoStatekey;
   final Widget bottomButtonBarWidget;
   final ValueNotifier<List<(String, int)>> chapterMarks;
+  // Bumped by the player on each d-pad key so the controls reveal on a TV remote.
+  final ValueNotifier<int> revealControls;
   const MobileControllerWidget({
     super.key,
     required this.videoController,
@@ -34,6 +36,7 @@ class MobileControllerWidget extends ConsumerStatefulWidget {
     required this.videoStatekey,
     required this.doubleSpeed,
     required this.chapterMarks,
+    required this.revealControls,
   });
 
   @override
@@ -45,6 +48,14 @@ class _MobileControllerWidgetState
     extends ConsumerState<MobileControllerWidget> {
   bool mount = true;
   bool visible = true;
+  // Wraps the control buttons; requestFocus()'d on reveal so the d-pad lands on
+  // a real button (see _onRevealRequest).
+  final FocusScopeNode _controlsScope = FocusScopeNode(
+    debugLabel: 'playerControls',
+  );
+  // The center play/pause — focused first on reveal so the d-pad lands on the
+  // main control rather than the top-bar back button.
+  final FocusNode _playPauseFocus = FocusNode(debugLabel: 'playerPlayPause');
   Duration controlsTransitionDuration = const Duration(milliseconds: 300);
   Color backdropColor = const Color(0x66000000);
   Timer? _timer;
@@ -125,8 +136,40 @@ class _MobileControllerWidgetState
     }
   }
 
+  // Called by the player on each d-pad key: reveal the controls if hidden and
+  // keep them on-screen while the user navigates the buttons with the remote.
+  void _onRevealRequest() {
+    if (!mounted) return;
+    if (!visible) {
+      setState(() {
+        mount = true;
+        visible = true;
+      });
+    }
+    _restartHideTimer();
+    // Move focus onto the controls only when it isn't already there. A
+    // FocusScope delegates requestFocus to its first focusable descendant, so
+    // this reliably lands the d-pad on a real button — unlike directional
+    // traversal from the full-screen player Focus, which never landed anywhere.
+    // Once focus is inside, subsequent keys navigate the buttons freely.
+    if (!_controlsScope.hasFocus) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        // Prefer the center play/pause; fall back to the scope's first button.
+        if (_playPauseFocus.canRequestFocus) {
+          _playPauseFocus.requestFocus();
+        } else {
+          _controlsScope.requestFocus();
+        }
+      });
+    }
+  }
+
   @override
   void dispose() {
+    widget.revealControls.removeListener(_onRevealRequest);
+    _controlsScope.dispose();
+    _playPauseFocus.dispose();
     for (final subscription in subscriptions) {
       subscription.cancel();
     }
@@ -172,6 +215,19 @@ class _MobileControllerWidgetState
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
       _timer?.cancel();
     }
+  }
+
+
+  void _restartHideTimer() {
+    _timer?.cancel();
+    _timer = Timer(controlsHoverDuration, () {
+      if (mounted) {
+        setState(() {
+          visible = false;
+        });
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+      }
+    });
   }
 
   void onDoubleTapSeekBackward() {
@@ -234,6 +290,7 @@ class _MobileControllerWidgetState
   @override
   void initState() {
     super.initState();
+    widget.revealControls.addListener(_onRevealRequest);
     _volumeController = VolumeController.instance;
 
     Future.microtask(() async {
@@ -309,8 +366,8 @@ class _MobileControllerWidgetState
                   ),
                 ),
         ),
-        Focus(
-          autofocus: true,
+        FocusScope(
+          node: _controlsScope,
           child: Stack(
             clipBehavior: Clip.none,
             alignment: Alignment.center,
@@ -429,12 +486,23 @@ class _MobileControllerWidgetState
                                     : 1.0,
                                 duration: controlsTransitionDuration,
                                 child: Center(
-                                  child: Row(
-                                    children: mobilePrimaryButtonBar(
-                                      context,
-                                      widget.videoStatekey,
-                                      widget.streamController,
-                                      widget.videoController,
+                                  // Brighter focus highlight on the main controls
+                                  // so the focused button stands out against the
+                                  // dark backdrop on a TV.
+                                  child: Theme(
+                                    data: Theme.of(context).copyWith(
+                                      focusColor: Colors.white.withValues(
+                                        alpha: 0.45,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: mobilePrimaryButtonBar(
+                                        context,
+                                        widget.videoStatekey,
+                                        widget.streamController,
+                                        widget.videoController,
+                                        playPauseFocus: _playPauseFocus,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -890,8 +958,9 @@ List<Widget> mobilePrimaryButtonBar(
   BuildContext context,
   GlobalKey<VideoState> key,
   AnimeStreamController streamController,
-  VideoController controller,
-) {
+  VideoController controller, {
+  FocusNode? playPauseFocus,
+}) {
   bool hasPrevEpisode =
       streamController.getEpisodeIndex().$1 + 1 !=
       streamController.getEpisodesLength(streamController.getEpisodeIndex().$2);
@@ -918,7 +987,7 @@ List<Widget> mobilePrimaryButtonBar(
       ),
     ),
     const Spacer(),
-    CustomPlayOrPauseButton(controller: controller),
+    CustomPlayOrPauseButton(controller: controller, focusNode: playPauseFocus),
     const Spacer(),
     IconButton(
       onPressed: hasNextEpisode

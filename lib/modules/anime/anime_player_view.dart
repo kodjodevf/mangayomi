@@ -21,7 +21,11 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/video.dart' as vid;
 import 'package:mangayomi/modules/anime/providers/anime_player_controller_provider.dart';
+import 'package:mangayomi/modules/anime/providers/auto_play_next_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/aniskip_countdown_btn.dart';
+import 'package:mangayomi/modules/anime/widgets/tv_player_controls.dart';
+import 'package:mangayomi/modules/anime/widgets/tv_player_settings_panel.dart';
+import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/anime/widgets/desktop.dart';
 import 'package:mangayomi/modules/anime/widgets/play_or_pause_button.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
@@ -311,7 +315,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
 
   late final StreamSubscription<bool> _completed = _player.stream.completed
       .listen((val) {
-        if (hasNextEpisode && val) {
+        if (hasNextEpisode && val && ref.read(autoPlayNextEpisodeProvider)) {
           if (mounted) {
             pushToNewEpisode(context, _streamController.getNextEpisode());
           }
@@ -853,7 +857,13 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     }
     if (!isDesktop) {
       final forceLandscape = ref.read(forceLandscapePlayerStateProvider);
-      if (forceLandscape) {
+      // Preserve the player orientation across episode changes. Playing the next
+      // episode pushes a fresh player, and the old one's dispose() resets the
+      // orientation to portrait. So if the viewer is still in fullscreen — from
+      // the force-landscape setting or a manual toggle that persists across
+      // episodes (fullscreenProvider is global) — re-apply landscape here rather
+      // than stranding them in portrait with the fullscreen button still active.
+      if (forceLandscape || ref.read(fullscreenProvider)) {
         _setLandscapeMode(true);
       }
     }
@@ -946,8 +956,22 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     });
   }
 
+  // Bumped on each d-pad key (see _onPlayerKey) so the mobile controls reveal
+  // themselves on a TV remote.
+  final ValueNotifier<int> _revealControls = ValueNotifier(0);
+  // TV-only: when the advanced settings panel is open the video docks left and
+  // the panel slides in on the right (YouTube-style), instead of a bottom sheet.
+  bool _tvSettingsOpen = false;
+  // Owned focus anchors for the split view so Left/Right cross deterministically
+  // (geometric directional focus was losing focus entirely).
+  final FocusNode _tvVideoFocus = FocusNode(debugLabel: 'tvVideoFrame');
+  final FocusNode _tvPanelFocus = FocusNode(debugLabel: 'tvPanelHeader');
+
   @override
   void dispose() {
+    _revealControls.dispose();
+    _tvVideoFocus.dispose();
+    _tvPanelFocus.dispose();
     _watchStopwatch.stop();
     _currentPosition.removeListener(_updateRpcTimestamp);
     _subDelayController.removeListener(_onSubDelayChanged);
@@ -1442,6 +1466,195 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     );
   }
 
+
+  // d-pad-focusable option data for the TV settings panel — the same track
+  // switching the bottom-sheet widgets do, minus the Navigator.pop (the panel
+  // is not a route). Records: (label, selected, onTap).
+  List<({String label, bool selected, VoidCallback onTap})> _tvQualityOptions() {
+    List<VideoPrefs> videoQuality = _player.state.tracks.video
+        .where(
+          (element) => element.w != null && element.h != null && widget.isLocal,
+        )
+        .toList()
+        .map((e) => VideoPrefs(videoTrack: e, isLocal: true))
+        .toList();
+    if (widget.videos.isNotEmpty && !widget.isLocal) {
+      for (var video in widget.videos) {
+        videoQuality.add(
+          VideoPrefs(
+            videoTrack: VideoTrack(video.url, video.quality, video.quality),
+            headers: video.headers,
+            isLocal: false,
+          ),
+        );
+      }
+    }
+    return videoQuality.map((quality) {
+      final selected =
+          _video.value!.videoTrack!.title == quality.videoTrack!.title ||
+          widget.isLocal;
+      return (
+        label: widget.isLocal ? _firstVid.quality : quality.videoTrack!.title!,
+        selected: selected,
+        onTap: () {
+          if (_video.value?.videoTrack?.id == quality.videoTrack?.id) return;
+          _video.value = quality;
+          _player.stop();
+          if (quality.isLocal) {
+            if (widget.isLocal) {
+              _player.setVideoTrack(quality.videoTrack!);
+            } else {
+              _openMedia(quality);
+            }
+          } else {
+            _openMedia(quality);
+          }
+          _initSubtitleAndAudio = true;
+        },
+      );
+    }).toList();
+  }
+
+  List<({String label, bool selected, VoidCallback onTap})> _tvSubtitleOptions() {
+    List<VideoPrefs> videoSubtitle = _player.state.tracks.subtitle
+        .toList()
+        .map((e) => VideoPrefs(isLocal: true, subtitle: e))
+        .toList();
+    List<String> subs = [];
+    if (widget.videos.isNotEmpty) {
+      for (var video in widget.videos) {
+        for (var sub in video.subtitles ?? []) {
+          if (!subs.contains(sub.file)) {
+            final file = sub.file!;
+            final label = sub.label;
+            videoSubtitle.add(
+              VideoPrefs(
+                isLocal: widget.isLocal,
+                subtitle: (file.startsWith("http") || file.startsWith("file"))
+                    ? SubtitleTrack.uri(file, title: label, language: label)
+                    : SubtitleTrack.data(file, title: label, language: label),
+              ),
+            );
+            subs.add(sub.file!);
+          }
+        }
+      }
+    }
+    final subtitle = _player.state.track.subtitle;
+    videoSubtitle = videoSubtitle
+        .map((e) {
+          e.title =
+              e.subtitle?.title ??
+              e.subtitle?.language ??
+              e.subtitle?.channels ??
+              "";
+          return e;
+        })
+        .toList()
+        .where((element) => element.title!.isNotEmpty)
+        .toList();
+    videoSubtitle.sort((a, b) => a.title!.compareTo(b.title!));
+    videoSubtitle.insert(
+      0,
+      VideoPrefs(isLocal: false, subtitle: SubtitleTrack.no()),
+    );
+    final List<VideoPrefs> last = [];
+    for (var element in videoSubtitle) {
+      final key = element.title ??
+          element.subtitle?.title ??
+          element.subtitle?.language ??
+          element.subtitle?.channels ??
+          "None";
+      final contains = last.any((sub) =>
+          (sub.title ??
+              sub.subtitle?.title ??
+              sub.subtitle?.language ??
+              sub.subtitle?.channels ??
+              "None") ==
+          key);
+      if (!contains) last.add(element);
+    }
+    return last.toSet().toList().map((sub) {
+      final title = sub.title ??
+          sub.subtitle?.title ??
+          sub.subtitle?.language ??
+          sub.subtitle?.channels ??
+          "None";
+      final selected = (title ==
+              (subtitle.title ??
+                  subtitle.language ??
+                  subtitle.channels ??
+                  "None")) ||
+          (subtitle.id == "no" && title == "None");
+      return (
+        label: title == "None" ? "Off" : title,
+        selected: selected,
+        onTap: () {
+          try {
+            _player.setSubtitleTrack(sub.subtitle!);
+          } catch (_) {}
+        },
+      );
+    }).toList();
+  }
+
+  List<({String label, bool selected, VoidCallback onTap})> _tvAudioOptions() {
+    List<VideoPrefs> videoAudio = _player.state.tracks.audio
+        .toList()
+        .map((e) => VideoPrefs(isLocal: true, audio: e))
+        .toList();
+    List<String> audios = [];
+    if (widget.videos.isNotEmpty && !widget.isLocal) {
+      for (var video in widget.videos) {
+        for (var audio in video.audios ?? []) {
+          if (!audios.contains(audio.file)) {
+            videoAudio.add(
+              VideoPrefs(
+                isLocal: false,
+                audio: AudioTrack.uri(
+                  audio.file!,
+                  title: audio.label,
+                  language: audio.label,
+                ),
+              ),
+            );
+            audios.add(audio.file!);
+          }
+        }
+      }
+    }
+    final audio = _player.state.track.audio;
+    videoAudio = videoAudio
+        .map((e) {
+          e.title =
+              e.audio?.title ?? e.audio?.language ?? e.audio?.channels ?? "";
+          return e;
+        })
+        .toList()
+        .where((element) => element.title!.isNotEmpty)
+        .toList();
+    videoAudio.sort((a, b) => a.title!.compareTo(b.title!));
+    videoAudio.insert(0, VideoPrefs(isLocal: false, audio: AudioTrack.no()));
+    return videoAudio.toSet().toList().map((aud) {
+      final title = aud.title ??
+          aud.audio?.title ??
+          aud.audio?.language ??
+          aud.audio?.channels ??
+          "None";
+      final selected =
+          (aud.audio == audio) || (audio.id == "no" && title == "None");
+      return (
+        label: title == "None" ? "Off" : title,
+        selected: selected,
+        onTap: () {
+          try {
+            _player.setAudioTrack(aud.audio!);
+          } catch (_) {}
+        },
+      );
+    }).toList();
+  }
+
   Future<void> _setPlaybackSpeed(double speed) async {
     await _player.setRate(speed);
     _playbackSpeed.value = speed;
@@ -1546,6 +1759,81 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     );
   }
 
+  Widget _tvControls() {
+    return TvPlayerControls(
+      player: _player,
+      revealControls: _revealControls,
+      title: widget.episode.manga.value?.name ?? '',
+      episodeLabel: widget.episode.name ?? '',
+      // Direct pop, not maybePop: the on-screen back arrow always exits the
+      // player, bypassing the PopScope that makes the remote Back hide the
+      // panel first.
+      onBack: () => Navigator.pop(context),
+      onRestart: () => _player.seek(Duration.zero),
+      onSettings: () {
+        // On TV the settings open as the docked side panel; phones/desktop keep
+        // the bottom-sheet menu.
+        if (isTv) {
+          setState(() => _tvSettingsOpen = true);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) _tvPanelFocus.requestFocus();
+          });
+        } else {
+          _videoSettingDraggableMenu(context);
+        }
+      },
+      hasNext: hasNextEpisode,
+      onNext: hasNextEpisode
+          ? () => pushToNewEpisode(context, _streamController.getNextEpisode())
+          : null,
+      qualityListenable: _video,
+      buildQualityOptions: _buildTvQualityOptions,
+      speedListenable: _playbackSpeed,
+      onSetSpeed: _setPlaybackSpeed,
+    );
+  }
+
+  // The source video list is the real dub/sub control (entries like "1080p Sub"
+  // / "1080p Dub"); switching re-opens the stream at that source. Mirrors
+  // _videoQualityWidget's selection logic for the TV pill bar.
+  List<TvTrackOption> _buildTvQualityOptions() {
+    if (widget.isLocal || widget.videos.isEmpty) return const <TvTrackOption>[];
+    final currentTitle = _video.value?.videoTrack?.title;
+    return [
+      for (final video in widget.videos)
+        TvTrackOption(
+          label: _shortQuality(video.quality),
+          selected: currentTitle == video.quality,
+          onSelect: () {
+            if (_video.value?.videoTrack?.title == video.quality) return;
+            final prefs = VideoPrefs(
+              videoTrack: VideoTrack(video.url, video.quality, video.quality),
+              headers: video.headers,
+              isLocal: false,
+            );
+            _video.value = prefs;
+            _player.stop();
+            _openMedia(prefs);
+            _initSubtitleAndAudio = true;
+          },
+        ),
+    ];
+  }
+
+  // Shorten a source quality label like "1080p (Sub)" to "1080-sub"/"1080-dub".
+  String _shortQuality(String raw) {
+    final lower = raw.toLowerCase();
+    final res = RegExp(r'(\d{3,4})\s*p?').firstMatch(lower)?.group(1);
+    final tag = lower.contains('sub')
+        ? 'sub'
+        : lower.contains('dub')
+        ? 'dub'
+        : null;
+    if (res != null && tag != null) return '$res-$tag';
+    if (res != null) return '${res}p';
+    return raw;
+  }
+
   Widget _mobileBottomButtonBar(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 30),
@@ -1555,11 +1843,16 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _seekToWidget(),
                 _chapterMarkWidget(),
-                _buildSettingsButtons(context),
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    reverse: true,
+                    child: _buildSettingsButtons(context),
+                  ),
+                ),
               ],
             ),
           ),
@@ -1825,7 +2118,8 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             controller: _controller,
             desktopFullScreenPlayer: widget.desktopFullScreenPlayer,
           )
-        else
+        // A TV is always fullscreen, so the toggle is useless there — hide it.
+        else if (!isTv)
           IconButton(
             icon: Icon(isFullscreen ? Icons.fullscreen_exit : Icons.fullscreen),
             iconSize: 25,
@@ -1896,6 +2190,34 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           ),
           Row(
             children: [
+              Consumer(
+                builder: (context, ref, _) {
+                  final autoPlay = ref.watch(autoPlayNextEpisodeProvider);
+                  // Same drawn play/pause switch as the TV player, for a
+                  // consistent autoplay toggle across all players.
+                  return Tooltip(
+                    message: autoPlay
+                        ? 'Autoplay next episode: on'
+                        : 'Autoplay next episode: off',
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(20),
+                      onTap: () => ref
+                          .read(autoPlayNextEpisodeProvider.notifier)
+                          .toggle(),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 8,
+                        ),
+                        child: AutoplaySwitch(
+                          on: autoPlay,
+                          accent: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
               if (_supportAlwaysOnTop())
                 IconButton(
                   icon: Icon(
@@ -1959,16 +2281,21 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     final enableAutoSkip = ref.read(enableAutoSkipStateProvider);
     final aniSkipTimeoutLength = ref.read(aniSkipTimeoutLengthStateProvider);
     final skipIntroLength = ref.read(defaultSkipIntroLengthStateProvider);
-    return Stack(
+    final splitSettings = isTv && _tvSettingsOpen;
+    final Widget player = Stack(
       children: [
         Video(
           subtitleViewConfiguration: SubtitleViewConfiguration(
             visible: false,
             style: subtileTextStyle(ref),
           ),
-          fit: fit,
+          // Docked in the split view, always contain so the whole frame shows
+          // at its true aspect ratio rather than cropping to the narrower slot.
+          fit: splitSettings ? BoxFit.contain : fit,
           key: _key,
-          controls: (state) => isDesktop
+          controls: (state) => (isTv && ref.read(tvPlayerStyleProvider))
+              ? (_tvSettingsOpen ? const SizedBox.shrink() : _tvControls())
+              : (isDesktop || isTv)
               ? DesktopControllerWidget(
                   videoController: _controller,
                   topButtonBarWidget: _topButtonBar(context),
@@ -1988,6 +2315,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                   defaultSkipIntroLength: skipIntroLength,
                   desktopFullScreenPlayer: widget.desktopFullScreenPlayer,
                   chapterMarks: _chapterMarks,
+                  revealControls: _revealControls,
                 )
               : MobileControllerWidget(
                   videoController: _controller,
@@ -1995,14 +2323,17 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                   videoStatekey: _key,
                   bottomButtonBarWidget: _mobileBottomButtonBar(context),
                   streamController: _streamController,
+                  revealControls: _revealControls,
                   doubleSpeed: (value) {
                     _isDoubleSpeed.value = value ?? false;
                   },
                   chapterMarks: _chapterMarks,
                 ),
           controller: _controller,
-          width: context.width(1),
-          height: context.height(1),
+          // When docked left for the settings panel, fill the (narrower) slot
+          // the Row gives us rather than forcing full-screen width.
+          width: splitSettings ? null : context.width(1),
+          height: splitSettings ? null : context.height(1),
           resumeUponEnteringForegroundMode: true,
         ),
         Stack(
@@ -2070,6 +2401,43 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             ),
           ),
       ],
+    );
+    if (!splitSettings) return player;
+    // YouTube-style split: video docks left (a single focusable unit — Left
+    // from the panel focuses it, Select toggles play/pause), a gap, then the
+    // settings panel on the right.
+    final accent = Theme.of(context).colorScheme.primary;
+    return ColoredBox(
+      color: Colors.black,
+      child: Row(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: TvVideoFocusFrame(
+                accent: accent,
+                player: _player,
+                focusNode: _tvVideoFocus,
+                onSelect: () => _player.playOrPause(),
+                onExitRight: () => _tvPanelFocus.requestFocus(),
+                child: player,
+              ),
+            ),
+          ),
+          TvPlayerSettingsPanel(
+            player: _player,
+            speedListenable: _playbackSpeed,
+            onSetSpeed: _setPlaybackSpeed,
+            selectedShaderListenable: _selectedShader,
+            qualityOptions: _tvQualityOptions,
+            subtitleOptions: _tvSubtitleOptions,
+            audioOptions: _tvAudioOptions,
+            headerFocusNode: _tvPanelFocus,
+            onExitLeft: () => _tvVideoFocus.requestFocus(),
+            onClose: () => setState(() => _tvSettingsOpen = false),
+          ),
+        ],
+      ),
     );
   }
 
@@ -2278,7 +2646,92 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: _videoPlayer(context));
+    final body = _videoPlayer(context);
+    // Desktop already gets player keyboard shortcuts through media_kit's
+    // DesktopControllerWidget. On mobile / Android TV the controls have none,
+    // so wrap the player so a physical keyboard or TV remote can drive
+    // playback too. See #668 / #729.
+    return Scaffold(
+      body: isDesktop ? body : _wrapWithPlayerShortcuts(body),
+    );
+  }
+
+  /// Maps keyboard and TV-remote keys to player actions for non-desktop
+  /// builds. Only dedicated media keys + the usual mpv-style keys are bound
+  /// (no D-pad arrows beyond seek), so it stays additive and doesn't fight
+  /// touch input. Reuses the existing player + episode-navigation methods.
+  Widget _wrapWithPlayerShortcuts(Widget child) {
+    void seekBy(int seconds) {
+      _player.seek(_player.state.position + Duration(seconds: seconds));
+    }
+
+    return CallbackShortcuts(
+      bindings: <ShortcutActivator, VoidCallback>{
+        const SingleActivator(LogicalKeyboardKey.space): () {
+          _player.playOrPause();
+        },
+        const SingleActivator(LogicalKeyboardKey.mediaPlayPause): () {
+          _player.playOrPause();
+        },
+        const SingleActivator(LogicalKeyboardKey.mediaPlay): () {
+          _player.play();
+        },
+        const SingleActivator(LogicalKeyboardKey.mediaPause): () {
+          _player.pause();
+        },
+        // Seek via J/L and the dedicated media keys only. Arrow keys are left
+        // unbound so they keep driving d-pad focus traversal on Android TV
+        // (and arrow-key focus movement with a keyboard) instead of seeking.
+        const SingleActivator(LogicalKeyboardKey.keyJ): () => seekBy(-10),
+        const SingleActivator(LogicalKeyboardKey.keyL): () => seekBy(10),
+        const SingleActivator(LogicalKeyboardKey.mediaRewind): () => seekBy(-10),
+        const SingleActivator(LogicalKeyboardKey.mediaFastForward): () =>
+            seekBy(10),
+        const SingleActivator(LogicalKeyboardKey.mediaTrackNext): () {
+          if (hasNextEpisode && mounted) {
+            pushToNewEpisode(context, _streamController.getNextEpisode());
+          }
+        },
+        const SingleActivator(LogicalKeyboardKey.mediaTrackPrevious): () {
+          if (_streamController.hasPreviousEpisode && mounted) {
+            pushToNewEpisode(context, _streamController.getPrevEpisode());
+          }
+        },
+      },
+      child: MouseRegion(
+        // Desktop debugging: a mouse has no d-pad, so let hover and clicks
+        // reveal the auto-hiding controls (bumping the same notifier the remote
+        // does). No-op on a TV, which sends no pointer-hover events.
+        onEnter: (_) => _revealControls.value++,
+        onHover: (_) => _revealControls.value++,
+        child: Listener(
+          onPointerDown: (_) => _revealControls.value++,
+          child: Focus(autofocus: true, onKeyEvent: _onPlayerKey, child: child),
+        ),
+      ),
+    );
+  }
+
+  // On a TV remote / keyboard, reveal the on-screen controls when the user
+  // presses the d-pad. The arrow keys stay unbound above (so they still drive
+  // focus traversal between the control buttons) — we just bump [_revealControls]
+  // so the controls become visible and the focus is on something the user can
+  // see. Returns ignored so traversal + the media shortcuts still run.
+  KeyEventResult _onPlayerKey(FocusNode node, KeyEvent event) {
+    if (event is KeyDownEvent || event is KeyRepeatEvent) {
+      final k = event.logicalKey;
+      final isNav =
+          k == LogicalKeyboardKey.arrowUp ||
+          k == LogicalKeyboardKey.arrowDown ||
+          k == LogicalKeyboardKey.arrowLeft ||
+          k == LogicalKeyboardKey.arrowRight ||
+          k == LogicalKeyboardKey.select ||
+          k == LogicalKeyboardKey.enter ||
+          k == LogicalKeyboardKey.numpadEnter ||
+          k == LogicalKeyboardKey.gameButtonA;
+      if (isNav) _revealControls.value++;
+    }
+    return KeyEventResult.ignored;
   }
 }
 
