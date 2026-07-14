@@ -92,6 +92,9 @@ void main(List<String> args) async {
 
       MediaKit.ensureInitialized();
       await RustLib.init();
+      // Detect Android TV / leanback so the UI can branch on form factor.
+      // No-op on other platforms. See #729.
+      await initIsTv();
       await getIsolateService.start();
       await ffiImageDecoder.start();
       if (!isMobile) {
