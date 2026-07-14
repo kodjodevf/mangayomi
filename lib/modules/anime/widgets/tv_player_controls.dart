@@ -246,7 +246,7 @@ class _TvPlayerControlsState extends State<TvPlayerControls> {
                     Consumer(
                       builder: (context, ref, _) {
                         final on = ref.watch(autoPlayNextEpisodeProvider);
-                        return _AutoplayToggle(
+                        return AutoplayToggle(
                           accent: accent,
                           on: on,
                           onToggle: () => ref
@@ -796,9 +796,12 @@ class _PillDivider extends StatelessWidget {
   }
 }
 
-/// A compact YouTube-style "Autoplay" labelled switch, focusable for the d-pad.
-class _AutoplayToggle extends StatefulWidget {
-  const _AutoplayToggle({
+/// A compact YouTube-style autoplay switch, focusable for the d-pad. Shared by
+/// the TV player and the mobile/desktop player so the toggle is visually
+/// identical across platforms.
+class AutoplayToggle extends StatefulWidget {
+  const AutoplayToggle({
+    super.key,
     required this.accent,
     required this.on,
     required this.onToggle,
@@ -809,10 +812,10 @@ class _AutoplayToggle extends StatefulWidget {
   final VoidCallback onToggle;
 
   @override
-  State<_AutoplayToggle> createState() => _AutoplayToggleState();
+  State<AutoplayToggle> createState() => AutoplayToggleState();
 }
 
-class _AutoplayToggleState extends State<_AutoplayToggle> {
+class AutoplayToggleState extends State<AutoplayToggle> {
   bool _focused = false;
 
   @override
@@ -850,7 +853,7 @@ class _AutoplayToggleState extends State<_AutoplayToggle> {
 /// black knob that slides right + shows ▶ when on, left + shows ⏸ when off —
 /// matching the reference toggle style.
 class AutoplaySwitch extends StatelessWidget {
-  const AutoplaySwitch({required this.on, required this.accent});
+  const AutoplaySwitch({super.key, required this.on, required this.accent});
 
   final bool on;
   final Color accent;

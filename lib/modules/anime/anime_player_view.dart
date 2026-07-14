@@ -2193,27 +2193,18 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
               Consumer(
                 builder: (context, ref, _) {
                   final autoPlay = ref.watch(autoPlayNextEpisodeProvider);
-                  // Same drawn play/pause switch as the TV player, for a
-                  // consistent autoplay toggle across all players.
+                  // Same pill control as the TV player, so the autoplay toggle
+                  // is visually identical across mobile, desktop and TV.
                   return Tooltip(
                     message: autoPlay
                         ? 'Autoplay next episode: on'
                         : 'Autoplay next episode: off',
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(20),
-                      onTap: () => ref
+                    child: AutoplayToggle(
+                      accent: Theme.of(context).colorScheme.primary,
+                      on: autoPlay,
+                      onToggle: () => ref
                           .read(autoPlayNextEpisodeProvider.notifier)
                           .toggle(),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 8,
-                        ),
-                        child: AutoplaySwitch(
-                          on: autoPlay,
-                          accent: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
                     ),
                   );
                 },
