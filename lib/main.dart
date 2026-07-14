@@ -33,6 +33,7 @@ import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/http/doh/doh_custom_store.dart';
+import 'package:mangayomi/services/http/cf_proxy_store.dart';
 import 'package:mangayomi/services/isolate_service.dart';
 import 'package:mangayomi/services/m_extension_server.dart';
 import 'package:mangayomi/services/download_manager/m_downloader.dart';
@@ -179,6 +180,7 @@ Future<void> _postLaunchInit(StorageProvider storage) async {
   await Hive.initFlutter(Platform.isAndroid ? "" : hivePath);
   Hive.registerAdapter(TrackSearchAdapter());
   await DohCustomStore.openBox();
+  await CfProxyStore.openBox();
   if (isDesktop && !kDebugMode) {
     discordRpc = DiscordRPC(applicationId: "1395040506677039157");
     await discordRpc?.initialize();
