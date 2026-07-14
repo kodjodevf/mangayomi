@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mangayomi/models/category.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 
 class CustomTextFormField extends StatelessWidget {
@@ -25,7 +26,7 @@ class CustomTextFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context);
     return TextFormField(
-      autofocus: true,
+      autofocus: !isTv,
       controller: controller,
       keyboardType: TextInputType.text,
       onChanged: (value) {

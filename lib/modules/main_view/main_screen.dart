@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,6 +19,7 @@ import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.da
 import 'package:mangayomi/modules/widgets/loading_icon.dart';
 import 'package:mangayomi/services/fetch_item_sources.dart';
 import 'package:mangayomi/modules/main_view/providers/migration.dart';
+import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/more/about/providers/check_for_update.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/auto_backup.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -29,6 +31,11 @@ import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 
 final libLocationRegex = RegExp(r"^/(Manga|Anime|Novel)Library$");
+
+/// Nav destinations kept off the anime-only TV layout (the manga & novel
+/// libraries). True means "keep this destination".
+bool _isNotHiddenLibOnTv(String nav) =>
+    nav != "/MangaLibrary" && nav != "/NovelLibrary";
 
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key, required this.child});
@@ -87,9 +94,12 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         .autoSyncFrequency;
     final hiddenItems = ref.read(hideItemsStateProvider);
 
-    _defaultLocation = _navigationOrder
-        .where((e) => !hiddenItems.contains(e))
-        .first;
+    // On the anime-only TV layout, never land on a hidden manga/novel library.
+    final order = ref.read(animeOnlyTvModeProvider)
+        ? _navigationOrder.where(_isNotHiddenLibOnTv).toList()
+        : _navigationOrder;
+    final visible = order.where((e) => !hiddenItems.contains(e)).toList();
+    _defaultLocation = visible.isNotEmpty ? visible.first : "/AnimeLibrary";
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
@@ -209,6 +219,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                   : navigationOrder
                         .where((nav) => !hideItems.contains(nav))
                         .toList();
+
+              // Anime-only TV layout: drop the manga & novel library tabs.
+              if (ref.watch(animeOnlyTvModeProvider)) {
+                dest = dest.where(_isNotHiddenLibOnTv).toList();
+              }
 
               if (mergeLibraryNavMobile && !context.isTablet && !isLibSwitch) {
                 dest = dest
@@ -622,7 +637,7 @@ class _IncognitoModeBar extends StatelessWidget {
   }
 }
 
-class _TabletLayout extends StatelessWidget {
+class _TabletLayout extends StatefulWidget {
   const _TabletLayout({
     required this.isLongPressed,
     required this.location,
@@ -649,13 +664,131 @@ class _TabletLayout extends StatelessWidget {
   buildNavigationWidgetsDesktop;
 
   @override
+  State<_TabletLayout> createState() => _TabletLayoutState();
+}
+
+class _TabletLayoutState extends State<_TabletLayout> {
+  // Explicit focus scopes for the rail and the routed content, used on Android
+  // TV only. Directional (d-pad) focus traversal doesn't cross into the rail —
+  // the routed page lives in its own FocusScope and arrows only move focus
+  // within it — so we move focus between the two scopes ourselves. A scope
+  // wraps the whole rail because NavigationRail doesn't expose its
+  // destinations' focus nodes.
+  final FocusScopeNode _railScope = FocusScopeNode(debugLabel: 'navRailScope');
+  final FocusScopeNode _contentScope = FocusScopeNode(
+    debugLabel: 'navContentScope',
+  );
+  bool _didAutofocusRail = false;
+
+  @override
+  void dispose() {
+    _railScope.dispose();
+    _contentScope.dispose();
+    super.dispose();
+  }
+
+  // TV d-pad crossing: LEFT that can't move any further inside the content
+  // pulls focus onto the rail; RIGHT from the rail dives into the content.
+  // Other keys (up/down/select) fall through to the default handler. Only
+  // active while the rail is visible (library tabs), never in the reader.
+  KeyEventResult _handleTvKey(KeyEvent event, bool railVisible) {
+    if (!railVisible) return KeyEventResult.ignored;
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
+      return KeyEventResult.ignored;
+    }
+    final key = event.logicalKey;
+    if (key == LogicalKeyboardKey.arrowLeft) {
+      if (_railScope.hasFocus) return KeyEventResult.ignored;
+      final current = FocusManager.instance.primaryFocus;
+      final moved = current?.focusInDirection(TraversalDirection.left) ?? false;
+      if (!moved) _railScope.requestFocus();
+      return KeyEventResult.handled;
+    }
+    if (key == LogicalKeyboardKey.arrowRight && _railScope.hasFocus) {
+      // Focus the content scope — it restores its focusedChild, which for the
+      // library grid is the first cover (autofocused on TV). That fixes both
+      // "focus never lands on the grid" and the anime-tab "hold Left to reach
+      // the rail" (Left from a cover reaches the rail in one press).
+      _contentScope.requestFocus();
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final destinations = buildNavigationWidgetsDesktop(ref, dest, context);
-    return Row(
+    final destinations = widget.buildNavigationWidgetsDesktop(
+      widget.ref,
+      widget.dest,
+      context,
+    );
+    final railWidth = _getNavigationRailWidth(
+      widget.isLongPressed,
+      widget.location,
+    );
+    final railVisible = railWidth > 0;
+
+    // On a TV, open with the tab rail focused so the user lands on the tabs and
+    // dives into content with RIGHT. One-shot per mount.
+    if (isTv && railVisible && !_didAutofocusRail) {
+      _didAutofocusRail = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _railScope.requestFocus();
+      });
+    }
+
+    Widget navRail = NavigationRail(
+      labelType: NavigationRailLabelType.all,
+      useIndicator: true,
+      // The Android TV experience is still beta — flag it in the rail.
+      leading: isTv
+          ? Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 3,
+                ),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: const Text(
+                  'BETA',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ),
+            )
+          : null,
+      destinations: destinations,
+      selectedIndex:
+          (widget.currentIndex >= 0 &&
+              widget.currentIndex < destinations.length)
+          ? widget.currentIndex
+          : 0,
+      onDestinationSelected: (newIndex) {
+        widget.route.go(widget.dest[newIndex]);
+      },
+    );
+    if (isTv) {
+      navRail = FocusScope(node: _railScope, child: navRail);
+    }
+
+    Widget content = widget.child;
+    if (isTv) {
+      content = FocusScope(node: _contentScope, child: content);
+    }
+
+    Widget row = Row(
       children: [
         AnimatedContainer(
           duration: const Duration(milliseconds: 0),
-          width: _getNavigationRailWidth(isLongPressed, location),
+          width: railWidth,
           child: Stack(
             children: [
               NavigationRailTheme(
@@ -664,25 +797,38 @@ class _TabletLayout extends StatelessWidget {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child: NavigationRail(
-                  labelType: NavigationRailLabelType.all,
-                  useIndicator: true,
-                  destinations: destinations,
-                  selectedIndex:
-                      (currentIndex >= 0 && currentIndex < destinations.length)
-                      ? currentIndex
-                      : 0,
-                  onDestinationSelected: (newIndex) {
-                    route.go(dest[newIndex]);
-                  },
+                // On Android TV the rail destination's default d-pad focus
+                // overlay is too faint to see from across a room. The
+                // destination InkResponse draws its focus highlight from the
+                // ambient Theme.focusColor, so a bold primary-tinted focusColor
+                // makes the focused tab clearly visible. No-op off TV.
+                child: Theme(
+                  data: Theme.of(context).copyWith(
+                    focusColor: isTv
+                        ? context.primaryColor.withValues(alpha: 0.45)
+                        : Theme.of(context).focusColor,
+                  ),
+                  child: navRail,
                 ),
               ),
             ],
           ),
         ),
-        Expanded(child: child),
+        Expanded(child: content),
       ],
     );
+
+    // Wrap in a non-focusable key handler on TV so we can move focus across the
+    // rail/content scope boundary that directional traversal won't cross.
+    if (isTv) {
+      row = Focus(
+        canRequestFocus: false,
+        skipTraversal: true,
+        onKeyEvent: (node, event) => _handleTvKey(event, railVisible),
+        child: row,
+      );
+    }
+    return row;
   }
 
   static double _getNavigationRailWidth(bool isLongPressed, String? location) {

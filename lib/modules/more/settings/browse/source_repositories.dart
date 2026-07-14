@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar_community/isar.dart';
@@ -355,7 +356,12 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                 title: Text(l10n.add_extensions_repo),
                 content: TextFormField(
                   controller: controller,
-                  autofocus: true,
+                  // On Android TV, don't autofocus: it instantly pops the
+                  // full-screen leanback keyboard over the dialog before the
+                  // user can even see the Cancel/Add buttons. Let them navigate
+                  // to the field and open the keyboard with select instead.
+                  // Phones keep autofocus for the usual ready-to-type flow.
+                  autofocus: !isTv,
                   keyboardType: TextInputType.url,
                   onChanged: (value) => setState(() {}),
                   validator: (value) {
