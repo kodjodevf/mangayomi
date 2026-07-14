@@ -77,7 +77,7 @@ class ChapterListTileWidget extends ConsumerWidget {
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Icon(
-          chapter.isRead! ? Icons.visibility_off : Icons.done_all,
+          chapter.isRead! ? Icons.remove_done_sharp : Icons.done_all,
           color: Colors.white,
         ),
       ),
