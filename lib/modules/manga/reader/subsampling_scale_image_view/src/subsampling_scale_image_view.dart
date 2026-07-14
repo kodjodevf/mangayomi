@@ -1330,7 +1330,7 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
             _scale,
             _vTranslate,
             targetTranslate,
-            const Duration(milliseconds: 350),
+            const Duration(seconds: 1),
           );
         }
       }
