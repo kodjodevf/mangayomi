@@ -20,6 +20,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/services/download_manager/m_downloader.dart';
+import 'package:mangayomi/services/download_manager/download_queue_order.dart';
 import 'package:mangayomi/services/get_video_list.dart';
 import 'package:mangayomi/services/get_chapter_pages.dart';
 import 'package:mangayomi/services/http/m_client.dart';
@@ -408,24 +409,33 @@ Future<void> downloadChapter(
 Future<void> processDownloads(Ref ref, {bool? useWifi}) async {
   final keepAlive = ref.keepAlive();
   try {
-    final ongoingDownloads = await isar.downloads
-        .filter()
-        .idIsNotNull()
-        .isDownloadEqualTo(false)
-        .isStartDownloadEqualTo(true)
-        .findAll();
     final maxConcurrentDownloads = ref.read(concurrentDownloadsStateProvider);
-    int index = 0;
-    int downloaded = 0;
-    int current = 0;
+    // Ids already handed to a downloader in this run, so re-reading the queue
+    // each tick never starts the same chapter twice.
+    final started = <int>{};
+    int inFlight = 0;
     await Future.doWhile(() async {
       await Future.delayed(const Duration(seconds: 1));
-      if (ongoingDownloads.length == downloaded) {
+      // Re-read and re-sort the pending queue every tick so manual reordering
+      // takes effect on what's left live, and chapters queued mid-run are
+      // picked up (see #514). Falls back to insertion order when nothing has
+      // been reordered.
+      final pending =
+          DownloadQueueOrder.sorted(
+            await isar.downloads
+                .filter()
+                .idIsNotNull()
+                .isDownloadEqualTo(false)
+                .isStartDownloadEqualTo(true)
+                .findAll(),
+          ).where((d) => !started.contains(d.id)).toList();
+      if (pending.isEmpty && inFlight == 0) {
         return false;
       }
-      if (current < maxConcurrentDownloads) {
-        current++;
-        final downloadItem = ongoingDownloads[index++];
+      if (inFlight < maxConcurrentDownloads && pending.isNotEmpty) {
+        inFlight++;
+        final downloadItem = pending.first;
+        started.add(downloadItem.id!);
         final chapter = downloadItem.chapter.value!;
         chapter.cancelDownloads(downloadItem.id);
         await Future.delayed(const Duration(milliseconds: 500));
@@ -434,8 +444,7 @@ Future<void> processDownloads(Ref ref, {bool? useWifi}) async {
             chapter: chapter,
             useWifi: useWifi,
             callback: () {
-              downloaded++;
-              current--;
+              inFlight--;
             },
           ),
         );
