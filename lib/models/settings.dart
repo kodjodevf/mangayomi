@@ -67,6 +67,9 @@ class Settings {
 
   List<MCookie>? cookiesList;
 
+  /// The last library update's failures, kept so they can be reviewed later.
+  List<UpdateError>? updateErrorsList;
+
   @enumerated
   late ReaderMode defaultReaderMode;
 
@@ -409,6 +412,7 @@ class Settings {
     this.chapterPageIndexList,
     this.userAgent = defaultUserAgent,
     this.cookiesList,
+    this.updateErrorsList,
     this.defaultReaderMode = ReaderMode.vertical,
     this.personalReaderModeList,
     this.animatePageTransitions = true,
@@ -614,6 +618,11 @@ class Settings {
     if (json['cookiesList'] != null) {
       cookiesList = (json['cookiesList'] as List)
           .map((e) => MCookie.fromJson(e))
+          .toList();
+    }
+    if (json['updateErrorsList'] != null) {
+      updateErrorsList = (json['updateErrorsList'] as List)
+          .map((e) => UpdateError.fromJson(e))
           .toList();
     }
     cropBorders = json['cropBorders'];
@@ -897,6 +906,7 @@ class Settings {
     'checkForAppUpdates': checkForAppUpdates,
     'checkForExtensionUpdates': checkForExtensionUpdates,
     'cookiesList': cookiesList,
+    'updateErrorsList': updateErrorsList,
     'cropBorders': cropBorders,
     'dateFormat': dateFormat,
     'defaultReaderMode': defaultReaderMode.index,
@@ -1103,6 +1113,23 @@ enum ScaleType {
 }
 
 enum BackgroundColor { black, grey, white, automatic }
+
+@embedded
+class UpdateError {
+  int mangaId;
+  String name;
+  String error;
+  UpdateError({this.mangaId = 0, this.name = '', this.error = ''});
+  UpdateError.fromJson(Map<String, dynamic> json)
+    : mangaId = json['mangaId'] ?? 0,
+      name = json['name'] ?? '',
+      error = json['error'] ?? '';
+  Map<String, dynamic> toJson() => {
+    'mangaId': mangaId,
+    'name': name,
+    'error': error,
+  };
+}
 
 @embedded
 class MCookie {
