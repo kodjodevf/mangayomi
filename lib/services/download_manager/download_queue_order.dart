@@ -1,46 +1,31 @@
-import 'package:hive/hive.dart';
+import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/download.dart';
+import 'package:mangayomi/models/settings.dart';
 
-/// Persists the user's manual ordering of the download queue as a list of
-/// Download ids (which equal their chapter ids), highest priority first.
+/// The user's manual ordering of the download queue as a list of Download ids
+/// (which equal their chapter ids), highest priority first.
 ///
-/// Kept in Hive rather than as an Isar field so the queue can be reordered
-/// without a schema change. Ids missing from the saved order are treated as
-/// lowest priority (kept in their incoming id order, after the known ones).
-/// The box is opened once at startup (see [openBox]); when it isn't open the
-/// order is empty and the queue falls back to its natural (insertion) order.
+/// Stored on the Settings collection (`downloadQueueOrder`), alongside the rest
+/// of the app's preferences. Ids missing from the saved order are treated as
+/// lowest priority (kept in their incoming id order, after the known ones), so
+/// newly queued downloads slot in at the end until the user moves them.
 class DownloadQueueOrder {
-  static const _boxName = 'download_queue_prefs';
-  static const _orderKey = 'queue_order';
-
-  /// Opens the backing box. Called once during app startup.
-  static Future<void> openBox() async {
-    // Best-effort: an optional ordering store must never block startup.
-    try {
-      if (!Hive.isBoxOpen(_boxName)) {
-        await Hive.openBox(_boxName);
-      }
-    } catch (_) {}
-  }
-
   /// The saved priority order (Download ids), or an empty list if none.
-  static List<int> get order {
-    if (!Hive.isBoxOpen(_boxName)) return const [];
-    final raw = Hive.box(_boxName).get(_orderKey);
-    if (raw is List) return raw.whereType<int>().toList();
-    return const [];
-  }
+  static List<int> get order =>
+      isar.settings.getSync(227)?.downloadQueueOrder ?? const [];
 
-  /// Persists [ids] as the new priority order (best-effort if the box is open).
+  /// Persists [ids] as the new priority order.
   static void setOrder(List<int> ids) {
-    if (Hive.isBoxOpen(_boxName)) {
-      Hive.box(_boxName).put(_orderKey, ids);
-    }
+    isar.writeTxnSync(() {
+      final settings = isar.settings.getSync(227);
+      if (settings != null) {
+        isar.settings.putSync(settings..downloadQueueOrder = ids);
+      }
+    });
   }
 
   /// Returns [items] arranged by the saved manual order. Items whose id isn't
-  /// in the saved order come last, keeping their incoming id order, so newly
-  /// queued downloads slot in at the end until the user moves them.
+  /// in the saved order come last, keeping their incoming id order.
   static List<Download> sorted(List<Download> items) {
     final ord = order;
     if (ord.isEmpty) return items;
