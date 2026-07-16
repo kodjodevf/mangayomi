@@ -1,46 +1,14 @@
-import 'dart:convert';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive/hive.dart';
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/settings.dart';
 
-/// A single failed library-update entry, persisted so the user can review it
-/// (and migrate the entry away) after the update run has finished.
-class UpdateError {
-  final int mangaId;
-  final String name;
-  final String error;
+// UpdateError is an @embedded model on the Settings collection; re-export it so
+// existing call sites can keep importing it from this provider.
+export 'package:mangayomi/models/settings.dart' show UpdateError;
 
-  const UpdateError({
-    required this.mangaId,
-    required this.name,
-    required this.error,
-  });
-
-  Map<String, dynamic> toJson() => {
-    'mangaId': mangaId,
-    'name': name,
-    'error': error,
-  };
-
-  factory UpdateError.fromJson(Map<dynamic, dynamic> json) => UpdateError(
-    mangaId: json['mangaId'] as int,
-    name: (json['name'] ?? '') as String,
-    error: (json['error'] ?? '') as String,
-  );
-}
-
-const _boxName = 'update_errors';
-const _key = 'errors';
-
-/// Opens the backing box. Called once at startup (see main.dart).
-Future<void> openUpdateErrorsBox() async {
-  if (!Hive.isBoxOpen(_boxName)) {
-    await Hive.openBox(_boxName);
-  }
-}
-
-/// The last library update's failures, persisted across restarts so they can be
-/// reviewed on the [UpdateErrorsScreen] rather than only in a transient dialog.
+/// The last library update's failures, persisted on the Settings collection so
+/// they can be reviewed on the [UpdateErrorsScreen] rather than only in a
+/// transient dialog.
 final updateErrorsProvider =
     NotifierProvider<UpdateErrorsNotifier, List<UpdateError>>(
       UpdateErrorsNotifier.new,
@@ -48,21 +16,8 @@ final updateErrorsProvider =
 
 class UpdateErrorsNotifier extends Notifier<List<UpdateError>> {
   @override
-  List<UpdateError> build() => _read();
-
-  List<UpdateError> _read() {
-    if (Hive.isBoxOpen(_boxName)) {
-      final raw = Hive.box(_boxName).get(_key);
-      if (raw is String && raw.isNotEmpty) {
-        try {
-          return (jsonDecode(raw) as List)
-              .map((e) => UpdateError.fromJson(e as Map))
-              .toList();
-        } catch (_) {}
-      }
-    }
-    return [];
-  }
+  List<UpdateError> build() =>
+      isar.settings.getSync(227)?.updateErrorsList ?? const [];
 
   /// Replaces the stored failures with the latest update run's results.
   void set(List<UpdateError> errors) {
@@ -82,10 +37,11 @@ class UpdateErrorsNotifier extends Notifier<List<UpdateError>> {
   }
 
   void _persist() {
-    if (Hive.isBoxOpen(_boxName)) {
-      Hive.box(
-        _boxName,
-      ).put(_key, jsonEncode(state.map((e) => e.toJson()).toList()));
-    }
+    isar.writeTxnSync(() {
+      final settings = isar.settings.getSync(227);
+      if (settings != null) {
+        isar.settings.putSync(settings..updateErrorsList = [...state]);
+      }
+    });
   }
 }
