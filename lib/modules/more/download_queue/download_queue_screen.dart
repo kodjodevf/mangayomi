@@ -92,8 +92,10 @@ class _DownloadQueueScreenState extends ConsumerState<DownloadQueueScreen> {
           body: ReorderableListView.builder(
             buildDefaultDragHandles: false,
             itemCount: entries.length,
-            onReorder: (oldIndex, newIndex) {
-              if (newIndex > oldIndex) newIndex -= 1;
+            // onReorderItem already accounts for the item being lifted out at
+            // oldIndex, so newIndex arrives adjusted and must not be shifted
+            // again here.
+            onReorderItem: (oldIndex, newIndex) {
               final ids = entries.map((e) => e.id!).toList();
               final moved = ids.removeAt(oldIndex);
               ids.insert(newIndex, moved);
