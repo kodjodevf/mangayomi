@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/double_page_view.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_vertical.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
@@ -82,13 +81,17 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
 
   Set<int> _visibleIndices = {};
   Offset _doubleTapPosition = Offset.zero;
+  final Map<int, ValueNotifier<bool>> _isVisibleNotifiers = {};
 
   @override
   void initState() {
     super.initState();
+    final doubleTapAnimationValue = ref.read(
+      doubleTapAnimationSpeedStateProvider,
+    );
     _zoomAnimationController = AnimationController(
       vsync: this,
-      duration: _doubleTapAnimationDuration(),
+      duration: _durationForSpeed(doubleTapAnimationValue),
     );
     _zoomAnimationController.addListener(() {
       final t = _zoomAnimationController.value;
@@ -103,19 +106,21 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
           _animFocalPointX -
           (_animFocalPointX - _animStartOffsetDx) *
               (currentScale / _animStartScale);
+      final targetDxVal = targetDx;
       final targetDy =
           _animFocalPointY -
           (_animFocalPointY - _animStartOffsetDy) *
               (currentScale / _animStartScale);
+      final targetDyVal = targetDy;
 
       final maxDx = (screenWidth * (currentScale - 1)) / 2;
       final maxDy = (screenHeight * (currentScale - 1)) / 2;
 
       final clampedDx = currentScale > 1.0
-          ? targetDx.clamp(-maxDx, maxDx)
+          ? targetDxVal.clamp(-maxDx, maxDx)
           : 0.0;
       final clampedDy = currentScale > 1.0
-          ? targetDy.clamp(-maxDy, maxDy)
+          ? targetDyVal.clamp(-maxDy, maxDy)
           : 0.0;
 
       setState(() {
@@ -132,14 +137,19 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
     });
   }
 
-  Duration _doubleTapAnimationDuration() {
-    final doubleTapAnimationValue =
-        isar.settings.getSync(227)?.doubleTapAnimationSpeed ?? 1;
-    return switch (doubleTapAnimationValue) {
+  Duration _durationForSpeed(int speed) {
+    return switch (speed) {
       0 => const Duration(milliseconds: 10),
       1 => const Duration(milliseconds: 800),
       _ => const Duration(milliseconds: 200),
     };
+  }
+
+  Duration _doubleTapAnimationDuration() {
+    final doubleTapAnimationValue = ref.read(
+      doubleTapAnimationSpeedStateProvider,
+    );
+    return _durationForSpeed(doubleTapAnimationValue);
   }
 
   void _handleScaleStart(ScaleStartDetails details) {
@@ -298,6 +308,10 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
       setState(() {
         _visibleIndices = newVisible;
       });
+      // Propagate visibility updates in O(1) to cached notifiers
+      for (final index in _isVisibleNotifiers.keys) {
+        _isVisibleNotifiers[index]?.value = newVisible.contains(index);
+      }
     }
   }
 
@@ -307,6 +321,10 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
     widget.itemPositionsListener.itemPositions.removeListener(
       _updateVisibleIndices,
     );
+    for (final notifier in _isVisibleNotifiers.values) {
+      notifier.dispose();
+    }
+    _isVisibleNotifiers.clear();
     super.dispose();
   }
 
@@ -365,6 +383,11 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
     }
 
     final bool isVisible = _visibleIndices.contains(index);
+    final isVisibleNotifier = _isVisibleNotifiers.putIfAbsent(
+      index,
+      () => ValueNotifier<bool>(isVisible),
+    );
+    isVisibleNotifier.value = isVisible;
 
     final dualPageRotateToFit = ref.watch(dualPageRotateToFitStateProvider);
     final dualPageRotateToFitInvert = ref.watch(
@@ -387,7 +410,7 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
         failedToLoadImage: widget.onFailedToLoadImage,
         onLongPressData: widget.onLongPressData,
         isHorizontal: widget.isHorizontalContinuous,
-        isVisible: ValueNotifier<bool>(isVisible),
+        isVisible: isVisibleNotifier,
         rotation: rotation,
         onImageLoaded: (width, height) {
           widget.onImageLoaded?.call(index, width, height);

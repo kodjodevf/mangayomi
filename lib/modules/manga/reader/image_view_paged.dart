@@ -11,7 +11,6 @@ import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_pr
 import 'package:mangayomi/modules/manga/reader/subsampling_scale_image_view/subsampling_scale_image_view.dart'
     as ssiv;
 import 'package:mangayomi/utils/extensions/others.dart';
-import 'package:mangayomi/main.dart';
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
 
@@ -50,6 +49,7 @@ class _ImageViewPagedState extends ConsumerState<ImageViewPaged> {
   bool _hasLandscapeZoomed = false;
 
   String? _resolvedFilePath;
+  bool _isAnimated = false;
 
   @override
   void initState() {
@@ -57,6 +57,7 @@ class _ImageViewPagedState extends ConsumerState<ImageViewPaged> {
     widget.controller?.addListener(_onControllerChanged);
     _resolvedFilePath = widget.data.resolvedFilePath;
     _resolveFilePath();
+    _checkIfAnimated();
   }
 
   @override
@@ -66,13 +67,56 @@ class _ImageViewPagedState extends ConsumerState<ImageViewPaged> {
       oldWidget.controller?.removeListener(_onControllerChanged);
       widget.controller?.addListener(_onControllerChanged);
     }
-    if (widget.data != oldWidget.data) {
+    final bool dataChanged = widget.data != oldWidget.data;
+    final bool pathResolved = _resolvedFilePath != widget.data.resolvedFilePath;
+    if (dataChanged || pathResolved) {
       _hasLandscapeZoomed = false;
       _resolvedFilePath = widget.data.resolvedFilePath;
       _resolveFilePath();
+      _checkIfAnimated();
     }
     if (widget.isVisible && !oldWidget.isVisible) {
       _checkLandscapeZoom();
+    }
+  }
+
+  Future<void> _checkIfAnimated() async {
+    bool isAnimated = false;
+    final url = widget.data.pageUrl?.url.trim().toLowerCase() ?? '';
+    if (url.contains('.gif')) {
+      isAnimated = true;
+    } else if (widget.data.archiveImage != null &&
+        widget.data.archiveImage!.length > 3) {
+      final bytes = widget.data.archiveImage!;
+      if (bytes[0] == 0x47 && bytes[1] == 0x49 && bytes[2] == 0x46) {
+        isAnimated = true;
+      }
+    } else if (widget.data.directory != null && widget.data.index != null) {
+      try {
+        final file = File(
+          '${widget.data.directory!.path}/${padIndex(widget.data.index!)}.jpg',
+        );
+        if (await file.exists()) {
+          final raf = await file.open();
+          try {
+            final fBytes = await raf.read(3);
+            if (fBytes.length > 2 &&
+                fBytes[0] == 0x47 &&
+                fBytes[1] == 0x49 &&
+                fBytes[2] == 0x46) {
+              isAnimated = true;
+            }
+          } finally {
+            await raf.close();
+          }
+        }
+      } catch (_) {}
+    }
+
+    if (mounted && _isAnimated != isAnimated) {
+      setState(() {
+        _isAnimated = isAnimated;
+      });
     }
   }
 
@@ -175,8 +219,9 @@ class _ImageViewPagedState extends ConsumerState<ImageViewPaged> {
   }
 
   Duration _doubleTapAnimationDuration() {
-    final doubleTapAnimationValue =
-        isar.settings.getSync(227)?.doubleTapAnimationSpeed ?? 1;
+    final doubleTapAnimationValue = ref.read(
+      doubleTapAnimationSpeedStateProvider,
+    );
     return switch (doubleTapAnimationValue) {
       0 => const Duration(milliseconds: 10),
       1 => const Duration(milliseconds: 800),
@@ -256,40 +301,12 @@ class _ImageViewPagedState extends ConsumerState<ImageViewPaged> {
       _ => BoxFit.contain,
     };
 
-    // Détection de GIF animé pour contourner le visualiseur de tuiles statiques
-    bool isAnimated = false;
-    if (widget.data.archiveImage != null &&
-        widget.data.archiveImage!.length > 3) {
-      final bytes = widget.data.archiveImage!;
-      if (bytes[0] == 0x47 && bytes[1] == 0x49 && bytes[2] == 0x46) {
-        isAnimated = true;
-      }
+    if (_resolvedFilePath != widget.data.resolvedFilePath &&
+        widget.data.resolvedFilePath != null) {
+      _resolvedFilePath = widget.data.resolvedFilePath;
     }
-    final url = widget.data.pageUrl?.url.trim().toLowerCase() ?? '';
-    if (url.contains('.gif')) isAnimated = true;
-    if (!isAnimated &&
-        widget.data.directory != null &&
-        widget.data.index != null) {
-      try {
-        final file = File(
-          '${widget.data.directory!.path}/${padIndex(widget.data.index!)}.jpg',
-        );
-        if (file.existsSync()) {
-          final raf = file.openSync();
-          try {
-            final fBytes = raf.readSync(3);
-            if (fBytes.length > 2 &&
-                fBytes[0] == 0x47 &&
-                fBytes[1] == 0x49 &&
-                fBytes[2] == 0x46) {
-              isAnimated = true;
-            }
-          } finally {
-            raf.closeSync();
-          }
-        }
-      } catch (_) {}
-    }
+
+    final bool isAnimated = _isAnimated;
 
     if (_resolvedFilePath == null && !isAnimated) {
       final Color bg =

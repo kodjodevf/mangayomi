@@ -27,6 +27,7 @@ class Tile {
 class TilingEngine {
   Map<int, List<Tile>> tileMap = {};
   int fullImageSampleSize = 1;
+  List<int> sortedKeys = [];
 
   /// Initializes the tile grid for different sampleSizes (powers of 2)
   void initialiseTileMap({
@@ -42,6 +43,7 @@ class TilingEngine {
     dispose();
 
     tileMap = {};
+    sortedKeys = [];
     fullImageSampleSize = baseSampleSize;
     int sampleSize = fullImageSampleSize;
 
@@ -107,6 +109,7 @@ class TilingEngine {
         sampleSize = sampleSize ~/ 2;
       }
     }
+    sortedKeys = tileMap.keys.toList()..sort((a, b) => b.compareTo(a));
   }
 
   /// Updates visibility and loads/recycles tiles based on the viewport
@@ -132,19 +135,9 @@ class TilingEngine {
     final viewRect = ui.Rect.fromLTWH(0, 0, viewSize.width, viewSize.height);
 
     for (final entry in tileMap.entries) {
-      final _ = entry.key;
       final tiles = entry.value;
 
       for (final tile in tiles) {
-        // Recycles tiles that are too detailed or too blurry (which are not the base layer)
-        if (tile.sampleSize < targetSampleSize ||
-            (tile.sampleSize > targetSampleSize &&
-                tile.sampleSize != fullImageSampleSize)) {
-          tile.visible = false;
-          tile.dispose();
-          continue;
-        }
-
         if (tile.sampleSize == targetSampleSize) {
           // Checks if the tile overlaps the screen
           final tileViewRect = transformer.sourceToViewRect(tile.sRect);
@@ -155,14 +148,14 @@ class TilingEngine {
             if (!tile.loading && tile.image == null) {
               loadTileCallback(tile);
             }
-          } else if (tile.sampleSize != fullImageSampleSize) {
-            // Offscreen and not base layer -> recycle
+          } else {
             tile.visible = false;
             tile.dispose();
           }
-        } else if (tile.sampleSize == fullImageSampleSize) {
-          // The base layer always remains visible in the background
-          tile.visible = true;
+        } else {
+          // Disable blurry base layer fallback by making other sample sizes invisible
+          tile.visible = false;
+          tile.dispose();
         }
       }
     }
@@ -186,5 +179,6 @@ class TilingEngine {
       }
     }
     tileMap.clear();
+    sortedKeys.clear();
   }
 }

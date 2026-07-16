@@ -473,6 +473,7 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
   // Previous state for callbacks
   double _lastNotifiedScale = 0;
   ui.Offset _lastNotifiedCenter = ui.Offset.zero;
+  Timer? _resizeTimer;
 
   @override
   void initState() {
@@ -507,6 +508,7 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
 
   @override
   void dispose() {
+    _resizeTimer?.cancel();
     _cancelImageStream();
     widget.controller?._detach();
     _animationController.dispose();
@@ -524,7 +526,8 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
     }
 
     // Reloads if the provider or critical options change
-    final imageChanged = widget.image != oldWidget.image;
+    final imageChanged = widget.resolvedFilePath != oldWidget.resolvedFilePath ||
+        (widget.resolvedFilePath == null && widget.image != oldWidget.image);
     final cropChanged = widget.cropBorders != oldWidget.cropBorders;
     final scaleTypeChanged =
         widget.minimumScaleType != oldWidget.minimumScaleType ||
@@ -981,18 +984,7 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
     );
 
     _isInitialized = true;
-    _loadState = LoadState.completed;
-    setState(() {});
     _refreshTiles(load: true);
-
-    _notifyStateChanged();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        widget.onReady?.call();
-        widget.onImageLoaded?.call(_sWidth, _sHeight);
-      }
-    });
   }
 
   // ── Scale and Type Calculations ────────────────────────────────────────────
@@ -1203,6 +1195,12 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
               setState(() {
                 tile.image = img;
                 tile.loading = false;
+                if (_loadState != LoadState.completed) {
+                  _loadState = LoadState.completed;
+                  _notifyStateChanged();
+                  widget.onReady?.call();
+                  widget.onImageLoaded?.call(_sWidth, _sHeight);
+                }
               });
               _refreshTiles(load: true);
             },
@@ -1427,7 +1425,8 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
 
         if (_viewSize.width != newWidth || _viewSize.height != newHeight) {
           _viewSize = ui.Size(newWidth, newHeight);
-          WidgetsBinding.instance.addPostFrameCallback((_) {
+          _resizeTimer?.cancel();
+          _resizeTimer = Timer(const Duration(milliseconds: 150), () {
             if (!mounted) return;
             if (_sWidth > 0 && _sHeight > 0) {
               _setupInitialViewState();
