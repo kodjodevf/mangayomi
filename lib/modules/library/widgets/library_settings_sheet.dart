@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
+import 'package:mangayomi/modules/library/providers/library_source_badge_provider.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_sort_list_tile_widget.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
@@ -291,6 +292,7 @@ class _DisplayTab extends ConsumerWidget {
     final localSource = ref.watch(
       libraryLocalSourceStateProvider(itemType: itemType, settings: settings),
     );
+    final sourceBadge = ref.watch(librarySourceBadgeProvider);
     return SingleChildScrollView(
       physics: const NeverScrollableScrollPhysics(),
       child: Column(
@@ -385,6 +387,15 @@ class _DisplayTab extends ConsumerWidget {
                           ).notifier,
                         )
                         .set(!language);
+                  },
+                ),
+                ListTileChapterFilter(
+                  label: 'Source',
+                  type: sourceBadge ? 1 : 0,
+                  onTap: () {
+                    ref
+                        .read(librarySourceBadgeProvider.notifier)
+                        .set(!sourceBadge);
                   },
                 ),
                 ListTileChapterFilter(

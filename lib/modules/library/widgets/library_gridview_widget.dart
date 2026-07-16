@@ -16,6 +16,7 @@ class LibraryGridViewWidget extends StatefulWidget {
   final Set<int> mangaIdsList;
   final List<Manga> entriesManga;
   final bool language;
+  final bool sourceBadge;
   final bool downloadedChapter;
   final bool continueReaderBtn;
   final bool localSource;
@@ -26,6 +27,7 @@ class LibraryGridViewWidget extends StatefulWidget {
     required this.isCoverOnlyGrid,
     this.isComfortableGrid = false,
     required this.language,
+    this.sourceBadge = false,
     required this.downloadedChapter,
     required this.continueReaderBtn,
     required this.mangaIdsList,
@@ -153,6 +155,35 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                       child: Padding(
                         padding: const EdgeInsets.all(9),
                         child: ContinueReaderButton(entry: entry),
+                      ),
+                    ),
+
+                  // ── Bottom-left: Source ──
+                  if (widget.sourceBadge && (entry.source ?? '').isNotEmpty)
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(5),
+                        child: Container(
+                          constraints: const BoxConstraints(maxWidth: 96),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 4,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: context.themeData.cardColor,
+                            borderRadius: const BorderRadius.only(
+                              topRight: Radius.circular(3),
+                            ),
+                          ),
+                          child: Text(
+                            entry.source!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 10),
+                          ),
+                        ),
                       ),
                     ),
                 ],

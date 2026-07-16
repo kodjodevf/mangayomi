@@ -4,6 +4,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/providers/isar_providers.dart';
 import 'package:mangayomi/modules/library/providers/library_filter_provider.dart';
+import 'package:mangayomi/modules/library/providers/library_source_badge_provider.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/modules/library/widgets/library_gridview_widget.dart';
 import 'package:mangayomi/modules/library/widgets/library_listview_widget.dart';
@@ -70,6 +71,7 @@ class LibraryBody extends ConsumerWidget {
         )
         .index;
     final mangaIdsList = ref.watch(mangasListStateProvider);
+    final sourceBadge = ref.watch(librarySourceBadgeProvider);
 
     // Choose the right data stream based on whether this is a category tab
     final mangaStream = withoutCategories
@@ -132,6 +134,7 @@ class LibraryBody extends ConsumerWidget {
                   continueReaderBtn: continueReaderBtn,
                   downloadedChapter: downloadedChapter,
                   language: language,
+                  sourceBadge: sourceBadge,
                   mangaIdsList: mangaIdsList,
                   localSource: localSource,
                   itemType: itemType,

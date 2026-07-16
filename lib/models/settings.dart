@@ -357,6 +357,9 @@ class Settings {
 
   bool? showNSFW;
 
+  /// Show a small source badge on library covers. Off by default.
+  bool? showSourceBadge;
+
   double? ttsSpeechRate;
 
   double? ttsPitch;
@@ -547,6 +550,7 @@ class Settings {
     this.readerNavigationLayout = 0,
     this.backupCompressionLevel,
     this.showNSFW = false,
+    this.showSourceBadge = false,
     this.ttsSpeechRate = 0.5,
     this.ttsPitch = 1.0,
     this.ttsLanguage,
@@ -853,6 +857,7 @@ class Settings {
     readerNavigationLayout = json['readerNavigationLayout'];
     backupCompressionLevel = json['backupCompressionLevel'];
     showNSFW = json['showNSFW'];
+    showSourceBadge = json['showSourceBadge'];
     ttsSpeechRate = json['ttsSpeechRate']?.toDouble();
     ttsPitch = json['ttsPitch']?.toDouble();
     ttsLanguage = json['ttsLanguage'];
@@ -1061,6 +1066,7 @@ class Settings {
     'readerNavigationLayout': readerNavigationLayout,
     'backupCompressionLevel': backupCompressionLevel,
     'showNSFW': showNSFW,
+    'showSourceBadge': showSourceBadge,
     'ttsSpeechRate': ttsSpeechRate,
     'ttsPitch': ttsPitch,
     'ttsLanguage': ttsLanguage,
