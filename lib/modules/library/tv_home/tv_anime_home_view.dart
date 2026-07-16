@@ -73,7 +73,10 @@ SliverGridDelegate _gridDelegate(int gridSize) => gridSize <= 0
 /// The episode to resume for [manga] - the last from watch history, else the
 /// first chapter.
 Chapter? _resumeChapter(Manga manga) {
-  final history = isar.historys.filter().mangaIdEqualTo(manga.id!).findAllSync();
+  final history = isar.historys
+      .filter()
+      .mangaIdEqualTo(manga.id!)
+      .findAllSync();
   if (history.isNotEmpty) {
     history.first.chapter.loadSync();
     final ch = history.first.chapter.value;
@@ -326,7 +329,9 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
           final updatedIds =
               (ref
                           .watch(
-                            getAllUpdateStreamProvider(itemType: ItemType.anime),
+                            getAllUpdateStreamProvider(
+                              itemType: ItemType.anime,
+                            ),
                           )
                           .asData
                           ?.value ??
@@ -429,7 +434,10 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
           } else if (selectedId == null) {
             order.add(_scopeHero);
             final rows = <Widget>[
-              FocusScope(node: _scopeHero, child: _TvHomeHero(items: heroItems)),
+              FocusScope(
+                node: _scopeHero,
+                child: _TvHomeHero(items: heroItems),
+              ),
             ];
             var ri = 0;
             void addRow(String title, List<Manga> items) {
@@ -476,10 +484,7 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
             // Category view: a Continue Watching row scoped to *this* category,
             // then the category's full grid.
             final catName = cats
-                .firstWhere(
-                  (c) => c.id == selectedId,
-                  orElse: () => cats.first,
-                )
+                .firstWhere((c) => c.id == selectedId, orElse: () => cats.first)
                 .name;
             final inCat = entries
                 .where(
@@ -487,10 +492,9 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
                 )
                 .toList();
             final catContinue =
-                inCat.where((m) => historyIds.contains(m.id)).toList()
-                  ..sort(
-                    (a, b) => (b.lastRead ?? 0).compareTo(a.lastRead ?? 0),
-                  );
+                inCat.where((m) => historyIds.contains(m.id)).toList()..sort(
+                  (a, b) => (b.lastRead ?? 0).compareTo(a.lastRead ?? 0),
+                );
             // Same hero rule as All: what you'd resume, else what you added
             // last - never "whatever the sort tab happens to put first".
             final catRecent = [...inCat]
@@ -606,10 +610,7 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
                               gradient: LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
-                                colors: [
-                                  pageBg,
-                                  pageBg.withValues(alpha: 0),
-                                ],
+                                colors: [pageBg, pageBg.withValues(alpha: 0)],
                               ),
                             ),
                           ),
@@ -659,8 +660,7 @@ class _TvHomeTopBar extends StatelessWidget {
                     event.logicalKey == LogicalKeyboardKey.arrowRight) {
                   final sel = controller.selection;
                   final atEnd =
-                      !sel.isValid ||
-                      sel.baseOffset >= controller.text.length;
+                      !sel.isValid || sel.baseOffset >= controller.text.length;
                   if (atEnd) {
                     FocusScope.of(
                       context,
@@ -678,28 +678,28 @@ class _TvHomeTopBar extends StatelessWidget {
                   context,
                 ).focusInDirection(TraversalDirection.down),
                 decoration: InputDecoration(
-                isDense: true,
-                filled: true,
-                hintText: 'Search your anime',
-                prefixIcon: const Icon(Icons.search, size: 20),
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                  horizontal: 12,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(26),
-                  borderSide: BorderSide.none,
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(26),
-                  borderSide: BorderSide(color: accent, width: 2),
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(26),
-                  borderSide: BorderSide.none,
+                  isDense: true,
+                  filled: true,
+                  hintText: 'Search your anime',
+                  prefixIcon: const Icon(Icons.search, size: 20),
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 12,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(26),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(26),
+                    borderSide: BorderSide(color: accent, width: 2),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(26),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
               ),
-            ),
             ),
           ),
           const SizedBox(width: 12),
@@ -1138,6 +1138,8 @@ class _HeroContinueButtonState extends State<_HeroContinueButton> {
 
   @override
   Widget build(BuildContext context) {
+    // Matrix4.scale is deprecated in favour of the explicit per-axis form.
+    final pop = _focused ? 1.05 : 1.0;
     final accent = context.primaryColor;
     return Focus(
       // Entry focus lives on the "All" pill; the hero must not steal it when
@@ -1168,7 +1170,7 @@ class _HeroContinueButtonState extends State<_HeroContinueButton> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 130),
           curve: Curves.easeOut,
-          transform: Matrix4.identity()..scale(_focused ? 1.05 : 1.0),
+          transform: Matrix4.identity()..scaleByDouble(pop, pop, pop, 1),
           transformAlignment: Alignment.center,
           padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
           decoration: BoxDecoration(
@@ -1381,6 +1383,8 @@ class _PillState extends State<_Pill> {
 
   @override
   Widget build(BuildContext context) {
+    // Matrix4.scale is deprecated in favour of the explicit per-axis form.
+    final pop = _focused ? 1.08 : 1.0;
     final accent = context.primaryColor;
     final bg = _focused
         ? accent
@@ -1445,7 +1449,7 @@ class _PillState extends State<_Pill> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 130),
           curve: Curves.easeOut,
-          transform: Matrix4.identity()..scale(_focused ? 1.08 : 1.0),
+          transform: Matrix4.identity()..scaleByDouble(pop, pop, pop, 1),
           transformAlignment: Alignment.center,
           padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
           decoration: BoxDecoration(

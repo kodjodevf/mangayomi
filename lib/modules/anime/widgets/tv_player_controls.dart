@@ -992,15 +992,10 @@ class _TrackPillState extends State<_TrackPill> {
 
 /// A focusable seek bar: Left/Right seek a small fixed amount; Up/Down escape.
 class _TvSeekBar extends StatefulWidget {
-  const _TvSeekBar({
-    required this.player,
-    required this.accent,
-    this.focusNode,
-  });
+  const _TvSeekBar({required this.player, required this.accent});
 
   final Player player;
   final Color accent;
-  final FocusNode? focusNode;
 
   @override
   State<_TvSeekBar> createState() => _TvSeekBarState();
@@ -1012,7 +1007,7 @@ class _TvSeekBarState extends State<_TvSeekBar> {
   // Own a node when the parent doesn't supply one, so a mouse click can focus
   // the bar (and hand keyboard seeking over to it) on desktop.
   FocusNode? _ownNode;
-  FocusNode get _node => widget.focusNode ?? (_ownNode ??= FocusNode());
+  FocusNode get _node => _ownNode ??= FocusNode();
 
   @override
   void dispose() {

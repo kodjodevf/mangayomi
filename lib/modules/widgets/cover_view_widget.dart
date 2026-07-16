@@ -90,6 +90,8 @@ class _CoverViewWidgetState extends State<CoverViewWidget> {
     // placed inside the card. Render it once, and only when provided.
     final showBottomText =
         widget.isComfortableGrid && widget.bottomTextWidget != null;
+    // Matrix4.scale is deprecated in favour of the explicit per-axis form.
+    final pop = _focused ? 1.06 : 1.0;
     return Padding(
       padding: const EdgeInsets.all(5),
       child: Column(
@@ -99,7 +101,7 @@ class _CoverViewWidgetState extends State<CoverViewWidget> {
               duration: const Duration(milliseconds: 130),
               curve: Curves.easeOut,
               // Focus "pop" - the focused cover lifts slightly, TV-style.
-              transform: Matrix4.identity()..scale(_focused ? 1.06 : 1.0),
+              transform: Matrix4.identity()..scaleByDouble(pop, pop, pop, 1),
               transformAlignment: Alignment.center,
               decoration: BoxDecoration(
                 // Outer radius = inner clip radius (5) + border width (3) so the
