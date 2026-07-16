@@ -90,35 +90,41 @@ void main(List<String> args) async {
         return true; // handled — prevent app termination
       };
 
-      MediaKit.ensureInitialized();
-      await RustLib.init();
-      await getIsolateService.start();
-      await ffiImageDecoder.start();
-      if (!isMobile) {
-        await windowManager.ensureInitialized();
-        await WindowGeometry.restore();
-      }
-      if (Platform.isWindows) {
-        registerProtocolHandler("mangayomi");
-      }
-      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
-        final availableVersion = await WebViewEnvironment.getAvailableVersion();
-        if (availableVersion != null) {
-          final document = await getApplicationDocumentsDirectory();
-          webViewEnvironment = await WebViewEnvironment.create(
-            settings: WebViewEnvironmentSettings(
-              userDataFolder: p.join(document.path, 'flutter_inappwebview'),
-            ),
-          );
-        }
-      }
       final storage = StorageProvider();
-      await storage.requestPermission();
       Object? startupError;
+      // Guard the whole pre-runApp init, not just the database. A failure in
+      // any of these steps (native rust bridge, background isolates, window
+      // manager, WebView env, database) used to escape main() before runApp()
+      // and leave a blank, unresponsive window. Catching here guarantees
+      // runApp() is always reached so the user sees the error instead.
       try {
+        MediaKit.ensureInitialized();
+        await RustLib.init();
+        await getIsolateService.start();
+        await ffiImageDecoder.start();
+        if (!isMobile) {
+          await windowManager.ensureInitialized();
+          await WindowGeometry.restore();
+        }
+        if (Platform.isWindows) {
+          registerProtocolHandler("mangayomi");
+        }
+        if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
+          final availableVersion =
+              await WebViewEnvironment.getAvailableVersion();
+          if (availableVersion != null) {
+            final document = await getApplicationDocumentsDirectory();
+            webViewEnvironment = await WebViewEnvironment.create(
+              settings: WebViewEnvironmentSettings(
+                userDataFolder: p.join(document.path, 'flutter_inappwebview'),
+              ),
+            );
+          }
+        }
+        await storage.requestPermission();
         isar = await storage.initDB(null, inspector: kDebugMode);
       } catch (e, st) {
-        AppLogger.log('DB init failed: $e\n$st', logLevel: LogLevel.error);
+        AppLogger.log('Startup init failed: $e\n$st', logLevel: LogLevel.error);
         startupError = e;
       }
       runApp(
@@ -141,12 +147,25 @@ class _StartupErrorApp extends StatelessWidget {
   final String error;
   const _StartupErrorApp({required this.error});
 
+  /// True when the database failed to open because its directory lives on an
+  /// NFS-exported (MNT_EXPORTED) filesystem. libmdbx (used by Isar) refuses to
+  /// open there and returns `MdbxError (15): Block device required`. This is a
+  /// libmdbx limitation, not something Mangayomi can work around in-app, so we
+  /// surface the cause + fix instead of just the raw code. See issue #652.
+  bool get _isExportedFsError {
+    final e = error.toLowerCase();
+    return e.contains('mdbxerror') &&
+        (e.contains('block device required') ||
+            e.contains('mdbxerror (15)') ||
+            e.contains('mnt_exported'));
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         body: Center(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -158,6 +177,20 @@ class _StartupErrorApp extends StatelessWidget {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
+                if (_isExportedFsError) ...[
+                  const Text(
+                    "The database can't be opened because its data folder is on "
+                    "a filesystem exported over NFS (MNT_EXPORTED). This is a "
+                    "limitation of the underlying database (libmdbx), not "
+                    "Mangayomi.\n\n"
+                    "To fix it, stop exporting that location over NFS and "
+                    "relaunch. On macOS this usually means removing the entry "
+                    "from /etc/exports and running `sudo nfsd disable`.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 13),
+                  ),
+                  const SizedBox(height: 12),
+                ],
                 SelectableText(
                   error,
                   style: const TextStyle(fontFamily: 'monospace', fontSize: 12),

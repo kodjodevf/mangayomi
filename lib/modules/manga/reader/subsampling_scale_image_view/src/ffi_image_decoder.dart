@@ -124,7 +124,15 @@ class FfiImageDecoder {
       }
     });
 
-    _sendPort = await completer.future;
+    // Bound the isolate handshake so a failure inside the isolate entry point
+    // (e.g. a missing or mismatched native library) cannot hang the await
+    // forever. start() runs before runApp(), so that hang surfaces as a blank,
+    // unresponsive window rather than an error the user can act on.
+    _sendPort = await completer.future.timeout(
+      const Duration(seconds: 5),
+      onTimeout: () =>
+          throw StateError('FFI image decoder isolate handshake timed out'),
+    );
     _isRunning = true;
   }
 
@@ -502,10 +510,10 @@ class FfiImageDecoder {
   }
 
   Future<void> stop() async {
-    if (!_isRunning) {
-      return;
-    }
-
+    // No `_isRunning` guard: a failed handshake (e.g. the 5s timeout above)
+    // throws before `_isRunning` is set, so this must still tear down the
+    // spawned isolate and ReceivePort instead of leaking them. Every call
+    // below is null-safe, so a no-op stop stays harmless.
     _sendPort?.send('dispose');
     _cIsolate?.kill(priority: Isolate.immediate);
     _receivePort?.close();
