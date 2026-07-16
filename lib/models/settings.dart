@@ -384,6 +384,13 @@ class Settings {
   bool? webtoonDoubleTapZoomEnabled;
   int? readerHideThreshold;
 
+  // Android TV preferences (null = follow the default). See #729.
+  bool? autoPlayNextEpisode;
+  bool? tvAnimeOnlyOverride;
+  bool? tvPlayerStyle;
+  bool? tvHomeStyle;
+  bool? tvHomeGenreRows;
+
   Settings({
     this.id = 227,
     this.updatedAt = 0,
@@ -568,6 +575,11 @@ class Settings {
     this.webtoonDisableZoomOut = false,
     this.webtoonDoubleTapZoomEnabled = true,
     this.readerHideThreshold = 1,
+    this.autoPlayNextEpisode,
+    this.tvAnimeOnlyOverride,
+    this.tvPlayerStyle,
+    this.tvHomeStyle,
+    this.tvHomeGenreRows,
   });
 
   Settings.fromJson(Map<String, dynamic> json) {
@@ -874,6 +886,11 @@ class Settings {
     webtoonDisableZoomOut = json['webtoonDisableZoomOut'];
     webtoonDoubleTapZoomEnabled = json['webtoonDoubleTapZoomEnabled'];
     readerHideThreshold = json['readerHideThreshold'];
+    autoPlayNextEpisode = json['autoPlayNextEpisode'];
+    tvAnimeOnlyOverride = json['tvAnimeOnlyOverride'];
+    tvPlayerStyle = json['tvPlayerStyle'];
+    tvHomeStyle = json['tvHomeStyle'];
+    tvHomeGenreRows = json['tvHomeGenreRows'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -1082,6 +1099,11 @@ class Settings {
     'webtoonDisableZoomOut': webtoonDisableZoomOut,
     'webtoonDoubleTapZoomEnabled': webtoonDoubleTapZoomEnabled,
     'readerHideThreshold': readerHideThreshold,
+    'autoPlayNextEpisode': autoPlayNextEpisode,
+    'tvAnimeOnlyOverride': tvAnimeOnlyOverride,
+    'tvPlayerStyle': tvPlayerStyle,
+    'tvHomeStyle': tvHomeStyle,
+    'tvHomeGenreRows': tvHomeGenreRows,
   };
 }
 

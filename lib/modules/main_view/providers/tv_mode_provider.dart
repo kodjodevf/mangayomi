@@ -1,21 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive/hive.dart';
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
-/// Hive box + key for the user's explicit anime-only-layout override.
-/// A stored `bool` forces it on/off; absent means "auto" (follow [isTv]).
-const _boxName = 'tv_prefs';
-const _overrideKey = 'anime_only_override';
-const _playerStyleKey = 'tv_player_style';
-const _homeStyleKey = 'tv_home_style';
-const _genreRowsKey = 'tv_home_genre_rows';
-
-/// Opens the backing box. Called once at startup.
-Future<void> openTvPrefsBox() async {
-  if (!Hive.isBoxOpen(_boxName)) {
-    await Hive.openBox(_boxName);
-  }
-}
+// Android TV preferences, stored on the Settings collection. A null field means
+// "auto" (follow the default below); a stored bool is an explicit override.
 
 /// Whether to show the anime-only TV layout (manga + novel libraries hidden,
 /// anime-first). Defaults to [isTv] - i.e. on for Android TV, off everywhere
@@ -27,45 +16,29 @@ final animeOnlyTvModeProvider = NotifierProvider<AnimeOnlyTvMode, bool>(
 
 class AnimeOnlyTvMode extends Notifier<bool> {
   @override
-  bool build() {
-    if (Hive.isBoxOpen(_boxName)) {
-      final override = Hive.box(_boxName).get(_overrideKey);
-      if (override is bool) return override;
-    }
-    return isTv;
-  }
+  bool build() => isar.settings.getSync(227)?.tvAnimeOnlyOverride ?? isTv;
 
   /// Explicitly turns the anime-only layout on/off and persists the choice.
   void set(bool value) {
     state = value;
-    if (Hive.isBoxOpen(_boxName)) {
-      Hive.box(_boxName).put(_overrideKey, value);
-    }
+    _writeTvPref((s) => s.tvAnimeOnlyOverride = value);
   }
 }
 
-/// Which controls to use for the anime player on TV: `true` = the dedicated
-/// dedicated TV player (default), `false` = the original desktop player.
-/// Only consulted when [isTv]; phones/desktops are unaffected.
+/// Which controls to use for the anime player on TV: `true` = the dedicated TV
+/// player (default), `false` = the original desktop player. Only consulted when
+/// [isTv]; phones/desktops are unaffected.
 final tvPlayerStyleProvider = NotifierProvider<TvPlayerStyle, bool>(
   TvPlayerStyle.new,
 );
 
 class TvPlayerStyle extends Notifier<bool> {
   @override
-  bool build() {
-    if (Hive.isBoxOpen(_boxName)) {
-      final v = Hive.box(_boxName).get(_playerStyleKey);
-      if (v is bool) return v;
-    }
-    return true; // default: TV player
-  }
+  bool build() => isar.settings.getSync(227)?.tvPlayerStyle ?? true;
 
   void set(bool value) {
     state = value;
-    if (Hive.isBoxOpen(_boxName)) {
-      Hive.box(_boxName).put(_playerStyleKey, value);
-    }
+    _writeTvPref((s) => s.tvPlayerStyle = value);
   }
 }
 
@@ -79,19 +52,11 @@ final tvHomeStyleProvider = NotifierProvider<TvHomeStyle, bool>(
 
 class TvHomeStyle extends Notifier<bool> {
   @override
-  bool build() {
-    if (Hive.isBoxOpen(_boxName)) {
-      final v = Hive.box(_boxName).get(_homeStyleKey);
-      if (v is bool) return v;
-    }
-    return isTv; // default: rows home on TV, grid everywhere else
-  }
+  bool build() => isar.settings.getSync(227)?.tvHomeStyle ?? isTv;
 
   void set(bool value) {
     state = value;
-    if (Hive.isBoxOpen(_boxName)) {
-      Hive.box(_boxName).put(_homeStyleKey, value);
-    }
+    _writeTvPref((s) => s.tvHomeStyle = value);
   }
 }
 
@@ -104,18 +69,21 @@ final tvHomeGenreRowsProvider = NotifierProvider<TvHomeGenreRows, bool>(
 
 class TvHomeGenreRows extends Notifier<bool> {
   @override
-  bool build() {
-    if (Hive.isBoxOpen(_boxName)) {
-      final v = Hive.box(_boxName).get(_genreRowsKey);
-      if (v is bool) return v;
-    }
-    return true;
-  }
+  bool build() => isar.settings.getSync(227)?.tvHomeGenreRows ?? true;
 
   void set(bool value) {
     state = value;
-    if (Hive.isBoxOpen(_boxName)) {
-      Hive.box(_boxName).put(_genreRowsKey, value);
-    }
+    _writeTvPref((s) => s.tvHomeGenreRows = value);
   }
+}
+
+/// Applies [mutate] to the Settings singleton and persists it.
+void _writeTvPref(void Function(Settings) mutate) {
+  isar.writeTxnSync(() {
+    final settings = isar.settings.getSync(227);
+    if (settings != null) {
+      mutate(settings);
+      isar.settings.putSync(settings);
+    }
+  });
 }
