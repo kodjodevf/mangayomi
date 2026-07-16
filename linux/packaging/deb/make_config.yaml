@@ -12,7 +12,7 @@ section: x11
 
 installed_size: 109400
 
-depencencies:
+dependencies:
   - libwebkit2gtk-4.1-0
   - libmpv2
 
