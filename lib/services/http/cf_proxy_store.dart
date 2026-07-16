@@ -1,37 +1,22 @@
-import 'package:hive/hive.dart';
+import 'package:mangayomi/main.dart';
+import 'package:mangayomi/models/settings.dart';
 
-/// Persists the URL of an external Cloudflare-bypass proxy
-/// (FlareSolverr / Byparr), e.g. `http://localhost:8191/v1`.
+/// Accessor for the external Cloudflare-bypass proxy URL (FlareSolverr /
+/// Byparr), e.g. `http://localhost:8191/v1`.
 ///
-/// Stored in Hive rather than the Isar `Settings` collection so the feature
-/// needs no generated schema field. The box is opened once at startup (see
-/// [openBox]); reads return an empty string when it isn't open (e.g. a
-/// background isolate), which callers treat as "no proxy configured".
+/// Stored on the Settings collection (`cfProxyUrl`), alongside the rest of the
+/// app's preferences.
 class CfProxyStore {
-  static const _boxName = 'cf_prefs';
-  static const _urlKey = 'cf_proxy_url';
+  /// The saved proxy URL, or an empty string if none.
+  static String get url => isar.settings.getSync(227)?.cfProxyUrl ?? '';
 
-  /// Opens the backing box. Called once during app startup.
-  static Future<void> openBox() async {
-    // Best-effort: this is an optional preference store, so a failure to open
-    // (corruption, permissions, ...) must not block startup. Reads then fall
-    // back to "no proxy configured".
-    try {
-      if (!Hive.isBoxOpen(_boxName)) {
-        await Hive.openBox(_boxName);
-      }
-    } catch (_) {}
-  }
-
-  /// The saved proxy URL, or an empty string if none / box not open.
-  static String get url => Hive.isBoxOpen(_boxName)
-      ? (Hive.box(_boxName).get(_urlKey, defaultValue: '') as String)
-      : '';
-
-  /// Persists [value] as the proxy URL (best-effort if the box is open).
+  /// Persists [value] as the proxy URL.
   static void setUrl(String value) {
-    if (Hive.isBoxOpen(_boxName)) {
-      Hive.box(_boxName).put(_urlKey, value);
-    }
+    isar.writeTxnSync(() {
+      final settings = isar.settings.getSync(227);
+      if (settings != null) {
+        isar.settings.putSync(settings..cfProxyUrl = value);
+      }
+    });
   }
 }
