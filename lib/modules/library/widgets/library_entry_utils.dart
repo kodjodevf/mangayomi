@@ -144,3 +144,70 @@ class DownloadCountBadge extends ConsumerWidget {
     return EntryBadgeChip(label: count.toString());
   }
 }
+
+/// A unified badge widget that combines Local, Download, and Unread counts.
+/// Only renders a non-empty widget when there is actually something to display,
+/// resolving the "0 unread" empty badge container UX bug.
+class LibraryBadgeWidget extends ConsumerWidget {
+  final Manga entry;
+  final bool showLocal;
+  final bool showDownloaded;
+
+  const LibraryBadgeWidget({
+    super.key,
+    required this.entry,
+    required this.showLocal,
+    required this.showDownloaded,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isLocalArchive = entry.isLocalArchive ?? false;
+    final hasLocal = showLocal && isLocalArchive;
+
+    int downloadCount = 0;
+    if (showDownloaded) {
+      final downloadedIds =
+          ref.watch(downloadedChapterIdsProvider).asData?.value ?? const <int>{};
+      downloadCount = entry.chapters
+          .where((c) => c.id != null && downloadedIds.contains(c.id))
+          .length;
+    }
+
+    final unreadCount = entry.chapters.where((e) => !e.isRead!).length;
+
+    // If there is nothing to show (no local, no download, no unread), return empty
+    if (!hasLocal && downloadCount == 0 && unreadCount == 0) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(3),
+        color: context.primaryColor,
+      ),
+      padding: const EdgeInsets.only(right: 5),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (hasLocal)
+            const EntryBadgeChip(label: 'Local'),
+          if (downloadCount > 0)
+            EntryBadgeChip(label: downloadCount.toString()),
+          if (unreadCount > 0)
+            Padding(
+              padding: const EdgeInsets.only(left: 3),
+              child: Text(
+                unreadCount.toString(),
+                style: TextStyle(
+                  color: context.dynamicBlackWhiteColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 10,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}

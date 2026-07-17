@@ -52,7 +52,6 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
           itemCount: widget.entriesManga.length,
           itemBuilder: (context, index) {
             final entry = widget.entriesManga[index];
-            final isLocalArchive = entry.isLocalArchive ?? false;
 
             return Padding(
               padding: const EdgeInsets.all(2),
@@ -84,39 +83,10 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                         left: 0,
                         child: Padding(
                           padding: const EdgeInsets.all(5),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(3),
-                              color: context.primaryColor,
-                            ),
-                            child: Row(
-                              children: [
-                                if (widget.localSource && isLocalArchive)
-                                  const EntryBadgeChip(label: 'Local'),
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 5),
-                                  child: Row(
-                                    children: [
-                                      if (widget.downloadedChapter)
-                                        DownloadCountBadge(entry: entry),
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 3),
-                                        child: Text(
-                                          entry.chapters
-                                              .where((e) => !e.isRead!)
-                                              .length
-                                              .toString(),
-                                          style: TextStyle(
-                                            color:
-                                                context.dynamicBlackWhiteColor,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+                          child: LibraryBadgeWidget(
+                            entry: entry,
+                            showLocal: widget.localSource,
+                            showDownloaded: widget.downloadedChapter,
                           ),
                         ),
                       ),

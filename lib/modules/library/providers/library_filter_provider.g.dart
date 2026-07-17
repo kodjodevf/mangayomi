@@ -51,17 +51,18 @@ final class DownloadedChapterIdsProvider
 String _$downloadedChapterIdsHash() =>
     r'ff409df987e776e8c150e541c5aa48b1d5f9e9b9';
 
-/// Pre-fetches all manga IDs that have at least one tracking entry.
+/// Pre-fetches all manga IDs that have at least one tracking entry reactively.
 
 @ProviderFor(trackedMangaIds)
 final trackedMangaIdsProvider = TrackedMangaIdsProvider._();
 
-/// Pre-fetches all manga IDs that have at least one tracking entry.
+/// Pre-fetches all manga IDs that have at least one tracking entry reactively.
 
 final class TrackedMangaIdsProvider
-    extends $FunctionalProvider<Set<int>, Set<int>, Set<int>>
-    with $Provider<Set<int>> {
-  /// Pre-fetches all manga IDs that have at least one tracking entry.
+    extends
+        $FunctionalProvider<AsyncValue<Set<int>>, Set<int>, Stream<Set<int>>>
+    with $FutureModifier<Set<int>>, $StreamProvider<Set<int>> {
+  /// Pre-fetches all manga IDs that have at least one tracking entry reactively.
   TrackedMangaIdsProvider._()
     : super(
         from: null,
@@ -78,24 +79,16 @@ final class TrackedMangaIdsProvider
 
   @$internal
   @override
-  $ProviderElement<Set<int>> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $StreamProviderElement<Set<int>> $createElement($ProviderPointer pointer) =>
+      $StreamProviderElement(pointer);
 
   @override
-  Set<int> create(Ref ref) {
+  Stream<Set<int>> create(Ref ref) {
     return trackedMangaIds(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(Set<int> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<Set<int>>(value),
-    );
   }
 }
 
-String _$trackedMangaIdsHash() => r'8fd052ae3ff4e9fe47e66d5e24cd57233aa03d0a';
+String _$trackedMangaIdsHash() => r'7cdf57492a70d233907d543f3c1aadeca5dfad50';
 
 /// Filters and sorts a list of [Manga] based on library filter/sort settings.
 
@@ -200,7 +193,7 @@ final class FilteredLibraryMangaProvider
 }
 
 String _$filteredLibraryMangaHash() =>
-    r'17c6f370c3120277379c3bbb22c31a19ff028682';
+    r'c64376a2f8cca35ab10d0810f4bd7d56c2ac6efd';
 
 /// Filters and sorts a list of [Manga] based on library filter/sort settings.
 

@@ -91,9 +91,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     final categories = ref.watch(
       getMangaCategorieStreamProvider(itemType: widget.itemType),
     );
-    final withoutCategories = ref.watch(
-      getAllMangaWithoutCategoriesStreamProvider(itemType: widget.itemType),
-    );
     final downloadedOnly = ref.watch(downloadedOnlyStateProvider);
     final mangaAll = ref.watch(
       getAllMangaStreamProvider(categoryId: null, itemType: widget.itemType),
@@ -217,75 +214,72 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     return Scaffold(
       body: mangaAll.when(
         data: (man) {
-          return withoutCategories.when(
-            data: (withoutCategory) {
-              return categories.when(
-                data: (data) {
-                  // Get the number of items for the app bar
-                  final numberOfItemsList = ref.watch(
-                    filteredLibraryMangaProvider(
-                      data: man,
-                      downloadFilterType: downloadFilterType,
-                      unreadFilterType: unreadFilterType,
-                      startedFilterType: startedFilterType,
-                      bookmarkedFilterType: bookmarkedFilterType,
-                      completedFilterType: completedFilterType,
-                      trackingFilterType: trackingFilterType,
-                      sortType: sortType,
-                      downloadedOnly: downloadedOnly,
-                      searchQuery: searchQuery,
-                      ignoreFiltersOnSearch: _ignoreFiltersOnSearch,
-                    ),
-                  );
+          return categories.when(
+            data: (data) {
+              final withoutCategory = man
+                  .where((m) => m.categories == null || m.categories!.isEmpty)
+                  .toList();
+              // Get the number of items for the app bar
+              final numberOfItemsList = ref.watch(
+                filteredLibraryMangaProvider(
+                  data: man,
+                  downloadFilterType: downloadFilterType,
+                  unreadFilterType: unreadFilterType,
+                  startedFilterType: startedFilterType,
+                  bookmarkedFilterType: bookmarkedFilterType,
+                  completedFilterType: completedFilterType,
+                  trackingFilterType: trackingFilterType,
+                  sortType: sortType,
+                  downloadedOnly: downloadedOnly,
+                  searchQuery: searchQuery,
+                  ignoreFiltersOnSearch: _ignoreFiltersOnSearch,
+                ),
+              );
 
-                  if (data.isNotEmpty && showCategoryTabs) {
-                    return _buildWithCategories(
-                      data: data,
-                      withoutCategory: withoutCategory,
-                      settings: settings,
-                      showNumbersOfItems: showNumbersOfItems,
-                      isNotFiltering: isNotFiltering,
-                      numberOfItems: numberOfItemsList.length,
-                      bodyForCategory: bodyForCategory,
-                      badgeForCategory: badgeForCategory,
-                      downloadFilterType: downloadFilterType,
-                      downloadedOnly: downloadedOnly,
-                    );
-                  }
+              if (data.isNotEmpty && showCategoryTabs) {
+                return _buildWithCategories(
+                  data: data,
+                  withoutCategory: withoutCategory,
+                  settings: settings,
+                  showNumbersOfItems: showNumbersOfItems,
+                  isNotFiltering: isNotFiltering,
+                  numberOfItems: numberOfItemsList.length,
+                  bodyForCategory: bodyForCategory,
+                  badgeForCategory: badgeForCategory,
+                  downloadFilterType: downloadFilterType,
+                  downloadedOnly: downloadedOnly,
+                );
+              }
 
-                  return Scaffold(
-                    appBar: LibraryAppBar(
-                      itemType: widget.itemType,
-                      isNotFiltering: isNotFiltering,
-                      showNumbersOfItems: showNumbersOfItems,
-                      numberOfItems: numberOfItemsList.length,
-                      entries: _entries,
-                      isCategory: false,
-                      categoryId: null,
-                      settings: settings,
-                      isSearch: _isSearch,
-                      ignoreFiltersOnSearch: _ignoreFiltersOnSearch,
-                      textEditingController: _textEditingController,
-                      onSearchToggle: () =>
-                          setState(() => _isSearch = !_isSearch),
-                      onSearchClear: () {
-                        _searchDebounce?.cancel();
-                        _searchDebounce = Timer(
-                          const Duration(milliseconds: 300),
-                          () {
-                            if (mounted) setState(() {});
-                          },
-                        );
+              return Scaffold(
+                appBar: LibraryAppBar(
+                  itemType: widget.itemType,
+                  isNotFiltering: isNotFiltering,
+                  showNumbersOfItems: showNumbersOfItems,
+                  numberOfItems: numberOfItemsList.length,
+                  entries: _entries,
+                  isCategory: false,
+                  categoryId: null,
+                  settings: settings,
+                  isSearch: _isSearch,
+                  ignoreFiltersOnSearch: _ignoreFiltersOnSearch,
+                  textEditingController: _textEditingController,
+                  onSearchToggle: () =>
+                      setState(() => _isSearch = !_isSearch),
+                  onSearchClear: () {
+                    _searchDebounce?.cancel();
+                    _searchDebounce = Timer(
+                      const Duration(milliseconds: 300),
+                      () {
+                        if (mounted) setState(() {});
                       },
-                      onIgnoreFiltersChanged: (val) =>
-                          setState(() => _ignoreFiltersOnSearch = val),
-                      vsync: this,
-                    ),
-                    body: bodyForCategory(),
-                  );
-                },
-                error: (error, _) => ErrorText(error),
-                loading: () => const ProgressCenter(),
+                    );
+                  },
+                  onIgnoreFiltersChanged: (val) =>
+                      setState(() => _ignoreFiltersOnSearch = val),
+                  vsync: this,
+                ),
+                body: bodyForCategory(),
               );
             },
             error: (error, _) => ErrorText(error),
@@ -506,9 +500,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
 
   void _invalidateStreams() {
     ref.invalidate(
-      getAllMangaWithoutCategoriesStreamProvider(itemType: widget.itemType),
-    );
-    ref.invalidate(
       getAllMangaStreamProvider(categoryId: null, itemType: widget.itemType),
     );
   }
@@ -522,20 +513,25 @@ class _DefaultCategoryBadge extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mangas = ref.watch(
-      getAllMangaWithoutCategoriesStreamProvider(itemType: itemType),
+      getAllMangaStreamProvider(categoryId: null, itemType: itemType),
     );
     return mangas.when(
-      data: (data) => CircleAvatar(
-        backgroundColor: Theme.of(context).focusColor,
-        radius: 8,
-        child: Text(
-          data.length.toString(),
-          style: TextStyle(
-            fontSize: 10,
-            color: Theme.of(context).textTheme.bodySmall!.color,
+      data: (data) {
+        final count = data
+            .where((m) => m.categories == null || m.categories!.isEmpty)
+            .length;
+        return CircleAvatar(
+          backgroundColor: Theme.of(context).focusColor,
+          radius: 8,
+          child: Text(
+            count.toString(),
+            style: TextStyle(
+              fontSize: 10,
+              color: Theme.of(context).textTheme.bodySmall!.color,
+            ),
           ),
-        ),
-      ),
+        );
+      },
       error: (_, _) => const SizedBox.shrink(),
       loading: () => const SizedBox.shrink(),
     );

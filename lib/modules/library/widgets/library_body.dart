@@ -71,17 +71,24 @@ class LibraryBody extends ConsumerWidget {
         .index;
     final mangaIdsList = ref.watch(mangasListStateProvider);
 
-    // Choose the right data stream based on whether this is a category tab
-    final mangaStream = withoutCategories
-        ? ref.watch(
-            getAllMangaWithoutCategoriesStreamProvider(itemType: itemType),
-          )
-        : ref.watch(
-            getAllMangaStreamProvider(
-              categoryId: categoryId,
-              itemType: itemType,
-            ),
-          );
+    // Watch the global manga stream and filter by category in-memory,
+    // avoiding N+1 active Isar database stream connections.
+    final allMangaStream = ref.watch(
+      getAllMangaStreamProvider(categoryId: null, itemType: itemType),
+    );
+    final mangaStream = allMangaStream.whenData((allMangas) {
+      if (withoutCategories) {
+        return allMangas
+            .where((m) => m.categories == null || m.categories!.isEmpty)
+            .toList();
+      }
+      if (categoryId != null) {
+        return allMangas
+            .where((m) => m.categories?.contains(categoryId) ?? false)
+            .toList();
+      }
+      return allMangas;
+    });
 
     return mangaStream.when(
       data: (data) {
@@ -181,7 +188,7 @@ class CategoryBadge extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mangas = ref.watch(
-      getAllMangaStreamProvider(categoryId: categoryId, itemType: itemType),
+      getAllMangaStreamProvider(categoryId: null, itemType: itemType),
     );
     final sortType = ref
         .watch(
@@ -190,7 +197,10 @@ class CategoryBadge extends ConsumerWidget {
         .index;
 
     return mangas.when(
-      data: (data) {
+      data: (allMangas) {
+        final data = allMangas
+            .where((m) => m.categories?.contains(categoryId) ?? false)
+            .toList();
         final filtered = ref.watch(
           filteredLibraryMangaProvider(
             data: data,

@@ -17,11 +17,13 @@ Stream<Set<int>> downloadedChapterIds(Ref ref) {
       .map((list) => list.map((d) => d.id).whereType<int>().toSet());
 }
 
-/// Pre-fetches all manga IDs that have at least one tracking entry.
+/// Pre-fetches all manga IDs that have at least one tracking entry reactively.
 @riverpod
-Set<int> trackedMangaIds(Ref ref) {
-  final tracks = isar.tracks.where().findAllSync();
-  return tracks.map((t) => t.mangaId).whereType<int>().toSet();
+Stream<Set<int>> trackedMangaIds(Ref ref) {
+  return isar.tracks
+      .where()
+      .watch(fireImmediately: true)
+      .map((tracks) => tracks.map((t) => t.mangaId).whereType<int>().toSet());
 }
 
 /// Filters and sorts a list of [Manga] based on library filter/sort settings.
@@ -42,7 +44,8 @@ List<Manga> filteredLibraryManga(
 }) {
   final downloadedIds =
       ref.watch(downloadedChapterIdsProvider).asData?.value ?? const <int>{};
-  final trackedIds = ref.watch(trackedMangaIdsProvider);
+  final trackedIds =
+      ref.watch(trackedMangaIdsProvider).asData?.value ?? const <int>{};
 
   List<Manga> mangas;
 
