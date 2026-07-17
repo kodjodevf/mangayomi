@@ -77,12 +77,12 @@ class _HistoryScreenState extends BaseLibraryTabScreenState<HistoryScreen> {
   }
 
   Future<void> _clearHistory() async {
-    List<History> histories = await isar.historys
+    final List<Id> idsToDelete = await isar.historys
         .filter()
         .idIsNotNull()
         .chapter((q) => q.manga((q) => q.itemTypeEqualTo(getCurrentItemType())))
+        .idProperty()
         .findAll();
-    final List<Id> idsToDelete = histories.map((h) => h.id!).toList();
     await isar.writeTxn(() => isar.historys.deleteAll(idsToDelete));
   }
 }

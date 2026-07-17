@@ -136,19 +136,18 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
   }
 
   Future<void> _clearUpdates() async {
-    List<Update> updates = await isar.updates
+    final List<Id> idsToDelete = await isar.updates
         .filter()
         .idIsNotNull()
         .chapter((q) => q.manga((q) => q.itemTypeEqualTo(getCurrentItemType())))
+        .idProperty()
         .findAll();
-    if (updates.isEmpty) return;
-    final idsToDelete = <Id>[];
+    if (idsToDelete.isEmpty) return;
     isar.writeTxnSync(() {
-      for (var update in updates) {
-        idsToDelete.add(update.id!);
+      for (var id in idsToDelete) {
         ref
             .read(synchingProvider(syncId: 1).notifier)
-            .addChangedPart(ActionType.removeUpdate, update.id, "{}", false);
+            .addChangedPart(ActionType.removeUpdate, id, "{}", false);
       }
     });
     await isar.writeTxn(() async => await isar.updates.deleteAll(idsToDelete));
