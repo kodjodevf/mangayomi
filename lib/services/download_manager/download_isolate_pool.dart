@@ -4,18 +4,17 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
+import 'package:http/io_client.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/page.dart';
-import 'package:mangayomi/services/http/m_client.dart';
-import 'package:mangayomi/services/http/rhttp/src/model/settings.dart';
 import 'package:mangayomi/services/download_manager/m3u8/models/download.dart';
 import 'package:mangayomi/services/download_manager/m3u8/models/ts_info.dart';
-import 'package:mangayomi/src/rust/frb_generated.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:path/path.dart' as path;
 import 'package:encrypt/encrypt.dart' as encrypt;
 
 final downloadTaskCancellation = <String, bool>{};
+const _downloadRequestTimeout = Duration(seconds: 60);
 
 /// Shared Isolate pool to optimize performance
 /// Instead of creating a new Isolate for each download,
@@ -372,15 +371,10 @@ class _WorkerTask {
 
 /// Isolate worker entry point
 void _workerEntryPoint(_WorkerInit init) async {
-  // Initialize dependencies in the Isolate
-  await RustLib.init();
-
-  final httpClient = MClient.httpClient(
-    settings: const ClientSettings(
-      throwOnStatusCode: false,
-      tlsSettings: TlsSettings(verifyCertificates: false),
-    ),
-  );
+  // Keep one Dart HTTP client per persistent worker. The previous path
+  // initialized a separate Rust/rhttp runtime in every worker, which made
+  // large queues allocate unnecessary native resources.
+  final httpClient = _createWorkerHttpClient();
 
   // Create the receive port for this worker
   final receivePort = ReceivePort();
@@ -414,6 +408,13 @@ void _workerEntryPoint(_WorkerInit init) async {
       }
     }
   }
+}
+
+Client _createWorkerHttpClient() {
+  final dartHttpClient = HttpClient()
+    ..badCertificateCallback =
+        (X509Certificate certificate, String host, int port) => true;
+  return IOClient(dartHttpClient);
 }
 
 /// Process a file download
@@ -481,7 +482,9 @@ Future<void> _downloadFile(
   try {
     if (itemType != ItemType.anime) {
       final response = await _withRetry(
-        () => client.get(Uri.parse(pageUrl.url), headers: pageUrl.headers),
+        () => client
+            .get(Uri.parse(pageUrl.url), headers: pageUrl.headers)
+            .timeout(_downloadRequestTimeout),
         3,
       );
       if (response.statusCode != 200) {
@@ -497,7 +500,9 @@ Future<void> _downloadFile(
       await _withRetry(() async {
         var request = Request('GET', Uri.parse(pageUrl.url));
         request.headers.addAll(pageUrl.headers ?? {});
-        StreamedResponse response = await client.send(request);
+        StreamedResponse response = await client
+            .send(request)
+            .timeout(_downloadRequestTimeout);
         // Accept any 2xx — including 206 Partial Content, which the server
         // returns when the source extension sends `Range: bytes=0-` on the
         // streaming request (e.g. AnimeGG). Rejecting 206 here caused 3
@@ -514,7 +519,9 @@ Future<void> _downloadFile(
         final file = File(pageUrl.fileName!);
         final sink = file.openWrite();
         try {
-          await for (var value in response.stream) {
+          await for (var value in response.stream.timeout(
+            _downloadRequestTimeout,
+          )) {
             sink.add(value);
             received += value.length;
             try {
@@ -609,7 +616,10 @@ Future<void> _downloadSegment(
     if (params.headers != null) {
       request.headers.addAll(params.headers!);
     }
-    StreamedResponse response = await _withRetry(() => client.send(request), 3);
+    StreamedResponse response = await _withRetry(
+      () => client.send(request).timeout(_downloadRequestTimeout),
+      3,
+    );
 
     // Accept any 2xx (including 206 Partial Content) — see comment in
     // _downloadFile.
@@ -621,7 +631,9 @@ Future<void> _downloadSegment(
 
     final sink = file.openWrite();
     try {
-      await for (var chunk in response.stream) {
+      await for (var chunk in response.stream.timeout(
+        _downloadRequestTimeout,
+      )) {
         sink.add(chunk);
       }
     } finally {
