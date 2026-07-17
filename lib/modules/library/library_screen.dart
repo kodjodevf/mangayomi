@@ -327,7 +327,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       );
       _tabIndex = newTabIndex;
       tabBarController!.addListener(() {
-        setState(() => _tabIndex = tabBarController!.index);
+        if (_tabIndex != tabBarController!.index) {
+          setState(() => _tabIndex = tabBarController!.index);
+        }
       });
     }
 
