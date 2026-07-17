@@ -10,7 +10,6 @@ import 'package:go_router/go_router.dart';
 import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -47,6 +46,7 @@ import 'package:mangayomi/utils/global_style.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/modules/manga/detail/providers/isar_providers.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
+import 'package:mangayomi/modules/more/categories/providers/isar_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/readmore.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/chapter_list_tile_widget.dart';
@@ -157,19 +157,19 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   Widget _buildWidget({required List<Chapter> chapters}) {
     final chapterList = ref.watch(chaptersListStateProvider);
     final isLongPressed = ref.watch(isLongPressedStateProvider);
-    final checkCategoryList = isar.categorys
-        .filter()
-        .idIsNotNull()
-        .and()
-        .forItemTypeEqualTo(widget.manga!.itemType)
-        .isNotEmptySync();
+    final checkCategoryList = ref
+        .watch(getMangaCategorieStreamProvider(itemType: widget.manga!.itemType))
+        .asData
+        ?.value
+        .isNotEmpty ??
+        false;
     return Stack(
       children: [
         Consumer(
           builder: (context, ref, child) {
             return Positioned(
               top: 0,
-              child: ref.watch(offetProvider) == 0.0
+              child: ref.watch(offetProvider.select((val) => val == 0.0))
                   ? Stack(
                       children: [
                         widget.manga!.customCoverImage != null
@@ -315,13 +315,15 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                         ),
                       )
                     : AppBar(
-                        title: ref.watch(offetProvider) > 200
+                        title:
+                            ref.watch(offetProvider.select((val) => val > 200))
                             ? Text(
                                 widget.manga!.name!,
                                 style: const TextStyle(fontSize: 17),
                               )
                             : null,
-                        backgroundColor: ref.watch(offetProvider) == 0.0
+                        backgroundColor:
+                            ref.watch(offetProvider.select((val) => val == 0.0))
                             ? Colors.transparent
                             : Theme.of(context).scaffoldBackgroundColor,
                         actions: [

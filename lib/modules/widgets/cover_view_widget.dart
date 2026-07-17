@@ -24,6 +24,7 @@ class CoverViewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final showOverlay = isLongPressed != null && isLongPressed!;
     return Padding(
       padding: const EdgeInsets.all(5),
       child: Column(
@@ -37,20 +38,30 @@ class CoverViewWidget extends StatelessWidget {
                 onTap: onTap,
                 onLongPress: onLongPress,
                 onSecondaryTap: onSecondaryTap,
-                child: Container(
-                  color: isLongPressed != null && isLongPressed!
-                      ? context.primaryColor.withValues(alpha: 0.4)
-                      : Colors.transparent,
-                  child: image == null
-                      ? isComfortableGrid
+                child: image == null
+                    ? Container(
+                        color: showOverlay
+                            ? context.primaryColor.withValues(alpha: 0.4)
+                            : Colors.transparent,
+                        child: isComfortableGrid
                             ? Column(children: [...children, bottomTextWidget!])
-                            : Stack(children: children)
-                      : Ink.image(
-                          fit: BoxFit.cover,
-                          image: image!,
-                          child: Stack(children: children),
+                            : Stack(children: children),
+                      )
+                    : Ink.image(
+                        fit: BoxFit.cover,
+                        image: image!,
+                        child: Stack(
+                          children: [
+                            if (showOverlay)
+                              Positioned.fill(
+                                child: Container(
+                                  color: context.primaryColor.withValues(alpha: 0.4),
+                                ),
+                              ),
+                            ...children,
+                          ],
                         ),
-                ),
+                      ),
               ),
             ),
           ),
