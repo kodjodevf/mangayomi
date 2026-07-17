@@ -119,31 +119,58 @@ List<Manga> filteredLibraryManga(
   }
 
   // Sort
-  mangas.sort((a, b) {
-    switch (sortType) {
-      case 0:
-        return a.name!.compareTo(b.name!);
-      case 1:
-        return a.lastRead!.compareTo(b.lastRead!);
-      case 2:
-        return a.lastUpdate?.compareTo(b.lastUpdate ?? 0) ?? 0;
-      case 3:
-        return a.chapters
-            .where((e) => !e.isRead!)
-            .length
-            .compareTo(b.chapters.where((e) => !e.isRead!).length);
-      case 4:
-        return a.chapters.length.compareTo(b.chapters.length);
-      case 5:
-        return (a.chapters.lastOrNull?.dateUpload ?? "").compareTo(
-          b.chapters.lastOrNull?.dateUpload ?? "",
-        );
-      case 6:
-        return a.dateAdded?.compareTo(b.dateAdded ?? 0) ?? 0;
-      default:
-        return 0;
+  if (mangas.isNotEmpty) {
+    if (sortType == 3) {
+      final unreadCounts = <int, int>{};
+      for (final manga in mangas) {
+        if (manga.id != null) {
+          int count = 0;
+          for (final chap in manga.chapters) {
+            if (!chap.isRead!) {
+              count++;
+            }
+          }
+          unreadCounts[manga.id!] = count;
+        }
+      }
+      mangas.sort((a, b) {
+        final aVal = a.id != null ? (unreadCounts[a.id] ?? 0) : 0;
+        final bVal = b.id != null ? (unreadCounts[b.id] ?? 0) : 0;
+        return aVal.compareTo(bVal);
+      });
+    } else if (sortType == 4) {
+      final totalCounts = <int, int>{};
+      for (final manga in mangas) {
+        if (manga.id != null) {
+          totalCounts[manga.id!] = manga.chapters.length;
+        }
+      }
+      mangas.sort((a, b) {
+        final aVal = a.id != null ? (totalCounts[a.id] ?? 0) : 0;
+        final bVal = b.id != null ? (totalCounts[b.id] ?? 0) : 0;
+        return aVal.compareTo(bVal);
+      });
+    } else {
+      mangas.sort((a, b) {
+        switch (sortType) {
+          case 0:
+            return a.name!.compareTo(b.name!);
+          case 1:
+            return a.lastRead!.compareTo(b.lastRead!);
+          case 2:
+            return a.lastUpdate?.compareTo(b.lastUpdate ?? 0) ?? 0;
+          case 5:
+            return (a.chapters.lastOrNull?.dateUpload ?? "").compareTo(
+              b.chapters.lastOrNull?.dateUpload ?? "",
+            );
+          case 6:
+            return a.dateAdded?.compareTo(b.dateAdded ?? 0) ?? 0;
+          default:
+            return 0;
+        }
+      });
     }
-  });
+  }
 
   return mangas;
 }

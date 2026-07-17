@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/modules/library/providers/isar_providers.dart';
 import 'package:mangayomi/modules/library/providers/library_filter_provider.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -79,14 +78,6 @@ Future<void> onTapEntry({
     sourceId: entry.sourceId,
   );
 
-  if (context.mounted) {
-    ref.invalidate(
-      getAllMangaWithoutCategoriesStreamProvider(itemType: entry.itemType),
-    );
-    ref.invalidate(
-      getAllMangaStreamProvider(categoryId: null, itemType: entry.itemType),
-    );
-  }
 }
 
 /// A small rounded chip using the theme's hint colour as its background.
@@ -169,12 +160,19 @@ class LibraryBadgeWidget extends ConsumerWidget {
     if (showDownloaded) {
       final downloadedIds =
           ref.watch(downloadedChapterIdsProvider).asData?.value ?? const <int>{};
-      downloadCount = entry.chapters
-          .where((c) => c.id != null && downloadedIds.contains(c.id))
-          .length;
+      for (final c in entry.chapters) {
+        if (c.id != null && downloadedIds.contains(c.id)) {
+          downloadCount++;
+        }
+      }
     }
 
-    final unreadCount = entry.chapters.where((e) => !e.isRead!).length;
+    int unreadCount = 0;
+    for (final e in entry.chapters) {
+      if (!e.isRead!) {
+        unreadCount++;
+      }
+    }
 
     // If there is nothing to show (no local, no download, no unread), return empty
     if (!hasLocal && downloadCount == 0 && unreadCount == 0) {
