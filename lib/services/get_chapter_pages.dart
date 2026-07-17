@@ -18,6 +18,15 @@ import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.d
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'get_chapter_pages.g.dart';
 
+bool _sameList<T>(List<T>? left, List<T>? right) {
+  if (left == null || right == null) return left == right;
+  if (left.length != right.length) return false;
+  for (var index = 0; index < left.length; index++) {
+    if (left[index] != right[index]) return false;
+  }
+  return true;
+}
+
 class GetChapterPagesModel {
   Directory? path;
   List<PageUrl> pageUrls = [];
@@ -124,31 +133,38 @@ Future<GetChapterPagesModel> getChapterPages(
         }
       }
       if (!incognitoMode) {
-        List<ChapterPageurls>? chapterPageUrls = [];
-        for (var chapterPageUrl in settings.chapterPageUrlsList ?? []) {
-          if (chapterPageUrl.chapterId != chapter.id) {
-            chapterPageUrls.add(chapterPageUrl);
-          }
-        }
+        final cachedUrls = isarPageUrls?.urls;
+        final cachedHeaders = isarPageUrls?.headers;
+        final pageUrlValues = pageUrls.map((e) => e.url).toList();
         final chapterPageHeaders = pageUrls
             .map((e) => e.headers == null ? null : jsonEncode(e.headers))
             .toList();
-        chapterPageUrls.add(
-          ChapterPageurls()
-            ..chapterId = chapter.id
-            ..urls = pageUrls.map((e) => e.url).toList()
-            ..chapterUrl = chapter.url
-            ..headers = chapterPageHeaders.first != null
-                ? chapterPageHeaders.map((e) => e.toString()).toList()
-                : null,
-        );
-        isar.writeTxnSync(() {
-          isar.settings.putSync(
-            settings
-              ..chapterPageUrlsList = chapterPageUrls
-              ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-          );
-        });
+        final pageHeaderValues = chapterPageHeaders.first != null
+            ? chapterPageHeaders.map((e) => e.toString()).toList()
+            : null;
+        final cacheUnchanged =
+            isarPageUrls != null &&
+            isarPageUrls!.chapterUrl == chapter.url &&
+            _sameList(cachedUrls, pageUrlValues) &&
+            _sameList(cachedHeaders, pageHeaderValues);
+        if (!cacheUnchanged) {
+          final chapterPageUrls = [
+            for (final chapterPageUrl in settings.chapterPageUrlsList ?? [])
+              if (chapterPageUrl.chapterId != chapter.id) chapterPageUrl,
+            ChapterPageurls()
+              ..chapterId = chapter.id
+              ..urls = pageUrlValues
+              ..chapterUrl = chapter.url
+              ..headers = pageHeaderValues,
+          ];
+          isar.writeTxnSync(() {
+            isar.settings.putSync(
+              settings
+                ..chapterPageUrlsList = chapterPageUrls
+                ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+            );
+          });
+        }
       }
       for (var i = 0; i < pageUrls.length; i++) {
         chapterModel.uChapDataPreload.add(
