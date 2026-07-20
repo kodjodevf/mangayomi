@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/mass_migration/mass_migration_runner_screen.dart';
 import 'package:mangayomi/modules/mass_migration/models/mass_migration_models.dart';
 import 'package:mangayomi/modules/mass_migration/widgets/mass_migration_widgets.dart';
+import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/utils/language.dart';
 
-class MassMigrationDestinationScreen extends StatelessWidget {
+class MassMigrationDestinationScreen extends ConsumerWidget {
   const MassMigrationDestinationScreen({required this.sourceGroup, super.key});
 
   final MassMigrationSourceGroup sourceGroup;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
     final sources = buildMassMigrationDestinationSources(
       sourceGroup: sourceGroup,
+      showNSFW: ref.watch(showNSFWStateProvider),
     );
 
     return Scaffold(
