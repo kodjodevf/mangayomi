@@ -215,7 +215,7 @@ final class ProcessDownloadsProvider
   }
 }
 
-String _$processDownloadsHash() => r'36903a1ca0140ef7d55aa68ee34d8c74573e8e71';
+String _$processDownloadsHash() => r'332b733f11a05a6c2445db6b6c4c0d1c820d4f51';
 
 final class ProcessDownloadsFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<void>, bool?> {
