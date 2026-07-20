@@ -103,6 +103,17 @@ class MProviderBridged {
       ),
     );
     interpreter.registertopLevelFunction(
+      'decryptAESGCM',
+      (visitor, positionalArgs, namedArgs, _) => MBridge.decryptAESGCM(
+        positionalArgs[0] as String,
+        positionalArgs[1] as String,
+        positionalArgs[2] as String,
+        // tagHex is optional (empty when the tag is already appended); coerce a
+        // null/missing arg to "" so the call can't throw before the try/catch.
+        positionalArgs[3] as String? ?? '',
+      ),
+    );
+    interpreter.registertopLevelFunction(
       'deobfuscateJsPassword',
       (visitor, positionalArgs, namedArgs, _) =>
           MBridge.deobfuscateJsPassword(positionalArgs[0] as String),

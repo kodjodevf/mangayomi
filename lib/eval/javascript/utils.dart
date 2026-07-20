@@ -42,6 +42,10 @@ class JsUtils {
     runtime.onMessage('decryptAESCryptoJS', (dynamic args) {
       return MBridge.decryptAESCryptoJS(args[0], args[1]);
     });
+    runtime.onMessage('decryptAESGCM', (dynamic args) {
+      // tagHex is optional (empty when already appended); coerce null → "".
+      return MBridge.decryptAESGCM(args[0], args[1], args[2], args[3] ?? '');
+    });
     runtime.onMessage('deobfuscateJsPassword', (dynamic args) {
       return MBridge.deobfuscateJsPassword(args[0]);
     });
@@ -165,6 +169,12 @@ function decryptAESCryptoJS(encrypted, passphrase) {
     return sendMessage(
         "decryptAESCryptoJS",
         JSON.stringify([encrypted, passphrase])
+    );
+}
+function decryptAESGCM(encrypted, keyHex, ivHex, tagHex = "") {
+    return sendMessage(
+        "decryptAESGCM",
+        JSON.stringify([encrypted, keyHex, ivHex, tagHex])
     );
 }
 function deobfuscateJsPassword(inputString) {
