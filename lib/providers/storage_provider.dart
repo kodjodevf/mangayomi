@@ -65,8 +65,15 @@ class StorageProvider {
   Future<Directory?> getMpvDirectory() async {
     final defaultDirectory = await getDefaultDirectory();
     String dbDir = path.join(defaultDirectory!.path, 'mpv');
-    await Directory(dbDir).create(recursive: true);
-    return Directory(dbDir);
+    // Was a raw create() that threw a PathAccessException (permission denied) at
+    // the user when playing on a fresh install with no all-files access.
+    // createDirectorySafely requests the permission on failure (so the user is
+    // asked at play time instead of hitting a cryptic error) and never throws;
+    // return null if the dir still couldn't be made so playback proceeds with
+    // mpv defaults instead of erroring. See #740.
+    await createDirectorySafely(dbDir);
+    final dir = Directory(dbDir);
+    return await dir.exists() ? dir : null;
   }
 
   Future<Directory?> getExtensionServerDirectory() async {
