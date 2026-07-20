@@ -1,6 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:ui';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/widgets.dart';
 import 'package:isar_community/isar.dart';
@@ -20,20 +20,25 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/services/download_manager/m_downloader.dart';
+import 'package:mangayomi/services/download_manager/download_queue_runner.dart';
 import 'package:mangayomi/services/get_video_list.dart';
 import 'package:mangayomi/services/get_chapter_pages.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/download_manager/m3u8/m3u8_downloader.dart';
 import 'package:mangayomi/services/download_manager/m3u8/models/download.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
-import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/headers.dart';
+import 'package:mangayomi/utils/log/logger.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:path/path.dart' as p;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'download_provider.g.dart';
+
+const _maxChapterDownloadConcurrency = 6;
+Future<void>? _activeDownloadQueueRun;
+bool _downloadQueueNeedsDrain = false;
 
 @riverpod
 Future<void> addDownloadToQueue(Ref ref, {required Chapter chapter}) async {
@@ -49,6 +54,20 @@ Future<void> addDownloadToQueue(Ref ref, {required Chapter chapter}) async {
     );
     isar.writeTxnSync(() {
       isar.downloads.putSync(download..chapter.value = chapter);
+    });
+  } else if (download.isDownload != true &&
+      download.isStartDownload != true) {
+    // A failed item can be explicitly requested again. Preserve the linked
+    // chapter and any already downloaded files, but reset queue state.
+    isar.writeTxnSync(() {
+      isar.downloads.putSync(
+        download
+          ..succeeded = 0
+          ..failed = 0
+          ..total = 100
+          ..isDownload = false
+          ..isStartDownload = true,
+      );
     });
   }
 }
@@ -85,7 +104,6 @@ Future<void> downloadChapter(
       chapter,
     );
     List<Track>? subtitles;
-    bool isOk = false;
     final manga = chapter.manga.value!;
     final chapterName = chapter.name!.replaceForbiddenCharacters(' ');
     final itemType = chapter.manga.value!.itemType;
@@ -207,48 +225,61 @@ Future<void> downloadChapter(
     }
 
     if (itemType == ItemType.manga) {
-      ref.read(getChapterPagesProvider(chapter: chapter).future).then((value) {
-        if (value.pageUrls.isNotEmpty) {
-          pageUrls = value.pageUrls;
-          isOk = true;
-        }
-      });
+      final chapterPages = await ref
+          .read(getChapterPagesProvider(chapter: chapter).future)
+          .timeout(
+            const Duration(seconds: 60),
+            onTimeout: () => throw TimeoutException(
+              'Timed out while loading pages for chapter ${chapter.id}',
+            ),
+          );
+      if (chapterPages.pageUrls.isEmpty) {
+        throw StateError('No pages returned for chapter ${chapter.id}');
+      }
+      pageUrls = chapterPages.pageUrls;
     } else if (itemType == ItemType.anime) {
-      ref.read(getVideoListProvider(episode: chapter).future).then((
-        value,
-      ) async {
-        final m3u8Urls = value.$1
-            .where(
-              (element) =>
-                  element.originalUrl.endsWith(".m3u8") ||
-                  element.originalUrl.endsWith(".m3u"),
-            )
-            .toList();
-        final nonM3u8Urls = value.$1
-            .where((element) => element.originalUrl.isMediaVideo())
-            .toList();
-        nonM3U8File = nonM3u8Urls.isNotEmpty;
-        hasM3U8File = nonM3U8File ? false : m3u8Urls.isNotEmpty;
-        final videosUrls = nonM3U8File ? nonM3u8Urls : m3u8Urls;
-        if (videosUrls.isNotEmpty) {
-          subtitles = videosUrls.first.subtitles;
-          if (hasM3U8File) {
-            m3u8Downloader = M3u8Downloader(
-              m3u8Url: videosUrls.first.url,
-              downloadDir: chapterDirectory.path,
-              headers: videosUrls.first.headers ?? {},
-              subtitles: subtitles,
-              fileName: p.join(mangaMainDirectory!.path, "$chapterName.mp4"),
-              chapter: chapter,
-            );
-          } else {
-            pageUrls = [PageUrl(videosUrls.first.url)];
-          }
-          videoHeader.addAll(videosUrls.first.headers ?? {});
-          isOk = true;
-        }
-      });
-    } else if (itemType == ItemType.novel && chapter.url != null) {
+      final videoList = await ref
+          .read(getVideoListProvider(episode: chapter).future)
+          .timeout(
+            const Duration(seconds: 60),
+            onTimeout: () => throw TimeoutException(
+              'Timed out while loading video for chapter ${chapter.id}',
+            ),
+          );
+      final m3u8Urls = videoList.$1
+          .where(
+            (element) =>
+                element.originalUrl.endsWith(".m3u8") ||
+                element.originalUrl.endsWith(".m3u"),
+          )
+          .toList();
+      final nonM3u8Urls = videoList.$1
+          .where((element) => element.originalUrl.isMediaVideo())
+          .toList();
+      nonM3U8File = nonM3u8Urls.isNotEmpty;
+      hasM3U8File = nonM3U8File ? false : m3u8Urls.isNotEmpty;
+      final videosUrls = nonM3U8File ? nonM3u8Urls : m3u8Urls;
+      if (videosUrls.isEmpty) {
+        throw StateError('No video returned for chapter ${chapter.id}');
+      }
+      subtitles = videosUrls.first.subtitles;
+      if (hasM3U8File) {
+        m3u8Downloader = M3u8Downloader(
+          m3u8Url: videosUrls.first.url,
+          downloadDir: chapterDirectory.path,
+          headers: videosUrls.first.headers ?? {},
+          subtitles: subtitles,
+          fileName: p.join(mangaMainDirectory!.path, "$chapterName.mp4"),
+          chapter: chapter,
+        );
+      } else {
+        pageUrls = [PageUrl(videosUrls.first.url)];
+      }
+      videoHeader.addAll(videosUrls.first.headers ?? {});
+    } else if (itemType == ItemType.novel) {
+      if (chapter.url == null) {
+        throw StateError('No URL available for novel chapter ${chapter.id}');
+      }
       final manga = chapter.manga.value!;
       final source = getSource(manga.lang!, manga.source!, manga.sourceId)!;
       final chapterUrl = "${source.baseUrl}${chapter.url!.getUrlWithoutDomain}";
@@ -265,16 +296,9 @@ Future<void> downloadChapter(
       } else {
         novelPage = PageUrl(chapterUrl);
       }
-      isOk = true;
+    } else {
+      throw UnsupportedError('Unsupported download item type: $itemType');
     }
-
-    await Future.doWhile(() async {
-      await Future.delayed(const Duration(seconds: 1));
-      if (isOk == true) {
-        return false;
-      }
-      return true;
-    });
 
     if (pageUrls.isNotEmpty) {
       bool cbzFileExist =
@@ -398,52 +422,100 @@ Future<void> downloadChapter(
     if (callback != null) {
       callback();
     }
-    keepAlive.close();
-  } catch (_) {
+  } catch (error, stackTrace) {
+    final message =
+        'Download failed for chapter ${chapter.id} (${chapter.name}): '
+        '$error\n$stackTrace';
+    AppLogger.log(message, logLevel: LogLevel.error);
+    debugPrint(message);
+    rethrow;
+  } finally {
     keepAlive.close();
   }
 }
 
 @riverpod
 Future<void> processDownloads(Ref ref, {bool? useWifi}) async {
+  final activeRun = _activeDownloadQueueRun;
+  if (activeRun != null) {
+    _downloadQueueNeedsDrain = true;
+    return activeRun;
+  }
+
+  final run = _drainDownloadQueue(ref, useWifi: useWifi);
+  _activeDownloadQueueRun = run;
+
+  try {
+    await run;
+  } finally {
+    if (identical(_activeDownloadQueueRun, run)) {
+      _activeDownloadQueueRun = null;
+    }
+  }
+}
+
+Future<void> _drainDownloadQueue(Ref ref, {bool? useWifi}) async {
   final keepAlive = ref.keepAlive();
   try {
-    final ongoingDownloads = await isar.downloads
-        .filter()
-        .idIsNotNull()
-        .isDownloadEqualTo(false)
-        .isStartDownloadEqualTo(true)
-        .findAll();
-    final maxConcurrentDownloads = ref.read(concurrentDownloadsStateProvider);
-    int index = 0;
-    int downloaded = 0;
-    int current = 0;
-    await Future.doWhile(() async {
-      await Future.delayed(const Duration(seconds: 1));
-      if (ongoingDownloads.length == downloaded) {
-        return false;
+    final attemptedIds = <int>{};
+    while (true) {
+      _downloadQueueNeedsDrain = false;
+      final ongoingDownloads = await isar.downloads
+          .filter()
+          .idIsNotNull()
+          .isDownloadEqualTo(false)
+          .isStartDownloadEqualTo(true)
+          .findAll();
+      final pendingDownloads = ongoingDownloads
+          .where((download) => !attemptedIds.contains(download.id))
+          .toList(growable: false);
+
+      if (pendingDownloads.isEmpty) {
+        if (_downloadQueueNeedsDrain) continue;
+        break;
       }
-      if (current < maxConcurrentDownloads) {
-        current++;
-        final downloadItem = ongoingDownloads[index++];
-        final chapter = downloadItem.chapter.value!;
-        chapter.cancelDownloads(downloadItem.id);
-        await Future.delayed(const Duration(milliseconds: 500));
-        ref.read(
-          downloadChapterProvider(
-            chapter: chapter,
-            useWifi: useWifi,
-            callback: () {
-              downloaded++;
-              current--;
-            },
-          ),
+
+      final configuredConcurrency = ref.read(concurrentDownloadsStateProvider);
+      final concurrency = configuredConcurrency < 1
+          ? 1
+          : configuredConcurrency > _maxChapterDownloadConcurrency
+          ? _maxChapterDownloadConcurrency
+          : configuredConcurrency;
+      final runner = DownloadQueueRunner<void>(concurrency: concurrency);
+      final run = await runner.run(
+        pendingDownloads.map((downloadItem) {
+          final downloadId = downloadItem.id!;
+          attemptedIds.add(downloadId);
+          return () async {
+            final chapter = downloadItem.chapter.value;
+            if (chapter == null) {
+              throw StateError('Download $downloadId has no linked chapter');
+            }
+            await ref.read(
+              downloadChapterProvider(chapter: chapter, useWifi: useWifi).future,
+            );
+          };
+        }),
+      );
+
+      for (final outcome in run.failures) {
+        final downloadItem = pendingDownloads[outcome.index];
+        isar.writeTxnSync(() {
+          final download = isar.downloads.getSync(downloadItem.id!);
+          if (download == null || download.isDownload == true) return;
+          isar.downloads.putSync(
+            download
+              ..isStartDownload = false
+              ..failed = (download.failed ?? 0) + 1,
+          );
+        });
+        AppLogger.log(
+          'Download queue item ${downloadItem.id} failed: ${outcome.error}',
+          logLevel: LogLevel.error,
         );
       }
-      return true;
-    });
-    keepAlive.close();
-  } catch (_) {
+    }
+  } finally {
     keepAlive.close();
   }
 }
