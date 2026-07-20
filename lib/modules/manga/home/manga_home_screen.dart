@@ -19,6 +19,7 @@ import 'package:mangayomi/services/get_filter_list.dart';
 import 'package:mangayomi/services/get_latest_updates.dart';
 import 'package:mangayomi/services/get_popular.dart';
 import 'package:mangayomi/services/get_source_baseurl.dart';
+import 'package:mangayomi/modules/manga/home/providers/saved_searches_provider.dart';
 import 'package:mangayomi/services/search.dart';
 import 'package:mangayomi/services/supports_latest.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -176,6 +177,101 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
         });
       }
     }
+  }
+
+  void _promptSaveSearch() {
+    final query = _query.trim();
+    if (query.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Enter a search to save first')),
+      );
+      return;
+    }
+    final controller = TextEditingController(text: query);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Save search'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(labelText: 'Name'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(context.l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              ref
+                  .read(savedSearchesProvider.notifier)
+                  .add(source.id!, controller.text, query);
+              Navigator.pop(ctx);
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showSavedSearches() {
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => Consumer(
+        builder: (ctx, ref, _) {
+          final saved =
+              ref.watch(savedSearchesProvider)[source.id] ??
+              const <SavedSearch>[];
+          if (saved.isEmpty) {
+            return const Padding(
+              padding: EdgeInsets.all(24),
+              child: Text(
+                'No saved searches for this source yet.\n'
+                'Run a search, then pick "Save search".',
+                textAlign: TextAlign.center,
+              ),
+            );
+          }
+          return ListView(
+            shrinkWrap: true,
+            children: [
+              for (final s in saved)
+                ListTile(
+                  leading: const Icon(Icons.bookmark_outline),
+                  title: Text(s.name),
+                  subtitle: Text(
+                    s.query,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete_outline),
+                    onPressed: () => ref
+                        .read(savedSearchesProvider.notifier)
+                        .remove(source.id!, s.name),
+                  ),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    _runSavedSearch(s.query);
+                  },
+                ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  void _runSavedSearch(String query) {
+    _mangaList.clear();
+    _textEditingController.text = query;
+    setState(() {
+      _isSearch = true;
+      _selectedIndex = 2;
+      _query = query;
+      _page = 1;
+    });
   }
 
   late final _textEditingController = TextEditingController(text: widget.query);
@@ -343,6 +439,14 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                     value: 1,
                     child: Text(context.l10n.settings),
                   ),
+                  const PopupMenuItem<int>(
+                    value: 2,
+                    child: Text('Save search'),
+                  ),
+                  const PopupMenuItem<int>(
+                    value: 3,
+                    child: Text('Saved searches'),
+                  ),
                 ];
               },
               onSelected: (value) async {
@@ -356,7 +460,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                     'title': '',
                   };
                   context.push("/mangawebview", extra: data);
-                } else {
+                } else if (value == 1) {
                   final res = await context.push(
                     '/extension_detail',
                     extra: source,
@@ -366,6 +470,10 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                       source = res as Source;
                     });
                   }
+                } else if (value == 2) {
+                  _promptSaveSearch();
+                } else if (value == 3) {
+                  _showSavedSearches();
                 }
               },
             ),
