@@ -183,7 +183,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                     ),
                     if (isExt) ...[
                       const SizedBox(width: 8),
-                      _extensionUpdateNumbers(ref, type),
+                      ExtensionUpdateNumbersBadge(itemType: type),
                     ],
                   ],
                 ),
@@ -213,36 +213,43 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
   }
 }
 
-Widget _extensionUpdateNumbers(WidgetRef ref, ItemType itemType) {
-  return StreamBuilder(
-    stream: isar.sources
-        .filter()
-        .idIsNotNull()
-        .and()
-        .isActiveEqualTo(true)
-        .itemTypeEqualTo(itemType)
-        .watch(fireImmediately: true),
-    builder: (context, snapshot) {
-      if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-        final entries = snapshot.data!
-            .where(
-              (element) =>
-                  compareVersions(element.version!, element.versionLast!) < 0,
-            )
-            .toList();
-        return entries.isEmpty
-            ? SizedBox.shrink()
-            : Badge(
-                backgroundColor: Theme.of(context).focusColor,
-                label: Text(
-                  entries.length.toString(),
-                  style: TextStyle(
-                    color: Theme.of(context).textTheme.bodySmall!.color,
-                  ),
-                ),
-              );
-      }
-      return Container();
-    },
-  );
+final extensionUpdateCountProvider =
+    StreamProvider.family<int, ItemType>((ref, itemType) {
+  return isar.sources
+      .filter()
+      .idIsNotNull()
+      .and()
+      .isActiveEqualTo(true)
+      .itemTypeEqualTo(itemType)
+      .watch(fireImmediately: true)
+      .map((list) => list
+          .where((element) =>
+              compareVersions(element.version!, element.versionLast!) < 0)
+          .length);
+});
+
+class ExtensionUpdateNumbersBadge extends ConsumerWidget {
+  final ItemType itemType;
+  const ExtensionUpdateNumbersBadge({required this.itemType, super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final countAsync = ref.watch(extensionUpdateCountProvider(itemType));
+    return countAsync.when(
+      data: (count) {
+        if (count == 0) return const SizedBox.shrink();
+        return Badge(
+          backgroundColor: Theme.of(context).focusColor,
+          label: Text(
+            count.toString(),
+            style: TextStyle(
+              color: Theme.of(context).textTheme.bodySmall!.color,
+            ),
+          ),
+        );
+      },
+      error: (error, stackTrace) => const SizedBox.shrink(),
+      loading: () => const SizedBox.shrink(),
+    );
+  }
 }

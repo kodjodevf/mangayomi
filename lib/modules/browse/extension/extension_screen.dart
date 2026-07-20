@@ -200,8 +200,10 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
           );
         },
       ),
-      itemBuilder: (context, Source element) =>
-          ref.watch(extensionListTileWidget(element)),
+      itemBuilder: (context, Source element) => Consumer(
+        builder: (context, ref, _) =>
+            ref.watch(extensionListTileWidget(element)),
+      ),
       groupComparator: (group1, group2) => group1.compareTo(group2),
       itemComparator: (item1, item2) =>
           item1.name?.compareTo(item2.name ?? '') ?? 0,
@@ -220,8 +222,10 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
         ),
       ),
-      itemBuilder: (context, Source element) =>
-          ref.watch(extensionListTileWidget(element)),
+      itemBuilder: (context, Source element) => Consumer(
+        builder: (context, ref, _) =>
+            ref.watch(extensionListTileWidget(element)),
+      ),
       groupComparator: (group1, group2) => group1.compareTo(group2),
       itemComparator: (item1, item2) =>
           item1.name?.compareTo(item2.name ?? '') ?? 0,
@@ -241,8 +245,10 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
         ),
       ),
-      itemBuilder: (context, Source element) =>
-          ref.watch(extensionListTileWidget(element)),
+      itemBuilder: (context, Source element) => Consumer(
+        builder: (context, ref, _) =>
+            ref.watch(extensionListTileWidget(element)),
+      ),
       groupComparator: (group1, group2) => group1.compareTo(group2),
       itemComparator: (item1, item2) =>
           item1.name?.compareTo(item2.name ?? '') ?? 0,

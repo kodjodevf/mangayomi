@@ -11,6 +11,19 @@ import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_pr
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/language.dart';
 
+final getSourcesStreamProvider =
+    StreamProvider.family<List<Source>, ItemType>((ref, itemType) {
+  return isar.sources
+      .filter()
+      .idIsNotNull()
+      .isAddedEqualTo(true)
+      .and()
+      .isActiveEqualTo(true)
+      .and()
+      .itemTypeEqualTo(itemType)
+      .watch(fireImmediately: true);
+});
+
 class SourcesScreen extends ConsumerStatefulWidget {
   final Function(int) tabIndex;
   final List<BrowseTab> tabs;
@@ -38,24 +51,14 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
+    final sourcesStream = ref.watch(getSourcesStreamProvider(widget.itemType));
+
     return Padding(
       padding: const EdgeInsets.only(top: 10),
-      child: StreamBuilder(
-        stream: isar.sources
-            .filter()
-            .idIsNotNull()
-            .isAddedEqualTo(true)
-            .and()
-            .isActiveEqualTo(true)
-            .and()
-            .itemTypeEqualTo(widget.itemType)
-            .watch(fireImmediately: true),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const SizedBox.shrink();
-          }
+      child: sourcesStream.when(
+        data: (snapshotData) {
           final showNSFW = ref.watch(showNSFWStateProvider);
-          List<Source> sources = snapshot.data!
+          List<Source> sources = snapshotData
               .where((e) => showNSFW || !(e.isNsfw ?? false))
               .toList();
           if (sources.isEmpty) {
@@ -243,6 +246,8 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
             ),
           );
         },
+        error: (error, _) => Center(child: Text(error.toString())),
+        loading: () => const Center(child: CircularProgressIndicator()),
       ),
     );
   }

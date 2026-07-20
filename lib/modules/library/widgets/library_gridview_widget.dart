@@ -42,7 +42,6 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final isLongPressed = ref.watch(isLongPressedStateProvider);
         final gridSize = ref.watch(
           libraryGridSizeStateProvider(itemType: widget.itemType),
         );
@@ -52,81 +51,86 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
           itemCount: widget.entriesManga.length,
           itemBuilder: (context, index) {
             final entry = widget.entriesManga[index];
-
-            return Padding(
-              padding: const EdgeInsets.all(2),
-              child: CoverViewWidget(
-                isLongPressed: widget.mangaIdsList.contains(entry.id),
-                isComfortableGrid: widget.isComfortableGrid,
-                bottomTextWidget: BottomTextWidget(
-                  maxLines: 1,
-                  text: entry.name!,
-                  isComfortableGrid: widget.isComfortableGrid,
-                ),
-                image: resolveCoverImage(entry, ref),
-                onTap: () => onTapEntry(
-                  isLongPressed: isLongPressed,
-                  ref: ref,
-                  context: context,
-                  entry: entry,
-                ),
-                onLongPress: () =>
-                    handleLongOrSecondaryTap(isLongPressed, ref, entry),
-                onSecondaryTap: () =>
-                    handleLongOrSecondaryTap(isLongPressed, ref, entry),
-                children: [
-                  Stack(
+            return Consumer(
+              builder: (context, ref, child) {
+                final isLongPressed = ref.watch(isLongPressedStateProvider);
+                return Padding(
+                  padding: const EdgeInsets.all(2),
+                  child: CoverViewWidget(
+                    isLongPressed: widget.mangaIdsList.contains(entry.id),
+                    isComfortableGrid: widget.isComfortableGrid,
+                    bottomTextWidget: BottomTextWidget(
+                      maxLines: 1,
+                      text: entry.name!,
+                      isComfortableGrid: widget.isComfortableGrid,
+                    ),
+                    image: resolveCoverImage(entry, ref),
+                    onTap: () => onTapEntry(
+                      isLongPressed: isLongPressed,
+                      ref: ref,
+                      context: context,
+                      entry: entry,
+                    ),
+                    onLongPress: () =>
+                        handleLongOrSecondaryTap(isLongPressed, ref, entry),
+                    onSecondaryTap: () =>
+                        handleLongOrSecondaryTap(isLongPressed, ref, entry),
                     children: [
-                      // ── Top-left: Local + download count + unread count ──
-                      Positioned(
-                        top: 0,
-                        left: 0,
-                        child: Padding(
-                          padding: const EdgeInsets.all(5),
-                          child: LibraryBadgeWidget(
-                            entry: entry,
-                            showLocal: widget.localSource,
-                            showDownloaded: widget.downloadedChapter,
+                      Stack(
+                        children: [
+                          // ── Top-left: Local + download count + unread count ──
+                          Positioned(
+                            top: 0,
+                            left: 0,
+                            child: Padding(
+                              padding: const EdgeInsets.all(5),
+                              child: LibraryBadgeWidget(
+                                entry: entry,
+                                showLocal: widget.localSource,
+                                showDownloaded: widget.downloadedChapter,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
 
-                      // ── Top-right: Language ──
-                      if (widget.language && (entry.lang?.isNotEmpty ?? false))
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: Container(
-                              color: context.themeData.cardColor,
-                              child: EntryBadgeChip(
-                                label: entry.lang!.toUpperCase(),
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(3),
-                                  bottomLeft: Radius.circular(3),
+                          // ── Top-right: Language ──
+                          if (widget.language &&
+                              (entry.lang?.isNotEmpty ?? false))
+                            Positioned(
+                              top: 0,
+                              right: 0,
+                              child: Padding(
+                                padding: const EdgeInsets.all(5),
+                                child: Container(
+                                  color: context.themeData.cardColor,
+                                  child: EntryBadgeChip(
+                                    label: entry.lang!.toUpperCase(),
+                                    borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(3),
+                                      bottomLeft: Radius.circular(3),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
+                        ],
+                      ),
+
+                      if (!widget.isComfortableGrid && !widget.isCoverOnlyGrid)
+                        BottomTextWidget(text: entry.name!),
+
+                      if (widget.continueReaderBtn)
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Padding(
+                            padding: const EdgeInsets.all(9),
+                            child: ContinueReaderButton(entry: entry),
                           ),
                         ),
                     ],
                   ),
-
-                  if (!widget.isComfortableGrid && !widget.isCoverOnlyGrid)
-                    BottomTextWidget(text: entry.name!),
-
-                  if (widget.continueReaderBtn)
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Padding(
-                        padding: const EdgeInsets.all(9),
-                        child: ContinueReaderButton(entry: entry),
-                      ),
-                    ),
-                ],
-              ),
+                );
+              },
             );
           },
         );
