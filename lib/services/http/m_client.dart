@@ -16,6 +16,8 @@ import 'package:mangayomi/utils/log/log.dart';
 import 'package:mangayomi/services/http/rhttp/rhttp.dart' as rhttp;
 import 'package:mangayomi/services/http/doh/doh_resolver.dart';
 import 'package:mangayomi/services/http/doh/doh_providers.dart';
+import 'package:mangayomi/services/http/doh/doh_custom_store.dart';
+import 'package:mangayomi/services/http/cf_proxy_store.dart';
 
 class MClient {
   MClient();
@@ -65,8 +67,13 @@ class MClient {
     DnsSettings? dnsSettings;
 
     if (useDoH && doHProviderId != null) {
-      // Use DoH resolver with specific provider
-      final provider = DoHProviders.byId[doHProviderId];
+      // Use DoH resolver with the selected provider — either a preset or, when
+      // the custom sentinel id is set, one built from the user's saved URL.
+      final provider = doHProviderId == DoHProviders.customId
+          ? (DohCustomStore.url.trim().isNotEmpty
+                ? DoHProviders.custom(DohCustomStore.url.trim())
+                : null)
+          : DoHProviders.byId[doHProviderId];
       if (provider != null) {
         dnsSettings = DnsSettings.dynamic(
           resolver: (host) => DoHResolver.resolve(host, provider: provider),
@@ -280,28 +287,81 @@ class ResolveCloudFlareChallenge extends RetryPolicy {
   int get maxRetryAttempts => 2;
   @override
   Future<bool> shouldAttemptRetryOnResponse(BaseResponse response) async {
-    if (!showCloudFlareError || Platform.isLinux) return false;
-    bool isCloudFlare = isCloudflare(response);
-    if (isCloudFlare) {
-      try {
-        return http
-            .post(
-              Uri.parse('http://localhost:$cfPort/resolve_cf'),
-              headers: {HttpHeaders.contentTypeHeader: 'application/json'},
-              body: jsonEncode({'url': response.request!.url.toString()}),
-            )
-            .then((res) {
-              if (res.statusCode == 200) {
-                final data = jsonDecode(res.body) as Map<String, dynamic>;
-                return data['result'] as bool;
-              }
-              return false;
-            });
-      } catch (e) {
-        return false;
-      }
+    if (!showCloudFlareError) return false;
+    if (!isCloudflare(response)) return false;
+    final url = response.request!.url.toString();
+
+    // Prefer an external Cloudflare-bypass proxy (FlareSolverr / Byparr) when
+    // one is configured. It also works on Linux, where the in-app webview
+    // resolver below is disabled.
+    final proxyUrl = CfProxyStore.url.trim();
+    if (proxyUrl.isNotEmpty) {
+      return _solveWithCfProxy(proxyUrl, url);
     }
 
+    // Fall back to the bundled webview resolver (not available on Linux).
+    if (Platform.isLinux) return false;
+    try {
+      return http
+          .post(
+            Uri.parse('http://localhost:$cfPort/resolve_cf'),
+            headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+            body: jsonEncode({'url': url}),
+          )
+          .then((res) {
+            if (res.statusCode == 200) {
+              final data = jsonDecode(res.body) as Map<String, dynamic>;
+              return data['result'] as bool;
+            }
+            return false;
+          });
+    } catch (e) {
+      return false;
+    }
+  }
+}
+
+/// Solves a Cloudflare challenge for [targetUrl] through a FlareSolverr- /
+/// Byparr-compatible proxy at [proxyUrl] (e.g. `http://localhost:8191/v1`).
+///
+/// On success it stores the returned `cf_clearance` cookies + user-agent via
+/// [MClient.setCookie] (exactly like the webview resolver does), so the retried
+/// request carries them, and returns `true` to trigger the retry.
+Future<bool> _solveWithCfProxy(String proxyUrl, String targetUrl) async {
+  try {
+    final res = await http
+        .post(
+          Uri.parse(proxyUrl),
+          headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+          body: jsonEncode({
+            'cmd': 'request.get',
+            'url': targetUrl,
+            'maxTimeout': 60000,
+          }),
+        )
+        .timeout(const Duration(seconds: 70));
+    if (res.statusCode != 200) return false;
+
+    final data = jsonDecode(res.body) as Map<String, dynamic>;
+    if (data['status'] != 'ok') return false;
+
+    final solution = data['solution'] as Map<String, dynamic>?;
+    if (solution == null) return false;
+
+    final cookieList = (solution['cookies'] as List?) ?? [];
+    final cookie = cookieList
+        .whereType<Map>()
+        .map((c) => "${c['name']}=${c['value']}")
+        .join('; ');
+    if (cookie.isEmpty) return false;
+
+    final ua = (solution['userAgent'] as String?) ?? '';
+    await MClient.setCookie(targetUrl, ua, null, cookie: cookie);
+    return true;
+  } catch (e) {
+    if (kDebugMode) {
+      debugPrint('CF proxy solve failed: $e');
+    }
     return false;
   }
 }
