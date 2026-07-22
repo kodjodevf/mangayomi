@@ -20,6 +20,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/services/download_manager/m_downloader.dart';
+import 'package:mangayomi/services/download_manager/download_progress_batcher.dart';
 import 'package:mangayomi/services/get_video_list.dart';
 import 'package:mangayomi/services/get_chapter_pages.dart';
 import 'package:mangayomi/services/http/m_client.dart';
@@ -34,6 +35,59 @@ import 'package:mangayomi/utils/utils.dart';
 import 'package:path/path.dart' as p;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'download_provider.g.dart';
+
+Future<void> _persistDownloadProgress(
+  List<DownloadProgressUpdate> updates,
+) async {
+  await isar.writeTxn(() async {
+    for (final update in updates) {
+      final download = await isar.downloads.get(update.chapterId);
+      if (download == null ||
+          (download.isDownload == true && !update.isCompleted)) {
+        continue;
+      }
+      if (update.isFailed) {
+        await isar.downloads.put(
+          download
+            ..isStartDownload = false
+            ..isDownload = false
+            ..failed = (download.failed ?? 0) + 1,
+        );
+        continue;
+      }
+      final current = download.succeeded ?? 0;
+      if (!update.isCompleted && update.succeeded < current) continue;
+      await isar.downloads.put(
+        download
+          ..succeeded = update.succeeded
+          ..failed = 0
+          ..total = 100
+          ..isDownload = update.isCompleted
+          ..isStartDownload = true,
+      );
+    }
+  });
+}
+
+final _downloadProgressBatcher = DownloadProgressBatcher(
+  persist: _persistDownloadProgress,
+);
+
+void _ensureDownloadRecord(Chapter chapter) {
+  if (isar.downloads.getSync(chapter.id!) != null) return;
+  isar.writeTxnSync(() {
+    isar.downloads.putSync(
+      Download(
+        id: chapter.id,
+        succeeded: 0,
+        failed: 0,
+        total: 100,
+        isDownload: false,
+        isStartDownload: true,
+      )..chapter.value = chapter,
+    );
+  });
+}
 
 @riverpod
 Future<void> addDownloadToQueue(Ref ref, {required Chapter chapter}) async {
@@ -146,68 +200,21 @@ Future<void> downloadChapter(
       if (progress.isCompleted && itemType == ItemType.manga) {
         await processConvert();
       }
-      final download = isar.downloads.getSync(chapter.id!);
-      if (download == null) {
-        final download = Download(
-          id: chapter.id,
-          succeeded: progress.completed == 0
-              ? 0
-              : (progress.completed / progress.total * 100).toInt(),
-          failed: 0,
-          total: 100,
-          isDownload: progress.isCompleted,
-          isStartDownload: true,
-        );
-        isar.writeTxnSync(() {
-          isar.downloads.putSync(download..chapter.value = chapter);
-        });
-      } else {
-        final download = isar.downloads.getSync(chapter.id!);
-        if (download != null && progress.total != 0) {
-          isar.writeTxnSync(() {
-            isar.downloads.putSync(
-              download
-                ..succeeded = progress.completed == 0
-                    ? 0
-                    : (progress.completed / progress.total * 100).toInt()
-                ..total = 100
-                ..failed = 0
-                ..isDownload = progress.isCompleted,
-            );
-          });
-        }
-      }
-    }
-
-    setProgress(DownloadProgress(0, 0, itemType));
-    void savePageUrls() {
-      final settings = isar.settings.getSync(227)!;
-      List<ChapterPageurls>? chapterPageUrls = [];
-      for (var chapterPageUrl in settings.chapterPageUrlsList ?? []) {
-        if (chapterPageUrl.chapterId != chapter.id) {
-          chapterPageUrls.add(chapterPageUrl);
-        }
-      }
-      final chapterPageHeaders = pageUrls
-          .map((e) => e.headers == null ? null : jsonEncode(e.headers))
-          .toList();
-      chapterPageUrls.add(
-        ChapterPageurls()
-          ..chapterId = chapter.id
-          ..urls = pageUrls.map((e) => e.url).toList()
-          ..chapterUrl = chapter.url
-          ..headers = chapterPageHeaders.first != null
-              ? chapterPageHeaders.map((e) => e.toString()).toList()
-              : null,
-      );
-      isar.writeTxnSync(
-        () => isar.settings.putSync(
-          settings
-            ..chapterPageUrlsList = chapterPageUrls
-            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      final succeeded = progress.total == 0
+          ? 0
+          : (progress.completed / progress.total * 100).toInt();
+      _downloadProgressBatcher.update(
+        DownloadProgressUpdate(
+          chapterId: chapter.id!,
+          succeeded: succeeded,
+          isCompleted: progress.isCompleted,
         ),
       );
+      if (progress.isCompleted) await _downloadProgressBatcher.flushNow();
     }
+
+    _ensureDownloadRecord(chapter);
+    _downloadProgressBatcher.reset(chapter.id!);
 
     if (itemType == ItemType.manga) {
       ref.read(getChapterPagesProvider(chapter: chapter).future).then((value) {
@@ -387,19 +394,17 @@ Future<void> downloadChapter(
       }
 
       if (pages.isEmpty && pageUrls.isNotEmpty) {
-        await processConvert();
-        savePageUrls();
         await setProgress(DownloadProgress(1, 1, itemType, isCompleted: true));
       } else {
-        savePageUrls();
         await MDownloader(
           chapter: chapter,
           pageUrls: pages,
           subtitles: subtitles,
           subDownloadDir: chapterDirectory.path,
         ).download((progress) {
-          setProgress(progress);
+          if (!progress.isCompleted) setProgress(progress);
         });
+        await setProgress(DownloadProgress(1, 1, itemType, isCompleted: true));
       }
     } else if (itemType == ItemType.novel) {
       final file = File(p.join(chapterDirectory.path, "$chapterName.html"));
@@ -423,8 +428,9 @@ Future<void> downloadChapter(
       }
     } else if (hasM3U8File) {
       await m3u8Downloader?.download((progress) {
-        setProgress(progress);
+        if (!progress.isCompleted) setProgress(progress);
       });
+      await setProgress(DownloadProgress(1, 1, itemType, isCompleted: true));
     }
     if (callback != null) {
       callback();
