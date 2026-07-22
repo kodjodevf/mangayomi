@@ -86,14 +86,12 @@ class _CoverViewWidgetState extends State<CoverViewWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final showOverlay = widget.isLongPressed != null && widget.isLongPressed!;
     // Comfortable grid renders the label below the card, so it must not also be
     // placed inside the card. Render it once, and only when provided.
     final showBottomText =
         widget.isComfortableGrid && widget.bottomTextWidget != null;
     // Matrix4.scale is deprecated in favour of the explicit per-axis form.
     final pop = _focused ? 1.06 : 1.0;
-
     return Padding(
       padding: const EdgeInsets.all(5),
       child: Column(
@@ -124,48 +122,42 @@ class _CoverViewWidgetState extends State<CoverViewWidget> {
                   onLongPress: widget.onLongPress,
                   onSecondaryTap: widget.onSecondaryTap,
                   onFocusChange: _onFocusChange,
-                  child: widget.image == null
-                      ? Container(
-                          color: showOverlay
-                              ? context.primaryColor.withValues(alpha: 0.4)
-                              : Colors.transparent,
-                          child: widget.isComfortableGrid
+                  child: Container(
+                    color: widget.isLongPressed != null && widget.isLongPressed!
+                        ? context.primaryColor.withValues(alpha: 0.4)
+                        : Colors.transparent,
+                    child: widget.image == null
+                        ? widget.isComfortableGrid
+                              // bottomTextWidget is rendered once below the card,
+                              // so it's not duplicated inside here anymore.
                               ? Column(children: widget.children)
-                              : Stack(children: widget.children),
-                        )
-                      : Ink.image(
-                          fit: BoxFit.cover,
-                          image: widget.image!,
-                          child: Stack(
-                            children: [
-                              if (showOverlay)
-                                Positioned.fill(
-                                  child: Container(
-                                    color: context.primaryColor.withValues(
-                                      alpha: 0.4,
+                              : Stack(children: widget.children)
+                        : Ink.image(
+                            fit: BoxFit.cover,
+                            image: widget.image!,
+                            child: Stack(
+                              children: [
+                                ...widget.children,
+                                if (widget.progress > 0)
+                                  Positioned(
+                                    left: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                    child: LinearProgressIndicator(
+                                      value: widget.progress.clamp(0.0, 1.0),
+                                      minHeight: 3,
+                                      backgroundColor: Colors.black.withValues(
+                                        alpha: 0.35,
+                                      ),
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        context.primaryColor,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ...widget.children,
-                              if (widget.progress > 0)
-                                Positioned(
-                                  left: 0,
-                                  right: 0,
-                                  bottom: 0,
-                                  child: LinearProgressIndicator(
-                                    value: widget.progress.clamp(0.0, 1.0),
-                                    minHeight: 3,
-                                    backgroundColor: Colors.black.withValues(
-                                      alpha: 0.35,
-                                    ),
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      context.primaryColor,
-                                    ),
-                                  ),
-                                ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
+                  ),
                 ),
               ),
             ),
