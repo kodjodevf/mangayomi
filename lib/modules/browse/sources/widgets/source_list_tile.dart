@@ -29,20 +29,18 @@ class SourceListTile extends StatelessWidget {
       builder: (context, ref, child) => ListTile(
         onTap: () {
           if (!isLocal) {
-            final sources = isar.sources
-                .filter()
-                .idIsNotNull()
-                .and()
-                .itemTypeEqualTo(itemType)
-                .findAllSync();
-            isar.writeTxnSync(() {
-              for (var src in sources) {
-                isar.sources.putSync(
-                  src
-                    ..lastUsed = src.id == source.id ? true : false
-                    ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-                );
-              }
+            isar.writeTxn(() async {
+              final sources = await isar.sources
+                  .filter()
+                  .idIsNotNull()
+                  .itemTypeEqualTo(itemType)
+                  .findAll();
+              final updated = sources.map((src) {
+                return src
+                  ..lastUsed = src.id == source.id
+                  ..updatedAt = DateTime.now().millisecondsSinceEpoch;
+              }).toList();
+              await isar.sources.putAll(updated);
             });
           }
           context.push('/mangaHome', extra: (source, false));
@@ -132,8 +130,8 @@ class SourceListTile extends StatelessWidget {
                 IconButton(
                   padding: const EdgeInsets.all(0),
                   onPressed: () {
-                    isar.writeTxnSync(
-                      () => isar.sources.putSync(
+                    isar.writeTxn(
+                      () async => await isar.sources.put(
                         source
                           ..isPinned = !source.isPinned!
                           ..updatedAt = DateTime.now().millisecondsSinceEpoch,

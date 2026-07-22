@@ -65,16 +65,22 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isLongPressed = ref.watch(isLongPressedStateProvider);
     final mangaIdsList = ref.watch(mangasListStateProvider);
-    final manga = categoryId == null
-        ? ref.watch(
-            getAllMangaWithoutCategoriesStreamProvider(itemType: itemType),
-          )
-        : ref.watch(
-            getAllMangaStreamProvider(
-              categoryId: categoryId,
-              itemType: itemType,
-            ),
-          );
+    final allMangaStream = ref.watch(
+      getAllMangaStreamProvider(categoryId: null, itemType: itemType),
+    );
+    final manga = allMangaStream.whenData((allMangas) {
+      if (categoryId == null && !isCategory) {
+        return allMangas;
+      }
+      if (categoryId == null) {
+        return allMangas
+            .where((m) => m.categories == null || m.categories!.isEmpty)
+            .toList();
+      }
+      return allMangas
+          .where((m) => m.categories?.contains(categoryId) ?? false)
+          .toList();
+    });
     final l10n = l10nLocalizations(context)!;
 
     if (isLongPressed) {

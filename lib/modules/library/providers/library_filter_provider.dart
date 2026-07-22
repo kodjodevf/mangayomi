@@ -17,11 +17,13 @@ Stream<Set<int>> downloadedChapterIds(Ref ref) {
       .map((list) => list.map((d) => d.id).whereType<int>().toSet());
 }
 
-/// Pre-fetches all manga IDs that have at least one tracking entry.
+/// Pre-fetches all manga IDs that have at least one tracking entry reactively.
 @riverpod
-Set<int> trackedMangaIds(Ref ref) {
-  final tracks = isar.tracks.where().findAllSync();
-  return tracks.map((t) => t.mangaId).whereType<int>().toSet();
+Stream<Set<int>> trackedMangaIds(Ref ref) {
+  return isar.tracks
+      .where()
+      .watch(fireImmediately: true)
+      .map((tracks) => tracks.map((t) => t.mangaId).whereType<int>().toSet());
 }
 
 /// Filters and sorts a list of [Manga] based on library filter/sort settings.
@@ -42,7 +44,8 @@ List<Manga> filteredLibraryManga(
 }) {
   final downloadedIds =
       ref.watch(downloadedChapterIdsProvider).asData?.value ?? const <int>{};
-  final trackedIds = ref.watch(trackedMangaIdsProvider);
+  final trackedIds =
+      ref.watch(trackedMangaIdsProvider).asData?.value ?? const <int>{};
 
   List<Manga> mangas;
 
@@ -116,31 +119,58 @@ List<Manga> filteredLibraryManga(
   }
 
   // Sort
-  mangas.sort((a, b) {
-    switch (sortType) {
-      case 0:
-        return a.name!.compareTo(b.name!);
-      case 1:
-        return a.lastRead!.compareTo(b.lastRead!);
-      case 2:
-        return a.lastUpdate?.compareTo(b.lastUpdate ?? 0) ?? 0;
-      case 3:
-        return a.chapters
-            .where((e) => !e.isRead!)
-            .length
-            .compareTo(b.chapters.where((e) => !e.isRead!).length);
-      case 4:
-        return a.chapters.length.compareTo(b.chapters.length);
-      case 5:
-        return (a.chapters.lastOrNull?.dateUpload ?? "").compareTo(
-          b.chapters.lastOrNull?.dateUpload ?? "",
-        );
-      case 6:
-        return a.dateAdded?.compareTo(b.dateAdded ?? 0) ?? 0;
-      default:
-        return 0;
+  if (mangas.isNotEmpty) {
+    if (sortType == 3) {
+      final unreadCounts = <int, int>{};
+      for (final manga in mangas) {
+        if (manga.id != null) {
+          int count = 0;
+          for (final chap in manga.chapters) {
+            if (!chap.isRead!) {
+              count++;
+            }
+          }
+          unreadCounts[manga.id!] = count;
+        }
+      }
+      mangas.sort((a, b) {
+        final aVal = a.id != null ? (unreadCounts[a.id] ?? 0) : 0;
+        final bVal = b.id != null ? (unreadCounts[b.id] ?? 0) : 0;
+        return aVal.compareTo(bVal);
+      });
+    } else if (sortType == 4) {
+      final totalCounts = <int, int>{};
+      for (final manga in mangas) {
+        if (manga.id != null) {
+          totalCounts[manga.id!] = manga.chapters.length;
+        }
+      }
+      mangas.sort((a, b) {
+        final aVal = a.id != null ? (totalCounts[a.id] ?? 0) : 0;
+        final bVal = b.id != null ? (totalCounts[b.id] ?? 0) : 0;
+        return aVal.compareTo(bVal);
+      });
+    } else {
+      mangas.sort((a, b) {
+        switch (sortType) {
+          case 0:
+            return a.name!.compareTo(b.name!);
+          case 1:
+            return a.lastRead!.compareTo(b.lastRead!);
+          case 2:
+            return a.lastUpdate?.compareTo(b.lastUpdate ?? 0) ?? 0;
+          case 5:
+            return (a.chapters.lastOrNull?.dateUpload ?? "").compareTo(
+              b.chapters.lastOrNull?.dateUpload ?? "",
+            );
+          case 6:
+            return a.dateAdded?.compareTo(b.dateAdded ?? 0) ?? 0;
+          default:
+            return 0;
+        }
+      });
     }
-  });
+  }
 
   return mangas;
 }

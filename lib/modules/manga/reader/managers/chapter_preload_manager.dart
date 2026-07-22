@@ -317,10 +317,11 @@ class ChapterPreloadManager {
     if (currentId == null) return [];
 
     final loadedIdsInOrder = <String>[];
+    final seen = <String>{};
     for (final page in _pages) {
       if (page.isTransitionPage || page.chapter == null) continue;
       final id = _getChapterIdentifier(page.chapter);
-      if (id != null && !loadedIdsInOrder.contains(id)) {
+      if (id != null && seen.add(id)) {
         loadedIdsInOrder.add(id);
       }
     }
@@ -338,24 +339,28 @@ class ChapterPreloadManager {
 
     final evictedIndices = <int>[];
     final idsToEvict = _loadedChapterIds.difference(idsToKeep);
-    for (final id in idsToEvict) {
-      if (kDebugMode) {
-        debugPrint('[ChapterPreload] Evicting chapter data for $id');
-      }
-      for (int i = 0; i < _pages.length; i++) {
-        final page = _pages[i];
-        if (page.isTransitionPage || page.chapter == null) continue;
-        if (_getChapterIdentifier(page.chapter) == id) {
-          page.archiveImage = null;
-          page.decodedImage?.dispose();
-          page.decodedImage = null;
-          page.resolvedFilePath = null;
-          evictedIndices.add(i);
+    if (idsToEvict.isEmpty) return [];
+
+    // Single linear pass over pages to evict old chapters in O(N)
+    for (int i = 0; i < _pages.length; i++) {
+      final page = _pages[i];
+      if (page.isTransitionPage || page.chapter == null) continue;
+      final id = _getChapterIdentifier(page.chapter);
+      if (id != null && idsToEvict.contains(id)) {
+        if (kDebugMode) {
+          debugPrint('[ChapterPreload] Evicting chapter page index $i for $id');
         }
+        page.archiveImage = null;
+        page.decodedImage?.dispose();
+        page.decodedImage = null;
+        page.resolvedFilePath = null;
+        evictedIndices.add(i);
       }
-      _loadedChapterIds.remove(id);
-      _chapterLoadOrder.remove(id);
     }
+
+    _loadedChapterIds.removeAll(idsToEvict);
+    _chapterLoadOrder.removeWhere((id) => idsToEvict.contains(id));
+
     return evictedIndices;
   }
 

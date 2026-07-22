@@ -284,10 +284,6 @@ class _MangaChapterPageGalleryState
   int _prefetchSessionId = 0;
   // bool _isPrevChapterPreloading = false;
 
-  /// Guard flag: suppresses [_readProgressListener] during scroll position
-  /// adjustment after prepending previous-chapter pages.
-  final bool _isAdjustingScroll = false; // TODO. The variable is never changed
-
   late int pagePreloadAmount = ref.read(pagePreloadAmountStateProvider);
   late bool _isBookmarked = _readerController.getChapterBookmarked();
 
@@ -562,8 +558,8 @@ class _MangaChapterPageGalleryState
                                 ? Axis.horizontal
                                 : Axis.vertical,
                             minCacheExtent: isHorizontalContinuous
-                                ? pagePreloadAmount * context.width(1)
-                                : pagePreloadAmount * context.height(1),
+                                ? (pagePreloadAmount * 2.0) * context.width(1)
+                                : (pagePreloadAmount * 2.0) * context.height(1),
                             initialScrollIndex: _readerController
                                 .getPageIndex(),
                             physics: const ClampingScrollPhysics(),
@@ -990,10 +986,9 @@ class _MangaChapterPageGalleryState
       controller: controller,
       isVisible: isVisible,
       onImageLoaded: (width, height) {
-        if (ref.watch(splitWidePagesStateProvider) && width > height * 1.2) {
+        if (ref.read(splitWidePagesStateProvider) && width > height * 1.2) {
           _splitWidePage(index, width.toDouble(), height.toDouble());
         }
-
         if (width > height) {
           Future.delayed(Duration(milliseconds: 600), () {
             setState(() {});
@@ -1149,7 +1144,6 @@ class _MangaChapterPageGalleryState
   }
 
   void _readProgressListener() async {
-    if (_isAdjustingScroll) return;
     final itemPositions = _itemPositionsListener.itemPositions.value;
     if (itemPositions.isEmpty) return;
     final newIndex = itemPositions.first.index;
@@ -1419,9 +1413,24 @@ class _MangaChapterPageGalleryState
         final page = pages[i];
         if (page.isTransitionPage) continue;
         try {
+          // Pre-resolve the local/archive file path in advance to avoid load delays
+          if (page.resolvedFilePath == null) {
+            final path = await page.getLocalFilePath;
+            if (path != null) {
+              page.resolvedFilePath = path;
+            }
+          }
+
           final provider = page.getImageProvider(ref, true);
           if (provider is CustomExtendedNetworkImageProvider) {
             await provider.getNetworkImageData();
+            // Resolve again if just downloaded
+            if (page.resolvedFilePath == null) {
+              final path = await page.getLocalFilePath;
+              if (path != null) {
+                page.resolvedFilePath = path;
+              }
+            }
           }
         } catch (_) {
           // Swallow errors: network failures, widget disposal, etc.
@@ -1514,17 +1523,15 @@ class _MangaChapterPageGalleryState
   );
 
   void _autoPagescroll() async {
-    if (_isContinuousMode()) {
-      for (int i = 0; i < 1; i++) {
-        await Future.delayed(const Duration(milliseconds: 100));
-        if (!_autoScroll.value) {
-          return;
-        }
-        _pageOffsetController.animateScroll(
-          offset: _pageOffset.value,
-          duration: const Duration(milliseconds: 100),
-        );
+    if (_isContinuousMode() && mounted) {
+      await Future.delayed(const Duration(milliseconds: 100));
+      if (!mounted || !_autoScroll.value) {
+        return;
       }
+      _pageOffsetController.animateScroll(
+        offset: _pageOffset.value,
+        duration: const Duration(milliseconds: 100),
+      );
       _autoPagescroll();
     }
   }
@@ -1576,7 +1583,7 @@ class _MangaChapterPageGalleryState
   }
 
   void _isViewFunction() {
-    final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
+    final fullScreenReader = ref.read(fullScreenReaderStateProvider);
     if (context.mounted) {
       setState(() {
         _isView = !_isView;

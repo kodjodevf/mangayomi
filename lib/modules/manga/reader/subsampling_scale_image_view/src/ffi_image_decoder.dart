@@ -74,7 +74,10 @@ class FfiImageDecoder {
   SendPort? _sendPort;
 
   final List<_DecodeJob> _queue = [];
-  bool _isProcessing = false;
+  // Max concurrent decode jobs sent to the isolate.
+  // 3 parallel jobs keeps tile throughput high without overloading memory.
+  static const int _maxConcurrent = 3;
+  int _activeJobs = 0;
 
   void cancel(Object token) {
     _queue.removeWhere((job) {
@@ -201,10 +204,13 @@ class FfiImageDecoder {
     final receivePort = ReceivePort();
     mainSendPort.send(receivePort.sendPort);
 
-    // LRU Cache for active page decoders
+    // LRU Cache using LinkedHashMap for O(1) access, insertion, and ordering.
+    // Keys are inserted in access order; to evict, remove first entry.
     final Map<String, Pointer<Opaque>> cachedContexts = {};
-    final List<String> lruList = [];
     final Map<String, List<int>> cachedDimensions = {};
+    // lruOrder tracks insertion order; LinkedHashMap isn't directly available in isolate
+    // so we use a plain Map (Dart Maps maintain insertion order since Dart 2) as O(1) ordered set.
+    final Map<String, bool> lruOrder = {};
     const int maxCacheSize = 10;
 
     receivePort.listen((message) async {
@@ -219,9 +225,10 @@ class FfiImageDecoder {
         int imgHeight = 0;
 
         if (ctx.address == 0) {
-          // LRU Eviction
+          // LRU Eviction: O(1) — remove first (oldest) entry from ordered map
           if (cachedContexts.length >= maxCacheSize) {
-            final oldestKey = lruList.removeAt(0);
+            final oldestKey = lruOrder.keys.first;
+            lruOrder.remove(oldestKey);
             final oldestCtx = cachedContexts.remove(oldestKey);
             cachedDimensions.remove(oldestKey);
             if (oldestCtx != null && oldestCtx.address != 0) {
@@ -249,7 +256,7 @@ class FfiImageDecoder {
             }
             ctx = newCtx;
             cachedContexts[key] = ctx;
-            lruList.add(key);
+            lruOrder[key] = true; // O(1) insertion at end
             imgWidth = wPtr.value;
             imgHeight = hPtr.value;
             cachedDimensions[key] = [imgWidth, imgHeight];
@@ -265,9 +272,9 @@ class FfiImageDecoder {
             calloc.free(hPtr);
           }
         } else {
-          // Update LRU order
-          lruList.remove(key);
-          lruList.add(key);
+          // Update LRU order: O(1) — remove and re-insert at end
+          lruOrder.remove(key);
+          lruOrder[key] = true;
           final dims = cachedDimensions[key]!;
           imgWidth = dims[0];
           imgHeight = dims[1];
@@ -325,7 +332,7 @@ class FfiImageDecoder {
           }
         }
         cachedContexts.clear();
-        lruList.clear();
+        lruOrder.clear();
         cachedDimensions.clear();
         receivePort.close();
       }
@@ -393,57 +400,74 @@ class FfiImageDecoder {
   }
 
   void _processNext() {
-    if (_isProcessing || _queue.isEmpty) return;
+    // Dispatch up to _maxConcurrent jobs simultaneously.
+    while (_activeJobs < _maxConcurrent && _queue.isNotEmpty) {
+      // Priority ordering:
+      //  1. getDimensions jobs first (they block image init)
+      //  2. High sampleSize (base/overview layer) before fine detail tiles
+      //  3. LIFO within same priority (last-added tile = most recently needed)
+      _queue.sort((a, b) {
+        final aPriority = a.action == 'getDimensions'
+            ? 1000
+            : a.params.sampleSize;
+        final bPriority = b.action == 'getDimensions'
+            ? 1000
+            : b.params.sampleSize;
+        return bPriority.compareTo(
+          aPriority,
+        ); // descending: highest priority last for removeLast
+      });
 
-    final job = _queue.removeLast(); // LIFO processing
-    _isProcessing = true;
+      final job = _queue.removeLast();
+      _activeJobs++;
 
-    final responsePort = ReceivePort();
-    responsePort.listen((response) {
-      responsePort.close();
-      _isProcessing = false;
+      final responsePort = ReceivePort();
+      responsePort.listen((response) {
+        responsePort.close();
+        _activeJobs--;
 
-      if (!job.completer.isCompleted) {
-        if (response is Map<String, dynamic>) {
-          if (response['success'] == true) {
-            if (job.action == 'getDimensions') {
-              job.completer.complete([
-                response['width'] as int,
-                response['height'] as int,
-              ]);
+        if (!job.completer.isCompleted) {
+          if (response is Map<String, dynamic>) {
+            if (response['success'] == true) {
+              if (job.action == 'getDimensions') {
+                job.completer.complete([
+                  response['width'] as int,
+                  response['height'] as int,
+                ]);
+              } else {
+                final pointerAddress = response['pointerAddress'] as int?;
+                job.completer.complete(
+                  DecodeResult(
+                    pointerAddress: pointerAddress,
+                    width: response['width'] as int,
+                    height: response['height'] as int,
+                  ),
+                );
+              }
             } else {
-              final pointerAddress = response['pointerAddress'] as int?;
-              job.completer.complete(
-                DecodeResult(
-                  pointerAddress: pointerAddress,
-                  width: response['width'] as int,
-                  height: response['height'] as int,
-                ),
-              );
+              if (kDebugMode) {
+                print('Image job failed: ${response['error']}');
+              }
+              if (job.action == 'getDimensions') {
+                job.completer.complete(null);
+              } else {
+                job.completer.complete(DecodeResult(error: response['error']));
+              }
             }
           } else {
-            if (kDebugMode) {
-              print('Image job failed: ${response['error']}');
-            }
-            if (job.action == 'getDimensions') {
-              job.completer.complete(null);
-            } else {
-              job.completer.complete(DecodeResult(error: response['error']));
-            }
+            job.completer.complete(null);
           }
-        } else {
-          job.completer.complete(null);
         }
-      }
 
-      _processNext();
-    });
+        _processNext();
+      });
 
-    _sendPort!.send({
-      'action': job.action,
-      'params': job.params.toJson(),
-      'responsePort': responsePort.sendPort,
-    });
+      _sendPort!.send({
+        'action': job.action,
+        'params': job.params.toJson(),
+        'responsePort': responsePort.sendPort,
+      });
+    }
   }
 
   bool getImageDimensions(
@@ -500,7 +524,6 @@ class FfiImageDecoder {
       }
     }
     _queue.clear();
-    _isProcessing = false;
   }
 }
 

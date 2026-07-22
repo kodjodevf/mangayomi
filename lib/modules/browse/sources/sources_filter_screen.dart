@@ -5,6 +5,7 @@ import 'package:isar_community/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/language.dart';
@@ -16,6 +17,7 @@ class SourcesFilterScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = l10nLocalizations(context)!;
+    final showNSFW = ref.watch(showNSFWStateProvider);
     return Scaffold(
       appBar: AppBar(title: Text(l10n.sources)),
       body: Padding(
@@ -31,7 +33,9 @@ class SourcesFilterScreen extends ConsumerWidget {
               .watch(fireImmediately: true),
           builder: (context, snapshot) {
             if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-              final entries = snapshot.data!;
+              final entries = snapshot.data!
+                  .where((e) => showNSFW || !(e.isNsfw ?? false))
+                  .toList();
               return CustomScrollView(
                 slivers: [
                   CustomSliverGroupedListView<Source, String>(

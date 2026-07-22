@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mangayomi/modules/library/providers/isar_providers.dart';
 import 'package:mangayomi/modules/library/providers/library_filter_provider.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -79,14 +78,6 @@ Future<void> onTapEntry({
     sourceId: entry.sourceId,
   );
 
-  if (context.mounted) {
-    ref.invalidate(
-      getAllMangaWithoutCategoriesStreamProvider(itemType: entry.itemType),
-    );
-    ref.invalidate(
-      getAllMangaStreamProvider(categoryId: null, itemType: entry.itemType),
-    );
-  }
 }
 
 /// A small rounded chip using the theme's hint colour as its background.
@@ -142,5 +133,79 @@ class DownloadCountBadge extends ConsumerWidget {
     if (count == 0) return const SizedBox.shrink();
 
     return EntryBadgeChip(label: count.toString());
+  }
+}
+
+/// A unified badge widget that combines Local, Download, and Unread counts.
+/// Only renders a non-empty widget when there is actually something to display,
+/// resolving the "0 unread" empty badge container UX bug.
+class LibraryBadgeWidget extends ConsumerWidget {
+  final Manga entry;
+  final bool showLocal;
+  final bool showDownloaded;
+
+  const LibraryBadgeWidget({
+    super.key,
+    required this.entry,
+    required this.showLocal,
+    required this.showDownloaded,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isLocalArchive = entry.isLocalArchive ?? false;
+    final hasLocal = showLocal && isLocalArchive;
+
+    int downloadCount = 0;
+    if (showDownloaded) {
+      final downloadedIds =
+          ref.watch(downloadedChapterIdsProvider).asData?.value ?? const <int>{};
+      for (final c in entry.chapters) {
+        if (c.id != null && downloadedIds.contains(c.id)) {
+          downloadCount++;
+        }
+      }
+    }
+
+    int unreadCount = 0;
+    for (final e in entry.chapters) {
+      if (!e.isRead!) {
+        unreadCount++;
+      }
+    }
+
+    // If there is nothing to show (no local, no download, no unread), return empty
+    if (!hasLocal && downloadCount == 0 && unreadCount == 0) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(3),
+        color: context.primaryColor,
+      ),
+      padding: const EdgeInsets.only(right: 5),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (hasLocal)
+            const EntryBadgeChip(label: 'Local'),
+          if (downloadCount > 0)
+            EntryBadgeChip(label: downloadCount.toString()),
+          if (unreadCount > 0)
+            Padding(
+              padding: const EdgeInsets.only(left: 3),
+              child: Text(
+                unreadCount.toString(),
+                style: TextStyle(
+                  color: context.dynamicBlackWhiteColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 10,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }

@@ -164,6 +164,8 @@ class RenderSubsamplingImage extends RenderBox {
     markNeedsLayout();
   }
 
+  final Paint _paint = Paint()..isAntiAlias = true;
+
   @override
   void performLayout() {
     size = constraints.constrain(_preferredSize);
@@ -198,21 +200,20 @@ class RenderSubsamplingImage extends RenderBox {
       canvas.translate(-_sWidth.toDouble(), 0.0);
     }
 
-    final paint = Paint()
-      ..isAntiAlias = true
-      ..filterQuality = _filterQuality;
+    _paint.filterQuality = _filterQuality;
 
     // Applies color blending if requested
     if (_color != null) {
-      paint.colorFilter = ColorFilter.mode(
+      _paint.colorFilter = ColorFilter.mode(
         _color!,
         _colorBlendMode ?? BlendMode.srcIn,
       );
+    } else {
+      _paint.colorFilter = null;
     }
 
-    // 3. Draws all visible tiles currently loaded
-    final sortedKeys = _tilingEngine.tileMap.keys.toList()
-      ..sort((a, b) => b.compareTo(a));
+    // 3. Draws all visible tiles currently loaded using cached sortedKeys
+    final sortedKeys = _tilingEngine.sortedKeys;
 
     for (final sampleSize in sortedKeys) {
       final tiles = _tilingEngine.tileMap[sampleSize] ?? [];
@@ -225,7 +226,7 @@ class RenderSubsamplingImage extends RenderBox {
             tile.image!.height.toDouble(),
           );
 
-          canvas.drawImageRect(tile.image!, srcRect, tile.sRect, paint);
+          canvas.drawImageRect(tile.image!, srcRect, tile.sRect, _paint);
         }
       }
     }
