@@ -83,6 +83,93 @@ jobs:
           artifacts: "build/app/outputs/flutter-apk/Mangayomi-*.apk"
           allowUpdates: true
 
+  # Dedicated Android TV build: same app, but with TV branding swapped in (a
+  # TV launcher icon + banner). Fire TV shows the square launcher icon for
+  # sideloaded apps and doesn't reliably honour the `-television` resource
+  # qualifier, so the icon is overwritten directly here rather than via a
+  # qualifier. Produces separate Mangayomi-<tag>-android-tv-*.apk artifacts.
+  build-and-release-android-tv:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout branch
+        uses: actions/checkout@v4
+
+      - name: setup flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Java toolchain (Only Android target)
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+        env:
+          JAVA_OPTS: "-Xmx4096m -XX:MaxMetaspaceSize=512m"
+
+      - name: Setup Gradle properties for CI
+        run: |
+          echo "org.gradle.jvmargs=-Xmx4096M -XX:MaxMetaspaceSize=512m -XX:+UseG1GC" >> android/gradle.properties
+          echo "org.gradle.parallel=true" >> android/gradle.properties
+          echo "org.gradle.daemon=false" >> android/gradle.properties
+
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: "3.18.1"
+
+      - name: Setup ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
+
+      - name: Install the CLI tool
+        run: cargo install 'flutter_rust_bridge_codegen'
+
+      # Overwrite the default launcher icon (and banner) with the TV variants
+      # from android/tv_res before building. The leanback banner is declared in
+      # the manifest by the Android TV support work.
+      - name: Apply TV branding
+        run: |
+          for d in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+            cp -f "android/tv_res/mipmap-$d/launcher_icon.png" \
+                  "android/app/src/main/res/mipmap-$d/launcher_icon.png"
+          done
+          cp -f android/tv_res/drawable-xhdpi/tv_banner.png \
+                android/app/src/main/res/drawable-xhdpi/tv_banner.png || true
+
+      - name: Setup Android keystore
+        run: |
+          echo "${{ secrets.SIGNING_KEY_STORE_BASE64 }}" | base64 -di > android/app/upload-keystore.jks
+          echo "${{ secrets.SIGNING_KEY_PROPERTIES }}" > android/key.properties
+
+      - name: flutter pub get
+        run: flutter pub get
+
+      - name: build android tv apks (split per ABI)
+        run: |
+          export GRADLE_OPTS="-Xmx4096m -XX:MaxMetaspaceSize=512m -XX:+UseG1GC"
+          flutter build apk --release --split-per-abi --verbose
+          cd build/app/outputs/flutter-apk
+          mv app-arm64-v8a-release.apk Mangayomi-${{ github.ref_name }}-android-tv-arm64-v8a.apk
+          mv app-armeabi-v7a-release.apk Mangayomi-${{ github.ref_name }}-android-tv-armeabi-v7a.apk
+          mv app-x86_64-release.apk Mangayomi-${{ github.ref_name }}-android-tv-x86_64.apk
+
+      - name: upload artifact android tv apks
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mangayomi-${{ github.ref_name }}-android-tv
+          path: "build/app/outputs/flutter-apk/Mangayomi-*android-tv*.apk"
+
+      - name: release packages android tv apks
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/app/outputs/flutter-apk/Mangayomi-*android-tv*.apk"
+          allowUpdates: true
+
   build-and-release-ios-ipa:
     permissions:
       contents: write
