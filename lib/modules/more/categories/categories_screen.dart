@@ -1,4 +1,5 @@
 import 'package:mangayomi/utils/platform_utils.dart';
+import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar_community/isar.dart';
@@ -31,7 +32,12 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen>
   @override
   void initState() {
     super.initState();
-    _visibleTabTypes = hiddenItemTypes(ref.read(hideItemsStateProvider));
+    var types = hiddenItemTypes(ref.read(hideItemsStateProvider));
+    // Anime-only layout: only manage anime categories.
+    if (ref.read(animeOnlyTvModeProvider)) {
+      types = types.where((t) => t == ItemType.anime).toList();
+    }
+    _visibleTabTypes = types;
     _tabBarController = TabController(
       length: _visibleTabTypes.length,
       vsync: this,

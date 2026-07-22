@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/more/widgets/list_tile_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class PlayerOverviewScreen extends StatelessWidget {
   const PlayerOverviewScreen({super.key});
@@ -14,6 +17,24 @@ class PlayerOverviewScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            // On TV, choose between the dedicated TV player and the original
+            // desktop player. Not shown on phones/desktops.
+            if (isTv)
+              Consumer(
+                builder: (context, ref, _) {
+                  final useTvPlayer = ref.watch(tvPlayerStyleProvider);
+                  return SwitchListTile(
+                    secondary: const Icon(Icons.smart_display_outlined),
+                    title: const Text('TV player (beta)'),
+                    subtitle: const Text(
+                      'On: dedicated TV player.  Off: original (desktop) player.',
+                    ),
+                    value: useTvPlayer,
+                    onChanged: (v) =>
+                        ref.read(tvPlayerStyleProvider.notifier).set(v),
+                  );
+                },
+              ),
             ListTileWidget(
               title: l10n.internal_player,
               subtitle: l10n.internal_player_info,

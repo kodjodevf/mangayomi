@@ -26,6 +26,9 @@ class DesktopControllerWidget extends ConsumerStatefulWidget {
   final int defaultSkipIntroLength;
   final void Function(bool) desktopFullScreenPlayer;
   final ValueNotifier<List<(String, int)>> chapterMarks;
+  // Bumped by the player on each d-pad key so the desktop controls can reveal on
+  // a TV remote - they otherwise only appear on mouse hover. Null off-TV.
+  final ValueNotifier<int>? revealControls;
   const DesktopControllerWidget({
     super.key,
     required this.videoController,
@@ -39,6 +42,7 @@ class DesktopControllerWidget extends ConsumerStatefulWidget {
     required this.defaultSkipIntroLength,
     required this.desktopFullScreenPlayer,
     required this.chapterMarks,
+    this.revealControls,
   });
 
   @override
@@ -67,6 +71,18 @@ class _DesktopControllerWidgetState
   final List<StreamSubscription> subscriptions = [];
   DateTime last = DateTime.now();
   Timer? _tapTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    // Reveal on a d-pad key (TV remote) - the desktop controls otherwise only
+    // appear on mouse hover, which a remote can't trigger.
+    widget.revealControls?.addListener(_onRevealRequest);
+  }
+
+  void _onRevealRequest() {
+    if (mounted) onEnter();
+  }
 
   @override
   void setState(VoidCallback fn) {
@@ -99,6 +115,7 @@ class _DesktopControllerWidgetState
 
   @override
   void dispose() {
+    widget.revealControls?.removeListener(_onRevealRequest);
     for (final subscription in subscriptions) {
       subscription.cancel();
     }

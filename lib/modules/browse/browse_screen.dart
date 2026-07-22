@@ -10,6 +10,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/modules/browse/extension/extension_screen.dart';
 import 'package:mangayomi/modules/browse/sources/sources_screen.dart';
+import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
@@ -35,33 +36,39 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
   late final hideItems = ref.read(hideItemsStateProvider);
   final _textEditingController = TextEditingController();
   late TabController _tabBarController;
+  late List<BrowseTab> _tabList;
 
-  late final List<BrowseTab> _tabList = [
-    if (!hideItems.contains("/MangaLibrary"))
+  // Hide manga & novel from Browse (sources + extensions) on the anime-only TV
+  // layout so only anime shows. Recomputed live so toggling "Anime only" updates
+  // the tabs without a restart. Defaults to isTv, user-overridable. See #729.
+  List<BrowseTab> _computeTabList(bool animeOnly) => [
+    if (!animeOnly && !hideItems.contains("/MangaLibrary"))
       BrowseTab(ItemType.manga, BrowseTabKind.sources),
     if (!hideItems.contains("/AnimeLibrary"))
       BrowseTab(ItemType.anime, BrowseTabKind.sources),
-    if (!hideItems.contains("/NovelLibrary"))
+    if (!animeOnly && !hideItems.contains("/NovelLibrary"))
       BrowseTab(ItemType.novel, BrowseTabKind.sources),
-
-    if (!hideItems.contains("/MangaLibrary"))
+    if (!animeOnly && !hideItems.contains("/MangaLibrary"))
       BrowseTab(ItemType.manga, BrowseTabKind.extensions),
     if (!hideItems.contains("/AnimeLibrary"))
       BrowseTab(ItemType.anime, BrowseTabKind.extensions),
-    if (!hideItems.contains("/NovelLibrary"))
+    if (!animeOnly && !hideItems.contains("/NovelLibrary"))
       BrowseTab(ItemType.novel, BrowseTabKind.extensions),
   ];
 
   @override
   void initState() {
     super.initState();
+    _tabList = _computeTabList(ref.read(animeOnlyTvModeProvider));
     _tabBarController = TabController(length: _tabList.length, vsync: this);
-    _tabBarController.addListener(() {
-      _chekPermission();
-      setState(() {
-        _textEditingController.clear();
-        _isSearch = false;
-      });
+    _tabBarController.addListener(_onTabChanged);
+  }
+
+  void _onTabChanged() {
+    _chekPermission();
+    setState(() {
+      _textEditingController.clear();
+      _isSearch = false;
     });
   }
 
@@ -79,6 +86,18 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
   bool _isSearch = false;
   @override
   Widget build(BuildContext context) {
+    // Recompute the tab list live when "Anime only" flips; recreate the
+    // controller when the tab count changes.
+    final newTabs = _computeTabList(ref.watch(animeOnlyTvModeProvider));
+    if (newTabs.length != _tabList.length) {
+      _tabList = newTabs;
+      _tabBarController.removeListener(_onTabChanged);
+      _tabBarController.dispose();
+      _tabBarController = TabController(length: _tabList.length, vsync: this);
+      _tabBarController.addListener(_onTabChanged);
+    } else {
+      _tabList = newTabs;
+    }
     if (_tabList.isEmpty) {
       return SizedBox.shrink();
     }
@@ -88,7 +107,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
     final l10n = l10nLocalizations(context)!;
     return DefaultTabController(
       animationDuration: Duration.zero,
-      length: 6,
+      length: _tabList.length,
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -116,6 +135,9 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
                   )
                 : Row(
                     children: [
+                      // Feed entry point temporarily disabled in this build -
+                      // it crashes on first load and its focus needs work (#782).
+                      // The FeedScreen code is kept for when we resume it.
                       if (isExtensionTab)
                         IconButton(
                           onPressed: () {
