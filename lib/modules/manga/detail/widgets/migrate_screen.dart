@@ -123,6 +123,7 @@ class _MigrationScreenScreenState extends ConsumerState<MigrationScreen> {
                     manga: widget.manga,
                     source: source,
                     trackSearch: widget.trackSearch,
+                    autofocusFirst: index == 0,
                   ),
                 );
               },
@@ -144,12 +145,14 @@ class MigrationSourceSearchScreen extends ConsumerStatefulWidget {
   final TrackSearch? trackSearch;
 
   final Source source;
+  final bool autofocusFirst;
   const MigrationSourceSearchScreen({
     super.key,
     required this.query,
     required this.manga,
     required this.source,
     this.trackSearch,
+    this.autofocusFirst = false,
   });
 
   @override
@@ -231,6 +234,7 @@ class _MigrationSourceSearchScreenState
                                 manga: pages!.list[index],
                                 source: widget.source,
                                 trackSearch: widget.trackSearch,
+                                autofocus: widget.autofocusFirst && index == 0,
                               );
                             },
                           );
@@ -251,6 +255,7 @@ class MigrationMangaGlobalImageCard extends ConsumerStatefulWidget {
   final MManga manga;
   final Source source;
   final TrackSearch? trackSearch;
+  final bool autofocus;
 
   const MigrationMangaGlobalImageCard({
     super.key,
@@ -258,6 +263,7 @@ class MigrationMangaGlobalImageCard extends ConsumerStatefulWidget {
     required this.manga,
     required this.source,
     this.trackSearch,
+    this.autofocus = false,
   });
 
   @override
@@ -279,6 +285,7 @@ class _MigrationMangaGlobalImageCardState
     // unreachable. Match the global-search / library covers: focusable, accent
     // ring plus a lift, opens on OK.
     return Focus(
+      autofocus: widget.autofocus,
       onFocusChange: (f) {
         setState(() => _focused = f);
         if (f && context.mounted && Scrollable.maybeOf(context) != null) {
