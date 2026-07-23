@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
 
 /// macOS, Linux or Windows
@@ -16,7 +17,7 @@ final bool isApple = Platform.isMacOS || Platform.isIOS;
 ///
 /// Defaults to false and is hydrated once at startup by [initIsTv] (Android
 /// only); it stays false on every other platform. Nothing branches on this
-/// yet - it's the detection foundation for Android TV support (see #729).
+/// yet — it's the detection foundation for Android TV support (see #729).
 bool isTv = false;
 
 /// Asks the native side whether this is a TV / leanback device and caches the
@@ -34,3 +35,11 @@ Future<void> initIsTv() async {
     debugPrint('[platform] isTv = $isTv');
   }
 }
+
+/// Horizontal breathing room for a TV screen's scrolling content.
+///
+/// A TV is viewed from across the room and its panel may overscan, so content
+/// running flush to the edges reads badly. Off-TV this is [EdgeInsets.zero], so
+/// phone and desktop layouts are byte-for-byte unchanged.
+EdgeInsets get tvPageInsets =>
+    isTv ? const EdgeInsets.symmetric(horizontal: 16) : EdgeInsets.zero;

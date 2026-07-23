@@ -7,6 +7,7 @@ import 'package:mangayomi/utils/language.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class PlayerScreen extends ConsumerStatefulWidget {
   const PlayerScreen({super.key});
@@ -37,6 +38,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.internal_player)),
       body: SingleChildScrollView(
+        padding: tvPageInsets,
         child: Column(
           children: [
             ListTile(

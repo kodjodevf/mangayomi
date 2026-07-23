@@ -10,9 +10,47 @@ import 'package:mangayomi/modules/manga/download/providers/download_provider.dar
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/utils/global_style.dart';
+import 'package:mangayomi/modules/widgets/tv_menu.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class DownloadQueueScreen extends ConsumerWidget {
   const DownloadQueueScreen({super.key});
+
+  /// The per-download actions, shared by the popup menu off-TV and the centred
+  /// TV menu.
+  Future<void> _onDownloadAction(
+    BuildContext context,
+    String value,
+    Download element,
+    List<Download> entries,
+  ) async {
+    if (value == 'Cancel') {
+      if (element.chapter.value != null) {
+        element.chapter.value!.cancelDownloads(element.id!);
+      } else {
+        // Orphaned download — just delete the record
+        isar.writeTxnSync(() {
+          isar.downloads.deleteSync(element.id!);
+        });
+      }
+    } else if (value == 'CancelAll') {
+      final a = entries
+          .where(
+            (e) =>
+                '${e.chapter.value?.manga.value?.name}' ==
+                    '${element.chapter.value?.manga.value?.name}' &&
+                '${e.chapter.value?.manga.value?.source}' ==
+                    '${element.chapter.value?.manga.value?.source}',
+          )
+          .map((e) => (e.id, e.chapter.value?.id))
+          .toList();
+      for (var ids in a) {
+        final (downloadId, chapterId) = ids;
+        final chapter = isar.chapters.getSync(chapterId!);
+        chapter?.cancelDownloads(downloadId!);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -49,7 +87,16 @@ class DownloadQueueScreen extends ConsumerWidget {
           }
           if (entries.isEmpty) {
             return Scaffold(
-              appBar: AppBar(title: Text(l10n!.download_queue)),
+              appBar: AppBar(
+                title: Text(l10n!.download_queue),
+                leading: isTv
+                    ? IconButton(
+                        autofocus: true,
+                        icon: const BackButtonIcon(),
+                        onPressed: () => Navigator.of(context).pop(),
+                      )
+                    : null,
+              ),
               body: Center(child: Text(l10n.no_downloads)),
             );
           }
@@ -142,52 +189,63 @@ class DownloadQueueScreen extends ConsumerWidget {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: PopupMenuButton(
-                          popUpAnimationStyle: popupAnimationStyle,
-                          child: const Icon(Icons.more_vert),
-                          onSelected: (value) async {
-                            if (value.toString() == 'Cancel') {
-                              if (element.chapter.value != null) {
-                                element.chapter.value!.cancelDownloads(
-                                  element.id!,
-                                );
-                              } else {
-                                // Orphaned download — just delete the record
-                                isar.writeTxnSync(() {
-                                  isar.downloads.deleteSync(element.id!);
-                                });
-                              }
-                            } else if (value.toString() == 'CancelAll') {
-                              final a = entries
-                                  .where(
-                                    (e) =>
-                                        '${e.chapter.value?.manga.value?.name}' ==
-                                            '${element.chapter.value?.manga.value?.name}' &&
-                                        '${e.chapter.value?.manga.value?.source}' ==
-                                            '${element.chapter.value?.manga.value?.source}',
-                                  )
-                                  .map((e) => (e.id, e.chapter.value?.id))
-                                  .toList();
-                              for (var ids in a) {
-                                final (downloadId, chapterId) = ids;
-                                final chapter = isar.chapters.getSync(
-                                  chapterId!,
-                                );
-                                chapter?.cancelDownloads(downloadId!);
-                              }
-                            }
-                          },
-                          itemBuilder: (context) => [
-                            PopupMenuItem(
-                              value: 'Cancel',
-                              child: Text(l10n.cancel),
-                            ),
-                            PopupMenuItem(
-                              value: 'CancelAll',
-                              child: Text(l10n.cancel_all_for_this_series),
-                            ),
-                          ],
-                        ),
+                        child: isTv
+                            // An anchored dropdown is a poor remote target, so
+                            // pop the same actions in the centre on TV.
+                            ? IconButton(
+                                icon: const Icon(Icons.more_vert),
+                                onPressed: () async {
+                                  final picked = await showTvMenu(
+                                    context,
+                                    title:
+                                        element
+                                            .chapter
+                                            .value
+                                            ?.manga
+                                            .value
+                                            ?.name ??
+                                        '',
+                                    options: [
+                                      TvMenuOption(l10n.cancel),
+                                      TvMenuOption(
+                                        l10n.cancel_all_for_this_series,
+                                      ),
+                                    ],
+                                  );
+                                  // The menu awaited, so the context may be
+                                  // gone by the time it returns.
+                                  if (picked != null && context.mounted) {
+                                    await _onDownloadAction(
+                                      context,
+                                      picked == 0 ? 'Cancel' : 'CancelAll',
+                                      element,
+                                      entries,
+                                    );
+                                  }
+                                },
+                              )
+                            : PopupMenuButton(
+                                popUpAnimationStyle: popupAnimationStyle,
+                                child: const Icon(Icons.more_vert),
+                                onSelected: (value) => _onDownloadAction(
+                                  context,
+                                  value.toString(),
+                                  element,
+                                  entries,
+                                ),
+                                itemBuilder: (context) => [
+                                  PopupMenuItem(
+                                    value: 'Cancel',
+                                    child: Text(l10n.cancel),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 'CancelAll',
+                                    child: Text(
+                                      l10n.cancel_all_for_this_series,
+                                    ),
+                                  ),
+                                ],
+                              ),
                       ),
                     ],
                   ),
@@ -209,7 +267,16 @@ class DownloadQueueScreen extends ConsumerWidget {
           );
         }
         return Scaffold(
-          appBar: AppBar(title: Text(l10n!.download_queue)),
+          appBar: AppBar(
+            title: Text(l10n!.download_queue),
+            leading: isTv
+                ? IconButton(
+                    autofocus: true,
+                    icon: const BackButtonIcon(),
+                    onPressed: () => Navigator.of(context).pop(),
+                  )
+                : null,
+          ),
           body: Center(child: Text(l10n.no_downloads)),
         );
       },

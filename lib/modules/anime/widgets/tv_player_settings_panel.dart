@@ -6,13 +6,13 @@ import 'package:media_kit/media_kit.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_decoder_state_provider.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
-/// The settings panel that docks on the right of the TV player.
+/// The YouTube-style settings panel that docks on the right of the TV player.
 /// A navigable drill-down: a category list, and selecting one replaces it with
 /// that category's page (Back returns). Surfaces the player's existing quality /
-/// subtitle / audio widgets plus speed, shaders, decoder and mpv stats - all
+/// subtitle / audio widgets plus speed, shaders, decoder and mpv stats — all
 /// d-pad-focusable.
 /// One selectable option in a track/quality list: its label, whether it's the
-/// current selection, and the action to switch to it (no route pop - the panel
+/// current selection, and the action to switch to it (no route pop — the panel
 /// stays open).
 typedef TvTrackOptionData = ({String label, bool selected, VoidCallback onTap});
 
@@ -41,7 +41,7 @@ class TvPlayerSettingsPanel extends ConsumerStatefulWidget {
   // The header's focus node is owned by the player so it can be re-focused every
   // time the panel opens (autofocus only fires once per scope).
   final FocusNode headerFocusNode;
-  // Left out of the panel goes to the video - an explicit hand-off, because
+  // Left out of the panel goes to the video — an explicit hand-off, because
   // geometric directional focus across the split was losing focus entirely.
   final VoidCallback onExitLeft;
   final VoidCallback onClose;
@@ -69,8 +69,8 @@ class _TvPlayerSettingsPanelState extends ConsumerState<TvPlayerSettingsPanel> {
   static const _decoders = [
     ('auto', 'Auto (hardware)'),
     ('auto-copy', 'Auto-copy'),
-    ('mediacodec', 'MediaCodec - HW (Android)'),
-    ('mediacodec-copy', 'MediaCodec - HW+ (Android)'),
+    ('mediacodec', 'MediaCodec — HW (Android)'),
+    ('mediacodec-copy', 'MediaCodec — HW+ (Android)'),
     ('videotoolbox', 'VideoToolbox (Apple)'),
     ('videotoolbox-copy', 'VideoToolbox-copy (Apple)'),
     ('d3d11va', 'D3D11VA (Windows)'),

@@ -6,6 +6,7 @@ import 'package:mangayomi/modules/more/widgets/downloaded_only_widget.dart';
 import 'package:mangayomi/modules/more/widgets/incognito_mode_widget.dart';
 import 'package:mangayomi/modules/more/widgets/list_tile_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class MoreScreen extends ConsumerStatefulWidget {
   const MoreScreen({super.key});
@@ -21,6 +22,7 @@ class MoreScreenState extends ConsumerState<MoreScreen> {
     final hiddenItems = ref.watch(hideItemsStateProvider);
     return Scaffold(
       body: SingleChildScrollView(
+        padding: tvPageInsets,
         child: Column(
           children: [
             SizedBox(height: AppBar().preferredSize.height),
@@ -64,6 +66,12 @@ class MoreScreenState extends ConsumerState<MoreScreen> {
               icon: Icons.download_outlined,
               title: l10n!.download_queue,
             ),
+            // Mass migration is otherwise only reachable from a manga's
+            // overflow menu, which the TV detail view does not have. It is a
+            // library-wide tool anyway: it lists every source in the library,
+            // and only uses a manga to float that source to the top. Seeded
+            // with anime because the TV build is anime-first; the per-source
+            // shortcut on the TV detail view covers the other libraries.
             ListTileWidget(
               onTap: () {
                 context.push('/categories', extra: (false, 0));

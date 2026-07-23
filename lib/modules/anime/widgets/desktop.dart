@@ -27,7 +27,7 @@ class DesktopControllerWidget extends ConsumerStatefulWidget {
   final void Function(bool) desktopFullScreenPlayer;
   final ValueNotifier<List<(String, int)>> chapterMarks;
   // Bumped by the player on each d-pad key so the desktop controls can reveal on
-  // a TV remote - they otherwise only appear on mouse hover. Null off-TV.
+  // a TV remote — they otherwise only appear on mouse hover. Null off-TV.
   final ValueNotifier<int>? revealControls;
   const DesktopControllerWidget({
     super.key,
@@ -75,7 +75,7 @@ class _DesktopControllerWidgetState
   @override
   void initState() {
     super.initState();
-    // Reveal on a d-pad key (TV remote) - the desktop controls otherwise only
+    // Reveal on a d-pad key (TV remote) — the desktop controls otherwise only
     // appear on mouse hover, which a remote can't trigger.
     widget.revealControls?.addListener(_onRevealRequest);
   }

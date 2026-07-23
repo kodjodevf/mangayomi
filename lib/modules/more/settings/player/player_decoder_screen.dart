@@ -5,6 +5,7 @@ import 'package:mangayomi/modules/more/settings/player/providers/player_decoder_
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class PlayerDecoderScreen extends ConsumerStatefulWidget {
   const PlayerDecoderScreen({super.key});
@@ -26,6 +27,7 @@ class _PlayerDecoderScreenState extends ConsumerState<PlayerDecoderScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.decoder)),
       body: SingleChildScrollView(
+        padding: tvPageInsets,
         child: Column(
           children: [
             SwitchListTile(

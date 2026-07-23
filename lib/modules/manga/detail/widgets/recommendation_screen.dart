@@ -12,6 +12,7 @@ import 'package:marquee/marquee.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class RecommendationScreen extends StatefulWidget {
   final String name;
@@ -80,6 +81,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
                   }
                   if (data != null && data!.isNotEmpty) {
                     return SuperListView.builder(
+                      padding: tvPageInsets,
                       extentPrecalculationPolicy: SuperPrecalculationPolicy(),
                       itemCount: data!.length,
                       itemBuilder: (context, index) {

@@ -15,6 +15,7 @@ class PlayerOverviewScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n!.player)),
       body: SingleChildScrollView(
+        padding: tvPageInsets,
         child: Column(
           children: [
             // On TV, choose between the dedicated TV player and the original

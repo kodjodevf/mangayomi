@@ -13,6 +13,8 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/modules/manga/detail/tv/tv_anime_detail_view.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
@@ -60,6 +62,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import '../../../utils/constant.dart';
 import 'package:path/path.dart' as p;
+import 'package:mangayomi/modules/widgets/tv_menu.dart';
 
 class MangaDetailView extends ConsumerStatefulWidget {
   final Function(bool) isExtended;
@@ -108,8 +111,107 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   bool _expanded = false;
   late final ScrollController _scrollController;
   late final isLocalArchive = widget.manga!.isLocalArchive ?? false;
+
+  /// The detail overflow actions, shared by the popup menu off-TV and the
+  /// centred TV menu.
+  Future<void> _onDetailOverflow(int value) async {
+    final l10n = l10nLocalizations(context)!;
+    switch (value) {
+      case 0:
+        widget.checkForUpdate(true);
+        break;
+      case 1:
+        showCategorySelectionDialog(
+          context: context,
+          ref: ref,
+          itemType: widget.manga!.itemType,
+          singleManga: widget.manga!,
+        );
+        break;
+      case 2:
+        final source = getSource(
+          widget.manga!.lang!,
+          widget.manga!.source!,
+          widget.manga!.sourceId,
+        );
+        if (source == null) return;
+        final url =
+            "${source.baseUrl}${widget.manga!.link!.getUrlWithoutDomain}";
+        final box = context.findRenderObject() as RenderBox?;
+        SharePlus.instance.share(
+          ShareParams(
+            text: url,
+            sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+          ),
+        );
+        break;
+      case 3:
+        context.push("/migrate", extra: widget.manga);
+        break;
+      case 4:
+        final source = getSource(
+          widget.manga!.lang!,
+          widget.manga!.source!,
+          widget.manga!.sourceId,
+        );
+        if (source == null) return;
+        context.push('/extension_detail', extra: source);
+        break;
+      case 5:
+        try {
+          final result = await FilePicker.getDirectoryPath();
+          if (result != null) {
+            final client = MClient.init();
+            final coverFile = File(p.join(result, "cover.jpg"));
+            final metadataFile = File(p.join(result, "metadata.json"));
+            final headers = widget.manga!.isLocalArchive!
+                ? null
+                : ref.read(
+                    headersProvider(
+                      source: widget.manga!.source!,
+                      lang: widget.manga!.lang!,
+                      sourceId: widget.manga!.sourceId,
+                    ),
+                  );
+            final imageUrl = toImgUrl(
+              widget.manga!.customCoverFromTracker ??
+                  widget.manga!.imageUrl ??
+                  "",
+            );
+            final res = await client.get(Uri.parse(imageUrl), headers: headers);
+            await coverFile.writeAsBytes(res.bodyBytes);
+            await metadataFile.writeAsString(
+              jsonEncode({
+                "name": widget.manga!.name,
+                "description": widget.manga!.description,
+                "artist": widget.manga!.artist,
+                "author": widget.manga!.author,
+                "genre": widget.manga!.genre,
+                "status": widget.manga!.status.index,
+              }),
+            );
+            botToast(l10n.exported);
+          }
+        } catch (e) {
+          botToast("Failed to export metadata: $e");
+        }
+        break;
+      case 6:
+        context.push(
+          "/massMigration",
+          extra: (widget.manga!.itemType, widget.manga),
+        );
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    // On Android TV, anime gets a dedicated d-pad split detail (info left,
+    // episodes right). Manga/novel and phones/desktop keep the classic detail.
+    if (isTv && widget.itemType == ItemType.anime) {
+      return TvAnimeDetailView(manga: widget.manga!);
+    }
     // Watch all sort/filter providers so the list rebuilds whenever
     // the user changes settings in _showDraggableMenu().
     ref.watch(scanlatorsFilterStateProvider(widget.manga!));
@@ -501,154 +603,86 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               color: isNotFiltering ? null : Colors.yellow,
                             ),
                           ),
-                          PopupMenuButton(
-                            popUpAnimationStyle: popupAnimationStyle,
-                            itemBuilder: (context) {
-                              return [
-                                if (!isLocalArchive)
-                                  PopupMenuItem<int>(
-                                    value: 0,
-                                    child: Text(l10n.refresh),
-                                  ),
-                                if (widget.manga!.favorite! &&
-                                    checkCategoryList)
-                                  PopupMenuItem<int>(
-                                    value: 1,
-                                    child: Text(l10n.set_categories),
-                                  ),
-                                if (!isLocalArchive)
-                                  PopupMenuItem<int>(
-                                    value: 2,
-                                    child: Text(l10n.share),
-                                  ),
-                                PopupMenuItem<int>(
-                                  value: 3,
-                                  child: Text(l10n.migrate),
-                                ),
-                                PopupMenuItem<int>(
-                                  value: 6,
-                                  child: const Text('Mass migration'),
-                                ),
-                                if (!isLocalArchive)
-                                  PopupMenuItem<int>(
-                                    value: 4,
-                                    child: Text(l10n.extension_settings),
-                                  ),
-                                PopupMenuItem<int>(
-                                  value: 5,
-                                  child: Text(l10n.export_metadata),
-                                ),
-                              ];
-                            },
-                            onSelected: (value) async {
-                              switch (value) {
-                                case 0:
-                                  widget.checkForUpdate(true);
-                                  break;
-                                case 1:
-                                  showCategorySelectionDialog(
-                                    context: context,
-                                    ref: ref,
-                                    itemType: widget.manga!.itemType,
-                                    singleManga: widget.manga!,
-                                  );
-                                  break;
-                                case 2:
-                                  final source = getSource(
-                                    widget.manga!.lang!,
-                                    widget.manga!.source!,
-                                    widget.manga!.sourceId,
-                                  );
-                                  if (source == null) return;
-                                  final url =
-                                      "${source.baseUrl}${widget.manga!.link!.getUrlWithoutDomain}";
-                                  final box =
-                                      context.findRenderObject() as RenderBox?;
-                                  SharePlus.instance.share(
-                                    ShareParams(
-                                      text: url,
-                                      sharePositionOrigin:
-                                          box!.localToGlobal(Offset.zero) &
-                                          box.size,
-                                    ),
-                                  );
-                                  break;
-                                case 3:
-                                  context.push("/migrate", extra: widget.manga);
-                                  break;
-                                case 4:
-                                  final source = getSource(
-                                    widget.manga!.lang!,
-                                    widget.manga!.source!,
-                                    widget.manga!.sourceId,
-                                  );
-                                  if (source == null) return;
-                                  context.push(
-                                    '/extension_detail',
-                                    extra: source,
-                                  );
-                                  break;
-                                case 5:
-                                  try {
-                                    final result =
-                                        await FilePicker.getDirectoryPath();
-                                    if (result != null) {
-                                      final client = MClient.init();
-                                      final coverFile = File(
-                                        p.join(result, "cover.jpg"),
+                          // The menu's items are conditional, so its values
+                          // are not its indices: keep label and value paired so
+                          // the centred TV menu cannot fire the wrong action.
+                          if (isTv)
+                            Builder(
+                              builder: (context) {
+                                final entries = <(String, int)>[
+                                  if (!isLocalArchive) (l10n.refresh, 0),
+                                  if (widget.manga!.favorite! &&
+                                      checkCategoryList)
+                                    (l10n.set_categories, 1),
+                                  if (!isLocalArchive) (l10n.share, 2),
+                                  (l10n.migrate, 3),
+                                  ('Mass migration', 6),
+                                  if (!isLocalArchive)
+                                    (l10n.extension_settings, 4),
+                                  (l10n.export_metadata, 5),
+                                ];
+                                return IconButton(
+                                  icon: const Icon(Icons.more_vert),
+                                  onPressed: () async {
+                                    final picked = await showTvMenu(
+                                      context,
+                                      title: widget.manga!.name ?? '',
+                                      options: [
+                                        for (final e in entries)
+                                          TvMenuOption(e.$1),
+                                      ],
+                                    );
+                                    if (picked != null) {
+                                      await _onDetailOverflow(
+                                        entries[picked].$2,
                                       );
-                                      final metadataFile = File(
-                                        p.join(result, "metadata.json"),
-                                      );
-                                      final headers =
-                                          widget.manga!.isLocalArchive!
-                                          ? null
-                                          : ref.read(
-                                              headersProvider(
-                                                source: widget.manga!.source!,
-                                                lang: widget.manga!.lang!,
-                                                sourceId:
-                                                    widget.manga!.sourceId,
-                                              ),
-                                            );
-                                      final imageUrl = toImgUrl(
-                                        widget.manga!.customCoverFromTracker ??
-                                            widget.manga!.imageUrl ??
-                                            "",
-                                      );
-                                      final res = await client.get(
-                                        Uri.parse(imageUrl),
-                                        headers: headers,
-                                      );
-                                      await coverFile.writeAsBytes(
-                                        res.bodyBytes,
-                                      );
-                                      await metadataFile.writeAsString(
-                                        jsonEncode({
-                                          "name": widget.manga!.name,
-                                          "description":
-                                              widget.manga!.description,
-                                          "artist": widget.manga!.artist,
-                                          "author": widget.manga!.author,
-                                          "genre": widget.manga!.genre,
-                                          "status": widget.manga!.status.index,
-                                        }),
-                                      );
-                                      botToast(l10n.exported);
                                     }
-                                  } catch (e) {
-                                    botToast("Failed to export metadata: $e");
-                                  }
-                                  break;
-                                case 6:
-                                  context.push(
-                                    "/massMigration",
-                                    extra: widget.manga,
-                                  );
-                                  break;
-                              }
-                            },
-                          ),
+                                  },
+                                );
+                              },
+                            )
+                          else
+                            PopupMenuButton(
+                              popUpAnimationStyle: popupAnimationStyle,
+                              itemBuilder: (context) {
+                                return [
+                                  if (!isLocalArchive)
+                                    PopupMenuItem<int>(
+                                      value: 0,
+                                      child: Text(l10n.refresh),
+                                    ),
+                                  if (widget.manga!.favorite! &&
+                                      checkCategoryList)
+                                    PopupMenuItem<int>(
+                                      value: 1,
+                                      child: Text(l10n.set_categories),
+                                    ),
+                                  if (!isLocalArchive)
+                                    PopupMenuItem<int>(
+                                      value: 2,
+                                      child: Text(l10n.share),
+                                    ),
+                                  PopupMenuItem<int>(
+                                    value: 3,
+                                    child: Text(l10n.migrate),
+                                  ),
+                                  PopupMenuItem<int>(
+                                    value: 6,
+                                    child: const Text('Mass migration'),
+                                  ),
+                                  if (!isLocalArchive)
+                                    PopupMenuItem<int>(
+                                      value: 4,
+                                      child: Text(l10n.extension_settings),
+                                    ),
+                                  PopupMenuItem<int>(
+                                    value: 5,
+                                    child: Text(l10n.export_metadata),
+                                  ),
+                                ];
+                              },
+                              onSelected: _onDetailOverflow,
+                            ),
                         ],
                       );
               },

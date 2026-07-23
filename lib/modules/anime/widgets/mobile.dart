@@ -53,7 +53,7 @@ class _MobileControllerWidgetState
   final FocusScopeNode _controlsScope = FocusScopeNode(
     debugLabel: 'playerControls',
   );
-  // The center play/pause - focused first on reveal so the d-pad lands on the
+  // The center play/pause — focused first on reveal so the d-pad lands on the
   // main control rather than the top-bar back button.
   final FocusNode _playPauseFocus = FocusNode(debugLabel: 'playerPlayPause');
   Duration controlsTransitionDuration = const Duration(milliseconds: 300);
@@ -149,7 +149,7 @@ class _MobileControllerWidgetState
     _restartHideTimer();
     // Move focus onto the controls only when it isn't already there. A
     // FocusScope delegates requestFocus to its first focusable descendant, so
-    // this reliably lands the d-pad on a real button - unlike directional
+    // this reliably lands the d-pad on a real button — unlike directional
     // traversal from the full-screen player Focus, which never landed anywhere.
     // Once focus is inside, subsequent keys navigate the buttons freely.
     if (!_controlsScope.hasFocus) {

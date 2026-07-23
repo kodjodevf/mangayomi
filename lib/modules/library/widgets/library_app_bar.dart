@@ -18,6 +18,7 @@ import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/global_style.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
+import 'package:mangayomi/modules/widgets/tv_menu.dart';
 
 /// AppBar for the library screen.
 ///
@@ -60,6 +61,45 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => Size.fromHeight(AppBar().preferredSize.height);
+
+  /// The library menu actions, shared by the popup off-TV and the centred TV
+  /// menu.
+  void _onLibraryMenu(
+    BuildContext context,
+    WidgetRef ref,
+    int value,
+    AsyncValue<List<Manga>> manga,
+  ) {
+    if (value == 0) {
+      manga.whenData((value) {
+        updateLibrary(
+          ref: ref,
+          context: context,
+          mangaList: value,
+          itemType: itemType,
+        );
+      });
+    } else if (value == 1) {
+      manga.whenData((value) {
+        var randomManga = (value..shuffle()).first;
+        pushToMangaReaderDetail(
+          ref: ref,
+          archiveId: randomManga.isLocalArchive ?? false
+              ? randomManga.id
+              : null,
+          context: context,
+          lang: randomManga.lang ?? '',
+          mangaM: randomManga,
+          source: randomManga.source ?? '',
+          sourceId: randomManga.sourceId,
+        );
+      });
+    } else if (value == 2) {
+      showImportLocalDialog(context, itemType);
+    } else if (value == 3 && itemType == ItemType.anime) {
+      addTorrent(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -177,52 +217,55 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
             color: isNotFiltering ? null : Colors.yellow,
           ),
         ),
-        PopupMenuButton(
-          popUpAnimationStyle: popupAnimationStyle,
-          itemBuilder: (context) {
-            return [
-              PopupMenuItem<int>(
-                value: 0,
-                child: Text(context.l10n.update_library),
-              ),
-              PopupMenuItem<int>(value: 1, child: Text(l10n.open_random_entry)),
-              PopupMenuItem<int>(value: 2, child: Text(l10n.import)),
-              if (itemType == ItemType.anime)
-                PopupMenuItem<int>(value: 3, child: Text(l10n.torrent_stream)),
-            ];
-          },
-          onSelected: (value) {
-            if (value == 0) {
-              manga.whenData((value) {
-                updateLibrary(
-                  ref: ref,
-                  context: context,
-                  mangaList: value,
-                  itemType: itemType,
-                );
-              });
-            } else if (value == 1) {
-              manga.whenData((value) {
-                var randomManga = (value..shuffle()).first;
-                pushToMangaReaderDetail(
-                  ref: ref,
-                  archiveId: randomManga.isLocalArchive ?? false
-                      ? randomManga.id
-                      : null,
-                  context: context,
-                  lang: randomManga.lang ?? '',
-                  mangaM: randomManga,
-                  source: randomManga.source ?? '',
-                  sourceId: randomManga.sourceId,
-                );
-              });
-            } else if (value == 2) {
-              showImportLocalDialog(context, itemType);
-            } else if (value == 3 && itemType == ItemType.anime) {
-              addTorrent(context);
-            }
-          },
-        ),
+        // Torrent stream is anime-only, so the menu's values are not its
+        // indices: keep label and value paired.
+        if (isTv)
+          Builder(
+            builder: (context) {
+              final entries = <(String, int)>[
+                (context.l10n.update_library, 0),
+                (l10n.open_random_entry, 1),
+                (l10n.import, 2),
+                if (itemType == ItemType.anime) (l10n.torrent_stream, 3),
+              ];
+              return IconButton(
+                icon: const Icon(Icons.more_vert),
+                onPressed: () async {
+                  final picked = await showTvMenu(
+                    context,
+                    title: l10n.library,
+                    options: [for (final e in entries) TvMenuOption(e.$1)],
+                  );
+                  if (picked != null && context.mounted) {
+                    _onLibraryMenu(context, ref, entries[picked].$2, manga);
+                  }
+                },
+              );
+            },
+          )
+        else
+          PopupMenuButton(
+            popUpAnimationStyle: popupAnimationStyle,
+            itemBuilder: (context) {
+              return [
+                PopupMenuItem<int>(
+                  value: 0,
+                  child: Text(context.l10n.update_library),
+                ),
+                PopupMenuItem<int>(
+                  value: 1,
+                  child: Text(l10n.open_random_entry),
+                ),
+                PopupMenuItem<int>(value: 2, child: Text(l10n.import)),
+                if (itemType == ItemType.anime)
+                  PopupMenuItem<int>(
+                    value: 3,
+                    child: Text(l10n.torrent_stream),
+                  ),
+              ];
+            },
+            onSelected: (value) => _onLibraryMenu(context, ref, value, manga),
+          ),
       ],
     );
   }
