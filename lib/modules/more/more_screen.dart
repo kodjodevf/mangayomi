@@ -7,6 +7,7 @@ import 'package:mangayomi/modules/more/widgets/incognito_mode_widget.dart';
 import 'package:mangayomi/modules/more/widgets/list_tile_widget.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
+import 'package:mangayomi/models/manga.dart';
 
 class MoreScreen extends ConsumerStatefulWidget {
   const MoreScreen({super.key});
@@ -72,6 +73,20 @@ class MoreScreenState extends ConsumerState<MoreScreen> {
             // and only uses a manga to float that source to the top. Seeded
             // with anime because the TV build is anime-first; the per-source
             // shortcut on the TV detail view covers the other libraries.
+            // Mass migration is otherwise only reachable from a manga's overflow
+            // menu, which the TV anime detail lacks. It is a library-wide tool
+            // (lists every source in the library), seeded with anime here since
+            // the TV build is anime-first; the TV detail's per-source shortcut
+            // covers the other libraries.
+            if (isTv)
+              ListTileWidget(
+                onTap: () => context.push(
+                  '/massMigration',
+                  extra: (ItemType.anime, null),
+                ),
+                icon: Icons.swap_horiz,
+                title: l10n.mass_migration_title,
+              ),
             ListTileWidget(
               onTap: () {
                 context.push('/categories', extra: (false, 0));

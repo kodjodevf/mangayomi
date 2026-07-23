@@ -35,7 +35,7 @@ class TvAnimeDetailView extends ConsumerStatefulWidget {
 }
 
 class _TvAnimeDetailViewState extends ConsumerState<TvAnimeDetailView> {
-  static const _actionCount = 7;
+  static const _actionCount = 8;
   late final List<FocusNode> _actionFocus;
   final _rootFocus = FocusNode(debugLabel: 'tvDetailRoot');
   final _topBarFocus = FocusNode(debugLabel: 'tvDetailTopBar');
@@ -230,6 +230,11 @@ class _TvAnimeDetailViewState extends ConsumerState<TvAnimeDetailView> {
                               ),
                               onMigrate: () =>
                                   context.push('/migrate', extra: manga),
+                              // Seeded: this manga's source floats to the top.
+                              onMassMigrate: () => context.push(
+                                '/massMigration',
+                                extra: (manga.itemType, manga),
+                              ),
                               onExitUp: () => _topBarFocus.requestFocus(),
                             ),
                           ),
@@ -409,6 +414,7 @@ class _LeftInfo extends StatelessWidget {
     required this.onRecommendations,
     required this.onWatchOrder,
     required this.onMigrate,
+    required this.onMassMigrate,
     required this.onExitUp,
   });
 
@@ -425,6 +431,7 @@ class _LeftInfo extends StatelessWidget {
   final VoidCallback onRecommendations;
   final VoidCallback onWatchOrder;
   final VoidCallback onMigrate;
+  final VoidCallback onMassMigrate;
   final VoidCallback onExitUp;
 
   @override
@@ -607,6 +614,13 @@ class _LeftInfo extends StatelessWidget {
                       icon: Icons.swap_horiz,
                       label: 'Migrate',
                       onPressed: onMigrate,
+                    ),
+                    _VActionButton(
+                      focusNode: actionFocus[7],
+                      accent: accent,
+                      icon: Icons.dynamic_feed,
+                      label: 'Migrate source',
+                      onPressed: onMassMigrate,
                     ),
                   ],
                 ),
