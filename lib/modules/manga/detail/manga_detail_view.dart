@@ -429,7 +429,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             ? Colors.transparent
                             : Theme.of(context).scaffoldBackgroundColor,
                         actions: [
-                          if (!isLocalArchive) ...[
+                          // Downloads are hidden on TV.
+                          if (!isLocalArchive && !isTv) ...[
                             PopupMenuButton(
                               popUpAnimationStyle: popupAnimationStyle,
                               icon: const Icon(Icons.download_outlined),
@@ -974,7 +975,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                       },
                     ),
                   // If not local archive and not downloaded, show download button
-                  if (!isLocalArchive && isDownloaded.isEmpty)
+                  if (!isLocalArchive && isDownloaded.isEmpty && !isTv)
                     BottomSelectButton(
                       icon: Icon(Icons.download_outlined, color: color),
                       onPressed: () {

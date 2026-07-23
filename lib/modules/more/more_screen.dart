@@ -19,7 +19,7 @@ class MoreScreen extends ConsumerStatefulWidget {
 class MoreScreenState extends ConsumerState<MoreScreen> {
   @override
   Widget build(BuildContext context) {
-    final l10n = l10nLocalizations(context);
+    final l10n = l10nLocalizations(context)!;
     final hiddenItems = ref.watch(hideItemsStateProvider);
     return Scaffold(
       body: SingleChildScrollView(
@@ -58,15 +58,18 @@ class MoreScreenState extends ConsumerState<MoreScreen> {
                   context.push('/history');
                 },
                 icon: Icons.history,
-                title: l10n!.history,
+                title: l10n.history,
               ),
-            ListTileWidget(
-              onTap: () {
-                context.push('/downloadQueue');
-              },
-              icon: Icons.download_outlined,
-              title: l10n!.download_queue,
-            ),
+            // Downloads are hidden on TV: no offline use case, and the download
+            // buttons are hidden there too, so a queue entry would just dangle.
+            if (!isTv)
+              ListTileWidget(
+                onTap: () {
+                  context.push('/downloadQueue');
+                },
+                icon: Icons.download_outlined,
+                title: l10n.download_queue,
+              ),
             // Mass migration is otherwise only reachable from a manga's
             // overflow menu, which the TV detail view does not have. It is a
             // library-wide tool anyway: it lists every source in the library,
