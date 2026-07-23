@@ -57,6 +57,15 @@ class _MigrationScreenScreenState extends ConsumerState<MigrationScreen> {
             .and()
             .itemTypeEqualTo(widget.manga.itemType)
             .findAllSync();
+  // Set once the first source row with results has taken the TV autofocus, so
+  // no other row steals it afterwards.
+  bool _autofocusClaimed = false;
+  bool _claimAutofocus() {
+    if (_autofocusClaimed) return false;
+    _autofocusClaimed = true;
+    return true;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -123,7 +132,8 @@ class _MigrationScreenScreenState extends ConsumerState<MigrationScreen> {
                     manga: widget.manga,
                     source: source,
                     trackSearch: widget.trackSearch,
-                    autofocusFirst: index == 0,
+                    isFirst: index == 0,
+                    claimAutofocus: isTv ? _claimAutofocus : null,
                   ),
                 );
               },
@@ -145,14 +155,21 @@ class MigrationSourceSearchScreen extends ConsumerStatefulWidget {
   final TrackSearch? trackSearch;
 
   final Source source;
-  final bool autofocusFirst;
+  // Whether this is the first source row (gets first shot at claiming the TV
+  // autofocus so the highlight lands at the top when it has results).
+  final bool isFirst;
+  // Returns true for exactly the first caller that has results, so on TV the
+  // first non-empty source claims the initial focus even when an earlier source
+  // returned nothing. Null off-TV.
+  final bool Function()? claimAutofocus;
   const MigrationSourceSearchScreen({
     super.key,
     required this.query,
     required this.manga,
     required this.source,
     this.trackSearch,
-    this.autofocusFirst = false,
+    this.isFirst = false,
+    this.claimAutofocus,
   });
 
   @override
@@ -170,6 +187,7 @@ class _MigrationSourceSearchScreenState
 
   String _errorMessage = "";
   bool _isLoading = true;
+  bool _autofocusFirst = false;
   MPages? pages;
   Future<void> _init() async {
     try {
@@ -186,6 +204,19 @@ class _MigrationSourceSearchScreenState
         setState(() {
           _isLoading = false;
         });
+        // Claim the TV autofocus if this source has results. The first row
+        // claims immediately; later rows wait a beat so the first still wins
+        // when it also has results, but a lower row grabs focus if the first
+        // came back empty.
+        final claim = widget.claimAutofocus;
+        if (claim != null && (pages?.list.isNotEmpty ?? false)) {
+          if (!widget.isFirst) {
+            await Future.delayed(const Duration(milliseconds: 150));
+          }
+          if (mounted && claim()) {
+            setState(() => _autofocusFirst = true);
+          }
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -234,7 +265,7 @@ class _MigrationSourceSearchScreenState
                                 manga: pages!.list[index],
                                 source: widget.source,
                                 trackSearch: widget.trackSearch,
-                                autofocus: widget.autofocusFirst && index == 0,
+                                autofocus: _autofocusFirst && index == 0,
                               );
                             },
                           );

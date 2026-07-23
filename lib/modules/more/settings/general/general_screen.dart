@@ -9,6 +9,8 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/modules/more/settings/general/providers/doh_provider_notifier.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
+import 'package:mangayomi/modules/widgets/tv_escapable_slider.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class GeneralScreen extends ConsumerStatefulWidget {
   const GeneralScreen({super.key});
@@ -198,25 +200,40 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        SliderTheme(
-                          data: SliderTheme.of(context).copyWith(
-                            overlayShape: const RoundSliderOverlayShape(
-                              overlayRadius: 5.0,
-                            ),
-                          ),
-                          child: Slider.adaptive(
-                            min: 0,
-                            max: 100,
-                            value: _genre.toDouble(),
-                            onChanged: (value) {
-                              HapticFeedback.vibrate();
-                              setState(() {
-                                _genre = value.toInt();
-                              });
-                            },
-                            onChangeEnd: (value) => ref
+                        TvEscapableSlider(
+                          enabled: isTv,
+                          onDecrease: () {
+                            setState(() => _genre = (_genre - 1).clamp(0, 100));
+                            ref
                                 .read(algorithmWeightsStateProvider.notifier)
-                                .setWeights(genre: _genre),
+                                .setWeights(genre: _genre);
+                          },
+                          onIncrease: () {
+                            setState(() => _genre = (_genre + 1).clamp(0, 100));
+                            ref
+                                .read(algorithmWeightsStateProvider.notifier)
+                                .setWeights(genre: _genre);
+                          },
+                          child: SliderTheme(
+                            data: SliderTheme.of(context).copyWith(
+                              overlayShape: const RoundSliderOverlayShape(
+                                overlayRadius: 5.0,
+                              ),
+                            ),
+                            child: Slider.adaptive(
+                              min: 0,
+                              max: 100,
+                              value: _genre.toDouble(),
+                              onChanged: (value) {
+                                HapticFeedback.vibrate();
+                                setState(() {
+                                  _genre = value.toInt();
+                                });
+                              },
+                              onChangeEnd: (value) => ref
+                                  .read(algorithmWeightsStateProvider.notifier)
+                                  .setWeights(genre: _genre),
+                            ),
                           ),
                         ),
                       ],
@@ -237,25 +254,44 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        SliderTheme(
-                          data: SliderTheme.of(context).copyWith(
-                            overlayShape: const RoundSliderOverlayShape(
-                              overlayRadius: 5.0,
-                            ),
-                          ),
-                          child: Slider.adaptive(
-                            min: 0,
-                            max: 100,
-                            value: _setting.toDouble(),
-                            onChanged: (value) {
-                              HapticFeedback.vibrate();
-                              setState(() {
-                                _setting = value.toInt();
-                              });
-                            },
-                            onChangeEnd: (value) => ref
+                        TvEscapableSlider(
+                          enabled: isTv,
+                          onDecrease: () {
+                            setState(
+                              () => _setting = (_setting - 1).clamp(0, 100),
+                            );
+                            ref
                                 .read(algorithmWeightsStateProvider.notifier)
-                                .setWeights(setting: _setting),
+                                .setWeights(setting: _setting);
+                          },
+                          onIncrease: () {
+                            setState(
+                              () => _setting = (_setting + 1).clamp(0, 100),
+                            );
+                            ref
+                                .read(algorithmWeightsStateProvider.notifier)
+                                .setWeights(setting: _setting);
+                          },
+                          child: SliderTheme(
+                            data: SliderTheme.of(context).copyWith(
+                              overlayShape: const RoundSliderOverlayShape(
+                                overlayRadius: 5.0,
+                              ),
+                            ),
+                            child: Slider.adaptive(
+                              min: 0,
+                              max: 100,
+                              value: _setting.toDouble(),
+                              onChanged: (value) {
+                                HapticFeedback.vibrate();
+                                setState(() {
+                                  _setting = value.toInt();
+                                });
+                              },
+                              onChangeEnd: (value) => ref
+                                  .read(algorithmWeightsStateProvider.notifier)
+                                  .setWeights(setting: _setting),
+                            ),
                           ),
                         ),
                       ],
@@ -276,25 +312,44 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        SliderTheme(
-                          data: SliderTheme.of(context).copyWith(
-                            overlayShape: const RoundSliderOverlayShape(
-                              overlayRadius: 5.0,
-                            ),
-                          ),
-                          child: Slider.adaptive(
-                            min: 0,
-                            max: 100,
-                            value: _synopsis.toDouble(),
-                            onChanged: (value) {
-                              HapticFeedback.vibrate();
-                              setState(() {
-                                _synopsis = value.toInt();
-                              });
-                            },
-                            onChangeEnd: (value) => ref
+                        TvEscapableSlider(
+                          enabled: isTv,
+                          onDecrease: () {
+                            setState(
+                              () => _synopsis = (_synopsis - 1).clamp(0, 100),
+                            );
+                            ref
                                 .read(algorithmWeightsStateProvider.notifier)
-                                .setWeights(synopsis: _synopsis),
+                                .setWeights(synopsis: _synopsis);
+                          },
+                          onIncrease: () {
+                            setState(
+                              () => _synopsis = (_synopsis + 1).clamp(0, 100),
+                            );
+                            ref
+                                .read(algorithmWeightsStateProvider.notifier)
+                                .setWeights(synopsis: _synopsis);
+                          },
+                          child: SliderTheme(
+                            data: SliderTheme.of(context).copyWith(
+                              overlayShape: const RoundSliderOverlayShape(
+                                overlayRadius: 5.0,
+                              ),
+                            ),
+                            child: Slider.adaptive(
+                              min: 0,
+                              max: 100,
+                              value: _synopsis.toDouble(),
+                              onChanged: (value) {
+                                HapticFeedback.vibrate();
+                                setState(() {
+                                  _synopsis = value.toInt();
+                                });
+                              },
+                              onChangeEnd: (value) => ref
+                                  .read(algorithmWeightsStateProvider.notifier)
+                                  .setWeights(synopsis: _synopsis),
+                            ),
                           ),
                         ),
                       ],
@@ -315,25 +370,40 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        SliderTheme(
-                          data: SliderTheme.of(context).copyWith(
-                            overlayShape: const RoundSliderOverlayShape(
-                              overlayRadius: 5.0,
-                            ),
-                          ),
-                          child: Slider.adaptive(
-                            min: 0,
-                            max: 100,
-                            value: _theme.toDouble(),
-                            onChanged: (value) {
-                              HapticFeedback.vibrate();
-                              setState(() {
-                                _theme = value.toInt();
-                              });
-                            },
-                            onChangeEnd: (value) => ref
+                        TvEscapableSlider(
+                          enabled: isTv,
+                          onDecrease: () {
+                            setState(() => _theme = (_theme - 1).clamp(0, 100));
+                            ref
                                 .read(algorithmWeightsStateProvider.notifier)
-                                .setWeights(theme: _theme),
+                                .setWeights(theme: _theme);
+                          },
+                          onIncrease: () {
+                            setState(() => _theme = (_theme + 1).clamp(0, 100));
+                            ref
+                                .read(algorithmWeightsStateProvider.notifier)
+                                .setWeights(theme: _theme);
+                          },
+                          child: SliderTheme(
+                            data: SliderTheme.of(context).copyWith(
+                              overlayShape: const RoundSliderOverlayShape(
+                                overlayRadius: 5.0,
+                              ),
+                            ),
+                            child: Slider.adaptive(
+                              min: 0,
+                              max: 100,
+                              value: _theme.toDouble(),
+                              onChanged: (value) {
+                                HapticFeedback.vibrate();
+                                setState(() {
+                                  _theme = value.toInt();
+                                });
+                              },
+                              onChangeEnd: (value) => ref
+                                  .read(algorithmWeightsStateProvider.notifier)
+                                  .setWeights(theme: _theme),
+                            ),
                           ),
                         ),
                       ],

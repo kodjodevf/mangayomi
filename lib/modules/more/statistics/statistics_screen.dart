@@ -25,13 +25,12 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
   @override
   void initState() {
     super.initState();
-    _visibleTabTypes = hiddenItemTypes(ref.read(hideItemsStateProvider));
-    // Anime-only TV layout: hide the manga/novel tabs, matching Updates and
-    // History which are built on BaseLibraryTabScreenState.
-    if (ref.read(animeOnlyTvModeProvider)) {
-      _visibleTabTypes =
-          _visibleTabTypes.where((t) => t == ItemType.anime).toList();
-    }
+    // Anime-only TV layout shows just the anime tab. Force it rather than
+    // intersecting with hiddenItemTypes: the Anime library can be hidden from
+    // that list, which would leave us with no tabs at all.
+    _visibleTabTypes = ref.read(animeOnlyTvModeProvider)
+        ? const [ItemType.anime]
+        : hiddenItemTypes(ref.read(hideItemsStateProvider));
     _tabController = TabController(
       length: _visibleTabTypes.length,
       vsync: this,
@@ -49,7 +48,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
     if (_visibleTabTypes.isEmpty) {
       return Scaffold(
         appBar: AppBar(title: Text(context.l10n.statistics)),
-        body: Center(child: Text("EMPTY\nMPTY\nMTY\nMT\n\n")),
+        body: Center(child: Text(context.l10n.no_result)),
       );
     }
     final l10n = context.l10n;

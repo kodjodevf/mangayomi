@@ -44,6 +44,12 @@ class CoverViewWidget extends StatefulWidget {
 class _CoverViewWidgetState extends State<CoverViewWidget> {
   // Held-OK tracking for the TV long-press (see the Focus wrapper in build).
   bool _held = false;
+  // True only between a Select KeyDown and its KeyUp on THIS card. Guards
+  // against a stray KeyUp landing here without its KeyDown: e.g. pressing OK on
+  // a detail screen's Back button pops on KeyDown, and the trailing KeyUp then
+  // arrives at whatever cover regained focus. Without this it read as a tap and
+  // immediately re-opened the detail we just left.
+  bool _pressed = false;
 
   // Whether the card should draw a focus ring. Only set when focus arrives via
   // keyboard / d-pad navigation (FocusHighlightMode.traditional), so touch
@@ -196,19 +202,25 @@ class _CoverViewWidgetState extends State<CoverViewWidget> {
           if (!tvIsSelectKey(event.logicalKey)) return KeyEventResult.ignored;
           if (event is KeyDownEvent) {
             _held = false;
+            _pressed = true;
             return KeyEventResult.handled;
           }
           if (event is KeyRepeatEvent) {
-            _held = true;
+            if (_pressed) _held = true;
             return KeyEventResult.handled;
           }
           if (event is KeyUpEvent) {
+            // A KeyUp without the matching KeyDown here is a leaked press from
+            // another screen (e.g. a Back button that popped on KeyDown). Drop
+            // it so it can't fire onTap and re-open what we just closed.
+            if (!_pressed) return KeyEventResult.ignored;
             if (_held) {
               longPress();
             } else {
               widget.onTap();
             }
             _held = false;
+            _pressed = false;
             return KeyEventResult.handled;
           }
           return KeyEventResult.ignored;

@@ -9,6 +9,8 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/tracking_menu.dart';
+import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/library/widgets/library_entry_utils.dart';
 import 'package:mangayomi/modules/manga/detail/providers/isar_providers.dart';
 import 'package:mangayomi/modules/manga/detail/providers/update_manga_detail_providers.dart';
@@ -35,7 +37,7 @@ class TvAnimeDetailView extends ConsumerStatefulWidget {
 }
 
 class _TvAnimeDetailViewState extends ConsumerState<TvAnimeDetailView> {
-  static const _actionCount = 8;
+  static const _actionCount = 9;
   late final List<FocusNode> _actionFocus;
   final _rootFocus = FocusNode(debugLabel: 'tvDetailRoot');
   final _topBarFocus = FocusNode(debugLabel: 'tvDetailTopBar');
@@ -145,7 +147,15 @@ class _TvAnimeDetailViewState extends ConsumerState<TvAnimeDetailView> {
       // frame, or after a pushed route / dialog returns). Checking the root
       // node's whole subtree — not individual nodes — so focus deep in the lazy
       // episode list never reads as "nowhere" and gets yanked back.
-      if (mounted && !_rootFocus.hasFocus) {
+      //
+      // Critically, only reclaim when this detail is the *current* route. This
+      // view watches a live chapters stream and rebuilds while a pushed screen
+      // (Migrate, Mass migration, Recommendations, Tracking) sits on top of it;
+      // without this gate every such rebuild would steal focus back from that
+      // screen to the Continue button, so those screens never held focus and an
+      // OK press landed on Continue instead (playing a random episode).
+      final isCurrent = ModalRoute.of(context)?.isCurrent ?? true;
+      if (mounted && isCurrent && !_rootFocus.hasFocus) {
         _actionFocus[_lastAction].requestFocus();
       }
     });
@@ -215,6 +225,7 @@ class _TvAnimeDetailViewState extends ConsumerState<TvAnimeDetailView> {
                                 itemType: manga.itemType,
                                 singleManga: manga,
                               ),
+                              onTracking: _openTracking,
                               onBrowser: _openInBrowser,
                               onRecommendations: () => context.push(
                                 '/recommendations',
@@ -275,6 +286,21 @@ class _TvAnimeDetailViewState extends ConsumerState<TvAnimeDetailView> {
       isar.mangas.putSync(model);
     });
     setState(() {});
+  }
+
+  /// Opens the tracker list (MAL/AniList/etc.) for this title. If no tracker is
+  /// logged in there is nothing to track against, so route to the tracking
+  /// settings to set one up instead of showing an empty sheet.
+  void _openTracking() {
+    final entries = isar.trackPreferences
+        .filter()
+        .syncIdIsNotNull()
+        .findAllSync();
+    if (entries.isEmpty) {
+      context.push('/track');
+      return;
+    }
+    openTrackingMenu(context: context, manga: manga, entries: entries);
   }
 
   void _openInBrowser() {
@@ -410,6 +436,7 @@ class _LeftInfo extends StatelessWidget {
     required this.onPlay,
     required this.onToggleLibrary,
     required this.onCategories,
+    required this.onTracking,
     required this.onBrowser,
     required this.onRecommendations,
     required this.onWatchOrder,
@@ -427,6 +454,7 @@ class _LeftInfo extends StatelessWidget {
   final VoidCallback onPlay;
   final VoidCallback onToggleLibrary;
   final VoidCallback onCategories;
+  final VoidCallback onTracking;
   final VoidCallback onBrowser;
   final VoidCallback onRecommendations;
   final VoidCallback onWatchOrder;
@@ -586,6 +614,13 @@ class _LeftInfo extends StatelessWidget {
                       icon: Icons.label_outline,
                       label: 'Categories',
                       onPressed: onCategories,
+                    ),
+                    _VActionButton(
+                      focusNode: actionFocus[8],
+                      accent: accent,
+                      icon: Icons.sync_alt,
+                      label: 'Tracking',
+                      onPressed: onTracking,
                     ),
                     _VActionButton(
                       focusNode: actionFocus[3],

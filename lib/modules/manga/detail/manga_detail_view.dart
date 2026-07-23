@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:draggable_menu/draggable_menu.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -21,15 +20,12 @@ import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/library/library_screen.dart';
 import 'package:mangayomi/modules/library/providers/library_filter_provider.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
-import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_search_widget.dart';
-import 'package:mangayomi/modules/manga/detail/widgets/tracker_widget.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/tracking_menu.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/modules/more/providers/algorithm_weights_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_library_screen.dart';
 import 'package:mangayomi/modules/widgets/bottom_select_bar.dart';
 import 'package:mangayomi/modules/widgets/category_selection_dialog.dart';
@@ -2428,98 +2424,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   }
 
   void _trackingDraggableMenu(List<TrackPreference>? entries) {
-    DraggableMenu.open(
-      context,
-      Consumer(
-        builder: (context, ref, _) {
-          final isPureBlack = ref.watch(pureBlackDarkModeStateProvider);
-          final theme = Theme.of(context);
-          final bgColor = context.isLight || !isPureBlack
-              ? theme.scaffoldBackgroundColor.withValues(alpha: 0.9)
-              : theme.cardColor;
-
-          return DraggableMenu(
-            ui: ClassicDraggableMenu(
-              radius: 20,
-              barItem: Container(),
-              color: theme.scaffoldBackgroundColor,
-            ),
-            allowToShrink: true,
-            child: Material(
-              color: bgColor,
-              borderRadius: BorderRadius.circular(20),
-              clipBehavior: Clip.antiAlias,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SuperListView.separated(
-                  padding: const EdgeInsets.all(0),
-                  itemCount: entries!.length,
-                  primary: false,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return StreamBuilder(
-                      stream: isar.tracks
-                          .filter()
-                          .idIsNotNull()
-                          .syncIdEqualTo(entries[index].syncId)
-                          .mangaIdEqualTo(widget.manga!.id!)
-                          .watch(fireImmediately: true),
-                      builder: (context, snapshot) {
-                        List<Track>? trackRes = snapshot.hasData
-                            ? snapshot.data
-                            : [];
-                        return trackRes!.isNotEmpty
-                            ? TrackerWidget(
-                                mangaId: widget.manga!.id!,
-                                syncId: entries[index].syncId!,
-                                trackRes: trackRes.first,
-                                itemType: widget.manga!.itemType,
-                              )
-                            : TrackListile(
-                                text: l10nLocalizations(context)!.add_tracker,
-                                onTap: () async {
-                                  final trackSearch =
-                                      await trackersSearchDraggableMenu(
-                                            context,
-                                            itemType: widget.manga!.itemType,
-                                            track: Track(
-                                              status: TrackStatus.planToRead,
-                                              syncId: entries[index].syncId!,
-                                              title: widget.manga!.name!,
-                                            ),
-                                          )
-                                          as TrackSearch?;
-                                  if (trackSearch != null) {
-                                    await ref
-                                        .read(
-                                          trackStateProvider(
-                                            track: null,
-                                            itemType: widget.manga!.itemType,
-                                            widgetRef: ref,
-                                          ).notifier,
-                                        )
-                                        .setTrackSearch(
-                                          trackSearch,
-                                          widget.manga!.id!,
-                                          entries[index].syncId!,
-                                        );
-                                  }
-                                },
-                                id: entries[index].syncId!,
-                                entries: const [],
-                              );
-                      },
-                    );
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return const Divider();
-                  },
-                ),
-              ),
-            ),
-          );
-        },
-      ),
+    openTrackingMenu(
+      context: context,
+      manga: widget.manga!,
+      entries: entries ?? const [],
     );
   }
 }
