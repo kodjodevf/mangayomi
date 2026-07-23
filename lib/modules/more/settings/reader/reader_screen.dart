@@ -6,6 +6,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
+import 'package:mangayomi/modules/widgets/tv_escapable_slider.dart';
 
 class ReaderScreen extends ConsumerWidget {
   const ReaderScreen({super.key});
@@ -254,17 +255,30 @@ class ReaderScreen extends ConsumerWidget {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                Slider(
-                                  value: tempAmount.toDouble(),
-                                  min: 1,
-                                  max: 20,
-                                  // divisions: 19, // makes the slider a bit sluggish
-                                  // label: tempAmount.toString(), // value indicator balloon. Redundant because of the Text widget above
-                                  onChanged: (double newVal) {
-                                    setState(() {
-                                      tempAmount = newVal.round();
-                                    });
-                                  },
+                                TvEscapableSlider(
+                                  enabled: isTv,
+                                  onDecrease: () => setState(
+                                    () => tempAmount = (tempAmount - 1).clamp(
+                                      1,
+                                      20,
+                                    ),
+                                  ),
+                                  onIncrease: () => setState(
+                                    () => tempAmount = (tempAmount + 1).clamp(
+                                      1,
+                                      20,
+                                    ),
+                                  ),
+                                  child: Slider(
+                                    value: tempAmount.toDouble(),
+                                    min: 1,
+                                    max: 20,
+                                    onChanged: (double newVal) {
+                                      setState(() {
+                                        tempAmount = newVal.round();
+                                      });
+                                    },
+                                  ),
                                 ),
                               ],
                             );
@@ -423,17 +437,26 @@ class ReaderScreen extends ConsumerWidget {
             ),
             ListTile(
               title: Text(context.l10n.webtoon_side_padding),
-              subtitle: Slider(
-                min: 0,
-                max: 50,
-                divisions: 50,
-                label: '$webtoonSidePadding%',
-                value: webtoonSidePadding.toDouble(),
-                onChanged: (value) {
-                  ref
-                      .read(webtoonSidePaddingStateProvider.notifier)
-                      .set(value.toInt());
-                },
+              subtitle: TvEscapableSlider(
+                enabled: isTv,
+                onDecrease: () => ref
+                    .read(webtoonSidePaddingStateProvider.notifier)
+                    .set((webtoonSidePadding - 1).clamp(0, 50)),
+                onIncrease: () => ref
+                    .read(webtoonSidePaddingStateProvider.notifier)
+                    .set((webtoonSidePadding + 1).clamp(0, 50)),
+                child: Slider(
+                  min: 0,
+                  max: 50,
+                  divisions: 50,
+                  label: '$webtoonSidePadding%',
+                  value: webtoonSidePadding.toDouble(),
+                  onChanged: (value) {
+                    ref
+                        .read(webtoonSidePaddingStateProvider.notifier)
+                        .set(value.toInt());
+                  },
+                ),
               ),
             ),
             ListTile(
