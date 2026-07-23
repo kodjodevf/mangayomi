@@ -180,6 +180,12 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   @override
   Widget build(BuildContext context) {
     ref.listen<AsyncValue<UpdateInfo?>>(checkForUpdateProvider, (_, next) {
+      // On TV the in-app updater (download + install an APK) is not reachable
+      // with a d-pad and is not how TV builds update (sideload / the release
+      // APK). Left on, this modal would appear unannounced over whatever the
+      // user is doing and trap focus with no way to dismiss it. TV updates out
+      // of band, so never raise it there.
+      if (isTv) return;
       next.whenData((updateInfo) {
         if (updateInfo != null && context.mounted) {
           showDialog(
