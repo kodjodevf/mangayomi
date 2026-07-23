@@ -9,6 +9,7 @@ import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_pr
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/language.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class SourcesFilterScreen extends ConsumerWidget {
   final ItemType itemType;
@@ -21,7 +22,8 @@ class SourcesFilterScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.sources)),
       body: Padding(
-        padding: const EdgeInsets.only(top: 10),
+        // Same inset as the other TV list screens; zero off-TV.
+        padding: const EdgeInsets.only(top: 10).add(tvPageInsets),
         child: StreamBuilder(
           stream: isar.sources
               .filter()

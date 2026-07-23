@@ -9,6 +9,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:path/path.dart' as path;
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class PlayerAdvancedScreen extends ConsumerStatefulWidget {
   const PlayerAdvancedScreen({super.key});
@@ -26,6 +27,7 @@ class _PlayerAdvancedScreenState extends ConsumerState<PlayerAdvancedScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.advanced)),
       body: SingleChildScrollView(
+        padding: tvPageInsets,
         child: Column(
           children: [
             SwitchListTile(

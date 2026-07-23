@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:draggable_menu/draggable_menu.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -13,21 +12,20 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/modules/manga/detail/tv/tv_anime_detail_view.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/library/library_screen.dart';
 import 'package:mangayomi/modules/library/providers/library_filter_provider.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
-import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_search_widget.dart';
-import 'package:mangayomi/modules/manga/detail/widgets/tracker_widget.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/tracking_menu.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/modules/more/providers/algorithm_weights_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_library_screen.dart';
 import 'package:mangayomi/modules/widgets/bottom_select_bar.dart';
 import 'package:mangayomi/modules/widgets/category_selection_dialog.dart';
@@ -60,6 +58,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import '../../../utils/constant.dart';
 import 'package:path/path.dart' as p;
+import 'package:mangayomi/modules/widgets/tv_menu.dart';
 
 class MangaDetailView extends ConsumerStatefulWidget {
   final Function(bool) isExtended;
@@ -108,8 +107,107 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   bool _expanded = false;
   late final ScrollController _scrollController;
   late final isLocalArchive = widget.manga!.isLocalArchive ?? false;
+
+  /// The detail overflow actions, shared by the popup menu off-TV and the
+  /// centred TV menu.
+  Future<void> _onDetailOverflow(int value) async {
+    final l10n = l10nLocalizations(context)!;
+    switch (value) {
+      case 0:
+        widget.checkForUpdate(true);
+        break;
+      case 1:
+        showCategorySelectionDialog(
+          context: context,
+          ref: ref,
+          itemType: widget.manga!.itemType,
+          singleManga: widget.manga!,
+        );
+        break;
+      case 2:
+        final source = getSource(
+          widget.manga!.lang!,
+          widget.manga!.source!,
+          widget.manga!.sourceId,
+        );
+        if (source == null) return;
+        final url =
+            "${source.baseUrl}${widget.manga!.link!.getUrlWithoutDomain}";
+        final box = context.findRenderObject() as RenderBox?;
+        SharePlus.instance.share(
+          ShareParams(
+            text: url,
+            sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
+          ),
+        );
+        break;
+      case 3:
+        context.push("/migrate", extra: widget.manga);
+        break;
+      case 4:
+        final source = getSource(
+          widget.manga!.lang!,
+          widget.manga!.source!,
+          widget.manga!.sourceId,
+        );
+        if (source == null) return;
+        context.push('/extension_detail', extra: source);
+        break;
+      case 5:
+        try {
+          final result = await FilePicker.getDirectoryPath();
+          if (result != null) {
+            final client = MClient.init();
+            final coverFile = File(p.join(result, "cover.jpg"));
+            final metadataFile = File(p.join(result, "metadata.json"));
+            final headers = widget.manga!.isLocalArchive!
+                ? null
+                : ref.read(
+                    headersProvider(
+                      source: widget.manga!.source!,
+                      lang: widget.manga!.lang!,
+                      sourceId: widget.manga!.sourceId,
+                    ),
+                  );
+            final imageUrl = toImgUrl(
+              widget.manga!.customCoverFromTracker ??
+                  widget.manga!.imageUrl ??
+                  "",
+            );
+            final res = await client.get(Uri.parse(imageUrl), headers: headers);
+            await coverFile.writeAsBytes(res.bodyBytes);
+            await metadataFile.writeAsString(
+              jsonEncode({
+                "name": widget.manga!.name,
+                "description": widget.manga!.description,
+                "artist": widget.manga!.artist,
+                "author": widget.manga!.author,
+                "genre": widget.manga!.genre,
+                "status": widget.manga!.status.index,
+              }),
+            );
+            botToast(l10n.exported);
+          }
+        } catch (e) {
+          botToast("Failed to export metadata: $e");
+        }
+        break;
+      case 6:
+        context.push(
+          "/massMigration",
+          extra: (widget.manga!.itemType, widget.manga),
+        );
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    // On Android TV, anime gets a dedicated d-pad split detail (info left,
+    // episodes right). Manga/novel and phones/desktop keep the classic detail.
+    if (isTv && widget.itemType == ItemType.anime) {
+      return TvAnimeDetailView(manga: widget.manga!);
+    }
     // Watch all sort/filter providers so the list rebuilds whenever
     // the user changes settings in _showDraggableMenu().
     ref.watch(scanlatorsFilterStateProvider(widget.manga!));
@@ -327,7 +425,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                             ? Colors.transparent
                             : Theme.of(context).scaffoldBackgroundColor,
                         actions: [
-                          if (!isLocalArchive) ...[
+                          // Downloads are hidden on TV.
+                          if (!isLocalArchive && !isTv) ...[
                             PopupMenuButton(
                               popUpAnimationStyle: popupAnimationStyle,
                               icon: const Icon(Icons.download_outlined),
@@ -501,154 +600,86 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               color: isNotFiltering ? null : Colors.yellow,
                             ),
                           ),
-                          PopupMenuButton(
-                            popUpAnimationStyle: popupAnimationStyle,
-                            itemBuilder: (context) {
-                              return [
-                                if (!isLocalArchive)
-                                  PopupMenuItem<int>(
-                                    value: 0,
-                                    child: Text(l10n.refresh),
-                                  ),
-                                if (widget.manga!.favorite! &&
-                                    checkCategoryList)
-                                  PopupMenuItem<int>(
-                                    value: 1,
-                                    child: Text(l10n.set_categories),
-                                  ),
-                                if (!isLocalArchive)
-                                  PopupMenuItem<int>(
-                                    value: 2,
-                                    child: Text(l10n.share),
-                                  ),
-                                PopupMenuItem<int>(
-                                  value: 3,
-                                  child: Text(l10n.migrate),
-                                ),
-                                PopupMenuItem<int>(
-                                  value: 6,
-                                  child: const Text('Mass migration'),
-                                ),
-                                if (!isLocalArchive)
-                                  PopupMenuItem<int>(
-                                    value: 4,
-                                    child: Text(l10n.extension_settings),
-                                  ),
-                                PopupMenuItem<int>(
-                                  value: 5,
-                                  child: Text(l10n.export_metadata),
-                                ),
-                              ];
-                            },
-                            onSelected: (value) async {
-                              switch (value) {
-                                case 0:
-                                  widget.checkForUpdate(true);
-                                  break;
-                                case 1:
-                                  showCategorySelectionDialog(
-                                    context: context,
-                                    ref: ref,
-                                    itemType: widget.manga!.itemType,
-                                    singleManga: widget.manga!,
-                                  );
-                                  break;
-                                case 2:
-                                  final source = getSource(
-                                    widget.manga!.lang!,
-                                    widget.manga!.source!,
-                                    widget.manga!.sourceId,
-                                  );
-                                  if (source == null) return;
-                                  final url =
-                                      "${source.baseUrl}${widget.manga!.link!.getUrlWithoutDomain}";
-                                  final box =
-                                      context.findRenderObject() as RenderBox?;
-                                  SharePlus.instance.share(
-                                    ShareParams(
-                                      text: url,
-                                      sharePositionOrigin:
-                                          box!.localToGlobal(Offset.zero) &
-                                          box.size,
-                                    ),
-                                  );
-                                  break;
-                                case 3:
-                                  context.push("/migrate", extra: widget.manga);
-                                  break;
-                                case 4:
-                                  final source = getSource(
-                                    widget.manga!.lang!,
-                                    widget.manga!.source!,
-                                    widget.manga!.sourceId,
-                                  );
-                                  if (source == null) return;
-                                  context.push(
-                                    '/extension_detail',
-                                    extra: source,
-                                  );
-                                  break;
-                                case 5:
-                                  try {
-                                    final result =
-                                        await FilePicker.getDirectoryPath();
-                                    if (result != null) {
-                                      final client = MClient.init();
-                                      final coverFile = File(
-                                        p.join(result, "cover.jpg"),
+                          // The menu's items are conditional, so its values
+                          // are not its indices: keep label and value paired so
+                          // the centred TV menu cannot fire the wrong action.
+                          if (isTv)
+                            Builder(
+                              builder: (context) {
+                                final entries = <(String, int)>[
+                                  if (!isLocalArchive) (l10n.refresh, 0),
+                                  if (widget.manga!.favorite! &&
+                                      checkCategoryList)
+                                    (l10n.set_categories, 1),
+                                  if (!isLocalArchive) (l10n.share, 2),
+                                  (l10n.migrate, 3),
+                                  ('Mass migration', 6),
+                                  if (!isLocalArchive)
+                                    (l10n.extension_settings, 4),
+                                  (l10n.export_metadata, 5),
+                                ];
+                                return IconButton(
+                                  icon: const Icon(Icons.more_vert),
+                                  onPressed: () async {
+                                    final picked = await showTvMenu(
+                                      context,
+                                      title: widget.manga!.name ?? '',
+                                      options: [
+                                        for (final e in entries)
+                                          TvMenuOption(e.$1),
+                                      ],
+                                    );
+                                    if (picked != null) {
+                                      await _onDetailOverflow(
+                                        entries[picked].$2,
                                       );
-                                      final metadataFile = File(
-                                        p.join(result, "metadata.json"),
-                                      );
-                                      final headers =
-                                          widget.manga!.isLocalArchive!
-                                          ? null
-                                          : ref.read(
-                                              headersProvider(
-                                                source: widget.manga!.source!,
-                                                lang: widget.manga!.lang!,
-                                                sourceId:
-                                                    widget.manga!.sourceId,
-                                              ),
-                                            );
-                                      final imageUrl = toImgUrl(
-                                        widget.manga!.customCoverFromTracker ??
-                                            widget.manga!.imageUrl ??
-                                            "",
-                                      );
-                                      final res = await client.get(
-                                        Uri.parse(imageUrl),
-                                        headers: headers,
-                                      );
-                                      await coverFile.writeAsBytes(
-                                        res.bodyBytes,
-                                      );
-                                      await metadataFile.writeAsString(
-                                        jsonEncode({
-                                          "name": widget.manga!.name,
-                                          "description":
-                                              widget.manga!.description,
-                                          "artist": widget.manga!.artist,
-                                          "author": widget.manga!.author,
-                                          "genre": widget.manga!.genre,
-                                          "status": widget.manga!.status.index,
-                                        }),
-                                      );
-                                      botToast(l10n.exported);
                                     }
-                                  } catch (e) {
-                                    botToast("Failed to export metadata: $e");
-                                  }
-                                  break;
-                                case 6:
-                                  context.push(
-                                    "/massMigration",
-                                    extra: widget.manga,
-                                  );
-                                  break;
-                              }
-                            },
-                          ),
+                                  },
+                                );
+                              },
+                            )
+                          else
+                            PopupMenuButton(
+                              popUpAnimationStyle: popupAnimationStyle,
+                              itemBuilder: (context) {
+                                return [
+                                  if (!isLocalArchive)
+                                    PopupMenuItem<int>(
+                                      value: 0,
+                                      child: Text(l10n.refresh),
+                                    ),
+                                  if (widget.manga!.favorite! &&
+                                      checkCategoryList)
+                                    PopupMenuItem<int>(
+                                      value: 1,
+                                      child: Text(l10n.set_categories),
+                                    ),
+                                  if (!isLocalArchive)
+                                    PopupMenuItem<int>(
+                                      value: 2,
+                                      child: Text(l10n.share),
+                                    ),
+                                  PopupMenuItem<int>(
+                                    value: 3,
+                                    child: Text(l10n.migrate),
+                                  ),
+                                  PopupMenuItem<int>(
+                                    value: 6,
+                                    child: const Text('Mass migration'),
+                                  ),
+                                  if (!isLocalArchive)
+                                    PopupMenuItem<int>(
+                                      value: 4,
+                                      child: Text(l10n.extension_settings),
+                                    ),
+                                  PopupMenuItem<int>(
+                                    value: 5,
+                                    child: Text(l10n.export_metadata),
+                                  ),
+                                ];
+                              },
+                              onSelected: _onDetailOverflow,
+                            ),
                         ],
                       );
               },
@@ -940,7 +971,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                       },
                     ),
                   // If not local archive and not downloaded, show download button
-                  if (!isLocalArchive && isDownloaded.isEmpty)
+                  if (!isLocalArchive && isDownloaded.isEmpty && !isTv)
                     BottomSelectButton(
                       icon: Icon(Icons.download_outlined, color: color),
                       onPressed: () {
@@ -2393,98 +2424,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   }
 
   void _trackingDraggableMenu(List<TrackPreference>? entries) {
-    DraggableMenu.open(
-      context,
-      Consumer(
-        builder: (context, ref, _) {
-          final isPureBlack = ref.watch(pureBlackDarkModeStateProvider);
-          final theme = Theme.of(context);
-          final bgColor = context.isLight || !isPureBlack
-              ? theme.scaffoldBackgroundColor.withValues(alpha: 0.9)
-              : theme.cardColor;
-
-          return DraggableMenu(
-            ui: ClassicDraggableMenu(
-              radius: 20,
-              barItem: Container(),
-              color: theme.scaffoldBackgroundColor,
-            ),
-            allowToShrink: true,
-            child: Material(
-              color: bgColor,
-              borderRadius: BorderRadius.circular(20),
-              clipBehavior: Clip.antiAlias,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SuperListView.separated(
-                  padding: const EdgeInsets.all(0),
-                  itemCount: entries!.length,
-                  primary: false,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return StreamBuilder(
-                      stream: isar.tracks
-                          .filter()
-                          .idIsNotNull()
-                          .syncIdEqualTo(entries[index].syncId)
-                          .mangaIdEqualTo(widget.manga!.id!)
-                          .watch(fireImmediately: true),
-                      builder: (context, snapshot) {
-                        List<Track>? trackRes = snapshot.hasData
-                            ? snapshot.data
-                            : [];
-                        return trackRes!.isNotEmpty
-                            ? TrackerWidget(
-                                mangaId: widget.manga!.id!,
-                                syncId: entries[index].syncId!,
-                                trackRes: trackRes.first,
-                                itemType: widget.manga!.itemType,
-                              )
-                            : TrackListile(
-                                text: l10nLocalizations(context)!.add_tracker,
-                                onTap: () async {
-                                  final trackSearch =
-                                      await trackersSearchDraggableMenu(
-                                            context,
-                                            itemType: widget.manga!.itemType,
-                                            track: Track(
-                                              status: TrackStatus.planToRead,
-                                              syncId: entries[index].syncId!,
-                                              title: widget.manga!.name!,
-                                            ),
-                                          )
-                                          as TrackSearch?;
-                                  if (trackSearch != null) {
-                                    await ref
-                                        .read(
-                                          trackStateProvider(
-                                            track: null,
-                                            itemType: widget.manga!.itemType,
-                                            widgetRef: ref,
-                                          ).notifier,
-                                        )
-                                        .setTrackSearch(
-                                          trackSearch,
-                                          widget.manga!.id!,
-                                          entries[index].syncId!,
-                                        );
-                                  }
-                                },
-                                id: entries[index].syncId!,
-                                entries: const [],
-                              );
-                      },
-                    );
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return const Divider();
-                  },
-                ),
-              ),
-            ),
-          );
-        },
-      ),
+    openTrackingMenu(
+      context: context,
+      manga: widget.manga!,
+      entries: entries ?? const [],
     );
   }
 }

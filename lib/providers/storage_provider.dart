@@ -21,6 +21,7 @@ import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path/path.dart' as path;
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class StorageProvider {
   static final StorageProvider _instance = StorageProvider._internal();
@@ -317,7 +318,11 @@ class StorageProvider {
     try {
       final settings = await isar.settings.filter().idEqualTo(227).findFirst();
       if (settings == null) {
-        await isar.writeTxn(() async => isar.settings.put(Settings()));
+        await isar.writeTxn(
+          // TV defaults to dark on first run (a fresh library). Only the
+          // initial Settings row is seeded, so switching to light later sticks.
+          () async => isar.settings.put(Settings()..themeIsDark = isTv),
+        );
       }
     } catch (_) {
       if (await requestPermission()) {
@@ -327,7 +332,11 @@ class StorageProvider {
               .idEqualTo(227)
               .findFirst();
           if (settings == null) {
-            await isar.writeTxn(() async => isar.settings.put(Settings()));
+            await isar.writeTxn(
+              // TV defaults to dark on first run (a fresh library). Only the
+              // initial Settings row is seeded, so switching to light later sticks.
+              () async => isar.settings.put(Settings()..themeIsDark = isTv),
+            );
           }
         } catch (e) {
           if (kDebugMode) {

@@ -7,6 +7,7 @@ import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_st
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:numberpicker/numberpicker.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class DownloadsScreen extends ConsumerStatefulWidget {
   const DownloadsScreen({super.key});
@@ -29,6 +30,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n!.downloads)),
       body: SingleChildScrollView(
+        padding: tvPageInsets,
         child: Column(
           children: [
             SwitchListTile(

@@ -23,6 +23,7 @@ class MangaImageCardWidget extends ConsumerWidget {
   final bool isComfortableGrid;
   final MManga? getMangaDetail;
   final Manga? libraryManga;
+  final bool autofocus;
 
   const MangaImageCardWidget({
     required this.source,
@@ -31,12 +32,14 @@ class MangaImageCardWidget extends ConsumerWidget {
     required this.isComfortableGrid,
     required this.itemType,
     this.libraryManga,
+    this.autofocus = false,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final hasData = libraryManga != null;
     return CoverViewWidget(
+      autofocus: autofocus,
       bottomTextWidget: BottomTextWidget(
         maxLines: 1,
         text: getMangaDetail!.name!,

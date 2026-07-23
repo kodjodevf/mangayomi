@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:mangayomi/modules/more/settings/security/providers/security_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class SecurityScreen extends ConsumerStatefulWidget {
   const SecurityScreen({super.key});
@@ -56,6 +57,7 @@ class _SecurityScreenState extends ConsumerState<SecurityScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.security)),
       body: SingleChildScrollView(
+        padding: tvPageInsets,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

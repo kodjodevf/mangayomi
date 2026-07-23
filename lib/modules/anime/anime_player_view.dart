@@ -128,7 +128,11 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           title: const Text(''),
-          leading: BackButton(
+          leading: IconButton(
+            // The error body is just text, so focus this or the remote is stuck.
+            // IconButton, not BackButton, because only it takes autofocus.
+            autofocus: isTv,
+            icon: const BackButtonIcon(),
             onPressed: () {
               restoreSystemUI();
               Navigator.pop(context);
@@ -143,8 +147,12 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
           extendBodyBehindAppBar: true,
           appBar: AppBar(
             title: const Text(''),
-            leading: BackButton(
+            leading: IconButton(
               color: Colors.white,
+              // Lets the remote bail out of a hung load. IconButton, not
+              // BackButton, because only it takes autofocus.
+              autofocus: isTv,
+              icon: const BackButtonIcon(),
               onPressed: () {
                 restoreSystemUI();
                 Navigator.pop(context);
@@ -830,6 +838,14 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             : "libmpv",
       ),
     );
+    // Picture-in-Picture (media_kit fork VideoOutputPIP, iOS 15+) is DISABLED:
+    // on iOS 26 the second UIScene that PiP creates re-runs plugin registration
+    // and connectivity_plus segfaults (EXC_BAD_ACCESS in didFinishLaunching).
+    // PiP is only the trigger; the real fix is the UIScene lifecycle migration
+    // (flutter.dev/to/uiscene-migration). Re-enable after that. See closed #757.
+    // if (Platform.isIOS) {
+    //   _controller.enableAutoPictureInPicture();
+    // }
     // If player is being launched the first time,
     // use global "Use Fullscreen" setting.
     // Else (if user already watches an episode and just changes it),
@@ -859,9 +875,9 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       final forceLandscape = ref.read(forceLandscapePlayerStateProvider);
       // Preserve the player orientation across episode changes. Playing the next
       // episode pushes a fresh player, and the old one's dispose() resets the
-      // orientation to portrait. So if the viewer is still in fullscreen - from
+      // orientation to portrait. So if the viewer is still in fullscreen — from
       // the force-landscape setting or a manual toggle that persists across
-      // episodes (fullscreenProvider is global) - re-apply landscape here rather
+      // episodes (fullscreenProvider is global) — re-apply landscape here rather
       // than stranding them in portrait with the fullscreen button still active.
       if (forceLandscape || ref.read(fullscreenProvider)) {
         _setLandscapeMode(true);
@@ -960,7 +976,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   // themselves on a TV remote.
   final ValueNotifier<int> _revealControls = ValueNotifier(0);
   // TV-only: when the advanced settings panel is open the video docks left and
-  // the panel slides in on the right, instead of a bottom sheet.
+  // the panel slides in on the right (YouTube-style), instead of a bottom sheet.
   bool _tvSettingsOpen = false;
   // Owned focus anchors for the split view so Left/Right cross deterministically
   // (geometric directional focus was losing focus entirely).
@@ -1467,7 +1483,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
   }
 
 
-  // d-pad-focusable option data for the TV settings panel - the same track
+  // d-pad-focusable option data for the TV settings panel — the same track
   // switching the bottom-sheet widgets do, minus the Navigator.pop (the panel
   // is not a route). Records: (label, selected, onTap).
   List<({String label, bool selected, VoidCallback onTap})> _tvQualityOptions() {
@@ -2107,6 +2123,18 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                   )
                   .toList(),
         ),
+        // PiP button disabled: entering PiP crashes on iOS 26 (see the
+        // enableAutoPictureInPicture note above / closed #757). Re-enable with
+        // the UIScene migration.
+        // if (Platform.isIOS && _controller.isPictureInPictureAvailable())
+        //   IconButton(
+        //     tooltip: 'Picture in Picture',
+        //     icon: const Icon(
+        //       Icons.picture_in_picture_alt,
+        //       color: Colors.white,
+        //     ),
+        //     onPressed: () => _controller.enterPictureInPicture(),
+        //   ),
         IconButton(
           icon: const Icon(Icons.fit_screen_outlined, color: Colors.white),
           onPressed: () async {
@@ -2118,7 +2146,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             controller: _controller,
             desktopFullScreenPlayer: widget.desktopFullScreenPlayer,
           )
-        // A TV is always fullscreen, so the toggle is useless there - hide it.
+        // A TV is always fullscreen, so the toggle is useless there — hide it.
         else if (!isTv)
           IconButton(
             icon: Icon(isFullscreen ? Icons.fullscreen_exit : Icons.fullscreen),
@@ -2193,18 +2221,27 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
               Consumer(
                 builder: (context, ref, _) {
                   final autoPlay = ref.watch(autoPlayNextEpisodeProvider);
-                  // Same pill control as the TV player, so the autoplay toggle
-                  // is visually identical across mobile, desktop and TV.
+                  // Same drawn play/pause switch as the TV player, for a
+                  // consistent autoplay toggle across all players.
                   return Tooltip(
                     message: autoPlay
                         ? 'Autoplay next episode: on'
                         : 'Autoplay next episode: off',
-                    child: AutoplayToggle(
-                      accent: Theme.of(context).colorScheme.primary,
-                      on: autoPlay,
-                      onToggle: () => ref
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(20),
+                      onTap: () => ref
                           .read(autoPlayNextEpisodeProvider.notifier)
                           .toggle(),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 8,
+                        ),
+                        child: AutoplaySwitch(
+                          on: autoPlay,
+                          accent: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
                     ),
                   );
                 },
@@ -2394,7 +2431,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
       ],
     );
     if (!splitSettings) return player;
-    // Split layout: video docks left (a single focusable unit, Left
+    // YouTube-style split: video docks left (a single focusable unit — Left
     // from the panel focuses it, Select toggles play/pause), a gap, then the
     // settings panel on the right.
     final accent = Theme.of(context).colorScheme.primary;
@@ -2705,7 +2742,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
 
   // On a TV remote / keyboard, reveal the on-screen controls when the user
   // presses the d-pad. The arrow keys stay unbound above (so they still drive
-  // focus traversal between the control buttons) - we just bump [_revealControls]
+  // focus traversal between the control buttons) — we just bump [_revealControls]
   // so the controls become visible and the focus is on something the user can
   // see. Returns ignored so traversal + the media shortcuts still run.
   KeyEventResult _onPlayerKey(FocusNode node, KeyEvent event) {

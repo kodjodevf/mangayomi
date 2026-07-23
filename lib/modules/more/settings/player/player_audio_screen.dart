@@ -8,6 +8,7 @@ import 'package:mangayomi/modules/more/settings/player/providers/player_audio_st
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class PlayerAudioScreen extends ConsumerStatefulWidget {
   const PlayerAudioScreen({super.key});
@@ -29,6 +30,7 @@ class _PlayerAudioScreenState extends ConsumerState<PlayerAudioScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.video_audio)),
       body: SingleChildScrollView(
+        padding: tvPageInsets,
         child: Column(
           children: [
             ListTile(

@@ -8,6 +8,8 @@ import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_pr
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/utils/language.dart';
+import 'package:mangayomi/modules/widgets/tv_row_button.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class MassMigrationDestinationScreen extends ConsumerWidget {
   const MassMigrationDestinationScreen({required this.sourceGroup, super.key});
@@ -32,11 +34,13 @@ class MassMigrationDestinationScreen extends ConsumerWidget {
               ),
             )
           : ListView.separated(
+              padding: tvPageInsets,
               itemCount: sources.length,
               separatorBuilder: (_, _) => const Divider(height: 1),
               itemBuilder: (context, index) {
                 final source = sources[index];
                 return _DestinationSourceTile(
+                  autofocus: index == 0,
                   source: source,
                   onTap: () {
                     Navigator.push(
@@ -57,15 +61,20 @@ class MassMigrationDestinationScreen extends ConsumerWidget {
 }
 
 class _DestinationSourceTile extends StatelessWidget {
-  const _DestinationSourceTile({required this.source, required this.onTap});
+  const _DestinationSourceTile({
+    required this.source,
+    required this.onTap,
+    this.autofocus = false,
+  });
 
   final Source source;
   final VoidCallback onTap;
+  final bool autofocus;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return ListTile(
+    final tile = ListTile(
       leading: MassMigrationSourceIcon(source: source),
       title: Text(source.name ?? l10n.mass_migration_unknown_source),
       subtitle: Text(
@@ -76,6 +85,21 @@ class _DestinationSourceTile extends StatelessWidget {
         ].join(' • '),
       ),
       trailing: const Icon(Icons.chevron_right),
+    );
+    if (isTv) {
+      return TvListRow(
+        children: [
+          Expanded(
+            child: TvRowButton(autofocus: autofocus, onTap: onTap, child: tile),
+          ),
+        ],
+      );
+    }
+    return ListTile(
+      leading: tile.leading,
+      title: tile.title,
+      subtitle: tile.subtitle,
+      trailing: tile.trailing,
       onTap: onTap,
     );
   }

@@ -16,6 +16,7 @@ import 'package:marquee/marquee.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class WatchOrderScreen extends StatefulWidget {
   final String name;
@@ -101,6 +102,7 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
   Widget _buildSequels() {
     if (sequels != null && sequels!.isNotEmpty) {
       return SuperListView.builder(
+        padding: tvPageInsets,
         extentPrecalculationPolicy: SuperPrecalculationPolicy(),
         itemCount: sequels!.length,
         itemBuilder: (context, index) {
@@ -155,6 +157,8 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
     final isWatchOrder = data != null && data!.isNotEmpty;
     if (isSearch || isWatchOrder) {
       return SuperListView.builder(
+        // Sibling view to _buildSequels, so it takes the same inset.
+        padding: tvPageInsets,
         extentPrecalculationPolicy: SuperPrecalculationPolicy(),
         itemCount: data?.length ?? dataSearch!.length,
         itemBuilder: (context, index) {

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:mangayomi/modules/widgets/tv_pill.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
@@ -14,7 +16,7 @@ class CoverViewWidget extends StatefulWidget {
   // On TV, the first cover autofocuses so the grid becomes the content scope's
   // focus target (otherwise d-pad focus never reaches it).
   final bool autofocus;
-  // Notifies the parent when this card gains/loses focus - used by the TV home
+  // Notifies the parent when this card gains/loses focus — used by the TV home
   // rows to scroll the focused card into view. Fires on any focus change,
   // independent of the internal ring (which is gated to d-pad/keyboard input).
   final ValueChanged<bool>? onFocusChange;
@@ -40,10 +42,19 @@ class CoverViewWidget extends StatefulWidget {
 }
 
 class _CoverViewWidgetState extends State<CoverViewWidget> {
+  // Held-OK tracking for the TV long-press (see the Focus wrapper in build).
+  bool _held = false;
+  // True only between a Select KeyDown and its KeyUp on THIS card. Guards
+  // against a stray KeyUp landing here without its KeyDown: e.g. pressing OK on
+  // a detail screen's Back button pops on KeyDown, and the trailing KeyUp then
+  // arrives at whatever cover regained focus. Without this it read as a tap and
+  // immediately re-opened the detail we just left.
+  bool _pressed = false;
+
   // Whether the card should draw a focus ring. Only set when focus arrives via
   // keyboard / d-pad navigation (FocusHighlightMode.traditional), so touch
   // input on phones/tablets never shows a ring. Gives d-pad/remote users on
-  // Android TV - and keyboard users anywhere - a clearly visible focus target.
+  // Android TV — and keyboard users anywhere — a clearly visible focus target.
   bool _focused = false;
 
   @override
@@ -93,8 +104,13 @@ class _CoverViewWidgetState extends State<CoverViewWidget> {
         widget.isComfortableGrid && widget.bottomTextWidget != null;
     // Matrix4.scale is deprecated in favour of the explicit per-axis form.
     final pop = _focused ? 1.06 : 1.0;
-
-    return Padding(
+    // An InkWell's keyboard activation only ever fires onTap, so a remote
+    // could not reach the long-press actions at all (library multi-select,
+    // most importantly). On TV, when a long-press exists, intercept the select
+    // key above the InkWell and resolve tap vs hold on release, exactly like
+    // TvPill: press-and-release opens, press-and-hold selects. The wrapper
+    // takes no focus of its own; it only sees keys bubbling from the InkWell.
+    Widget card = Padding(
       padding: const EdgeInsets.all(5),
       child: Column(
         children: [
@@ -102,7 +118,7 @@ class _CoverViewWidgetState extends State<CoverViewWidget> {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 130),
               curve: Curves.easeOut,
-              // Focus "pop" - the focused cover lifts slightly, TV-style.
+              // Focus "pop" — the focused cover lifts slightly, TV-style.
               transform: Matrix4.identity()..scaleByDouble(pop, pop, pop, 1),
               transformAlignment: Alignment.center,
               decoration: BoxDecoration(
@@ -170,9 +186,48 @@ class _CoverViewWidgetState extends State<CoverViewWidget> {
               ),
             ),
           ),
+          // A small gap so the focused card's 3px ring (and its slight scale)
+          // clears the title below instead of bleeding onto it.
+          if (showBottomText) const SizedBox(height: 4),
           if (showBottomText) widget.bottomTextWidget!,
         ],
       ),
     );
+    final longPress = widget.onLongPress;
+    if (isTv && longPress != null) {
+      card = Focus(
+        canRequestFocus: false,
+        skipTraversal: true,
+        onKeyEvent: (node, event) {
+          if (!tvIsSelectKey(event.logicalKey)) return KeyEventResult.ignored;
+          if (event is KeyDownEvent) {
+            _held = false;
+            _pressed = true;
+            return KeyEventResult.handled;
+          }
+          if (event is KeyRepeatEvent) {
+            if (_pressed) _held = true;
+            return KeyEventResult.handled;
+          }
+          if (event is KeyUpEvent) {
+            // A KeyUp without the matching KeyDown here is a leaked press from
+            // another screen (e.g. a Back button that popped on KeyDown). Drop
+            // it so it can't fire onTap and re-open what we just closed.
+            if (!_pressed) return KeyEventResult.ignored;
+            if (_held) {
+              longPress();
+            } else {
+              widget.onTap();
+            }
+            _held = false;
+            _pressed = false;
+            return KeyEventResult.handled;
+          }
+          return KeyEventResult.ignored;
+        },
+        child: card,
+      );
+    }
+    return card;
   }
 }

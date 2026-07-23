@@ -6,13 +6,13 @@ import 'package:media_kit/media_kit.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_decoder_state_provider.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
-/// The settings panel that docks on the right of the TV player.
+/// The YouTube-style settings panel that docks on the right of the TV player.
 /// A navigable drill-down: a category list, and selecting one replaces it with
 /// that category's page (Back returns). Surfaces the player's existing quality /
-/// subtitle / audio widgets plus speed, shaders, decoder and mpv stats - all
+/// subtitle / audio widgets plus speed, shaders, decoder and mpv stats — all
 /// d-pad-focusable.
 /// One selectable option in a track/quality list: its label, whether it's the
-/// current selection, and the action to switch to it (no route pop - the panel
+/// current selection, and the action to switch to it (no route pop — the panel
 /// stays open).
 typedef TvTrackOptionData = ({String label, bool selected, VoidCallback onTap});
 
@@ -41,7 +41,7 @@ class TvPlayerSettingsPanel extends ConsumerStatefulWidget {
   // The header's focus node is owned by the player so it can be re-focused every
   // time the panel opens (autofocus only fires once per scope).
   final FocusNode headerFocusNode;
-  // Left out of the panel goes to the video - an explicit hand-off, because
+  // Left out of the panel goes to the video — an explicit hand-off, because
   // geometric directional focus across the split was losing focus entirely.
   final VoidCallback onExitLeft;
   final VoidCallback onClose;
@@ -69,8 +69,8 @@ class _TvPlayerSettingsPanelState extends ConsumerState<TvPlayerSettingsPanel> {
   static const _decoders = [
     ('auto', 'Auto (hardware)'),
     ('auto-copy', 'Auto-copy'),
-    ('mediacodec', 'MediaCodec - HW (Android)'),
-    ('mediacodec-copy', 'MediaCodec - HW+ (Android)'),
+    ('mediacodec', 'MediaCodec — HW (Android)'),
+    ('mediacodec-copy', 'MediaCodec — HW+ (Android)'),
     ('videotoolbox', 'VideoToolbox (Apple)'),
     ('videotoolbox-copy', 'VideoToolbox-copy (Apple)'),
     ('d3d11va', 'D3D11VA (Windows)'),
@@ -214,9 +214,10 @@ class _TvPlayerSettingsPanelState extends ConsumerState<TvPlayerSettingsPanel> {
           valueListenable: widget.speedListenable,
           builder: (context, rate, _) => ListView(
             children: [
-              for (final s in _speeds)
+              for (final (i, s) in _speeds.indexed)
                 _OptionRow(
                   accent: accent,
+                  autofocus: i == 0,
                   label: _fmtSpeed(s),
                   selected: (s - rate).abs() < 0.001,
                   onTap: () => widget.onSetSpeed(s),
@@ -225,19 +226,24 @@ class _TvPlayerSettingsPanelState extends ConsumerState<TvPlayerSettingsPanel> {
           ),
         );
       case 'quality':
-        return _trackList(accent, widget.qualityOptions(), 'No other quality');
+        return _trackList(
+          accent,
+          widget.qualityOptions,
+          'No other quality',
+        );
       case 'subtitles':
-        return _trackList(accent, widget.subtitleOptions(), 'No subtitles');
+        return _trackList(accent, widget.subtitleOptions, 'No subtitles');
       case 'audio':
-        return _trackList(accent, widget.audioOptions(), 'No audio tracks');
+        return _trackList(accent, widget.audioOptions, 'No audio tracks');
       case 'shaders':
         return ValueListenableBuilder<String>(
           valueListenable: widget.selectedShaderListenable,
           builder: (context, current, _) => ListView(
             children: [
-              for (final sh in _shaders)
+              for (final (i, sh) in _shaders.indexed)
                 _OptionRow(
                   accent: accent,
+                  autofocus: i == 0,
                   label: sh.$1,
                   selected: current == sh.$1,
                   onTap: () =>
@@ -250,9 +256,10 @@ class _TvPlayerSettingsPanelState extends ConsumerState<TvPlayerSettingsPanel> {
         final currentHwdec = ref.watch(hwdecModeStateProvider());
         return ListView(
           children: [
-            for (final d in _decoders)
+            for (final (i, d) in _decoders.indexed)
               _OptionRow(
                 accent: accent,
+                autofocus: i == 0,
                 label: d.$2,
                 selected: currentHwdec == d.$1,
                 onTap: () {
@@ -266,9 +273,10 @@ class _TvPlayerSettingsPanelState extends ConsumerState<TvPlayerSettingsPanel> {
       case 'stats':
         return ListView(
           children: [
-            for (final st in _stats)
+            for (final (i, st) in _stats.indexed)
               _NavRow(
                 accent: accent,
+                autofocus: i == 0,
                 icon: Icons.insights_outlined,
                 label: st.$1,
                 onTap: () => _native.command(['script-binding', st.$2]),
@@ -280,25 +288,43 @@ class _TvPlayerSettingsPanelState extends ConsumerState<TvPlayerSettingsPanel> {
     }
   }
 
-  Widget _trackList(Color accent, List<TvTrackOptionData> options, String empty) {
-    if (options.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Text(empty, style: TextStyle(color: Theme.of(context).hintColor)),
-        ),
-      );
-    }
-    return ListView(
-      children: [
-        for (final o in options)
-          _OptionRow(
-            accent: accent,
-            label: o.label,
-            selected: o.selected,
-            onTap: o.onTap,
-          ),
-      ],
+  Widget _trackList(
+    Color accent,
+    List<TvTrackOptionData> Function() optionsBuilder,
+    String empty,
+  ) {
+    // Recompute from player state on every track change so the check mark
+    // follows the real selection: switching a track updates player state
+    // asynchronously, and without this the list stayed frozen on the option
+    // that was selected when the page opened.
+    return StreamBuilder<Track>(
+      stream: widget.player.stream.track,
+      builder: (context, _) {
+        final options = optionsBuilder();
+        if (options.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Text(
+                empty,
+                style: TextStyle(color: Theme.of(context).hintColor),
+              ),
+            ),
+          );
+        }
+        return ListView(
+          children: [
+            for (final (i, o) in options.indexed)
+              _OptionRow(
+                accent: accent,
+                autofocus: i == 0,
+                label: o.label,
+                selected: o.selected,
+                onTap: o.onTap,
+              ),
+          ],
+        );
+      },
     );
   }
 
@@ -316,12 +342,14 @@ class _NavRow extends StatefulWidget {
     required this.label,
     required this.onTap,
     this.trailing,
+    this.autofocus = false,
   });
   final Color accent;
   final IconData icon;
   final String label;
   final VoidCallback onTap;
   final Widget? trailing;
+  final bool autofocus;
 
   @override
   State<_NavRow> createState() => _NavRowState();
@@ -333,6 +361,7 @@ class _NavRowState extends State<_NavRow> {
   @override
   Widget build(BuildContext context) {
     return Focus(
+      autofocus: widget.autofocus,
       onFocusChange: (f) => setState(() => _focused = f),
       onKeyEvent: (node, event) {
         if (event is KeyDownEvent && _isSelect(event.logicalKey)) {
@@ -376,11 +405,13 @@ class _OptionRow extends StatefulWidget {
     required this.label,
     required this.selected,
     required this.onTap,
+    this.autofocus = false,
   });
   final Color accent;
   final String label;
   final bool selected;
   final VoidCallback onTap;
+  final bool autofocus;
 
   @override
   State<_OptionRow> createState() => _OptionRowState();
@@ -392,6 +423,7 @@ class _OptionRowState extends State<_OptionRow> {
   @override
   Widget build(BuildContext context) {
     return Focus(
+      autofocus: widget.autofocus,
       onFocusChange: (f) => setState(() => _focused = f),
       onKeyEvent: (node, event) {
         if (event is KeyDownEvent && _isSelect(event.logicalKey)) {

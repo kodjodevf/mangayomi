@@ -30,6 +30,8 @@ import 'package:mangayomi/utils/global_style.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:marquee/marquee.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
+import 'package:mangayomi/modules/widgets/tv_menu.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class MangaHomeScreen extends ConsumerStatefulWidget {
   final Source source;
@@ -188,6 +190,21 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
       ? true
       : ref.watch(supportsLatestProvider(source: source));
   late final filterList = isLocal ? [] : getFilterList(source: source);
+  Future<void> _onSourceOverflow(int value) async {
+    if (value == 0) {
+      final baseUrl = ref.read(sourceBaseUrlProvider(source: source));
+      final data = {
+        'url': baseUrl,
+        'sourceId': source.id.toString(),
+        'title': '',
+      };
+      if (mounted) context.push("/mangawebview", extra: data);
+    } else {
+      final res = await context.push('/extension_detail', extra: source);
+      if (res != null && mounted) setState(() => source = res as Source);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_selectedIndex == 2 && (_isSearch && _query.isNotEmpty) ||
@@ -200,9 +217,13 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
           filterList: filters,
         ),
       );
-    } else if (_selectedIndex == 1 && !_isSearch && _query.isEmpty) {
+    } else if (_selectedIndex == 1 &&
+        (!_isSearch || isTv) &&
+        _query.isEmpty) {
       _getManga = ref.watch(getLatestUpdatesProvider(source: source, page: 1));
-    } else if (_selectedIndex == 0 && !_isSearch && _query.isEmpty) {
+    } else if (_selectedIndex == 0 &&
+        (!_isSearch || isTv) &&
+        _query.isEmpty) {
       _getManga = ref.watch(getPopularProvider(source: source, page: 1));
     }
     final l10n = context.l10n;
@@ -288,9 +309,43 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                       _isSearch = true;
                     });
                   },
+                  focusColor: isTv
+                      ? context.primaryColor.withValues(alpha: 0.4)
+                      : null,
                   icon: Icon(Icons.search, color: Theme.of(context).hintColor),
                 ),
-          PopupMenuButton(
+          if (isTv)
+            IconButton(
+              focusColor: context.primaryColor.withValues(alpha: 0.4),
+              icon: Icon(displayTypeIcon),
+              onPressed: () async {
+                const order = [
+                  DisplayType.comfortableGrid,
+                  DisplayType.compactGrid,
+                  DisplayType.list,
+                ];
+                final current = ref.read(mangaHomeDisplayTypeStateProvider);
+                final picked = await showTvMenu(
+                  context,
+                  title: context.l10n.display_mode,
+                  options: [
+                    TvMenuOption(context.l10n.comfortable_grid,
+                        selected: current == DisplayType.comfortableGrid),
+                    TvMenuOption(context.l10n.compact_grid,
+                        selected: current == DisplayType.compactGrid),
+                    TvMenuOption(context.l10n.list,
+                        selected: current == DisplayType.list),
+                  ],
+                );
+                if (picked != null) {
+                  ref
+                      .read(mangaHomeDisplayTypeStateProvider.notifier)
+                      .setMangaHomeDisplayType(order[picked]);
+                }
+              },
+            )
+          else
+            PopupMenuButton(
             popUpAnimationStyle: popupAnimationStyle,
             icon: Icon(displayTypeIcon),
             itemBuilder: (context) {
@@ -331,44 +386,39 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
             onSelected: (value) {},
           ),
           if (!isLocal)
-            PopupMenuButton(
-              popUpAnimationStyle: popupAnimationStyle,
-              itemBuilder: (context) {
-                return [
-                  PopupMenuItem<int>(
-                    value: 0,
-                    child: Text(context.l10n.open_in_browser),
-                  ),
-                  PopupMenuItem<int>(
-                    value: 1,
-                    child: Text(context.l10n.settings),
-                  ),
-                ];
-              },
-              onSelected: (value) async {
-                if (value == 0) {
-                  final baseUrl = ref.watch(
-                    sourceBaseUrlProvider(source: source),
+            if (isTv)
+              IconButton(
+                focusColor: context.primaryColor.withValues(alpha: 0.4),
+                icon: const Icon(Icons.more_vert),
+                onPressed: () async {
+                  final picked = await showTvMenu(
+                    context,
+                    title: source.name ?? '',
+                    options: [
+                      TvMenuOption(context.l10n.open_in_browser),
+                      TvMenuOption(context.l10n.settings),
+                    ],
                   );
-                  Map<String, dynamic> data = {
-                    'url': baseUrl,
-                    'sourceId': source.id.toString(),
-                    'title': '',
-                  };
-                  context.push("/mangawebview", extra: data);
-                } else {
-                  final res = await context.push(
-                    '/extension_detail',
-                    extra: source,
-                  );
-                  if (res != null && mounted) {
-                    setState(() {
-                      source = res as Source;
-                    });
-                  }
-                }
-              },
-            ),
+                  if (picked != null && mounted) _onSourceOverflow(picked);
+                },
+              )
+            else
+              PopupMenuButton(
+                popUpAnimationStyle: popupAnimationStyle,
+                itemBuilder: (context) {
+                  return [
+                    PopupMenuItem<int>(
+                      value: 0,
+                      child: Text(context.l10n.open_in_browser),
+                    ),
+                    PopupMenuItem<int>(
+                      value: 1,
+                      child: Text(context.l10n.settings),
+                    ),
+                  ];
+                },
+                onSelected: _onSourceOverflow,
+              ),
         ],
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(AppBar().preferredSize.height * 0.8),
@@ -624,6 +674,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                         return buildProgressIndicator();
                                       }
                                       return MangaHomeImageCard(
+                                        autofocus:
+                                            isTv && index == 0 && !_isSearch,
                                         itemType: source.itemType,
                                         manga: _mangaList[index],
                                         source: source,
@@ -734,6 +786,7 @@ class MangaHomeImageCard extends ConsumerStatefulWidget {
   final Source source;
   final bool isComfortableGrid;
   final Manga? libraryManga;
+  final bool autofocus;
   const MangaHomeImageCard({
     super.key,
     required this.manga,
@@ -741,6 +794,7 @@ class MangaHomeImageCard extends ConsumerStatefulWidget {
     required this.itemType,
     required this.isComfortableGrid,
     this.libraryManga,
+    this.autofocus = false,
   });
 
   @override
@@ -756,6 +810,7 @@ class _MangaHomeImageCardState extends ConsumerState<MangaHomeImageCard> {
       itemType: widget.itemType,
       isComfortableGrid: widget.isComfortableGrid,
       libraryManga: widget.libraryManga,
+      autofocus: widget.autofocus,
     );
   }
 }

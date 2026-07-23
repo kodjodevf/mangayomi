@@ -73,6 +73,7 @@ class AppearanceScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n!.appearance)),
       body: SingleChildScrollView(
+        padding: tvPageInsets,
         child: Column(
           children: [
             SettingsSection(

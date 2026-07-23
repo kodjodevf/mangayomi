@@ -14,6 +14,7 @@ import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/global_style.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class MangaWebView extends ConsumerStatefulWidget {
   final String url;
@@ -308,76 +309,87 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                         : Container(),
                     if (!Platform.isWindows)
                       Expanded(
-                        child: InAppWebView(
-                          webViewEnvironment: webViewEnvironment,
-                          onWebViewCreated: (controller) async {
-                            _webViewController = controller;
-                          },
-                          onLoadStart: (controller, url) async {
-                            setState(() {
-                              _url = url.toString();
-                            });
-                          },
-                          shouldOverrideUrlLoading:
-                              (controller, navigationAction) async {
-                                var uri = navigationAction.request.url!;
-                                if (![
-                                  "http",
-                                  "https",
-                                  "file",
-                                  "chrome",
-                                  "data",
-                                  "javascript",
-                                  "about",
-                                ].contains(uri.scheme)) {
-                                  if (await canLaunchUrl(uri)) {
-                                    await launchUrl(uri);
-                                    return NavigationActionPolicy.CANCEL;
-                                  }
-                                }
-                                return NavigationActionPolicy.ALLOW;
-                              },
-                          onLoadStop: (controller, url) async {
-                            if (mounted) {
+                        // Android's WebView drives its own d-pad focus once it
+                        // has focus, but nothing here ever gave it any, so on a
+                        // TV the remote could not reach into the page at all.
+                        // That matters most for a Cloudflare challenge, which
+                        // is the whole reason this screen exists. Autofocus it
+                        // on TV so the keys land in the page rather than the
+                        // toolbar.
+                        child: Focus(
+                          autofocus: isTv,
+                          child: InAppWebView(
+                            webViewEnvironment: webViewEnvironment,
+                            onWebViewCreated: (controller) async {
+                              _webViewController = controller;
+                            },
+                            onLoadStart: (controller, url) async {
                               setState(() {
                                 _url = url.toString();
                               });
-                            }
-                          },
-                          onProgressChanged: (controller, progress) async {
-                            if (mounted) {
-                              setState(() {
-                                _progress = progress / 100;
-                              });
-                            }
-                          },
-                          onUpdateVisitedHistory:
-                              (controller, url, isReload) async {
-                                final ua =
-                                    await controller.evaluateJavascript(
-                                      source: "navigator.userAgent",
-                                    ) ??
-                                    "";
-                                await MClient.setCookie(
-                                  url.toString(),
-                                  ua,
-                                  controller,
-                                );
-                                final canGoback = await controller.canGoBack();
-                                final canGoForward = await controller
-                                    .canGoForward();
-                                final title = await controller.getTitle();
-                                if (mounted) {
-                                  setState(() {
-                                    _url = url.toString();
-                                    _title = title!;
-                                    _canGoback = canGoback;
-                                    _canGoForward = canGoForward;
-                                  });
-                                }
-                              },
-                          initialUrlRequest: URLRequest(
-                            url: WebUri(widget.url),
+                            },
+                            shouldOverrideUrlLoading:
+                                (controller, navigationAction) async {
+                                  var uri = navigationAction.request.url!;
+                                  if (![
+                                    "http",
+                                    "https",
+                                    "file",
+                                    "chrome",
+                                    "data",
+                                    "javascript",
+                                    "about",
+                                  ].contains(uri.scheme)) {
+                                    if (await canLaunchUrl(uri)) {
+                                      await launchUrl(uri);
+                                      return NavigationActionPolicy.CANCEL;
+                                    }
+                                  }
+                                  return NavigationActionPolicy.ALLOW;
+                                },
+                            onLoadStop: (controller, url) async {
+                              if (mounted) {
+                                setState(() {
+                                  _url = url.toString();
+                                });
+                              }
+                            },
+                            onProgressChanged: (controller, progress) async {
+                              if (mounted) {
+                                setState(() {
+                                  _progress = progress / 100;
+                                });
+                              }
+                            },
+                            onUpdateVisitedHistory:
+                                (controller, url, isReload) async {
+                                  final ua =
+                                      await controller.evaluateJavascript(
+                                        source: "navigator.userAgent",
+                                      ) ??
+                                      "";
+                                  await MClient.setCookie(
+                                    url.toString(),
+                                    ua,
+                                    controller,
+                                  );
+                                  final canGoback = await controller
+                                      .canGoBack();
+                                  final canGoForward = await controller
+                                      .canGoForward();
+                                  final title = await controller.getTitle();
+                                  if (mounted) {
+                                    setState(() {
+                                      _url = url.toString();
+                                      _title = title!;
+                                      _canGoback = canGoback;
+                                      _canGoForward = canGoForward;
+                                    });
+                                  }
+                                },
+                            initialUrlRequest: URLRequest(
+                              url: WebUri(widget.url),
+                            ),
                           ),
                         ),
                       ),

@@ -6,21 +6,29 @@ import 'package:mangayomi/modules/mass_migration/widgets/mass_migration_widgets.
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/utils/language.dart';
+import 'package:mangayomi/modules/widgets/tv_row_button.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 class MassMigrationSourceSelectionScreen extends StatelessWidget {
   const MassMigrationSourceSelectionScreen({
-    required this.initialManga,
+    required this.itemType,
+    this.prioritizedManga,
     super.key,
   });
 
-  final Manga initialManga;
+  /// Which library to group. The screen lists every source in it.
+  final ItemType itemType;
+
+  /// Optional: the manga the user came from, whose source floats to the top.
+  /// Null when opened library-wide (e.g. from More) rather than from a manga.
+  final Manga? prioritizedManga;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final sourceGroups = buildMassMigrationSourceGroups(
-      itemType: initialManga.itemType,
-      prioritizedManga: initialManga,
+      itemType: itemType,
+      prioritizedManga: prioritizedManga,
     );
 
     return Scaffold(
@@ -33,11 +41,18 @@ class MassMigrationSourceSelectionScreen extends StatelessWidget {
               ),
             )
           : ListView.separated(
+              padding: tvPageInsets,
               itemCount: sourceGroups.length,
               separatorBuilder: (_, _) => const Divider(height: 1),
               itemBuilder: (context, index) {
                 final sourceGroup = sourceGroups[index];
-                return ListTile(
+                void open() => Navigator.push(
+                  context,
+                  createRoute(
+                    page: MassMigrationPreviewScreen(sourceGroup: sourceGroup),
+                  ),
+                );
+                final tile = ListTile(
                   leading: MassMigrationSourceIcon(source: sourceGroup.source),
                   title: Text(sourceGroup.sourceName),
                   subtitle: Text(
@@ -48,16 +63,26 @@ class MassMigrationSourceSelectionScreen extends StatelessWidget {
                     ].join(' • '),
                   ),
                   trailing: const Icon(Icons.chevron_right),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      createRoute(
-                        page: MassMigrationPreviewScreen(
-                          sourceGroup: sourceGroup,
+                );
+                if (isTv) {
+                  return TvListRow(
+                    children: [
+                      Expanded(
+                        child: TvRowButton(
+                          autofocus: index == 0,
+                          onTap: open,
+                          child: tile,
                         ),
                       ),
-                    );
-                  },
+                    ],
+                  );
+                }
+                return ListTile(
+                  leading: tile.leading,
+                  title: tile.title,
+                  subtitle: tile.subtitle,
+                  trailing: tile.trailing,
+                  onTap: open,
                 );
               },
             ),

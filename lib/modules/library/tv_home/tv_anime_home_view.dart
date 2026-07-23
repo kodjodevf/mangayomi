@@ -25,6 +25,7 @@ import 'package:mangayomi/modules/more/providers/downloaded_only_state_provider.
 import 'package:mangayomi/modules/widgets/bottom_text_widget.dart';
 import 'package:mangayomi/modules/widgets/category_selection_dialog.dart';
 import 'package:mangayomi/modules/widgets/cover_view_widget.dart';
+import 'package:mangayomi/modules/widgets/tv_pill.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
@@ -36,7 +37,7 @@ import 'package:super_sliver_list/super_sliver_list.dart';
 const double _defaultCardWidth = 150;
 
 /// Card width follows the library's own grid-size setting ("items per row",
-/// 0 = default) - the slider in the filter/sort/display sheet drives the TV
+/// 0 = default) — the slider in the filter/sort/display sheet drives the TV
 /// home too, rather than the home keeping a private density of its own.
 double _cardWidth(BuildContext context, int gridSize) {
   final size = MediaQuery.sizeOf(context);
@@ -70,7 +71,7 @@ SliverGridDelegate _gridDelegate(int gridSize) => gridSize <= 0
         crossAxisSpacing: 6,
       );
 
-/// The episode to resume for [manga] - the last from watch history, else the
+/// The episode to resume for [manga] — the last from watch history, else the
 /// first chapter.
 Chapter? _resumeChapter(Manga manga) {
   final history = isar.historys
@@ -92,7 +93,7 @@ String _fmtMs(int ms) {
 }
 
 /// TV-only, d-pad-first anime home. A hero (the thing you'll resume) plus
-/// horizontal rows - Continue Watching (from history), New Episodes (from the
+/// horizontal rows — Continue Watching (from history), New Episodes (from the
 /// update feed), Recently Added, then one row per category. A top bar adds
 /// search and the library's own filter/sort/display sheet.
 /// Rendered only when `isTv` + `tvHomeStyle`.
@@ -113,8 +114,8 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
   int? _selected;
 
   // Each vertical section (top bar, pills, hero, each row) gets its own
-  // FocusScope. Up/Down move whole-section to whole-section - restoring each
-  // scope's remembered child - instead of Flutter's geometric directional
+  // FocusScope. Up/Down move whole-section to whole-section — restoring each
+  // scope's remembered child — instead of Flutter's geometric directional
   // focus, which skips items that aren't exactly aligned above/below.
   final _scopeTopbar = FocusScopeNode(debugLabel: 'tvHomeTopbar');
   final _scopePills = FocusScopeNode(debugLabel: 'tvHomePills');
@@ -156,7 +157,7 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
     if (cur == -1) return KeyEventResult.ignored;
     final down = k == LogicalKeyboardKey.arrowDown;
 
-    // The grid is 2D - let it move between its own rows first; only when it
+    // The grid is 2D — let it move between its own rows first; only when it
     // can't (top/bottom edge) do we hop to the adjacent section.
     if (identical(_order[cur], _scopeGrid)) {
       final moved =
@@ -179,7 +180,7 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
     return KeyEventResult.handled;
   }
 
-  /// Focus the card at [column] in a section (clamped) - always a visible child,
+  /// Focus the card at [column] in a section (clamped) — always a visible child,
   /// so a card/button shows the focus ring and the horizontal position carries
   /// over. Returns false when the section has no focusable children.
   bool _focusSection(FocusScopeNode scope, int column) {
@@ -189,7 +190,7 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
     return true;
   }
 
-  /// Synchronous read matching getAllMangaStreamProvider(categoryId: null) -
+  /// Synchronous read matching getAllMangaStreamProvider(categoryId: null) —
   /// used to seed the first frame so the spinner never flashes for local data.
   List<Manga> _favoriteAnimeSync() => isar.mangas
       .filter()
@@ -209,8 +210,8 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
     );
 
     // Seed the first frame from a synchronous Isar read. A stream provider is
-    // AsyncLoading on its very first build - its fireImmediately value arrives a
-    // microtask later - so .when() flashed the spinner for one frame even though
+    // AsyncLoading on its very first build — its fireImmediately value arrives a
+    // microtask later — so .when() flashed the spinner for one frame even though
     // the (local) library data is available instantly. `asData` is null only on
     // that first frame (a local Isar stream doesn't error), and the sync read
     // covers it; the stream then drives live updates.
@@ -240,7 +241,7 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
                 }).toList();
 
           // Only a genuinely empty library short-circuits the whole screen. If
-          // everything is merely hidden, keep the pill bar on screen - holding
+          // everything is merely hidden, keep the pill bar on screen — holding
           // OK on "All" is the way back, and _EmptyHome has no "All".
           if (allAnime.isEmpty) return const _EmptyHome();
 
@@ -389,7 +390,7 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
           } else if (searching) {
             // `entries` already has the query applied, in the sheet's sort
             // order. A selected pill scopes the search to that category, the
-            // way searching inside a category tab does everywhere else - the
+            // way searching inside a category tab does everywhere else — the
             // library searches `getAllMangaStreamProvider(categoryId:)`, not
             // the whole library.
             final catName = selectedId == null
@@ -458,7 +459,7 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
             if (newEpisodes.isNotEmpty) addRow('New Episodes', newEpisodes);
             addRow('Recently Added', recent);
 
-            // Genre rows - browse the library by genre (top few, ≥3 titles).
+            // Genre rows — browse the library by genre (top few, ≥3 titles).
             // The one place a title can appear in more than one row, so they're
             // switchable from the filter/sort/display sheet.
             if (ref.watch(tvHomeGenreRowsProvider)) {
@@ -496,7 +497,7 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
                   (a, b) => (b.lastRead ?? 0).compareTo(a.lastRead ?? 0),
                 );
             // Same hero rule as All: what you'd resume, else what you added
-            // last - never "whatever the sort tab happens to put first".
+            // last — never "whatever the sort tab happens to put first".
             final catRecent = [...inCat]
               ..sort((a, b) => (b.dateAdded ?? 0).compareTo(a.dateAdded ?? 0));
             final catHero = (catContinue.isNotEmpty ? catContinue : catRecent)
@@ -517,7 +518,7 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
             } else {
               // NestedScrollView, not a CustomScrollView: the hero and rail
               // still scroll away, but the grid stays a real (lazy) box widget,
-              // so each part can own a FocusScope - a scope can't wrap a sliver.
+              // so each part can own a FocusScope — a scope can't wrap a sliver.
               // That keeps every section on `_handleVertical`'s column-preserving
               // navigation instead of Flutter's geometric focus, which snaps to
               // the first card whenever the rows don't line up.
@@ -565,7 +566,7 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
           }
           _order = order;
 
-          // Whatever is painted behind the pills - the colour the scrolling
+          // Whatever is painted behind the pills — the colour the scrolling
           // content has to dissolve into at the top of its viewport.
           final pageBg = Theme.of(context).scaffoldBackgroundColor;
           return Focus(
@@ -597,7 +598,7 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
                       // The hero's backdrop is full-bleed, so scrolling it up
                       // under the pills leaves the viewport's clip cutting
                       // straight across it. The hero fades at its *own* top
-                      // edge, which by then is off-screen - so dissolve the
+                      // edge, which by then is off-screen — so dissolve the
                       // cut here, where it actually happens.
                       Positioned(
                         top: 0,
@@ -710,7 +711,7 @@ class _TvHomeTopBar extends StatelessWidget {
   }
 }
 
-/// Opens the library's own filter/sort/display sheet - the same one the phone
+/// Opens the library's own filter/sort/display sheet — the same one the phone
 /// app uses, already d-pad traversable. Its grid-size slider is where card
 /// density now lives.
 class _LibrarySettingsButton extends ConsumerStatefulWidget {
@@ -771,7 +772,7 @@ class _LibrarySettingsButtonState extends ConsumerState<_LibrarySettingsButton>
   }
 }
 
-/// Flat grid of a Manga list (leaf view - a plain grid navigates predictably).
+/// Flat grid of a Manga list (leaf view — a plain grid navigates predictably).
 /// Shared by search results and a selected category.
 class _MangaGrid extends ConsumerWidget {
   const _MangaGrid({required this.items, this.emptyLabel = ''});
@@ -803,7 +804,7 @@ class _MangaGrid extends ConsumerWidget {
 /// The top hero: a blurred cover backdrop (clipped so it can't bleed into the
 /// rows), darkened on the left for text and faded into the page background at
 /// the bottom for a clean seam. Poster + title + the autofocused Continue.
-/// Auto-rotating hero - cycles through the top few resume candidates with a
+/// Auto-rotating hero — cycles through the top few resume candidates with a
 /// crossfade, pausing while it (its Continue button) is focused.
 class _TvHomeHero extends StatefulWidget {
   const _TvHomeHero({required this.items});
@@ -980,7 +981,7 @@ class _HeroContent extends ConsumerWidget {
             // The backdrop fades its own alpha out into the rows below, rather
             // than blending toward a background colour it would have to guess
             // at. Its top edge is handled by the fade over the whole content
-            // viewport - that edge moves as the hero scrolls, this one doesn't.
+            // viewport — that edge moves as the hero scrolls, this one doesn't.
             ShaderMask(
               blendMode: BlendMode.dstIn,
               shaderCallback: (rect) => const LinearGradient(
@@ -1118,7 +1119,7 @@ class _HeroContent extends ConsumerWidget {
   }
 }
 
-/// The hero's Continue button - focusable, autofocused (the home's landing
+/// The hero's Continue button — focusable, autofocused (the home's landing
 /// target), theme-accent when focused, OK/Select or tap to resume.
 class _HeroContinueButton extends StatefulWidget {
   const _HeroContinueButton({required this.manga, this.chapter});
@@ -1138,8 +1139,6 @@ class _HeroContinueButtonState extends State<_HeroContinueButton> {
 
   @override
   Widget build(BuildContext context) {
-    // Matrix4.scale is deprecated in favour of the explicit per-axis form.
-    final pop = _focused ? 1.05 : 1.0;
     final accent = context.primaryColor;
     return Focus(
       // Entry focus lives on the "All" pill; the hero must not steal it when
@@ -1170,7 +1169,13 @@ class _HeroContinueButtonState extends State<_HeroContinueButton> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 130),
           curve: Curves.easeOut,
-          transform: Matrix4.identity()..scaleByDouble(pop, pop, pop, 1),
+          transform: Matrix4.identity()
+            ..scaleByDouble(
+              _focused ? 1.05 : 1.0,
+              _focused ? 1.05 : 1.0,
+              _focused ? 1.05 : 1.0,
+              1,
+            ),
           transformAlignment: Alignment.center,
           padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
           decoration: BoxDecoration(
@@ -1266,7 +1271,7 @@ class _CategoryPills extends StatefulWidget {
 
 class _CategoryPillsState extends State<_CategoryPills> {
   /// "All" is the one pill that always exists, so it's where focus lands when
-  /// the pill that had it leaves the tree - hiding it, or unhiding the last
+  /// the pill that had it leaves the tree — hiding it, or unhiding the last
   /// hidden category and losing the Hidden pill with it.
   final _allNode = FocusNode(debugLabel: 'tvPillAll');
 
@@ -1307,7 +1312,7 @@ class _CategoryPillsState extends State<_CategoryPills> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _Pill(
+                  TvPill(
                     label: 'All',
                     focusNode: _allNode,
                     selected: widget.selected == null,
@@ -1321,7 +1326,7 @@ class _CategoryPillsState extends State<_CategoryPills> {
                   for (final c in widget.categories)
                     Padding(
                       padding: const EdgeInsets.only(left: 8),
-                      child: _Pill(
+                      child: TvPill(
                         label: c.name ?? '',
                         selected: widget.selected == c.id,
                         onTap: () => widget.onSelect(c.id),
@@ -1330,7 +1335,7 @@ class _CategoryPillsState extends State<_CategoryPills> {
                     ),
                   Padding(
                     padding: const EdgeInsets.only(left: 8),
-                    child: _Pill(
+                    child: TvPill(
                       label: 'Category',
                       icon: Icons.add,
                       onTap: () =>
@@ -1347,143 +1352,14 @@ class _CategoryPillsState extends State<_CategoryPills> {
   }
 }
 
-/// A focusable filter pill: idle · focused (accent fill) · selected
-/// (accent-tinted) - three clearly distinct states for a d-pad across a room.
-class _Pill extends StatefulWidget {
-  const _Pill({
-    required this.label,
-    required this.onTap,
-    this.onLongPress,
-    this.onMenu,
-    this.icon,
-    this.focusNode,
-    this.selected = false,
-    this.autofocus = false,
-  });
-  final String label;
-  final IconData? icon;
-  final FocusNode? focusNode;
-  final bool selected;
-  final bool autofocus;
-  final VoidCallback onTap;
-  final VoidCallback? onLongPress;
-
-  /// Handled only while this pill has focus, so the remote's Menu button stays
-  /// free everywhere else - it reads as "options for the focused item", which
-  /// a cover will want.
-  final VoidCallback? onMenu;
-
-  @override
-  State<_Pill> createState() => _PillState();
-}
-
-class _PillState extends State<_Pill> {
-  bool _focused = false;
-  bool _held = false;
-
-  @override
-  Widget build(BuildContext context) {
-    // Matrix4.scale is deprecated in favour of the explicit per-axis form.
-    final pop = _focused ? 1.08 : 1.0;
-    final accent = context.primaryColor;
-    final bg = _focused
-        ? accent
-        : widget.selected
-        ? accent.withValues(alpha: 0.22)
-        : Theme.of(context).hintColor.withValues(alpha: 0.14);
-    final fg = _focused
-        ? Colors.white
-        : widget.selected
-        ? accent
-        : Theme.of(context).colorScheme.onSurface;
-    return Focus(
-      focusNode: widget.focusNode,
-      autofocus: widget.autofocus,
-      onFocusChange: (f) {
-        setState(() => _focused = f);
-        if (f && context.mounted && Scrollable.maybeOf(context) != null) {
-          Scrollable.ensureVisible(
-            context,
-            alignment: 0.5,
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeOut,
-          );
-        }
-      },
-      onKeyEvent: (node, event) {
-        final onMenu = widget.onMenu;
-        if (onMenu != null &&
-            event is KeyDownEvent &&
-            event.logicalKey == LogicalKeyboardKey.contextMenu) {
-          onMenu();
-          return KeyEventResult.handled;
-        }
-        if (!_isSelectKey(event.logicalKey)) return KeyEventResult.ignored;
-        // A remote reports a held OK as key *repeats*, never as a pointer
-        // long-press. Both tap and hold resolve on release, so whatever a hold
-        // opens never inherits the rest of that press - a dialog raised on the
-        // first repeat would be driven by the repeats still to come.
-        if (event is KeyDownEvent) {
-          _held = false;
-          return KeyEventResult.handled;
-        }
-        if (event is KeyRepeatEvent) {
-          _held = true;
-          return KeyEventResult.handled;
-        }
-        if (event is KeyUpEvent) {
-          final longPress = widget.onLongPress;
-          if (_held && longPress != null) {
-            longPress();
-          } else {
-            widget.onTap();
-          }
-          _held = false;
-          return KeyEventResult.handled;
-        }
-        return KeyEventResult.ignored;
-      },
-      child: GestureDetector(
-        onTap: widget.onTap,
-        onLongPress: widget.onLongPress,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 130),
-          curve: Curves.easeOut,
-          transform: Matrix4.identity()..scaleByDouble(pop, pop, pop, 1),
-          transformAlignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            color: bg,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (widget.icon != null) ...[
-                Icon(widget.icon, size: 14, color: fg),
-                const SizedBox(width: 4),
-              ],
-              Text(
-                widget.label,
-                style: TextStyle(
-                  color: fg,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
+// The filter pill moved to the shared `TvPill` widget
+// (lib/modules/widgets/tv_pill.dart), reused by the Browse tab switcher.
 
 /// Reuses the categories screen's add-category flow to create an anime category
 /// inline from the home.
 /// Has no chip, no icon, nothing on screen: a visible "Hidden" affordance would
 /// advertise the categories the user hid, which is most of what hiding is for.
-/// Reached from the "All" pill - hold OK on it, or press Menu while it's
+/// Reached from the "All" pill — hold OK on it, or press Menu while it's
 /// focused. Hiding leaves focus there, so the toast can name the way back.
 void _showHiddenCategoriesDialog(BuildContext context, List<Category> hidden) {
   if (hidden.isEmpty) {
@@ -1603,7 +1479,7 @@ class _TvHomeCard extends ConsumerWidget {
       onFocusChange: (focused) {
         if (focused && context.mounted) {
           // Reveal the focused card in both the row (horizontal) and the page
-          // (vertical) - one call walks up every enclosing scrollable.
+          // (vertical) — one call walks up every enclosing scrollable.
           Scrollable.ensureVisible(
             context,
             alignment: 0.5,
@@ -1677,7 +1553,7 @@ class _TvHomeCard extends ConsumerWidget {
   }
 }
 
-/// Shown when the anime library is empty - carries a *focusable* action so the
+/// Shown when the anime library is empty — carries a *focusable* action so the
 /// content always has a focus target (otherwise the empty home traps the d-pad
 /// with nothing to move Left from to reach the rail).
 class _EmptyHome extends StatefulWidget {

@@ -6,6 +6,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
+import 'package:mangayomi/modules/widgets/tv_escapable_slider.dart';
 
 class ReaderScreen extends ConsumerWidget {
   const ReaderScreen({super.key});
@@ -29,27 +30,12 @@ class ReaderScreen extends ConsumerWidget {
     final keepScreenOn = ref.watch(keepScreenOnReaderStateProvider);
     final autoReadDuplChap = ref.watch(autoReadDuplicateChaptersStateProvider);
     final showPageGaps = ref.watch(showPageGapsStateProvider);
-    final showPagesNumber = ref.watch(showPagesNumberStateProvider);
     final webtoonSidePadding = ref.watch(webtoonSidePaddingStateProvider);
     final navigationLayout = ref.watch(readerNavigationLayoutStateProvider);
-    final navigateToPan = ref.watch(navigateToPanStateProvider);
-    final tappingInversion = ref.watch(tappingInversionStateProvider);
-
-    final flashOnPageChange = ref.watch(flashOnPageChangeStateProvider);
-    final flashDuration = ref.watch(flashDurationStateProvider);
-    final flashInterval = ref.watch(flashIntervalStateProvider);
-    final flashColor = ref.watch(flashColorStateProvider);
-    final showNavigationOverlayOnStart = ref.watch(
-      showNavigationOverlayOnStartStateProvider,
-    );
-    final webtoonDisableZoomOut = ref.watch(webtoonDisableZoomOutStateProvider);
-    final webtoonDoubleTapZoomEnabled = ref.watch(
-      webtoonDoubleTapZoomEnabledStateProvider,
-    );
-    final readerHideThreshold = ref.watch(readerHideThresholdStateProvider);
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.reader)),
       body: SingleChildScrollView(
+        padding: tvPageInsets,
         child: Column(
           children: [
             ListTile(
@@ -269,17 +255,30 @@ class ReaderScreen extends ConsumerWidget {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                Slider(
-                                  value: tempAmount.toDouble(),
-                                  min: 1,
-                                  max: 20,
-                                  // divisions: 19, // makes the slider a bit sluggish
-                                  // label: tempAmount.toString(), // value indicator balloon. Redundant because of the Text widget above
-                                  onChanged: (double newVal) {
-                                    setState(() {
-                                      tempAmount = newVal.round();
-                                    });
-                                  },
+                                TvEscapableSlider(
+                                  enabled: isTv,
+                                  onDecrease: () => setState(
+                                    () => tempAmount = (tempAmount - 1).clamp(
+                                      1,
+                                      20,
+                                    ),
+                                  ),
+                                  onIncrease: () => setState(
+                                    () => tempAmount = (tempAmount + 1).clamp(
+                                      1,
+                                      20,
+                                    ),
+                                  ),
+                                  child: Slider(
+                                    value: tempAmount.toDouble(),
+                                    min: 1,
+                                    max: 20,
+                                    onChanged: (double newVal) {
+                                      setState(() {
+                                        tempAmount = newVal.round();
+                                      });
+                                    },
+                                  ),
                                 ),
                               ],
                             );
@@ -428,13 +427,6 @@ class ReaderScreen extends ConsumerWidget {
               },
             ),
             SwitchListTile(
-              value: showPagesNumber,
-              title: Text(context.l10n.show_page_number),
-              onChanged: (value) {
-                ref.read(showPagesNumberStateProvider.notifier).set(value);
-              },
-            ),
-            SwitchListTile(
               value: autoReadDuplChap,
               title: Text(context.l10n.mark_duplicate_chapters_read),
               onChanged: (value) {
@@ -445,17 +437,26 @@ class ReaderScreen extends ConsumerWidget {
             ),
             ListTile(
               title: Text(context.l10n.webtoon_side_padding),
-              subtitle: Slider(
-                min: 0,
-                max: 50,
-                divisions: 50,
-                label: '$webtoonSidePadding%',
-                value: webtoonSidePadding.toDouble(),
-                onChanged: (value) {
-                  ref
-                      .read(webtoonSidePaddingStateProvider.notifier)
-                      .set(value.toInt());
-                },
+              subtitle: TvEscapableSlider(
+                enabled: isTv,
+                onDecrease: () => ref
+                    .read(webtoonSidePaddingStateProvider.notifier)
+                    .set((webtoonSidePadding - 1).clamp(0, 50)),
+                onIncrease: () => ref
+                    .read(webtoonSidePaddingStateProvider.notifier)
+                    .set((webtoonSidePadding + 1).clamp(0, 50)),
+                child: Slider(
+                  min: 0,
+                  max: 50,
+                  divisions: 50,
+                  label: '$webtoonSidePadding%',
+                  value: webtoonSidePadding.toDouble(),
+                  onChanged: (value) {
+                    ref
+                        .read(webtoonSidePaddingStateProvider.notifier)
+                        .set(value.toInt());
+                  },
+                ),
               ),
             ),
             ListTile(
@@ -496,239 +497,6 @@ class ReaderScreen extends ConsumerWidget {
                 _navLayoutNameGlobal(navigationLayout, context),
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
-            ),
-            SwitchListTile(
-              value: navigateToPan,
-              title: Text(context.l10n.navigate_to_pan),
-              subtitle: Text(context.l10n.navigate_to_pan_subtitle),
-              onChanged: (value) {
-                ref.read(navigateToPanStateProvider.notifier).set(value);
-              },
-            ),
-            ListTile(
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (ctx) {
-                    return SimpleDialog(
-                      title: Text(context.l10n.tapping_inversion),
-                      children: [
-                        RadioGroup<int>(
-                          groupValue: tappingInversion,
-                          onChanged: (val) {
-                            ref
-                                .read(tappingInversionStateProvider.notifier)
-                                .set(val!);
-                            Navigator.pop(ctx);
-                          },
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              RadioListTile<int>(
-                                value: 0,
-                                title: Text(
-                                  context.l10n.tapping_inversion_none,
-                                ),
-                              ),
-                              RadioListTile<int>(
-                                value: 1,
-                                title: Text(
-                                  context.l10n.tapping_inversion_horizontal,
-                                ),
-                              ),
-                              RadioListTile<int>(
-                                value: 2,
-                                title: Text(
-                                  context.l10n.tapping_inversion_vertical,
-                                ),
-                              ),
-                              RadioListTile<int>(
-                                value: 3,
-                                title: Text(
-                                  context.l10n.tapping_inversion_both,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-              title: Text(context.l10n.tapping_inversion),
-              subtitle: Text(switch (tappingInversion) {
-                1 => context.l10n.tapping_inversion_horizontal,
-                2 => context.l10n.tapping_inversion_vertical,
-                3 => context.l10n.tapping_inversion_both,
-                _ => context.l10n.tapping_inversion_none,
-              }, style: TextStyle(fontSize: 11, color: context.secondaryColor)),
-            ),
-            SwitchListTile(
-              value: webtoonDisableZoomOut,
-              title: Text(context.l10n.webtoon_disable_zoom_out),
-              onChanged: (value) {
-                ref
-                    .read(webtoonDisableZoomOutStateProvider.notifier)
-                    .set(value);
-              },
-            ),
-            SwitchListTile(
-              value: webtoonDoubleTapZoomEnabled,
-              title: Text(context.l10n.webtoon_double_tap_zoom_enabled),
-              onChanged: (value) {
-                ref
-                    .read(webtoonDoubleTapZoomEnabledStateProvider.notifier)
-                    .set(value);
-              },
-            ),
-            SwitchListTile(
-              value: flashOnPageChange,
-              title: Text(context.l10n.flash_on_page_change),
-              subtitle: Text(context.l10n.flash_on_page_change_subtitle),
-              onChanged: (value) {
-                ref.read(flashOnPageChangeStateProvider.notifier).set(value);
-              },
-            ),
-            if (flashOnPageChange) ...[
-              ListTile(
-                title: Text(context.l10n.flash_color),
-                subtitle: Row(
-                  children: [
-                    ChoiceChip(
-                      label: Text(context.l10n.flash_color_black),
-                      selected: flashColor == 0,
-                      onSelected: (val) {
-                        if (val) {
-                          ref.read(flashColorStateProvider.notifier).set(0);
-                        }
-                      },
-                    ),
-                    const SizedBox(width: 8),
-                    ChoiceChip(
-                      label: Text(context.l10n.flash_color_white),
-                      selected: flashColor == 1,
-                      onSelected: (val) {
-                        if (val) {
-                          ref.read(flashColorStateProvider.notifier).set(1);
-                        }
-                      },
-                    ),
-                    const SizedBox(width: 8),
-                    ChoiceChip(
-                      label: Text(context.l10n.flash_color_white_black),
-                      selected: flashColor == 2,
-                      onSelected: (val) {
-                        if (val) {
-                          ref.read(flashColorStateProvider.notifier).set(2);
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              ListTile(
-                title: Text(
-                  context.l10n.flash_interval(flashInterval.toString()),
-                ),
-                subtitle: Slider(
-                  min: 1,
-                  max: 10,
-                  divisions: 9,
-                  label: flashInterval.toString(),
-                  value: flashInterval.toDouble(),
-                  onChanged: (val) {
-                    ref
-                        .read(flashIntervalStateProvider.notifier)
-                        .set(val.toInt());
-                  },
-                ),
-              ),
-              ListTile(
-                title: Text(
-                  context.l10n.flash_duration(flashDuration.toString()),
-                ),
-                subtitle: Slider(
-                  min: 50,
-                  max: 500,
-                  divisions: 9,
-                  label: flashDuration.toString(),
-                  value: flashDuration.toDouble(),
-                  onChanged: (val) {
-                    ref
-                        .read(flashDurationStateProvider.notifier)
-                        .set(val.toInt());
-                  },
-                ),
-              ),
-            ],
-            SwitchListTile(
-              value: showNavigationOverlayOnStart,
-              title: Text(context.l10n.show_navigation_overlay_on_start),
-              onChanged: (value) {
-                ref
-                    .read(showNavigationOverlayOnStartStateProvider.notifier)
-                    .set(value);
-              },
-            ),
-            ListTile(
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (ctx) {
-                    return SimpleDialog(
-                      title: Text(context.l10n.reader_hide_threshold),
-                      children: [
-                        RadioGroup<int>(
-                          groupValue: readerHideThreshold,
-                          onChanged: (val) {
-                            ref
-                                .read(readerHideThresholdStateProvider.notifier)
-                                .set(val!);
-                            Navigator.pop(ctx);
-                          },
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              RadioListTile<int>(
-                                value: 0,
-                                title: Text(
-                                  context.l10n.reader_hide_threshold_highest,
-                                ),
-                              ),
-                              RadioListTile<int>(
-                                value: 1,
-                                title: Text(
-                                  context.l10n.reader_hide_threshold_high,
-                                ),
-                              ),
-                              RadioListTile<int>(
-                                value: 2,
-                                title: Text(
-                                  context.l10n.reader_hide_threshold_low,
-                                ),
-                              ),
-                              RadioListTile<int>(
-                                value: 3,
-                                title: Text(
-                                  context.l10n.reader_hide_threshold_lowest,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-              title: Text(context.l10n.reader_hide_threshold),
-              subtitle: Text(switch (readerHideThreshold) {
-                0 => context.l10n.reader_hide_threshold_highest,
-                1 => context.l10n.reader_hide_threshold_high,
-                2 => context.l10n.reader_hide_threshold_low,
-                _ => context.l10n.reader_hide_threshold_lowest,
-              }, style: TextStyle(fontSize: 11, color: context.secondaryColor)),
             ),
           ],
         ),

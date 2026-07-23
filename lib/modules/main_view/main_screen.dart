@@ -180,6 +180,12 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   @override
   Widget build(BuildContext context) {
     ref.listen<AsyncValue<UpdateInfo?>>(checkForUpdateProvider, (_, next) {
+      // On TV the in-app updater (download + install an APK) is not reachable
+      // with a d-pad and is not how TV builds update (sideload / the release
+      // APK). Left on, this modal would appear unannounced over whatever the
+      // user is doing and trap focus with no way to dismiss it. TV updates out
+      // of band, so never raise it there.
+      if (isTv) return;
       next.whenData((updateInfo) {
         if (updateInfo != null && context.mounted) {
           showDialog(
@@ -353,6 +359,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
     if (dest.contains("/MangaLibrary")) {
       destinations[dest.indexOf("/MangaLibrary")] = NavigationRailDestination(
+        // Even breathing room between tabs on TV; null off-TV.
+        padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
         selectedIcon: const Icon(Icons.collections_bookmark),
         icon: const Icon(Icons.collections_bookmark_outlined),
         label: Padding(
@@ -363,6 +371,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     }
     if (dest.contains("/AnimeLibrary")) {
       destinations[dest.indexOf("/AnimeLibrary")] = NavigationRailDestination(
+        // Even breathing room between tabs on TV; null off-TV.
+        padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
         selectedIcon: const Icon(Icons.video_collection),
         icon: const Icon(Icons.video_collection_outlined),
         label: Padding(
@@ -373,6 +383,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     }
     if (dest.contains("/NovelLibrary")) {
       destinations[dest.indexOf("/NovelLibrary")] = NavigationRailDestination(
+        // Even breathing room between tabs on TV; null off-TV.
+        padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
         selectedIcon: const Icon(Icons.local_library),
         icon: const Icon(Icons.local_library_outlined),
         label: Padding(
@@ -383,6 +395,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     }
     if (dest.contains("/updates")) {
       destinations[dest.indexOf("/updates")] = NavigationRailDestination(
+        // Even breathing room between tabs on TV; null off-TV.
+        padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
         selectedIcon: _UpdatesBadgeWidget(
           icon: const Icon(Icons.new_releases),
           ref: ref,
@@ -405,6 +419,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     }
     if (dest.contains("/history")) {
       destinations[dest.indexOf("/history")] = NavigationRailDestination(
+        // Even breathing room between tabs on TV; null off-TV.
+        padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
         selectedIcon: const Icon(Icons.history),
         icon: const Icon(Icons.history_outlined),
         label: Padding(
@@ -415,6 +431,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     }
     if (dest.contains("/browse")) {
       destinations[dest.indexOf("/browse")] = NavigationRailDestination(
+        // Even breathing room between tabs on TV; null off-TV.
+        padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
         selectedIcon: _ExtensionBadgeWidget(
           icon: const Icon(Icons.explore),
           ref: ref,
@@ -431,6 +449,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     }
     if (dest.contains("/more")) {
       destinations[dest.indexOf("/more")] = NavigationRailDestination(
+        // Even breathing room between tabs on TV; null off-TV.
+        padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
         selectedIcon: const Icon(Icons.more_horiz),
         icon: const Icon(Icons.more_horiz_outlined),
         label: Padding(
@@ -441,6 +461,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     }
     if (dest.contains("/trackerLibrary")) {
       destinations[dest.indexOf("/trackerLibrary")] = NavigationRailDestination(
+        // Even breathing room between tabs on TV; null off-TV.
+        padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
         selectedIcon: const Icon(Icons.account_tree),
         icon: const Icon(Icons.account_tree_outlined),
         label: Padding(
@@ -669,9 +691,9 @@ class _TabletLayout extends StatefulWidget {
 
 class _TabletLayoutState extends State<_TabletLayout> {
   // Explicit focus scopes for the rail and the routed content, used on Android
-  // TV only. Directional (d-pad) focus traversal doesn't cross into the rail -
+  // TV only. Directional (d-pad) focus traversal doesn't cross into the rail —
   // the routed page lives in its own FocusScope and arrows only move focus
-  // within it - so we move focus between the two scopes ourselves. A scope
+  // within it — so we move focus between the two scopes ourselves. A scope
   // wraps the whole rail because NavigationRail doesn't expose its
   // destinations' focus nodes.
   final FocusScopeNode _railScope = FocusScopeNode(debugLabel: 'navRailScope');
@@ -705,7 +727,7 @@ class _TabletLayoutState extends State<_TabletLayout> {
       return KeyEventResult.handled;
     }
     if (key == LogicalKeyboardKey.arrowRight && _railScope.hasFocus) {
-      // Focus the content scope - it restores its focusedChild, which for the
+      // Focus the content scope — it restores its focusedChild, which for the
       // library grid is the first cover (autofocused on TV). That fixes both
       // "focus never lands on the grid" and the anime-tab "hold Left to reach
       // the rail" (Left from a cover reaches the rail in one press).
@@ -737,33 +759,35 @@ class _TabletLayoutState extends State<_TabletLayout> {
       });
     }
 
+    final scheme = Theme.of(context).colorScheme;
     Widget navRail = NavigationRail(
       labelType: NavigationRailLabelType.all,
       useIndicator: true,
-      // The Android TV experience is still beta - flag it in the rail.
-      leading: isTv
-          ? Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 3,
-                ),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: const Text(
-                  'BETA',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.5,
-                  ),
-                ),
-              ),
+      // Centre the tabs rather than bunching them under the logo with dead
+      // space below. Off-TV keeps the default top alignment.
+      groupAlignment: isTv ? 0.0 : null,
+      // Brand the rail on TV: the app glyph, then the beta flag under it.
+      leading: isTv ? const _TvRailHeader() : null,
+      // A TV is read from across a room, so the desktop defaults (24px icons,
+      // regular labels) are undersized. Colours are restated rather than left
+      // null, because supplying an IconThemeData/TextStyle replaces the rail's
+      // own defaults wholesale and would otherwise drop the selected and
+      // unselected colouring. All null off TV, so desktop keeps its defaults.
+      selectedIconTheme: isTv
+          ? IconThemeData(size: 28, color: scheme.onSecondaryContainer)
+          : null,
+      unselectedIconTheme: isTv
+          ? IconThemeData(size: 28, color: scheme.onSurfaceVariant)
+          : null,
+      selectedLabelTextStyle: isTv
+          ? TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: scheme.onSurface,
             )
+          : null,
+      unselectedLabelTextStyle: isTv
+          ? TextStyle(fontSize: 12, color: scheme.onSurfaceVariant)
           : null,
       destinations: destinations,
       selectedIndex:
@@ -787,7 +811,11 @@ class _TabletLayoutState extends State<_TabletLayout> {
     Widget row = Row(
       children: [
         AnimatedContainer(
-          duration: const Duration(milliseconds: 0),
+          // The rail collapses to zero width when a reader or player opens, so
+          // on TV give that a real transition instead of snapping. Off-TV keeps
+          // the original instant behaviour.
+          duration: Duration(milliseconds: isTv ? 220 : 0),
+          curve: Curves.easeOutCubic,
           width: railWidth,
           child: Stack(
             children: [
@@ -1021,6 +1049,54 @@ class _UpdatesBadgeWidget extends ConsumerWidget {
 
         return Badge(label: Text("${entries.length}"), child: icon);
       },
+    );
+  }
+}
+
+/// The top of the TV nav rail: the app glyph over a beta flag.
+///
+/// Uses the bare glyph asset rather than the app icon, tinted with the theme
+/// accent, so it carries no white tile of its own into a dark rail and follows
+/// whatever accent the user picked.
+class _TvRailHeader extends StatelessWidget {
+  const _TvRailHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = Theme.of(context).colorScheme.primary;
+    return Padding(
+      // Tight under the glyph: the first destination already carries its
+      // own vertical padding, so this only needs to clear the beta pill.
+      padding: const EdgeInsets.only(top: 14, bottom: 2),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(
+            'assets/app_icons/icon.png',
+            width: 30,
+            height: 30,
+            color: accent,
+            filterQuality: FilterQuality.medium,
+          ),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+            decoration: BoxDecoration(
+              color: accent.withValues(alpha: 0.18),
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Text(
+              'BETA',
+              style: TextStyle(
+                color: accent,
+                fontSize: 8,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.2,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
