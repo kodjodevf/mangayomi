@@ -16,6 +16,7 @@ import 'package:mangayomi/utils/date.dart';
 import 'package:mangayomi/utils/fetch_interval.dart';
 import 'package:mangayomi/utils/item_type_filters.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
+import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 
 class CalendarScreen extends ConsumerStatefulWidget {
   final ItemType? itemType;
@@ -39,6 +40,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   void initState() {
     super.initState();
     _visibleTypes = hiddenItemTypes(ref.read(hideItemsStateProvider));
+    // Anime-only TV layout: hide the manga/novel tabs.
+    if (ref.read(animeOnlyTvModeProvider)) {
+      _visibleTypes = _visibleTypes.where((t) => t == ItemType.anime).toList();
+    }
     final initialItemType = widget.itemType ?? ItemType.manga;
     if (_visibleTypes.contains(initialItemType)) {
       itemType = initialItemType;

@@ -8,6 +8,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/item_type_filters.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
+import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 
 class StatisticsScreen extends ConsumerStatefulWidget {
   const StatisticsScreen({super.key});
@@ -25,6 +26,12 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
   void initState() {
     super.initState();
     _visibleTabTypes = hiddenItemTypes(ref.read(hideItemsStateProvider));
+    // Anime-only TV layout: hide the manga/novel tabs, matching Updates and
+    // History which are built on BaseLibraryTabScreenState.
+    if (ref.read(animeOnlyTvModeProvider)) {
+      _visibleTabTypes =
+          _visibleTabTypes.where((t) => t == ItemType.anime).toList();
+    }
     _tabController = TabController(
       length: _visibleTabTypes.length,
       vsync: this,

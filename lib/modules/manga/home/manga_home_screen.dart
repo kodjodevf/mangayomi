@@ -217,9 +217,13 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
           filterList: filters,
         ),
       );
-    } else if (_selectedIndex == 1 && !_isSearch && _query.isEmpty) {
+    } else if (_selectedIndex == 1 &&
+        (!_isSearch || isTv) &&
+        _query.isEmpty) {
       _getManga = ref.watch(getLatestUpdatesProvider(source: source, page: 1));
-    } else if (_selectedIndex == 0 && !_isSearch && _query.isEmpty) {
+    } else if (_selectedIndex == 0 &&
+        (!_isSearch || isTv) &&
+        _query.isEmpty) {
       _getManga = ref.watch(getPopularProvider(source: source, page: 1));
     }
     final l10n = context.l10n;
@@ -312,6 +316,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                 ),
           if (isTv)
             IconButton(
+              focusColor: context.primaryColor.withValues(alpha: 0.4),
               icon: Icon(displayTypeIcon),
               onPressed: () async {
                 const order = [
@@ -383,6 +388,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
           if (!isLocal)
             if (isTv)
               IconButton(
+                focusColor: context.primaryColor.withValues(alpha: 0.4),
                 icon: const Icon(Icons.more_vert),
                 onPressed: () async {
                   final picked = await showTvMenu(
@@ -668,7 +674,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                         return buildProgressIndicator();
                                       }
                                       return MangaHomeImageCard(
-                                        autofocus: isTv && index == 0,
+                                        autofocus:
+                                            isTv && index == 0 && !_isSearch,
                                         itemType: source.itemType,
                                         manga: _mangaList[index],
                                         source: source,
