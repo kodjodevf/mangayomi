@@ -61,17 +61,22 @@ const ChapterSchema = CollectionSchema(
       name: r'scanlator',
       type: IsarType.string,
     ),
-    r'thumbnailUrl': PropertySchema(
+    r'sourceOrder': PropertySchema(
       id: 12,
+      name: r'sourceOrder',
+      type: IsarType.long,
+    ),
+    r'thumbnailUrl': PropertySchema(
+      id: 13,
       name: r'thumbnailUrl',
       type: IsarType.string,
     ),
     r'updatedAt': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'updatedAt',
       type: IsarType.long,
     ),
-    r'url': PropertySchema(id: 14, name: r'url', type: IsarType.string),
+    r'url': PropertySchema(id: 15, name: r'url', type: IsarType.string),
   },
 
   estimateSize: _chapterEstimateSize,
@@ -183,9 +188,10 @@ void _chapterSerialize(
   writer.writeLong(offsets[9], object.mangaId);
   writer.writeString(offsets[10], object.name);
   writer.writeString(offsets[11], object.scanlator);
-  writer.writeString(offsets[12], object.thumbnailUrl);
-  writer.writeLong(offsets[13], object.updatedAt);
-  writer.writeString(offsets[14], object.url);
+  writer.writeLong(offsets[12], object.sourceOrder);
+  writer.writeString(offsets[13], object.thumbnailUrl);
+  writer.writeLong(offsets[14], object.updatedAt);
+  writer.writeString(offsets[15], object.url);
 }
 
 Chapter _chapterDeserialize(
@@ -208,9 +214,10 @@ Chapter _chapterDeserialize(
     mangaId: reader.readLongOrNull(offsets[9]),
     name: reader.readStringOrNull(offsets[10]),
     scanlator: reader.readStringOrNull(offsets[11]),
-    thumbnailUrl: reader.readStringOrNull(offsets[12]),
-    updatedAt: reader.readLongOrNull(offsets[13]),
-    url: reader.readStringOrNull(offsets[14]),
+    sourceOrder: reader.readLongOrNull(offsets[12]),
+    thumbnailUrl: reader.readStringOrNull(offsets[13]),
+    updatedAt: reader.readLongOrNull(offsets[14]),
+    url: reader.readStringOrNull(offsets[15]),
   );
   return object;
 }
@@ -247,10 +254,12 @@ P _chapterDeserializeProp<P>(
     case 11:
       return (reader.readStringOrNull(offset)) as P;
     case 12:
-      return (reader.readStringOrNull(offset)) as P;
-    case 13:
       return (reader.readLongOrNull(offset)) as P;
+    case 13:
+      return (reader.readStringOrNull(offset)) as P;
     case 14:
+      return (reader.readLongOrNull(offset)) as P;
+    case 15:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1879,6 +1888,81 @@ extension ChapterQueryFilter
     });
   }
 
+  QueryBuilder<Chapter, Chapter, QAfterFilterCondition> sourceOrderIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'sourceOrder'),
+      );
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterFilterCondition> sourceOrderIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'sourceOrder'),
+      );
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterFilterCondition> sourceOrderEqualTo(
+    int? value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'sourceOrder', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterFilterCondition> sourceOrderGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'sourceOrder',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterFilterCondition> sourceOrderLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'sourceOrder',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterFilterCondition> sourceOrderBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'sourceOrder',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
   QueryBuilder<Chapter, Chapter, QAfterFilterCondition> thumbnailUrlIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
@@ -2446,6 +2530,18 @@ extension ChapterQuerySortBy on QueryBuilder<Chapter, Chapter, QSortBy> {
     });
   }
 
+  QueryBuilder<Chapter, Chapter, QAfterSortBy> sortBySourceOrder() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sourceOrder', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterSortBy> sortBySourceOrderDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sourceOrder', Sort.desc);
+    });
+  }
+
   QueryBuilder<Chapter, Chapter, QAfterSortBy> sortByThumbnailUrl() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'thumbnailUrl', Sort.asc);
@@ -2641,6 +2737,18 @@ extension ChapterQuerySortThenBy
     });
   }
 
+  QueryBuilder<Chapter, Chapter, QAfterSortBy> thenBySourceOrder() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sourceOrder', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterSortBy> thenBySourceOrderDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sourceOrder', Sort.desc);
+    });
+  }
+
   QueryBuilder<Chapter, Chapter, QAfterSortBy> thenByThumbnailUrl() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'thumbnailUrl', Sort.asc);
@@ -2768,6 +2876,12 @@ extension ChapterQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Chapter, Chapter, QDistinct> distinctBySourceOrder() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'sourceOrder');
+    });
+  }
+
   QueryBuilder<Chapter, Chapter, QDistinct> distinctByThumbnailUrl({
     bool caseSensitive = true,
   }) {
@@ -2868,6 +2982,12 @@ extension ChapterQueryProperty
   QueryBuilder<Chapter, String?, QQueryOperations> scanlatorProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'scanlator');
+    });
+  }
+
+  QueryBuilder<Chapter, int?, QQueryOperations> sourceOrderProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'sourceOrder');
     });
   }
 

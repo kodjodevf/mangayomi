@@ -5,6 +5,7 @@ import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
+import 'package:mangayomi/utils/chapter_source_order.dart';
 
 extension MangaExtensions on Manga {
   /// Filtered chapters respecting the user's active filters (unread,
@@ -42,9 +43,10 @@ extension MangaExtensions on Manga {
 
     // Memoize so each chapter name is parsed at most once during the sort.
     final numCache = <int?, int>{};
-    int chapNum(Chapter c) => numCache[c.id] ??= recognition.parseChapterNumber(
+    int chapNum(Chapter c) => numCache[c.id] ??= ChapterSourceOrder.value(
+      c,
       mangaTitle,
-      c.name ?? '',
+      recognition: recognition,
     );
 
     // Sort by chapter number — DB insertion order is NOT guaranteed to be ascending
@@ -108,10 +110,13 @@ extension MangaExtensions on Manga {
         final mangaTitle = name ?? '';
 
         // Returns the parsed chapter number for a chapter, used as the primary
-        // numeric sort key for cases 0 and 1.
+        // numeric sort key for scanlator grouping.
         final numCache = <int?, int>{};
-        int chapNum(Chapter c) => numCache[c.id] ??= recognition
-            .parseChapterNumber(mangaTitle, c.name ?? '');
+        int chapNum(Chapter c) => numCache[c.id] ??= ChapterSourceOrder.value(
+          c,
+          mangaTitle,
+          recognition: recognition,
+        );
         list.sort((a, b) {
           final s = (a.scanlator ?? '').compareTo(b.scanlator ?? '');
           if (s != 0) return s;
@@ -153,7 +158,11 @@ extension MangaExtensions on Manga {
     return list
         .where(
           (c) => seen.add(
-            recognition.parseChapterNumber(mangaTitle, c.name ?? ''),
+            ChapterSourceOrder.value(
+              c,
+              mangaTitle,
+              recognition: recognition,
+            ),
           ),
         )
         .toList();
