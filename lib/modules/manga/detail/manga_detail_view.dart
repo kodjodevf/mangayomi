@@ -36,6 +36,7 @@ import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+import 'package:mangayomi/services/get_source_baseurl.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/riverpod.dart';
 import 'package:mangayomi/utils/utils.dart';
@@ -1893,8 +1894,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                       widget.manga!.sourceId,
                     );
                     if (source == null) return;
-                    final url =
-                        "${source.baseUrl}${widget.manga!.link!.getUrlWithoutDomain}";
+                    final baseUrl = ref.read(
+                      sourceBaseUrlProvider(source: source),
+                    );
+                    final url = buildSourceUrl(baseUrl, widget.manga!.link!);
 
                     Map<String, dynamic> data = {
                       'url': url,

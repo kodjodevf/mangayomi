@@ -32,8 +32,10 @@ import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_pr
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
 import 'package:mangayomi/utils/riverpod.dart';
+import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/modules/manga/reader/providers/push_router.dart';
 import 'package:mangayomi/services/get_chapter_pages.dart';
+import 'package:mangayomi/services/get_source_baseurl.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/manga/reader/image_view_paged.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
@@ -776,7 +778,17 @@ class _MangaChapterPageGalleryState
                           (chapter.manga.value!.isLocalArchive ?? false) ==
                               false
                           ? () {
-                              final data = buildWebViewData(chapter);
+                              final manga = chapter.manga.value!;
+                              final source = getSource(
+                                manga.lang!,
+                                manga.source!,
+                                manga.sourceId,
+                              );
+                              if (source == null) return;
+                              final baseUrl = ref.read(
+                                sourceBaseUrlProvider(source: source),
+                              );
+                              final data = buildWebViewData(chapter, baseUrl);
                               if (data != null) {
                                 context.push("/mangawebview", extra: data);
                               }
