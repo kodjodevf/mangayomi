@@ -392,7 +392,7 @@ class _DisplayTab extends ConsumerWidget {
                   },
                 ),
                 ListTileChapterFilter(
-                  label: 'Source',
+                  label: l10n.source,
                   type: sourceBadge ? 1 : 0,
                   onTap: () {
                     ref

@@ -185,7 +185,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
     final query = _query.trim();
     if (query.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter a search to save first')),
+        SnackBar(content: Text(context.l10n.enter_search_to_save_first)),
       );
       return;
     }
@@ -193,10 +193,10 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Save search'),
+        title: Text(context.l10n.save_search),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(labelText: 'Name'),
+          decoration: InputDecoration(labelText: context.l10n.name),
         ),
         actions: [
           TextButton(
@@ -210,7 +210,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                   .add(source.id!, controller.text, query);
               Navigator.pop(ctx);
             },
-            child: const Text('Save'),
+            child: Text(context.l10n.save),
           ),
         ],
       ),
@@ -226,11 +226,10 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
               ref.watch(savedSearchesProvider)[source.id] ??
               const <SavedSearch>[];
           if (saved.isEmpty) {
-            return const Padding(
-              padding: EdgeInsets.all(24),
+            return Padding(
+              padding: const EdgeInsets.all(24),
               child: Text(
-                'No saved searches for this source yet.\n'
-                'Run a search, then pick "Save search".',
+                context.l10n.no_saved_searches,
                 textAlign: TextAlign.center,
               ),
             );
@@ -481,13 +480,13 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                       ),
                     ),
                   ),
-                  const PopupMenuItem<int>(
+                  PopupMenuItem<int>(
                     value: 2,
-                    child: Text('Save search'),
+                    child: Text(context.l10n.save_search),
                   ),
-                  const PopupMenuItem<int>(
+                  PopupMenuItem<int>(
                     value: 3,
-                    child: Text('Saved searches'),
+                    child: Text(context.l10n.saved_searches),
                   ),
                 ];
               },

@@ -4546,6 +4546,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error: no pages available'**
   String get error_no_pages_available;
+
+  /// No description provided for @save_search.
+  ///
+  /// In en, this message translates to:
+  /// **'Save search'**
+  String get save_search;
+
+  /// No description provided for @saved_searches.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved searches'**
+  String get saved_searches;
+
+  /// No description provided for @enter_search_to_save_first.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a search to save first'**
+  String get enter_search_to_save_first;
+
+  /// No description provided for @no_saved_searches.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved searches for this source yet.\nRun a search, then pick \"Save search\".'**
+  String get no_saved_searches;
+
+  /// No description provided for @source.
+  ///
+  /// In en, this message translates to:
+  /// **'Source'**
+  String get source;
 }
 
 class _AppLocalizationsDelegate
