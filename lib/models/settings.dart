@@ -190,6 +190,10 @@ class Settings {
 
   int? doHProviderId;
 
+  String? customDohUrl;
+
+  String? cfProxyUrl;
+
   String? btServerAddress;
 
   int? btServerPort;
@@ -483,6 +487,8 @@ class Settings {
     this.customDns = "",
     this.doHEnabled = false,
     this.doHProviderId = 0,
+    this.customDohUrl = "",
+    this.cfProxyUrl = "",
     this.btServerAddress = "127.0.0.1",
     this.btServerPort,
     this.fullScreenReader = true,
@@ -752,6 +758,8 @@ class Settings {
     customDns = json['customDns'];
     doHEnabled = json['doHEnabled'];
     doHProviderId = json['doHProviderId'];
+    customDohUrl = json['customDohUrl'];
+    cfProxyUrl = json['cfProxyUrl'];
     btServerAddress = json['btServerAddress'];
     btServerPort = json['btServerPort'];
     customColorFilter = json['customColorFilter'] != null
@@ -1013,6 +1021,8 @@ class Settings {
     'customDns': customDns,
     'doHEnabled': doHEnabled,
     'doHProviderId': doHProviderId,
+    'customDohUrl': customDohUrl,
+    'cfProxyUrl': cfProxyUrl,
     'btServerAddress': btServerAddress,
     'btServerPort': btServerPort,
     'fullScreenReader': fullScreenReader,
