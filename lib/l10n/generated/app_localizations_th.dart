@@ -2451,4 +2451,11 @@ class AppLocalizationsTh extends AppLocalizations {
   @override
   String get error_no_pages_available =>
       'เกิดข้อผิดพลาด: ไม่มีหน้าที่พร้อมใช้งาน';
+
+  @override
+  String get tv_ui_scale => 'TV interface scale';
+
+  @override
+  String get tv_ui_scale_subtitle =>
+      'Make the interface larger or smaller. Lower it if everything looks zoomed in.';
 }

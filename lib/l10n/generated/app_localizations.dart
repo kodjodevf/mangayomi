@@ -4546,6 +4546,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error: no pages available'**
   String get error_no_pages_available;
+
+  /// No description provided for @tv_ui_scale.
+  ///
+  /// In en, this message translates to:
+  /// **'TV interface scale'**
+  String get tv_ui_scale;
+
+  /// No description provided for @tv_ui_scale_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Make the interface larger or smaller. Lower it if everything looks zoomed in.'**
+  String get tv_ui_scale_subtitle;
 }
 
 class _AppLocalizationsDelegate

@@ -979,70 +979,75 @@ const SettingsSchema = CollectionSchema(
       name: r'tvPlayerStyle',
       type: IsarType.bool,
     ),
-    r'updateErrorsList': PropertySchema(
+    r'tvUiScale': PropertySchema(
       id: 182,
+      name: r'tvUiScale',
+      type: IsarType.double,
+    ),
+    r'updateErrorsList': PropertySchema(
+      id: 183,
       name: r'updateErrorsList',
       type: IsarType.objectList,
 
       target: r'UpdateError',
     ),
     r'updateProgressAfterReading': PropertySchema(
-      id: 183,
+      id: 184,
       name: r'updateProgressAfterReading',
       type: IsarType.bool,
     ),
     r'updatedAt': PropertySchema(
-      id: 184,
+      id: 185,
       name: r'updatedAt',
       type: IsarType.long,
     ),
     r'useLibass': PropertySchema(
-      id: 185,
+      id: 186,
       name: r'useLibass',
       type: IsarType.bool,
     ),
     r'useMpvConfig': PropertySchema(
-      id: 186,
+      id: 187,
       name: r'useMpvConfig',
       type: IsarType.bool,
     ),
     r'usePageTapZones': PropertySchema(
-      id: 187,
+      id: 188,
       name: r'usePageTapZones',
       type: IsarType.bool,
     ),
     r'useYUV420P': PropertySchema(
-      id: 188,
+      id: 189,
       name: r'useYUV420P',
       type: IsarType.bool,
     ),
     r'userAgent': PropertySchema(
-      id: 189,
+      id: 190,
       name: r'userAgent',
       type: IsarType.string,
     ),
     r'volumeBoostCap': PropertySchema(
-      id: 190,
+      id: 191,
       name: r'volumeBoostCap',
       type: IsarType.long,
     ),
     r'webtoonDisableZoomOut': PropertySchema(
-      id: 191,
+      id: 192,
       name: r'webtoonDisableZoomOut',
       type: IsarType.bool,
     ),
     r'webtoonDoubleTapZoomEnabled': PropertySchema(
-      id: 192,
+      id: 193,
       name: r'webtoonDoubleTapZoomEnabled',
       type: IsarType.bool,
     ),
     r'webtoonSidePadding': PropertySchema(
-      id: 193,
+      id: 194,
       name: r'webtoonSidePadding',
       type: IsarType.long,
     ),
     r'zoomStartPosition': PropertySchema(
-      id: 194,
+      id: 195,
       name: r'zoomStartPosition',
       type: IsarType.long,
     ),
@@ -1887,24 +1892,25 @@ void _settingsSerialize(
   writer.writeBool(offsets[179], object.tvHomeGenreRows);
   writer.writeBool(offsets[180], object.tvHomeStyle);
   writer.writeBool(offsets[181], object.tvPlayerStyle);
+  writer.writeDouble(offsets[182], object.tvUiScale);
   writer.writeObjectList<UpdateError>(
-    offsets[182],
+    offsets[183],
     allOffsets,
     UpdateErrorSchema.serialize,
     object.updateErrorsList,
   );
-  writer.writeBool(offsets[183], object.updateProgressAfterReading);
-  writer.writeLong(offsets[184], object.updatedAt);
-  writer.writeBool(offsets[185], object.useLibass);
-  writer.writeBool(offsets[186], object.useMpvConfig);
-  writer.writeBool(offsets[187], object.usePageTapZones);
-  writer.writeBool(offsets[188], object.useYUV420P);
-  writer.writeString(offsets[189], object.userAgent);
-  writer.writeLong(offsets[190], object.volumeBoostCap);
-  writer.writeBool(offsets[191], object.webtoonDisableZoomOut);
-  writer.writeBool(offsets[192], object.webtoonDoubleTapZoomEnabled);
-  writer.writeLong(offsets[193], object.webtoonSidePadding);
-  writer.writeLong(offsets[194], object.zoomStartPosition);
+  writer.writeBool(offsets[184], object.updateProgressAfterReading);
+  writer.writeLong(offsets[185], object.updatedAt);
+  writer.writeBool(offsets[186], object.useLibass);
+  writer.writeBool(offsets[187], object.useMpvConfig);
+  writer.writeBool(offsets[188], object.usePageTapZones);
+  writer.writeBool(offsets[189], object.useYUV420P);
+  writer.writeString(offsets[190], object.userAgent);
+  writer.writeLong(offsets[191], object.volumeBoostCap);
+  writer.writeBool(offsets[192], object.webtoonDisableZoomOut);
+  writer.writeBool(offsets[193], object.webtoonDoubleTapZoomEnabled);
+  writer.writeLong(offsets[194], object.webtoonSidePadding);
+  writer.writeLong(offsets[195], object.zoomStartPosition);
 }
 
 Settings _settingsDeserialize(
@@ -2214,24 +2220,25 @@ Settings _settingsDeserialize(
     tvHomeGenreRows: reader.readBoolOrNull(offsets[179]),
     tvHomeStyle: reader.readBoolOrNull(offsets[180]),
     tvPlayerStyle: reader.readBoolOrNull(offsets[181]),
+    tvUiScale: reader.readDoubleOrNull(offsets[182]),
     updateErrorsList: reader.readObjectList<UpdateError>(
-      offsets[182],
+      offsets[183],
       UpdateErrorSchema.deserialize,
       allOffsets,
       UpdateError(),
     ),
-    updateProgressAfterReading: reader.readBoolOrNull(offsets[183]),
-    updatedAt: reader.readLongOrNull(offsets[184]),
-    useLibass: reader.readBoolOrNull(offsets[185]),
-    useMpvConfig: reader.readBoolOrNull(offsets[186]),
-    usePageTapZones: reader.readBoolOrNull(offsets[187]),
-    useYUV420P: reader.readBoolOrNull(offsets[188]),
-    userAgent: reader.readStringOrNull(offsets[189]),
-    volumeBoostCap: reader.readLongOrNull(offsets[190]),
-    webtoonDisableZoomOut: reader.readBoolOrNull(offsets[191]),
-    webtoonDoubleTapZoomEnabled: reader.readBoolOrNull(offsets[192]),
-    webtoonSidePadding: reader.readLongOrNull(offsets[193]),
-    zoomStartPosition: reader.readLongOrNull(offsets[194]),
+    updateProgressAfterReading: reader.readBoolOrNull(offsets[184]),
+    updatedAt: reader.readLongOrNull(offsets[185]),
+    useLibass: reader.readBoolOrNull(offsets[186]),
+    useMpvConfig: reader.readBoolOrNull(offsets[187]),
+    usePageTapZones: reader.readBoolOrNull(offsets[188]),
+    useYUV420P: reader.readBoolOrNull(offsets[189]),
+    userAgent: reader.readStringOrNull(offsets[190]),
+    volumeBoostCap: reader.readLongOrNull(offsets[191]),
+    webtoonDisableZoomOut: reader.readBoolOrNull(offsets[192]),
+    webtoonDoubleTapZoomEnabled: reader.readBoolOrNull(offsets[193]),
+    webtoonSidePadding: reader.readLongOrNull(offsets[194]),
+    zoomStartPosition: reader.readLongOrNull(offsets[195]),
   );
   object.chapterFilterBookmarkedList = reader
       .readObjectList<ChapterFilterBookmarked>(
@@ -2806,6 +2813,8 @@ P _settingsDeserializeProp<P>(
     case 181:
       return (reader.readBoolOrNull(offset)) as P;
     case 182:
+      return (reader.readDoubleOrNull(offset)) as P;
+    case 183:
       return (reader.readObjectList<UpdateError>(
             offset,
             UpdateErrorSchema.deserialize,
@@ -2813,12 +2822,10 @@ P _settingsDeserializeProp<P>(
             UpdateError(),
           ))
           as P;
-    case 183:
-      return (reader.readBoolOrNull(offset)) as P;
     case 184:
-      return (reader.readLongOrNull(offset)) as P;
-    case 185:
       return (reader.readBoolOrNull(offset)) as P;
+    case 185:
+      return (reader.readLongOrNull(offset)) as P;
     case 186:
       return (reader.readBoolOrNull(offset)) as P;
     case 187:
@@ -2826,16 +2833,18 @@ P _settingsDeserializeProp<P>(
     case 188:
       return (reader.readBoolOrNull(offset)) as P;
     case 189:
-      return (reader.readStringOrNull(offset)) as P;
-    case 190:
-      return (reader.readLongOrNull(offset)) as P;
-    case 191:
       return (reader.readBoolOrNull(offset)) as P;
+    case 190:
+      return (reader.readStringOrNull(offset)) as P;
+    case 191:
+      return (reader.readLongOrNull(offset)) as P;
     case 192:
       return (reader.readBoolOrNull(offset)) as P;
     case 193:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 194:
+      return (reader.readLongOrNull(offset)) as P;
+    case 195:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -15199,6 +15208,96 @@ extension SettingsQueryFilter
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> tvUiScaleIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'tvUiScale'),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> tvUiScaleIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'tvUiScale'),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> tvUiScaleEqualTo(
+    double? value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'tvUiScale',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> tvUiScaleGreaterThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'tvUiScale',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> tvUiScaleLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'tvUiScale',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition> tvUiScaleBetween(
+    double? lower,
+    double? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'tvUiScale',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterFilterCondition>
   updateErrorsListIsNull() {
     return QueryBuilder.apply(this, (query) {
@@ -18199,6 +18298,18 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByTvUiScale() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'tvUiScale', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByTvUiScaleDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'tvUiScale', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy>
   sortByUpdateProgressAfterReading() {
     return QueryBuilder.apply(this, (query) {
@@ -20391,6 +20502,18 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByTvUiScale() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'tvUiScale', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByTvUiScaleDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'tvUiScale', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy>
   thenByUpdateProgressAfterReading() {
     return QueryBuilder.apply(this, (query) {
@@ -21624,6 +21747,12 @@ extension SettingsQueryWhereDistinct
   QueryBuilder<Settings, Settings, QDistinct> distinctByTvPlayerStyle() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'tvPlayerStyle');
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QDistinct> distinctByTvUiScale() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'tvUiScale');
     });
   }
 
@@ -22910,6 +23039,12 @@ extension SettingsQueryProperty
   QueryBuilder<Settings, bool?, QQueryOperations> tvPlayerStyleProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'tvPlayerStyle');
+    });
+  }
+
+  QueryBuilder<Settings, double?, QQueryOperations> tvUiScaleProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'tvUiScale');
     });
   }
 

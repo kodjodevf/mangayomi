@@ -51,6 +51,8 @@ import 'package:path/path.dart' as p;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:mangayomi/utils/window_geometry.dart';
 import 'package:mangayomi/modules/manga/reader/subsampling_scale_image_view/subsampling_scale_image_view.dart';
+import 'package:mangayomi/modules/widgets/tv_ui_scale.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/tv_ui_scale_state_provider.dart';
 
 late Isar isar;
 DiscordRPC? discordRpc;
@@ -264,7 +266,13 @@ class _MyAppState extends ConsumerState<MyApp>
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       builder: (context, child) {
-        final base = BotToastInit()(context, child);
+        // Normalize the TV UI to a fixed reference width so it looks consistent
+        // across TVs regardless of the density the device reports. No-op off-TV.
+        final scaledChild = TvUiScale(
+          scale: ref.watch(tvUiScaleStateProvider),
+          child: child ?? const SizedBox.shrink(),
+        );
+        final base = BotToastInit()(context, scaledChild);
         final withBackHandler = !isMobile
             ? _MouseBackButtonHandler(router: router, child: base)
             : base;
