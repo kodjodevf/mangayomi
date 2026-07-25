@@ -34,6 +34,24 @@ class DoHProvider {
 
 /// All available DoH providers
 final class DoHProviders {
+  /// Sentinel id for a user-supplied custom DoH endpoint. Kept well clear of
+  /// the preset ids so it survives in the existing `doHProviderId` setting
+  /// without needing a new schema field. The URL itself lives in
+  /// `DohCustomStore`; build the provider with [custom].
+  static const int customId = 999;
+
+  /// Builds a [DoHProvider] from a user-supplied [url]. Bootstrap IPs are only
+  /// required to be non-empty by the resolver (it connects via the endpoint
+  /// hostname using the platform resolver), so sane public defaults are fine.
+  static DoHProvider custom(String url) => DoHProvider(
+    id: customId,
+    name: 'Custom',
+    url: url,
+    bootstrapIPs: const ['1.1.1.1', '8.8.8.8'],
+    description: 'Custom DoH endpoint',
+    region: 'Custom',
+  );
+
   /// Cloudflare DNS - Fast, privacy-first
   static const cloudflare = DoHProvider(
     id: 0,
