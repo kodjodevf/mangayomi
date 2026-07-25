@@ -10,6 +10,11 @@
 analyzer:
   errors:
     unintended_html_in_doc_comment: ignore
+  exclude:
+    # Vendored flutter_rust_bridge build tool — a separate package with its own
+    # dependencies that aren't resolved in the app's analysis context, so it
+    # reports false errors. It's build-time only, not app code.
+    - rust_builder/**
 include: package:flutter_lints/flutter.yaml
 
 linter:

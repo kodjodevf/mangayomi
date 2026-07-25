@@ -1,0 +1,78 @@
+name: CI
+
+# Build/compile checks for pull requests and main. The release workflow only
+# runs on version tags, so without this nothing verifies that a PR (or main)
+# actually compiles until a release is cut. This catches that earlier.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # Generated files (frb_generated.dart, *.g.dart, l10n) are committed, so
+      # analyze runs without the Rust/codegen toolchain. Fail only on errors
+      # (e.g. undefined symbols / type errors), not pre-existing infos/warnings.
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+
+  build-android:
+    name: Build (Android debug)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Java toolchain
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: "3.18.1"
+
+      - name: Setup ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
+
+      - name: Install flutter_rust_bridge_codegen
+        run: cargo install 'flutter_rust_bridge_codegen'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # Debug build: needs no signing secrets, so it also runs on fork PRs,
+      # while still compiling the full Dart + Kotlin + Rust bridge.
+      - name: Build debug APK
+        run: flutter build apk --debug
