@@ -476,6 +476,22 @@ Duration _downloadStartDelay(int baseSeconds) {
   return Duration(milliseconds: base + jitter);
 }
 
+/// Key identifying the source a download belongs to, used to serialize
+/// downloads from the same source. Falls back to a per-download unique key when
+/// the source can't be resolved, so an unknown source never over-serializes.
+String _downloadSourceKey(Download d) {
+  final chapter = d.chapter.value;
+  if (chapter == null) return 'download-${d.id}';
+  if (!chapter.manga.isLoaded) {
+    try {
+      chapter.manga.loadSync();
+    } catch (_) {}
+  }
+  final m = chapter.manga.value;
+  if (m?.source == null) return 'download-${d.id}';
+  return '${m!.source}|${m.lang}|${m.sourceId}';
+}
+
 @riverpod
 Future<void> processDownloads(Ref ref, {bool? useWifi}) async {
   final keepAlive = ref.keepAlive();
@@ -492,17 +508,29 @@ Future<void> processDownloads(Ref ref, {bool? useWifi}) async {
         ? ref.read(concurrentDownloadsStateProvider)
         : 1;
     final delaySeconds = ref.read(downloadDelaySecondsStateProvider);
-    int index = 0;
-    int downloaded = 0;
+    // Serialize downloads from the same source: at most one per source runs at
+    // a time even when concurrency is on, so a single plugin/source is never hit
+    // by parallel requests. Different sources still download in parallel. #645.
+    final pending = List.of(ongoingDownloads);
+    final total = ongoingDownloads.length;
+    final activeSources = <String>{};
+    int done = 0;
     int current = 0;
     await Future.doWhile(() async {
       await Future.delayed(const Duration(seconds: 1));
-      if (ongoingDownloads.length == downloaded) {
+      if (done >= total) {
         return false;
       }
-      if (current < maxConcurrentDownloads) {
+      while (current < maxConcurrentDownloads && pending.isNotEmpty) {
+        // Next pending download whose source isn't already downloading.
+        final idx = pending.indexWhere(
+          (d) => !activeSources.contains(_downloadSourceKey(d)),
+        );
+        if (idx < 0) break; // every remaining download shares a busy source
+        final downloadItem = pending.removeAt(idx);
+        final key = _downloadSourceKey(downloadItem);
+        activeSources.add(key);
         current++;
-        final downloadItem = ongoingDownloads[index++];
         final chapter = downloadItem.chapter.value!;
         chapter.cancelDownloads(downloadItem.id);
         await Future.delayed(_downloadStartDelay(delaySeconds));
@@ -511,8 +539,9 @@ Future<void> processDownloads(Ref ref, {bool? useWifi}) async {
             chapter: chapter,
             useWifi: useWifi,
             callback: () {
-              downloaded++;
+              done++;
               current--;
+              activeSources.remove(key);
             },
           ),
         );
