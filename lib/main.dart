@@ -48,7 +48,7 @@ import 'package:media_kit/media_kit.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:path/path.dart' as p;
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart' show rootBundle, LogicalKeyboardKey;
 import 'package:mangayomi/utils/window_geometry.dart';
 import 'package:mangayomi/modules/manga/reader/subsampling_scale_image_view/subsampling_scale_image_view.dart';
 import 'package:mangayomi/modules/widgets/tv_ui_scale.dart';
@@ -266,11 +266,27 @@ class _MyAppState extends ConsumerState<MyApp>
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       builder: (context, child) {
+        Widget content = child ?? const SizedBox.shrink();
+        // On TV, a single-line text field consumes Up/Down for the text cursor,
+        // trapping focus so the remote can't reach the surrounding buttons (a
+        // dialog's Cancel/Add, etc.). Remap Up/Down to move focus app-wide: a
+        // no-op everywhere except inside a text field, where it frees the field.
+        if (isTv) {
+          content = Shortcuts(
+            shortcuts: const <ShortcutActivator, Intent>{
+              SingleActivator(LogicalKeyboardKey.arrowDown):
+                  DirectionalFocusIntent(TraversalDirection.down),
+              SingleActivator(LogicalKeyboardKey.arrowUp):
+                  DirectionalFocusIntent(TraversalDirection.up),
+            },
+            child: content,
+          );
+        }
         // Normalize the TV UI to a fixed reference width so it looks consistent
         // across TVs regardless of the density the device reports. No-op off-TV.
         final scaledChild = TvUiScale(
           scale: ref.watch(tvUiScaleStateProvider),
-          child: child ?? const SizedBox.shrink(),
+          child: content,
         );
         final base = BotToastInit()(context, scaledChild);
         final withBackHandler = !isMobile
