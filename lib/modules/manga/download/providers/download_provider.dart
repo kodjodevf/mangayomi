@@ -343,6 +343,7 @@ Future<void> downloadChapter(
 
     if (!isOk) {
       botToast(startFailure ?? "Couldn't start the download");
+      _markDownloadFailed(chapter);
       if (callback != null) callback();
       keepAlive.close();
       return;
@@ -492,7 +493,8 @@ Future<void> downloadChapter(
   } catch (e) {
     // Surface the failure instead of swallowing it — a silent catch here is
     // exactly how "downloads just don't start" stays invisible.
-    botToast("Download failed to start: $e");
+    botToast("Download failed: $e");
+    _markDownloadFailed(chapter);
     if (callback != null) callback();
     keepAlive.close();
   } finally {
@@ -509,6 +511,22 @@ Duration _downloadStartDelay(int baseSeconds) {
   final base = baseSeconds * 1000;
   final jitter = (base * (0.25 + Random().nextDouble() * 0.75)).round();
   return Duration(milliseconds: base + jitter);
+}
+
+/// Reset a failed/aborted download to a plain, tappable "not downloaded" state
+/// so it shows a retry-able icon instead of a progress bar frozen at its last
+/// value. Any partial file is cleaned up on the next attempt.
+void _markDownloadFailed(Chapter chapter) {
+  final record = isar.downloads.getSync(chapter.id!);
+  if (record == null || (record.isDownload ?? false)) return;
+  isar.writeTxnSync(() {
+    isar.downloads.putSync(
+      record
+        ..isStartDownload = false
+        ..succeeded = 0
+        ..failed = 1,
+    );
+  });
 }
 
 /// Key identifying the source a chapter belongs to, used to serialize
