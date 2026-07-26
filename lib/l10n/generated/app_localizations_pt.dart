@@ -2476,6 +2476,13 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get error_no_pages_available => 'Erro: nenhuma página disponível';
+
+  @override
+  String get tv_ui_scale => 'TV interface scale';
+
+  @override
+  String get tv_ui_scale_subtitle =>
+      'Make the interface larger or smaller. Lower it if everything looks zoomed in.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).

@@ -44,6 +44,7 @@ class Settings {
   List<ChapterFilterBookmarked>? chapterFilterBookmarkedList;
 
   double? flexColorSchemeBlendLevel;
+  double? tvUiScale;
 
   String? dateFormat;
 
@@ -412,6 +413,7 @@ class Settings {
     this.sortChapterList,
     this.chapterFilterDownloadedList,
     this.flexColorSchemeBlendLevel = 10.0,
+    this.tvUiScale = 1.0,
     this.dateFormat = "M/d/y",
     this.relativeTimesTamps = 2,
     this.flexSchemeColorIndex = 2,
@@ -658,6 +660,7 @@ class Settings {
     flexColorSchemeBlendLevel = json['flexColorSchemeBlendLevel'] is double
         ? json['flexColorSchemeBlendLevel']
         : (json['flexColorSchemeBlendLevel'] as int).toDouble();
+    tvUiScale = (json['tvUiScale'] as num?)?.toDouble() ?? 1.0;
     flexSchemeColorIndex = json['flexSchemeColorIndex'];
     id = json['id'];
     incognitoMode = json['incognitoMode'];
@@ -942,6 +945,7 @@ class Settings {
     'concurrentDownloads': concurrentDownloads,
     'filterScanlatorList': filterScanlatorList,
     'flexColorSchemeBlendLevel': flexColorSchemeBlendLevel,
+    'tvUiScale': tvUiScale,
     'flexSchemeColorIndex': flexSchemeColorIndex,
     'id': id,
     'incognitoMode': incognitoMode,
