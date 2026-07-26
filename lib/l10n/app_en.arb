@@ -902,6 +902,6 @@
   "reader_hide_threshold_low": "Low (31 px)",
   "reader_hide_threshold_lowest": "Lowest (47 px)",
   "error_no_pages_available": "Error: no pages available",
-  "tv_ui_scale": "TV interface scale",
-  "tv_ui_scale_subtitle": "Make the interface larger or smaller. Lower it if everything looks zoomed in."
+  "app_ui_scale": "Interface scale",
+  "app_ui_scale_subtitle": "Make the interface larger or smaller to suit your screen and viewing distance."
 }

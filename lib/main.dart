@@ -51,8 +51,8 @@ import 'package:path/path.dart' as p;
 import 'package:flutter/services.dart' show rootBundle, LogicalKeyboardKey;
 import 'package:mangayomi/utils/window_geometry.dart';
 import 'package:mangayomi/modules/manga/reader/subsampling_scale_image_view/subsampling_scale_image_view.dart';
-import 'package:mangayomi/modules/widgets/tv_ui_scale.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/tv_ui_scale_state_provider.dart';
+import 'package:mangayomi/modules/widgets/app_ui_scale.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/app_ui_scale_state_provider.dart';
 
 late Isar isar;
 DiscordRPC? discordRpc;
@@ -284,8 +284,8 @@ class _MyAppState extends ConsumerState<MyApp>
         }
         // Normalize the TV UI to a fixed reference width so it looks consistent
         // across TVs regardless of the density the device reports. No-op off-TV.
-        final scaledChild = TvUiScale(
-          scale: ref.watch(tvUiScaleStateProvider),
+        final scaledChild = AppUiScale(
+          scale: ref.watch(appUiScaleStateProvider),
           child: content,
         );
         final base = BotToastInit()(context, scaledChild);

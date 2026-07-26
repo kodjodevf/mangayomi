@@ -18,7 +18,7 @@ import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/tv_ui_scale_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/appearance/providers/app_ui_scale_state_provider.dart';
 import 'package:mangayomi/modules/widgets/tv_escapable_slider.dart';
 
 final navigationItems = {
@@ -113,55 +113,54 @@ class AppearanceScreen extends ConsumerWidget {
                     onChanged: (v) =>
                         ref.read(tvHomeStyleProvider.notifier).set(v),
                   ),
-                if (isTv)
-                  Builder(
-                    builder: (context) {
-                      final scale = ref
-                          .watch(tvUiScaleStateProvider)
-                          .clamp(0.85, 1.25);
-                      return ListTile(
-                        leading: const Icon(Icons.aspect_ratio_outlined),
-                        title: Text(l10n.tv_ui_scale),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${l10n.tv_ui_scale_subtitle}  '
-                              '(${(scale * 100).round()}%)',
+                Builder(
+                  builder: (context) {
+                    final scale = ref
+                        .watch(appUiScaleStateProvider)
+                        .clamp(0.85, 1.25);
+                    return ListTile(
+                      leading: const Icon(Icons.aspect_ratio_outlined),
+                      title: Text(l10n.app_ui_scale),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${l10n.app_ui_scale_subtitle}  '
+                            '(${(scale * 100).round()}%)',
+                          ),
+                          TvEscapableSlider(
+                            enabled: isTv,
+                            onDecrease: () => ref
+                                .read(appUiScaleStateProvider.notifier)
+                                .set(
+                                  (scale - 0.05).clamp(0.85, 1.25),
+                                  end: true,
+                                ),
+                            onIncrease: () => ref
+                                .read(appUiScaleStateProvider.notifier)
+                                .set(
+                                  (scale + 0.05).clamp(0.85, 1.25),
+                                  end: true,
+                                ),
+                            child: Slider(
+                              min: 0.85,
+                              max: 1.25,
+                              divisions: 8,
+                              value: scale.toDouble(),
+                              label: '${(scale * 100).round()}%',
+                              onChanged: (v) => ref
+                                  .read(appUiScaleStateProvider.notifier)
+                                  .set(v),
+                              onChangeEnd: (v) => ref
+                                  .read(appUiScaleStateProvider.notifier)
+                                  .set(v, end: true),
                             ),
-                            TvEscapableSlider(
-                              enabled: isTv,
-                              onDecrease: () => ref
-                                  .read(tvUiScaleStateProvider.notifier)
-                                  .set(
-                                    (scale - 0.05).clamp(0.85, 1.25),
-                                    end: true,
-                                  ),
-                              onIncrease: () => ref
-                                  .read(tvUiScaleStateProvider.notifier)
-                                  .set(
-                                    (scale + 0.05).clamp(0.85, 1.25),
-                                    end: true,
-                                  ),
-                              child: Slider(
-                                min: 0.85,
-                                max: 1.25,
-                                divisions: 8,
-                                value: scale.toDouble(),
-                                label: '${(scale * 100).round()}%',
-                                onChanged: (v) => ref
-                                    .read(tvUiScaleStateProvider.notifier)
-                                    .set(v),
-                                onChangeEnd: (v) => ref
-                                    .read(tvUiScaleStateProvider.notifier)
-                                    .set(v, end: true),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
                 _buildLanguageTile(context, ref, l10n),
                 _buildFontTile(context, ref, l10n),
                 ListTile(

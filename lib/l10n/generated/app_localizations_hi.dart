@@ -2456,9 +2456,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get error_no_pages_available => 'त्रुटि: कोई पन्ने उपलब्ध नहीं हैं';
 
   @override
-  String get tv_ui_scale => 'TV interface scale';
+  String get app_ui_scale => 'Interface scale';
 
   @override
-  String get tv_ui_scale_subtitle =>
-      'Make the interface larger or smaller. Lower it if everything looks zoomed in.';
+  String get app_ui_scale_subtitle =>
+      'Make the interface larger or smaller to suit your screen and viewing distance.';
 }

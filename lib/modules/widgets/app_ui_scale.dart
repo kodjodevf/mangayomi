@@ -8,8 +8,8 @@ import 'package:mangayomi/utils/platform_utils.dart';
 /// [referenceWidth] logical pixels wide, then scaled uniformly to fill the real
 /// panel. [scale] is the user's fine-tune (1.0 == the reference). Off-TV it is a
 /// transparent pass-through.
-class TvUiScale extends StatelessWidget {
-  const TvUiScale({super.key, required this.child, this.scale = 1.0});
+class AppUiScale extends StatelessWidget {
+  const AppUiScale({super.key, required this.child, this.scale = 1.0});
 
   final Widget child;
   final double scale;
@@ -20,14 +20,24 @@ class TvUiScale extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!isTv) return child;
     final mq = MediaQuery.of(context);
     final size = mq.size;
     if (size.isEmpty || size.width <= 0) return child;
 
-    // A higher user scale => narrower target => the UI renders larger.
-    final target = referenceWidth / (scale <= 0 ? 1.0 : scale);
-    // Match the panel's aspect ratio so the uniform fit never distorts.
+    final s = scale <= 0 ? 1.0 : scale;
+    final double target;
+    if (isTv) {
+      // TV: lay out against a fixed reference width and scale to the panel, so
+      // the UI is consistent across TVs regardless of the density the device
+      // reports. A higher user scale => narrower target => larger UI.
+      target = referenceWidth / s;
+    } else {
+      // Elsewhere there is no density problem, so the scale is a straight
+      // multiplier on the native size: 1.0 is native (no-op), higher zooms in.
+      if (s == 1.0) return child;
+      target = size.width / s;
+    }
+    // Match the aspect ratio so the uniform fit never distorts.
     final designSize = Size(target, target * size.height / size.width);
     // Convert real insets into design space so safe-area padding stays correct.
     final ratio = target / size.width;

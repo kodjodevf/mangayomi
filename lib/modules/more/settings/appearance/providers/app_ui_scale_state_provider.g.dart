@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'tv_ui_scale_state_provider.dart';
+part of 'app_ui_scale_state_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -9,34 +9,34 @@ part of 'tv_ui_scale_state_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 /// User fine-tune for the TV interface scale. 1.0 is the normalized reference
-/// (see [TvUiScale]); higher renders the UI larger, lower smaller.
+/// (see [AppUiScale]); higher renders the UI larger, lower smaller.
 
-@ProviderFor(TvUiScaleState)
-final tvUiScaleStateProvider = TvUiScaleStateProvider._();
+@ProviderFor(AppUiScaleState)
+final appUiScaleStateProvider = AppUiScaleStateProvider._();
 
 /// User fine-tune for the TV interface scale. 1.0 is the normalized reference
-/// (see [TvUiScale]); higher renders the UI larger, lower smaller.
-final class TvUiScaleStateProvider
-    extends $NotifierProvider<TvUiScaleState, double> {
+/// (see [AppUiScale]); higher renders the UI larger, lower smaller.
+final class AppUiScaleStateProvider
+    extends $NotifierProvider<AppUiScaleState, double> {
   /// User fine-tune for the TV interface scale. 1.0 is the normalized reference
-  /// (see [TvUiScale]); higher renders the UI larger, lower smaller.
-  TvUiScaleStateProvider._()
+  /// (see [AppUiScale]); higher renders the UI larger, lower smaller.
+  AppUiScaleStateProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'tvUiScaleStateProvider',
+        name: r'appUiScaleStateProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$tvUiScaleStateHash();
+  String debugGetCreateSourceHash() => _$appUiScaleStateHash();
 
   @$internal
   @override
-  TvUiScaleState create() => TvUiScaleState();
+  AppUiScaleState create() => AppUiScaleState();
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(double value) {
@@ -47,12 +47,12 @@ final class TvUiScaleStateProvider
   }
 }
 
-String _$tvUiScaleStateHash() => r'349b8b775f89f4e60199dce6b1e99ea88bf7322f';
+String _$appUiScaleStateHash() => r'e8cc7e2266975c7a9b08974167a5b1f5cd8415b9';
 
 /// User fine-tune for the TV interface scale. 1.0 is the normalized reference
-/// (see [TvUiScale]); higher renders the UI larger, lower smaller.
+/// (see [AppUiScale]); higher renders the UI larger, lower smaller.
 
-abstract class _$TvUiScaleState extends $Notifier<double> {
+abstract class _$AppUiScaleState extends $Notifier<double> {
   double build();
   @$mustCallSuper
   @override
