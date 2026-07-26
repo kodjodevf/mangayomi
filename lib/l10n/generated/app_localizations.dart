@@ -4556,7 +4556,7 @@ abstract class AppLocalizations {
   /// No description provided for @allow_concurrent_downloads_subtitle.
   ///
   /// In en, this message translates to:
-  /// **'Download several chapters at once. Turn off to download one at a time, which is steadier and less likely to stall.'**
+  /// **'Download from different sources at the same time. A single source still downloads one chapter at a time so it isn\'t overloaded. Turn off to download one at a time everywhere.'**
   String get allow_concurrent_downloads_subtitle;
 
   /// No description provided for @download_delay.

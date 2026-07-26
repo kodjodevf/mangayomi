@@ -97,6 +97,12 @@ Future<void> downloadChapter(
   );
 
   try {
+    // Cancelled while it waited for a slot in the gate? Its record was deleted,
+    // so don't resurrect it.
+    if (_downloadCancelled(chapter)) {
+      keepAlive.close();
+      return;
+    }
     bool onlyOnWifi = useWifi ?? ref.read(onlyOnWifiStateProvider);
     final connectivity = await Connectivity().checkConnectivity();
     final isOnWifi =
@@ -349,6 +355,12 @@ Future<void> downloadChapter(
       return;
     }
 
+    // Cancelled during the (up to 45s) prep wait? Bail before writing files.
+    if (_downloadCancelled(chapter)) {
+      keepAlive.close();
+      return;
+    }
+
     if (pageUrls.isNotEmpty) {
       // A stalled or failed attempt can leave a partial single-file download
       // (anime .mp4, novel .html) on disk. The existence check below would then
@@ -502,12 +514,14 @@ Future<void> downloadChapter(
   }
 }
 
-/// Delay before starting the next queued download. With rate limiting off
-/// ([baseSeconds] 0) this is just the small default gap. Otherwise it is the
-/// chosen base plus 25% to 100% random jitter, spacing requests out and varying
-/// them so a source is less likely to IP-block or wear a plugin out. See #621.
+/// Delay before releasing the next queued download from the gate. With rate
+/// limiting off ([baseSeconds] 0) there is no artificial delay — the gate's
+/// concurrency limit and per-source serialization already prevent hammering, so
+/// downloads should start as soon as a slot is free. Otherwise it is the chosen
+/// base plus 25% to 100% random jitter, spacing requests out and varying them so
+/// a source is less likely to IP-block or wear a plugin out. See #621.
 Duration _downloadStartDelay(int baseSeconds) {
-  if (baseSeconds <= 0) return const Duration(milliseconds: 500);
+  if (baseSeconds <= 0) return Duration.zero;
   final base = baseSeconds * 1000;
   final jitter = (base * (0.25 + Random().nextDouble() * 0.75)).round();
   return Duration(milliseconds: base + jitter);
@@ -528,6 +542,14 @@ void _markDownloadFailed(Chapter chapter) {
     );
   });
 }
+
+/// True when a download was cancelled while it was queued. cancelDownloads
+/// deletes the record, so a missing record for a chapter we were about to
+/// download means "cancelled" — bail instead of resurrecting it. This matters
+/// because every download is fired up front and then waits in the gate; a
+/// cancel that lands while it waits must actually stop it.
+bool _downloadCancelled(Chapter chapter) =>
+    isar.downloads.getSync(chapter.id!) == null;
 
 /// Key identifying the source a chapter belongs to, used to serialize
 /// downloads from the same source. Falls back to a per-chapter unique key when
