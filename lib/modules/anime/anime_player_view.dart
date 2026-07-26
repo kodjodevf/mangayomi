@@ -919,14 +919,25 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     }
   }
 
-  Future<void> _openMedia(VideoPrefs prefs, [Duration? position]) {
-    return _player.open(
-      Media(
-        prefs.videoTrack!.id,
-        httpHeaders: prefs.headers,
-        start: position ?? _currentPosition.value,
-      ),
+  Future<void> _openMedia(VideoPrefs prefs, [Duration? position]) async {
+    final start = position ?? _currentPosition.value;
+    await _player.open(
+      Media(prefs.videoTrack!.id, httpHeaders: prefs.headers, start: start),
     );
+    if (start > Duration.zero) {
+      // media_kit's Media(start:) is unreliable for some sources — playback can
+      // begin at 0 even though the resume position was passed. Seek explicitly
+      // once the media reports a duration (i.e. it has loaded). Fire-and-forget
+      // so open() isn't delayed; the timeout guards a source that never reports
+      // one, and a redundant seek (when start: did work) is harmless.
+      unawaited(
+        _player.stream.duration
+            .firstWhere((d) => d > Duration.zero)
+            .timeout(const Duration(seconds: 8))
+            .then((_) => _player.seek(start))
+            .catchError((_) {}),
+      );
+    }
   }
 
   Future<void> _loadAndroidFont() async {
