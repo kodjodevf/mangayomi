@@ -2380,4 +2380,18 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get error_no_pages_available => '错误：无可用页面';
+
+  @override
+  String get allow_concurrent_downloads => 'Allow concurrent downloads';
+
+  @override
+  String get allow_concurrent_downloads_subtitle =>
+      'Download several chapters at once. Turn off to download one at a time, which is steadier and less likely to stall.';
+
+  @override
+  String get download_delay => 'Download delay';
+
+  @override
+  String get download_delay_subtitle =>
+      'Off. Add a wait with random jitter between chapters to be gentler on sources.';
 }

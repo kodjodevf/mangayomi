@@ -179,10 +179,10 @@ class ChapterPageDownload extends ConsumerWidget {
                           }
                         },
                         itemBuilder: (context) => [
-                          PopupMenuItem(
-                            value: 1,
-                            child: Text(l10n.start_downloading),
-                          ),
+                          // This download already has progress, so the action is
+                          // a restart, not a start — label it Retry (matches the
+                          // stalled/no-progress state below).
+                          PopupMenuItem(value: 1, child: Text(l10n.retry)),
                           PopupMenuItem(value: 0, child: Text(l10n.cancel)),
                         ],
                       ),

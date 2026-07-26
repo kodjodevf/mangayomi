@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:io';
 import 'dart:ui';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -464,6 +465,17 @@ Future<void> downloadChapter(
   }
 }
 
+/// Delay before starting the next queued download. With rate limiting off
+/// ([baseSeconds] 0) this is just the small default gap. Otherwise it is the
+/// chosen base plus 25% to 100% random jitter, spacing requests out and varying
+/// them so a source is less likely to IP-block or wear a plugin out. See #621.
+Duration _downloadStartDelay(int baseSeconds) {
+  if (baseSeconds <= 0) return const Duration(milliseconds: 500);
+  final base = baseSeconds * 1000;
+  final jitter = (base * (0.25 + Random().nextDouble() * 0.75)).round();
+  return Duration(milliseconds: base + jitter);
+}
+
 @riverpod
 Future<void> processDownloads(Ref ref, {bool? useWifi}) async {
   final keepAlive = ref.keepAlive();
@@ -474,7 +486,12 @@ Future<void> processDownloads(Ref ref, {bool? useWifi}) async {
         .isDownloadEqualTo(false)
         .isStartDownloadEqualTo(true)
         .findAll();
-    final maxConcurrentDownloads = ref.read(concurrentDownloadsStateProvider);
+    // When concurrent downloads are disabled, run them one at a time.
+    final allowConcurrent = ref.read(allowConcurrentDownloadsStateProvider);
+    final maxConcurrentDownloads = allowConcurrent
+        ? ref.read(concurrentDownloadsStateProvider)
+        : 1;
+    final delaySeconds = ref.read(downloadDelaySecondsStateProvider);
     int index = 0;
     int downloaded = 0;
     int current = 0;
@@ -488,7 +505,7 @@ Future<void> processDownloads(Ref ref, {bool? useWifi}) async {
         final downloadItem = ongoingDownloads[index++];
         final chapter = downloadItem.chapter.value!;
         chapter.cancelDownloads(downloadItem.id);
-        await Future.delayed(const Duration(milliseconds: 500));
+        await Future.delayed(_downloadStartDelay(delaySeconds));
         ref.read(
           downloadChapterProvider(
             chapter: chapter,
