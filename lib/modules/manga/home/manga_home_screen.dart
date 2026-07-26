@@ -157,6 +157,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     _textEditingController.dispose();
+    _searchFieldFocus.dispose();
+    _postSearchFocus.dispose();
     super.dispose();
   }
 
@@ -181,6 +183,11 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
   }
 
   late final _textEditingController = TextEditingController(text: widget.query);
+  // TV search focus flow: opening search puts focus on the field; submitting
+  // hands focus to the next button in the row, so it never reverts to Popular /
+  // Latest (which, on revert, would re-select and close the search field).
+  final _searchFieldFocus = FocusNode();
+  final _postSearchFocus = FocusNode();
   late String _query = widget.query;
   late bool _isSearch = widget.isSearch;
   AsyncValue<MPages?>? _getManga;
@@ -273,6 +280,13 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                       }
                       _page = 1;
                     });
+                    // Hand focus to the next button in the row so it never
+                    // reverts to Popular / Latest.
+                    if (isTv) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (mounted) _postSearchFocus.requestFocus();
+                      });
+                    }
                   },
                   onChanged: (value) {},
                   onSuffixPressed: () {
@@ -297,6 +311,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                     });
                   },
                   controller: _textEditingController,
+                  focusNode: _searchFieldFocus,
                 )
               : IconButton(
                   splashRadius: 20,
@@ -304,6 +319,13 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                     setState(() {
                       _isSearch = true;
                     });
+                    // Force focus onto the field so it doesn't revert to the
+                    // previously focused pill while the search button unmounts.
+                    if (isTv) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (mounted) _searchFieldFocus.requestFocus();
+                      });
+                    }
                   },
                   focusColor: isTv
                       ? context.primaryColor.withValues(alpha: 0.4)
@@ -312,6 +334,7 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                 ),
           if (isTv)
             IconButton(
+              focusNode: _postSearchFocus,
               focusColor: context.primaryColor.withValues(alpha: 0.4),
               icon: Icon(displayTypeIcon),
               onPressed: () async {
