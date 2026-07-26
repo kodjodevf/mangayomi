@@ -8,6 +8,7 @@ class SeachFormTextField extends StatelessWidget {
   final TextEditingController controller;
   final Function(String)? onFieldSubmitted;
   final bool autofocus;
+  final FocusNode? focusNode;
   const SeachFormTextField({
     super.key,
     required this.onChanged,
@@ -16,6 +17,7 @@ class SeachFormTextField extends StatelessWidget {
     this.onFieldSubmitted,
     required this.onSuffixPressed,
     this.autofocus = true,
+    this.focusNode,
   });
 
   @override
@@ -24,6 +26,7 @@ class SeachFormTextField extends StatelessWidget {
     return Flexible(
       child: TextFormField(
         autofocus: autofocus,
+        focusNode: focusNode,
         controller: controller,
         keyboardType: TextInputType.text,
         onChanged: onChanged,

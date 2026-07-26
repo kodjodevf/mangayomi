@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mangayomi/models/category.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
@@ -25,7 +26,7 @@ class CustomTextFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context);
-    return TextFormField(
+    final Widget field = TextFormField(
       autofocus: !isTv,
       controller: controller,
       keyboardType: TextInputType.text,
@@ -75,6 +76,20 @@ class CustomTextFormField extends StatelessWidget {
           ),
         ),
       ),
+    );
+    if (!isTv) return field;
+    // A single-line field consumes Up/Down for the cursor and traps focus on a
+    // remote. Remap them to move focus so the dialog buttons are reachable.
+    return Shortcuts(
+      shortcuts: const <ShortcutActivator, Intent>{
+        SingleActivator(LogicalKeyboardKey.arrowDown): DirectionalFocusIntent(
+          TraversalDirection.down,
+        ),
+        SingleActivator(LogicalKeyboardKey.arrowUp): DirectionalFocusIntent(
+          TraversalDirection.up,
+        ),
+      },
+      child: field,
     );
   }
 }

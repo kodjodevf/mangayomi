@@ -48,6 +48,12 @@ class TvPill extends StatefulWidget {
 class _TvPillState extends State<TvPill> {
   bool _focused = false;
   bool _held = false;
+  // True only between a Select KeyDown and its KeyUp on THIS pill. Guards
+  // against a stray KeyUp arriving without its KeyDown: activating a control
+  // that removes itself (e.g. the source page's search button) reverts focus to
+  // the previously focused pill, and the trailing KeyUp would otherwise fire its
+  // onTap — re-selecting Popular/Latest and closing the search field.
+  bool _pressed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -90,13 +96,17 @@ class _TvPillState extends State<TvPill> {
         // opens never inherits the rest of that press.
         if (event is KeyDownEvent) {
           _held = false;
+          _pressed = true;
           return KeyEventResult.handled;
         }
         if (event is KeyRepeatEvent) {
-          _held = true;
+          if (_pressed) _held = true;
           return KeyEventResult.handled;
         }
         if (event is KeyUpEvent) {
+          // A KeyUp without the matching KeyDown here is a leaked press from a
+          // control that just removed itself; drop it so it can't fire onTap.
+          if (!_pressed) return KeyEventResult.ignored;
           final longPress = widget.onLongPress;
           if (_held && longPress != null) {
             longPress();
@@ -104,6 +114,7 @@ class _TvPillState extends State<TvPill> {
             widget.onTap();
           }
           _held = false;
+          _pressed = false;
           return KeyEventResult.handled;
         }
         return KeyEventResult.ignored;
