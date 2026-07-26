@@ -514,7 +514,15 @@ Future<void> _downloadFile(
         final file = File(pageUrl.fileName!);
         final sink = file.openWrite();
         try {
-          await for (var value in response.stream) {
+          // Idle timeout: if no bytes arrive for 30s the connection has
+          // stalled, so fail (and retry) instead of hanging the whole
+          // download forever with no progress.
+          await for (var value in response.stream.timeout(
+            const Duration(seconds: 30),
+            onTimeout: (sink) => sink.addError(
+              TimeoutException('Download stalled (no data for 30s)'),
+            ),
+          )) {
             sink.add(value);
             received += value.length;
             try {
@@ -621,7 +629,14 @@ Future<void> _downloadSegment(
 
     final sink = file.openWrite();
     try {
-      await for (var chunk in response.stream) {
+      // Idle timeout: a segment whose connection stalls (no bytes for 30s)
+      // fails and retries instead of hanging the whole download forever.
+      await for (var chunk in response.stream.timeout(
+        const Duration(seconds: 30),
+        onTimeout: (sink) => sink.addError(
+          TimeoutException('Segment stalled (no data for 30s)'),
+        ),
+      )) {
         sink.add(chunk);
       }
     } finally {

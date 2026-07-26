@@ -315,6 +315,24 @@ Future<void> downloadChapter(
     }
 
     if (pageUrls.isNotEmpty) {
+      // A stalled or failed attempt can leave a partial single-file download
+      // (anime .mp4, novel .html) on disk. The existence check below would then
+      // treat it as already downloaded and mark it complete — a truncated but
+      // "finished" file. If this chapter's download record is not actually
+      // complete, delete any such leftover first so it re-downloads fresh.
+      final downloadRecord = isar.downloads.getSync(chapter.id!);
+      if (!(downloadRecord?.isDownload ?? false)) {
+        for (final leftover in [
+          File(p.join(mangaMainDirectory!.path, "$chapterName.mp4")),
+          File(p.join(mangaMainDirectory.path, "$chapterName.html")),
+        ]) {
+          if (leftover.existsSync()) {
+            try {
+              leftover.deleteSync();
+            } catch (_) {}
+          }
+        }
+      }
       bool cbzFileExist =
           await File(
             p.join(mangaMainDirectory!.path, "${chapter.name}.cbz"),
