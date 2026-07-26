@@ -901,5 +901,9 @@
   "reader_hide_threshold_high": "High (13 px)",
   "reader_hide_threshold_low": "Low (31 px)",
   "reader_hide_threshold_lowest": "Lowest (47 px)",
-  "error_no_pages_available": "Error: no pages available"
+  "error_no_pages_available": "Error: no pages available",
+  "allow_concurrent_downloads": "Allow concurrent downloads",
+  "allow_concurrent_downloads_subtitle": "Download several chapters at once. Turn off to download one at a time, which is steadier and less likely to stall.",
+  "download_delay": "Download delay",
+  "download_delay_subtitle": "Off. Add a wait with random jitter between chapters to be gentler on sources."
 }

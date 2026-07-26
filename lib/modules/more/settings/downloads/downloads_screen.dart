@@ -25,6 +25,10 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
     );
     final onlyOnWifiState = ref.watch(onlyOnWifiStateProvider);
     final concurrentDownloads = ref.watch(concurrentDownloadsStateProvider);
+    final allowConcurrentDownloads = ref.watch(
+      allowConcurrentDownloadsStateProvider,
+    );
+    final downloadDelaySeconds = ref.watch(downloadDelaySecondsStateProvider);
     final localFolders = ref.watch(localFoldersStateProvider);
     final l10n = l10nLocalizations(context);
     return Scaffold(
@@ -56,14 +60,94 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                     .set(value);
               },
             ),
+            SwitchListTile(
+              value: allowConcurrentDownloads,
+              title: Text(l10n.allow_concurrent_downloads),
+              subtitle: Text(l10n.allow_concurrent_downloads_subtitle),
+              onChanged: (value) {
+                ref
+                    .read(allowConcurrentDownloadsStateProvider.notifier)
+                    .set(value);
+              },
+            ),
+            if (allowConcurrentDownloads)
+              ListTile(
+                onTap: () {
+                  int currentIntValue = concurrentDownloads;
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text(context.l10n.concurrent_downloads),
+                        content: StatefulBuilder(
+                          builder: (context, setState) => SizedBox(
+                            height: 200,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                NumberPicker(
+                                  value: currentIntValue,
+                                  minValue: 1,
+                                  maxValue: 255,
+                                  step: 1,
+                                  haptics: true,
+                                  textMapper: (numberText) => numberText,
+                                  onChanged: (value) =>
+                                      setState(() => currentIntValue = value),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        actions: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton(
+                                onPressed: () async {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  context.l10n.cancel,
+                                  style: TextStyle(color: context.primaryColor),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  ref
+                                      .read(
+                                        concurrentDownloadsStateProvider
+                                            .notifier,
+                                      )
+                                      .set(currentIntValue);
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  context.l10n.ok,
+                                  style: TextStyle(color: context.primaryColor),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                title: Text(context.l10n.concurrent_downloads),
+                subtitle: Text(
+                  "$concurrentDownloads",
+                  style: TextStyle(fontSize: 11, color: context.secondaryColor),
+                ),
+              ),
             ListTile(
               onTap: () {
-                int currentIntValue = concurrentDownloads;
+                int currentDelay = downloadDelaySeconds;
                 showDialog(
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: Text(context.l10n.concurrent_downloads),
+                      title: Text(context.l10n.download_delay),
                       content: StatefulBuilder(
                         builder: (context, setState) => SizedBox(
                           height: 200,
@@ -71,14 +155,14 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               NumberPicker(
-                                value: currentIntValue,
-                                minValue: 1,
-                                maxValue: 255,
+                                value: currentDelay,
+                                minValue: 0,
+                                maxValue: 120,
                                 step: 1,
                                 haptics: true,
                                 textMapper: (numberText) => numberText,
                                 onChanged: (value) =>
-                                    setState(() => currentIntValue = value),
+                                    setState(() => currentDelay = value),
                               ),
                             ],
                           ),
@@ -89,21 +173,20 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             TextButton(
-                              onPressed: () async {
-                                Navigator.pop(context);
-                              },
+                              onPressed: () => Navigator.pop(context),
                               child: Text(
                                 context.l10n.cancel,
                                 style: TextStyle(color: context.primaryColor),
                               ),
                             ),
                             TextButton(
-                              onPressed: () async {
+                              onPressed: () {
                                 ref
                                     .read(
-                                      concurrentDownloadsStateProvider.notifier,
+                                      downloadDelaySecondsStateProvider
+                                          .notifier,
                                     )
-                                    .set(currentIntValue);
+                                    .set(currentDelay);
                                 Navigator.pop(context);
                               },
                               child: Text(
@@ -118,9 +201,11 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                   },
                 );
               },
-              title: Text(context.l10n.concurrent_downloads),
+              title: Text(context.l10n.download_delay),
               subtitle: Text(
-                "$concurrentDownloads",
+                downloadDelaySeconds == 0
+                    ? l10n.download_delay_subtitle
+                    : "$downloadDelaySeconds s (+ jitter)",
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
