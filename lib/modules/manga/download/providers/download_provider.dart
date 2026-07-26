@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'dart:io';
@@ -62,6 +63,38 @@ Future<void> downloadChapter(
   VoidCallback? callback,
 }) async {
   final keepAlive = ref.keepAlive();
+
+  // Show the chapter as queued straight away, before it waits for a slot, so
+  // the download icon reacts to the tap immediately even while it sits in the
+  // gate behind other downloads.
+  if (isar.downloads.getSync(chapter.id!) == null) {
+    isar.writeTxnSync(() {
+      isar.downloads.putSync(
+        Download(
+          id: chapter.id,
+          succeeded: 0,
+          failed: 0,
+          total: 100,
+          isDownload: false,
+          isStartDownload: true,
+        )..chapter.value = chapter,
+      );
+    });
+  }
+
+  // Every download path funnels through here, so acquiring the shared gate is
+  // what makes the concurrency limit, per-source serialization (#645) and the
+  // start delay/jitter (#621) apply no matter how the download was started.
+  final sourceKey = _chapterSourceKey(chapter);
+  final maxConcurrent = ref.read(allowConcurrentDownloadsStateProvider)
+      ? ref.read(concurrentDownloadsStateProvider)
+      : 1;
+  final delaySeconds = ref.read(downloadDelaySecondsStateProvider);
+  await _DownloadGate.instance.acquire(
+    sourceKey: sourceKey,
+    maxConcurrent: maxConcurrent,
+    delaySeconds: delaySeconds,
+  );
 
   try {
     bool onlyOnWifi = useWifi ?? ref.read(onlyOnWifiStateProvider);
@@ -462,6 +495,8 @@ Future<void> downloadChapter(
     botToast("Download failed to start: $e");
     if (callback != null) callback();
     keepAlive.close();
+  } finally {
+    _DownloadGate.instance.release(sourceKey);
   }
 }
 
@@ -476,20 +511,80 @@ Duration _downloadStartDelay(int baseSeconds) {
   return Duration(milliseconds: base + jitter);
 }
 
-/// Key identifying the source a download belongs to, used to serialize
-/// downloads from the same source. Falls back to a per-download unique key when
+/// Key identifying the source a chapter belongs to, used to serialize
+/// downloads from the same source. Falls back to a per-chapter unique key when
 /// the source can't be resolved, so an unknown source never over-serializes.
-String _downloadSourceKey(Download d) {
-  final chapter = d.chapter.value;
-  if (chapter == null) return 'download-${d.id}';
+String _chapterSourceKey(Chapter chapter) {
   if (!chapter.manga.isLoaded) {
     try {
       chapter.manga.loadSync();
     } catch (_) {}
   }
   final m = chapter.manga.value;
-  if (m?.source == null) return 'download-${d.id}';
+  if (m?.source == null) return 'chapter-${chapter.id}';
   return '${m!.source}|${m.lang}|${m.sourceId}';
+}
+
+/// A download waiting for a slot in [_DownloadGate].
+class _GateWaiter {
+  _GateWaiter(this.sourceKey, this.completer);
+  final String sourceKey;
+  final Completer<void> completer;
+}
+
+/// App-wide gate every download passes through before doing network work.
+/// It bounds how many downloads run at once, keeps a single source strictly
+/// serial (#645), and spaces launches apart with a jittered delay (#621) —
+/// all independent of how the download was triggered (per-chapter icon,
+/// "download all", or the queue processor).
+class _DownloadGate {
+  _DownloadGate._();
+  static final _DownloadGate instance = _DownloadGate._();
+
+  int _active = 0;
+  int _maxConcurrent = 1;
+  int _delaySeconds = 0;
+  final Set<String> _activeSources = <String>{};
+  final List<_GateWaiter> _waiters = <_GateWaiter>[];
+
+  Future<void> acquire({
+    required String sourceKey,
+    required int maxConcurrent,
+    required int delaySeconds,
+  }) {
+    _maxConcurrent = maxConcurrent < 1 ? 1 : maxConcurrent;
+    _delaySeconds = delaySeconds;
+    final completer = Completer<void>();
+    _waiters.add(_GateWaiter(sourceKey, completer));
+    _dispatch();
+    return completer.future;
+  }
+
+  void release(String sourceKey) {
+    if (_active > 0) _active--;
+    _activeSources.remove(sourceKey);
+    _dispatch();
+  }
+
+  void _dispatch() {
+    var i = 0;
+    while (i < _waiters.length && _active < _maxConcurrent) {
+      final waiter = _waiters[i];
+      // Source already downloading — leave this one queued, try the next.
+      if (_activeSources.contains(waiter.sourceKey)) {
+        i++;
+        continue;
+      }
+      _waiters.removeAt(i);
+      _active++;
+      _activeSources.add(waiter.sourceKey);
+      // Reserve the slot now but only release the waiter after the start delay,
+      // so launches stay spaced out instead of bursting.
+      Future.delayed(_downloadStartDelay(_delaySeconds), () {
+        if (!waiter.completer.isCompleted) waiter.completer.complete();
+      });
+    }
+  }
 }
 
 @riverpod
@@ -502,54 +597,23 @@ Future<void> processDownloads(Ref ref, {bool? useWifi}) async {
         .isDownloadEqualTo(false)
         .isStartDownloadEqualTo(true)
         .findAll();
-    // When concurrent downloads are disabled, run them one at a time.
-    final allowConcurrent = ref.read(allowConcurrentDownloadsStateProvider);
-    final maxConcurrentDownloads = allowConcurrent
-        ? ref.read(concurrentDownloadsStateProvider)
-        : 1;
-    final delaySeconds = ref.read(downloadDelaySecondsStateProvider);
-    // Serialize downloads from the same source: at most one per source runs at
-    // a time even when concurrency is on, so a single plugin/source is never hit
-    // by parallel requests. Different sources still download in parallel. #645.
-    final pending = List.of(ongoingDownloads);
-    final total = ongoingDownloads.length;
-    final activeSources = <String>{};
-    int done = 0;
-    int current = 0;
-    await Future.doWhile(() async {
-      await Future.delayed(const Duration(seconds: 1));
-      if (done >= total) {
-        return false;
+    // Kick off every pending download. The shared _DownloadGate enforces the
+    // concurrency limit, per-source serialization (#645) and the start delay
+    // (#621), so they can all be fired at once and will queue themselves
+    // instead of being paced here (which used to block on the main isolate).
+    for (final downloadItem in ongoingDownloads) {
+      if (!downloadItem.chapter.isLoaded) {
+        try {
+          downloadItem.chapter.loadSync();
+        } catch (_) {}
       }
-      while (current < maxConcurrentDownloads && pending.isNotEmpty) {
-        // Next pending download whose source isn't already downloading.
-        final idx = pending.indexWhere(
-          (d) => !activeSources.contains(_downloadSourceKey(d)),
-        );
-        if (idx < 0) break; // every remaining download shares a busy source
-        final downloadItem = pending.removeAt(idx);
-        final key = _downloadSourceKey(downloadItem);
-        activeSources.add(key);
-        current++;
-        final chapter = downloadItem.chapter.value!;
-        chapter.cancelDownloads(downloadItem.id);
-        await Future.delayed(_downloadStartDelay(delaySeconds));
-        ref.read(
-          downloadChapterProvider(
-            chapter: chapter,
-            useWifi: useWifi,
-            callback: () {
-              done++;
-              current--;
-              activeSources.remove(key);
-            },
-          ),
-        );
-      }
-      return true;
-    });
-    keepAlive.close();
+      final chapter = downloadItem.chapter.value;
+      if (chapter == null) continue;
+      chapter.cancelDownloads(downloadItem.id);
+      ref.read(downloadChapterProvider(chapter: chapter, useWifi: useWifi));
+    }
   } catch (_) {
+  } finally {
     keepAlive.close();
   }
 }

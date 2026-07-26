@@ -510,6 +510,13 @@ Future<void> _downloadFile(
         }
         int total = response.contentLength ?? 0;
         int received = 0;
+        // Throttle progress. Emitting on every chunk floods the main isolate
+        // with synchronous DB writes (setProgress) and freezes the whole UI
+        // while a download runs — worst with large single files (anime .mp4).
+        // Send at most once per 1% step (known length) or every 250ms
+        // (unknown length); the final 100% is delivered by onComplete.
+        int lastPercent = -1;
+        final progressWatch = Stopwatch()..start();
 
         final file = File(pageUrl.fileName!);
         final sink = file.openWrite();
@@ -525,16 +532,24 @@ Future<void> _downloadFile(
           )) {
             sink.add(value);
             received += value.length;
-            try {
-              replyPort.send(
-                DownloadProgress(
-                  (received / total * 100).toInt(),
-                  100,
-                  pageUrl: pageUrl,
-                  itemType,
-                ),
-              );
-            } catch (_) {}
+            final percent = total > 0 ? (received / total * 100).toInt() : -1;
+            final shouldSend = percent >= 0
+                ? percent != lastPercent
+                : progressWatch.elapsedMilliseconds >= 250;
+            if (shouldSend) {
+              lastPercent = percent;
+              if (percent < 0) progressWatch.reset();
+              try {
+                replyPort.send(
+                  DownloadProgress(
+                    percent < 0 ? 0 : percent,
+                    100,
+                    pageUrl: pageUrl,
+                    itemType,
+                  ),
+                );
+              } catch (_) {}
+            }
           }
         } finally {
           await sink.flush();
