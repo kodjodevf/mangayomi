@@ -2454,4 +2454,20 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get error_no_pages_available => 'त्रुटि: कोई पन्ने उपलब्ध नहीं हैं';
+
+  @override
+  String get save_search => 'Save search';
+
+  @override
+  String get saved_searches => 'Saved searches';
+
+  @override
+  String get enter_search_to_save_first => 'Enter a search to save first';
+
+  @override
+  String get no_saved_searches =>
+      'No saved searches for this source yet.\nRun a search, then pick \"Save search\".';
+
+  @override
+  String get source => 'Source';
 }

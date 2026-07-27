@@ -70,6 +70,9 @@ class Settings {
   /// The last library update's failures, kept so they can be reviewed later.
   List<UpdateError>? updateErrorsList;
 
+  /// User's saved searches (per source; each entry carries its sourceId).
+  List<SavedSearch>? savedSearchesList;
+
   @enumerated
   late ReaderMode defaultReaderMode;
 
@@ -361,6 +364,9 @@ class Settings {
 
   bool? showNSFW;
 
+  /// Show a small source badge on library covers. Off by default.
+  bool? showSourceBadge;
+
   double? ttsSpeechRate;
 
   double? ttsPitch;
@@ -424,6 +430,7 @@ class Settings {
     this.userAgent = defaultUserAgent,
     this.cookiesList,
     this.updateErrorsList,
+    this.savedSearchesList,
     this.defaultReaderMode = ReaderMode.vertical,
     this.personalReaderModeList,
     this.animatePageTransitions = true,
@@ -560,6 +567,7 @@ class Settings {
     this.readerNavigationLayout = 0,
     this.backupCompressionLevel,
     this.showNSFW = false,
+    this.showSourceBadge = false,
     this.ttsSpeechRate = 0.5,
     this.ttsPitch = 1.0,
     this.ttsLanguage,
@@ -641,6 +649,11 @@ class Settings {
     if (json['updateErrorsList'] != null) {
       updateErrorsList = (json['updateErrorsList'] as List)
           .map((e) => UpdateError.fromJson(e))
+          .toList();
+    }
+    if (json['savedSearchesList'] != null) {
+      savedSearchesList = (json['savedSearchesList'] as List)
+          .map((e) => SavedSearch.fromJson(e))
           .toList();
     }
     cropBorders = json['cropBorders'];
@@ -873,6 +886,7 @@ class Settings {
     readerNavigationLayout = json['readerNavigationLayout'];
     backupCompressionLevel = json['backupCompressionLevel'];
     showNSFW = json['showNSFW'];
+    showSourceBadge = json['showSourceBadge'];
     ttsSpeechRate = json['ttsSpeechRate']?.toDouble();
     ttsPitch = json['ttsPitch']?.toDouble();
     ttsLanguage = json['ttsLanguage'];
@@ -932,6 +946,7 @@ class Settings {
     'checkForExtensionUpdates': checkForExtensionUpdates,
     'cookiesList': cookiesList,
     'updateErrorsList': updateErrorsList,
+    'savedSearchesList': savedSearchesList,
     'cropBorders': cropBorders,
     'dateFormat': dateFormat,
     'defaultReaderMode': defaultReaderMode.index,
@@ -1088,6 +1103,7 @@ class Settings {
     'readerNavigationLayout': readerNavigationLayout,
     'backupCompressionLevel': backupCompressionLevel,
     'showNSFW': showNSFW,
+    'showSourceBadge': showSourceBadge,
     'ttsSpeechRate': ttsSpeechRate,
     'ttsPitch': ttsPitch,
     'ttsLanguage': ttsLanguage,
@@ -1160,6 +1176,23 @@ class UpdateError {
     'mangaId': mangaId,
     'name': name,
     'error': error,
+  };
+}
+
+@embedded
+class SavedSearch {
+  int? sourceId;
+  String name;
+  String query;
+  SavedSearch({this.sourceId, this.name = '', this.query = ''});
+  SavedSearch.fromJson(Map<String, dynamic> json)
+    : sourceId = json['sourceId'],
+      name = json['name'] ?? '',
+      query = json['query'] ?? '';
+  Map<String, dynamic> toJson() => {
+    'sourceId': sourceId,
+    'name': name,
+    'query': query,
   };
 }
 
