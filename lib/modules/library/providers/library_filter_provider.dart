@@ -1,4 +1,5 @@
 import 'package:isar_community/isar.dart';
+import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -124,13 +125,8 @@ List<Manga> filteredLibraryManga(
       final unreadCounts = <int, int>{};
       for (final manga in mangas) {
         if (manga.id != null) {
-          int count = 0;
-          for (final chap in manga.chapters) {
-            if (!chap.isRead!) {
-              count++;
-            }
-          }
-          unreadCounts[manga.id!] = count;
+          // Scanlator-aware unread count (respects the per-manga filter).
+          unreadCounts[manga.id!] = manga.unreadChaptersCount;
         }
       }
       mangas.sort((a, b) {

@@ -903,5 +903,10 @@
   "reader_hide_threshold_lowest": "Lowest (47 px)",
   "error_no_pages_available": "Error: no pages available",
   "app_ui_scale": "Interface scale",
-  "app_ui_scale_subtitle": "Make the interface larger or smaller to suit your screen and viewing distance."
+  "app_ui_scale_subtitle": "Make the interface larger or smaller to suit your screen and viewing distance.",
+  "save_search": "Save search",
+  "saved_searches": "Saved searches",
+  "enter_search_to_save_first": "Enter a search to save first",
+  "no_saved_searches": "No saved searches for this source yet.\nRun a search, then pick \"Save search\".",
+  "source": "Source"
 }
