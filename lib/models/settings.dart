@@ -96,9 +96,6 @@ class Settings {
 
   String? downloadLocation;
 
-  /// User's manual download-queue order (Download ids, highest priority first).
-  List<int>? downloadQueueOrder;
-
   List<FilterScanlator>? filterScanlatorList;
 
   final sources = IsarLinks<Source>();
@@ -469,7 +466,6 @@ class Settings {
     this.personalPageModeList,
     this.backupFrequency,
     this.backupListOptions,
-    this.downloadQueueOrder,
     this.autoBackupLocation,
     this.startDatebackup,
     this.usePageTapZones = true,
@@ -739,7 +735,6 @@ class Settings {
     userAgent = json['userAgent'];
     backupFrequency = json['backupFrequency'];
     backupListOptions = json['backupListOptions']?.cast<int>();
-    downloadQueueOrder = json['downloadQueueOrder']?.cast<int>();
     autoBackupLocation = json['autoBackupLocation'];
     startDatebackup = json['startDatebackup'];
     usePageTapZones = json['usePageTapZones'];
@@ -1004,7 +999,6 @@ class Settings {
     'userAgent': userAgent,
     'backupFrequency': backupFrequency,
     'backupListOptions': backupListOptions,
-    'downloadQueueOrder': downloadQueueOrder,
     'autoBackupLocation': autoBackupLocation,
     'startDatebackup': startDatebackup,
     'usePageTapZones': usePageTapZones,

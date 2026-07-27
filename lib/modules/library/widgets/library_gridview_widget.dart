@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mangayomi/utils/extensions/manga_extensions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/models/manga.dart';
