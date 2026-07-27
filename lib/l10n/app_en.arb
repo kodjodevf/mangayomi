@@ -905,5 +905,10 @@
   "allow_concurrent_downloads": "Allow concurrent downloads",
   "allow_concurrent_downloads_subtitle": "Download from different sources at the same time. A single source still downloads one chapter at a time so it isn't overloaded. Turn off to download one at a time everywhere.",
   "download_delay": "Download delay",
-  "download_delay_subtitle": "Off. Add a wait with random jitter between chapters to be gentler on sources."
+  "download_delay_subtitle": "Off. Add a wait with random jitter between chapters to be gentler on sources.",
+  "save_search": "Save search",
+  "saved_searches": "Saved searches",
+  "enter_search_to_save_first": "Enter a search to save first",
+  "no_saved_searches": "No saved searches for this source yet.\nRun a search, then pick \"Save search\".",
+  "source": "Source"
 }

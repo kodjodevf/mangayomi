@@ -193,7 +193,7 @@ final class FilteredLibraryMangaProvider
 }
 
 String _$filteredLibraryMangaHash() =>
-    r'cab1c697a2f660e8afad32ad2ad53aadcc5435e5';
+    r'3a78278a4cd23f79d93c98db3e1c97164194b786';
 
 /// Filters and sorts a list of [Manga] based on library filter/sort settings.
 
