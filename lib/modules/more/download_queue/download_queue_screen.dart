@@ -61,7 +61,6 @@ class DownloadQueueScreen extends ConsumerWidget {
           .idIsNotNull()
           .isDownloadEqualTo(false)
           .isStartDownloadEqualTo(true)
-          .sortBySucceededDesc()
           .watch(fireImmediately: true),
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data!.isNotEmpty) {
@@ -100,6 +99,14 @@ class DownloadQueueScreen extends ConsumerWidget {
               body: Center(child: Text(l10n.no_downloads)),
             );
           }
+          entries.sort((left, right) {
+            final sourceOrder =
+                (right.chapter.value?.manga.value?.source ?? "").compareTo(
+                  left.chapter.value?.manga.value?.source ?? "",
+                );
+            if (sourceOrder != 0) return sourceOrder;
+            return (left.id ?? 0).compareTo(right.id ?? 0);
+          });
           final allQueueLength = entries.length;
           return Scaffold(
             appBar: AppBar(
@@ -251,11 +258,7 @@ class DownloadQueueScreen extends ConsumerWidget {
                   ),
                 );
               },
-              itemComparator: (item1, item2) =>
-                  (item1.chapter.value?.manga.value?.source ?? "").compareTo(
-                    item2.chapter.value?.manga.value?.source ?? "",
-                  ),
-              order: GroupedListOrder.DESC,
+              sort: false,
             ),
             floatingActionButton: CustomFloatingActionBtn(
               isExtended: false,
