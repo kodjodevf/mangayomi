@@ -21,6 +21,7 @@ import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_st
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/router/router.dart';
+import 'package:mangayomi/services/download_manager/download_queue_order.dart';
 import 'package:mangayomi/services/download_manager/m_downloader.dart';
 import 'package:mangayomi/services/get_video_list.dart';
 import 'package:mangayomi/services/get_chapter_pages.dart';
@@ -91,6 +92,7 @@ Future<void> downloadChapter(
       : 1;
   final delaySeconds = ref.read(downloadDelaySecondsStateProvider);
   await _DownloadGate.instance.acquire(
+    id: chapter.id!,
     sourceKey: sourceKey,
     maxConcurrent: maxConcurrent,
     delaySeconds: delaySeconds,
@@ -565,18 +567,21 @@ String _chapterSourceKey(Chapter chapter) {
   return '${m!.source}|${m.lang}|${m.sourceId}';
 }
 
-/// A download waiting for a slot in [_DownloadGate].
+/// A download waiting for a slot in [_DownloadGate]. [id] is the download's id
+/// (== chapter id), used to honor the manual queue order.
 class _GateWaiter {
-  _GateWaiter(this.sourceKey, this.completer);
+  _GateWaiter(this.id, this.sourceKey, this.completer);
+  final int id;
   final String sourceKey;
   final Completer<void> completer;
 }
 
 /// App-wide gate every download passes through before doing network work.
 /// It bounds how many downloads run at once, keeps a single source strictly
-/// serial (#645), and spaces launches apart with a jittered delay (#621) —
-/// all independent of how the download was triggered (per-chapter icon,
-/// "download all", or the queue processor).
+/// serial (#645), spaces launches apart with a jittered delay (#621), and hands
+/// out slots in the user's manual queue order (#514) — all independent of how
+/// the download was triggered (per-chapter icon, "download all", or the queue
+/// processor).
 class _DownloadGate {
   _DownloadGate._();
   static final _DownloadGate instance = _DownloadGate._();
@@ -588,6 +593,7 @@ class _DownloadGate {
   final List<_GateWaiter> _waiters = <_GateWaiter>[];
 
   Future<void> acquire({
+    required int id,
     required String sourceKey,
     required int maxConcurrent,
     required int delaySeconds,
@@ -595,7 +601,7 @@ class _DownloadGate {
     _maxConcurrent = maxConcurrent < 1 ? 1 : maxConcurrent;
     _delaySeconds = delaySeconds;
     final completer = Completer<void>();
-    _waiters.add(_GateWaiter(sourceKey, completer));
+    _waiters.add(_GateWaiter(id, sourceKey, completer));
     _dispatch();
     return completer.future;
   }
@@ -606,7 +612,34 @@ class _DownloadGate {
     _dispatch();
   }
 
+  /// Reorder the waiting list by the user's saved manual order (#514), re-read
+  /// each dispatch so dragging a chapter up takes effect on what's still
+  /// waiting. Ids not in the saved order keep their current relative order,
+  /// after the ranked ones, so a plain queue behaves exactly as before.
+  void _reorderWaiters() {
+    final order = DownloadQueueOrder.order;
+    if (order.isEmpty || _waiters.length < 2) return;
+    final rank = <int, int>{};
+    for (var j = 0; j < order.length; j++) {
+      rank[order[j]] = j;
+    }
+    final decorated = [
+      for (var j = 0; j < _waiters.length; j++) (pos: j, w: _waiters[j]),
+    ];
+    decorated.sort((a, b) {
+      final ra = rank[a.w.id] ?? (order.length + a.pos);
+      final rb = rank[b.w.id] ?? (order.length + b.pos);
+      return ra.compareTo(rb);
+    });
+    _waiters
+      ..clear()
+      ..addAll(decorated.map((e) => e.w));
+  }
+
   void _dispatch() {
+    // Only worth reordering when a slot is actually free to grant; skipping it
+    // when full keeps a big "download all" burst from doing O(n^2) sorting.
+    if (_active < _maxConcurrent) _reorderWaiters();
     var i = 0;
     while (i < _waiters.length && _active < _maxConcurrent) {
       final waiter = _waiters[i];
@@ -631,16 +664,22 @@ class _DownloadGate {
 Future<void> processDownloads(Ref ref, {bool? useWifi}) async {
   final keepAlive = ref.keepAlive();
   try {
-    final ongoingDownloads = await isar.downloads
-        .filter()
-        .idIsNotNull()
-        .isDownloadEqualTo(false)
-        .isStartDownloadEqualTo(true)
-        .findAll();
+    // Fire in the user's manual queue order (#514) so the initial slots go to
+    // the highest-priority chapters; the gate then keeps honoring live reorders
+    // as later slots free.
+    final ongoingDownloads = DownloadQueueOrder.sorted(
+      await isar.downloads
+          .filter()
+          .idIsNotNull()
+          .isDownloadEqualTo(false)
+          .isStartDownloadEqualTo(true)
+          .findAll(),
+    );
     // Kick off every pending download. The shared _DownloadGate enforces the
-    // concurrency limit, per-source serialization (#645) and the start delay
-    // (#621), so they can all be fired at once and will queue themselves
-    // instead of being paced here (which used to block on the main isolate).
+    // concurrency limit, per-source serialization (#645), the start delay
+    // (#621) and the manual order (#514), so they can all be fired at once and
+    // will queue themselves instead of being paced here (which used to block on
+    // the main isolate).
     for (final downloadItem in ongoingDownloads) {
       if (!downloadItem.chapter.isLoaded) {
         try {
