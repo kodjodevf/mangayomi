@@ -3,13 +3,14 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 
 /// AniList public GraphQL discovery client. No login required for browsing, so
-/// this is separate from the AniList *tracker* (which is OAuth'd). It powers the
-/// planned Feed tab (trending / seasonal / upcoming / popular), recommendations,
-/// and watch-order relations.
+/// this is separate from the AniList *tracker* (which is OAuth'd).
 ///
-/// Replaces the dead anibrain.ai recommendation backend (shut down 2026). Unlike
-/// the old scrapers, failures are NOT silently swallowed here: [_executeGraphQL]
-/// throws, so callers can surface a real error instead of a blank "No result".
+/// This slice powers recommendations, replacing the dead anibrain.ai backend
+/// (shut down 2026, its API now redirects to a farewell page). The feed tab
+/// (trending / seasonal / upcoming) and watch-order relations extend this client
+/// in a follow-up PR. Unlike the old scrapers, failures are NOT silently
+/// swallowed here: [_executeGraphQL] throws so callers can surface a real error
+/// instead of a blank "No result".
 ///
 /// Queries verified against https://graphql.anilist.co (2026-07).
 const String _anilistEndpoint = "https://graphql.anilist.co/";
@@ -55,15 +56,13 @@ Future<Map<String, dynamic>?> _executeGraphQL(
   return decoded["data"] as Map<String, dynamic>?;
 }
 
-/// One page of media, filtered/sorted by whatever the caller passes. Backs
-/// trending, popular, seasonal and title search. Novels are MANGA with
-/// format NOVEL on AniList, so item type maps to a type + a format filter.
+/// One page of media, filtered/sorted by what the caller passes. Novels are
+/// MANGA with format NOVEL on AniList, so item type maps to a type plus a format
+/// filter (null filters are ignored by AniList). The feed PR extends this with
+/// season/status filters.
 Future<List<DiscoveryMedia>> fetchDiscoveryPage({
   required ItemType itemType,
   List<String>? sort,
-  String? season,
-  int? seasonYear,
-  String? status,
   String? search,
   int page = 1,
   int perPage = 25,
@@ -73,22 +72,15 @@ Future<List<DiscoveryMedia>> fetchDiscoveryPage({
     "perPage": perPage,
     "type": _mediaTypeOf(itemType),
     "sort": sort,
-    "season": season,
-    "seasonYear": seasonYear,
-    "status": status,
     "search": search,
-    // Null filters are ignored by AniList, so this cleanly separates
-    // manga (exclude novels) from novels (only novels).
     "formatIn": itemType == ItemType.novel ? const ["NOVEL"] : null,
     "formatNotIn": itemType == ItemType.manga ? const ["NOVEL"] : null,
   };
   const query = '''
     query(\$page: Int, \$perPage: Int, \$type: MediaType, \$sort: [MediaSort],
-          \$season: MediaSeason, \$seasonYear: Int, \$status: MediaStatus,
           \$search: String, \$formatIn: [MediaFormat], \$formatNotIn: [MediaFormat]) {
       Page(page: \$page, perPage: \$perPage) {
-        media(type: \$type, sort: \$sort, season: \$season, seasonYear: \$seasonYear,
-              status: \$status, search: \$search,
+        media(type: \$type, sort: \$sort, search: \$search,
               format_in: \$formatIn, format_not_in: \$formatNotIn) {
 $_mediaFields
         }
@@ -102,38 +94,8 @@ $_mediaFields
       const [];
 }
 
-Future<List<DiscoveryMedia>> fetchTrending(ItemType itemType, {int page = 1}) =>
-    fetchDiscoveryPage(itemType: itemType, sort: const ["TRENDING_DESC"], page: page);
-
-Future<List<DiscoveryMedia>> fetchPopular(ItemType itemType, {int page = 1}) =>
-    fetchDiscoveryPage(itemType: itemType, sort: const ["POPULARITY_DESC"], page: page);
-
-/// Popular titles airing/publishing this season (mainly meaningful for anime).
-Future<List<DiscoveryMedia>> fetchThisSeason(ItemType itemType, {int page = 1}) {
-  final now = DateTime.now();
-  return fetchDiscoveryPage(
-    itemType: itemType,
-    season: currentSeason(now),
-    seasonYear: now.year,
-    sort: const ["POPULARITY_DESC"],
-    page: page,
-  );
-}
-
-/// Anticipated titles for next season (not yet released).
-Future<List<DiscoveryMedia>> fetchUpcoming(ItemType itemType, {int page = 1}) {
-  final (season, year) = nextSeason(DateTime.now());
-  return fetchDiscoveryPage(
-    itemType: itemType,
-    season: season,
-    seasonYear: year,
-    sort: const ["POPULARITY_DESC"],
-    page: page,
-  );
-}
-
-/// Best-effort resolve a title to its AniList media id (for repointing the
-/// existing recommendation screen, which only knows a manga/anime name).
+/// Best-effort resolve a title to its AniList media id. The recommendation
+/// screen only knows a manga/anime name, so this maps it to an id.
 Future<int?> searchMediaId(ItemType itemType, String title) async {
   final results = await fetchDiscoveryPage(
     itemType: itemType,
@@ -167,45 +129,6 @@ $_mediaFields
           .map((m) => DiscoveryMedia.fromJson(m))
           .toList() ??
       const [];
-}
-
-/// Related entries (prequels/sequels/side stories/adaptations). Raw graph for
-/// building a watch order; the linear ordering is derived by the caller.
-Future<List<DiscoveryRelation>> fetchRelations(int mediaId) async {
-  const query = '''
-    query(\$id: Int) {
-      Media(id: \$id) {
-        relations { edges { relationType node {
-$_mediaFields
-        } } }
-      }
-    }''';
-  final data = await _executeGraphQL(query, {"id": mediaId});
-  final edges = data?["Media"]?["relations"]?["edges"] as List?;
-  return edges
-          ?.map((e) => DiscoveryRelation.fromEdge(e as Map<String, dynamic>))
-          .toList() ??
-      const [];
-}
-
-/// AniList season for a given date (WINTER=Dec-Feb, SPRING=Mar-May,
-/// SUMMER=Jun-Aug, FALL=Sep-Nov).
-String currentSeason([DateTime? now]) {
-  final month = (now ?? DateTime.now()).month;
-  if (month == 12 || month <= 2) return "WINTER";
-  if (month <= 5) return "SPRING";
-  if (month <= 8) return "SUMMER";
-  return "FALL";
-}
-
-/// The season/year immediately after [now] (wraps FALL -> WINTER of next year).
-(String, int) nextSeason([DateTime? now]) {
-  now ??= DateTime.now();
-  const order = ["WINTER", "SPRING", "SUMMER", "FALL"];
-  final current = currentSeason(now);
-  final next = order[(order.indexOf(current) + 1) % 4];
-  final year = current == "FALL" ? now.year + 1 : now.year;
-  return (next, year);
 }
 
 class DiscoveryMedia {
@@ -250,20 +173,21 @@ class DiscoveryMedia {
   /// Preferred display title: English, then Romaji, then Native.
   String get title => english ?? romaji ?? native ?? "Unknown";
 
-  /// Search term to bridge to installed sources (the reader extensions match by
-  /// title, so Romaji is usually the safest key, with English as a fallback).
+  /// Search term to bridge to installed sources (extensions match by title, so
+  /// Romaji is usually the safest key, with English as a fallback).
   String get searchTitle => romaji ?? english ?? native ?? "";
 
   factory DiscoveryMedia.fromJson(Map<String, dynamic> json) {
     final t = json["title"] as Map<String, dynamic>?;
+    final cover = json["coverImage"] as Map<String, dynamic>?;
     return DiscoveryMedia(
       id: json["id"] as int,
       idMal: json["idMal"] as int?,
       romaji: t?["romaji"] as String?,
       english: t?["english"] as String?,
       native: t?["native"] as String?,
-      coverImage: (json["coverImage"] as Map<String, dynamic>?)?["large"] as String?,
-      coverColor: (json["coverImage"] as Map<String, dynamic>?)?["color"] as String?,
+      coverImage: cover?["large"] as String?,
+      coverColor: cover?["color"] as String?,
       bannerImage: json["bannerImage"] as String?,
       description: json["description"] as String?,
       format: json["format"] as String?,
@@ -276,18 +200,4 @@ class DiscoveryMedia {
       seasonYear: json["seasonYear"] as int?,
     );
   }
-}
-
-class DiscoveryRelation {
-  /// PREQUEL, SEQUEL, SIDE_STORY, ADAPTATION, PARENT, ALTERNATIVE, etc.
-  final String relationType;
-  final DiscoveryMedia media;
-
-  DiscoveryRelation({required this.relationType, required this.media});
-
-  factory DiscoveryRelation.fromEdge(Map<String, dynamic> edge) =>
-      DiscoveryRelation(
-        relationType: edge["relationType"] as String? ?? "",
-        media: DiscoveryMedia.fromJson(edge["node"] as Map<String, dynamic>),
-      );
 }
