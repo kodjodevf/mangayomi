@@ -131,6 +131,26 @@ $_mediaFields
       const [];
 }
 
+/// Related entries (prequels/sequels/side stories/adaptations) for building a
+/// watch order. AniList returns the raw relation graph; the caller derives the
+/// order it wants.
+Future<List<DiscoveryRelation>> fetchRelations(int mediaId) async {
+  const query = '''
+    query(\$id: Int) {
+      Media(id: \$id) {
+        relations { edges { relationType node {
+$_mediaFields
+        } } }
+      }
+    }''';
+  final data = await _executeGraphQL(query, {"id": mediaId});
+  final edges = data?["Media"]?["relations"]?["edges"] as List?;
+  return edges
+          ?.map((e) => DiscoveryRelation.fromEdge(e as Map<String, dynamic>))
+          .toList() ??
+      const [];
+}
+
 class DiscoveryMedia {
   final int id;
   final int? idMal;
@@ -200,4 +220,18 @@ class DiscoveryMedia {
       seasonYear: json["seasonYear"] as int?,
     );
   }
+}
+
+class DiscoveryRelation {
+  /// PREQUEL, SEQUEL, SIDE_STORY, PARENT, SPIN_OFF, ALTERNATIVE, ADAPTATION, etc.
+  final String relationType;
+  final DiscoveryMedia media;
+
+  DiscoveryRelation({required this.relationType, required this.media});
+
+  factory DiscoveryRelation.fromEdge(Map<String, dynamic> edge) =>
+      DiscoveryRelation(
+        relationType: edge["relationType"] as String? ?? "",
+        media: DiscoveryMedia.fromJson(edge["node"] as Map<String, dynamic>),
+      );
 }
