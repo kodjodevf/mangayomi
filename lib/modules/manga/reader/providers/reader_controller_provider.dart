@@ -183,9 +183,13 @@ class ReaderController extends _$ReaderController
   }
 
   int? _lastSavedIndex;
-  void setPageIndex(int newIndex, bool save) {
+  void setPageIndex(
+    int newIndex,
+    bool save, [
+    List pageUrlsFallback = const [],
+  ]) {
     if (chapter.isRead! || incognitoMode) return;
-    final pageLength = getPageLength([]);
+    final pageLength = getPageLength(pageUrlsFallback);
     if (pageLength == 0 || (!save && newIndex == _lastSavedIndex)) return;
     _lastSavedIndex = newIndex;
     final isContinuousLike = getReaderMode().isVerticalContinuous;
