@@ -164,6 +164,18 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
               ],
             ),
       actions: [
+        // Stop a running library update. Only shown while one is in progress.
+        if (ref.watch(libraryUpdateProvider).running)
+          IconButton(
+            splashRadius: 20,
+            tooltip: l10n.cancel,
+            focusColor: Theme.of(
+              context,
+            ).colorScheme.primary.withValues(alpha: 0.4),
+            onPressed: () =>
+                ref.read(libraryUpdateProvider.notifier).requestCancel(),
+            icon: const Icon(Icons.stop_circle_outlined),
+          ),
         isSearch
             ? SeachFormTextField(
                 onChanged: (_) => onSearchClear(),
