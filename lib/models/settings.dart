@@ -94,6 +94,9 @@ class Settings {
   bool? deleteDownloadAfterReading;
 
   int? concurrentDownloads;
+  bool? allowConcurrentDownloads;
+  int? downloadDelaySeconds;
+  List<int>? downloadQueueOrder;
 
   String? downloadLocation;
 
@@ -443,6 +446,9 @@ class Settings {
     this.saveAsCBZArchive = false,
     this.deleteDownloadAfterReading = false,
     this.concurrentDownloads = 2,
+    this.allowConcurrentDownloads = true,
+    this.downloadDelaySeconds = 0,
+    this.downloadQueueOrder,
     this.downloadLocation = "",
     this.cropBorders = false,
     this.libraryLocalSource,
@@ -667,6 +673,9 @@ class Settings {
     downloadLocation = json['downloadLocation'];
     downloadOnlyOnWifi = json['downloadOnlyOnWifi'];
     concurrentDownloads = json['concurrentDownloads'];
+    allowConcurrentDownloads = json['allowConcurrentDownloads'] ?? true;
+    downloadDelaySeconds = json['downloadDelaySeconds'] ?? 0;
+    downloadQueueOrder = json['downloadQueueOrder']?.cast<int>();
     filterScanlatorList = (json['filterScanlatorList'] as List?)
         ?.map((e) => FilterScanlator.fromJson(e))
         .toList();
@@ -958,6 +967,9 @@ class Settings {
     'downloadLocation': downloadLocation,
     'downloadOnlyOnWifi': downloadOnlyOnWifi,
     'concurrentDownloads': concurrentDownloads,
+    'allowConcurrentDownloads': allowConcurrentDownloads,
+    'downloadDelaySeconds': downloadDelaySeconds,
+    'downloadQueueOrder': downloadQueueOrder,
     'filterScanlatorList': filterScanlatorList,
     'flexColorSchemeBlendLevel': flexColorSchemeBlendLevel,
     'appUiScale': appUiScale,

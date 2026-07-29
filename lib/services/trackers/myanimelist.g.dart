@@ -58,7 +58,7 @@ final class MyAnimeListProvider extends $NotifierProvider<MyAnimeList, void> {
   }
 }
 
-String _$myAnimeListHash() => r'2aeddba481f6f97fac7ce2037f6c38f84acf755d';
+String _$myAnimeListHash() => r'f84c26b581bf39b24e50f65a0d36d7ab38922a95';
 
 final class MyAnimeListFamily extends $Family
     with
