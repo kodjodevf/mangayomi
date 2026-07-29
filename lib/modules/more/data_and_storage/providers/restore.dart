@@ -425,6 +425,9 @@ void restoreTachiBkBackup(Ref ref, String path, BackupType bkType) {
               : "1",
           scanlator: tempChapter.scanlator,
           url: tempChapter.url,
+          sourceOrder: tempChapter.hasSourceOrder()
+              ? _protoInt(tempChapter.sourceOrder)
+              : null,
         );
         isar.chapters.putSync(chapter..manga.value = manga);
         chapter.manga.saveSync();
@@ -513,6 +516,9 @@ void restoreTachiBkBackup(Ref ref, String path, BackupType bkType) {
                 : "1",
             scanlator: tempEpisode.scanlator,
             url: tempEpisode.url,
+            sourceOrder: tempEpisode.hasSourceOrder()
+                ? _protoInt(tempEpisode.sourceOrder)
+                : null,
           );
           isar.chapters.putSync(episode..manga.value = anime);
           episode.manga.saveSync();

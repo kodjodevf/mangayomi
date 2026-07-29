@@ -1,5 +1,6 @@
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
+import 'package:mangayomi/utils/chapter_source_order.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/update.dart';
@@ -75,12 +76,15 @@ Future<dynamic> updateMangaDetail(
       ..updatedAt = now;
 
     final chaps = getManga.chapters;
+    final indexedChapters = chaps == null
+        ? const <IndexedSourceChapter>[]
+        : ChapterSourceOrder.indexSourceChapters(chaps);
 
     await isar.writeTxn(() async {
       // Persist updated manga metadata.
       final savedMangaId = await isar.mangas.put(manga);
 
-      if (chaps == null || chaps.isEmpty) return;
+      if (indexedChapters.isEmpty) return;
 
       // loadSync() was called before the transaction; the set is still valid
       // here because we haven't written to chapters yet.
@@ -106,9 +110,9 @@ Future<dynamic> updateMangaDetail(
 
       final newChapters = <Chapter>[];
 
-      for (final chap in chaps) {
-        final url = chap.url?.trim();
-        if (url == null || url.isEmpty) continue;
+      for (final indexedChapter in indexedChapters) {
+        final chap = indexedChapter.chapter;
+        final url = chap.url!;
         final existing = existingByUrl[url];
 
         if (existing == null) {
@@ -131,6 +135,7 @@ Future<dynamic> updateMangaDetail(
             isFiller: chap.isFiller,
             thumbnailUrl: chap.thumbnailUrl,
             description: chap.description,
+            sourceOrder: indexedChapter.sourceOrder,
             downloadSize: chap.downloadSize,
             duration: chap.duration,
           )..manga.value = manga;
@@ -151,6 +156,7 @@ Future<dynamic> updateMangaDetail(
             ..isFiller = chap.isFiller
             ..thumbnailUrl = chap.thumbnailUrl
             ..description = chap.description
+            ..sourceOrder = indexedChapter.sourceOrder
             ..downloadSize = chap.downloadSize
             ..duration = chap.duration;
           await isar.chapters.put(existing);
