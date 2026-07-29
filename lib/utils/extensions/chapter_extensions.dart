@@ -116,6 +116,7 @@ extension ChapterExtension on Chapter {
           .findFirstSync();
       if (!(service == null || chapterNumber <= (track.lastChapterRead ?? 0))) {
         if (track.status != TrackStatus.completed) {
+          final isFirstRead = (track.lastChapterRead ?? 0) == 0;
           track.lastChapterRead = chapterNumber;
           if (track.lastChapterRead == track.totalChapter &&
               (track.totalChapter ?? 0) > 0) {
@@ -125,7 +126,7 @@ extension ChapterExtension on Chapter {
             track.status = manga.itemType == ItemType.manga
                 ? TrackStatus.reading
                 : TrackStatus.watching;
-            if (track.lastChapterRead == 1) {
+            if (isFirstRead) {
               track.startedReadingDate = DateTime.now().millisecondsSinceEpoch;
             }
           }

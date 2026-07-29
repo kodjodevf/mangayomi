@@ -423,13 +423,14 @@ class MyAnimeList extends _$MyAnimeList implements BaseTracker {
           (track.status ==
                   (isManga ? TrackStatus.reReading : TrackStatus.reWatching))
               .toString(),
-      'score': track.score.toString(),
+      if (track.score != null && track.score! > 0)
+        'score': track.score.toString(),
       isManga ? 'num_chapters_read' : 'num_watched_episodes': track
           .lastChapterRead
           .toString(),
-      if (track.startedReadingDate != null)
+      if ((track.startedReadingDate ?? 0) > 0)
         'start_date': _convertToIsoDate(track.startedReadingDate),
-      if (track.finishedReadingDate != null)
+      if ((track.finishedReadingDate ?? 0) > 0)
         'finish_date': _convertToIsoDate(track.finishedReadingDate),
     };
     final request = Request(
@@ -442,7 +443,15 @@ class MyAnimeList extends _$MyAnimeList implements BaseTracker {
     request.bodyFields = formBody;
     request.headers.addAll({'Authorization': 'Bearer $accessToken'});
     final response = await Client().send(request);
-    final mJson = jsonDecode(await response.stream.bytesToString());
+    final bodyStr = await response.stream.bytesToString();
+    if (response.statusCode != 200) {
+      AppLogger.log(
+        "MAL update failed (${response.statusCode}): $bodyStr",
+        logLevel: LogLevel.error,
+      );
+      throw Exception("Failed to update MAL entry: ${response.statusCode}");
+    }
+    final mJson = jsonDecode(bodyStr);
     return _parseItem(mJson, track, isManga);
   }
 
