@@ -1,6 +1,6 @@
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/services/http/m_client.dart';
 
 /// AniList public GraphQL discovery client. No login required for browsing, so
 /// this is separate from the AniList *tracker* (which is OAuth'd).
@@ -40,29 +40,32 @@ Future<Map<String, dynamic>?> _executeGraphQL(
   String query,
   Map<String, dynamic> variables,
 ) async {
-  final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
-  final res = await http.post(
-    Uri.parse(_anilistEndpoint),
-    // AniList sits behind Cloudflare. Set the User-Agent and Cookie explicitly
-    // so the app's cookie/UA interceptor injects neither: Cloudflare bans some
-    // user-agents (403), and the stored anilist.co cookies from tracker login,
-    // sent without an Authorization bearer, make the public GraphQL endpoint
-    // return 500. A plain browser UA with no cookies is what works.
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json",
-      "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-          "(KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
-      "Cookie": "",
-    },
-    body: jsonEncode({"query": query, "variables": variables}),
-  );
-  final decoded = jsonDecode(res.body) as Map<String, dynamic>;
-  if (decoded["errors"] != null) {
-    throw Exception("AniList error: ${jsonEncode(decoded["errors"])}");
+  // Use a plain HTTP client, NOT the app's MClient. AniList discovery is public
+  // and behind Cloudflare; MClient's interceptor rewrites the request (injects
+  // the app's cookies/User-Agent, etc.) in a way that makes the public GraphQL
+  // endpoint return 500. A bare client sending only a browser User-Agent (which
+  // Cloudflare requires) mirrors the request that works from curl.
+  final client = http.Client();
+  try {
+    final res = await client.post(
+      Uri.parse(_anilistEndpoint),
+      headers: const {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+            "(KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+      },
+      body: jsonEncode({"query": query, "variables": variables}),
+    );
+    final decoded = jsonDecode(res.body) as Map<String, dynamic>;
+    if (decoded["errors"] != null) {
+      throw Exception("AniList error: ${jsonEncode(decoded["errors"])}");
+    }
+    return decoded["data"] as Map<String, dynamic>?;
+  } finally {
+    client.close();
   }
-  return decoded["data"] as Map<String, dynamic>?;
 }
 
 /// One page of media, filtered/sorted by what the caller passes. Novels are
