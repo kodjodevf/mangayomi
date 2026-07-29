@@ -85,10 +85,33 @@ Future<dynamic> updateMangaDetail(
       // loadSync() was called before the transaction; the set is still valid
       // here because we haven't written to chapters yet.
       final existingChapters = manga.chapters.toList();
-      final existingByUrl = <String, Chapter>{
-        for (final c in existingChapters)
-          if (c.url?.isNotEmpty == true) c.url!.trim(): c,
-      };
+      // Match by the domain-less URL (path + query), not the full URL. Sources
+      // (anime ones especially) migrate domains, so the stored URL keeps the old
+      // host while a fresh fetch returns the new one — matching on the full URL
+      // then misses and re-adds every chapter each update, which is how episodes
+      // ended up duplicated/tripled.
+      final existingByUrl = <String, Chapter>{};
+      // IDs of pre-existing duplicates (same domain-less URL) to remove, so the
+      // list stops showing copies created before this fix. The read/started copy
+      // is the one kept.
+      final duplicateIds = <int>[];
+      for (final c in existingChapters) {
+        final u = c.url?.trim();
+        if (u == null || u.isEmpty) continue;
+        final key = u.getUrlWithoutDomain;
+        final prior = existingByUrl[key];
+        if (prior == null) {
+          existingByUrl[key] = c;
+        } else {
+          // Keep the copy with reading state; drop the other.
+          final priorHasState =
+              (prior.isRead ?? false) || (prior.lastPageRead ?? '').isNotEmpty;
+          final keep = priorHasState ? prior : c;
+          final drop = identical(keep, prior) ? c : prior;
+          existingByUrl[key] = keep;
+          if (drop.id != null) duplicateIds.add(drop.id!);
+        }
+      }
 
       // Build a chapterNumber -> isRead map so that when a new scanlator covers
       // a chapter the user has already read, the new entry is pre-marked read.
@@ -105,11 +128,15 @@ Future<dynamic> updateMangaDetail(
       }
 
       final newChapters = <Chapter>[];
+      // Guards against a source repeating the same episode within one fetch.
+      final seenKeys = <String>{};
 
       for (final chap in chaps) {
         final url = chap.url?.trim();
         if (url == null || url.isEmpty) continue;
-        final existing = existingByUrl[url];
+        final key = url.getUrlWithoutDomain;
+        if (!seenKeys.add(key)) continue;
+        final existing = existingByUrl[key];
 
         if (existing == null) {
           // Determine whether this chapter number has already been read under
@@ -178,11 +205,22 @@ Future<dynamic> updateMangaDetail(
           }
         }
       }
+      // Remove pre-existing duplicate chapters (from before the domain-less
+      // match), keeping the read/started copy chosen above.
+      for (final id in duplicateIds) {
+        await isar.chapters.delete(id);
+      }
+
       // Calculate fetch interval:
       // median of gaps between recent distinct chapter dates, clamped [1, 28].
-      final allChapters = newChapters.isEmpty
+      final dedupedExisting = duplicateIds.isEmpty
           ? existingChapters
-          : [...existingChapters, ...newChapters];
+          : existingChapters
+                .where((c) => c.id == null || !duplicateIds.contains(c.id))
+                .toList();
+      final allChapters = newChapters.isEmpty
+          ? dedupedExisting
+          : [...dedupedExisting, ...newChapters];
       if (allChapters.isNotEmpty) {
         final interval = FetchInterval.calculateInterval(allChapters);
         manga
