@@ -4547,6 +4547,30 @@ abstract class AppLocalizations {
   /// **'Error: no pages available'**
   String get error_no_pages_available;
 
+  /// No description provided for @allow_concurrent_downloads.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow concurrent downloads'**
+  String get allow_concurrent_downloads;
+
+  /// No description provided for @allow_concurrent_downloads_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Download from different sources at the same time. A single source still downloads one chapter at a time so it isn\'t overloaded. Turn off to download one at a time everywhere.'**
+  String get allow_concurrent_downloads_subtitle;
+
+  /// No description provided for @download_delay.
+  ///
+  /// In en, this message translates to:
+  /// **'Download delay'**
+  String get download_delay;
+
+  /// No description provided for @download_delay_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Off. Add a wait with random jitter between chapters to be gentler on sources.'**
+  String get download_delay_subtitle;
+
   /// No description provided for @save_search.
   ///
   /// In en, this message translates to:
