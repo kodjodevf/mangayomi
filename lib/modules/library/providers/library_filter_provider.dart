@@ -42,6 +42,7 @@ List<Manga> filteredLibraryManga(
   required bool downloadedOnly,
   required String searchQuery,
   required bool ignoreFiltersOnSearch,
+  required List<String> sourceIds,
 }) {
   final downloadedIds =
       ref.watch(downloadedChapterIdsProvider).asData?.value ?? const <int>{};
@@ -106,6 +107,13 @@ List<Manga> filteredLibraryManga(
         }
       } else if (trackingFilterType == 2) {
         if (element.id != null && trackedIds.contains(element.id)) {
+          return false;
+        }
+      }
+
+      // Filter by source
+      if (sourceIds.isNotEmpty) {
+        if (element.source == null || !sourceIds.contains(element.source)) {
           return false;
         }
       }
