@@ -992,7 +992,7 @@ final class MangaFilterSourceStateProvider
 }
 
 String _$mangaFilterSourceStateHash() =>
-    r'8c6b8a4854b3976e49509ec6dadb33cddfd1dc8f';
+    r'18a2548ce96eac2f552594bf856d5e843f23fc31';
 
 final class MangaFilterSourceStateFamily extends $Family
     with

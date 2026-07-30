@@ -516,8 +516,9 @@ class MangaFilterSourceState extends _$MangaFilterSourceState {
     required ItemType itemType,
     required Settings settings,
   }) {
-    final persisted = _getFilterSources();
-    return (_getSources(), persisted, persisted);
+    final available = _getSources();
+    final persisted = _getFilterSources().where(available.contains).toList();
+    return (available, persisted, persisted);
   }
 
   List<String> _getSources() {
