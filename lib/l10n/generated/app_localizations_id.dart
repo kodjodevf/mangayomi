@@ -2462,6 +2462,13 @@ class AppLocalizationsId extends AppLocalizations {
       'Kesalahan: tidak ada halaman tersedia';
 
   @override
+  String get app_ui_scale => 'Interface scale';
+
+  @override
+  String get app_ui_scale_subtitle =>
+      'Make the interface larger or smaller to suit your screen and viewing distance.';
+
+  @override
   String get allow_concurrent_downloads => 'Allow concurrent downloads';
 
   @override
