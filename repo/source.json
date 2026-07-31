@@ -14,15 +14,15 @@
       "bundleIdentifier": "com.kodjodevf.mangayomi",
       "developerName": "Moustapha Kodjo Amadou",
       "subtitle": "Read manga, novels, and watch anime",
-      "version": "0.8.0",
-      "versionDate": "2026-07-24T09:52:20Z",
+      "version": "0.8.1",
+      "versionDate": "2026-07-31T15:58:46Z",
       "versionDescription": "",
-      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.8.0/Mangayomi-v0.8.0-ios.ipa",
+      "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.8.1/Mangayomi-v0.8.1-ios.ipa",
       "localizedDescription": "Mangayomi is an open-source Flutter app for reading manga, novels, and watching anime across multiple platforms.",
       "iconURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/icons/icon_default.webp",
       "tintColor": "EF4444",
       "category": "entertainment",
-      "size": 47726662,
+      "size": 47764550,
       "screenshotURLs": [
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_0_default.webp",
         "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/screenshots/image_1_default.webp",
@@ -30,9 +30,16 @@
       ],
       "versions": [
         {
+          "version": "0.8.1",
+          "date": "2026-07-31T15:58:46Z",
+          "localizedDescription": "",
+          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.8.1/Mangayomi-v0.8.1-ios.ipa",
+          "size": 47764550
+        },
+        {
           "version": "0.8.0",
           "date": "2026-07-24T09:52:20Z",
-          "localizedDescription": "",
+          "localizedDescription": "What's Changed\r\n* Better manga reader by @kodjodevf  \r\n* Fix bug \"lastPageRead\" not saving by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/751\r\n* Fix bug: update tracker with latest selected chapter  by @NBA2K1 in https://github.com/kodjodevf/mangayomi/pull/756\r\n* fix(linux): desktop fixes \u2022 libmpv2 deb dependency (700) and WebView teardown crash (752) by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/800\r\n* fix: missing\u2022source robustness \u2022 null source/lang crash (708) and orphaned sources on repo delete by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/801\r\n* feat(reader): global \"Show page number\" toggle in Reader settings (790) by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/794\r\n* feat(updates): surface library\u2022update failures \u2022 persistent screen and dismissible dialog (623) by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/803\r\n* fix(browse): respect Show NSFW in the migration destination picker and the source filter (806) by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/807\r\n* feat: add AES\u2022GCM decryption to the extension bridge (732) by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/760\r\n* fix(android): don't force all\u2022files\u2022access prompt at launch (740) by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/764\r\n* feat: select which entries to migrate (per source) by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/780\r\n* fix(downloads): fail loudly instead of hanging when a download can't start by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/789\r\n* feat(android\u2022tv): Android TV support with d\u2022pad UI, TV home and player (729) by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/799\r\n* feat(android\u2022tv): packaging \u2022 leanback manifest/banner and dedicated TV build (729, 178) by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/802\r\n* feat(android\u2022tv): TV UI \u2022 d\u2022pad focus model, home\u2022style pills, centred menus (729) by @mrandhawa14 in https://github.com/kodjodevf/mangayomi/pull/813\r\n\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.7.80...v0.8.0",
           "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.8.0/Mangayomi-v0.8.0-ios.ipa",
           "size": 47726662
         },
@@ -231,13 +238,6 @@
           "localizedDescription": "What's Changed\r\n* Update quarkuc extractor  by @yxxyun in https://github.com/kodjodevf/mangayomi/pull/393\r\n* added long press for 2x playback speed by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/396\r\n* fix broken category \r\n* add confirmation dialog for adding repositories\r\n\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.5.1...v0.5.2",
           "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.5.2/Mangayomi-v0.5.2-ios.ipa",
           "size": 56680831
-        },
-        {
-          "version": "0.5.1",
-          "date": "2025-02-20T14:29:54Z",
-          "localizedDescription": "What's Changed\r\n* added deep links for repo urls by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/379\r\n* enhanced sync feature by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/380\r\n* optimized sync and bug fixes by @Schnitzel5 in https://github.com/kodjodevf/mangayomi/pull/381\r\n\r\n\r\n**Full Changelog**: https://github.com/kodjodevf/mangayomi/compare/v0.5.0...v0.5.1",
-          "downloadURL": "https://github.com/kodjodevf/mangayomi/releases/download/v0.5.1/Mangayomi-v0.5.1-ios.ipa",
-          "size": 56754892
         }
       ],
       "appPermissions": {
@@ -567,6 +567,17 @@
       "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
       "notify": true,
       "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.8.0"
+    },
+    {
+      "appID": "com.kodjodevf.mangayomi",
+      "title": "0.8.1 - 31 Jul",
+      "identifier": "release-0.8.1",
+      "caption": "Update for Mangayomi now available!",
+      "date": "2026-07-31T15:58:46Z",
+      "tintColor": "EF4444",
+      "imageURL": "https://raw.githubusercontent.com/kodjodevf/mangayomi/refs/heads/main/repo/images/news/update_default.webp",
+      "notify": true,
+      "url": "https://github.com/kodjodevf/mangayomi/releases/tag/v0.8.1"
     }
   ]
 }
