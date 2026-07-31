@@ -87,8 +87,7 @@ Future<Map<String, dynamic>?> _executeGraphQL(
 
 /// One page of media, filtered/sorted by what the caller passes. Novels are
 /// MANGA with format NOVEL on AniList, so item type maps to a type plus a format
-/// filter (null filters are ignored by AniList). The feed PR extends this with
-/// season/status filters.
+/// filter. The feed PR extends this with season/status filters.
 Future<List<DiscoveryMedia>> fetchDiscoveryPage({
   required ItemType itemType,
   List<String>? sort,
@@ -102,15 +101,20 @@ Future<List<DiscoveryMedia>> fetchDiscoveryPage({
     "type": _mediaTypeOf(itemType),
     "sort": sort,
     "search": search,
-    "formatIn": itemType == ItemType.novel ? const ["NOVEL"] : null,
-    "formatNotIn": itemType == ItemType.manga ? const ["NOVEL"] : null,
   };
-  const query = '''
-    query(\$page: Int, \$perPage: Int, \$type: MediaType, \$sort: [MediaSort],
-          \$search: String, \$formatIn: [MediaFormat], \$formatNotIn: [MediaFormat]) {
+  // Inline the format filter as a literal only when there is one. Passing
+  // `format_in: null` / `format_not_in: null` (i.e. the arg present but null)
+  // makes AniList's search return a 500, so anime sends no format arg at all,
+  // manga excludes NOVEL, and novels ask only for NOVEL.
+  final formatFilter = switch (itemType) {
+    ItemType.novel => ", format_in: [NOVEL]",
+    ItemType.manga => ", format_not_in: [NOVEL]",
+    ItemType.anime => "",
+  };
+  final query = '''
+    query(\$page: Int, \$perPage: Int, \$type: MediaType, \$sort: [MediaSort], \$search: String) {
       Page(page: \$page, perPage: \$perPage) {
-        media(type: \$type, sort: \$sort, search: \$search,
-              format_in: \$formatIn, format_not_in: \$formatNotIn) {
+        media(type: \$type, sort: \$sort, search: \$search$formatFilter) {
 $_searchFields
         }
       }
