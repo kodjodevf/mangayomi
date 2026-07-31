@@ -506,8 +506,8 @@ class _MyAppState extends ConsumerState<MyApp>
     try {
       final provider = StorageProvider();
       final dir = await provider.getMpvDirectory();
-      final mpvFile = File('${dir!.path}/mpv.conf');
-      final inputFile = File('${dir.path}/input.conf');
+      final mpvFile = File(p.join(dir!.path, 'mpv.conf'));
+      final inputFile = File(p.join(dir.path, 'input.conf'));
       final filesMissing =
           !(await mpvFile.exists()) && !(await inputFile.exists());
       if (filesMissing) {
