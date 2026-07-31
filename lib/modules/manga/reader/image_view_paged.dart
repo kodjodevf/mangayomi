@@ -238,9 +238,28 @@ class _ImageViewPagedState extends ConsumerState<ImageViewPaged> {
       listener = ImageStreamListener(
         (ImageInfo info, bool syncCall) async {
           try {
-            final byteData = await info.image.toByteData(
+            // Downsample to 1x1 pixel via PictureRecorder/Canvas to extract
+            // corner/average brightness without allocating megabytes of raw RGBA buffer
+            final recorder = ui.PictureRecorder();
+            final canvas = Canvas(recorder);
+            canvas.drawImageRect(
+              info.image,
+              Rect.fromLTWH(
+                0,
+                0,
+                info.image.width.toDouble(),
+                info.image.height.toDouble(),
+              ),
+              const Rect.fromLTWH(0, 0, 1, 1),
+              Paint(),
+            );
+            final picture = recorder.endRecording();
+            final resizedImage = await picture.toImage(1, 1);
+            final byteData = await resizedImage.toByteData(
               format: ui.ImageByteFormat.rawRgba,
             );
+            resizedImage.dispose();
+
             if (byteData != null && byteData.lengthInBytes >= 4) {
               final int r = byteData.getUint8(0);
               final int g = byteData.getUint8(1);

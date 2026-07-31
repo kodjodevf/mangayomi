@@ -1,5 +1,4 @@
 import 'dart:ui' as ui;
-import 'coordinate_transformer.dart';
 import 'ffi_image_decoder.dart';
 
 /// Represents an image tile in the grid
@@ -48,60 +47,13 @@ class TilingEngine {
     int sampleSize = fullImageSampleSize;
 
     while (true) {
-      int xTiles = 1;
-      int yTiles = 1;
+      final tile = Tile(
+        sRect: ui.Rect.fromLTRB(0, 0, sWidth.toDouble(), sHeight.toDouble()),
+        sampleSize: sampleSize,
+      );
 
-      int sTileWidth = sWidth ~/ xTiles;
-      int sTileHeight = sHeight ~/ yTiles;
-
-      int subTileWidth = sTileWidth ~/ sampleSize;
-      int subTileHeight = sTileHeight ~/ sampleSize;
-
-      // Increases the number of horizontal tiles if necessary
-      while (subTileWidth + xTiles + 1 > maxTileWidth ||
-          (subTileWidth > viewWidth * 1.25 &&
-              sampleSize < fullImageSampleSize)) {
-        xTiles += 1;
-        sTileWidth = sWidth ~/ xTiles;
-        subTileWidth = sTileWidth ~/ sampleSize;
-      }
-
-      // Increases the number of vertical tiles if necessary
-      while (subTileHeight + yTiles + 1 > maxTileHeight ||
-          (subTileHeight > viewHeight * 1.25 &&
-              sampleSize < fullImageSampleSize)) {
-        yTiles += 1;
-        sTileHeight = sHeight ~/ yTiles;
-        subTileHeight = sTileHeight ~/ sampleSize;
-      }
-
-      List<Tile> tileGrid = [];
-      for (int x = 0; x < xTiles; x++) {
-        for (int y = 0; y < yTiles; y++) {
-          final tileLeft = x * sTileWidth;
-          final tileTop = y * sTileHeight;
-          final tileRight = (x == xTiles - 1) ? sWidth : (x + 1) * sTileWidth;
-          final tileBottom = (y == yTiles - 1)
-              ? sHeight
-              : (y + 1) * sTileHeight;
-
-          final tile = Tile(
-            sRect: ui.Rect.fromLTRB(
-              tileLeft.toDouble(),
-              tileTop.toDouble(),
-              tileRight.toDouble(),
-              tileBottom.toDouble(),
-            ),
-            sampleSize: sampleSize,
-          );
-
-          // The base layer is visible by default
-          tile.visible = (sampleSize == fullImageSampleSize);
-          tileGrid.add(tile);
-        }
-      }
-
-      tileMap[sampleSize] = tileGrid;
+      tile.visible = (sampleSize == fullImageSampleSize);
+      tileMap[sampleSize] = [tile];
 
       if (sampleSize == 1) {
         break;
@@ -112,7 +64,8 @@ class TilingEngine {
     sortedKeys = tileMap.keys.toList()..sort((a, b) => b.compareTo(a));
   }
 
-  /// Updates visibility and loads/recycles tiles based on the viewport
+  /// Updates visibility and loads tiles.
+  /// Keeps loaded tiles visible without disposing them on scroll to ensure 0 FFI overhead during panning.
   void refreshRequiredTiles({
     required double scale,
     required ui.Offset vTranslate,
@@ -123,37 +76,16 @@ class TilingEngine {
     required int targetSampleSize,
     required Function(Tile tile) loadTileCallback,
   }) {
-    final transformer = CoordinateTransformer(
-      scale: scale,
-      vTranslate: vTranslate,
-      rotation: rotation,
-      sWidth: sWidth,
-      sHeight: sHeight,
-    );
-
-    // Screen viewport
-    final viewRect = ui.Rect.fromLTWH(0, 0, viewSize.width, viewSize.height);
-
     for (final entry in tileMap.entries) {
       final tiles = entry.value;
 
       for (final tile in tiles) {
         if (tile.sampleSize == targetSampleSize) {
-          // Checks if the tile overlaps the screen
-          final tileViewRect = transformer.sourceToViewRect(tile.sRect);
-          final isVisibleOnScreen = viewRect.overlaps(tileViewRect);
-
-          if (isVisibleOnScreen) {
-            tile.visible = true;
-            if (!tile.loading && tile.image == null) {
-              loadTileCallback(tile);
-            }
-          } else {
-            tile.visible = false;
-            tile.dispose();
+          tile.visible = true;
+          if (!tile.loading && tile.image == null) {
+            loadTileCallback(tile);
           }
-        } else {
-          // Disable blurry base layer fallback by making other sample sizes invisible
+        } else if (tile.sampleSize != fullImageSampleSize) {
           tile.visible = false;
           tile.dispose();
         }

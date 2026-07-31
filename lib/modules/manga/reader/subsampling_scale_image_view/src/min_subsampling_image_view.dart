@@ -115,7 +115,7 @@ class _MinSubsamplingImageState extends ConsumerState<MinSubsamplingImage> {
     }
 
     final String? path = await widget.data.getLocalFilePath;
-    if (path != null) {
+    if (path != null && widget.cropBorders) {
       await _loadFromPath(path);
     } else {
       final provider = widget.data.getImageProvider(ref, true);
