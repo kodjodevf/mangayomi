@@ -513,25 +513,30 @@ class _MyAppState extends ConsumerState<MyApp>
       if (filesMissing) {
         final bytes = await rootBundle.load("assets/mangayomi_mpv.zip");
         final archive = ZipDecoder().decodeBytes(bytes.buffer.asUint8List());
-        String shadersDir = p.join(dir.path, 'shaders');
-        await Directory(shadersDir).create(recursive: true);
-        String scriptsDir = p.join(dir.path, 'scripts');
-        await Directory(scriptsDir).create(recursive: true);
+        final shadersDir = Directory(p.join(dir.path, 'shaders'));
+        final scriptsDir = Directory(p.join(dir.path, 'scripts'));
+        await Future.wait([
+          shadersDir.create(recursive: true),
+          scriptsDir.create(recursive: true),
+        ]);
+
+        final List<Future> writes = [];
         for (final file in archive.files) {
-          if (file.name == "mpv.conf") {
-            await mpvFile.writeAsBytes(file.content);
-          } else if (file.name == "input.conf") {
-            await inputFile.writeAsBytes(file.content);
-          } else if (file.name.startsWith("shaders/") &&
-              file.name.endsWith(".glsl")) {
-            final shaderFile = File('$shadersDir/${file.name.split("/").last}');
-            await shaderFile.writeAsBytes(file.content);
-          } else if (file.name.startsWith("scripts/") &&
-              (file.name.endsWith(".js") || file.name.endsWith(".lua"))) {
-            final scriptFile = File('$scriptsDir/${file.name.split("/").last}');
-            await scriptFile.writeAsBytes(file.content);
+          final name = file.name;
+          if (name == "mpv.conf") {
+            writes.add(mpvFile.writeAsBytes(file.content));
+          } else if (name == "input.conf") {
+            writes.add(inputFile.writeAsBytes(file.content));
+          } else if (name.startsWith("shaders/") && name.endsWith(".glsl")) {
+            final shaderFile = File(p.join(shadersDir.path, p.basename(name)));
+            writes.add(shaderFile.writeAsBytes(file.content));
+          } else if (name.startsWith("scripts/") &&
+              (name.endsWith(".js") || name.endsWith(".lua"))) {
+            final scriptFile = File(p.join(scriptsDir.path, p.basename(name)));
+            writes.add(scriptFile.writeAsBytes(file.content));
           }
         }
+        await Future.wait(writes);
       }
     } catch (e) {
       // Best-effort: on Android the mpv config dir is in shared storage, which
