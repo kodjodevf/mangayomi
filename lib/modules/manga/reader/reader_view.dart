@@ -1321,12 +1321,6 @@ class _MangaChapterPageGalleryState
         (readerMode.isHorizontalPaged || readerMode == ReaderMode.vertical)) {
       _onPageChanged(0);
     }
-    final showOverlay = ref.read(showNavigationOverlayOnStartStateProvider);
-    if (showOverlay && mounted) {
-      setState(() {
-        _showNavigationOverlay = true;
-      });
-    }
   }
 
   /// Warms Flutter's [ImageCache] in page order before the widget tree renders.
@@ -1547,6 +1541,7 @@ class _MangaChapterPageGalleryState
   }
 
   void _setReaderMode(ReaderMode value, WidgetRef ref) async {
+    final showOverlay = ref.read(showNavigationOverlayOnStartStateProvider);
     if (!value.isVerticalContinuous) {
       _autoScroll.value = false;
     } else if (_autoScrollPage.value) {
@@ -1571,7 +1566,10 @@ class _MangaChapterPageGalleryState
       } else if (value.isHorizontalPaged) {
         _scrollDirection = Axis.horizontal;
       }
-      _showNavigationOverlay = true;
+
+      if (showOverlay) {
+        _showNavigationOverlay = true;
+      }
     });
     // Wait for the next frame so the scroll view rebuilds
     await WidgetsBinding.instance.endOfFrame;
