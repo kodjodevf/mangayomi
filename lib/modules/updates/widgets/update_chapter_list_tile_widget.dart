@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/chapter.dart';
-import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
+import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/modules/manga/download/download_page_widget.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
@@ -34,7 +34,7 @@ class UpdateChapterListTileWidget extends ConsumerWidget {
               image: manga.customCoverImage != null
                   ? MemoryImage(manga.customCoverImage as Uint8List)
                         as ImageProvider
-                  : CustomExtendedNetworkImageProvider(
+                  : coverProvider(
                       toImgUrl(manga.customCoverFromTracker ?? manga.imageUrl!),
                       headers: ref.watch(
                         headersProvider(
@@ -149,7 +149,7 @@ class UpdateChapterListTileWidget extends ConsumerWidget {
                                           manga.customCoverImage as Uint8List,
                                         )
                                         as ImageProvider
-                                  : CustomExtendedNetworkImageProvider(
+                                  : coverProvider(
                                       toImgUrl(
                                         manga.customCoverFromTracker ??
                                             manga.imageUrl!,
