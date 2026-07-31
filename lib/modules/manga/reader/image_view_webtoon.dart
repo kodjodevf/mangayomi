@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/double_page_view.dart';
@@ -21,7 +20,7 @@ class ImageViewWebtoon extends ConsumerStatefulWidget {
   final int initialScrollIndex;
   final ScrollPhysics physics;
   final Function(UChapDataPreload data) onLongPressData;
-  final Function(bool) onFailedToLoadImage;
+  final Function(int index, bool failed) onFailedToLoadImage;
   final BackgroundColor backgroundColor;
   final bool isDoublePageMode;
   final bool isHorizontalContinuous;
@@ -367,7 +366,7 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
           : EdgeInsets.symmetric(horizontal: sidePad),
       child: ImageViewVertical(
         data: currentPage,
-        failedToLoadImage: widget.onFailedToLoadImage,
+        failedToLoadImage: (failed) => widget.onFailedToLoadImage(index, failed),
         onLongPressData: widget.onLongPressData,
         isHorizontal: widget.isHorizontalContinuous,
         rotation: rotation,
@@ -397,7 +396,7 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
     return DoublePageView.vertical(
       pages: datas,
       backgroundColor: widget.backgroundColor,
-      onFailedToLoadImage: widget.onFailedToLoadImage,
+      onFailedToLoadImage: (failed) => widget.onFailedToLoadImage(index, failed),
       onLongPressData: widget.onLongPressData,
     );
   }

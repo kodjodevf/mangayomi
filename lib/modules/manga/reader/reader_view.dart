@@ -177,7 +177,7 @@ class _MangaChapterPageGalleryState
     );
     _rebuildDetail.close();
 
-    _failedToLoadImage.dispose();
+    _failedPageIndexes.dispose();
     _panAnimationController?.dispose();
     _autoScroll.value = false;
     _autoScroll.dispose();
@@ -248,7 +248,15 @@ class _MangaChapterPageGalleryState
 
   late Chapter chapter = widget.chapter;
 
-  final _failedToLoadImage = ValueNotifier<bool>(false);
+  final _failedPageIndexes = ValueNotifier<Set<int>>({});
+
+  void _onFailedToLoadImage(int index, bool failed) {
+    final current = Set<int>.from(_failedPageIndexes.value);
+    final bool changed = failed ? current.add(index) : current.remove(index);
+    if (changed) {
+      _failedPageIndexes.value = current;
+    }
+  }
 
   late int? _currentIndex = _readerController.getPageIndex();
   late final ValueNotifier<int> _currentPageDisplayIndex = ValueNotifier(
@@ -551,9 +559,9 @@ class _MangaChapterPageGalleryState
           child: SafeArea(
             top: !fullScreenReader,
             bottom: false,
-            child: ValueListenableBuilder(
-              valueListenable: _failedToLoadImage,
-              builder: (context, failedToLoadImage, child) {
+            child: ValueListenableBuilder<Set<int>>(
+              valueListenable: _failedPageIndexes,
+              builder: (context, failedPageIndexes, child) {
                 return Stack(
                   children: [
                     readerMode.isContinuous
@@ -577,12 +585,8 @@ class _MangaChapterPageGalleryState
                               manga: widget.chapter.manga.value!,
                               chapterName: widget.chapter.name!,
                             ),
-                            onFailedToLoadImage: (value) {
-                              // TODO: Handle failed image loading
-                              // if (_failedToLoadImage.value != value &&
-                              //     context.mounted) {
-                              //   _failedToLoadImage.value = value;
-                              // }
+                            onFailedToLoadImage: (index, value) {
+                              _onFailedToLoadImage(index, value);
                             },
                             backgroundColor: backgroundColor,
                             isDoublePageMode:
@@ -665,10 +669,7 @@ class _MangaChapterPageGalleryState
                                           }
                                         },
                                         onFailedToLoadImage: (val) {
-                                          if (_failedToLoadImage.value != val &&
-                                              mounted) {
-                                            _failedToLoadImage.value = val;
-                                          }
+                                          _onFailedToLoadImage(index, val);
                                         },
                                         onLongPressData: (datas) {
                                           ImageActionsDialog.show(
@@ -717,7 +718,9 @@ class _MangaChapterPageGalleryState
                           navigationLayout: navigationLayout,
                           tappingInversion: tappingInversion,
                           isRTL: _isReverseHorizontal,
-                          hasImageError: failedToLoadImage,
+                          hasImageError: failedPageIndexes.contains(
+                            _currentIndex ?? 0,
+                          ),
                           isContinuousMode: readerMode.isContinuous,
                           onToggleUI: _isViewFunction,
                           onPreviousPage: () {
@@ -1017,19 +1020,11 @@ class _MangaChapterPageGalleryState
           );
         }
         if (state.loadState == ssiv.LoadState.completed) {
-          if (_failedToLoadImage.value) {
-            Future.delayed(
-              const Duration(milliseconds: 10),
-            ).then((value) => _failedToLoadImage.value = false);
-          }
+          _onFailedToLoadImage(index, false);
           return null; // Dessine l'image via SubsamplingScaleImageView
         }
         if (state.loadState == ssiv.LoadState.failed) {
-          if (!_failedToLoadImage.value) {
-            Future.delayed(
-              const Duration(milliseconds: 10),
-            ).then((value) => _failedToLoadImage.value = true);
-          }
+          _onFailedToLoadImage(index, true);
           final l10n = l10nLocalizations(context)!;
           return Container(
             color: getBackgroundColor(backgroundColor),
@@ -1046,11 +1041,11 @@ class _MangaChapterPageGalleryState
                   child: GestureDetector(
                     onLongPress: () {
                       state.reLoadImage();
-                      _failedToLoadImage.value = false;
+                      _onFailedToLoadImage(index, false);
                     },
                     onTap: () {
                       state.reLoadImage();
-                      _failedToLoadImage.value = false;
+                      _onFailedToLoadImage(index, false);
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -1549,7 +1544,7 @@ class _MangaChapterPageGalleryState
       _autoScroll.value = true;
     }
 
-    _failedToLoadImage.value = false;
+    _failedPageIndexes.value = {};
     _readerController.setReaderMode(value);
 
     // Cache the reader mode for safe access in dispose
