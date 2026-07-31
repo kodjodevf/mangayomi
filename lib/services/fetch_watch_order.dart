@@ -67,55 +67,87 @@ Future<List<WatchOrderSearch>> searchWatchOrder(String name) async {
 /// rather than relation type, which is the reliable watch order for most
 /// franchises (AniList's relation graph has no order of its own).
 Future<List<WatchOrderItem>> fetchWatchOrder(String id) async {
-  final mediaId = int.tryParse(id);
-  if (mediaId == null) return [];
-  final (self, relations) = await fetchMediaWithRelations(mediaId);
+  final rootId = int.tryParse(id);
+  if (rootId == null) return [];
 
-  // Gate 1: real franchise relations only (a prequel/sequel/side-story line),
-  // not the source manga/LN (ADAPTATION/SOURCE) or unrelated CHARACTER/OTHER.
-  const franchise = {
-    "PREQUEL",
-    "SEQUEL",
+  // AniList relations are a single hop, so a chained franchise (S1 -> Cour 2 ->
+  // S2 -> S3, each a SEQUEL of the previous) needs a graph walk. Traverse the
+  // main story line (prequel/sequel/parent) and additionally collect side
+  // content (side story/spin-off/alternative/summary/compilation) from visited
+  // nodes without expanding out of it. Anime only, and capped so a huge
+  // franchise can't run away.
+  const chain = {"PREQUEL", "SEQUEL", "PARENT"};
+  const extra = {
     "SIDE_STORY",
-    "PARENT",
     "SPIN_OFF",
     "ALTERNATIVE",
     "SUMMARY",
     "COMPILATION",
   };
-  // Gate 2: anime entries only (keeps manga/novel out of an anime watch order).
-  final entries = <DiscoveryMedia>[
-    if (self != null && self.isAnime) self,
-    for (final r in relations)
-      if (franchise.contains(r.relationType) && r.media.isAnime) r.media,
-  ];
+  final collected = <int, DiscoveryMedia>{};
+  final queue = <int>[rootId];
+  final visited = <int>{};
+  var queries = 0;
+  while (queue.isNotEmpty && queries < 20) {
+    final current = queue.removeAt(0);
+    if (!visited.add(current)) continue;
+    queries++;
+    final (self, relations) = await fetchMediaWithRelations(current);
+    if (self != null && self.isAnime) collected[self.id] = self;
+    for (final r in relations) {
+      if (!r.media.isAnime) continue;
+      if (chain.contains(r.relationType)) {
+        collected[r.media.id] = r.media;
+        if (!visited.contains(r.media.id)) queue.add(r.media.id);
+      } else if (extra.contains(r.relationType)) {
+        collected[r.media.id] = r.media;
+      }
+    }
+  }
 
-  // Dedupe: a title can be reachable through more than one relation.
-  final seen = <int>{};
-  final unique = [
-    for (final m in entries)
-      if (seen.add(m.id)) m,
-  ];
+  // Order by air date (the reliable watch order); undated entries sink last.
+  final unique = collected.values.toList()
+    ..sort((a, b) => a.startSortKey.compareTo(b.startSortKey));
 
-  // Double-check the order with the air date: chronological is the reliable
-  // watch order; undated entries sink to the end.
-  unique.sort((a, b) => a.startSortKey.compareTo(b.startSortKey));
-
-  return unique.map((m) {
+  // The queried title is the anchor: entries before it are "previous", it is
+  // "current", entries after are "next".
+  final currentIndex = unique.indexWhere((m) => m.id == rootId);
+  final items = <WatchOrderItem>[];
+  for (var i = 0; i < unique.length; i++) {
+    final m = unique[i];
+    final role = currentIndex < 0
+        ? WatchOrderRole.next
+        : i < currentIndex
+        ? WatchOrderRole.previous
+        : i == currentIndex
+        ? WatchOrderRole.current
+        : WatchOrderRole.next;
     final meta = [
       if (m.format != null) m.format!,
       if (m.episodes != null) "${m.episodes} eps",
       if (m.startYear != null) "${m.startYear}",
     ].join(" | ");
-    return WatchOrderItem(
-      id: m.id.toString(),
-      anilistId: m.id.toString(),
-      image: m.coverImage ?? "",
-      name: m.romaji ?? m.title,
-      nameEnglish: m.english,
-      text: meta,
+    items.add(
+      WatchOrderItem(
+        id: m.id.toString(),
+        anilistId: m.id.toString(),
+        image: m.coverImage ?? "",
+        name: m.romaji ?? m.title,
+        nameEnglish: m.english,
+        text: meta,
+        role: role,
+      ),
     );
-  }).toList();
+  }
+  return items;
+}
+
+/// Resolve an anime name to its AniList id and build its watch order directly,
+/// with no manual pick step. The resolved title becomes the "current" anchor.
+Future<List<WatchOrderItem>> fetchWatchOrderByName(String name) async {
+  final mediaId = await searchMediaId(ItemType.anime, name);
+  if (mediaId == null) return [];
+  return fetchWatchOrder(mediaId.toString());
 }
 
 class SequelItem {
@@ -211,6 +243,9 @@ class WatchOrderSearch {
   }
 }
 
+/// Where an entry sits relative to the one the user opened watch order from.
+enum WatchOrderRole { previous, current, next }
+
 class WatchOrderItem {
   final String id;
   final String anilistId;
@@ -218,6 +253,7 @@ class WatchOrderItem {
   final String name;
   final String? nameEnglish;
   final String text;
+  final WatchOrderRole role;
 
   WatchOrderItem({
     required this.id,
@@ -226,5 +262,6 @@ class WatchOrderItem {
     required this.name,
     required this.nameEnglish,
     required this.text,
+    this.role = WatchOrderRole.next,
   });
 }
