@@ -509,6 +509,75 @@ class MangaFilterTrackingState extends _$MangaFilterTrackingState {
 }
 
 @riverpod
+class MangaFilterSourceState extends _$MangaFilterSourceState {
+  @override
+  (List<String>, List<String>, List<String>) build({
+    required List<Manga> mangaList,
+    required ItemType itemType,
+    required Settings settings,
+  }) {
+    final available = _getSources();
+    final persisted = _getFilterSources().where(available.contains).toList();
+    return (available, persisted, persisted);
+  }
+
+  List<String> _getSources() {
+    final names = <String>{};
+    for (final m in mangaList) {
+      if (m.source?.isNotEmpty ?? false) {
+        names.add(m.source!);
+      }
+    }
+    return names.toList();
+  }
+
+  List<String> _getFilterSources() {
+    switch (itemType) {
+      case ItemType.manga:
+        return settings.libraryFilterMangasSourceIds ?? [];
+      case ItemType.anime:
+        return settings.libraryFilterAnimeSourceIds ?? [];
+      default:
+        return settings.libraryFilterNovelSourceIds ?? [];
+    }
+  }
+
+  void _persist(List<String> names) {
+    Settings appSettings = Settings();
+    switch (itemType) {
+      case ItemType.manga:
+        appSettings = settings..libraryFilterMangasSourceIds = names;
+        break;
+      case ItemType.anime:
+        appSettings = settings..libraryFilterAnimeSourceIds = names;
+        break;
+      default:
+        appSettings = settings..libraryFilterNovelSourceIds = names;
+    }
+    isar.writeTxnSync(() {
+      isar.settings.putSync(
+        appSettings..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      );
+    });
+  }
+
+  void setFilteredList(String source) {
+    final pending = List<String>.from(state.$3);
+    if (pending.contains(source)) {
+      pending.remove(source);
+    } else {
+      pending.add(source);
+    }
+    state = (state.$1, state.$2, pending);
+  }
+
+  void set(List<String> names) {
+    _persist(names);
+    state = (_getSources(), names, names);
+  }
+}
+
+@riverpod
 class MangasFilterResultState extends _$MangasFilterResultState {
   @override
   bool build({
@@ -558,12 +627,22 @@ class MangasFilterResultState extends _$MangasFilterResultState {
         settings: settings,
       ),
     );
+    final sourceFilterType = ref
+        .watch(
+          mangaFilterSourceStateProvider(
+            mangaList: mangaList,
+            itemType: itemType,
+            settings: settings,
+          ),
+        )
+        .$2;
     return downloadFilterType == 0 &&
         unreadFilterType == 0 &&
         startedFilterType == 0 &&
         bookmarkedFilterType == 0 &&
         completedFilterType == 0 &&
-        trackingFilterType == 0;
+        trackingFilterType == 0 &&
+        sourceFilterType.isEmpty;
   }
 }
 

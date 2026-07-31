@@ -481,7 +481,9 @@ Future<void> _downloadFile(
   try {
     if (itemType != ItemType.anime) {
       final response = await _withRetry(
-        () => client.get(Uri.parse(pageUrl.url), headers: pageUrl.headers),
+        () => client
+            .get(Uri.parse(pageUrl.url), headers: pageUrl.headers)
+            .timeout(const Duration(seconds: 30)),
         3,
       );
       if (response.statusCode != 200) {
@@ -497,7 +499,14 @@ Future<void> _downloadFile(
       await _withRetry(() async {
         var request = Request('GET', Uri.parse(pageUrl.url));
         request.headers.addAll(pageUrl.headers ?? {});
-        StreamedResponse response = await client.send(request);
+        // Connection/response-headers timeout. Without it, a wifi drop after
+        // streaming has begun makes the stream idle-timeout fire, retry, and
+        // then hang forever on this send with no network — the download stalls
+        // with no progress, no retry, and no error. Bail so _withRetry cycles
+        // and, once exhausted, the failure propagates to the UI.
+        StreamedResponse response = await client
+            .send(request)
+            .timeout(const Duration(seconds: 30));
         // Accept any 2xx — including 206 Partial Content, which the server
         // returns when the source extension sends `Range: bytes=0-` on the
         // streaming request (e.g. AnimeGG). Rejecting 206 here caused 3
@@ -510,23 +519,46 @@ Future<void> _downloadFile(
         }
         int total = response.contentLength ?? 0;
         int received = 0;
+        // Throttle progress. Emitting on every chunk floods the main isolate
+        // with synchronous DB writes (setProgress) and freezes the whole UI
+        // while a download runs — worst with large single files (anime .mp4).
+        // Send at most once per 1% step (known length) or every 250ms
+        // (unknown length); the final 100% is delivered by onComplete.
+        int lastPercent = -1;
+        final progressWatch = Stopwatch()..start();
 
         final file = File(pageUrl.fileName!);
         final sink = file.openWrite();
         try {
-          await for (var value in response.stream) {
+          // Idle timeout: if no bytes arrive for 30s the connection has
+          // stalled, so fail (and retry) instead of hanging the whole
+          // download forever with no progress.
+          await for (var value in response.stream.timeout(
+            const Duration(seconds: 30),
+            onTimeout: (sink) => sink.addError(
+              TimeoutException('Download stalled (no data for 30s)'),
+            ),
+          )) {
             sink.add(value);
             received += value.length;
-            try {
-              replyPort.send(
-                DownloadProgress(
-                  (received / total * 100).toInt(),
-                  100,
-                  pageUrl: pageUrl,
-                  itemType,
-                ),
-              );
-            } catch (_) {}
+            final percent = total > 0 ? (received / total * 100).toInt() : -1;
+            final shouldSend = percent >= 0
+                ? percent != lastPercent
+                : progressWatch.elapsedMilliseconds >= 250;
+            if (shouldSend) {
+              lastPercent = percent;
+              if (percent < 0) progressWatch.reset();
+              try {
+                replyPort.send(
+                  DownloadProgress(
+                    percent < 0 ? 0 : percent,
+                    100,
+                    pageUrl: pageUrl,
+                    itemType,
+                  ),
+                );
+              } catch (_) {}
+            }
           }
         } finally {
           await sink.flush();
@@ -609,7 +641,12 @@ Future<void> _downloadSegment(
     if (params.headers != null) {
       request.headers.addAll(params.headers!);
     }
-    StreamedResponse response = await _withRetry(() => client.send(request), 3);
+    // Connection/response-headers timeout so a dropped connection can't hang
+    // the segment forever (see _downloadFile) — retry, then fail loudly.
+    StreamedResponse response = await _withRetry(
+      () => client.send(request).timeout(const Duration(seconds: 30)),
+      3,
+    );
 
     // Accept any 2xx (including 206 Partial Content) — see comment in
     // _downloadFile.
@@ -621,7 +658,14 @@ Future<void> _downloadSegment(
 
     final sink = file.openWrite();
     try {
-      await for (var chunk in response.stream) {
+      // Idle timeout: a segment whose connection stalls (no bytes for 30s)
+      // fails and retries instead of hanging the whole download forever.
+      await for (var chunk in response.stream.timeout(
+        const Duration(seconds: 30),
+        onTimeout: (sink) => sink.addError(
+          TimeoutException('Segment stalled (no data for 30s)'),
+        ),
+      )) {
         sink.add(chunk);
       }
     } finally {

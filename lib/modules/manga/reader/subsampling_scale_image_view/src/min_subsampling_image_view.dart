@@ -115,7 +115,7 @@ class _MinSubsamplingImageState extends ConsumerState<MinSubsamplingImage> {
     }
 
     final String? path = await widget.data.getLocalFilePath;
-    if (path != null) {
+    if (path != null && widget.cropBorders) {
       await _loadFromPath(path);
     } else {
       final provider = widget.data.getImageProvider(ref, true);
@@ -124,7 +124,7 @@ class _MinSubsamplingImageState extends ConsumerState<MinSubsamplingImage> {
         (info, syncCall) async {
           _cleanStream();
           final cachedPath = await widget.data.getLocalFilePath;
-          if (cachedPath != null) {
+          if (cachedPath != null && widget.cropBorders) {
             await _loadFromPath(cachedPath);
           } else {
             if (mounted) {
@@ -172,7 +172,8 @@ class _MinSubsamplingImageState extends ConsumerState<MinSubsamplingImage> {
       );
 
       if (dims == null || dims.length < 2) {
-        throw Exception("Failed to get dimensions");
+        // If operation was cancelled by a quick toggle, return quietly without error
+        return;
       }
 
       final int croppedWidth = dims[0];
@@ -218,10 +219,12 @@ class _MinSubsamplingImageState extends ConsumerState<MinSubsamplingImage> {
         cancelToken: this,
       );
 
-      if (result == null ||
-          result.pointerAddress == null ||
-          result.error != null) {
-        throw Exception(result?.error ?? "Failed to decode region");
+      if (result == null || result.error == 'Cancelled') {
+        return;
+      }
+
+      if (result.pointerAddress == null || result.error != null) {
+        throw Exception(result.error ?? "Failed to decode region");
       }
 
       final decodedWidth = croppedWidth ~/ sampleSize;
@@ -254,6 +257,7 @@ class _MinSubsamplingImageState extends ConsumerState<MinSubsamplingImage> {
         setState(() {
           _uiImage = img;
           _isLoading = false;
+          _hasError = false;
         });
         widget.failedToLoadImage(false);
         widget.onImageLoaded?.call(
@@ -264,6 +268,7 @@ class _MinSubsamplingImageState extends ConsumerState<MinSubsamplingImage> {
         img.dispose();
       }
     } catch (e) {
+      if (e.toString().contains('Cancelled')) return;
       if (mounted) {
         setState(() {
           _hasError = true;

@@ -11,8 +11,6 @@ import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_pr
 import 'package:mangayomi/modules/manga/reader/subsampling_scale_image_view/subsampling_scale_image_view.dart'
     as ssiv;
 import 'package:mangayomi/utils/extensions/others.dart';
-import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
-import 'package:mangayomi/modules/manga/reader/widgets/circular_progress_indicator_animate_rotate.dart';
 
 class ImageViewPaged extends ConsumerStatefulWidget {
   final UChapDataPreload data;
@@ -238,9 +236,28 @@ class _ImageViewPagedState extends ConsumerState<ImageViewPaged> {
       listener = ImageStreamListener(
         (ImageInfo info, bool syncCall) async {
           try {
-            final byteData = await info.image.toByteData(
+            // Downsample to 1x1 pixel via PictureRecorder/Canvas to extract
+            // corner/average brightness without allocating megabytes of raw RGBA buffer
+            final recorder = ui.PictureRecorder();
+            final canvas = Canvas(recorder);
+            canvas.drawImageRect(
+              info.image,
+              Rect.fromLTWH(
+                0,
+                0,
+                info.image.width.toDouble(),
+                info.image.height.toDouble(),
+              ),
+              const Rect.fromLTWH(0, 0, 1, 1),
+              Paint(),
+            );
+            final picture = recorder.endRecording();
+            final resizedImage = await picture.toImage(1, 1);
+            final byteData = await resizedImage.toByteData(
               format: ui.ImageByteFormat.rawRgba,
             );
+            resizedImage.dispose();
+
             if (byteData != null && byteData.lengthInBytes >= 4) {
               final int r = byteData.getUint8(0);
               final int g = byteData.getUint8(1);
@@ -307,19 +324,6 @@ class _ImageViewPagedState extends ConsumerState<ImageViewPaged> {
     }
 
     final bool isAnimated = _isAnimated;
-
-    if (_resolvedFilePath == null && !isAnimated) {
-      final Color bg =
-          pageBgColor ??
-          getBackgroundColor(ref.watch(backgroundColorStateProvider)) ??
-          Colors.black;
-      return Container(
-        color: bg,
-        child: const Center(
-          child: CircularProgressIndicatorAnimateRotate(progress: 0),
-        ),
-      );
-    }
 
     final ssivScaleType = switch (scaleType) {
       ScaleType.fitScreen => ssiv.ScaleType.centerInside,

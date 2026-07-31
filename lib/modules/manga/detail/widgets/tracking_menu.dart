@@ -47,7 +47,15 @@ void openTrackingMenu({
             borderRadius: BorderRadius.circular(20),
             clipBehavior: Clip.antiAlias,
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              // Breathing room at the bottom, plus clearance for the system
+              // navigation bar / gesture area so the last tracker row is not
+              // flush against (or behind) the on-screen buttons on Android.
+              padding: EdgeInsets.fromLTRB(
+                8,
+                8,
+                8,
+                8 + MediaQuery.viewPaddingOf(context).bottom,
+              ),
               child: SuperListView.separated(
                 padding: const EdgeInsets.all(0),
                 itemCount: entries.length,

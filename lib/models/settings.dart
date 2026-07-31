@@ -21,6 +21,12 @@ class Settings {
 
   int? libraryFilterMangasBookMarkedType;
 
+  List<String>? libraryFilterMangasSourceIds;
+
+  List<String>? libraryFilterAnimeSourceIds;
+
+  List<String>? libraryFilterNovelSourceIds;
+
   bool? libraryShowCategoryTabs;
 
   bool? libraryDownloadedChapters;
@@ -44,6 +50,7 @@ class Settings {
   List<ChapterFilterBookmarked>? chapterFilterBookmarkedList;
 
   double? flexColorSchemeBlendLevel;
+  double? appUiScale;
 
   String? dateFormat;
 
@@ -93,6 +100,9 @@ class Settings {
   bool? deleteDownloadAfterReading;
 
   int? concurrentDownloads;
+  bool? allowConcurrentDownloads;
+  int? downloadDelaySeconds;
+  List<int>? downloadQueueOrder;
 
   String? downloadLocation;
 
@@ -409,6 +419,9 @@ class Settings {
     this.libraryFilterMangasUnreadType = 0,
     this.libraryFilterMangasStartedType = 0,
     this.libraryFilterMangasBookMarkedType = 0,
+    this.libraryFilterMangasSourceIds,
+    this.libraryFilterAnimeSourceIds,
+    this.libraryFilterNovelSourceIds,
     this.libraryShowCategoryTabs = false,
     this.libraryDownloadedChapters = false,
     this.libraryShowLanguage = false,
@@ -418,6 +431,7 @@ class Settings {
     this.sortChapterList,
     this.chapterFilterDownloadedList,
     this.flexColorSchemeBlendLevel = 10.0,
+    this.appUiScale = 1.0,
     this.dateFormat = "M/d/y",
     this.relativeTimesTamps = 2,
     this.flexSchemeColorIndex = 2,
@@ -441,6 +455,9 @@ class Settings {
     this.saveAsCBZArchive = false,
     this.deleteDownloadAfterReading = false,
     this.concurrentDownloads = 2,
+    this.allowConcurrentDownloads = true,
+    this.downloadDelaySeconds = 0,
+    this.downloadQueueOrder,
     this.downloadLocation = "",
     this.cropBorders = false,
     this.libraryLocalSource,
@@ -665,12 +682,16 @@ class Settings {
     downloadLocation = json['downloadLocation'];
     downloadOnlyOnWifi = json['downloadOnlyOnWifi'];
     concurrentDownloads = json['concurrentDownloads'];
+    allowConcurrentDownloads = json['allowConcurrentDownloads'] ?? true;
+    downloadDelaySeconds = json['downloadDelaySeconds'] ?? 0;
+    downloadQueueOrder = json['downloadQueueOrder']?.cast<int>();
     filterScanlatorList = (json['filterScanlatorList'] as List?)
         ?.map((e) => FilterScanlator.fromJson(e))
         .toList();
     flexColorSchemeBlendLevel = json['flexColorSchemeBlendLevel'] is double
         ? json['flexColorSchemeBlendLevel']
         : (json['flexColorSchemeBlendLevel'] as int).toDouble();
+    appUiScale = (json['appUiScale'] as num?)?.toDouble() ?? 1.0;
     flexSchemeColorIndex = json['flexSchemeColorIndex'];
     id = json['id'];
     incognitoMode = json['incognitoMode'];
@@ -681,6 +702,9 @@ class Settings {
     libraryFilterAnimeUnreadType = json['libraryFilterAnimeUnreadType'];
     libraryFilterMangasBookMarkedType =
         json['libraryFilterMangasBookMarkedType'];
+    libraryFilterMangasSourceIds = json['libraryFilterMangasSourceIds'];
+    libraryFilterAnimeSourceIds = json['libraryFilterAnimeSourceIds'];
+    libraryFilterNovelSourceIds = json['libraryFilterNovelSourceIds'];
     libraryFilterMangasDownloadType = json['libraryFilterMangasDownloadType'];
     libraryFilterMangasStartedType = json['libraryFilterMangasStartedType'];
     libraryFilterMangasUnreadType = json['libraryFilterMangasUnreadType'];
@@ -955,8 +979,12 @@ class Settings {
     'downloadLocation': downloadLocation,
     'downloadOnlyOnWifi': downloadOnlyOnWifi,
     'concurrentDownloads': concurrentDownloads,
+    'allowConcurrentDownloads': allowConcurrentDownloads,
+    'downloadDelaySeconds': downloadDelaySeconds,
+    'downloadQueueOrder': downloadQueueOrder,
     'filterScanlatorList': filterScanlatorList,
     'flexColorSchemeBlendLevel': flexColorSchemeBlendLevel,
+    'appUiScale': appUiScale,
     'flexSchemeColorIndex': flexSchemeColorIndex,
     'id': id,
     'incognitoMode': incognitoMode,
@@ -966,6 +994,9 @@ class Settings {
     'libraryFilterAnimeStartedType': libraryFilterAnimeStartedType,
     'libraryFilterAnimeUnreadType': libraryFilterAnimeUnreadType,
     'libraryFilterMangasBookMarkedType': libraryFilterMangasBookMarkedType,
+    'libraryFilterMangasSourceIds': libraryFilterMangasSourceIds,
+    'libraryFilterAnimeSourceIds': libraryFilterAnimeSourceIds,
+    'libraryFilterNovelSourceIds': libraryFilterNovelSourceIds,
     'libraryFilterMangasDownloadType': libraryFilterMangasDownloadType,
     'libraryFilterMangasStartedType': libraryFilterMangasStartedType,
     'libraryFilterMangasUnreadType': libraryFilterMangasUnreadType,

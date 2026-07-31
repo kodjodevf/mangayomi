@@ -1,5 +1,4 @@
 import 'package:http_interceptor/http_interceptor.dart';
-import 'package:intl/intl.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
@@ -404,19 +403,16 @@ class Kitsu extends _$Kitsu implements BaseTracker {
     };
   }
 
-  var formatter = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", "en");
   String? _convertDate(int dateValue) {
     if (dateValue == 0) return null;
-
-    return formatter.format(DateTime.fromMillisecondsSinceEpoch(dateValue));
+    return DateTime.fromMillisecondsSinceEpoch(
+      dateValue,
+    ).toUtc().toIso8601String();
   }
 
   int _parseDate(String? date) {
     if (date == null) return 0;
-
-    var dateValue = formatter.parse(date);
-
-    return dateValue.millisecondsSinceEpoch;
+    return DateTime.parse(date).millisecondsSinceEpoch;
   }
 
   String? _toKitsuScore(int score) {

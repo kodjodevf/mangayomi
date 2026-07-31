@@ -10,6 +10,38 @@ import 'package:mangayomi/utils/log/logger.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/services/update_errors_provider.dart';
 
+/// Tracks whether a library update is running and lets the UI request its
+/// cancellation. The update loop checks [LibraryUpdateState.cancelRequested]
+/// between entries and stops early.
+class LibraryUpdateState {
+  final bool running;
+  final bool cancelRequested;
+  const LibraryUpdateState({
+    this.running = false,
+    this.cancelRequested = false,
+  });
+  LibraryUpdateState copyWith({bool? running, bool? cancelRequested}) =>
+      LibraryUpdateState(
+        running: running ?? this.running,
+        cancelRequested: cancelRequested ?? this.cancelRequested,
+      );
+}
+
+class LibraryUpdateNotifier extends Notifier<LibraryUpdateState> {
+  @override
+  LibraryUpdateState build() => const LibraryUpdateState();
+  void begin() => state = const LibraryUpdateState(running: true);
+  void requestCancel() {
+    if (state.running) state = state.copyWith(cancelRequested: true);
+  }
+  void end() => state = const LibraryUpdateState();
+}
+
+final libraryUpdateProvider =
+    NotifierProvider<LibraryUpdateNotifier, LibraryUpdateState>(
+      LibraryUpdateNotifier.new,
+    );
+
 Future<void> updateLibrary({
   required WidgetRef ref,
   required BuildContext context,
@@ -22,6 +54,9 @@ Future<void> updateLibrary({
     AppLogger.log("$itemtype library is empty. Nothing to update.");
     return;
   }
+  // Don't start a second concurrent run.
+  if (ref.read(libraryUpdateProvider).running) return;
+  ref.read(libraryUpdateProvider.notifier).begin();
   bool isDark = ref.read(themeModeStateProvider);
   botToast(
     context.l10n.updating_library("0", "0", "0"),
@@ -33,6 +68,8 @@ Future<void> updateLibrary({
   int failed = 0;
   List<UpdateError> failures = [];
   for (var i = 0; i < mangaList.length; i++) {
+    // Stop early if the user pressed Stop.
+    if (ref.read(libraryUpdateProvider).cancelRequested) break;
     final manga = mangaList[i];
     try {
       await ref.read(
@@ -67,6 +104,7 @@ Future<void> updateLibrary({
       );
     }
   }
+  ref.read(libraryUpdateProvider.notifier).end();
   await Future.delayed(const Duration(seconds: 1));
   BotToast.cleanAll();
   // Persist this run's failures (empty list clears any previous ones) so they

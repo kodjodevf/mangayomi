@@ -1033,7 +1033,7 @@ final class ScanlatorsFilterStateProvider
 }
 
 String _$scanlatorsFilterStateHash() =>
-    r'f5220568e29e0c0efaac862fb0dce166f7be3172';
+    r'fa85d5d0f89044d3eb5c11bd1265c7a513a5558d';
 
 final class ScanlatorsFilterStateFamily extends $Family
     with

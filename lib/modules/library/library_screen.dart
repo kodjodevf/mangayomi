@@ -54,7 +54,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     with TickerProviderStateMixin {
   bool _isSearch = false;
   bool _ignoreFiltersOnSearch = false;
-  final List<Manga> _entries = [];
   final _textEditingController = TextEditingController();
   TabController? tabBarController;
   int _tabIndex = 0;
@@ -131,7 +130,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       return ref.watch(
         providerFn(
           itemType: widget.itemType,
-          mangaList: _entries,
+          mangaList: const <Manga>[],
           settings: settings,
         ),
       );
@@ -154,9 +153,6 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     );
     final language = watchWithSettings(libraryLanguageStateProvider.call);
     final displayType = watchWithSettings(libraryDisplayTypeStateProvider.call);
-    final isNotFiltering = watchWithSettingsAndManga(
-      mangasFilterResultStateProvider.call,
-    );
     final downloadFilterType = watchWithSettingsAndManga(
       mangaFilterDownloadedStateProvider.call,
     );
@@ -180,53 +176,75 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
 
     final searchQuery = _textEditingController.text;
 
-    // Common body params
-    Widget bodyForCategory({int? categoryId, bool withoutCategories = false}) {
-      return LibraryBody(
-        itemType: widget.itemType,
-        categoryId: categoryId,
-        withoutCategories: withoutCategories,
-        downloadFilterType: downloadFilterType,
-        unreadFilterType: unreadFilterType,
-        startedFilterType: startedFilterType,
-        bookmarkedFilterType: bookmarkedFilterType,
-        completedFilterType: completedFilterType,
-        trackingFilterType: trackingFilterType,
-        reverse: reverse,
-        downloadedChapter: downloadedChapter,
-        continueReaderBtn: continueReaderBtn,
-        localSource: localSource,
-        language: language,
-        displayType: displayType,
-        settings: settings,
-        downloadedOnly: downloadedOnly,
-        searchQuery: searchQuery,
-        ignoreFiltersOnSearch: _ignoreFiltersOnSearch,
-      );
-    }
-
-    Widget badgeForCategory(int categoryId) {
-      return CategoryBadge(
-        itemType: widget.itemType,
-        categoryId: categoryId,
-        downloadFilterType: downloadFilterType,
-        unreadFilterType: unreadFilterType,
-        startedFilterType: startedFilterType,
-        bookmarkedFilterType: bookmarkedFilterType,
-        completedFilterType: completedFilterType,
-        trackingFilterType: trackingFilterType,
-        settings: settings,
-        downloadedOnly: downloadedOnly,
-        searchQuery: searchQuery,
-        ignoreFiltersOnSearch: _ignoreFiltersOnSearch,
-      );
-    }
-
     return Scaffold(
       body: mangaAll.when(
         data: (man) {
           return categories.when(
             data: (data) {
+              final isNotFiltering = ref.watch(
+                mangasFilterResultStateProvider(
+                  itemType: widget.itemType,
+                  mangaList: man,
+                  settings: settings,
+                ),
+              );
+              final sourceFilterIds = ref
+                  .watch(
+                    mangaFilterSourceStateProvider(
+                      mangaList: man,
+                      itemType: widget.itemType,
+                      settings: settings,
+                    ),
+                  )
+                  .$2;
+
+              // Common body params
+              Widget bodyForCategory({
+                int? categoryId,
+                bool withoutCategories = false,
+              }) {
+                return LibraryBody(
+                  itemType: widget.itemType,
+                  categoryId: categoryId,
+                  withoutCategories: withoutCategories,
+                  downloadFilterType: downloadFilterType,
+                  unreadFilterType: unreadFilterType,
+                  startedFilterType: startedFilterType,
+                  bookmarkedFilterType: bookmarkedFilterType,
+                  completedFilterType: completedFilterType,
+                  trackingFilterType: trackingFilterType,
+                  reverse: reverse,
+                  downloadedChapter: downloadedChapter,
+                  continueReaderBtn: continueReaderBtn,
+                  localSource: localSource,
+                  language: language,
+                  displayType: displayType,
+                  settings: settings,
+                  downloadedOnly: downloadedOnly,
+                  searchQuery: searchQuery,
+                  ignoreFiltersOnSearch: _ignoreFiltersOnSearch,
+                  sourceIds: sourceFilterIds,
+                );
+              }
+
+              Widget badgeForCategory(int categoryId) {
+                return CategoryBadge(
+                  itemType: widget.itemType,
+                  categoryId: categoryId,
+                  downloadFilterType: downloadFilterType,
+                  unreadFilterType: unreadFilterType,
+                  startedFilterType: startedFilterType,
+                  bookmarkedFilterType: bookmarkedFilterType,
+                  completedFilterType: completedFilterType,
+                  trackingFilterType: trackingFilterType,
+                  settings: settings,
+                  downloadedOnly: downloadedOnly,
+                  searchQuery: searchQuery,
+                  ignoreFiltersOnSearch: _ignoreFiltersOnSearch,
+                  sourceIds: sourceFilterIds,
+                );
+              }
+
               final withoutCategory = man
                   .where((m) => m.categories == null || m.categories!.isEmpty)
                   .toList();
@@ -244,6 +262,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   downloadedOnly: downloadedOnly,
                   searchQuery: searchQuery,
                   ignoreFiltersOnSearch: _ignoreFiltersOnSearch,
+                  sourceIds: sourceFilterIds,
                 ),
               );
 
@@ -251,6 +270,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                 return _buildWithCategories(
                   data: data,
                   withoutCategory: withoutCategory,
+                  man: man,
                   settings: settings,
                   showNumbersOfItems: showNumbersOfItems,
                   isNotFiltering: isNotFiltering,
@@ -268,7 +288,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
                   isNotFiltering: isNotFiltering,
                   showNumbersOfItems: showNumbersOfItems,
                   numberOfItems: numberOfItemsList.length,
-                  entries: _entries,
+                  entries: man,
                   isCategory: false,
                   categoryId: null,
                   settings: settings,
@@ -306,6 +326,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   Widget _buildWithCategories({
     required List data,
     required List<Manga> withoutCategory,
+    required List<Manga> man,
     required Settings settings,
     required bool showNumbersOfItems,
     required bool isNotFiltering,
@@ -351,7 +372,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
           isNotFiltering: isNotFiltering,
           showNumbersOfItems: showNumbersOfItems,
           numberOfItems: numberOfItems,
-          entries: _entries,
+          entries: man,
           isCategory: true,
           categoryId: withoutCategory.isNotEmpty && _tabIndex == 0
               ? null
