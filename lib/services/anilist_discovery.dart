@@ -33,6 +33,24 @@ const String _mediaFields = '''
     season
     seasonYear''';
 
+/// Lean field set for the SEARCH query. AniList search is far more expensive
+/// than a by-id lookup, and asking for the heavy [_mediaFields] on top of a
+/// search (the large `description` field in particular) reliably returns a
+/// server 500. Search only needs enough to resolve an id and show a result row,
+/// so drop description/banner/genres/status here. Recommendations and relations
+/// (cheap by-id lookups) still use the full [_mediaFields], cover included.
+const String _searchFields = '''
+    id
+    idMal
+    title { romaji english native }
+    coverImage { large color }
+    format
+    episodes
+    chapters
+    averageScore
+    season
+    seasonYear''';
+
 String _mediaTypeOf(ItemType itemType) =>
     itemType == ItemType.anime ? "ANIME" : "MANGA";
 
@@ -40,11 +58,10 @@ Future<Map<String, dynamic>?> _executeGraphQL(
   String query,
   Map<String, dynamic> variables,
 ) async {
-  // Use a plain HTTP client, NOT the app's MClient. AniList discovery is public
-  // and behind Cloudflare; MClient's interceptor rewrites the request (injects
-  // the app's cookies/User-Agent, etc.) in a way that makes the public GraphQL
-  // endpoint return 500. A bare client sending only a browser User-Agent (which
-  // Cloudflare requires) mirrors the request that works from curl.
+  // Plain HTTP client with a fixed browser User-Agent. AniList is behind
+  // Cloudflare, which 403-bans non-browser user-agents, so a bare client with a
+  // known Chrome UA is the reliable choice (MClient would send the user's
+  // configured UA, which may not satisfy Cloudflare).
   final client = http.Client();
   try {
     final res = await client.post(
@@ -94,7 +111,7 @@ Future<List<DiscoveryMedia>> fetchDiscoveryPage({
       Page(page: \$page, perPage: \$perPage) {
         media(type: \$type, sort: \$sort, search: \$search,
               format_in: \$formatIn, format_not_in: \$formatNotIn) {
-$_mediaFields
+$_searchFields
         }
       }
     }''';
