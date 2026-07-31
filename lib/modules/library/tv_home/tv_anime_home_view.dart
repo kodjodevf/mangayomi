@@ -304,6 +304,15 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
               downloadedOnly: ref.watch(downloadedOnlyStateProvider),
               searchQuery: _query.trim(),
               ignoreFiltersOnSearch: false,
+              sourceIds: ref
+                  .watch(
+                    mangaFilterSourceStateProvider(
+                      itemType: it,
+                      mangaList: visible,
+                      settings: settings,
+                    ),
+                  )
+                  .$2,
             ),
           );
           final entries = (sortState.reverse ?? false)

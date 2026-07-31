@@ -407,11 +407,11 @@ class ChaptersListttState extends _$ChaptersListttState {
 class ScanlatorsFilterState extends _$ScanlatorsFilterState {
   @override
   (List<String>, List<String>, List<String>) build(Manga manga) {
-    return (
-      _getScanlators(),
-      _getFilterScanlator() ?? [],
-      _getFilterScanlator() ?? [],
-    );
+    final available = _getScanlators();
+    final persisted = (_getFilterScanlator() ?? [])
+        .where(available.contains)
+        .toList();
+    return (available, persisted, persisted);
   }
 
   List<String> _getScanlators() {
@@ -457,19 +457,16 @@ class ScanlatorsFilterState extends _$ScanlatorsFilterState {
   }
 
   void setFilteredList(String scanlator) {
-    List<String> scanlatorFilteredList = [];
-    for (var a in state.$3) {
-      scanlatorFilteredList.add(a);
-    }
-
+    final available = _getScanlators();
+    List<String> scanlatorFilteredList = List<String>.from(state.$3);
     if (scanlatorFilteredList.contains(scanlator)) {
       scanlatorFilteredList.remove(scanlator);
     } else {
       scanlatorFilteredList.add(scanlator);
     }
     state = (
-      _getScanlators(),
-      _getFilterScanlator() ?? [],
+      available,
+      (_getFilterScanlator() ?? []).where(available.contains).toList(),
       scanlatorFilteredList,
     );
   }
