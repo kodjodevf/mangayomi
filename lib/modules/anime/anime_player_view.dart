@@ -7,6 +7,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:ffi/ffi.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_qjs/quickjs/ffi.dart';
@@ -2750,7 +2751,13 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
         onEnter: (_) => _revealControls.value++,
         onHover: (_) => _revealControls.value++,
         child: Listener(
-          onPointerDown: (_) => _revealControls.value++,
+          // Reveal on a mouse click (desktop), but NOT on touch. On a touch
+          // device the mobile controls handle tap-to-toggle themselves, so
+          // revealing here on finger-down makes the following tap immediately
+          // hide them again (controls flash and vanish in under a second).
+          onPointerDown: (event) {
+            if (event.kind == PointerDeviceKind.mouse) _revealControls.value++;
+          },
           child: Focus(autofocus: true, onKeyEvent: _onPlayerKey, child: child),
         ),
       ),
