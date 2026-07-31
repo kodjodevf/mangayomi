@@ -61,39 +61,51 @@ Future<List<WatchOrderSearch>> searchWatchOrder(String name) async {
       .toList();
 }
 
-/// Build a watch order from an AniList media id via its relations (was chiaki.
-/// site HTML scraping). Relations are ordered so the list reads like a watch
-/// order: parent/prequel first, then sequels, then side stories and the rest.
+/// Build a watch order from an AniList media id. Two gates keep it accurate:
+/// (1) include only the ANIME line — drop the manga/light-novel the anime was
+/// adapted from and loose shared-character links; and (2) order by release date
+/// rather than relation type, which is the reliable watch order for most
+/// franchises (AniList's relation graph has no order of its own).
 Future<List<WatchOrderItem>> fetchWatchOrder(String id) async {
   final mediaId = int.tryParse(id);
   if (mediaId == null) return [];
-  final relations = await fetchRelations(mediaId);
-  const priority = {
-    "PARENT": 0,
-    "PREQUEL": 1,
-    "SEQUEL": 2,
-    "SIDE_STORY": 3,
-    "SPIN_OFF": 4,
-    "ALTERNATIVE": 5,
-    "SUMMARY": 6,
-    "COMPILATION": 7,
-    "ADAPTATION": 8,
-    "SOURCE": 9,
-    "CHARACTER": 10,
-    "CONTAINS": 11,
-    "OTHER": 12,
+  final (self, relations) = await fetchMediaWithRelations(mediaId);
+
+  // Gate 1: real franchise relations only (a prequel/sequel/side-story line),
+  // not the source manga/LN (ADAPTATION/SOURCE) or unrelated CHARACTER/OTHER.
+  const franchise = {
+    "PREQUEL",
+    "SEQUEL",
+    "SIDE_STORY",
+    "PARENT",
+    "SPIN_OFF",
+    "ALTERNATIVE",
+    "SUMMARY",
+    "COMPILATION",
   };
-  final ordered = [...relations]..sort(
-    (a, b) => (priority[a.relationType] ?? 99).compareTo(
-      priority[b.relationType] ?? 99,
-    ),
-  );
-  return ordered.map((r) {
-    final m = r.media;
+  // Gate 2: anime entries only (keeps manga/novel out of an anime watch order).
+  final entries = <DiscoveryMedia>[
+    if (self != null && self.isAnime) self,
+    for (final r in relations)
+      if (franchise.contains(r.relationType) && r.media.isAnime) r.media,
+  ];
+
+  // Dedupe: a title can be reachable through more than one relation.
+  final seen = <int>{};
+  final unique = [
+    for (final m in entries)
+      if (seen.add(m.id)) m,
+  ];
+
+  // Double-check the order with the air date: chronological is the reliable
+  // watch order; undated entries sink to the end.
+  unique.sort((a, b) => a.startSortKey.compareTo(b.startSortKey));
+
+  return unique.map((m) {
     final meta = [
-      _humanizeRelation(r.relationType),
       if (m.format != null) m.format!,
       if (m.episodes != null) "${m.episodes} eps",
+      if (m.startYear != null) "${m.startYear}",
     ].join(" | ");
     return WatchOrderItem(
       id: m.id.toString(),
@@ -104,13 +116,6 @@ Future<List<WatchOrderItem>> fetchWatchOrder(String id) async {
       text: meta,
     );
   }).toList();
-}
-
-/// "SIDE_STORY" -> "Side story".
-String _humanizeRelation(String type) {
-  if (type.isEmpty) return "Related";
-  final lower = type.toLowerCase().replaceAll("_", " ");
-  return "${lower[0].toUpperCase()}${lower.substring(1)}";
 }
 
 class SequelItem {

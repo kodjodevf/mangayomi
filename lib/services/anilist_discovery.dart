@@ -26,12 +26,14 @@ const String _mediaFields = '''
     description(asHtml: false)
     format
     status
+    type
     episodes
     chapters
     averageScore
     genres
     season
-    seasonYear''';
+    seasonYear
+    startDate { year month }''';
 
 /// Lean field set for the SEARCH query. AniList search is far more expensive
 /// than a by-id lookup, and asking for the heavy [_mediaFields] on top of a
@@ -164,24 +166,29 @@ $_mediaFields
       const [];
 }
 
-/// Related entries (prequels/sequels/side stories/adaptations) for building a
-/// watch order. AniList returns the raw relation graph; the caller derives the
-/// order it wants.
-Future<List<DiscoveryRelation>> fetchRelations(int mediaId) async {
-  const query = '''
+/// A media plus its relations in one call, for building a watch order. AniList
+/// gives no linear order, so the caller filters/orders the graph.
+Future<(DiscoveryMedia?, List<DiscoveryRelation>)> fetchMediaWithRelations(
+  int mediaId,
+) async {
+  final query = '''
     query(\$id: Int) {
       Media(id: \$id) {
+$_mediaFields
         relations { edges { relationType node {
 $_mediaFields
         } } }
       }
     }''';
   final data = await _executeGraphQL(query, {"id": mediaId});
-  final edges = data?["Media"]?["relations"]?["edges"] as List?;
-  return edges
+  final media = data?["Media"] as Map<String, dynamic>?;
+  if (media == null) return (null, const <DiscoveryRelation>[]);
+  final edges = media["relations"]?["edges"] as List?;
+  final relations = edges
           ?.map((e) => DiscoveryRelation.fromEdge(e as Map<String, dynamic>))
           .toList() ??
-      const [];
+      <DiscoveryRelation>[];
+  return (DiscoveryMedia.fromJson(media), relations);
 }
 
 class DiscoveryMedia {
@@ -202,6 +209,9 @@ class DiscoveryMedia {
   final List<String> genres;
   final String? season;
   final int? seasonYear;
+  final String? type;
+  final int? startYear;
+  final int? startMonth;
 
   DiscoveryMedia({
     required this.id,
@@ -221,6 +231,9 @@ class DiscoveryMedia {
     this.genres = const [],
     this.season,
     this.seasonYear,
+    this.type,
+    this.startYear,
+    this.startMonth,
   });
 
   /// Preferred display title: English, then Romaji, then Native.
@@ -229,6 +242,14 @@ class DiscoveryMedia {
   /// Search term to bridge to installed sources (extensions match by title, so
   /// Romaji is usually the safest key, with English as a fallback).
   String get searchTitle => romaji ?? english ?? native ?? "";
+
+  /// AniList type is ANIME or MANGA (novels are MANGA with format NOVEL).
+  bool get isAnime => type == "ANIME";
+
+  /// Chronological key (year then month) for release-order sorting; undated
+  /// entries sort last.
+  int get startSortKey =>
+      startYear == null ? 1 << 30 : startYear! * 12 + (startMonth ?? 0);
 
   factory DiscoveryMedia.fromJson(Map<String, dynamic> json) {
     final t = json["title"] as Map<String, dynamic>?;
@@ -251,6 +272,9 @@ class DiscoveryMedia {
       genres: (json["genres"] as List?)?.cast<String>() ?? const [],
       season: json["season"] as String?,
       seasonYear: json["seasonYear"] as int?,
+      type: json["type"] as String?,
+      startYear: (json["startDate"] as Map<String, dynamic>?)?["year"] as int?,
+      startMonth: (json["startDate"] as Map<String, dynamic>?)?["month"] as int?,
     );
   }
 }
