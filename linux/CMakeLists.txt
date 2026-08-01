@@ -121,6 +121,16 @@ install(FILES "${FLUTTER_LIBRARY}" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/bundle/lib/libmtorrentserver.so" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
   COMPONENT Runtime)
 
+add_library(subsampling_scale_image_view SHARED
+  "${CMAKE_CURRENT_SOURCE_DIR}/../lib/ffi/image_decoder.cpp"
+)
+apply_standard_settings(subsampling_scale_image_view)
+target_include_directories(subsampling_scale_image_view PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../lib/ffi")
+
+install(TARGETS subsampling_scale_image_view
+  LIBRARY DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
+  COMPONENT Runtime)
+
 foreach(bundled_library ${PLUGIN_BUNDLED_LIBRARIES})
   install(FILES "${bundled_library}"
     DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"

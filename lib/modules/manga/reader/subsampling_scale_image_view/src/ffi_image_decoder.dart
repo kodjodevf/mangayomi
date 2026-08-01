@@ -143,9 +143,9 @@ class FfiImageDecoder {
       } else if (Platform.isWindows) {
         final exeDir = File(Platform.resolvedExecutable).parent.path;
         final candidates = [
+          "$exeDir\\subsampling_scale_image_view.dll",
           "subsampling_scale_image_view.dll",
           "libsubsampling_scale_image_view.dll",
-          "$exeDir\\subsampling_scale_image_view.dll",
           "$exeDir\\libsubsampling_scale_image_view.dll",
           "${Directory.current.path}\\build\\native_assets\\windows\\subsampling_scale_image_view.dll",
           "$exeDir\\..\\..\\..\\native_assets\\windows\\subsampling_scale_image_view.dll",
@@ -153,22 +153,22 @@ class FfiImageDecoder {
         for (final path in candidates) {
           try {
             _dylib = DynamicLibrary.open(path);
-            break;
+            if (_dylib != null) break;
           } catch (_) {}
         }
         _dylib ??= DynamicLibrary.process();
       } else if (Platform.isLinux) {
         final exeDir = File(Platform.resolvedExecutable).parent.path;
         final candidates = [
-          "libsubsampling_scale_image_view.so",
           "$exeDir/lib/libsubsampling_scale_image_view.so",
           "$exeDir/libsubsampling_scale_image_view.so",
+          "libsubsampling_scale_image_view.so",
           "${Directory.current.path}/build/native_assets/linux/libsubsampling_scale_image_view.so",
         ];
         for (final path in candidates) {
           try {
             _dylib = DynamicLibrary.open(path);
-            break;
+            if (_dylib != null) break;
           } catch (_) {}
         }
         _dylib ??= DynamicLibrary.process();
