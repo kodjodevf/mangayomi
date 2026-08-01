@@ -104,14 +104,8 @@ jobs:
       - name: Build debug Windows
         run: flutter build windows --debug
 
-      - name: Create Windows debug zip
-        shell: pwsh
-        run: |
-          Set-Location -Path "build/windows/x64/runner/Debug"
-          Compress-Archive -Path * -DestinationPath "../../../../Mangayomi-windows-debug.zip"
-
       - name: Upload Windows debug artifact
         uses: actions/upload-artifact@v4
         with:
           name: Mangayomi-windows-debug
-          path: Mangayomi-windows-debug.zip
+          path: build/windows/x64/runner/Debug/
