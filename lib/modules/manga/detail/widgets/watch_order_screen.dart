@@ -61,7 +61,9 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
             .where((e) => e.reason.any((r) => r.id == mediaId))
             .toList();
       } else {
-        dataSearch = await searchWatchOrder(widget.name);
+        // Auto-build: resolve the anime and show its chronological franchise
+        // directly (no pick step); the opened title is marked "current".
+        data = await fetchWatchOrderByName(widget.name);
       }
       if (mounted) {
         setState(() {
@@ -187,8 +189,23 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
                 }
               }
             },
+            trailing: watchOrder != null
+                ? _roleBadge(context, watchOrder.role)
+                : null,
             title: Row(
               children: [
+                if (watchOrder != null)
+                  SizedBox(
+                    width: 24,
+                    child: Text(
+                      "${index + 1}",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 _thumbnailPreview(context, watchOrder?.image ?? search!.image),
                 const SizedBox(width: 15),
                 Flexible(
@@ -218,6 +235,29 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
       );
     }
     return Center(child: Text(context.l10n.no_result));
+  }
+
+  Widget _roleBadge(BuildContext context, WatchOrderRole role) {
+    final (label, color) = switch (role) {
+      WatchOrderRole.current => ("Currently watching", context.primaryColor),
+      WatchOrderRole.previous => ("Previous", Colors.grey),
+      WatchOrderRole.next => ("Up next", Colors.blueGrey),
+    };
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.18),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: color,
+        ),
+      ),
+    );
   }
 
   Widget _buildTitle(String text, BuildContext context) {

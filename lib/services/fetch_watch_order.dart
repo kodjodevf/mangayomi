@@ -1,9 +1,8 @@
 import 'dart:convert';
-import 'dart:math';
 
-import 'package:html/dom.dart';
+import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/services/anilist_discovery.dart';
 import 'package:mangayomi/services/http/m_client.dart';
-import 'package:mangayomi/utils/extensions/dom_extensions.dart';
 
 const _sequelData =
     "&types%5B%5D=1&types%5B%5D=3&types%5B%5D=2&types%5B%5D=4&types%5B%5D=9&score=0&date_from=false&date_to=false&include_ptw=1&exclude_h=1&exclude_planned=1&exclude_dropped=0&exclude_not_aired=0&exclude_short=1&exclude_short_value=3";
@@ -40,70 +39,115 @@ Future<List<SequelItem>> fetchSequels(
   }
 }
 
+/// Search AniList for anime to build a watch order from (was chiaki.site).
+/// Errors propagate so the screen shows a real message instead of "No result".
 Future<List<WatchOrderSearch>> searchWatchOrder(String name) async {
-  final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
-  try {
-    final url = Uri.parse(
-      "https://chiaki.site/?/tools/autocomplete_series&term=$name",
-    );
-    final res = await http.get(
-      url,
-      headers: {
-        "priority": "u=1, i",
-        "Referer": "https://chiaki.site/?/tools/watch_order",
-        "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
-      },
-    );
-    final data = jsonDecode(res.body) as List?;
-    return data?.map((e) => WatchOrderSearch.fromJson(e)).toList() ?? [];
-  } catch (_) {
-    return [];
-  }
+  final results = await fetchDiscoveryPage(
+    itemType: ItemType.anime,
+    search: name,
+    sort: const ["SEARCH_MATCH"],
+    perPage: 15,
+  );
+  return results
+      .map(
+        (m) => WatchOrderSearch(
+          id: m.id.toString(),
+          image: m.coverImage ?? "",
+          type: m.format ?? "",
+          name: m.title,
+          year: m.seasonYear ?? 0,
+        ),
+      )
+      .toList();
 }
 
+/// Build a watch order from an AniList media id. Two gates keep it accurate:
+/// (1) include only the ANIME line — drop the manga/light-novel the anime was
+/// adapted from and loose shared-character links; and (2) order by release date
+/// rather than relation type, which is the reliable watch order for most
+/// franchises (AniList's relation graph has no order of its own).
 Future<List<WatchOrderItem>> fetchWatchOrder(String id) async {
-  final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
-  try {
-    final res = await http.get(
-      Uri.parse("https://chiaki.site/?/tools/watch_order/id/$id"),
-      headers: {
-        "priority": "u=1, i",
-        "Referer": "https://chiaki.site/?/tools/watch_order",
-        "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
-      },
-    );
-    final doc = Document.html(res.body);
-    return doc
-            .select("table > tbody > tr")
-            ?.map((e) {
-              final img = e.selectFirst("td > div.wo_avatar_big")?.outerHtml;
-              final startIdx = img?.indexOf("url('") ?? -1;
-              final endIdx = img?.indexOf("')", max(0, startIdx)) ?? -1;
-              return WatchOrderItem(
-                id: e.attr("data-id") ?? id,
-                anilistId: e.attr("data-anilist-id") ?? "",
-                image: startIdx != -1 && endIdx != -1
-                    ? "https://chiaki.site/${img?.substring(startIdx + 5, endIdx)}"
-                    : "",
-                name:
-                    e.selectFirst("td > span.wo_title")?.text ??
-                    "Unknown title",
-                nameEnglish: e.selectFirst("td > span.uk-text-small")?.text,
-                text:
-                    e
-                        .selectFirst("td > span.uk-text-muted.uk-text-small")
-                        ?.text ??
-                    "",
-              );
-            })
-            .where((e) => e.name != "Unknown title")
-            .toList() ??
-        [];
-  } catch (_) {
-    return [];
+  final rootId = int.tryParse(id);
+  if (rootId == null) return [];
+
+  // AniList relations are a single hop, so a chained franchise (S1 -> Cour 2 ->
+  // S2 -> S3, each a SEQUEL of the previous) needs a graph walk. Traverse the
+  // main story line (prequel/sequel/parent) and additionally collect side
+  // content (side story/spin-off/alternative/summary/compilation) from visited
+  // nodes without expanding out of it. Anime only, and capped so a huge
+  // franchise can't run away.
+  const chain = {"PREQUEL", "SEQUEL", "PARENT"};
+  const extra = {
+    "SIDE_STORY",
+    "SPIN_OFF",
+    "ALTERNATIVE",
+    "SUMMARY",
+    "COMPILATION",
+  };
+  final collected = <int, DiscoveryMedia>{};
+  final queue = <int>[rootId];
+  final visited = <int>{};
+  var queries = 0;
+  while (queue.isNotEmpty && queries < 20) {
+    final current = queue.removeAt(0);
+    if (!visited.add(current)) continue;
+    queries++;
+    final (self, relations) = await fetchMediaWithRelations(current);
+    if (self != null && self.isAnime) collected[self.id] = self;
+    for (final r in relations) {
+      if (!r.media.isAnime) continue;
+      if (chain.contains(r.relationType)) {
+        collected[r.media.id] = r.media;
+        if (!visited.contains(r.media.id)) queue.add(r.media.id);
+      } else if (extra.contains(r.relationType)) {
+        collected[r.media.id] = r.media;
+      }
+    }
   }
+
+  // Order by air date (the reliable watch order); undated entries sink last.
+  final unique = collected.values.toList()
+    ..sort((a, b) => a.startSortKey.compareTo(b.startSortKey));
+
+  // The queried title is the anchor: entries before it are "previous", it is
+  // "current", entries after are "next".
+  final currentIndex = unique.indexWhere((m) => m.id == rootId);
+  final items = <WatchOrderItem>[];
+  for (var i = 0; i < unique.length; i++) {
+    final m = unique[i];
+    final role = currentIndex < 0
+        ? WatchOrderRole.next
+        : i < currentIndex
+        ? WatchOrderRole.previous
+        : i == currentIndex
+        ? WatchOrderRole.current
+        : WatchOrderRole.next;
+    final meta = [
+      if (m.format != null) m.format!,
+      if (m.episodes != null) "${m.episodes} eps",
+      if (m.startYear != null) "${m.startYear}",
+    ].join(" | ");
+    items.add(
+      WatchOrderItem(
+        id: m.id.toString(),
+        anilistId: m.id.toString(),
+        image: m.coverImage ?? "",
+        name: m.romaji ?? m.title,
+        nameEnglish: m.english,
+        text: meta,
+        role: role,
+      ),
+    );
+  }
+  return items;
+}
+
+/// Resolve an anime name to its AniList id and build its watch order directly,
+/// with no manual pick step. The resolved title becomes the "current" anchor.
+Future<List<WatchOrderItem>> fetchWatchOrderByName(String name) async {
+  final mediaId = await searchMediaId(ItemType.anime, name);
+  if (mediaId == null) return [];
+  return fetchWatchOrder(mediaId.toString());
 }
 
 class SequelItem {
@@ -199,6 +243,9 @@ class WatchOrderSearch {
   }
 }
 
+/// Where an entry sits relative to the one the user opened watch order from.
+enum WatchOrderRole { previous, current, next }
+
 class WatchOrderItem {
   final String id;
   final String anilistId;
@@ -206,6 +253,7 @@ class WatchOrderItem {
   final String name;
   final String? nameEnglish;
   final String text;
+  final WatchOrderRole role;
 
   WatchOrderItem({
     required this.id,
@@ -214,5 +262,6 @@ class WatchOrderItem {
     required this.name,
     required this.nameEnglish,
     required this.text,
+    this.role = WatchOrderRole.next,
   });
 }
