@@ -88,6 +88,7 @@ add_library(subsampling_scale_image_view SHARED
   "${CMAKE_CURRENT_SOURCE_DIR}/../lib/ffi/image_decoder.cpp"
 )
 apply_standard_settings(subsampling_scale_image_view)
+target_compile_definitions(subsampling_scale_image_view PRIVATE _CRT_SECURE_NO_WARNINGS)
 target_include_directories(subsampling_scale_image_view PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../lib/ffi")
 
 install(TARGETS subsampling_scale_image_view
