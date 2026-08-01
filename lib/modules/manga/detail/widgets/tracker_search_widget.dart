@@ -5,7 +5,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
-import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
+import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -128,7 +128,7 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
                                             width: 80,
                                             fit: BoxFit.cover,
                                             image:
-                                                CustomExtendedNetworkImageProvider(
+                                                coverProvider(
                                                   tracks![index].coverUrl!,
                                                 ),
                                           ),

@@ -6,7 +6,6 @@ import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/readmore.dart';
-import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/constant.dart';
@@ -246,7 +245,7 @@ class TrackerItemCard extends StatelessWidget {
   }
 
   Widget _coverCard() {
-    final imageProvider = CustomExtendedNetworkImageProvider(
+    final imageProvider = coverProvider(
       toImgUrl(track.coverUrl ?? ""),
     );
     return Padding(

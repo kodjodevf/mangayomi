@@ -88,5 +88,14 @@
             android:name="flutterEmbedding"
             android:value="2" />
         <meta-data android:name="flutter_deeplinking_enabled" android:value="false" />
+        <!-- Use the Skia renderer on Android. Impeller (the default on the
+             Flutter version the v8.0 native image decoder pulled in) janks
+             app-wide on many Android devices here: reader scrolling and cover
+             grids stutter, and switching between the anime and manga tabs is
+             slow. Skia restores the pre-v8.0 smoothness. iOS is unaffected and
+             keeps Impeller. -->
+        <meta-data
+            android:name="io.flutter.embedding.android.EnableImpeller"
+            android:value="false" />
     </application>
 </manifest>
