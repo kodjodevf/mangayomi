@@ -6,21 +6,26 @@ part 'app_font_family.g.dart';
 
 @riverpod
 class AppFontFamily extends _$AppFontFamily {
+  static String? _resolveFontFamily(String? fontFamily) {
+    if (fontFamily == null || fontFamily.isEmpty) return null;
+    if (GoogleFonts.asMap().containsKey(fontFamily)) {
+      try {
+        return GoogleFonts.getFont(fontFamily).fontFamily;
+      } catch (_) {
+        return fontFamily;
+      }
+    }
+    return fontFamily;
+  }
+
   @override
   String? build() {
-    final fontFamily = isar.settings.getSync(227)!.appFontFamily;
-    if (fontFamily == null) return null;
-
-    return GoogleFonts.asMap().entries
-        .toList()
-        .firstWhere((element) => element.value().fontFamily! == fontFamily)
-        .value()
-        .fontFamily;
+    final fontFamily = isar.settings.getSync(227)?.appFontFamily;
+    return _resolveFontFamily(fontFamily);
   }
 
   void set(String? fontFamily) {
     final settings = isar.settings.getSync(227);
-    state = fontFamily;
     isar.writeTxnSync(
       () => isar.settings.putSync(
         settings!
@@ -28,5 +33,6 @@ class AppFontFamily extends _$AppFontFamily {
           ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       ),
     );
+    state = _resolveFontFamily(fontFamily);
   }
 }
