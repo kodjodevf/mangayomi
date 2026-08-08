@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/library/widgets/continue_reader_button.dart';
@@ -22,6 +23,7 @@ class LibraryGridViewWidget extends StatefulWidget {
   final bool continueReaderBtn;
   final bool localSource;
   final ItemType itemType;
+  final Settings settings;
   const LibraryGridViewWidget({
     super.key,
     required this.entriesManga,
@@ -34,6 +36,7 @@ class LibraryGridViewWidget extends StatefulWidget {
     required this.mangaIdsList,
     required this.localSource,
     required this.itemType,
+    required this.settings,
   });
 
   @override
@@ -94,6 +97,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                 entry: entry,
                                 showLocal: widget.localSource,
                                 showDownloaded: widget.downloadedChapter,
+                                settings: widget.settings,
                               ),
                             ),
                           ),

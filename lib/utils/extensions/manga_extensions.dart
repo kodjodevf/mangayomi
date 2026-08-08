@@ -12,10 +12,8 @@ extension MangaExtensions on Manga {
   /// so the library "unread" badge and the unread sort reflect what the user
   /// actually sees rather than counting duplicate chapters from hidden
   /// scanlators (#796).
-  int get unreadChaptersCount {
-    final filter = isar.settings
-        .getSync(227)
-        ?.filterScanlatorList
+  int unreadChaptersCount(Settings settings) {
+    final filter = settings.filterScanlatorList
         ?.where((e) => e.mangaId == id)
         .firstOrNull
         ?.scanlators;
