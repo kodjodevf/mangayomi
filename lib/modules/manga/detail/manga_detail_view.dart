@@ -1121,7 +1121,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
   }
 
   void _showDraggableMenu() {
-    final scanlators = ref.watch(scanlatorsFilterStateProvider(widget.manga!));
+    final scanlators = ref.read(scanlatorsFilterStateProvider(widget.manga!));
     final l10n = l10nLocalizations(context)!;
     customDraggableTabBar(
       tabs: [
