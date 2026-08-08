@@ -112,30 +112,6 @@ class EntryBadgeChip extends StatelessWidget {
   }
 }
 
-/// Shows the number of downloaded chapters for [entry], or nothing when zero.
-///
-/// Uses a [Consumer] internally so it can watch [downloadedChapterIdsProvider]
-/// without forcing its parent to rebuild.
-class DownloadCountBadge extends ConsumerWidget {
-  const DownloadCountBadge({super.key, required this.entry});
-
-  final Manga entry;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final downloadedIds =
-        ref.watch(downloadedChapterIdsProvider).asData?.value ?? const <int>{};
-
-    final count = entry.chapters
-        .where((c) => c.id != null && downloadedIds.contains(c.id))
-        .length;
-
-    if (count == 0) return const SizedBox.shrink();
-
-    return EntryBadgeChip(label: count.toString());
-  }
-}
-
 /// A unified badge widget that combines Local, Download, and Unread counts.
 /// Only renders a non-empty widget when there is actually something to display,
 /// resolving the "0 unread" empty badge container UX bug.
