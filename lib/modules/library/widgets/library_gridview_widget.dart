@@ -59,7 +59,6 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
             final entry = widget.entriesManga[index];
             return Consumer(
               builder: (context, ref, child) {
-                final isLongPressed = ref.watch(isLongPressedStateProvider);
                 return Padding(
                   padding: const EdgeInsets.all(2),
                   child: CoverViewWidget(
@@ -75,15 +74,21 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                     ),
                     image: resolveCoverImage(entry, ref),
                     onTap: () => onTapEntry(
-                      isLongPressed: isLongPressed,
+                      isLongPressed: ref.read(isLongPressedStateProvider),
                       ref: ref,
                       context: context,
                       entry: entry,
                     ),
-                    onLongPress: () =>
-                        handleLongOrSecondaryTap(isLongPressed, ref, entry),
-                    onSecondaryTap: () =>
-                        handleLongOrSecondaryTap(isLongPressed, ref, entry),
+                    onLongPress: () => handleLongOrSecondaryTap(
+                      ref.read(isLongPressedStateProvider),
+                      ref,
+                      entry,
+                    ),
+                    onSecondaryTap: () => handleLongOrSecondaryTap(
+                      ref.read(isLongPressedStateProvider),
+                      ref,
+                      entry,
+                    ),
                     children: [
                       Stack(
                         children: [
