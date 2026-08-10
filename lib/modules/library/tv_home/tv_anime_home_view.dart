@@ -313,6 +313,7 @@ class _TvAnimeHomeViewState extends ConsumerState<TvAnimeHomeView> {
                     ),
                   )
                   .$2,
+              settings: settings,
             ),
           );
           final entries = (sortState.reverse ?? false)

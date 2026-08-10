@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/services/anilist_discovery.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+import 'package:mangayomi/utils/constant.dart';
 
 const _sequelData =
     "&types%5B%5D=1&types%5B%5D=3&types%5B%5D=2&types%5B%5D=4&types%5B%5D=9&score=0&date_from=false&date_to=false&include_ptw=1&exclude_h=1&exclude_planned=1&exclude_dropped=0&exclude_not_aired=0&exclude_short=1&exclude_short_value=3";
@@ -23,8 +24,7 @@ Future<List<SequelItem>> fetchSequels(
         "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
         "priority": "u=1, i",
         "Referer": "https://chiaki.site/?/tools/watch_order",
-        "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "User-Agent": metadataApiUserAgent,
       },
       body:
           "user=${malUsername ?? anilistUsername}&list_source=${malUsername != null ? "mal" : "anilist"}$_sequelData",

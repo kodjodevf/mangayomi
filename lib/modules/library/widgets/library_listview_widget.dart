@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/widgets/continue_reader_button.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
 import 'package:mangayomi/modules/library/widgets/library_entry_utils.dart';
@@ -14,6 +15,7 @@ class LibraryListViewWidget extends StatelessWidget {
   final Set<int> mangaIdsList;
   final bool continueReaderBtn;
   final bool localSource;
+  final Settings settings;
   const LibraryListViewWidget({
     super.key,
     required this.entriesManga,
@@ -22,6 +24,7 @@ class LibraryListViewWidget extends StatelessWidget {
     required this.continueReaderBtn,
     required this.mangaIdsList,
     required this.localSource,
+    required this.settings,
   });
 
   @override
@@ -106,6 +109,7 @@ class LibraryListViewWidget extends StatelessWidget {
                                 entry: entry,
                                 showLocal: localSource,
                                 showDownloaded: downloadedChapter,
+                                settings: settings,
                               ),
                               if (language && (entry.lang?.isNotEmpty ?? false))
                                 Padding(

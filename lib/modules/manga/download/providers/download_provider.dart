@@ -18,6 +18,7 @@ import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/modules/manga/download/providers/convert_to_cbz.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/general/providers/general_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/router/router.dart';
@@ -142,8 +143,7 @@ Future<void> downloadChapter(
     Map<String, String> videoHeader = {};
     Map<String, String> htmlHeader = {
       "Priority": "u=0, i",
-      "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+      "User-Agent": ref.read(userAgentStateProvider),
     };
     bool hasM3U8File = false;
     bool nonM3U8File = false;
@@ -320,7 +320,7 @@ Future<void> downloadChapter(
       final cookie = MClient.getCookiesPref(chapterUrl);
       final headers = htmlHeader;
       if (cookie.isNotEmpty) {
-        final userAgent = isar.settings.getSync(227)!.userAgent!;
+        final userAgent = ref.read(userAgentStateProvider);
         headers.addAll(cookie);
         headers[HttpHeaders.userAgentHeader] = userAgent;
       }
@@ -420,7 +420,7 @@ Future<void> downloadChapter(
               ? videoHeader
               : htmlHeader;
           if (cookie.isNotEmpty) {
-            final userAgent = isar.settings.getSync(227)!.userAgent!;
+            final userAgent = ref.read(userAgentStateProvider);
             headers.addAll(cookie);
             headers[HttpHeaders.userAgentHeader] = userAgent;
           }

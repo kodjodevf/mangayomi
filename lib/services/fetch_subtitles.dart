@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:mangayomi/services/http/m_client.dart';
+import 'package:mangayomi/utils/constant.dart';
 
 Future<List<ImdbTitle>> fetchImdbTitles(String query) async {
   final http = MClient.init(reqcopyWith: {'useDartHttpClient': true});
@@ -9,8 +10,7 @@ Future<List<ImdbTitle>> fetchImdbTitles(String query) async {
       Uri.parse(url),
       headers: {
         "Accept": "application/json",
-        "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "User-Agent": metadataApiUserAgent,
       },
     );
     final data = json.decode(res.body) as Map<String, dynamic>;
@@ -31,8 +31,7 @@ Future<List<ImdbEpisode>?> fetchImdbEpisodes(String imdbId) async {
       Uri.parse(url),
       headers: {
         "Accept": "application/json",
-        "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "User-Agent": metadataApiUserAgent,
       },
     );
     final data = json.decode(res.body) as Map<String, dynamic>;
@@ -52,8 +51,7 @@ Future<List<ImdbSubtitle>?> fetchImdbSubtitles(String imdbId) async {
       Uri.parse(url),
       headers: {
         "Accept": "application/json",
-        "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "User-Agent": metadataApiUserAgent,
       },
     );
     final data = json.decode(res.body) as List?;

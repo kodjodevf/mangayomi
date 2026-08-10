@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/utils/constant.dart';
 
 /// AniList public GraphQL discovery client. No login required for browsing, so
 /// this is separate from the AniList *tracker* (which is OAuth'd).
@@ -71,9 +72,7 @@ Future<Map<String, dynamic>?> _executeGraphQL(
       headers: const {
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-            "(KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+        "User-Agent": metadataApiUserAgent,
       },
       body: jsonEncode({"query": query, "variables": variables}),
     );

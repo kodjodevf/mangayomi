@@ -6,6 +6,14 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 const defaultUserAgent =
     "Mozilla/5.0 (Linux; Android 13; 22081212UG Build/TKQ1.220829.002; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/114.0.5735.131 Mobile Safari/537.36";
 
+/// Used only for requests to AniList, imdbapi.dev, subtitle/watch-order services
+/// NOT sent to installed sources. Those Cloudflare-protected APIs reject
+/// non-browser UAs, and the user's configurable [defaultUserAgent]-derived
+/// setting is tuned for source scraping, not guaranteed to pass Cloudflare's
+/// checks. Fixed here intentionally; bump when it starts getting rejected.
+const metadataApiUserAgent =
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36";
+
 String getMangaStatusName(Status status, BuildContext context) {
   final l10n = l10nLocalizations(context)!;
   return switch (status) {

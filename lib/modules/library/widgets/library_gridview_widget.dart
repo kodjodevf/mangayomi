@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/library/widgets/continue_reader_button.dart';
@@ -22,6 +23,7 @@ class LibraryGridViewWidget extends StatefulWidget {
   final bool continueReaderBtn;
   final bool localSource;
   final ItemType itemType;
+  final Settings settings;
   const LibraryGridViewWidget({
     super.key,
     required this.entriesManga,
@@ -34,6 +36,7 @@ class LibraryGridViewWidget extends StatefulWidget {
     required this.mangaIdsList,
     required this.localSource,
     required this.itemType,
+    required this.settings,
   });
 
   @override
@@ -56,7 +59,6 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
             final entry = widget.entriesManga[index];
             return Consumer(
               builder: (context, ref, child) {
-                final isLongPressed = ref.watch(isLongPressedStateProvider);
                 return Padding(
                   padding: const EdgeInsets.all(2),
                   child: CoverViewWidget(
@@ -72,15 +74,21 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                     ),
                     image: resolveCoverImage(entry, ref),
                     onTap: () => onTapEntry(
-                      isLongPressed: isLongPressed,
+                      isLongPressed: ref.read(isLongPressedStateProvider),
                       ref: ref,
                       context: context,
                       entry: entry,
                     ),
-                    onLongPress: () =>
-                        handleLongOrSecondaryTap(isLongPressed, ref, entry),
-                    onSecondaryTap: () =>
-                        handleLongOrSecondaryTap(isLongPressed, ref, entry),
+                    onLongPress: () => handleLongOrSecondaryTap(
+                      ref.read(isLongPressedStateProvider),
+                      ref,
+                      entry,
+                    ),
+                    onSecondaryTap: () => handleLongOrSecondaryTap(
+                      ref.read(isLongPressedStateProvider),
+                      ref,
+                      entry,
+                    ),
                     children: [
                       Stack(
                         children: [
@@ -94,6 +102,7 @@ class _LibraryGridViewWidgetState extends State<LibraryGridViewWidget> {
                                 entry: entry,
                                 showLocal: widget.localSource,
                                 showDownloaded: widget.downloadedChapter,
+                                settings: widget.settings,
                               ),
                             ),
                           ),

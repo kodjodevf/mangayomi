@@ -12,10 +12,8 @@ extension MangaExtensions on Manga {
   /// so the library "unread" badge and the unread sort reflect what the user
   /// actually sees rather than counting duplicate chapters from hidden
   /// scanlators (#796).
-  int get unreadChaptersCount {
-    final filter = isar.settings
-        .getSync(227)
-        ?.filterScanlatorList
+  int unreadChaptersCount(Settings settings) {
+    final filter = settings.filterScanlatorList
         ?.where((e) => e.mangaId == id)
         .firstOrNull
         ?.scanlators;
@@ -30,8 +28,8 @@ extension MangaExtensions on Manga {
   /// Filtered chapters respecting the user's active filters (unread,
   /// bookmarked, downloaded, scanlator). Sorted by chapter number ascending.
   /// Base list — no user-chosen sort, no deduplication.
-  List<Chapter> getFilteredChapters() {
-    final settings = isar.settings.getSync(227)!;
+  List<Chapter> getFilteredChapters([Settings? settingsOverride]) {
+    final settings = settingsOverride ?? isar.settings.getSync(227)!;
 
     final filterUnread =
         (settings.chapterFilterUnreadList!
@@ -118,7 +116,7 @@ extension MangaExtensions on Manga {
     final reverse = sortChapterEntry.reverse!;
 
     // Build on getFilteredChapters so filter logic lives in one place.
-    List<Chapter> list = getFilteredChapters();
+    List<Chapter> list = getFilteredChapters(settings);
 
     switch (sortIndex) {
       case 0: // by scanlator, then chapter number
