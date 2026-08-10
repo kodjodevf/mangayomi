@@ -172,11 +172,7 @@ class LibraryBadgeWidget extends ConsumerWidget {
               padding: const EdgeInsets.only(left: 3),
               child: Text(
                 unreadCount.toString(),
-                style: TextStyle(
-                  color: context.dynamicBlackWhiteColor,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 10,
-                ),
+                style: TextStyle(color: context.dynamicBlackWhiteColor),
               ),
             ),
         ],
