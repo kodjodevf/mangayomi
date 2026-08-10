@@ -436,7 +436,7 @@
   "manage_anime_repo_urls": "管理动画库URL",
   "manage_novel_repo_urls": "管理小说库URL",
   "url_cannot_be_empty": "URL不能为空",
-  "url_must_end_with_dot_json": "URL必须以.json结尾",
+  "url_must_end_with_dot_json_or_dot_pb": "URL必须以.json结尾",
   "repo_url": "库URL",
   "invalid_url_format": "无效的URL格式",
   "clear_all_sources": "清除所有来源",

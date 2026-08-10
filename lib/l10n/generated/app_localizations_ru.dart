@@ -1742,7 +1742,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get url_cannot_be_empty => 'URL не может быть пустым';
 
   @override
-  String get url_must_end_with_dot_json => 'URL должен заканчиваться на .json';
+  String get url_must_end_with_dot_json_or_dot_pb =>
+      'URL должен заканчиваться на .json / .pb';
 
   @override
   String get repo_url => 'URL репозитория';

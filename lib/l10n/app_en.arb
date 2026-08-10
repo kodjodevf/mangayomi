@@ -650,7 +650,7 @@
   "manage_anime_repo_urls": "Manage Anime Repo URLs",
   "manage_novel_repo_urls": "Manage Novel Repo URLs",
   "url_cannot_be_empty": "URL cannot be empty",
-  "url_must_end_with_dot_json": "URL must end with .json",
+  "url_must_end_with_dot_json_or_dot_pb": "URL must end with .json / .pb",
   "repo_url": "Repo URL",
   "invalid_url_format": "Invalid URL format",
   "clear_all_sources": "Clear all sources",

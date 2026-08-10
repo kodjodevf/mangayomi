@@ -433,7 +433,7 @@
   "manage_anime_repo_urls": "Anime depo URL'lerini yönet",
   "manage_novel_repo_urls": "Roman depo URL'lerini yönet",
   "url_cannot_be_empty": "URL boş olamaz",
-  "url_must_end_with_dot_json": "URL .json ile bitmelidir",
+  "url_must_end_with_dot_json_or_dot_pb": "URL .json / .pb ile bitmelidir",
   "repo_url": "Depo URL'si",
   "invalid_url_format": "Geçersiz URL formatı",
   "clear_all_sources": "Tüm kaynakları temizle",

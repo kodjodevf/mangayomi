@@ -1716,7 +1716,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get url_cannot_be_empty => 'URL खाली नहीं हो सकता';
 
   @override
-  String get url_must_end_with_dot_json => 'URL .json के साथ समाप्त होना चाहिए';
+  String get url_must_end_with_dot_json_or_dot_pb =>
+      'URL .json / .pb के साथ समाप्त होना चाहिए';
 
   @override
   String get repo_url => 'रेपो URL';

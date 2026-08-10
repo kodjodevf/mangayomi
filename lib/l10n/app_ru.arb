@@ -433,7 +433,7 @@
   "manage_anime_repo_urls": "Управление URL-адресами репозитория аниме",
   "manage_novel_repo_urls": "Управление URL-адресами репозитория новелл",
   "url_cannot_be_empty": "URL не может быть пустым",
-  "url_must_end_with_dot_json": "URL должен заканчиваться на .json",
+  "url_must_end_with_dot_json_or_dot_pb": "URL должен заканчиваться на .json / .pb",
   "repo_url": "URL репозитория",
   "invalid_url_format": "Неверный формат URL",
   "clear_all_sources": "Очистить все источники",

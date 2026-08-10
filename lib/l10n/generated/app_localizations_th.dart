@@ -1715,7 +1715,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get url_cannot_be_empty => 'URL ไม่สามารถเว้นว่างได้';
 
   @override
-  String get url_must_end_with_dot_json => 'URL ต้องลงท้ายด้วย .json';
+  String get url_must_end_with_dot_json_or_dot_pb =>
+      'URL ต้องลงท้ายด้วย .json / .pb';
 
   @override
   String get repo_url => 'URL ที่เก็บข้อมูล';

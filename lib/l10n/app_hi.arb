@@ -461,7 +461,7 @@
   "manage_anime_repo_urls": "एनीमे रेपो URL प्रबंधित करें",
   "manage_novel_repo_urls": "उपन्यास रेपो URL प्रबंधित करें",
   "url_cannot_be_empty": "URL खाली नहीं हो सकता",
-  "url_must_end_with_dot_json": "URL .json के साथ समाप्त होना चाहिए",
+  "url_must_end_with_dot_json_or_dot_pb": "URL .json / .pb के साथ समाप्त होना चाहिए",
   "repo_url": "रेपो URL",
   "invalid_url_format": "अमान्य URL प्रारूप",
   "clear_all_sources": "सभी स्रोत साफ़ करें",

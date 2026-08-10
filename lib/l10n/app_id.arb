@@ -433,7 +433,7 @@
   "manage_anime_repo_urls": "Kelola URL repositori anime",
   "manage_novel_repo_urls": "Kelola URL repositori novel",
   "url_cannot_be_empty": "URL tidak boleh kosong",
-  "url_must_end_with_dot_json": "URL harus diakhiri dengan .json",
+  "url_must_end_with_dot_json_or_dot_pb": "URL harus diakhiri dengan .json / .pb",
   "repo_url": "URL repositori",
   "invalid_url_format": "Format URL tidak valid",
   "clear_all_sources": "Hapus semua sumber",

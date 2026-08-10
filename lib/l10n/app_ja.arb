@@ -411,7 +411,7 @@
   "manage_anime_repo_urls": "アニメリポジトリURLを管理",
   "manage_novel_repo_urls": "小説リポジトリURLを管理",
   "url_cannot_be_empty": "URLは空にできません",
-  "url_must_end_with_dot_json": "URLは.jsonで終わる必要があります",
+  "url_must_end_with_dot_json_or_dot_pb": "URLは.jsonで終わる必要があります",
   "repo_url": "リポジトリURL",
   "invalid_url_format": "無効なURL形式",
   "clear_all_sources": "すべてのソースをクリア",

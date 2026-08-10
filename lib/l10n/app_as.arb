@@ -461,7 +461,7 @@
   "manage_anime_repo_urls": "এনিমে ৰিপ' URL পৰিচালনা কৰক",
   "manage_novel_repo_urls": "উপন্যাস ৰিপ' URL পৰিচালনা কৰক",
   "url_cannot_be_empty": "URL খালী হ'ব নোৱাৰে",
-  "url_must_end_with_dot_json": "URL .jsonৰ সৈতে শেষ হ'ব লাগিব",
+  "url_must_end_with_dot_json_or_dot_pb": "URL .json / .pbৰ সৈতে শেষ হ'ব লাগিব",
   "repo_url": "ৰিপ' URL",
   "invalid_url_format": "অবৈধ URL বিন্যাস",
   "clear_all_sources": "সকলো উৎস পৰিষ্কাৰ কৰক",

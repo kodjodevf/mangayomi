@@ -433,7 +433,7 @@
   "manage_anime_repo_urls": "Gestisci gli URL del repository anime",
   "manage_novel_repo_urls": "Gestisci gli URL del repository romanzi",
   "url_cannot_be_empty": "L'URL non può essere vuoto",
-  "url_must_end_with_dot_json": "L'URL deve terminare con .json",
+  "url_must_end_with_dot_json_or_dot_pb": "L'URL deve terminare con .json / .pb",
   "repo_url": "URL del repository",
   "invalid_url_format": "Formato URL non valido",
   "clear_all_sources": "Cancella tutte le fonti",

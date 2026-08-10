@@ -3191,11 +3191,11 @@ abstract class AppLocalizations {
   /// **'URL cannot be empty'**
   String get url_cannot_be_empty;
 
-  /// No description provided for @url_must_end_with_dot_json.
+  /// No description provided for @url_must_end_with_dot_json_or_dot_pb.
   ///
   /// In en, this message translates to:
-  /// **'URL must end with .json'**
-  String get url_must_end_with_dot_json;
+  /// **'URL must end with .json / .pb'**
+  String get url_must_end_with_dot_json_or_dot_pb;
 
   /// No description provided for @repo_url.
   ///

@@ -1715,7 +1715,8 @@ class AppLocalizationsAs extends AppLocalizations {
   String get url_cannot_be_empty => 'URL খালী হ\'ব নোৱাৰে';
 
   @override
-  String get url_must_end_with_dot_json => 'URL .jsonৰ সৈতে শেষ হ\'ব লাগিব';
+  String get url_must_end_with_dot_json_or_dot_pb =>
+      'URL .json / .pbৰ সৈতে শেষ হ\'ব লাগিব';
 
   @override
   String get repo_url => 'ৰিপ\' URL';

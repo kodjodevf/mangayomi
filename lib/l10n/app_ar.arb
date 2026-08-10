@@ -435,7 +435,7 @@
   "manage_anime_repo_urls": "إدارة عناوين URL لمستودع الأنمي",
   "manage_novel_repo_urls": "إدارة عناوين URL لمستودع الروايات",
   "url_cannot_be_empty": "لا يمكن أن يكون عنوان URL فارغًا",
-  "url_must_end_with_dot_json": "يجب أن ينتهي عنوان URL بـ .json",
+  "url_must_end_with_dot_json_or_dot_pb": "يجب أن ينتهي عنوان URL بـ .json / .pb",
   "repo_url": "عنوان URL للمستودع",
   "invalid_url_format": "تنسيق عنوان URL غير صالح",
   "clear_all_sources": "مسح جميع المصادر",

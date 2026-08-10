@@ -1733,7 +1733,8 @@ class AppLocalizationsIt extends AppLocalizations {
   String get url_cannot_be_empty => 'L\'URL non può essere vuoto';
 
   @override
-  String get url_must_end_with_dot_json => 'L\'URL deve terminare con .json';
+  String get url_must_end_with_dot_json_or_dot_pb =>
+      'L\'URL deve terminare con .json / .pb';
 
   @override
   String get repo_url => 'URL del repository';

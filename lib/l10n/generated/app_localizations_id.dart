@@ -1720,7 +1720,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get url_cannot_be_empty => 'URL tidak boleh kosong';
 
   @override
-  String get url_must_end_with_dot_json => 'URL harus diakhiri dengan .json';
+  String get url_must_end_with_dot_json_or_dot_pb =>
+      'URL harus diakhiri dengan .json / .pb';
 
   @override
   String get repo_url => 'URL repositori';

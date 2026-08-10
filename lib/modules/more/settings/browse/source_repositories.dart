@@ -381,7 +381,7 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                   },
                   autovalidateMode: AutovalidateMode.onUserInteraction,
                   decoration: InputDecoration(
-                    hintText: l10n.url_must_end_with_dot_json,
+                    hintText: l10n.url_must_end_with_dot_json_or_dot_pb,
                     filled: false,
                     contentPadding: const EdgeInsets.all(12),
                     enabledBorder: OutlineInputBorder(

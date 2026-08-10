@@ -436,7 +436,7 @@
   "manage_anime_repo_urls": "จัดการ URL ที่เก็บอนิเมะ",
   "manage_novel_repo_urls": "จัดการ URL ที่เก็บโนเวล",
   "url_cannot_be_empty": "URL ไม่สามารถเว้นว่างได้",
-  "url_must_end_with_dot_json": "URL ต้องลงท้ายด้วย .json",
+  "url_must_end_with_dot_json_or_dot_pb": "URL ต้องลงท้ายด้วย .json / .pb",
   "repo_url": "URL ที่เก็บข้อมูล",
   "invalid_url_format": "รูปแบบ URL ไม่ถูกต้อง",
   "clear_all_sources": "ล้างแหล่งข้อมูลทั้งหมด",

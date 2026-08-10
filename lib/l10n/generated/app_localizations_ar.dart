@@ -1727,7 +1727,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get url_cannot_be_empty => 'لا يمكن أن يكون عنوان URL فارغًا';
 
   @override
-  String get url_must_end_with_dot_json => 'يجب أن ينتهي عنوان URL بـ .json';
+  String get url_must_end_with_dot_json_or_dot_pb =>
+      'يجب أن ينتهي عنوان URL بـ .json / .pb';
 
   @override
   String get repo_url => 'عنوان URL للمستودع';

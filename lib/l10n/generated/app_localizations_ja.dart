@@ -1693,7 +1693,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get url_cannot_be_empty => 'URLは空にできません';
 
   @override
-  String get url_must_end_with_dot_json => 'URLは.jsonで終わる必要があります';
+  String get url_must_end_with_dot_json_or_dot_pb => 'URLは.jsonで終わる必要があります';
 
   @override
   String get repo_url => 'リポジトリURL';

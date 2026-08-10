@@ -1674,7 +1674,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get url_cannot_be_empty => 'URL不能为空';
 
   @override
-  String get url_must_end_with_dot_json => 'URL必须以.json结尾';
+  String get url_must_end_with_dot_json_or_dot_pb => 'URL必须以.json结尾';
 
   @override
   String get repo_url => '库URL';

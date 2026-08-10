@@ -1720,7 +1720,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get url_cannot_be_empty => 'URL boş olamaz';
 
   @override
-  String get url_must_end_with_dot_json => 'URL .json ile bitmelidir';
+  String get url_must_end_with_dot_json_or_dot_pb =>
+      'URL .json / .pb ile bitmelidir';
 
   @override
   String get repo_url => 'Depo URL\'si';
