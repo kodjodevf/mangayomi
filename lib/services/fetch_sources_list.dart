@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/filter.dart';
@@ -10,6 +9,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/isolate_service.dart';
+import 'package:mangayomi/services/extension_store_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 Future<void> fetchSourcesList({
@@ -24,102 +24,82 @@ Future<void> fetchSourcesList({
   final url = repo?.jsonUrl;
   if (url == null) return;
 
-  final req = await http.get(Uri.parse(url));
   final info = await PackageInfo.fromPlatform();
 
-  final sourceList = (jsonDecode(req.body) as List)
-      .expand((e) sync* {
-        if (e['name'] != null &&
-            e['pkg'] != null &&
-            e['version'] != null &&
-            e['code'] != null &&
-            e['lang'] != null &&
-            e['nsfw'] != null &&
-            e['sources'] != null &&
-            e['apk'] != null) {
-          final repoUrl = url.replaceAll("/index.min.json", "");
-          final sources = e['sources'] as List;
-          for (final source in sources) {
-            final src = Source.fromJson(e)
-              ..apiUrl = ''
-              ..appMinVerReq = ''
-              ..dateFormat = ''
-              ..dateFormatLocale = ''
-              ..hasCloudflare = false
-              ..headers = ''
-              ..isActive = true
-              ..isAdded = false
-              ..isFullData = false
-              ..isNsfw = e['nsfw'] == 1
-              ..isPinned = false
-              ..lastUsed = false
-              ..sourceCode = ''
-              ..typeSource = ''
-              ..versionLast = '0.0.1'
-              ..isObsolete = false
-              ..isLocal = false
-              ..name = source['name']
-              ..lang = source['lang']
-              ..baseUrl = source['baseUrl']
-              ..sourceCodeUrl = "$repoUrl/apk/${e['apk']}"
-              ..sourceCodeLanguage = SourceCodeLanguage.mihon
-              ..itemType =
-                  (e['pkg'] as String).startsWith(
-                    "eu.kanade.tachiyomi.animeextension",
-                  )
-                  ? ItemType.anime
-                  : ItemType.manga
-              ..iconUrl = "$repoUrl/icon/${e['pkg']}.png"
-              ..notes = Platform.isAndroid
-                  ? null
-                  : "Requires Android Proxy Server (ApkBridge) for installing and using the extensions!";
-            src.id = 'mihon-${source['id']}'.hashCode;
-            yield src;
-          }
-        } else if (e['id'] is String &&
-            e['name'] != null &&
-            e['site'] != null &&
-            e['lang'] != null &&
-            e['version'] != null &&
-            e['url'] != null &&
-            e['iconUrl'] != null) {
-          final src = Source.fromJson(e)
-            ..apiUrl = ''
-            ..appMinVerReq = ''
-            ..dateFormat = ''
-            ..dateFormatLocale = ''
-            ..hasCloudflare = false
-            ..headers = ''
-            ..isActive = true
-            ..isAdded = false
-            ..isFullData = false
-            ..isNsfw = false
-            ..isPinned = false
-            ..lastUsed = false
-            ..sourceCode = ''
-            ..typeSource = ''
-            ..versionLast = '0.0.1'
-            ..isObsolete = false
-            ..isLocal = false
-            ..lang = _convertLang(e)
-            ..baseUrl = e['site']
-            ..sourceCodeUrl = e['url']
-            ..sourceCodeLanguage = SourceCodeLanguage.lnreader
-            ..itemType = ItemType.novel
-            ..notes = "Performance might be poor due to limited engine";
-          src.id = 'lnreader-plugin-"${src.name}"."${src.lang}"'.hashCode;
-          yield src;
-        } else {
-          yield Source.fromJson(e);
+  List<Source> sourceList = [];
+
+  // Try parsing with ExtensionStoreService (.pb, NetworkExtensionStore JSON, or legacy min.json)
+  final storeResult = await ExtensionStoreService.fetchStore(url, http);
+  if (storeResult != null && storeResult.sources.isNotEmpty) {
+    sourceList = storeResult.sources
+        .where(
+          (source) =>
+              source.itemType == itemType &&
+              (source.appMinVerReq == null ||
+                  source.appMinVerReq!.isEmpty ||
+                  compareVersions(info.version, source.appMinVerReq!) > -1),
+        )
+        .toList();
+  } else {
+    // Fallback parsing for non-Mihon direct JSON lists (LNReader or custom format)
+    try {
+      final req = await http.get(Uri.parse(url));
+      if (req.statusCode == 200) {
+        final decoded = jsonDecode(req.body);
+        if (decoded is List) {
+          sourceList = decoded
+              .expand((e) sync* {
+                if (e['id'] is String &&
+                    e['name'] != null &&
+                    e['site'] != null &&
+                    e['lang'] != null &&
+                    e['version'] != null &&
+                    e['url'] != null &&
+                    e['iconUrl'] != null) {
+                  final src = Source.fromJson(e)
+                    ..apiUrl = ''
+                    ..appMinVerReq = ''
+                    ..dateFormat = ''
+                    ..dateFormatLocale = ''
+                    ..hasCloudflare = false
+                    ..headers = ''
+                    ..isActive = true
+                    ..isAdded = false
+                    ..isFullData = false
+                    ..isNsfw = false
+                    ..isPinned = false
+                    ..lastUsed = false
+                    ..sourceCode = ''
+                    ..typeSource = ''
+                    ..versionLast = '0.0.1'
+                    ..isObsolete = false
+                    ..isLocal = false
+                    ..lang = _convertLang(e)
+                    ..baseUrl = e['site']
+                    ..sourceCodeUrl = e['url']
+                    ..sourceCodeLanguage = SourceCodeLanguage.lnreader
+                    ..itemType = ItemType.novel
+                    ..notes = "Performance might be poor due to limited engine";
+                  src.id =
+                      'lnreader-plugin-"${src.name}"."${src.lang}"'.hashCode;
+                  yield src;
+                } else {
+                  yield Source.fromJson(e);
+                }
+              })
+              .where(
+                (source) =>
+                    source.itemType == itemType &&
+                    (source.appMinVerReq == null ||
+                        source.appMinVerReq!.isEmpty ||
+                        compareVersions(info.version, source.appMinVerReq!) >
+                            -1),
+              )
+              .toList();
         }
-      })
-      .where(
-        (source) =>
-            source.itemType == itemType &&
-            source.appMinVerReq != null &&
-            compareVersions(info.version, source.appMinVerReq!) > -1,
-      )
-      .toList();
+      }
+    } catch (_) {}
+  }
 
   if (id != null) {
     final matchingSource = sourceList.firstWhere(

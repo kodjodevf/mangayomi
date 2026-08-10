@@ -365,15 +365,13 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                   keyboardType: TextInputType.url,
                   onChanged: (value) => setState(() {}),
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    if (value == null || value.trim().isEmpty) {
                       return l10n.url_cannot_be_empty;
                     }
-                    if (!value.endsWith('.json')) {
-                      return l10n.url_must_end_with_dot_json;
-                    }
                     try {
-                      final uri = Uri.parse(value);
-                      if (!uri.isAbsolute) {
+                      final uri = Uri.parse(value.trim());
+                      if (!uri.isAbsolute ||
+                          (uri.scheme != 'http' && uri.scheme != 'https')) {
                         return l10n.invalid_url_format;
                       }
                       return null;
@@ -413,10 +411,12 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                       const SizedBox(width: 15),
                       StatefulBuilder(
                         builder: (context, setState) {
+                          final text = controller.text.trim();
+                          final isValid =
+                              text.isNotEmpty &&
+                              Uri.tryParse(text)?.isAbsolute == true;
                           return TextButton(
-                            onPressed:
-                                controller.text.isEmpty ||
-                                    !controller.text.endsWith(".json")
+                            onPressed: !isValid
                                 ? null
                                 : () async {
                                     setState(() => isLoading = true);
@@ -430,7 +430,7 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                                           .toList();
                                       final repo = await ref.read(
                                         getRepoInfosProvider(
-                                          jsonUrl: controller.text,
+                                          jsonUrl: text,
                                         ).future,
                                       );
                                       if (repo == null) {
@@ -455,7 +455,7 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                                     }
                                   },
                             child: isLoading
-                                ? SizedBox(
+                                ? const SizedBox(
                                     height: 20,
                                     width: 20,
                                     child: CircularProgressIndicator(),
@@ -463,9 +463,7 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                                 : Text(
                                     l10n.add,
                                     style: TextStyle(
-                                      color:
-                                          controller.text.isEmpty ||
-                                              !controller.text.endsWith(".json")
+                                      color: !isValid
                                           ? Theme.of(context).primaryColor
                                                 .withValues(alpha: 0.2)
                                           : null,
