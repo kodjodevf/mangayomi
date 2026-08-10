@@ -38,17 +38,15 @@ class ExtensionsLang extends ConsumerWidget {
                 }
                 final sources = isar.sources
                     .filter()
-                    .idIsNotNull()
-                    .and()
                     .itemTypeEqualTo(itemType)
                     .findAllSync();
+                final now = DateTime.now().millisecondsSinceEpoch;
                 for (var source in sources) {
-                  isar.sources.putSync(
-                    source
-                      ..isActive = enable
-                      ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-                  );
+                  source
+                    ..isActive = enable
+                    ..updatedAt = now;
                 }
+                isar.sources.putAllSync(sources);
               });
             },
           ),
@@ -57,8 +55,6 @@ class ExtensionsLang extends ConsumerWidget {
       body: StreamBuilder(
         stream: isar.sources
             .filter()
-            .idIsNotNull()
-            .and()
             .itemTypeEqualTo(itemType)
             .watch(fireImmediately: true),
         builder: (context, snapshot) {

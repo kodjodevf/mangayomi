@@ -192,15 +192,13 @@ class Synching extends _$Synching {
   }
 
   Future<void> clearChangedParts(List<ActionType> actions, bool txn) async {
-    var temp = isar.changedParts.filter().idIsNotNull().and().actionTypeEqualTo(
+    var temp = isar.changedParts.filter().actionTypeEqualTo(
       actions.first,
     );
     for (ActionType action in actions.skip(1)) {
       temp = temp.or().actionTypeEqualTo(action);
     }
-    final changedParts = (await temp.findAll())
-        .map((cp) => cp.id as Id)
-        .toList();
+    final changedParts = await temp.idProperty().findAll();
     if (txn) {
       await isar.writeTxn(() async {
         await isar.changedParts.deleteAll(changedParts);

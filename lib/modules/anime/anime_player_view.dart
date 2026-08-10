@@ -649,8 +649,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
   Future<void> _initCustomButton() async {
     if (!useMpvConfig) return;
     final customButtons = isar.customButtons
-        .filter()
-        .idIsNotNull()
+        .where()
         .sortByPos()
         .findAllSync();
     if (customButtons.isEmpty) return;

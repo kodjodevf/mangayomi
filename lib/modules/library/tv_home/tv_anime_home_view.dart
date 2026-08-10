@@ -1447,7 +1447,10 @@ void _showAddCategoryDialog(BuildContext context, List<Category> existing) {
                           .posIsNull()
                           .findAllSync();
                       for (final c in nulls) {
-                        isar.categorys.putSync(c..pos = c.id);
+                        c.pos = c.id;
+                      }
+                      if (nulls.isNotEmpty) {
+                        isar.categorys.putAllSync(nulls);
                       }
                     });
                     Navigator.pop(context);

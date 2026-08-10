@@ -11,22 +11,19 @@ Stream<List<Manga>> getAllMangaStream(
   required int? categoryId,
   required ItemType itemType,
 }) async* {
+  // Use the composite index (favorite, itemType) via where() for an index scan
+  // instead of a full-collection filter — orders of magnitude faster on large
+  // libraries.
   yield* categoryId == null
       ? isar.mangas
-            .filter()
-            .idIsNotNull()
-            .favoriteEqualTo(true)
-            .and()
-            .itemTypeEqualTo(itemType)
+            .where()
+            .favoriteItemTypeEqualTo(true, itemType)
             .watch(fireImmediately: true)
       : isar.mangas
+            .where()
+            .favoriteItemTypeEqualTo(true, itemType)
             .filter()
-            .idIsNotNull()
-            .favoriteEqualTo(true)
-            .categoriesIsNotEmpty()
             .categoriesElementEqualTo(categoryId)
-            .and()
-            .itemTypeEqualTo(itemType)
             .watch(fireImmediately: true);
 }
 
@@ -35,28 +32,20 @@ Stream<List<Manga>> getAllMangaWithoutCategoriesStream(
   Ref ref, {
   required ItemType itemType,
 }) async* {
+  // Use composite index for the primary filter; keep filter() only for the
+  // secondary predicate (null/empty categories) which cannot use an index.
   yield* isar.mangas
+      .where()
+      .favoriteItemTypeEqualTo(true, itemType)
       .filter()
-      .idIsNotNull()
-      .favoriteEqualTo(true)
-      .categoriesIsEmpty()
-      .and()
-      .itemTypeEqualTo(itemType)
-      .or()
-      .idIsNotNull()
-      .categoriesIsNull()
-      .favoriteEqualTo(true)
-      .and()
-      .itemTypeEqualTo(itemType)
+      .group((q) => q.categoriesIsEmpty().or().categoriesIsNull())
       .watch(fireImmediately: true);
 }
 
 @riverpod
 Stream<List<Settings>> getSettingsStream(Ref ref) async* {
   yield* isar.settings
-      .filter()
-      .idIsNotNull()
-      .and()
+      .where()
       .idEqualTo(227)
       .watch(fireImmediately: true);
 }

@@ -82,7 +82,6 @@ class _HistoryScreenState extends BaseLibraryTabScreenState<HistoryScreen> {
   Future<void> _clearHistory() async {
     final List<Id> idsToDelete = await isar.historys
         .filter()
-        .idIsNotNull()
         .chapter((q) => q.manga((q) => q.itemTypeEqualTo(getCurrentItemType())))
         .idProperty()
         .findAll();

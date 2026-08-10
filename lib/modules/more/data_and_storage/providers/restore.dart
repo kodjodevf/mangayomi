@@ -165,57 +165,79 @@ void restoreBackup(Ref ref, Map<String, dynamic> backup, {bool full = true}) {
           isar.mangas.putAllSync(manga);
           if (chapters != null) {
             isar.chapters.clearSync();
+            final mangaMap = {
+              for (var m in isar.mangas.where().findAllSync()) m.id!: m,
+            };
+            final chaptersToPut = <Chapter>[];
             for (var chapter in chapters) {
-              final manga = isar.mangas.getSync(chapter.mangaId!);
+              final manga = mangaMap[chapter.mangaId];
               if (manga != null) {
-                isar.chapters.putSync(chapter..manga.value = manga);
-                chapter.manga.saveSync();
+                chapter.manga.value = manga;
+                chaptersToPut.add(chapter);
               }
             }
+            isar.chapters.putAllSync(chaptersToPut);
+            for (var chapter in chaptersToPut) {
+              chapter.manga.saveSync();
+            }
+
+            final chapterMap = {
+              for (var c in isar.chapters.where().findAllSync()) c.id!: c,
+            };
 
             if (full) {
               isar.downloads.clearSync();
               if (downloads != null) {
+                final downloadsToPut = <Download>[];
                 for (var download in downloads) {
-                  final chapter = isar.chapters.getSync(download.id!);
+                  final chapter = chapterMap[download.id];
                   if (chapter != null) {
-                    isar.downloads.putSync(download..chapter.value = chapter);
-                    download.chapter.saveSync();
+                    download.chapter.value = chapter;
+                    downloadsToPut.add(download);
                   }
+                }
+                isar.downloads.putAllSync(downloadsToPut);
+                for (var download in downloadsToPut) {
+                  download.chapter.saveSync();
                 }
               }
             }
 
             isar.historys.clearSync();
             if (history != null) {
+              final historyToPut = <History>[];
               for (var element in history) {
-                final chapter = isar.chapters.getSync(element.chapterId!);
+                final chapter = chapterMap[element.chapterId];
                 if (chapter != null) {
-                  isar.historys.putSync(element..chapter.value = chapter);
-                  element.chapter.saveSync();
+                  element.chapter.value = chapter;
+                  historyToPut.add(element);
                 }
+              }
+              isar.historys.putAllSync(historyToPut);
+              for (var element in historyToPut) {
+                element.chapter.saveSync();
               }
             }
 
             isar.updates.clearSync();
             if (updates != null) {
-              final tempChapters = isar.chapters
-                  .filter()
-                  .idIsNotNull()
-                  .findAllSync()
-                  .toList();
+              final chapterMapByKey = {
+                for (var c in chapterMap.values)
+                  "${c.mangaId}_${c.name}": c,
+              };
+              final updatesToPut = <Update>[];
               for (var update in updates) {
-                final matchingChapter = tempChapters
-                    .where(
-                      (chapter) =>
-                          chapter.mangaId == update.mangaId &&
-                          chapter.name == update.chapterName,
-                    )
-                    .firstOrNull;
+                final matchingChapter = chapterMapByKey[
+                  "${update.mangaId}_${update.chapterName}"
+                ];
                 if (matchingChapter != null) {
-                  isar.updates.putSync(update..chapter.value = matchingChapter);
-                  update.chapter.saveSync();
+                  update.chapter.value = matchingChapter;
+                  updatesToPut.add(update);
                 }
+              }
+              isar.updates.putAllSync(updatesToPut);
+              for (var update in updatesToPut) {
+                update.chapter.saveSync();
               }
             }
           }

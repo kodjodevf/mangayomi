@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'app_font_family.dart';
+part of 'settings_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -9,51 +9,51 @@ part of 'app_font_family.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(AppFontFamily)
-final appFontFamilyProvider = AppFontFamilyProvider._();
+@ProviderFor(CachedSettings)
+final cachedSettingsProvider = CachedSettingsProvider._();
 
-final class AppFontFamilyProvider
-    extends $NotifierProvider<AppFontFamily, String?> {
-  AppFontFamilyProvider._()
+final class CachedSettingsProvider
+    extends $NotifierProvider<CachedSettings, Settings> {
+  CachedSettingsProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'appFontFamilyProvider',
+        name: r'cachedSettingsProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$appFontFamilyHash();
+  String debugGetCreateSourceHash() => _$cachedSettingsHash();
 
   @$internal
   @override
-  AppFontFamily create() => AppFontFamily();
+  CachedSettings create() => CachedSettings();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(String? value) {
+  Override overrideWithValue(Settings value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<String?>(value),
+      providerOverride: $SyncValueProvider<Settings>(value),
     );
   }
 }
 
-String _$appFontFamilyHash() => r'c832be00ab5426ee2f6bc1c76e8768aaf098b914';
+String _$cachedSettingsHash() => r'593cb97ba902236c390b36f5d6d47cb96acb7cfa';
 
-abstract class _$AppFontFamily extends $Notifier<String?> {
-  String? build();
+abstract class _$CachedSettings extends $Notifier<Settings> {
+  Settings build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final ref = this.ref as $Ref<String?, String?>;
+    final ref = this.ref as $Ref<Settings, Settings>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<String?, String?>,
-              String?,
+              AnyNotifier<Settings, Settings>,
+              Settings,
               Object?,
               Object?
             >;

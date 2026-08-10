@@ -114,16 +114,14 @@ class _ExtensionListTileWidgetState
                     final sourcePrefsIds = isar.sourcePreferences
                         .filter()
                         .sourceIdEqualTo(widget.source.id!)
-                        .findAllSync()
-                        .map((e) => e.id!)
-                        .toList();
+                        .idProperty()
+                        .findAllSync();
                     final sourcePrefsStringIds = isar
                         .sourcePreferenceStringValues
                         .filter()
                         .sourceIdEqualTo(widget.source.id!)
-                        .findAllSync()
-                        .map((e) => e.id)
-                        .toList();
+                        .idProperty()
+                        .findAllSync();
                     isar.writeTxnSync(() {
                       if (widget.source.isObsolete ?? false) {
                         isar.sources.deleteSync(widget.source.id!);

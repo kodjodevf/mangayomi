@@ -42,7 +42,7 @@ final class AppLockEnabledStateProvider
 }
 
 String _$appLockEnabledStateHash() =>
-    r'cdd466aee9037e776f5adf992e11ccedb8c58e74';
+    r'94983ee8be2c6184c8fa694a310a48299da80e6c';
 
 abstract class _$AppLockEnabledState extends $Notifier<bool> {
   bool build();
@@ -101,7 +101,7 @@ final class AppUnlockedStateProvider
   }
 }
 
-String _$appUnlockedStateHash() => r'e5dd0982d0fc0b51cb3db8e6be04d11490d46b9b';
+String _$appUnlockedStateHash() => r'910d7ae95cb9a88dbea7469da08a8fb1d6e13523';
 
 /// Tracks whether the app is currently unlocked.
 /// Resets to false when app goes to background (if lock is enabled).

@@ -13,9 +13,10 @@ Stream<List<History>> getAllHistoryStream(
   required ItemType itemType,
   String search = "",
 }) async* {
+  // idIsNotNull() removed — every Isar document has a non-null id.
+  // The itemType hash-index on History + the link traversal does the filtering.
   yield* isar.historys
       .filter()
-      .idIsNotNull()
       .chapter(
         (q) => q.manga(
           (q) => q
@@ -35,7 +36,6 @@ Stream<List<Update>> getAllUpdateStream(
 }) async* {
   yield* isar.updates
       .filter()
-      .idIsNotNull()
       .chapter(
         (q) => q.manga(
           (q) => q

@@ -47,7 +47,7 @@ final class AppUiScaleStateProvider
   }
 }
 
-String _$appUiScaleStateHash() => r'e8cc7e2266975c7a9b08974167a5b1f5cd8415b9';
+String _$appUiScaleStateHash() => r'8654b60b4b98153d4cd72208fb4dcde851ffc22a';
 
 /// User fine-tune for the TV interface scale. 1.0 is the normalized reference
 /// (see [AppUiScale]); higher renders the UI larger, lower smaller.

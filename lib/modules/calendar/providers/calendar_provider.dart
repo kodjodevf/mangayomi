@@ -7,10 +7,9 @@ part 'calendar_provider.g.dart';
 @riverpod
 Stream<List<Manga>> getCalendarStream(Ref ref, {ItemType? itemType}) async* {
   yield* isar.mangas
+      .where()
+      .favoriteItemTypeEqualTo(true, itemType ?? ItemType.manga)
       .filter()
-      .idIsNotNull()
-      .favoriteEqualTo(true)
-      .itemTypeEqualTo(itemType ?? ItemType.manga)
       .anyOf([
         Status.ongoing,
         Status.unknown,

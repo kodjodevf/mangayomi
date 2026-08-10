@@ -42,7 +42,7 @@ final class DefaultReadingModeStateProvider
 }
 
 String _$defaultReadingModeStateHash() =>
-    r'6125feb2aff79c017dc55ea2faa2591916af051a';
+    r'54f6919d69a6896a7200d98c491b8b817187249d';
 
 abstract class _$DefaultReadingModeState extends $Notifier<ReaderMode> {
   ReaderMode build();
@@ -96,7 +96,7 @@ final class AnimatePageTransitionsStateProvider
 }
 
 String _$animatePageTransitionsStateHash() =>
-    r'b65e7a08d290f4ec6b9616eb70ce2830b51582e6';
+    r'108a256f2a88c497e9032e42f57af68e915cce03';
 
 abstract class _$AnimatePageTransitionsState extends $Notifier<bool> {
   bool build();
@@ -150,7 +150,7 @@ final class DoubleTapAnimationSpeedStateProvider
 }
 
 String _$doubleTapAnimationSpeedStateHash() =>
-    r'6b7b88dd088b7c8328960553b3a8fd17066030a6';
+    r'dd0b9acafbeebe068b70c20e015bf4f9d9b33a28';
 
 abstract class _$DoubleTapAnimationSpeedState extends $Notifier<int> {
   int build();
@@ -202,7 +202,7 @@ final class CropBordersStateProvider
   }
 }
 
-String _$cropBordersStateHash() => r'b8a38a59e240909f81a5faad44b54d3ced025de8';
+String _$cropBordersStateHash() => r'ce71e28de53a2f5c55ee6f9260720361fd196b77';
 
 abstract class _$CropBordersState extends $Notifier<bool> {
   bool build();
@@ -254,7 +254,7 @@ final class ScaleTypeStateProvider
   }
 }
 
-String _$scaleTypeStateHash() => r'07f29cba7193242795134b6d37bb393210a191a1';
+String _$scaleTypeStateHash() => r'ce86e3a7b5eb1ef23d00c3fe54759368652599c7';
 
 abstract class _$ScaleTypeState extends $Notifier<ScaleType> {
   ScaleType build();
@@ -307,7 +307,7 @@ final class PagePreloadAmountStateProvider
 }
 
 String _$pagePreloadAmountStateHash() =>
-    r'45e9810e73e93b7a88a1a3b876da73123024cc71';
+    r'bf0e72b8897b4812cb64390df6f042efa867e6c9';
 
 abstract class _$PagePreloadAmountState extends $Notifier<int> {
   int build();

@@ -360,15 +360,19 @@ Future<void> _scanDirectory(Ref ref, Directory? dir) async {
   }
   try {
     if (chaptersToSave.isNotEmpty) {
+      final mangaMap = {for (final m in processedMangas) m.id: m};
       await isar.writeTxn(() async {
+        for (final chap in chaptersToSave) {
+          final manga = mangaMap[chap.mangaId];
+          if (manga != null) {
+            chap.manga.value = manga;
+          }
+        }
         // insert chapters
         await isar.chapters.putAll(chaptersToSave);
 
-        // for each one, set its link and save it
+        // save link references
         for (final chap in chaptersToSave) {
-          chap.manga.value = processedMangas.firstWhere(
-            (m) => m.id == chap.mangaId,
-          );
           await chap.manga.save();
         }
       });

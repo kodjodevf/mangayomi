@@ -42,7 +42,7 @@ final class IncognitoModeStateProvider
 }
 
 String _$incognitoModeStateHash() =>
-    r'3858256a820eef632d3df57533f2aad14f555b22';
+    r'4271bc0905239853bafe9400290ab32d6a093578';
 
 abstract class _$IncognitoModeState extends $Notifier<bool> {
   bool build();

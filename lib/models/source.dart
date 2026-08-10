@@ -18,8 +18,10 @@ class Source {
 
   String? lang;
 
+  @Index()
   bool? isActive;
 
+  @Index()
   bool? isAdded;
 
   bool? isPinned;
@@ -63,6 +65,7 @@ class Source {
 
   bool? isManga;
 
+  @Index(composite: [CompositeIndex('isAdded')])
   @enumerated
   late ItemType itemType;
 

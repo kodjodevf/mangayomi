@@ -48,16 +48,14 @@ class _MangaReaderDetailState extends ConsumerState<MangaReaderDetail> {
         data: (manga) {
           return StreamBuilder(
             stream: isar.sources
+                .where()
+                .itemTypeIsAddedEqualTo(manga!.itemType, true)
                 .filter()
-                .langContains(manga!.lang!, caseSensitive: false)
+                .langContains(manga.lang!, caseSensitive: false)
                 .and()
                 .nameContains(manga.source!, caseSensitive: false)
                 .and()
-                .idIsNotNull()
-                .and()
                 .isActiveEqualTo(true)
-                .and()
-                .isAddedEqualTo(true)
                 .watch(fireImmediately: true),
             builder: (context, snapshot) {
               final sourceExist = snapshot.hasData && snapshot.data!.isNotEmpty;

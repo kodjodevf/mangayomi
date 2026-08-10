@@ -50,12 +50,8 @@ class _MigrationScreenScreenState extends ConsumerState<MigrationScreen> {
             .itemTypeEqualTo(widget.manga.itemType)
             .findAllSync()
       : isar.sources
-            .filter()
-            .idIsNotNull()
-            .and()
-            .isAddedEqualTo(true)
-            .and()
-            .itemTypeEqualTo(widget.manga.itemType)
+            .where()
+            .itemTypeIsAddedEqualTo(widget.manga.itemType, true)
             .findAllSync();
   // Set once the first source row with results has taken the TV autofocus, so
   // no other row steals it afterwards.

@@ -12,8 +12,6 @@ Stream<List<Category>> getMangaCategorieStream(
 }) async* {
   yield* isar.categorys
       .filter()
-      .idIsNotNull()
-      .and()
       .forItemTypeEqualTo(itemType)
       .watch(fireImmediately: true);
 }

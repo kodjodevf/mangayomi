@@ -8,16 +8,17 @@ part 'extensions_provider.g.dart';
 
 @riverpod
 Stream<List<Source>> getExtensionsStream(Ref ref, ItemType itemType) async* {
+  // where().isActiveEqualTo() uses the isActive index for an efficient primary
+  // scan; itemType and repo-visibility are secondary filters on the smaller set.
   yield* isar.sources
+      .where()
+      .isActiveEqualTo(true)
       .filter()
-      .idIsNotNull()
-      .and()
+      .itemTypeEqualTo(itemType)
       .group(
         (q) => q.repoIsNull().or().repo(
           (q) => q.hiddenIsNull().or().hiddenEqualTo(false),
         ),
       )
-      .isActiveEqualTo(true)
-      .itemTypeEqualTo(itemType)
       .watch(fireImmediately: true);
 }

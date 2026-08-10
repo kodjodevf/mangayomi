@@ -277,16 +277,14 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                                         .sourcePreferences
                                         .filter()
                                         .sourceIdEqualTo(source.id!)
-                                        .findAllSync()
-                                        .map((e) => e.id!)
-                                        .toList();
+                                        .idProperty()
+                                        .findAllSync();
                                     final sourcePrefsStringIds = isar
                                         .sourcePreferenceStringValues
                                         .filter()
                                         .sourceIdEqualTo(source.id!)
-                                        .findAllSync()
-                                        .map((e) => e.id)
-                                        .toList();
+                                        .idProperty()
+                                        .findAllSync();
                                     isar.writeTxnSync(() {
                                       if (source.isObsolete ?? false) {
                                         isar.sources.deleteSync(

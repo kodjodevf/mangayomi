@@ -160,7 +160,7 @@ void showDeleteMangaDialog({
 void _removeImport(WidgetRef ref, Manga manga) {
   final provider = ref.read(synchingProvider(syncId: 1).notifier);
   final histories = isar.historys
-      .filter()
+      .where()
       .mangaIdEqualTo(manga.id)
       .findAllSync();
   for (var history in histories) {
@@ -168,16 +168,16 @@ void _removeImport(WidgetRef ref, Manga manga) {
     provider.addChangedPart(ActionType.removeHistory, history.id, "{}", false);
   }
 
+  final updates = isar.updates
+      .where()
+      .mangaIdEqualTo(manga.id)
+      .findAllSync();
+  for (var update in updates) {
+    isar.updates.deleteSync(update.id!);
+    provider.addChangedPart(ActionType.removeUpdate, update.id, "{}", false);
+  }
+
   for (var chapter in manga.chapters) {
-    final updates = isar.updates
-        .filter()
-        .mangaIdEqualTo(chapter.mangaId)
-        .chapterNameEqualTo(chapter.name)
-        .findAllSync();
-    for (var update in updates) {
-      isar.updates.deleteSync(update.id!);
-      provider.addChangedPart(ActionType.removeUpdate, update.id, "{}", false);
-    }
     // Remove associated download record to prevent ghost entries
     isar.downloads.deleteSync(chapter.id!);
     isar.chapters.deleteSync(chapter.id!);

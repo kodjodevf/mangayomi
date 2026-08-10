@@ -130,6 +130,8 @@ Future<dynamic> updateMangaDetail(
       final newChapters = <Chapter>[];
       // Guards against a source repeating the same episode within one fetch.
       final seenKeys = <String>{};
+      // Existing chapters whose metadata changed — batch-updated at the end.
+      final chaptersToUpdate = <Chapter>[];
 
       for (final chap in chaps) {
         final url = chap.url?.trim();
@@ -170,7 +172,7 @@ Future<dynamic> updateMangaDetail(
 
           newChapters.add(newChapter);
         } else {
-          // Existing chapter - refresh metadata only.
+          // Existing chapter - refresh metadata only (collected for batch write).
           existing
             ..name = chap.name
             ..scanlator = chap.scanlator
@@ -180,35 +182,60 @@ Future<dynamic> updateMangaDetail(
             ..description = chap.description
             ..downloadSize = chap.downloadSize
             ..duration = chap.duration;
-          await isar.chapters.put(existing);
+          chaptersToUpdate.add(existing);
         }
       }
 
-      // Insert new chapters oldest-first (API typically returns newest-first).
+      // ── Batch write existing chapters metadata ──────────────────────────
+      if (chaptersToUpdate.isNotEmpty) {
+        await isar.chapters.putAll(chaptersToUpdate);
+      }
+
+      // ── Batch insert new chapters (oldest-first) + their Updates ────────
       if (newChapters.isNotEmpty) {
         final hasExisting = existingChapters.isNotEmpty;
-        for (final chap in newChapters.reversed) {
-          await isar.chapters.put(chap);
-          await chap.manga.save();
 
-          // Only create an Update entry for genuinely new (unread) chapters,
-          // so that pre-read cross-scanlator chapters don't spam the updates feed.
+        // Reverse so oldest chapters get inserted first (API returns newest-first).
+        final orderedNew = newChapters.reversed.toList();
+
+        // Set manga link on each chapter before batch insert.
+        for (final chap in orderedNew) {
+          chap.manga.value = manga;
+        }
+
+        await isar.chapters.putAll(orderedNew);
+        // Save the IsarLink for every chapter in one pass.
+        for (final chap in orderedNew) {
+          await chap.manga.save();
+        }
+
+        // Build Update entries for genuinely new (unread) chapters only,
+        // so pre-read cross-scanlator chapters don't spam the updates feed.
+        final updatesToInsert = <Update>[];
+        for (final chap in orderedNew) {
           if (hasExisting && !(chap.isRead ?? false)) {
-            final update = Update(
-              mangaId: savedMangaId,
-              chapterName: chap.name,
-              date: now.toString(),
-              updatedAt: now,
-            )..chapter.value = chap;
-            await isar.updates.put(update);
-            await update.chapter.save();
+            updatesToInsert.add(
+              Update(
+                mangaId: savedMangaId,
+                chapterName: chap.name,
+                date: now.toString(),
+                updatedAt: now,
+              )..chapter.value = chap,
+            );
+          }
+        }
+
+        if (updatesToInsert.isNotEmpty) {
+          await isar.updates.putAll(updatesToInsert);
+          for (final upd in updatesToInsert) {
+            await upd.chapter.save();
           }
         }
       }
-      // Remove pre-existing duplicate chapters (from before the domain-less
-      // match), keeping the read/started copy chosen above.
-      for (final id in duplicateIds) {
-        await isar.chapters.delete(id);
+
+      // ── Remove pre-existing duplicate chapters ───────────────────────────
+      if (duplicateIds.isNotEmpty) {
+        await isar.chapters.deleteAll(duplicateIds);
       }
 
       // Calculate fetch interval:

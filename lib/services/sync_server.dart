@@ -554,8 +554,7 @@ class SyncServer extends _$SyncServer {
 
   List<Map<String, dynamic>> _getManga() {
     return isar.mangas
-        .filter()
-        .idIsNotNull()
+        .where()
         .findAllSync()
         .map((e) => (e..customCoverImage = null).toJson())
         .toList();
@@ -563,8 +562,7 @@ class SyncServer extends _$SyncServer {
 
   List<Map<String, dynamic>> _getCategories() {
     return isar.categorys
-        .filter()
-        .idIsNotNull()
+        .where()
         .findAllSync()
         .map((e) => e.toJson())
         .toList();
@@ -572,8 +570,7 @@ class SyncServer extends _$SyncServer {
 
   List<Map<String, dynamic>> _getChapters() {
     return isar.chapters
-        .filter()
-        .idIsNotNull()
+        .where()
         .findAllSync()
         .map((e) => e.toJson())
         .toList();
@@ -581,8 +578,7 @@ class SyncServer extends _$SyncServer {
 
   List<Map<String, dynamic>> _getTracks() {
     return isar.tracks
-        .filter()
-        .idIsNotNull()
+        .where()
         .findAllSync()
         .map((e) => e.toJson())
         .toList();
@@ -590,8 +586,7 @@ class SyncServer extends _$SyncServer {
 
   List<Map<String, dynamic>> _getHistories() {
     return isar.historys
-        .filter()
-        .idIsNotNull()
+        .where()
         .findAllSync()
         .map((e) => e.toJson())
         .toList();
@@ -599,8 +594,7 @@ class SyncServer extends _$SyncServer {
 
   List<Map<String, dynamic>> _getUpdates() {
     return isar.updates
-        .filter()
-        .idIsNotNull()
+        .where()
         .findAllSync()
         .map((e) => e.toJson())
         .toList();

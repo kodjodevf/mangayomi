@@ -337,10 +337,9 @@ final extensionUpdateCountProvider = StreamProvider.family<int, ItemType>((
   itemType,
 ) {
   return isar.sources
-      .filter()
-      .idIsNotNull()
-      .and()
+      .where()
       .isActiveEqualTo(true)
+      .filter()
       .itemTypeEqualTo(itemType)
       .watch(fireImmediately: true)
       .map(

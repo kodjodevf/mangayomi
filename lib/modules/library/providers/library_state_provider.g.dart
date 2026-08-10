@@ -60,7 +60,7 @@ final class LibraryDisplayTypeStateProvider
 }
 
 String _$libraryDisplayTypeStateHash() =>
-    r'459a91429b3d1490347cae4bd062745c5e372f05';
+    r'3f1d8d516ee3e5a6ff21d52506a7195d55437256';
 
 final class LibraryDisplayTypeStateFamily extends $Family
     with
@@ -167,7 +167,7 @@ final class LibraryGridSizeStateProvider
 }
 
 String _$libraryGridSizeStateHash() =>
-    r'288b58266426aae511454e120d76a7fde7d2899b';
+    r'608558c72613153909ea2e49d70336d5b1e37f63';
 
 final class LibraryGridSizeStateFamily extends $Family
     with

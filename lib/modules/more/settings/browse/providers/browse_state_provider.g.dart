@@ -42,7 +42,7 @@ final class AndroidProxyServerStateProvider
 }
 
 String _$androidProxyServerStateHash() =>
-    r'3ac060f8a61added586dcefc889fa44c71263c5b';
+    r'2488f025b4f3f2abbd49e2e3fd79a0a77455a021';
 
 abstract class _$AndroidProxyServerState extends $Notifier<String> {
   String build();
@@ -96,7 +96,7 @@ final class OnlyIncludePinnedSourceStateProvider
 }
 
 String _$onlyIncludePinnedSourceStateHash() =>
-    r'b9f707348d5d0f7abfa8e615c1d2b35c6dbd57f3';
+    r'1212774d767e912932b12c073288cb2f7ecb5b9d';
 
 abstract class _$OnlyIncludePinnedSourceState extends $Notifier<bool> {
   bool build();
@@ -148,7 +148,7 @@ final class ShowNSFWStateProvider
   }
 }
 
-String _$showNSFWStateHash() => r'e1c8ac8c545ff11f315fd51ad049ffb7fa905142';
+String _$showNSFWStateHash() => r'95c35ec2b620f28058e279401ed790a16cf38fd3';
 
 abstract class _$ShowNSFWState extends $Notifier<bool> {
   bool build();
@@ -218,7 +218,7 @@ final class ExtensionsRepoStateProvider
 }
 
 String _$extensionsRepoStateHash() =>
-    r'86edc9a3f78d72acda4b20a058031c345ee406eb';
+    r'bd0b2af31dfb23531547c2756b53042f2920fe35';
 
 final class ExtensionsRepoStateFamily extends $Family
     with

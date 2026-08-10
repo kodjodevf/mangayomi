@@ -101,4 +101,4 @@ final class CheckForAppUpdatesProvider
 }
 
 String _$checkForAppUpdatesHash() =>
-    r'2243b74d748a90847bacff256cb2ef0a344fee80';
+    r'dbcf10c6790b81927d5517b30ce87a505f8100ee';

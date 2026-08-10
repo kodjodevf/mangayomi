@@ -16,14 +16,13 @@ final getSourcesStreamProvider = StreamProvider.family<List<Source>, ItemType>((
   ref,
   itemType,
 ) {
+  // Use composite index (itemType, isAdded) via where() for an index scan,
+  // then narrow to isActive=true with a secondary filter on the small result set.
   return isar.sources
+      .where()
+      .itemTypeIsAddedEqualTo(itemType, true)
       .filter()
-      .idIsNotNull()
-      .isAddedEqualTo(true)
-      .and()
       .isActiveEqualTo(true)
-      .and()
-      .itemTypeEqualTo(itemType)
       .watch(fireImmediately: true);
 });
 

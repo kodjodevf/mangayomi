@@ -956,8 +956,9 @@ class _ExtensionBadgeWidget extends ConsumerWidget {
 
     return StreamBuilder(
       stream: isar.sources
+          .where()
+          .isActiveEqualTo(true)
           .filter()
-          .idIsNotNull()
           .optional(
             hideItems.contains("/MangaLibrary"),
             (q) => q.not().itemTypeEqualTo(ItemType.manga),
@@ -970,8 +971,6 @@ class _ExtensionBadgeWidget extends ConsumerWidget {
             hideItems.contains("/NovelLibrary"),
             (q) => q.not().itemTypeEqualTo(ItemType.novel),
           )
-          .and()
-          .isActiveEqualTo(true)
           .watch(fireImmediately: true),
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -1008,7 +1007,6 @@ class _UpdatesBadgeWidget extends ConsumerWidget {
     return StreamBuilder(
       stream: isar.updates
           .filter()
-          .idIsNotNull()
           .optional(
             hideItems.contains("/MangaLibrary"),
             (q) => q.chapter(

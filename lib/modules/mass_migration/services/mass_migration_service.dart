@@ -78,13 +78,11 @@ _MigrationSnapshot _captureMigrationSnapshot({
           .read(synchingProvider(syncId: 1).notifier)
           .addChangedPart(ActionType.removeHistory, history.id, '{}', false);
     }
+    // Batch delete all updates for oldManga via mangaId index
+    isar.updates.where().mangaIdEqualTo(oldManga.id).deleteAllSync();
+
     for (final chapter in oldManga.chapters) {
       chaptersProgress.add(chapter);
-      isar.updates
-          .filter()
-          .mangaIdEqualTo(chapter.mangaId)
-          .chapterNameEqualTo(chapter.name)
-          .deleteAllSync();
       isar.chapters.deleteSync(chapter.id!);
       ref
           .read(synchingProvider(syncId: 1).notifier)
@@ -180,8 +178,9 @@ void _syncMigratedMangaFromPreview({
           )..manga.value = oldManga,
         )
         .toList();
-    for (final chapter in chapters.reversed) {
-      isar.chapters.putSync(chapter);
+    final orderedChapters = chapters.reversed.toList();
+    isar.chapters.putAllSync(orderedChapters);
+    for (final chapter in orderedChapters) {
       chapter.manga.saveSync();
     }
   });
@@ -192,10 +191,12 @@ void _restoreMigrationProgress({
   required _MigrationSnapshot snapshot,
 }) {
   isar.writeTxnSync(() {
+    final updatedChapters = <Chapter>[];
     for (final oldChapter in snapshot.chaptersProgress) {
       final chapter = isar.chapters
+          .where()
+          .mangaIdEqualToAnyIsRead(oldManga.id)
           .filter()
-          .mangaIdEqualTo(oldManga.id)
           .nameContains(
             extractMigrationChapterNumber(oldChapter.name ?? '') ?? '.....',
             caseSensitive: false,
@@ -205,8 +206,11 @@ void _restoreMigrationProgress({
         chapter.isBookmarked = oldChapter.isBookmarked;
         chapter.lastPageRead = oldChapter.lastPageRead;
         chapter.isRead = oldChapter.isRead;
-        isar.chapters.putSync(chapter);
+        updatedChapters.add(chapter);
       }
+    }
+    if (updatedChapters.isNotEmpty) {
+      isar.chapters.putAllSync(updatedChapters);
     }
 
     final historyChapter = isar.chapters

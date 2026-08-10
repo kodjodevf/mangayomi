@@ -42,7 +42,7 @@ final class MangaHomeDisplayTypeStateProvider
 }
 
 String _$mangaHomeDisplayTypeStateHash() =>
-    r'6e91cef2e4a9925cab1a7a764ac6a0e741398fb2';
+    r'91dcc24774f7009e6a2d726aa0c3f12616ac227c';
 
 abstract class _$MangaHomeDisplayTypeState extends $Notifier<DisplayType> {
   DisplayType build();

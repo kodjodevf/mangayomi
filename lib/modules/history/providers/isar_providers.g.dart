@@ -69,7 +69,7 @@ final class GetAllHistoryStreamProvider
 }
 
 String _$getAllHistoryStreamHash() =>
-    r'0f374dfdb3636b06da2f6786066a1737b645a4b6';
+    r'a6ed506d30089539d15abc1ee2e766ffd4c2fddb';
 
 final class GetAllHistoryStreamFamily extends $Family
     with
@@ -158,7 +158,7 @@ final class GetAllUpdateStreamProvider
 }
 
 String _$getAllUpdateStreamHash() =>
-    r'd02b3a80d14947681e2684dd4b3c76e2545339aa';
+    r'80e1489533dde2073348da448807f6edb0de3c52';
 
 final class GetAllUpdateStreamFamily extends $Family
     with

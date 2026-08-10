@@ -97,7 +97,52 @@ const MangaSchema = CollectionSchema(
   deserialize: _mangaDeserialize,
   deserializeProp: _mangaDeserializeProp,
   idName: r'id',
-  indexes: {},
+  indexes: {
+    r'itemType': IndexSchema(
+      id: 4177129349728551858,
+      name: r'itemType',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'itemType',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+      ],
+    ),
+    r'favorite_itemType': IndexSchema(
+      id: -5021945722742197463,
+      name: r'favorite_itemType',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'favorite',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+        IndexPropertySchema(
+          name: r'itemType',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+      ],
+    ),
+    r'source': IndexSchema(
+      id: -836881197531269605,
+      name: r'source',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'source',
+          type: IndexType.hash,
+          caseSensitive: true,
+        ),
+      ],
+    ),
+  },
   links: {
     r'chapters': LinkSchema(
       id: -1477759690489116902,
@@ -376,6 +421,22 @@ extension MangaQueryWhereSort on QueryBuilder<Manga, Manga, QWhere> {
       return query.addWhereClause(const IdWhereClause.any());
     });
   }
+
+  QueryBuilder<Manga, Manga, QAfterWhere> anyItemType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'itemType'),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhere> anyFavoriteItemType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'favorite_itemType'),
+      );
+    });
+  }
 }
 
 extension MangaQueryWhere on QueryBuilder<Manga, Manga, QWhereClause> {
@@ -444,6 +505,377 @@ extension MangaQueryWhere on QueryBuilder<Manga, Manga, QWhereClause> {
           includeUpper: includeUpper,
         ),
       );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause> itemTypeEqualTo(
+    ItemType itemType,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'itemType', value: [itemType]),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause> itemTypeNotEqualTo(
+    ItemType itemType,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'itemType',
+                lower: [],
+                upper: [itemType],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'itemType',
+                lower: [itemType],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'itemType',
+                lower: [itemType],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'itemType',
+                lower: [],
+                upper: [itemType],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause> itemTypeGreaterThan(
+    ItemType itemType, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'itemType',
+          lower: [itemType],
+          includeLower: include,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause> itemTypeLessThan(
+    ItemType itemType, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'itemType',
+          lower: [],
+          upper: [itemType],
+          includeUpper: include,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause> itemTypeBetween(
+    ItemType lowerItemType,
+    ItemType upperItemType, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'itemType',
+          lower: [lowerItemType],
+          includeLower: includeLower,
+          upper: [upperItemType],
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause> favoriteIsNullAnyItemType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(
+          indexName: r'favorite_itemType',
+          value: [null],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause> favoriteIsNotNullAnyItemType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'favorite_itemType',
+          lower: [null],
+          includeLower: false,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause> favoriteEqualToAnyItemType(
+    bool? favorite,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(
+          indexName: r'favorite_itemType',
+          value: [favorite],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause> favoriteNotEqualToAnyItemType(
+    bool? favorite,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'favorite_itemType',
+                lower: [],
+                upper: [favorite],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'favorite_itemType',
+                lower: [favorite],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'favorite_itemType',
+                lower: [favorite],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'favorite_itemType',
+                lower: [],
+                upper: [favorite],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause> favoriteItemTypeEqualTo(
+    bool? favorite,
+    ItemType itemType,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(
+          indexName: r'favorite_itemType',
+          value: [favorite, itemType],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause>
+  favoriteEqualToItemTypeNotEqualTo(bool? favorite, ItemType itemType) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'favorite_itemType',
+                lower: [favorite],
+                upper: [favorite, itemType],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'favorite_itemType',
+                lower: [favorite, itemType],
+                includeLower: false,
+                upper: [favorite],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'favorite_itemType',
+                lower: [favorite, itemType],
+                includeLower: false,
+                upper: [favorite],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'favorite_itemType',
+                lower: [favorite],
+                upper: [favorite, itemType],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause>
+  favoriteEqualToItemTypeGreaterThan(
+    bool? favorite,
+    ItemType itemType, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'favorite_itemType',
+          lower: [favorite, itemType],
+          includeLower: include,
+          upper: [favorite],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause> favoriteEqualToItemTypeLessThan(
+    bool? favorite,
+    ItemType itemType, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'favorite_itemType',
+          lower: [favorite],
+          upper: [favorite, itemType],
+          includeUpper: include,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause> favoriteEqualToItemTypeBetween(
+    bool? favorite,
+    ItemType lowerItemType,
+    ItemType upperItemType, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'favorite_itemType',
+          lower: [favorite, lowerItemType],
+          includeLower: includeLower,
+          upper: [favorite, upperItemType],
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause> sourceIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'source', value: [null]),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause> sourceIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'source',
+          lower: [null],
+          includeLower: false,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause> sourceEqualTo(String? source) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'source', value: [source]),
+      );
+    });
+  }
+
+  QueryBuilder<Manga, Manga, QAfterWhereClause> sourceNotEqualTo(
+    String? source,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'source',
+                lower: [],
+                upper: [source],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'source',
+                lower: [source],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'source',
+                lower: [source],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'source',
+                lower: [],
+                upper: [source],
+                includeUpper: false,
+              ),
+            );
+      }
     });
   }
 }

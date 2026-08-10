@@ -79,7 +79,52 @@ const ChapterSchema = CollectionSchema(
   deserialize: _chapterDeserialize,
   deserializeProp: _chapterDeserializeProp,
   idName: r'id',
-  indexes: {},
+  indexes: {
+    r'mangaId_isRead': IndexSchema(
+      id: 4614369434036219438,
+      name: r'mangaId_isRead',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'mangaId',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+        IndexPropertySchema(
+          name: r'isRead',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+      ],
+    ),
+    r'isBookmarked': IndexSchema(
+      id: -5205273177397984230,
+      name: r'isBookmarked',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'isBookmarked',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+      ],
+    ),
+    r'isRead': IndexSchema(
+      id: -944277114070112791,
+      name: r'isRead',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'isRead',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+      ],
+    ),
+  },
   links: {
     r'manga': LinkSchema(
       id: -8510956094935473973,
@@ -276,6 +321,30 @@ extension ChapterQueryWhereSort on QueryBuilder<Chapter, Chapter, QWhere> {
       return query.addWhereClause(const IdWhereClause.any());
     });
   }
+
+  QueryBuilder<Chapter, Chapter, QAfterWhere> anyMangaIdIsRead() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'mangaId_isRead'),
+      );
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterWhere> anyIsBookmarked() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'isBookmarked'),
+      );
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterWhere> anyIsRead() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'isRead'),
+      );
+    });
+  }
 }
 
 extension ChapterQueryWhere on QueryBuilder<Chapter, Chapter, QWhereClause> {
@@ -344,6 +413,373 @@ extension ChapterQueryWhere on QueryBuilder<Chapter, Chapter, QWhereClause> {
           includeUpper: includeUpper,
         ),
       );
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterWhereClause> mangaIdIsNullAnyIsRead() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'mangaId_isRead', value: [null]),
+      );
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterWhereClause>
+  mangaIdIsNotNullAnyIsRead() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'mangaId_isRead',
+          lower: [null],
+          includeLower: false,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterWhereClause> mangaIdEqualToAnyIsRead(
+    int? mangaId,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(
+          indexName: r'mangaId_isRead',
+          value: [mangaId],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterWhereClause> mangaIdNotEqualToAnyIsRead(
+    int? mangaId,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'mangaId_isRead',
+                lower: [],
+                upper: [mangaId],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'mangaId_isRead',
+                lower: [mangaId],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'mangaId_isRead',
+                lower: [mangaId],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'mangaId_isRead',
+                lower: [],
+                upper: [mangaId],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterWhereClause> mangaIdGreaterThanAnyIsRead(
+    int? mangaId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'mangaId_isRead',
+          lower: [mangaId],
+          includeLower: include,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterWhereClause> mangaIdLessThanAnyIsRead(
+    int? mangaId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'mangaId_isRead',
+          lower: [],
+          upper: [mangaId],
+          includeUpper: include,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterWhereClause> mangaIdBetweenAnyIsRead(
+    int? lowerMangaId,
+    int? upperMangaId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'mangaId_isRead',
+          lower: [lowerMangaId],
+          includeLower: includeLower,
+          upper: [upperMangaId],
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterWhereClause> mangaIdEqualToIsReadIsNull(
+    int? mangaId,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(
+          indexName: r'mangaId_isRead',
+          value: [mangaId, null],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterWhereClause>
+  mangaIdEqualToIsReadIsNotNull(int? mangaId) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'mangaId_isRead',
+          lower: [mangaId, null],
+          includeLower: false,
+          upper: [mangaId],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterWhereClause> mangaIdIsReadEqualTo(
+    int? mangaId,
+    bool? isRead,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(
+          indexName: r'mangaId_isRead',
+          value: [mangaId, isRead],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterWhereClause>
+  mangaIdEqualToIsReadNotEqualTo(int? mangaId, bool? isRead) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'mangaId_isRead',
+                lower: [mangaId],
+                upper: [mangaId, isRead],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'mangaId_isRead',
+                lower: [mangaId, isRead],
+                includeLower: false,
+                upper: [mangaId],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'mangaId_isRead',
+                lower: [mangaId, isRead],
+                includeLower: false,
+                upper: [mangaId],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'mangaId_isRead',
+                lower: [mangaId],
+                upper: [mangaId, isRead],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterWhereClause> isBookmarkedIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'isBookmarked', value: [null]),
+      );
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterWhereClause> isBookmarkedIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'isBookmarked',
+          lower: [null],
+          includeLower: false,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterWhereClause> isBookmarkedEqualTo(
+    bool? isBookmarked,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(
+          indexName: r'isBookmarked',
+          value: [isBookmarked],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterWhereClause> isBookmarkedNotEqualTo(
+    bool? isBookmarked,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isBookmarked',
+                lower: [],
+                upper: [isBookmarked],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isBookmarked',
+                lower: [isBookmarked],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isBookmarked',
+                lower: [isBookmarked],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isBookmarked',
+                lower: [],
+                upper: [isBookmarked],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterWhereClause> isReadIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'isRead', value: [null]),
+      );
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterWhereClause> isReadIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'isRead',
+          lower: [null],
+          includeLower: false,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterWhereClause> isReadEqualTo(
+    bool? isRead,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'isRead', value: [isRead]),
+      );
+    });
+  }
+
+  QueryBuilder<Chapter, Chapter, QAfterWhereClause> isReadNotEqualTo(
+    bool? isRead,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isRead',
+                lower: [],
+                upper: [isRead],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isRead',
+                lower: [isRead],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isRead',
+                lower: [isRead],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isRead',
+                lower: [],
+                upper: [isRead],
+                includeUpper: false,
+              ),
+            );
+      }
     });
   }
 }

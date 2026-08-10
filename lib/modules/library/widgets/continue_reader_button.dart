@@ -17,7 +17,7 @@ class ContinueReaderButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return StreamBuilder(
       stream: isar.historys
-          .filter()
+          .where()
           .mangaIdEqualTo(entry.id!)
           .watch(fireImmediately: true),
       builder: (context, snapshot) => GestureDetector(

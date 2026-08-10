@@ -177,18 +177,16 @@ class TvSourceRow extends StatelessWidget {
     if (!isLocal) {
       final sources = isar.sources
           .filter()
-          .idIsNotNull()
-          .and()
           .itemTypeEqualTo(itemType)
           .findAllSync();
+      final now = DateTime.now().millisecondsSinceEpoch;
       isar.writeTxnSync(() {
         for (var src in sources) {
-          isar.sources.putSync(
-            src
-              ..lastUsed = src.id == source.id
-              ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-          );
+          src
+            ..lastUsed = src.id == source.id
+            ..updatedAt = now;
         }
+        isar.sources.putAllSync(sources);
       });
     }
     context.push('/mangaHome', extra: (source, false));

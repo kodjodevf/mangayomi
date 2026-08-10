@@ -47,12 +47,8 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
               .itemTypeEqualTo(widget.itemType)
               .findAllSync()
         : isar.sources
-              .filter()
-              .idIsNotNull()
-              .and()
-              .isAddedEqualTo(true)
-              .and()
-              .itemTypeEqualTo(widget.itemType)
+              .where()
+              .itemTypeIsAddedEqualTo(widget.itemType, true)
               .findAllSync();
     if (_showNSFW) return sources;
     return sources.where((e) => !(e.isNsfw ?? false)).toList();

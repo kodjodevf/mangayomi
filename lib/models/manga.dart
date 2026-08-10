@@ -24,13 +24,16 @@ class Manga {
 
   bool? isManga;
 
+  @Index()
   @enumerated
   late ItemType itemType;
 
   List<String>? genre;
 
+  @Index(composite: [CompositeIndex('itemType')])
   bool? favorite;
 
+  @Index(type: IndexType.hash)
   String? source;
 
   String? lang;

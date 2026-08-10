@@ -7,6 +7,7 @@ part 'chapter.g.dart';
 class Chapter {
   Id? id;
 
+  @Index(composite: [CompositeIndex('isRead')])
   int? mangaId;
 
   String? name;
@@ -17,8 +18,10 @@ class Chapter {
 
   String? scanlator;
 
+  @Index()
   bool? isBookmarked;
 
+  @Index()
   bool? isRead;
 
   String? lastPageRead;

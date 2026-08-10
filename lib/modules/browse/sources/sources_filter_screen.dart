@@ -27,8 +27,6 @@ class SourcesFilterScreen extends ConsumerWidget {
         child: StreamBuilder(
           stream: isar.sources
               .filter()
-              .idIsNotNull()
-              .and()
               .sourceCodeIsNotEmpty()
               .and()
               .itemTypeEqualTo(itemType)

@@ -551,17 +551,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                         (element) => !(element.isRead ?? false),
                                       )
                                       .toList();
-                                  isar.chapters
-                                      .filter()
-                                      .idIsNotNull()
-                                      .mangaIdEqualTo(widget.manga!.id!)
-                                      .isReadEqualTo(false)
-                                      .findAllSync();
                                   for (var chapter in unreadChapters) {
-                                    final entry = isar.downloads
-                                        .filter()
-                                        .idEqualTo(chapter.id)
-                                        .findFirstSync();
+                                    final entry = isar.downloads.getSync(
+                                      chapter.id!,
+                                    );
                                     if (entry == null || !entry.isDownload!) {
                                       ref.watch(
                                         addDownloadToQueueProvider(

@@ -47,4 +47,4 @@ final class LogsStateProvider extends $FunctionalProvider<bool, bool, bool>
   }
 }
 
-String _$logsStateHash() => r'680ab781a039e0441394dc0b376b8add0fb80910';
+String _$logsStateHash() => r'7b391f12ada6835518e4e747a36053a49d180c4b';
