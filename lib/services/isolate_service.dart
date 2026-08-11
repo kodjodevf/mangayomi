@@ -201,6 +201,28 @@ class GetIsolateService {
     String? androidProxyServer,
     bool? useLogger,
   }) async {
+    if (source?.sourceCodeLanguage != SourceCodeLanguage.lnreader) {
+      return withExtensionService(source!, proxyServer ?? '', (service) async {
+        switch (serviceType) {
+          case 'getDetail':
+            return (await service.getDetail(url!)) as T;
+          case 'getPopular':
+            return (await service.getPopular(page!)) as T;
+          case 'getLatestUpdates':
+            return (await service.getLatestUpdates(page!)) as T;
+          case 'search':
+            return (await service.search(query!, page!, filterList!)) as T;
+          case 'getVideoList':
+            return (await service.getVideoList(url!)) as T;
+          case 'getPageList':
+            return (await service.getPageList(url!)) as T;
+          case 'getHeaders':
+            return (service.getHeaders()) as T;
+          default:
+            throw Exception('Unknown service type: $serviceType');
+        }
+      });
+    }
     if (!_isRunning) {
       await start();
     }
