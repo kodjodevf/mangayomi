@@ -384,7 +384,7 @@ const mangayomiSources = [{
     "itemType": ${source.itemType.index},
     "version": "${source.version}",
     "pkgPath": "",
-    "notes": ""
+    "notes": "${source.notes}"
 }];
 
 class DefaultExtension extends MProvider {
