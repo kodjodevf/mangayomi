@@ -110,6 +110,7 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
               },
               onSuffixPressed: () {
                 _textEditingController.clear();
+                setState(() {});
               },
               onPressed: () {
                 setState(() {
