@@ -120,6 +120,14 @@ final languagesMap = {
   "Uzbek": "uz",
   "Tagalog": "tl",
   'অসমীয়া': 'as',
+  'Brezhoneg': 'br',
+  'Corsu': 'co',
+  'Чӑвашла': 'cv',
+  'Lombard': 'lmo',
+  'Moldavian': 'mo',
+  'ਪੰਜਾਬੀ': 'pa',
+  'తెలుగు': 'te',
+  'Vèneto': 'vec',
 };
 
 /// this might not always work depending on how every extension provides its subtitles
@@ -223,4 +231,12 @@ final languagesMapEnglish = {
   "Uzbek": "uz",
   "Tagalog": "tl",
   "Assamese": "as",
+  "Breton": "br",
+  "Corsican": "co",
+  "Chuvash": "cv",
+  "Lombard": "lmo",
+  "Moldavian": "mo",
+  "Punjabi": "pa",
+  "Telugu": "te",
+  "Venetian": "vec",
 };
