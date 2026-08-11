@@ -295,10 +295,10 @@ class _MangaChapterPageGalleryState
     }
   }
 
-  // final double _horizontalScaleValue = 1.0;
+  // final double _horizontalScaleValue = 1.0; TODO
   bool _isNextChapterPreloading = false;
   int _prefetchSessionId = 0;
-  // bool _isPrevChapterPreloading = false;
+  // bool _isPrevChapterPreloading = false; TODO
 
   int get pagePreloadAmount => ref.read(pagePreloadAmountStateProvider);
   late bool _isBookmarked = _readerController.getChapterBookmarked();
