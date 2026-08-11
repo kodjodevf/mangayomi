@@ -62,16 +62,9 @@ class AboutScreen extends ConsumerWidget {
                         title: Text(l10n.check_for_app_updates),
                         value: checkForUpdates,
                         onChanged: (value) {
-                          isar.writeTxnSync(() {
-                            final settings = isar.settings.getSync(227);
-                            isar.settings.putSync(
-                              settings!
-                                ..checkForAppUpdates = value
-                                ..updatedAt =
-                                    DateTime.now().millisecondsSinceEpoch,
-                            );
-                          });
-                          ref.invalidate(checkForAppUpdatesProvider);
+                          ref
+                              .read(checkForAppUpdatesProvider.notifier)
+                              .set(value);
                         },
                       ),
                       ListTile(
