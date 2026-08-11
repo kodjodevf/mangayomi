@@ -54,12 +54,6 @@ add_subdirectory(${FLUTTER_MANAGED_DIR})
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK REQUIRED IMPORTED_TARGET gtk+-3.0)
 
-# Optional image decoding libraries for the native Linux image decoder.
-# Install with: sudo apt install libjpeg-dev libpng-dev (Debian/Ubuntu)
-#               sudo dnf install libjpeg-turbo-devel libpng-devel (Fedora/RHEL)
-find_package(JPEG)
-find_package(PNG)
-
 add_definitions(-DAPPLICATION_ID="${APPLICATION_ID}")
 
 # Define the application target. To change its name, change BINARY_NAME above,
@@ -132,26 +126,6 @@ add_library(subsampling_scale_image_view SHARED
 )
 apply_standard_settings(subsampling_scale_image_view)
 target_include_directories(subsampling_scale_image_view PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../lib/ffi")
-
-# Link libjpeg if found (enables JPEG decoding on Linux)
-if(JPEG_FOUND)
-  target_link_libraries(subsampling_scale_image_view PRIVATE ${JPEG_LIBRARIES})
-  target_include_directories(subsampling_scale_image_view PRIVATE ${JPEG_INCLUDE_DIRS})
-  target_compile_definitions(subsampling_scale_image_view PRIVATE HAVE_LIBJPEG)
-  message(STATUS "libjpeg found: JPEG decoding enabled for Linux")
-else()
-  message(WARNING "libjpeg not found: JPEG images will not display on Linux. Install libjpeg-dev.")
-endif()
-
-# Link libpng if found (enables PNG decoding on Linux)
-if(PNG_FOUND)
-  target_link_libraries(subsampling_scale_image_view PRIVATE ${PNG_LIBRARIES})
-  target_include_directories(subsampling_scale_image_view PRIVATE ${PNG_INCLUDE_DIRS})
-  target_compile_definitions(subsampling_scale_image_view PRIVATE HAVE_LIBPNG)
-  message(STATUS "libpng found: PNG decoding enabled for Linux")
-else()
-  message(WARNING "libpng not found: PNG images will not display on Linux. Install libpng-dev.")
-endif()
 
 install(TARGETS subsampling_scale_image_view
   LIBRARY DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
