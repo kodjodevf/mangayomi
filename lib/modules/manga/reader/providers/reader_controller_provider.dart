@@ -128,24 +128,6 @@ class ReaderController extends _$ReaderController
     onSettingsMutated();
   }
 
-  void setShowPageNumber(bool value) {
-    if (!incognitoMode) {
-      isar.writeTxnSync(
-        () => isar.settings.putSync(
-          getIsarSetting()
-            ..showPagesNumber = value
-            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-        ),
-      );
-      onSettingsMutated();
-    }
-  }
-
-  bool getShowPageNumber() {
-    if (!incognitoMode) return getIsarSetting().showPagesNumber!;
-    return true;
-  }
-
   // ---------------------------------------------------------------------------
   // Page tracking
   // ---------------------------------------------------------------------------
