@@ -15,6 +15,8 @@ installed_size: 109400
 dependencies:
   - libwebkit2gtk-4.1-0
   - libmpv2
+  - libjpeg8
+  - libpng16-16t64
 
 essential: false
 
