@@ -212,7 +212,7 @@ class _MangaChapterPageGalleryState
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    final keepOn = isar.settings.getSync(227)!.keepScreenOnReader ?? true;
+    final keepOn = ref.read(keepScreenOnReaderStateProvider);
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached) {
       _readingStopwatch.stop();
@@ -281,7 +281,7 @@ class _MangaChapterPageGalleryState
   }
 
   void _initWakelock() {
-    final keepOn = isar.settings.getSync(227)!.keepScreenOnReader ?? true;
+    final keepOn = ref.read(keepScreenOnReaderStateProvider);
     if (keepOn) {
       WakelockPlus.enable();
     }
