@@ -1145,9 +1145,7 @@ class _MangaChapterPageGalleryState
     final newIndex = itemPositions.first.index;
     final bool pageChanged = _currentIndex != newIndex;
     _currentIndex = newIndex;
-    if (pageChanged) {
-      _triggerFlash();
-    }
+    if (pageChanged) _triggerFlash();
     final currentReaderMode = ref.read(_currentReaderMode);
     int pagesLength =
         (_pageMode == PageMode.doublePage &&
@@ -1155,26 +1153,7 @@ class _MangaChapterPageGalleryState
         ? (pages.length / 2).ceil()
         : pages.length;
     if (_currentIndex! >= 0 && _currentIndex! < pagesLength) {
-      if (_readerController.chapter.id != pages[_currentIndex!].chapter!.id) {
-        if (mounted) {
-          setState(() {
-            _readerController = ref.read(
-              readerControllerProvider(
-                chapter: pages[_currentIndex!].chapter!,
-              ).notifier,
-            );
-
-            chapter = pages[_currentIndex!].chapter!;
-            final chapterUrlModel = pages[_currentIndex!].chapterUrlModel;
-
-            if (chapterUrlModel != null) {
-              _chapterUrlModel = chapterUrlModel;
-            }
-
-            _isBookmarked = _readerController.getChapterBookmarked();
-          });
-        }
-      }
+      _updateChapterIfNeeded(_currentIndex!);
 
       // ── Next-chapter preloading: trigger when near the end ──
       final distToEnd = pagesLength - 1 - itemPositions.last.index;
@@ -1187,12 +1166,7 @@ class _MangaChapterPageGalleryState
       //   _triggerPrevChapterPreload();
       // }
 
-      final idx = pages[_currentIndex!].index;
-      if (idx != null) {
-        _currentPageDisplayIndex.value = idx;
-        _readerController.setPageIndex(idx, false, _chapterUrlModel.pageUrls);
-        ref.read(currentIndexProvider(chapter).notifier).setCurrentIndex(idx);
-      }
+      _updateDisplayIndex(_currentIndex!, false /*Note Paged, Continuous*/);
     }
   }
 
@@ -1435,27 +1409,11 @@ class _MangaChapterPageGalleryState
     final int actualIndex = _pageViewToActualIndex(index);
     final int prevActualIndex = _pageViewToActualIndex(_currentIndex!);
 
-    final idx = pages[prevActualIndex].index;
-    if (idx != null) {
-      _readerController.setPageIndex(idx, false, _chapterUrlModel.pageUrls);
+    final prevIdx = pages[prevActualIndex].index;
+    if (prevIdx != null) {
+      _readerController.setPageIndex(prevIdx, false, _chapterUrlModel.pageUrls);
     }
-    if (_readerController.chapter.id != pages[actualIndex].chapter!.id) {
-      if (mounted) {
-        setState(() {
-          _readerController = ref.read(
-            readerControllerProvider(
-              chapter: pages[actualIndex].chapter!,
-            ).notifier,
-          );
-          chapter = pages[actualIndex].chapter!;
-          final chapterUrlModel = pages[actualIndex].chapterUrlModel;
-          if (chapterUrlModel != null) {
-            _chapterUrlModel = chapterUrlModel;
-          }
-          _isBookmarked = _readerController.getChapterBookmarked();
-        });
-      }
-    }
+    _updateChapterIfNeeded(actualIndex);
     // Reset zoom of the previous page so user can swipe back freely (#443).
     _pageControllers[prevActualIndex]?.resetScaleAndCenter();
     if (_isDoublePageActive) {
@@ -1469,15 +1427,8 @@ class _MangaChapterPageGalleryState
     final bool pageChanged = _currentIndex != index;
     _currentIndex = index;
 
-    if (pageChanged) {
-      _triggerFlash();
-    }
-    if (pages[actualIndex].index != null) {
-      _currentPageDisplayIndex.value = pages[actualIndex].index!;
-      ref
-          .read(currentIndexProvider(chapter).notifier)
-          .setCurrentIndex(pages[actualIndex].index!);
-    }
+    if (pageChanged) _triggerFlash();
+    _updateDisplayIndex(actualIndex, true /*Paged*/);
 
     // ── Next-chapter preloading: trigger when near the end ──
     final distToEnd = pages.length - 1 - actualIndex;
@@ -1501,6 +1452,39 @@ class _MangaChapterPageGalleryState
 
     // Prefetch pages in order for the new page window
     _prefetchPagesInOrder();
+  }
+
+  /// helper for [_readProgressListener] and [_onPageChanged]
+  void _updateChapterIfNeeded(int actualIndex) {
+    final newChapter = pages[actualIndex].chapter!;
+    if (_readerController.chapter.id == newChapter.id) return;
+
+    if (!mounted) return;
+
+    setState(() {
+      _readerController = ref.read(
+        readerControllerProvider(chapter: newChapter).notifier,
+      );
+      chapter = newChapter;
+
+      final chapterUrlModel = pages[actualIndex].chapterUrlModel;
+      if (chapterUrlModel != null) {
+        _chapterUrlModel = chapterUrlModel;
+      }
+
+      _isBookmarked = _readerController.getChapterBookmarked();
+    });
+  }
+
+  /// helper for [_readProgressListener] and [_onPageChanged]
+  void _updateDisplayIndex(int actualIndex, bool pageView) {
+    final idx = pages[actualIndex].index;
+    if (idx == null) return;
+    _currentPageDisplayIndex.value = idx;
+    if (!pageView) {
+      _readerController.setPageIndex(idx, false, _chapterUrlModel.pageUrls);
+    }
+    ref.read(currentIndexProvider(chapter).notifier).setCurrentIndex(idx);
   }
 
   late final _pageOffset = ValueNotifier(
