@@ -79,33 +79,33 @@ jobs:
           name: Mangayomi-android-debug
           path: build/app/outputs/flutter-apk/app-debug.apk
 
-  build-windows:
-    name: Build (Windows debug)
-    runs-on: windows-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  # build-windows:
+  #   name: Build (Windows debug)
+  #   runs-on: windows-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
+  #     - name: Setup Flutter
+  #       uses: subosito/flutter-action@v2
+  #       with:
+  #         channel: stable
+  #         cache: true
 
-      - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+  #     - name: Setup Rust toolchain
+  #       uses: dtolnay/rust-toolchain@stable
 
-      - name: Install flutter_rust_bridge_codegen
-        run: cargo install 'flutter_rust_bridge_codegen'
+  #     - name: Install flutter_rust_bridge_codegen
+  #       run: cargo install 'flutter_rust_bridge_codegen'
 
-      - name: Install dependencies
-        run: flutter pub get
+  #     - name: Install dependencies
+  #       run: flutter pub get
 
-      - name: Build debug Windows
-        run: flutter build windows --debug
+  #     - name: Build debug Windows
+  #       run: flutter build windows --debug
 
-      - name: Upload Windows debug artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: Mangayomi-windows-debug
-          path: build/windows/x64/runner/Debug/
+  #     - name: Upload Windows debug artifact
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: Mangayomi-windows-debug
+  #         path: build/windows/x64/runner/Debug/
