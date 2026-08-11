@@ -16,6 +16,7 @@ import 'package:mangayomi/modules/more/settings/player/custom_button_screen.dart
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
+import 'package:mangayomi/modules/widgets/extension_server_warning_banner.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
@@ -71,6 +72,7 @@ class BrowseSScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
+                  const ExtensionServerWarningBanner(),
                   ListTile(
                     onTap: () => context.push('/extensionServer'),
                     title: Text(

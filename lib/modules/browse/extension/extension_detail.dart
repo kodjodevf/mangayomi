@@ -10,6 +10,7 @@ import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/extension/providers/extension_preferences_providers.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/source_preference_widget.dart';
+import 'package:mangayomi/modules/widgets/extension_server_warning_banner.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_source_preference.dart';
@@ -70,6 +71,8 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            if (source.sourceCodeLanguage == SourceCodeLanguage.mihon)
+              const ExtensionServerWarningBanner(),
             Padding(
               padding: const EdgeInsets.only(top: 20),
               child: Container(

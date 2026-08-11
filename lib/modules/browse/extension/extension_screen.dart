@@ -12,6 +12,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/modules/browse/extension/widgets/extension_list_tile_widget.dart';
+import 'package:mangayomi/modules/widgets/extension_server_warning_banner.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
 class ExtensionScreen extends ConsumerStatefulWidget {
@@ -138,6 +139,9 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
               child: CustomScrollView(
                 controller: controller,
                 slivers: [
+                  const SliverToBoxAdapter(
+                    child: ExtensionServerWarningBanner(),
+                  ),
                   if (updateEntries.isNotEmpty)
                     _buildUpdateSection(updateEntries, l10n),
                   if (installedEntries.isNotEmpty)

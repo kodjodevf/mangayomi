@@ -8,6 +8,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/sources/widgets/source_list_tile.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
+import 'package:mangayomi/modules/widgets/extension_server_warning_banner.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
@@ -107,6 +108,7 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                const ExtensionServerWarningBanner(),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(context.l10n.no_sources_installed),
@@ -171,6 +173,9 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
             child: CustomScrollView(
               controller: controller,
               slivers: [
+                const SliverToBoxAdapter(
+                  child: ExtensionServerWarningBanner(),
+                ),
                 CustomSliverGroupedListView<Source, String>(
                   elements: lastUsedEntries,
                   groupBy: (element) => "",
