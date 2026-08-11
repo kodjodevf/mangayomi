@@ -198,11 +198,7 @@ class _MangaChapterPageGalleryState
     final actualIdx = _pageViewToActualIndexSync(_currentIndex!);
     final index = pages[actualIdx].index;
     if (index != null) {
-      _readerController.setPageIndex(
-        _isDoublePageActiveSync ? index : _geCurrentIndex(index),
-        true,
-        _chapterUrlModel.pageUrls,
-      );
+      _readerController.setPageIndex(index, true, _chapterUrlModel.pageUrls);
     }
     for (final controller in _pageControllers.values) {
       controller.dispose();
@@ -226,11 +222,7 @@ class _MangaChapterPageGalleryState
       final actualIdx = _pageViewToActualIndex(_currentIndex!);
       final index = pages[actualIdx].index;
       if (index != null) {
-        _readerController.setPageIndex(
-          _isDoublePageActive ? index : _geCurrentIndex(index),
-          true,
-          _chapterUrlModel.pageUrls,
-        );
+        _readerController.setPageIndex(index, true, _chapterUrlModel.pageUrls);
       }
     } else if (state == AppLifecycleState.resumed) {
       _readingStopwatch.start();
@@ -1198,11 +1190,7 @@ class _MangaChapterPageGalleryState
       final idx = pages[_currentIndex!].index;
       if (idx != null) {
         _currentPageDisplayIndex.value = idx;
-        _readerController.setPageIndex(
-          _isDoublePageActive ? idx : _geCurrentIndex(idx),
-          false,
-          _chapterUrlModel.pageUrls,
-        );
+        _readerController.setPageIndex(idx, false, _chapterUrlModel.pageUrls);
         ref.read(currentIndexProvider(chapter).notifier).setCurrentIndex(idx);
       }
     }
@@ -1449,11 +1437,7 @@ class _MangaChapterPageGalleryState
 
     final idx = pages[prevActualIndex].index;
     if (idx != null) {
-      _readerController.setPageIndex(
-        _isDoublePageActive ? idx : _geCurrentIndex(idx),
-        false,
-        _chapterUrlModel.pageUrls,
-      );
+      _readerController.setPageIndex(idx, false, _chapterUrlModel.pageUrls);
     }
     if (_readerController.chapter.id != pages[actualIndex].chapter!.id) {
       if (mounted) {
@@ -1611,10 +1595,6 @@ class _MangaChapterPageGalleryState
     int page1 = index + 1;
     int page2 = index + 2;
     return page2 > pageLength ? "$pageLength" : "$page1-$page2";
-  }
-
-  int _geCurrentIndex(int index) {
-    return index;
   }
 
   /// Whether double page mode is active (continuous or paged).
