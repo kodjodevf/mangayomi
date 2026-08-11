@@ -4,6 +4,11 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'app_font_family.g.dart';
 
+/// Provides both the raw and resolved font family.
+///
+/// Returns a tuple `(raw, resolved)`:
+/// - `raw`      -> the original font name stored in Isar (e.g. "Roboto")
+/// - `resolved` -> the actual font family used by Flutter/GoogleFonts (e.g. "Roboto-Regular")
 @riverpod
 class AppFontFamily extends _$AppFontFamily {
   static String? _resolveFontFamily(String? fontFamily) {
@@ -19,9 +24,9 @@ class AppFontFamily extends _$AppFontFamily {
   }
 
   @override
-  String? build() {
+  (String? raw, String? resolved) build() {
     final fontFamily = isar.settings.getSync(227)?.appFontFamily;
-    return _resolveFontFamily(fontFamily);
+    return (fontFamily, _resolveFontFamily(fontFamily));
   }
 
   void set(String? fontFamily) {
@@ -33,6 +38,6 @@ class AppFontFamily extends _$AppFontFamily {
           ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       ),
     );
-    state = _resolveFontFamily(fontFamily);
+    state = (fontFamily, _resolveFontFamily(fontFamily));
   }
 }

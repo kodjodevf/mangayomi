@@ -45,7 +45,7 @@ ThemeData _tvFocus(ThemeData theme) {
 final lightThemeProvider = Provider<ThemeData>((ref) {
   final colors = ref.watch(flexSchemeColorStateProvider);
   final blendLevel = ref.watch(blendLevelStateProvider).toInt();
-  final fontFamily = ref.watch(appFontFamilyProvider);
+  final fontFamily = ref.watch(appFontFamilyProvider.select((t) => t.$2));
 
   return _tvFocus(
     FlexThemeData.light(
@@ -73,7 +73,7 @@ final lightThemeProvider = Provider<ThemeData>((ref) {
 final darkThemeProvider = Provider<ThemeData>((ref) {
   final colors = ref.watch(flexSchemeColorStateProvider);
   final blendLevel = ref.watch(blendLevelStateProvider).toInt();
-  final fontFamily = ref.watch(appFontFamilyProvider);
+  final fontFamily = ref.watch(appFontFamilyProvider.select((t) => t.$2));
   final pureBlack = ref.watch(pureBlackDarkModeStateProvider);
 
   return _tvFocus(
