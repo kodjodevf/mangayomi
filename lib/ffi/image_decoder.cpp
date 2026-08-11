@@ -310,6 +310,11 @@ struct ImageDecoderContext {
         #ifdef _WIN32
         WinNativeContext win_ctx;
         #endif
+        #if !defined(__APPLE__) && !defined(__ANDROID__) && !defined(_WIN32)
+        struct {
+            unsigned char* full_rgba;  // Full decoded RGBA image held in RAM for tile extraction
+        } linux_ctx;
+        #endif
     };
 };
 
@@ -1160,11 +1165,250 @@ void free_decoder(ImageDecoderContext* ctx) {
 #endif
 
 // ============================================================================
-// Fallback / LINUX (BMP decoder support and explicit messages)
+// Fallback / LINUX (libjpeg + libpng + BMP native support)
 // ============================================================================
 #if !defined(__APPLE__) && !defined(__ANDROID__) && !defined(_WIN32)
 
+// ---------------------------------------------------------------------------
+// JPEG decoding via libjpeg (compiled only when HAVE_LIBJPEG is defined)
+// ---------------------------------------------------------------------------
+#ifdef HAVE_LIBJPEG
+#include <jpeglib.h>
+#include <setjmp.h>
+
+struct linux_jpeg_error_mgr {
+    struct jpeg_error_mgr pub;
+    jmp_buf setjmp_buffer;
+};
+
+static void linux_jpeg_error_exit(j_common_ptr cinfo) {
+    struct linux_jpeg_error_mgr* myerr = (struct linux_jpeg_error_mgr*)cinfo->err;
+    longjmp(myerr->setjmp_buffer, 1);
+}
+
+static unsigned char* decode_jpeg_rgba(const char* file_path, int* out_w, int* out_h) {
+    FILE* f = fopen(file_path, "rb");
+    if (!f) return NULL;
+
+    struct jpeg_decompress_struct cinfo;
+    struct linux_jpeg_error_mgr jerr;
+    memset(&cinfo, 0, sizeof(cinfo));
+
+    cinfo.err = jpeg_std_error(&jerr.pub);
+    jerr.pub.error_exit = linux_jpeg_error_exit;
+
+    if (setjmp(jerr.setjmp_buffer)) {
+        jpeg_destroy_decompress(&cinfo);
+        fclose(f);
+        return NULL;
+    }
+
+    jpeg_create_decompress(&cinfo);
+    jpeg_stdio_src(&cinfo, f);
+    jpeg_read_header(&cinfo, TRUE);
+
+    // Decode to plain RGB first (universally supported), then convert to RGBA.
+    cinfo.out_color_space = JCS_RGB;
+    jpeg_start_decompress(&cinfo);
+
+    int w = (int)cinfo.output_width;
+    int h = (int)cinfo.output_height;
+
+    unsigned char* rgba = (unsigned char*)malloc((size_t)w * h * 4);
+    if (!rgba) {
+        jpeg_destroy_decompress(&cinfo);
+        fclose(f);
+        return NULL;
+    }
+
+    unsigned char* row_rgb = (unsigned char*)malloc(w * 3);
+    if (!row_rgb) {
+        free(rgba);
+        jpeg_destroy_decompress(&cinfo);
+        fclose(f);
+        return NULL;
+    }
+
+    while (cinfo.output_scanline < cinfo.output_height) {
+        unsigned char* ptr = row_rgb;
+        jpeg_read_scanlines(&cinfo, &ptr, 1);
+        int y = (int)(cinfo.output_scanline - 1);
+        unsigned char* dst = rgba + (size_t)y * w * 4;
+        for (int x = 0; x < w; x++) {
+            dst[x * 4 + 0] = row_rgb[x * 3 + 0]; // R
+            dst[x * 4 + 1] = row_rgb[x * 3 + 1]; // G
+            dst[x * 4 + 2] = row_rgb[x * 3 + 2]; // B
+            dst[x * 4 + 3] = 255;                  // A (fully opaque)
+        }
+    }
+
+    free(row_rgb);
+    jpeg_finish_decompress(&cinfo);
+    jpeg_destroy_decompress(&cinfo);
+    fclose(f);
+
+    *out_w = w;
+    *out_h = h;
+    return rgba;
+}
+#endif // HAVE_LIBJPEG
+
+// ---------------------------------------------------------------------------
+// PNG decoding via libpng (compiled only when HAVE_LIBPNG is defined)
+// ---------------------------------------------------------------------------
+#ifdef HAVE_LIBPNG
+#include <png.h>
+
+static unsigned char* decode_png_rgba(const char* file_path, int* out_w, int* out_h) {
+    FILE* f = fopen(file_path, "rb");
+    if (!f) return NULL;
+
+    // Verify PNG signature
+    unsigned char sig[8];
+    if (fread(sig, 1, 8, f) != 8 || png_sig_cmp(sig, 0, 8)) {
+        fclose(f);
+        return NULL;
+    }
+
+    png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    if (!png) { fclose(f); return NULL; }
+
+    png_infop info = png_create_info_struct(png);
+    if (!info) { png_destroy_read_struct(&png, NULL, NULL); fclose(f); return NULL; }
+
+    if (setjmp(png_jmpbuf(png))) {
+        png_destroy_read_struct(&png, &info, NULL);
+        fclose(f);
+        return NULL;
+    }
+
+    png_init_io(png, f);
+    png_set_sig_bytes(png, 8); // already consumed the signature
+    png_read_info(png, info);
+
+    int w = (int)png_get_image_width(png, info);
+    int h = (int)png_get_image_height(png, info);
+    png_byte color_type = png_get_color_type(png, info);
+    png_byte bit_depth  = png_get_bit_depth(png, info);
+
+    // Normalize all variants to 8-bit RGBA
+    if (bit_depth == 16)   png_set_strip_16(png);
+    if (color_type == PNG_COLOR_TYPE_PALETTE) png_set_palette_to_rgb(png);
+    if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8) png_set_expand_gray_1_2_4_to_8(png);
+    if (png_get_valid(png, info, PNG_INFO_tRNS)) png_set_tRNS_to_alpha(png);
+    // Add alpha channel if not present
+    if (color_type == PNG_COLOR_TYPE_RGB  ||
+        color_type == PNG_COLOR_TYPE_GRAY ||
+        color_type == PNG_COLOR_TYPE_PALETTE)
+        png_set_filler(png, 0xFF, PNG_FILLER_AFTER);
+    // Convert grayscale to RGB
+    if (color_type == PNG_COLOR_TYPE_GRAY ||
+        color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+        png_set_gray_to_rgb(png);
+
+    png_read_update_info(png, info);
+
+    unsigned char* rgba = (unsigned char*)malloc((size_t)w * h * 4);
+    if (!rgba) {
+        png_destroy_read_struct(&png, &info, NULL);
+        fclose(f);
+        return NULL;
+    }
+
+    png_bytep* rows = (png_bytep*)malloc((size_t)h * sizeof(png_bytep));
+    if (!rows) {
+        free(rgba);
+        png_destroy_read_struct(&png, &info, NULL);
+        fclose(f);
+        return NULL;
+    }
+    for (int i = 0; i < h; i++) {
+        rows[i] = rgba + (size_t)i * w * 4;
+    }
+
+    png_read_image(png, rows);
+    free(rows);
+
+    png_destroy_read_struct(&png, &info, NULL);
+    fclose(f);
+
+    *out_w = w;
+    *out_h = h;
+    return rgba;
+}
+#endif // HAVE_LIBPNG
+
+// ---------------------------------------------------------------------------
+// Format detection helpers
+// ---------------------------------------------------------------------------
+static int linux_is_jpeg(const char* file_path) {
+    FILE* f = fopen(file_path, "rb");
+    if (!f) return 0;
+    unsigned char magic[2] = {0, 0};
+    fread(magic, 1, 2, f);
+    fclose(f);
+    return (magic[0] == 0xFF && magic[1] == 0xD8);
+}
+
+static int linux_is_png(const char* file_path) {
+    FILE* f = fopen(file_path, "rb");
+    if (!f) return 0;
+    unsigned char magic[8] = {0};
+    size_t n = fread(magic, 1, 8, f);
+    fclose(f);
+    return (n == 8 && memcmp(magic, "\x89PNG\r\n\x1a\n", 8) == 0);
+}
+
+// ---------------------------------------------------------------------------
+// Autocrop helper for the Linux RGBA buffer
+// ---------------------------------------------------------------------------
+static void perform_linux_autocrop(ImageDecoderContext* ctx) {
+    int w = ctx->width;
+    int h = ctx->height;
+
+    if (!ctx->linux_ctx.full_rgba) {
+        ctx->crop_left = 0; ctx->crop_top = 0;
+        ctx->crop_width = w; ctx->crop_height = h;
+        return;
+    }
+
+    // Downscale to 256-wide thumbnail using nearest-neighbour for fast analysis
+    int thumb_w = 256;
+    int thumb_h = (h * thumb_w) / w;
+    if (thumb_h <= 0) thumb_h = 1;
+
+    unsigned char* temp = (unsigned char*)malloc((size_t)thumb_w * thumb_h * 4);
+    if (!temp) {
+        ctx->crop_left = 0; ctx->crop_top = 0;
+        ctx->crop_width = w; ctx->crop_height = h;
+        return;
+    }
+
+    for (int dy = 0; dy < thumb_h; dy++) {
+        int sy = (dy * h) / thumb_h;
+        for (int dx = 0; dx < thumb_w; dx++) {
+            int sx = (dx * w) / thumb_w;
+            const unsigned char* src = ctx->linux_ctx.full_rgba + ((size_t)sy * w + sx) * 4;
+            unsigned char* dst = temp + ((size_t)dy * thumb_w + dx) * 4;
+            dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2]; dst[3] = src[3];
+        }
+    }
+
+    int left = 0, top = 0, right = thumb_w, bottom = thumb_h;
+    find_margins_rgba(temp, thumb_w, thumb_h, &left, &top, &right, &bottom);
+    free(temp);
+
+    ctx->crop_left   = (left   * w) / thumb_w;
+    ctx->crop_top    = (top    * h) / thumb_h;
+    ctx->crop_width  = ((right  - left)   * w) / thumb_w;
+    ctx->crop_height = ((bottom - top)    * h) / thumb_h;
+}
+
+// ---------------------------------------------------------------------------
+// Public API — init / decode_region / free
+// ---------------------------------------------------------------------------
 ImageDecoderContext* init_decoder(const char* file_path, bool crop_borders, int* out_width, int* out_height) {
+    // BMP is decoded natively without any external library
     BmpDecoderContext* bmp = init_bmp_decoder(file_path, out_width, out_height);
     if (bmp) {
         ImageDecoderContext* ctx = (ImageDecoderContext*)malloc(sizeof(ImageDecoderContext));
@@ -1172,49 +1416,109 @@ ImageDecoderContext* init_decoder(const char* file_path, bool crop_borders, int*
         ctx->width = *out_width;
         ctx->height = *out_height;
         ctx->bmp_ctx = bmp;
-        
         if (crop_borders) {
             perform_bmp_autocrop(ctx);
         } else {
-            ctx->crop_left = 0;
-            ctx->crop_top = 0;
-            ctx->crop_width = ctx->width;
-            ctx->crop_height = ctx->height;
+            ctx->crop_left = 0; ctx->crop_top = 0;
+            ctx->crop_width = ctx->width; ctx->crop_height = ctx->height;
         }
-
-        *out_width = ctx->crop_width;
+        *out_width  = ctx->crop_width;
         *out_height = ctx->crop_height;
         return ctx;
     }
 
-    printf("ImageDecoder: Unsupported file format on Linux without libjpeg/libpng linked.\n");
-    return NULL;
+    // Try JPEG / PNG via system libraries
+    int w = 0, h = 0;
+    unsigned char* rgba = NULL;
+
+#ifdef HAVE_LIBJPEG
+    if (!rgba && linux_is_jpeg(file_path)) {
+        rgba = decode_jpeg_rgba(file_path, &w, &h);
+    }
+#endif
+
+#ifdef HAVE_LIBPNG
+    if (!rgba && linux_is_png(file_path)) {
+        rgba = decode_png_rgba(file_path, &w, &h);
+    }
+#endif
+
+    if (!rgba) {
+        printf("ImageDecoder: Unsupported file format on Linux."
+               " Install libjpeg-dev and libpng-dev, then rebuild the app to enable JPEG/PNG support.\n");
+        return NULL;
+    }
+
+    ImageDecoderContext* ctx = (ImageDecoderContext*)malloc(sizeof(ImageDecoderContext));
+    ctx->type = TYPE_NATIVE;
+    ctx->width  = w;
+    ctx->height = h;
+    ctx->linux_ctx.full_rgba = rgba;
+
+    if (crop_borders) {
+        perform_linux_autocrop(ctx);
+    } else {
+        ctx->crop_left = 0; ctx->crop_top = 0;
+        ctx->crop_width = w; ctx->crop_height = h;
+    }
+
+    *out_width  = ctx->crop_width;
+    *out_height = ctx->crop_height;
+    return ctx;
 }
 
-bool decode_region(ImageDecoderContext* ctx, int left, int top, int right, int bottom, int sample_size, unsigned char* out_rgba_buffer) {
+bool decode_region(ImageDecoderContext* ctx, int left, int top, int right, int bottom,
+                   int sample_size, unsigned char* out_rgba_buffer) {
     if (!ctx || !out_rgba_buffer) return false;
 
-    int raw_left = left + ctx->crop_left;
-    int raw_top = top + ctx->crop_top;
-    int raw_right = right + ctx->crop_left;
+    // Translate coordinates from cropped space to original image space
+    int raw_left   = left   + ctx->crop_left;
+    int raw_top    = top    + ctx->crop_top;
+    int raw_right  = right  + ctx->crop_left;
     int raw_bottom = bottom + ctx->crop_top;
-    
+
     if (ctx->type == TYPE_BMP) {
-        return decode_bmp_region(ctx->bmp_ctx, raw_left, raw_top, raw_right, raw_bottom, sample_size, out_rgba_buffer);
+        return decode_bmp_region(ctx->bmp_ctx, raw_left, raw_top, raw_right, raw_bottom,
+                                  sample_size, out_rgba_buffer);
     }
-    return false;
+
+    if (!ctx->linux_ctx.full_rgba) return false;
+
+    int dest_w = (raw_right  - raw_left) / sample_size;
+    int dest_h = (raw_bottom - raw_top)  / sample_size;
+    if (dest_w <= 0 || dest_h <= 0) return false;
+
+    int src_w = ctx->width;
+
+    for (int dy = 0; dy < dest_h; dy++) {
+        int sy = raw_top + dy * sample_size;
+        const unsigned char* src_row = ctx->linux_ctx.full_rgba + (size_t)sy * src_w * 4;
+        unsigned char* dst_row = out_rgba_buffer + (size_t)dy * dest_w * 4;
+        for (int dx = 0; dx < dest_w; dx++) {
+            int sx = raw_left + dx * sample_size;
+            const unsigned char* src = src_row + sx * 4;
+            unsigned char* dst = dst_row + dx * 4;
+            dst[0] = src[0]; dst[1] = src[1]; dst[2] = src[2]; dst[3] = src[3];
+        }
+    }
+
+    return true;
 }
 
 void free_decoder(ImageDecoderContext* ctx) {
     if (ctx) {
         if (ctx->type == TYPE_BMP) {
             free_bmp_decoder(ctx->bmp_ctx);
+        } else {
+            if (ctx->linux_ctx.full_rgba) {
+                free(ctx->linux_ctx.full_rgba);
+            }
         }
         free(ctx);
     }
 }
 
-#endif
+#endif // Linux fallback
 
 #ifdef __cplusplus
 }

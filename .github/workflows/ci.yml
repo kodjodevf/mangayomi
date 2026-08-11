@@ -1,6 +1,6 @@
 name: CI
 
-# Build/compile checks for pull requests and main branch for Android & Windows in debug mode.
+# Build/compile checks for pull requests and main branch for Android, Windows & Linux in debug mode.
 on:
   pull_request:
     branches: [main]
@@ -109,3 +109,43 @@ jobs:
         with:
           name: Mangayomi-windows-debug
           path: build/windows/x64/runner/Debug/
+
+  build-linux:
+    name: Build (Linux debug)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            webkit2gtk-4.1 clang cmake ninja-build pkg-config \
+            libgtk-3-dev mpv libmpv-dev dpkg-dev \
+            libblkid-dev liblzma-dev \
+            libjpeg-dev libpng-dev
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install flutter_rust_bridge_codegen
+        run: cargo install 'flutter_rust_bridge_codegen'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build debug Linux
+        run: flutter build linux --debug --verbose
+
+      - name: Upload Linux debug artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mangayomi-linux-debug
+          path: build/linux/x64/debug/bundle/
