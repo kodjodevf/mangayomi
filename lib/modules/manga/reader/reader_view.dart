@@ -1138,7 +1138,17 @@ class _MangaChapterPageGalleryState
     }
   }
 
-  /// handles page changes in a scrollable list (continuous mode)
+  /// Handles scroll-based page changes in continuous mode (vertical or horizontal).
+  ///
+  /// Responsibilities:
+  /// - Determine the first visible item from the scroll position listener.
+  /// - Detect page changes and trigger flash animation.
+  /// - Update chapter when scrolling into a page from another chapter.
+  /// - Trigger next-chapter preloading when nearing the end.
+  /// - Update display index and persist progress.
+  ///
+  /// This is the continuous-mode equivalent of `_onPageChanged`, but optimized
+  /// for list-based scrolling instead of discrete PageView swipes.
   void _readProgressListener() async {
     final itemPositions = _itemPositionsListener.itemPositions.value;
     if (itemPositions.isEmpty) return;
@@ -1402,7 +1412,20 @@ class _MangaChapterPageGalleryState
     await Future.wait([worker(), worker(), worker()]);
   }
 
-  /// handles page changes in a PageView (discrete pages)
+  /// Handles page changes in PageView mode (discrete pages).
+  ///
+  /// Responsibilities:
+  /// - Convert PageView index -> actual page index (handles double-page mode).
+  /// - Update reader progress and chapter if the new page belongs to another chapter.
+  /// - Reset zoom/scale of the previous page so swiping back works smoothly.
+  /// - Trigger flash animation on page change.
+  /// - Update display index and persist progress.
+  /// - Preload next chapter when nearing the end of the current one.
+  /// - Reload evicted pages if needed and evict old chapter pages to free memory.
+  /// - Prefetch pages in correct order for smoother reading.
+  ///
+  /// This is the main handler for all logic that should occur when the user
+  /// swipes to a new page in PageView mode.
   Future<void> _onPageChanged(int index) async {
     // In non-continuous double page mode, convert page view index to actual
     // pages array index for correct lookups.
@@ -1454,7 +1477,16 @@ class _MangaChapterPageGalleryState
     _prefetchPagesInOrder();
   }
 
-  /// helper for [_readProgressListener] and [_onPageChanged]
+  /// Updates the active chapter when the user scrolls or swipes into a page
+  /// belonging to a different chapter.
+  ///
+  /// This:
+  /// - Detects if the newly visible page belongs to another chapter.
+  /// - Rebuilds the reader controller for that chapter.
+  /// - Updates the current chapter, chapter URL model, and bookmark state.
+  ///
+  /// Called by both page‑based and continuous scrolling listeners to keep
+  /// chapter state in sync with the visible page.
   void _updateChapterIfNeeded(int actualIndex) {
     final newChapter = pages[actualIndex].chapter!;
     if (_readerController.chapter.id == newChapter.id) return;
@@ -1476,7 +1508,15 @@ class _MangaChapterPageGalleryState
     });
   }
 
-  /// helper for [_readProgressListener] and [_onPageChanged]
+  /// Updates the user-facing page index (e.g., "Page 5 of 32") and syncs
+  /// progress to the reader controller + Riverpod state.
+  ///
+  /// This:
+  /// - Converts the actual page index into the display index used in UI.
+  /// - Updates the reader controller's internal page index (unless in PageView).
+  /// - Persists the current index via `currentIndexProvider`.
+  ///
+  /// Used by both PageView mode and continuous scrolling mode.
   void _updateDisplayIndex(int actualIndex, bool pageView) {
     final idx = pages[actualIndex].index;
     if (idx == null) return;
