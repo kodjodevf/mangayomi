@@ -243,11 +243,13 @@ class _MangaChapterPageGalleryState
   final _failedPageIndexes = ValueNotifier<Set<int>>({});
 
   void _onFailedToLoadImage(int index, bool failed) {
-    final current = Set<int>.from(_failedPageIndexes.value);
-    final bool changed = failed ? current.add(index) : current.remove(index);
-    if (changed) {
-      _failedPageIndexes.value = current;
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final current = Set<int>.from(_failedPageIndexes.value);
+      final bool changed = failed ? current.add(index) : current.remove(index);
+      if (changed) {
+        _failedPageIndexes.value = current;
+      }
+    });
   }
 
   late int? _currentIndex = _readerController.getPageIndex();
