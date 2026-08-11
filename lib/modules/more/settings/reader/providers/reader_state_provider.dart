@@ -867,26 +867,6 @@ class ZoomStartPositionState extends _$ZoomStartPositionState {
 }
 
 @riverpod
-class AutomaticBackgroundState extends _$AutomaticBackgroundState {
-  @override
-  bool build() {
-    return isar.settings.getSync(227)!.automaticBackground ?? false;
-  }
-
-  void set(bool value) {
-    final settings = isar.settings.getSync(227);
-    state = value;
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..automaticBackground = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
-  }
-}
-
-@riverpod
 class NavigateToPanState extends _$NavigateToPanState {
   @override
   bool build() {

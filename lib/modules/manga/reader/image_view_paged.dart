@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -42,7 +41,6 @@ class ImageViewPaged extends ConsumerStatefulWidget {
 
 class _ImageViewPagedState extends ConsumerState<ImageViewPaged> {
   Color? _autoBgColor;
-  bool _isDetecting = false;
 
   bool _hasLandscapeZoomed = false;
 
@@ -227,75 +225,16 @@ class _ImageViewPagedState extends ConsumerState<ImageViewPaged> {
     };
   }
 
-  void _detectBgColor(ImageProvider provider) async {
-    if (_isDetecting || _autoBgColor != null) return;
-    _isDetecting = true;
-    try {
-      final ImageStream stream = provider.resolve(ImageConfiguration.empty);
-      ImageStreamListener? listener;
-      listener = ImageStreamListener(
-        (ImageInfo info, bool syncCall) async {
-          try {
-            // Downsample to 1x1 pixel via PictureRecorder/Canvas to extract
-            // corner/average brightness without allocating megabytes of raw RGBA buffer
-            final recorder = ui.PictureRecorder();
-            final canvas = Canvas(recorder);
-            canvas.drawImageRect(
-              info.image,
-              Rect.fromLTWH(
-                0,
-                0,
-                info.image.width.toDouble(),
-                info.image.height.toDouble(),
-              ),
-              const Rect.fromLTWH(0, 0, 1, 1),
-              Paint(),
-            );
-            final picture = recorder.endRecording();
-            final resizedImage = await picture.toImage(1, 1);
-            final byteData = await resizedImage.toByteData(
-              format: ui.ImageByteFormat.rawRgba,
-            );
-            resizedImage.dispose();
-
-            if (byteData != null && byteData.lengthInBytes >= 4) {
-              final int r = byteData.getUint8(0);
-              final int g = byteData.getUint8(1);
-              final int b = byteData.getUint8(2);
-              final double brightness =
-                  (r * 0.299 + g * 0.587 + b * 0.114) / 255.0;
-              if (mounted) {
-                setState(() {
-                  _autoBgColor = brightness > 0.5 ? Colors.white : Colors.black;
-                });
-              }
-            }
-          } catch (_) {}
-          stream.removeListener(listener!);
-        },
-        onError: (err, stack) {
-          stream.removeListener(listener!);
-        },
-      );
-      stream.addListener(listener);
-    } catch (_) {}
-  }
-
   @override
   Widget build(BuildContext context) {
     final scaleType = ref.watch(scaleTypeStateProvider);
     final image = widget.data.getImageProvider(ref, true);
     final (colorBlendMode, color) = chapterColorFIlterValues(context, ref);
     final cropBorders = ref.watch(cropBordersStateProvider);
-    final automaticBackground = ref.watch(automaticBackgroundStateProvider);
     final dualPageRotateToFit = ref.watch(dualPageRotateToFitStateProvider);
     final dualPageRotateToFitInvert = ref.watch(
       dualPageRotateToFitInvertStateProvider,
     );
-
-    if (automaticBackground) {
-      _detectBgColor(image);
-    }
 
     // Determine background color
     Color? pageBgColor = _autoBgColor;

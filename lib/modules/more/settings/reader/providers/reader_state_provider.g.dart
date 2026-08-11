@@ -42,7 +42,7 @@ final class DefaultReadingModeStateProvider
 }
 
 String _$defaultReadingModeStateHash() =>
-    r'54f6919d69a6896a7200d98c491b8b817187249d';
+    r'6125feb2aff79c017dc55ea2faa2591916af051a';
 
 abstract class _$DefaultReadingModeState extends $Notifier<ReaderMode> {
   ReaderMode build();
@@ -96,7 +96,7 @@ final class AnimatePageTransitionsStateProvider
 }
 
 String _$animatePageTransitionsStateHash() =>
-    r'108a256f2a88c497e9032e42f57af68e915cce03';
+    r'b65e7a08d290f4ec6b9616eb70ce2830b51582e6';
 
 abstract class _$AnimatePageTransitionsState extends $Notifier<bool> {
   bool build();
@@ -150,7 +150,7 @@ final class DoubleTapAnimationSpeedStateProvider
 }
 
 String _$doubleTapAnimationSpeedStateHash() =>
-    r'dd0b9acafbeebe068b70c20e015bf4f9d9b33a28';
+    r'6b7b88dd088b7c8328960553b3a8fd17066030a6';
 
 abstract class _$DoubleTapAnimationSpeedState extends $Notifier<int> {
   int build();
@@ -202,7 +202,7 @@ final class CropBordersStateProvider
   }
 }
 
-String _$cropBordersStateHash() => r'ce71e28de53a2f5c55ee6f9260720361fd196b77';
+String _$cropBordersStateHash() => r'b8a38a59e240909f81a5faad44b54d3ced025de8';
 
 abstract class _$CropBordersState extends $Notifier<bool> {
   bool build();
@@ -254,7 +254,7 @@ final class ScaleTypeStateProvider
   }
 }
 
-String _$scaleTypeStateHash() => r'ce86e3a7b5eb1ef23d00c3fe54759368652599c7';
+String _$scaleTypeStateHash() => r'07f29cba7193242795134b6d37bb393210a191a1';
 
 abstract class _$ScaleTypeState extends $Notifier<ScaleType> {
   ScaleType build();
@@ -307,7 +307,7 @@ final class PagePreloadAmountStateProvider
 }
 
 String _$pagePreloadAmountStateHash() =>
-    r'bf0e72b8897b4812cb64390df6f042efa867e6c9';
+    r'45e9810e73e93b7a88a1a3b876da73123024cc71';
 
 abstract class _$PagePreloadAmountState extends $Notifier<int> {
   int build();
@@ -2230,59 +2230,6 @@ abstract class _$ZoomStartPositionState extends $Notifier<int> {
             as $ClassProviderElement<
               AnyNotifier<int, int>,
               int,
-              Object?,
-              Object?
-            >;
-    element.handleCreate(ref, build);
-  }
-}
-
-@ProviderFor(AutomaticBackgroundState)
-final automaticBackgroundStateProvider = AutomaticBackgroundStateProvider._();
-
-final class AutomaticBackgroundStateProvider
-    extends $NotifierProvider<AutomaticBackgroundState, bool> {
-  AutomaticBackgroundStateProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'automaticBackgroundStateProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$automaticBackgroundStateHash();
-
-  @$internal
-  @override
-  AutomaticBackgroundState create() => AutomaticBackgroundState();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(bool value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<bool>(value),
-    );
-  }
-}
-
-String _$automaticBackgroundStateHash() =>
-    r'adeef482a7630c03d0eee4eef7bf33aeff71d053';
-
-abstract class _$AutomaticBackgroundState extends $Notifier<bool> {
-  bool build();
-  @$mustCallSuper
-  @override
-  void runBuild() {
-    final ref = this.ref as $Ref<bool, bool>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<bool, bool>,
-              bool,
               Object?,
               Object?
             >;

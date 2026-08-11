@@ -16,15 +16,6 @@ class NovelReaderController extends _$NovelReaderController
   @override
   final bool incognitoMode = isar.settings.getSync(227)!.incognitoMode!;
 
-  // Override getIsarSetting to add per-instance caching; callers that mutate
-  // settings must call _invalidateSettingsCache() afterwards.
-  Settings? _cachedSettings;
-  @override
-  void onSettingsMutated() => _cachedSettings = null;
-
-  @override
-  Settings getIsarSetting() => _cachedSettings ??= isar.settings.getSync(227)!;
-
   // ---------------------------------------------------------------------------
   // Scroll-position tracking
   // ---------------------------------------------------------------------------

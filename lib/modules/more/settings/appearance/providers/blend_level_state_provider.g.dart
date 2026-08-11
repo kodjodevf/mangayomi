@@ -41,7 +41,7 @@ final class BlendLevelStateProvider
   }
 }
 
-String _$blendLevelStateHash() => r'f8658ae5f99624fde46d76e26575f04861f46bca';
+String _$blendLevelStateHash() => r'78024b3432868c3b901419bbd919c3f84a4cf713';
 
 abstract class _$BlendLevelState extends $Notifier<double> {
   double build();

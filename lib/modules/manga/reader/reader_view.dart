@@ -300,7 +300,7 @@ class _MangaChapterPageGalleryState
   int _prefetchSessionId = 0;
   // bool _isPrevChapterPreloading = false;
 
-  late int pagePreloadAmount = ref.read(pagePreloadAmountStateProvider);
+  int get pagePreloadAmount => ref.read(pagePreloadAmountStateProvider);
   late bool _isBookmarked = _readerController.getChapterBookmarked();
 
   bool _isLastPageTransition = false;

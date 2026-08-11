@@ -138,7 +138,6 @@ class _ReadingModeTab extends ConsumerWidget {
     );
     final landscapeZoom = ref.watch(landscapeZoomStateProvider);
     final zoomStartPosition = ref.watch(zoomStartPositionStateProvider);
-    final automaticBackground = ref.watch(automaticBackgroundStateProvider);
     final webtoonDisableZoomOut = ref.watch(webtoonDisableZoomOutStateProvider);
     final webtoonDoubleTapZoomEnabled = ref.watch(
       webtoonDoubleTapZoomEnabledStateProvider,
@@ -341,22 +340,6 @@ class _ReadingModeTab extends ConsumerWidget {
                   _ => l10n.zoom_start_center,
                 },
               ),
-
-            SwitchListTile(
-              value: automaticBackground,
-              title: Text(
-                l10n.automatic_background,
-                style: TextStyle(
-                  color: Theme.of(
-                    context,
-                  ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
-                  fontSize: 14,
-                ),
-              ),
-              onChanged: (value) {
-                ref.read(automaticBackgroundStateProvider.notifier).set(value);
-              },
-            ),
 
             // Page Tap Zones
             SwitchListTile(

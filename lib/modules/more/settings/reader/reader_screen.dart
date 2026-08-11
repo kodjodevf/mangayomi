@@ -13,6 +13,7 @@ class ReaderScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // ── Reading Mode & Display ──
     final defaultReadingMode = ref.watch(defaultReadingModeStateProvider);
     final animatePageTransitions = ref.watch(
       animatePageTransitionsStateProvider,
@@ -23,21 +24,51 @@ class ReaderScreen extends ConsumerWidget {
     final pagePreloadAmount = ref.watch(pagePreloadAmountStateProvider);
     final scaleType = ref.watch(scaleTypeStateProvider);
     final backgroundColor = ref.watch(backgroundColorStateProvider);
-    final usePageTapZones = ref.watch(usePageTapZonesStateProvider);
     final fullScreenReader = ref.watch(fullScreenReaderStateProvider);
-
     final cropBorders = ref.watch(cropBordersStateProvider);
+    final navigateToPan = ref.watch(navigateToPanStateProvider);
+    final webtoonDisableZoomOut = ref.watch(webtoonDisableZoomOutStateProvider);
+    final webtoonDoubleTapZoomEnabled = ref.watch(
+      webtoonDoubleTapZoomEnabledStateProvider,
+    );
+    final webtoonSidePadding = ref.watch(webtoonSidePaddingStateProvider);
+    final showPageGaps = ref.watch(showPageGapsStateProvider);
     final keepScreenOn = ref.watch(keepScreenOnReaderStateProvider);
     final autoReadDuplChap = ref.watch(autoReadDuplicateChaptersStateProvider);
-    final showPageGaps = ref.watch(showPageGapsStateProvider);
-    final webtoonSidePadding = ref.watch(webtoonSidePaddingStateProvider);
+    final showPagesNumber = ref.watch(showPagesNumberStateProvider);
+
+    // ── Page Layout & Zoom ──
+    final splitWidePages = ref.watch(splitWidePagesStateProvider);
+    final dualPageInvert = ref.watch(dualPageInvertStateProvider);
+    final dualPageRotateToFit = ref.watch(dualPageRotateToFitStateProvider);
+    final dualPageRotateToFitInvert = ref.watch(
+      dualPageRotateToFitInvertStateProvider,
+    );
+    final landscapeZoom = ref.watch(landscapeZoomStateProvider);
+    final zoomStartPosition = ref.watch(zoomStartPositionStateProvider);
+
+    // ── Navigation & Tap Zones ──
+    final usePageTapZones = ref.watch(usePageTapZonesStateProvider);
     final navigationLayout = ref.watch(readerNavigationLayoutStateProvider);
+    final tappingInversion = ref.watch(tappingInversionStateProvider);
+    final readerHideThreshold = ref.watch(readerHideThresholdStateProvider);
+    final showNavigationOverlayOnStart = ref.watch(
+      showNavigationOverlayOnStartStateProvider,
+    );
+    final flashOnPageChange = ref.watch(flashOnPageChangeStateProvider);
+    final flashColor = ref.watch(flashColorStateProvider);
+    final flashInterval = ref.watch(flashIntervalStateProvider);
+    final flashDuration = ref.watch(flashDurationStateProvider);
+
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.reader)),
       body: SingleChildScrollView(
         padding: tvPageInsets,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            _buildSectionHeader(context, context.l10n.reading_mode),
+
             ListTile(
               onTap: () {
                 showDialog(
@@ -104,36 +135,38 @@ class ReaderScreen extends ConsumerWidget {
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
+
             ListTile(
               onTap: () {
                 showDialog(
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: Text(context.l10n.double_tap_animation_speed),
+                      title: Text(context.l10n.scale_type),
                       content: SizedBox(
                         width: context.width(0.8),
                         child: RadioGroup(
-                          groupValue: doubleTapAnimationSpeed,
+                          groupValue: scaleType.index,
                           onChanged: (value) {
                             ref
-                                .read(
-                                  doubleTapAnimationSpeedStateProvider.notifier,
-                                )
-                                .set(value!);
+                                .read(scaleTypeStateProvider.notifier)
+                                .set(ScaleType.values[value!]);
                             Navigator.pop(context);
                           },
                           child: SuperListView.builder(
                             shrinkWrap: true,
-                            itemCount: 3,
+                            itemCount: getScaleTypeNames(context).length,
                             itemBuilder: (context, index) {
                               return RadioListTile(
-                                dense: true,
                                 contentPadding: const EdgeInsets.all(0),
                                 value: index,
                                 title: Row(
                                   children: [
-                                    Text(getAnimationSpeedName(index, context)),
+                                    Text(
+                                      getScaleTypeNames(
+                                        context,
+                                      )[index].toString(),
+                                    ),
                                   ],
                                 ),
                               );
@@ -161,12 +194,13 @@ class ReaderScreen extends ConsumerWidget {
                   },
                 );
               },
-              title: Text(context.l10n.double_tap_animation_speed),
+              title: Text(context.l10n.scale_type),
               subtitle: Text(
-                getAnimationSpeedName(doubleTapAnimationSpeed, context),
+                getScaleTypeNames(context)[scaleType.index],
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
+
             ListTile(
               onTap: () {
                 showDialog(
@@ -233,6 +267,7 @@ class ReaderScreen extends ConsumerWidget {
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
+
             ListTile(
               onTap: () {
                 showDialog(
@@ -250,7 +285,7 @@ class ReaderScreen extends ConsumerWidget {
                               children: [
                                 Text(
                                   tempAmount.toString(),
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -316,38 +351,37 @@ class ReaderScreen extends ConsumerWidget {
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
+
             ListTile(
               onTap: () {
                 showDialog(
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: Text(context.l10n.scale_type),
+                      title: Text(context.l10n.double_tap_animation_speed),
                       content: SizedBox(
                         width: context.width(0.8),
                         child: RadioGroup(
-                          groupValue: scaleType.index,
+                          groupValue: doubleTapAnimationSpeed,
                           onChanged: (value) {
                             ref
-                                .read(scaleTypeStateProvider.notifier)
-                                .set(ScaleType.values[value!]);
+                                .read(
+                                  doubleTapAnimationSpeedStateProvider.notifier,
+                                )
+                                .set(value!);
                             Navigator.pop(context);
                           },
                           child: SuperListView.builder(
                             shrinkWrap: true,
-                            itemCount: getScaleTypeNames(context).length,
+                            itemCount: 3,
                             itemBuilder: (context, index) {
                               return RadioListTile(
-                                // dense: true,
+                                dense: true,
                                 contentPadding: const EdgeInsets.all(0),
                                 value: index,
                                 title: Row(
                                   children: [
-                                    Text(
-                                      getScaleTypeNames(
-                                        context,
-                                      )[index].toString(),
-                                    ),
+                                    Text(getAnimationSpeedName(index, context)),
                                   ],
                                 ),
                               );
@@ -375,12 +409,13 @@ class ReaderScreen extends ConsumerWidget {
                   },
                 );
               },
-              title: Text(context.l10n.scale_type),
+              title: Text(context.l10n.double_tap_animation_speed),
               subtitle: Text(
-                getScaleTypeNames(context)[scaleType.index],
+                getAnimationSpeedName(doubleTapAnimationSpeed, context),
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
+
             if (!isMobile)
               SwitchListTile(
                 value: fullScreenReader,
@@ -389,6 +424,7 @@ class ReaderScreen extends ConsumerWidget {
                   ref.read(fullScreenReaderStateProvider.notifier).set(value);
                 },
               ),
+
             SwitchListTile(
               value: animatePageTransitions,
               title: Text(context.l10n.animate_page_transitions),
@@ -398,6 +434,7 @@ class ReaderScreen extends ConsumerWidget {
                     .set(value);
               },
             ),
+
             SwitchListTile(
               value: cropBorders,
               title: Text(context.l10n.crop_borders),
@@ -405,38 +442,43 @@ class ReaderScreen extends ConsumerWidget {
                 ref.read(cropBordersStateProvider.notifier).set(value);
               },
             ),
+
             SwitchListTile(
-              value: usePageTapZones,
-              title: Text(context.l10n.use_page_tap_zones),
+              value: navigateToPan,
+              title: Text(context.l10n.navigate_to_pan),
+              subtitle: Text(
+                context.l10n.navigate_to_pan_subtitle,
+                style: const TextStyle(fontSize: 11),
+              ),
               onChanged: (value) {
-                ref.read(usePageTapZonesStateProvider.notifier).set(value);
+                ref.read(navigateToPanStateProvider.notifier).set(value);
               },
             ),
+
             SwitchListTile(
-              value: keepScreenOn,
-              title: Text(context.l10n.keep_screen_on),
-              onChanged: (value) {
-                ref.read(keepScreenOnReaderStateProvider.notifier).set(value);
-              },
-            ),
-            SwitchListTile(
-              value: showPageGaps,
-              title: Text(context.l10n.show_page_gaps),
-              onChanged: (value) {
-                ref.read(showPageGapsStateProvider.notifier).set(value);
-              },
-            ),
-            SwitchListTile(
-              value: autoReadDuplChap,
-              title: Text(context.l10n.mark_duplicate_chapters_read),
+              value: webtoonDisableZoomOut,
+              title: Text(context.l10n.webtoon_disable_zoom_out),
               onChanged: (value) {
                 ref
-                    .read(autoReadDuplicateChaptersStateProvider.notifier)
+                    .read(webtoonDisableZoomOutStateProvider.notifier)
                     .set(value);
               },
             ),
+
+            SwitchListTile(
+              value: webtoonDoubleTapZoomEnabled,
+              title: Text(context.l10n.webtoon_double_tap_zoom_enabled),
+              onChanged: (value) {
+                ref
+                    .read(webtoonDoubleTapZoomEnabledStateProvider.notifier)
+                    .set(value);
+              },
+            ),
+
             ListTile(
-              title: Text(context.l10n.webtoon_side_padding),
+              title: Text(
+                '${context.l10n.webtoon_side_padding}: $webtoonSidePadding%',
+              ),
               subtitle: TvEscapableSlider(
                 enabled: isTv,
                 onDecrease: () => ref
@@ -459,6 +501,152 @@ class ReaderScreen extends ConsumerWidget {
                 ),
               ),
             ),
+
+            SwitchListTile(
+              value: showPageGaps,
+              title: Text(context.l10n.show_page_gaps),
+              onChanged: (value) {
+                ref.read(showPageGapsStateProvider.notifier).set(value);
+              },
+            ),
+
+            SwitchListTile(
+              value: keepScreenOn,
+              title: Text(context.l10n.keep_screen_on),
+              onChanged: (value) {
+                ref.read(keepScreenOnReaderStateProvider.notifier).set(value);
+              },
+            ),
+
+            SwitchListTile(
+              value: autoReadDuplChap,
+              title: Text(context.l10n.mark_duplicate_chapters_read),
+              onChanged: (value) {
+                ref
+                    .read(autoReadDuplicateChaptersStateProvider.notifier)
+                    .set(value);
+              },
+            ),
+
+            SwitchListTile(
+              value: showPagesNumber,
+              title: Text(context.l10n.show_page_number),
+              onChanged: (value) {
+                ref.read(showPagesNumberStateProvider.notifier).set(value);
+              },
+            ),
+
+            const Divider(height: 32),
+
+            _buildSectionHeader(context, context.l10n.split_wide_pages),
+
+            SwitchListTile(
+              value: splitWidePages,
+              title: Text(context.l10n.split_wide_pages),
+              onChanged: (value) {
+                ref.read(splitWidePagesStateProvider.notifier).set(value);
+              },
+            ),
+
+            if (splitWidePages)
+              SwitchListTile(
+                value: dualPageInvert,
+                title: Text(context.l10n.dual_page_invert),
+                onChanged: (value) {
+                  ref.read(dualPageInvertStateProvider.notifier).set(value);
+                },
+              ),
+
+            SwitchListTile(
+              value: dualPageRotateToFit,
+              title: Text(context.l10n.dual_page_rotate_to_fit),
+              onChanged: (value) {
+                ref.read(dualPageRotateToFitStateProvider.notifier).set(value);
+              },
+            ),
+
+            if (dualPageRotateToFit)
+              SwitchListTile(
+                value: dualPageRotateToFitInvert,
+                title: Text(context.l10n.dual_page_rotate_to_fit_invert),
+                onChanged: (value) {
+                  ref
+                      .read(dualPageRotateToFitInvertStateProvider.notifier)
+                      .set(value);
+                },
+              ),
+
+            SwitchListTile(
+              value: landscapeZoom,
+              title: Text(context.l10n.landscape_zoom),
+              onChanged: (value) {
+                ref.read(landscapeZoomStateProvider.notifier).set(value);
+              },
+            ),
+
+            if (landscapeZoom)
+              ListTile(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (ctx) {
+                      return SimpleDialog(
+                        title: Text(context.l10n.zoom_start_position),
+                        children: [
+                          RadioGroup<int>(
+                            groupValue: zoomStartPosition,
+                            onChanged: (val) {
+                              ref
+                                  .read(zoomStartPositionStateProvider.notifier)
+                                  .set(val!);
+                              Navigator.pop(ctx);
+                            },
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                RadioListTile<int>(
+                                  value: 0,
+                                  title: Text(context.l10n.zoom_start_left),
+                                ),
+                                RadioListTile<int>(
+                                  value: 1,
+                                  title: Text(context.l10n.zoom_start_right),
+                                ),
+                                RadioListTile<int>(
+                                  value: 2,
+                                  title: Text(context.l10n.zoom_start_center),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                title: Text(context.l10n.zoom_start_position),
+                subtitle: Text(
+                  switch (zoomStartPosition) {
+                    0 => context.l10n.zoom_start_left,
+                    1 => context.l10n.zoom_start_right,
+                    _ => context.l10n.zoom_start_center,
+                  },
+                  style: TextStyle(fontSize: 11, color: context.secondaryColor),
+                ),
+              ),
+
+            const Divider(height: 32),
+
+            _buildSectionHeader(context, context.l10n.navigation_layout),
+
+            SwitchListTile(
+              value: usePageTapZones,
+              title: Text(context.l10n.use_page_tap_zones),
+              onChanged: (value) {
+                ref.read(usePageTapZonesStateProvider.notifier).set(value);
+              },
+            ),
+
             ListTile(
               onTap: () {
                 showDialog(
@@ -498,7 +686,239 @@ class ReaderScreen extends ConsumerWidget {
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
+
+            ListTile(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (ctx) {
+                    return SimpleDialog(
+                      title: Text(context.l10n.tapping_inversion),
+                      children: [
+                        RadioGroup<int>(
+                          groupValue: tappingInversion,
+                          onChanged: (val) {
+                            ref
+                                .read(tappingInversionStateProvider.notifier)
+                                .set(val!);
+                            Navigator.pop(ctx);
+                          },
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              RadioListTile<int>(
+                                value: 0,
+                                title: Text(
+                                  context.l10n.tapping_inversion_none,
+                                ),
+                              ),
+                              RadioListTile<int>(
+                                value: 1,
+                                title: Text(
+                                  context.l10n.tapping_inversion_horizontal,
+                                ),
+                              ),
+                              RadioListTile<int>(
+                                value: 2,
+                                title: Text(
+                                  context.l10n.tapping_inversion_vertical,
+                                ),
+                              ),
+                              RadioListTile<int>(
+                                value: 3,
+                                title: Text(
+                                  context.l10n.tapping_inversion_both,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              title: Text(context.l10n.tapping_inversion),
+              subtitle: Text(switch (tappingInversion) {
+                1 => context.l10n.tapping_inversion_horizontal,
+                2 => context.l10n.tapping_inversion_vertical,
+                3 => context.l10n.tapping_inversion_both,
+                _ => context.l10n.tapping_inversion_none,
+              }, style: TextStyle(fontSize: 11, color: context.secondaryColor)),
+            ),
+
+            ListTile(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (ctx) {
+                    return SimpleDialog(
+                      title: Text(context.l10n.reader_hide_threshold),
+                      children: [
+                        RadioGroup<int>(
+                          groupValue: readerHideThreshold,
+                          onChanged: (val) {
+                            ref
+                                .read(readerHideThresholdStateProvider.notifier)
+                                .set(val!);
+                            Navigator.pop(ctx);
+                          },
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              RadioListTile<int>(
+                                value: 0,
+                                title: Text(
+                                  context.l10n.reader_hide_threshold_highest,
+                                ),
+                              ),
+                              RadioListTile<int>(
+                                value: 1,
+                                title: Text(
+                                  context.l10n.reader_hide_threshold_high,
+                                ),
+                              ),
+                              RadioListTile<int>(
+                                value: 2,
+                                title: Text(
+                                  context.l10n.reader_hide_threshold_low,
+                                ),
+                              ),
+                              RadioListTile<int>(
+                                value: 3,
+                                title: Text(
+                                  context.l10n.reader_hide_threshold_lowest,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              title: Text(context.l10n.reader_hide_threshold),
+              subtitle: Text(switch (readerHideThreshold) {
+                0 => context.l10n.reader_hide_threshold_highest,
+                1 => context.l10n.reader_hide_threshold_high,
+                2 => context.l10n.reader_hide_threshold_low,
+                _ => context.l10n.reader_hide_threshold_lowest,
+              }, style: TextStyle(fontSize: 11, color: context.secondaryColor)),
+            ),
+
+            SwitchListTile(
+              value: showNavigationOverlayOnStart,
+              title: Text(context.l10n.show_navigation_overlay_on_start),
+              onChanged: (value) {
+                ref
+                    .read(showNavigationOverlayOnStartStateProvider.notifier)
+                    .set(value);
+              },
+            ),
+
+            SwitchListTile(
+              value: flashOnPageChange,
+              title: Text(context.l10n.flash_on_page_change),
+              subtitle: Text(
+                context.l10n.flash_on_page_change_subtitle,
+                style: const TextStyle(fontSize: 11),
+              ),
+              onChanged: (value) {
+                ref.read(flashOnPageChangeStateProvider.notifier).set(value);
+              },
+            ),
+
+            if (flashOnPageChange) ...[
+              ListTile(
+                title: Text(context.l10n.flash_color),
+                subtitle: Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Row(
+                    children: [
+                      ChoiceChip(
+                        label: Text(context.l10n.flash_color_black),
+                        selected: flashColor == 0,
+                        onSelected: (val) {
+                          if (val) {
+                            ref.read(flashColorStateProvider.notifier).set(0);
+                          }
+                        },
+                      ),
+                      const SizedBox(width: 8),
+                      ChoiceChip(
+                        label: Text(context.l10n.flash_color_white),
+                        selected: flashColor == 1,
+                        onSelected: (val) {
+                          if (val) {
+                            ref.read(flashColorStateProvider.notifier).set(1);
+                          }
+                        },
+                      ),
+                      const SizedBox(width: 8),
+                      ChoiceChip(
+                        label: Text(context.l10n.flash_color_white_black),
+                        selected: flashColor == 2,
+                        onSelected: (val) {
+                          if (val) {
+                            ref.read(flashColorStateProvider.notifier).set(2);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  context.l10n.flash_interval(flashInterval.toString()),
+                ),
+                subtitle: Slider(
+                  min: 1,
+                  max: 10,
+                  divisions: 9,
+                  value: flashInterval.toDouble(),
+                  onChanged: (val) {
+                    ref
+                        .read(flashIntervalStateProvider.notifier)
+                        .set(val.toInt());
+                  },
+                ),
+              ),
+              ListTile(
+                title: Text(
+                  context.l10n.flash_duration(flashDuration.toString()),
+                ),
+                subtitle: Slider(
+                  min: 50,
+                  max: 500,
+                  divisions: 9,
+                  value: flashDuration.toDouble(),
+                  onChanged: (val) {
+                    ref
+                        .read(flashDurationStateProvider.notifier)
+                        .set(val.toInt());
+                  },
+                ),
+              ),
+            ],
+
+            const Divider(height: 32),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(BuildContext context, String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.bold,
+          color: context.primaryColor,
         ),
       ),
     );

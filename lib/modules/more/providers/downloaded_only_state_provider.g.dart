@@ -42,7 +42,7 @@ final class DownloadedOnlyStateProvider
 }
 
 String _$downloadedOnlyStateHash() =>
-    r'17e5dcc6d7ad324338c95f39313cd622eb0132e4';
+    r'09c451617c435ca59554546f5d3090d20c961bfe';
 
 abstract class _$DownloadedOnlyState extends $Notifier<bool> {
   bool build();
