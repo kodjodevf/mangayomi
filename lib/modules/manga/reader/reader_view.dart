@@ -1146,6 +1146,7 @@ class _MangaChapterPageGalleryState
     }
   }
 
+  /// handles page changes in a scrollable list (continuous mode)
   void _readProgressListener() async {
     final itemPositions = _itemPositionsListener.itemPositions.value;
     if (itemPositions.isEmpty) return;
@@ -1439,6 +1440,7 @@ class _MangaChapterPageGalleryState
     await Future.wait([worker(), worker(), worker()]);
   }
 
+  /// handles page changes in a PageView (discrete pages)
   Future<void> _onPageChanged(int index) async {
     // In non-continuous double page mode, convert page view index to actual
     // pages array index for correct lookups.
