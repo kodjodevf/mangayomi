@@ -156,15 +156,14 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
               ],
             );
           }
-          final lastUsedEntries = sources
-              .where((element) => element.lastUsed!)
-              .toList();
-          final isPinnedEntries = sources
-              .where((element) => element.isPinned!)
-              .toList();
+          final lastUsedEntries = sources.where((e) => e.lastUsed!).toList();
+          final isPinnedEntries = sources.where((e) => e.isPinned!).toList();
           final allEntriesWithoutIspinned = sources
               .where((element) => !element.isPinned!)
               .toList();
+          final showWarning = sources
+              .where((e) => e.sourceCodeLanguage == SourceCodeLanguage.mihon)
+              .isNotEmpty;
           return Scrollbar(
             interactive: true,
             controller: controller,
@@ -173,9 +172,10 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
             child: CustomScrollView(
               controller: controller,
               slivers: [
-                const SliverToBoxAdapter(
-                  child: ExtensionServerWarningBanner(),
-                ),
+                if (showWarning)
+                  const SliverToBoxAdapter(
+                    child: ExtensionServerWarningBanner(),
+                  ),
                 CustomSliverGroupedListView<Source, String>(
                   elements: lastUsedEntries,
                   groupBy: (element) => "",
