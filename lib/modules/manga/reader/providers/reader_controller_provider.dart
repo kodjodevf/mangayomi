@@ -69,7 +69,7 @@ class ReaderController extends _$ReaderController
     if (personalReaderMode.isNotEmpty) {
       return personalReaderMode.first.readerMode;
     }
-    return getIsarSetting().defaultReaderMode;
+    return ref.read(defaultReadingModeStateProvider);
   }
 
   PageMode getPageMode() {
@@ -126,24 +126,6 @@ class ReaderController extends _$ReaderController
       ),
     );
     onSettingsMutated();
-  }
-
-  void setShowPageNumber(bool value) {
-    if (!incognitoMode) {
-      isar.writeTxnSync(
-        () => isar.settings.putSync(
-          getIsarSetting()
-            ..showPagesNumber = value
-            ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-        ),
-      );
-      onSettingsMutated();
-    }
-  }
-
-  bool getShowPageNumber() {
-    if (!incognitoMode) return getIsarSetting().showPagesNumber!;
-    return true;
   }
 
   // ---------------------------------------------------------------------------

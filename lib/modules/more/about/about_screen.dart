@@ -6,8 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/about/providers/check_for_update.dart';
 import 'package:mangayomi/modules/more/about/providers/download_file_screen.dart';
 import 'package:mangayomi/modules/more/about/providers/get_package_info.dart';
@@ -62,16 +60,9 @@ class AboutScreen extends ConsumerWidget {
                         title: Text(l10n.check_for_app_updates),
                         value: checkForUpdates,
                         onChanged: (value) {
-                          isar.writeTxnSync(() {
-                            final settings = isar.settings.getSync(227);
-                            isar.settings.putSync(
-                              settings!
-                                ..checkForAppUpdates = value
-                                ..updatedAt =
-                                    DateTime.now().millisecondsSinceEpoch,
-                            );
-                          });
-                          ref.invalidate(checkForAppUpdatesProvider);
+                          ref
+                              .read(checkForAppUpdatesProvider.notifier)
+                              .set(value);
                         },
                       ),
                       ListTile(
@@ -109,13 +100,7 @@ class AboutScreen extends ConsumerWidget {
                         title: Text(l10n.logs_on),
                         value: enableLogs,
                         onChanged: (value) async {
-                          await isar.writeTxn(() async {
-                            final settings = await isar.settings.get(227);
-                            await isar.settings.put(
-                              settings!..enableLogs = value,
-                            );
-                          });
-                          ref.invalidate(logsStateProvider);
+                          ref.read(logsStateProvider.notifier).set(value);
                           if (value) {
                             await AppLogger.init();
                           } else {

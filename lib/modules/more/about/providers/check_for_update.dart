@@ -10,6 +10,28 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'check_for_update.g.dart';
 
+@riverpod
+class CheckForAppUpdates extends _$CheckForAppUpdates {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)?.checkForAppUpdates ?? true;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+
+    state = value;
+
+    isar.writeTxnSync(() {
+      isar.settings.putSync(
+        settings!
+          ..checkForAppUpdates = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      );
+    });
+  }
+}
+
 /// Convenience alias: (version, body, htmlUrl, assets).
 typedef UpdateInfo = (String, String, String, List<dynamic>);
 
@@ -33,11 +55,6 @@ Future<UpdateInfo?> _getUpdateIfAvailable() async {
   }
   final latest = await _fetchLatestRelease();
   return compareVersions(info.version, latest.$1) < 0 ? latest : null;
-}
-
-@riverpod
-bool checkForAppUpdates(Ref ref) {
-  return isar.settings.getSync(227)?.checkForAppUpdates ?? true;
 }
 
 /// Performs an update check unconditionally, ignoring the auto-update setting.

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mangayomi/main.dart';
-import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/app_font_family.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/widgets/follow_system_theme_button.dart';
@@ -266,8 +264,7 @@ class AppearanceScreen extends ConsumerWidget {
     WidgetRef ref,
     AppLocalizations l10n,
   ) {
-    ref.watch(appFontFamilyProvider);
-    final rawFontFamily = isar.settings.getSync(227)?.appFontFamily;
+    final rawFontFamily = ref.watch(appFontFamilyProvider.select((t) => t.$1));
     final appFontFamilySub = rawFontFamily ?? context.l10n.default0;
     return ListTile(
       title: Text(context.l10n.font),
@@ -323,7 +320,6 @@ class AppearanceScreen extends ConsumerWidget {
                         ),
                         Builder(
                           builder: (context) {
-                            final currentSelected = isar.settings.getSync(227)?.appFontFamily;
                             final filteredFontNames = allFontNames
                                 .where(
                                   (name) => name.toLowerCase().contains(
@@ -338,7 +334,7 @@ class AppearanceScreen extends ConsumerWidget {
                                 radius: const Radius.circular(10),
                                 controller: controller,
                                 child: RadioGroup<String?>(
-                                  groupValue: currentSelected,
+                                  groupValue: rawFontFamily,
                                   onChanged: (value) {
                                     ref
                                         .read(appFontFamilyProvider.notifier)

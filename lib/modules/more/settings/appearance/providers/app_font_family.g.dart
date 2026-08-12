@@ -8,12 +8,27 @@ part of 'app_font_family.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// Provides both the raw and resolved font family.
+///
+/// Returns a tuple `(raw, resolved)`:
+/// - `raw`      -> the original font name stored in Isar (e.g. "Roboto")
+/// - `resolved` -> the actual font family used by Flutter/GoogleFonts (e.g. "Roboto-Regular")
 
 @ProviderFor(AppFontFamily)
 final appFontFamilyProvider = AppFontFamilyProvider._();
 
+/// Provides both the raw and resolved font family.
+///
+/// Returns a tuple `(raw, resolved)`:
+/// - `raw`      -> the original font name stored in Isar (e.g. "Roboto")
+/// - `resolved` -> the actual font family used by Flutter/GoogleFonts (e.g. "Roboto-Regular")
 final class AppFontFamilyProvider
-    extends $NotifierProvider<AppFontFamily, String?> {
+    extends $NotifierProvider<AppFontFamily, (String?, String?)> {
+  /// Provides both the raw and resolved font family.
+  ///
+  /// Returns a tuple `(raw, resolved)`:
+  /// - `raw`      -> the original font name stored in Isar (e.g. "Roboto")
+  /// - `resolved` -> the actual font family used by Flutter/GoogleFonts (e.g. "Roboto-Regular")
   AppFontFamilyProvider._()
     : super(
         from: null,
@@ -33,27 +48,33 @@ final class AppFontFamilyProvider
   AppFontFamily create() => AppFontFamily();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(String? value) {
+  Override overrideWithValue((String?, String?) value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<String?>(value),
+      providerOverride: $SyncValueProvider<(String?, String?)>(value),
     );
   }
 }
 
-String _$appFontFamilyHash() => r'c832be00ab5426ee2f6bc1c76e8768aaf098b914';
+String _$appFontFamilyHash() => r'a0dd3e81d43047e1f8b9d126c59ebbb0bdd4f727';
 
-abstract class _$AppFontFamily extends $Notifier<String?> {
-  String? build();
+/// Provides both the raw and resolved font family.
+///
+/// Returns a tuple `(raw, resolved)`:
+/// - `raw`      -> the original font name stored in Isar (e.g. "Roboto")
+/// - `resolved` -> the actual font family used by Flutter/GoogleFonts (e.g. "Roboto-Regular")
+
+abstract class _$AppFontFamily extends $Notifier<(String?, String?)> {
+  (String?, String?) build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final ref = this.ref as $Ref<String?, String?>;
+    final ref = this.ref as $Ref<(String?, String?), (String?, String?)>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<String?, String?>,
-              String?,
+              AnyNotifier<(String?, String?), (String?, String?)>,
+              (String?, String?),
               Object?,
               Object?
             >;

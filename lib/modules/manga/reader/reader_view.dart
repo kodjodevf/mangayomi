@@ -198,11 +198,7 @@ class _MangaChapterPageGalleryState
     final actualIdx = _pageViewToActualIndexSync(_currentIndex!);
     final index = pages[actualIdx].index;
     if (index != null) {
-      _readerController.setPageIndex(
-        _isDoublePageActiveSync ? index : _geCurrentIndex(index),
-        true,
-        _chapterUrlModel.pageUrls,
-      );
+      _readerController.setPageIndex(index, true, _chapterUrlModel.pageUrls);
     }
     for (final controller in _pageControllers.values) {
       controller.dispose();
@@ -216,7 +212,7 @@ class _MangaChapterPageGalleryState
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    final keepOn = isar.settings.getSync(227)!.keepScreenOnReader ?? true;
+    final keepOn = ref.read(keepScreenOnReaderStateProvider);
     if (state == AppLifecycleState.paused ||
         state == AppLifecycleState.detached) {
       _readingStopwatch.stop();
@@ -226,11 +222,7 @@ class _MangaChapterPageGalleryState
       final actualIdx = _pageViewToActualIndex(_currentIndex!);
       final index = pages[actualIdx].index;
       if (index != null) {
-        _readerController.setPageIndex(
-          _isDoublePageActive ? index : _geCurrentIndex(index),
-          true,
-          _chapterUrlModel.pageUrls,
-        );
+        _readerController.setPageIndex(index, true, _chapterUrlModel.pageUrls);
       }
     } else if (state == AppLifecycleState.resumed) {
       _readingStopwatch.start();
@@ -251,11 +243,13 @@ class _MangaChapterPageGalleryState
   final _failedPageIndexes = ValueNotifier<Set<int>>({});
 
   void _onFailedToLoadImage(int index, bool failed) {
-    final current = Set<int>.from(_failedPageIndexes.value);
-    final bool changed = failed ? current.add(index) : current.remove(index);
-    if (changed) {
-      _failedPageIndexes.value = current;
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final current = Set<int>.from(_failedPageIndexes.value);
+      final bool changed = failed ? current.add(index) : current.remove(index);
+      if (changed) {
+        _failedPageIndexes.value = current;
+      }
+    });
   }
 
   late int? _currentIndex = _readerController.getPageIndex();
@@ -289,16 +283,16 @@ class _MangaChapterPageGalleryState
   }
 
   void _initWakelock() {
-    final keepOn = isar.settings.getSync(227)!.keepScreenOnReader ?? true;
+    final keepOn = ref.read(keepScreenOnReaderStateProvider);
     if (keepOn) {
       WakelockPlus.enable();
     }
   }
 
-  // final double _horizontalScaleValue = 1.0;
+  // final double _horizontalScaleValue = 1.0; TODO
   bool _isNextChapterPreloading = false;
   int _prefetchSessionId = 0;
-  // bool _isPrevChapterPreloading = false;
+  // bool _isPrevChapterPreloading = false; TODO
 
   int get pagePreloadAmount => ref.read(pagePreloadAmountStateProvider);
   late bool _isBookmarked = _readerController.getChapterBookmarked();
@@ -1146,15 +1140,24 @@ class _MangaChapterPageGalleryState
     }
   }
 
+  /// Handles scroll-based page changes in continuous mode (vertical or horizontal).
+  ///
+  /// Responsibilities:
+  /// - Determine the first visible item from the scroll position listener.
+  /// - Detect page changes and trigger flash animation.
+  /// - Update chapter when scrolling into a page from another chapter.
+  /// - Trigger next-chapter preloading when nearing the end.
+  /// - Update display index and persist progress.
+  ///
+  /// This is the continuous-mode equivalent of `_onPageChanged`, but optimized
+  /// for list-based scrolling instead of discrete PageView swipes.
   void _readProgressListener() async {
     final itemPositions = _itemPositionsListener.itemPositions.value;
     if (itemPositions.isEmpty) return;
     final newIndex = itemPositions.first.index;
     final bool pageChanged = _currentIndex != newIndex;
     _currentIndex = newIndex;
-    if (pageChanged) {
-      _triggerFlash();
-    }
+    if (pageChanged) _triggerFlash();
     final currentReaderMode = ref.read(_currentReaderMode);
     int pagesLength =
         (_pageMode == PageMode.doublePage &&
@@ -1162,26 +1165,7 @@ class _MangaChapterPageGalleryState
         ? (pages.length / 2).ceil()
         : pages.length;
     if (_currentIndex! >= 0 && _currentIndex! < pagesLength) {
-      if (_readerController.chapter.id != pages[_currentIndex!].chapter!.id) {
-        if (mounted) {
-          setState(() {
-            _readerController = ref.read(
-              readerControllerProvider(
-                chapter: pages[_currentIndex!].chapter!,
-              ).notifier,
-            );
-
-            chapter = pages[_currentIndex!].chapter!;
-            final chapterUrlModel = pages[_currentIndex!].chapterUrlModel;
-
-            if (chapterUrlModel != null) {
-              _chapterUrlModel = chapterUrlModel;
-            }
-
-            _isBookmarked = _readerController.getChapterBookmarked();
-          });
-        }
-      }
+      _updateChapterIfNeeded(_currentIndex!);
 
       // ── Next-chapter preloading: trigger when near the end ──
       final distToEnd = pagesLength - 1 - itemPositions.last.index;
@@ -1194,16 +1178,7 @@ class _MangaChapterPageGalleryState
       //   _triggerPrevChapterPreload();
       // }
 
-      final idx = pages[_currentIndex!].index;
-      if (idx != null) {
-        _currentPageDisplayIndex.value = idx;
-        _readerController.setPageIndex(
-          _isDoublePageActive ? idx : _geCurrentIndex(idx),
-          false,
-          _chapterUrlModel.pageUrls,
-        );
-        ref.read(currentIndexProvider(chapter).notifier).setCurrentIndex(idx);
-      }
+      _updateDisplayIndex(_currentIndex!, false /*Note Paged, Continuous*/);
     }
   }
 
@@ -1439,37 +1414,31 @@ class _MangaChapterPageGalleryState
     await Future.wait([worker(), worker(), worker()]);
   }
 
+  /// Handles page changes in PageView mode (discrete pages).
+  ///
+  /// Responsibilities:
+  /// - Convert PageView index -> actual page index (handles double-page mode).
+  /// - Update reader progress and chapter if the new page belongs to another chapter.
+  /// - Reset zoom/scale of the previous page so swiping back works smoothly.
+  /// - Trigger flash animation on page change.
+  /// - Update display index and persist progress.
+  /// - Preload next chapter when nearing the end of the current one.
+  /// - Reload evicted pages if needed and evict old chapter pages to free memory.
+  /// - Prefetch pages in correct order for smoother reading.
+  ///
+  /// This is the main handler for all logic that should occur when the user
+  /// swipes to a new page in PageView mode.
   Future<void> _onPageChanged(int index) async {
     // In non-continuous double page mode, convert page view index to actual
     // pages array index for correct lookups.
     final int actualIndex = _pageViewToActualIndex(index);
     final int prevActualIndex = _pageViewToActualIndex(_currentIndex!);
 
-    final idx = pages[prevActualIndex].index;
-    if (idx != null) {
-      _readerController.setPageIndex(
-        _isDoublePageActive ? idx : _geCurrentIndex(idx),
-        false,
-        _chapterUrlModel.pageUrls,
-      );
+    final prevIdx = pages[prevActualIndex].index;
+    if (prevIdx != null) {
+      _readerController.setPageIndex(prevIdx, false, _chapterUrlModel.pageUrls);
     }
-    if (_readerController.chapter.id != pages[actualIndex].chapter!.id) {
-      if (mounted) {
-        setState(() {
-          _readerController = ref.read(
-            readerControllerProvider(
-              chapter: pages[actualIndex].chapter!,
-            ).notifier,
-          );
-          chapter = pages[actualIndex].chapter!;
-          final chapterUrlModel = pages[actualIndex].chapterUrlModel;
-          if (chapterUrlModel != null) {
-            _chapterUrlModel = chapterUrlModel;
-          }
-          _isBookmarked = _readerController.getChapterBookmarked();
-        });
-      }
-    }
+    _updateChapterIfNeeded(actualIndex);
     // Reset zoom of the previous page so user can swipe back freely (#443).
     _pageControllers[prevActualIndex]?.resetScaleAndCenter();
     if (_isDoublePageActive) {
@@ -1483,15 +1452,8 @@ class _MangaChapterPageGalleryState
     final bool pageChanged = _currentIndex != index;
     _currentIndex = index;
 
-    if (pageChanged) {
-      _triggerFlash();
-    }
-    if (pages[actualIndex].index != null) {
-      _currentPageDisplayIndex.value = pages[actualIndex].index!;
-      ref
-          .read(currentIndexProvider(chapter).notifier)
-          .setCurrentIndex(pages[actualIndex].index!);
-    }
+    if (pageChanged) _triggerFlash();
+    _updateDisplayIndex(actualIndex, true /*Paged*/);
 
     // ── Next-chapter preloading: trigger when near the end ──
     final distToEnd = pages.length - 1 - actualIndex;
@@ -1515,6 +1477,56 @@ class _MangaChapterPageGalleryState
 
     // Prefetch pages in order for the new page window
     _prefetchPagesInOrder();
+  }
+
+  /// Updates the active chapter when the user scrolls or swipes into a page
+  /// belonging to a different chapter.
+  ///
+  /// This:
+  /// - Detects if the newly visible page belongs to another chapter.
+  /// - Rebuilds the reader controller for that chapter.
+  /// - Updates the current chapter, chapter URL model, and bookmark state.
+  ///
+  /// Called by both page‑based and continuous scrolling listeners to keep
+  /// chapter state in sync with the visible page.
+  void _updateChapterIfNeeded(int actualIndex) {
+    final newChapter = pages[actualIndex].chapter!;
+    if (_readerController.chapter.id == newChapter.id) return;
+
+    if (!mounted) return;
+
+    setState(() {
+      _readerController = ref.read(
+        readerControllerProvider(chapter: newChapter).notifier,
+      );
+      chapter = newChapter;
+
+      final chapterUrlModel = pages[actualIndex].chapterUrlModel;
+      if (chapterUrlModel != null) {
+        _chapterUrlModel = chapterUrlModel;
+      }
+
+      _isBookmarked = _readerController.getChapterBookmarked();
+    });
+  }
+
+  /// Updates the user-facing page index (e.g., "Page 5 of 32") and syncs
+  /// progress to the reader controller + Riverpod state.
+  ///
+  /// This:
+  /// - Converts the actual page index into the display index used in UI.
+  /// - Updates the reader controller's internal page index (unless in PageView).
+  /// - Persists the current index via `currentIndexProvider`.
+  ///
+  /// Used by both PageView mode and continuous scrolling mode.
+  void _updateDisplayIndex(int actualIndex, bool pageView) {
+    final idx = pages[actualIndex].index;
+    if (idx == null) return;
+    _currentPageDisplayIndex.value = idx;
+    if (!pageView) {
+      _readerController.setPageIndex(idx, false, _chapterUrlModel.pageUrls);
+    }
+    ref.read(currentIndexProvider(chapter).notifier).setCurrentIndex(idx);
   }
 
   late final _pageOffset = ValueNotifier(
@@ -1609,10 +1621,6 @@ class _MangaChapterPageGalleryState
     int page1 = index + 1;
     int page2 = index + 2;
     return page2 > pageLength ? "$pageLength" : "$page1-$page2";
-  }
-
-  int _geCurrentIndex(int index) {
-    return index;
   }
 
   /// Whether double page mode is active (continuous or paged).

@@ -4,6 +4,23 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'logs_state.g.dart';
 
 @riverpod
-bool logsState(Ref ref) {
-  return isar.settings.getSync(227)?.enableLogs ?? false;
+class LogsState extends _$LogsState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)?.enableLogs ?? false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+
+    state = value;
+
+    isar.writeTxnSync(() {
+      isar.settings.putSync(
+        settings!
+          ..enableLogs = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      );
+    });
+  }
 }
