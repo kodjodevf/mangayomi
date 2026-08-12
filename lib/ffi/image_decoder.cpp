@@ -1445,6 +1445,11 @@ static unsigned char* decode_avif_rgba(const char* file_path, int* out_w, int* o
 // ---------------------------------------------------------------------------
 // Format detection helpers
 // ---------------------------------------------------------------------------
+// These only inspect magic bytes and have no dependency on the optional
+// decoding libraries, so they're compiled and used unconditionally. This lets
+// init_decoder() give a specific "you're missing libX-dev" message rather
+// than a generic one, no matter which combination of libjpeg/libpng/libavif
+// was found at configure time.
 static int linux_is_jpeg(const char* file_path) {
     FILE* f = fopen(file_path, "rb");
     if (!f) return 0;
@@ -1463,7 +1468,6 @@ static int linux_is_png(const char* file_path) {
     return (n == 8 && memcmp(magic, "\x89PNG\r\n\x1a\n", 8) == 0);
 }
 
-#ifdef HAVE_LIBAVIF
 static int linux_is_avif(const char* file_path) {
     FILE* f = fopen(file_path, "rb");
     if (!f) return 0;
@@ -1477,7 +1481,6 @@ static int linux_is_avif(const char* file_path) {
     if (memcmp(header + 4, "ftyp", 4) != 0) return 0;
     return (memcmp(header + 8, "avif", 4) == 0 || memcmp(header + 8, "avis", 4) == 0);
 }
-#endif // HAVE_LIBAVIF
 
 // ---------------------------------------------------------------------------
 // Autocrop helper for the Linux RGBA buffer
@@ -1547,31 +1550,60 @@ ImageDecoderContext* init_decoder(const char* file_path, bool crop_borders, int*
         return ctx;
     }
 
-    // Try JPEG / PNG via system libraries
+    // Try JPEG / PNG / AVIF via system libraries
     int w = 0, h = 0;
     unsigned char* rgba = NULL;
 
+    // Sniffing is unconditional (cheap header check, no library dependency),
+    // so we know the file's actual format even if we can't decode it — this
+    // is what lets the error path below name the specific missing package.
+    int is_jpeg = linux_is_jpeg(file_path);
+    int is_png  = linux_is_png(file_path);
+    int is_avif = linux_is_avif(file_path);
+
 #ifdef HAVE_LIBJPEG
-    if (!rgba && linux_is_jpeg(file_path)) {
+    if (!rgba && is_jpeg) {
         rgba = decode_jpeg_rgba(file_path, &w, &h);
     }
 #endif
 
 #ifdef HAVE_LIBPNG
-    if (!rgba && linux_is_png(file_path)) {
+    if (!rgba && is_png) {
         rgba = decode_png_rgba(file_path, &w, &h);
     }
 #endif
 
 #ifdef HAVE_LIBAVIF
-    if (!rgba && linux_is_avif(file_path)) {
+    if (!rgba && is_avif) {
         rgba = decode_avif_rgba(file_path, &w, &h);
     }
 #endif
 
     if (!rgba) {
-        printf("ImageDecoder: Unsupported file format on Linux."
-               " Install libjpeg-dev, libpng-dev, and libavif-dev, then rebuild the app to enable JPEG/PNG/AVIF support.\n");
+        if (is_jpeg) {
+#ifdef HAVE_LIBJPEG
+            printf("ImageDecoder: Failed to decode JPEG file (it may be corrupt or truncated): %s\n", file_path);
+#else
+            printf("ImageDecoder: JPEG file detected, but libjpeg support was not compiled in."
+                   " Install libjpeg-dev, then rebuild the app to enable JPEG support.\n");
+#endif
+        } else if (is_png) {
+#ifdef HAVE_LIBPNG
+            printf("ImageDecoder: Failed to decode PNG file (it may be corrupt or truncated): %s\n", file_path);
+#else
+            printf("ImageDecoder: PNG file detected, but libpng support was not compiled in."
+                   " Install libpng-dev, then rebuild the app to enable PNG support.\n");
+#endif
+        } else if (is_avif) {
+#ifdef HAVE_LIBAVIF
+            printf("ImageDecoder: Failed to decode AVIF file (it may be corrupt or use an unsupported profile): %s\n", file_path);
+#else
+            printf("ImageDecoder: AVIF file detected, but libavif support was not compiled in."
+                   " Install libavif-dev, then rebuild the app to enable AVIF support.\n");
+#endif
+        } else {
+            printf("ImageDecoder: Unsupported or unrecognized file format on Linux: %s\n", file_path);
+        }
         return NULL;
     }
 
