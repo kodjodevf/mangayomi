@@ -297,7 +297,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh\"\n\nif [ -d \"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenJDKRuntime.framework\" ]; then\n  identity=\"${EXPANDED_CODE_SIGN_IDENTITY}\"\n  [ -n \"${identity}\" ] || identity=\"-\"\n  /usr/bin/codesign --force --sign \"${identity}\" --timestamp=none \\\n    \"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenJDKRuntime.framework\"\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		3370BAFD8EB148956C9E3778 /* [CP] Copy Pods Resources */ = {
