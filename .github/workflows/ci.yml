@@ -23,6 +23,11 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+          # Pin the Flutter version so CI is reproducible. Tracking bare
+          # `stable` means a new release can break the build with no code
+          # change (e.g. a raised minimum Gradle version). Bump this
+          # deliberately.
+          flutter-version: 3.44.6
           cache: true
 
       - name: Install dependencies
@@ -45,6 +50,11 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+          # Pin the Flutter version so CI is reproducible. Tracking bare
+          # `stable` means a new release can break the build with no code
+          # change (e.g. a raised minimum Gradle version). Bump this
+          # deliberately.
+          flutter-version: 3.44.6
           cache: true
 
       - name: Setup Rust toolchain
@@ -65,7 +75,10 @@ jobs:
         uses: seanmiddleditch/gha-setup-ninja@master
 
       - name: Install flutter_rust_bridge_codegen
-        run: cargo install 'flutter_rust_bridge_codegen'
+        # Pin to the flutter_rust_bridge runtime version in pubspec.lock. The
+        # codegen and runtime must match, so tracking latest can generate code
+        # incompatible with the pinned crate.
+        run: cargo install 'flutter_rust_bridge_codegen' --version 2.12.0
 
       - name: Install dependencies
         run: flutter pub get
@@ -130,13 +143,16 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+          # Pin the Flutter version so CI is reproducible (see the analyze job).
+          flutter-version: 3.44.6
           cache: true
 
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install flutter_rust_bridge_codegen
-        run: cargo install 'flutter_rust_bridge_codegen'
+        # Pin to the flutter_rust_bridge runtime version in pubspec.lock.
+        run: cargo install 'flutter_rust_bridge_codegen' --version 2.12.0
 
       - name: Install dependencies
         run: flutter pub get
