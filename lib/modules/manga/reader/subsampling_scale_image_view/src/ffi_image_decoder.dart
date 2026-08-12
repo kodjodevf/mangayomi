@@ -243,7 +243,7 @@ class FfiImageDecoder {
     // lruOrder tracks insertion order; LinkedHashMap isn't directly available in isolate
     // so we use a plain Map (Dart Maps maintain insertion order since Dart 2) as O(1) ordered set.
     final Map<String, bool> lruOrder = {};
-    const int maxCacheSize = 10;
+    const int maxCacheSize = 5;
 
     receivePort.listen((message) async {
       if (message is Map<String, dynamic>) {
@@ -432,12 +432,9 @@ class FfiImageDecoder {
   }
 
   void _processNext() {
-    // Dispatch up to _maxConcurrent jobs simultaneously.
-    while (_activeJobs < _maxConcurrent && _queue.isNotEmpty) {
-      // Priority ordering:
-      //  1. getDimensions jobs first (they block image init)
-      //  2. High sampleSize (base/overview layer) before fine detail tiles
-      //  3. LIFO within same priority (last-added tile = most recently needed)
+    // Sort once before dispatching, not per iteration.
+    // Priority: getDimensions first, then high sampleSize (base layer), LIFO within.
+    if (_queue.length > 1) {
       _queue.sort((a, b) {
         final aPriority = a.action == 'getDimensions'
             ? 1000
@@ -449,7 +446,9 @@ class FfiImageDecoder {
           aPriority,
         ); // descending: highest priority last for removeLast
       });
+    }
 
+    while (_activeJobs < _maxConcurrent && _queue.isNotEmpty) {
       final job = _queue.removeLast();
       _activeJobs++;
 

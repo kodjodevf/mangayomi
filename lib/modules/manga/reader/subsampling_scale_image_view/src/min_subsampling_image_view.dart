@@ -283,6 +283,7 @@ class _MinSubsamplingImageState extends ConsumerState<MinSubsamplingImage> {
   @override
   Widget build(BuildContext context) {
     if (_uiImage == null && widget.data.decodedImage != null) {
+      _uiImage?.dispose();
       _uiImage = widget.data.decodedImage!.clone();
       _isLoading = false;
       _hasError = false;

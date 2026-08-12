@@ -568,8 +568,10 @@ class _MangaChapterPageGalleryState
                                 ? Axis.horizontal
                                 : Axis.vertical,
                             minCacheExtent: isHorizontalContinuous
-                                ? (pagePreloadAmount * 2.0) * context.width(1)
-                                : (pagePreloadAmount * 2.0) * context.height(1),
+                                ? (pagePreloadAmount.clamp(0, 2) * 2.0) *
+                                      context.width(1)
+                                : (pagePreloadAmount.clamp(0, 2) * 2.0) *
+                                      context.height(1),
                             initialScrollIndex: _readerController
                                 .getPageIndex(),
                             physics: const ClampingScrollPhysics(),

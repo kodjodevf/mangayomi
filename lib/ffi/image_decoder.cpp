@@ -305,6 +305,7 @@ struct ImageDecoderContext {
             unsigned char* file_bytes;      // Raw image bytes loaded once into RAM
             size_t file_size;
             AImageDecoder* cached_decoder;  // Reusable decoder — avoids per-tile recreate
+            unsigned char* full_rgba;       // Full pre-decoded RGBA for O(1) tile extraction
         } android_mem;
         #endif
         #ifdef _WIN32
@@ -779,13 +780,30 @@ ImageDecoderContext* init_decoder(const char* file_path, bool crop_borders, int*
     // Keep the decoder alive — recreating it per-tile (old code) was O(N_tiles) cost.
     // The decoder is reused across all decode_region calls for this context.
 
+    // Pre-decode the full image to RGBA once — eliminates per-tile JPEG decompression.
+    // Tile requests become simple memory copies instead of full re-decompression.
+    pAImageDecoder_setAndroidBitmapFormat(decoder, 1); // ANDROID_BITMAP_FORMAT_RGBA_8888
+    size_t full_stride = (size_t)w * 4;
+    size_t full_buffer_size = full_stride * (size_t)h;
+    unsigned char* full_rgba = (unsigned char*)malloc(full_buffer_size);
+    if (full_rgba) {
+        int dr = pAImageDecoder_decodeImage(decoder, full_rgba, full_stride, full_buffer_size);
+        if (dr != 0) {
+            free(full_rgba);
+            full_rgba = NULL;
+        }
+    }
+    // Free the decoder — no longer needed after pre-decode
+    pAImageDecoder_delete(decoder);
+
     ImageDecoderContext* ctx = (ImageDecoderContext*)malloc(sizeof(ImageDecoderContext));
     ctx->type = TYPE_NATIVE;
     ctx->width = w;
     ctx->height = h;
     ctx->android_mem.file_bytes = file_bytes;
     ctx->android_mem.file_size = size;
-    ctx->android_mem.cached_decoder = decoder;
+    ctx->android_mem.cached_decoder = NULL;
+    ctx->android_mem.full_rgba = full_rgba;
 
     if (crop_borders) {
         perform_android_autocrop(ctx);
@@ -815,9 +833,31 @@ bool decode_region(ImageDecoderContext* ctx, int left, int top, int right, int b
 
     if (!ctx->android_mem.file_bytes || !load_imagedecoder_symbols()) return false;
 
-    // Use the cached decoder if available; fall back to creating a new one.
-    // Note: AImageDecoder is NOT thread-safe; concurrent callers must use their own.
-    // The isolate serializes calls, so single-decoder reuse is safe here.
+    int dest_width  = (raw_right  - raw_left) / sample_size;
+    int dest_height = (raw_bottom - raw_top)  / sample_size;
+    if (dest_width <= 0 || dest_height <= 0) return false;
+
+    // Fast path: copy from pre-decoded RGBA buffer (no decompression)
+    if (ctx->android_mem.full_rgba) {
+        int src_w = ctx->width;
+        for (int dy = 0; dy < dest_height; dy++) {
+            int sy = raw_top + dy * sample_size;
+            const unsigned char* src_row = ctx->android_mem.full_rgba + (size_t)sy * src_w * 4;
+            unsigned char* dst_row = out_rgba_buffer + (size_t)dy * dest_width * 4;
+            if (sample_size == 1) {
+                // Optimized: single memcpy for contiguous row slice
+                memcpy(dst_row, src_row + raw_left * 4, (size_t)dest_width * 4);
+            } else {
+                for (int dx = 0; dx < dest_width; dx++) {
+                    int sx = raw_left + dx * sample_size;
+                    memcpy(dst_row + dx * 4, src_row + sx * 4, 4);
+                }
+            }
+        }
+        return true;
+    }
+
+    // Fallback: use AImageDecoder (if pre-decode failed)
     AImageDecoder* decoder = ctx->android_mem.cached_decoder;
     bool owns_decoder = false;
     if (!decoder) {
@@ -832,13 +872,6 @@ bool decode_region(ImageDecoderContext* ctx, int left, int top, int right, int b
 
     int result = pAImageDecoder_setTargetSize(decoder, total_dest_width, total_dest_height);
     if (result != 0) {
-        if (owns_decoder) pAImageDecoder_delete(decoder);
-        return false;
-    }
-
-    int dest_width  = (raw_right  - raw_left) / sample_size;
-    int dest_height = (raw_bottom - raw_top)  / sample_size;
-    if (dest_width <= 0 || dest_height <= 0) {
         if (owns_decoder) pAImageDecoder_delete(decoder);
         return false;
     }
@@ -873,6 +906,9 @@ void free_decoder(ImageDecoderContext* ctx) {
             if (ctx->android_mem.cached_decoder) {
                 pAImageDecoder_delete(ctx->android_mem.cached_decoder);
                 ctx->android_mem.cached_decoder = NULL;
+            }
+            if (ctx->android_mem.full_rgba) {
+                free(ctx->android_mem.full_rgba);
             }
             if (ctx->android_mem.file_bytes) {
                 free(ctx->android_mem.file_bytes);

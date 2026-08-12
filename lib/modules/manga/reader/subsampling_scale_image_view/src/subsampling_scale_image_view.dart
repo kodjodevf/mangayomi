@@ -438,6 +438,7 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
   // Tiling
   late TilingEngine _tilingEngine;
   bool _isInitialized = false;
+  bool _rebuildScheduled = false;
   int _sWidth = 0;
   int _sHeight = 0;
 
@@ -1193,17 +1194,15 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
                 img.dispose();
                 return;
               }
-              setState(() {
-                tile.image = img;
-                tile.loading = false;
-                if (_loadState != LoadState.completed) {
-                  _loadState = LoadState.completed;
-                  _notifyStateChanged();
-                  widget.onReady?.call();
-                  widget.onImageLoaded?.call(_sWidth, _sHeight);
-                }
-              });
-              _refreshTiles(load: true);
+              tile.image = img;
+              tile.loading = false;
+              if (_loadState != LoadState.completed) {
+                _loadState = LoadState.completed;
+                _notifyStateChanged();
+                widget.onReady?.call();
+                widget.onImageLoaded?.call(_sWidth, _sHeight);
+              }
+              _scheduleBatchRebuild();
             },
           );
         } catch (e) {
@@ -1224,6 +1223,22 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
         }
       }
     });
+  }
+  // ── Batch Rebuild ──────────────────────────────────────────────────────────
+
+  /// Coalesces multiple tile-completion setState calls into a single rebuild
+  /// per microtask frame. Prevents cascading rebuilds when several tiles
+  /// finish decoding within the same event loop iteration.
+  void _scheduleBatchRebuild() {
+    if (!_rebuildScheduled) {
+      _rebuildScheduled = true;
+      Future.microtask(() {
+        if (!mounted) return;
+        _rebuildScheduled = false;
+        setState(() {});
+        _refreshTiles(load: true);
+      });
+    }
   }
 
   // ── Gesture handlers ─────────────────────────────────────────────────────────
@@ -1425,16 +1440,26 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
             : (constraints.minWidth > 0 ? constraints.minWidth : screenWidth);
 
         if (_viewSize.width != newWidth || _viewSize.height != newHeight) {
+          final bool isFirstLayout = _viewSize == ui.Size.zero;
           _viewSize = ui.Size(newWidth, newHeight);
-          _resizeTimer?.cancel();
-          _resizeTimer = Timer(const Duration(milliseconds: 150), () {
-            if (!mounted) return;
+          if (isFirstLayout) {
+            // No debounce for initial layout — start loading immediately
             if (_sWidth > 0 && _sHeight > 0) {
               _setupInitialViewState();
             } else if (_resolvedFilePath != null) {
               _initImage();
             }
-          });
+          } else {
+            _resizeTimer?.cancel();
+            _resizeTimer = Timer(const Duration(milliseconds: 150), () {
+              if (!mounted) return;
+              if (_sWidth > 0 && _sHeight > 0) {
+                _setupInitialViewState();
+              } else if (_resolvedFilePath != null) {
+                _initImage();
+              }
+            });
+          }
         }
 
         // Displays custom state widget if image is not ready
