@@ -1375,6 +1375,74 @@ static unsigned char* decode_png_rgba(const char* file_path, int* out_w, int* ou
 #endif // HAVE_LIBPNG
 
 // ---------------------------------------------------------------------------
+// AVIF decoding via libavif (compiled only when HAVE_LIBAVIF is defined)
+// ---------------------------------------------------------------------------
+#ifdef HAVE_LIBAVIF
+#include <avif/avif.h>
+
+static unsigned char* decode_avif_rgba(const char* file_path, int* out_w, int* out_h) {
+    avifDecoder* decoder = avifDecoderCreate();
+    if (!decoder) return NULL;
+
+    avifResult result = avifDecoderSetIOFile(decoder, file_path);
+    if (result != AVIF_RESULT_OK) {
+        avifDecoderDestroy(decoder);
+        return NULL;
+    }
+
+    result = avifDecoderParse(decoder);
+    if (result != AVIF_RESULT_OK) {
+        avifDecoderDestroy(decoder);
+        return NULL;
+    }
+
+    // Decode the first (or only) image in the AVIF file/sequence.
+    result = avifDecoderNextImage(decoder);
+    if (result != AVIF_RESULT_OK) {
+        avifDecoderDestroy(decoder);
+        return NULL;
+    }
+
+    int w = (int)decoder->image->width;
+    int h = (int)decoder->image->height;
+
+    avifRGBImage rgb;
+    memset(&rgb, 0, sizeof(rgb));
+    avifRGBImageSetDefaults(&rgb, decoder->image);
+    rgb.format = AVIF_RGB_FORMAT_RGBA;
+    rgb.depth = 8;
+
+    if (avifRGBImageAllocatePixels(&rgb) != AVIF_RESULT_OK) {
+        avifDecoderDestroy(decoder);
+        return NULL;
+    }
+
+    if (avifImageYUVToRGB(decoder->image, &rgb) != AVIF_RESULT_OK) {
+        avifRGBImageFreePixels(&rgb);
+        avifDecoderDestroy(decoder);
+        return NULL;
+    }
+
+    // Copy into a plain malloc'd buffer so it can be freed with free(), matching
+    // the ownership convention of the JPEG/PNG decoders above.
+    unsigned char* out = (unsigned char*)malloc((size_t)w * h * 4);
+    if (!out) {
+        avifRGBImageFreePixels(&rgb);
+        avifDecoderDestroy(decoder);
+        return NULL;
+    }
+    memcpy(out, rgb.pixels, (size_t)w * h * 4);
+
+    avifRGBImageFreePixels(&rgb);
+    avifDecoderDestroy(decoder);
+
+    *out_w = w;
+    *out_h = h;
+    return out;
+}
+#endif // HAVE_LIBAVIF
+
+// ---------------------------------------------------------------------------
 // Format detection helpers
 // ---------------------------------------------------------------------------
 static int linux_is_jpeg(const char* file_path) {
@@ -1394,6 +1462,22 @@ static int linux_is_png(const char* file_path) {
     fclose(f);
     return (n == 8 && memcmp(magic, "\x89PNG\r\n\x1a\n", 8) == 0);
 }
+
+#ifdef HAVE_LIBAVIF
+static int linux_is_avif(const char* file_path) {
+    FILE* f = fopen(file_path, "rb");
+    if (!f) return 0;
+    unsigned char header[12] = {0};
+    size_t n = fread(header, 1, 12, f);
+    fclose(f);
+    if (n != 12) return 0;
+
+    // ISOBMFF: bytes 4-7 must be "ftyp"; the major brand (bytes 8-11) tells us
+    // whether this is an AVIF still image ("avif") or AVIF image sequence ("avis").
+    if (memcmp(header + 4, "ftyp", 4) != 0) return 0;
+    return (memcmp(header + 8, "avif", 4) == 0 || memcmp(header + 8, "avis", 4) == 0);
+}
+#endif // HAVE_LIBAVIF
 
 // ---------------------------------------------------------------------------
 // Autocrop helper for the Linux RGBA buffer
@@ -1479,9 +1563,15 @@ ImageDecoderContext* init_decoder(const char* file_path, bool crop_borders, int*
     }
 #endif
 
+#ifdef HAVE_LIBAVIF
+    if (!rgba && linux_is_avif(file_path)) {
+        rgba = decode_avif_rgba(file_path, &w, &h);
+    }
+#endif
+
     if (!rgba) {
         printf("ImageDecoder: Unsupported file format on Linux."
-               " Install libjpeg-dev and libpng-dev, then rebuild the app to enable JPEG/PNG support.\n");
+               " Install libjpeg-dev, libpng-dev, and libavif-dev, then rebuild the app to enable JPEG/PNG/AVIF support.\n");
         return NULL;
     }
 

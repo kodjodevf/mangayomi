@@ -17,6 +17,7 @@ dependencies:
   - libmpv2
   - libjpeg8
   - libpng16-16t64
+  - libavif16
 
 essential: false
 
