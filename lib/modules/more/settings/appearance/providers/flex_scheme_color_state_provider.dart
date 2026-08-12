@@ -5,21 +5,26 @@ import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'flex_scheme_color_state_provider.g.dart';
 
+/// Provides both the selected theme index and the resolved FlexSchemeColor.
+///
+/// Returns a tuple `(color, index)`:
+/// - `color` -> the resolved FlexSchemeColor (light or dark variant),
+///              depending on the current theme mode
+/// - `index` -> the selected FlexSchemeColor index stored in Isar
 @riverpod
 class FlexSchemeColorState extends _$FlexSchemeColorState {
   @override
-  FlexSchemeColor build() {
-    final flexSchemeColorIndex = isar.settings
-        .getSync(227)!
-        .flexSchemeColorIndex!;
-    return ref.read(themeModeStateProvider)
-        ? ThemeAA.schemes[flexSchemeColorIndex].dark
-        : ThemeAA.schemes[flexSchemeColorIndex].light;
+  (FlexSchemeColor color, int index) build() {
+    final index = isar.settings.getSync(227)!.flexSchemeColorIndex!;
+    final color = ref.read(themeModeStateProvider)
+        ? ThemeAA.schemes[index].dark
+        : ThemeAA.schemes[index].light;
+    return (color, index);
   }
 
   void setTheme(FlexSchemeColor color, int index) {
     final settings = isar.settings.getSync(227);
-    state = color;
+    state = (color, index);
     isar.writeTxnSync(
       () => isar.settings.putSync(
         settings!

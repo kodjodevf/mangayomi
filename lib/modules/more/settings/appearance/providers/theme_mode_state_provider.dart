@@ -28,7 +28,7 @@ class ThemeModeState extends _$ThemeModeState {
 
     state = isDark;
 
-    final schemeIndex = settings!.flexSchemeColorIndex!;
+    final schemeIndex = ref.read(flexSchemeColorStateProvider).$2;
     final scheme = ThemeAA.schemes[schemeIndex];
 
     ref
@@ -37,7 +37,7 @@ class ThemeModeState extends _$ThemeModeState {
 
     isar.writeTxnSync(
       () => isar.settings.putSync(
-        settings
+        settings!
           ..themeIsDark = isDark
           ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       ),
