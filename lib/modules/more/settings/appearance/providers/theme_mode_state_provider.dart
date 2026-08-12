@@ -14,43 +14,31 @@ class ThemeModeState extends _$ThemeModeState {
 
   void setTheme(Brightness brightness) {
     if (brightness == Brightness.light) {
-      ref.read(themeModeStateProvider.notifier).setLightTheme();
+      setLightTheme();
     } else {
-      ref.read(themeModeStateProvider.notifier).setDarkTheme();
+      setDarkTheme();
     }
   }
 
-  void setLightTheme() {
-    final settings = isar.settings.getSync(227);
-    state = false;
-    ref
-        .read(flexSchemeColorStateProvider.notifier)
-        .setTheme(
-          ThemeAA.schemes[settings!.flexSchemeColorIndex!].light,
-          settings.flexSchemeColorIndex!,
-        );
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings
-          ..themeIsDark = state
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
-  }
+  void setLightTheme() => _applyTheme(false);
+  void setDarkTheme() => _applyTheme(true);
 
-  void setDarkTheme() {
+  void _applyTheme(bool isDark) {
     final settings = isar.settings.getSync(227);
-    state = true;
+
+    state = isDark;
+
+    final schemeIndex = settings!.flexSchemeColorIndex!;
+    final scheme = ThemeAA.schemes[schemeIndex];
+
     ref
         .read(flexSchemeColorStateProvider.notifier)
-        .setTheme(
-          ThemeAA.schemes[settings!.flexSchemeColorIndex!].dark,
-          settings.flexSchemeColorIndex!,
-        );
+        .setTheme(isDark ? scheme.dark : scheme.light, schemeIndex);
+
     isar.writeTxnSync(
       () => isar.settings.putSync(
         settings
-          ..themeIsDark = state
+          ..themeIsDark = isDark
           ..updatedAt = DateTime.now().millisecondsSinceEpoch,
       ),
     );
