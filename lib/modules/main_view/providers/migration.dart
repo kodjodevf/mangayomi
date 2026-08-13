@@ -1,15 +1,33 @@
-// import 'package:isar_community/isar.dart';
-// import 'package:mangayomi/main.dart';
+import 'package:isar_community/isar.dart';
+import 'package:mangayomi/main.dart';
 // import 'package:mangayomi/models/category.dart';
 // import 'package:mangayomi/models/history.dart';
 // import 'package:mangayomi/models/manga.dart';
-// import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/models/source.dart';
 // import 'package:mangayomi/models/track.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'migration.g.dart';
 
 @riverpod
 Future<void> migration(Ref ref) async {
+  // One-time cleanup: locally-created extensions that were uninstalled
+  // before the fix that hard-deletes them on uninstall are stuck as dead
+  // rows (isAdded: false, sourceCode: "", no repo to reinstall from). Prune
+  // any that are still lingering.
+  final orphanedLocalIds = isar.sources
+      .filter()
+      .idIsNotNull()
+      .isLocalEqualTo(true)
+      .isAddedEqualTo(false)
+      .idProperty()
+      .findAllSync();
+
+  if (orphanedLocalIds.isNotEmpty) {
+    isar.writeTxnSync(() {
+      isar.sources.deleteAllSync(orphanedLocalIds);
+    });
+  }
+
   // final mangas = isar.mangas
   //     .filter()
   //     .idIsNotNull()
