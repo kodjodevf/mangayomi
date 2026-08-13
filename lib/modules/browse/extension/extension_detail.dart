@@ -289,7 +289,8 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                                         .idProperty()
                                         .findAllSync();
                                     isar.writeTxnSync(() {
-                                      if (source.isObsolete ?? false) {
+                                      if ((source.isObsolete ?? false) ||
+                                          (source.isLocal ?? false)) {
                                         isar.sources.deleteSync(
                                           widget.source.id!,
                                         );

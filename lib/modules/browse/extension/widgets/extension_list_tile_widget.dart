@@ -123,7 +123,8 @@ class _ExtensionListTileWidgetState
                         .idProperty()
                         .findAllSync();
                     isar.writeTxnSync(() {
-                      if (widget.source.isObsolete ?? false) {
+                      if ((widget.source.isObsolete ?? false) ||
+                          (widget.source.isLocal ?? false)) {
                         isar.sources.deleteSync(widget.source.id!);
                         ref
                             .read(synchingProvider(syncId: 1).notifier)
