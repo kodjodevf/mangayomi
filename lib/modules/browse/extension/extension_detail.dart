@@ -111,6 +111,28 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                 textAlign: TextAlign.center,
               ),
             ),
+            if (widget.source.isNsfw!)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withValues(alpha: 0.8),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Text(
+                    "NSFW (18+)",
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
