@@ -6,6 +6,7 @@ PODS:
   - device_info_plus (0.0.1):
     - FlutterMacOS
   - file_picker (0.0.1):
+    - Flutter
     - FlutterMacOS
   - flutter_discord_rpc_fork (0.0.1):
     - FlutterMacOS
@@ -56,7 +57,7 @@ DEPENDENCIES:
   - app_links (from `Flutter/ephemeral/.symlinks/plugins/app_links/macos`)
   - connectivity_plus (from `Flutter/ephemeral/.symlinks/plugins/connectivity_plus/macos`)
   - device_info_plus (from `Flutter/ephemeral/.symlinks/plugins/device_info_plus/macos`)
-  - file_picker (from `Flutter/ephemeral/.symlinks/plugins/file_picker/macos`)
+  - file_picker (from `Flutter/ephemeral/.symlinks/plugins/file_picker/darwin`)
   - flutter_discord_rpc_fork (from `Flutter/ephemeral/.symlinks/plugins/flutter_discord_rpc_fork/macos`)
   - flutter_inappwebview_macos (from `Flutter/ephemeral/.symlinks/plugins/flutter_inappwebview_macos/macos`)
   - flutter_qjs (from `Flutter/ephemeral/.symlinks/plugins/flutter_qjs/macos`)
@@ -91,7 +92,7 @@ EXTERNAL SOURCES:
   device_info_plus:
     :path: Flutter/ephemeral/.symlinks/plugins/device_info_plus/macos
   file_picker:
-    :path: Flutter/ephemeral/.symlinks/plugins/file_picker/macos
+    :path: Flutter/ephemeral/.symlinks/plugins/file_picker/darwin
   flutter_discord_rpc_fork:
     :path: Flutter/ephemeral/.symlinks/plugins/flutter_discord_rpc_fork/macos
   flutter_inappwebview_macos:
@@ -139,7 +140,7 @@ SPEC CHECKSUMS:
   app_links: 05a6ec2341985eb05e9f97dc63f5837c39895c3f
   connectivity_plus: 4adf20a405e25b42b9c9f87feff8f4b6fde18a4e
   device_info_plus: 4fb280989f669696856f8b129e4a5e3cd6c48f76
-  file_picker: 7584aae6fa07a041af2b36a2655122d42f578c1a
+  file_picker: 70164d9778c42c47218d6cd79ce435de0856b11a
   flutter_discord_rpc_fork: 9f54b8cb8643b2fb84c685509e2eca403e284652
   flutter_inappwebview_macos: e69b76dd5c46a6d9471f195f3d8d36f11b3ab7a4
   flutter_qjs: cb2d0cba9deade1d03b89f6c432eac126f39482a

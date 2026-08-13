@@ -817,14 +817,12 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
   }
 
   Future<File?> _pickIosJarFile(dynamic l10n) async {
-    final result = await FilePicker.pickFiles(
+    final file = await FilePicker.pickFile(
       dialogTitle: l10n.select_extension_server_jar,
       type: FileType.custom,
       allowedExtensions: const ['jar'],
-      allowMultiple: false,
-      withData: false,
     );
-    final filePath = result?.files.single.path;
+    final filePath = file?.path;
     if (filePath == null || filePath.isEmpty) {
       return null;
     }

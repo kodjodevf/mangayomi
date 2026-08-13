@@ -22,7 +22,6 @@ Future importArchivesFromFile(
   final keepAlile = ref.keepAlive();
   try {
     FilePickerResult? result = await FilePicker.pickFiles(
-      allowMultiple: true,
       type: FileType.custom,
       allowedExtensions: switch (itemType) {
         ItemType.manga => ['cbz', 'zip'],

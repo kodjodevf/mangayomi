@@ -187,15 +187,16 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
           )
         : Material(
             child: SafeArea(
-              child: WillPopScope(
-                onWillPop: () async {
+              child: PopScope(
+                canPop: false,
+                onPopInvokedWithResult: (didPop, result) async {
+                  if (didPop) return;
                   final canGoback = await _webViewController?.canGoBack();
                   if (canGoback ?? false) {
                     _webViewController?.goBack();
                   } else if (context.mounted) {
                     context.pop();
                   }
-                  return false;
                 },
                 child: Column(
                   children: [

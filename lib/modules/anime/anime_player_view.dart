@@ -1371,14 +1371,10 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           GestureDetector(
             onTap: () async {
               try {
-                FilePickerResult? result = await FilePicker.pickFiles(
-                  allowMultiple: false,
-                );
+                final file = await FilePicker.pickFile();
 
-                if (result != null && context.mounted) {
-                  _player.setSubtitleTrack(
-                    SubtitleTrack.uri(result.files.first.path!),
-                  );
+                if (file != null && context.mounted) {
+                  _player.setSubtitleTrack(SubtitleTrack.uri(file.path!));
                 }
                 if (!context.mounted) return;
                 Navigator.pop(context);
