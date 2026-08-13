@@ -259,19 +259,29 @@ Future<void> checkIfSourceIsObsolete(
   if (sourceIds.isEmpty) return;
 
   final toUpdate = <Source>[];
+  final toDelete = <int>[];
   for (var source in sources) {
     final isNowObsolete =
         !sourceIds.contains(source.id) && source.repo?.jsonUrl == repo.jsonUrl;
 
+    if (!(source.isAdded ?? false) && isNowObsolete) {
+      // Not installed and gone from the repo: nothing to install, so
+      // remove the dead row instead of leaving it in the browse list.
+      toDelete.add(source.id!);
+      continue;
+    }
     if (source.isObsolete != isNowObsolete) {
       source.isObsolete = isNowObsolete;
       source.updatedAt = DateTime.now().millisecondsSinceEpoch;
       toUpdate.add(source);
     }
   }
-  if (toUpdate.isEmpty) return;
-
-  await isar.writeTxn(() => isar.sources.putAll(toUpdate));
+  if (toUpdate.isNotEmpty) {
+    await isar.writeTxn(() => isar.sources.putAll(toUpdate));
+  }
+  if (toDelete.isNotEmpty) {
+    await isar.writeTxn(() => isar.sources.deleteAll(toDelete));
+  }
 }
 
 int compareVersions(String version1, String version2) {
