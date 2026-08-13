@@ -24,7 +24,11 @@ dependencies:
   intl: ^0.20.2
   google_fonts: ^8.0.2
   url_launcher: ^6.3.1
-  package_info_plus: ^9.0.1
+  package_info_plus:
+    git:
+      url: https://github.com/kodjodevf/plus_plugins.git
+      path: packages/package_info_plus/package_info_plus
+      ref: main
   permission_handler: ^12.0.1
   flutter_inappwebview:
     git:
@@ -34,10 +38,10 @@ dependencies:
   draggable_menu: ^4.4.1
   isar_community: ^3.3.2
   isar_community_flutter_libs: ^3.3.2
-  share_plus: ^12.0.2
+  share_plus: ^13.0.0
   xpath_selector_html_parser: ^3.0.1
   archive: ^4.0.9
-  file_picker: ^11.0.2
+  file_picker: ^12.0.0-beta.7
   path_provider: ^2.1.5
   scrollable_positioned_list: ^0.3.8
   bot_toast: ^4.1.3
@@ -88,10 +92,11 @@ dependencies:
   convert: ^3.1.2
   connectivity_plus: ^7.0.0
   app_links: ^7.0.0
-  win32: ^5.10.1
+  win32: ^6.3.0
+  win32_registry: ^3.0.3
   protobuf: ^5.0.0
   fixnum: ^1.1.1
-  device_info_plus: ^12.2.0
+  device_info_plus: ^13.2.0
   marquee: ^2.2.3
   d4rt: ^0.2.2
   hive: ^2.2.3
@@ -102,7 +107,7 @@ dependencies:
       ref: update_frb
   table_calendar: ^3.2.0
   local_auth: ^3.0.1
-  wakelock_plus: ^1.4.0
+  wakelock_plus: ^1.7.0
   m_extension_server:
     git:
       url: https://github.com/kodjodevf/m_extension_server.git
@@ -120,6 +125,11 @@ dependency_overrides:
       url: https://github.com/ThexXTURBOXx/flutter_web_auth_2.git
       ref: 3.x-without-v1
       path: flutter_web_auth_2
+  package_info_plus:
+    git:
+      url: https://github.com/kodjodevf/plus_plugins.git
+      path: packages/package_info_plus/package_info_plus
+      ref: main
 
 dev_dependencies:
   flutter_test:

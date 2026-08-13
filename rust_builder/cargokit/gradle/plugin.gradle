@@ -3,6 +3,8 @@
 
 import java.nio.file.Paths
 import org.apache.tools.ant.taskdefs.condition.Os
+import javax.inject.Inject
+import org.gradle.process.ExecOperations
 
 CargoKitPlugin.file = buildscript.sourceFile
 
@@ -14,6 +16,9 @@ class CargoKitExtension {
 }
 
 abstract class CargoKitBuildTask extends DefaultTask {
+
+    @Inject
+    abstract ExecOperations getExecOperations()
 
     @Input
     String buildMode
@@ -60,12 +65,12 @@ abstract class CargoKitBuildTask extends DefaultTask {
         def rootProjectDir = project.rootProject.projectDir
         
         if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
-            project.exec {
+            execOperations.exec {
                 commandLine 'chmod', '+x', path
             }
         }
         
-        project.exec {
+        execOperations.exec {
             executable path
             args "build-gradle"
             environment "CARGOKIT_ROOT_PROJECT_DIR", rootProjectDir
