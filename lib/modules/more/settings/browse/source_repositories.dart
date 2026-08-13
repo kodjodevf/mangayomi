@@ -196,9 +196,8 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                             IconButton(
                               onPressed: () => ref
                                   .read(
-                                    extensionsRepoStateProvider(
-                                      widget.itemType,
-                                    ).notifier,
+                                    extensionsRepoStateProvider(widget.itemType)
+                                        .notifier,
                                   )
                                   .setVisibility(repo, !isHidden),
                               icon: Stack(
@@ -319,9 +318,8 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                         mangaRepos.removeWhere((url) => url == removedRepo);
                         ref
                             .read(
-                              extensionsRepoStateProvider(
-                                widget.itemType,
-                              ).notifier,
+                              extensionsRepoStateProvider(widget.itemType)
+                                  .notifier,
                             )
                             .set(mangaRepos);
                         _removeOrphanSources(removedRepo);
@@ -429,9 +427,8 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                                           )
                                           .toList();
                                       final repo = await ref.read(
-                                        getRepoInfosProvider(
-                                          jsonUrl: text,
-                                        ).future,
+                                        getRepoInfosProvider(jsonUrl: text)
+                                            .future,
                                       );
                                       if (repo == null) {
                                         botToast(l10n.unsupported_repo);

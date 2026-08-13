@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
+
 import 'dart:math';
 
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show ProviderListenable;
@@ -162,9 +163,8 @@ class ReaderBottomBar extends ConsumerWidget {
                     Icons.skip_previous_rounded,
                     color: hasPreviousChapter
                         ? Theme.of(context).textTheme.bodyLarge!.color
-                        : Theme.of(
-                            context,
-                          ).textTheme.bodyLarge!.color!.withValues(alpha: 0.4),
+                        : Theme.of(context).textTheme.bodyLarge!.color!
+                              .withValues(alpha: 0.4),
                   ),
                 ),
               ),
@@ -257,9 +257,8 @@ class ReaderBottomBar extends ConsumerWidget {
                     Icons.skip_next_rounded,
                     color: hasNextChapter
                         ? Theme.of(context).textTheme.bodyLarge!.color
-                        : Theme.of(
-                            context,
-                          ).textTheme.bodyLarge!.color!.withValues(alpha: 0.4),
+                        : Theme.of(context).textTheme.bodyLarge!.color!
+                              .withValues(alpha: 0.4),
                   ),
                 ),
               ),

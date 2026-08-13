@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -54,7 +55,7 @@ class TotalChapterCacheSizeState extends _$TotalChapterCacheSizeState {
   Future<int> _getdirectorySize(Directory directory) async {
     try {
       if (await directory.exists()) {
-        return directory
+        return await directory
             .list(recursive: true, followLinks: false)
             .where((entity) => entity is File)
             .cast<File>()

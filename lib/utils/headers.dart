@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:mangayomi/eval/javascript/http.dart';
 import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/modules/more/settings/general/providers/general_state_provider.dart';

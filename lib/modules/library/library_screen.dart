@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/main.dart';
@@ -704,9 +705,10 @@ void addTorrent(BuildContext context, {Manga? manga}) {
                                         Text(
                                           "import .torrent file",
                                           style: TextStyle(
-                                            color: Theme.of(
-                                              context,
-                                            ).textTheme.bodySmall!.color,
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!
+                                                .color,
                                             fontSize: 10,
                                           ),
                                         ),
@@ -727,9 +729,8 @@ void addTorrent(BuildContext context, {Manga? manga}) {
                                   child: Container(
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(20),
-                                      color: Theme.of(
-                                        context,
-                                      ).scaffoldBackgroundColor,
+                                      color: Theme.of(context)
+                                          .scaffoldBackgroundColor,
                                     ),
                                     height: 50,
                                     width: 50,

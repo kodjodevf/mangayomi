@@ -678,18 +678,16 @@ class _GridSizeSlider extends ConsumerWidget {
                   HapticFeedback.vibrate();
                   ref
                       .read(
-                        libraryGridSizeStateProvider(
-                          itemType: itemType,
-                        ).notifier,
+                        libraryGridSizeStateProvider(itemType: itemType)
+                            .notifier,
                       )
                       .set(value.toInt());
                 },
                 onChangeEnd: (value) {
                   ref
                       .read(
-                        libraryGridSizeStateProvider(
-                          itemType: itemType,
-                        ).notifier,
+                        libraryGridSizeStateProvider(itemType: itemType)
+                            .notifier,
                       )
                       .set(value.toInt(), end: true);
                 },

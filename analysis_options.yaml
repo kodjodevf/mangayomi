@@ -15,6 +15,13 @@ analyzer:
     # dependencies that aren't resolved in the app's analysis context, so it
     # reports false errors. It's build-time only, not app code.
     - rust_builder/**
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
 include: package:flutter_lints/flutter.yaml
 
 linter:

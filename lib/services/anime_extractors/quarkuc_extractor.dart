@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/models/video.dart';
 import 'package:mangayomi/services/http/m_client.dart';
@@ -30,16 +31,14 @@ class QuarkUcExtractor {
     if (cloudDriveType == CloudDriveType.quark) {
       apiUrl = "https://drive-pc.quark.cn/1/clouddrive/";
       pr = "pr=ucpro&fr=pc";
-      ua =
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) quark-cloud-drive/2.5.20 Chrome/100.0.4896.160 Electron/18.3.5.4-b478491100 Safari/537.36 Channel/pckk_other_ch";
+      ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) quark-cloud-drive/2.5.20 Chrome/100.0.4896.160 Electron/18.3.5.4-b478491100 Safari/537.36 Channel/pckk_other_ch";
       refererUrl = "https://pan.quark.cn/";
       host = "https://quark.cn";
       _lastCookie = "https://quarkcookie.last";
     } else {
       apiUrl = "https://pc-api.uc.cn/1/clouddrive/";
       pr = "pr=UCBrowser&fr=pc";
-      ua =
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) uc-cloud-drive/2.5.20 Chrome/100.0.4896.160 Electron/18.3.5.4-b478491100 Safari/537.36 Channel/pckk_other_ch";
+      ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) uc-cloud-drive/2.5.20 Chrome/100.0.4896.160 Electron/18.3.5.4-b478491100 Safari/537.36 Channel/pckk_other_ch";
       refererUrl = "https://drive.uc.cn/";
       host = "https://uc.cn";
       _lastCookie = "https://uccookie.last";
@@ -672,9 +671,10 @@ class Item {
       displayName =
           RegExp(r'\.S01E(.*?)\.').firstMatch(displayName)?.group(1) ??
           displayName;
-      final numbers = RegExp(
-        r'\d+',
-      ).allMatches(displayName).map((m) => m.group(0)).toList();
+      final numbers = RegExp(r'\d+')
+          .allMatches(displayName)
+          .map((m) => m.group(0))
+          .toList();
       if (numbers.isNotEmpty) {
         displayName = numbers[0]!;
       }

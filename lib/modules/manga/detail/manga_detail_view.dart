@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -56,7 +57,9 @@ import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
+
 import '../../../utils/constant.dart';
+
 import 'package:path/path.dart' as p;
 import 'package:mangayomi/modules/widgets/tv_menu.dart';
 
@@ -307,9 +310,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   width: context.width(1),
                                   height: AppBar().preferredSize.height,
                                   color: context.isTablet
-                                      ? Theme.of(
-                                          context,
-                                        ).scaffoldBackgroundColor
+                                      ? Theme.of(context)
+                                            .scaffoldBackgroundColor
                                       : Theme.of(context)
                                             .scaffoldBackgroundColor
                                             .withValues(alpha: 0.9),
@@ -318,9 +320,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                   width: context.width(1),
                                   height: 465,
                                   color: context.isTablet
-                                      ? Theme.of(
-                                          context,
-                                        ).scaffoldBackgroundColor
+                                      ? Theme.of(context)
+                                            .scaffoldBackgroundColor
                                       : Theme.of(context)
                                             .scaffoldBackgroundColor
                                             .withValues(alpha: 0.9),
@@ -332,9 +333,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                               child: Container(
                                 width: context.width(1),
                                 height: 100,
-                                color: Theme.of(
-                                  context,
-                                ).scaffoldBackgroundColor,
+                                color: Theme.of(context)
+                                    .scaffoldBackgroundColor,
                               ),
                             ),
                           ],
@@ -724,9 +724,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                                   height: chapters.isEmpty
                                                       ? context.height(1)
                                                       : null,
-                                                  color: Theme.of(
-                                                    context,
-                                                  ).scaffoldBackgroundColor,
+                                                  color: Theme.of(context)
+                                                      .scaffoldBackgroundColor,
                                                   child: Padding(
                                                     padding:
                                                         const EdgeInsets.symmetric(
@@ -1352,9 +1351,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                     onTap: () {
                       ref
                           .read(
-                            sortChapterStateProvider(
-                              mangaId: widget.manga!.id!,
-                            ).notifier,
+                            sortChapterStateProvider(mangaId: widget.manga!.id!)
+                                .notifier,
                           )
                           .set(0);
                     },
@@ -1367,9 +1365,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                     onTap: () {
                       ref
                           .read(
-                            sortChapterStateProvider(
-                              mangaId: widget.manga!.id!,
-                            ).notifier,
+                            sortChapterStateProvider(mangaId: widget.manga!.id!)
+                                .notifier,
                           )
                           .set(i);
                     },
@@ -1434,9 +1431,8 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Theme.of(
-                  context,
-                ).scaffoldBackgroundColor.withValues(alpha: 0.05),
+                Theme.of(context).scaffoldBackgroundColor
+                    .withValues(alpha: 0.05),
                 Theme.of(context).scaffoldBackgroundColor,
               ],
               stops: const [0, .3],
@@ -2105,17 +2101,14 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                       onPressed: () async {
                                         final trackSearch =
                                             await trackersSearchDraggableMenu(
-                                                  context,
-                                                  itemType:
-                                                      widget.manga!.itemType,
-                                                  track: Track(
-                                                    status:
-                                                        TrackStatus.planToRead,
-                                                    syncId: e.syncId!,
-                                                    title: widget.manga!.name!,
-                                                  ),
-                                                )
-                                                as TrackSearch?;
+                                              context,
+                                              itemType: widget.manga!.itemType,
+                                              track: Track(
+                                                status: TrackStatus.planToRead,
+                                                syncId: e.syncId!,
+                                                title: widget.manga!.name!,
+                                              ),
+                                            ) as TrackSearch?;
                                         if (trackSearch != null) {
                                           isar.writeTxnSync(() {
                                             isar.mangas.putSync(

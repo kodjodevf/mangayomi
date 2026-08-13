@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io'; // For I/O-operations
 import 'dart:typed_data';
+
 import 'package:isar_community/isar.dart'; // Isar database package for local storage
 import 'package:mangayomi/main.dart'; // Exposes the global `isar` instance
 import 'package:mangayomi/models/settings.dart';

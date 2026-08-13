@@ -284,9 +284,8 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
             if (_showDesktopAdvancedApkBridgeSection) ...[
               const SizedBox(height: 24),
               Theme(
-                data: Theme.of(
-                  context,
-                ).copyWith(dividerColor: Colors.transparent),
+                data: Theme.of(context)
+                    .copyWith(dividerColor: Colors.transparent),
                 child: ExpansionTile(
                   tilePadding: EdgeInsets.zero,
                   childrenPadding: const EdgeInsets.only(bottom: 8),

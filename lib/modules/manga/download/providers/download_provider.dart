@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:io';
 import 'dart:ui';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/widgets.dart';
 import 'package:isar_community/isar.dart';
@@ -383,9 +384,8 @@ Future<void> downloadChapter(
         }
       }
       bool cbzFileExist =
-          await File(
-            p.join(mangaMainDirectory!.path, "${chapter.name}.cbz"),
-          ).exists() &&
+          await File(p.join(mangaMainDirectory!.path, "${chapter.name}.cbz"))
+              .exists() &&
           ref.read(saveAsCBZArchiveStateProvider);
       bool mp4FileExist = await File(
         p.join(mangaMainDirectory.path, "$chapterName.mp4"),
@@ -400,9 +400,8 @@ Future<void> downloadChapter(
         storageProvider.createDirectorySafely(mainDirectory.path);
         for (var index = 0; index < pageUrls.length; index++) {
           if (Platform.isAndroid) {
-            if (!(await File(
-              p.join(mainDirectory.path, ".nomedia"),
-            ).exists())) {
+            if (!(await File(p.join(mainDirectory.path, ".nomedia"))
+                .exists())) {
               await File(p.join(mainDirectory.path, ".nomedia")).create();
             }
           }

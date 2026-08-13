@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/utils/constant.dart';
@@ -112,7 +113,8 @@ Future<List<DiscoveryMedia>> fetchDiscoveryPage({
     ItemType.manga => ", format_not_in: [NOVEL]",
     ItemType.anime => "",
   };
-  final query = '''
+  final query =
+      '''
     query(\$page: Int, \$perPage: Int, \$type: MediaType, \$sort: [MediaSort], \$search: String) {
       Page(page: \$page, perPage: \$perPage) {
         media(type: \$type, sort: \$sort, search: \$search$formatFilter) {
@@ -145,7 +147,8 @@ Future<List<DiscoveryMedia>> fetchRecommendations(
   int mediaId, {
   int perPage = 25,
 }) async {
-  const query = '''
+  const query =
+      '''
     query(\$id: Int, \$perPage: Int) {
       Media(id: \$id) {
         recommendations(sort: RATING_DESC, perPage: \$perPage) {
@@ -155,7 +158,10 @@ $_mediaFields
         }
       }
     }''';
-  final data = await _executeGraphQL(query, {"id": mediaId, "perPage": perPage});
+  final data = await _executeGraphQL(query, {
+    "id": mediaId,
+    "perPage": perPage,
+  });
   final nodes = data?["Media"]?["recommendations"]?["nodes"] as List?;
   return nodes
           ?.map((n) => (n as Map<String, dynamic>)["mediaRecommendation"])
@@ -170,7 +176,8 @@ $_mediaFields
 Future<(DiscoveryMedia?, List<DiscoveryRelation>)> fetchMediaWithRelations(
   int mediaId,
 ) async {
-  final query = '''
+  final query =
+      '''
     query(\$id: Int) {
       Media(id: \$id) {
 $_mediaFields
@@ -183,7 +190,8 @@ $_mediaFields
   final media = data?["Media"] as Map<String, dynamic>?;
   if (media == null) return (null, const <DiscoveryRelation>[]);
   final edges = media["relations"]?["edges"] as List?;
-  final relations = edges
+  final relations =
+      edges
           ?.map((e) => DiscoveryRelation.fromEdge(e as Map<String, dynamic>))
           .toList() ??
       <DiscoveryRelation>[];
@@ -273,7 +281,8 @@ class DiscoveryMedia {
       seasonYear: json["seasonYear"] as int?,
       type: json["type"] as String?,
       startYear: (json["startDate"] as Map<String, dynamic>?)?["year"] as int?,
-      startMonth: (json["startDate"] as Map<String, dynamic>?)?["month"] as int?,
+      startMonth:
+          (json["startDate"] as Map<String, dynamic>?)?["month"] as int?,
     );
   }
 }

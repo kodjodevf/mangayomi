@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
+
 import 'tiling_engine.dart';
 
 /// A lightweight render object widget that displays the subsampled image.

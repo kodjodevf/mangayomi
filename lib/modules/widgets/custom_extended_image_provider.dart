@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui show Codec;
+
 import 'package:extended_image_library/src/extended_image_provider.dart';
 import 'package:extended_image_library/src/platform.dart';
 import 'package:flutter/foundation.dart';
@@ -396,7 +397,7 @@ class CustomExtendedNetworkImageProvider
       }
 
       if (bytes.isEmpty) {
-        return Future<Uint8List>.error(
+        return await Future<Uint8List>.error(
           StateError('NetworkImage is an empty file: $resolved'),
         );
       }

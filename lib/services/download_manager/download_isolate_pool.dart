@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:isolate';
 import 'dart:async';
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:mangayomi/models/manga.dart';

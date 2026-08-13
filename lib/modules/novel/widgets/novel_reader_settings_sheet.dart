@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/settings.dart';
@@ -175,9 +176,8 @@ class ReaderSettingsTab extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Theme.of(
-                          context,
-                        ).primaryColor.withValues(alpha: 0.1),
+                        color: Theme.of(context).primaryColor
+                            .withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Icon(
@@ -198,13 +198,11 @@ class ReaderSettingsTab extends ConsumerWidget {
                             overlayRadius: 16,
                           ),
                           activeTrackColor: Theme.of(context).primaryColor,
-                          inactiveTrackColor: Theme.of(
-                            context,
-                          ).primaryColor.withValues(alpha: 0.2),
+                          inactiveTrackColor: Theme.of(context).primaryColor
+                              .withValues(alpha: 0.2),
                           thumbColor: Theme.of(context).primaryColor,
-                          overlayColor: Theme.of(
-                            context,
-                          ).primaryColor.withValues(alpha: 0.2),
+                          overlayColor: Theme.of(context).primaryColor
+                              .withValues(alpha: 0.2),
                         ),
                         child: Slider(
                           value: padding.toDouble(),
@@ -226,9 +224,8 @@ class ReaderSettingsTab extends ConsumerWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Theme.of(
-                          context,
-                        ).primaryColor.withValues(alpha: 0.1),
+                        color: Theme.of(context).primaryColor
+                            .withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -257,9 +254,8 @@ class ReaderSettingsTab extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Theme.of(
-                          context,
-                        ).primaryColor.withValues(alpha: 0.1),
+                        color: Theme.of(context).primaryColor
+                            .withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Icon(
@@ -280,13 +276,11 @@ class ReaderSettingsTab extends ConsumerWidget {
                             overlayRadius: 16,
                           ),
                           activeTrackColor: Theme.of(context).primaryColor,
-                          inactiveTrackColor: Theme.of(
-                            context,
-                          ).primaryColor.withValues(alpha: 0.2),
+                          inactiveTrackColor: Theme.of(context).primaryColor
+                              .withValues(alpha: 0.2),
                           thumbColor: Theme.of(context).primaryColor,
-                          overlayColor: Theme.of(
-                            context,
-                          ).primaryColor.withValues(alpha: 0.2),
+                          overlayColor: Theme.of(context).primaryColor
+                              .withValues(alpha: 0.2),
                         ),
                         child: Slider(
                           value: lineHeight,
@@ -310,9 +304,8 @@ class ReaderSettingsTab extends ConsumerWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Theme.of(
-                          context,
-                        ).primaryColor.withValues(alpha: 0.1),
+                        color: Theme.of(context).primaryColor
+                            .withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -502,9 +495,8 @@ class _SwitchListTileSetting extends StatelessWidget {
       title: Text(
         title,
         style: TextStyle(
-          color: Theme.of(
-            context,
-          ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+          color: Theme.of(context).textTheme.bodyLarge!.color!
+              .withValues(alpha: 0.9),
           fontSize: 14,
         ),
       ),
@@ -558,9 +550,8 @@ class _ThemeButton extends StatelessWidget {
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: Theme.of(
-                        context,
-                      ).primaryColor.withValues(alpha: 0.3),
+                      color: Theme.of(context).primaryColor
+                          .withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -703,9 +694,8 @@ class _ColorPicker extends StatelessWidget {
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: Theme.of(
-                        context,
-                      ).primaryColor.withValues(alpha: 0.4),
+                      color: Theme.of(context).primaryColor
+                          .withValues(alpha: 0.4),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),

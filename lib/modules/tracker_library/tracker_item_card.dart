@@ -56,16 +56,14 @@ class TrackerItemCard extends StatelessWidget {
                           Container(
                             width: context.width(1),
                             height: AppBar().preferredSize.height,
-                            color: Theme.of(
-                              context,
-                            ).scaffoldBackgroundColor.withValues(alpha: 0.9),
+                            color: Theme.of(context).scaffoldBackgroundColor
+                                .withValues(alpha: 0.9),
                           ),
                           Container(
                             width: context.width(1),
                             height: context.height(1),
-                            color: Theme.of(
-                              context,
-                            ).scaffoldBackgroundColor.withValues(alpha: 0.9),
+                            color: Theme.of(context).scaffoldBackgroundColor
+                                .withValues(alpha: 0.9),
                           ),
                         ],
                       ),
@@ -245,9 +243,7 @@ class TrackerItemCard extends StatelessWidget {
   }
 
   Widget _coverCard() {
-    final imageProvider = coverProvider(
-      toImgUrl(track.coverUrl ?? ""),
-    );
+    final imageProvider = coverProvider(toImgUrl(track.coverUrl ?? ""));
     return Padding(
       padding: const EdgeInsets.all(20),
       child: SizedBox(

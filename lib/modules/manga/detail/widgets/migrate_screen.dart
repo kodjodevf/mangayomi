@@ -410,9 +410,10 @@ class _MigrationMangaGlobalImageCardState
                             fontSize: 12.0,
                             text: widget.manga.name!,
                             isLoading: true,
-                            textColor: Theme.of(
-                              context,
-                            ).textTheme.bodyLarge!.color,
+                            textColor: Theme.of(context)
+                                .textTheme
+                                .bodyLarge!
+                                .color,
                             isComfortableGrid: true,
                           ),
                         ],

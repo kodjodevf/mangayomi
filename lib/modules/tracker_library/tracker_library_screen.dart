@@ -525,8 +525,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
               func: _fetchGeneralData(
                 syncId,
                 ItemType.anime,
-                rankingType:
-                    "sort: [UPDATED_AT_DESC, POPULARITY_DESC], status: RELEASING",
+                rankingType: "sort: [UPDATED_AT_DESC, POPULARITY_DESC], status: RELEASING",
               ),
               itemType: ItemType.anime,
             ),
@@ -566,8 +565,7 @@ class _TrackerLibraryScreenState extends ConsumerState<TrackerLibraryScreen> {
               func: _fetchGeneralData(
                 syncId,
                 ItemType.manga,
-                rankingType:
-                    "sort: [UPDATED_AT_DESC, POPULARITY_DESC], status: RELEASING",
+                rankingType: "sort: [UPDATED_AT_DESC, POPULARITY_DESC], status: RELEASING",
               ),
             ),
           ];

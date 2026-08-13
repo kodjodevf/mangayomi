@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
@@ -11,7 +12,9 @@ import 'package:mangayomi/modules/more/settings/track/myanimelist/model.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/log/logger.dart';
+
 import 'base_tracker.dart';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'trakt_tv.g.dart';
 
@@ -124,9 +127,8 @@ class TraktTv extends _$TraktTv implements BaseTracker {
   Future<List<TrackSearch>> fetchUserData({bool isManga = true}) async {
     final type = isManga ? "movies" : "shows";
     final accessToken = await _getAccessToken();
-    final url = Uri.parse(
-      '$_baseApiUrl/sync/watched/$type',
-    ).replace(queryParameters: {"extended": "full,images"});
+    final url = Uri.parse('$_baseApiUrl/sync/watched/$type')
+        .replace(queryParameters: {"extended": "full,images"});
     final result = await _makeGetRequest(url, accessToken);
     final data = jsonDecode(result.body) as List?;
     return data?.map((e) {
@@ -262,9 +264,8 @@ class TraktTv extends _$TraktTv implements BaseTracker {
             ],
           };
     await _makePostRequest(urlRemove, accessToken, bodyRemove);*/
-    final url = Uri.parse(
-      "$_baseApiUrl/sync/history",
-    ).replace(queryParameters: {'extended': 'full', 'clientId': _clientId});
+    final url = Uri.parse("$_baseApiUrl/sync/history")
+        .replace(queryParameters: {'extended': 'full', 'clientId': _clientId});
     final body = isMovie
         ? {
             'movies': [

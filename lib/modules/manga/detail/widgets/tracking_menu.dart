@@ -85,15 +85,14 @@ void openTrackingMenu({
                               onTap: () async {
                                 final trackSearch =
                                     await trackersSearchDraggableMenu(
-                                          context,
-                                          itemType: manga.itemType,
-                                          track: Track(
-                                            status: TrackStatus.planToRead,
-                                            syncId: entries[index].syncId!,
-                                            title: manga.name!,
-                                          ),
-                                        )
-                                        as TrackSearch?;
+                                      context,
+                                      itemType: manga.itemType,
+                                      track: Track(
+                                        status: TrackStatus.planToRead,
+                                        syncId: entries[index].syncId!,
+                                        title: manga.name!,
+                                      ),
+                                    ) as TrackSearch?;
                                 if (trackSearch != null) {
                                   await ref
                                       .read(

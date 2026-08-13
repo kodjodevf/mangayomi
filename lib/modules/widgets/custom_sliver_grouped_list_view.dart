@@ -1,6 +1,7 @@
 // ignore_for_file: implementation_imports
 
 import 'dart:collection';
+
 import 'package:flutter/widgets.dart';
 
 import 'package:grouped_list/src/grouped_list_order.dart';

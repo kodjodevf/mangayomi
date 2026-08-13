@@ -101,13 +101,11 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                   ),
                   onPressed: !widget.hide
                       ? () async {
-                          final trackSearch =
-                              await trackersSearchDraggableMenu(
-                                    context,
-                                    itemType: widget.itemType,
-                                    track: widget.trackRes,
-                                  )
-                                  as TrackSearch?;
+                          final trackSearch = await trackersSearchDraggableMenu(
+                            context,
+                            itemType: widget.itemType,
+                            track: widget.trackRes,
+                          ) as TrackSearch?;
                           if (trackSearch != null) {
                             await ref
                                 .read(
@@ -133,9 +131,10 @@ class _TrackerWidgetState extends ConsumerState<TrackerWidget> {
                           child: Text(
                             widget.trackRes.title!,
                             style: TextStyle(
-                              color: Theme.of(
-                                context,
-                              ).textTheme.bodyMedium!.color,
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .color,
                               overflow: TextOverflow.ellipsis,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -581,9 +580,8 @@ Widget _elevatedButton(
         Text(
           text,
           style: TextStyle(
-            color: Theme.of(
-              context,
-            ).textTheme.bodyMedium!.color!.withValues(alpha: 0.9),
+            color: Theme.of(context).textTheme.bodyMedium!.color!
+                .withValues(alpha: 0.9),
           ),
         ),
   );

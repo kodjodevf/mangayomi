@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -366,13 +367,8 @@ class MBridge {
         "دقائق",
       ]).anyWordIn(date)) {
         return cal.subtract(Duration(minutes: number)).millisecondsSinceEpoch;
-      } else if (WordSet([
-        "detik",
-        "segundo",
-        "second",
-        "วินาที",
-        "sec",
-      ]).anyWordIn(date)) {
+      } else if (WordSet(["detik", "segundo", "second", "วินาที", "sec"])
+          .anyWordIn(date)) {
         return cal.subtract(Duration(seconds: number)).millisecondsSinceEpoch;
       } else if (WordSet(["week", "semana"]).anyWordIn(date)) {
         return cal.subtract(Duration(days: number * 7)).millisecondsSinceEpoch;
@@ -446,12 +442,8 @@ class MBridge {
               DateTime cal = DateTime.now().subtract(const Duration(days: 2));
               cal = DateTime(cal.year, cal.month, cal.day);
               return cal.millisecondsSinceEpoch.toString();
-            } else if (WordSet([
-              "ago",
-              "atrás",
-              "önce",
-              "قبل",
-            ]).endsWith(date)) {
+            } else if (WordSet(["ago", "atrás", "önce", "قبل"])
+                .endsWith(date)) {
               return parseRelativeDate(date).toString();
             } else if (WordSet(["hace"]).startsWith(date)) {
               return parseRelativeDate(date).toString();
@@ -495,9 +487,8 @@ class MBridge {
     String? headers,
     String prefix,
   ) async {
-    return await SendvidExtractor(
-      decodeHeaders(headers),
-    ).videosFromUrl(url, prefix: prefix);
+    return await SendvidExtractor(decodeHeaders(headers))
+        .videosFromUrl(url, prefix: prefix);
   }
 
   static Future<List<Video>> myTvExtractor(String url) async {

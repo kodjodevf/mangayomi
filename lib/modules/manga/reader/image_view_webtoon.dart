@@ -366,7 +366,8 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
           : EdgeInsets.symmetric(horizontal: sidePad),
       child: ImageViewVertical(
         data: currentPage,
-        failedToLoadImage: (failed) => widget.onFailedToLoadImage(index, failed),
+        failedToLoadImage: (failed) =>
+            widget.onFailedToLoadImage(index, failed),
         onLongPressData: widget.onLongPressData,
         isHorizontal: widget.isHorizontalContinuous,
         rotation: rotation,
@@ -396,7 +397,8 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
     return DoublePageView.vertical(
       pages: datas,
       backgroundColor: widget.backgroundColor,
-      onFailedToLoadImage: (failed) => widget.onFailedToLoadImage(index, failed),
+      onFailedToLoadImage: (failed) =>
+          widget.onFailedToLoadImage(index, failed),
       onLongPressData: widget.onLongPressData,
     );
   }

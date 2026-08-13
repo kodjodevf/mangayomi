@@ -480,11 +480,10 @@ P _sourceDeserializeProp<P>(
       return (reader.readStringOrNull(offset)) as P;
     case 25:
       return (reader.readObjectOrNull<Repo>(
-            offset,
-            RepoSchema.deserialize,
-            allOffsets,
-          ))
-          as P;
+        offset,
+        RepoSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 26:
       return (reader.readStringOrNull(offset)) as P;
     case 27:

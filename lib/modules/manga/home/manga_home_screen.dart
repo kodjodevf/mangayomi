@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -635,9 +636,8 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                                             child: Text(
                                               l10n.filter,
                                               style: TextStyle(
-                                                color: Theme.of(
-                                                  context,
-                                                ).scaffoldBackgroundColor,
+                                                color: Theme.of(context)
+                                                    .scaffoldBackgroundColor,
                                               ),
                                             ),
                                           ),

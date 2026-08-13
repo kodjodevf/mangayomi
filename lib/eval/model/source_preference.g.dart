@@ -241,43 +241,38 @@ P _sourcePreferenceDeserializeProp<P>(
   switch (propertyId) {
     case 0:
       return (reader.readObjectOrNull<CheckBoxPreference>(
-            offset,
-            CheckBoxPreferenceSchema.deserialize,
-            allOffsets,
-          ))
-          as P;
+        offset,
+        CheckBoxPreferenceSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 1:
       return (reader.readObjectOrNull<EditTextPreference>(
-            offset,
-            EditTextPreferenceSchema.deserialize,
-            allOffsets,
-          ))
-          as P;
+        offset,
+        EditTextPreferenceSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 2:
       return (reader.readStringOrNull(offset)) as P;
     case 3:
       return (reader.readObjectOrNull<ListPreference>(
-            offset,
-            ListPreferenceSchema.deserialize,
-            allOffsets,
-          ))
-          as P;
+        offset,
+        ListPreferenceSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 4:
       return (reader.readObjectOrNull<MultiSelectListPreference>(
-            offset,
-            MultiSelectListPreferenceSchema.deserialize,
-            allOffsets,
-          ))
-          as P;
+        offset,
+        MultiSelectListPreferenceSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 5:
       return (reader.readLongOrNull(offset)) as P;
     case 6:
       return (reader.readObjectOrNull<SwitchPreferenceCompat>(
-            offset,
-            SwitchPreferenceCompatSchema.deserialize,
-            allOffsets,
-          ))
-          as P;
+        offset,
+        SwitchPreferenceCompatSchema.deserialize,
+        allOffsets,
+      )) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }

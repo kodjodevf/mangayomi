@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -38,9 +39,9 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
             .map((e) => SourcePreference.fromJson(e))
             .toList();
       }
-      return getSourcePreference(
-        source: source,
-      ).map((e) => getSourcePreferenceEntry(e.key!, source.id!)).toList();
+      return getSourcePreference(source: source)
+          .map((e) => getSourcePreferenceEntry(e.key!, source.id!))
+          .toList();
     } catch (e) {
       return null;
     }
@@ -77,9 +78,8 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
               padding: const EdgeInsets.only(top: 20),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Theme.of(
-                    context,
-                  ).secondaryHeaderColor.withValues(alpha: 0.5),
+                  color: Theme.of(context).secondaryHeaderColor
+                      .withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: widget.source.iconUrl!.isEmpty
@@ -296,9 +296,8 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                                         );
                                         ref
                                             .read(
-                                              synchingProvider(
-                                                syncId: 1,
-                                              ).notifier,
+                                              synchingProvider(syncId: 1)
+                                                  .notifier,
                                             )
                                             .addChangedPart(
                                               ActionType.removeExtension,

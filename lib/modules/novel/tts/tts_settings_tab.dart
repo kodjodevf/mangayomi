@@ -103,9 +103,8 @@ class _TtsSettingsTabState extends ConsumerState<TtsSettingsTab> {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Theme.of(
-                      context,
-                    ).primaryColor.withValues(alpha: 0.1),
+                    color: Theme.of(context).primaryColor
+                        .withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
@@ -126,13 +125,11 @@ class _TtsSettingsTabState extends ConsumerState<TtsSettingsTab> {
                         overlayRadius: 16,
                       ),
                       activeTrackColor: Theme.of(context).primaryColor,
-                      inactiveTrackColor: Theme.of(
-                        context,
-                      ).primaryColor.withValues(alpha: 0.2),
+                      inactiveTrackColor: Theme.of(context).primaryColor
+                          .withValues(alpha: 0.2),
                       thumbColor: Theme.of(context).primaryColor,
-                      overlayColor: Theme.of(
-                        context,
-                      ).primaryColor.withValues(alpha: 0.2),
+                      overlayColor: Theme.of(context).primaryColor
+                          .withValues(alpha: 0.2),
                     ),
                     child: Slider(
                       value: speed,
@@ -155,9 +152,8 @@ class _TtsSettingsTabState extends ConsumerState<TtsSettingsTab> {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: Theme.of(
-                      context,
-                    ).primaryColor.withValues(alpha: 0.1),
+                    color: Theme.of(context).primaryColor
+                        .withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -183,9 +179,8 @@ class _TtsSettingsTabState extends ConsumerState<TtsSettingsTab> {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Theme.of(
-                      context,
-                    ).primaryColor.withValues(alpha: 0.1),
+                    color: Theme.of(context).primaryColor
+                        .withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
@@ -206,13 +201,11 @@ class _TtsSettingsTabState extends ConsumerState<TtsSettingsTab> {
                         overlayRadius: 16,
                       ),
                       activeTrackColor: Theme.of(context).primaryColor,
-                      inactiveTrackColor: Theme.of(
-                        context,
-                      ).primaryColor.withValues(alpha: 0.2),
+                      inactiveTrackColor: Theme.of(context).primaryColor
+                          .withValues(alpha: 0.2),
                       thumbColor: Theme.of(context).primaryColor,
-                      overlayColor: Theme.of(
-                        context,
-                      ).primaryColor.withValues(alpha: 0.2),
+                      overlayColor: Theme.of(context).primaryColor
+                          .withValues(alpha: 0.2),
                     ),
                     child: Slider(
                       value: pitch,
@@ -233,9 +226,8 @@ class _TtsSettingsTabState extends ConsumerState<TtsSettingsTab> {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: Theme.of(
-                      context,
-                    ).primaryColor.withValues(alpha: 0.1),
+                    color: Theme.of(context).primaryColor
+                        .withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -269,17 +261,15 @@ class _TtsSettingsTabState extends ConsumerState<TtsSettingsTab> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
-                      color: Theme.of(
-                        context,
-                      ).primaryColor.withValues(alpha: 0.2),
+                      color: Theme.of(context).primaryColor
+                          .withValues(alpha: 0.2),
                     ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
-                      color: Theme.of(
-                        context,
-                      ).primaryColor.withValues(alpha: 0.2),
+                      color: Theme.of(context).primaryColor
+                          .withValues(alpha: 0.2),
                     ),
                   ),
                   contentPadding: const EdgeInsets.symmetric(

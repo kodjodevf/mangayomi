@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -606,9 +607,7 @@ class _DownloadedOnlyBar extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 l10n.downloaded_only,
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
+                style: const TextStyle(color: Colors.white),
               ),
             ),
           ],
@@ -644,9 +643,7 @@ class _IncognitoModeBar extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 l10n.incognito_mode,
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
+                style: const TextStyle(color: Colors.white),
               ),
             ),
           ],

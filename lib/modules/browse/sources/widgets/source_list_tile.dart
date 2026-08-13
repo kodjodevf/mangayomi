@@ -50,9 +50,8 @@ class SourceListTile extends StatelessWidget {
           height: 37,
           width: 37,
           decoration: BoxDecoration(
-            color: Theme.of(
-              context,
-            ).secondaryHeaderColor.withValues(alpha: 0.5),
+            color: Theme.of(context).secondaryHeaderColor
+                .withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(5),
           ),
           child: source.iconUrl!.isEmpty
@@ -212,9 +211,8 @@ class TvSourceRow extends StatelessWidget {
                       height: 37,
                       width: 37,
                       decoration: BoxDecoration(
-                        color: Theme.of(
-                          context,
-                        ).secondaryHeaderColor.withValues(alpha: 0.5),
+                        color: Theme.of(context).secondaryHeaderColor
+                            .withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: source.iconUrl!.isEmpty

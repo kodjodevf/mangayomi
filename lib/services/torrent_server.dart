@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
+
 import 'package:flutter/services.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/main.dart';

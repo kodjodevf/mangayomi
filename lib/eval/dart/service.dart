@@ -77,11 +77,10 @@ class DartExtensionService implements ExtensionService {
   @override
   Future<MPages> search(String query, int page, List<dynamic> filters) async {
     return await _interpreter!.invoke('search', [
-          query,
-          page,
-          FilterList(filters),
-        ])
-        as MPages;
+      query,
+      page,
+      FilterList(filters),
+    ]) as MPages;
   }
 
   @override

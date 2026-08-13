@@ -56,9 +56,8 @@ class CustomPopupMenuButton<T> extends StatelessWidget {
                 child: Text(
                   label,
                   style: TextStyle(
-                    color: Theme.of(
-                      context,
-                    ).textTheme.bodyLarge!.color!.withValues(alpha: 0.9),
+                    color: Theme.of(context).textTheme.bodyLarge!.color!
+                        .withValues(alpha: 0.9),
                   ),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,

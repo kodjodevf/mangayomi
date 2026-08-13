@@ -1,5 +1,6 @@
 import 'dart:isolate';
 import 'dart:typed_data';
+
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/page.dart';
 import 'package:mangayomi/services/download_manager/m3u8/models/ts_info.dart';

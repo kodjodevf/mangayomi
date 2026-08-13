@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -87,9 +88,8 @@ class ChapterPageDownload extends ConsumerWidget {
                       child: Icon(
                         size: 25,
                         Icons.check_circle,
-                        color: Theme.of(
-                          context,
-                        ).iconTheme.color!.withValues(alpha: 0.7),
+                        color: Theme.of(context).iconTheme.color!
+                            .withValues(alpha: 0.7),
                       ),
                       onSelected: (value) {
                         if (value == 0) {
@@ -149,9 +149,8 @@ class ChapterPageDownload extends ConsumerWidget {
                                   child: CircularProgressIndicator(
                                     strokeWidth: 19,
                                     value: value,
-                                    color: Theme.of(
-                                      context,
-                                    ).iconTheme.color!.withValues(alpha: 0.7),
+                                    color: Theme.of(context).iconTheme.color!
+                                        .withValues(alpha: 0.7),
                                   ),
                                 ),
                               ),
@@ -164,9 +163,8 @@ class ChapterPageDownload extends ConsumerWidget {
                                     (download.succeeded! / download.total!) >
                                         0.5
                                     ? Theme.of(context).scaffoldBackgroundColor
-                                    : Theme.of(
-                                        context,
-                                      ).iconTheme.color!.withValues(alpha: 0.7),
+                                    : Theme.of(context).iconTheme.color!
+                                          .withValues(alpha: 0.7),
                               ),
                             ),
                           ],
@@ -194,9 +192,8 @@ class ChapterPageDownload extends ConsumerWidget {
                       },
                       icon: FaIcon(
                         FontAwesomeIcons.circleDown,
-                        color: Theme.of(
-                          context,
-                        ).iconTheme.color!.withValues(alpha: 0.7),
+                        color: Theme.of(context).iconTheme.color!
+                            .withValues(alpha: 0.7),
                         size: 25,
                       ),
                     )

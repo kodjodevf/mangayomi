@@ -294,9 +294,8 @@ class _CustomButtonScreenState extends ConsumerState<CustomButtonScreen> {
                               : context.l10n.edit,
                           style: TextStyle(
                             color: isTitleMissing || isCodePressMissing
-                                ? Theme.of(
-                                    context,
-                                  ).primaryColor.withValues(alpha: 0.2)
+                                ? Theme.of(context).primaryColor
+                                      .withValues(alpha: 0.2)
                                 : null,
                           ),
                         ),

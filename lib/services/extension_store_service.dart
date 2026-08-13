@@ -68,7 +68,7 @@ class ExtensionStoreService {
                   repoJson['index_v2'] != null &&
                   (repoJson['index_v2'] as String).isNotEmpty) {
                 // Redirect to V2 index (.pb or JSON store)
-                return fetchStore(repoJson['index_v2'] as String, client);
+                return await fetchStore(repoJson['index_v2'] as String, client);
               }
             }
           } catch (_) {}
@@ -84,16 +84,16 @@ class ExtensionStoreService {
           // Check for index_v2 redirect in legacy repo JSON
           if (jsonMap['index_v2'] != null &&
               (jsonMap['index_v2'] as String).isNotEmpty) {
-            return fetchStore(jsonMap['index_v2'] as String, client);
+            return await fetchStore(jsonMap['index_v2'] as String, client);
           }
 
           // Try parsing JSON NetworkExtensionStore
-          return _parseJsonNetworkStore(currentUrl, jsonMap, client);
+          return await _parseJsonNetworkStore(currentUrl, jsonMap, client);
         }
       }
 
       // 3. Binary Protobuf: NetworkExtensionStore
-      return _parseProtobufStore(currentUrl, bytes, client);
+      return await _parseProtobufStore(currentUrl, bytes, client);
     } catch (_) {
       return null;
     }
@@ -116,9 +116,9 @@ class ExtensionStoreService {
       if (store.hasField(101) && store.extensionList.extensions.isNotEmpty) {
         extensionItems = store.extensionList.extensions;
       } else if (store.extensionListUrl.isNotEmpty) {
-        final resolvedListUrl = Uri.parse(
-          indexUrl,
-        ).resolve(store.extensionListUrl).toString();
+        final resolvedListUrl = Uri.parse(indexUrl)
+            .resolve(store.extensionListUrl)
+            .toString();
         final listRes = await client.get(Uri.parse(resolvedListUrl));
         if (listRes.statusCode == 200 && listRes.bodyBytes.isNotEmpty) {
           final listBytes = _decompressIfGzipped(listRes.bodyBytes);
@@ -177,9 +177,9 @@ class ExtensionStoreService {
         rawExtensions = jsonMap['extensionList']['extensions'] as List;
       } else if (jsonMap['extensionListUrl'] is String &&
           (jsonMap['extensionListUrl'] as String).isNotEmpty) {
-        final listUrl = Uri.parse(
-          indexUrl,
-        ).resolve(jsonMap['extensionListUrl'] as String).toString();
+        final listUrl = Uri.parse(indexUrl)
+            .resolve(jsonMap['extensionListUrl'] as String)
+            .toString();
         final listRes = await client.get(Uri.parse(listUrl));
         if (listRes.statusCode == 200) {
           final listBytes = _decompressIfGzipped(listRes.bodyBytes);

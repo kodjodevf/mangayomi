@@ -34,6 +34,7 @@ class LibraryUpdateNotifier extends Notifier<LibraryUpdateState> {
   void requestCancel() {
     if (state.running) state = state.copyWith(cancelRequested: true);
   }
+
   void end() => state = const LibraryUpdateState();
 }
 

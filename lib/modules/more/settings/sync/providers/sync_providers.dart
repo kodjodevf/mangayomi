@@ -192,9 +192,7 @@ class Synching extends _$Synching {
   }
 
   Future<void> clearChangedParts(List<ActionType> actions, bool txn) async {
-    var temp = isar.changedParts.filter().actionTypeEqualTo(
-      actions.first,
-    );
+    var temp = isar.changedParts.filter().actionTypeEqualTo(actions.first);
     for (ActionType action in actions.skip(1)) {
       temp = temp.or().actionTypeEqualTo(action);
     }

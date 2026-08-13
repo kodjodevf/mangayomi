@@ -1,10 +1,13 @@
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
+
 import 'dart:async';
 import 'dart:io';
+
 import 'package:mangayomi/eval/model/m_source.dart';
 import 'package:mangayomi/main.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart'
@@ -302,7 +305,7 @@ class ResolveCloudFlareChallenge extends RetryPolicy {
     // Fall back to the bundled webview resolver (not available on Linux).
     if (Platform.isLinux) return false;
     try {
-      return http
+      return await http
           .post(
             Uri.parse('http://localhost:$cfPort/resolve_cf'),
             headers: {HttpHeaders.contentTypeHeader: 'application/json'},
@@ -453,8 +456,7 @@ void _handleResolveCf(HttpRequest request) async {
           if (!timeOut && isCloudFlare) {
             try {
               isCloudFlare = await controller.platform.evaluateJavascript(
-                source:
-                    "document.head.innerHTML.includes('#challenge-success-text')",
+                source: "document.head.innerHTML.includes('#challenge-success-text')",
               );
             } catch (_) {
               isCloudFlare = false;

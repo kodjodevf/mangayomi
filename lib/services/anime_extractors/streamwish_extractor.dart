@@ -17,9 +17,9 @@ class StreamWishExtractor {
     try {
       final response = await client.get(Uri.parse(url), headers: headers);
 
-      final jsEval = xpathSelector(
-        response.body,
-      ).queryXPath('//script[contains(text(), "m3u8")]/text()').attrs;
+      final jsEval = xpathSelector(response.body)
+          .queryXPath('//script[contains(text(), "m3u8")]/text()')
+          .attrs;
       if (jsEval.isEmpty) {
         return [];
       }

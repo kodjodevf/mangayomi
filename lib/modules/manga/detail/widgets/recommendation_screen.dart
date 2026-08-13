@@ -284,14 +284,11 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
       builder: (context, constraints) {
         // Make sure that (constraints.maxWidth - (35 + 5)) is strictly positive.
         final double availableWidth = constraints.maxWidth - (35 + 5);
-        final textPainter =
-            TextPainter(
-              text: TextSpan(text: text, style: const TextStyle(fontSize: 13)),
-              maxLines: 1,
-              textDirection: TextDirection.ltr,
-            )..layout(
-              maxWidth: availableWidth > 0 ? availableWidth : 1.0,
-            ); // - Download icon size (download_page_widget.dart, Widget Build SizedBox width: 35)
+        final textPainter = TextPainter(
+          text: TextSpan(text: text, style: const TextStyle(fontSize: 13)),
+          maxLines: 1,
+          textDirection: TextDirection.ltr,
+        )..layout(maxWidth: availableWidth > 0 ? availableWidth : 1.0); // - Download icon size (download_page_widget.dart, Widget Build SizedBox width: 35)
 
         final isOverflowing = textPainter.didExceedMaxLines;
 

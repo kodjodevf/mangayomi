@@ -1,5 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/source_preference.dart';
@@ -369,11 +370,9 @@ class StorageProvider {
         await isar.customButtons.put(
           CustomButton(
             title: "+85 s",
-            codePress:
-                """local intro_length = mp.get_property_native("user-data/current-anime/intro-length")
+            codePress: """local intro_length = mp.get_property_native("user-data/current-anime/intro-length")
 aniyomi.right_seek_by(intro_length)""",
-            codeLongPress:
-                """aniyomi.int_picker("Change intro length", "%ds", 0, 255, 1, "user-data/current-anime/intro-length")""",
+            codeLongPress: """aniyomi.int_picker("Change intro length", "%ds", 0, 255, 1, "user-data/current-anime/intro-length")""",
             codeStartup: """function update_button(_, length)
   if length ~= nil then
     if length == 0 then

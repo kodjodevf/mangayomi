@@ -5,7 +5,7 @@ publish_to: "none"
 version: 0.8.4+112
 
 environment:
-  sdk: ^3.12.2
+  sdk: ^3.13.0
 
 dependencies:
   flutter:
@@ -110,6 +110,7 @@ dependencies:
   code_assets: ^1.2.1
   hooks: ^2.0.2
   native_toolchain_c: ^0.19.2
+  cupertino_ui: ^1.0.0
 
 dependency_overrides:
   ffi: ^2.1.3

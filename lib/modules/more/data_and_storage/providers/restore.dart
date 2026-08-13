@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:archive/archive_io.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
@@ -41,9 +42,9 @@ void doRestore(Ref ref, {required String path, required BuildContext context}) {
     final backupType = checkBackupType(path, archive);
     switch (backupType) {
       case BackupType.mangayomi:
-        final backup =
-            jsonDecode(utf8.decode(archive.files.first.content))
-                as Map<String, dynamic>;
+        final backup = jsonDecode(
+          utf8.decode(archive.files.first.content),
+        ) as Map<String, dynamic>;
         ref.read(restoreBackupProvider(backup));
         break;
       case BackupType.kotatsu:
@@ -222,14 +223,12 @@ void restoreBackup(Ref ref, Map<String, dynamic> backup, {bool full = true}) {
             isar.updates.clearSync();
             if (updates != null) {
               final chapterMapByKey = {
-                for (var c in chapterMap.values)
-                  "${c.mangaId}_${c.name}": c,
+                for (var c in chapterMap.values) "${c.mangaId}_${c.name}": c,
               };
               final updatesToPut = <Update>[];
               for (var update in updates) {
-                final matchingChapter = chapterMapByKey[
-                  "${update.mangaId}_${update.chapterName}"
-                ];
+                final matchingChapter =
+                    chapterMapByKey["${update.mangaId}_${update.chapterName}"];
                 if (matchingChapter != null) {
                   update.chapter.value = matchingChapter;
                   updatesToPut.add(update);

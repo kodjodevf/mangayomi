@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/main.dart';
@@ -24,9 +25,8 @@ class AndroidProxyServerState extends _$AndroidProxyServerState {
       proxyServer = "http://$proxyServer";
     }
     if ((proxyServer.contains("localhost") ||
-            RegExp(
-              r'^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$',
-            ).hasMatch(proxyServer.replaceAll("://", ":").split(":")[1])) &&
+            RegExp(r'^((25[0-5]|(2[0-4]|1[0-9]|[1-9]|)[0-9])(\.(?!$)|$)){4}$')
+                .hasMatch(proxyServer.replaceAll("://", ":").split(":")[1])) &&
         proxyServer.split(":").length < 3) {
       proxyServer = "$proxyServer:8080";
     }

@@ -1,4 +1,5 @@
 import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -673,9 +674,8 @@ class _TvHomeTopBar extends StatelessWidget {
                   final atEnd =
                       !sel.isValid || sel.baseOffset >= controller.text.length;
                   if (atEnd) {
-                    FocusScope.of(
-                      context,
-                    ).focusInDirection(TraversalDirection.right);
+                    FocusScope.of(context)
+                        .focusInDirection(TraversalDirection.right);
                     return KeyEventResult.handled;
                   }
                 }
@@ -685,9 +685,9 @@ class _TvHomeTopBar extends StatelessWidget {
                 controller: controller,
                 onChanged: onChanged,
                 textInputAction: TextInputAction.search,
-                onSubmitted: (_) => FocusScope.of(
-                  context,
-                ).focusInDirection(TraversalDirection.down),
+                onSubmitted: (_) =>
+                    FocusScope.of(context)
+                        .focusInDirection(TraversalDirection.down),
                 decoration: InputDecoration(
                   isDense: true,
                   filled: true,

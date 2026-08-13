@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:html/dom.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
@@ -31,9 +32,9 @@ class GogoCdnExtractor {
           .split('container-')
           .last;
       RegExp(r'container-(\d+)').firstMatch(document)?.group(1);
-      final decryptionKey = RegExp(
-        r'videocontent-(\d+)',
-      ).firstMatch(document)?.group(1);
+      final decryptionKey = RegExp(r'videocontent-(\d+)')
+          .firstMatch(document)
+          ?.group(1);
       final encryptAjaxParams = MBridge.cryptoHandler(
         RegExp(r'data-value="([^"]+)').firstMatch(document)?.group(1) ?? "",
         iv,

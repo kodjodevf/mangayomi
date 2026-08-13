@@ -573,9 +573,8 @@ class _LeftInfo extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 height: 1.45,
-                color: Theme.of(
-                  context,
-                ).textTheme.bodyLarge!.color!.withValues(alpha: 0.82),
+                color: Theme.of(context).textTheme.bodyLarge!.color!
+                    .withValues(alpha: 0.82),
               ),
             ),
           ],

@@ -127,10 +127,9 @@ class _TrackerWidgetSearchState extends ConsumerState<TrackerWidgetSearch> {
                                             height: 120,
                                             width: 80,
                                             fit: BoxFit.cover,
-                                            image:
-                                                coverProvider(
-                                                  tracks![index].coverUrl!,
-                                                ),
+                                            image: coverProvider(
+                                              tracks![index].coverUrl!,
+                                            ),
                                           ),
                                         ),
                                         const SizedBox(width: 10),

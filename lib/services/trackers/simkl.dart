@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:http_interceptor/http_interceptor.dart';
@@ -10,7 +11,9 @@ import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/more/settings/track/myanimelist/model.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+
 import 'base_tracker.dart';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'simkl.g.dart';
 
@@ -140,9 +143,8 @@ class Simkl extends _$Simkl implements BaseTracker {
   @override
   Future<Track?> findLibItem(Track track, bool isManga) async {
     final accessToken = await _getAccessToken();
-    final url = Uri.parse(
-      '$_baseApiUrl/sync/watched/',
-    ).replace(queryParameters: {"extended": "episodes,specials,counters"});
+    final url = Uri.parse('$_baseApiUrl/sync/watched/')
+        .replace(queryParameters: {"extended": "episodes,specials,counters"});
     final result = await _makePostRequest(url, accessToken, [
       {"simkl": track.mediaId},
     ]);

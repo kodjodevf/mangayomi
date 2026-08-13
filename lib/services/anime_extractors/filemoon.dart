@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:js_packer/js_packer.dart';
 import 'package:mangayomi/models/video.dart';
@@ -24,9 +25,9 @@ class FilemoonExtractor {
       };
       final response = await client.get(Uri.parse(url));
 
-      final jsEval = xpathSelector(
-        response.body,
-      ).queryXPath('//script[contains(text(), "eval")]/text()').attr;
+      final jsEval = xpathSelector(response.body)
+          .queryXPath('//script[contains(text(), "eval")]/text()')
+          .attr;
 
       final unpacked = JSPacker(jsEval!).unpack() ?? "";
 

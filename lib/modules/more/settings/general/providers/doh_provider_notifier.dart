@@ -71,10 +71,7 @@ class DoHProviderNotifier extends Notifier<DoHProviderState> {
     isar.writeTxnSync(() {
       isar.settings.putSync(settings);
     });
-    state = state.copyWith(
-      enabled: true,
-      providerId: DoHProviders.customId,
-    );
+    state = state.copyWith(enabled: true, providerId: DoHProviders.customId);
   }
 }
 

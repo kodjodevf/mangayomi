@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar_community/isar.dart';
@@ -168,10 +169,7 @@ void _removeImport(WidgetRef ref, Manga manga) {
     provider.addChangedPart(ActionType.removeHistory, history.id, "{}", false);
   }
 
-  final updates = isar.updates
-      .where()
-      .mangaIdEqualTo(manga.id)
-      .findAllSync();
+  final updates = isar.updates.where().mangaIdEqualTo(manga.id).findAllSync();
   for (var update in updates) {
     isar.updates.deleteSync(update.id!);
     provider.addChangedPart(ActionType.removeUpdate, update.id, "{}", false);
@@ -308,9 +306,10 @@ void showImportLocalDialog(BuildContext context, ItemType itemType) {
                                           Text(
                                             "${l10n.import_files} ( $filesText )",
                                             style: TextStyle(
-                                              color: Theme.of(
-                                                context,
-                                              ).textTheme.bodySmall!.color,
+                                              color: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall!
+                                                  .color,
                                               fontSize: 10,
                                             ),
                                           ),
@@ -333,9 +332,8 @@ void showImportLocalDialog(BuildContext context, ItemType itemType) {
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
-                                color: Theme.of(
-                                  context,
-                                ).scaffoldBackgroundColor,
+                                color: Theme.of(context)
+                                    .scaffoldBackgroundColor,
                               ),
                               height: 50,
                               width: 50,

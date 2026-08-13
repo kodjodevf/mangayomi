@@ -29,21 +29,22 @@ class ExtensionStoreContact extends $pb.GeneratedMessage {
   factory ExtensionStoreContact.fromBuffer(
     $core.List<$core.int> i, [
     $pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY,
-  ]) => create()..mergeFromBuffer(i, r);
+  ]) =>
+      create()..mergeFromBuffer(i, r);
 
   factory ExtensionStoreContact.fromJson(
     $core.String json, [
     $pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY,
-  ]) => create()..mergeFromJson(json, r);
+  ]) =>
+      create()..mergeFromJson(json, r);
 
-  static final $pb.BuilderInfo _i =
-      $pb.BuilderInfo(
-        _omitMessageNames ? '' : 'ExtensionStoreContact',
-        createEmptyInstance: create,
-      )
-        ..aOS(1, _omitFieldNames ? '' : 'website')
-        ..aOS(2, _omitFieldNames ? '' : 'discord')
-        ..hasRequiredFields = false;
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+    _omitMessageNames ? '' : 'ExtensionStoreContact',
+    createEmptyInstance: create,
+  )
+    ..aOS(1, _omitFieldNames ? '' : 'website')
+    ..aOS(2, _omitFieldNames ? '' : 'discord')
+    ..hasRequiredFields = false;
 
   @$core.override
   ExtensionStoreContact clone() => create()..mergeFromMessage(this);
@@ -61,10 +62,8 @@ class ExtensionStoreContact extends $pb.GeneratedMessage {
       $pb.PbList<ExtensionStoreContact>();
 
   @$core.pragma('dart2js:noInline')
-  static ExtensionStoreContact getDefault() =>
-      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<
-        ExtensionStoreContact
-      >(create);
+  static ExtensionStoreContact getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ExtensionStoreContact>(create);
   static ExtensionStoreContact? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -98,21 +97,22 @@ class ExtensionStoreResources extends $pb.GeneratedMessage {
   factory ExtensionStoreResources.fromBuffer(
     $core.List<$core.int> i, [
     $pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY,
-  ]) => create()..mergeFromBuffer(i, r);
+  ]) =>
+      create()..mergeFromBuffer(i, r);
 
   factory ExtensionStoreResources.fromJson(
     $core.String json, [
     $pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY,
-  ]) => create()..mergeFromJson(json, r);
+  ]) =>
+      create()..mergeFromJson(json, r);
 
-  static final $pb.BuilderInfo _i =
-      $pb.BuilderInfo(
-        _omitMessageNames ? '' : 'ExtensionStoreResources',
-        createEmptyInstance: create,
-      )
-        ..aOS(1, _omitFieldNames ? '' : 'apkUrl', protoName: 'apkUrl')
-        ..aOS(2, _omitFieldNames ? '' : 'iconUrl', protoName: 'iconUrl')
-        ..hasRequiredFields = false;
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+    _omitMessageNames ? '' : 'ExtensionStoreResources',
+    createEmptyInstance: create,
+  )
+    ..aOS(1, _omitFieldNames ? '' : 'apkUrl', protoName: 'apkUrl')
+    ..aOS(2, _omitFieldNames ? '' : 'iconUrl', protoName: 'iconUrl')
+    ..hasRequiredFields = false;
 
   @$core.override
   ExtensionStoreResources clone() => create()..mergeFromMessage(this);
@@ -130,10 +130,8 @@ class ExtensionStoreResources extends $pb.GeneratedMessage {
       $pb.PbList<ExtensionStoreResources>();
 
   @$core.pragma('dart2js:noInline')
-  static ExtensionStoreResources getDefault() =>
-      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<
-        ExtensionStoreResources
-      >(create);
+  static ExtensionStoreResources getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ExtensionStoreResources>(create);
   static ExtensionStoreResources? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -175,25 +173,26 @@ class ExtensionStoreSource extends $pb.GeneratedMessage {
   factory ExtensionStoreSource.fromBuffer(
     $core.List<$core.int> i, [
     $pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY,
-  ]) => create()..mergeFromBuffer(i, r);
+  ]) =>
+      create()..mergeFromBuffer(i, r);
 
   factory ExtensionStoreSource.fromJson(
     $core.String json, [
     $pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY,
-  ]) => create()..mergeFromJson(json, r);
+  ]) =>
+      create()..mergeFromJson(json, r);
 
-  static final $pb.BuilderInfo _i =
-      $pb.BuilderInfo(
-        _omitMessageNames ? '' : 'ExtensionStoreSource',
-        createEmptyInstance: create,
-      )
-        ..aInt64(1, _omitFieldNames ? '' : 'id')
-        ..aOS(2, _omitFieldNames ? '' : 'name')
-        ..aOS(3, _omitFieldNames ? '' : 'language')
-        ..aOS(4, _omitFieldNames ? '' : 'homeUrl', protoName: 'homeUrl')
-        ..pPS(5, _omitFieldNames ? '' : 'mirrorUrls', protoName: 'mirrorUrls')
-        ..aOS(7, _omitFieldNames ? '' : 'message')
-        ..hasRequiredFields = false;
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+    _omitMessageNames ? '' : 'ExtensionStoreSource',
+    createEmptyInstance: create,
+  )
+    ..aInt64(1, _omitFieldNames ? '' : 'id')
+    ..aOS(2, _omitFieldNames ? '' : 'name')
+    ..aOS(3, _omitFieldNames ? '' : 'language')
+    ..aOS(4, _omitFieldNames ? '' : 'homeUrl', protoName: 'homeUrl')
+    ..pPS(5, _omitFieldNames ? '' : 'mirrorUrls', protoName: 'mirrorUrls')
+    ..aOS(7, _omitFieldNames ? '' : 'message')
+    ..hasRequiredFields = false;
 
   @$core.override
   ExtensionStoreSource clone() => create()..mergeFromMessage(this);
@@ -211,10 +210,8 @@ class ExtensionStoreSource extends $pb.GeneratedMessage {
       $pb.PbList<ExtensionStoreSource>();
 
   @$core.pragma('dart2js:noInline')
-  static ExtensionStoreSource getDefault() =>
-      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<
-        ExtensionStoreSource
-      >(create);
+  static ExtensionStoreSource getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ExtensionStoreSource>(create);
   static ExtensionStoreSource? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -284,41 +281,42 @@ class ExtensionStoreItem extends $pb.GeneratedMessage {
   factory ExtensionStoreItem.fromBuffer(
     $core.List<$core.int> i, [
     $pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY,
-  ]) => create()..mergeFromBuffer(i, r);
+  ]) =>
+      create()..mergeFromBuffer(i, r);
 
   factory ExtensionStoreItem.fromJson(
     $core.String json, [
     $pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY,
-  ]) => create()..mergeFromJson(json, r);
+  ]) =>
+      create()..mergeFromJson(json, r);
 
-  static final $pb.BuilderInfo _i =
-      $pb.BuilderInfo(
-        _omitMessageNames ? '' : 'ExtensionStoreItem',
-        createEmptyInstance: create,
-      )
-        ..aOS(1, _omitFieldNames ? '' : 'name')
-        ..aOS(2, _omitFieldNames ? '' : 'packageName', protoName: 'packageName')
-        ..aOM<ExtensionStoreResources>(
-          3,
-          _omitFieldNames ? '' : 'resources',
-          subBuilder: ExtensionStoreResources.create,
-        )
-        ..aOS(4, _omitFieldNames ? '' : 'extensionLib', protoName: 'extensionLib')
-        ..aInt64(5, _omitFieldNames ? '' : 'versionCode', protoName: 'versionCode')
-        ..aOS(6, _omitFieldNames ? '' : 'versionName', protoName: 'versionName')
-        ..a<$core.int>(
-          7,
-          _omitFieldNames ? '' : 'contentWarning',
-          $pb.PbFieldType.O3,
-          protoName: 'contentWarning',
-        )
-        ..pc<ExtensionStoreSource>(
-          8,
-          _omitFieldNames ? '' : 'sources',
-          $pb.PbFieldType.PM,
-          subBuilder: ExtensionStoreSource.create,
-        )
-        ..hasRequiredFields = false;
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+    _omitMessageNames ? '' : 'ExtensionStoreItem',
+    createEmptyInstance: create,
+  )
+    ..aOS(1, _omitFieldNames ? '' : 'name')
+    ..aOS(2, _omitFieldNames ? '' : 'packageName', protoName: 'packageName')
+    ..aOM<ExtensionStoreResources>(
+      3,
+      _omitFieldNames ? '' : 'resources',
+      subBuilder: ExtensionStoreResources.create,
+    )
+    ..aOS(4, _omitFieldNames ? '' : 'extensionLib', protoName: 'extensionLib')
+    ..aInt64(5, _omitFieldNames ? '' : 'versionCode', protoName: 'versionCode')
+    ..aOS(6, _omitFieldNames ? '' : 'versionName', protoName: 'versionName')
+    ..a<$core.int>(
+      7,
+      _omitFieldNames ? '' : 'contentWarning',
+      $pb.PbFieldType.O3,
+      protoName: 'contentWarning',
+    )
+    ..pc<ExtensionStoreSource>(
+      8,
+      _omitFieldNames ? '' : 'sources',
+      $pb.PbFieldType.PM,
+      subBuilder: ExtensionStoreSource.create,
+    )
+    ..hasRequiredFields = false;
 
   @$core.override
   ExtensionStoreItem clone() => create()..mergeFromMessage(this);
@@ -336,10 +334,8 @@ class ExtensionStoreItem extends $pb.GeneratedMessage {
       $pb.PbList<ExtensionStoreItem>();
 
   @$core.pragma('dart2js:noInline')
-  static ExtensionStoreItem getDefault() =>
-      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<
-        ExtensionStoreItem
-      >(create);
+  static ExtensionStoreItem getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ExtensionStoreItem>(create);
   static ExtensionStoreItem? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -409,25 +405,26 @@ class ExtensionStoreExtensionList extends $pb.GeneratedMessage {
   factory ExtensionStoreExtensionList.fromBuffer(
     $core.List<$core.int> i, [
     $pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY,
-  ]) => create()..mergeFromBuffer(i, r);
+  ]) =>
+      create()..mergeFromBuffer(i, r);
 
   factory ExtensionStoreExtensionList.fromJson(
     $core.String json, [
     $pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY,
-  ]) => create()..mergeFromJson(json, r);
+  ]) =>
+      create()..mergeFromJson(json, r);
 
-  static final $pb.BuilderInfo _i =
-      $pb.BuilderInfo(
-        _omitMessageNames ? '' : 'ExtensionStoreExtensionList',
-        createEmptyInstance: create,
-      )
-        ..pc<ExtensionStoreItem>(
-          1,
-          _omitFieldNames ? '' : 'extensions',
-          $pb.PbFieldType.PM,
-          subBuilder: ExtensionStoreItem.create,
-        )
-        ..hasRequiredFields = false;
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+    _omitMessageNames ? '' : 'ExtensionStoreExtensionList',
+    createEmptyInstance: create,
+  )
+    ..pc<ExtensionStoreItem>(
+      1,
+      _omitFieldNames ? '' : 'extensions',
+      $pb.PbFieldType.PM,
+      subBuilder: ExtensionStoreItem.create,
+    )
+    ..hasRequiredFields = false;
 
   @$core.override
   ExtensionStoreExtensionList clone() => create()..mergeFromMessage(this);
@@ -446,10 +443,8 @@ class ExtensionStoreExtensionList extends $pb.GeneratedMessage {
       $pb.PbList<ExtensionStoreExtensionList>();
 
   @$core.pragma('dart2js:noInline')
-  static ExtensionStoreExtensionList getDefault() =>
-      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<
-        ExtensionStoreExtensionList
-      >(create);
+  static ExtensionStoreExtensionList getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<ExtensionStoreExtensionList>(create);
   static ExtensionStoreExtensionList? _defaultInstance;
 
   @$pb.TagNumber(1)
@@ -480,38 +475,39 @@ class NetworkExtensionStore extends $pb.GeneratedMessage {
   factory NetworkExtensionStore.fromBuffer(
     $core.List<$core.int> i, [
     $pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY,
-  ]) => create()..mergeFromBuffer(i, r);
+  ]) =>
+      create()..mergeFromBuffer(i, r);
 
   factory NetworkExtensionStore.fromJson(
     $core.String json, [
     $pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY,
-  ]) => create()..mergeFromJson(json, r);
+  ]) =>
+      create()..mergeFromJson(json, r);
 
-  static final $pb.BuilderInfo _i =
-      $pb.BuilderInfo(
-        _omitMessageNames ? '' : 'NetworkExtensionStore',
-        createEmptyInstance: create,
-      )
-        ..aOS(1, _omitFieldNames ? '' : 'name')
-        ..aOS(2, _omitFieldNames ? '' : 'badgeLabel', protoName: 'badgeLabel')
-        ..aOS(3, _omitFieldNames ? '' : 'signingKey', protoName: 'signingKey')
-        ..aOM<ExtensionStoreContact>(
-          4,
-          _omitFieldNames ? '' : 'contact',
-          subBuilder: ExtensionStoreContact.create,
-        )
-        ..aOM<ExtensionStoreExtensionList>(
-          101,
-          _omitFieldNames ? '' : 'extensionList',
-          protoName: 'extensionList',
-          subBuilder: ExtensionStoreExtensionList.create,
-        )
-        ..aOS(
-          102,
-          _omitFieldNames ? '' : 'extensionListUrl',
-          protoName: 'extensionListUrl',
-        )
-        ..hasRequiredFields = false;
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(
+    _omitMessageNames ? '' : 'NetworkExtensionStore',
+    createEmptyInstance: create,
+  )
+    ..aOS(1, _omitFieldNames ? '' : 'name')
+    ..aOS(2, _omitFieldNames ? '' : 'badgeLabel', protoName: 'badgeLabel')
+    ..aOS(3, _omitFieldNames ? '' : 'signingKey', protoName: 'signingKey')
+    ..aOM<ExtensionStoreContact>(
+      4,
+      _omitFieldNames ? '' : 'contact',
+      subBuilder: ExtensionStoreContact.create,
+    )
+    ..aOM<ExtensionStoreExtensionList>(
+      101,
+      _omitFieldNames ? '' : 'extensionList',
+      protoName: 'extensionList',
+      subBuilder: ExtensionStoreExtensionList.create,
+    )
+    ..aOS(
+      102,
+      _omitFieldNames ? '' : 'extensionListUrl',
+      protoName: 'extensionListUrl',
+    )
+    ..hasRequiredFields = false;
 
   @$core.override
   NetworkExtensionStore clone() => create()..mergeFromMessage(this);
@@ -529,10 +525,8 @@ class NetworkExtensionStore extends $pb.GeneratedMessage {
       $pb.PbList<NetworkExtensionStore>();
 
   @$core.pragma('dart2js:noInline')
-  static NetworkExtensionStore getDefault() =>
-      _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<
-        NetworkExtensionStore
-      >(create);
+  static NetworkExtensionStore getDefault() => _defaultInstance ??=
+      $pb.GeneratedMessage.$_defaultFor<NetworkExtensionStore>(create);
   static NetworkExtensionStore? _defaultInstance;
 
   @$pb.TagNumber(1)

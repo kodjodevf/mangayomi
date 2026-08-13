@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:mangayomi/modules/manga/reader/image_view_vertical.dart';
 import 'package:flutter/material.dart';
 import 'package:mangayomi/main.dart';

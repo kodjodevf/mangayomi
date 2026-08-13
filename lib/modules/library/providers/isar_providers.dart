@@ -44,8 +44,5 @@ Stream<List<Manga>> getAllMangaWithoutCategoriesStream(
 
 @riverpod
 Stream<List<Settings>> getSettingsStream(Ref ref) async* {
-  yield* isar.settings
-      .where()
-      .idEqualTo(227)
-      .watch(fireImmediately: true);
+  yield* isar.settings.where().idEqualTo(227).watch(fireImmediately: true);
 }

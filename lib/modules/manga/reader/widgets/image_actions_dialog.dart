@@ -139,9 +139,8 @@ class _ImageActionsSheet extends StatelessWidget {
                   isar.writeTxnSync(() {
                     isar.mangas.putSync(
                       manga
-                        ..customCoverImage = Uint8List.fromList(
-                          imageBytes,
-                        ).getCoverImage
+                        ..customCoverImage = Uint8List.fromList(imageBytes)
+                            .getCoverImage
                         ..updatedAt = DateTime.now().millisecondsSinceEpoch,
                     );
                   });

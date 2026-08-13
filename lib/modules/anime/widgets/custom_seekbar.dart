@@ -1,5 +1,7 @@
 import 'package:mangayomi/utils/platform_utils.dart';
+
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:mangayomi/modules/anime/widgets/custom_track_shape.dart';
 import 'package:media_kit/media_kit.dart';

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:intl/intl.dart';
@@ -13,7 +14,9 @@ import 'package:mangayomi/modules/more/settings/track/myanimelist/model.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/log/logger.dart';
+
 import 'base_tracker.dart';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'myanimelist.g.dart';
 
@@ -136,9 +139,8 @@ class MyAnimeList extends _$MyAnimeList implements BaseTracker {
   @override
   Future<List<TrackSearch>> search(String query, isManga) async {
     final accessToken = await _getAccessToken();
-    final url = Uri.parse(
-      '$_baseApiUrl/${isManga ? "manga" : "anime"}',
-    ).replace(queryParameters: {'q': query.trim(), 'nsfw': 'true'});
+    final url = Uri.parse('$_baseApiUrl/${isManga ? "manga" : "anime"}')
+        .replace(queryParameters: {'q': query.trim(), 'nsfw': 'true'});
     final result = await _makeGetRequest(url, accessToken);
     final res = jsonDecode(result.body) as Map<String, dynamic>;
 

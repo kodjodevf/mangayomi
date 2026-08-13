@@ -5,6 +5,7 @@
 
 import '../../frb_generated.dart';
 import 'http.dart';
+
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:freezed_annotation/freezed_annotation.dart' hide protected;
 part 'error.freezed.dart';

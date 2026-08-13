@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'aniskip.g.dart';

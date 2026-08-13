@@ -88,9 +88,8 @@ class ChapterTransitionPage extends StatelessWidget {
           const SizedBox(height: 20),
           Text(
             l10n.end_of_chapter,
-            style: Theme.of(
-              context,
-            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.headlineSmall
+                ?.copyWith(fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
@@ -108,9 +107,8 @@ class ChapterTransitionPage extends StatelessWidget {
             size: 32,
             color: nextChapter != null
                 ? Theme.of(context).colorScheme.primary
-                : Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.6),
+                : Theme.of(context).colorScheme.onSurface
+                      .withValues(alpha: 0.6),
           ),
           const SizedBox(height: 16),
           if (nextChapter != null) ...[
@@ -124,9 +122,8 @@ class ChapterTransitionPage extends StatelessWidget {
             Text(
               l10n.continue_to_next_chapter,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(
-                  context,
-                ).colorScheme.onSurface.withValues(alpha: 0.6),
+                color: Theme.of(context).colorScheme.onSurface
+                    .withValues(alpha: 0.6),
               ),
               textAlign: TextAlign.center,
             ),
@@ -136,9 +133,8 @@ class ChapterTransitionPage extends StatelessWidget {
             Text(
               l10n.return_to_the_list_of_chapters,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(
-                  context,
-                ).colorScheme.onSurface.withValues(alpha: 0.6),
+                color: Theme.of(context).colorScheme.onSurface
+                    .withValues(alpha: 0.6),
               ),
               textAlign: TextAlign.center,
             ),

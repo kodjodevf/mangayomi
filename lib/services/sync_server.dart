@@ -18,7 +18,9 @@ import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_pr
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+
 import 'dart:convert';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 part 'sync_server.g.dart';
@@ -561,43 +563,23 @@ class SyncServer extends _$SyncServer {
   }
 
   List<Map<String, dynamic>> _getCategories() {
-    return isar.categorys
-        .where()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
+    return isar.categorys.where().findAllSync().map((e) => e.toJson()).toList();
   }
 
   List<Map<String, dynamic>> _getChapters() {
-    return isar.chapters
-        .where()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
+    return isar.chapters.where().findAllSync().map((e) => e.toJson()).toList();
   }
 
   List<Map<String, dynamic>> _getTracks() {
-    return isar.tracks
-        .where()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
+    return isar.tracks.where().findAllSync().map((e) => e.toJson()).toList();
   }
 
   List<Map<String, dynamic>> _getHistories() {
-    return isar.historys
-        .where()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
+    return isar.historys.where().findAllSync().map((e) => e.toJson()).toList();
   }
 
   List<Map<String, dynamic>> _getUpdates() {
-    return isar.updates
-        .where()
-        .findAllSync()
-        .map((e) => e.toJson())
-        .toList();
+    return isar.updates.where().findAllSync().map((e) => e.toJson()).toList();
   }
 
   String _getAccessToken() {

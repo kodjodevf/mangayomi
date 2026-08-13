@@ -2410,11 +2410,10 @@ P _settingsDeserializeProp<P>(
   switch (propertyId) {
     case 0:
       return (reader.readObjectOrNull<AlgorithmWeights>(
-            offset,
-            AlgorithmWeightsSchema.deserialize,
-            allOffsets,
-          ))
-          as P;
+        offset,
+        AlgorithmWeightsSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 1:
       return (reader.readBoolOrNull(offset)) as P;
     case 2:
@@ -2431,12 +2430,11 @@ P _settingsDeserializeProp<P>(
           as P;
     case 6:
       return (reader.readObjectList<Repo>(
-            offset,
-            RepoSchema.deserialize,
-            allOffsets,
-            Repo(),
-          ))
-          as P;
+        offset,
+        RepoSchema.deserialize,
+        allOffsets,
+        Repo(),
+      )) as P;
     case 7:
       return (reader.readLongOrNull(offset)) as P;
     case 8:
@@ -2475,12 +2473,11 @@ P _settingsDeserializeProp<P>(
       return (reader.readBoolOrNull(offset)) as P;
     case 23:
       return (reader.readObjectList<AutoScrollPages>(
-            offset,
-            AutoScrollPagesSchema.deserialize,
-            allOffsets,
-            AutoScrollPages(),
-          ))
-          as P;
+        offset,
+        AutoScrollPagesSchema.deserialize,
+        allOffsets,
+        AutoScrollPages(),
+      )) as P;
     case 24:
       return (reader.readBoolOrNull(offset)) as P;
     case 25:
@@ -2503,44 +2500,39 @@ P _settingsDeserializeProp<P>(
       return (reader.readStringOrNull(offset)) as P;
     case 32:
       return (reader.readObjectList<ChapterFilterBookmarked>(
-            offset,
-            ChapterFilterBookmarkedSchema.deserialize,
-            allOffsets,
-            ChapterFilterBookmarked(),
-          ))
-          as P;
+        offset,
+        ChapterFilterBookmarkedSchema.deserialize,
+        allOffsets,
+        ChapterFilterBookmarked(),
+      )) as P;
     case 33:
       return (reader.readObjectList<ChapterFilterDownloaded>(
-            offset,
-            ChapterFilterDownloadedSchema.deserialize,
-            allOffsets,
-            ChapterFilterDownloaded(),
-          ))
-          as P;
+        offset,
+        ChapterFilterDownloadedSchema.deserialize,
+        allOffsets,
+        ChapterFilterDownloaded(),
+      )) as P;
     case 34:
       return (reader.readObjectList<ChapterFilterUnread>(
-            offset,
-            ChapterFilterUnreadSchema.deserialize,
-            allOffsets,
-            ChapterFilterUnread(),
-          ))
-          as P;
+        offset,
+        ChapterFilterUnreadSchema.deserialize,
+        allOffsets,
+        ChapterFilterUnread(),
+      )) as P;
     case 35:
       return (reader.readObjectList<ChapterPageIndex>(
-            offset,
-            ChapterPageIndexSchema.deserialize,
-            allOffsets,
-            ChapterPageIndex(),
-          ))
-          as P;
+        offset,
+        ChapterPageIndexSchema.deserialize,
+        allOffsets,
+        ChapterPageIndex(),
+      )) as P;
     case 36:
       return (reader.readObjectList<ChapterPageurls>(
-            offset,
-            ChapterPageurlsSchema.deserialize,
-            allOffsets,
-            ChapterPageurls(),
-          ))
-          as P;
+        offset,
+        ChapterPageurlsSchema.deserialize,
+        allOffsets,
+        ChapterPageurls(),
+      )) as P;
     case 37:
       return (reader.readBoolOrNull(offset)) as P;
     case 38:
@@ -2557,21 +2549,19 @@ P _settingsDeserializeProp<P>(
       return (reader.readLongOrNull(offset)) as P;
     case 42:
       return (reader.readObjectList<MCookie>(
-            offset,
-            MCookieSchema.deserialize,
-            allOffsets,
-            MCookie(),
-          ))
-          as P;
+        offset,
+        MCookieSchema.deserialize,
+        allOffsets,
+        MCookie(),
+      )) as P;
     case 43:
       return (reader.readBoolOrNull(offset)) as P;
     case 44:
       return (reader.readObjectOrNull<CustomColorFilter>(
-            offset,
-            CustomColorFilterSchema.deserialize,
-            allOffsets,
-          ))
-          as P;
+        offset,
+        CustomColorFilterSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 45:
       return (reader.readStringOrNull(offset)) as P;
     case 46:
@@ -2598,11 +2588,10 @@ P _settingsDeserializeProp<P>(
       return (reader.readLongOrNull(offset)) as P;
     case 53:
       return (reader.readObjectOrNull<L10nLocale>(
-            offset,
-            L10nLocaleSchema.deserialize,
-            allOffsets,
-          ))
-          as P;
+        offset,
+        L10nLocaleSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 54:
       return (reader.readBoolOrNull(offset)) as P;
     case 55:
@@ -2657,12 +2646,11 @@ P _settingsDeserializeProp<P>(
       return (reader.readStringOrNull(offset)) as P;
     case 77:
       return (reader.readObjectList<FilterScanlator>(
-            offset,
-            FilterScanlatorSchema.deserialize,
-            allOffsets,
-            FilterScanlator(),
-          ))
-          as P;
+        offset,
+        FilterScanlatorSchema.deserialize,
+        allOffsets,
+        FilterScanlator(),
+      )) as P;
     case 78:
       return (reader.readLongOrNull(offset)) as P;
     case 79:
@@ -2761,19 +2749,17 @@ P _settingsDeserializeProp<P>(
       return (reader.readStringList(offset)) as P;
     case 126:
       return (reader.readObjectOrNull<L10nLocale>(
-            offset,
-            L10nLocaleSchema.deserialize,
-            allOffsets,
-          ))
-          as P;
+        offset,
+        L10nLocaleSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 127:
       return (reader.readObjectList<Repo>(
-            offset,
-            RepoSchema.deserialize,
-            allOffsets,
-            Repo(),
-          ))
-          as P;
+        offset,
+        RepoSchema.deserialize,
+        allOffsets,
+        Repo(),
+      )) as P;
     case 128:
       return (reader.readLongOrNull(offset)) as P;
     case 129:
@@ -2798,12 +2784,11 @@ P _settingsDeserializeProp<P>(
           as P;
     case 135:
       return (reader.readObjectList<Repo>(
-            offset,
-            RepoSchema.deserialize,
-            allOffsets,
-            Repo(),
-          ))
-          as P;
+        offset,
+        RepoSchema.deserialize,
+        allOffsets,
+        Repo(),
+      )) as P;
     case 136:
       return (reader.readLongOrNull(offset)) as P;
     case 137:
@@ -2846,27 +2831,24 @@ P _settingsDeserializeProp<P>(
       return (reader.readLongOrNull(offset)) as P;
     case 154:
       return (reader.readObjectList<PersonalPageMode>(
-            offset,
-            PersonalPageModeSchema.deserialize,
-            allOffsets,
-            PersonalPageMode(),
-          ))
-          as P;
+        offset,
+        PersonalPageModeSchema.deserialize,
+        allOffsets,
+        PersonalPageMode(),
+      )) as P;
     case 155:
       return (reader.readObjectList<PersonalReaderMode>(
-            offset,
-            PersonalReaderModeSchema.deserialize,
-            allOffsets,
-            PersonalReaderMode(),
-          ))
-          as P;
+        offset,
+        PersonalReaderModeSchema.deserialize,
+        allOffsets,
+        PersonalReaderMode(),
+      )) as P;
     case 156:
       return (reader.readObjectOrNull<PlayerSubtitleSettings>(
-            offset,
-            PlayerSubtitleSettingsSchema.deserialize,
-            allOffsets,
-          ))
-          as P;
+        offset,
+        PlayerSubtitleSettingsSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 157:
       return (reader.readBoolOrNull(offset)) as P;
     case 158:
@@ -2891,12 +2873,11 @@ P _settingsDeserializeProp<P>(
       return (reader.readBoolOrNull(offset)) as P;
     case 168:
       return (reader.readObjectList<SavedSearch>(
-            offset,
-            SavedSearchSchema.deserialize,
-            allOffsets,
-            SavedSearch(),
-          ))
-          as P;
+        offset,
+        SavedSearchSchema.deserialize,
+        allOffsets,
+        SavedSearch(),
+      )) as P;
     case 169:
       return (_SettingsscaleTypeValueEnumMap[reader.readByteOrNull(offset)] ??
               ScaleType.fitScreen)
@@ -2913,33 +2894,29 @@ P _settingsDeserializeProp<P>(
       return (reader.readBoolOrNull(offset)) as P;
     case 175:
       return (reader.readObjectList<SortChapter>(
-            offset,
-            SortChapterSchema.deserialize,
-            allOffsets,
-            SortChapter(),
-          ))
-          as P;
+        offset,
+        SortChapterSchema.deserialize,
+        allOffsets,
+        SortChapter(),
+      )) as P;
     case 176:
       return (reader.readObjectOrNull<SortLibraryManga>(
-            offset,
-            SortLibraryMangaSchema.deserialize,
-            allOffsets,
-          ))
-          as P;
+        offset,
+        SortLibraryMangaSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 177:
       return (reader.readObjectOrNull<SortLibraryManga>(
-            offset,
-            SortLibraryMangaSchema.deserialize,
-            allOffsets,
-          ))
-          as P;
+        offset,
+        SortLibraryMangaSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 178:
       return (reader.readObjectOrNull<SortLibraryManga>(
-            offset,
-            SortLibraryMangaSchema.deserialize,
-            allOffsets,
-          ))
-          as P;
+        offset,
+        SortLibraryMangaSchema.deserialize,
+        allOffsets,
+      )) as P;
     case 179:
       return (reader.readBoolOrNull(offset)) as P;
     case 180:
@@ -2966,12 +2943,11 @@ P _settingsDeserializeProp<P>(
       return (reader.readBoolOrNull(offset)) as P;
     case 191:
       return (reader.readObjectList<UpdateError>(
-            offset,
-            UpdateErrorSchema.deserialize,
-            allOffsets,
-            UpdateError(),
-          ))
-          as P;
+        offset,
+        UpdateErrorSchema.deserialize,
+        allOffsets,
+        UpdateError(),
+      )) as P;
     case 192:
       return (reader.readBoolOrNull(offset)) as P;
     case 193:

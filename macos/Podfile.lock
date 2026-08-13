@@ -145,7 +145,7 @@ SPEC CHECKSUMS:
   flutter_qjs: cb2d0cba9deade1d03b89f6c432eac126f39482a
   flutter_tts: ae915565cc6948444b513acc8ee021993281e027
   flutter_web_auth_2: 62b08da29f15a20fa63f144234622a1488d45b65
-  FlutterMacOS: d0db08ddef1a9af05a5ec4b724367152bb0500b1
+  FlutterMacOS: c232990155153907050900a2e175c7773903ba4e
   isar_community_flutter_libs: a631ceb5622413b56bcd0a8bf49cb55bf3d8bb2b
   local_auth_darwin: c3ee6cce0a8d56be34c8ccb66ba31f7f180aaebb
   m_extension_server: 50e95a61bbf93c9a33ddc812d0753bddf1c01456
@@ -163,6 +163,6 @@ SPEC CHECKSUMS:
   window_manager: b729e31d38fb04905235df9ea896128991cad99e
   window_to_front: 2d7d31f268d0b13b7e63b26e31eb0a2e9612239e
 
-PODFILE CHECKSUM: 9ebaf0ce3d369aaa26a9ea0e159195ed94724cf3
+PODFILE CHECKSUM: f0c21717cb7ee9112f915044c74bfceb5b12e02a
 
 COCOAPODS: 1.16.2

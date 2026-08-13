@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+
 // part 'track_search.g.dart';
 
 @HiveType(typeId: 0, adapterName: "TrackSearchAdapter")

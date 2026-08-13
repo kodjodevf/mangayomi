@@ -68,9 +68,8 @@ class _PlayerDecoderScreenState extends ConsumerState<PlayerDecoderScreen> {
                           onChanged: (value) {
                             ref
                                 .read(
-                                  hwdecModeStateProvider(
-                                    rawValue: true,
-                                  ).notifier,
+                                  hwdecModeStateProvider(rawValue: true)
+                                      .notifier,
                                 )
                                 .set(value!);
                             Navigator.pop(context);

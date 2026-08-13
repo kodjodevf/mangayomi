@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
 import 'dart:math';
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:ffi/ffi.dart';
 import 'package:file_picker/file_picker.dart';
@@ -648,10 +649,7 @@ class _AnimeStreamPageState extends riv.ConsumerState<AnimeStreamPage>
 
   Future<void> _initCustomButton() async {
     if (!useMpvConfig) return;
-    final customButtons = isar.customButtons
-        .where()
-        .sortByPos()
-        .findAllSync();
+    final customButtons = isar.customButtons.where().sortByPos().findAllSync();
     if (customButtons.isEmpty) return;
     final primaryButton =
         customButtons.firstWhereOrNull((e) => e.isFavourite ?? false) ??
@@ -1395,13 +1393,11 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
           GestureDetector(
             onTap: () async {
               try {
-                final subtitle =
-                    await subtitlesSearchraggableMenu(
-                          context,
-                          chapter: widget.episode,
-                          isLocal: widget.isLocal,
-                        )
-                        as ImdbSubtitle?;
+                final subtitle = await subtitlesSearchraggableMenu(
+                  context,
+                  chapter: widget.episode,
+                  isLocal: widget.isLocal,
+                ) as ImdbSubtitle?;
                 if (subtitle != null && context.mounted) {
                   _player.setSubtitleTrack(
                     SubtitleTrack.uri(
@@ -2567,72 +2563,65 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                       ),
                       Row(
                         children: [
-                          button(
-                            context.l10n.set_as_cover,
-                            Icons.image_outlined,
-                            () async {
-                              final imageBytes = await _player.screenshot(
-                                format: "image/png",
-                                includeLibassSubtitles: _includeSubtitles,
-                              );
-                              if (context.mounted) {
-                                final res = await showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      content: Text(
-                                        context.l10n.use_this_as_cover_art,
+                          button(context.l10n.set_as_cover, Icons.image_outlined, () async {
+                            final imageBytes = await _player.screenshot(
+                              format: "image/png",
+                              includeLibassSubtitles: _includeSubtitles,
+                            );
+                            if (context.mounted) {
+                              final res = await showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    content: Text(
+                                      context.l10n.use_this_as_cover_art,
+                                    ),
+                                    actions: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text(context.l10n.cancel),
+                                          ),
+                                          const SizedBox(width: 15),
+                                          TextButton(
+                                            onPressed: () {
+                                              final manga =
+                                                  episode.manga.value!;
+                                              isar.writeTxnSync(() {
+                                                isar.mangas.putSync(
+                                                  manga
+                                                    ..updatedAt = DateTime.now()
+                                                        .millisecondsSinceEpoch
+                                                    ..customCoverImage =
+                                                        imageBytes
+                                                            ?.getCoverImage,
+                                                );
+                                              });
+                                              if (context.mounted) {
+                                                Navigator.pop(context, "ok");
+                                              }
+                                            },
+                                            child: Text(context.l10n.ok),
+                                          ),
+                                        ],
                                       ),
-                                      actions: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            TextButton(
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                              child: Text(context.l10n.cancel),
-                                            ),
-                                            const SizedBox(width: 15),
-                                            TextButton(
-                                              onPressed: () {
-                                                final manga =
-                                                    episode.manga.value!;
-                                                isar.writeTxnSync(() {
-                                                  isar.mangas.putSync(
-                                                    manga
-                                                      ..updatedAt = DateTime.now()
-                                                          .millisecondsSinceEpoch
-                                                      ..customCoverImage =
-                                                          imageBytes
-                                                              ?.getCoverImage,
-                                                  );
-                                                });
-                                                if (context.mounted) {
-                                                  Navigator.pop(context, "ok");
-                                                }
-                                              },
-                                              child: Text(context.l10n.ok),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                                if (res != null &&
-                                    res == "ok" &&
-                                    context.mounted) {
-                                  Navigator.pop(context);
-                                  botToast(
-                                    context.l10n.cover_updated,
-                                    second: 3,
+                                    ],
                                   );
-                                }
+                                },
+                              );
+                              if (res != null &&
+                                  res == "ok" &&
+                                  context.mounted) {
+                                Navigator.pop(context);
+                                botToast(context.l10n.cover_updated, second: 3);
                               }
-                            },
-                          ),
+                            }
+                          }),
                           button(
                             context.l10n.share,
                             Icons.share_outlined,

@@ -3,12 +3,16 @@ import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
+
 import 'dart:convert';
+
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/more/settings/track/myanimelist/model.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+
 import 'base_tracker.dart';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'kitsu.g.dart';
 
@@ -55,9 +59,9 @@ class Kitsu extends _$Kitsu implements BaseTracker {
       if (response.statusCode != 200) {
         return (false, "${response.reasonPhrase!} ${response.statusCode}");
       }
-      final res =
-          jsonDecode(await response.stream.bytesToString())
-              as Map<String, dynamic>;
+      final res = jsonDecode(
+        await response.stream.bytesToString(),
+      ) as Map<String, dynamic>;
       final aKOAuth = OAuth.fromJson(res)
         ..expiresIn = DateTime.now()
             .add(Duration(seconds: res['expires_in']))
@@ -153,9 +157,9 @@ class Kitsu extends _$Kitsu implements BaseTracker {
     );
     final data = json.decode(utf8.decode(response.bodyBytes));
 
-    final entries = List<Map<String, dynamic>>.from(
-      data['hits'],
-    ).where((element) => element["subtype"] != "novel").toList();
+    final entries = List<Map<String, dynamic>>.from(data['hits'])
+        .where((element) => element["subtype"] != "novel")
+        .toList();
     final totalChapter = isManga ? "chapterCount" : "episodeCount";
     return entries
         .map(
@@ -191,9 +195,9 @@ class Kitsu extends _$Kitsu implements BaseTracker {
     );
     final data = json.decode(utf8.decode(response.bodyBytes));
 
-    final entries = List<Map<String, dynamic>>.from(
-      data['data'],
-    ).where((element) => element["subtype"] != "novel").toList();
+    final entries = List<Map<String, dynamic>>.from(data['data'])
+        .where((element) => element["subtype"] != "novel")
+        .toList();
     final totalChapter = isManga ? "chapterCount" : "episodeCount";
     return entries.map((jsonRes) {
       final mediaId = jsonRes['id'] is String
@@ -405,9 +409,9 @@ class Kitsu extends _$Kitsu implements BaseTracker {
 
   String? _convertDate(int dateValue) {
     if (dateValue == 0) return null;
-    return DateTime.fromMillisecondsSinceEpoch(
-      dateValue,
-    ).toUtc().toIso8601String();
+    return DateTime.fromMillisecondsSinceEpoch(dateValue)
+        .toUtc()
+        .toIso8601String();
   }
 
   int _parseDate(String? date) {

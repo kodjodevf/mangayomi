@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:isar_community/isar.dart';
 import 'package:mangayomi/eval/model/filter.dart';

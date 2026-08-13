@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter_qjs/flutter_qjs.dart';
 import 'package:mangayomi/eval/lnreader/http.dart';
 import 'package:mangayomi/eval/lnreader/m_plugin.dart';
@@ -197,9 +198,8 @@ const extension = exports.default;
                 name: e.name,
                 url: e.path,
                 dateUpload: e.releaseTime != null
-                    ? DateTime.tryParse(
-                            e.releaseTime!,
-                          )?.millisecondsSinceEpoch.toString() ??
+                    ? DateTime.tryParse(e.releaseTime!)?.millisecondsSinceEpoch
+                              .toString() ??
                           int.tryParse(e.releaseTime!)?.toString() ??
                           DateTime.now().millisecondsSinceEpoch.toString()
                     : DateTime.now().millisecondsSinceEpoch.toString(),

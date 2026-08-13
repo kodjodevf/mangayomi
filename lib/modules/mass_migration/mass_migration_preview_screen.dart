@@ -108,9 +108,8 @@ class _MassMigrationPreviewScreenState
                   ),
                   child: Card(
                     color: selected
-                        ? Theme.of(
-                            context,
-                          ).colorScheme.primaryContainer.withValues(alpha: 0.4)
+                        ? Theme.of(context).colorScheme.primaryContainer
+                              .withValues(alpha: 0.4)
                         : null,
                     child: Padding(
                       padding: const EdgeInsets.all(12),
@@ -147,9 +146,9 @@ class _MassMigrationPreviewScreenState
                                       Text(
                                         manga.name ??
                                             l10n.mass_migration_unknown_title,
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.titleMedium,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium,
                                       ),
                                       const SizedBox(height: 6),
                                       Text(

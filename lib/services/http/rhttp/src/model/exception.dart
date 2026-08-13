@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+
 import 'package:mangayomi/services/http/rhttp/src/model/request.dart';
 import 'package:mangayomi/src/rust/api/rhttp/error.dart' as rust;
 import 'package:mangayomi/src/rust/api/rhttp/http.dart' as rust_http;

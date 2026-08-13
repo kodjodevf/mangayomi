@@ -169,9 +169,8 @@ class LibraryAppBar extends ConsumerWidget implements PreferredSizeWidget {
           IconButton(
             splashRadius: 20,
             tooltip: l10n.cancel,
-            focusColor: Theme.of(
-              context,
-            ).colorScheme.primary.withValues(alpha: 0.4),
+            focusColor: Theme.of(context).colorScheme.primary
+                .withValues(alpha: 0.4),
             onPressed: () =>
                 ref.read(libraryUpdateProvider.notifier).requestCancel(),
             icon: const Icon(Icons.stop_circle_outlined),

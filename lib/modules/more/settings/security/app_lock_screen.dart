@@ -65,9 +65,8 @@ class _AppLockScreenState extends ConsumerState<AppLockScreen> {
               const SizedBox(height: 8),
               Text(
                 l10n.auth_unlock_msg,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).hintColor,
-                ),
+                style: Theme.of(context).textTheme.bodyMedium
+                    ?.copyWith(color: Theme.of(context).hintColor),
               ),
               const SizedBox(height: 32),
               FilledButton.icon(

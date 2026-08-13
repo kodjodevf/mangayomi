@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+
 import 'package:mangayomi/services/http/rhttp/src/client/rhttp_client.dart';
 import 'package:mangayomi/services/http/rhttp/src/model/cancel_token.dart';
 import 'package:mangayomi/services/http/rhttp/src/model/settings.dart';

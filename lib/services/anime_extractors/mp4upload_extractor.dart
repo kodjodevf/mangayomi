@@ -32,9 +32,9 @@ class Mp4uploadExtractor {
       if (scriptElementWithEval.isNotEmpty) {
         script = JSPacker(script).unpack() ?? "";
       } else {
-        final scriptElementWithSrc = xpathSelector(
-          response.body,
-        ).queryXPath('//script[contains(text(), "player.src")]/text()').attrs;
+        final scriptElementWithSrc = xpathSelector(response.body)
+            .queryXPath('//script[contains(text(), "player.src")]/text()')
+            .attrs;
         if (scriptElementWithSrc.isNotEmpty) {
           script = scriptElementWithSrc.first!;
         } else {

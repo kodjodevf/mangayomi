@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/services/isolate_service.dart';
@@ -70,8 +71,9 @@ Future<GetChapterPagesModel> getChapterPages(
         for (var i = 0; i < isarPageUrls!.urls!.length; i++) {
           Map<String, String>? headers;
           if (isarPageUrls.headers?.isNotEmpty ?? false) {
-            headers = (jsonDecode(isarPageUrls.headers![i]) as Map?)
-                ?.toMapStringString;
+            headers = (jsonDecode(
+              isarPageUrls.headers![i],
+            ) as Map?)?.toMapStringString;
           }
           pageUrls.add(PageUrl(isarPageUrls.urls![i], headers: headers));
         }
@@ -94,9 +96,8 @@ Future<GetChapterPagesModel> getChapterPages(
     );
 
     if (pageUrls.isNotEmpty || isLocalArchive) {
-      if (await File(
-            p.join(mangaDirectory!.path, "${chapter.name}.cbz"),
-          ).exists() ||
+      if (await File(p.join(mangaDirectory!.path, "${chapter.name}.cbz"))
+              .exists() ||
           isLocalArchive) {
         final path = isLocalArchive
             ? chapter.archivePath
