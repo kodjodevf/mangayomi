@@ -228,7 +228,10 @@ class RouterNotifier extends ChangeNotifier {
       name: "codeEditor",
       builder: (sourceId) => CodeEditorPage(sourceId: sourceId),
     ),
-    _genericRoute(name: "createExtension", child: const CreateExtension()),
+    _genericRoute<Source?>(
+      name: "createExtension",
+      builder: (source) => CreateExtension(editSource: source),
+    ),
     _genericRoute(name: "createBackup", child: const CreateBackup()),
     _genericRoute(
       name: "customNavigationSettings",
