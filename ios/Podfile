@@ -38,8 +38,22 @@ target 'Runner' do
 end
 
 post_install do |installer|
+  media_kit_libs_target = installer.pods_project.targets.find { |target| target.name == 'media_kit_libs_ios_video' }
+  media_kit_video_target = installer.pods_project.targets.find { |target| target.name == 'media_kit_video' }
+
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
+
+    if target == media_kit_video_target
+      target.build_configurations.each do |configuration|
+        key = 'FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]'
+        configuration.build_settings[key] = Array(configuration.build_settings[key]) +
+          ['"${PODS_XCFRAMEWORKS_BUILD_DIR}/media_kit_libs_ios_video"']
+        configuration.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] =
+          '$(inherited) i386 x86_64'
+      end
+    end
+
     next unless target.name == 'm_extension_server'
 
     # OpenJDK Zero has thousands of native initializers. Keep CocoaPods' embed
@@ -47,6 +61,36 @@ post_install do |installer|
     target.frameworks_build_phase.files
       .select { |file| file.display_name.include?('OpenJDKRuntime') }
       .each(&:remove_from_project)
+  end
+
+  if media_kit_libs_target && media_kit_video_target
+    phase = media_kit_libs_target.new_shell_script_build_phase('[Mangayomi] Prepare media-kit simulator frameworks')
+    phase.shell_script = <<~'SH'
+      if [ "${PLATFORM_NAME}" != "iphonesimulator" ]; then
+        exit 0
+      fi
+
+      source_root="${PODS_ROOT}/../.symlinks/plugins/media_kit_libs_ios_video/ios/Frameworks"
+      output_root="${PODS_XCFRAMEWORKS_BUILD_DIR}/media_kit_libs_ios_video"
+      mkdir -p "${output_root}"
+
+      for xcframework in "${source_root}"/*.xcframework; do
+        name="$(basename "${xcframework}" .xcframework)"
+        source_framework="${xcframework}/ios-arm64/${name}.framework"
+        destination_framework="${output_root}/${name}.framework"
+        [ -d "${source_framework}" ] || continue
+
+        rm -rf "${destination_framework}"
+        ditto "${source_framework}" "${destination_framework}"
+        binary="${destination_framework}/${name}"
+        patched="${binary}.iossim"
+        /usr/bin/xcrun vtool \
+          -set-build-version iossim "${IPHONEOS_DEPLOYMENT_TARGET:-13.0}" "${SDK_VERSION}" \
+          -replace -output "${patched}" "${binary}"
+        /bin/mv "${patched}" "${binary}"
+      done
+    SH
+    media_kit_video_target.add_dependency(media_kit_libs_target)
   end
 
 end

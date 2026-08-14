@@ -4259,6 +4259,48 @@ abstract class AppLocalizations {
   /// **'Not configured'**
   String get not_configured;
 
+  /// No description provided for @zero_interpreter.
+  ///
+  /// In en, this message translates to:
+  /// **'Zero interpreter'**
+  String get zero_interpreter;
+
+  /// No description provided for @zero_interpreter_description.
+  ///
+  /// In en, this message translates to:
+  /// **'The server starts automatically on launch. You can also control it manually.'**
+  String get zero_interpreter_description;
+
+  /// No description provided for @runtime_status.
+  ///
+  /// In en, this message translates to:
+  /// **'Runtime status'**
+  String get runtime_status;
+
+  /// No description provided for @running.
+  ///
+  /// In en, this message translates to:
+  /// **'Running'**
+  String get running;
+
+  /// No description provided for @stopped.
+  ///
+  /// In en, this message translates to:
+  /// **'Stopped'**
+  String get stopped;
+
+  /// No description provided for @start.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get start;
+
+  /// No description provided for @stop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get stop;
+
   /// No description provided for @webview.
   ///
   /// In en, this message translates to:

@@ -1040,8 +1040,8 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "7601d5f72abf84b2145341ebd2230ca3bc141330"
-      url: "https://github.com/Schnitzel5/m_extension_server.git"
+      resolved-ref: fd2b30349280060a165b964bf2bea1e791cca555
+      url: "https://github.com/kodjodevf/m_extension_server.git"
     source: git
     version: "0.0.4"
   marquee:
