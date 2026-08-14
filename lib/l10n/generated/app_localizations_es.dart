@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -2520,6 +2519,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get source => 'Source';
+
+  @override
+  String get something_went_wrong => 'Something went wrong';
+
+  @override
+  String get startup_failed => 'Mangayomi could not finish starting up';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).

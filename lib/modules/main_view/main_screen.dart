@@ -16,6 +16,7 @@ import 'package:mangayomi/modules/more/about/providers/download_file_screen.dart
 import 'package:mangayomi/modules/more/providers/downloaded_only_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
+import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/modules/widgets/loading_icon.dart';
 import 'package:mangayomi/services/fetch_item_sources.dart';
 import 'package:mangayomi/modules/main_view/providers/migration.dart';
@@ -330,7 +331,16 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               );
             },
           ),
-          error: (error, _) => const LoadingIcon(),
+          // A failed migration used to render the loading screen, so the app
+          // sat on a blank splash forever with nothing to act on. Show what
+          // happened and let the user run it again.
+          error: (error, _) => Scaffold(
+            body: ErrorState(
+              message: l10n.startup_failed,
+              detail: error.toString(),
+              onRetry: () => ref.invalidate(migrationProvider),
+            ),
+          ),
           loading: () => const LoadingIcon(),
         );
   }

@@ -4612,6 +4612,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Source'**
   String get source;
+
+  /// No description provided for @something_went_wrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get something_went_wrong;
+
+  /// No description provided for @startup_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Mangayomi could not finish starting up'**
+  String get startup_failed;
 }
 
 class _AppLocalizationsDelegate

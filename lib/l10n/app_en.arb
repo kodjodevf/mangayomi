@@ -912,5 +912,7 @@
   "saved_searches": "Saved searches",
   "enter_search_to_save_first": "Enter a search to save first",
   "no_saved_searches": "No saved searches for this source yet.\nRun a search, then pick \"Save search\".",
-  "source": "Source"
+  "source": "Source",
+  "something_went_wrong": "Something went wrong",
+  "startup_failed": "Mangayomi could not finish starting up"
 }
