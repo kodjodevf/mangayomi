@@ -7,6 +7,7 @@ import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_library_screen.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
+import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/fetch_watch_order.dart';
@@ -92,7 +93,16 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
             : Builder(
                 builder: (context) {
                   if (_errorMessage.isNotEmpty) {
-                    return Center(child: Text(_errorMessage));
+                    return ErrorState(
+                      detail: _errorMessage,
+                      onRetry: () {
+                        setState(() {
+                          _isLoading = true;
+                          _errorMessage = "";
+                        });
+                        _init();
+                      },
+                    );
                   }
                   return isSequels ? _buildSequels() : _buildWatchOrder();
                 },

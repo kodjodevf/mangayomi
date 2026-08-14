@@ -19,6 +19,7 @@ class ErrorState extends StatelessWidget {
     this.detail,
     this.onRetry,
     this.compact = false,
+    this.autofocusRetry,
   });
 
   /// Human readable line. Falls back to a generic message when null.
@@ -34,6 +35,12 @@ class ErrorState extends StatelessWidget {
   /// Tightens the padding for use inside a list or a sheet rather than as a
   /// whole page.
   final bool compact;
+
+  /// Whether the retry button claims focus on a TV. Defaults to taking it,
+  /// since it is usually the only control on the screen. Pass false where the
+  /// route already autofocuses something else, because two widgets competing
+  /// for autofocus in one scope resolve arbitrarily.
+  final bool? autofocusRetry;
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +91,7 @@ class ErrorState extends StatelessWidget {
               FilledButton.tonalIcon(
                 // On a TV there is no pointer, so the only actionable control
                 // on the screen takes focus straight away.
-                autofocus: isTv,
+                autofocus: autofocusRetry ?? isTv,
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh),
                 label: Text(l10n.retry),

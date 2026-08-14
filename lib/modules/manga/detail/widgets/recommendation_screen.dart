@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
+import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/recommendation.dart';
@@ -77,7 +78,16 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
             : Builder(
                 builder: (context) {
                   if (_errorMessage.isNotEmpty) {
-                    return Center(child: Text(_errorMessage));
+                    return ErrorState(
+                      detail: _errorMessage,
+                      onRetry: () {
+                        setState(() {
+                          _isLoading = true;
+                          _errorMessage = "";
+                        });
+                        _init();
+                      },
+                    );
                   }
                   if (data != null && data!.isNotEmpty) {
                     return SuperListView.builder(

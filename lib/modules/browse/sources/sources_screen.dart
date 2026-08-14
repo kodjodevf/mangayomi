@@ -8,6 +8,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/modules/browse/sources/widgets/source_list_tile.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
+import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/modules/widgets/extension_server_warning_banner.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/language.dart';
@@ -284,7 +285,11 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
             ),
           );
         },
-        error: (error, _) => Center(child: Text(error.toString())),
+        error: (error, _) => ErrorState(
+          detail: error.toString(),
+          onRetry: () =>
+              ref.invalidate(getSourcesStreamProvider(widget.itemType)),
+        ),
         loading: () => const Center(child: CircularProgressIndicator()),
       ),
     );
