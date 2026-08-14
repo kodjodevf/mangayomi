@@ -11,6 +11,7 @@ import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_pr
 import 'package:mangayomi/modules/more/settings/reader/reader_screen.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 String _navLayoutName(int index, BuildContext context) {
   final l10n = l10nLocalizations(context)!;
@@ -817,22 +818,22 @@ class _GeneralTab extends ConsumerWidget {
                 );
               },
             ),
-
-            // Fullscreen
-            SwitchListTile(
-              value: fullScreenReader,
-              title: Text(
-                l10n.fullscreen,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyLarge!.color!
-                      .withValues(alpha: 0.9),
-                  fontSize: 14,
+            if (!isMobile)
+              // Fullscreen
+              SwitchListTile(
+                value: fullScreenReader,
+                title: Text(
+                  l10n.fullscreen,
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyLarge!.color!
+                        .withValues(alpha: 0.9),
+                    fontSize: 14,
+                  ),
                 ),
+                onChanged: (value) {
+                  onFullScreenToggle();
+                },
               ),
-              onChanged: (value) {
-                onFullScreenToggle();
-              },
-            ),
 
             // Show Page Numbers
             SwitchListTile(
