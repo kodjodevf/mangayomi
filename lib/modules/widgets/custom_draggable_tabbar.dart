@@ -151,9 +151,7 @@ Future<void> customDraggableTabBar({
                                 labelStyle: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
-                                dividerColor: context.isLight
-                                    ? Colors.black
-                                    : Colors.grey,
+                                dividerColor: Theme.of(context).dividerColor,
                                 dividerHeight: 0.4,
                                 controller: tabBarController,
                                 tabs: tabs,
@@ -170,9 +168,7 @@ Future<void> customDraggableTabBar({
                                       children: [
                                         Flexible(
                                           child: Container(
-                                            color: context.isLight
-                                                ? Colors.black
-                                                : Colors.grey,
+                                            color: Theme.of(context).dividerColor,
                                             height: 0.4,
                                           ),
                                         ),

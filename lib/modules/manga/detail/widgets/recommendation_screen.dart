@@ -2,17 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
+import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/recommendation.dart';
+import 'package:mangayomi/utils/cached_network.dart';
 import 'package:mangayomi/utils/constant.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
-import 'package:marquee/marquee.dart';
-import 'package:photo_view/photo_view.dart';
-import 'package:photo_view/photo_view_gallery.dart';
-import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
+
+/// Covers are 2:3, so a grid of mixed sources does not visibly jitter.
+const double _coverWidth = 96;
+const double _coverHeight = 144;
+
+/// Cover plus the card's vertical padding.
+const double _cardExtent = _coverHeight + 12;
+
+/// One column on a phone, two above this, and never more than two: a third
+/// column turns a scannable list of cover-plus-prose into a wall.
+const double _twoColumnBreakpoint = 700;
+
+/// Tints are an alpha over the theme foreground or the accent, never a fixed
+/// colour, because the palette is chosen at runtime.
+const double _alphaTint = 0.08;
+const double _alphaFocus = 0.14;
+const double _alphaSecondary = 0.70;
 
 class RecommendationScreen extends StatefulWidget {
   final String name;
@@ -70,313 +84,172 @@ class _RecommendationScreenState extends State<RecommendationScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.recommendations)),
-      body: Padding(
-        padding: EdgeInsetsGeometry.all(5),
-        child: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : Builder(
-                builder: (context) {
-                  if (_errorMessage.isNotEmpty) {
-                    return Center(child: Text(_errorMessage));
-                  }
-                  if (data != null && data!.isNotEmpty) {
-                    return SuperListView.builder(
-                      padding: tvPageInsets,
-                      extentPrecalculationPolicy: SuperPrecalculationPolicy(),
-                      itemCount: data!.length,
-                      itemBuilder: (context, index) {
-                        final recommendation = data![index];
-                        return ListTile(
-                          onTap: () => context.push(
-                            '/globalSearch',
-                            extra: (
-                              recommendation.titleEnglish ??
-                                  recommendation.titleRomaji ??
-                                  recommendation.titleNative,
-                              widget.itemType,
-                            ),
-                          ),
-                          title: Row(
-                            children: [
-                              if (recommendation.imgURLs.isNotEmpty)
-                                _thumbnailPreview(
-                                  context,
-                                  recommendation.imgURLs.first,
-                                ),
-                              const SizedBox(width: 15),
-                              recommendation.description != null
-                                  ? Flexible(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          _buildTitle(
-                                            recommendation.titleEnglish ??
-                                                recommendation.titleRomaji ??
-                                                recommendation.titleNative ??
-                                                "",
-                                            context,
-                                          ),
-                                          Text(
-                                            recommendation.description!,
-                                            style: const TextStyle(
-                                              fontSize: 11,
-                                            ),
-                                            overflow: TextOverflow.clip,
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  : Flexible(
-                                      child: _buildTitle(
-                                        recommendation.titleEnglish ??
-                                            recommendation.titleRomaji ??
-                                            recommendation.titleNative ??
-                                            "",
-                                        context,
-                                      ),
-                                    ),
-                            ],
-                          ),
-                          subtitle: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                  ),
-                                  child: recommendation.genres.isEmpty
-                                      ? const SizedBox(height: 15)
-                                      : context.isTablet
-                                      ? Wrap(
-                                          children: [
-                                            for (
-                                              var i = 0;
-                                              i < recommendation.genres.length;
-                                              i++
-                                            )
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                  left: 2,
-                                                  right: 2,
-                                                  bottom: 5,
-                                                ),
-                                                child: SizedBox(
-                                                  height: 30,
-                                                  child: ElevatedButton(
-                                                    style: ElevatedButton.styleFrom(
-                                                      elevation: 0,
-                                                      backgroundColor: Colors
-                                                          .grey
-                                                          .withValues(
-                                                            alpha: 0.2,
-                                                          ),
-                                                      shape: RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              5,
-                                                            ),
-                                                      ),
-                                                    ),
-                                                    onPressed: null,
-                                                    child: Text(
-                                                      recommendation.genres[i],
-                                                      style: TextStyle(
-                                                        fontSize: 11.5,
-                                                        color: context.isLight
-                                                            ? Colors.black
-                                                            : Colors.white,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                          ],
-                                        )
-                                      : SingleChildScrollView(
-                                          scrollDirection: Axis.horizontal,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              for (
-                                                var i = 0;
-                                                i <
-                                                    recommendation
-                                                        .genres
-                                                        .length;
-                                                i++
-                                              )
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                        left: 2,
-                                                        right: 2,
-                                                        bottom: 5,
-                                                      ),
-                                                  child: SizedBox(
-                                                    height: 30,
-                                                    child: ElevatedButton(
-                                                      style: ElevatedButton.styleFrom(
-                                                        elevation: 0,
-                                                        backgroundColor: Colors
-                                                            .grey
-                                                            .withValues(
-                                                              alpha: 0.2,
-                                                            ),
-                                                        shape: RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                5,
-                                                              ),
-                                                        ),
-                                                      ),
-                                                      onPressed: () {},
-                                                      child: Text(
-                                                        recommendation
-                                                            .genres[i],
-                                                        style: TextStyle(
-                                                          fontSize: 11.5,
-                                                          color: context.isLight
-                                                              ? Colors.black
-                                                              : Colors.white,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                            ],
-                                          ),
-                                        ),
-                                ),
-                                const SizedBox(width: 15),
-                                Text(
-                                  "${recommendation.score}% ${l10n.recommendations_similar}",
-                                  style: TextStyle(
-                                    background: Paint()
-                                      ..color = Theme.of(context)
-                                          .scaffoldBackgroundColor
-                                          .withValues(alpha: 0.75)
-                                      ..strokeWidth = 30.0
-                                      ..strokeJoin = StrokeJoin.round
-                                      ..style = PaintingStyle.stroke,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  }
-                  return Center(child: Text(l10n.no_result));
-                },
+      body: _isLoading
+          ? const ProgressCenter()
+          : _errorMessage.isNotEmpty
+          ? ErrorState(
+              detail: _errorMessage,
+              onRetry: () {
+                setState(() {
+                  _isLoading = true;
+                  _errorMessage = "";
+                });
+                _init();
+              },
+            )
+          : (data == null || data!.isEmpty)
+          ? Center(child: Text(l10n.no_result))
+          // Poster list: a cover, the similarity score as a filled pill, the
+          // title, a two-line capped synopsis and genre chips. Rows used to
+          // stretch the full width of a TV or desktop panel; the grid reflows
+          // to two columns instead so they never run into empty space.
+          : LayoutBuilder(
+              builder: (context, constraints) {
+                final columns =
+                    constraints.maxWidth >= _twoColumnBreakpoint ? 2 : 1;
+                return GridView.builder(
+                  padding: tvPageInsets,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: columns,
+                    mainAxisExtent: _cardExtent,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                  ),
+                  itemCount: data!.length,
+                  itemBuilder: (context, index) =>
+                      _card(context, data![index], index),
+                );
+              },
+            ),
+    );
+  }
+
+  Widget _card(BuildContext context, RecommendationResult rec, int index) {
+    final title = rec.titleEnglish ?? rec.titleRomaji ?? rec.titleNative ?? "";
+    final coverUrl = rec.imgURLs.isNotEmpty ? rec.imgURLs.first : "";
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(8),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        // Nothing was focusable on entry, so a remote did nothing until the
+        // user guessed a direction. The first card claims focus on a TV.
+        autofocus: isTv && index == 0,
+        focusColor: context.primaryColor.withValues(alpha: _alphaFocus),
+        onTap: () =>
+            context.push('/globalSearch', extra: (title, widget.itemType)),
+        child: Padding(
+          padding: const EdgeInsets.all(6),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(6),
+                child: Image(
+                  image: coverProvider(toImgUrl(coverUrl)),
+                  width: _coverWidth,
+                  height: _coverHeight,
+                  fit: BoxFit.cover,
+                ),
               ),
-      ),
-    );
-  }
-
-  Widget _buildTitle(String text, BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        // Make sure that (constraints.maxWidth - (35 + 5)) is strictly positive.
-        final double availableWidth = constraints.maxWidth - (35 + 5);
-        final textPainter = TextPainter(
-          text: TextSpan(text: text, style: const TextStyle(fontSize: 13)),
-          maxLines: 1,
-          textDirection: TextDirection.ltr,
-        )..layout(maxWidth: availableWidth > 0 ? availableWidth : 1.0); // - Download icon size (download_page_widget.dart, Widget Build SizedBox width: 35)
-
-        final isOverflowing = textPainter.didExceedMaxLines;
-
-        if (isOverflowing) {
-          return SizedBox(
-            height: 20,
-            child: Marquee(
-              text: text,
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-              blankSpace: 40.0,
-              velocity: 30.0,
-              pauseAfterRound: const Duration(seconds: 1),
-              startPadding: 10.0,
-            ),
-          );
-        } else {
-          return Text(
-            text,
-            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-            overflow: TextOverflow.ellipsis,
-          );
-        }
-      },
-    );
-  }
-
-  Widget _thumbnailPreview(BuildContext context, String? imageUrl) {
-    final imageProvider = CustomExtendedNetworkImageProvider(
-      toImgUrl(imageUrl ?? ""),
-    );
-    return Padding(
-      padding: const EdgeInsets.all(3),
-      child: GestureDetector(
-        onTap: () {
-          _openImage(context, imageProvider);
-        },
-        child: SizedBox(
-          width: 100,
-          height: 150,
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(5)),
-              image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
-            ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _scorePill(context, rec.score),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (rec.description != null &&
+                        rec.description!.isNotEmpty) ...[
+                      const SizedBox(height: 5),
+                      Text(
+                        rec.description!,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 12,
+                          height: 1.35,
+                          color: context.textColor.withValues(
+                            alpha: _alphaSecondary,
+                          ),
+                        ),
+                      ),
+                    ],
+                    if (rec.genres.isNotEmpty) ...[
+                      const SizedBox(height: 7),
+                      Wrap(
+                        spacing: 5,
+                        runSpacing: 4,
+                        children: [
+                          for (final g in rec.genres.take(3)) _chip(context, g),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  void _openImage(BuildContext context, ImageProvider imageProvider) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Scaffold(
-          backgroundColor: Colors.transparent,
-          body: Stack(
-            children: [
-              GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: PhotoViewGallery.builder(
-                  backgroundDecoration: const BoxDecoration(
-                    color: Colors.transparent,
-                  ),
-                  itemCount: 1,
-                  builder: (context, index) {
-                    return PhotoViewGalleryPageOptions(
-                      imageProvider: imageProvider,
-                      minScale: PhotoViewComputedScale.contained,
-                      maxScale: 2.0,
-                    );
-                  },
-                  loadingBuilder: (context, event) {
-                    return const ProgressCenter();
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+  /// Filled with the accent. The label colour is computed against the accent
+  /// rather than the theme, so it stays readable whichever hue the user picked
+  /// and in either brightness.
+  Widget _scorePill(BuildContext context, int score) {
+    final accent = context.primaryColor;
+    final onAccent = accent.computeLuminance() > 0.5
+        ? Colors.black
+        : Colors.white;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: accent,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        "$score%",
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w800,
+          color: onAccent,
+        ),
+      ),
     );
   }
-}
 
-class SuperPrecalculationPolicy extends ExtentPrecalculationPolicy {
-  @override
-  bool shouldPrecalculateExtents(ExtentPrecalculationContext context) {
-    return context.numberOfItems < 100;
+  Widget _chip(BuildContext context, String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+      decoration: BoxDecoration(
+        color: context.textColor.withValues(alpha: _alphaTint),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 11,
+          color: context.textColor.withValues(alpha: _alphaSecondary),
+        ),
+      ),
+    );
   }
 }

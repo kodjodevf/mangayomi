@@ -5,6 +5,7 @@ import 'package:http_interceptor/http_interceptor.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/proto/mihon_extension_store.pb.dart';
 import 'package:mangayomi/models/source.dart';
+import 'package:mangayomi/utils/log/logger.dart';
 
 class ExtensionStoreFetchResult {
   final String name;
@@ -71,7 +72,14 @@ class ExtensionStoreService {
                 return await fetchStore(repoJson['index_v2'] as String, client);
               }
             }
-          } catch (_) {}
+          } catch (e, st) {
+            // Falls through to the legacy parser, so a broken v2 redirect just
+            // looks like an empty repo.
+            AppLogger.log(
+              'fetchStore: index_v2 redirect failed: $e\n$st',
+              logLevel: LogLevel.error,
+            );
+          }
         }
         return _parseLegacyJsonStore(currentUrl, bytes);
       }

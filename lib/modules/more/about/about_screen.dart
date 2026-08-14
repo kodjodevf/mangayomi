@@ -47,7 +47,7 @@ class AboutScreen extends ConsumerWidget {
                   ),
                   Column(
                     children: [
-                      const Divider(color: Colors.grey),
+                      const Divider(),
                       ListTile(
                         onTap: () {},
                         title: const Text('Version'),

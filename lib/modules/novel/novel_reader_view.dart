@@ -22,6 +22,7 @@ import 'package:mangayomi/modules/novel/tts/tts_player_bar.dart';
 import 'package:mangayomi/modules/novel/tts/tts_settings_tab.dart';
 import 'package:mangayomi/modules/novel/widgets/novel_reader_settings_sheet.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
+import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/get_html_content.dart';
 import 'package:mangayomi/src/rust/api/epub.dart';
@@ -776,8 +777,15 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                 context,
                 Center(child: CircularProgressIndicator()),
               ),
-              error: (err, stack) =>
-                  scaffoldWith(context, Center(child: Text(err.toString()))),
+              error: (err, stack) => scaffoldWith(
+                context,
+                ErrorState(
+                  detail: err.toString(),
+                  onRetry: () => ref.invalidate(
+                    getHtmlContentProvider(chapter: widget.chapter),
+                  ),
+                ),
+              ),
             ),
           ),
         ),

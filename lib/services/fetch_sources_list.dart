@@ -12,6 +12,7 @@ import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/isolate_service.dart';
 import 'package:mangayomi/services/extension_store_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:mangayomi/utils/log/logger.dart';
 
 Future<void> fetchSourcesList({
   int? id,
@@ -99,7 +100,13 @@ Future<void> fetchSourcesList({
               .toList();
         }
       }
-    } catch (_) {}
+    } catch (e, st) {
+      // A failure here drops sources from the list with no sign of why.
+      AppLogger.log(
+        'fetchSourcesList: filtering sources failed: $e\n$st',
+        logLevel: LogLevel.error,
+      );
+    }
   }
 
   if (id != null) {

@@ -26,6 +26,7 @@ import 'package:mangayomi/services/supports_latest.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/library/widgets/search_text_form_field.dart';
 import 'package:mangayomi/modules/manga/home/widget/mangas_card_selector.dart';
+import 'package:mangayomi/modules/widgets/cover_grid_skeleton.dart';
 import 'package:mangayomi/modules/widgets/gridview_widget.dart';
 import 'package:mangayomi/modules/widgets/manga_image_card_widget.dart';
 import 'package:mangayomi/utils/global_style.dart';
@@ -707,7 +708,25 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
         ),
       ),
       body: _getManga!.isLoading
-          ? const ProgressCenter()
+          // Fetching a source page is the app's longest routine wait. Lay out
+          // the grid the covers will land in rather than a centred spinner;
+          // the list mode has no fixed cell shape to stand in for, so it keeps
+          // the spinner.
+          ? (displayType == DisplayType.list
+                ? const ProgressCenter()
+                : Consumer(
+                    builder: (context, ref, child) => CoverGridSkeleton(
+                      gridSize: ref.watch(
+                        libraryGridSizeStateProvider(
+                          itemType: source.itemType,
+                        ),
+                      ),
+                      childAspectRatio:
+                          displayType == DisplayType.comfortableGrid
+                          ? 0.642
+                          : 0.69,
+                    ),
+                  ))
           : _getManga!.when(
               data: (data) {
                 if (_hasNextPage) {
@@ -924,9 +943,20 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                       ],
                     ),
                   ),
+                  // This screen keeps its own recovery actions above (refresh
+                  // with the right provider, and a webview for Cloudflare), so
+                  // only the cause is demoted here to match ErrorState.
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text(error.toString(), textAlign: TextAlign.center),
+                    child: Text(
+                      error.toString(),
+                      textAlign: TextAlign.center,
+                      maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: context.textColor.withValues(alpha: 0.7),
+                      ),
+                    ),
                   ),
                 ],
               ),
