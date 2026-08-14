@@ -28,6 +28,10 @@ const double _alphaFocus = 0.14;
 const double _alphaAccentTint = 0.16;
 const double _alphaSecondary = 0.70;
 
+/// Cover height over width. One value for every cover in the rail, so the
+/// current entry differs from the rest in size only, never in shape.
+const double _coverAspect = 1.46;
+
 class WatchOrderScreen extends StatefulWidget {
   final String name;
   final Track? track;
@@ -376,8 +380,15 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
     String? imageUrl, {
     required bool isCurrent,
   }) {
-    final width = isCurrent ? 120.0 : 96.0;
-    final height = isCurrent ? 180.0 : 144.0;
+    // Every cover keeps the same aspect, so none of them crops differently
+    // from the rest. The two sizes used to be 120x174 and 100x146, which are
+    // not quite the same ratio.
+    //
+    // The current entry is only a little larger. The accent ring already marks
+    // it, so the size difference just has to be felt; at the previous 20% it
+    // read as a jump in the rail.
+    final width = isCurrent ? 110.0 : 100.0;
+    final height = width * _coverAspect;
     return Container(
       width: width,
       height: height,
