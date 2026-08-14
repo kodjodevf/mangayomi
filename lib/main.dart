@@ -50,7 +50,6 @@ import 'package:window_manager/window_manager.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter/services.dart' show rootBundle, LogicalKeyboardKey;
 import 'package:mangayomi/utils/window_geometry.dart';
-import 'package:mangayomi/modules/manga/reader/subsampling_scale_image_view/subsampling_scale_image_view.dart';
 import 'package:mangayomi/modules/widgets/app_ui_scale.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/app_ui_scale_state_provider.dart';
 

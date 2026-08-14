@@ -12,61 +12,57 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/modules/manga/detail/tv/tv_anime_detail_view.dart';
-import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/library/library_screen.dart';
+import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/modules/library/providers/library_filter_provider.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
-import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/modules/manga/detail/providers/export_metadata.dart';
-import 'package:mangayomi/modules/manga/detail/providers/track_state_providers.dart';
+import 'package:mangayomi/modules/manga/detail/providers/isar_providers.dart';
+import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
+import 'package:mangayomi/modules/manga/detail/tv/tv_anime_detail_view.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/chapter_list_tile_widget.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/chapter_sort_list_tile_widget.dart';
+import 'package:mangayomi/modules/manga/detail/widgets/readmore.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracker_search_widget.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/tracking_menu.dart';
-import 'package:mangayomi/utils/chapter_recognition.dart';
-import 'package:mangayomi/utils/extensions/manga_extensions.dart';
-import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
+import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
+import 'package:mangayomi/modules/more/categories/providers/isar_providers.dart';
 import 'package:mangayomi/modules/more/providers/algorithm_weights_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/track/widgets/track_listile.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_library_screen.dart';
 import 'package:mangayomi/modules/widgets/bottom_select_bar.dart';
 import 'package:mangayomi/modules/widgets/category_selection_dialog.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
-import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/providers/storage_provider.dart';
-import 'package:mangayomi/utils/extensions/string_extensions.dart';
-import 'package:mangayomi/utils/riverpod.dart';
-import 'package:mangayomi/utils/utils.dart';
-import 'package:mangayomi/utils/cached_network.dart';
-import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
-import 'package:mangayomi/utils/extensions/others.dart';
-import 'package:mangayomi/utils/global_style.dart';
-import 'package:mangayomi/utils/headers.dart';
-import 'package:mangayomi/modules/manga/detail/providers/isar_providers.dart';
-import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
-import 'package:mangayomi/modules/more/categories/providers/isar_providers.dart';
-import 'package:mangayomi/modules/manga/detail/widgets/readmore.dart';
-import 'package:mangayomi/modules/manga/detail/widgets/chapter_filter_list_tile_widget.dart';
-import 'package:mangayomi/modules/manga/detail/widgets/chapter_list_tile_widget.dart';
-import 'package:mangayomi/modules/manga/detail/widgets/chapter_sort_list_tile_widget.dart';
-import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
 import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
+import 'package:mangayomi/modules/widgets/tv_menu.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/utils/cached_network.dart';
+import 'package:mangayomi/utils/chapter_recognition.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
+import 'package:mangayomi/utils/extensions/manga_extensions.dart';
+import 'package:mangayomi/utils/extensions/others.dart';
+import 'package:mangayomi/utils/extensions/string_extensions.dart';
+import 'package:mangayomi/utils/global_style.dart';
+import 'package:mangayomi/utils/headers.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
+import 'package:mangayomi/utils/riverpod.dart';
+import 'package:mangayomi/utils/utils.dart';
+import 'package:path/path.dart' as p;
 import 'package:photo_view/photo_view.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
 import '../../../utils/constant.dart';
-
-import 'package:path/path.dart' as p;
-import 'package:mangayomi/modules/widgets/tv_menu.dart';
 
 class MangaDetailView extends ConsumerStatefulWidget {
   final Function(bool) isExtended;
@@ -165,10 +161,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         try {
           final result = await FilePicker.getDirectoryPath();
           if (result != null) {
-            final client = MClient.init();
-            final coverFile = File(p.join(result, "cover.jpg"));
-            final metadataFile = File(p.join(result, "metadata.json"));
-            final headers = widget.manga!.isLocalArchive!
+            final headers = isLocalArchive
                 ? null
                 : ref.read(
                     headersProvider(
@@ -177,22 +170,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                       sourceId: widget.manga!.sourceId,
                     ),
                   );
-            final imageUrl = toImgUrl(
-              widget.manga!.customCoverFromTracker ??
-                  widget.manga!.imageUrl ??
-                  "",
-            );
-            final res = await client.get(Uri.parse(imageUrl), headers: headers);
-            await coverFile.writeAsBytes(res.bodyBytes);
-            await metadataFile.writeAsString(
-              jsonEncode({
-                "name": widget.manga!.name,
-                "description": widget.manga!.description,
-                "artist": widget.manga!.artist,
-                "author": widget.manga!.author,
-                "genre": widget.manga!.genre,
-                "status": widget.manga!.status.index,
-              }),
+            await exportMangaMetadata(
+              manga: widget.manga!,
+              directory: Directory(result),
+              headers: headers,
             );
             botToast(l10n.exported);
           }
@@ -259,7 +240,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
       ),
     );
   }
-
 
   Future<void> _downloadChaptersWithDestination(
     BuildContext context,
@@ -331,7 +311,6 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
       ),
     );
   }
-
 
   Widget _buildWidget({required List<Chapter> chapters}) {
     final chapterList = ref.watch(chaptersListStateProvider);

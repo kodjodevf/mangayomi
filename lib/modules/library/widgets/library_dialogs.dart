@@ -106,7 +106,7 @@ void showDeleteMangaDialog({
                                 // For local archives the archive file IS the chapter — there is
                                 // nothing to re-download. So we delete the physical files and
                                 // remove all Isar records, mirroring a full library removal.
-                                mangaDirectory = _deleteImport(
+                                mangaDirectory = await _deleteImport(
                                   manga,
                                   mangaDirectory,
                                 );
@@ -189,7 +189,7 @@ void _removeImport(WidgetRef ref, Manga manga) {
 /// Deletes the physical archive files (zip/cbz/mp4/epub) for a local-archive
 /// manga from disk. Returns the parent directory path so the caller can clean
 /// up the now-empty folder afterwards.
-String _deleteImport(Manga manga, String mangaDirectory) {
+Future<String> _deleteImport(Manga manga, String mangaDirectory) async {
   for (var chapter in manga.chapters) {
     final path = chapter.archivePath;
     if (path == null) continue;

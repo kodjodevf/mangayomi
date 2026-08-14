@@ -56,6 +56,6 @@ Map<String, String> headers(
   if (mSource.sourceCodeLanguage != SourceCodeLanguage.mihon) return base;
 
   final headers = Map<String, String>.of(base);
-  headers['user-agent'] = isar.settings.getSync(227)!.userAgent!;
+  headers['user-agent'] = ref.watch(userAgentStateProvider);
   return headers;
 }

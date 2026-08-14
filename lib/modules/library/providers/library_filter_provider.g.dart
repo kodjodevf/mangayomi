@@ -49,7 +49,7 @@ final class DownloadedChapterIdsProvider
 }
 
 String _$downloadedChapterIdsHash() =>
-    r'ff409df987e776e8c150e541c5aa48b1d5f9e9b9';
+    r'2697cdf0c52c2efa41ef00ba4b4af42ad6029100';
 
 /// Pre-fetches all manga IDs that have at least one tracking entry reactively.
 
@@ -199,7 +199,7 @@ final class FilteredLibraryMangaProvider
 }
 
 String _$filteredLibraryMangaHash() =>
-    r'df4bfaf2b66c8161c1c4d7849159d04ffafbd7d2';
+    r'0d24c1464203816fb724873a55b67ad5eb3dbe43';
 
 /// Filters and sorts a list of [Manga] based on library filter/sort settings.
 

@@ -54,15 +54,6 @@ class ChapterPageDownload extends ConsumerWidget {
     }
   }
 
-  void _deleteFile(int downloadId) async {
-    for (final entity in await _downloadedFileEntities()) {
-      try {
-        if (entity.existsSync()) entity.deleteSync(recursive: true);
-      } catch (_) {}
-    }
-    chapter.cancelDownloads(downloadId);
-  }
-
   Future<List<File>> _downloadedFiles() async {
     final files = <File>[];
     for (final entity in await _downloadedFileEntities()) {
@@ -143,6 +134,7 @@ class ChapterPageDownload extends ConsumerWidget {
       ),
     );
   }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = l10nLocalizations(context)!;

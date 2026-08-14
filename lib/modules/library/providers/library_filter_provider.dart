@@ -162,8 +162,7 @@ List<Manga> filteredLibraryManga(
           manga.id: manga.chapters.lastOrNull?.dateUpload ?? "",
       };
       mangas.sort(
-        (a, b) =>
-            (lastUpload[a.id] ?? "").compareTo(lastUpload[b.id] ?? ""),
+        (a, b) => (lastUpload[a.id] ?? "").compareTo(lastUpload[b.id] ?? ""),
       );
     } else {
       mangas.sort((a, b) {

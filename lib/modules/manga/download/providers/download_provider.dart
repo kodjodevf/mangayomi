@@ -381,10 +381,7 @@ Future<void> downloadChapter(
                   headers: videosUrls.first.headers ?? {},
                   subtitles: subtitles,
                   subDownloadDir: subtitleDirectoryBase,
-                  fileName: p.join(
-                    mangaMainDirectory!.path,
-                    "$chapterName.mp4",
-                  ),
+                  fileName: p.join(mangaMainDirectory.path, "$chapterName.mp4"),
                   chapter: chapter,
                 );
               } else {
@@ -463,7 +460,7 @@ Future<void> downloadChapter(
       final downloadRecord = isar.downloads.getSync(chapter.id!);
       if (!(downloadRecord?.isDownload ?? false)) {
         for (final leftover in [
-          File(p.join(mangaMainDirectory!.path, "$chapterName.mp4")),
+          File(p.join(mangaMainDirectory.path, "$chapterName.mp4")),
           File(p.join(mangaMainDirectory.path, "$chapterName.html")),
         ]) {
           if (leftover.existsSync()) {
@@ -474,12 +471,10 @@ Future<void> downloadChapter(
         }
       }
       bool cbzFileExist =
-          (await File(
-                p.join(mangaMainDirectory.path, "${chapter.name}.cbz"),
-              ).exists() ||
-              await File(
-                p.join(mangaMainDirectory.path, "$chapterName.cbz"),
-              ).exists()) &&
+          (await File(p.join(mangaMainDirectory.path, "${chapter.name}.cbz"))
+                  .exists() ||
+              await File(p.join(mangaMainDirectory.path, "$chapterName.cbz"))
+                  .exists()) &&
           ref.read(saveAsCBZArchiveStateProvider);
       bool mp4FileExist = await File(
         p.join(mangaMainDirectory.path, "$chapterName.mp4"),

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -199,7 +200,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   bool isLibSwitch = false;
   @override
   Widget build(BuildContext context) {
-
     ref.listen<Locale>(l10nLocaleStateProvider, (previous, next) {
       _clearCache();
       setState(() {});
