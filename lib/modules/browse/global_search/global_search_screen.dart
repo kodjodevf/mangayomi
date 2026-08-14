@@ -8,7 +8,6 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/migrate_screen.dart';
 import 'package:mangayomi/modules/manga/home/manga_home_screen.dart';
-import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/models/source.dart';
@@ -55,10 +54,25 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
     return sources.where((e) => !(e.isNsfw ?? false)).toList();
   }();
 
+  /// Sources that finished with nothing to show, id to the reason.
+  ///
+  /// They are hidden from the list and gathered into one group at the bottom,
+  /// so the results are not interleaved with a dozen dead extensions.
+  final Map<int, String> _nothingToShow = {};
+
   @override
   void initState() {
     super.initState();
     _textEditingController.text = widget.search ?? "";
+  }
+
+  void _reportNothingToShow(Source source, String reason) {
+    final id = source.id;
+    if (id == null || _nothingToShow[id] == reason) return;
+    // Reported from the child's build, so defer the parent rebuild a frame.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) setState(() => _nothingToShow[id] = reason);
+    });
   }
 
   @override
@@ -98,21 +112,93 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
       ),
       body: _query.isNotEmpty || widget.search != null
           ? SuperListView.builder(
-              itemCount: sourceList.length,
+              // One extra row for the group of sources with nothing to show.
+              itemCount: sourceList.length + 1,
               extentPrecalculationPolicy: SuperPrecalculationPolicy(),
               itemBuilder: (context, index) {
+                if (index == sourceList.length) {
+                  return _nothingToShowGroup(context);
+                }
                 final source = sourceList[index];
-                return SizedBox(
-                  height: 260,
-                  child: SourceSearchScreen(
-                    key: ValueKey(query),
-                    query: query,
-                    source: source,
-                  ),
+                // A source that fails or finds nothing renders nothing here and
+                // reports itself instead, so results are never interleaved with
+                // dead extensions. It stays mounted, so nothing refetches.
+                return SourceSearchScreen(
+                  // Keyed per source as well as per query. They previously all
+                  // shared one key, which is not a valid sibling key.
+                  key: ValueKey('$query#${source.id}'),
+                  query: query,
+                  source: source,
+                  onNothingToShow: (reason) =>
+                      _reportNothingToShow(source, reason),
                 );
               },
             )
           : Container(),
+    );
+  }
+
+  /// Collapsed group of every source that failed or found nothing.
+  ///
+  /// Collapsed by default: it is the part of the screen nobody came for. The
+  /// reason is kept on each row, since it is the only clue about which
+  /// extension is broken.
+  Widget _nothingToShowGroup(BuildContext context) {
+    if (_nothingToShow.isEmpty) return const SizedBox.shrink();
+    final byId = {for (final s in sourceList) s.id: s};
+    final theme = Theme.of(context);
+    return Theme(
+      // Drop the divider lines ExpansionTile draws by default.
+      data: theme.copyWith(dividerColor: Colors.transparent),
+      child: ExpansionTile(
+        dense: true,
+        shape: const Border(),
+        collapsedShape: const Border(),
+        leading: Icon(
+          Icons.error_outline,
+          size: 18,
+          color: context.textColor.withValues(alpha: 0.7),
+        ),
+        title: Text(
+          l10nLocalizations(context)!
+              .sources_with_no_results(_nothingToShow.length),
+          style: TextStyle(
+            fontSize: 13,
+            color: context.textColor.withValues(alpha: 0.7),
+          ),
+        ),
+        children: [
+          for (final entry in _nothingToShow.entries)
+            if (byId[entry.key] != null)
+              ListTile(
+                dense: true,
+                onTap: () => Navigator.push(
+                  context,
+                  createRoute(
+                    page: MangaHomeScreen(
+                      query: _query.isNotEmpty ? _query : widget.search ?? "",
+                      source: byId[entry.key]!,
+                      isSearch: true,
+                    ),
+                  ),
+                ),
+                title: Text(
+                  byId[entry.key]!.name!,
+                  style: const TextStyle(fontSize: 13),
+                ),
+                subtitle: Text(
+                  entry.value,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: context.textColor.withValues(alpha: 0.7),
+                  ),
+                ),
+                trailing: const Icon(Icons.arrow_forward_sharp, size: 18),
+              ),
+        ],
+      ),
     );
   }
 
@@ -127,10 +213,16 @@ class SourceSearchScreen extends ConsumerStatefulWidget {
   final String query;
 
   final Source source;
+
+  /// Called when this source finishes with nothing to show, with the reason.
+  /// The parent gathers these into one collapsed group at the bottom.
+  final void Function(String reason)? onNothingToShow;
+
   const SourceSearchScreen({
     super.key,
     required this.query,
     required this.source,
+    this.onNothingToShow,
   });
 
   @override
@@ -177,73 +269,78 @@ class _SourceSearchScreenState extends ConsumerState<SourceSearchScreen> {
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
 
-    return Scaffold(
-      body: SizedBox(
-        height: 260,
-        child: Column(
-          children: [
-            ListTile(
-              dense: true,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  createRoute(
-                    page: MangaHomeScreen(
-                      query: widget.query,
-                      source: widget.source,
-                      isSearch: true,
-                    ),
+    // A source with nothing to show should not hold a full height slot. Failed
+    // and empty sources collapse to a single line, so the sources that did
+    // return results stay on screen instead of being pushed off by errors.
+    final hasResults =
+        _errorMessage.isEmpty && (pages?.list.isNotEmpty ?? false);
+    final collapsed = !_isLoading && !hasResults;
+
+    // Nothing to show is nothing to show. A source that errored and a source
+    // that returned no match are the same non-event to someone scanning
+    // results, so both are handed to the parent and drawn once, together, at
+    // the bottom rather than each taking a slot in the middle of the results.
+    if (collapsed) {
+      widget.onNothingToShow?.call(
+        _errorMessage.isNotEmpty
+            ? "${l10n.failed} ${_errorMessage.replaceAll(RegExp(r'\s+'), ' ').trim()}"
+            : l10n.no_result,
+      );
+      return const SizedBox.shrink();
+    }
+
+    final header = ListTile(
+      dense: true,
+      onTap: () {
+        Navigator.push(
+          context,
+          createRoute(
+            page: MangaHomeScreen(
+              query: widget.query,
+              source: widget.source,
+              isSearch: true,
+            ),
+          ),
+        );
+      },
+      title: Text(widget.source.name!),
+      subtitle: Text(
+        completeLanguageName(widget.source.lang!),
+        style: const TextStyle(fontSize: 10),
+      ),
+      trailing: const Icon(Icons.arrow_forward_sharp),
+    );
+
+    // A Scaffold per list row was never needed; it also forces the row to
+    // expand, which would defeat the collapse.
+    return SizedBox(
+      height: 260,
+      child: Column(
+        children: [
+          header,
+          // Only loading or results reach here; failures and empty results
+          // returned above as a single header row. No retry: these are almost
+          // always a broken extension returning the same error every time, not
+          // a transient blip, and the header still opens the source.
+          Flexible(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : SuperListView.builder(
+                    extentPrecalculationPolicy: SuperPrecalculationPolicy(),
+                    scrollDirection: Axis.horizontal,
+                    padding: isTv
+                        ? const EdgeInsets.symmetric(horizontal: 8)
+                        : null,
+                    itemCount: pages!.list.length,
+                    itemBuilder: (context, index) {
+                      return MangaGlobalImageCard(
+                        manga: pages!.list[index],
+                        source: widget.source,
+                      );
+                    },
                   ),
-                );
-              },
-              title: Text(widget.source.name!),
-              subtitle: Text(
-                completeLanguageName(widget.source.lang!),
-                style: const TextStyle(fontSize: 10),
-              ),
-              trailing: const Icon(Icons.arrow_forward_sharp),
-            ),
-            Flexible(
-              child: _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : Builder(
-                      builder: (context) {
-                        if (_errorMessage.isNotEmpty) {
-                          return ErrorState(
-                            compact: true,
-                            detail: _errorMessage,
-                            onRetry: () {
-                              setState(() {
-                                _isLoading = true;
-                                _errorMessage = "";
-                              });
-                              _init();
-                            },
-                          );
-                        }
-                        if (pages!.list.isNotEmpty) {
-                          return SuperListView.builder(
-                            extentPrecalculationPolicy:
-                                SuperPrecalculationPolicy(),
-                            scrollDirection: Axis.horizontal,
-                            padding: isTv
-                                ? const EdgeInsets.symmetric(horizontal: 8)
-                                : null,
-                            itemCount: pages!.list.length,
-                            itemBuilder: (context, index) {
-                              return MangaGlobalImageCard(
-                                manga: pages!.list[index],
-                                source: widget.source,
-                              );
-                            },
-                          );
-                        }
-                        return Center(child: Text(l10n.no_result));
-                      },
-                    ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

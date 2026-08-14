@@ -921,5 +921,14 @@
   "no_saved_searches": "No saved searches for this source yet.\nRun a search, then pick \"Save search\".",
   "source": "Source",
   "something_went_wrong": "Something went wrong",
-  "startup_failed": "Mangayomi could not finish starting up"
+  "startup_failed": "Mangayomi could not finish starting up",
+  "sources_with_no_results": "{count, plural, =1{1 source with no results} other{{count} sources with no results}}",
+  "@sources_with_no_results": {
+    "description": "Header of the collapsed group in global search holding every source that failed or found nothing.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

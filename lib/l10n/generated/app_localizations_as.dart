@@ -2524,4 +2524,15 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String get startup_failed => 'Mangayomi could not finish starting up';
+
+  @override
+  String sources_with_no_results(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sources with no results',
+      one: '1 source with no results',
+    );
+    return '$_temp0';
+  }
 }
