@@ -229,56 +229,79 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
                     final item = items[index];
                     final isLast = index == items.length - 1;
                     final isCurrent = item.role == WatchOrderRole.current;
-                    return Material(
-                      // The anchor the timeline opens on, and on TV the row
-                      // the remote lands on. Row 0 would make a mid franchise
-                      // position look like the beginning.
-                      key: isCurrent ? _currentRowKey : null,
-                      color: Colors.transparent,
-                      child: InkWell(
-                        autofocus: isTv && isCurrent,
-                        focusColor: context.primaryColor.withValues(
-                          alpha: _alphaFocus,
-                        ),
-                        onTap: () => _openWatchOrder(item),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Cover, then a short connector stub down to the next
-                              // cover so the chain reads as an ordered rail.
-                              SizedBox(
-                                width: 132,
-                                child: Column(
-                                  children: [
-                                    _cover(
+                    // The focus tint belongs to the entry, not to the rail.
+                    // The connector stub is drawn after the ink surface rather
+                    // than inside it, so the highlight stops at the entry, the
+                    // gap between rows stays readable, and the tint does not
+                    // paint a block over the connector.
+                    return Column(
+                      children: [
+                        Material(
+                          // The anchor the timeline opens on, and on TV the row
+                          // the remote lands on. Row 0 would make a mid
+                          // franchise position look like the beginning.
+                          key: isCurrent ? _currentRowKey : null,
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(12),
+                          clipBehavior: Clip.antiAlias,
+                          child: InkWell(
+                            autofocus: isTv && isCurrent,
+                            borderRadius: BorderRadius.circular(12),
+                            focusColor: context.primaryColor.withValues(
+                              alpha: _alphaFocus,
+                            ),
+                            onTap: () => _openWatchOrder(item),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    width: 132,
+                                    child: _cover(
                                       context,
                                       item.image,
                                       isCurrent: isCurrent,
                                     ),
-                                    if (!isLast)
-                                      Container(
-                                        width: 2,
-                                        height: 22,
-                                        color: context.textColor.withValues(
-                                          alpha: _alphaHairline,
-                                        ),
-                                      ),
-                                  ],
-                                ),
+                                  ),
+                                  const SizedBox(width: 14),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 6),
+                                      child: _timelineBody(context, item),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(width: 14),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 6),
-                                  child: _timelineBody(context, item),
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
+                        // Outside the ink surface, aligned under the cover by
+                        // reusing the same padding and rail width.
+                        if (!isLast)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 132,
+                                  child: Center(
+                                    child: Container(
+                                      width: 2,
+                                      height: 22,
+                                      color: context.textColor.withValues(
+                                        alpha: _alphaHairline,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
                     );
                   },
                 ),
