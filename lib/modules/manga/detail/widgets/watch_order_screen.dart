@@ -60,13 +60,31 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
   /// No offsets are computed here. [Scrollable.ensureVisible] does the
   /// positioning, and it is a no-op both when the current entry is already
   /// first and when the list is too short to scroll at all.
+  ///
+  /// It retries across a few frames rather than trying once. The row has to be
+  /// laid out and the scroll view has to know its extent before this can do
+  /// anything, and neither is guaranteed on the first frame after the data
+  /// arrives: the route may still be animating in. Giving up after one silent
+  /// miss is why this worked on one platform and not another.
   void _anchorOnCurrent() {
     if (_didAnchorOnCurrent) return;
     _didAnchorOnCurrent = true;
+    _tryAnchor(0);
+  }
+
+  void _tryAnchor(int attempt) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       final rowContext = _currentRowKey.currentContext;
-      if (!mounted || rowContext == null) return;
-      Scrollable.ensureVisible(rowContext, alignment: 0.3);
+      final position = rowContext == null
+          ? null
+          : Scrollable.maybeOf(rowContext)?.position;
+      if (position == null || !position.hasContentDimensions) {
+        // Not ready yet. Frames are cheap and this stops within ~10 of them.
+        if (attempt < 10) _tryAnchor(attempt + 1);
+        return;
+      }
+      Scrollable.ensureVisible(rowContext!, alignment: 0.3);
     });
   }
 
