@@ -103,6 +103,7 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
             final updateEntries = <Source>[];
             final installedEntries = <Source>[];
             final notInstalledEntries = <Source>[];
+            var showWarning = false;
 
             for (var element in filteredData) {
               if (repositories
@@ -113,6 +114,9 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
               }
               if (!showNSFW && (element.isNsfw ?? false)) {
                 continue;
+              }
+              if (element.sourceCodeLanguage == SourceCodeLanguage.mihon) {
+                showWarning = true;
               }
               final isLatestVersion = element.version == element.versionLast;
 
@@ -139,9 +143,10 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
               child: CustomScrollView(
                 controller: controller,
                 slivers: [
-                  const SliverToBoxAdapter(
-                    child: ExtensionServerWarningBanner(),
-                  ),
+                  if (showWarning)
+                    const SliverToBoxAdapter(
+                      child: ExtensionServerWarningBanner(),
+                    ),
                   if (updateEntries.isNotEmpty)
                     _buildUpdateSection(updateEntries, l10n),
                   if (installedEntries.isNotEmpty)
