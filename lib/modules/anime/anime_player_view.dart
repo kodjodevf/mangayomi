@@ -843,14 +843,21 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
             : "libmpv",
       ),
     );
-    // Picture-in-Picture (media_kit fork VideoOutputPIP, iOS 15+) is DISABLED:
-    // on iOS 26 the second UIScene that PiP creates re-runs plugin registration
-    // and connectivity_plus segfaults (EXC_BAD_ACCESS in didFinishLaunching).
-    // PiP is only the trigger; the real fix is the UIScene lifecycle migration
-    // (flutter.dev/to/uiscene-migration). Re-enable after that. See closed #757.
-    // if (Platform.isIOS) {
-    //   _controller.enableAutoPictureInPicture();
-    // }
+    // Picture-in-Picture is still off, but the reason has changed.
+    //
+    // It was disabled because the second UIScene PiP creates re-entered
+    // didFinishLaunchingWithOptions and re-ran plugin registration, which
+    // segfaulted connectivity_plus. That cause is now gone: the app is on the
+    // UIScene lifecycle and registration happens once per engine in
+    // didInitializeImplicitFlutterEngine.
+    //
+    // What blocks it now is the media_kit fork. The old call was
+    // `_controller.enableAutoPictureInPicture()`, and that method no longer
+    // exists: the fork moved PiP onto `VideoController.pictureInPicture`, a
+    // PictureInPictureController with `isSupported()` and
+    // `start(handle:, videoSize:, autoEnter:)` taking a native libmpv handle.
+    // Re-enabling means porting to that API and testing on a device, so it is
+    // deliberately left for its own change. See closed #757.
     // If player is being launched the first time,
     // use global "Use Fullscreen" setting.
     // Else (if user already watches an episode and just changes it),
@@ -2154,9 +2161,9 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                   )
                   .toList(),
         ),
-        // PiP button disabled: entering PiP crashes on iOS 26 (see the
-        // enableAutoPictureInPicture note above / closed #757). Re-enable with
-        // the UIScene migration.
+        // PiP button stays off. The UIScene crash that originally disabled it
+        // is fixed, but the media_kit fork moved the API; see the note on
+        // pictureInPicture above and closed #757.
         // if (Platform.isIOS && _controller.isPictureInPictureAvailable())
         //   IconButton(
         //     tooltip: 'Picture in Picture',
