@@ -8,6 +8,7 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/manga/detail/widgets/migrate_screen.dart';
 import 'package:mangayomi/modules/manga/home/manga_home_screen.dart';
+import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/models/source.dart';
@@ -208,7 +209,17 @@ class _SourceSearchScreenState extends ConsumerState<SourceSearchScreen> {
                   : Builder(
                       builder: (context) {
                         if (_errorMessage.isNotEmpty) {
-                          return Center(child: Text(_errorMessage));
+                          return ErrorState(
+                            compact: true,
+                            detail: _errorMessage,
+                            onRetry: () {
+                              setState(() {
+                                _isLoading = true;
+                                _errorMessage = "";
+                              });
+                              _init();
+                            },
+                          );
                         }
                         if (pages!.list.isNotEmpty) {
                           return SuperListView.builder(

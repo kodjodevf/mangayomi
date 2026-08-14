@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 import 'package:photo_view/photo_view.dart';
+import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
@@ -77,8 +78,14 @@ class _MangaReaderViewState extends ConsumerState<MangaReaderView> {
 
     return chapterData.when(
       loading: () => scaffoldWith(context, const ProgressCenter()),
-      error: (error, _) =>
-          scaffoldWith(context, Center(child: Text(error.toString()))),
+      error: (error, _) => scaffoldWith(
+        context,
+        ErrorState(
+          detail: error.toString(),
+          onRetry: () =>
+              ref.invalidate(mangaReaderProvider(widget.chapterId)),
+        ),
+      ),
       data: (data) {
         final chapter = data.chapter;
         final model = data.pages;

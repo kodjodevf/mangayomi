@@ -924,9 +924,20 @@ class _MangaHomeScreenState extends ConsumerState<MangaHomeScreen> {
                       ],
                     ),
                   ),
+                  // This screen keeps its own recovery actions above (refresh
+                  // with the right provider, and a webview for Cloudflare), so
+                  // only the cause is demoted here to match ErrorState.
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text(error.toString(), textAlign: TextAlign.center),
+                    child: Text(
+                      error.toString(),
+                      textAlign: TextAlign.center,
+                      maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: context.textColor.withValues(alpha: 0.7),
+                      ),
+                    ),
                   ),
                 ],
               ),

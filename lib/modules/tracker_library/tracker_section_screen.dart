@@ -8,6 +8,7 @@ import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_library_card.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_library_section.dart';
+import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
@@ -83,7 +84,17 @@ class _TrackerSectionScreenState extends State<TrackerSectionScreen> {
                   : Builder(
                       builder: (context) {
                         if (_errorMessage.isNotEmpty) {
-                          return Center(child: Text(_errorMessage));
+                          return ErrorState(
+                            compact: true,
+                            detail: _errorMessage,
+                            onRetry: () {
+                              setState(() {
+                                _isLoading = true;
+                                _errorMessage = "";
+                              });
+                              _fetchData();
+                            },
+                          );
                         }
                         if (_tracks.isNotEmpty) {
                           return SuperListView.builder(
