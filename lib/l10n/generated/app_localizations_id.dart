@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1353,7 +1354,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get mark_duplicate_chapters_read =>
-      'Mark duplicate chapter numbers as read';
+      'Tandai nomor bab duplikat sebagai dibaca';
 
   @override
   String get default_skip_intro_length => 'Panjang lewati intro default';
@@ -2334,45 +2335,45 @@ class AppLocalizationsId extends AppLocalizations {
   String get webview => 'Tampilan Web';
 
   @override
-  String get tts => 'Text-to-Speech';
+  String get tts => 'Teks ke Suara';
 
   @override
-  String get tts_speed => 'Speed';
+  String get tts_speed => 'Kecepatan';
 
   @override
-  String get tts_pitch => 'Pitch';
+  String get tts_pitch => 'Nada';
 
   @override
-  String get tts_language => 'Language';
+  String get tts_language => 'Bahasa';
 
   @override
-  String get tts_voice => 'Voice';
+  String get tts_voice => 'Suara';
 
   @override
-  String get tts_stop => 'Stop';
+  String get tts_stop => 'Hentikan';
 
   @override
-  String get tts_play => 'Play';
+  String get tts_play => 'Mainkan';
 
   @override
-  String get tts_pause => 'Pause';
+  String get tts_pause => 'Jeda';
 
   @override
-  String get tts_previous => 'Previous paragraph';
+  String get tts_previous => 'Paragraf sebelumnya';
 
   @override
-  String get tts_next => 'Next paragraph';
+  String get tts_next => 'Paragraf berikutnya';
 
   @override
   String tts_paragraph_progress(Object current, Object total) {
-    return 'Paragraph $current of $total';
+    return 'Paragraf $current dari $total';
   }
 
   @override
-  String get tts_settings => 'TTS Settings';
+  String get tts_settings => 'Pengaturan TTS';
 
   @override
-  String get tts_default => 'Default';
+  String get tts_default => 'Bawaan';
 
   @override
   String get webtoon_disable_zoom_out => 'Nonaktifkan perkecil Webtoon';
@@ -2485,41 +2486,42 @@ class AppLocalizationsId extends AppLocalizations {
       'Kesalahan: tidak ada halaman tersedia';
 
   @override
-  String get app_ui_scale => 'Interface scale';
+  String get app_ui_scale => 'Skala antarmuka';
 
   @override
   String get app_ui_scale_subtitle =>
-      'Make the interface larger or smaller to suit your screen and viewing distance.';
+      'Buat antarmuka lebih besar atau lebih kecil agar sesuai dengan layar dan jarak pandang Anda.';
 
   @override
-  String get allow_concurrent_downloads => 'Allow concurrent downloads';
+  String get allow_concurrent_downloads => 'Izinkan pengunduhan bersamaan';
 
   @override
   String get allow_concurrent_downloads_subtitle =>
-      'Download from different sources at the same time. A single source still downloads one chapter at a time so it isn\'t overloaded. Turn off to download one at a time everywhere.';
+      'Unduh dari berbagai sumber pada waktu yang sama. Satu sumber masih mengunduh satu bab pada satu waktu sehingga tidak kelebihan beban. Matikan untuk mengunduh satu per satu di mana-mana.';
 
   @override
-  String get download_delay => 'Download delay';
+  String get download_delay => 'Penundaan pengunduhan';
 
   @override
   String get download_delay_subtitle =>
-      'Off. Add a wait with random jitter between chapters to be gentler on sources.';
+      'Mati. Tambahkan penundaan dengan jitter acak antar bab agar lebih lembut di sumber.';
 
   @override
-  String get save_search => 'Save search';
+  String get save_search => 'Simpan pencarian';
 
   @override
-  String get saved_searches => 'Saved searches';
+  String get saved_searches => 'Pencarian tersimpan';
 
   @override
-  String get enter_search_to_save_first => 'Enter a search to save first';
+  String get enter_search_to_save_first =>
+      'Masukkan pencarian untuk disimpan terlebih dahulu';
 
   @override
   String get no_saved_searches =>
-      'No saved searches for this source yet.\nRun a search, then pick \"Save search\".';
+      'Belum ada pencarian tersimpan untuk sumber ini.\nJalankan pencarian, lalu pilih \"Simpan pencarian\".';
 
   @override
-  String get source => 'Source';
+  String get source => 'Sumber';
 
   @override
   String get something_went_wrong => 'Something went wrong';

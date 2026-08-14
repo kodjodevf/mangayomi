@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1317,8 +1318,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get markEpisodeAsSeenSetting => '标记剧集为已看的时间点';
 
   @override
-  String get mark_duplicate_chapters_read =>
-      'Mark duplicate chapter numbers as read';
+  String get mark_duplicate_chapters_read => '将重复的章节号标记为已读';
 
   @override
   String get default_skip_intro_length => '默认跳过介绍长度';
@@ -2257,45 +2257,45 @@ class AppLocalizationsZh extends AppLocalizations {
   String get webview => 'Webview';
 
   @override
-  String get tts => 'Text-to-Speech';
+  String get tts => '文字转语音';
 
   @override
-  String get tts_speed => 'Speed';
+  String get tts_speed => '速度';
 
   @override
-  String get tts_pitch => 'Pitch';
+  String get tts_pitch => '音调';
 
   @override
-  String get tts_language => 'Language';
+  String get tts_language => '语言';
 
   @override
-  String get tts_voice => 'Voice';
+  String get tts_voice => '语音';
 
   @override
-  String get tts_stop => 'Stop';
+  String get tts_stop => '停止';
 
   @override
-  String get tts_play => 'Play';
+  String get tts_play => '播放';
 
   @override
-  String get tts_pause => 'Pause';
+  String get tts_pause => '暂停';
 
   @override
-  String get tts_previous => 'Previous paragraph';
+  String get tts_previous => '上一段';
 
   @override
-  String get tts_next => 'Next paragraph';
+  String get tts_next => '下一段';
 
   @override
   String tts_paragraph_progress(Object current, Object total) {
-    return 'Paragraph $current of $total';
+    return '第$current段，共$total段';
   }
 
   @override
-  String get tts_settings => 'TTS Settings';
+  String get tts_settings => 'TTS设置';
 
   @override
-  String get tts_default => 'Default';
+  String get tts_default => '默认';
 
   @override
   String get webtoon_disable_zoom_out => 'Webtoon禁用缩小';
@@ -2404,41 +2404,38 @@ class AppLocalizationsZh extends AppLocalizations {
   String get error_no_pages_available => '错误：无可用页面';
 
   @override
-  String get app_ui_scale => 'Interface scale';
+  String get app_ui_scale => '界面缩放';
 
   @override
-  String get app_ui_scale_subtitle =>
-      'Make the interface larger or smaller to suit your screen and viewing distance.';
+  String get app_ui_scale_subtitle => '根据你的屏幕和观看距离，使界面更大或更小。';
 
   @override
-  String get allow_concurrent_downloads => 'Allow concurrent downloads';
+  String get allow_concurrent_downloads => '允许并发下载';
 
   @override
   String get allow_concurrent_downloads_subtitle =>
-      'Download from different sources at the same time. A single source still downloads one chapter at a time so it isn\'t overloaded. Turn off to download one at a time everywhere.';
+      '同时从不同来源下载。单个来源仍然一次下载一个章节，因此不会过载。关闭后，可在任何地方一次下载一个。';
 
   @override
-  String get download_delay => 'Download delay';
+  String get download_delay => '下载延迟';
 
   @override
-  String get download_delay_subtitle =>
-      'Off. Add a wait with random jitter between chapters to be gentler on sources.';
+  String get download_delay_subtitle => '关闭。在章节之间添加随机抖动的等待，以便更温柔地对待来源。';
 
   @override
-  String get save_search => 'Save search';
+  String get save_search => '保存搜索';
 
   @override
-  String get saved_searches => 'Saved searches';
+  String get saved_searches => '已保存的搜索';
 
   @override
-  String get enter_search_to_save_first => 'Enter a search to save first';
+  String get enter_search_to_save_first => '先输入搜索进行保存';
 
   @override
-  String get no_saved_searches =>
-      'No saved searches for this source yet.\nRun a search, then pick \"Save search\".';
+  String get no_saved_searches => '此来源还没有保存的搜索。\n执行搜索，然后选择\"保存搜索\"。';
 
   @override
-  String get source => 'Source';
+  String get source => '来源';
 
   @override
   String get something_went_wrong => 'Something went wrong';

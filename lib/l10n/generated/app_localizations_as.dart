@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1350,7 +1351,7 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String get mark_duplicate_chapters_read =>
-      'Mark duplicate chapter numbers as read';
+      'অনুলিপি অধ্যায় সংখ্যা পড়া হিসাবে চিহ্নিত করুন';
 
   @override
   String get default_skip_intro_length => 'ডিফল্ট ইনট্ৰ\' এৰি দিয়াৰ দৈৰ্ঘ্য';
@@ -2332,45 +2333,45 @@ class AppLocalizationsAs extends AppLocalizations {
   String get webview => 'Webview';
 
   @override
-  String get tts => 'Text-to-Speech';
+  String get tts => 'পাঠ্য-থেকে-বক্তৃতা';
 
   @override
-  String get tts_speed => 'Speed';
+  String get tts_speed => 'গতি';
 
   @override
-  String get tts_pitch => 'Pitch';
+  String get tts_pitch => 'পিচ';
 
   @override
-  String get tts_language => 'Language';
+  String get tts_language => 'ভাষা';
 
   @override
-  String get tts_voice => 'Voice';
+  String get tts_voice => 'কণ্ঠস্বর';
 
   @override
-  String get tts_stop => 'Stop';
+  String get tts_stop => 'বন্ধ করুন';
 
   @override
-  String get tts_play => 'Play';
+  String get tts_play => 'চালান';
 
   @override
-  String get tts_pause => 'Pause';
+  String get tts_pause => 'বিরাম';
 
   @override
-  String get tts_previous => 'Previous paragraph';
+  String get tts_previous => 'আগের অনুচ্ছেদ';
 
   @override
-  String get tts_next => 'Next paragraph';
+  String get tts_next => 'পরবর্তী অনুচ্ছেদ';
 
   @override
   String tts_paragraph_progress(Object current, Object total) {
-    return 'Paragraph $current of $total';
+    return 'অনুচ্ছেদ $current / $total';
   }
 
   @override
-  String get tts_settings => 'TTS Settings';
+  String get tts_settings => 'TTS সেটিংস';
 
   @override
-  String get tts_default => 'Default';
+  String get tts_default => 'ডিফল্ট';
 
   @override
   String get webtoon_disable_zoom_out => 'Webtoon disable zoom out';
@@ -2481,41 +2482,42 @@ class AppLocalizationsAs extends AppLocalizations {
   String get error_no_pages_available => 'Error: no pages available';
 
   @override
-  String get app_ui_scale => 'Interface scale';
+  String get app_ui_scale => 'ইন্টারফেস স্কেল';
 
   @override
   String get app_ui_scale_subtitle =>
-      'Make the interface larger or smaller to suit your screen and viewing distance.';
+      'আপনার স্ক্রীন এবং দেখার দূরত্বের সাথে মানানসই করতে ইন্টারফেসটি বড় বা ছোট করুন।';
 
   @override
-  String get allow_concurrent_downloads => 'Allow concurrent downloads';
+  String get allow_concurrent_downloads => 'একযোগে ডাউনলোড অনুমতি দিন';
 
   @override
   String get allow_concurrent_downloads_subtitle =>
-      'Download from different sources at the same time. A single source still downloads one chapter at a time so it isn\'t overloaded. Turn off to download one at a time everywhere.';
+      'বিভিন্ন উত্স থেকে একই সাথে ডাউনলোড করুন। একটি একক উত্স এখনও এক সময়ে একটি অধ্যায় ডাউনলোড করে তাই এটি অপ্রতিরোধ্য নয়। সর্বত্র একবারে ডাউনলোড করতে বন্ধ করুন।';
 
   @override
-  String get download_delay => 'Download delay';
+  String get download_delay => 'ডাউনলোড বিলম্ব';
 
   @override
   String get download_delay_subtitle =>
-      'Off. Add a wait with random jitter between chapters to be gentler on sources.';
+      'বন্ধ। উত্সগুলির উপর আরও নম্র হতে অধ্যায়গুলির মধ্যে র্যান্ডম জিটার সহ একটি অপেক্ষা যোগ করুন।';
 
   @override
-  String get save_search => 'Save search';
+  String get save_search => 'অনুসন্ধান সংরক্ষণ করুন';
 
   @override
-  String get saved_searches => 'Saved searches';
+  String get saved_searches => 'সংরক্ষিত অনুসন্ধান';
 
   @override
-  String get enter_search_to_save_first => 'Enter a search to save first';
+  String get enter_search_to_save_first =>
+      'প্রথম সংরক্ষণ করতে একটি অনুসন্ধান লিখুন';
 
   @override
   String get no_saved_searches =>
-      'No saved searches for this source yet.\nRun a search, then pick \"Save search\".';
+      'এই উত্সের জন্য এখনও কোনও সংরক্ষিত অনুসন্ধান নেই।\nএকটি অনুসন্ধান চালান, তারপরে \"অনুসন্ধান সংরক্ষণ করুন\" বেছে নিন।';
 
   @override
-  String get source => 'Source';
+  String get source => 'উত্স';
 
   @override
   String get something_went_wrong => 'Something went wrong';

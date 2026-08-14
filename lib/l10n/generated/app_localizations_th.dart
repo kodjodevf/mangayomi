@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1349,7 +1350,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get mark_duplicate_chapters_read =>
-      'Mark duplicate chapter numbers as read';
+      'ทำเครื่องหมายหมายเลขบทที่ซ้ำกันว่าอ่านแล้ว';
 
   @override
   String get default_skip_intro_length => 'ค่าพื้นฐานความยาวการเข้าอินโทร';
@@ -2325,45 +2326,45 @@ class AppLocalizationsTh extends AppLocalizations {
   String get webview => 'Webview';
 
   @override
-  String get tts => 'Text-to-Speech';
+  String get tts => 'ข้อความเป็นเสียง';
 
   @override
-  String get tts_speed => 'Speed';
+  String get tts_speed => 'ความเร็ว';
 
   @override
-  String get tts_pitch => 'Pitch';
+  String get tts_pitch => 'เสียง';
 
   @override
-  String get tts_language => 'Language';
+  String get tts_language => 'ภาษา';
 
   @override
-  String get tts_voice => 'Voice';
+  String get tts_voice => 'เสียง';
 
   @override
-  String get tts_stop => 'Stop';
+  String get tts_stop => 'หยุด';
 
   @override
-  String get tts_play => 'Play';
+  String get tts_play => 'เล่น';
 
   @override
-  String get tts_pause => 'Pause';
+  String get tts_pause => 'ชั่วพัก';
 
   @override
-  String get tts_previous => 'Previous paragraph';
+  String get tts_previous => 'ย่อหน้าก่อนหน้า';
 
   @override
-  String get tts_next => 'Next paragraph';
+  String get tts_next => 'ย่อหน้าถัดไป';
 
   @override
   String tts_paragraph_progress(Object current, Object total) {
-    return 'Paragraph $current of $total';
+    return 'ย่อหน้า $current จาก $total';
   }
 
   @override
-  String get tts_settings => 'TTS Settings';
+  String get tts_settings => 'การตั้งค่า TTS';
 
   @override
-  String get tts_default => 'Default';
+  String get tts_default => 'ค่าเริ่มต้น';
 
   @override
   String get webtoon_disable_zoom_out => 'ปิดการใช้งานการซูมออกสำหรับเว็บตูน';
@@ -2476,41 +2477,41 @@ class AppLocalizationsTh extends AppLocalizations {
       'เกิดข้อผิดพลาด: ไม่มีหน้าที่พร้อมใช้งาน';
 
   @override
-  String get app_ui_scale => 'Interface scale';
+  String get app_ui_scale => 'สเกลอินเทอร์เฟซ';
 
   @override
   String get app_ui_scale_subtitle =>
-      'Make the interface larger or smaller to suit your screen and viewing distance.';
+      'ทำให้อินเทอร์เฟซใหญ่ขึ้นหรือเล็กลงเพื่อให้เหมาะกับหน้าจอและระยะการมองของคุณ';
 
   @override
-  String get allow_concurrent_downloads => 'Allow concurrent downloads';
+  String get allow_concurrent_downloads => 'อนุญาตให้ดาวน์โหลดพร้อมกัน';
 
   @override
   String get allow_concurrent_downloads_subtitle =>
-      'Download from different sources at the same time. A single source still downloads one chapter at a time so it isn\'t overloaded. Turn off to download one at a time everywhere.';
+      'ดาวน์โหลดจากแหล่งที่มาต่างๆในเวลาเดียวกัน แหล่งที่มาเดียวจะยังคงดาวน์โหลดหนึ่งบทในครั้งเดียวเพื่อไม่ให้โอเวอร์โหลด ปิดเพื่อดาวน์โหลดทีละอันทุกที่';
 
   @override
-  String get download_delay => 'Download delay';
+  String get download_delay => 'ความล่าช้าในการดาวน์โหลด';
 
   @override
   String get download_delay_subtitle =>
-      'Off. Add a wait with random jitter between chapters to be gentler on sources.';
+      'ปิด เพิ่มการรอคอยพร้อมกับการสั่นสะเทือนแบบสุ่มระหว่างบทเพื่อให้นุ่มนวลกับแหล่งที่มา';
 
   @override
-  String get save_search => 'Save search';
+  String get save_search => 'บันทึกการค้นหา';
 
   @override
-  String get saved_searches => 'Saved searches';
+  String get saved_searches => 'การค้นหาที่บันทึกไว้';
 
   @override
-  String get enter_search_to_save_first => 'Enter a search to save first';
+  String get enter_search_to_save_first => 'ป้อนการค้นหาเพื่อบันทึกก่อน';
 
   @override
   String get no_saved_searches =>
-      'No saved searches for this source yet.\nRun a search, then pick \"Save search\".';
+      'ไม่มีการค้นหาที่บันทึกไว้สำหรับแหล่งที่มานี้เพื่อ\nทำการค้นหาแล้วเลือก \"บันทึกการค้นหา\"';
 
   @override
-  String get source => 'Source';
+  String get source => 'แหล่งที่มา';
 
   @override
   String get something_went_wrong => 'Something went wrong';

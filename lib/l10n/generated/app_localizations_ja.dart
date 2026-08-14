@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1333,8 +1334,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get markEpisodeAsSeenSetting => 'エピソードを視聴済みにするタイミング';
 
   @override
-  String get mark_duplicate_chapters_read =>
-      'Mark duplicate chapter numbers as read';
+  String get mark_duplicate_chapters_read => '重複する章番号を読済みとしてマーク';
 
   @override
   String get default_skip_intro_length => 'デフォルトイントロスキップ長';
@@ -2295,45 +2295,45 @@ class AppLocalizationsJa extends AppLocalizations {
   String get webview => 'Webview';
 
   @override
-  String get tts => 'Text-to-Speech';
+  String get tts => 'テキスト読み上げ';
 
   @override
-  String get tts_speed => 'Speed';
+  String get tts_speed => '速度';
 
   @override
-  String get tts_pitch => 'Pitch';
+  String get tts_pitch => 'ピッチ';
 
   @override
-  String get tts_language => 'Language';
+  String get tts_language => '言語';
 
   @override
-  String get tts_voice => 'Voice';
+  String get tts_voice => 'ボイス';
 
   @override
-  String get tts_stop => 'Stop';
+  String get tts_stop => '停止';
 
   @override
-  String get tts_play => 'Play';
+  String get tts_play => '再生';
 
   @override
-  String get tts_pause => 'Pause';
+  String get tts_pause => '一時停止';
 
   @override
-  String get tts_previous => 'Previous paragraph';
+  String get tts_previous => '前の段落';
 
   @override
-  String get tts_next => 'Next paragraph';
+  String get tts_next => '次の段落';
 
   @override
   String tts_paragraph_progress(Object current, Object total) {
-    return 'Paragraph $current of $total';
+    return '段落$current/$total';
   }
 
   @override
-  String get tts_settings => 'TTS Settings';
+  String get tts_settings => 'TTS設定';
 
   @override
-  String get tts_default => 'Default';
+  String get tts_default => 'デフォルト';
 
   @override
   String get webtoon_disable_zoom_out => 'Webtoonの縮小を無効化';
@@ -2442,38 +2442,38 @@ class AppLocalizationsJa extends AppLocalizations {
   String get error_no_pages_available => 'エラー：利用可能なページがありません';
 
   @override
-  String get app_ui_scale => 'Interface scale';
+  String get app_ui_scale => 'インターフェーススケール';
 
   @override
   String get app_ui_scale_subtitle =>
-      'Make the interface larger or smaller to suit your screen and viewing distance.';
+      'インターフェースをお使いのスクリーンと視聴距離に合わせて大きくまたは小さくします。';
 
   @override
-  String get allow_concurrent_downloads => 'Allow concurrent downloads';
+  String get allow_concurrent_downloads => '同時ダウンロードを許可';
 
   @override
   String get allow_concurrent_downloads_subtitle =>
-      'Download from different sources at the same time. A single source still downloads one chapter at a time so it isn\'t overloaded. Turn off to download one at a time everywhere.';
+      '異なるソースから同時にダウンロードします。1つのソースは依然として一度に1つの章をダウンロードするため、過負荷になりません。すべての場所で1つずつダウンロードするには、オフにしてください。';
 
   @override
-  String get download_delay => 'Download delay';
+  String get download_delay => 'ダウンロード遅延';
 
   @override
   String get download_delay_subtitle =>
-      'Off. Add a wait with random jitter between chapters to be gentler on sources.';
+      'オフ。ソースに優しくするために、章間にランダムジッターを伴う待機を追加します。';
 
   @override
-  String get save_search => 'Save search';
+  String get save_search => '検索を保存';
 
   @override
-  String get saved_searches => 'Saved searches';
+  String get saved_searches => '保存済み検索';
 
   @override
-  String get enter_search_to_save_first => 'Enter a search to save first';
+  String get enter_search_to_save_first => 'まず検索を入力して保存してください';
 
   @override
   String get no_saved_searches =>
-      'No saved searches for this source yet.\nRun a search, then pick \"Save search\".';
+      'このソースの保存済み検索はまだありません。\n検索を実行してから、「検索を保存」を選択してください。';
 
   @override
   String get source => 'ソース';

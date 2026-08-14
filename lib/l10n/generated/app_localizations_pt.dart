@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1357,7 +1358,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get mark_duplicate_chapters_read =>
-      'Mark duplicate chapter numbers as read';
+      'Marcar números de capítulos duplicados como lidos';
 
   @override
   String get default_skip_intro_length =>
@@ -2351,45 +2352,45 @@ class AppLocalizationsPt extends AppLocalizations {
   String get webview => 'Webview';
 
   @override
-  String get tts => 'Text-to-Speech';
+  String get tts => 'Conversão de texto em fala';
 
   @override
-  String get tts_speed => 'Speed';
+  String get tts_speed => 'Velocidade';
 
   @override
-  String get tts_pitch => 'Pitch';
+  String get tts_pitch => 'Tom';
 
   @override
-  String get tts_language => 'Language';
+  String get tts_language => 'Linguagem';
 
   @override
-  String get tts_voice => 'Voice';
+  String get tts_voice => 'Voz';
 
   @override
-  String get tts_stop => 'Stop';
+  String get tts_stop => 'Parar';
 
   @override
-  String get tts_play => 'Play';
+  String get tts_play => 'Reproduzir';
 
   @override
-  String get tts_pause => 'Pause';
+  String get tts_pause => 'Pausa';
 
   @override
-  String get tts_previous => 'Previous paragraph';
+  String get tts_previous => 'Parágrafo anterior';
 
   @override
-  String get tts_next => 'Next paragraph';
+  String get tts_next => 'Próximo parágrafo';
 
   @override
   String tts_paragraph_progress(Object current, Object total) {
-    return 'Paragraph $current of $total';
+    return 'Parágrafo $current de $total';
   }
 
   @override
-  String get tts_settings => 'TTS Settings';
+  String get tts_settings => 'Configurações de TTS';
 
   @override
-  String get tts_default => 'Default';
+  String get tts_default => 'Padrão';
 
   @override
   String get webtoon_disable_zoom_out => 'Desativar zoom out do Webtoon';
@@ -2501,41 +2502,42 @@ class AppLocalizationsPt extends AppLocalizations {
   String get error_no_pages_available => 'Erro: nenhuma página disponível';
 
   @override
-  String get app_ui_scale => 'Interface scale';
+  String get app_ui_scale => 'Escala de interface';
 
   @override
   String get app_ui_scale_subtitle =>
-      'Make the interface larger or smaller to suit your screen and viewing distance.';
+      'Torne a interface maior ou menor para se adequar à sua tela e distância de visualização.';
 
   @override
-  String get allow_concurrent_downloads => 'Allow concurrent downloads';
+  String get allow_concurrent_downloads => 'Permitir downloads simultâneos';
 
   @override
   String get allow_concurrent_downloads_subtitle =>
-      'Download from different sources at the same time. A single source still downloads one chapter at a time so it isn\'t overloaded. Turn off to download one at a time everywhere.';
+      'Baixe de diferentes fontes ao mesmo tempo. Uma única fonte ainda baixa um capítulo por vez para que não seja sobrecarregada. Desative para fazer download um por vez em todos os lugares.';
 
   @override
-  String get download_delay => 'Download delay';
+  String get download_delay => 'Atraso de download';
 
   @override
   String get download_delay_subtitle =>
-      'Off. Add a wait with random jitter between chapters to be gentler on sources.';
+      'Desativado. Adicione uma espera com jitter aleatório entre os capítulos para ser mais gentil nas fontes.';
 
   @override
-  String get save_search => 'Save search';
+  String get save_search => 'Salvar pesquisa';
 
   @override
-  String get saved_searches => 'Saved searches';
+  String get saved_searches => 'Pesquisas salvas';
 
   @override
-  String get enter_search_to_save_first => 'Enter a search to save first';
+  String get enter_search_to_save_first =>
+      'Digite uma pesquisa para salvar primeiro';
 
   @override
   String get no_saved_searches =>
-      'No saved searches for this source yet.\nRun a search, then pick \"Save search\".';
+      'Nenhuma pesquisa salva para esta fonte ainda.\nExecute uma pesquisa e escolha \"Salvar pesquisa\".';
 
   @override
-  String get source => 'Source';
+  String get source => 'Fonte';
 
   @override
   String get something_went_wrong => 'Something went wrong';
@@ -3896,6 +3898,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
       'Em que ponto marcar o episódio como visto';
 
   @override
+  String get mark_duplicate_chapters_read =>
+      'Marcar números de capítulos duplicados como lidos';
+
+  @override
   String get default_skip_intro_length =>
       'Duração padrão para pular a introdução';
 
@@ -4866,6 +4872,47 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get webview => 'Webview';
 
   @override
+  String get tts => 'Conversão de texto em fala';
+
+  @override
+  String get tts_speed => 'Velocidade';
+
+  @override
+  String get tts_pitch => 'Tom';
+
+  @override
+  String get tts_language => 'Linguagem';
+
+  @override
+  String get tts_voice => 'Voz';
+
+  @override
+  String get tts_stop => 'Parar';
+
+  @override
+  String get tts_play => 'Reproduzir';
+
+  @override
+  String get tts_pause => 'Pausa';
+
+  @override
+  String get tts_previous => 'Parágrafo anterior';
+
+  @override
+  String get tts_next => 'Próximo parágrafo';
+
+  @override
+  String tts_paragraph_progress(Object current, Object total) {
+    return 'Parágrafo $current de $total';
+  }
+
+  @override
+  String get tts_settings => 'Configurações de TTS';
+
+  @override
+  String get tts_default => 'Padrão';
+
+  @override
   String get webtoon_disable_zoom_out => 'Desativar zoom out do Webtoon';
 
   @override
@@ -4973,4 +5020,42 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get error_no_pages_available => 'Erro: nenhuma página disponível';
+
+  @override
+  String get app_ui_scale => 'Escala de interface';
+
+  @override
+  String get app_ui_scale_subtitle =>
+      'Torne a interface maior ou menor para se adequar à sua tela e distância de visualização.';
+
+  @override
+  String get allow_concurrent_downloads => 'Permitir downloads simultâneos';
+
+  @override
+  String get allow_concurrent_downloads_subtitle =>
+      'Baixe de diferentes fontes ao mesmo tempo. Uma única fonte ainda baixa um capítulo por vez para que não seja sobrecarregada. Desative para fazer download um por vez em todos os lugares.';
+
+  @override
+  String get download_delay => 'Atraso de download';
+
+  @override
+  String get download_delay_subtitle =>
+      'Desativado. Adicione uma espera com jitter aleatório entre os capítulos para ser mais gentil nas fontes.';
+
+  @override
+  String get save_search => 'Salvar pesquisa';
+
+  @override
+  String get saved_searches => 'Pesquisas salvas';
+
+  @override
+  String get enter_search_to_save_first =>
+      'Digite uma pesquisa para salvar primeiro';
+
+  @override
+  String get no_saved_searches =>
+      'Nenhuma pesquisa salva para esta fonte ainda.\nExecute uma pesquisa e escolha \"Salvar pesquisa\".';
+
+  @override
+  String get source => 'Fonte';
 }

@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1354,7 +1355,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get mark_duplicate_chapters_read =>
-      'Mark duplicate chapter numbers as read';
+      'Doppelte Kapitelnummern als gelesen markieren';
 
   @override
   String get default_skip_intro_length =>
@@ -2349,42 +2350,42 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tts => 'Text-to-Speech';
 
   @override
-  String get tts_speed => 'Speed';
+  String get tts_speed => 'Geschwindigkeit';
 
   @override
-  String get tts_pitch => 'Pitch';
+  String get tts_pitch => 'Tonhöhe';
 
   @override
-  String get tts_language => 'Language';
+  String get tts_language => 'Sprache';
 
   @override
-  String get tts_voice => 'Voice';
+  String get tts_voice => 'Stimme';
 
   @override
-  String get tts_stop => 'Stop';
+  String get tts_stop => 'Stopp';
 
   @override
-  String get tts_play => 'Play';
+  String get tts_play => 'Wiedergabe';
 
   @override
   String get tts_pause => 'Pause';
 
   @override
-  String get tts_previous => 'Previous paragraph';
+  String get tts_previous => 'Vorheriger Absatz';
 
   @override
-  String get tts_next => 'Next paragraph';
+  String get tts_next => 'Nächster Absatz';
 
   @override
   String tts_paragraph_progress(Object current, Object total) {
-    return 'Paragraph $current of $total';
+    return 'Absatz $current von $total';
   }
 
   @override
-  String get tts_settings => 'TTS Settings';
+  String get tts_settings => 'TTS-Einstellungen';
 
   @override
-  String get tts_default => 'Default';
+  String get tts_default => 'Standard';
 
   @override
   String get webtoon_disable_zoom_out => 'Webtoon-Herauszoomen deaktivieren';
@@ -2496,41 +2497,42 @@ class AppLocalizationsDe extends AppLocalizations {
   String get error_no_pages_available => 'Fehler: Keine Seiten verfügbar';
 
   @override
-  String get app_ui_scale => 'Interface scale';
+  String get app_ui_scale => 'Schnittstellenskalierung';
 
   @override
   String get app_ui_scale_subtitle =>
-      'Make the interface larger or smaller to suit your screen and viewing distance.';
+      'Passen Sie die Schnittstelle Ihrer Bildschirmgröße und Betrachtungsentfernung an.';
 
   @override
-  String get allow_concurrent_downloads => 'Allow concurrent downloads';
+  String get allow_concurrent_downloads => 'Gleichzeitige Downloads erlauben';
 
   @override
   String get allow_concurrent_downloads_subtitle =>
-      'Download from different sources at the same time. A single source still downloads one chapter at a time so it isn\'t overloaded. Turn off to download one at a time everywhere.';
+      'Laden Sie gleichzeitig von verschiedenen Quellen herunter. Eine einzelne Quelle lädt immer noch ein Kapitel auf einmal herunter, um nicht überfordert zu werden. Deaktivieren Sie diese Option, um überall einzeln herunterzuladen.';
 
   @override
-  String get download_delay => 'Download delay';
+  String get download_delay => 'Download-Verzögerung';
 
   @override
   String get download_delay_subtitle =>
-      'Off. Add a wait with random jitter between chapters to be gentler on sources.';
+      'Aus. Fügen Sie zwischen den Kapiteln eine Wartezeit mit zufälliger Jitter hinzu, um Quellen sanfter zu behandeln.';
 
   @override
-  String get save_search => 'Save search';
+  String get save_search => 'Suche speichern';
 
   @override
-  String get saved_searches => 'Saved searches';
+  String get saved_searches => 'Gespeicherte Suchen';
 
   @override
-  String get enter_search_to_save_first => 'Enter a search to save first';
+  String get enter_search_to_save_first =>
+      'Geben Sie zuerst eine Suche ein, um sie zu speichern';
 
   @override
   String get no_saved_searches =>
-      'No saved searches for this source yet.\nRun a search, then pick \"Save search\".';
+      'Für diese Quelle gibt es noch keine gespeicherten Suchen.\nFühren Sie eine Suche durch und wählen Sie dann \"Suche speichern\".';
 
   @override
-  String get source => 'Source';
+  String get source => 'Quelle';
 
   @override
   String get something_went_wrong => 'Something went wrong';

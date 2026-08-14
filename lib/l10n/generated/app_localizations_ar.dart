@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1363,7 +1364,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get mark_duplicate_chapters_read =>
-      'Mark duplicate chapter numbers as read';
+      'ضع علامة على أرقام الفصول المكررة كمقروءة';
 
   @override
   String get default_skip_intro_length => 'طول تخطي المقدمة الافتراضي';
@@ -2333,45 +2334,45 @@ class AppLocalizationsAr extends AppLocalizations {
   String get webview => 'عرض الويب';
 
   @override
-  String get tts => 'Text-to-Speech';
+  String get tts => 'تحويل النص إلى كلام';
 
   @override
-  String get tts_speed => 'Speed';
+  String get tts_speed => 'السرعة';
 
   @override
-  String get tts_pitch => 'Pitch';
+  String get tts_pitch => 'التيمبر';
 
   @override
-  String get tts_language => 'Language';
+  String get tts_language => 'اللغة';
 
   @override
-  String get tts_voice => 'Voice';
+  String get tts_voice => 'الصوت';
 
   @override
-  String get tts_stop => 'Stop';
+  String get tts_stop => 'إيقاف';
 
   @override
-  String get tts_play => 'Play';
+  String get tts_play => 'تشغيل';
 
   @override
-  String get tts_pause => 'Pause';
+  String get tts_pause => 'إيقاف مؤقت';
 
   @override
-  String get tts_previous => 'Previous paragraph';
+  String get tts_previous => 'الفقرة السابقة';
 
   @override
-  String get tts_next => 'Next paragraph';
+  String get tts_next => 'الفقرة التالية';
 
   @override
   String tts_paragraph_progress(Object current, Object total) {
-    return 'Paragraph $current of $total';
+    return 'الفقرة $current من $total';
   }
 
   @override
-  String get tts_settings => 'TTS Settings';
+  String get tts_settings => 'إعدادات TTS';
 
   @override
-  String get tts_default => 'Default';
+  String get tts_default => 'افتراضي';
 
   @override
   String get webtoon_disable_zoom_out => 'تعطيل التصغير في الويب تون';
@@ -2481,41 +2482,41 @@ class AppLocalizationsAr extends AppLocalizations {
   String get error_no_pages_available => 'خطأ: لا توجد صفحات متاحة';
 
   @override
-  String get app_ui_scale => 'Interface scale';
+  String get app_ui_scale => 'حجم الواجهة';
 
   @override
   String get app_ui_scale_subtitle =>
-      'Make the interface larger or smaller to suit your screen and viewing distance.';
+      'اجعل الواجهة أكبر أو أصغر لتناسب شاشتك ومسافة المشاهدة.';
 
   @override
-  String get allow_concurrent_downloads => 'Allow concurrent downloads';
+  String get allow_concurrent_downloads => 'السماح بالتنزيلات المتزامنة';
 
   @override
   String get allow_concurrent_downloads_subtitle =>
-      'Download from different sources at the same time. A single source still downloads one chapter at a time so it isn\'t overloaded. Turn off to download one at a time everywhere.';
+      'قم بالتنزيل من مصادر مختلفة في نفس الوقت. يقوم مصدر واحد فقط بتنزيل فصل واحد في المرة حتى لا يتم الإرهاق. أطفئها للتنزيل واحدة تلو الأخرى في كل مكان.';
 
   @override
-  String get download_delay => 'Download delay';
+  String get download_delay => 'تأخير التنزيل';
 
   @override
   String get download_delay_subtitle =>
-      'Off. Add a wait with random jitter between chapters to be gentler on sources.';
+      'إيقاف. أضف انتظارًا مع اهتزاز عشوائي بين الفصول لتكون أكثر لطفًا على المصادر.';
 
   @override
-  String get save_search => 'Save search';
+  String get save_search => 'حفظ البحث';
 
   @override
-  String get saved_searches => 'Saved searches';
+  String get saved_searches => 'عمليات البحث المحفوظة';
 
   @override
-  String get enter_search_to_save_first => 'Enter a search to save first';
+  String get enter_search_to_save_first => 'أدخل بحثًا لحفظه أولاً';
 
   @override
   String get no_saved_searches =>
-      'No saved searches for this source yet.\nRun a search, then pick \"Save search\".';
+      'لا توجد عمليات بحث محفوظة لهذا المصدر حتى الآن.\nقم بإجراء بحث، ثم اختر \"حفظ البحث\".';
 
   @override
-  String get source => 'Source';
+  String get source => 'المصدر';
 
   @override
   String get something_went_wrong => 'Something went wrong';

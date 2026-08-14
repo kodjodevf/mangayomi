@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -1361,7 +1362,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get mark_duplicate_chapters_read =>
-      'Mark duplicate chapter numbers as read';
+      'Marquer les numéros de chapitres en double comme lus';
 
   @override
   String get default_skip_intro_length =>
@@ -2506,38 +2507,40 @@ class AppLocalizationsFr extends AppLocalizations {
   String get error_no_pages_available => 'Erreur : aucune page disponible';
 
   @override
-  String get app_ui_scale => 'Interface scale';
+  String get app_ui_scale => 'Échelle de l\'interface';
 
   @override
   String get app_ui_scale_subtitle =>
-      'Make the interface larger or smaller to suit your screen and viewing distance.';
+      'Rendez l\'interface plus grande ou plus petite pour adapter votre écran et votre distance de visionnage.';
 
   @override
-  String get allow_concurrent_downloads => 'Allow concurrent downloads';
+  String get allow_concurrent_downloads =>
+      'Autoriser les téléchargements simultanés';
 
   @override
   String get allow_concurrent_downloads_subtitle =>
-      'Download from different sources at the same time. A single source still downloads one chapter at a time so it isn\'t overloaded. Turn off to download one at a time everywhere.';
+      'Télécharger à partir de différentes sources en même temps. Une seule source télécharge encore un chapitre à la fois pour qu\'elle ne soit pas surchargée. Désactivez pour télécharger un à la fois partout.';
 
   @override
-  String get download_delay => 'Download delay';
+  String get download_delay => 'Délai de téléchargement';
 
   @override
   String get download_delay_subtitle =>
-      'Off. Add a wait with random jitter between chapters to be gentler on sources.';
+      'Désactivé. Ajouter une attente avec un dégradé aléatoire entre les chapitres pour être plus doux sur les sources.';
 
   @override
-  String get save_search => 'Save search';
+  String get save_search => 'Enregistrer la recherche';
 
   @override
-  String get saved_searches => 'Saved searches';
+  String get saved_searches => 'Recherches enregistrées';
 
   @override
-  String get enter_search_to_save_first => 'Enter a search to save first';
+  String get enter_search_to_save_first =>
+      'Entrez une recherche à enregistrer en premier';
 
   @override
   String get no_saved_searches =>
-      'No saved searches for this source yet.\nRun a search, then pick \"Save search\".';
+      'Aucune recherche enregistrée pour cette source pour le moment.\nEffectuez une recherche, puis choisissez \"Enregistrer la recherche\".';
 
   @override
   String get source => 'Source';
