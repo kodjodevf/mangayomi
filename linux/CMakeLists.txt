@@ -55,10 +55,11 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK REQUIRED IMPORTED_TARGET gtk+-3.0)
 
 # Optional image decoding libraries for the native Linux image decoder.
-# Install with: sudo apt install libjpeg-dev libpng-dev (Debian/Ubuntu)
-#               sudo dnf install libjpeg-turbo-devel libpng-devel (Fedora/RHEL)
+# Install with: sudo apt install libjpeg-dev libpng-dev libavif-dev (Debian/Ubuntu)
+#               sudo dnf install libjpeg-turbo-devel libpng-devel libavif-devel (Fedora/RHEL)
 find_package(JPEG)
 find_package(PNG)
+pkg_check_modules(AVIF IMPORTED_TARGET libavif)
 
 add_definitions(-DAPPLICATION_ID="${APPLICATION_ID}")
 
@@ -151,6 +152,15 @@ if(PNG_FOUND)
   message(STATUS "libpng found: PNG decoding enabled for Linux")
 else()
   message(WARNING "libpng not found: PNG images will not display on Linux. Install libpng-dev.")
+endif()
+
+# Link libavif if found (enables AVIF decoding on Linux)
+if(AVIF_FOUND)
+  target_link_libraries(subsampling_scale_image_view PRIVATE PkgConfig::AVIF)
+  target_compile_definitions(subsampling_scale_image_view PRIVATE HAVE_LIBAVIF)
+  message(STATUS "libavif found: AVIF decoding enabled for Linux")
+else()
+  message(WARNING "libavif not found: AVIF images will not display on Linux. Install libavif-dev.")
 endif()
 
 install(TARGETS subsampling_scale_image_view
