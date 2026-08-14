@@ -68,20 +68,28 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
   Offset _offset = Offset.zero;
   Offset _baseOffset = Offset.zero;
   Offset _pinchStartFocalPoint = Offset.zero;
+  int _previousPointerCount = 0;
 
+  // QuickScale (one-finger double-tap and drag zoom)
+  bool _isQuickScaling = false;
+  double _quickScaleLastY = 0.0;
+  double _quickScaleLastDistance = -1.0;
+  Offset? _quickScaleCenter;
+
+  late final ValueNotifier<Matrix4> _transformNotifier;
   late final AnimationController _zoomAnimationController;
 
   double _animStartScale = 1.0;
   double _animTargetScale = 1.0;
-  double _animFocalPointX = 0.0;
-  double _animFocalPointY = 0.0;
-  double _animStartOffsetDx = 0.0;
-  double _animStartOffsetDy = 0.0;
+  Offset _animStartOffset = Offset.zero;
+  Offset _animTargetOffset = Offset.zero;
 
   Offset _doubleTapPosition = Offset.zero;
+
   @override
   void initState() {
     super.initState();
+    _transformNotifier = ValueNotifier(Matrix4.identity());
     final doubleTapAnimationValue = ref.read(
       doubleTapAnimationSpeedStateProvider,
     );
@@ -92,38 +100,17 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
     _zoomAnimationController.addListener(() {
       final t = _zoomAnimationController.value;
       final curveVal = Curves.easeOutCubic.transform(t);
-      final currentScale =
+      _scale =
           _animStartScale + (_animTargetScale - _animStartScale) * curveVal;
-
-      final screenWidth = MediaQuery.of(context).size.width;
-      final screenHeight = MediaQuery.of(context).size.height;
-
-      final targetDx =
-          _animFocalPointX -
-          (_animFocalPointX - _animStartOffsetDx) *
-              (currentScale / _animStartScale);
-      final targetDxVal = targetDx;
-      final targetDy =
-          _animFocalPointY -
-          (_animFocalPointY - _animStartOffsetDy) *
-              (currentScale / _animStartScale);
-      final targetDyVal = targetDy;
-
-      final maxDx = (screenWidth * (currentScale - 1)) / 2;
-      final maxDy = (screenHeight * (currentScale - 1)) / 2;
-
-      final clampedDx = currentScale > 1.0
-          ? targetDxVal.clamp(-maxDx, maxDx)
-          : 0.0;
-      final clampedDy = currentScale > 1.0
-          ? targetDyVal.clamp(-maxDy, maxDy)
-          : 0.0;
-
-      setState(() {
-        _scale = currentScale;
-        _offset = Offset(clampedDx, clampedDy);
-      });
+      _offset =
+          Offset.lerp(_animStartOffset, _animTargetOffset, curveVal) ?? _offset;
+      _updateMatrix();
     });
+  }
+
+  void _updateMatrix() {
+    _transformNotifier.value = Matrix4.diagonal3Values(_scale, _scale, 1.0)
+      ..setTranslationRaw(_offset.dx, _offset.dy, 0.0);
   }
 
   Duration _durationForSpeed(int speed) {
@@ -141,6 +128,51 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
     return _durationForSpeed(doubleTapAnimationValue);
   }
 
+  void _animateTo(
+    double targetScale,
+    Offset targetOffset, {
+    Duration? duration,
+  }) {
+    if (_zoomAnimationController.isAnimating) {
+      _zoomAnimationController.stop();
+    }
+    _animStartScale = _scale;
+    _animTargetScale = targetScale;
+    _animStartOffset = _offset;
+    _animTargetOffset = targetOffset;
+
+    _zoomAnimationController.duration =
+        duration ?? _doubleTapAnimationDuration();
+    _zoomAnimationController.forward(from: 0.0);
+  }
+
+  void _animateZoomToFocalPoint(double targetScale, Offset localFocalPoint) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    final focalX = localFocalPoint.dx - screenWidth / 2;
+    final focalY = localFocalPoint.dy - screenHeight / 2;
+
+    double targetDx;
+    double targetDy;
+
+    if (targetScale <= 1.0) {
+      targetDx = 0.0;
+      targetDy = 0.0;
+    } else {
+      targetDx = focalX - (focalX - _offset.dx) * (targetScale / _scale);
+      targetDy = focalY - (focalY - _offset.dy) * (targetScale / _scale);
+
+      final maxDx = (screenWidth * (targetScale - 1)) / 2;
+      final maxDy = (screenHeight * (targetScale - 1)) / 2;
+
+      targetDx = targetDx.clamp(-maxDx, maxDx);
+      targetDy = targetDy.clamp(-maxDy, maxDy);
+    }
+
+    _animateTo(targetScale, Offset(targetDx, targetDy));
+  }
+
   void _handleScaleStart(ScaleStartDetails details) {
     if (_zoomAnimationController.isAnimating) {
       _zoomAnimationController.stop();
@@ -148,34 +180,76 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
     _baseScale = _scale;
     _baseOffset = _offset;
     _pinchStartFocalPoint = details.localFocalPoint;
+    _previousPointerCount = details.pointerCount;
+    _isQuickScaling = false;
+    _quickScaleLastDistance = -1.0;
   }
 
   void _handleScaleUpdate(ScaleUpdateDetails details) {
     if (_zoomAnimationController.isAnimating) return;
 
-    final newScale = (_baseScale * details.scale).clamp(
-      widget.zoomOutDisabled ? 1.0 : 0.5,
-      5.0,
-    );
+    if (details.pointerCount != _previousPointerCount) {
+      _baseScale = _scale;
+      _baseOffset = _offset;
+      _pinchStartFocalPoint = details.localFocalPoint;
+      _previousPointerCount = details.pointerCount;
+    }
 
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final isVertical = widget.scrollDirection == Axis.vertical;
 
-    double newDx;
-    double newDy;
+    double newScale = _scale;
+    double newDx = _offset.dx;
+    double newDy = _offset.dy;
 
-    final maxDx = (screenWidth * (newScale - 1)) / 2;
-    final maxDy = (screenHeight * (newScale - 1)) / 2;
+    if (_isQuickScaling && _quickScaleCenter != null) {
+      final double dy = details.localFocalPoint.dy;
+      final double dist = (dy - _pinchStartFocalPoint.dy).abs() * 2 + 20;
 
-    if (details.pointerCount == 1) {
+      if (_quickScaleLastDistance < 0) _quickScaleLastDistance = dist;
+      final bool isUpwards = dy < _quickScaleLastY;
+      _quickScaleLastY = dy;
+
+      final double spanDiff =
+          (1 - (dist / _quickScaleLastDistance)).abs() * 0.5;
+      if (spanDiff > 0.02) {
+        final double multiplier = isUpwards ? (1 + spanDiff) : (1 - spanDiff);
+        newScale = (_scale * multiplier).clamp(
+          widget.zoomOutDisabled ? 1.0 : 0.5,
+          5.0,
+        );
+
+        final focalX = _quickScaleCenter!.dx - screenWidth / 2;
+        final focalY = _quickScaleCenter!.dy - screenHeight / 2;
+        newDx = focalX - (focalX - _baseOffset.dx) * (newScale / _baseScale);
+        newDy = focalY - (focalY - _baseOffset.dy) * (newScale / _baseScale);
+      }
+      _quickScaleLastDistance = dist;
+    } else if (details.pointerCount > 1 && details.scale != 1.0) {
+      newScale = (_baseScale * details.scale).clamp(
+        widget.zoomOutDisabled ? 1.0 : 0.5,
+        5.0,
+      );
+
+      final focalX = details.localFocalPoint.dx - screenWidth / 2;
+      final focalY = details.localFocalPoint.dy - screenHeight / 2;
+      newDx = focalX - (focalX - _baseOffset.dx) * (newScale / _baseScale);
+      newDy = focalY - (focalY - _baseOffset.dy) * (newScale / _baseScale);
+    } else if (details.pointerCount == 1 && !_isQuickScaling) {
       final dragDeltaX = details.localFocalPoint.dx - _pinchStartFocalPoint.dx;
       final dragDeltaY = details.localFocalPoint.dy - _pinchStartFocalPoint.dy;
 
       final tempDx = _baseOffset.dx + dragDeltaX;
       final tempDy = _baseOffset.dy + dragDeltaY;
 
-      if (isVertical) {
+      final maxDx = (screenWidth * (_scale - 1)) / 2;
+      final maxDy = (screenHeight * (_scale - 1)) / 2;
+
+      if (_scale <= 1.0) {
+        newDx = 0.0;
+        newDy = 0.0;
+      } else if (isVertical) {
         newDx = tempDx.clamp(-maxDx, maxDx);
 
         if (tempDy > maxDy) {
@@ -228,69 +302,74 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
           newDx = tempDx;
         }
       }
-    } else {
-      final focalX = details.localFocalPoint.dx - screenWidth / 2;
-      final focalY = details.localFocalPoint.dy - screenHeight / 2;
-      newDx = focalX - (focalX - _baseOffset.dx) * (newScale / _baseScale);
-      newDy = focalY - (focalY - _baseOffset.dy) * (newScale / _baseScale);
     }
+
+    final maxDx = (screenWidth * (newScale - 1)) / 2;
+    final maxDy = (screenHeight * (newScale - 1)) / 2;
 
     final clampedDx = newScale > 1.0 ? newDx.clamp(-maxDx, maxDx) : 0.0;
     final clampedDy = newScale > 1.0 ? newDy.clamp(-maxDy, maxDy) : 0.0;
 
-    setState(() {
-      _scale = newScale;
-      _offset = Offset(clampedDx, clampedDy);
-    });
+    _scale = newScale;
+    _offset = Offset(clampedDx, clampedDy);
+    _updateMatrix();
   }
 
   void _handleScaleEnd(ScaleEndDetails details) {
+    _isQuickScaling = false;
+
+    // 1. Rebound spring if zoomed out below 1.0
     if (_scale < 1.0) {
-      _animateZoom(
-        1.0,
-        Offset(
-          MediaQuery.of(context).size.width / 2,
-          MediaQuery.of(context).size.height / 2,
-        ),
-      );
+      _animateTo(1.0, Offset.zero, duration: const Duration(milliseconds: 250));
+      return;
+    }
+
+    // 2. Fling inertia momentum if panning while zoomed
+    if (_scale > 1.0) {
+      final velocity = details.velocity.pixelsPerSecond;
+      if (velocity.distance > 350) {
+        final screenWidth = MediaQuery.of(context).size.width;
+        final screenHeight = MediaQuery.of(context).size.height;
+        final maxDx = (screenWidth * (_scale - 1)) / 2;
+        final maxDy = (screenHeight * (_scale - 1)) / 2;
+
+        final targetDx = (_offset.dx + velocity.dx * 0.15).clamp(-maxDx, maxDx);
+        final targetDy = (_offset.dy + velocity.dy * 0.15).clamp(-maxDy, maxDy);
+
+        if ((Offset(targetDx, targetDy) - _offset).distance > 8) {
+          _animateTo(
+            _scale,
+            Offset(targetDx, targetDy),
+            duration: const Duration(milliseconds: 400),
+          );
+        }
+      }
     }
   }
 
-  void _animateZoom(double targetScale, Offset localFocalPoint) {
-    if (_zoomAnimationController.isAnimating) {
-      _zoomAnimationController.stop();
-    }
-
-    _animStartScale = _scale;
-    _animTargetScale = targetScale;
-
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-
-    _animFocalPointX = localFocalPoint.dx - screenWidth / 2;
-    _animFocalPointY = localFocalPoint.dy - screenHeight / 2;
-
-    _animStartOffsetDx = _offset.dx;
-    _animStartOffsetDy = _offset.dy;
-
-    _zoomAnimationController.duration = _doubleTapAnimationDuration();
-    _zoomAnimationController.forward(from: 0.0);
+  void _handleDoubleTapDown(TapDownDetails details) {
+    _doubleTapPosition = details.localPosition;
+    _isQuickScaling = true;
+    _quickScaleLastY = details.localPosition.dy;
+    _quickScaleLastDistance = -1.0;
+    _quickScaleCenter = details.localPosition;
   }
 
   void _toggleScale(Offset localFocalPoint) {
     if (!widget.doubleTapZoomEnabled || !mounted) return;
     if (_zoomAnimationController.isAnimating) return;
 
-    if (_scale == 1.0) {
-      _animateZoom(2.0, localFocalPoint);
+    if (_scale <= 1.05) {
+      _animateZoomToFocalPoint(2.5, localFocalPoint);
     } else {
-      _animateZoom(1.0, localFocalPoint);
+      _animateZoomToFocalPoint(1.0, localFocalPoint);
     }
   }
 
   @override
   void dispose() {
     _zoomAnimationController.dispose();
+    _transformNotifier.dispose();
     super.dispose();
   }
 
@@ -301,12 +380,10 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
       onScaleStart: _handleScaleStart,
       onScaleUpdate: _handleScaleUpdate,
       onScaleEnd: _handleScaleEnd,
-      onDoubleTapDown: (details) => _doubleTapPosition = details.localPosition,
+      onDoubleTapDown: _handleDoubleTapDown,
       onDoubleTap: () => _toggleScale(_doubleTapPosition),
-      child: Transform(
-        transform: Matrix4.diagonal3Values(_scale, _scale, 1.0)
-          ..setTranslationRaw(_offset.dx, _offset.dy, 0.0),
-        alignment: Alignment.center,
+      child: ValueListenableBuilder<Matrix4>(
+        valueListenable: _transformNotifier,
         child: ScrollablePositionedList.separated(
           scrollDirection: widget.scrollDirection,
           reverse: widget.reverse,
@@ -320,6 +397,13 @@ class _ImageViewWebtoonState extends ConsumerState<ImageViewWebtoon>
           itemBuilder: (context, index) => _buildItem(context, index),
           separatorBuilder: _buildSeparator,
         ),
+        builder: (context, matrix, child) {
+          return Transform(
+            transform: matrix,
+            alignment: Alignment.center,
+            child: child,
+          );
+        },
       ),
     );
   }
