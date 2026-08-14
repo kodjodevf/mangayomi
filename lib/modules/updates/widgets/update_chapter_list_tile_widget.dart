@@ -68,9 +68,9 @@ class UpdateChapterListTileWidget extends ConsumerWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 11,
-                    color: chapter.isRead ?? false
-                        ? Colors.grey
-                        : Theme.of(context).textTheme.bodyLarge!.color,
+                    color: Theme.of(context).textTheme.bodyLarge!.color!.withValues(
+                          alpha: (chapter.isRead ?? false) ? 0.5 : 1,
+                        ),
                   ),
                 ),
               ],
@@ -189,12 +189,12 @@ class UpdateChapterListTileWidget extends ConsumerWidget {
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontSize: 11,
-                                  color: chapter.isRead ?? false
-                                      ? Colors.grey
-                                      : Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge!
-                                            .color,
+                                  color: Theme.of(context).textTheme.bodyLarge!.color!
+                                          .withValues(
+                                            alpha: (chapter.isRead ?? false)
+                                                ? 0.5
+                                                : 1,
+                                          ),
                                 ),
                               ),
                             ],

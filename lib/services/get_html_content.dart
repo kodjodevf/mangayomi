@@ -8,6 +8,7 @@ import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_pr
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:mangayomi/utils/log/logger.dart';
 part 'get_html_content.g.dart';
 
 @riverpod
@@ -47,7 +48,14 @@ Future<(String, EpubNovel?)> getHtmlContent(
           }
         }
         result = (_buildHtml(htmlContent), book);
-      } catch (_) {}
+      } catch (e, st) {
+        // Swallowed, so the reader shows the not-found placeholder below with
+        // no clue that parsing was what actually failed.
+        AppLogger.log(
+          'getHtmlContent: epub parse failed: $e\n$st',
+          logLevel: LogLevel.error,
+        );
+      }
 
       result ??= (_buildHtml("Local epub file not found!"), null);
     }

@@ -120,13 +120,13 @@ void showCategorySelectionDialog({
                               Icon(
                                 Icons.category_outlined,
                                 size: 64,
-                                color: Colors.grey.withValues(alpha: 0.5),
+                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                               ),
                               const SizedBox(height: 16),
                               Text(
                                 l10n.library_no_category_exist,
                                 style: TextStyle(
-                                  color: Colors.grey.withValues(alpha: 0.7),
+                                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                                   fontSize: 15,
                                 ),
                               ),
@@ -150,13 +150,13 @@ void showCategorySelectionDialog({
                               Icon(
                                 Icons.category_outlined,
                                 size: 64,
-                                color: Colors.grey.withValues(alpha: 0.5),
+                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                               ),
                               const SizedBox(height: 16),
                               Text(
                                 l10n.library_no_category_exist,
                                 style: TextStyle(
-                                  color: Colors.grey.withValues(alpha: 0.7),
+                                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
                                   fontSize: 15,
                                 ),
                               ),

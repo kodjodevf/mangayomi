@@ -238,7 +238,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                           IconButton(
                             icon: Icon(
                               Icons.arrow_back,
-                              color: _canGoback ? null : Colors.grey,
+                              color: _canGoback ? null : Theme.of(context).disabledColor,
                             ),
                             onPressed: _canGoback
                                 ? () {
@@ -249,7 +249,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                           IconButton(
                             icon: Icon(
                               Icons.arrow_forward,
-                              color: _canGoForward ? null : Colors.grey,
+                              color: _canGoForward ? null : Theme.of(context).disabledColor,
                             ),
                             onPressed: _canGoForward
                                 ? () {
