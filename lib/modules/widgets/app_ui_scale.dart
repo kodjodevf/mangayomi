@@ -21,41 +21,53 @@ class AppUiScale extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
-    final size = mq.size;
-    if (size.isEmpty || size.width <= 0) return child;
-
     final s = scale <= 0 ? 1.0 : scale;
-    final double target;
-    if (isTv) {
-      // TV: lay out against a fixed reference width and scale to the panel, so
-      // the UI is consistent across TVs regardless of the density the device
-      // reports. A higher user scale => narrower target => larger UI.
-      target = referenceWidth / s;
-    } else {
-      // Elsewhere there is no density problem, so the scale is a straight
-      // multiplier on the native size: 1.0 is native (no-op), higher zooms in.
-      if (s == 1.0) return child;
-      target = size.width / s;
-    }
-    // Match the aspect ratio so the uniform fit never distorts.
-    final designSize = Size(target, target * size.height / size.width);
-    // Convert real insets into design space so safe-area padding stays correct.
-    final ratio = target / size.width;
+    // Off-TV at 1.0 there is nothing to do; on TV we always normalize to the
+    // reference width, so keep going.
+    if (!isTv && s == 1.0) return child;
 
-    return FittedBox(
-      fit: BoxFit.fill,
-      child: SizedBox.fromSize(
-        size: designSize,
-        child: MediaQuery(
-          data: mq.copyWith(
-            size: designSize,
-            padding: mq.padding * ratio,
-            viewPadding: mq.viewPadding * ratio,
-            viewInsets: mq.viewInsets * ratio,
+    // Measure the real box we are given rather than trusting MediaQuery.size,
+    // which can differ from the actual render constraints on desktop and left
+    // the scaled subtree mis-sized (blank right/bottom edges).
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final w = constraints.maxWidth;
+        final h = constraints.maxHeight;
+        if (!w.isFinite || !h.isFinite || w <= 0 || h <= 0) return child;
+
+        // Design width: a fixed reference on TV (density-independent), else the
+        // real width divided by the user's zoom. A higher scale => narrower
+        // design width => the FittedBox blows it up more.
+        final double designWidth = isTv ? referenceWidth / s : w / s;
+        // Convert real insets into design space so safe-area padding stays right.
+        final ratio = designWidth / w;
+        // Same aspect ratio as the box so the uniform fit never distorts.
+        final designSize = Size(designWidth, h * ratio);
+
+        // Pin the FittedBox to the real box (tight w x h) so the scaled subtree
+        // always covers the whole window. Without this, under loose constraints
+        // the FittedBox shrinks to the smaller design child and leaves the right
+        // and bottom of the window blank.
+        return SizedBox(
+          width: w,
+          height: h,
+          child: FittedBox(
+            fit: BoxFit.fill,
+            child: SizedBox.fromSize(
+              size: designSize,
+              child: MediaQuery(
+                data: mq.copyWith(
+                  size: designSize,
+                  padding: mq.padding * ratio,
+                  viewPadding: mq.viewPadding * ratio,
+                  viewInsets: mq.viewInsets * ratio,
+                ),
+                child: child,
+              ),
+            ),
           ),
-          child: child,
-        ),
-      ),
+        );
+      },
     );
   }
 }
