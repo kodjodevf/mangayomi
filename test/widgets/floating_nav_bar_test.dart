@@ -185,11 +185,13 @@ void main() {
 
     final gesture = await tester.startGesture(start.center);
     await gesture.moveBy(const Offset(80, 0));
-    await tester.pump();
+    // Settle first: the bar grows when a drag starts, and that animation moves
+    // the pill's absolute position for a few frames on its own.
+    await tester.pumpAndSettle();
     final mid = _pillRect(tester);
     expect(mid.left, greaterThan(start.left));
 
-    // No easing while in hand, so a second pump must not move it further.
+    // No easing on the pill itself, so a further pump must not move it.
     await tester.pump(const Duration(milliseconds: 200));
     expect(_pillRect(tester).left, moreOrLessEquals(mid.left, epsilon: 0.5));
 
@@ -351,5 +353,50 @@ void main() {
       reason: 'selected icons carry a stroke so line-art icons read as active',
     );
     expect(themeFor(Icons.explore_outlined).shadows, isNull);
+  });
+
+  testWidgets('the pill nearly fills the bar it sits in', (tester) async {
+    await tester.pumpWidget(_host(index: 1));
+    await tester.pumpAndSettle();
+
+    final pill = _pillRect(tester);
+    final bar = _barRect(tester);
+    expect(
+      pill.height,
+      moreOrLessEquals(bar.height - 8, epsilon: 0.5),
+      reason: 'a small gap top and bottom, not a chip floating in the middle',
+    );
+  });
+
+  testWidgets('the whole bar grows while the pill is dragged', (tester) async {
+    await tester.pumpWidget(_host(index: 1));
+    await tester.pumpAndSettle();
+    final resting = _barRect(tester);
+
+    final gesture = await tester.startGesture(_pillRect(tester).center);
+    await gesture.moveBy(const Offset(30, 0));
+    await tester.pumpAndSettle();
+
+    final lifted = _barRect(tester);
+    expect(lifted.height, greaterThan(resting.height));
+    expect(
+      lifted.width,
+      greaterThan(resting.width),
+      reason: 'the margin narrows so the bar stretches outwards too',
+    );
+    // The pill is sized from the bar, so it has to grow with it.
+    expect(
+      _pillRect(tester).height,
+      moreOrLessEquals(lifted.height - 8, epsilon: 0.5),
+    );
+
+    await gesture.moveBy(const Offset(-30, 0));
+    await tester.pump();
+    await gesture.up();
+    await tester.pumpAndSettle();
+    expect(
+      _barRect(tester).height,
+      moreOrLessEquals(resting.height, epsilon: 0.5),
+    );
   });
 }

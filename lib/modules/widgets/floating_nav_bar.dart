@@ -43,6 +43,20 @@ class FloatingNavBar extends StatefulWidget {
   static const _speedStretch = 0.9;
   static const _maxSpeedStretch = 24.0;
 
+  /// The bar's own margin. It narrows while a drag is in flight so the whole
+  /// bar grows outwards with the pill rather than the pill moving inside a
+  /// fixed frame.
+  static const _margin = 14.0;
+  static const _dragMargin = 7.0;
+
+  /// Extra bar height while dragging. The pill is sized from the bar, so it
+  /// grows with it.
+  static const _dragLift = 6.0;
+
+  /// Gap between the pill and the bar's edge, top and bottom. Small, so the
+  /// pill reads as nearly filling the bar.
+  static const _pillGap = 4.0;
+
   @override
   State<FloatingNavBar> createState() => _FloatingNavBarState();
 }
@@ -135,14 +149,21 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final height = widget.shrunk ? 46.0 : 58.0;
-    final pillHeight = widget.shrunk ? 32.0 : 40.0;
     final dragging = _dragX != null;
+    final height =
+        (widget.shrunk ? 46.0 : 58.0) +
+        (dragging ? FloatingNavBar._dragLift : 0.0);
+    final pillHeight = height - FloatingNavBar._pillGap * 2;
+    final margin = dragging
+        ? FloatingNavBar._dragMargin
+        : FloatingNavBar._margin;
 
     return SafeArea(
       top: false,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 0, 14, 6),
+      child: AnimatedPadding(
+        duration: FloatingNavBar._duration,
+        curve: FloatingNavBar._curve,
+        padding: EdgeInsets.fromLTRB(margin, 0, margin, 6),
         child: Align(
           alignment: Alignment.bottomCenter,
           child: AnimatedContainer(
@@ -282,7 +303,7 @@ class _FloatingNavItem extends StatelessWidget {
         onTap: onTap,
         child: Center(
           child: TweenAnimationBuilder<double>(
-            tween: Tween(end: shrunk ? 21 : 24),
+            tween: Tween(end: shrunk ? 23 : 27),
             duration: FloatingNavBar._duration,
             curve: FloatingNavBar._curve,
             builder: (context, size, child) => IconTheme(
