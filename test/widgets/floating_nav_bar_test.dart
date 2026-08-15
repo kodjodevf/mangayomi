@@ -104,10 +104,11 @@ void main() {
     final after = _pillRect(tester);
     expect(after.left, greaterThan(midway.left));
 
+    final bar = _barRect(tester);
     expect(
-      after.right,
-      moreOrLessEquals(_barRect(tester).right, epsilon: 0.5),
-      reason: 'the last slot runs out to the end of the bar',
+      bar.right - after.right,
+      moreOrLessEquals(after.top - bar.top, epsilon: 0.5),
+      reason: 'the last slot keeps the same inset as every other side',
     );
   });
 
@@ -256,27 +257,31 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets('the end slots run flush into the bar caps', (tester) async {
-    await tester.pumpWidget(_host(index: 0));
-    await tester.pumpAndSettle();
-    expect(
-      _pillRect(tester).left,
-      moreOrLessEquals(_barRect(tester).left, epsilon: 0.5),
-    );
+  testWidgets('the resting pill is inset evenly on all four sides', (
+    tester,
+  ) async {
+    // The end slots are the ones that can go wrong: the pill has a bar edge on
+    // one side there, not a neighbouring slot.
+    for (final index in [0, 2]) {
+      await tester.pumpWidget(_host(index: index));
+      await tester.pumpAndSettle();
+      final pill = _pillRect(tester);
+      final bar = _barRect(tester);
+      final outer = index == 0 ? pill.left - bar.left : bar.right - pill.right;
+      final vertical = pill.top - bar.top;
 
-    await tester.pumpWidget(_host(index: 2));
-    await tester.pumpAndSettle();
-    expect(
-      _pillRect(tester).right,
-      moreOrLessEquals(_barRect(tester).right, epsilon: 0.5),
-    );
-
-    // A middle slot keeps its breathing room on both sides.
-    await tester.pumpWidget(_host(index: 1));
-    await tester.pumpAndSettle();
-    final mid = _pillRect(tester);
-    expect(mid.left, greaterThan(_barRect(tester).left + 1));
-    expect(mid.right, lessThan(_barRect(tester).right - 1));
+      expect(
+        outer,
+        moreOrLessEquals(vertical, epsilon: 0.5),
+        reason:
+            'slot $index sits against a bar edge, and that gap has to match '
+            'the top and bottom gap',
+      );
+      expect(
+        bar.bottom - pill.bottom,
+        moreOrLessEquals(vertical, epsilon: 0.5),
+      );
+    }
   });
 
   testWidgets('the pill is as round as the bar it sits in', (tester) async {
@@ -341,10 +346,11 @@ void main() {
     }
 
     final pill = _pillRect(tester);
+    final bar = _barRect(tester);
     expect(
-      pill.right,
-      moreOrLessEquals(_barRect(tester).right, epsilon: 1),
-      reason: 'it should sit against the cap',
+      bar.right - pill.right,
+      moreOrLessEquals(pill.top - bar.top, epsilon: 1),
+      reason: 'it pins at the cap but keeps its inset, like at rest',
     );
     expect(
       pill.width,
@@ -358,25 +364,38 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets('the gap tightens when the pill is picked up', (tester) async {
+  testWidgets('the pill zooms evenly when picked up, not just taller', (
+    tester,
+  ) async {
     await tester.pumpWidget(_host(index: 1));
     await tester.pumpAndSettle();
-    final restingGap = (_barRect(tester).height - _pillRect(tester).height) / 2;
+    final resting = _pillRect(tester);
 
     // Has to clear the touch slop, or no drag is recognised at all.
-    final gesture = await tester.startGesture(_pillRect(tester).center);
+    final gesture = await tester.startGesture(resting.center);
     await gesture.moveBy(const Offset(30, 0));
     await tester.pumpAndSettle();
-    final heldGap = (_barRect(tester).height - _pillRect(tester).height) / 2;
+    final held = _pillRect(tester);
 
-    expect(heldGap, lessThan(restingGap));
+    final sx = held.width / resting.width;
+    final sy = held.height / resting.height;
+    expect(sy, greaterThan(1.0));
+    expect(
+      sx,
+      moreOrLessEquals(sy, epsilon: 0.02),
+      reason:
+          'growing only the height makes the pill rounder rather than bigger, '
+          'which is what this replaced',
+    );
 
     await gesture.moveBy(const Offset(-30, 0));
     await tester.pump();
     await gesture.up();
     await tester.pumpAndSettle();
-    final backGap = (_barRect(tester).height - _pillRect(tester).height) / 2;
-    expect(backGap, moreOrLessEquals(restingGap, epsilon: 0.5));
+    expect(
+      _pillRect(tester).height,
+      moreOrLessEquals(resting.height, epsilon: 0.5),
+    );
   });
 
   testWidgets('the bar is edged with glass, not outlined', (tester) async {
@@ -411,6 +430,16 @@ void main() {
       0.0,
       reason: 'the middle has to be clear, or it is a wash not an edge',
     );
+
+    // Masked so each line dissolves before it reaches a cap, instead of
+    // cutting straight across the curve.
+    final mask = tester.widget<ShaderMask>(
+      find.descendant(
+        of: find.byType(FloatingNavBar),
+        matching: find.byType(ShaderMask),
+      ),
+    );
+    expect(mask.blendMode, BlendMode.dstIn);
   });
 
   testWidgets('the focused icon is thickened for icons that cannot fill', (
