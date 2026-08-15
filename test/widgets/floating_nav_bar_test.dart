@@ -155,10 +155,10 @@ void main() {
   ) async {
     // A tab bar that keeps shrinking would eventually be unusable, so the
     // floor matters more than the ratio here.
-    expect(FloatingNavBar.heightFor(30), greaterThanOrEqualTo(38.0));
+    expect(FloatingNavBar.heightFor(30), greaterThanOrEqualTo(44.0));
     await tester.pumpWidget(_host(index: 0, destinations: manyTabs(12)));
     await tester.pumpAndSettle();
-    expect(_barRect(tester).height, greaterThanOrEqualTo(38.0));
+    expect(_barRect(tester).height, greaterThanOrEqualTo(44.0));
   });
 
   testWidgets('icons shrink with the bar', (tester) async {
@@ -984,7 +984,7 @@ void main() {
     // Crowding and a short viewport both apply, and the floor still wins.
     expect(
       FloatingNavBar.heightFor(9, viewportHeight: landscape),
-      greaterThanOrEqualTo(38.0),
+      greaterThanOrEqualTo(44.0),
     );
     // No viewport given means no assumption either way.
     expect(

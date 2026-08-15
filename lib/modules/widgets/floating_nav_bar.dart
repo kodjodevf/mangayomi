@@ -50,13 +50,13 @@ class FloatingNavBar extends StatefulWidget {
   /// takes a little height, since the slots are getting narrower and a bar
   /// that keeps its full height starts to look crowded.
   static const _comfortableCount = 5;
-  static const _fullHeight = 54.0;
+  static const _fullHeight = 56.0;
   static const _shrinkPerExtra = 3.0;
-  static const _minHeight = 42.0;
+  static const _minHeight = 44.0;
 
   /// Icon size as a fraction of bar height, so icons shrink with the bar
   /// rather than needing their own ladder of numbers.
-  static const _iconRatio = 25 / _fullHeight;
+  static const _iconRatio = 27 / _fullHeight;
 
   /// Gap between an icon and its label, and the room either side of a labelled
   /// item, in the labelled layout.
