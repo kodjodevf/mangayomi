@@ -27,6 +27,13 @@ import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/more/about/providers/check_for_update.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/auto_backup.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/modules/library/library_screen.dart';
+import 'package:mangayomi/modules/tracker_library/tracker_library_screen.dart';
+import 'package:mangayomi/modules/history/history_screen.dart';
+import 'package:mangayomi/modules/updates/updates_screen.dart';
+import 'package:mangayomi/modules/browse/browse_screen.dart';
+import 'package:mangayomi/modules/more/more_screen.dart';
+import 'package:mangayomi/modules/main_view/swipeable_tabs.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/services/sync_server.dart';
@@ -130,6 +137,32 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     }
     return null;
   }
+
+  /// Builds a tab screen for the swipe peek.
+  ///
+  /// Mirrors what the shell route builds. Route arguments are deliberately
+  /// left out: this instance lives only while a finger is down, and the shell
+  /// replaces it with the real one the moment the swipe commits.
+  Widget? _pageForNav(String nav) => switch (nav) {
+    "/MangaLibrary" => const LibraryScreen(
+      itemType: ItemType.manga,
+      presetInput: null,
+    ),
+    "/AnimeLibrary" => const LibraryScreen(
+      itemType: ItemType.anime,
+      presetInput: null,
+    ),
+    "/NovelLibrary" => const LibraryScreen(
+      itemType: ItemType.novel,
+      presetInput: null,
+    ),
+    "/trackerLibrary" => const TrackerLibraryScreen(presetInput: null),
+    "/history" => const HistoryScreen(),
+    "/updates" => const UpdatesScreen(),
+    "/browse" => const BrowseScreen(),
+    "/more" => const MoreScreen(),
+    _ => null,
+  };
 
   void _initializeTimers() {
     _backupTimer = Timer.periodic(
@@ -325,7 +358,28 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                                   _buildNavigationWidgetsDesktop,
                               child: widget.child,
                             )
-                          : widget.child,
+                          : SwipeableTabs(
+                              // Rail platforms navigate by the rail, and a
+                              // horizontal drag there belongs to the content.
+                              enabled: !isTv && !isLongPressed,
+                              currentIndex: currentIndex,
+                              count: dest.length,
+                              pageBuilder: (i) =>
+                                  _pageForNav(dest[i]) ?? const SizedBox(),
+                              onSwitch: (i) {
+                                final nav = dest[i];
+                                if (nav == "_enableLibSwitch") {
+                                  setState(() => isLibSwitch = true);
+                                  final target = _firstVisibleLibrary();
+                                  if (target != null) route.go(target);
+                                } else if (nav == "_disableLibSwitch") {
+                                  setState(() => isLibSwitch = false);
+                                } else {
+                                  route.go(nav);
+                                }
+                              },
+                              child: widget.child,
+                            ),
                       bottomNavigationBar: context.prefersNavRail
                           ? null
                           : _MobileBottomNavigation(
