@@ -225,6 +225,12 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     return false;
   }
 
+  /// Back to full size. Touching the bar or changing tab both count as using
+  /// it, and a bar that stayed shrunk through either would look stuck.
+  void _wakeNav() {
+    if (_navShrink.reset()) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.listen<AsyncValue<UpdateInfo?>>(checkForUpdateProvider, (_, next) {
@@ -367,6 +373,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                               route: route,
                               ref: ref,
                               shrink: _navShrink.shrunk ? 1.0 : 0.0,
+                              onWake: _wakeNav,
                               buildNavigationWidgetsMobile:
                                   _buildNavigationWidgetsMobile,
                               onDestinationSelected: (destination) {
@@ -961,6 +968,7 @@ class _MobileBottomNavigation extends StatelessWidget {
     required this.buildNavigationWidgetsMobile,
     required this.onDestinationSelected,
     this.shrink = 0,
+    this.onWake,
   });
 
   final bool isLongPressed;
@@ -976,6 +984,9 @@ class _MobileBottomNavigation extends StatelessWidget {
   /// Passed through to the floating bar; 0 at rest, 1 while the page under it
   /// is being scrolled down.
   final double shrink;
+
+  /// The bar asking for its full size back.
+  final VoidCallback? onWake;
 
   @override
   Widget build(BuildContext context) {
@@ -1003,6 +1014,7 @@ class _MobileBottomNavigation extends StatelessWidget {
           // beside the icons rather than a rail taking over.
           showLabels: context.isLandscape,
           shrink: shrink,
+          onWake: onWake,
         ),
       );
     }

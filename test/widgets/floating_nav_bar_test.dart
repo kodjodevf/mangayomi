@@ -27,6 +27,8 @@ Widget _host({
   List<NavigationDestination> destinations = _destinations,
   ValueChanged<int>? onSelected,
   double shrink = 0,
+  VoidCallback? onWake,
+  int? swipeTarget,
 }) => MaterialApp(
   home: Scaffold(
     body: Align(
@@ -41,6 +43,8 @@ Widget _host({
           currentIndex: index,
           onSelected: onSelected ?? (_) {},
           shrink: shrink,
+          onWake: onWake,
+          swipeTarget: swipeTarget,
         ),
       ),
     ),
@@ -66,6 +70,7 @@ Rect _barRect(WidgetTester tester) => tester.getRect(
 
 void main() {
   group("shrink", _shrinkTests);
+  group("wake", _wakeTests);
 
   testWidgets('the highlight sits under the selected destination', (
     tester,
@@ -1480,5 +1485,87 @@ void _shrinkTests() {
     await tester.tap(find.byIcon(Icons.explore_outlined));
     await tester.pumpAndSettle();
     expect(taps, isNotEmpty);
+  });
+}
+
+void _wakeTests() {
+  testWidgets('a touch anywhere on the bar asks for full size back', (
+    tester,
+  ) async {
+    var wakes = 0;
+    await tester.pumpWidget(_host(index: 0, shrink: 1, onWake: () => wakes++));
+    await tester.pumpAndSettle();
+
+    // The middle of the bar, which is a gap between items rather than an item.
+    await tester.tapAt(_barRect(tester).center);
+    await tester.pumpAndSettle();
+    expect(wakes, greaterThan(0));
+  });
+
+  testWidgets('tapping a tab wakes it as well as selecting', (tester) async {
+    var wakes = 0;
+    await tester.pumpWidget(_host(index: 0, shrink: 1, onWake: () => wakes++));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(Icons.explore_outlined));
+    await tester.pumpAndSettle();
+    expect(wakes, greaterThan(0));
+  });
+
+  testWidgets('dragging the pill wakes it', (tester) async {
+    var wakes = 0;
+    await tester.pumpWidget(_host(index: 0, shrink: 1, onWake: () => wakes++));
+    await tester.pumpAndSettle();
+
+    await tester.drag(find.byType(FloatingNavBar), const Offset(80, 0));
+    await tester.pumpAndSettle();
+    expect(wakes, greaterThan(0));
+  });
+
+  testWidgets('landing on another tab wakes it however it was reached', (
+    tester,
+  ) async {
+    var wakes = 0;
+    // No touch at all: the index changes underneath it, as a page swipe does.
+    await tester.pumpWidget(_host(index: 0, shrink: 1, onWake: () => wakes++));
+    await tester.pumpAndSettle();
+    expect(wakes, 0, reason: 'nothing has happened yet');
+
+    await tester.pumpWidget(_host(index: 2, shrink: 1, onWake: () => wakes++));
+    await tester.pumpAndSettle();
+    expect(wakes, 1);
+  });
+
+  testWidgets('a rebuild on the same tab does not wake it', (tester) async {
+    var wakes = 0;
+    await tester.pumpWidget(_host(index: 1, shrink: 1, onWake: () => wakes++));
+    await tester.pumpAndSettle();
+    await tester.pumpWidget(_host(index: 1, shrink: 1, onWake: () => wakes++));
+    await tester.pumpAndSettle();
+    expect(wakes, 0);
+  });
+
+  testWidgets('a swipe setting off wakes it before the tab changes', (
+    tester,
+  ) async {
+    var wakes = 0;
+    await tester.pumpWidget(_host(index: 0, shrink: 1, onWake: () => wakes++));
+    await tester.pumpAndSettle();
+
+    // Same tab still selected; only the swipe target has appeared.
+    await tester.pumpWidget(
+      _host(index: 0, shrink: 1, onWake: () => wakes++, swipeTarget: 1),
+    );
+    await tester.pumpAndSettle();
+    expect(wakes, 1);
+  });
+
+  testWidgets('waking is optional', (tester) async {
+    await tester.pumpWidget(_host(index: 0, shrink: 1));
+    await tester.pumpAndSettle();
+    await tester.tapAt(_barRect(tester).center);
+    await tester.pumpWidget(_host(index: 2, shrink: 1));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
   });
 }
