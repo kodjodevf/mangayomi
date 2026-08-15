@@ -30,9 +30,11 @@ Widget _host({
   home: Scaffold(
     body: Align(
       alignment: Alignment.bottomCenter,
+      // Width only. Scaffold gives its bottomNavigationBar loose height, so
+      // pinning one here would force the bar to fill it and mask the very
+      // thing several of these tests measure.
       child: SizedBox(
         width: 360,
-        height: 80,
         child: FloatingNavBar(
           destinations: destinations,
           currentIndex: index,
@@ -613,7 +615,6 @@ void main() {
         alignment: Alignment.bottomCenter,
         child: SizedBox(
           width: 360,
-          height: 90,
           child: FloatingNavBar(
             destinations: _destinations,
             currentIndex: 1,
@@ -757,7 +758,6 @@ void main() {
             alignment: Alignment.bottomCenter,
             child: SizedBox(
               width: 360,
-              height: 90,
               child: FloatingNavBar(
                 destinations: _destinations,
                 currentIndex: 1,
@@ -875,6 +875,52 @@ void main() {
       reason:
           'the pill, the fill and the stroke weight already mark the active '
           'tab, so dimming the others only made them harder to read',
+    );
+  });
+
+  testWidgets('the bar reports its own height, not the screen height', (
+    tester,
+  ) async {
+    // Scaffold lays a bottomNavigationBar out with the screen height as its
+    // maximum. A widget that fills those constraints still *looks* right,
+    // because its content is pinned to the bottom, but with extendBody the
+    // Scaffold hands that height to the body as bottom padding. Every page
+    // that respects the inset then pushes its content off screen: More showed
+    // one item and a void, Browse and Extensions came up blank.
+    late double bodyBottomInset;
+    late Size barSize;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          extendBody: true,
+          bottomNavigationBar: FloatingNavBar(
+            destinations: _destinations,
+            currentIndex: 0,
+            onSelected: (_) {},
+          ),
+          body: Builder(
+            builder: (context) {
+              bodyBottomInset = MediaQuery.paddingOf(context).bottom;
+              return const SizedBox.expand();
+            },
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    barSize = tester.getSize(find.byType(FloatingNavBar));
+
+    final screen = tester.getSize(find.byType(Scaffold)).height;
+    expect(
+      barSize.height,
+      lessThan(screen / 3),
+      reason: 'the bar box swallowed the screen',
+    );
+    expect(
+      bodyBottomInset,
+      moreOrLessEquals(barSize.height, epsilon: 1),
+      reason: 'the inset handed to the body has to be the bar, nothing more',
     );
   });
 }

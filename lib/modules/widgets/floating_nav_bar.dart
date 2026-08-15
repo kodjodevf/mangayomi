@@ -260,9 +260,12 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
         FloatingNavBar._margin,
         bottom,
       ),
-      child: Align(
-        alignment: Alignment.bottomCenter,
-        child: _Zoom(
+      // No Align here. Scaffold lays a bottomNavigationBar out with the screen
+      // height as its maximum, and Align only shrink-wraps when its constraint
+      // is unbounded, so it made this box as tall as the screen. The bar still
+      // looked right, but extendBody reports that height to the body as bottom
+      // padding, which pushed every page's content off screen.
+      child: _Zoom(
           zoom: dragging ? FloatingNavBar._dragZoom : 1.0,
           give: dragging ? _edgePush * FloatingNavBar._barGive : 0.0,
           child: SizedBox(
@@ -416,8 +419,7 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 }
 
