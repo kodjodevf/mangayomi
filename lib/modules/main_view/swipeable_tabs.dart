@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -45,6 +46,14 @@ class SwipeableTabs extends StatefulWidget {
 
   static const _settleDuration = Duration(milliseconds: 220);
 
+  /// Gap between the outgoing and incoming page while they are both on screen,
+  /// so the two read as separate surfaces rather than one sliding sheet.
+  static const _separator = 10.0;
+
+  /// How far a pointer has to travel before this widget treats it as its own
+  /// drag rather than a stray movement.
+  static const _slop = 18.0;
+
   @override
   State<SwipeableTabs> createState() => _SwipeableTabsState();
 }
@@ -66,6 +75,14 @@ class _SwipeableTabsState extends State<SwipeableTabs>
 
   bool _dragging = false;
 
+  /// Set when an inner horizontal scrollable claims the pointer. It keeps the
+  /// gesture; all this widget does then is pick up the overscroll it reports
+  /// once it runs out of room.
+  bool _innerOwns = false;
+  bool _engaged = false;
+  Offset _down = Offset.zero;
+  VelocityTracker? _velocity;
+
   @override
   void dispose() {
     _settle.dispose();
@@ -86,26 +103,50 @@ class _SwipeableTabsState extends State<SwipeableTabs>
     return index;
   }
 
-  void _onDragStart(DragStartDetails _) {
-    _settle.stop();
-    setState(() {
-      _dragging = true;
-      _offset = 0;
-    });
+  void _onPointerDown(PointerDownEvent event) {
+    _down = event.position;
+    _engaged = false;
+    _innerOwns = false;
+    _velocity = VelocityTracker.withKind(event.kind)
+      ..addPosition(event.timeStamp, event.position);
   }
 
-  void _onDragUpdate(DragUpdateDetails details) {
+  void _onPointerMove(PointerMoveEvent event) {
+    _velocity?.addPosition(event.timeStamp, event.position);
+    // An inner scrollable is driving; the overscroll path takes over from here.
+    if (_innerOwns) return;
+
+    final total = event.position - _down;
+    if (!_engaged) {
+      // Sideways and past the slop, or it belongs to whatever is underneath.
+      if (total.dx.abs() < SwipeableTabs._slop ||
+          total.dx.abs() <= total.dy.abs()) {
+        return;
+      }
+      _settle.stop();
+      _engaged = true;
+      _dragging = true;
+      _offset = 0;
+    }
+
     final width = context.size?.width ?? 1;
-    var next = _offset + details.delta.dx;
+    var next = _offset + event.delta.dx;
     // Nothing to reveal past the first or last tab, so resist rather than
     // dragging a blank gap into view.
-    if (_neighbourFor(next) == null) next = _offset + details.delta.dx * 0.25;
+    if (_neighbourFor(next) == null) next = _offset + event.delta.dx * 0.25;
     setState(() => _offset = next.clamp(-width, width));
   }
 
-  void _onDragEnd(DragEndDetails details) {
+  void _onPointerUp(PointerEvent event) {
+    final v = _velocity?.getVelocity().pixelsPerSecond.dx ?? 0;
+    _velocity = null;
+    if (!_engaged) return;
+    _engaged = false;
+    _finish(velocity: v);
+  }
+
+  void _finish({required double velocity}) {
     final width = context.size?.width ?? 1;
-    final velocity = details.velocity.pixelsPerSecond.dx;
     final target = _neighbourFor(_offset);
 
     final farEnough = _offset.abs() > width * SwipeableTabs._commitFraction;
@@ -137,6 +178,41 @@ class _SwipeableTabsState extends State<SwipeableTabs>
     setState(() {});
   }
 
+  /// Carries an inner tab set's overscroll into the same drag.
+  ///
+  /// A TabBarView wins the gesture before this widget ever sees it, and
+  /// Flutter does not pass a drag up to a parent scrollable at the edge. But
+  /// TabBarView clamps rather than bouncing, so once it has nowhere left to go
+  /// it reports the leftover as overscroll, and that is the rest of the same
+  /// finger movement. Reading it here is what lets a swipe run out of the last
+  /// section and straight on into the next tab.
+  bool _onInnerScroll(ScrollNotification notification) {
+    if (notification.metrics.axis != Axis.horizontal) return false;
+
+    // Whoever started scrolling horizontally owns this pointer, so stay out of
+    // its way rather than fighting it for the gesture.
+    if (notification is ScrollStartNotification) _innerOwns = true;
+
+    if (notification is OverscrollNotification) {
+      final width = context.size?.width ?? 1;
+      // Overscroll past the end is a drag towards the next tab, which moves
+      // the pages the other way.
+      var next = _offset - notification.overscroll;
+      if (_neighbourFor(next) == null) return false;
+      _settle.stop();
+      setState(() {
+        _dragging = true;
+        _offset = next.clamp(-width, width);
+      });
+      return false;
+    }
+
+    if (notification is ScrollEndNotification && _offset != 0) {
+      _finish(velocity: 0);
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!widget.enabled) return widget.child;
@@ -144,37 +220,48 @@ class _SwipeableTabsState extends State<SwipeableTabs>
     final position = _position;
     final neighbour = _neighbourFor(position);
 
-    return GestureDetector(
-      onHorizontalDragStart: _onDragStart,
-      onHorizontalDragUpdate: _onDragUpdate,
-      onHorizontalDragEnd: _onDragEnd,
-      child: position == 0
-          ? widget.child
-          : LayoutBuilder(
-              builder: (context, constraints) {
-                final width = constraints.maxWidth;
-                return Stack(
-                  clipBehavior: Clip.hardEdge,
-                  children: [
-                    Transform.translate(
-                      offset: Offset(position, 0),
-                      child: widget.child,
+    return NotificationListener<ScrollNotification>(
+      onNotification: _onInnerScroll,
+      // A Listener, not a GestureDetector. A drag recognizer here joins the
+      // gesture arena and beats the scrollables inside the page, which left
+      // inner tab sets unswipeable except by their header. Raw pointer events
+      // never enter the arena, so everything underneath keeps working and this
+      // widget only acts when nothing else claimed the pointer.
+      child: Listener(
+        onPointerDown: _onPointerDown,
+        onPointerMove: _onPointerMove,
+        onPointerUp: _onPointerUp,
+        onPointerCancel: _onPointerUp,
+        // Always the same shape, even at rest. Swapping between a bare child
+        // and a wrapped one reparents the page the moment a drag starts, which
+        // throws away the state of anything inside it: an inner tab set loses
+        // its position and its half-finished gesture.
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final width = constraints.maxWidth;
+            // The neighbour sits a full width away plus the gap, so the
+            // two never touch while both are on screen.
+            final step = width + SwipeableTabs._separator;
+            return Stack(
+              clipBehavior: Clip.hardEdge,
+              children: [
+                Transform.translate(
+                  offset: Offset(position, 0),
+                  child: widget.child,
+                ),
+                if (neighbour != null)
+                  Transform.translate(
+                    offset: Offset(position + (position < 0 ? step : -step), 0),
+                    child: SizedBox(
+                      width: width,
+                      child: widget.pageBuilder(neighbour),
                     ),
-                    if (neighbour != null)
-                      Transform.translate(
-                        offset: Offset(
-                          position + (position < 0 ? width : -width),
-                          0,
-                        ),
-                        child: SizedBox(
-                          width: width,
-                          child: widget.pageBuilder(neighbour),
-                        ),
-                      ),
-                  ],
-                );
-              },
-            ),
+                  ),
+              ],
+            );
+          },
+        ),
+      ),
     );
   }
 }

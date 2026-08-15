@@ -128,28 +128,48 @@ class RouterNotifier extends ChangeNotifier {
       builder: (context, state, child) => MainScreen(child: child),
       routes: [
         _genericRoute<String?>(
+          noTransition: true,
           name: "MangaLibrary",
           builder: (id) =>
               LibraryScreen(itemType: ItemType.manga, presetInput: id),
         ),
         _genericRoute<String?>(
+          noTransition: true,
           name: "AnimeLibrary",
           builder: (id) =>
               LibraryScreen(itemType: ItemType.anime, presetInput: id),
         ),
         _genericRoute<String?>(
+          noTransition: true,
           name: "NovelLibrary",
           builder: (id) =>
               LibraryScreen(itemType: ItemType.novel, presetInput: id),
         ),
         _genericRoute<String?>(
+          noTransition: true,
           name: "trackerLibrary",
           builder: (id) => TrackerLibraryScreen(presetInput: id),
         ),
-        _genericRoute(name: "history", child: const HistoryScreen()),
-        _genericRoute(name: "updates", child: const UpdatesScreen()),
-        _genericRoute(name: "browse", child: const BrowseScreen()),
-        _genericRoute(name: "more", child: const MoreScreen()),
+        _genericRoute(
+          noTransition: true,
+          name: "history",
+          child: const HistoryScreen(),
+        ),
+        _genericRoute(
+          noTransition: true,
+          name: "updates",
+          child: const UpdatesScreen(),
+        ),
+        _genericRoute(
+          noTransition: true,
+          name: "browse",
+          child: const BrowseScreen(),
+        ),
+        _genericRoute(
+          noTransition: true,
+          name: "more",
+          child: const MoreScreen(),
+        ),
       ],
     ),
     _genericRoute<(Source?, bool)>(
@@ -288,6 +308,7 @@ class RouterNotifier extends ChangeNotifier {
     String? path,
     Widget Function(T extra)? builder,
     Widget? child,
+    bool noTransition = false,
   }) {
     return GoRoute(
       path: path ?? (name != null ? "/$name" : "/"),
@@ -300,12 +321,17 @@ class RouterNotifier extends ChangeNotifier {
           return child!;
         }
       },
-      pageBuilder: isApple
+      pageBuilder: isApple || noTransition
           ? (context, state) {
               final pageChild = builder != null
                   ? builder(state.extra as T)
                   : child!;
-              return transitionPage(key: state.pageKey, child: pageChild);
+              // Shell tabs are switched, not pushed. A page transition here
+              // plays on top of whatever moved you between them, so a swipe
+              // animates twice and a tap slides when it should just change.
+              return noTransition
+                  ? NoTransitionPage(key: state.pageKey, child: pageChild)
+                  : transitionPage(key: state.pageKey, child: pageChild);
             }
           : null,
     );
