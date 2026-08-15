@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui';
 
@@ -111,6 +112,12 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
   /// per-event jitter from making the pill flutter.
   double _stretch = 0;
 
+  /// True for the first moments of a drag, while the pill is still travelling
+  /// to the finger. Tracking only becomes one-to-one once it has arrived, so
+  /// grabbing a different tab pulls the pill over rather than teleporting it.
+  bool _catchingUp = false;
+  Timer? _catchUpTimer;
+
   /// Signed overshoot past an end of the bar, -1 to 1. Drives how far the bar
   /// itself gives, so the whole component deforms rather than just the pill.
   double _edgePush = 0;
@@ -131,11 +138,24 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
   int _slotAt(double x, double slot) =>
       (x / slot).floor().clamp(0, widget.destinations.length - 1);
 
-  void _startDrag(double x) => setState(() {
-    _dragX = x;
-    _stretch = 0;
-    _edgePush = 0;
-  });
+  void _startDrag(double x) {
+    _catchUpTimer?.cancel();
+    setState(() {
+      _dragX = x;
+      _stretch = 0;
+      _edgePush = 0;
+      _catchingUp = true;
+    });
+    _catchUpTimer = Timer(FloatingNavBar._duration, () {
+      if (mounted) setState(() => _catchingUp = false);
+    });
+  }
+
+  @override
+  void dispose() {
+    _catchUpTimer?.cancel();
+    super.dispose();
+  }
 
   void _updateDrag(double x) => setState(() {
     final travelled = (x - _dragX!).abs() * FloatingNavBar._speedStretch;
@@ -149,10 +169,12 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
   void _endDrag(double slot) {
     final target = _slotAt(_dragX!, slot);
     final changing = target != widget.currentIndex;
+    _catchUpTimer?.cancel();
     setState(() {
       _dragX = null;
       _stretch = 0;
       _edgePush = 0;
+      _catchingUp = false;
       // Only hold a dropped slot when the selection is actually moving.
       // Otherwise the pill would sit on a slot the app never navigated to.
       _droppedIndex = changing ? target : null;
@@ -160,11 +182,15 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
     if (changing) widget.onSelected(target);
   }
 
-  void _cancelDrag() => setState(() {
-    _dragX = null;
-    _stretch = 0;
-    _edgePush = 0;
-  });
+  void _cancelDrag() {
+    _catchUpTimer?.cancel();
+    setState(() {
+      _dragX = null;
+      _stretch = 0;
+      _edgePush = 0;
+      _catchingUp = false;
+    });
+  }
 
   /// Left and right edges of the pill, in bar-local coordinates.
   ///
@@ -302,7 +328,11 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                               AnimatedPositioned(
                                 // A dragged pill has to track the finger exactly;
                                 // easing here would make it lag behind.
-                                duration: dragging
+                                // Eases while it travels to the finger, then
+                                // tracks it exactly. Easing throughout would
+                                // make it lag behind; never easing would make
+                                // it teleport to whichever tab was grabbed.
+                                duration: dragging && !_catchingUp
                                     ? Duration.zero
                                     : FloatingNavBar._duration,
                                 curve: FloatingNavBar._curve,
@@ -535,9 +565,10 @@ class _FloatingNavItem extends StatelessWidget {
     // A selected icon sits on the pill, so it takes the pill's paired colour
     // rather than the bar's. Unselected ones stay neutral, so only the active
     // tab carries the theme.
-    final color = selected
-        ? scheme.onSecondaryContainer
-        : scheme.onSurface.withValues(alpha: 0.62);
+    // Both states at full strength: the pill, the fill and the stroke weight
+    // already say which tab is active, so dimming the rest only made them
+    // harder to read.
+    final color = selected ? scheme.onSecondaryContainer : scheme.onSurface;
     return Semantics(
       // The label is gone visually, so it has to survive for screen readers.
       label: destination.label,

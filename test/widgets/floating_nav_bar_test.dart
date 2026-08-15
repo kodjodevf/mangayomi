@@ -349,6 +349,10 @@ void main() {
     final resting = _pillRect(tester).width;
 
     final gesture = await tester.startGesture(_pillRect(tester).center);
+    // The move is what starts the drag; wait for the pill to finish travelling
+    // to the finger before measuring, or the width is still mid-animation.
+    await gesture.moveBy(const Offset(30, 0));
+    await tester.pump(const Duration(milliseconds: 300));
     await gesture.moveBy(const Offset(20, 0));
     await tester.pump();
     await gesture.moveBy(const Offset(60, 0));
@@ -375,7 +379,9 @@ void main() {
 
     final gesture = await tester.startGesture(_pillRect(tester).center);
     await gesture.moveBy(const Offset(400, 0));
-    await tester.pump();
+    // The move is what starts the drag; only then does the pill begin
+    // travelling to the finger, so wait for it to arrive before measuring.
+    await tester.pump(const Duration(milliseconds: 300));
     // Let the speed stretch decay before measuring, so what is left is only
     // the edge behaviour.
     for (var i = 0; i < 12; i++) {
@@ -808,5 +814,67 @@ void main() {
         );
       }
     }
+  });
+
+  testWidgets('grabbing another tab pulls the pill over, not teleports it', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_host(index: 0));
+    await tester.pumpAndSettle();
+    final start = _pillRect(tester).center.dx;
+
+    // Press on the far tab and drag from there.
+    final target = tester.getCenter(find.byIcon(Icons.explore_outlined));
+    final gesture = await tester.startGesture(target);
+    // Enough to clear the touch slop in one go, so the drag is definitely
+    // running by the time the first frame is measured.
+    await gesture.moveBy(const Offset(40, 0));
+    // The first frame after the target changes still renders the old value,
+    // since that is where the animation starts; the second one advances it.
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 60));
+
+    final partway = _pillRect(tester).center.dx;
+    expect(
+      partway,
+      greaterThan(start),
+      reason: 'it should have set off towards the finger',
+    );
+    expect(
+      partway,
+      lessThan(target.dx),
+      reason: 'and should still be on its way, not already there',
+    );
+
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(
+      _pillRect(tester).center.dx,
+      greaterThan(partway),
+      reason: 'it keeps going and arrives',
+    );
+
+    await gesture.up();
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('unselected icons are not dimmed', (tester) async {
+    await tester.pumpWidget(_host(index: 1));
+    await tester.pumpAndSettle();
+
+    IconThemeData themeOf(IconData icon) => tester
+        .widget<IconTheme>(
+          find
+              .ancestor(of: find.byIcon(icon), matching: find.byType(IconTheme))
+              .first,
+        )
+        .data;
+
+    expect(
+      themeOf(Icons.explore_outlined).color!.a,
+      1.0,
+      reason:
+          'the pill, the fill and the stroke weight already mark the active '
+          'tab, so dimming the others only made them harder to read',
+    );
   });
 }
