@@ -4666,6 +4666,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Mangayomi could not finish starting up'**
   String get startup_failed;
+
+  /// Header of the collapsed group in global search holding every source that failed or found nothing.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 source with no results} other{{count} sources with no results}}'**
+  String sources_with_no_results(int count);
 }
 
 class _AppLocalizationsDelegate
