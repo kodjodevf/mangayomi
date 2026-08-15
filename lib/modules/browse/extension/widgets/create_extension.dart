@@ -290,7 +290,8 @@ class _CreateExtensionState extends State<CreateExtension> {
                               ..iconUrl = _iconUrl
                               ..notes = _notes
                               ..isNsfw = _isNsfw
-                              ..typeSource = _sourceTypes[_sourceTypeIndex];
+                              ..typeSource =
+                                  _sourceTypeValues[_sourceTypeIndex];
                             isar.writeTxnSync(() {
                               isar.sources.putSync(
                                 source
