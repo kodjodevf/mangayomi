@@ -726,4 +726,87 @@ void main() {
       reason: 'the middle slot of three is the bar centre; nothing to nudge',
     );
   });
+
+  Color pillColourOf(WidgetTester tester) =>
+      (tester
+                  .widget<AnimatedContainer>(
+                    find.descendant(
+                      of: find.byType(AnimatedPositioned),
+                      matching: find.byType(AnimatedContainer),
+                    ),
+                  )
+                  .decoration
+              as ShapeDecoration)
+          .color!;
+
+  testWidgets('the pill carries the theme, the bar stays neutral', (
+    tester,
+  ) async {
+    final scheme = ColorScheme.fromSeed(seedColor: const Color(0xFF7B4BD6));
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(colorScheme: scheme, useMaterial3: true),
+        home: Scaffold(
+          body: Align(
+            alignment: Alignment.bottomCenter,
+            child: SizedBox(
+              width: 360,
+              height: 90,
+              child: FloatingNavBar(
+                destinations: _destinations,
+                currentIndex: 1,
+                onSelected: (_) {},
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      pillColourOf(tester).withValues(alpha: 1),
+      scheme.secondaryContainer,
+      reason: 'the pill is the one element that takes the accent',
+    );
+    // The bar is glass: it should take colour from what is behind it, not
+    // impose its own, and a coloured slab would fight the cover art.
+    final fill = barFillOf(tester);
+    expect(
+      (fill.r - fill.g).abs() < 0.25 && (fill.g - fill.b).abs() < 0.25,
+      isTrue,
+      reason: 'the bar itself must stay near-neutral',
+    );
+  });
+
+  test('a selected icon stays legible on the pill in any scheme', () {
+    // This pairing is the reason the pill carries the theme rather than the
+    // icon. Tinting the icon against the bar would have to hold up against
+    // every scheme the user can choose, with no guarantee behind it.
+    double contrast(Color a, Color b) {
+      final la = a.computeLuminance(), lb = b.computeLuminance();
+      return (math.max(la, lb) + 0.05) / (math.min(la, lb) + 0.05);
+    }
+
+    final seeds = [
+      const Color(0xFF6750A4),
+      const Color(0xFF0061A4),
+      const Color(0xFF006E1C),
+      const Color(0xFFBA1A1A),
+      const Color(0xFFFFD600),
+      const Color(0xFF00696E),
+      const Color(0xFF8F4C38),
+      const Color(0xFF4A4458),
+    ];
+    for (final seed in seeds) {
+      for (final brightness in Brightness.values) {
+        final s = ColorScheme.fromSeed(seedColor: seed, brightness: brightness);
+        expect(
+          contrast(s.onSecondaryContainer, s.secondaryContainer),
+          greaterThan(4.5),
+          reason: 'seed $seed in $brightness fails the pairing',
+        );
+      }
+    }
+  });
 }

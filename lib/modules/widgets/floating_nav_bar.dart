@@ -323,10 +323,19 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                                     duration: FloatingNavBar._duration,
                                     curve: FloatingNavBar._curve,
                                     decoration: ShapeDecoration(
-                                      color: scheme.onSurface.withValues(
-                                        // Reads as picked up while in hand.
-                                        alpha: dragging ? 0.2 : 0.13,
-                                      ),
+                                      // The one element that carries the
+                                      // theme. Pairing it with
+                                      // onSecondaryContainer for the icon is
+                                      // what guarantees the icon stays legible
+                                      // across every scheme the user can pick,
+                                      // which tinting the icon against the bar
+                                      // could not.
+                                      color: scheme.secondaryContainer
+                                          .withValues(
+                                            // Slightly more solid in hand, so
+                                            // it still reads as picked up.
+                                            alpha: dragging ? 1.0 : 0.9,
+                                          ),
                                       // A stadium is a full capsule at any
                                       // size, so the pill stays as round as the
                                       // bar's own caps however it scales.
@@ -523,8 +532,11 @@ class _FloatingNavItem extends StatelessWidget {
     final icon = selected
         ? (destination.selectedIcon ?? destination.icon)
         : destination.icon;
+    // A selected icon sits on the pill, so it takes the pill's paired colour
+    // rather than the bar's. Unselected ones stay neutral, so only the active
+    // tab carries the theme.
     final color = selected
-        ? scheme.onSurface
+        ? scheme.onSecondaryContainer
         : scheme.onSurface.withValues(alpha: 0.62);
     return Semantics(
       // The label is gone visually, so it has to survive for screen readers.
