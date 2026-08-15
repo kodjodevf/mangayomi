@@ -1,3 +1,4 @@
+import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
 
 extension BuildContextExtensions on BuildContext {
@@ -43,5 +44,25 @@ extension BuildContextExtensions on BuildContext {
 
   bool get isTablet {
     return MediaQuery.of(this).size.width >= 600;
+  }
+
+  /// Whether this viewport should navigate by a rail rather than a bottom bar.
+  ///
+  /// Measured on the shortest side, not the width: a phone turned landscape is
+  /// over 600 wide but is still a phone, and judging it by width alone handed
+  /// it a rail the moment it rotated.
+  ///
+  /// Platforms on the floating bar never take a rail at all. There the bar
+  /// carries labels in landscape instead, which is the same navigation in both
+  /// orientations rather than two different ones.
+  bool get prefersNavRail {
+    if (usesFloatingNav) return false;
+    return MediaQuery.of(this).size.shortestSide >= 600;
+  }
+
+  /// Wide enough to put labels beside the icons rather than icons alone.
+  bool get isLandscape {
+    final size = MediaQuery.of(this).size;
+    return size.width > size.height;
   }
 }

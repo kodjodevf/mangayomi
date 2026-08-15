@@ -235,7 +235,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
             builder: (context, ref, child) {
               final isReadingScreen = _isReadingScreen(location);
               bool uniqueSwitch = false;
-              List<String> dest = !context.isTablet && isLibSwitch
+              List<String> dest = !context.prefersNavRail && isLibSwitch
                   ? [
                       "_disableLibSwitch",
                       ...navigationOrder.where(
@@ -251,7 +251,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                 dest = dest.where(_isNotHiddenLibOnTv).toList();
               }
 
-              if (mergeLibraryNavMobile && !context.isTablet && !isLibSwitch) {
+              if (mergeLibraryNavMobile &&
+                  !context.prefersNavRail &&
+                  !isLibSwitch) {
                 dest = dest
                     .map((nav) {
                       if ([
@@ -276,7 +278,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               } else {
                 String? libLocation;
                 if (mergeLibraryNavMobile &&
-                    !context.isTablet &&
+                    !context.prefersNavRail &&
                     !isLibSwitch) {
                   libLocation = location?.replaceAll(
                     libLocationRegex,
@@ -310,8 +312,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                       // bar, which is the whole point of blurring it. Scroll
                       // views inset themselves by the bar height through
                       // MediaQuery padding, so the last row stays reachable.
-                      extendBody: isApple,
-                      body: context.isTablet
+                      extendBody: usesFloatingNav,
+                      body: context.prefersNavRail
                           ? _TabletLayout(
                               isLongPressed: isLongPressed,
                               location: location,
@@ -324,7 +326,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                               child: widget.child,
                             )
                           : widget.child,
-                      bottomNavigationBar: context.isTablet
+                      bottomNavigationBar: context.prefersNavRail
                           ? null
                           : _MobileBottomNavigation(
                               isLongPressed: isLongPressed,
@@ -944,7 +946,7 @@ class _MobileBottomNavigation extends StatelessWidget {
     // On Apple platforms the bar is translucent and content passes underneath,
     // which is what makes it read as native rather than as a solid slab. The
     // Scaffold sets extendBody to match. Elsewhere the bar stays opaque.
-    final translucent = isApple;
+    final translucent = usesFloatingNav;
 
     if (translucent) {
       return SizedBox(
@@ -960,6 +962,9 @@ class _MobileBottomNavigation extends StatelessWidget {
           ).cast<NavigationDestination>(),
           currentIndex: currentIndex,
           onSelected: (newIndex) => onDestinationSelected(dest[newIndex]),
+          // Landscape has width to spare and height to save, so the labels go
+          // beside the icons rather than a rail taking over.
+          showLabels: context.isLandscape,
         ),
       );
     }

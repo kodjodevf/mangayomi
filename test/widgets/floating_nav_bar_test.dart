@@ -155,10 +155,10 @@ void main() {
   ) async {
     // A tab bar that keeps shrinking would eventually be unusable, so the
     // floor matters more than the ratio here.
-    expect(FloatingNavBar.heightFor(30), greaterThanOrEqualTo(44.0));
+    expect(FloatingNavBar.heightFor(30), greaterThanOrEqualTo(38.0));
     await tester.pumpWidget(_host(index: 0, destinations: manyTabs(12)));
     await tester.pumpAndSettle();
-    expect(_barRect(tester).height, greaterThanOrEqualTo(44.0));
+    expect(_barRect(tester).height, greaterThanOrEqualTo(38.0));
   });
 
   testWidgets('icons shrink with the bar', (tester) async {
@@ -970,5 +970,123 @@ void main() {
       moreOrLessEquals(resting.height, epsilon: 0.5),
       reason: 'and settle back on its own',
     );
+  });
+
+  test('a short viewport gets a shorter bar', () {
+    // Landscape on a phone has very little height to spare, and a bar sized
+    // for portrait eats into the content.
+    const portrait = 900.0;
+    const landscape = 390.0;
+    expect(
+      FloatingNavBar.heightFor(5, viewportHeight: landscape),
+      lessThan(FloatingNavBar.heightFor(5, viewportHeight: portrait)),
+    );
+    // Crowding and a short viewport both apply, and the floor still wins.
+    expect(
+      FloatingNavBar.heightFor(9, viewportHeight: landscape),
+      greaterThanOrEqualTo(38.0),
+    );
+    // No viewport given means no assumption either way.
+    expect(
+      FloatingNavBar.heightFor(5),
+      FloatingNavBar.heightFor(5, viewportHeight: portrait),
+    );
+  });
+
+  testWidgets('the bar is laid out from the viewport it is actually in', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1560, 720);
+    tester.view.devicePixelRatio = 2.0;
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(_host(index: 0));
+    await tester.pumpAndSettle();
+    final wide = _barRect(tester).height;
+
+    tester.view.physicalSize = const Size(780, 1690);
+    await tester.pumpWidget(_host(index: 0));
+    await tester.pumpAndSettle();
+    final tall = _barRect(tester).height;
+
+    expect(
+      wide,
+      lessThan(tall),
+      reason: 'landscape has less height to give the bar',
+    );
+  });
+
+  testWidgets('labels sit beside the icons in the landscape layout', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Align(
+            alignment: Alignment.bottomCenter,
+            child: SizedBox(
+              width: 700,
+              child: FloatingNavBar(
+                destinations: _destinations,
+                currentIndex: 1,
+                showLabels: true,
+                onSelected: (_) {},
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    for (final label in ['Manga', 'Anime', 'Browse']) {
+      expect(find.text(label), findsOneWidget);
+    }
+
+    // Beside, not above: same row, so their vertical centres line up.
+    final icon = tester.getRect(find.byIcon(Icons.video_library_rounded).first);
+    final text = tester.getRect(find.text('Anime'));
+    expect(text.left, greaterThan(icon.right));
+    expect(text.center.dy, moreOrLessEquals(icon.center.dy, epsilon: 2));
+  });
+
+  testWidgets('a labelled item is as wide as its own label', (tester) async {
+    const wordy = [
+      NavigationDestination(icon: Icon(Icons.circle), label: 'Hi'),
+      NavigationDestination(
+        icon: Icon(Icons.square),
+        label: 'A considerably longer label',
+      ),
+    ];
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Align(
+            alignment: Alignment.bottomCenter,
+            child: SizedBox(
+              width: 700,
+              child: FloatingNavBar(
+                destinations: wordy,
+                currentIndex: 0,
+                showLabels: true,
+                onSelected: (_) {},
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // The pill is sized from the same widths, so it must fit the short item
+    // rather than half the bar.
+    final pill = _pillRect(tester);
+    final bar = _barRect(tester);
+    expect(
+      pill.width,
+      lessThan(bar.width / 2),
+      reason: 'even slots would give the short label half the bar',
+    );
+    expect(pill.center.dx, lessThan(bar.center.dx));
   });
 }

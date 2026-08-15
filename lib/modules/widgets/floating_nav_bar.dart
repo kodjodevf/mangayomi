@@ -17,11 +17,17 @@ class FloatingNavBar extends StatefulWidget {
     required this.destinations,
     required this.currentIndex,
     required this.onSelected,
+    this.showLabels = false,
   });
 
   final List<NavigationDestination> destinations;
   final int currentIndex;
   final ValueChanged<int> onSelected;
+
+  /// Puts the label beside each icon and lets the bar hug its contents rather
+  /// than span the screen. Used in landscape, where there is width to spare and
+  /// height to save, and where a rail would otherwise take over.
+  final bool showLabels;
 
   static const _duration = Duration(milliseconds: 260);
   static const _curve = Curves.easeOutCubic;
@@ -33,20 +39,33 @@ class FloatingNavBar extends StatefulWidget {
   /// takes a little height, since the slots are getting narrower and a bar
   /// that keeps its full height starts to look crowded.
   static const _comfortableCount = 5;
-  static const _fullHeight = 58.0;
-  static const _shrinkPerExtra = 4.0;
-  static const _minHeight = 44.0;
+  static const _fullHeight = 48.0;
+  static const _shrinkPerExtra = 3.0;
+  static const _minHeight = 38.0;
 
   /// Icon size as a fraction of bar height, so icons shrink with the bar
   /// rather than needing their own ladder of numbers.
-  static const _iconRatio = 27 / _fullHeight;
+  static const _iconRatio = 25 / _fullHeight;
+
+  /// Gap between an icon and its label, and the room either side of a labelled
+  /// item, in the labelled layout.
+  static const _labelGap = 8.0;
+  static const _labelPad = 14.0;
+
+  /// Viewport height below which the bar trims further. A phone in landscape
+  /// has very little of it, and a bar sized for portrait eats the content.
+  static const _shortViewport = 480.0;
+  static const _shortViewportTrim = 6.0;
 
   @visibleForTesting
-  static double heightFor(int destinationCount) => math.max(
-    _minHeight,
-    _fullHeight -
-        math.max(0, destinationCount - _comfortableCount) * _shrinkPerExtra,
-  );
+  static double heightFor(int destinationCount, {double viewportHeight = 0}) {
+    final crowding =
+        math.max(0, destinationCount - _comfortableCount) * _shrinkPerExtra;
+    final landscape = viewportHeight > 0 && viewportHeight < _shortViewport
+        ? _shortViewportTrim
+        : 0.0;
+    return math.max(_minHeight, _fullHeight - crowding - landscape);
+  }
 
   /// Hairline. Anything heavier stops reading as glass and starts reading as
   /// a border.
@@ -129,6 +148,36 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
   double _slot = 0;
   double _barWidth = 0;
 
+  /// Left edge of every slot, plus the bar's right edge. Icon-only items are
+  /// all one width, but a labelled one is as wide as its label, so positions
+  /// come from here rather than from multiplying a slot width by an index.
+  List<double> _bounds = const [];
+
+  double _slotStart(int i) => i < _bounds.length ? _bounds[i] : 0;
+  double _slotEnd(int i) => i + 1 < _bounds.length ? _bounds[i + 1] : _barWidth;
+  double _slotWidth(int i) => _slotEnd(i) - _slotStart(i);
+
+  /// Width each labelled item needs: icon, gap, label, and room either side.
+  static List<double> labelledWidths(
+    List<NavigationDestination> destinations,
+    double iconSize,
+    TextStyle style,
+    double textScale,
+  ) => [
+    for (final d in destinations)
+      () {
+        final painter = TextPainter(
+          text: TextSpan(text: d.label, style: style),
+          textDirection: TextDirection.ltr,
+          textScaler: TextScaler.linear(textScale),
+        )..layout();
+        return iconSize +
+            FloatingNavBar._labelGap +
+            painter.width +
+            FloatingNavBar._labelPad * 2;
+      }(),
+  ];
+
   /// Signed overshoot past an end of the bar, -1 to 1. Drives how far the bar
   /// itself gives, so the whole component deforms rather than just the pill.
   double _edgePush = 0;
@@ -146,8 +195,12 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
     }
   }
 
-  int _slotAt(double x, double slot) =>
-      (x / slot).floor().clamp(0, widget.destinations.length - 1);
+  int _slotAt(double x, double _) {
+    for (var i = 0; i < widget.destinations.length; i++) {
+      if (x < _slotEnd(i)) return i;
+    }
+    return widget.destinations.length - 1;
+  }
 
   void _flashTap() {
     _tapTimer?.cancel();
@@ -239,15 +292,19 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
   /// icons have to follow it or they sit off centre inside the pill.
   double _restingCentre(double slot, double width, int index) {
     const outer = FloatingNavBar._pillInset;
-    final base = slot - FloatingNavBar._pillSlotInset * 2;
+    final base = _slotWidth(index) - FloatingNavBar._pillSlotInset * 2;
     final lo = outer + base / 2;
     final hi = width - outer - base / 2;
-    return (slot * (index + 0.5)).clamp(math.min(lo, hi), math.max(lo, hi));
+    final centre = (_slotStart(index) + _slotEnd(index)) / 2;
+    return centre.clamp(math.min(lo, hi), math.max(lo, hi));
   }
 
   (double, double) _pillEdges(double slot, double width, int index) {
     const outer = FloatingNavBar._pillInset;
-    final base = slot - FloatingNavBar._pillSlotInset * 2;
+    // Sized from the slot it is over, which is not a fixed width once labels
+    // are in play.
+    final over = _dragX == null ? index : _slotAt(_dragX!, slot);
+    final base = _slotWidth(over) - FloatingNavBar._pillSlotInset * 2;
 
     // Keep the pill a fixed distance from the bar's own ends, so the gap there
     // matches the top and bottom. Clamping the centre rather than the edges
@@ -279,9 +336,15 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final light = theme.brightness == Brightness.light;
+    final labelStyle =
+        theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600) ??
+        const TextStyle(fontSize: 12, fontWeight: FontWeight.w600);
     final dragging = _dragX != null;
     final lifted = dragging || _tapped;
-    final height = FloatingNavBar.heightFor(widget.destinations.length);
+    final height = FloatingNavBar.heightFor(
+      widget.destinations.length,
+      viewportHeight: MediaQuery.sizeOf(context).height,
+    );
 
     // Sit closer to the bottom than a full safe-area inset would put us. The
     // bar is a floating capsule, not a docked bar, so it can overlap the home
@@ -340,8 +403,30 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                     builder: (context, constraints) {
                       final count = widget.destinations.length;
                       final width = constraints.maxWidth;
-                      final slot = width / count;
                       final resting = _droppedIndex ?? widget.currentIndex;
+
+                      // Icon-only items share the width evenly. Labelled ones
+                      // are each as wide as their own label, so the boundaries
+                      // have to be accumulated rather than derived from a slot
+                      // width and an index.
+                      final widths = widget.showLabels
+                          ? labelledWidths(
+                              widget.destinations,
+                              height * FloatingNavBar._iconRatio,
+                              labelStyle,
+                              MediaQuery.textScalerOf(context).scale(1),
+                            )
+                          : List<double>.filled(count, width / count);
+                      final total = widths.fold<double>(0, (a, b) => a + b);
+                      // Share out any rounding slack so the last item still
+                      // ends exactly on the bar's edge.
+                      final scale = total > 0 ? width / total : 1.0;
+                      final bounds = <double>[0];
+                      for (final w in widths) {
+                        bounds.add(bounds.last + w * scale);
+                      }
+                      _bounds = bounds;
+                      final slot = width / count;
                       _slot = slot;
                       _barWidth = width;
 
@@ -425,12 +510,21 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                             Row(
                               children: [
                                 for (var i = 0; i < count; i++)
-                                  Expanded(
+                                  SizedBox(
+                                    // Explicit rather than Expanded: labelled
+                                    // items are each as wide as their label,
+                                    // and the pill is positioned from the same
+                                    // widths.
+                                    width: bounds[i + 1] - bounds[i],
                                     child: _FloatingNavItem(
                                       destination: widget.destinations[i],
                                       selected: i == resting,
                                       iconSize:
                                           height * FloatingNavBar._iconRatio,
+                                      label: widget.showLabels
+                                          ? widget.destinations[i].label
+                                          : null,
+                                      labelStyle: labelStyle,
                                       // Follow the pill inwards at the ends,
                                       // so the icon stays centred in it.
                                       nudge:
@@ -583,6 +677,8 @@ class _FloatingNavItem extends StatelessWidget {
     required this.iconSize,
     required this.nudge,
     required this.onTap,
+    this.label,
+    this.labelStyle,
   });
 
   final NavigationDestination destination;
@@ -592,6 +688,10 @@ class _FloatingNavItem extends StatelessWidget {
   /// Horizontal shift so the icon lands on the pill's centre rather than its
   /// slot's. Zero everywhere except the two end slots.
   final double nudge;
+
+  /// Shown beside the icon in the labelled layout; null keeps it icon-only.
+  final String? label;
+  final TextStyle? labelStyle;
   final VoidCallback onTap;
 
   @override
@@ -636,7 +736,25 @@ class _FloatingNavItem extends StatelessWidget {
                 ),
                 child: child!,
               ),
-              child: icon,
+              child: label == null
+                  ? icon
+                  : Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        icon,
+                        const SizedBox(width: FloatingNavBar._labelGap),
+                        // Flexible so a long label in a narrow window ellipsises
+                        // rather than overflowing the bar.
+                        Flexible(
+                          child: Text(
+                            label!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: labelStyle?.copyWith(color: color),
+                          ),
+                        ),
+                      ],
+                    ),
             ),
           ),
         ),
