@@ -18,11 +18,22 @@ class FloatingNavBar extends StatefulWidget {
     required this.currentIndex,
     required this.onSelected,
     this.showLabels = false,
+    this.swipeTarget,
+    this.swipeProgress = 0,
   });
 
   final List<NavigationDestination> destinations;
   final int currentIndex;
   final ValueChanged<int> onSelected;
+
+  /// The tab a page swipe is heading towards, and how far along it is, 0 to 1.
+  ///
+  /// The pill reaches for it rather than waiting: the leading edge sets off
+  /// ahead of the trailing one, so it stretches between the two tabs while the
+  /// finger is still moving and closes up on whichever one the swipe settles
+  /// on.
+  final int? swipeTarget;
+  final double swipeProgress;
 
   /// Puts the label beside each icon and lets the bar hug its contents rather
   /// than span the screen. Used in landscape, where there is width to spare and
@@ -299,6 +310,40 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
     return centre.clamp(math.min(lo, hi), math.max(lo, hi));
   }
 
+  /// The pill part way to [FloatingNavBar.swipeTarget], stretched between the
+  /// two slots.
+  ///
+  /// The edge in front of the movement runs on an eased-out curve and the one
+  /// behind it on an eased-in curve, so the gap between them opens in the
+  /// middle of the swipe and closes again at either end. That is the reach.
+  (double, double)? _reachingEdges(double slot, double width, int index) {
+    final target = widget.swipeTarget;
+    final t = widget.swipeProgress.clamp(0.0, 1.0);
+    if (target == null || target == index || t <= 0) return null;
+    if (target < 0 || target >= widget.destinations.length) return null;
+
+    // Both ends taken from where the pill actually rests on each slot, so the
+    // clamping at the bar's caps carries through the reach as well.
+    const gap = FloatingNavBar._pillSlotInset;
+    final fromHalf = (_slotWidth(index) - gap * 2) / 2;
+    final toHalf = (_slotWidth(target) - gap * 2) / 2;
+    final fromCentre = _restingCentre(slot, width, index);
+    final toCentre = _restingCentre(slot, width, target);
+    final fromLeft = fromCentre - fromHalf;
+    final fromRight = fromCentre + fromHalf;
+    final toLeft = toCentre - toHalf;
+    final toRight = toCentre + toHalf;
+
+    final lead = Curves.easeOutCubic.transform(t);
+    final trail = Curves.easeInCubic.transform(t);
+    final forward = target > index;
+    return forward
+        ? (_lerp(fromLeft, toLeft, trail), _lerp(fromRight, toRight, lead))
+        : (_lerp(fromLeft, toLeft, lead), _lerp(fromRight, toRight, trail));
+  }
+
+  static double _lerp(double a, double b, double t) => a + (b - a) * t;
+
   (double, double) _pillEdges(double slot, double width, int index) {
     const outer = FloatingNavBar._pillInset;
     // Sized from the slot it is over, which is not a fixed width once labels
@@ -316,6 +361,8 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
     }
 
     if (_dragX == null) {
+      final reaching = _reachingEdges(slot, width, index);
+      if (reaching != null) return reaching;
       final centre = _restingCentre(slot, width, index);
       return (centre - base / 2, centre + base / 2);
     }

@@ -1140,4 +1140,81 @@ void main() {
       reason: 'portrait keeps the full width less its margins',
     );
   });
+
+  Widget reaching({required int index, int? target, double progress = 0}) =>
+      MaterialApp(
+        home: Scaffold(
+          body: Align(
+            alignment: Alignment.bottomCenter,
+            child: SizedBox(
+              width: 360,
+              child: FloatingNavBar(
+                destinations: _destinations,
+                currentIndex: index,
+                swipeTarget: target,
+                swipeProgress: progress,
+                onSelected: (_) {},
+              ),
+            ),
+          ),
+        ),
+      );
+
+  testWidgets('the pill reaches for the tab a swipe is heading to', (
+    tester,
+  ) async {
+    await tester.pumpWidget(reaching(index: 0));
+    await tester.pumpAndSettle();
+    final resting = _pillRect(tester);
+
+    await tester.pumpWidget(reaching(index: 0, target: 1, progress: 0.5));
+    await tester.pumpAndSettle();
+    final midway = _pillRect(tester);
+
+    // Stretched, not slid: it is wider in the middle of the swipe than at
+    // either end of it, which is what makes it read as reaching.
+    expect(midway.width, greaterThan(resting.width));
+    expect(midway.left, greaterThan(resting.left));
+    expect(midway.right, greaterThan(resting.right));
+  });
+
+  testWidgets('the reach closes up on the tab it lands on', (tester) async {
+    await tester.pumpWidget(reaching(index: 1));
+    await tester.pumpAndSettle();
+    final settledOnOne = _pillRect(tester);
+
+    await tester.pumpWidget(reaching(index: 0, target: 1, progress: 1));
+    await tester.pumpAndSettle();
+    final arrived = _pillRect(tester);
+
+    expect(arrived.left, moreOrLessEquals(settledOnOne.left, epsilon: 0.5));
+    expect(arrived.right, moreOrLessEquals(settledOnOne.right, epsilon: 0.5));
+  });
+
+  testWidgets('reaching backwards stretches the other way', (tester) async {
+    await tester.pumpWidget(reaching(index: 2));
+    await tester.pumpAndSettle();
+    final resting = _pillRect(tester);
+
+    await tester.pumpWidget(reaching(index: 2, target: 1, progress: 0.5));
+    await tester.pumpAndSettle();
+    final midway = _pillRect(tester);
+
+    expect(midway.width, greaterThan(resting.width));
+    expect(midway.left, lessThan(resting.left));
+  });
+
+  testWidgets('no target leaves the pill where it is', (tester) async {
+    await tester.pumpWidget(reaching(index: 1));
+    await tester.pumpAndSettle();
+    final plain = _pillRect(tester);
+
+    await tester.pumpWidget(reaching(index: 1, target: 1, progress: 0.7));
+    await tester.pumpAndSettle();
+    expect(
+      _pillRect(tester).left,
+      moreOrLessEquals(plain.left, epsilon: 0.5),
+      reason: 'reaching for the tab it is already on is not a reach',
+    );
+  });
 }
