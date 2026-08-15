@@ -3,6 +3,7 @@ import 'dart:ui' show ImageFilter;
 
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show ScrollDirection;
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -179,6 +180,23 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   int currentIndex = 0;
   bool isLibSwitch = false;
+
+  /// True while the user is scrolling down, so the floating bar can get out of
+  /// the way. Only listened to on Apple, where that bar is used.
+  bool _navShrunk = false;
+
+  /// Scroll notifications bubble up from whichever route is on screen, so the
+  /// shell can react without every screen having to cooperate.
+  bool _onScroll(UserScrollNotification n) {
+    final shrink = switch (n.direction) {
+      ScrollDirection.reverse => true,
+      ScrollDirection.forward => false,
+      ScrollDirection.idle => _navShrunk,
+    };
+    if (shrink != _navShrunk) setState(() => _navShrunk = shrink);
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.listen<AsyncValue<UpdateInfo?>>(checkForUpdateProvider, (_, next) {
@@ -293,22 +311,26 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                       // views inset themselves by the bar height through
                       // MediaQuery padding, so the last row stays reachable.
                       extendBody: isApple,
-                      body: context.isTablet
-                          ? _TabletLayout(
-                              isLongPressed: isLongPressed,
-                              location: location,
-                              dest: dest,
-                              currentIndex: currentIndex,
-                              route: route,
-                              ref: ref,
-                              buildNavigationWidgetsDesktop:
-                                  _buildNavigationWidgetsDesktop,
-                              child: widget.child,
-                            )
-                          : widget.child,
+                      body: NotificationListener<UserScrollNotification>(
+                        onNotification: isApple ? _onScroll : (_) => false,
+                        child: context.isTablet
+                            ? _TabletLayout(
+                                isLongPressed: isLongPressed,
+                                location: location,
+                                dest: dest,
+                                currentIndex: currentIndex,
+                                route: route,
+                                ref: ref,
+                                buildNavigationWidgetsDesktop:
+                                    _buildNavigationWidgetsDesktop,
+                                child: widget.child,
+                              )
+                            : widget.child,
+                      ),
                       bottomNavigationBar: context.isTablet
                           ? null
                           : _MobileBottomNavigation(
+                              shrunk: _navShrunk,
                               isLongPressed: isLongPressed,
                               location: location,
                               currentIndex: currentIndex,
@@ -889,6 +911,7 @@ class _TabletLayoutState extends State<_TabletLayout> {
 
 class _MobileBottomNavigation extends StatelessWidget {
   const _MobileBottomNavigation({
+    required this.shrunk,
     required this.isLongPressed,
     required this.location,
     required this.currentIndex,
@@ -908,6 +931,7 @@ class _MobileBottomNavigation extends StatelessWidget {
   final List<Widget> Function(WidgetRef, List<String>, BuildContext)
   buildNavigationWidgetsMobile;
   final Function(String) onDestinationSelected;
+  final bool shrunk;
 
   @override
   Widget build(BuildContext context) {
@@ -918,9 +942,10 @@ class _MobileBottomNavigation extends StatelessWidget {
     final translucent = isApple;
 
     if (translucent) {
-      return AnimatedContainer(
-        duration: const Duration(milliseconds: 0),
+      return SizedBox(
         width: context.width(1),
+        // Reserved height stays constant so shrinking the bar never reflows
+        // the list underneath it. The bar shrinks within this slot.
         height: _getBottomNavigationHeight(isLongPressed, location),
         child: _FloatingNavBar(
           destinations: buildNavigationWidgetsMobile(
@@ -930,6 +955,7 @@ class _MobileBottomNavigation extends StatelessWidget {
           ).cast<NavigationDestination>(),
           currentIndex: currentIndex,
           onSelected: (newIndex) => onDestinationSelected(dest[newIndex]),
+          shrunk: shrunk,
         ),
       );
     }
@@ -1006,8 +1032,8 @@ class _MobileBottomNavigation extends StatelessWidget {
   }
 }
 
-/// A floating capsule nav bar: content runs underneath, icons only, with a
-/// filled pill marking the current destination.
+/// A floating capsule nav bar: content runs underneath, icons only, and one
+/// filled pill slides between destinations to mark the current one.
 ///
 /// Labels are dropped rather than shrunk, so every icon has to identify its
 /// destination on its own. That is why the novel library uses an open book
@@ -1018,45 +1044,91 @@ class _FloatingNavBar extends StatelessWidget {
     required this.destinations,
     required this.currentIndex,
     required this.onSelected,
+    required this.shrunk,
   });
 
   final List<NavigationDestination> destinations;
   final int currentIndex;
   final ValueChanged<int> onSelected;
 
+  /// Set while the user is scrolling down, so the bar gets out of the way
+  /// without disappearing entirely.
+  final bool shrunk;
+
+  static const _duration = Duration(milliseconds: 260);
+  static const _curve = Curves.easeOutCubic;
+
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final height = shrunk ? 46.0 : 58.0;
+    final pillHeight = shrunk ? 32.0 : 40.0;
+
     return SafeArea(
       top: false,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(14, 0, 14, 6),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(30),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-            child: Container(
-              height: 58,
-              decoration: BoxDecoration(
-                // Tinted from the theme rather than a fixed dark, since the
-                // palette is chosen at runtime.
-                color: scheme.surface.withValues(alpha: 0.62),
-                borderRadius: BorderRadius.circular(30),
-                border: Border.all(
-                  color: scheme.onSurface.withValues(alpha: 0.08),
-                ),
-              ),
-              child: Row(
-                children: [
-                  for (var i = 0; i < destinations.length; i++)
-                    Expanded(
-                      child: _FloatingNavItem(
-                        destination: destinations[i],
-                        selected: i == currentIndex,
-                        onTap: () => onSelected(i),
-                      ),
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: AnimatedContainer(
+            duration: _duration,
+            curve: _curve,
+            height: height,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(height / 2),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    // Tinted from the theme rather than a fixed dark, since the
+                    // palette is chosen at runtime.
+                    color: scheme.surface.withValues(alpha: 0.62),
+                    border: Border.all(
+                      color: scheme.onSurface.withValues(alpha: 0.08),
                     ),
-                ],
+                    borderRadius: BorderRadius.circular(height / 2),
+                  ),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final slot = constraints.maxWidth / destinations.length;
+                      return Stack(
+                        alignment: Alignment.centerLeft,
+                        children: [
+                          // One pill that travels, rather than a highlight
+                          // fading in and out under each icon in turn.
+                          AnimatedPositioned(
+                            duration: _duration,
+                            curve: _curve,
+                            left: slot * currentIndex + 6,
+                            width: slot - 12,
+                            height: pillHeight,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: scheme.onSurface.withValues(alpha: 0.13),
+                                borderRadius: BorderRadius.circular(
+                                  pillHeight / 2.6,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              for (var i = 0; i < destinations.length; i++)
+                                Expanded(
+                                  child: _FloatingNavItem(
+                                    destination: destinations[i],
+                                    selected: i == currentIndex,
+                                    shrunk: shrunk,
+                                    onTap: () => onSelected(i),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
               ),
             ),
           ),
@@ -1070,11 +1142,13 @@ class _FloatingNavItem extends StatelessWidget {
   const _FloatingNavItem({
     required this.destination,
     required this.selected,
+    required this.shrunk,
     required this.onTap,
   });
 
   final NavigationDestination destination;
   final bool selected;
+  final bool shrunk;
   final VoidCallback onTap;
 
   @override
@@ -1088,32 +1162,24 @@ class _FloatingNavItem extends StatelessWidget {
       label: destination.label,
       selected: selected,
       button: true,
-      child: InkWell(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
         child: Center(
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            curve: Curves.easeOut,
-            height: 40,
-            margin: const EdgeInsets.symmetric(horizontal: 4),
-            decoration: BoxDecoration(
-              color: selected
-                  ? scheme.onSurface.withValues(alpha: 0.13)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Center(
-              child: IconTheme(
-                data: IconThemeData(
-                  size: 24,
-                  color: selected
-                      ? scheme.onSurface
-                      : scheme.onSurface.withValues(alpha: 0.62),
-                ),
-                child: icon,
+          child: TweenAnimationBuilder<double>(
+            tween: Tween(end: shrunk ? 21 : 24),
+            duration: _FloatingNavBar._duration,
+            curve: _FloatingNavBar._curve,
+            builder: (context, size, child) => IconTheme(
+              data: IconThemeData(
+                size: size,
+                color: selected
+                    ? scheme.onSurface
+                    : scheme.onSurface.withValues(alpha: 0.62),
               ),
+              child: child!,
             ),
+            child: icon,
           ),
         ),
       ),
