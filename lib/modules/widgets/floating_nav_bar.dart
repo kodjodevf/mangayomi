@@ -30,10 +30,14 @@ class FloatingNavBar extends StatefulWidget {
   static const _duration = Duration(milliseconds: 260);
   static const _curve = Curves.easeOutCubic;
 
-  /// Space between the pill and the bar, the same on all four sides, so the
-  /// pill sits evenly inside the bar wherever it is. Tightening it widens the
-  /// pill; keeping one value for every side is what keeps the gap even.
-  static const _pillInset = 3.5;
+  /// Space between the pill and the bar itself: top, bottom, and the two end
+  /// caps. One value for every bar edge is what keeps that gap even.
+  static const _pillInset = 5.0;
+
+  /// Space between the pill and its slot's boundary with a neighbour. Smaller
+  /// than the bar inset, which is what lets the pill be wider without eating
+  /// into the even gap around the bar's own edges.
+  static const _pillSlotInset = 1.5;
 
   /// Pixels of extra width per pixel of pointer movement in a frame, which is
   /// what makes the pill look like it is being pulled along.
@@ -132,24 +136,31 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
   /// bar's own edge. While dragging it is centred on the pointer, and pushing
   /// it past an end pins that edge and spends the rest on width.
   (double, double) _pillEdges(double slot, double width, int index) {
-    const inset = FloatingNavBar._pillInset;
-    if (_dragX == null) {
-      return (slot * index + inset, slot * (index + 1) - inset);
+    const outer = FloatingNavBar._pillInset;
+    final base = slot - FloatingNavBar._pillSlotInset * 2;
+
+    // Keep the pill a fixed distance from the bar's own ends, so the gap there
+    // matches the top and bottom. Clamping the centre rather than the edges
+    // also stops a pointer far past the bar from inverting the pill.
+    double centreFor(double wanted, double pillWidth) {
+      final lo = outer + pillWidth / 2;
+      final hi = width - outer - pillWidth / 2;
+      return wanted.clamp(math.min(lo, hi), math.max(lo, hi));
     }
 
-    // Clamp the centre, not the edges. Clamping the edges lets a pointer far
-    // past the bar push one edge beyond the other and invert the pill.
-    final pillWidth = math.min(slot - inset * 2 + _stretch, width - inset * 2);
-    final lo = inset + pillWidth / 2;
-    final hi = width - inset - pillWidth / 2;
-    final centre = _dragX!.clamp(math.min(lo, hi), math.max(lo, hi));
+    if (_dragX == null) {
+      final centre = centreFor(slot * (index + 0.5), base);
+      return (centre - base / 2, centre + base / 2);
+    }
 
-    // Past an end the pill simply pins there, keeping its inset. It must not
-    // grow backwards, away from the push: the bar takes the give instead.
-    final beyond = _dragX! - centre;
+    final pillWidth = math.min(base + _stretch, width - outer * 2);
+    final centre = centreFor(_dragX!, pillWidth);
+
+    // Past an end the pill pins there, keeping its inset. It must not grow
+    // backwards, away from the push: the bar takes the give instead.
     // Read during layout only; the drag callbacks rebuild anyway, so the bar
     // picks this up on the same frame it is computed for.
-    _edgePush = (beyond / 60).clamp(-1.0, 1.0);
+    _edgePush = ((_dragX! - centre) / 60).clamp(-1.0, 1.0);
     return (centre - pillWidth / 2, centre + pillWidth / 2);
   }
 
@@ -318,10 +329,13 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
 
 /// The lit top and bottom edges of the bar.
 ///
-/// Light falls on a curved surface where it turns, not along its flat run, so
-/// the highlight is brightest on the two rounded caps and fades out towards
-/// the middle. A vertical gradient supplies the top and bottom edges; a
-/// horizontal mask keeps them to the ends.
+/// The bar's reflection.
+///
+/// Vertically it falls away continuously from both edges and reaches zero at
+/// exactly one line, the horizontal equator, so any distance off centre still
+/// catches light. Horizontally it is strongest on the two rounded caps, where
+/// a curved surface actually turns into the light, and weaker but still
+/// present along the flat run.
 class _GlassEdge extends StatelessWidget {
   const _GlassEdge({
     required this.color,
@@ -337,18 +351,18 @@ class _GlassEdge extends StatelessWidget {
   Widget build(BuildContext context) {
     return ShaderMask(
       blendMode: BlendMode.dstIn,
-      // Brightest at the two curved ends and gone by the middle: the light
-      // catches where the surface turns, not along the flat run.
-      shaderCallback: (rect) => const LinearGradient(
+      // Strongest at the two curved ends, where the surface turns, but never
+      // fully gone: the flat run keeps a weaker sheen rather than going dark.
+      shaderCallback: (rect) => LinearGradient(
         begin: Alignment.centerLeft,
         end: Alignment.centerRight,
         colors: [
           Colors.white,
-          Colors.transparent,
-          Colors.transparent,
+          Colors.white.withValues(alpha: 0.38),
+          Colors.white.withValues(alpha: 0.38),
           Colors.white,
         ],
-        stops: [0.0, 0.34, 0.66, 1.0],
+        stops: const [0.0, 0.3, 0.7, 1.0],
       ).createShader(rect),
       child: DecoratedBox(
         decoration: BoxDecoration(
@@ -356,13 +370,15 @@ class _GlassEdge extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
+            // A reflection, not a pair of lines: it falls away continuously
+            // from each edge and is zero at exactly one place, the horizontal
+            // equator. A hair above or below it still carries light.
             colors: [
-              color.withValues(alpha: light ? 0.18 : 0.30),
+              color.withValues(alpha: light ? 0.16 : 0.26),
               Colors.transparent,
-              Colors.transparent,
-              color.withValues(alpha: light ? 0.12 : 0.20),
+              color.withValues(alpha: light ? 0.10 : 0.17),
             ],
-            stops: const [0.0, 0.12, 0.88, 1.0],
+            stops: const [0.0, 0.5, 1.0],
           ),
         ),
       ),

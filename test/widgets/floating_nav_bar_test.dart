@@ -425,11 +425,16 @@ void main() {
     final g = edge as LinearGradient;
     expect(g.begin, Alignment.topCenter);
     expect(g.end, Alignment.bottomCenter);
-    expect(
-      g.colors[1].a,
-      0.0,
-      reason: 'the middle has to be clear, or it is a wash not an edge',
-    );
+
+    // Zero at exactly one line and nowhere else, so a hair off centre still
+    // catches light. Two clear stops would give a dead band instead.
+    final clear = [
+      for (var i = 0; i < g.colors.length; i++)
+        if (g.colors[i].a == 0.0) g.stops![i],
+    ];
+    expect(clear, [0.5], reason: 'the only dark line is the equator');
+    expect(g.colors.first.a, greaterThan(0));
+    expect(g.colors.last.a, greaterThan(0));
 
     // Masked so each line dissolves before it reaches a cap, instead of
     // cutting straight across the curve.
@@ -441,8 +446,8 @@ void main() {
     );
     expect(mask.blendMode, BlendMode.dstIn);
 
-    // Kept to the two rounded caps and cleared through the middle, so the
-    // light reads as catching where the surface turns.
+    // Strongest on the caps but never fully cleared, so the flat run keeps a
+    // weaker sheen rather than going dark.
     final shader = mask.shaderCallback(const Rect.fromLTWH(0, 0, 300, 58));
     expect(shader, isNotNull);
   });
@@ -479,7 +484,7 @@ void main() {
     // does not break this. The even-inset test pins the exact spacing.
     expect(
       pill.height / bar.height,
-      greaterThan(0.85),
+      greaterThan(0.78),
       reason: 'a small gap top and bottom, not a chip floating in the middle',
     );
   });
