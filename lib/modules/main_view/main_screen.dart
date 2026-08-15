@@ -936,6 +936,13 @@ class _MobileBottomNavigation extends StatelessWidget {
       child: NavigationBar(
         animationDuration: const Duration(milliseconds: 500),
         selectedIndex: currentIndex,
+        // The bar adapts to whatever the user put on it rather than the user
+        // having to trim it to fit. With every tab enabled the labels run into
+        // each other, so below a comfortable width per destination only the
+        // selected label is shown; the icons still say what everything is.
+        labelBehavior: context.width(1) / dest.length < 72
+            ? NavigationDestinationLabelBehavior.onlyShowSelected
+            : NavigationDestinationLabelBehavior.alwaysShow,
         destinations: buildNavigationWidgetsMobile(ref, dest, context),
         onDestinationSelected: (newIndex) {
           onDestinationSelected(dest[newIndex]);
