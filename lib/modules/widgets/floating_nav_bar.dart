@@ -137,7 +137,7 @@ class FloatingNavBar extends StatefulWidget {
   /// How much thinner the pill gets at full reach, per side. Something being
   /// pulled longer gets narrower, and without this the pill just looked bigger
   /// rather than strained.
-  static const _reachSquash = 2.5;
+  static const _reachSquash = 4.5;
 
   /// How much the pill grows when picked up. A scale rather than a smaller
   /// gap: shrinking only the vertical gap makes the pill rounder instead of
