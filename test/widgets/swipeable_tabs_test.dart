@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mangayomi/modules/main_view/swipeable_tabs.dart';
@@ -454,5 +455,46 @@ void main() {
 
     await gesture.up();
     await tester.pumpAndSettle();
+  });
+
+  testWidgets('a mouse drag does not switch tabs', (tester) async {
+    // The same shell runs on desktop. Dragging a mouse across a page does not
+    // mean "next tab" there, and click-dragging into a tab change would fight
+    // selecting and dragging content.
+    final switched = <int>[];
+    await tester.pumpWidget(_host(index: 1, count: 3, onSwitch: switched.add));
+    await tester.pumpAndSettle();
+
+    final gesture = await tester.startGesture(
+      const Offset(400, 300),
+      kind: PointerDeviceKind.mouse,
+    );
+    for (var i = 0; i < 8; i++) {
+      await gesture.moveBy(const Offset(-60, 0));
+      await tester.pump();
+    }
+    await gesture.up();
+    await tester.pumpAndSettle();
+
+    expect(switched, isEmpty);
+  });
+
+  testWidgets('a finger still does', (tester) async {
+    final switched = <int>[];
+    await tester.pumpWidget(_host(index: 1, count: 3, onSwitch: switched.add));
+    await tester.pumpAndSettle();
+
+    final gesture = await tester.startGesture(
+      const Offset(400, 300),
+      kind: PointerDeviceKind.touch,
+    );
+    for (var i = 0; i < 8; i++) {
+      await gesture.moveBy(const Offset(-60, 0));
+      await tester.pump();
+    }
+    await gesture.up();
+    await tester.pumpAndSettle();
+
+    expect(switched, [2]);
   });
 }

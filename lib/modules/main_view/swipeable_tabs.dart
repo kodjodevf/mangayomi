@@ -163,7 +163,17 @@ class _SwipeableTabsState extends State<SwipeableTabs>
     return index;
   }
 
+  /// Only a finger drives this.
+  ///
+  /// On desktop the same shell is used, so without this a click-and-drag
+  /// anywhere on a page switched tabs, which is not what dragging a mouse
+  /// means. A trackpad swipe arrives as a scroll rather than a drag and never
+  /// reached here anyway.
+  static bool _isDragKind(PointerDeviceKind kind) =>
+      kind == PointerDeviceKind.touch || kind == PointerDeviceKind.stylus;
+
   void _onPointerDown(PointerDownEvent event) {
+    if (!_isDragKind(event.kind)) return;
     _down = event.position;
     _speed = 0;
     _lastStamp = event.timeStamp;
@@ -174,6 +184,7 @@ class _SwipeableTabsState extends State<SwipeableTabs>
   }
 
   void _onPointerMove(PointerMoveEvent event) {
+    if (!_isDragKind(event.kind)) return;
     _velocity?.addPosition(event.timeStamp, event.position);
 
     final dt = (event.timeStamp - _lastStamp).inMicroseconds / 1000000;
