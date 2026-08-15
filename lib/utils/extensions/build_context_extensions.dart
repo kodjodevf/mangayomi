@@ -63,6 +63,10 @@ extension BuildContextExtensions on BuildContext {
   /// Platforms on the floating bar never take a rail at all. There the bar
   /// carries labels in landscape instead, which is the same navigation in both
   /// orientations rather than two different ones.
+  ///
+  /// A TV is the case this ordering exists for: it is excluded from the
+  /// floating bar, so it falls through to the size rule and keeps the rail its
+  /// remote can actually focus.
   bool get prefersNavRail {
     if (usesFloatingNav) return false;
     return sizeWantsNavRail(MediaQuery.of(this).size);

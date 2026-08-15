@@ -26,6 +26,9 @@ Widget _host({
   required int index,
   List<NavigationDestination> destinations = _destinations,
   ValueChanged<int>? onSelected,
+  double shrink = 0,
+  VoidCallback? onWake,
+  int? swipeTarget,
 }) => MaterialApp(
   home: Scaffold(
     body: Align(
@@ -39,6 +42,9 @@ Widget _host({
           destinations: destinations,
           currentIndex: index,
           onSelected: onSelected ?? (_) {},
+          shrink: shrink,
+          onWake: onWake,
+          swipeTarget: swipeTarget,
         ),
       ),
     ),
@@ -63,6 +69,9 @@ Rect _barRect(WidgetTester tester) => tester.getRect(
 );
 
 void main() {
+  group("shrink", _shrinkTests);
+  group("wake", _wakeTests);
+
   testWidgets('the highlight sits under the selected destination', (
     tester,
   ) async {
@@ -1375,5 +1384,188 @@ void main() {
       moreOrLessEquals(bar.right - last.right, epsilon: 1),
       reason: 'the two ends should have the same spacing',
     );
+  });
+}
+
+void _shrinkTests() {
+  // The capsule is what gets scaled; FloatingNavBar itself is the slot around
+  // it and deliberately keeps its size.
+  final barRect = _barRect;
+
+  testWidgets('rests at full size', (tester) async {
+    await tester.pumpWidget(_host(index: 0));
+    await tester.pumpAndSettle();
+    final rest = barRect(tester);
+
+    await tester.pumpWidget(_host(index: 0, shrink: 0));
+    await tester.pumpAndSettle();
+    expect(barRect(tester), rest);
+  });
+
+  testWidgets('draws in towards its own centre, not off to one side', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_host(index: 0));
+    await tester.pumpAndSettle();
+    final rest = barRect(tester);
+
+    await tester.pumpWidget(_host(index: 0, shrink: 1));
+    await tester.pumpAndSettle();
+    final shrunk = barRect(tester);
+
+    expect(shrunk.width, lessThan(rest.width));
+    expect(
+      shrunk.center.dx,
+      moreOrLessEquals(rest.center.dx, epsilon: 0.5),
+      reason: 'both sides should come in by the same amount',
+    );
+    expect(shrunk.left - rest.left, greaterThan(0));
+    expect(
+      shrunk.left - rest.left,
+      moreOrLessEquals(rest.right - shrunk.right, epsilon: 0.5),
+    );
+  });
+
+  testWidgets('settles on the same bottom line instead of dropping', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_host(index: 0));
+    await tester.pumpAndSettle();
+    final rest = barRect(tester);
+
+    await tester.pumpWidget(_host(index: 0, shrink: 1));
+    await tester.pumpAndSettle();
+    final shrunk = barRect(tester);
+
+    expect(
+      shrunk.bottom,
+      moreOrLessEquals(rest.bottom, epsilon: 0.5),
+      reason: 'anchored on the bottom axis, so only the top edge moves',
+    );
+    expect(shrunk.height, lessThan(rest.height));
+    expect(shrunk.top, greaterThan(rest.top));
+  });
+
+  testWidgets('the slot it sits in keeps its size, so pages do not reflow', (
+    tester,
+  ) async {
+    Size slot(WidgetTester tester) =>
+        tester.getSize(find.byType(FloatingNavBar));
+
+    await tester.pumpWidget(_host(index: 0));
+    await tester.pumpAndSettle();
+    final rest = slot(tester);
+
+    await tester.pumpWidget(_host(index: 0, shrink: 1));
+    await tester.pumpAndSettle();
+    expect(slot(tester), rest);
+  });
+
+  testWidgets('animates rather than snapping', (tester) async {
+    await tester.pumpWidget(_host(index: 0));
+    await tester.pumpAndSettle();
+    final rest = barRect(tester).width;
+
+    await tester.pumpWidget(_host(index: 0, shrink: 1));
+    await tester.pump(const Duration(milliseconds: 60));
+    final mid = barRect(tester).width;
+
+    await tester.pumpAndSettle();
+    final settled = barRect(tester).width;
+
+    expect(mid, lessThan(rest));
+    expect(mid, greaterThan(settled));
+  });
+
+  testWidgets('still tappable while shrunk', (tester) async {
+    final taps = <int>[];
+    await tester.pumpWidget(_host(index: 0, onSelected: taps.add, shrink: 1));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(Icons.explore_outlined));
+    await tester.pumpAndSettle();
+    expect(taps, isNotEmpty);
+  });
+}
+
+void _wakeTests() {
+  testWidgets('a touch anywhere on the bar asks for full size back', (
+    tester,
+  ) async {
+    var wakes = 0;
+    await tester.pumpWidget(_host(index: 0, shrink: 1, onWake: () => wakes++));
+    await tester.pumpAndSettle();
+
+    // The middle of the bar, which is a gap between items rather than an item.
+    await tester.tapAt(_barRect(tester).center);
+    await tester.pumpAndSettle();
+    expect(wakes, greaterThan(0));
+  });
+
+  testWidgets('tapping a tab wakes it as well as selecting', (tester) async {
+    var wakes = 0;
+    await tester.pumpWidget(_host(index: 0, shrink: 1, onWake: () => wakes++));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(Icons.explore_outlined));
+    await tester.pumpAndSettle();
+    expect(wakes, greaterThan(0));
+  });
+
+  testWidgets('dragging the pill wakes it', (tester) async {
+    var wakes = 0;
+    await tester.pumpWidget(_host(index: 0, shrink: 1, onWake: () => wakes++));
+    await tester.pumpAndSettle();
+
+    await tester.drag(find.byType(FloatingNavBar), const Offset(80, 0));
+    await tester.pumpAndSettle();
+    expect(wakes, greaterThan(0));
+  });
+
+  testWidgets('landing on another tab wakes it however it was reached', (
+    tester,
+  ) async {
+    var wakes = 0;
+    // No touch at all: the index changes underneath it, as a page swipe does.
+    await tester.pumpWidget(_host(index: 0, shrink: 1, onWake: () => wakes++));
+    await tester.pumpAndSettle();
+    expect(wakes, 0, reason: 'nothing has happened yet');
+
+    await tester.pumpWidget(_host(index: 2, shrink: 1, onWake: () => wakes++));
+    await tester.pumpAndSettle();
+    expect(wakes, 1);
+  });
+
+  testWidgets('a rebuild on the same tab does not wake it', (tester) async {
+    var wakes = 0;
+    await tester.pumpWidget(_host(index: 1, shrink: 1, onWake: () => wakes++));
+    await tester.pumpAndSettle();
+    await tester.pumpWidget(_host(index: 1, shrink: 1, onWake: () => wakes++));
+    await tester.pumpAndSettle();
+    expect(wakes, 0);
+  });
+
+  testWidgets('a swipe setting off wakes it before the tab changes', (
+    tester,
+  ) async {
+    var wakes = 0;
+    await tester.pumpWidget(_host(index: 0, shrink: 1, onWake: () => wakes++));
+    await tester.pumpAndSettle();
+
+    // Same tab still selected; only the swipe target has appeared.
+    await tester.pumpWidget(
+      _host(index: 0, shrink: 1, onWake: () => wakes++, swipeTarget: 1),
+    );
+    await tester.pumpAndSettle();
+    expect(wakes, 1);
+  });
+
+  testWidgets('waking is optional', (tester) async {
+    await tester.pumpWidget(_host(index: 0, shrink: 1));
+    await tester.pumpAndSettle();
+    await tester.tapAt(_barRect(tester).center);
+    await tester.pumpWidget(_host(index: 2, shrink: 1));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
   });
 }
