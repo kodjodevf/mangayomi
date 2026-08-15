@@ -170,7 +170,7 @@ jobs:
   build-and-release-ios-ipa:
     permissions:
       contents: write
-    runs-on: macos-15
+    runs-on: macos-26
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -192,8 +192,8 @@ jobs:
           workspaces: rust
           cache-on-failure: true
 
-      - name: Select Xcode 16.4
-        run: sudo xcode-select --switch /Applications/Xcode_16.4.app
+      - name: Select Xcode 26.1.1
+        run: sudo xcode-select --switch /Applications/Xcode_26.1.1.app
 
       - name: Print Xcode version
         run: xcodebuild -version
