@@ -30,6 +30,23 @@ class FloatingNavBar extends StatefulWidget {
   static const _duration = Duration(milliseconds: 260);
   static const _curve = Curves.easeOutCubic;
 
+  /// How the glass edge varies along the bar. Irregular on purpose, and never
+  /// far from full: glass catches light in patches, but a stretch that dips
+  /// too low reads as the washed-out centre that a fade produced.
+  @visibleForTesting
+  static const glassPatchStops = [0.0, 0.13, 0.27, 0.44, 0.58, 0.71, 0.86, 1.0];
+  @visibleForTesting
+  static const glassPatchAlphas = [
+    1.0,
+    0.7,
+    0.95,
+    0.62,
+    0.88,
+    0.66,
+    0.92,
+    0.75,
+  ];
+
   /// Space between the pill and the bar itself: top, bottom, and the two end
   /// caps. One value for every bar edge is what keeps that gap even.
   static const _pillInset = 5.0;
@@ -329,13 +346,13 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
 
 /// The lit top and bottom edges of the bar.
 ///
-/// The bar's reflection.
+/// The bar's glass edge.
 ///
-/// It falls away continuously from the top and bottom edges and reaches zero
-/// at exactly one line, the horizontal equator, so any distance off centre
-/// still catches light. It runs at full strength the whole way across: the
-/// bar's rounded caps curve the top and bottom edges down on their own, so the
-/// reflection follows the shape without being faded inwards to fake it.
+/// A thin stroke along the top and bottom rather than a gradient across the
+/// whole height, and deliberately uneven along its length: real glass catches
+/// light in patches, and a perfectly constant line reads as a drawn border.
+/// The unevenness never dips far, so the middle of the bar is not washed out
+/// the way a fade towards the centre washed it out.
 class _GlassEdge extends StatelessWidget {
   const _GlassEdge({
     required this.color,
@@ -349,18 +366,33 @@ class _GlassEdge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(radius),
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            color.withValues(alpha: light ? 0.16 : 0.26),
-            Colors.transparent,
-            color.withValues(alpha: light ? 0.10 : 0.17),
-          ],
-          stops: const [0.0, 0.5, 1.0],
+    return ShaderMask(
+      blendMode: BlendMode.dstIn,
+      shaderCallback: (rect) => LinearGradient(
+        begin: Alignment.centerLeft,
+        end: Alignment.centerRight,
+        colors: [
+          for (final a in FloatingNavBar.glassPatchAlphas)
+            Colors.white.withValues(alpha: a),
+        ],
+        stops: FloatingNavBar.glassPatchStops,
+      ).createShader(rect),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(radius),
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              color.withValues(alpha: light ? 0.13 : 0.20),
+              Colors.transparent,
+              Colors.transparent,
+              // Dimmer underneath, which is what makes it read as light
+              // falling on glass rather than a stroke drawn round a box.
+              color.withValues(alpha: light ? 0.07 : 0.12),
+            ],
+            stops: const [0.0, 0.085, 0.915, 1.0],
+          ),
         ),
       ),
     );

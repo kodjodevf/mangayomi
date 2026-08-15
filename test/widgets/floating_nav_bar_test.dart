@@ -426,27 +426,57 @@ void main() {
     expect(g.begin, Alignment.topCenter);
     expect(g.end, Alignment.bottomCenter);
 
-    // Zero at exactly one line and nowhere else, so a hair off centre still
-    // catches light. Two clear stops would give a dead band instead.
+    // A thin stroke top and bottom, not a wash: the clear span has to cover
+    // most of the bar's height.
     final clear = [
       for (var i = 0; i < g.colors.length; i++)
         if (g.colors[i].a == 0.0) g.stops![i],
     ];
-    expect(clear, [0.5], reason: 'the only dark line is the equator');
+    expect(clear.length, 2, reason: 'clear through the middle');
+    expect(
+      clear.last - clear.first,
+      greaterThan(0.75),
+      reason: 'anything narrower is a gradient over the bar, not a stroke',
+    );
     expect(g.colors.first.a, greaterThan(0));
     expect(g.colors.last.a, greaterThan(0));
-
-    // Even the whole way across. Fading it inwards washed out the middle of
-    // the bar, and the caps already curve the top and bottom edges down on
-    // their own without help.
     expect(
+      g.colors.last.a,
+      lessThan(g.colors.first.a),
+      reason: 'dimmer underneath, so it reads as light falling on glass',
+    );
+
+    // Uneven along its length, the way glass catches light in patches. The
+    // distinction that matters is uneven versus faded: it must not trend down
+    // towards the centre, and no stretch may go dull.
+    final mask = tester.widget<ShaderMask>(
       find.descendant(
         of: find.byType(FloatingNavBar),
         matching: find.byType(ShaderMask),
       ),
-      findsNothing,
-      reason: 'a horizontal mask would fade the reflection towards the centre',
     );
+    expect(mask.blendMode, BlendMode.dstIn);
+
+    final alphas = FloatingNavBar.glassPatchAlphas;
+    expect(
+      alphas.reduce(math.min),
+      greaterThan(0.55),
+      reason: 'a dull stretch would look like the washed-out centre again',
+    );
+    final mid = alphas[alphas.length ~/ 2];
+    expect(
+      mid,
+      greaterThan(alphas.reduce(math.min)),
+      reason: 'the centre must not be the darkest point',
+    );
+    // Genuinely irregular rather than a smooth ramp either way.
+    var reversals = 0;
+    for (var i = 2; i < alphas.length; i++) {
+      final a = alphas[i] - alphas[i - 1];
+      final b = alphas[i - 1] - alphas[i - 2];
+      if (a.sign != b.sign) reversals++;
+    }
+    expect(reversals, greaterThan(2), reason: 'a ramp is not unevenness');
   });
 
   testWidgets('the focused icon is thickened for icons that cannot fill', (
