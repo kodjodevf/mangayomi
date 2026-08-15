@@ -98,6 +98,7 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
         top: 10,
         left: isTv ? 8 : 0,
         right: isTv ? 8 : 0,
+        bottom: pageBottomInsets(context).bottom,
       ),
       child: sourcesStream.when(
         data: (snapshotData) {

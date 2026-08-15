@@ -23,7 +23,7 @@ class MoreScreenState extends ConsumerState<MoreScreen> {
     final hiddenItems = ref.watch(hideItemsStateProvider);
     return Scaffold(
       body: SingleChildScrollView(
-        padding: tvPageInsets,
+        padding: tvPageInsets.add(pageBottomInsets(context)),
         child: Column(
           children: [
             SizedBox(height: AppBar().preferredSize.height),
