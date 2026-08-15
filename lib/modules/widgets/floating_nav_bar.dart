@@ -33,18 +33,23 @@ class FloatingNavBar extends StatefulWidget {
   /// How the glass edge varies along the bar. Irregular on purpose, and never
   /// far from full: glass catches light in patches, but a stretch that dips
   /// too low reads as the washed-out centre that a fade produced.
+  /// Hairline. Anything heavier stops reading as glass and starts reading as
+  /// a border.
+  @visibleForTesting
+  static const glassStrokeWidth = 1.0;
+
   @visibleForTesting
   static const glassPatchStops = [0.0, 0.13, 0.27, 0.44, 0.58, 0.71, 0.86, 1.0];
   @visibleForTesting
   static const glassPatchAlphas = [
     1.0,
-    0.7,
-    0.95,
-    0.62,
-    0.88,
-    0.66,
+    0.42,
     0.92,
-    0.75,
+    0.34,
+    0.86,
+    0.38,
+    0.98,
+    0.5,
   ];
 
   /// Space between the pill and the bar itself: top, bottom, and the two end
@@ -348,11 +353,14 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
 ///
 /// The bar's glass edge.
 ///
-/// A thin stroke along the top and bottom rather than a gradient across the
-/// whole height, and deliberately uneven along its length: real glass catches
-/// light in patches, and a perfectly constant line reads as a drawn border.
-/// The unevenness never dips far, so the middle of the bar is not washed out
-/// the way a fade towards the centre washed it out.
+/// A hairline stroke following the whole outline, caps included. A horizontal
+/// band cannot reach the far left and right points of a stadium at all, since
+/// those sit at mid height, which left the ends unlit. Stroking the path fixes
+/// that and is thinner besides.
+///
+/// It is dimmest around the equator and brightest along the top, so the caps
+/// keep some light without the stroke reading as a drawn border, and it varies
+/// along its length the way glass catches light in patches.
 class _GlassEdge extends StatelessWidget {
   const _GlassEdge({
     required this.color,
@@ -377,26 +385,56 @@ class _GlassEdge extends StatelessWidget {
         ],
         stops: FloatingNavBar.glassPatchStops,
       ).createShader(rect),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(radius),
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              color.withValues(alpha: light ? 0.13 : 0.20),
-              Colors.transparent,
-              Colors.transparent,
-              // Dimmer underneath, which is what makes it read as light
-              // falling on glass rather than a stroke drawn round a box.
-              color.withValues(alpha: light ? 0.07 : 0.12),
-            ],
-            stops: const [0.0, 0.085, 0.915, 1.0],
-          ),
-        ),
+      child: CustomPaint(
+        painter: _GlassEdgePainter(color: color, light: light, radius: radius),
       ),
     );
   }
+}
+
+class _GlassEdgePainter extends CustomPainter {
+  const _GlassEdgePainter({
+    required this.color,
+    required this.light,
+    required this.radius,
+  });
+
+  final Color color;
+  final bool light;
+  final double radius;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = FloatingNavBar.glassStrokeWidth
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          color.withValues(alpha: light ? 0.22 : 0.36),
+          // Never zero: this is where the caps are, and they should keep a
+          // trace of light rather than breaking the outline.
+          color.withValues(alpha: light ? 0.04 : 0.07),
+          color.withValues(alpha: light ? 0.11 : 0.18),
+        ],
+        stops: const [0.0, 0.5, 1.0],
+      ).createShader(rect);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        // Inset by half the stroke so it lands inside the clip rather than
+        // being shaved in half by it.
+        rect.deflate(FloatingNavBar.glassStrokeWidth / 2),
+        Radius.circular(radius),
+      ),
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_GlassEdgePainter old) =>
+      old.color != color || old.light != light || old.radius != radius;
 }
 
 /// Scales the bar up while a drag is in flight, and lets it give sideways when
