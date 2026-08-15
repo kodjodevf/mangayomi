@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -128,7 +129,10 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   }
 
   void _initializeProviders() {
-    Future.microtask(() {
+    // The extension-repo fetches (one per item type) and the GitHub update
+    // check hit the network; delay them so they don't compete with the first
+    // paint and the initial library queries.
+    Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
         for (var type in ItemType.values) {
           ref.read(
@@ -140,6 +144,22 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           );
         }
       }
+    });
+    Future.delayed(const Duration(seconds: 5), () {
+      if (!mounted || isTv) return;
+      ref.listenManual<AsyncValue<UpdateInfo?>>(checkForUpdateProvider, (
+        _,
+        next,
+      ) {
+        next.whenData((updateInfo) {
+          if (updateInfo != null && mounted) {
+            showDialog(
+              context: context,
+              builder: (_) => DownloadFileScreen(updateAvailable: updateInfo),
+            );
+          }
+        });
+      });
     });
   }
 
@@ -180,23 +200,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   bool isLibSwitch = false;
   @override
   Widget build(BuildContext context) {
-    ref.listen<AsyncValue<UpdateInfo?>>(checkForUpdateProvider, (_, next) {
-      // On TV the in-app updater (download + install an APK) is not reachable
-      // with a d-pad and is not how TV builds update (sideload / the release
-      // APK). Left on, this modal would appear unannounced over whatever the
-      // user is doing and trap focus with no way to dismiss it. TV updates out
-      // of band, so never raise it there.
-      if (isTv) return;
-      next.whenData((updateInfo) {
-        if (updateInfo != null && context.mounted) {
-          showDialog(
-            context: context,
-            builder: (_) => DownloadFileScreen(updateAvailable: updateInfo),
-          );
-        }
-      });
-    });
-
     ref.listen<Locale>(l10nLocaleStateProvider, (previous, next) {
       _clearCache();
       setState(() {});
@@ -591,6 +594,10 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   }
 }
 
+// Resolved once — GoogleFonts lookups in build run font resolution on every
+// rebuild of these always-mounted bars.
+final String? _barFontFamily = GoogleFonts.aBeeZee().fontFamily;
+
 class _DownloadedOnlyBar extends StatelessWidget {
   const _DownloadedOnlyBar({required this.downloadedOnly, required this.l10n});
 
@@ -603,7 +610,7 @@ class _DownloadedOnlyBar extends StatelessWidget {
       child: AnimatedContainer(
         height: downloadedOnly
             ? isMobile
-                  ? MediaQuery.of(context).padding.top * 2
+                  ? MediaQuery.paddingOf(context).top * 2
                   : 50
             : 0,
         curve: Curves.easeIn,
@@ -617,7 +624,10 @@ class _DownloadedOnlyBar extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 l10n.downloaded_only,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: _barFontFamily,
+                ),
               ),
             ),
           ],
@@ -639,7 +649,7 @@ class _IncognitoModeBar extends StatelessWidget {
       child: AnimatedContainer(
         height: incognitoMode
             ? isMobile
-                  ? MediaQuery.of(context).padding.top * 2
+                  ? MediaQuery.paddingOf(context).top * 2
                   : 50
             : 0,
         curve: Curves.easeIn,
@@ -653,7 +663,10 @@ class _IncognitoModeBar extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 l10n.incognito_mode,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: _barFontFamily,
+                ),
               ),
             ),
           ],
@@ -1032,24 +1045,17 @@ class _UpdatesBadgeWidget extends ConsumerWidget {
               (c) => c.manga((m) => m.not().itemTypeEqualTo(ItemType.novel)),
             ),
           )
+          // Filter unread in the query itself — loading every linked chapter
+          // with loadSync() in the builder ran N+1 sync DB reads on the
+          // always-mounted nav bar for every update write.
+          .chapter((c) => c.not().isReadEqualTo(true))
           .watch(fireImmediately: true),
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return icon;
         }
 
-        final entries = snapshot.data!.where((element) {
-          if (!element.chapter.isLoaded) {
-            element.chapter.loadSync();
-          }
-          return !(element.chapter.value?.isRead ?? false);
-        }).toList();
-
-        if (entries.isEmpty) {
-          return icon;
-        }
-
-        return Badge(label: Text("${entries.length}"), child: icon);
+        return Badge(label: Text("${snapshot.data!.length}"), child: icon);
       },
     );
   }

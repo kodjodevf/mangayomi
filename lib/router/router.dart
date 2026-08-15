@@ -124,32 +124,43 @@ class RouterCurrentLocationState extends _$RouterCurrentLocationState {
 
 class RouterNotifier extends ChangeNotifier {
   List<RouteBase> get _routes => [
-    ShellRoute(
-      builder: (context, state, child) => MainScreen(child: child),
-      routes: [
-        _genericRoute<String?>(
-          name: "MangaLibrary",
-          builder: (id) =>
-              LibraryScreen(itemType: ItemType.manga, presetInput: id),
+    // Each tab lives in its own StatefulShellBranch so switching tabs keeps
+    // the other screens mounted (scroll position, queries, images preserved).
+    StatefulShellRoute.indexedStack(
+      builder: (context, state, navigationShell) =>
+          MainScreen(child: navigationShell),
+      branches: [
+        _branch(
+          _genericRoute<String?>(
+            name: "MangaLibrary",
+            builder: (id) =>
+                LibraryScreen(itemType: ItemType.manga, presetInput: id),
+          ),
         ),
-        _genericRoute<String?>(
-          name: "AnimeLibrary",
-          builder: (id) =>
-              LibraryScreen(itemType: ItemType.anime, presetInput: id),
+        _branch(
+          _genericRoute<String?>(
+            name: "AnimeLibrary",
+            builder: (id) =>
+                LibraryScreen(itemType: ItemType.anime, presetInput: id),
+          ),
         ),
-        _genericRoute<String?>(
-          name: "NovelLibrary",
-          builder: (id) =>
-              LibraryScreen(itemType: ItemType.novel, presetInput: id),
+        _branch(
+          _genericRoute<String?>(
+            name: "NovelLibrary",
+            builder: (id) =>
+                LibraryScreen(itemType: ItemType.novel, presetInput: id),
+          ),
         ),
-        _genericRoute<String?>(
-          name: "trackerLibrary",
-          builder: (id) => TrackerLibraryScreen(presetInput: id),
+        _branch(
+          _genericRoute<String?>(
+            name: "trackerLibrary",
+            builder: (id) => TrackerLibraryScreen(presetInput: id),
+          ),
         ),
-        _genericRoute(name: "history", child: const HistoryScreen()),
-        _genericRoute(name: "updates", child: const UpdatesScreen()),
-        _genericRoute(name: "browse", child: const BrowseScreen()),
-        _genericRoute(name: "more", child: const MoreScreen()),
+        _branch(_genericRoute(name: "history", child: const HistoryScreen())),
+        _branch(_genericRoute(name: "updates", child: const UpdatesScreen())),
+        _branch(_genericRoute(name: "browse", child: const BrowseScreen())),
+        _branch(_genericRoute(name: "more", child: const MoreScreen())),
       ],
     ),
     _genericRoute<(Source?, bool)>(
@@ -282,6 +293,9 @@ class RouterNotifier extends ChangeNotifier {
       builder: (data) => WatchOrderScreen(name: data.$1, track: data.$2),
     ),
   ];
+
+  StatefulShellBranch _branch(GoRoute route) =>
+      StatefulShellBranch(routes: [route]);
 
   GoRoute _genericRoute<T>({
     String? name,

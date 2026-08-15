@@ -11,8 +11,10 @@ class Track {
 
   int? mediaId;
 
+  @Index(composite: [CompositeIndex('itemType')])
   int? mangaId;
 
+  @Index()
   int? syncId;
 
   String? title;

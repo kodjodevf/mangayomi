@@ -14,62 +14,9 @@ import 'package:path/path.dart';
 import 'package:extended_image_library/src/network/extended_network_image_provider.dart'
     as image_provider;
 
-/// LRU Memory Cache for decoded image data
-class _LRUCache<K, V> {
-  final int _maxSize;
-  final _cache = <K, V>{};
-  int _currentSize = 0;
-  final int Function(V)? _sizeOf;
-
-  _LRUCache({required this._maxSize, this._sizeOf});
-
-  V? get(K key) {
-    final value = _cache.remove(key);
-    if (value != null) {
-      _cache[key] = value; // Move to end (most recently used)
-    }
-    return value;
-  }
-
-  void put(K key, V value) {
-    _cache.remove(key); // Remove if exists
-    _cache[key] = value; // Add to end
-
-    if (_sizeOf != null) {
-      _currentSize += _sizeOf(value);
-      while (_currentSize > _maxSize && _cache.isNotEmpty) {
-        final oldest = _cache.entries.first;
-        _currentSize -= _sizeOf(oldest.value);
-        _cache.remove(oldest.key);
-      }
-    } else {
-      while (_cache.length > _maxSize) {
-        _cache.remove(_cache.keys.first);
-      }
-    }
-  }
-
-  void remove(K key) {
-    final value = _cache.remove(key);
-    if (value != null && _sizeOf != null) {
-      _currentSize -= _sizeOf(value);
-    }
-  }
-
-  void clear() {
-    _cache.clear();
-    _currentSize = 0;
-  }
-
-  int get length => _cache.length;
-  int get currentSize => _currentSize;
-}
-
-/// Global memory cache (100 images max, ~50MB)
-final _memoryCache = _LRUCache<String, Uint8List>(
-  maxSize: 50 * 1024 * 1024, // 50MB
-  sizeOf: (data) => data.length,
-);
+// NOTE: encoded image bytes are intentionally NOT cached in memory here.
+// The on-disk cache plus Flutter's decoded imageCache already cover repeat
+// loads; an extra encoded-bytes layer only added ~50MB of resident memory.
 
 /// Cache metadata for LRU eviction
 class _CacheMetadata {
@@ -309,12 +256,6 @@ class CustomExtendedNetworkImageProvider
     StreamController<ImageChunkEvent>? chunkEvents,
     String md5Key,
   ) async {
-    // Check memory cache first
-    final cachedData = _memoryCache.get(md5Key);
-    if (cachedData != null) {
-      return cachedData;
-    }
-
     final Directory cacheImagesDirectory = await StorageProvider()
         .createCacheDirectory(imageCacheFolderName);
     Uint8List? data;
@@ -329,13 +270,9 @@ class CustomExtendedNetworkImageProvider
           cacheFile.deleteSync();
         } else {
           data = await cacheFile.readAsBytes();
-          // Store in memory cache
-          _memoryCache.put(md5Key, data);
         }
       } else {
         data = await cacheFile.readAsBytes();
-        // Store in memory cache
-        _memoryCache.put(md5Key, data);
       }
     }
 
@@ -348,9 +285,6 @@ class CustomExtendedNetworkImageProvider
 
         // cache image file
         await File(join(cacheImagesDirectory.path, md5Key)).writeAsBytes(data);
-
-        // Store in memory cache
-        _memoryCache.put(md5Key, data);
       }
     }
 

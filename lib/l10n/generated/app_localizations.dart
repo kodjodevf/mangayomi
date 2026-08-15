@@ -941,6 +941,18 @@ abstract class AppLocalizations {
   /// **'Name'**
   String get name;
 
+  /// No description provided for @label_value.
+  ///
+  /// In en, this message translates to:
+  /// **'{label}: {value}'**
+  String label_value(Object label, Object value);
+
+  /// No description provided for @url.
+  ///
+  /// In en, this message translates to:
+  /// **'URL'**
+  String get url;
+
   /// No description provided for @category_name_required.
   ///
   /// In en, this message translates to:
@@ -1253,6 +1265,12 @@ abstract class AppLocalizations {
   /// **'Version'**
   String get version;
 
+  /// No description provided for @beta_version.
+  ///
+  /// In en, this message translates to:
+  /// **'Beta ({version})'**
+  String beta_version(Object version);
+
   /// No description provided for @check_for_update.
   ///
   /// In en, this message translates to:
@@ -1355,6 +1373,30 @@ abstract class AppLocalizations {
   /// **'Unknown'**
   String get unknown;
 
+  /// No description provided for @empty_placeholder.
+  ///
+  /// In en, this message translates to:
+  /// **'EMPTY\nMPTY\nMTY\nMT\n\n'**
+  String get empty_placeholder;
+
+  /// No description provided for @error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error;
+
+  /// No description provided for @error_with_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {error}'**
+  String error_with_message(Object error);
+
+  /// No description provided for @no_pages_available.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: no pages available'**
+  String get no_pages_available;
+
   /// No description provided for @set_categories.
   ///
   /// In en, this message translates to:
@@ -1414,6 +1456,162 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Source title'**
   String get source_title;
+
+  /// No description provided for @create_extension.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Extension'**
+  String get create_extension;
+
+  /// No description provided for @choose_extension_language.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose extension language'**
+  String get choose_extension_language;
+
+  /// No description provided for @lang.
+  ///
+  /// In en, this message translates to:
+  /// **'Lang'**
+  String get lang;
+
+  /// No description provided for @base_url.
+  ///
+  /// In en, this message translates to:
+  /// **'BaseUrl'**
+  String get base_url;
+
+  /// No description provided for @api_url_optional.
+  ///
+  /// In en, this message translates to:
+  /// **'ApiUrl (optional)'**
+  String get api_url_optional;
+
+  /// No description provided for @icon_url.
+  ///
+  /// In en, this message translates to:
+  /// **'iconUrl'**
+  String get icon_url;
+
+  /// No description provided for @source_icon_url.
+  ///
+  /// In en, this message translates to:
+  /// **'Source icon url'**
+  String get source_icon_url;
+
+  /// No description provided for @notes.
+  ///
+  /// In en, this message translates to:
+  /// **'notes'**
+  String get notes;
+
+  /// No description provided for @extension_name_example.
+  ///
+  /// In en, this message translates to:
+  /// **'ex: myAnime'**
+  String get extension_name_example;
+
+  /// No description provided for @language_code_example.
+  ///
+  /// In en, this message translates to:
+  /// **'ex: en'**
+  String get language_code_example;
+
+  /// No description provided for @base_url_example.
+  ///
+  /// In en, this message translates to:
+  /// **'ex: https://example.com'**
+  String get base_url_example;
+
+  /// No description provided for @api_url_example.
+  ///
+  /// In en, this message translates to:
+  /// **'ex: https://api.example.com'**
+  String get api_url_example;
+
+  /// No description provided for @extension_notes_example.
+  ///
+  /// In en, this message translates to:
+  /// **'ex: this extension requires login'**
+  String get extension_notes_example;
+
+  /// No description provided for @type.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get type;
+
+  /// No description provided for @target.
+  ///
+  /// In en, this message translates to:
+  /// **'Target'**
+  String get target;
+
+  /// No description provided for @source_type_single.
+  ///
+  /// In en, this message translates to:
+  /// **'single'**
+  String get source_type_single;
+
+  /// No description provided for @source_type_multi.
+  ///
+  /// In en, this message translates to:
+  /// **'multi'**
+  String get source_type_multi;
+
+  /// No description provided for @source_type_torrent.
+  ///
+  /// In en, this message translates to:
+  /// **'torrent'**
+  String get source_type_torrent;
+
+  /// No description provided for @source_language_dart.
+  ///
+  /// In en, this message translates to:
+  /// **'Dart'**
+  String get source_language_dart;
+
+  /// No description provided for @source_language_javascript.
+  ///
+  /// In en, this message translates to:
+  /// **'JavaScript'**
+  String get source_language_javascript;
+
+  /// No description provided for @source_language_lnreader_compiled_js.
+  ///
+  /// In en, this message translates to:
+  /// **'LNReader compiled JS'**
+  String get source_language_lnreader_compiled_js;
+
+  /// No description provided for @source_created_successfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Source created successfully'**
+  String get source_created_successfully;
+
+  /// No description provided for @source_already_exists.
+  ///
+  /// In en, this message translates to:
+  /// **'Source already exists'**
+  String get source_already_exists;
+
+  /// No description provided for @error_when_creating_source.
+  ///
+  /// In en, this message translates to:
+  /// **'Error when creating source'**
+  String get error_when_creating_source;
+
+  /// No description provided for @cookies_deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Cookies deleted!'**
+  String get cookies_deleted;
+
+  /// No description provided for @delete_all_cookies.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all cookies'**
+  String get delete_all_cookies;
 
   /// No description provided for @chapter_number.
   ///
@@ -3731,6 +3929,102 @@ abstract class AppLocalizations {
   /// **'Rescan all local folders now'**
   String get rescan_local_folder;
 
+  /// No description provided for @default_download_destination.
+  ///
+  /// In en, this message translates to:
+  /// **'Default download destination'**
+  String get default_download_destination;
+
+  /// No description provided for @ask_download_destination.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask for download destination'**
+  String get ask_download_destination;
+
+  /// No description provided for @ask_download_destination_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a local folder each time a download starts.'**
+  String get ask_download_destination_desc;
+
+  /// No description provided for @select_download_destination.
+  ///
+  /// In en, this message translates to:
+  /// **'Select download destination'**
+  String get select_download_destination;
+
+  /// No description provided for @clear_local_library.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear local library'**
+  String get clear_local_library;
+
+  /// No description provided for @clear_local_library_desc.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove local folder and archive entries from the library.'**
+  String get clear_local_library_desc;
+
+  /// No description provided for @clear_local_library_msg.
+  ///
+  /// In en, this message translates to:
+  /// **'This will remove local folder and archive entries from your library. It will not delete files from disk.'**
+  String get clear_local_library_msg;
+
+  /// No description provided for @custom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get custom;
+
+  /// No description provided for @no_local_folder_available_for_downloads.
+  ///
+  /// In en, this message translates to:
+  /// **'No local folder is available for downloads'**
+  String get no_local_folder_available_for_downloads;
+
+  /// No description provided for @failed_to_create_cbz.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to create CBZ: {error}'**
+  String failed_to_create_cbz(Object error);
+
+  /// No description provided for @error_reading_cover_image.
+  ///
+  /// In en, this message translates to:
+  /// **'Error reading cover image: {error}'**
+  String error_reading_cover_image(Object error);
+
+  /// No description provided for @error_reading_metadata.
+  ///
+  /// In en, this message translates to:
+  /// **'Error reading metadata: {error}'**
+  String error_reading_metadata(Object error);
+
+  /// No description provided for @error_saving_chapter_episode_to_library.
+  ///
+  /// In en, this message translates to:
+  /// **'Error saving chapter/episode to library: {error}'**
+  String error_saving_chapter_episode_to_library(Object error);
+
+  /// No description provided for @error_reading_chapter_cover_image.
+  ///
+  /// In en, this message translates to:
+  /// **'Error reading chapter cover image: {error}'**
+  String error_reading_chapter_cover_image(Object error);
+
+  /// No description provided for @error_reading_archive_cover_image.
+  ///
+  /// In en, this message translates to:
+  /// **'Error reading archive cover image: {error}'**
+  String error_reading_archive_cover_image(Object error);
+
+  /// No description provided for @error_getting_local_library.
+  ///
+  /// In en, this message translates to:
+  /// **'Error getting local library: {error}'**
+  String error_getting_local_library(Object error);
+
   /// No description provided for @export_metadata.
   ///
   /// In en, this message translates to:
@@ -3742,6 +4036,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Exported'**
   String get exported;
+
+  /// No description provided for @failed_to_export_metadata.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to export metadata: {error}'**
+  String failed_to_export_metadata(Object error);
+
+  /// No description provided for @cloudflare_resolution_webview_server_start_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t start Cloudflare Resolution Webview Server.'**
+  String get cloudflare_resolution_webview_server_start_failed;
+
+  /// No description provided for @tracker_token_expired.
+  ///
+  /// In en, this message translates to:
+  /// **'{tracker} Token expired'**
+  String tracker_token_expired(Object tracker);
+
+  /// No description provided for @video_list_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Video list is empty'**
+  String get video_list_empty;
+
+  /// No description provided for @playback_speed_multiplier.
+  ///
+  /// In en, this message translates to:
+  /// **'x{value}'**
+  String playback_speed_multiplier(Object value);
+
+  /// No description provided for @could_not_launch_url.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not launch {url}'**
+  String could_not_launch_url(Object url);
 
   /// No description provided for @text_size.
   ///

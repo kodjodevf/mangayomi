@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/modules/widgets/error_text.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
@@ -334,10 +335,14 @@ class _SubtitlesWidgetSearchState extends ConsumerState<SubtitlesWidgetSearch> {
     try {
       final subtitle = subtitles![index];
       final storageProvider = StorageProvider();
+      final resolvedArchivePath =
+          widget.chapter.archivePath?.isNotEmpty ?? false
+          ? await resolveLocalArchivePath(widget.chapter.archivePath!)
+          : null;
       final animeDir =
-          widget.chapter.archivePath != null &&
+          resolvedArchivePath != null &&
               widget.chapter.manga.value?.source == "local"
-          ? Directory(path.dirname(widget.chapter.archivePath!))
+          ? Directory(path.dirname(resolvedArchivePath))
           : null;
       final chapterDirectory = (await storageProvider.getMangaChapterDirectory(
         widget.chapter,

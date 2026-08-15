@@ -355,11 +355,13 @@ class StorageProvider {
         .filter()
         .syncIdIsNotNull()
         .findAll();
-    await isar.writeTxn(() async {
-      for (final pref in prefs) {
-        await isar.trackPreferences.put(pref..refreshing = true);
-      }
-    });
+    if (prefs.isNotEmpty) {
+      await isar.writeTxn(() async {
+        await isar.trackPreferences.putAll([
+          for (final pref in prefs) pref..refreshing = true,
+        ]);
+      });
+    }
 
     final customButton = await isar.customButtons
         .filter()

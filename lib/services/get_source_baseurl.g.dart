@@ -66,7 +66,7 @@ final class SourceBaseUrlProvider
   }
 }
 
-String _$sourceBaseUrlHash() => r'8b39ad1c4c8283700b2d16dfa3036acc766bb5d4';
+String _$sourceBaseUrlHash() => r'863d7734511f4b16a7f2c068a4fe085266c49e3c';
 
 final class SourceBaseUrlFamily extends $Family
     with $FunctionalFamilyOverride<String, Source> {

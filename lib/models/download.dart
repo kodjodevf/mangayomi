@@ -14,6 +14,7 @@ class Download {
 
   int? total;
 
+  @Index()
   bool? isDownload;
 
   bool? isStartDownload;

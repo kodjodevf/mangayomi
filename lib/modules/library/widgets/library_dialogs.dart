@@ -10,6 +10,7 @@ import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/changed.dart';
+import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/modules/library/providers/library_state_provider.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/detail/providers/state_providers.dart';
@@ -105,7 +106,7 @@ void showDeleteMangaDialog({
                                 // For local archives the archive file IS the chapter — there is
                                 // nothing to re-download. So we delete the physical files and
                                 // remove all Isar records, mirroring a full library removal.
-                                mangaDirectory = _deleteImport(
+                                mangaDirectory = await _deleteImport(
                                   manga,
                                   mangaDirectory,
                                 );
@@ -188,13 +189,14 @@ void _removeImport(WidgetRef ref, Manga manga) {
 /// Deletes the physical archive files (zip/cbz/mp4/epub) for a local-archive
 /// manga from disk. Returns the parent directory path so the caller can clean
 /// up the now-empty folder afterwards.
-String _deleteImport(Manga manga, String mangaDirectory) {
+Future<String> _deleteImport(Manga manga, String mangaDirectory) async {
   for (var chapter in manga.chapters) {
     final path = chapter.archivePath;
     if (path == null) continue;
-    final chapterFile = File(path);
+    final resolvedPath = await resolveLocalArchivePath(path);
+    final chapterFile = File(resolvedPath);
     if (mangaDirectory.isEmpty) {
-      mangaDirectory = p.dirname(path);
+      mangaDirectory = p.dirname(resolvedPath);
     }
     try {
       if (chapterFile.existsSync()) {

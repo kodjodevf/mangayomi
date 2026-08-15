@@ -339,8 +339,9 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
     required int downloadFilterType,
     required bool downloadedOnly,
   }) {
-    data.sort((a, b) => (a.pos ?? 0).compareTo(b.pos ?? 0));
-    final entr = data.where((e) => !(e.hide ?? false)).toList();
+    final sortedData = [...data]
+      ..sort((a, b) => (a.pos ?? 0).compareTo(b.pos ?? 0));
+    final entr = sortedData.where((e) => !(e.hide ?? false)).toList();
     int tabCount = withoutCategory.isNotEmpty ? entr.length + 1 : entr.length;
 
     if (tabCount <= 0) {

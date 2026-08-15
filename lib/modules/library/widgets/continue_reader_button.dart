@@ -15,29 +15,33 @@ class ContinueReaderButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return StreamBuilder(
-      stream: isar.historys
-          .where()
-          .mangaIdEqualTo(entry.id!)
-          .watch(fireImmediately: true),
-      builder: (context, snapshot) => GestureDetector(
-        onTap: () {
-          final incognitoMode = ref.read(incognitoModeStateProvider);
-          if (snapshot.hasData && snapshot.data!.isNotEmpty && !incognitoMode) {
-            snapshot.data!.first.chapter.value!.pushToReaderView(context);
-          } else {
-            entry.chapters.first.pushToReaderView(context);
-          }
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            color: context.primaryColor.withValues(alpha: 0.9),
-          ),
-          child: const Padding(
-            padding: EdgeInsets.all(7),
-            child: Icon(Icons.play_arrow, size: 19, color: Colors.white),
-          ),
+    // The button looks the same regardless of history, so the last-read
+    // chapter is resolved on tap — a live watch per grid cell made scrolling
+    // large libraries churn dozens of query subscriptions.
+    return GestureDetector(
+      onTap: () {
+        final incognitoMode = ref.read(incognitoModeStateProvider);
+        final history = incognitoMode
+            ? null
+            : isar.historys.where().mangaIdEqualTo(entry.id!).findFirstSync();
+        if (history != null && !history.chapter.isLoaded) {
+          history.chapter.loadSync();
+        }
+        final lastReadChapter = history?.chapter.value;
+        if (lastReadChapter != null) {
+          lastReadChapter.pushToReaderView(context);
+        } else {
+          entry.chapters.first.pushToReaderView(context);
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: context.primaryColor.withValues(alpha: 0.9),
+        ),
+        child: const Padding(
+          padding: EdgeInsets.all(7),
+          child: Icon(Icons.play_arrow, size: 19, color: Colors.white),
         ),
       ),
     );

@@ -109,7 +109,7 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
                 },
               ),
             ),
-            body: const Center(child: Text("Video list is empty")),
+            body: Center(child: Text(context.l10n.video_list_empty)),
           );
         }
 
@@ -1393,7 +1393,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                 if (!context.mounted) return;
                 Navigator.pop(context);
               } catch (e) {
-                botToast("Error: $e");
+                botToast(context.l10n.error_with_message(e));
                 Navigator.pop(context);
               }
             },
@@ -1420,7 +1420,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                 if (!context.mounted) return;
                 Navigator.pop(context);
               } catch (_) {
-                botToast("Error");
+                botToast(context.l10n.error);
                 Navigator.pop(context);
               }
             },
