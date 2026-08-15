@@ -20,6 +20,7 @@ class FloatingNavBar extends StatefulWidget {
     this.showLabels = false,
     this.swipeTarget,
     this.swipeProgress = 0,
+    this.shrink = 0,
   });
 
   final List<NavigationDestination> destinations;
@@ -34,6 +35,11 @@ class FloatingNavBar extends StatefulWidget {
   /// on.
   final int? swipeTarget;
   final double swipeProgress;
+
+  /// How far the whole bar is drawn in, 0 at rest and 1 fully shrunk. Set
+  /// while the page underneath is being scrolled down, so the bar gives the
+  /// content a little more room without ever leaving the screen.
+  final double shrink;
 
   /// Puts the label beside each icon and lets the bar hug its contents rather
   /// than span the screen. Used in landscape, where there is width to spare and
@@ -50,6 +56,12 @@ class FloatingNavBar extends StatefulWidget {
   /// takes a little height, since the slots are getting narrower and a bar
   /// that keeps its full height starts to look crowded.
   static const _comfortableCount = 5;
+
+  /// How much of itself the bar gives up when shrunk. Small on purpose: the
+  /// bar is meant to step back while you read, not to get out of the way, and
+  /// anything deeper starts to read as it leaving.
+  static const _shrinkScale = 0.14;
+
   static const _fullHeight = 56.0;
   static const _shrinkPerExtra = 3.0;
   static const _minHeight = 44.0;
@@ -478,27 +490,48 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
         FloatingNavBar._margin,
         bottom,
       ),
-      // Sized to its contents when labelled, and centred. Left to fill the
-      // width, the items spread right across the screen with great gaps
-      // between them; the bar should be as wide as the tabs and no wider.
+      // Scaled rather than laid out smaller, and anchored to the bottom
+      // centre: the capsule draws in towards its own middle and stays on the
+      // same resting line instead of sliding down or drifting to one side.
       //
-      // Only ever horizontally: Scaffold lays a bottomNavigationBar out with
-      // the screen height as its maximum, and anything that fills its
-      // constraints vertically here reports that height to the body as bottom
-      // padding, which pushes every page's content off screen.
-      // Hugged to the row when labelled. IntrinsicWidth can do that only
-      // because the bar holds no LayoutBuilder on this path: intrinsics cannot
-      // be computed through one.
-      child: widget.showLabels
-          ? Align(
-              alignment: Alignment.bottomCenter,
-              heightFactor: 1,
-              child: IntrinsicWidth(child: _bar(context, height, null)),
-            )
-          : LayoutBuilder(
-              builder: (context, outer) =>
-                  _bar(context, height, outer.maxWidth),
-            ),
+      // Inside the padding, not around it. Anchoring the padded box instead
+      // scales the gap below the bar along with everything else, and the
+      // capsule creeps downwards by the padding's share as it shrinks.
+      //
+      // Scaling also leaves the slot's own size untouched, so the list
+      // underneath never reflows while it is being scrolled.
+      child: TweenAnimationBuilder<double>(
+        tween: Tween<double>(end: widget.shrink.clamp(0.0, 1.0)),
+        duration: FloatingNavBar._duration,
+        curve: FloatingNavBar._curve,
+        builder: (context, shrink, child) => Transform.scale(
+          scale: 1 - shrink * FloatingNavBar._shrinkScale,
+          alignment: Alignment.bottomCenter,
+          filterQuality: FilterQuality.medium,
+          child: child,
+        ),
+        // Sized to its contents when labelled, and centred. Left to fill the
+        // width, the items spread right across the screen with great gaps
+        // between them; the bar should be as wide as the tabs and no wider.
+        //
+        // Only ever horizontally: Scaffold lays a bottomNavigationBar out with
+        // the screen height as its maximum, and anything that fills its
+        // constraints vertically here reports that height to the body as bottom
+        // padding, which pushes every page's content off screen.
+        // Hugged to the row when labelled. IntrinsicWidth can do that only
+        // because the bar holds no LayoutBuilder on this path: intrinsics cannot
+        // be computed through one.
+        child: widget.showLabels
+            ? Align(
+                alignment: Alignment.bottomCenter,
+                heightFactor: 1,
+                child: IntrinsicWidth(child: _bar(context, height, null)),
+              )
+            : LayoutBuilder(
+                builder: (context, outer) =>
+                    _bar(context, height, outer.maxWidth),
+              ),
+      ),
     );
   }
 

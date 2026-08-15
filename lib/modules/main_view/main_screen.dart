@@ -22,6 +22,7 @@ import 'package:mangayomi/modules/widgets/error_state.dart';
 import 'package:mangayomi/modules/widgets/floating_nav_bar.dart';
 import 'package:mangayomi/modules/widgets/loading_icon.dart';
 import 'package:mangayomi/services/fetch_item_sources.dart';
+import 'package:mangayomi/modules/main_view/nav_shrink.dart';
 import 'package:mangayomi/modules/main_view/providers/migration.dart';
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/more/about/providers/check_for_update.dart';
@@ -197,6 +198,33 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   int currentIndex = 0;
   bool isLibSwitch = false;
 
+  /// Drives the floating bar stepping back while a page is scrolled down.
+  final NavShrink _navShrink = NavShrink();
+
+  /// Watches the page underneath the bar and shrinks it on a sustained scroll
+  /// down. Only vertical scrolling counts: the tab swipe and every horizontal
+  /// carousel report here too, and neither should move the bar.
+  bool _onPageScroll(ScrollNotification notification) {
+    if (!usesFloatingNav) return false;
+    if (notification.metrics.axis != Axis.vertical) return false;
+
+    var changed = false;
+    if (notification is ScrollUpdateNotification) {
+      // A list with nothing to scroll cannot earn the shrink, and reaching the
+      // top always gives the bar back rather than waiting out the release run.
+      final metrics = notification.metrics;
+      if (metrics.maxScrollExtent <= 0) {
+        changed = _navShrink.reset();
+      } else if (metrics.pixels <= metrics.minScrollExtent) {
+        changed = _navShrink.reset();
+      } else {
+        changed = _navShrink.update(notification.scrollDelta ?? 0);
+      }
+    }
+    if (changed) setState(() {});
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.listen<AsyncValue<UpdateInfo?>>(checkForUpdateProvider, (_, next) {
@@ -313,19 +341,22 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                       // views inset themselves by the bar height through
                       // MediaQuery padding, so the last row stays reachable.
                       extendBody: usesFloatingNav,
-                      body: context.prefersNavRail
-                          ? _TabletLayout(
-                              isLongPressed: isLongPressed,
-                              location: location,
-                              dest: dest,
-                              currentIndex: currentIndex,
-                              route: route,
-                              ref: ref,
-                              buildNavigationWidgetsDesktop:
-                                  _buildNavigationWidgetsDesktop,
-                              child: widget.child,
-                            )
-                          : widget.child,
+                      body: NotificationListener<ScrollNotification>(
+                        onNotification: _onPageScroll,
+                        child: context.prefersNavRail
+                            ? _TabletLayout(
+                                isLongPressed: isLongPressed,
+                                location: location,
+                                dest: dest,
+                                currentIndex: currentIndex,
+                                route: route,
+                                ref: ref,
+                                buildNavigationWidgetsDesktop:
+                                    _buildNavigationWidgetsDesktop,
+                                child: widget.child,
+                              )
+                            : widget.child,
+                      ),
                       bottomNavigationBar: context.prefersNavRail
                           ? null
                           : _MobileBottomNavigation(
@@ -335,6 +366,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                               dest: dest,
                               route: route,
                               ref: ref,
+                              shrink: _navShrink.shrunk ? 1.0 : 0.0,
                               buildNavigationWidgetsMobile:
                                   _buildNavigationWidgetsMobile,
                               onDestinationSelected: (destination) {
@@ -928,6 +960,7 @@ class _MobileBottomNavigation extends StatelessWidget {
     required this.ref,
     required this.buildNavigationWidgetsMobile,
     required this.onDestinationSelected,
+    this.shrink = 0,
   });
 
   final bool isLongPressed;
@@ -939,6 +972,10 @@ class _MobileBottomNavigation extends StatelessWidget {
   final List<Widget> Function(WidgetRef, List<String>, BuildContext)
   buildNavigationWidgetsMobile;
   final Function(String) onDestinationSelected;
+
+  /// Passed through to the floating bar; 0 at rest, 1 while the page under it
+  /// is being scrolled down.
+  final double shrink;
 
   @override
   Widget build(BuildContext context) {
@@ -965,6 +1002,7 @@ class _MobileBottomNavigation extends StatelessWidget {
           // Landscape has width to spare and height to save, so the labels go
           // beside the icons rather than a rail taking over.
           showLabels: context.isLandscape,
+          shrink: shrink,
         ),
       );
     }
