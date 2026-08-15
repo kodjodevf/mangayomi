@@ -349,10 +349,11 @@ packages:
   device_info_plus:
     dependency: "direct main"
     description:
-      name: device_info_plus
-      sha256: "0891702f96b2e465fe567b7ec448380e6b1c14f60af552a8536d9f583b6b8442"
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/device_info_plus/device_info_plus"
+      ref: main
+      resolved-ref: "9a4db3e93f55dbf0713d3ca23f43985873d15f3a"
+      url: "https://github.com/kodjodevf/plus_plugins.git"
+    source: git
     version: "13.2.0"
   device_info_plus_platform_interface:
     dependency: transitive

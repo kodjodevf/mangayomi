@@ -24,11 +24,7 @@ dependencies:
   intl: ^0.20.2
   google_fonts: ^8.0.2
   url_launcher: ^6.3.1
-  package_info_plus:
-    git:
-      url: https://github.com/kodjodevf/plus_plugins.git
-      path: packages/package_info_plus/package_info_plus
-      ref: main
+  package_info_plus: ^9.0.1
   permission_handler: ^12.0.1
   flutter_inappwebview:
     git:
@@ -129,6 +125,11 @@ dependency_overrides:
     git:
       url: https://github.com/kodjodevf/plus_plugins.git
       path: packages/package_info_plus/package_info_plus
+      ref: main
+  device_info_plus:
+    git:
+      url: https://github.com/kodjodevf/plus_plugins.git
+      path: packages/device_info_plus/device_info_plus
       ref: main
 
 dev_dependencies:
