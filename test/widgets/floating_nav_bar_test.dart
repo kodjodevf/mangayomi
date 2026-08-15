@@ -687,4 +687,43 @@ void main() {
       );
     }
   });
+
+  testWidgets('the end icons sit centred in the pill, not in their slot', (
+    tester,
+  ) async {
+    // The end slots push the pill inwards so it keeps its inset from the bar's
+    // caps. Icons that stayed centred in their slot then sat off centre inside
+    // the pill, which is visible at both ends.
+    for (final index in [0, 2]) {
+      await tester.pumpWidget(_host(index: index));
+      await tester.pumpAndSettle();
+
+      final icon = tester.getRect(
+        find
+            .byIcon(
+              index == 0
+                  ? Icons.collections_bookmark_rounded
+                  : Icons.explore_rounded,
+            )
+            .first,
+      );
+      expect(
+        icon.center.dx,
+        moreOrLessEquals(_pillRect(tester).center.dx, epsilon: 0.5),
+        reason: 'slot $index icon is off centre in its pill',
+      );
+    }
+  });
+
+  testWidgets('middle icons are not nudged', (tester) async {
+    await tester.pumpWidget(_host(index: 1));
+    await tester.pumpAndSettle();
+    final bar = _barRect(tester);
+    final icon = tester.getRect(find.byIcon(Icons.video_library_rounded).first);
+    expect(
+      icon.center.dx,
+      moreOrLessEquals(bar.center.dx, epsilon: 0.5),
+      reason: 'the middle slot of three is the bar centre; nothing to nudge',
+    );
+  });
 }

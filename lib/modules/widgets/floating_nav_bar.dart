@@ -171,6 +171,19 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
   /// At rest it spans its slot, except at either end where it runs out to the
   /// bar's own edge. While dragging it is centred on the pointer, and pushing
   /// it past an end pins that edge and spends the rest on width.
+  /// Where the pill sits at rest for [index].
+  ///
+  /// The end slots get pushed inwards so the pill keeps its inset from the
+  /// bar's caps, which means their pill is no longer centred on its slot. The
+  /// icons have to follow it or they sit off centre inside the pill.
+  double _restingCentre(double slot, double width, int index) {
+    const outer = FloatingNavBar._pillInset;
+    final base = slot - FloatingNavBar._pillSlotInset * 2;
+    final lo = outer + base / 2;
+    final hi = width - outer - base / 2;
+    return (slot * (index + 0.5)).clamp(math.min(lo, hi), math.max(lo, hi));
+  }
+
   (double, double) _pillEdges(double slot, double width, int index) {
     const outer = FloatingNavBar._pillInset;
     final base = slot - FloatingNavBar._pillSlotInset * 2;
@@ -185,7 +198,7 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
     }
 
     if (_dragX == null) {
-      final centre = centreFor(slot * (index + 0.5), base);
+      final centre = _restingCentre(slot, width, index);
       return (centre - base / 2, centre + base / 2);
     }
 
@@ -343,6 +356,11 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                                         selected: i == resting,
                                         iconSize:
                                             height * FloatingNavBar._iconRatio,
+                                        // Follow the pill inwards at the ends,
+                                        // so the icon stays centred in it.
+                                        nudge:
+                                            _restingCentre(slot, width, i) -
+                                            slot * (i + 0.5),
                                         onTap: () => widget.onSelected(i),
                                       ),
                                     ),
@@ -486,12 +504,17 @@ class _FloatingNavItem extends StatelessWidget {
     required this.destination,
     required this.selected,
     required this.iconSize,
+    required this.nudge,
     required this.onTap,
   });
 
   final NavigationDestination destination;
   final bool selected;
   final double iconSize;
+
+  /// Horizontal shift so the icon lands on the pill's centre rather than its
+  /// slot's. Zero everywhere except the two end slots.
+  final double nudge;
   final VoidCallback onTap;
 
   @override
@@ -512,25 +535,28 @@ class _FloatingNavItem extends StatelessWidget {
         behavior: HitTestBehavior.opaque,
         onTap: onTap,
         child: Center(
-          child: TweenAnimationBuilder<double>(
-            tween: Tween(end: iconSize),
-            duration: FloatingNavBar._duration,
-            curve: FloatingNavBar._curve,
-            builder: (context, size, child) => IconTheme(
-              data: IconThemeData(
-                size: size,
-                color: color,
-                // Several destinations (history, more) have an "outlined"
-                // variant that is the same drawing, so filling cannot show
-                // selection. Thickening the stroke does, and it is harmless on
-                // the icons that do fill.
-                shadows: selected
-                    ? [Shadow(color: color, blurRadius: 0.9)]
-                    : null,
+          child: Transform.translate(
+            offset: Offset(nudge, 0),
+            child: TweenAnimationBuilder<double>(
+              tween: Tween(end: iconSize),
+              duration: FloatingNavBar._duration,
+              curve: FloatingNavBar._curve,
+              builder: (context, size, child) => IconTheme(
+                data: IconThemeData(
+                  size: size,
+                  color: color,
+                  // Several destinations (history, more) have an "outlined"
+                  // variant that is the same drawing, so filling cannot show
+                  // selection. Thickening the stroke does, and it is harmless on
+                  // the icons that do fill.
+                  shadows: selected
+                      ? [Shadow(color: color, blurRadius: 0.9)]
+                      : null,
+                ),
+                child: child!,
               ),
-              child: child!,
+              child: icon,
             ),
-            child: icon,
           ),
         ),
       ),
