@@ -401,8 +401,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       destinations[dest.indexOf("/NovelLibrary")] = NavigationRailDestination(
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
-        selectedIcon: const Icon(Icons.local_library),
-        icon: const Icon(Icons.local_library_outlined),
+        selectedIcon: const Icon(Icons.auto_stories),
+        icon: const Icon(Icons.auto_stories_outlined),
         label: Padding(
           padding: const EdgeInsets.only(top: 5),
           child: Text(l10n.novel),
@@ -539,8 +539,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     }
     if (dest.contains("/NovelLibrary")) {
       destinations[dest.indexOf("/NovelLibrary")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.local_library),
-        icon: const Icon(Icons.local_library_outlined),
+        selectedIcon: const Icon(Icons.auto_stories),
+        icon: const Icon(Icons.auto_stories_outlined),
         label: l10n.novel,
       );
     }
@@ -917,6 +917,23 @@ class _MobileBottomNavigation extends StatelessWidget {
     // Scaffold sets extendBody to match. Elsewhere the bar stays opaque.
     final translucent = isApple;
 
+    if (translucent) {
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 0),
+        width: context.width(1),
+        height: _getBottomNavigationHeight(isLongPressed, location),
+        child: _FloatingNavBar(
+          destinations: buildNavigationWidgetsMobile(
+            ref,
+            dest,
+            context,
+          ).cast<NavigationDestination>(),
+          currentIndex: currentIndex,
+          onSelected: (newIndex) => onDestinationSelected(dest[newIndex]),
+        ),
+      );
+    }
+
     Widget bar = NavigationBarTheme(
       data: NavigationBarThemeData(
         labelTextStyle: const WidgetStatePropertyAll(
@@ -986,6 +1003,121 @@ class _MobileBottomNavigation extends StatelessWidget {
     };
 
     return (location == null || validLocations.contains(location)) ? null : 0;
+  }
+}
+
+/// A floating capsule nav bar: content runs underneath, icons only, with a
+/// filled pill marking the current destination.
+///
+/// Labels are dropped rather than shrunk, so every icon has to identify its
+/// destination on its own. That is why the novel library uses an open book
+/// while the manga library uses stacked cards: with labels either reads fine,
+/// without them two book icons do not.
+class _FloatingNavBar extends StatelessWidget {
+  const _FloatingNavBar({
+    required this.destinations,
+    required this.currentIndex,
+    required this.onSelected,
+  });
+
+  final List<NavigationDestination> destinations;
+  final int currentIndex;
+  final ValueChanged<int> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 0, 14, 6),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(30),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+            child: Container(
+              height: 58,
+              decoration: BoxDecoration(
+                // Tinted from the theme rather than a fixed dark, since the
+                // palette is chosen at runtime.
+                color: scheme.surface.withValues(alpha: 0.62),
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(
+                  color: scheme.onSurface.withValues(alpha: 0.08),
+                ),
+              ),
+              child: Row(
+                children: [
+                  for (var i = 0; i < destinations.length; i++)
+                    Expanded(
+                      child: _FloatingNavItem(
+                        destination: destinations[i],
+                        selected: i == currentIndex,
+                        onTap: () => onSelected(i),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FloatingNavItem extends StatelessWidget {
+  const _FloatingNavItem({
+    required this.destination,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final NavigationDestination destination;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final icon = selected
+        ? (destination.selectedIcon ?? destination.icon)
+        : destination.icon;
+    return Semantics(
+      // The label is gone visually, so it has to survive for screen readers.
+      label: destination.label,
+      selected: selected,
+      button: true,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Center(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            curve: Curves.easeOut,
+            height: 40,
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            decoration: BoxDecoration(
+              color: selected
+                  ? scheme.onSurface.withValues(alpha: 0.13)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Center(
+              child: IconTheme(
+                data: IconThemeData(
+                  size: 24,
+                  color: selected
+                      ? scheme.onSurface
+                      : scheme.onSurface.withValues(alpha: 0.62),
+                ),
+                child: icon,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 
