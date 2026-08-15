@@ -32,11 +32,7 @@ class FloatingNavBar extends StatefulWidget {
 
   /// Horizontal breathing room between the pill and its slot. The outermost
   /// edges skip it so the pill can sit flush inside the bar's own end caps.
-  static const _inset = 4.0;
-
-  /// How much of a drag past the end of the bar turns into extra pill width
-  /// rather than movement, so the pill visibly gives against the cap.
-  static const _edgeStretch = 0.5;
+  static const _inset = 2.0;
 
   /// Pixels of extra width per pixel of pointer movement in a frame, which is
   /// what makes the pill look like it is being pulled along.
@@ -56,9 +52,10 @@ class FloatingNavBar extends StatefulWidget {
   /// direction being pushed.
   static const _barGive = 0.05;
 
-  /// Gap between the pill and the bar's edge, top and bottom. Small, so the
-  /// pill reads as nearly filling the bar.
-  static const _pillGap = 2.0;
+  /// Gap between the pill and the bar's edge, top and bottom. It tightens
+  /// while dragging so the pill fills more of the bar in the hand.
+  static const _pillGapRest = 5.0;
+  static const _pillGapDrag = 2.0;
 
   @override
   State<FloatingNavBar> createState() => _FloatingNavBarState();
@@ -155,13 +152,9 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
 
     // Whatever the pointer asked for beyond that is spent widening the pill
     // into the cap, so it gives rather than stopping dead.
+    // Past an end the pill simply pins there. It must not grow backwards,
+    // away from the direction being pushed: the bar takes the give instead.
     final beyond = _dragX! - centre;
-    final overshoot = beyond.abs() * FloatingNavBar._edgeStretch;
-    if (beyond < 0) {
-      right = math.min(width, right + overshoot);
-    } else if (beyond > 0) {
-      left = math.max(0, left - overshoot);
-    }
     // Read during layout only; the drag callbacks rebuild anyway, so the bar
     // picks this up on the same frame it is computed for.
     _edgePush = (beyond / 60).clamp(-1.0, 1.0);
@@ -175,7 +168,9 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
     final light = theme.brightness == Brightness.light;
     final dragging = _dragX != null;
     final height = widget.shrunk ? 46.0 : 58.0;
-    final pillHeight = height - FloatingNavBar._pillGap * 2;
+    final pillGap = dragging
+        ? FloatingNavBar._pillGapDrag
+        : FloatingNavBar._pillGapRest;
 
     // Sit closer to the bottom than a full safe-area inset would put us. The
     // bar is a floating capsule, not a docked bar, so it can overlap the home
@@ -215,7 +210,7 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                 borderRadius: BorderRadius.circular(height / 2),
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-                  child: DecoratedBox(
+                  child: Container(
                     decoration: BoxDecoration(
                       // A light theme has nothing darker behind it for the
                       // blur to pull in, so translucency alone leaves the bar
@@ -226,10 +221,28 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                               alpha: 0.94,
                             )
                           : scheme.surface.withValues(alpha: 0.62),
-                      border: Border.all(
-                        color: scheme.onSurface.withValues(alpha: 0.08),
-                      ),
                       borderRadius: BorderRadius.circular(height / 2),
+                    ),
+                    // A lit top and bottom edge rather than an outline all the
+                    // way round: it reads as a pane of glass catching light,
+                    // and leaves the end caps clean.
+                    foregroundDecoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(height / 2),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          scheme.onSurface.withValues(
+                            alpha: light ? 0.10 : 0.16,
+                          ),
+                          Colors.transparent,
+                          Colors.transparent,
+                          scheme.onSurface.withValues(
+                            alpha: light ? 0.06 : 0.10,
+                          ),
+                        ],
+                        stops: const [0.0, 0.045, 0.955, 1.0],
+                      ),
                     ),
                     child: LayoutBuilder(
                       builder: (context, constraints) {
@@ -266,20 +279,29 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                                 curve: FloatingNavBar._curve,
                                 left: left,
                                 width: right - left,
-                                height: pillHeight,
-                                child: AnimatedContainer(
+                                top: 0,
+                                bottom: 0,
+                                // The gap animates even though the horizontal
+                                // tracking does not, so tightening it on pick-up
+                                // eases instead of popping.
+                                child: AnimatedPadding(
                                   duration: FloatingNavBar._duration,
                                   curve: FloatingNavBar._curve,
-                                  decoration: BoxDecoration(
-                                    color: scheme.onSurface.withValues(
-                                      // Reads as picked up while in hand.
-                                      alpha: dragging ? 0.2 : 0.13,
-                                    ),
-                                    // Matches the bar's own end caps, so the pill
-                                    // looks like part of it rather than a chip
-                                    // laid on top.
-                                    borderRadius: BorderRadius.circular(
-                                      pillHeight / 2,
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: pillGap,
+                                  ),
+                                  child: AnimatedContainer(
+                                    duration: FloatingNavBar._duration,
+                                    curve: FloatingNavBar._curve,
+                                    decoration: ShapeDecoration(
+                                      color: scheme.onSurface.withValues(
+                                        // Reads as picked up while in hand.
+                                        alpha: dragging ? 0.2 : 0.13,
+                                      ),
+                                      // A stadium stays exactly as round as the
+                                      // bar's own caps at any height, so the gap
+                                      // can change without the radius drifting.
+                                      shape: const StadiumBorder(),
                                     ),
                                   ),
                                 ),

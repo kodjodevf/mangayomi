@@ -44,11 +44,15 @@ Widget _host({
   ),
 );
 
-/// The travelling highlight is the only positioned child in the stack, so it
-/// can be picked out by type without reaching for a key that only exists for
-/// the test's benefit.
-Rect _pillRect(WidgetTester tester) =>
-    tester.getRect(find.byType(AnimatedPositioned));
+/// The painted pill. The positioned box around it spans the bar's full height
+/// (the gap lives in a padding inside, so it can animate while the horizontal
+/// tracking stays instant), so measuring that box would not measure the pill.
+Rect _pillRect(WidgetTester tester) => tester.getRect(
+  find.descendant(
+    of: find.byType(AnimatedPositioned),
+    matching: find.byType(AnimatedContainer),
+  ),
+);
 
 Rect _barRect(WidgetTester tester) => tester.getRect(
   find.descendant(
@@ -279,20 +283,20 @@ void main() {
     await tester.pumpWidget(_host(index: 1));
     await tester.pumpAndSettle();
 
-    final decoration =
-        tester
-                .widget<AnimatedContainer>(
-                  find.descendant(
-                    of: find.byType(AnimatedPositioned),
-                    matching: find.byType(AnimatedContainer),
-                  ),
-                )
-                .decoration
-            as BoxDecoration;
+    final decoration = tester
+        .widget<AnimatedContainer>(
+          find.descendant(
+            of: find.byType(AnimatedPositioned),
+            matching: find.byType(AnimatedContainer),
+          ),
+        )
+        .decoration;
     expect(
-      decoration.borderRadius,
-      BorderRadius.circular(_pillRect(tester).height / 2),
-      reason: 'half its own height is a full capsule, matching the bar',
+      (decoration as ShapeDecoration).shape,
+      isA<StadiumBorder>(),
+      reason:
+          'a stadium is a full capsule at any height, so the pill stays as '
+          'round as the bar even as the gap animates',
     );
   });
 
@@ -319,22 +323,94 @@ void main() {
     expect(_pillRect(tester).width, moreOrLessEquals(resting, epsilon: 1));
   });
 
-  testWidgets('dragging past the end stretches into the cap', (tester) async {
+  testWidgets('past the end the pill pins without growing backwards', (
+    tester,
+  ) async {
     await tester.pumpWidget(_host(index: 1));
     await tester.pumpAndSettle();
+    final resting = _pillRect(tester).width;
 
     final gesture = await tester.startGesture(_pillRect(tester).center);
-    // Well beyond the right edge, so the pill has nowhere left to travel.
     await gesture.moveBy(const Offset(400, 0));
     await tester.pump();
+    // Let the speed stretch decay before measuring, so what is left is only
+    // the edge behaviour.
+    for (var i = 0; i < 12; i++) {
+      await gesture.moveBy(const Offset(1, 0));
+      await tester.pump();
+    }
 
     final pill = _pillRect(tester);
-    final bar = _barRect(tester);
-    expect(pill.right, moreOrLessEquals(bar.right, epsilon: 0.5));
-    expect(pill.left, greaterThanOrEqualTo(bar.left - 0.5));
+    expect(
+      pill.right,
+      moreOrLessEquals(_barRect(tester).right, epsilon: 1),
+      reason: 'it should sit against the cap',
+    );
+    expect(
+      pill.width,
+      lessThan(resting + 8),
+      reason:
+          'pushing right must not widen the pill leftwards, away from the '
+          'push; the bar takes the give instead',
+    );
 
     await gesture.up();
     await tester.pumpAndSettle();
+  });
+
+  testWidgets('the gap tightens when the pill is picked up', (tester) async {
+    await tester.pumpWidget(_host(index: 1));
+    await tester.pumpAndSettle();
+    final restingGap = (_barRect(tester).height - _pillRect(tester).height) / 2;
+
+    // Has to clear the touch slop, or no drag is recognised at all.
+    final gesture = await tester.startGesture(_pillRect(tester).center);
+    await gesture.moveBy(const Offset(30, 0));
+    await tester.pumpAndSettle();
+    final heldGap = (_barRect(tester).height - _pillRect(tester).height) / 2;
+
+    expect(heldGap, lessThan(restingGap));
+
+    await gesture.moveBy(const Offset(-30, 0));
+    await tester.pump();
+    await gesture.up();
+    await tester.pumpAndSettle();
+    final backGap = (_barRect(tester).height - _pillRect(tester).height) / 2;
+    expect(backGap, moreOrLessEquals(restingGap, epsilon: 0.5));
+  });
+
+  testWidgets('the bar is edged with glass, not outlined', (tester) async {
+    await tester.pumpWidget(_host(index: 1));
+    await tester.pumpAndSettle();
+
+    final decorations = tester
+        .widgetList<DecoratedBox>(
+          find.descendant(
+            of: find.descendant(
+              of: find.byType(FloatingNavBar),
+              matching: find.byType(ClipRRect),
+            ),
+            matching: find.byType(DecoratedBox),
+          ),
+        )
+        .map((b) => b.decoration)
+        .whereType<BoxDecoration>();
+
+    expect(
+      decorations.every((d) => d.border == null),
+      isTrue,
+      reason: 'a hard outline all the way round is what we are replacing',
+    );
+    final edge = decorations.firstWhere((d) => d.gradient != null).gradient!;
+    expect(edge, isA<LinearGradient>());
+    final g = edge as LinearGradient;
+    expect(g.begin, Alignment.topCenter);
+    expect(g.end, Alignment.bottomCenter);
+    expect(
+      g.colors[1].a,
+      0.0,
+      reason: 'the middle has to be clear, or it is a wash not an edge',
+    );
   });
 
   testWidgets('the focused icon is thickened for icons that cannot fill', (
@@ -367,7 +443,7 @@ void main() {
     final bar = _barRect(tester);
     expect(
       pill.height,
-      moreOrLessEquals(bar.height - 4, epsilon: 0.5),
+      moreOrLessEquals(bar.height - 10, epsilon: 0.5),
       reason: 'a small gap top and bottom, not a chip floating in the middle',
     );
   });
@@ -414,46 +490,43 @@ void main() {
     return (math.max(la, lb) + 0.05) / (math.min(la, lb) + 0.05);
   }
 
-  Color barFillOf(WidgetTester tester) =>
-      (tester
-                  .widget<DecoratedBox>(
-                    // The pill has a DecoratedBox too; the bar's own fill is
-                    // the outermost one inside the clip.
-                    find
-                        .descendant(
-                          of: find.descendant(
-                            of: find.byType(FloatingNavBar),
-                            matching: find.byType(ClipRRect),
-                          ),
-                          matching: find.byType(DecoratedBox),
-                        )
-                        .first,
-                  )
-                  .decoration
-              as BoxDecoration)
-          .color!;
+  /// The bar's fill. Its glass-edge overlay is also a DecoratedBox and sits
+  /// outside it, but only the fill carries a colour.
+  Color barFillOf(WidgetTester tester) {
+    final boxes = tester.widgetList<DecoratedBox>(
+      find.descendant(
+        of: find.descendant(
+          of: find.byType(FloatingNavBar),
+          matching: find.byType(ClipRRect),
+        ),
+        matching: find.byType(DecoratedBox),
+      ),
+    );
+    return boxes
+        .map((b) => b.decoration)
+        .whereType<BoxDecoration>()
+        .firstWhere((d) => d.color != null)
+        .color!;
+  }
 
-  Widget themed(Brightness brightness) {
-    final theme = ThemeData(brightness: brightness);
-    return MaterialApp(
-      theme: theme,
-      home: Scaffold(
-        body: Align(
-          alignment: Alignment.bottomCenter,
-          child: SizedBox(
-            width: 360,
-            height: 90,
-            child: FloatingNavBar(
-              destinations: _destinations,
-              currentIndex: 1,
-              shrunk: false,
-              onSelected: (_) {},
-            ),
+  Widget themed(Brightness brightness) => MaterialApp(
+    theme: ThemeData(brightness: brightness),
+    home: Scaffold(
+      body: Align(
+        alignment: Alignment.bottomCenter,
+        child: SizedBox(
+          width: 360,
+          height: 90,
+          child: FloatingNavBar(
+            destinations: _destinations,
+            currentIndex: 1,
+            shrunk: false,
+            onSelected: (_) {},
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
 
   testWidgets('the bar is nearly opaque in light, where blur cannot help', (
     tester,
