@@ -1089,4 +1089,55 @@ void main() {
     );
     expect(pill.center.dx, lessThan(bar.center.dx));
   });
+
+  testWidgets('the labelled bar hugs its tabs and centres them', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Align(
+            alignment: Alignment.bottomCenter,
+            child: SizedBox(
+              width: 900,
+              child: FloatingNavBar(
+                destinations: _destinations,
+                currentIndex: 1,
+                showLabels: true,
+                onSelected: (_) {},
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final bar = _barRect(tester);
+    final host = tester.getRect(find.byType(FloatingNavBar));
+    // Three short labels cannot need 900pt. Filling the width is what spread
+    // the tabs right across the screen.
+    expect(
+      bar.width,
+      lessThan(host.width * 0.75),
+      reason: 'the bar should be as wide as its tabs and no wider',
+    );
+    expect(
+      bar.center.dx,
+      moreOrLessEquals(host.center.dx, epsilon: 1),
+      reason: 'and sit in the middle',
+    );
+  });
+
+  testWidgets('icon-only still spans the width it is given', (tester) async {
+    await tester.pumpWidget(_host(index: 1));
+    await tester.pumpAndSettle();
+    final bar = _barRect(tester);
+    final host = tester.getRect(find.byType(FloatingNavBar));
+    expect(
+      bar.width,
+      moreOrLessEquals(host.width - 40, epsilon: 1),
+      reason: 'portrait keeps the full width less its margins',
+    );
+  });
 }
