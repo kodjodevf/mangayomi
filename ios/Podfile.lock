@@ -30,7 +30,7 @@ PODS:
   - local_auth_darwin (0.0.1):
     - Flutter
     - FlutterMacOS
-  - m_extension_server (0.0.1):
+  - m_extension_server (0.0.4):
     - Flutter
   - media_kit_libs_ios_video (1.0.4):
     - Flutter
@@ -161,7 +161,7 @@ SPEC CHECKSUMS:
   InternalCollectionsUtilities: af3f471602c4a67cbcb0bee0a80f6f55a33ae453
   isar_community_flutter_libs: bede843185a61a05ff364a05c9b23209523f7e0d
   local_auth_darwin: c3ee6cce0a8d56be34c8ccb66ba31f7f180aaebb
-  m_extension_server: 6946ec189542b271dbd15629b9498595f1036761
+  m_extension_server: 8460f14761883af48772290c5f818659b844d4c3
   media_kit_libs_ios_video: 5a18affdb97d1f5d466dc79988b13eff6c5e2854
   media_kit_video: 1746e198cb697d1ffb734b1d05ec429d1fcd1474
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
