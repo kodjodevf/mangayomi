@@ -205,4 +205,38 @@ void main() {
     await gesture.up();
     await tester.pumpAndSettle();
   });
+
+  testWidgets('a diagonal drag is left to the content', (tester) async {
+    final switched = <int>[];
+    await tester.pumpWidget(_host(index: 1, count: 3, onSwitch: switched.add));
+    await tester.pumpAndSettle();
+
+    final gesture = await tester.startGesture(const Offset(400, 300));
+    // Well past the slop sideways, but going down almost as steeply. A drag
+    // like this is meant for whatever is on the page, not for the tabs.
+    for (var i = 0; i < 8; i++) {
+      await gesture.moveBy(const Offset(-50, 40));
+      await tester.pump();
+    }
+    await gesture.up();
+    await tester.pumpAndSettle();
+
+    expect(switched, isEmpty);
+  });
+
+  testWidgets('a flat drag is taken', (tester) async {
+    final switched = <int>[];
+    await tester.pumpWidget(_host(index: 1, count: 3, onSwitch: switched.add));
+    await tester.pumpAndSettle();
+
+    final gesture = await tester.startGesture(const Offset(400, 300));
+    for (var i = 0; i < 8; i++) {
+      await gesture.moveBy(const Offset(-50, 6));
+      await tester.pump();
+    }
+    await gesture.up();
+    await tester.pumpAndSettle();
+
+    expect(switched, [2], reason: 'a little drift must not disqualify a swipe');
+  });
 }

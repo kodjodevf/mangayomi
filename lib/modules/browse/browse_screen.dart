@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/main_view/section_memory.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:isar_community/isar.dart';
@@ -69,11 +70,21 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
   void initState() {
     super.initState();
     _tabList = _computeTabList(ref.read(animeOnlyTvModeProvider));
-    _tabBarController = TabController(length: _tabList.length, vsync: this);
+    _tabBarController = TabController(
+      length: _tabList.length,
+      vsync: this,
+      // The shell disposes this screen on every tab switch, so without seeding
+      // it the section you left is forgotten the moment you swipe away.
+      initialIndex: rememberedSection(_sectionKey)
+          .clamp(0, _tabList.length - 1),
+    );
     _tabBarController.addListener(_onTabChanged);
   }
 
+  static const _sectionKey = 'browse';
+
   void _onTabChanged() {
+    rememberSection(_sectionKey, _tabBarController.index);
     _chekPermission();
     setState(() {
       _textEditingController.clear();
@@ -271,7 +282,12 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
       _tabList = newTabs;
       _tabBarController.removeListener(_onTabChanged);
       _tabBarController.dispose();
-      _tabBarController = TabController(length: _tabList.length, vsync: this);
+      _tabBarController = TabController(
+        length: _tabList.length,
+        vsync: this,
+        initialIndex: rememberedSection(_sectionKey)
+            .clamp(0, _tabList.length - 1),
+      );
       _tabBarController.addListener(_onTabChanged);
     } else {
       _tabList = newTabs;

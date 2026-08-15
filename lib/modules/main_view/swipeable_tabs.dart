@@ -51,8 +51,15 @@ class SwipeableTabs extends StatefulWidget {
   static const _separator = 10.0;
 
   /// How far a pointer has to travel before this widget treats it as its own
-  /// drag rather than a stray movement.
-  static const _slop = 18.0;
+  /// drag. Deliberately twice the touch slop: any scrollable inside the page
+  /// claims at the normal slop, so by the time this triggers the inner one has
+  /// already taken the pointer if it wanted it.
+  static const _slop = 36.0;
+
+  /// How much more horizontal than vertical the movement has to be. Keeps this
+  /// to deliberate sideways drags instead of catching diagonals meant for the
+  /// content.
+  static const _horizontalBias = 2.0;
 
   @override
   State<SwipeableTabs> createState() => _SwipeableTabsState();
@@ -118,9 +125,10 @@ class _SwipeableTabsState extends State<SwipeableTabs>
 
     final total = event.position - _down;
     if (!_engaged) {
-      // Sideways and past the slop, or it belongs to whatever is underneath.
+      // Clearly sideways and past the slop, or it belongs to whatever is
+      // underneath.
       if (total.dx.abs() < SwipeableTabs._slop ||
-          total.dx.abs() <= total.dy.abs()) {
+          total.dx.abs() <= total.dy.abs() * SwipeableTabs._horizontalBias) {
         return;
       }
       _settle.stop();
