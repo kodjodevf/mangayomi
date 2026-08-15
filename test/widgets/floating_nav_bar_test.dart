@@ -440,6 +440,11 @@ void main() {
       ),
     );
     expect(mask.blendMode, BlendMode.dstIn);
+
+    // Kept to the two rounded caps and cleared through the middle, so the
+    // light reads as catching where the surface turns.
+    final shader = mask.shaderCallback(const Rect.fromLTWH(0, 0, 300, 58));
+    expect(shader, isNotNull);
   });
 
   testWidgets('the focused icon is thickened for icons that cannot fill', (

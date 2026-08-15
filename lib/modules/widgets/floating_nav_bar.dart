@@ -318,10 +318,10 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
 
 /// The lit top and bottom edges of the bar.
 ///
-/// A plain vertical gradient runs the full width and meets the end caps head
-/// on, which reads as an outline stopping abruptly. Masking it with a
-/// horizontal fade lets each line carry a little way around the curve and then
-/// dissolve, the way light actually falls on a glass edge.
+/// Light falls on a curved surface where it turns, not along its flat run, so
+/// the highlight is brightest on the two rounded caps and fades out towards
+/// the middle. A vertical gradient supplies the top and bottom edges; a
+/// horizontal mask keeps them to the ends.
 class _GlassEdge extends StatelessWidget {
   const _GlassEdge({
     required this.color,
@@ -337,18 +337,18 @@ class _GlassEdge extends StatelessWidget {
   Widget build(BuildContext context) {
     return ShaderMask(
       blendMode: BlendMode.dstIn,
+      // Brightest at the two curved ends and gone by the middle: the light
+      // catches where the surface turns, not along the flat run.
       shaderCallback: (rect) => const LinearGradient(
         begin: Alignment.centerLeft,
         end: Alignment.centerRight,
         colors: [
-          Colors.transparent,
-          Colors.white,
           Colors.white,
           Colors.transparent,
+          Colors.transparent,
+          Colors.white,
         ],
-        // Carried further towards the caps than a plain fade would, so each
-        // line follows the curve down before it dissolves.
-        stops: [0.0, 0.09, 0.91, 1.0],
+        stops: [0.0, 0.34, 0.66, 1.0],
       ).createShader(rect),
       child: DecoratedBox(
         decoration: BoxDecoration(
@@ -357,12 +357,12 @@ class _GlassEdge extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
+              color.withValues(alpha: light ? 0.18 : 0.30),
+              Colors.transparent,
+              Colors.transparent,
               color.withValues(alpha: light ? 0.12 : 0.20),
-              Colors.transparent,
-              Colors.transparent,
-              color.withValues(alpha: light ? 0.07 : 0.12),
             ],
-            stops: const [0.0, 0.05, 0.95, 1.0],
+            stops: const [0.0, 0.12, 0.88, 1.0],
           ),
         ),
       ),

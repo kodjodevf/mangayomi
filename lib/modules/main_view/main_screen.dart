@@ -423,8 +423,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       destinations[dest.indexOf("/MangaLibrary")] = NavigationRailDestination(
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
-        selectedIcon: const Icon(Icons.collections_bookmark_rounded),
-        icon: const Icon(Icons.collections_bookmark_outlined),
+        selectedIcon: const Icon(Icons.book_rounded),
+        icon: const Icon(Icons.book_outlined),
         label: Padding(
           padding: const EdgeInsets.only(top: 5),
           child: Text(l10n.manga),
@@ -435,8 +435,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       destinations[dest.indexOf("/AnimeLibrary")] = NavigationRailDestination(
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
-        selectedIcon: const Icon(Icons.video_collection_rounded),
-        icon: const Icon(Icons.video_collection_outlined),
+        selectedIcon: const Icon(Icons.play_circle_rounded),
+        icon: const Icon(Icons.play_circle_outlined),
         label: Padding(
           padding: const EdgeInsets.only(top: 5),
           child: Text(l10n.anime),
@@ -460,11 +460,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
         selectedIcon: _UpdatesBadgeWidget(
-          icon: const Icon(Icons.new_releases_rounded),
+          icon: const Icon(Icons.notifications_rounded),
           ref: ref,
         ),
         icon: _UpdatesBadgeWidget(
-          icon: const Icon(Icons.new_releases_outlined),
+          icon: const Icon(Icons.notifications_outlined),
           ref: ref,
         ),
         label: Padding(
@@ -571,15 +571,15 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     }
     if (dest.contains("/MangaLibrary")) {
       destinations[dest.indexOf("/MangaLibrary")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.collections_bookmark_rounded),
-        icon: const Icon(Icons.collections_bookmark_outlined),
+        selectedIcon: const Icon(Icons.book_rounded),
+        icon: const Icon(Icons.book_outlined),
         label: l10n.manga,
       );
     }
     if (dest.contains("/AnimeLibrary")) {
       destinations[dest.indexOf("/AnimeLibrary")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.video_collection_rounded),
-        icon: const Icon(Icons.video_collection_outlined),
+        selectedIcon: const Icon(Icons.play_circle_rounded),
+        icon: const Icon(Icons.play_circle_outlined),
         label: l10n.anime,
       );
     }
@@ -593,11 +593,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     if (dest.contains("/updates")) {
       destinations[dest.indexOf("/updates")] = NavigationDestination(
         selectedIcon: _UpdatesBadgeWidget(
-          icon: const Icon(Icons.new_releases_rounded),
+          icon: const Icon(Icons.notifications_rounded),
           ref: ref,
         ),
         icon: _UpdatesBadgeWidget(
-          icon: const Icon(Icons.new_releases_outlined),
+          icon: const Icon(Icons.notifications_outlined),
           ref: ref,
         ),
         label: l10n.updates,
