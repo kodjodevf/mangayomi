@@ -331,11 +331,11 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
 ///
 /// The bar's reflection.
 ///
-/// Vertically it falls away continuously from both edges and reaches zero at
-/// exactly one line, the horizontal equator, so any distance off centre still
-/// catches light. Horizontally it is strongest on the two rounded caps, where
-/// a curved surface actually turns into the light, and weaker but still
-/// present along the flat run.
+/// It falls away continuously from the top and bottom edges and reaches zero
+/// at exactly one line, the horizontal equator, so any distance off centre
+/// still catches light. It runs at full strength the whole way across: the
+/// bar's rounded caps curve the top and bottom edges down on their own, so the
+/// reflection follows the shape without being faded inwards to fake it.
 class _GlassEdge extends StatelessWidget {
   const _GlassEdge({
     required this.color,
@@ -349,37 +349,18 @@ class _GlassEdge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ShaderMask(
-      blendMode: BlendMode.dstIn,
-      // Strongest at the two curved ends, where the surface turns, but never
-      // fully gone: the flat run keeps a weaker sheen rather than going dark.
-      shaderCallback: (rect) => LinearGradient(
-        begin: Alignment.centerLeft,
-        end: Alignment.centerRight,
-        colors: [
-          Colors.white,
-          Colors.white.withValues(alpha: 0.38),
-          Colors.white.withValues(alpha: 0.38),
-          Colors.white,
-        ],
-        stops: const [0.0, 0.3, 0.7, 1.0],
-      ).createShader(rect),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(radius),
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            // A reflection, not a pair of lines: it falls away continuously
-            // from each edge and is zero at exactly one place, the horizontal
-            // equator. A hair above or below it still carries light.
-            colors: [
-              color.withValues(alpha: light ? 0.16 : 0.26),
-              Colors.transparent,
-              color.withValues(alpha: light ? 0.10 : 0.17),
-            ],
-            stops: const [0.0, 0.5, 1.0],
-          ),
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(radius),
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            color.withValues(alpha: light ? 0.16 : 0.26),
+            Colors.transparent,
+            color.withValues(alpha: light ? 0.10 : 0.17),
+          ],
+          stops: const [0.0, 0.5, 1.0],
         ),
       ),
     );

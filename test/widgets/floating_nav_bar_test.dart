@@ -436,20 +436,17 @@ void main() {
     expect(g.colors.first.a, greaterThan(0));
     expect(g.colors.last.a, greaterThan(0));
 
-    // Masked so each line dissolves before it reaches a cap, instead of
-    // cutting straight across the curve.
-    final mask = tester.widget<ShaderMask>(
+    // Even the whole way across. Fading it inwards washed out the middle of
+    // the bar, and the caps already curve the top and bottom edges down on
+    // their own without help.
+    expect(
       find.descendant(
         of: find.byType(FloatingNavBar),
         matching: find.byType(ShaderMask),
       ),
+      findsNothing,
+      reason: 'a horizontal mask would fade the reflection towards the centre',
     );
-    expect(mask.blendMode, BlendMode.dstIn);
-
-    // Strongest on the caps but never fully cleared, so the flat run keeps a
-    // weaker sheen rather than going dark.
-    final shader = mask.shaderCallback(const Rect.fromLTWH(0, 0, 300, 58));
-    expect(shader, isNotNull);
   });
 
   testWidgets('the focused icon is thickened for icons that cannot fill', (
