@@ -28,9 +28,13 @@ const double _alphaFocus = 0.14;
 const double _alphaAccentTint = 0.16;
 const double _alphaSecondary = 0.70;
 
-/// Cover height over width. One value for every cover in the rail, so the
-/// current entry differs from the rest in size only, never in shape.
-const double _coverAspect = 1.46;
+/// Cover height over width, taken from the artwork itself: AniList serves
+/// these at 230x320. Matching it means BoxFit.cover has nothing to crop, so
+/// every cover shows its original framing rather than a trimmed version of it.
+///
+/// One value for the whole rail, so the current entry differs from the rest in
+/// size only, never in shape.
+const double _coverAspect = 320 / 230;
 
 class WatchOrderScreen extends StatefulWidget {
   final String name;
@@ -283,10 +287,18 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
                                 children: [
                                   SizedBox(
                                     width: 132,
-                                    child: _cover(
-                                      context,
-                                      item.image,
-                                      isCurrent: isCurrent,
+                                    // Centre it, or the rail's width is a
+                                    // tight constraint and the cover is
+                                    // stretched to 132 no matter what width it
+                                    // asks for. That is what made every cover
+                                    // near square and made width changes look
+                                    // like they did nothing.
+                                    child: Center(
+                                      child: _cover(
+                                        context,
+                                        item.image,
+                                        isCurrent: isCurrent,
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(width: 14),
