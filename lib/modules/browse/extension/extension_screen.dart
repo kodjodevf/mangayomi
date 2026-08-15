@@ -81,10 +81,12 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
       onRefresh: _refreshSources,
       child: Padding(
         // Match the sources tab's inset so the two Browse tabs line up on TV.
+        // The bottom keeps the last extension clear of the floating nav bar.
         padding: EdgeInsets.only(
           top: 10,
           left: isTv ? 8 : 0,
           right: isTv ? 8 : 0,
+          bottom: pageBottomInsets(context).bottom,
         ),
         child: streamExtensions.when(
           data: (data) {
