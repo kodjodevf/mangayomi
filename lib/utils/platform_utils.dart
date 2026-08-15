@@ -14,10 +14,21 @@ final bool isMobile = Platform.isAndroid || Platform.isIOS;
 /// macOS or iOS
 final bool isApple = Platform.isMacOS || Platform.isIOS;
 
-/// Platforms using the floating capsule navigation bar rather than the
-/// material one. Apple only for now; Android, Windows and Linux still take the
-/// material bar or the rail.
-final bool usesFloatingNav = isApple;
+/// Whether navigation here is the floating capsule bar rather than the
+/// material one.
+///
+/// Everywhere touch-first plus the two desktops that already match it: Apple,
+/// Android and Linux. Windows is left on the material bar and the rail for
+/// now, and a TV never takes the capsule at all. The capsule is driven by
+/// pointer events and holds no focus handling, so a remote could not reach it;
+/// leaving TV out is what keeps it on the rail it is actually navigable with.
+///
+/// A getter rather than a final, because [isTv] is hydrated asynchronously by
+/// [initIsTv]. A top-level final is initialised on first read and cached for
+/// the rest of the process, so on a TV it would latch whatever detection had
+/// answered by then, which early in startup is "not a TV".
+bool get usesFloatingNav =>
+    (isApple || Platform.isAndroid || Platform.isLinux) && !isTv;
 
 /// What the device reported, hydrated once at startup by [initIsTv].
 bool _isTvDetected = false;
