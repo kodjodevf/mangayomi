@@ -423,7 +423,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       destinations[dest.indexOf("/MangaLibrary")] = NavigationRailDestination(
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
-        selectedIcon: const Icon(Icons.collections_bookmark),
+        selectedIcon: const Icon(Icons.collections_bookmark_rounded),
         icon: const Icon(Icons.collections_bookmark_outlined),
         label: Padding(
           padding: const EdgeInsets.only(top: 5),
@@ -435,7 +435,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       destinations[dest.indexOf("/AnimeLibrary")] = NavigationRailDestination(
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
-        selectedIcon: const Icon(Icons.video_collection),
+        selectedIcon: const Icon(Icons.video_collection_rounded),
         icon: const Icon(Icons.video_collection_outlined),
         label: Padding(
           padding: const EdgeInsets.only(top: 5),
@@ -447,7 +447,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       destinations[dest.indexOf("/NovelLibrary")] = NavigationRailDestination(
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
-        selectedIcon: const Icon(Icons.auto_stories),
+        selectedIcon: const Icon(Icons.auto_stories_rounded),
         icon: const Icon(Icons.auto_stories_outlined),
         label: Padding(
           padding: const EdgeInsets.only(top: 5),
@@ -460,7 +460,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
         selectedIcon: _UpdatesBadgeWidget(
-          icon: const Icon(Icons.new_releases),
+          icon: const Icon(Icons.new_releases_rounded),
           ref: ref,
         ),
         icon: _UpdatesBadgeWidget(
@@ -483,7 +483,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       destinations[dest.indexOf("/history")] = NavigationRailDestination(
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
-        selectedIcon: const Icon(Icons.history),
+        selectedIcon: const Icon(Icons.history_rounded),
         icon: const Icon(Icons.history_outlined),
         label: Padding(
           padding: const EdgeInsets.only(top: 5),
@@ -496,7 +496,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
         selectedIcon: _ExtensionBadgeWidget(
-          icon: const Icon(Icons.explore),
+          icon: const Icon(Icons.explore_rounded),
           ref: ref,
         ),
         icon: _ExtensionBadgeWidget(
@@ -513,7 +513,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       destinations[dest.indexOf("/more")] = NavigationRailDestination(
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
-        selectedIcon: const Icon(Icons.more_horiz),
+        selectedIcon: const Icon(Icons.more_horiz_rounded),
         icon: const Icon(Icons.more_horiz_outlined),
         label: Padding(
           padding: const EdgeInsets.only(top: 5),
@@ -525,7 +525,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       destinations[dest.indexOf("/trackerLibrary")] = NavigationRailDestination(
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
-        selectedIcon: const Icon(Icons.account_tree),
+        selectedIcon: const Icon(Icons.account_tree_rounded),
         icon: const Icon(Icons.account_tree_outlined),
         label: Padding(
           padding: const EdgeInsets.only(top: 5),
@@ -557,35 +557,35 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
     if (dest.contains("_disableLibSwitch")) {
       destinations[dest.indexOf("_disableLibSwitch")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.arrow_back),
-        icon: const Icon(Icons.arrow_back),
+        selectedIcon: const Icon(Icons.arrow_back_rounded),
+        icon: const Icon(Icons.arrow_back_rounded),
         label: l10n.go_back,
       );
     }
     if (dest.contains("_enableLibSwitch")) {
       destinations[dest.indexOf("_enableLibSwitch")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.collections_bookmark),
+        selectedIcon: const Icon(Icons.collections_bookmark_rounded),
         icon: const Icon(Icons.collections_bookmark_outlined),
         label: l10n.library,
       );
     }
     if (dest.contains("/MangaLibrary")) {
       destinations[dest.indexOf("/MangaLibrary")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.collections_bookmark),
+        selectedIcon: const Icon(Icons.collections_bookmark_rounded),
         icon: const Icon(Icons.collections_bookmark_outlined),
         label: l10n.manga,
       );
     }
     if (dest.contains("/AnimeLibrary")) {
       destinations[dest.indexOf("/AnimeLibrary")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.video_collection),
+        selectedIcon: const Icon(Icons.video_collection_rounded),
         icon: const Icon(Icons.video_collection_outlined),
         label: l10n.anime,
       );
     }
     if (dest.contains("/NovelLibrary")) {
       destinations[dest.indexOf("/NovelLibrary")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.auto_stories),
+        selectedIcon: const Icon(Icons.auto_stories_rounded),
         icon: const Icon(Icons.auto_stories_outlined),
         label: l10n.novel,
       );
@@ -593,7 +593,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     if (dest.contains("/updates")) {
       destinations[dest.indexOf("/updates")] = NavigationDestination(
         selectedIcon: _UpdatesBadgeWidget(
-          icon: const Icon(Icons.new_releases),
+          icon: const Icon(Icons.new_releases_rounded),
           ref: ref,
         ),
         icon: _UpdatesBadgeWidget(
@@ -605,7 +605,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     }
     if (dest.contains("/history")) {
       destinations[dest.indexOf("/history")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.history),
+        selectedIcon: const Icon(Icons.history_rounded),
         icon: const Icon(Icons.history_outlined),
         label: l10n.history,
       );
@@ -613,7 +613,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     if (dest.contains("/browse")) {
       destinations[dest.indexOf("/browse")] = NavigationDestination(
         selectedIcon: _ExtensionBadgeWidget(
-          icon: const Icon(Icons.explore),
+          icon: const Icon(Icons.explore_rounded),
           ref: ref,
         ),
         icon: _ExtensionBadgeWidget(
@@ -625,14 +625,14 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     }
     if (dest.contains("/more")) {
       destinations[dest.indexOf("/more")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.more_horiz),
+        selectedIcon: const Icon(Icons.more_horiz_rounded),
         icon: const Icon(Icons.more_horiz_outlined),
         label: l10n.more,
       );
     }
     if (dest.contains("/trackerLibrary")) {
       destinations[dest.indexOf("/trackerLibrary")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.account_tree),
+        selectedIcon: const Icon(Icons.account_tree_rounded),
         icon: const Icon(Icons.account_tree_outlined),
         label: l10n.tracking,
       );

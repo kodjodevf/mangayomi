@@ -31,8 +31,9 @@ class FloatingNavBar extends StatefulWidget {
   static const _curve = Curves.easeOutCubic;
 
   /// Space between the pill and the bar, the same on all four sides, so the
-  /// pill sits evenly inside the bar wherever it is.
-  static const _pillInset = 5.0;
+  /// pill sits evenly inside the bar wherever it is. Tightening it widens the
+  /// pill; keeping one value for every side is what keeps the gap even.
+  static const _pillInset = 3.5;
 
   /// Pixels of extra width per pixel of pointer movement in a frame, which is
   /// what makes the pill look like it is being pulled along.
@@ -345,9 +346,9 @@ class _GlassEdge extends StatelessWidget {
           Colors.white,
           Colors.transparent,
         ],
-        // Held clear well past the caps, then eased in, so the highlight
-        // follows the curve rather than cutting across it.
-        stops: [0.0, 0.16, 0.84, 1.0],
+        // Carried further towards the caps than a plain fade would, so each
+        // line follows the curve down before it dissolves.
+        stops: [0.0, 0.09, 0.91, 1.0],
       ).createShader(rect),
       child: DecoratedBox(
         decoration: BoxDecoration(

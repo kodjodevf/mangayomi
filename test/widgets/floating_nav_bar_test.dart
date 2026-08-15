@@ -7,17 +7,17 @@ import 'package:mangayomi/modules/widgets/floating_nav_bar.dart';
 const _destinations = [
   NavigationDestination(
     icon: Icon(Icons.collections_bookmark_outlined),
-    selectedIcon: Icon(Icons.collections_bookmark),
+    selectedIcon: Icon(Icons.collections_bookmark_rounded),
     label: 'Manga',
   ),
   NavigationDestination(
     icon: Icon(Icons.video_library_outlined),
-    selectedIcon: Icon(Icons.video_library),
+    selectedIcon: Icon(Icons.video_library_rounded),
     label: 'Anime',
   ),
   NavigationDestination(
     icon: Icon(Icons.explore_outlined),
-    selectedIcon: Icon(Icons.explore),
+    selectedIcon: Icon(Icons.explore_rounded),
     label: 'Browse',
   ),
 ];
@@ -78,7 +78,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final pill = _pillRect(tester);
-    final icon = tester.getRect(find.byIcon(Icons.video_library).first);
+    final icon = tester.getRect(find.byIcon(Icons.video_library_rounded).first);
     expect(
       pill.center.dx,
       moreOrLessEquals(icon.center.dx, epsilon: 1),
@@ -242,7 +242,7 @@ void main() {
   testWidgets('dragging over a tab does not fill it', (tester) async {
     await tester.pumpWidget(_host(index: 0));
     await tester.pumpAndSettle();
-    expect(find.byIcon(Icons.collections_bookmark), findsOneWidget);
+    expect(find.byIcon(Icons.collections_bookmark_rounded), findsOneWidget);
 
     final gesture = await tester.startGesture(_pillRect(tester).center);
     await gesture.moveBy(const Offset(240, 0));
@@ -250,8 +250,8 @@ void main() {
 
     // Fill and weight belong to the selected tab. Hovering the pill over a
     // different one must leave both alone until the drag is committed.
-    expect(find.byIcon(Icons.explore), findsNothing);
-    expect(find.byIcon(Icons.collections_bookmark), findsOneWidget);
+    expect(find.byIcon(Icons.explore_rounded), findsNothing);
+    expect(find.byIcon(Icons.collections_bookmark_rounded), findsOneWidget);
 
     await gesture.up();
     await tester.pumpAndSettle();
@@ -457,7 +457,7 @@ void main() {
         .data;
 
     expect(
-      themeFor(Icons.video_library).shadows,
+      themeFor(Icons.video_library_rounded).shadows,
       isNotNull,
       reason: 'selected icons carry a stroke so line-art icons read as active',
     );
@@ -470,9 +470,11 @@ void main() {
 
     final pill = _pillRect(tester);
     final bar = _barRect(tester);
+    // Stated as a proportion rather than a fixed gap, so tuning the inset
+    // does not break this. The even-inset test pins the exact spacing.
     expect(
-      pill.height,
-      moreOrLessEquals(bar.height - 10, epsilon: 0.5),
+      pill.height / bar.height,
+      greaterThan(0.85),
       reason: 'a small gap top and bottom, not a chip floating in the middle',
     );
   });
