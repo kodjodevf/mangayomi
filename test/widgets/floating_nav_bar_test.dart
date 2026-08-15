@@ -1178,17 +1178,49 @@ void main() {
     expect(midway.right, greaterThan(resting.right));
   });
 
-  testWidgets('the reach closes up on the tab it lands on', (tester) async {
+  testWidgets('the reach strains but does not travel', (tester) async {
+    await tester.pumpWidget(reaching(index: 0));
+    await tester.pumpAndSettle();
+    final resting = _pillRect(tester);
+
     await tester.pumpWidget(reaching(index: 1));
     await tester.pumpAndSettle();
-    final settledOnOne = _pillRect(tester);
+    final nextSlot = _pillRect(tester);
+    final distance = nextSlot.center.dx - resting.center.dx;
 
     await tester.pumpWidget(reaching(index: 0, target: 1, progress: 1));
     await tester.pumpAndSettle();
-    final arrived = _pillRect(tester);
+    final strained = _pillRect(tester);
 
-    expect(arrived.left, moreOrLessEquals(settledOnOne.left, epsilon: 0.5));
-    expect(arrived.right, moreOrLessEquals(settledOnOne.right, epsilon: 0.5));
+    // Leaning, not walking: even at full swipe it has covered only a fraction
+    // of the way. Travelling most of the distance read as having already
+    // arrived, which made the actual arrival an anticlimax.
+    final covered = (strained.center.dx - resting.center.dx) / distance;
+    expect(covered, greaterThan(0));
+    expect(
+      covered,
+      lessThan(0.2),
+      reason: 'it should still be sitting on its own tab',
+    );
+  });
+
+  testWidgets('straining makes the pill thinner, not just longer', (
+    tester,
+  ) async {
+    await tester.pumpWidget(reaching(index: 0));
+    await tester.pumpAndSettle();
+    final resting = _pillRect(tester);
+
+    await tester.pumpWidget(reaching(index: 0, target: 1, progress: 1));
+    await tester.pumpAndSettle();
+    final strained = _pillRect(tester);
+
+    expect(strained.width, greaterThan(resting.width));
+    expect(
+      strained.height,
+      lessThan(resting.height),
+      reason: 'something pulled longer gets narrower, or it just looks bigger',
+    );
   });
 
   testWidgets('reaching backwards stretches the other way', (tester) async {

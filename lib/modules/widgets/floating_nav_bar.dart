@@ -124,6 +124,21 @@ class FloatingNavBar extends StatefulWidget {
   /// direction being pushed.
   static const _barGive = 0.05;
 
+  /// How far the pill may reach towards the tab a swipe is heading for, as a
+  /// fraction of the distance between them.
+  ///
+  /// Small on purpose. The pill straining at its slot reads as wanting to go;
+  /// the pill actually travelling most of the way reads as having gone, and
+  /// then arriving is an anticlimax. It leans, it does not walk. The move
+  /// itself happens on release, when the selection changes.
+  static const _reachLead = 0.15;
+  static const _reachTrail = 0.04;
+
+  /// How much thinner the pill gets at full reach, per side. Something being
+  /// pulled longer gets narrower, and without this the pill just looked bigger
+  /// rather than strained.
+  static const _reachSquash = 2.5;
+
   /// How much the pill grows when picked up. A scale rather than a smaller
   /// gap: shrinking only the vertical gap makes the pill rounder instead of
   /// bigger, since its width does not change with it.
@@ -334,8 +349,12 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
     final toLeft = toCentre - toHalf;
     final toRight = toCentre + toHalf;
 
-    final lead = Curves.easeOutCubic.transform(t);
-    final trail = Curves.easeInCubic.transform(t);
+    // Eased out and capped, so most of the reach happens in the first part of
+    // the swipe and further dragging barely adds to it: it strains rather than
+    // creeping steadily across.
+    final eased = _reachAmount(index);
+    final lead = eased * FloatingNavBar._reachLead;
+    final trail = eased * FloatingNavBar._reachTrail;
     final forward = target > index;
     return forward
         ? (_lerp(fromLeft, toLeft, trail), _lerp(fromRight, toRight, lead))
@@ -343,6 +362,14 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
   }
 
   static double _lerp(double a, double b, double t) => a + (b - a) * t;
+
+  /// How hard the pill is straining towards another tab, 0 to 1.
+  double _reachAmount(int index) {
+    final target = widget.swipeTarget;
+    if (target == null || target == index) return 0;
+    if (target < 0 || target >= widget.destinations.length) return 0;
+    return Curves.easeOut.transform(widget.swipeProgress.clamp(0.0, 1.0));
+  }
 
   (double, double) _pillEdges(double slot, double width, int index) {
     const outer = FloatingNavBar._pillInset;
@@ -517,6 +544,11 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                     // alone shows where a drag currently is.
                     final (left, right) = _pillEdges(slot, width, resting);
 
+                    // Thinner the harder it is straining, so the stretch reads
+                    // as a stretch rather than as the pill simply growing.
+                    final squash =
+                        _reachAmount(resting) * FloatingNavBar._reachSquash;
+
                     return GestureDetector(
                       // Picking the pill up anywhere along the bar is more
                       // forgiving than having to grab it exactly.
@@ -544,8 +576,8 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                             curve: FloatingNavBar._curve,
                             left: left,
                             width: right - left,
-                            top: FloatingNavBar._pillInset,
-                            bottom: FloatingNavBar._pillInset,
+                            top: FloatingNavBar._pillInset + squash,
+                            bottom: FloatingNavBar._pillInset + squash,
                             // Grows from the middle on every side, so it
                             // keeps its shape. Scaling only the height
                             // would just make it rounder.
