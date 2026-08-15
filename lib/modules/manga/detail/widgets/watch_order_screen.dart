@@ -28,6 +28,14 @@ const double _alphaFocus = 0.14;
 const double _alphaAccentTint = 0.16;
 const double _alphaSecondary = 0.70;
 
+/// Cover height over width, taken from the artwork itself: AniList serves
+/// these at 230x320. Matching it means BoxFit.cover has nothing to crop, so
+/// every cover shows its original framing rather than a trimmed version of it.
+///
+/// One value for the whole rail, so the current entry differs from the rest in
+/// size only, never in shape.
+const double _coverAspect = 320 / 230;
+
 class WatchOrderScreen extends StatefulWidget {
   final String name;
   final Track? track;
@@ -46,6 +54,47 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
   List<WatchOrderItem>? data;
 
   bool get isSequels => widget.track != null;
+
+  /// Marks the current entry so the framework can scroll it into view.
+  final GlobalKey _currentRowKey = GlobalKey();
+  bool _didAnchorOnCurrent = false;
+
+  /// Opens the timeline on the entry the user is actually watching.
+  ///
+  /// Starting at the top of a long franchise hides where you are in it. The
+  /// alignment leaves the previous entry partly visible, so it reads as "there
+  /// is more in both directions" rather than as the start of the list.
+  ///
+  /// No offsets are computed here. [Scrollable.ensureVisible] does the
+  /// positioning, and it is a no-op both when the current entry is already
+  /// first and when the list is too short to scroll at all.
+  ///
+  /// It retries across a few frames rather than trying once. The row has to be
+  /// laid out and the scroll view has to know its extent before this can do
+  /// anything, and neither is guaranteed on the first frame after the data
+  /// arrives: the route may still be animating in. Giving up after one silent
+  /// miss is why this worked on one platform and not another.
+  void _anchorOnCurrent() {
+    if (_didAnchorOnCurrent) return;
+    _didAnchorOnCurrent = true;
+    _tryAnchor(0);
+  }
+
+  void _tryAnchor(int attempt) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final rowContext = _currentRowKey.currentContext;
+      final position = rowContext == null
+          ? null
+          : Scrollable.maybeOf(rowContext)?.position;
+      if (position == null || !position.hasContentDimensions) {
+        // Not ready yet. Frames are cheap and this stops within ~10 of them.
+        if (attempt < 10) _tryAnchor(attempt + 1);
+        return;
+      }
+      Scrollable.ensureVisible(rowContext!, alignment: 0.3);
+    });
+  }
 
   @override
   void initState() {
@@ -189,58 +238,109 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
     // One layout on every form factor: a vertical rail. On a wide TV/desktop
     // window it centres at a comfortable width with side padding rather than
     // stretching a single column across the whole panel.
+    _anchorOnCurrent();
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 820),
-        child: ListView.builder(
+        // Every row is built rather than lazily: a franchise timeline is
+        // short, and the current entry needs a laid out context for
+        // ensureVisible to reach it while it is still off screen.
+        child: SingleChildScrollView(
           padding: tvPageInsets,
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            final item = items[index];
-            final isLast = index == items.length - 1;
-            final isCurrent = item.role == WatchOrderRole.current;
-            return Material(
-              color: Colors.transparent,
-              child: InkWell(
-                autofocus: isTv && index == 0,
-                focusColor: context.primaryColor.withValues(alpha: _alphaFocus),
-                onTap: () => _openWatchOrder(item),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Cover, then a short connector stub down to the next
-                      // cover so the chain reads as an ordered rail.
-                      SizedBox(
-                        width: 132,
-                        child: Column(
-                          children: [
-                            _cover(context, item.image, isCurrent: isCurrent),
-                            if (!isLast)
-                              Container(
-                                width: 2,
-                                height: 22,
-                                color: context.textColor.withValues(
-                                  alpha: _alphaHairline,
-                                ),
+          child: Column(
+            children: [
+              for (var index = 0; index < items.length; index++)
+                Builder(
+                  builder: (context) {
+                    final item = items[index];
+                    final isLast = index == items.length - 1;
+                    final isCurrent = item.role == WatchOrderRole.current;
+                    // The focus tint belongs to the entry, not to the rail.
+                    // The connector stub is drawn after the ink surface rather
+                    // than inside it, so the highlight stops at the entry, the
+                    // gap between rows stays readable, and the tint does not
+                    // paint a block over the connector.
+                    return Column(
+                      children: [
+                        Material(
+                          // The anchor the timeline opens on, and on TV the row
+                          // the remote lands on. Row 0 would make a mid
+                          // franchise position look like the beginning.
+                          key: isCurrent ? _currentRowKey : null,
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(12),
+                          clipBehavior: Clip.antiAlias,
+                          child: InkWell(
+                            autofocus: isTv && isCurrent,
+                            borderRadius: BorderRadius.circular(12),
+                            focusColor: context.primaryColor.withValues(
+                              alpha: _alphaFocus,
+                            ),
+                            onTap: () => _openWatchOrder(item),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
                               ),
-                          ],
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    width: 132,
+                                    // Centre it, or the rail's width is a
+                                    // tight constraint and the cover is
+                                    // stretched to 132 no matter what width it
+                                    // asks for. That is what made every cover
+                                    // near square and made width changes look
+                                    // like they did nothing.
+                                    child: Center(
+                                      child: _cover(
+                                        context,
+                                        item.image,
+                                        isCurrent: isCurrent,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 14),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 6),
+                                      child: _timelineBody(context, item),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 6),
-                          child: _timelineBody(context, item),
-                        ),
-                      ),
-                    ],
-                  ),
+                        // Outside the ink surface, aligned under the cover by
+                        // reusing the same padding and rail width.
+                        if (!isLast)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 132,
+                                  child: Center(
+                                    child: Container(
+                                      width: 2,
+                                      height: 22,
+                                      color: context.textColor.withValues(
+                                        alpha: _alphaHairline,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    );
+                  },
                 ),
-              ),
-            );
-          },
+            ],
+          ),
         ),
       ),
     );
@@ -292,8 +392,15 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
     String? imageUrl, {
     required bool isCurrent,
   }) {
-    final width = isCurrent ? 120.0 : 96.0;
-    final height = isCurrent ? 180.0 : 144.0;
+    // Every cover keeps the same aspect, so none of them crops differently
+    // from the rest. The two sizes used to be 120x174 and 100x146, which are
+    // not quite the same ratio.
+    //
+    // The current entry is only a little larger. The accent ring already marks
+    // it, so the size difference just has to be felt; at the previous 20% it
+    // read as a jump in the rail.
+    final width = isCurrent ? 110.0 : 100.0;
+    final height = width * _coverAspect;
     return Container(
       width: width,
       height: height,
@@ -427,14 +534,11 @@ class _WatchOrderScreenState extends State<WatchOrderScreen> {
       builder: (context, constraints) {
         // Make sure that (constraints.maxWidth - (35 + 5)) is strictly positive.
         final double availableWidth = constraints.maxWidth - (35 + 5);
-        final textPainter =
-            TextPainter(
-              text: TextSpan(text: text, style: const TextStyle(fontSize: 13)),
-              maxLines: 1,
-              textDirection: TextDirection.ltr,
-            )..layout(
-              maxWidth: availableWidth > 0 ? availableWidth : 1.0,
-            ); // - Download icon size (download_page_widget.dart, Widget Build SizedBox width: 35)
+        final textPainter = TextPainter(
+          text: TextSpan(text: text, style: const TextStyle(fontSize: 13)),
+          maxLines: 1,
+          textDirection: TextDirection.ltr,
+        )..layout(maxWidth: availableWidth > 0 ? availableWidth : 1.0); // - Download icon size (download_page_widget.dart, Widget Build SizedBox width: 35)
 
         final isOverflowing = textPainter.didExceedMaxLines;
 
