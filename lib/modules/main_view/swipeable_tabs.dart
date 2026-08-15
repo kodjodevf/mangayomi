@@ -236,6 +236,10 @@ class _SwipeableTabsState extends State<SwipeableTabs>
       // never enter the arena, so everything underneath keeps working and this
       // widget only acts when nothing else claimed the pointer.
       child: Listener(
+        // Translucent, or a drag starting anywhere the page has no widget to
+        // hit never arrives here at all. Children still receive the pointer,
+        // since this only listens and never enters the gesture arena.
+        behavior: HitTestBehavior.translucent,
         onPointerDown: _onPointerDown,
         onPointerMove: _onPointerMove,
         onPointerUp: _onPointerUp,
@@ -250,19 +254,36 @@ class _SwipeableTabsState extends State<SwipeableTabs>
             // The neighbour sits a full width away plus the gap, so the
             // two never touch while both are on screen.
             final step = width + SwipeableTabs._separator;
+            // Positioned, not just translated. A Stack sizes itself to its
+            // children and hands them loose constraints, but a page expects the
+            // tight ones the Scaffold body used to give it; without those,
+            // anything that fills its parent collapses, a category TabBar
+            // included.
             return Stack(
               clipBehavior: Clip.hardEdge,
               children: [
-                Transform.translate(
-                  offset: Offset(position, 0),
+                Positioned(
+                  left: position,
+                  top: 0,
+                  bottom: 0,
+                  width: width,
                   child: widget.child,
                 ),
                 if (neighbour != null)
-                  Transform.translate(
-                    offset: Offset(position + (position < 0 ? step : -step), 0),
-                    child: SizedBox(
-                      width: width,
-                      child: widget.pageBuilder(neighbour),
+                  Positioned(
+                    left: position + (position < 0 ? step : -step),
+                    top: 0,
+                    bottom: 0,
+                    width: width,
+                    // Inert until it is actually yours. Left live, the page
+                    // being dragged into view took focus early, and its insides
+                    // scrolled under a finger that was still on the page
+                    // behind it.
+                    child: IgnorePointer(
+                      child: FocusScope(
+                        canRequestFocus: false,
+                        child: widget.pageBuilder(neighbour),
+                      ),
                     ),
                   ),
               ],

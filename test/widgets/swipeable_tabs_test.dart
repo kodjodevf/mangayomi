@@ -239,4 +239,81 @@ void main() {
 
     expect(switched, [2], reason: 'a little drift must not disqualify a swipe');
   });
+
+  testWidgets('the page still gets the constraints a Scaffold body gives it', (
+    tester,
+  ) async {
+    // A Stack hands loose constraints to its children. A page built for the
+    // tight ones a Scaffold body provides then collapses: a library's category
+    // TabBar simply stopped being laid out. Only pages that fill their parent
+    // show this, which is why the earlier tests missed it.
+    late BoxConstraints seen;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SwipeableTabs(
+            currentIndex: 1,
+            count: 3,
+            onSwitch: (_) {},
+            pageBuilder: (i) => const SizedBox(),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                seen = constraints;
+                return const SizedBox.expand();
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(seen.hasBoundedHeight, isTrue, reason: 'height came through loose');
+    expect(seen.maxHeight, greaterThan(0));
+    expect(seen.maxWidth, greaterThan(0));
+  });
+
+  testWidgets('the page being dragged in cannot be touched yet', (
+    tester,
+  ) async {
+    var peekTaps = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SwipeableTabs(
+            currentIndex: 1,
+            count: 3,
+            onSwitch: (_) {},
+            pageBuilder: (i) => GestureDetector(
+              onTap: () => peekTaps++,
+              child: Container(
+                key: const ValueKey('peekTarget'),
+                color: const Color(0xFF000000),
+              ),
+            ),
+            child: const SizedBox.expand(),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final gesture = await tester.startGesture(const Offset(400, 300));
+    for (var i = 0; i < 10; i++) {
+      await gesture.moveBy(const Offset(-50, 0));
+      await tester.pump();
+    }
+    // It is on screen, but it belongs to the finger that is still on the page
+    // behind it.
+    expect(find.byKey(const ValueKey('peekTarget')), findsOneWidget);
+    await tester.tap(
+      find.byKey(const ValueKey('peekTarget')),
+      warnIfMissed: false,
+    );
+    await tester.pump();
+    expect(peekTaps, 0);
+
+    await gesture.up();
+    await tester.pumpAndSettle();
+  });
 }
