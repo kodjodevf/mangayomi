@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mangayomi/modules/widgets/floating_nav_bar.dart';
@@ -232,17 +234,19 @@ void main() {
     expect(taps, isEmpty);
   });
 
-  testWidgets('the icon under the pill previews the drag', (tester) async {
+  testWidgets('dragging over a tab does not fill it', (tester) async {
     await tester.pumpWidget(_host(index: 0));
     await tester.pumpAndSettle();
-    expect(find.byIcon(Icons.explore), findsNothing);
+    expect(find.byIcon(Icons.collections_bookmark), findsOneWidget);
 
     final gesture = await tester.startGesture(_pillRect(tester).center);
     await gesture.moveBy(const Offset(240, 0));
-    await tester.pump();
-    // Filled while hovered, but the selection itself has not moved yet.
-    expect(find.byIcon(Icons.explore), findsOneWidget);
-    expect(find.byIcon(Icons.collections_bookmark), findsNothing);
+    await tester.pumpAndSettle();
+
+    // Fill and weight belong to the selected tab. Hovering the pill over a
+    // different one must leave both alone until the drag is committed.
+    expect(find.byIcon(Icons.explore), findsNothing);
+    expect(find.byIcon(Icons.collections_bookmark), findsOneWidget);
 
     await gesture.up();
     await tester.pumpAndSettle();
@@ -363,12 +367,12 @@ void main() {
     final bar = _barRect(tester);
     expect(
       pill.height,
-      moreOrLessEquals(bar.height - 8, epsilon: 0.5),
+      moreOrLessEquals(bar.height - 4, epsilon: 0.5),
       reason: 'a small gap top and bottom, not a chip floating in the middle',
     );
   });
 
-  testWidgets('the whole bar grows while the pill is dragged', (tester) async {
+  testWidgets('the whole bar zooms while the pill is dragged', (tester) async {
     await tester.pumpWidget(_host(index: 1));
     await tester.pumpAndSettle();
     final resting = _barRect(tester);
@@ -378,16 +382,20 @@ void main() {
     await tester.pumpAndSettle();
 
     final lifted = _barRect(tester);
-    expect(lifted.height, greaterThan(resting.height));
+    // A zoom, not a stretch: both axes grow by the same factor, so the bar
+    // keeps its proportions instead of deforming.
+    final sx = lifted.width / resting.width;
+    final sy = lifted.height / resting.height;
+    expect(sy, greaterThan(1.0));
     expect(
-      lifted.width,
-      greaterThan(resting.width),
-      reason: 'the margin narrows so the bar stretches outwards too',
+      sx,
+      greaterThan(1.0),
+      reason: 'width has to scale too, or it is a stretch',
     );
-    // The pill is sized from the bar, so it has to grow with it.
     expect(
-      _pillRect(tester).height,
-      moreOrLessEquals(lifted.height - 8, epsilon: 0.5),
+      sx,
+      moreOrLessEquals(sy, epsilon: 0.02),
+      reason: 'uniform scale keeps the proportions',
     );
 
     await gesture.moveBy(const Offset(-30, 0));
@@ -398,5 +406,122 @@ void main() {
       _barRect(tester).height,
       moreOrLessEquals(resting.height, epsilon: 0.5),
     );
+  });
+
+  /// WCAG contrast ratio between two opaque colours.
+  double contrastOf(Color a, Color b) {
+    final la = a.computeLuminance(), lb = b.computeLuminance();
+    return (math.max(la, lb) + 0.05) / (math.min(la, lb) + 0.05);
+  }
+
+  Color barFillOf(WidgetTester tester) =>
+      (tester
+                  .widget<DecoratedBox>(
+                    // The pill has a DecoratedBox too; the bar's own fill is
+                    // the outermost one inside the clip.
+                    find
+                        .descendant(
+                          of: find.descendant(
+                            of: find.byType(FloatingNavBar),
+                            matching: find.byType(ClipRRect),
+                          ),
+                          matching: find.byType(DecoratedBox),
+                        )
+                        .first,
+                  )
+                  .decoration
+              as BoxDecoration)
+          .color!;
+
+  Widget themed(Brightness brightness) {
+    final theme = ThemeData(brightness: brightness);
+    return MaterialApp(
+      theme: theme,
+      home: Scaffold(
+        body: Align(
+          alignment: Alignment.bottomCenter,
+          child: SizedBox(
+            width: 360,
+            height: 90,
+            child: FloatingNavBar(
+              destinations: _destinations,
+              currentIndex: 1,
+              shrunk: false,
+              onSelected: (_) {},
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  testWidgets('the bar is nearly opaque in light, where blur cannot help', (
+    tester,
+  ) async {
+    final theme = ThemeData(brightness: Brightness.light);
+    await tester.pumpWidget(themed(Brightness.light));
+    await tester.pumpAndSettle();
+
+    final page = theme.scaffoldBackgroundColor;
+    // The fill is translucent, so what matters is the colour once it has
+    // composited over the page behind it.
+    final composited = Color.alphaBlend(barFillOf(tester), page);
+    expect(
+      contrastOf(composited, page),
+      greaterThan(1.12),
+      reason:
+          'light mode measured 1.05 on device, which is invisible. A light '
+          'page gives the backdrop blur nothing darker to pull in, so the '
+          'fill itself has to carry the separation here.',
+    );
+  });
+
+  testWidgets('the bar keeps its glass fill in dark', (tester) async {
+    await tester.pumpWidget(themed(Brightness.dark));
+    await tester.pumpAndSettle();
+    expect(
+      barFillOf(tester).a,
+      lessThan(0.8),
+      reason: 'dark keeps the translucency; the blur has content to work with',
+    );
+  });
+
+  testWidgets('a shadow separates the bar in either theme', (tester) async {
+    // Dark relies on the blur, and the blur only helps when there is content
+    // behind the bar. Over a flat background the shadow is what is left, so it
+    // has to exist and it has to sit outside the clip to be drawn at all.
+    for (final brightness in Brightness.values) {
+      await tester.pumpWidget(themed(brightness));
+      await tester.pumpAndSettle();
+
+      final outer =
+          tester
+                  .widget<DecoratedBox>(
+                    find
+                        .descendant(
+                          of: find.byType(FloatingNavBar),
+                          matching: find.byType(DecoratedBox),
+                        )
+                        .first,
+                  )
+                  .decoration
+              as BoxDecoration;
+      expect(outer.boxShadow, isNotNull, reason: '$brightness has no shadow');
+      expect(outer.boxShadow!.single.blurRadius, greaterThan(0));
+
+      // The shadow box has to wrap the clip, not sit inside it, or the clip
+      // cuts the shadow off and it never draws.
+      expect(
+        find.ancestor(
+          of: find.descendant(
+            of: find.byType(FloatingNavBar),
+            matching: find.byType(ClipRRect),
+          ),
+          matching: find.byType(DecoratedBox),
+        ),
+        findsWidgets,
+        reason: '$brightness draws its shadow inside the clip',
+      );
+    }
   });
 }
