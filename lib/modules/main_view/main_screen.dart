@@ -116,6 +116,21 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     discordRpc?.connect(ref);
   }
 
+  /// The first library the user actually has visible, in their own nav order.
+  ///
+  /// Which one counts as the default is their arrangement's business, not
+  /// ours: the merged switcher lands wherever their first library sits.
+  String? _firstVisibleLibrary() {
+    final hidden = ref.read(hideItemsStateProvider);
+    final order = ref.read(animeOnlyTvModeProvider)
+        ? _navigationOrder.where(_isNotHiddenLibOnTv)
+        : _navigationOrder;
+    for (final nav in order) {
+      if (libLocationRegex.hasMatch(nav) && !hidden.contains(nav)) return nav;
+    }
+    return null;
+  }
+
   void _initializeTimers() {
     _backupTimer = Timer.periodic(
       const Duration(minutes: 5),
@@ -325,6 +340,17 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                                   setState(() {
                                     isLibSwitch = true;
                                   });
+                                  // Expanding the switcher used to leave you on
+                                  // whatever screen you were already on, so the
+                                  // tap looked like it did nothing until you
+                                  // picked one of the three. Land on a library
+                                  // unless you are already in one.
+                                  if (!libLocationRegex.hasMatch(
+                                    location ?? "",
+                                  )) {
+                                    final target = _firstVisibleLibrary();
+                                    if (target != null) route.go(target);
+                                  }
                                 } else if (destination == "_disableLibSwitch") {
                                   setState(() {
                                     isLibSwitch = false;
