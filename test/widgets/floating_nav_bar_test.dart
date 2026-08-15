@@ -48,6 +48,13 @@ Widget _host({
 Rect _pillRect(WidgetTester tester) =>
     tester.getRect(find.byType(AnimatedPositioned));
 
+Rect _barRect(WidgetTester tester) => tester.getRect(
+  find.descendant(
+    of: find.byType(FloatingNavBar),
+    matching: find.byType(ClipRRect),
+  ),
+);
+
 double _barHeight(WidgetTester tester) => tester
     .getSize(
       find.descendant(
@@ -61,16 +68,14 @@ void main() {
   testWidgets('the highlight sits under the selected destination', (
     tester,
   ) async {
-    await tester.pumpWidget(_host(index: 0));
+    await tester.pumpWidget(_host(index: 1));
     await tester.pumpAndSettle();
 
-    final first = _pillRect(tester);
-    final firstIcon = tester.getRect(
-      find.byIcon(Icons.collections_bookmark).first,
-    );
+    final pill = _pillRect(tester);
+    final icon = tester.getRect(find.byIcon(Icons.video_library).first);
     expect(
-      first.center.dx,
-      moreOrLessEquals(firstIcon.center.dx, epsilon: 1),
+      pill.center.dx,
+      moreOrLessEquals(icon.center.dx, epsilon: 1),
       reason: 'the pill should be centred on the icon it highlights',
     );
   });
@@ -93,8 +98,11 @@ void main() {
     final after = _pillRect(tester);
     expect(after.left, greaterThan(midway.left));
 
-    final lastIcon = tester.getRect(find.byIcon(Icons.explore).first);
-    expect(after.center.dx, moreOrLessEquals(lastIcon.center.dx, epsilon: 1));
+    expect(
+      after.right,
+      moreOrLessEquals(_barRect(tester).right, epsilon: 0.5),
+      reason: 'the last slot runs out to the end of the bar',
+    );
   });
 
   testWidgets('shrinking lowers the bar without moving its bottom edge', (
@@ -236,5 +244,112 @@ void main() {
 
     await gesture.up();
     await tester.pumpAndSettle();
+  });
+
+  testWidgets('the end slots run flush into the bar caps', (tester) async {
+    await tester.pumpWidget(_host(index: 0));
+    await tester.pumpAndSettle();
+    expect(
+      _pillRect(tester).left,
+      moreOrLessEquals(_barRect(tester).left, epsilon: 0.5),
+    );
+
+    await tester.pumpWidget(_host(index: 2));
+    await tester.pumpAndSettle();
+    expect(
+      _pillRect(tester).right,
+      moreOrLessEquals(_barRect(tester).right, epsilon: 0.5),
+    );
+
+    // A middle slot keeps its breathing room on both sides.
+    await tester.pumpWidget(_host(index: 1));
+    await tester.pumpAndSettle();
+    final mid = _pillRect(tester);
+    expect(mid.left, greaterThan(_barRect(tester).left + 1));
+    expect(mid.right, lessThan(_barRect(tester).right - 1));
+  });
+
+  testWidgets('the pill is as round as the bar it sits in', (tester) async {
+    await tester.pumpWidget(_host(index: 1));
+    await tester.pumpAndSettle();
+
+    final decoration =
+        tester
+                .widget<AnimatedContainer>(
+                  find.descendant(
+                    of: find.byType(AnimatedPositioned),
+                    matching: find.byType(AnimatedContainer),
+                  ),
+                )
+                .decoration
+            as BoxDecoration;
+    expect(
+      decoration.borderRadius,
+      BorderRadius.circular(_pillRect(tester).height / 2),
+      reason: 'half its own height is a full capsule, matching the bar',
+    );
+  });
+
+  testWidgets('the pill widens as it is pulled along', (tester) async {
+    await tester.pumpWidget(_host(index: 1));
+    await tester.pumpAndSettle();
+    final resting = _pillRect(tester).width;
+
+    final gesture = await tester.startGesture(_pillRect(tester).center);
+    await gesture.moveBy(const Offset(20, 0));
+    await tester.pump();
+    await gesture.moveBy(const Offset(60, 0));
+    await tester.pump();
+    expect(
+      _pillRect(tester).width,
+      greaterThan(resting),
+      reason: 'a fast drag should stretch it',
+    );
+
+    await gesture.moveBy(const Offset(-80, 0));
+    await tester.pump();
+    await gesture.up();
+    await tester.pumpAndSettle();
+    expect(_pillRect(tester).width, moreOrLessEquals(resting, epsilon: 1));
+  });
+
+  testWidgets('dragging past the end stretches into the cap', (tester) async {
+    await tester.pumpWidget(_host(index: 1));
+    await tester.pumpAndSettle();
+
+    final gesture = await tester.startGesture(_pillRect(tester).center);
+    // Well beyond the right edge, so the pill has nowhere left to travel.
+    await gesture.moveBy(const Offset(400, 0));
+    await tester.pump();
+
+    final pill = _pillRect(tester);
+    final bar = _barRect(tester);
+    expect(pill.right, moreOrLessEquals(bar.right, epsilon: 0.5));
+    expect(pill.left, greaterThanOrEqualTo(bar.left - 0.5));
+
+    await gesture.up();
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('the focused icon is thickened for icons that cannot fill', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_host(index: 1));
+    await tester.pumpAndSettle();
+
+    IconThemeData themeFor(IconData icon) => tester
+        .widget<IconTheme>(
+          find
+              .ancestor(of: find.byIcon(icon), matching: find.byType(IconTheme))
+              .first,
+        )
+        .data;
+
+    expect(
+      themeFor(Icons.video_library).shadows,
+      isNotNull,
+      reason: 'selected icons carry a stroke so line-art icons read as active',
+    );
+    expect(themeFor(Icons.explore_outlined).shadows, isNull);
   });
 }

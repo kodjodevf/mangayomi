@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -29,8 +30,18 @@ class FloatingNavBar extends StatefulWidget {
   static const _duration = Duration(milliseconds: 260);
   static const _curve = Curves.easeOutCubic;
 
-  /// Horizontal breathing room between the pill and its slot.
+  /// Horizontal breathing room between the pill and its slot. The outermost
+  /// edges skip it so the pill can sit flush inside the bar's own end caps.
   static const _inset = 6.0;
+
+  /// How much of a drag past the end of the bar turns into extra pill width
+  /// rather than movement, so the pill visibly gives against the cap.
+  static const _edgeStretch = 0.5;
+
+  /// Pixels of extra width per pixel of pointer movement in a frame, which is
+  /// what makes the pill look like it is being pulled along.
+  static const _speedStretch = 0.9;
+  static const _maxSpeedStretch = 24.0;
 
   @override
   State<FloatingNavBar> createState() => _FloatingNavBarState();
@@ -40,6 +51,10 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
   /// Pointer position in bar-local coordinates, or null when nothing is being
   /// dragged.
   double? _dragX;
+
+  /// Smoothed drag speed, carried as the extra width it earns. Smoothing keeps
+  /// per-event jitter from making the pill flutter.
+  double _stretch = 0;
 
   /// The slot the pill was dropped on, kept until the parent reports the same
   /// index. Routing is not synchronous, so without this the pill would spring
@@ -57,13 +72,64 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
   int _slotAt(double x, double slot) =>
       (x / slot).floor().clamp(0, widget.destinations.length - 1);
 
-  void _drop(double slot) {
+  void _startDrag(double x) => setState(() {
+    _dragX = x;
+    _stretch = 0;
+  });
+
+  void _updateDrag(double x) => setState(() {
+    final travelled = (x - _dragX!).abs() * FloatingNavBar._speedStretch;
+    _stretch = (_stretch * 0.6 + travelled * 0.4).clamp(
+      0.0,
+      FloatingNavBar._maxSpeedStretch,
+    );
+    _dragX = x;
+  });
+
+  void _endDrag(double slot) {
     final target = _slotAt(_dragX!, slot);
     setState(() {
       _dragX = null;
+      _stretch = 0;
       _droppedIndex = target;
     });
     if (target != widget.currentIndex) widget.onSelected(target);
+  }
+
+  /// Left and right edges of the pill, in bar-local coordinates.
+  ///
+  /// At rest it spans its slot, except at either end where it runs out to the
+  /// bar's own edge. While dragging it is centred on the pointer, and pushing
+  /// it past an end pins that edge and spends the rest on width.
+  (double, double) _pillEdges(double slot, double width, int index) {
+    final count = widget.destinations.length;
+    if (_dragX == null) {
+      return (
+        index == 0 ? 0 : slot * index + FloatingNavBar._inset,
+        index == count - 1 ? width : slot * (index + 1) - FloatingNavBar._inset,
+      );
+    }
+
+    // Clamp the centre before the edges. Clamping the edges instead lets a
+    // pointer far past the bar push one edge beyond the other and invert the
+    // pill.
+    final pillWidth = math.min(
+      slot - FloatingNavBar._inset * 2 + _stretch,
+      width,
+    );
+    final centre = _dragX!.clamp(pillWidth / 2, width - pillWidth / 2);
+    var left = centre - pillWidth / 2;
+    var right = centre + pillWidth / 2;
+
+    // Whatever the pointer asked for beyond that is spent widening the pill
+    // into the cap, so it gives rather than stopping dead.
+    final overshoot = (_dragX! - centre).abs() * FloatingNavBar._edgeStretch;
+    if (_dragX! < centre) {
+      right = math.min(width, right + overshoot);
+    } else if (_dragX! > centre) {
+      left = math.max(0, left - overshoot);
+    }
+    return (left, right);
   }
 
   @override
@@ -100,8 +166,8 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                   child: LayoutBuilder(
                     builder: (context, constraints) {
                       final count = widget.destinations.length;
-                      final slot = constraints.maxWidth / count;
-                      final pillWidth = slot - FloatingNavBar._inset * 2;
+                      final width = constraints.maxWidth;
+                      final slot = width / count;
                       final resting = _droppedIndex ?? widget.currentIndex;
 
                       // While dragging the pill answers to the pointer and the
@@ -110,25 +176,20 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                       final highlighted = dragging
                           ? _slotAt(_dragX!, slot)
                           : resting;
-                      final left = dragging
-                          ? (_dragX! - pillWidth / 2).clamp(
-                              FloatingNavBar._inset,
-                              constraints.maxWidth -
-                                  pillWidth -
-                                  FloatingNavBar._inset,
-                            )
-                          : slot * resting + FloatingNavBar._inset;
+                      final (left, right) = _pillEdges(slot, width, resting);
 
                       return GestureDetector(
                         // Picking the pill up anywhere along the bar is more
                         // forgiving than having to grab it exactly.
                         onHorizontalDragStart: (d) =>
-                            setState(() => _dragX = d.localPosition.dx),
+                            _startDrag(d.localPosition.dx),
                         onHorizontalDragUpdate: (d) =>
-                            setState(() => _dragX = d.localPosition.dx),
-                        onHorizontalDragEnd: (_) => _drop(slot),
-                        onHorizontalDragCancel: () =>
-                            setState(() => _dragX = null),
+                            _updateDrag(d.localPosition.dx),
+                        onHorizontalDragEnd: (_) => _endDrag(slot),
+                        onHorizontalDragCancel: () => setState(() {
+                          _dragX = null;
+                          _stretch = 0;
+                        }),
                         child: Stack(
                           alignment: Alignment.centerLeft,
                           children: [
@@ -142,7 +203,7 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                                   : FloatingNavBar._duration,
                               curve: FloatingNavBar._curve,
                               left: left,
-                              width: pillWidth,
+                              width: right - left,
                               height: pillHeight,
                               child: AnimatedContainer(
                                 duration: FloatingNavBar._duration,
@@ -152,8 +213,11 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                                     // Reads as picked up while in hand.
                                     alpha: dragging ? 0.2 : 0.13,
                                   ),
+                                  // Matches the bar's own end caps, so the pill
+                                  // looks like part of it rather than a chip
+                                  // laid on top.
                                   borderRadius: BorderRadius.circular(
-                                    pillHeight / 2.6,
+                                    pillHeight / 2,
                                   ),
                                 ),
                               ),
@@ -205,6 +269,9 @@ class _FloatingNavItem extends StatelessWidget {
     final icon = selected
         ? (destination.selectedIcon ?? destination.icon)
         : destination.icon;
+    final color = selected
+        ? scheme.onSurface
+        : scheme.onSurface.withValues(alpha: 0.62);
     return Semantics(
       // The label is gone visually, so it has to survive for screen readers.
       label: destination.label,
@@ -221,9 +288,14 @@ class _FloatingNavItem extends StatelessWidget {
             builder: (context, size, child) => IconTheme(
               data: IconThemeData(
                 size: size,
-                color: selected
-                    ? scheme.onSurface
-                    : scheme.onSurface.withValues(alpha: 0.62),
+                color: color,
+                // Several destinations (history, more) have an "outlined"
+                // variant that is the same drawing, so filling cannot show
+                // selection. Thickening the stroke does, and it is harmless on
+                // the icons that do fill.
+                shadows: selected
+                    ? [Shadow(color: color, blurRadius: 0.9)]
+                    : null,
               ),
               child: child!,
             ),
