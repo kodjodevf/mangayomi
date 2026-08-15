@@ -1249,4 +1249,131 @@ void main() {
       reason: 'reaching for the tab it is already on is not a reach',
     );
   });
+
+  testWidgets('every labelled pill sits exactly on its own item', (
+    tester,
+  ) async {
+    // The regression this exists for: item widths were predicted from the icon
+    // size and a TextPainter run on the label, and the prediction disagreed
+    // with the real layout. The error was a scale mismatch, so it grew towards
+    // the ends of the bar and reversed sign across the middle: the first tab's
+    // pill sat right of its content and the last tab's sat seventeen points
+    // left of it. Checking one tab, or only the middle, would have missed it.
+    const many = [
+      NavigationDestination(icon: Icon(Icons.book), label: 'Manga'),
+      NavigationDestination(icon: Icon(Icons.play_circle), label: 'Anime'),
+      NavigationDestination(icon: Icon(Icons.menu_book), label: 'Novel'),
+      NavigationDestination(icon: Icon(Icons.new_releases), label: 'Updates'),
+      NavigationDestination(icon: Icon(Icons.history), label: 'History'),
+      NavigationDestination(icon: Icon(Icons.explore), label: 'Browse'),
+      NavigationDestination(icon: Icon(Icons.more_horiz), label: 'More'),
+    ];
+    const icons = [
+      Icons.book,
+      Icons.play_circle,
+      Icons.menu_book,
+      Icons.new_releases,
+      Icons.history,
+      Icons.explore,
+      Icons.more_horiz,
+    ];
+    const names = [
+      'Manga',
+      'Anime',
+      'Novel',
+      'Updates',
+      'History',
+      'Browse',
+      'More',
+    ];
+
+    // Landscape-sized. Seven labelled tabs do not fit the default 800pt test
+    // surface, and a bar forced to overflow is not the case under test.
+    tester.view.physicalSize = const Size(1900, 500);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    for (var sel = 0; sel < many.length; sel++) {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Align(
+              alignment: Alignment.bottomCenter,
+              child: FloatingNavBar(
+                destinations: many,
+                currentIndex: sel,
+                showLabels: true,
+                onSelected: (_) {},
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final pill = _pillRect(tester);
+      final icon = tester.getRect(find.byIcon(icons[sel]));
+      final text = tester.getRect(find.text(names[sel]));
+
+      expect(
+        icon.left,
+        greaterThan(pill.left),
+        reason: '${names[sel]}: icon starts outside its pill',
+      );
+      expect(
+        text.right,
+        lessThan(pill.right),
+        reason: '${names[sel]}: label runs past its pill',
+      );
+      expect(
+        pill.center.dx,
+        moreOrLessEquals((icon.left + text.right) / 2, epsilon: 1),
+        reason: '${names[sel]}: pill is off centre from its own content',
+      );
+    }
+  });
+
+  testWidgets('labelled items are evenly spaced whatever their width', (
+    tester,
+  ) async {
+    const mixed = [
+      NavigationDestination(icon: Icon(Icons.circle), label: 'Hi'),
+      NavigationDestination(icon: Icon(Icons.square), label: 'Considerably'),
+      NavigationDestination(icon: Icon(Icons.star), label: 'Mid'),
+    ];
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Align(
+            alignment: Alignment.bottomCenter,
+            child: FloatingNavBar(
+              destinations: mixed,
+              currentIndex: 0,
+              showLabels: true,
+              onSelected: (_) {},
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final a = tester.getRect(find.text('Hi'));
+    final b = tester.getRect(find.byIcon(Icons.square));
+    final c = tester.getRect(find.text('Considerably'));
+    final d = tester.getRect(find.byIcon(Icons.star));
+
+    // Same gap between neighbours regardless of how wide either one is.
+    expect(b.left - a.right, moreOrLessEquals(d.left - c.right, epsilon: 1));
+
+    // And the same again at each end.
+    final bar = _barRect(tester);
+    final first = tester.getRect(find.byIcon(Icons.circle));
+    final last = tester.getRect(find.text('Mid'));
+    expect(
+      first.left - bar.left,
+      moreOrLessEquals(bar.right - last.right, epsilon: 1),
+      reason: 'the two ends should have the same spacing',
+    );
+  });
 }

@@ -61,7 +61,13 @@ class FloatingNavBar extends StatefulWidget {
   /// Gap between an icon and its label, and the room either side of a labelled
   /// item, in the labelled layout.
   static const _labelGap = 6.0;
-  static const _labelPad = 9.0;
+
+  /// Even spacing between items, and the same again at each end, however wide
+  /// the items themselves are.
+  static const _itemSpacing = 20.0;
+
+  /// How far the pill extends around its item's content.
+  static const _pillPad = 9.0;
 
   /// Viewport height below which the bar trims further. A phone in landscape
   /// has very little of it, and a bar sized for portrait eats the content.
@@ -174,35 +180,82 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
   double _slot = 0;
   double _barWidth = 0;
 
-  /// Left edge of every slot, plus the bar's right edge. Icon-only items are
-  /// all one width, but a labelled one is as wide as its label, so positions
-  /// come from here rather than from multiplying a slot width by an index.
-  List<double> _bounds = const [];
+  /// Where each item's pill sits, left and right, in bar-local coordinates.
+  ///
+  /// Icon-only items share the bar evenly so these are computed. Labelled ones
+  /// are each as wide as their own content, and only the layout knows that, so
+  /// those are measured after it runs. They were predicted once, from the icon
+  /// size and a TextPainter on the label; the prediction disagreed with the
+  /// real layout by a couple of points an item and the pill, which followed
+  /// the prediction, ended up as much as seventeen points off its own content.
+  List<double> _slotL = const [];
+  List<double> _slotR = const [];
 
-  double _slotStart(int i) => i < _bounds.length ? _bounds[i] : 0;
-  double _slotEnd(int i) => i + 1 < _bounds.length ? _bounds[i + 1] : _barWidth;
+  double _slotStart(int i) => i < _slotL.length ? _slotL[i] : 0;
+  double _slotEnd(int i) => i < _slotR.length ? _slotR[i] : _barWidth;
   double _slotWidth(int i) => _slotEnd(i) - _slotStart(i);
 
-  /// Width each labelled item needs: icon, gap, label, and room either side.
-  static List<double> labelledWidths(
-    List<NavigationDestination> destinations,
-    double iconSize,
-    TextStyle style,
-    double textScale,
-  ) => [
-    for (final d in destinations)
-      () {
-        final painter = TextPainter(
-          text: TextSpan(text: d.label, style: style),
-          textDirection: TextDirection.ltr,
-          textScaler: TextScaler.linear(textScale),
-        )..layout();
-        return iconSize +
-            FloatingNavBar._labelGap +
-            painter.width +
-            FloatingNavBar._labelPad * 2;
-      }(),
-  ];
+  /// One key per item, so the pill is placed from where each item actually
+  /// ended up rather than from a guess at how wide it would be.
+  List<GlobalKey> _itemKeys = const [];
+
+  void _syncKeys(int count) {
+    if (_itemKeys.length != count) {
+      _itemKeys = List.generate(count, (_) => GlobalKey());
+    }
+  }
+
+  /// The bar's interior: the space the pill is positioned in.
+  final GlobalKey _interiorKey = GlobalKey();
+
+  /// Reads the laid-out items into the slot lists.
+  ///
+  /// The pill wraps its item with [FloatingNavBar._pillPad] around it, so it
+  /// is always exactly as wide as the icon and label it sits behind, whatever
+  /// that label happens to be.
+  void _measure() {
+    final box = _interiorKey.currentContext?.findRenderObject();
+    if (box is! RenderBox || !box.hasSize) {
+      _remeasure();
+      return;
+    }
+
+    const pad = FloatingNavBar._pillPad;
+    final l = <double>[];
+    final r = <double>[];
+    for (final key in _itemKeys) {
+      final item = key.currentContext?.findRenderObject();
+      if (item is! RenderBox || !item.hasSize) {
+        _remeasure();
+        return;
+      }
+      final left = item.localToGlobal(Offset.zero, ancestor: box).dx;
+      l.add(left - pad);
+      r.add(left + item.size.width + pad);
+    }
+    if (l.isEmpty) return;
+
+    var changed = l.length != _slotL.length || box.size.width != _barWidth;
+    for (var i = 0; !changed && i < l.length; i++) {
+      changed =
+          (l[i] - _slotL[i]).abs() > 0.5 || (r[i] - _slotR[i]).abs() > 0.5;
+    }
+    if (!changed || !mounted) return;
+    setState(() {
+      _slotL = l;
+      _slotR = r;
+      _barWidth = box.size.width;
+      _slot = _barWidth / math.max(1, widget.destinations.length);
+    });
+  }
+
+  /// Try again next frame. The first attempt can land before the render tree
+  /// exists, and without this it never retried: the slots stayed empty, so the
+  /// pill sat at zero while the items marched off to the right.
+  void _remeasure() {
+    if (!mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) => _measure());
+  }
 
   /// Signed overshoot past an end of the bar, -1 to 1. Drives how far the bar
   /// itself gives, so the whole component deforms rather than just the pill.
@@ -407,10 +460,6 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final labelStyle =
-        theme.textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600) ??
-        const TextStyle(fontSize: 12, fontWeight: FontWeight.w600);
     final height = FloatingNavBar.heightFor(
       widget.destinations.length,
       viewportHeight: MediaQuery.sizeOf(context).height,
@@ -437,30 +486,23 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
       // the screen height as its maximum, and anything that fills its
       // constraints vertically here reports that height to the body as bottom
       // padding, which pushes every page's content off screen.
-      child: LayoutBuilder(
-        builder: (context, outer) {
-          final natural = widget.showLabels
-              ? math.min(
-                  labelledWidths(
-                    widget.destinations,
-                    height * FloatingNavBar._iconRatio,
-                    labelStyle,
-                    MediaQuery.textScalerOf(context).scale(1),
-                  ).fold<double>(0, (a, b) => a + b),
-                  outer.maxWidth,
-                )
-              : outer.maxWidth;
-          return Align(
-            alignment: Alignment.bottomCenter,
-            heightFactor: 1,
-            child: SizedBox(width: natural, child: _bar(context, height)),
-          );
-        },
-      ),
+      // Hugged to the row when labelled. IntrinsicWidth can do that only
+      // because the bar holds no LayoutBuilder on this path: intrinsics cannot
+      // be computed through one.
+      child: widget.showLabels
+          ? Align(
+              alignment: Alignment.bottomCenter,
+              heightFactor: 1,
+              child: IntrinsicWidth(child: _bar(context, height, null)),
+            )
+          : LayoutBuilder(
+              builder: (context, outer) =>
+                  _bar(context, height, outer.maxWidth),
+            ),
     );
   }
 
-  Widget _bar(BuildContext context, double height) {
+  Widget _bar(BuildContext context, double height, double? fixedWidth) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final light = theme.brightness == Brightness.light;
@@ -505,39 +547,31 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                   borderRadius: BorderRadius.circular(height / 2),
                 ),
 
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
+                child: Builder(
+                  builder: (context) {
                     final count = widget.destinations.length;
-                    final width = constraints.maxWidth;
                     final resting = _droppedIndex ?? widget.currentIndex;
+                    _syncKeys(count);
 
-                    // Icon-only items share the width evenly. Labelled ones
-                    // are each as wide as their own label, so the boundaries
-                    // have to be accumulated rather than derived from a slot
-                    // width and an index.
-                    final widths = widget.showLabels
-                        ? labelledWidths(
-                            widget.destinations,
-                            height * FloatingNavBar._iconRatio,
-                            labelStyle,
-                            MediaQuery.textScalerOf(context).scale(1),
-                          )
-                        : List<double>.filled(count, width / count);
-                    final total = widths.fold<double>(0, (a, b) => a + b);
-                    // Only ever shrink. Scaling labelled items up to fill the
-                    // bar spread them across the whole screen; they keep
-                    // their own width and the bar is sized to them instead.
-                    final scale = total > width && total > 0
-                        ? width / total
-                        : 1.0;
-                    final bounds = <double>[0];
-                    for (final w in widths) {
-                      bounds.add(bounds.last + w * scale);
+                    // Icon-only items share the bar evenly, so their slots are
+                    // exact without measuring. Labelled ones are each as wide
+                    // as their own content, which only the layout knows.
+                    final width = fixedWidth ?? _barWidth;
+                    if (!widget.showLabels) {
+                      const gap = FloatingNavBar._pillSlotInset;
+                      _slotL = [
+                        for (var i = 0; i < count; i++) width / count * i + gap,
+                      ];
+                      _slotR = [
+                        for (var i = 1; i <= count; i++)
+                          width / count * i - gap,
+                      ];
+                      _barWidth = width;
+                      _slot = width / count;
+                    } else {
+                      _remeasure();
                     }
-                    _bounds = bounds;
-                    final slot = width / count;
-                    _slot = slot;
-                    _barWidth = width;
+                    final slot = _slot;
 
                     // Fill and weight belong to the selected tab, never to
                     // whichever slot the pill happens to be over. The pill
@@ -559,6 +593,7 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                       onHorizontalDragEnd: (_) => _endDrag(slot),
                       onHorizontalDragCancel: _cancelDrag,
                       child: Stack(
+                        key: _interiorKey,
                         alignment: Alignment.centerLeft,
                         children: [
                           // One pill that travels, rather than a highlight
@@ -621,36 +656,56 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                               ),
                             ),
                           ),
-                          Row(
-                            children: [
-                              for (var i = 0; i < count; i++)
-                                SizedBox(
-                                  // Explicit rather than Expanded: labelled
-                                  // items are each as wide as their label,
-                                  // and the pill is positioned from the same
-                                  // widths.
-                                  width: bounds[i + 1] - bounds[i],
-                                  child: _FloatingNavItem(
-                                    destination: widget.destinations[i],
-                                    selected: i == resting,
-                                    iconSize:
-                                        height * FloatingNavBar._iconRatio,
-                                    label: widget.showLabels
-                                        ? widget.destinations[i].label
-                                        : null,
-                                    labelStyle: labelStyle,
-                                    // Follow the pill inwards at the ends,
-                                    // so the icon stays centred in it.
-                                    nudge:
-                                        _restingCentre(slot, width, i) -
-                                        slot * (i + 0.5),
-                                    onTap: () {
-                                      _flashTap();
-                                      widget.onSelected(i);
-                                    },
+                          Padding(
+                            // The same spacing at each end as between the
+                            // items, whatever width they happen to be.
+                            padding: EdgeInsets.symmetric(
+                              horizontal: widget.showLabels
+                                  ? FloatingNavBar._itemSpacing
+                                  : 0,
+                            ),
+                            child: Row(
+                              // Labelled items take their own width, evenly
+                              // spaced and centred; icon-only ones share the
+                              // bar equally.
+                              mainAxisSize: widget.showLabels
+                                  ? MainAxisSize.min
+                                  : MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              spacing: widget.showLabels
+                                  ? FloatingNavBar._itemSpacing
+                                  : 0,
+                              children: [
+                                for (var i = 0; i < count; i++)
+                                  _Sized(
+                                    key: _itemKeys[i],
+                                    expand: !widget.showLabels,
+                                    child: _FloatingNavItem(
+                                      destination: widget.destinations[i],
+                                      selected: i == resting,
+                                      iconSize:
+                                          height * FloatingNavBar._iconRatio,
+                                      label: widget.showLabels
+                                          ? widget.destinations[i].label
+                                          : null,
+                                      labelStyle: labelStyle,
+                                      // Only the icon-only layout nudges: there
+                                      // the pill is clamped inwards at the ends
+                                      // and the icon follows it. Labelled slots
+                                      // are measured from the items themselves,
+                                      // so they already agree.
+                                      nudge: widget.showLabels
+                                          ? 0
+                                          : _restingCentre(slot, width, i) -
+                                                slot * (i + 0.5),
+                                      onTap: () {
+                                        _flashTap();
+                                        widget.onSelected(i);
+                                      },
+                                    ),
                                   ),
-                                ),
-                            ],
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -752,6 +807,18 @@ class _GlassEdgePainter extends CustomPainter {
   @override
   bool shouldRepaint(_GlassEdgePainter old) =>
       old.color != color || old.light != light || old.radius != radius;
+}
+
+/// One navigation item: sharing the bar evenly, or hugging its own content.
+/// Exists so each item can carry the key the bar measures it by.
+class _Sized extends StatelessWidget {
+  const _Sized({super.key, required this.expand, required this.child});
+
+  final bool expand;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => expand ? Expanded(child: child) : child;
 }
 
 /// Scales the bar up while a drag is in flight, and lets it give sideways when
