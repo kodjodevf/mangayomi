@@ -923,4 +923,52 @@ void main() {
       reason: 'the inset handed to the body has to be the bar, nothing more',
     );
   });
+
+  testWidgets('grabbing the pill itself tracks at once, without easing', (
+    tester,
+  ) async {
+    // Easing towards a target that moves with the finger made the pill stutter.
+    // It only ever needs to travel when the grab landed somewhere else.
+    await tester.pumpWidget(_host(index: 1));
+    await tester.pumpAndSettle();
+
+    final gesture = await tester.startGesture(_pillRect(tester).center);
+    await gesture.moveBy(const Offset(30, 0));
+    await tester.pump();
+    final first = _pillRect(tester).center.dx;
+
+    await gesture.moveBy(const Offset(30, 0));
+    await tester.pump();
+    final second = _pillRect(tester).center.dx;
+
+    // Each move lands in full on the very next frame. Under the easing it
+    // arrived over several frames, which is what read as jitter.
+    expect(second - first, moreOrLessEquals(30, epsilon: 2));
+
+    await gesture.up();
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('a tap lifts the bar the same way a drag does', (tester) async {
+    await tester.pumpWidget(_host(index: 0));
+    await tester.pumpAndSettle();
+    final resting = _barRect(tester);
+
+    await tester.tap(find.byIcon(Icons.explore_outlined));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 120));
+
+    expect(
+      _barRect(tester).height,
+      greaterThan(resting.height),
+      reason: 'a press should react, not only a drag',
+    );
+
+    await tester.pumpAndSettle(const Duration(milliseconds: 400));
+    expect(
+      _barRect(tester).height,
+      moreOrLessEquals(resting.height, epsilon: 0.5),
+      reason: 'and settle back on its own',
+    );
+  });
 }

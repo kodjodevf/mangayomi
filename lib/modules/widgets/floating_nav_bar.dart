@@ -87,7 +87,7 @@ class FloatingNavBar extends StatefulWidget {
   /// How much the whole bar scales up while a drag is in flight. This is a
   /// zoom, not a stretch: the icons scale with it, so the bar keeps its
   /// proportions instead of deforming.
-  static const _dragZoom = 1.06;
+  static const _dragZoom = 1.035;
 
   /// How much of the bar's width a full edge push adds, applied as a
   /// horizontal scale anchored at the far side so the bar gives in the
@@ -97,7 +97,7 @@ class FloatingNavBar extends StatefulWidget {
   /// How much the pill grows when picked up. A scale rather than a smaller
   /// gap: shrinking only the vertical gap makes the pill rounder instead of
   /// bigger, since its width does not change with it.
-  static const _pillZoom = 1.07;
+  static const _pillZoom = 1.04;
 
   @override
   State<FloatingNavBar> createState() => _FloatingNavBarState();
@@ -112,11 +112,22 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
   /// per-event jitter from making the pill flutter.
   double _stretch = 0;
 
+  /// Set briefly on a tap so a plain press gets the same lift a drag does,
+  /// rather than the bar only ever reacting to one of the two.
+  bool _tapped = false;
+  Timer? _tapTimer;
+
   /// True for the first moments of a drag, while the pill is still travelling
   /// to the finger. Tracking only becomes one-to-one once it has arrived, so
   /// grabbing a different tab pulls the pill over rather than teleporting it.
   bool _catchingUp = false;
   Timer? _catchUpTimer;
+
+  /// Last laid-out slot width and bar width, so [_startDrag] can work out
+  /// where the pill currently is. Written during layout, read on the next
+  /// gesture, which is always at least a frame later.
+  double _slot = 0;
+  double _barWidth = 0;
 
   /// Signed overshoot past an end of the bar, -1 to 1. Drives how far the bar
   /// itself gives, so the whole component deforms rather than just the pill.
@@ -138,14 +149,37 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
   int _slotAt(double x, double slot) =>
       (x / slot).floor().clamp(0, widget.destinations.length - 1);
 
+  void _flashTap() {
+    _tapTimer?.cancel();
+    setState(() => _tapped = true);
+    _tapTimer = Timer(FloatingNavBar._duration, () {
+      if (mounted) setState(() => _tapped = false);
+    });
+  }
+
   void _startDrag(double x) {
     _catchUpTimer?.cancel();
+    _tapTimer?.cancel();
+
+    // Only travel when the grab landed somewhere else. Grabbing the pill
+    // itself has nothing to travel to, and easing towards a target that moves
+    // with the finger made it stutter instead of tracking.
+    final centre = _restingCentre(
+      _slot,
+      _barWidth,
+      _droppedIndex ?? widget.currentIndex,
+    );
+    final halfPill = (_slot - FloatingNavBar._pillSlotInset * 2) / 2;
+    final travels = _slot > 0 && (x - centre).abs() > halfPill;
+
     setState(() {
       _dragX = x;
       _stretch = 0;
       _edgePush = 0;
-      _catchingUp = true;
+      _tapped = false;
+      _catchingUp = travels;
     });
+    if (!travels) return;
     _catchUpTimer = Timer(FloatingNavBar._duration, () {
       if (mounted) setState(() => _catchingUp = false);
     });
@@ -154,6 +188,7 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
   @override
   void dispose() {
     _catchUpTimer?.cancel();
+    _tapTimer?.cancel();
     super.dispose();
   }
 
@@ -245,6 +280,7 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
     final scheme = theme.colorScheme;
     final light = theme.brightness == Brightness.light;
     final dragging = _dragX != null;
+    final lifted = dragging || _tapped;
     final height = FloatingNavBar.heightFor(widget.destinations.length);
 
     // Sit closer to the bottom than a full safe-area inset would put us. The
@@ -266,160 +302,160 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
       // looked right, but extendBody reports that height to the body as bottom
       // padding, which pushed every page's content off screen.
       child: _Zoom(
-          zoom: dragging ? FloatingNavBar._dragZoom : 1.0,
-          give: dragging ? _edgePush * FloatingNavBar._barGive : 0.0,
-          child: SizedBox(
-            height: height,
-            child: DecoratedBox(
-              // Outside the clip: a clipped child cannot cast a shadow past
-              // its own bounds, and in a light theme the shadow is most of
-              // what separates the bar from the page.
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(height / 2),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: light ? 0.16 : 0.34),
-                    blurRadius: 20,
-                    offset: const Offset(0, 6),
+        zoom: lifted ? FloatingNavBar._dragZoom : 1.0,
+        give: dragging ? _edgePush * FloatingNavBar._barGive : 0.0,
+        child: SizedBox(
+          height: height,
+          child: DecoratedBox(
+            // Outside the clip: a clipped child cannot cast a shadow past
+            // its own bounds, and in a light theme the shadow is most of
+            // what separates the bar from the page.
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(height / 2),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: light ? 0.16 : 0.34),
+                  blurRadius: 20,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(height / 2),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+                child: Container(
+                  decoration: BoxDecoration(
+                    // A light theme has nothing darker behind it for the
+                    // blur to pull in, so translucency alone leaves the bar
+                    // invisible against the page. Go nearly opaque there and
+                    // keep the glass effect for dark.
+                    color: light
+                        ? scheme.surfaceContainerHighest.withValues(alpha: 0.94)
+                        : scheme.surface.withValues(alpha: 0.62),
+                    borderRadius: BorderRadius.circular(height / 2),
                   ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(height / 2),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      // A light theme has nothing darker behind it for the
-                      // blur to pull in, so translucency alone leaves the bar
-                      // invisible against the page. Go nearly opaque there and
-                      // keep the glass effect for dark.
-                      color: light
-                          ? scheme.surfaceContainerHighest.withValues(
-                              alpha: 0.94,
-                            )
-                          : scheme.surface.withValues(alpha: 0.62),
-                      borderRadius: BorderRadius.circular(height / 2),
-                    ),
 
-                    child: LayoutBuilder(
-                      builder: (context, constraints) {
-                        final count = widget.destinations.length;
-                        final width = constraints.maxWidth;
-                        final slot = width / count;
-                        final resting = _droppedIndex ?? widget.currentIndex;
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final count = widget.destinations.length;
+                      final width = constraints.maxWidth;
+                      final slot = width / count;
+                      final resting = _droppedIndex ?? widget.currentIndex;
+                      _slot = slot;
+                      _barWidth = width;
 
-                        // Fill and weight belong to the selected tab, never to
-                        // whichever slot the pill happens to be over. The pill
-                        // alone shows where a drag currently is.
-                        final (left, right) = _pillEdges(slot, width, resting);
+                      // Fill and weight belong to the selected tab, never to
+                      // whichever slot the pill happens to be over. The pill
+                      // alone shows where a drag currently is.
+                      final (left, right) = _pillEdges(slot, width, resting);
 
-                        return GestureDetector(
-                          // Picking the pill up anywhere along the bar is more
-                          // forgiving than having to grab it exactly.
-                          onHorizontalDragStart: (d) =>
-                              _startDrag(d.localPosition.dx),
-                          onHorizontalDragUpdate: (d) =>
-                              _updateDrag(d.localPosition.dx),
-                          onHorizontalDragEnd: (_) => _endDrag(slot),
-                          onHorizontalDragCancel: _cancelDrag,
-                          child: Stack(
-                            alignment: Alignment.centerLeft,
-                            children: [
-                              // One pill that travels, rather than a highlight
-                              // fading in and out under each icon in turn.
-                              AnimatedPositioned(
-                                // A dragged pill has to track the finger exactly;
-                                // easing here would make it lag behind.
-                                // Eases while it travels to the finger, then
-                                // tracks it exactly. Easing throughout would
-                                // make it lag behind; never easing would make
-                                // it teleport to whichever tab was grabbed.
-                                duration: dragging && !_catchingUp
-                                    ? Duration.zero
-                                    : FloatingNavBar._duration,
+                      return GestureDetector(
+                        // Picking the pill up anywhere along the bar is more
+                        // forgiving than having to grab it exactly.
+                        onHorizontalDragStart: (d) =>
+                            _startDrag(d.localPosition.dx),
+                        onHorizontalDragUpdate: (d) =>
+                            _updateDrag(d.localPosition.dx),
+                        onHorizontalDragEnd: (_) => _endDrag(slot),
+                        onHorizontalDragCancel: _cancelDrag,
+                        child: Stack(
+                          alignment: Alignment.centerLeft,
+                          children: [
+                            // One pill that travels, rather than a highlight
+                            // fading in and out under each icon in turn.
+                            AnimatedPositioned(
+                              // A dragged pill has to track the finger exactly;
+                              // easing here would make it lag behind.
+                              // Eases while it travels to the finger, then
+                              // tracks it exactly. Easing throughout would
+                              // make it lag behind; never easing would make
+                              // it teleport to whichever tab was grabbed.
+                              duration: dragging && !_catchingUp
+                                  ? Duration.zero
+                                  : FloatingNavBar._duration,
+                              curve: FloatingNavBar._curve,
+                              left: left,
+                              width: right - left,
+                              top: FloatingNavBar._pillInset,
+                              bottom: FloatingNavBar._pillInset,
+                              // Grows from the middle on every side, so it
+                              // keeps its shape. Scaling only the height
+                              // would just make it rounder.
+                              child: AnimatedScale(
+                                duration: FloatingNavBar._duration,
                                 curve: FloatingNavBar._curve,
-                                left: left,
-                                width: right - left,
-                                top: FloatingNavBar._pillInset,
-                                bottom: FloatingNavBar._pillInset,
-                                // Grows from the middle on every side, so it
-                                // keeps its shape. Scaling only the height
-                                // would just make it rounder.
-                                child: AnimatedScale(
+                                scale: lifted ? FloatingNavBar._pillZoom : 1.0,
+                                child: AnimatedContainer(
                                   duration: FloatingNavBar._duration,
                                   curve: FloatingNavBar._curve,
-                                  scale: dragging
-                                      ? FloatingNavBar._pillZoom
-                                      : 1.0,
-                                  child: AnimatedContainer(
-                                    duration: FloatingNavBar._duration,
-                                    curve: FloatingNavBar._curve,
-                                    decoration: ShapeDecoration(
-                                      // The one element that carries the
-                                      // theme. Pairing it with
-                                      // onSecondaryContainer for the icon is
-                                      // what guarantees the icon stays legible
-                                      // across every scheme the user can pick,
-                                      // which tinting the icon against the bar
-                                      // could not.
-                                      color: scheme.secondaryContainer
-                                          .withValues(
-                                            // Slightly more solid in hand, so
-                                            // it still reads as picked up.
-                                            alpha: dragging ? 1.0 : 0.9,
-                                          ),
-                                      // A stadium is a full capsule at any
-                                      // size, so the pill stays as round as the
-                                      // bar's own caps however it scales.
-                                      shape: const StadiumBorder(),
+                                  decoration: ShapeDecoration(
+                                    // The one element that carries the
+                                    // theme. Pairing it with
+                                    // onSecondaryContainer for the icon is
+                                    // what guarantees the icon stays legible
+                                    // across every scheme the user can pick,
+                                    // which tinting the icon against the bar
+                                    // could not.
+                                    color: scheme.secondaryContainer.withValues(
+                                      // Slightly more solid in hand, so
+                                      // it still reads as picked up.
+                                      alpha: dragging ? 1.0 : 0.9,
                                     ),
+                                    // A stadium is a full capsule at any
+                                    // size, so the pill stays as round as the
+                                    // bar's own caps however it scales.
+                                    shape: const StadiumBorder(),
                                   ),
                                 ),
                               ),
-                              // A lit top and bottom edge instead of an
-                              // outline. Drawn over everything, since it is the
-                              // surface catching light, not a frame behind it.
-                              Positioned.fill(
-                                child: IgnorePointer(
-                                  child: _GlassEdge(
-                                    color: scheme.onSurface,
-                                    light: light,
-                                    radius: height / 2,
-                                  ),
+                            ),
+                            // A lit top and bottom edge instead of an
+                            // outline. Drawn over everything, since it is the
+                            // surface catching light, not a frame behind it.
+                            Positioned.fill(
+                              child: IgnorePointer(
+                                child: _GlassEdge(
+                                  color: scheme.onSurface,
+                                  light: light,
+                                  radius: height / 2,
                                 ),
                               ),
-                              Row(
-                                children: [
-                                  for (var i = 0; i < count; i++)
-                                    Expanded(
-                                      child: _FloatingNavItem(
-                                        destination: widget.destinations[i],
-                                        selected: i == resting,
-                                        iconSize:
-                                            height * FloatingNavBar._iconRatio,
-                                        // Follow the pill inwards at the ends,
-                                        // so the icon stays centred in it.
-                                        nudge:
-                                            _restingCentre(slot, width, i) -
-                                            slot * (i + 0.5),
-                                        onTap: () => widget.onSelected(i),
-                                      ),
+                            ),
+                            Row(
+                              children: [
+                                for (var i = 0; i < count; i++)
+                                  Expanded(
+                                    child: _FloatingNavItem(
+                                      destination: widget.destinations[i],
+                                      selected: i == resting,
+                                      iconSize:
+                                          height * FloatingNavBar._iconRatio,
+                                      // Follow the pill inwards at the ends,
+                                      // so the icon stays centred in it.
+                                      nudge:
+                                          _restingCentre(slot, width, i) -
+                                          slot * (i + 0.5),
+                                      onTap: () {
+                                        _flashTap();
+                                        widget.onSelected(i);
+                                      },
                                     ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
+                                  ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 ),
               ),
             ),
           ),
         ),
-      );
+      ),
+    );
   }
 }
 
