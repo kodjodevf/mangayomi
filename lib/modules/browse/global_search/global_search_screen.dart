@@ -111,28 +111,29 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
         ],
       ),
       body: _query.isNotEmpty || widget.search != null
-          ? SuperListView.builder(
-              // One extra row for the group of sources with nothing to show.
-              itemCount: sourceList.length + 1,
-              extentPrecalculationPolicy: SuperPrecalculationPolicy(),
-              itemBuilder: (context, index) {
-                if (index == sourceList.length) {
-                  return _nothingToShowGroup(context);
-                }
-                final source = sourceList[index];
-                // A source that fails or finds nothing renders nothing here and
-                // reports itself instead, so results are never interleaved with
-                // dead extensions. It stays mounted, so nothing refetches.
-                return SourceSearchScreen(
-                  // Keyed per source as well as per query. They previously all
-                  // shared one key, which is not a valid sibling key.
-                  key: ValueKey('$query#${source.id}'),
-                  query: query,
-                  source: source,
-                  onNothingToShow: (reason) =>
-                      _reportNothingToShow(source, reason),
-                );
-              },
+          // Every row is built rather than lazily. A source that fails or finds
+          // nothing collapses to zero height, and a lazy list that estimates
+          // extents cannot cope with that: scrolling up builds more rows, they
+          // resolve, they collapse, and the content shrinks under the scroll
+          // position, so the view fights the finger and never reaches the top.
+          // Building all of them keeps the extent stable. There is one row per
+          // installed source, and a global search queries all of them anyway.
+          ? SingleChildScrollView(
+              child: Column(
+                children: [
+                  for (final source in sourceList)
+                    SourceSearchScreen(
+                      // Keyed per source as well as per query. They previously
+                      // all shared one key, which is not a valid sibling key.
+                      key: ValueKey('$query#${source.id}'),
+                      query: query,
+                      source: source,
+                      onNothingToShow: (reason) =>
+                          _reportNothingToShow(source, reason),
+                    ),
+                  _nothingToShowGroup(context),
+                ],
+              ),
             )
           : Container(),
     );
