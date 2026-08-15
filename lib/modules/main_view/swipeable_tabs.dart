@@ -44,6 +44,15 @@ class SwipeableTabs extends StatefulWidget {
   /// drag belongs to the content.
   final bool enabled;
 
+  /// Drag speed, in points a second, at which the pill stops reaching.
+  ///
+  /// The reach is for a deliberate drag: you pull, the pill strains, you see
+  /// it. Flicking through tabs one after another is not that, and a pill
+  /// stretching on every flick is noise, so it fades out as the drag gets
+  /// quicker and a fast swipe simply switches.
+  static const _deliberateBelow = 400.0;
+  static const _hurriedAbove = 1600.0;
+
   /// How far across the width the drag has to travel to commit.
   static const _commitFraction = 0.28;
 
@@ -97,6 +106,18 @@ class _SwipeableTabsState extends State<SwipeableTabs>
   /// asking then throws.
   double _lastWidth = 0;
 
+  /// Smoothed drag speed, and the timestamp it was last measured at.
+  double _speed = 0;
+  Duration _lastStamp = Duration.zero;
+
+  /// 1 for a slow, deliberate drag and 0 for a hurried one.
+  double get _deliberate {
+    if (_speed <= SwipeableTabs._deliberateBelow) return 1;
+    if (_speed >= SwipeableTabs._hurriedAbove) return 0;
+    final span = SwipeableTabs._hurriedAbove - SwipeableTabs._deliberateBelow;
+    return 1 - (_speed - SwipeableTabs._deliberateBelow) / span;
+  }
+
   /// Set when an inner horizontal scrollable claims the pointer. It keeps the
   /// gesture; all this widget does then is pick up the overscroll it reports
   /// once it runs out of room.
@@ -126,7 +147,10 @@ class _SwipeableTabsState extends State<SwipeableTabs>
       report(null, 0);
       return;
     }
-    report(target, (position.abs() / width).clamp(0.0, 1.0));
+    // Scaled by how deliberate the drag is, so a flick reports almost nothing
+    // and the pill does not stretch on every quick swipe.
+    final progress = (position.abs() / width).clamp(0.0, 1.0);
+    report(target, progress * _deliberate);
   }
 
   /// The neighbour a given drag direction leads to, or null at either end.
@@ -141,6 +165,8 @@ class _SwipeableTabsState extends State<SwipeableTabs>
 
   void _onPointerDown(PointerDownEvent event) {
     _down = event.position;
+    _speed = 0;
+    _lastStamp = event.timeStamp;
     _engaged = false;
     _innerOwns = false;
     _velocity = VelocityTracker.withKind(event.kind)
@@ -149,6 +175,13 @@ class _SwipeableTabsState extends State<SwipeableTabs>
 
   void _onPointerMove(PointerMoveEvent event) {
     _velocity?.addPosition(event.timeStamp, event.position);
+
+    final dt = (event.timeStamp - _lastStamp).inMicroseconds / 1000000;
+    _lastStamp = event.timeStamp;
+    if (dt > 0) {
+      // Smoothed, or a single stuttering frame reads as a flick.
+      _speed = _speed * 0.7 + (event.delta.dx.abs() / dt) * 0.3;
+    }
     // An inner scrollable is driving; the overscroll path takes over from here.
     if (_innerOwns) return;
 

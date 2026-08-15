@@ -389,4 +389,70 @@ void main() {
       0.0,
     ), reason: 'the pill has to be told to stop reaching, not just left there');
   });
+
+  Widget reporting(List<(int?, double)> into, {int index = 1}) => MaterialApp(
+    home: Scaffold(
+      body: SwipeableTabs(
+        currentIndex: index,
+        count: 3,
+        onSwitch: (_) {},
+        onProgress: (target, progress) => into.add((target, progress)),
+        pageBuilder: (i) => Text('page$i'),
+        child: const SizedBox.expand(),
+      ),
+    ),
+  );
+
+  testWidgets('a deliberate drag reports a reach', (tester) async {
+    final reports = <(int?, double)>[];
+    await tester.pumpWidget(reporting(reports));
+    await tester.pumpAndSettle();
+
+    final gesture = await tester.startGesture(const Offset(400, 300));
+    // Slow: small steps, well spaced. The timestamp matters as much as the
+    // pump; without it every event looks instantaneous and infinitely fast.
+    var at = Duration.zero;
+    for (var i = 0; i < 10; i++) {
+      at += const Duration(milliseconds: 20);
+      await gesture.moveBy(const Offset(-8, 0), timeStamp: at);
+      await tester.pump(const Duration(milliseconds: 20));
+    }
+
+    final reach = reports.where((r) => r.$1 != null).map((r) => r.$2);
+    expect(
+      reach.isNotEmpty && reach.last > 0.02,
+      isTrue,
+      reason: 'a slow pull is exactly when the pill should strain',
+    );
+
+    await gesture.up();
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('a hurried flick reports almost none', (tester) async {
+    final reports = <(int?, double)>[];
+    await tester.pumpWidget(reporting(reports));
+    await tester.pumpAndSettle();
+
+    final gesture = await tester.startGesture(const Offset(400, 300));
+    // Fast: much further in much less time.
+    var at = Duration.zero;
+    for (var i = 0; i < 5; i++) {
+      at += const Duration(milliseconds: 8);
+      await gesture.moveBy(const Offset(-60, 0), timeStamp: at);
+      await tester.pump(const Duration(milliseconds: 8));
+    }
+
+    final reach = reports.where((r) => r.$1 != null).map((r) => r.$2).toList();
+    expect(
+      reach.every((r) => r < 0.05),
+      isTrue,
+      reason:
+          'flicking through tabs should just switch; a pill stretching on '
+          'every flick is noise',
+    );
+
+    await gesture.up();
+    await tester.pumpAndSettle();
+  });
 }
