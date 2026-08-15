@@ -4,8 +4,6 @@ import 'dart:ui' show ImageFilter;
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
 
-import 'dart:math' as math;
-
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -184,43 +182,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   int currentIndex = 0;
   bool isLibSwitch = false;
 
-  /// True while the user is scrolling down, so the floating bar can get out of
-  /// the way. Only listened to on Apple, where that bar is used.
-  bool _navShrunk = false;
-
-  /// Signed distance scrolled since the last change of direction. Reacting to
-  /// direction alone made a few pixels of movement collapse the bar.
-  double _scrollRun = 0;
-
-  /// Pixels in one direction before the bar reacts. Expanding is easier than
-  /// collapsing, so a small flick up brings it straight back.
-  static const _shrinkAfter = 72.0;
-  static const _growAfter = 24.0;
-
-  /// Scroll notifications bubble up from whichever route is on screen, so the
-  /// shell can react without every screen having to cooperate.
-  bool _onScroll(ScrollNotification n) {
-    if (n is ScrollEndNotification) {
-      _scrollRun = 0;
-      return false;
-    }
-    if (n is! ScrollUpdateNotification) return false;
-    final delta = n.scrollDelta ?? 0;
-    if (delta == 0) return false;
-    // Reset the run whenever the direction flips, so the thresholds measure
-    // continuous travel rather than a total that never decays.
-    _scrollRun = delta > 0
-        ? math.max(0, _scrollRun) + delta
-        : math.min(0, _scrollRun) + delta;
-
-    if (!_navShrunk && _scrollRun > _shrinkAfter) {
-      setState(() => _navShrunk = true);
-    } else if (_navShrunk && _scrollRun < -_growAfter) {
-      setState(() => _navShrunk = false);
-    }
-    return false;
-  }
-
   @override
   Widget build(BuildContext context) {
     ref.listen<AsyncValue<UpdateInfo?>>(checkForUpdateProvider, (_, next) {
@@ -335,26 +296,22 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                       // views inset themselves by the bar height through
                       // MediaQuery padding, so the last row stays reachable.
                       extendBody: isApple,
-                      body: NotificationListener<ScrollNotification>(
-                        onNotification: isApple ? _onScroll : (_) => false,
-                        child: context.isTablet
-                            ? _TabletLayout(
-                                isLongPressed: isLongPressed,
-                                location: location,
-                                dest: dest,
-                                currentIndex: currentIndex,
-                                route: route,
-                                ref: ref,
-                                buildNavigationWidgetsDesktop:
-                                    _buildNavigationWidgetsDesktop,
-                                child: widget.child,
-                              )
-                            : widget.child,
-                      ),
+                      body: context.isTablet
+                          ? _TabletLayout(
+                              isLongPressed: isLongPressed,
+                              location: location,
+                              dest: dest,
+                              currentIndex: currentIndex,
+                              route: route,
+                              ref: ref,
+                              buildNavigationWidgetsDesktop:
+                                  _buildNavigationWidgetsDesktop,
+                              child: widget.child,
+                            )
+                          : widget.child,
                       bottomNavigationBar: context.isTablet
                           ? null
                           : _MobileBottomNavigation(
-                              shrunk: _navShrunk,
                               isLongPressed: isLongPressed,
                               location: location,
                               currentIndex: currentIndex,
@@ -935,7 +892,6 @@ class _TabletLayoutState extends State<_TabletLayout> {
 
 class _MobileBottomNavigation extends StatelessWidget {
   const _MobileBottomNavigation({
-    required this.shrunk,
     required this.isLongPressed,
     required this.location,
     required this.currentIndex,
@@ -955,7 +911,6 @@ class _MobileBottomNavigation extends StatelessWidget {
   final List<Widget> Function(WidgetRef, List<String>, BuildContext)
   buildNavigationWidgetsMobile;
   final Function(String) onDestinationSelected;
-  final bool shrunk;
 
   @override
   Widget build(BuildContext context) {
@@ -979,7 +934,6 @@ class _MobileBottomNavigation extends StatelessWidget {
           ).cast<NavigationDestination>(),
           currentIndex: currentIndex,
           onSelected: (newIndex) => onDestinationSelected(dest[newIndex]),
-          shrunk: shrunk,
         ),
       );
     }

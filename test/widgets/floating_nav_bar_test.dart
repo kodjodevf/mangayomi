@@ -24,7 +24,7 @@ const _destinations = [
 
 Widget _host({
   required int index,
-  bool shrunk = false,
+  List<NavigationDestination> destinations = _destinations,
   ValueChanged<int>? onSelected,
 }) => MaterialApp(
   home: Scaffold(
@@ -34,9 +34,8 @@ Widget _host({
         width: 360,
         height: 80,
         child: FloatingNavBar(
-          destinations: _destinations,
+          destinations: destinations,
           currentIndex: index,
-          shrunk: shrunk,
           onSelected: onSelected ?? (_) {},
         ),
       ),
@@ -60,15 +59,6 @@ Rect _barRect(WidgetTester tester) => tester.getRect(
     matching: find.byType(ClipRRect),
   ),
 );
-
-double _barHeight(WidgetTester tester) => tester
-    .getSize(
-      find.descendant(
-        of: find.byType(FloatingNavBar),
-        matching: find.byType(ClipRRect),
-      ),
-    )
-    .height;
 
 void main() {
   testWidgets('the highlight sits under the selected destination', (
@@ -112,38 +102,86 @@ void main() {
     );
   });
 
-  testWidgets('shrinking lowers the bar without moving its bottom edge', (
+  List<NavigationDestination> manyTabs(int n) => [
+    for (var i = 0; i < n; i++)
+      NavigationDestination(
+        icon: const Icon(Icons.circle_outlined),
+        selectedIcon: const Icon(Icons.circle),
+        label: 'Tab $i',
+      ),
+  ];
+
+  testWidgets('the bar keeps full height up to five destinations', (
     tester,
   ) async {
-    await tester.pumpWidget(_host(index: 0));
+    await tester.pumpWidget(_host(index: 0, destinations: manyTabs(3)));
     await tester.pumpAndSettle();
-    final tall = _barHeight(tester);
-    final tallBottom = tester
-        .getRect(
-          find.descendant(
-            of: find.byType(FloatingNavBar),
-            matching: find.byType(ClipRRect),
-          ),
-        )
-        .bottom;
+    final three = _barRect(tester).height;
 
-    await tester.pumpWidget(_host(index: 0, shrunk: true));
+    await tester.pumpWidget(_host(index: 0, destinations: manyTabs(5)));
     await tester.pumpAndSettle();
-    final short = _barHeight(tester);
-    final shortBottom = tester
-        .getRect(
-          find.descendant(
-            of: find.byType(FloatingNavBar),
-            matching: find.byType(ClipRRect),
-          ),
-        )
-        .bottom;
+    expect(_barRect(tester).height, moreOrLessEquals(three, epsilon: 0.5));
+  });
 
-    expect(short, lessThan(tall));
+  testWidgets('each destination past five takes a little height', (
+    tester,
+  ) async {
+    double heightWith(int n) => FloatingNavBar.heightFor(n);
+
+    expect(heightWith(6), lessThan(heightWith(5)));
+    expect(heightWith(7), lessThan(heightWith(6)));
+    expect(heightWith(8), lessThan(heightWith(7)));
+    // Even steps, so no single extra tab causes a jolt.
     expect(
-      shortBottom,
-      moreOrLessEquals(tallBottom, epsilon: 0.5),
-      reason: 'it should shrink upwards, staying anchored to the bottom',
+      heightWith(6) - heightWith(7),
+      moreOrLessEquals(heightWith(7) - heightWith(8), epsilon: 0.01),
+    );
+
+    await tester.pumpWidget(_host(index: 0, destinations: manyTabs(5)));
+    await tester.pumpAndSettle();
+    final five = _barRect(tester).height;
+
+    await tester.pumpWidget(_host(index: 0, destinations: manyTabs(7)));
+    await tester.pumpAndSettle();
+    final seven = _barRect(tester).height;
+    expect(seven, lessThan(five));
+    expect(seven, moreOrLessEquals(heightWith(7), epsilon: 0.5));
+  });
+
+  testWidgets('it never shrinks away, however many destinations', (
+    tester,
+  ) async {
+    // A tab bar that keeps shrinking would eventually be unusable, so the
+    // floor matters more than the ratio here.
+    expect(FloatingNavBar.heightFor(30), greaterThanOrEqualTo(44.0));
+    await tester.pumpWidget(_host(index: 0, destinations: manyTabs(12)));
+    await tester.pumpAndSettle();
+    expect(_barRect(tester).height, greaterThanOrEqualTo(44.0));
+  });
+
+  testWidgets('icons shrink with the bar', (tester) async {
+    double iconAt(int n) => tester
+        .widget<IconTheme>(
+          find
+              .ancestor(
+                of: find.byIcon(Icons.circle).first,
+                matching: find.byType(IconTheme),
+              )
+              .first,
+        )
+        .data
+        .size!;
+
+    await tester.pumpWidget(_host(index: 0, destinations: manyTabs(5)));
+    await tester.pumpAndSettle();
+    final five = iconAt(5);
+
+    await tester.pumpWidget(_host(index: 0, destinations: manyTabs(8)));
+    await tester.pumpAndSettle();
+    expect(
+      iconAt(8),
+      lessThan(five),
+      reason: 'icons keep their proportion to the bar rather than crowding it',
     );
   });
 
@@ -573,7 +611,6 @@ void main() {
           child: FloatingNavBar(
             destinations: _destinations,
             currentIndex: 1,
-            shrunk: false,
             onSelected: (_) {},
           ),
         ),

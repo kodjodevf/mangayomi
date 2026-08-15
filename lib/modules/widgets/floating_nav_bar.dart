@@ -16,16 +16,11 @@ class FloatingNavBar extends StatefulWidget {
     required this.destinations,
     required this.currentIndex,
     required this.onSelected,
-    required this.shrunk,
   });
 
   final List<NavigationDestination> destinations;
   final int currentIndex;
   final ValueChanged<int> onSelected;
-
-  /// Set while the user is scrolling down, so the bar gets out of the way
-  /// without disappearing entirely.
-  final bool shrunk;
 
   static const _duration = Duration(milliseconds: 260);
   static const _curve = Curves.easeOutCubic;
@@ -33,6 +28,25 @@ class FloatingNavBar extends StatefulWidget {
   /// How the glass edge varies along the bar. Irregular on purpose, and never
   /// far from full: glass catches light in patches, but a stretch that dips
   /// too low reads as the washed-out centre that a fade produced.
+  /// Destinations the bar can hold at full size. Past this every extra one
+  /// takes a little height, since the slots are getting narrower and a bar
+  /// that keeps its full height starts to look crowded.
+  static const _comfortableCount = 5;
+  static const _fullHeight = 58.0;
+  static const _shrinkPerExtra = 4.0;
+  static const _minHeight = 44.0;
+
+  /// Icon size as a fraction of bar height, so icons shrink with the bar
+  /// rather than needing their own ladder of numbers.
+  static const _iconRatio = 27 / _fullHeight;
+
+  @visibleForTesting
+  static double heightFor(int destinationCount) => math.max(
+    _minHeight,
+    _fullHeight -
+        math.max(0, destinationCount - _comfortableCount) * _shrinkPerExtra,
+  );
+
   /// Hairline. Anything heavier stops reading as glass and starts reading as
   /// a border.
   @visibleForTesting
@@ -192,7 +206,7 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
     final scheme = theme.colorScheme;
     final light = theme.brightness == Brightness.light;
     final dragging = _dragX != null;
-    final height = widget.shrunk ? 46.0 : 58.0;
+    final height = FloatingNavBar.heightFor(widget.destinations.length);
 
     // Sit closer to the bottom than a full safe-area inset would put us. The
     // bar is a floating capsule, not a docked bar, so it can overlap the home
@@ -327,7 +341,8 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
                                       child: _FloatingNavItem(
                                         destination: widget.destinations[i],
                                         selected: i == resting,
-                                        shrunk: widget.shrunk,
+                                        iconSize:
+                                            height * FloatingNavBar._iconRatio,
                                         onTap: () => widget.onSelected(i),
                                       ),
                                     ),
@@ -470,13 +485,13 @@ class _FloatingNavItem extends StatelessWidget {
   const _FloatingNavItem({
     required this.destination,
     required this.selected,
-    required this.shrunk,
+    required this.iconSize,
     required this.onTap,
   });
 
   final NavigationDestination destination;
   final bool selected;
-  final bool shrunk;
+  final double iconSize;
   final VoidCallback onTap;
 
   @override
@@ -498,7 +513,7 @@ class _FloatingNavItem extends StatelessWidget {
         onTap: onTap,
         child: Center(
           child: TweenAnimationBuilder<double>(
-            tween: Tween(end: shrunk ? 23 : 27),
+            tween: Tween(end: iconSize),
             duration: FloatingNavBar._duration,
             curve: FloatingNavBar._curve,
             builder: (context, size, child) => IconTheme(
