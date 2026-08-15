@@ -316,4 +316,77 @@ void main() {
     await gesture.up();
     await tester.pumpAndSettle();
   });
+
+  testWidgets('the swipe reports where it is heading and how far', (
+    tester,
+  ) async {
+    final reports = <(int?, double)>[];
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SwipeableTabs(
+            currentIndex: 1,
+            count: 3,
+            onSwitch: (_) {},
+            onProgress: (target, progress) => reports.add((target, progress)),
+            pageBuilder: (i) => Text('page$i'),
+            child: const SizedBox.expand(),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final gesture = await tester.startGesture(const Offset(400, 300));
+    for (var i = 0; i < 4; i++) {
+      await gesture.moveBy(const Offset(-60, 0));
+      await tester.pump();
+    }
+
+    expect(reports, isNotEmpty);
+    final heading = reports.where((r) => r.$1 != null).toList();
+    expect(heading.map((r) => r.$1).toSet(), {2});
+    // Monotonic while the finger keeps going the same way, which is what lets
+    // the pill stretch smoothly rather than jump.
+    for (var i = 1; i < heading.length; i++) {
+      expect(heading[i].$2, greaterThanOrEqualTo(heading[i - 1].$2 - 0.001));
+    }
+    expect(heading.last.$2, greaterThan(0));
+
+    await gesture.up();
+    await tester.pumpAndSettle();
+    // Once it lands, the bar's own selection takes over.
+    expect(reports.last.$1, isNull);
+    expect(reports.last.$2, 0);
+  });
+
+  testWidgets('a swipe that springs back reports its way home', (tester) async {
+    final reports = <(int?, double)>[];
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SwipeableTabs(
+            currentIndex: 1,
+            count: 3,
+            onSwitch: (_) {},
+            onProgress: (target, progress) => reports.add((target, progress)),
+            pageBuilder: (i) => Text('page$i'),
+            child: const SizedBox.expand(),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final gesture = await tester.startGesture(const Offset(400, 300));
+    await gesture.moveBy(const Offset(-60, 0));
+    await tester.pump();
+    await gesture.up();
+    await tester.pumpAndSettle();
+
+    expect(reports.last, (
+      null,
+      0.0,
+    ), reason: 'the pill has to be told to stop reaching, not just left there');
+  });
 }

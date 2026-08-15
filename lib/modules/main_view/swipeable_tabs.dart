@@ -20,6 +20,7 @@ class SwipeableTabs extends StatefulWidget {
     required this.count,
     required this.pageBuilder,
     required this.onSwitch,
+    this.onProgress,
     this.enabled = true,
   });
 
@@ -33,6 +34,11 @@ class SwipeableTabs extends StatefulWidget {
 
   /// Called once a drag has carried far enough to commit.
   final ValueChanged<int> onSwitch;
+
+  /// Reports which tab the swipe is heading for and how far along it is, 0 to
+  /// 1, so the navigation bar can follow the drag instead of only hearing
+  /// about it once the swipe has finished.
+  final void Function(int? target, double progress)? onProgress;
 
   /// Off on tablets and TV, where the rail is the navigation and a horizontal
   /// drag belongs to the content.
@@ -67,10 +73,14 @@ class SwipeableTabs extends StatefulWidget {
 
 class _SwipeableTabsState extends State<SwipeableTabs>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _settle = AnimationController(
-    vsync: this,
-    duration: SwipeableTabs._settleDuration,
-  )..addListener(() => setState(() {}));
+  late final AnimationController _settle =
+      AnimationController(vsync: this, duration: SwipeableTabs._settleDuration)
+        ..addListener(() {
+          setState(() {});
+          // The cached width, not the render object's: this fires mid-pipeline,
+          // when the box may be dirty for layout, and asking then throws.
+          _report(_position, _lastWidth);
+        });
 
   /// Drag offset in pixels. Negative means dragging towards the next tab.
   double _offset = 0;
@@ -81,6 +91,11 @@ class _SwipeableTabsState extends State<SwipeableTabs>
   double _settleTo = 0;
 
   bool _dragging = false;
+
+  /// Last known width. The settle listener cannot ask the render object for its
+  /// size: it fires mid-pipeline, when the box may be dirty for layout, and
+  /// asking then throws.
+  double _lastWidth = 0;
 
   /// Set when an inner horizontal scrollable claims the pointer. It keeps the
   /// gesture; all this widget does then is pick up the overscroll it reports
@@ -99,6 +114,20 @@ class _SwipeableTabsState extends State<SwipeableTabs>
   double get _position => _settle.isAnimating || _settle.value > 0 && !_dragging
       ? _settleFrom + (_settleTo - _settleFrom) * _settle.value
       : _offset;
+
+  /// Tells the bar where this drag is going. Called after every change to the
+  /// position, including the settle, so the pill tracks the whole gesture and
+  /// not just its start and end.
+  void _report(double position, double width) {
+    final report = widget.onProgress;
+    if (report == null) return;
+    final target = _neighbourFor(position);
+    if (target == null || width <= 0) {
+      report(null, 0);
+      return;
+    }
+    report(target, (position.abs() / width).clamp(0.0, 1.0));
+  }
 
   /// The neighbour a given drag direction leads to, or null at either end.
   int? _neighbourFor(double offset) {
@@ -138,11 +167,13 @@ class _SwipeableTabsState extends State<SwipeableTabs>
     }
 
     final width = context.size?.width ?? 1;
+    _lastWidth = width;
     var next = _offset + event.delta.dx;
     // Nothing to reveal past the first or last tab, so resist rather than
     // dragging a blank gap into view.
     if (_neighbourFor(next) == null) next = _offset + event.delta.dx * 0.25;
     setState(() => _offset = next.clamp(-width, width));
+    _report(_offset, width);
   }
 
   void _onPointerUp(PointerEvent event) {
@@ -155,6 +186,7 @@ class _SwipeableTabsState extends State<SwipeableTabs>
 
   void _finish({required double velocity}) {
     final width = context.size?.width ?? 1;
+    _lastWidth = width;
     final target = _neighbourFor(_offset);
 
     final farEnough = _offset.abs() > width * SwipeableTabs._commitFraction;
@@ -169,6 +201,8 @@ class _SwipeableTabsState extends State<SwipeableTabs>
       _settle.forward(from: 0).whenComplete(() {
         HapticFeedback.selectionClick();
         widget.onSwitch(target);
+        // The bar's own selection takes over from here.
+        widget.onProgress?.call(null, 0);
         // The shell swaps the child in on the next frame; drop the peek then,
         // not before, or the outgoing page flashes back into view.
         if (mounted) {
@@ -181,7 +215,9 @@ class _SwipeableTabsState extends State<SwipeableTabs>
     } else {
       _settleFrom = _offset;
       _settleTo = 0;
-      _settle.forward(from: 0);
+      _settle.forward(from: 0).whenComplete(() {
+        if (mounted) widget.onProgress?.call(null, 0);
+      });
     }
     setState(() {});
   }
@@ -203,6 +239,7 @@ class _SwipeableTabsState extends State<SwipeableTabs>
 
     if (notification is OverscrollNotification) {
       final width = context.size?.width ?? 1;
+      _lastWidth = width;
       // Overscroll past the end is a drag towards the next tab, which moves
       // the pages the other way.
       var next = _offset - notification.overscroll;
@@ -212,6 +249,7 @@ class _SwipeableTabsState extends State<SwipeableTabs>
         _dragging = true;
         _offset = next.clamp(-width, width);
       });
+      _report(_offset, width);
       return false;
     }
 

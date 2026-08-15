@@ -230,6 +230,12 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   int currentIndex = 0;
   bool isLibSwitch = false;
 
+  /// Where a page swipe is heading and how far along it is, so the navigation
+  /// bar's pill can follow the drag rather than only hearing about it once the
+  /// swipe has committed.
+  int? _swipeTarget;
+  double _swipeProgress = 0;
+
   @override
   Widget build(BuildContext context) {
     ref.listen<AsyncValue<UpdateInfo?>>(checkForUpdateProvider, (_, next) {
@@ -366,6 +372,16 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                               count: dest.length,
                               pageBuilder: (i) =>
                                   _pageForNav(dest[i]) ?? const SizedBox(),
+                              onProgress: (target, progress) {
+                                if (target == _swipeTarget &&
+                                    (progress - _swipeProgress).abs() < 0.005) {
+                                  return;
+                                }
+                                setState(() {
+                                  _swipeTarget = target;
+                                  _swipeProgress = progress;
+                                });
+                              },
                               onSwitch: (i) {
                                 final nav = dest[i];
                                 if (nav == "_enableLibSwitch") {
@@ -383,6 +399,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                       bottomNavigationBar: context.prefersNavRail
                           ? null
                           : _MobileBottomNavigation(
+                              swipeTarget: _swipeTarget,
+                              swipeProgress: _swipeProgress,
                               isLongPressed: isLongPressed,
                               location: location,
                               currentIndex: currentIndex,
@@ -974,6 +992,8 @@ class _TabletLayoutState extends State<_TabletLayout> {
 
 class _MobileBottomNavigation extends StatelessWidget {
   const _MobileBottomNavigation({
+    this.swipeTarget,
+    this.swipeProgress = 0,
     required this.isLongPressed,
     required this.location,
     required this.currentIndex,
@@ -993,6 +1013,8 @@ class _MobileBottomNavigation extends StatelessWidget {
   final List<Widget> Function(WidgetRef, List<String>, BuildContext)
   buildNavigationWidgetsMobile;
   final Function(String) onDestinationSelected;
+  final int? swipeTarget;
+  final double swipeProgress;
 
   @override
   Widget build(BuildContext context) {
@@ -1019,6 +1041,8 @@ class _MobileBottomNavigation extends StatelessWidget {
           // Landscape has width to spare and height to save, so the labels go
           // beside the icons rather than a rail taking over.
           showLabels: context.isLandscape,
+          swipeTarget: swipeTarget,
+          swipeProgress: swipeProgress,
         ),
       );
     }
