@@ -192,9 +192,6 @@ jobs:
           workspaces: rust
           cache-on-failure: true
 
-      - name: Select Xcode 26.1.1
-        run: sudo xcode-select --switch /Applications/Xcode_26.1.1.app
-
       - name: Print Xcode version
         run: xcodebuild -version
 
