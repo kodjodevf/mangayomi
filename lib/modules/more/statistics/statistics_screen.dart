@@ -86,7 +86,8 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen>
 
     return stats.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (err, stack) => Center(child: Text("Err: $err")),
+      error: (err, stack) =>
+          Center(child: Text(context.l10n.error_with_message(err))),
       data: (stats) {
         final totalItems = stats.totalItems;
         final totalChapters = stats.totalChapters;

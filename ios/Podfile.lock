@@ -5,6 +5,8 @@ PODS:
     - Flutter
   - device_info_plus (0.0.1):
     - Flutter
+  - external_path (2.0.1):
+    - Flutter
   - file_picker (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -73,6 +75,7 @@ DEPENDENCIES:
   - app_links (from `.symlinks/plugins/app_links/ios`)
   - connectivity_plus (from `.symlinks/plugins/connectivity_plus/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
+  - external_path (from `.symlinks/plugins/external_path/ios`)
   - file_picker (from `.symlinks/plugins/file_picker/darwin`)
   - Flutter (from `Flutter`)
   - flutter_discord_rpc_fork (from `.symlinks/plugins/flutter_discord_rpc_fork/ios`)
@@ -106,6 +109,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/connectivity_plus/ios"
   device_info_plus:
     :path: ".symlinks/plugins/device_info_plus/ios"
+  external_path:
+    :path: ".symlinks/plugins/external_path/ios"
   file_picker:
     :path: ".symlinks/plugins/file_picker/darwin"
   Flutter:
@@ -151,6 +156,7 @@ SPEC CHECKSUMS:
   app_links: a754cbec3c255bd4bbb4d236ecc06f28cd9a7ce8
   connectivity_plus: cb623214f4e1f6ef8fe7403d580fdad517d2f7dd
   device_info_plus: 21fcca2080fbcd348be798aa36c3e5ed849eefbe
+  external_path: fd37c654b69a1336e33a2403f48383ae6100e443
   file_picker: 70164d9778c42c47218d6cd79ce435de0856b11a
   Flutter: 71a624a5bc0c04062bf19101d501e466baf2fb47
   flutter_discord_rpc_fork: 970cf2beca17870caf8645556de01ae2b8587bb6

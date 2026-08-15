@@ -58,7 +58,7 @@ final class AnilistProvider extends $NotifierProvider<Anilist, void> {
   }
 }
 
-String _$anilistHash() => r'c7ade80d69398d712596080cdba0c670724ac0da';
+String _$anilistHash() => r'bc3f5e2aba14274074c73f7848dec713c77b9e23';
 
 final class AnilistFamily extends $Family
     with

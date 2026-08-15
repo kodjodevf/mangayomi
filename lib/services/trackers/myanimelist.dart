@@ -13,6 +13,7 @@ import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/more/settings/track/myanimelist/model.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+import 'package:mangayomi/utils/localized_message.dart';
 import 'package:mangayomi/utils/log/logger.dart';
 
 import 'base_tracker.dart';
@@ -82,7 +83,9 @@ class MyAnimeList extends _$MyAnimeList implements BaseTracker {
     final refreshed = await _tryRefreshToken(mALOAuth);
     if (refreshed == null) {
       widgetRef.read(tracksProvider(syncId: syncId).notifier).logout();
-      botToast("MyAnimeList Token expired");
+      botToast(
+        localizedMessage((l10n) => l10n.tracker_token_expired("MyAnimeList")),
+      );
       throw Exception("Token expired");
     }
     final username = await _getUserName(refreshed.accessToken!);

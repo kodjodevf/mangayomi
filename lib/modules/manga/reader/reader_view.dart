@@ -575,6 +575,11 @@ class _MangaChapterPageGalleryState
                             scrollDirection: isHorizontalContinuous
                                 ? Axis.horizontal
                                 : Axis.vertical,
+                            // Keep the *built* (decoded, in-memory) range small
+                            // and constant; pagePreloadAmount only drives the
+                            // network prefetch in _prefetchPagesInOrder. Tying
+                            // this to pagePreloadAmount pinned up to 20 screens
+                            // of decoded pages at once (OOM on webtoons).
                             minCacheExtent: isHorizontalContinuous
                                 ? (pagePreloadAmount.clamp(0, 2) * 2.0) *
                                       context.width(1)

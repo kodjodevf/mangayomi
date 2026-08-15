@@ -11,11 +11,12 @@ Widget _host({
   home: Scaffold(
     body: SwipeableTabs(
       currentIndex: index,
-      count: count,
+      order: [for (var i = 0; i < count; i++) i],
       onSwitch: onSwitch,
-      pageBuilder: (i) =>
-          Center(key: ValueKey('peek$i'), child: Text('page$i')),
-      child: Center(key: const ValueKey('live'), child: Text('page$index')),
+      branches: [
+        for (var i = 0; i < count; i++)
+          Center(key: ValueKey('page$i'), child: Text('page$i')),
+      ],
     ),
   ),
 );
@@ -26,7 +27,7 @@ void main() {
   ) async {
     await tester.pumpWidget(_host(index: 1, count: 3, onSwitch: (_) {}));
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('peek2')), findsNothing);
+    expect(find.byKey(const ValueKey('page2')), findsNothing);
 
     final gesture = await tester.startGesture(const Offset(400, 300));
     await gesture.moveBy(const Offset(-120, 0));
@@ -34,8 +35,8 @@ void main() {
 
     // Both pages on screen at once is the whole point: it has to be a drag you
     // can hold, not a transition that fires on release.
-    expect(find.byKey(const ValueKey('live')), findsOneWidget);
-    expect(find.byKey(const ValueKey('peek2')), findsOneWidget);
+    expect(find.byKey(const ValueKey('page1')), findsOneWidget);
+    expect(find.byKey(const ValueKey('page2')), findsOneWidget);
 
     await gesture.up();
     await tester.pumpAndSettle();
@@ -53,7 +54,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(switched, isEmpty);
-    expect(find.byKey(const ValueKey('peek2')), findsNothing);
+    expect(find.byKey(const ValueKey('page2')), findsNothing);
   });
 
   testWidgets('carrying it far enough switches to that tab', (tester) async {
@@ -94,8 +95,11 @@ void main() {
     final gesture = await tester.startGesture(const Offset(400, 300));
     await gesture.moveBy(const Offset(400, 0));
     await tester.pump();
-    // There is no tab before the first, so nothing may be revealed.
-    expect(find.byKey(const ValueKey('peek0')), findsNothing);
+    // There is no tab before the first, so nothing may be revealed. The first
+    // tab is itself on screen, of course; it is a neighbour that must not be.
+    expect(find.byKey(const ValueKey('page0')), findsOneWidget);
+    expect(find.byKey(const ValueKey('page1')), findsNothing);
+    expect(find.byKey(const ValueKey('page2')), findsNothing);
     await gesture.up();
     await tester.pumpAndSettle();
     expect(switched, isEmpty);
@@ -109,10 +113,9 @@ void main() {
           body: SwipeableTabs(
             enabled: false,
             currentIndex: 1,
-            count: 3,
+            order: const [0, 1, 2],
             onSwitch: switched.add,
-            pageBuilder: (i) => Text('peek$i'),
-            child: const Text('live'),
+            branches: const [Text('page0'), Text('page1'), Text('page2')],
           ),
         ),
       ),
@@ -142,15 +145,18 @@ void main() {
           child: Scaffold(
             body: SwipeableTabs(
               currentIndex: 1,
-              count: 3,
+              order: const [0, 1, 2],
               onSwitch: switched.add,
-              pageBuilder: (i) => Center(child: Text('peek$i')),
-              child: const TabBarView(
-                children: [
-                  Center(child: Text('a')),
-                  Center(child: Text('b')),
-                ],
-              ),
+              branches: const [
+                Center(child: Text('page0')),
+                TabBarView(
+                  children: [
+                    Center(child: Text('a')),
+                    Center(child: Text('b')),
+                  ],
+                ),
+                Center(child: Text('page2')),
+              ],
             ),
           ),
         ),
@@ -198,8 +204,8 @@ void main() {
     await gesture.moveBy(const Offset(-200, 0));
     await tester.pump();
 
-    final live = tester.getRect(find.byKey(const ValueKey('live')));
-    final peek = tester.getRect(find.byKey(const ValueKey('peek2')));
+    final live = tester.getRect(find.byKey(const ValueKey('page1')));
+    final peek = tester.getRect(find.byKey(const ValueKey('page2')));
     // A gap, not a seam: the incoming page starts after the outgoing one ends.
     expect(peek.left - live.right, greaterThan(0));
 
@@ -254,15 +260,18 @@ void main() {
         home: Scaffold(
           body: SwipeableTabs(
             currentIndex: 1,
-            count: 3,
+            order: const [0, 1, 2],
             onSwitch: (_) {},
-            pageBuilder: (i) => const SizedBox(),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                seen = constraints;
-                return const SizedBox.expand();
-              },
-            ),
+            branches: [
+              const SizedBox(),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  seen = constraints;
+                  return const SizedBox.expand();
+                },
+              ),
+              const SizedBox(),
+            ],
           ),
         ),
       ),
@@ -283,16 +292,19 @@ void main() {
         home: Scaffold(
           body: SwipeableTabs(
             currentIndex: 1,
-            count: 3,
+            order: const [0, 1, 2],
             onSwitch: (_) {},
-            pageBuilder: (i) => GestureDetector(
-              onTap: () => peekTaps++,
-              child: Container(
-                key: const ValueKey('peekTarget'),
-                color: const Color(0xFF000000),
+            branches: [
+              const SizedBox.expand(),
+              const SizedBox.expand(),
+              GestureDetector(
+                onTap: () => peekTaps++,
+                child: Container(
+                  key: const ValueKey('peekTarget'),
+                  color: const Color(0xFF000000),
+                ),
               ),
-            ),
-            child: const SizedBox.expand(),
+            ],
           ),
         ),
       ),
@@ -327,11 +339,14 @@ void main() {
         home: Scaffold(
           body: SwipeableTabs(
             currentIndex: 1,
-            count: 3,
+            order: const [0, 1, 2],
             onSwitch: (_) {},
             onProgress: (target, progress) => reports.add((target, progress)),
-            pageBuilder: (i) => Text('page$i'),
-            child: const SizedBox.expand(),
+            branches: const [
+              SizedBox.expand(),
+              SizedBox.expand(),
+              SizedBox.expand(),
+            ],
           ),
         ),
       ),
@@ -368,11 +383,14 @@ void main() {
         home: Scaffold(
           body: SwipeableTabs(
             currentIndex: 1,
-            count: 3,
+            order: const [0, 1, 2],
             onSwitch: (_) {},
             onProgress: (target, progress) => reports.add((target, progress)),
-            pageBuilder: (i) => Text('page$i'),
-            child: const SizedBox.expand(),
+            branches: const [
+              SizedBox.expand(),
+              SizedBox.expand(),
+              SizedBox.expand(),
+            ],
           ),
         ),
       ),
@@ -395,11 +413,14 @@ void main() {
     home: Scaffold(
       body: SwipeableTabs(
         currentIndex: index,
-        count: 3,
+        order: const [0, 1, 2],
         onSwitch: (_) {},
         onProgress: (target, progress) => into.add((target, progress)),
-        pageBuilder: (i) => Text('page$i'),
-        child: const SizedBox.expand(),
+        branches: const [
+          SizedBox.expand(),
+          SizedBox.expand(),
+          SizedBox.expand(),
+        ],
       ),
     ),
   );
@@ -496,5 +517,99 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(switched, [2]);
+  });
+
+  group('a tab change that came from a tap', () {
+    testWidgets('slides in from the right for a tab to the right', (
+      tester,
+    ) async {
+      await tester.pumpWidget(_host(index: 1, count: 3, onSwitch: (_) {}));
+      await tester.pumpAndSettle();
+
+      await tester.pumpWidget(_host(index: 2, count: 3, onSwitch: (_) {}));
+      await tester.pump(const Duration(milliseconds: 40));
+
+      final arriving = tester.getRect(find.byKey(const ValueKey('page2')));
+      expect(
+        arriving.left,
+        greaterThan(0),
+        reason: 'still on its way in from the right',
+      );
+
+      await tester.pumpAndSettle();
+      expect(tester.getRect(find.byKey(const ValueKey('page2'))).left, 0);
+    });
+
+    testWidgets('slides in from the left for a tab to the left', (
+      tester,
+    ) async {
+      await tester.pumpWidget(_host(index: 2, count: 3, onSwitch: (_) {}));
+      await tester.pumpAndSettle();
+
+      await tester.pumpWidget(_host(index: 0, count: 3, onSwitch: (_) {}));
+      await tester.pump(const Duration(milliseconds: 40));
+
+      expect(
+        tester.getRect(find.byKey(const ValueKey('page0'))).left,
+        lessThan(0),
+        reason: 'still on its way in from the left',
+      );
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('the page being left goes out, whichever tab it was', (
+      tester,
+    ) async {
+      // A jump of more than one tab: the page sliding out is the one you left,
+      // not whichever happens to sit next to the one you landed on.
+      await tester.pumpWidget(_host(index: 0, count: 3, onSwitch: (_) {}));
+      await tester.pumpAndSettle();
+
+      await tester.pumpWidget(_host(index: 2, count: 3, onSwitch: (_) {}));
+      await tester.pump(const Duration(milliseconds: 40));
+
+      expect(find.byKey(const ValueKey('page0')), findsOneWidget);
+      expect(find.byKey(const ValueKey('page1')), findsNothing);
+    });
+
+    testWidgets('still slides when the swipe gesture is turned off', (
+      tester,
+    ) async {
+      Widget host(int index) => MaterialApp(
+        home: Scaffold(
+          body: SwipeableTabs(
+            enabled: false,
+            currentIndex: index,
+            order: const [0, 1, 2],
+            onSwitch: (_) {},
+            branches: const [
+              Center(key: ValueKey('page0'), child: Text('page0')),
+              Center(key: ValueKey('page1'), child: Text('page1')),
+              Center(key: ValueKey('page2'), child: Text('page2')),
+            ],
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(host(0));
+      await tester.pumpAndSettle();
+      await tester.pumpWidget(host(1));
+      await tester.pump(const Duration(milliseconds: 40));
+
+      expect(
+        tester.getRect(find.byKey(const ValueKey('page1'))).left,
+        greaterThan(0),
+        reason: 'the slide is the transition, not part of the gesture',
+      );
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('a rebuild on the same tab does not slide', (tester) async {
+      await tester.pumpWidget(_host(index: 1, count: 3, onSwitch: (_) {}));
+      await tester.pumpAndSettle();
+      await tester.pumpWidget(_host(index: 1, count: 3, onSwitch: (_) {}));
+      await tester.pump(const Duration(milliseconds: 40));
+      expect(tester.getRect(find.byKey(const ValueKey('page1'))).left, 0);
+    });
   });
 }

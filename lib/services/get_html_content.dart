@@ -4,6 +4,7 @@ import 'package:mangayomi/src/rust/api/epub.dart';
 import 'package:html/parser.dart';
 import 'package:mangayomi/eval/lib.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/utils.dart';
@@ -23,9 +24,10 @@ Future<(String, EpubNovel?)> getHtmlContent(
       chapter.manga.loadSync();
     }
     if (chapter.archivePath != null && chapter.archivePath!.isNotEmpty) {
+      final archivePath = await resolveLocalArchivePath(chapter.archivePath!);
       try {
         final book = await parseEpubFromPath(
-          epubPath: chapter.archivePath!,
+          epubPath: archivePath,
           fullData: true,
         );
         String htmlContent = "";
@@ -37,7 +39,7 @@ Future<(String, EpubNovel?)> getHtmlContent(
           } else {
             // Fallback: try via Rust direct access
             htmlContent = await getChapterContent(
-              epubPath: chapter.archivePath!,
+              epubPath: archivePath,
               chapterPath: chapter.url!,
             );
           }

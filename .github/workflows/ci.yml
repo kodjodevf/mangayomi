@@ -1,6 +1,6 @@
 name: CI
 
-# Build/compile checks for pull requests and main branch for Android, Windows & Linux in debug mode.
+# Build/compile checks for pull requests and main branch for Android, Android TV, iOS, macOS, Windows & Linux in debug mode.
 on:
   pull_request:
     branches: [main]
@@ -79,6 +79,133 @@ jobs:
           name: Mangayomi-android-debug
           path: build/app/outputs/flutter-apk/app-debug.apk
 
+  build-android-tv:
+    name: Build (Android TV debug)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Setup Java toolchain
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: "3.18.1"
+
+      - name: Setup ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
+
+      - name: Install flutter_rust_bridge_codegen
+        run: cargo install 'flutter_rust_bridge_codegen'
+
+      # Overwrite the default launcher icon (and banner) with the TV variants
+      # from android/tv_res before building.
+      - name: Apply TV branding
+        run: |
+          for d in mdpi hdpi xhdpi xxhdpi xxxhdpi; do
+            cp -f "android/tv_res/mipmap-$d/launcher_icon.png" \
+                  "android/app/src/main/res/mipmap-$d/launcher_icon.png"
+          done
+          cp -f android/tv_res/drawable-xhdpi/tv_banner.png \
+                android/app/src/main/res/drawable-xhdpi/tv_banner.png || true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build debug TV APK
+        run: flutter build apk --debug
+
+      - name: Upload Android TV debug artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mangayomi-android-tv-debug
+          path: build/app/outputs/flutter-apk/app-debug.apk
+
+  build-ios:
+    name: Build (iOS debug)
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-ios,x86_64-apple-ios
+
+      - name: Install flutter_rust_bridge_codegen
+        run: cargo install 'flutter_rust_bridge_codegen'
+
+      - name: Select Xcode 16.4
+        run: sudo xcode-select --switch /Applications/Xcode_16.4.app || true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build debug iOS
+        run: flutter build ios --debug --no-codesign
+
+      - name: Upload iOS debug artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mangayomi-ios-debug
+          path: build/ios/iphoneos/Runner.app
+
+  build-macos:
+    name: Build (macOS debug)
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install flutter_rust_bridge_codegen
+        run: cargo install 'flutter_rust_bridge_codegen'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build debug macOS
+        run: |
+          cd macos
+          pod update
+          cd ..
+          flutter build macos --debug --verbose
+
+      - name: Upload macOS debug artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mangayomi-macos-debug
+          path: build/macos/Build/Products/Debug/Mangayomi.app
+
   build-windows:
     name: Build (Windows debug)
     runs-on: windows-latest
@@ -124,7 +251,7 @@ jobs:
             webkit2gtk-4.1 clang cmake ninja-build pkg-config \
             libgtk-3-dev mpv libmpv-dev dpkg-dev \
             libblkid-dev liblzma-dev \
-            libjpeg-dev libpng-dev
+            libjpeg-dev libpng-dev libavif-dev
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2

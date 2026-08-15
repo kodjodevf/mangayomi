@@ -50,9 +50,9 @@ class AboutScreen extends ConsumerWidget {
                       const Divider(),
                       ListTile(
                         onTap: () {},
-                        title: const Text('Version'),
+                        title: Text(l10n.version),
                         subtitle: Text(
-                          'Beta (${data.version})',
+                          l10n.beta_version(data.version),
                           style: const TextStyle(fontSize: 12),
                         ),
                       ),

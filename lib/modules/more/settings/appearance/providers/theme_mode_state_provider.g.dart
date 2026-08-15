@@ -41,7 +41,7 @@ final class ThemeModeStateProvider
   }
 }
 
-String _$themeModeStateHash() => r'f1a29fab544a04b3f1d9c269e08f5b83ec51e0c3';
+String _$themeModeStateHash() => r'23f6de72068278674f7f935a234b2e5b589e225f';
 
 abstract class _$ThemeModeState extends $Notifier<bool> {
   bool build();

@@ -3,7 +3,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mangayomi/modules/main_view/tab_transition.dart';
+import 'package:mangayomi/modules/main_view/nav_shell_container.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
@@ -125,52 +125,49 @@ class RouterCurrentLocationState extends _$RouterCurrentLocationState {
 
 class RouterNotifier extends ChangeNotifier {
   List<RouteBase> get _routes => [
-    ShellRoute(
-      builder: (context, state, child) => MainScreen(child: child),
-      routes: [
-        _genericRoute<String?>(
-          noTransition: true,
-          name: "MangaLibrary",
-          builder: (id) =>
-              LibraryScreen(itemType: ItemType.manga, presetInput: id),
+    // Each tab lives in its own StatefulShellBranch so switching tabs keeps
+    // the other screens mounted (scroll position, queries, images preserved).
+    StatefulShellRoute(
+      builder: (context, state, navigationShell) =>
+          MainScreen(child: navigationShell),
+      // The branches are laid out by hand rather than by an IndexedStack, so a
+      // swipe can hold two of them on screen at once and a tab change can
+      // arrive from the side its tab sits on. Every branch still stays
+      // mounted, which is the point of the stateful shell.
+      navigatorContainerBuilder: (context, navigationShell, children) =>
+          NavShellContainer(shell: navigationShell, children: children),
+      branches: [
+        _branch(
+          _genericRoute<String?>(
+            name: "MangaLibrary",
+            builder: (id) =>
+                LibraryScreen(itemType: ItemType.manga, presetInput: id),
+          ),
         ),
-        _genericRoute<String?>(
-          noTransition: true,
-          name: "AnimeLibrary",
-          builder: (id) =>
-              LibraryScreen(itemType: ItemType.anime, presetInput: id),
+        _branch(
+          _genericRoute<String?>(
+            name: "AnimeLibrary",
+            builder: (id) =>
+                LibraryScreen(itemType: ItemType.anime, presetInput: id),
+          ),
         ),
-        _genericRoute<String?>(
-          noTransition: true,
-          name: "NovelLibrary",
-          builder: (id) =>
-              LibraryScreen(itemType: ItemType.novel, presetInput: id),
+        _branch(
+          _genericRoute<String?>(
+            name: "NovelLibrary",
+            builder: (id) =>
+                LibraryScreen(itemType: ItemType.novel, presetInput: id),
+          ),
         ),
-        _genericRoute<String?>(
-          noTransition: true,
-          name: "trackerLibrary",
-          builder: (id) => TrackerLibraryScreen(presetInput: id),
+        _branch(
+          _genericRoute<String?>(
+            name: "trackerLibrary",
+            builder: (id) => TrackerLibraryScreen(presetInput: id),
+          ),
         ),
-        _genericRoute(
-          noTransition: true,
-          name: "history",
-          child: const HistoryScreen(),
-        ),
-        _genericRoute(
-          noTransition: true,
-          name: "updates",
-          child: const UpdatesScreen(),
-        ),
-        _genericRoute(
-          noTransition: true,
-          name: "browse",
-          child: const BrowseScreen(),
-        ),
-        _genericRoute(
-          noTransition: true,
-          name: "more",
-          child: const MoreScreen(),
-        ),
+        _branch(_genericRoute(name: "history", child: const HistoryScreen())),
+        _branch(_genericRoute(name: "updates", child: const UpdatesScreen())),
+        _branch(_genericRoute(name: "browse", child: const BrowseScreen())),
+        _branch(_genericRoute(name: "more", child: const MoreScreen())),
       ],
     ),
     _genericRoute<(Source?, bool)>(
@@ -304,12 +301,14 @@ class RouterNotifier extends ChangeNotifier {
     ),
   ];
 
+  StatefulShellBranch _branch(GoRoute route) =>
+      StatefulShellBranch(routes: [route]);
+
   GoRoute _genericRoute<T>({
     String? name,
     String? path,
     Widget Function(T extra)? builder,
     Widget? child,
-    bool noTransition = false,
   }) {
     return GoRoute(
       path: path ?? (name != null ? "/$name" : "/"),
@@ -322,16 +321,12 @@ class RouterNotifier extends ChangeNotifier {
           return child!;
         }
       },
-      pageBuilder: isApple || noTransition
+      pageBuilder: isApple
           ? (context, state) {
               final pageChild = builder != null
                   ? builder(state.extra as T)
                   : child!;
-              // Shell tabs are switched, not pushed, so they get their own
-              // page rather than the push transition.
-              return noTransition
-                  ? tabPage(key: state.pageKey, child: pageChild)
-                  : transitionPage(key: state.pageKey, child: pageChild);
+              return transitionPage(key: state.pageKey, child: pageChild);
             }
           : null,
     );
@@ -340,34 +335,6 @@ class RouterNotifier extends ChangeNotifier {
 
 Page transitionPage({required LocalKey key, required child}) {
   return CupertinoPage(key: key, child: child);
-}
-
-/// A shell tab page, which arrives from whichever side its tab sits on.
-///
-/// With the swipe turned on there is no transition at all: the drag has
-/// already carried the pages across under the finger, and animating them again
-/// on arrival plays the same movement twice. With it off nothing else is
-/// moving them, so they come in from the side they actually lie on - the same
-/// read as the Cupertino push, but pointed by where the tab is rather than
-/// always from the right.
-Page tabPage({required LocalKey key, required Widget child}) {
-  final slide = tabSlide;
-  if (slide == 0) return NoTransitionPage(key: key, child: child);
-  return CustomTransitionPage(
-    key: key,
-    child: child,
-    transitionDuration: const Duration(milliseconds: 260),
-    reverseTransitionDuration: const Duration(milliseconds: 260),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      return SlideTransition(
-        position: Tween(
-          begin: Offset(slide.toDouble(), 0),
-          end: Offset.zero,
-        ).chain(CurveTween(curve: Curves.easeOutCubic)).animate(animation),
-        child: child,
-      );
-    },
-  );
 }
 
 Route createRoute({required Widget page}) {

@@ -237,10 +237,10 @@ packages:
     dependency: "direct main"
     description:
       name: connectivity_plus
-      sha256: "762c99f890ca8bf87f7337236f99edd42793843bc6c3631da294a76653a54bd0"
+      sha256: "051849e2bd7c7b3bc5844ea0d096609ddc3a859890ec3a9ac4a65a2620cc1f99"
       url: "https://pub.dev"
     source: hosted
-    version: "7.3.1"
+    version: "6.1.4"
   connectivity_plus_platform_interface:
     dependency: transitive
     description:
@@ -349,10 +349,11 @@ packages:
   device_info_plus:
     dependency: "direct main"
     description:
-      name: device_info_plus
-      sha256: "0891702f96b2e465fe567b7ec448380e6b1c14f60af552a8536d9f583b6b8442"
-      url: "https://pub.dev"
-    source: hosted
+      path: "packages/device_info_plus/device_info_plus"
+      ref: main
+      resolved-ref: "9a4db3e93f55dbf0713d3ca23f43985873d15f3a"
+      url: "https://github.com/kodjodevf/plus_plugins.git"
+    source: git
     version: "13.2.0"
   device_info_plus_platform_interface:
     dependency: transitive
@@ -402,6 +403,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.1"
+  external_path:
+    dependency: "direct main"
+    description:
+      name: external_path
+      sha256: "68a18a2aa51ec012d7013ea2a80305dc5372f3577a2bbcc7dcc5550b25a5a73b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
   fading_edge_scrollview:
     dependency: transitive
     description:

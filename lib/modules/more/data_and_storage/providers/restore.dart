@@ -160,6 +160,7 @@ void restoreBackup(Ref ref, Map<String, dynamic> backup, {bool full = true}) {
           ?.map((e) => CustomButton.fromJson(e))
           .toList();
 
+      final currentSettings = isar.settings.getSync(227);
       isar.writeTxnSync(() {
         isar.mangas.clearSync();
         if (manga != null) {
@@ -267,7 +268,18 @@ void restoreBackup(Ref ref, Map<String, dynamic> backup, {bool full = true}) {
           }
           isar.settings.clearSync();
           if (settings != null) {
-            isar.settings.putAllSync(settings);
+            isar.settings.putAllSync(
+              settings
+                  .map(
+                    (settings) => currentSettings == null
+                        ? settings
+                        : _preserveDeviceLocalSettings(
+                            settings,
+                            currentSettings,
+                          ),
+                  )
+                  .toList(),
+            );
           }
           isar.customButtons.clearSync();
           if (customButtons != null) {
@@ -573,6 +585,17 @@ int _protoInt(Object value) {
 
 int _protoMillis(Object seconds) => _protoInt(seconds) * 1000;
 
+Settings _preserveDeviceLocalSettings(Settings incoming, Settings current) {
+  return incoming
+    ..id = current.id
+    ..localFolders = current.localFolders
+    ..namedLocalFolders = current.namedLocalFolders
+    ..downloadLocalFolderName = current.downloadLocalFolderName
+    ..askDownloadDestination = current.askDownloadDestination
+    ..androidProxyServer = current.androidProxyServer
+    ..jrePath = current.jrePath
+    ..extensionServerPath = current.extensionServerPath;
+}
 void _invalidateCommonState(Ref ref) {
   ref.read(synchingProvider(syncId: 1).notifier).clearAllChangedParts(false);
   ref.invalidate(followSystemThemeStateProvider);

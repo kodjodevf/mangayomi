@@ -1,6 +1,5 @@
 // ignore_for_file: implementation_imports
 
-import 'dart:collection';
 
 import 'package:flutter/widgets.dart';
 
@@ -96,13 +95,29 @@ class CustomSliverGroupedListView<T, E> extends StatefulWidget {
 
 class _CustomSliverGroupedListViewState<T, E>
     extends State<CustomSliverGroupedListView<T, E>> {
-  final LinkedHashMap<String, GlobalKey> _keys = LinkedHashMap();
   List<T> _sortedElements = [];
+  List<E> _groupKeys = [];
+  bool _needsPrepare = true;
+
+  @override
+  void didUpdateWidget(covariant CustomSliverGroupedListView<T, E> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.elements, widget.elements) ||
+        oldWidget.sort != widget.sort ||
+        oldWidget.order != widget.order) {
+      _needsPrepare = true;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    _sortedElements = _sortElements();
-    var hiddenIndex = 0;
+    // Prepared lazily here (not in initState) because groupBy closures may
+    // look up inherited widgets, and memoized so a rebuild without a new
+    // elements list never re-sorts.
+    if (_needsPrepare) {
+      _needsPrepare = false;
+      _prepareElements();
+    }
     isSeparator(int i) => i.isEven;
 
     return SuperSliverList(
@@ -117,78 +132,64 @@ class _CustomSliverGroupedListViewState<T, E>
             return widget.footer!;
           }
 
-          if (index == hiddenIndex) {
-            return Opacity(
-              opacity: 1,
-              child: _buildGroupSeparator(_sortedElements[actualIndex]),
-            );
+          if (index == 0) {
+            return _buildGroupSeparator(actualIndex);
           }
           if (isSeparator(index)) {
-            var curr = widget.groupBy(_sortedElements[actualIndex]);
-            var prev = widget.groupBy(_sortedElements[actualIndex - 1]);
-            if (prev != curr) {
-              return _buildGroupSeparator(_sortedElements[actualIndex]);
+            if (_groupKeys[actualIndex] != _groupKeys[actualIndex - 1]) {
+              return _buildGroupSeparator(actualIndex);
             }
             return widget.separator;
           }
-          return _buildItem(context, actualIndex);
+          return widget.indexedItemBuilder == null
+              ? widget.itemBuilder!(context, _sortedElements[actualIndex])
+              : widget.indexedItemBuilder!(
+                  context,
+                  _sortedElements[actualIndex],
+                  actualIndex,
+                );
         },
       ),
     );
   }
 
-  Container _buildItem(BuildContext context, int actualIndex) {
-    var key = GlobalKey();
-    _keys['$actualIndex'] = key;
-    return Container(
-      key: key,
-      child: widget.indexedItemBuilder == null
-          ? widget.itemBuilder!(context, _sortedElements[actualIndex])
-          : widget.indexedItemBuilder!(
-              context,
-              _sortedElements[actualIndex],
-              actualIndex,
-            ),
-    );
-  }
-
-  List<T> _sortElements() {
-    var elements = [...widget.elements];
-    if (widget.sort && elements.isNotEmpty) {
-      elements.sort((e1, e2) {
+  /// Computes the group key once per element (groupBy may be expensive, e.g.
+  /// date formatting), then sorts on the cached keys.
+  void _prepareElements() {
+    var decorated = [
+      for (final element in widget.elements) (element, widget.groupBy(element)),
+    ];
+    if (widget.sort && decorated.isNotEmpty) {
+      decorated.sort((a, b) {
         int? compareResult;
         // compare groups
         if (widget.groupComparator != null) {
-          compareResult = widget.groupComparator!(
-            widget.groupBy(e1),
-            widget.groupBy(e2),
-          );
-        } else if (widget.groupBy(e1) is Comparable) {
-          compareResult = (widget.groupBy(e1) as Comparable).compareTo(
-            widget.groupBy(e2) as Comparable,
-          );
+          compareResult = widget.groupComparator!(a.$2, b.$2);
+        } else if (a.$2 is Comparable) {
+          compareResult = (a.$2 as Comparable).compareTo(b.$2 as Comparable);
         }
         // compare elements inside group
         if (compareResult == null || compareResult == 0) {
           if (widget.itemComparator != null) {
-            compareResult = widget.itemComparator!(e1, e2);
-          } else if (e1 is Comparable) {
-            compareResult = e1.compareTo(e2);
+            compareResult = widget.itemComparator!(a.$1, b.$1);
+          } else if (a.$1 is Comparable) {
+            compareResult = (a.$1 as Comparable).compareTo(b.$1);
           }
         }
         return compareResult!;
       });
       if (widget.order == GroupedListOrder.DESC) {
-        elements = elements.reversed.toList();
+        decorated = decorated.reversed.toList();
       }
     }
-    return elements;
+    _sortedElements = [for (final d in decorated) d.$1];
+    _groupKeys = [for (final d in decorated) d.$2];
   }
 
-  Widget _buildGroupSeparator(T element) {
+  Widget _buildGroupSeparator(int actualIndex) {
     if (widget.groupHeaderBuilder == null) {
-      return widget.groupSeparatorBuilder!(widget.groupBy(element));
+      return widget.groupSeparatorBuilder!(_groupKeys[actualIndex]);
     }
-    return widget.groupHeaderBuilder!(element);
+    return widget.groupHeaderBuilder!(_sortedElements[actualIndex]);
   }
 }

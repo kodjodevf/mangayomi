@@ -24,11 +24,7 @@ dependencies:
   intl: ^0.20.2
   google_fonts: ^8.0.2
   url_launcher: ^6.3.1
-  package_info_plus:
-    git:
-      url: https://github.com/kodjodevf/plus_plugins.git
-      path: packages/package_info_plus/package_info_plus
-      ref: main
+  package_info_plus: ^9.0.1
   permission_handler: ^12.0.1
   flutter_inappwebview:
     git:
@@ -41,6 +37,7 @@ dependencies:
   share_plus: ^13.0.0
   xpath_selector_html_parser: ^3.0.1
   archive: ^4.0.9
+  external_path: ^2.2.0
   file_picker: 12.0.0-beta.7
   path_provider: ^2.1.5
   scrollable_positioned_list: ^0.3.8
@@ -90,7 +87,7 @@ dependencies:
   screen_brightness: ^2.1.1
   flutter_html: ^3.0.0
   convert: ^3.1.2
-  connectivity_plus: ^7.0.0
+  connectivity_plus: 6.1.4
   app_links: ^7.0.0
   win32: ^6.3.0
   win32_registry: ^3.0.3
@@ -129,6 +126,11 @@ dependency_overrides:
     git:
       url: https://github.com/kodjodevf/plus_plugins.git
       path: packages/package_info_plus/package_info_plus
+      ref: main
+  device_info_plus:
+    git:
+      url: https://github.com/kodjodevf/plus_plugins.git
+      path: packages/device_info_plus/device_info_plus
       ref: main
 
 dev_dependencies:

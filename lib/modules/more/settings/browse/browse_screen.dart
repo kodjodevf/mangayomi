@@ -198,6 +198,17 @@ class BrowseSScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
+                  ListTile(
+                    onTap: () => _showClearLocalLibraryDialog(context, ref),
+                    title: Text(l10n.clear_local_library),
+                    subtitle: Text(
+                      l10n.clear_local_library_desc,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: context.secondaryColor,
+                      ),
+                    ),
+                  ),
                   if (checkForExtensionUpdates)
                     SwitchListTile(
                       value: autoUpdateExtensions,
@@ -573,6 +584,102 @@ void _showClearLibraryDialog(BuildContext context, WidgetRef ref) {
             ],
           );
         },
+      );
+    },
+  );
+}
+
+void _showClearLocalLibraryDialog(BuildContext context, WidgetRef ref) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: Text(context.l10n.clear_local_library),
+        content: Text(context.l10n.clear_local_library_msg),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  context.l10n.cancel,
+                  style: TextStyle(color: context.primaryColor),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  final mangasList = isar.mangas
+                      .filter()
+                      .sourceEqualTo("local")
+                      .or()
+                      .sourceEqualTo("archive")
+                      .findAllSync();
+                  final provider = ref.read(
+                    synchingProvider(syncId: 1).notifier,
+                  );
+                  isar.writeTxnSync(() {
+                    for (var manga in mangasList) {
+                      final histories = isar.historys
+                          .filter()
+                          .mangaIdEqualTo(manga.id)
+                          .findAllSync();
+                      for (var history in histories) {
+                        isar.historys.deleteSync(history.id!);
+                        provider.addChangedPart(
+                          ActionType.removeHistory,
+                          history.id,
+                          "{}",
+                          false,
+                        );
+                      }
+
+                      for (var chapter in manga.chapters) {
+                        final updates = isar.updates
+                            .filter()
+                            .mangaIdEqualTo(chapter.mangaId)
+                            .chapterNameEqualTo(chapter.name)
+                            .findAllSync();
+                        for (var update in updates) {
+                          isar.updates.deleteSync(update.id!);
+                          provider.addChangedPart(
+                            ActionType.removeUpdate,
+                            update.id,
+                            "{}",
+                            false,
+                          );
+                        }
+                        isar.downloads.deleteSync(chapter.id!);
+                        isar.chapters.deleteSync(chapter.id!);
+                        provider.addChangedPart(
+                          ActionType.removeChapter,
+                          chapter.id,
+                          "{}",
+                          false,
+                        );
+                      }
+                      isar.mangas.deleteSync(manga.id!);
+                      provider.addChangedPart(
+                        ActionType.removeItem,
+                        manga.id,
+                        "{}",
+                        false,
+                      );
+                    }
+                  });
+                  botToast(context.l10n.cleaned_database(mangasList.length));
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  context.l10n.ok,
+                  style: TextStyle(color: context.primaryColor),
+                ),
+              ),
+            ],
+          ),
+        ],
       );
     },
   );

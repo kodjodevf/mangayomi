@@ -13,14 +13,11 @@ part 'app_font_family.g.dart';
 class AppFontFamily extends _$AppFontFamily {
   static String? _resolveFontFamily(String? fontFamily) {
     if (fontFamily == null || fontFamily.isEmpty) return null;
-    if (GoogleFonts.asMap().containsKey(fontFamily)) {
-      try {
-        return GoogleFonts.getFont(fontFamily).fontFamily;
-      } catch (_) {
-        return fontFamily;
-      }
+    try {
+      return GoogleFonts.getFont(fontFamily).fontFamily;
+    } catch (_) {
+      return fontFamily;
     }
-    return fontFamily;
   }
 
   @override

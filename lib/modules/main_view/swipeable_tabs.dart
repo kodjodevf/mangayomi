@@ -2,35 +2,38 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-/// Lets a horizontal drag carry you between top-level tabs, showing both the
-/// page you are leaving and the one you are arriving at while your finger is
-/// down.
+/// Lays out the shell's branch navigators, and lets a horizontal drag carry
+/// you between them with both pages visible while your finger is down.
 ///
-/// The shell renders exactly one tab, so the neighbour does not exist until it
-/// is asked for. [pageBuilder] builds it for the duration of the drag only;
-/// once the drag commits, [onSwitch] navigates and the shell supplies the real
-/// one. Building a whole screen for a peek is cheap next to rebuilding the
-/// navigation stack around a PageView, and it leaves deep links, route
-/// arguments and the desktop rail untouched.
+/// Every branch stays mounted whichever tab is showing, which is what the
+/// stateful shell is for, so the peek shows the real page with its own scroll
+/// position rather than a second copy built for the occasion. The ones not on
+/// screen are held offstage: still alive, not laid out, not painted.
+///
+/// It also carries a tab change that came from a tap. Switching a branch never
+/// animates by itself, so without this the page would simply appear; here it
+/// arrives from the side its tab sits on.
 class SwipeableTabs extends StatefulWidget {
   const SwipeableTabs({
     super.key,
-    required this.child,
+    required this.branches,
+    required this.order,
     required this.currentIndex,
-    required this.count,
-    required this.pageBuilder,
     required this.onSwitch,
     this.onProgress,
     this.enabled = true,
   });
 
-  /// The live page, as built by the shell.
-  final Widget child;
-  final int currentIndex;
-  final int count;
+  /// Every branch navigator the shell built, in the shell's own order.
+  final List<Widget> branches;
 
-  /// Builds a neighbouring tab for the peek.
-  final Widget Function(int index) pageBuilder;
+  /// Which branch each entry of the visible tab strip belongs to, in the
+  /// user's own arrangement. Null where an entry is a toggle rather than a
+  /// destination, like the merged-library switch.
+  final List<int?> order;
+
+  /// Position in [order], not in [branches].
+  final int currentIndex;
 
   /// Called once a drag has carried far enough to commit.
   final ValueChanged<int> onSwitch;
@@ -40,8 +43,8 @@ class SwipeableTabs extends StatefulWidget {
   /// about it once the swipe has finished.
   final void Function(int? target, double progress)? onProgress;
 
-  /// Off on tablets and TV, where the rail is the navigation and a horizontal
-  /// drag belongs to the content.
+  /// Whether a drag switches tabs. Off leaves the layout and the tap slide
+  /// exactly as they are and simply stops listening for the gesture.
   final bool enabled;
 
   /// Drag speed, in points a second, at which the pill stops reaching.
@@ -123,8 +126,43 @@ class _SwipeableTabsState extends State<SwipeableTabs>
   /// once it runs out of room.
   bool _innerOwns = false;
   bool _engaged = false;
+
+  /// The tab a tap-driven slide is coming from, while it plays.
+  ///
+  /// A drag works its neighbour out from the direction it is going, but a tap
+  /// can jump several tabs at once, and the page sliding out then is the one
+  /// you left rather than the one next door.
+  int? _outgoing;
+
+  /// Set while a committed drag hands over to the shell, so the tab change it
+  /// causes is not mistaken for a tap and animated a second time.
+  bool _committing = false;
   Offset _down = Offset.zero;
   VelocityTracker? _velocity;
+
+  @override
+  void didUpdateWidget(SwipeableTabs oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.currentIndex == oldWidget.currentIndex) return;
+    // The drag that caused this has already carried the pages across.
+    if (_committing) {
+      _committing = false;
+      return;
+    }
+    if (_dragging || _settle.isAnimating) return;
+    if (_lastWidth <= 0) return;
+
+    // Arrives from the side its tab sits on: a tab to the right comes in from
+    // the right, and the one being left goes out to the left behind it.
+    final from = widget.currentIndex > oldWidget.currentIndex ? 1 : -1;
+    _outgoing = oldWidget.currentIndex;
+    _offset = 0;
+    _settleFrom = from * (_lastWidth + SwipeableTabs._separator);
+    _settleTo = 0;
+    _settle.forward(from: 0).whenComplete(() {
+      if (mounted) setState(() => _outgoing = null);
+    });
+  }
 
   @override
   void dispose() {
@@ -142,6 +180,9 @@ class _SwipeableTabsState extends State<SwipeableTabs>
   void _report(double position, double width) {
     final report = widget.onProgress;
     if (report == null) return;
+    // A tap has already moved the bar's selection; reporting a target here
+    // would have the pill reach for a tab it is standing on.
+    if (_outgoing != null) return;
     final target = _neighbourFor(position);
     if (target == null || width <= 0) {
       report(null, 0);
@@ -159,7 +200,7 @@ class _SwipeableTabsState extends State<SwipeableTabs>
     final index = offset < 0
         ? widget.currentIndex + 1
         : widget.currentIndex - 1;
-    if (index < 0 || index >= widget.count) return null;
+    if (index < 0 || index >= widget.order.length) return null;
     return index;
   }
 
@@ -173,7 +214,7 @@ class _SwipeableTabsState extends State<SwipeableTabs>
       kind == PointerDeviceKind.touch || kind == PointerDeviceKind.stylus;
 
   void _onPointerDown(PointerDownEvent event) {
-    if (!_isDragKind(event.kind)) return;
+    if (!widget.enabled || !_isDragKind(event.kind)) return;
     _down = event.position;
     _speed = 0;
     _lastStamp = event.timeStamp;
@@ -184,7 +225,7 @@ class _SwipeableTabsState extends State<SwipeableTabs>
   }
 
   void _onPointerMove(PointerMoveEvent event) {
-    if (!_isDragKind(event.kind)) return;
+    if (!widget.enabled || !_isDragKind(event.kind)) return;
     _velocity?.addPosition(event.timeStamp, event.position);
 
     final dt = (event.timeStamp - _lastStamp).inMicroseconds / 1000000;
@@ -244,6 +285,7 @@ class _SwipeableTabsState extends State<SwipeableTabs>
       _settleTo = _offset < 0 ? -width : width;
       _settle.forward(from: 0).whenComplete(() {
         HapticFeedback.selectionClick();
+        _committing = true;
         widget.onSwitch(target);
         // The bar's own selection takes over from here.
         widget.onProgress?.call(null, 0);
@@ -275,6 +317,7 @@ class _SwipeableTabsState extends State<SwipeableTabs>
   /// finger movement. Reading it here is what lets a swipe run out of the last
   /// section and straight on into the next tab.
   bool _onInnerScroll(ScrollNotification notification) {
+    if (!widget.enabled) return false;
     if (notification.metrics.axis != Axis.horizontal) return false;
 
     // Whoever started scrolling horizontally owns this pointer, so stay out of
@@ -303,12 +346,61 @@ class _SwipeableTabsState extends State<SwipeableTabs>
     return false;
   }
 
+  /// One branch, always in the same slot of the stack.
+  ///
+  /// Position and visibility change; the shape never does. Swapping a branch
+  /// between two different wrappers as it becomes current would reparent it,
+  /// and everything inside would lose its state on every tab change.
+  Widget _slot({
+    required int branch,
+    required int? neighbour,
+    required double position,
+    required double width,
+    required double step,
+  }) {
+    final strip = widget.order.indexOf(branch);
+    final isCurrent = strip == widget.currentIndex;
+    final isNeighbour = neighbour != null && strip == neighbour;
+    final visible = isCurrent || isNeighbour;
+
+    return Positioned(
+      key: ValueKey(branch),
+      left: isCurrent
+          ? position
+          : isNeighbour
+          ? position + (position < 0 ? step : -step)
+          : 0,
+      top: 0,
+      bottom: 0,
+      width: width,
+      // Offstage rather than dropped: the branch keeps its state, and skips
+      // layout and paint while it is nowhere to be seen. TickerMode stops
+      // anything in there animating out of sight.
+      child: TickerMode(
+        enabled: visible,
+        child: Offstage(
+          offstage: !visible,
+          // Inert until it is actually yours. Left live, the page being
+          // dragged into view took focus early, and its insides scrolled
+          // under a finger that was still on the page behind it.
+          child: IgnorePointer(
+            ignoring: !isCurrent,
+            child: FocusScope(
+              canRequestFocus: isCurrent,
+              child: widget.branches[branch],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (!widget.enabled) return widget.child;
-
     final position = _position;
-    final neighbour = _neighbourFor(position);
+    // A tap knows exactly which page it is leaving; a drag infers it from the
+    // direction the finger went.
+    final neighbour = _outgoing ?? _neighbourFor(position);
 
     return NotificationListener<ScrollNotification>(
       onNotification: _onInnerScroll,
@@ -326,47 +418,28 @@ class _SwipeableTabsState extends State<SwipeableTabs>
         onPointerMove: _onPointerMove,
         onPointerUp: _onPointerUp,
         onPointerCancel: _onPointerUp,
-        // Always the same shape, even at rest. Swapping between a bare child
-        // and a wrapped one reparents the page the moment a drag starts, which
-        // throws away the state of anything inside it: an inner tab set loses
-        // its position and its half-finished gesture.
         child: LayoutBuilder(
           builder: (context, constraints) {
             final width = constraints.maxWidth;
-            // The neighbour sits a full width away plus the gap, so the
-            // two never touch while both are on screen.
+            _lastWidth = width;
+            // The neighbour sits a full width away plus the gap, so the two
+            // never touch while both are on screen.
             final step = width + SwipeableTabs._separator;
             // Positioned, not just translated. A Stack sizes itself to its
-            // children and hands them loose constraints, but a page expects the
-            // tight ones the Scaffold body used to give it; without those,
+            // children and hands them loose constraints, but a page expects
+            // the tight ones the Scaffold body used to give it; without those,
             // anything that fills its parent collapses, a category TabBar
             // included.
             return Stack(
               clipBehavior: Clip.hardEdge,
               children: [
-                Positioned(
-                  left: position,
-                  top: 0,
-                  bottom: 0,
-                  width: width,
-                  child: widget.child,
-                ),
-                if (neighbour != null)
-                  Positioned(
-                    left: position + (position < 0 ? step : -step),
-                    top: 0,
-                    bottom: 0,
+                for (var branch = 0; branch < widget.branches.length; branch++)
+                  _slot(
+                    branch: branch,
+                    neighbour: neighbour,
+                    position: position,
                     width: width,
-                    // Inert until it is actually yours. Left live, the page
-                    // being dragged into view took focus early, and its insides
-                    // scrolled under a finger that was still on the page
-                    // behind it.
-                    child: IgnorePointer(
-                      child: FocusScope(
-                        canRequestFocus: false,
-                        child: widget.pageBuilder(neighbour),
-                      ),
-                    ),
+                    step: step,
                   ),
               ],
             );

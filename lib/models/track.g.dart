@@ -77,7 +77,39 @@ const TrackSchema = CollectionSchema(
   deserialize: _trackDeserialize,
   deserializeProp: _trackDeserializeProp,
   idName: r'id',
-  indexes: {},
+  indexes: {
+    r'mangaId_itemType': IndexSchema(
+      id: 1932770689417107750,
+      name: r'mangaId_itemType',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'mangaId',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+        IndexPropertySchema(
+          name: r'itemType',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+      ],
+    ),
+    r'syncId': IndexSchema(
+      id: 7538593479801827566,
+      name: r'syncId',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'syncId',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+      ],
+    ),
+  },
   links: {},
   embeddedSchemas: {},
 
@@ -255,6 +287,22 @@ extension TrackQueryWhereSort on QueryBuilder<Track, Track, QWhere> {
       return query.addWhereClause(const IdWhereClause.any());
     });
   }
+
+  QueryBuilder<Track, Track, QAfterWhere> anyMangaIdItemType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'mangaId_itemType'),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhere> anySyncId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'syncId'),
+      );
+    });
+  }
 }
 
 extension TrackQueryWhere on QueryBuilder<Track, Track, QWhereClause> {
@@ -320,6 +368,369 @@ extension TrackQueryWhere on QueryBuilder<Track, Track, QWhereClause> {
           lower: lowerId,
           includeLower: includeLower,
           upper: upperId,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause> mangaIdIsNullAnyItemType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'mangaId_itemType', value: [null]),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause> mangaIdIsNotNullAnyItemType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'mangaId_itemType',
+          lower: [null],
+          includeLower: false,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause> mangaIdEqualToAnyItemType(
+    int? mangaId,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(
+          indexName: r'mangaId_itemType',
+          value: [mangaId],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause> mangaIdNotEqualToAnyItemType(
+    int? mangaId,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'mangaId_itemType',
+                lower: [],
+                upper: [mangaId],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'mangaId_itemType',
+                lower: [mangaId],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'mangaId_itemType',
+                lower: [mangaId],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'mangaId_itemType',
+                lower: [],
+                upper: [mangaId],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause> mangaIdGreaterThanAnyItemType(
+    int? mangaId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'mangaId_itemType',
+          lower: [mangaId],
+          includeLower: include,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause> mangaIdLessThanAnyItemType(
+    int? mangaId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'mangaId_itemType',
+          lower: [],
+          upper: [mangaId],
+          includeUpper: include,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause> mangaIdBetweenAnyItemType(
+    int? lowerMangaId,
+    int? upperMangaId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'mangaId_itemType',
+          lower: [lowerMangaId],
+          includeLower: includeLower,
+          upper: [upperMangaId],
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause> mangaIdItemTypeEqualTo(
+    int? mangaId,
+    ItemType itemType,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(
+          indexName: r'mangaId_itemType',
+          value: [mangaId, itemType],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause>
+  mangaIdEqualToItemTypeNotEqualTo(int? mangaId, ItemType itemType) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'mangaId_itemType',
+                lower: [mangaId],
+                upper: [mangaId, itemType],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'mangaId_itemType',
+                lower: [mangaId, itemType],
+                includeLower: false,
+                upper: [mangaId],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'mangaId_itemType',
+                lower: [mangaId, itemType],
+                includeLower: false,
+                upper: [mangaId],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'mangaId_itemType',
+                lower: [mangaId],
+                upper: [mangaId, itemType],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause>
+  mangaIdEqualToItemTypeGreaterThan(
+    int? mangaId,
+    ItemType itemType, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'mangaId_itemType',
+          lower: [mangaId, itemType],
+          includeLower: include,
+          upper: [mangaId],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause> mangaIdEqualToItemTypeLessThan(
+    int? mangaId,
+    ItemType itemType, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'mangaId_itemType',
+          lower: [mangaId],
+          upper: [mangaId, itemType],
+          includeUpper: include,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause> mangaIdEqualToItemTypeBetween(
+    int? mangaId,
+    ItemType lowerItemType,
+    ItemType upperItemType, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'mangaId_itemType',
+          lower: [mangaId, lowerItemType],
+          includeLower: includeLower,
+          upper: [mangaId, upperItemType],
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause> syncIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'syncId', value: [null]),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause> syncIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'syncId',
+          lower: [null],
+          includeLower: false,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause> syncIdEqualTo(int? syncId) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'syncId', value: [syncId]),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause> syncIdNotEqualTo(int? syncId) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'syncId',
+                lower: [],
+                upper: [syncId],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'syncId',
+                lower: [syncId],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'syncId',
+                lower: [syncId],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'syncId',
+                lower: [],
+                upper: [syncId],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause> syncIdGreaterThan(
+    int? syncId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'syncId',
+          lower: [syncId],
+          includeLower: include,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause> syncIdLessThan(
+    int? syncId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'syncId',
+          lower: [],
+          upper: [syncId],
+          includeUpper: include,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Track, Track, QAfterWhereClause> syncIdBetween(
+    int? lowerSyncId,
+    int? upperSyncId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'syncId',
+          lower: [lowerSyncId],
+          includeLower: includeLower,
+          upper: [upperSyncId],
           includeUpper: includeUpper,
         ),
       );

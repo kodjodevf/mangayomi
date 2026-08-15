@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui' show ImageFilter;
 
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
 
@@ -23,20 +24,13 @@ import 'package:mangayomi/modules/widgets/floating_nav_bar.dart';
 import 'package:mangayomi/modules/widgets/loading_icon.dart';
 import 'package:mangayomi/services/fetch_item_sources.dart';
 import 'package:mangayomi/modules/main_view/nav_shrink.dart';
-import 'package:mangayomi/modules/main_view/tab_transition.dart';
 import 'package:mangayomi/modules/main_view/providers/swipe_tabs_provider.dart';
 import 'package:mangayomi/modules/main_view/providers/migration.dart';
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/more/about/providers/check_for_update.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/auto_backup.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
-import 'package:mangayomi/modules/library/library_screen.dart';
-import 'package:mangayomi/modules/tracker_library/tracker_library_screen.dart';
-import 'package:mangayomi/modules/history/history_screen.dart';
-import 'package:mangayomi/modules/updates/updates_screen.dart';
-import 'package:mangayomi/modules/browse/browse_screen.dart';
-import 'package:mangayomi/modules/more/more_screen.dart';
-import 'package:mangayomi/modules/main_view/swipeable_tabs.dart';
+import 'package:mangayomi/modules/main_view/nav_shell_container.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/services/sync_server.dart';
@@ -146,26 +140,26 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   /// Mirrors what the shell route builds. Route arguments are deliberately
   /// left out: this instance lives only while a finger is down, and the shell
   /// replaces it with the real one the moment the swipe commits.
-  Widget? _pageForNav(String nav) => switch (nav) {
-    "/MangaLibrary" => const LibraryScreen(
-      itemType: ItemType.manga,
-      presetInput: null,
-    ),
-    "/AnimeLibrary" => const LibraryScreen(
-      itemType: ItemType.anime,
-      presetInput: null,
-    ),
-    "/NovelLibrary" => const LibraryScreen(
-      itemType: ItemType.novel,
-      presetInput: null,
-    ),
-    "/trackerLibrary" => const TrackerLibraryScreen(presetInput: null),
-    "/history" => const HistoryScreen(),
-    "/updates" => const UpdatesScreen(),
-    "/browse" => const BrowseScreen(),
-    "/more" => const MoreScreen(),
-    _ => null,
+  /// Which shell branch each entry of the visible strip belongs to.
+  ///
+  /// The branches are declared in a fixed order by the router; the strip is
+  /// the user's own arrangement with hidden entries dropped, so the two need
+  /// mapping. Entries that are toggles rather than destinations have no branch
+  /// at all.
+  static const _branchForNav = {
+    "/MangaLibrary": 0,
+    "/AnimeLibrary": 1,
+    "/NovelLibrary": 2,
+    "/trackerLibrary": 3,
+    "/history": 4,
+    "/updates": 5,
+    "/browse": 6,
+    "/more": 7,
   };
+
+  List<int?> _branchOrder(List<String> dest) => [
+    for (final nav in dest) _branchForNav[nav],
+  ];
 
   void _initializeTimers() {
     _backupTimer = Timer.periodic(
@@ -182,7 +176,10 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   }
 
   void _initializeProviders() {
-    Future.microtask(() {
+    // The extension-repo fetches (one per item type) and the GitHub update
+    // check hit the network; delay them so they don't compete with the first
+    // paint and the initial library queries.
+    Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
         for (var type in ItemType.values) {
           ref.read(
@@ -194,6 +191,22 @@ class _MainScreenState extends ConsumerState<MainScreen> {
           );
         }
       }
+    });
+    Future.delayed(const Duration(seconds: 5), () {
+      if (!mounted || isTv) return;
+      ref.listenManual<AsyncValue<UpdateInfo?>>(checkForUpdateProvider, (
+        _,
+        next,
+      ) {
+        next.whenData((updateInfo) {
+          if (updateInfo != null && mounted) {
+            showDialog(
+              context: context,
+              builder: (_) => DownloadFileScreen(updateAvailable: updateInfo),
+            );
+          }
+        });
+      });
     });
   }
 
@@ -274,23 +287,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen<AsyncValue<UpdateInfo?>>(checkForUpdateProvider, (_, next) {
-      // On TV the in-app updater (download + install an APK) is not reachable
-      // with a d-pad and is not how TV builds update (sideload / the release
-      // APK). Left on, this modal would appear unannounced over whatever the
-      // user is doing and trap focus with no way to dismiss it. TV updates out
-      // of band, so never raise it there.
-      if (isTv) return;
-      next.whenData((updateInfo) {
-        if (updateInfo != null && context.mounted) {
-          showDialog(
-            context: context,
-            builder: (_) => DownloadFileScreen(updateAvailable: updateInfo),
-          );
-        }
-      });
-    });
-
     ref.listen<Locale>(l10nLocaleStateProvider, (previous, next) {
       _clearCache();
       setState(() {});
@@ -403,17 +399,13 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                                     _buildNavigationWidgetsDesktop,
                                 child: widget.child,
                               )
-                            : SwipeableTabs(
+                            : NavShellScope(
+                                order: _branchOrder(dest),
+                                currentIndex: currentIndex,
                                 // Off unless asked for, and never where the
                                 // gesture cannot be made: a TV has no touch
                                 // screen and a desktop pointer is a mouse.
-                                // Rail platforms navigate by the rail, where a
-                                // horizontal drag belongs to the content.
-                                enabled: swipeTabs && !isLongPressed,
-                                currentIndex: currentIndex,
-                                count: dest.length,
-                                pageBuilder: (i) =>
-                                    _pageForNav(dest[i]) ?? const SizedBox(),
+                                swipeEnabled: swipeTabs && !isLongPressed,
                                 onProgress: (target, progress) {
                                   if (target == _swipeTarget &&
                                       (progress - _swipeProgress).abs() <
@@ -427,9 +419,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                                 },
                                 onSwitch: (i) {
                                   final nav = dest[i];
-                                  // The drag has already carried the pages
-                                  // across; sliding on arrival plays it twice.
-                                  setTabSlide(0);
                                   if (nav == "_enableLibSwitch") {
                                     setState(() => isLibSwitch = true);
                                     final target = _firstVisibleLibrary();
@@ -459,18 +448,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                               buildNavigationWidgetsMobile:
                                   _buildNavigationWidgetsMobile,
                               onDestinationSelected: (destination) {
-                                // Nothing else is moving these pages, so they
-                                // come in from the side the tab actually sits
-                                // on. With the swipe on this stays 0 and the
-                                // swipe itself is the animation.
-                                setTabSlide(
-                                  swipeTabs
-                                      ? 0
-                                      : slideBetween(
-                                          currentIndex,
-                                          dest.indexOf(destination),
-                                        ),
-                                );
                                 if (destination == "_enableLibSwitch") {
                                   setState(() {
                                     isLibSwitch = true;
@@ -761,6 +738,10 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   }
 }
 
+// Resolved once — GoogleFonts lookups in build run font resolution on every
+// rebuild of these always-mounted bars.
+final String? _barFontFamily = GoogleFonts.aBeeZee().fontFamily;
+
 class _DownloadedOnlyBar extends StatelessWidget {
   const _DownloadedOnlyBar({required this.downloadedOnly, required this.l10n});
 
@@ -773,7 +754,7 @@ class _DownloadedOnlyBar extends StatelessWidget {
       child: AnimatedContainer(
         height: downloadedOnly
             ? isMobile
-                  ? MediaQuery.of(context).padding.top * 2
+                  ? MediaQuery.paddingOf(context).top * 2
                   : 50
             : 0,
         curve: Curves.easeIn,
@@ -787,7 +768,10 @@ class _DownloadedOnlyBar extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 l10n.downloaded_only,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: _barFontFamily,
+                ),
               ),
             ),
           ],
@@ -809,7 +793,7 @@ class _IncognitoModeBar extends StatelessWidget {
       child: AnimatedContainer(
         height: incognitoMode
             ? isMobile
-                  ? MediaQuery.of(context).padding.top * 2
+                  ? MediaQuery.paddingOf(context).top * 2
                   : 50
             : 0,
         curve: Curves.easeIn,
@@ -823,7 +807,10 @@ class _IncognitoModeBar extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 l10n.incognito_mode,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: _barFontFamily,
+                ),
               ),
             ),
           ],
@@ -1279,24 +1266,17 @@ class _UpdatesBadgeWidget extends ConsumerWidget {
               (c) => c.manga((m) => m.not().itemTypeEqualTo(ItemType.novel)),
             ),
           )
+          // Filter unread in the query itself — loading every linked chapter
+          // with loadSync() in the builder ran N+1 sync DB reads on the
+          // always-mounted nav bar for every update write.
+          .chapter((c) => c.not().isReadEqualTo(true))
           .watch(fireImmediately: true),
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return icon;
         }
 
-        final entries = snapshot.data!.where((element) {
-          if (!element.chapter.isLoaded) {
-            element.chapter.loadSync();
-          }
-          return !(element.chapter.value?.isRead ?? false);
-        }).toList();
-
-        if (entries.isEmpty) {
-          return icon;
-        }
-
-        return Badge(label: Text("${entries.length}"), child: icon);
+        return Badge(label: Text("${snapshot.data!.length}"), child: icon);
       },
     );
   }

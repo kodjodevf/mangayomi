@@ -7,13 +7,8 @@ part 'get_source_baseurl.g.dart';
 
 @riverpod
 String sourceBaseUrl(Ref ref, {required Source source}) {
-  final service = getExtensionService(
+  return getCachedExtensionService(
     source,
     ref.read(androidProxyServerStateProvider),
-  );
-  try {
-    return service.sourceBaseUrl;
-  } finally {
-    service.dispose();
-  }
+  ).sourceBaseUrl;
 }

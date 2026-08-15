@@ -291,13 +291,13 @@ class _ExtensionDetailState extends ConsumerState<ExtensionDetail> {
                   ),
                   onPressed: () async {
                     MClient.deleteAllCookies(source.baseUrl ?? "");
-                    botToast("Cookies deleted!");
+                    botToast(context.l10n.cookies_deleted);
                   },
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Text(
-                      "Delete all cookies",
-                      style: TextStyle(
+                      context.l10n.delete_all_cookies,
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),

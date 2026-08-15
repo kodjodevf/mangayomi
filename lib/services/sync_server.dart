@@ -474,7 +474,10 @@ class SyncServer extends _$SyncServer {
     final oldSettings = isar.settings.getSync(227)!;
     final settings = Settings.fromJson(jsonData["settings"]);
     await isar.writeTxn(() async {
-      await isar.settings.put(settings..cookiesList = oldSettings.cookiesList);
+      await isar.settings.put(
+        _preserveDeviceLocalSettings(settings, oldSettings)
+          ..cookiesList = oldSettings.cookiesList,
+      );
       ref.invalidate(followSystemThemeStateProvider);
       ref.invalidate(themeModeStateProvider);
       ref.invalidate(blendLevelStateProvider);
@@ -538,9 +541,13 @@ class SyncServer extends _$SyncServer {
   String _getSettingsData({bool download = false}) {
     Map<String, dynamic> data = {};
     if (!download) {
-      data["settings"] = isar.settings.getSync(227)!
-        ..updatedAt ??= DateTime.now().millisecondsSinceEpoch
-        ..cookiesList = [];
+      final settingsJson = isar.settings.getSync(227)!.toJson();
+      settingsJson["updatedAt"] ??= DateTime.now().millisecondsSinceEpoch;
+      settingsJson["cookiesList"] = [];
+      for (final key in _deviceLocalSettingsKeys) {
+        settingsJson.remove(key);
+      }
+      data["settings"] = settingsJson;
     }
     return jsonEncode(data);
   }
@@ -591,4 +598,26 @@ class SyncServer extends _$SyncServer {
     final syncPrefs = ref.watch(synchingProvider(syncId: syncId));
     return syncPrefs.server ?? "";
   }
+}
+
+const _deviceLocalSettingsKeys = {
+  'localFolders',
+  'namedLocalFolders',
+  'downloadLocalFolderName',
+  'askDownloadDestination',
+  'androidProxyServer',
+  'jrePath',
+  'extensionServerPath',
+};
+
+Settings _preserveDeviceLocalSettings(Settings incoming, Settings current) {
+  return incoming
+    ..id = current.id
+    ..localFolders = current.localFolders
+    ..namedLocalFolders = current.namedLocalFolders
+    ..downloadLocalFolderName = current.downloadLocalFolderName
+    ..askDownloadDestination = current.askDownloadDestination
+    ..androidProxyServer = current.androidProxyServer
+    ..jrePath = current.jrePath
+    ..extensionServerPath = current.extensionServerPath;
 }

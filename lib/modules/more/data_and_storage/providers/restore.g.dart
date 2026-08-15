@@ -145,7 +145,7 @@ final class RestoreBackupProvider extends $FunctionalProvider<void, void, void>
   }
 }
 
-String _$restoreBackupHash() => r'710406e69599fd359e382420cda320cde2639242';
+String _$restoreBackupHash() => r'942d8e7548daeb3138b3b4c26565fdee2d4c4aa1';
 
 final class RestoreBackupFamily extends $Family
     with $FunctionalFamilyOverride<void, (Map<String, dynamic>, {bool full})> {
