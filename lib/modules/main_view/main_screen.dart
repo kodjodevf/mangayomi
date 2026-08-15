@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' show ImageFilter;
 
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
@@ -287,6 +288,11 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                     _IncognitoModeBar(incognitoMode: incognitoMode, l10n: l10n),
                   Flexible(
                     child: Scaffold(
+                      // Apple only: lets content scroll under the translucent
+                      // bar, which is the whole point of blurring it. Scroll
+                      // views inset themselves by the bar height through
+                      // MediaQuery padding, so the last row stays reachable.
+                      extendBody: isApple,
                       body: context.isTablet
                           ? _TabletLayout(
                               isLongPressed: isLongPressed,
@@ -905,28 +911,53 @@ class _MobileBottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    // On Apple platforms the bar is translucent and content passes underneath,
+    // which is what makes it read as native rather than as a solid slab. The
+    // Scaffold sets extendBody to match. Elsewhere the bar stays opaque.
+    final translucent = isApple;
+
+    Widget bar = NavigationBarTheme(
+      data: NavigationBarThemeData(
+        labelTextStyle: const WidgetStatePropertyAll(
+          TextStyle(overflow: TextOverflow.ellipsis),
+        ),
+        indicatorShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        backgroundColor: translucent
+            ? theme.colorScheme.surface.withValues(alpha: 0.72)
+            : null,
+        // Material's tint would fight the blur and leave the bar looking
+        // muddy over scrolling content.
+        surfaceTintColor: translucent ? Colors.transparent : null,
+        elevation: translucent ? 0 : null,
+      ),
+      child: NavigationBar(
+        animationDuration: const Duration(milliseconds: 500),
+        selectedIndex: currentIndex,
+        destinations: buildNavigationWidgetsMobile(ref, dest, context),
+        onDestinationSelected: (newIndex) {
+          onDestinationSelected(dest[newIndex]);
+        },
+      ),
+    );
+
+    if (translucent) {
+      // Clipped, or the blur samples beyond the bar and bleeds up the screen.
+      bar = ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+          child: bar,
+        ),
+      );
+    }
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 0),
       width: context.width(1),
       height: _getBottomNavigationHeight(isLongPressed, location),
-      child: NavigationBarTheme(
-        data: NavigationBarThemeData(
-          labelTextStyle: const WidgetStatePropertyAll(
-            TextStyle(overflow: TextOverflow.ellipsis),
-          ),
-          indicatorShape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-        ),
-        child: NavigationBar(
-          animationDuration: const Duration(milliseconds: 500),
-          selectedIndex: currentIndex,
-          destinations: buildNavigationWidgetsMobile(ref, dest, context),
-          onDestinationSelected: (newIndex) {
-            onDestinationSelected(dest[newIndex]);
-          },
-        ),
-      ),
+      child: bar,
     );
   }
 
