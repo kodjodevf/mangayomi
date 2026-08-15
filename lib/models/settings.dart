@@ -411,6 +411,11 @@ class Settings {
   bool? tvHomeStyle;
   bool? tvHomeGenreRows;
 
+  /// Whether a horizontal drag on a page moves between navigation tabs.
+  /// Null means the default, which is off: it is a gesture that competes with
+  /// everything else a page wants to do with a sideways drag, so it is opt-in.
+  bool? swipeBetweenTabs;
+
   Settings({
     this.id = 227,
     this.updatedAt = 0,
@@ -611,6 +616,7 @@ class Settings {
     this.tvPlayerStyle,
     this.tvHomeStyle,
     this.tvHomeGenreRows,
+    this.swipeBetweenTabs,
   });
 
   Settings.fromJson(Map<String, dynamic> json) {
@@ -937,6 +943,7 @@ class Settings {
     tvPlayerStyle = json['tvPlayerStyle'];
     tvHomeStyle = json['tvHomeStyle'];
     tvHomeGenreRows = json['tvHomeGenreRows'];
+    swipeBetweenTabs = json['swipeBetweenTabs'];
   }
 
   Map<String, dynamic> toJson() => {
@@ -1161,6 +1168,7 @@ class Settings {
     'tvPlayerStyle': tvPlayerStyle,
     'tvHomeStyle': tvHomeStyle,
     'tvHomeGenreRows': tvHomeGenreRows,
+    'swipeBetweenTabs': swipeBetweenTabs,
   };
 }
 

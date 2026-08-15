@@ -1790,6 +1790,13 @@ class AppLocalizationsJa extends AppLocalizations {
   String get merge_library_nav_mobile => 'モバイルでライブラリナビゲーションを統合';
 
   @override
+  String get swipe_between_tabs => 'Swipe between tabs';
+
+  @override
+  String get swipe_between_tabs_subtitle =>
+      'Drag sideways on a page to move to the next tab';
+
+  @override
   String get enable_discord_rpc => 'Discord RPCを有効化';
 
   @override

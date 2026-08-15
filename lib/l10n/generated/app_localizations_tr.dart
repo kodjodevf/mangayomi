@@ -1824,6 +1824,13 @@ class AppLocalizationsTr extends AppLocalizations {
       'Mobilde kütüphane gezinmesini birleştir';
 
   @override
+  String get swipe_between_tabs => 'Swipe between tabs';
+
+  @override
+  String get swipe_between_tabs_subtitle =>
+      'Drag sideways on a page to move to the next tab';
+
+  @override
   String get enable_discord_rpc => 'Discord RPC\'yi etkinleştir';
 
   @override

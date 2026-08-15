@@ -3,6 +3,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mangayomi/modules/main_view/tab_transition.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
@@ -326,11 +327,10 @@ class RouterNotifier extends ChangeNotifier {
               final pageChild = builder != null
                   ? builder(state.extra as T)
                   : child!;
-              // Shell tabs are switched, not pushed. A page transition here
-              // plays on top of whatever moved you between them, so a swipe
-              // animates twice and a tap slides when it should just change.
+              // Shell tabs are switched, not pushed, so they get their own
+              // page rather than the push transition.
               return noTransition
-                  ? NoTransitionPage(key: state.pageKey, child: pageChild)
+                  ? tabPage(key: state.pageKey, child: pageChild)
                   : transitionPage(key: state.pageKey, child: pageChild);
             }
           : null,
@@ -340,6 +340,34 @@ class RouterNotifier extends ChangeNotifier {
 
 Page transitionPage({required LocalKey key, required child}) {
   return CupertinoPage(key: key, child: child);
+}
+
+/// A shell tab page, which arrives from whichever side its tab sits on.
+///
+/// With the swipe turned on there is no transition at all: the drag has
+/// already carried the pages across under the finger, and animating them again
+/// on arrival plays the same movement twice. With it off nothing else is
+/// moving them, so they come in from the side they actually lie on - the same
+/// read as the Cupertino push, but pointed by where the tab is rather than
+/// always from the right.
+Page tabPage({required LocalKey key, required Widget child}) {
+  final slide = tabSlide;
+  if (slide == 0) return NoTransitionPage(key: key, child: child);
+  return CustomTransitionPage(
+    key: key,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 260),
+    reverseTransitionDuration: const Duration(milliseconds: 260),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return SlideTransition(
+        position: Tween(
+          begin: Offset(slide.toDouble(), 0),
+          end: Offset.zero,
+        ).chain(CurveTween(curve: Curves.easeOutCubic)).animate(animation),
+        child: child,
+      );
+    },
+  );
 }
 
 Route createRoute({required Widget page}) {

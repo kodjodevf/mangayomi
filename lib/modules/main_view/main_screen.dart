@@ -23,6 +23,8 @@ import 'package:mangayomi/modules/widgets/floating_nav_bar.dart';
 import 'package:mangayomi/modules/widgets/loading_icon.dart';
 import 'package:mangayomi/services/fetch_item_sources.dart';
 import 'package:mangayomi/modules/main_view/nav_shrink.dart';
+import 'package:mangayomi/modules/main_view/tab_transition.dart';
+import 'package:mangayomi/modules/main_view/providers/swipe_tabs_provider.dart';
 import 'package:mangayomi/modules/main_view/providers/migration.dart';
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/more/about/providers/check_for_update.dart';
@@ -369,6 +371,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               final incognitoMode = ref.watch(incognitoModeStateProvider);
               final downloadedOnly = ref.watch(downloadedOnlyStateProvider);
               final isLongPressed = ref.watch(isLongPressedStateProvider);
+              final swipeTabs = ref.watch(swipeBetweenTabsProvider);
 
               return Column(
                 children: [
@@ -401,9 +404,12 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                                 child: widget.child,
                               )
                             : SwipeableTabs(
-                                // Rail platforms navigate by the rail, and a
-                                // horizontal drag there belongs to the content.
-                                enabled: !isTv && !isLongPressed,
+                                // Off unless asked for, and never where the
+                                // gesture cannot be made: a TV has no touch
+                                // screen and a desktop pointer is a mouse.
+                                // Rail platforms navigate by the rail, where a
+                                // horizontal drag belongs to the content.
+                                enabled: swipeTabs && !isLongPressed,
                                 currentIndex: currentIndex,
                                 count: dest.length,
                                 pageBuilder: (i) =>
@@ -421,6 +427,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                                 },
                                 onSwitch: (i) {
                                   final nav = dest[i];
+                                  // The drag has already carried the pages
+                                  // across; sliding on arrival plays it twice.
+                                  setTabSlide(0);
                                   if (nav == "_enableLibSwitch") {
                                     setState(() => isLibSwitch = true);
                                     final target = _firstVisibleLibrary();
@@ -450,6 +459,18 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                               buildNavigationWidgetsMobile:
                                   _buildNavigationWidgetsMobile,
                               onDestinationSelected: (destination) {
+                                // Nothing else is moving these pages, so they
+                                // come in from the side the tab actually sits
+                                // on. With the swipe on this stays 0 and the
+                                // swipe itself is the animation.
+                                setTabSlide(
+                                  swipeTabs
+                                      ? 0
+                                      : slideBetween(
+                                          currentIndex,
+                                          dest.indexOf(destination),
+                                        ),
+                                );
                                 if (destination == "_enableLibSwitch") {
                                   setState(() {
                                     isLibSwitch = true;

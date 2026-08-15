@@ -1830,6 +1830,13 @@ class AppLocalizationsAr extends AppLocalizations {
       'دمج التنقل في المكتبة على الهاتف المحمول';
 
   @override
+  String get swipe_between_tabs => 'Swipe between tabs';
+
+  @override
+  String get swipe_between_tabs_subtitle =>
+      'Drag sideways on a page to move to the next tab';
+
+  @override
   String get enable_discord_rpc => 'تمكين Discord RPC';
 
   @override

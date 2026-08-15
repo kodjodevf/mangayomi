@@ -1769,6 +1769,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get merge_library_nav_mobile => '在移动设备上合并库导航';
 
   @override
+  String get swipe_between_tabs => 'Swipe between tabs';
+
+  @override
+  String get swipe_between_tabs_subtitle =>
+      'Drag sideways on a page to move to the next tab';
+
+  @override
   String get enable_discord_rpc => '启用 Discord RPC';
 
   @override
