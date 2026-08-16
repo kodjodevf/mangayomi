@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:ui' show ImageFilter;
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -18,8 +20,10 @@ import 'package:mangayomi/modules/more/providers/downloaded_only_state_provider.
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
+import 'package:mangayomi/modules/widgets/floating_nav_bar.dart';
 import 'package:mangayomi/modules/widgets/loading_icon.dart';
 import 'package:mangayomi/services/fetch_item_sources.dart';
+import 'package:mangayomi/modules/main_view/nav_shrink.dart';
 import 'package:mangayomi/modules/main_view/providers/migration.dart';
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/more/about/providers/check_for_update.dart';
@@ -114,6 +118,21 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     discordRpc?.connect(ref);
   }
 
+  /// The first library the user actually has visible, in their own nav order.
+  ///
+  /// Which one counts as the default is their arrangement's business, not
+  /// ours: the merged switcher lands wherever their first library sits.
+  String? _firstVisibleLibrary() {
+    final hidden = ref.read(hideItemsStateProvider);
+    final order = ref.read(animeOnlyTvModeProvider)
+        ? _navigationOrder.where(_isNotHiddenLibOnTv)
+        : _navigationOrder;
+    for (final nav in order) {
+      if (libLocationRegex.hasMatch(nav) && !hidden.contains(nav)) return nav;
+    }
+    return null;
+  }
+
   void _initializeTimers() {
     _backupTimer = Timer.periodic(
       const Duration(minutes: 5),
@@ -198,6 +217,40 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
   int currentIndex = 0;
   bool isLibSwitch = false;
+
+  /// Drives the floating bar stepping back while a page is scrolled down.
+  final NavShrink _navShrink = NavShrink();
+
+  /// Watches the page underneath the bar and shrinks it on a sustained scroll
+  /// down. Only vertical scrolling counts: the tab swipe and every horizontal
+  /// carousel report here too, and neither should move the bar.
+  bool _onPageScroll(ScrollNotification notification) {
+    if (!usesFloatingNav) return false;
+    if (notification.metrics.axis != Axis.vertical) return false;
+
+    var changed = false;
+    if (notification is ScrollUpdateNotification) {
+      // A list with nothing to scroll cannot earn the shrink, and reaching the
+      // top always gives the bar back rather than waiting out the release run.
+      final metrics = notification.metrics;
+      if (metrics.maxScrollExtent <= 0) {
+        changed = _navShrink.reset();
+      } else if (metrics.pixels <= metrics.minScrollExtent) {
+        changed = _navShrink.reset();
+      } else {
+        changed = _navShrink.update(notification.scrollDelta ?? 0);
+      }
+    }
+    if (changed) setState(() {});
+    return false;
+  }
+
+  /// Back to full size. Touching the bar or changing tab both count as using
+  /// it, and a bar that stayed shrunk through either would look stuck.
+  void _wakeNav() {
+    if (_navShrink.reset()) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.listen<Locale>(l10nLocaleStateProvider, (previous, next) {
@@ -219,7 +272,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
             builder: (context, ref, child) {
               final isReadingScreen = _isReadingScreen(location);
               bool uniqueSwitch = false;
-              List<String> dest = !context.isTablet && isLibSwitch
+              List<String> dest = !context.prefersNavRail && isLibSwitch
                   ? [
                       "_disableLibSwitch",
                       ...navigationOrder.where(
@@ -235,7 +288,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                 dest = dest.where(_isNotHiddenLibOnTv).toList();
               }
 
-              if (mergeLibraryNavMobile && !context.isTablet && !isLibSwitch) {
+              if (mergeLibraryNavMobile &&
+                  !context.prefersNavRail &&
+                  !isLibSwitch) {
                 dest = dest
                     .map((nav) {
                       if ([
@@ -260,7 +315,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               } else {
                 String? libLocation;
                 if (mergeLibraryNavMobile &&
-                    !context.isTablet &&
+                    !context.prefersNavRail &&
                     !isLibSwitch) {
                   libLocation = location?.replaceAll(
                     libLocationRegex,
@@ -290,20 +345,28 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                     _IncognitoModeBar(incognitoMode: incognitoMode, l10n: l10n),
                   Flexible(
                     child: Scaffold(
-                      body: context.isTablet
-                          ? _TabletLayout(
-                              isLongPressed: isLongPressed,
-                              location: location,
-                              dest: dest,
-                              currentIndex: currentIndex,
-                              route: route,
-                              ref: ref,
-                              buildNavigationWidgetsDesktop:
-                                  _buildNavigationWidgetsDesktop,
-                              child: widget.child,
-                            )
-                          : widget.child,
-                      bottomNavigationBar: context.isTablet
+                      // Apple only: lets content scroll under the translucent
+                      // bar, which is the whole point of blurring it. Scroll
+                      // views inset themselves by the bar height through
+                      // MediaQuery padding, so the last row stays reachable.
+                      extendBody: usesFloatingNav,
+                      body: NotificationListener<ScrollNotification>(
+                        onNotification: _onPageScroll,
+                        child: context.prefersNavRail
+                            ? _TabletLayout(
+                                isLongPressed: isLongPressed,
+                                location: location,
+                                dest: dest,
+                                currentIndex: currentIndex,
+                                route: route,
+                                ref: ref,
+                                buildNavigationWidgetsDesktop:
+                                    _buildNavigationWidgetsDesktop,
+                                child: widget.child,
+                              )
+                            : widget.child,
+                      ),
+                      bottomNavigationBar: context.prefersNavRail
                           ? null
                           : _MobileBottomNavigation(
                               isLongPressed: isLongPressed,
@@ -312,6 +375,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                               dest: dest,
                               route: route,
                               ref: ref,
+                              shrink: _navShrink.shrunk ? 1.0 : 0.0,
+                              onWake: _wakeNav,
                               buildNavigationWidgetsMobile:
                                   _buildNavigationWidgetsMobile,
                               onDestinationSelected: (destination) {
@@ -319,6 +384,17 @@ class _MainScreenState extends ConsumerState<MainScreen> {
                                   setState(() {
                                     isLibSwitch = true;
                                   });
+                                  // Expanding the switcher used to leave you on
+                                  // whatever screen you were already on, so the
+                                  // tap looked like it did nothing until you
+                                  // picked one of the three. Land on a library
+                                  // unless you are already in one.
+                                  if (!libLocationRegex.hasMatch(
+                                    location ?? "",
+                                  )) {
+                                    final target = _firstVisibleLibrary();
+                                    if (target != null) route.go(target);
+                                  }
                                 } else if (destination == "_disableLibSwitch") {
                                   setState(() {
                                     isLibSwitch = false;
@@ -374,8 +450,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       destinations[dest.indexOf("/MangaLibrary")] = NavigationRailDestination(
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
-        selectedIcon: const Icon(Icons.collections_bookmark),
-        icon: const Icon(Icons.collections_bookmark_outlined),
+        selectedIcon: const Icon(Icons.book_rounded),
+        icon: const Icon(Icons.book_outlined),
         label: Padding(
           padding: const EdgeInsets.only(top: 5),
           child: Text(l10n.manga),
@@ -386,7 +462,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       destinations[dest.indexOf("/AnimeLibrary")] = NavigationRailDestination(
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
-        selectedIcon: const Icon(Icons.video_collection),
+        selectedIcon: const Icon(Icons.video_collection_rounded),
         icon: const Icon(Icons.video_collection_outlined),
         label: Padding(
           padding: const EdgeInsets.only(top: 5),
@@ -398,8 +474,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       destinations[dest.indexOf("/NovelLibrary")] = NavigationRailDestination(
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
-        selectedIcon: const Icon(Icons.local_library),
-        icon: const Icon(Icons.local_library_outlined),
+        selectedIcon: const Icon(Icons.auto_stories_rounded),
+        icon: const Icon(Icons.auto_stories_outlined),
         label: Padding(
           padding: const EdgeInsets.only(top: 5),
           child: Text(l10n.novel),
@@ -411,7 +487,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
         selectedIcon: _UpdatesBadgeWidget(
-          icon: const Icon(Icons.new_releases),
+          icon: const Icon(Icons.new_releases_rounded),
           ref: ref,
         ),
         icon: _UpdatesBadgeWidget(
@@ -434,7 +510,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       destinations[dest.indexOf("/history")] = NavigationRailDestination(
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
-        selectedIcon: const Icon(Icons.history),
+        selectedIcon: const Icon(Icons.history_rounded),
         icon: const Icon(Icons.history_outlined),
         label: Padding(
           padding: const EdgeInsets.only(top: 5),
@@ -447,7 +523,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
         selectedIcon: _ExtensionBadgeWidget(
-          icon: const Icon(Icons.explore),
+          icon: const Icon(Icons.explore_rounded),
           ref: ref,
         ),
         icon: _ExtensionBadgeWidget(
@@ -464,7 +540,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       destinations[dest.indexOf("/more")] = NavigationRailDestination(
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
-        selectedIcon: const Icon(Icons.more_horiz),
+        selectedIcon: const Icon(Icons.more_horiz_rounded),
         icon: const Icon(Icons.more_horiz_outlined),
         label: Padding(
           padding: const EdgeInsets.only(top: 5),
@@ -476,7 +552,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       destinations[dest.indexOf("/trackerLibrary")] = NavigationRailDestination(
         // Even breathing room between tabs on TV; null off-TV.
         padding: isTv ? const EdgeInsets.symmetric(vertical: 6) : null,
-        selectedIcon: const Icon(Icons.account_tree),
+        selectedIcon: const Icon(Icons.account_tree_rounded),
         icon: const Icon(Icons.account_tree_outlined),
         label: Padding(
           padding: const EdgeInsets.only(top: 5),
@@ -508,43 +584,43 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
     if (dest.contains("_disableLibSwitch")) {
       destinations[dest.indexOf("_disableLibSwitch")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.arrow_back),
-        icon: const Icon(Icons.arrow_back),
+        selectedIcon: const Icon(Icons.arrow_back_rounded),
+        icon: const Icon(Icons.arrow_back_rounded),
         label: l10n.go_back,
       );
     }
     if (dest.contains("_enableLibSwitch")) {
       destinations[dest.indexOf("_enableLibSwitch")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.collections_bookmark),
+        selectedIcon: const Icon(Icons.collections_bookmark_rounded),
         icon: const Icon(Icons.collections_bookmark_outlined),
         label: l10n.library,
       );
     }
     if (dest.contains("/MangaLibrary")) {
       destinations[dest.indexOf("/MangaLibrary")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.collections_bookmark),
-        icon: const Icon(Icons.collections_bookmark_outlined),
+        selectedIcon: const Icon(Icons.book_rounded),
+        icon: const Icon(Icons.book_outlined),
         label: l10n.manga,
       );
     }
     if (dest.contains("/AnimeLibrary")) {
       destinations[dest.indexOf("/AnimeLibrary")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.video_collection),
+        selectedIcon: const Icon(Icons.video_collection_rounded),
         icon: const Icon(Icons.video_collection_outlined),
         label: l10n.anime,
       );
     }
     if (dest.contains("/NovelLibrary")) {
       destinations[dest.indexOf("/NovelLibrary")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.local_library),
-        icon: const Icon(Icons.local_library_outlined),
+        selectedIcon: const Icon(Icons.auto_stories_rounded),
+        icon: const Icon(Icons.auto_stories_outlined),
         label: l10n.novel,
       );
     }
     if (dest.contains("/updates")) {
       destinations[dest.indexOf("/updates")] = NavigationDestination(
         selectedIcon: _UpdatesBadgeWidget(
-          icon: const Icon(Icons.new_releases),
+          icon: const Icon(Icons.new_releases_rounded),
           ref: ref,
         ),
         icon: _UpdatesBadgeWidget(
@@ -556,7 +632,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     }
     if (dest.contains("/history")) {
       destinations[dest.indexOf("/history")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.history),
+        selectedIcon: const Icon(Icons.history_rounded),
         icon: const Icon(Icons.history_outlined),
         label: l10n.history,
       );
@@ -564,7 +640,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     if (dest.contains("/browse")) {
       destinations[dest.indexOf("/browse")] = NavigationDestination(
         selectedIcon: _ExtensionBadgeWidget(
-          icon: const Icon(Icons.explore),
+          icon: const Icon(Icons.explore_rounded),
           ref: ref,
         ),
         icon: _ExtensionBadgeWidget(
@@ -576,14 +652,14 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     }
     if (dest.contains("/more")) {
       destinations[dest.indexOf("/more")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.more_horiz),
+        selectedIcon: const Icon(Icons.more_horiz_rounded),
         icon: const Icon(Icons.more_horiz_outlined),
         label: l10n.more,
       );
     }
     if (dest.contains("/trackerLibrary")) {
       destinations[dest.indexOf("/trackerLibrary")] = NavigationDestination(
-        selectedIcon: const Icon(Icons.account_tree),
+        selectedIcon: const Icon(Icons.account_tree_rounded),
         icon: const Icon(Icons.account_tree_outlined),
         label: l10n.tracking,
       );
@@ -904,6 +980,8 @@ class _MobileBottomNavigation extends StatelessWidget {
     required this.ref,
     required this.buildNavigationWidgetsMobile,
     required this.onDestinationSelected,
+    this.shrink = 0,
+    this.onWake,
   });
 
   final bool isLongPressed;
@@ -916,30 +994,92 @@ class _MobileBottomNavigation extends StatelessWidget {
   buildNavigationWidgetsMobile;
   final Function(String) onDestinationSelected;
 
+  /// Passed through to the floating bar; 0 at rest, 1 while the page under it
+  /// is being scrolled down.
+  final double shrink;
+
+  /// The bar asking for its full size back.
+  final VoidCallback? onWake;
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    // On Apple platforms the bar is translucent and content passes underneath,
+    // which is what makes it read as native rather than as a solid slab. The
+    // Scaffold sets extendBody to match. Elsewhere the bar stays opaque.
+    final translucent = usesFloatingNav;
+
+    if (translucent) {
+      return SizedBox(
+        width: context.width(1),
+        // Reserved height stays constant so shrinking the bar never reflows
+        // the list underneath it. The bar shrinks within this slot.
+        height: _getBottomNavigationHeight(isLongPressed, location),
+        child: FloatingNavBar(
+          destinations: buildNavigationWidgetsMobile(
+            ref,
+            dest,
+            context,
+          ).cast<NavigationDestination>(),
+          currentIndex: currentIndex,
+          onSelected: (newIndex) => onDestinationSelected(dest[newIndex]),
+          // Landscape has width to spare and height to save, so the labels go
+          // beside the icons rather than a rail taking over.
+          showLabels: context.isLandscape,
+          shrink: shrink,
+          onWake: onWake,
+        ),
+      );
+    }
+
+    Widget bar = NavigationBarTheme(
+      data: NavigationBarThemeData(
+        labelTextStyle: const WidgetStatePropertyAll(
+          TextStyle(overflow: TextOverflow.ellipsis),
+        ),
+        indicatorShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        backgroundColor: translucent
+            ? theme.colorScheme.surface.withValues(alpha: 0.72)
+            : null,
+        // Material's tint would fight the blur and leave the bar looking
+        // muddy over scrolling content.
+        surfaceTintColor: translucent ? Colors.transparent : null,
+        elevation: translucent ? 0 : null,
+      ),
+      child: NavigationBar(
+        animationDuration: const Duration(milliseconds: 500),
+        selectedIndex: currentIndex,
+        // The bar adapts to whatever the user put on it rather than the user
+        // having to trim it to fit. With every tab enabled the labels run into
+        // each other, so below a comfortable width per destination only the
+        // selected label is shown; the icons still say what everything is.
+        labelBehavior: context.width(1) / dest.length < 72
+            ? NavigationDestinationLabelBehavior.onlyShowSelected
+            : NavigationDestinationLabelBehavior.alwaysShow,
+        destinations: buildNavigationWidgetsMobile(ref, dest, context),
+        onDestinationSelected: (newIndex) {
+          onDestinationSelected(dest[newIndex]);
+        },
+      ),
+    );
+
+    if (translucent) {
+      // Clipped, or the blur samples beyond the bar and bleeds up the screen.
+      bar = ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+          child: bar,
+        ),
+      );
+    }
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 0),
       width: context.width(1),
       height: _getBottomNavigationHeight(isLongPressed, location),
-      child: NavigationBarTheme(
-        data: NavigationBarThemeData(
-          labelTextStyle: const WidgetStatePropertyAll(
-            TextStyle(overflow: TextOverflow.ellipsis),
-          ),
-          indicatorShape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-        ),
-        child: NavigationBar(
-          animationDuration: const Duration(milliseconds: 500),
-          selectedIndex: currentIndex,
-          destinations: buildNavigationWidgetsMobile(ref, dest, context),
-          onDestinationSelected: (newIndex) {
-            onDestinationSelected(dest[newIndex]);
-          },
-        ),
-      ),
+      child: bar,
     );
   }
 
@@ -964,6 +1104,13 @@ class _MobileBottomNavigation extends StatelessWidget {
   }
 }
 
+/// A floating capsule nav bar: content runs underneath, icons only, and one
+/// filled pill slides between destinations to mark the current one.
+///
+/// Labels are dropped rather than shrunk, so every icon has to identify its
+/// destination on its own. That is why the novel library uses an open book
+/// while the manga library uses stacked cards: with labels either reads fine,
+/// without them two book icons do not.
 class _ExtensionBadgeWidget extends ConsumerWidget {
   const _ExtensionBadgeWidget({required this.icon, required this.ref});
 
