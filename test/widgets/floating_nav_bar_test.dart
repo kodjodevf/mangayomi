@@ -1568,4 +1568,27 @@ void _wakeTests() {
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('shrinking never puts the bar in its own layer', (tester) async {
+    // Transform applies its scale as a bitmap operation when given a
+    // filterQuality, which paints the subtree into an offscreen layer. The
+    // BackdropFilter inside then samples that layer instead of the page behind
+    // the bar, so the glass silently stops working for as long as the bar is
+    // shrunk and the translucency snaps back the moment it is not.
+    for (final shrink in const [0.0, 0.5, 1.0]) {
+      await tester.pumpWidget(_host(index: 0, shrink: shrink));
+      await tester.pumpAndSettle();
+
+      final quality = tester
+          .widgetList<Transform>(find.byType(Transform))
+          .map((t) => t.filterQuality)
+          .where((q) => q != null)
+          .toList();
+      expect(
+        quality,
+        isEmpty,
+        reason: 'a filterQuality at shrink $shrink would break the backdrop',
+      );
+    }
+  });
 }
