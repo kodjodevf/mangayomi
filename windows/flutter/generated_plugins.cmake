@@ -5,6 +5,7 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   app_links
   connectivity_plus
+  flutter_avif_windows
   flutter_inappwebview_windows
   flutter_qjs
   flutter_tts

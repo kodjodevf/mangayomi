@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   desktop_webview_window
+  flutter_avif_linux
   flutter_qjs
   gtk
   isar_community_flutter_libs
