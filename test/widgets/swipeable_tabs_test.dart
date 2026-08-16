@@ -612,4 +612,145 @@ void main() {
       expect(tester.getRect(find.byKey(const ValueKey('page1'))).left, 0);
     });
   });
+
+  group('handing over to the shell', () {
+    testWidgets('the page just left never comes back to the middle', (
+      tester,
+    ) async {
+      await tester.pumpWidget(const _LiveTabs(start: 1, count: 3));
+      await tester.pumpAndSettle();
+
+      final gesture = await tester.startGesture(const Offset(400, 300));
+      await gesture.moveBy(const Offset(-400, 0));
+      await tester.pump();
+      await gesture.up();
+
+      // Where the page being left sits on every frame of the settle and the
+      // handover. Missing means it has gone offstage, which is the end of it.
+      final trail = <double>[];
+      for (var i = 0; i < 40; i++) {
+        await tester.pump(const Duration(milliseconds: 16));
+        final outgoing = find.byKey(const ValueKey('page1'));
+        if (outgoing.evaluate().isEmpty) break;
+        trail.add(tester.getRect(outgoing).left);
+      }
+
+      // Once it has started leaving it must keep leaving. Coming back to the
+      // middle is the flicker: for one frame the shell still has the old tab
+      // selected while the offset has already been zeroed.
+      var departed = false;
+      for (final left in trail) {
+        if (left.abs() > 50) {
+          departed = true;
+        } else if (departed) {
+          fail('the page just left returned to the middle at $left');
+        }
+      }
+      expect(departed, isTrue, reason: 'it never left at all');
+
+      await tester.pumpAndSettle();
+      expect(tester.getRect(find.byKey(const ValueKey('page2'))).left, 0);
+    });
+
+    testWidgets('the arriving page ends up centred', (tester) async {
+      await tester.pumpWidget(const _LiveTabs(start: 0, count: 3));
+      await tester.pumpAndSettle();
+
+      final gesture = await tester.startGesture(const Offset(400, 300));
+      await gesture.moveBy(const Offset(-400, 0));
+      await tester.pump();
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(tester.getRect(find.byKey(const ValueKey('page1'))).left, 0);
+      expect(find.byKey(const ValueKey('page0')), findsNothing);
+    });
+  });
+
+  group('the ends', () {
+    testWidgets('the last tab does not shift when dragged further', (
+      tester,
+    ) async {
+      await tester.pumpWidget(_host(index: 2, count: 3, onSwitch: (_) {}));
+      await tester.pumpAndSettle();
+      final rest = tester.getRect(find.byKey(const ValueKey('page2')));
+
+      final gesture = await tester.startGesture(const Offset(400, 300));
+      await gesture.moveBy(const Offset(-200, 0));
+      await tester.pump();
+
+      expect(
+        tester.getRect(find.byKey(const ValueKey('page2'))),
+        rest,
+        reason: 'there is no next tab, so nothing should give',
+      );
+      await gesture.up();
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('the first tab does not shift either', (tester) async {
+      await tester.pumpWidget(_host(index: 0, count: 3, onSwitch: (_) {}));
+      await tester.pumpAndSettle();
+      final rest = tester.getRect(find.byKey(const ValueKey('page0')));
+
+      final gesture = await tester.startGesture(const Offset(400, 300));
+      await gesture.moveBy(const Offset(200, 0));
+      await tester.pump();
+
+      expect(tester.getRect(find.byKey(const ValueKey('page0'))), rest);
+      await gesture.up();
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('a drag away from the end still works', (tester) async {
+      final switched = <int>[];
+      await tester.pumpWidget(
+        _host(index: 2, count: 3, onSwitch: switched.add),
+      );
+      await tester.pumpAndSettle();
+
+      final gesture = await tester.startGesture(const Offset(400, 300));
+      await gesture.moveBy(const Offset(400, 0));
+      await tester.pump();
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(switched, [1]);
+    });
+  });
+}
+
+/// A host that switches tab when the swipe commits, like the shell does.
+///
+/// The change lands a frame late on purpose. go_router does not swap the
+/// branch in the same frame the swipe asks it to, and that gap is exactly
+/// where the outgoing page can flash back into the middle.
+class _LiveTabs extends StatefulWidget {
+  const _LiveTabs({required this.start, required this.count});
+  final int start;
+  final int count;
+
+  @override
+  State<_LiveTabs> createState() => _LiveTabsState();
+}
+
+class _LiveTabsState extends State<_LiveTabs> {
+  late int _index = widget.start;
+
+  @override
+  Widget build(BuildContext context) => MaterialApp(
+    home: Scaffold(
+      body: SwipeableTabs(
+        currentIndex: _index,
+        order: [for (var i = 0; i < widget.count; i++) i],
+        onSwitch: (i) => WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) setState(() => _index = i);
+        }),
+        branches: [
+          for (var i = 0; i < widget.count; i++)
+            Center(key: ValueKey('page$i'), child: Text('page$i')),
+        ],
+      ),
+    ),
+  );
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -63,6 +65,12 @@ class SwipeableTabs extends StatefulWidget {
   static const _commitVelocity = 450.0;
 
   static const _settleDuration = Duration(milliseconds: 220);
+
+  /// How long to wait for the shell to actually change tab after a commit
+  /// before assuming it is not going to and putting the pages back. Long
+  /// enough to be well clear of a router round trip, since firing early is
+  /// what causes the page just left to flash back into the middle.
+  static const _handoverGiveUp = Duration(milliseconds: 400);
 
   /// Gap between the outgoing and incoming page while they are both on screen,
   /// so the two read as separate surfaces rather than one sliding sheet.
@@ -137,6 +145,9 @@ class _SwipeableTabsState extends State<SwipeableTabs>
   /// Set while a committed drag hands over to the shell, so the tab change it
   /// causes is not mistaken for a tap and animated a second time.
   bool _committing = false;
+
+  /// Fallback for a commit whose tab change never arrives.
+  Timer? _handover;
   Offset _down = Offset.zero;
   VelocityTracker? _velocity;
 
@@ -144,9 +155,15 @@ class _SwipeableTabsState extends State<SwipeableTabs>
   void didUpdateWidget(SwipeableTabs oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.currentIndex == oldWidget.currentIndex) return;
-    // The drag that caused this has already carried the pages across.
+    // The drag that caused this has already carried the pages across. This is
+    // the build that brings the new tab in, so the offset the settle left
+    // behind goes now: any earlier and the outgoing page reappears in the
+    // middle for a frame.
     if (_committing) {
+      _handover?.cancel();
       _committing = false;
+      _offset = 0;
+      _settle.value = 0;
       return;
     }
     if (_dragging || _settle.isAnimating) return;
@@ -166,6 +183,7 @@ class _SwipeableTabsState extends State<SwipeableTabs>
 
   @override
   void dispose() {
+    _handover?.cancel();
     _settle.dispose();
     super.dispose();
   }
@@ -253,10 +271,11 @@ class _SwipeableTabsState extends State<SwipeableTabs>
 
     final width = context.size?.width ?? 1;
     _lastWidth = width;
-    var next = _offset + event.delta.dx;
-    // Nothing to reveal past the first or last tab, so resist rather than
-    // dragging a blank gap into view.
-    if (_neighbourFor(next) == null) next = _offset + event.delta.dx * 0.25;
+    final next = _offset + event.delta.dx;
+    // Nothing to reveal past the first or last tab. The page stays put rather
+    // than giving: a page that shifts under the finger reads as the swipe
+    // having been taken, and then nothing happens.
+    if (_neighbourFor(next) == null) return;
     setState(() => _offset = next.clamp(-width, width));
     _report(_offset, width);
   }
@@ -289,14 +308,29 @@ class _SwipeableTabsState extends State<SwipeableTabs>
         widget.onSwitch(target);
         // The bar's own selection takes over from here.
         widget.onProgress?.call(null, 0);
-        // The shell swaps the child in on the next frame; drop the peek then,
-        // not before, or the outgoing page flashes back into view.
-        if (mounted) {
+        // The offset is deliberately left where the settle put it. Zeroing it
+        // here would centre the page again while the shell still has the old
+        // tab selected, and the page you just swiped away flashes back for a
+        // frame before the new one arrives. It is cleared in didUpdateWidget
+        // instead, on the build that actually brings the new tab in.
+        //
+        // Unless the switch never lands: a destination that only toggles the
+        // library switcher can leave the selection where it was, and without
+        // this the page would stay parked off screen.
+        //
+        // On a timer rather than the next frame. The router does not swap the
+        // branch in the frame it is asked to, so a next-frame fallback fires
+        // into that gap and puts the page back in the middle itself, which is
+        // the very flicker it is here to avoid.
+        _handover?.cancel();
+        _handover = Timer(SwipeableTabs._handoverGiveUp, () {
+          if (!mounted || !_committing) return;
           setState(() {
+            _committing = false;
             _offset = 0;
             _settle.value = 0;
           });
-        }
+        });
       });
     } else {
       _settleFrom = _offset;
