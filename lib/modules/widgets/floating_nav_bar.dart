@@ -528,7 +528,12 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
         builder: (context, shrink, child) => Transform.scale(
           scale: 1 - shrink * FloatingNavBar._shrinkScale,
           alignment: Alignment.bottomCenter,
-          filterQuality: FilterQuality.medium,
+          // No filterQuality. Setting one applies the scale as a bitmap
+          // operation, which paints this subtree into an offscreen layer, and
+          // the BackdropFilter inside then samples that layer rather than the
+          // page behind the bar. The blur quietly stops working for as long as
+          // the scale is applied, so the bar reads as flat while it is shrunk
+          // and the translucency snaps back the moment it is not.
           child: child,
         ),
         // Sized to its contents when labelled, and centred. Left to fill the
