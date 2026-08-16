@@ -80,3 +80,14 @@ Future<void> initIsTv() async {
 /// phone and desktop layouts are byte-for-byte unchanged.
 EdgeInsets get tvPageInsets =>
     isTv ? const EdgeInsets.symmetric(horizontal: 16) : EdgeInsets.zero;
+
+/// Bottom room a scrolling page should leave clear.
+///
+/// On Apple the nav bar floats over the content, and the shell sets
+/// `extendBody`, so the Scaffold reports the bar's height here. On a pushed
+/// route with no bar this is just the home indicator's inset. Either way a
+/// scroll view that sets its own padding *replaces* what the Scaffold provided
+/// rather than adding to it, which is how a list ends up running underneath
+/// the bar; adding this back is what fixes it.
+EdgeInsets pageBottomInsets(BuildContext context) =>
+    EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom + 8);
