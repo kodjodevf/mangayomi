@@ -201,7 +201,12 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
       animationDuration: Duration.zero,
       length: _tabList.length,
       child: Scaffold(
+        // bottom: false so the inset reaches the tab views instead of being
+        // consumed here. Each applies it to its own scroll padding, which lets
+        // content pass under the translucent bar rather than stopping short of
+        // it, and keeps the last row reachable either way.
         body: SafeArea(
+          bottom: false,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

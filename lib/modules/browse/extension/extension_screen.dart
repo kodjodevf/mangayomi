@@ -153,6 +153,12 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
                     _buildInstalledSection(installedEntries, l10n),
                   if (notInstalledEntries.isNotEmpty)
                     _buildNotInstalledSection(notInstalledEntries),
+                  // Trailing room rather than padding around the viewport, so
+                  // rows scroll under the translucent bar (which is what gives
+                  // it something to blur) and only the last one clears it.
+                  SliverToBoxAdapter(
+                    child: SizedBox(height: pageBottomInsets(context).bottom),
+                  ),
                 ],
               ),
             );
