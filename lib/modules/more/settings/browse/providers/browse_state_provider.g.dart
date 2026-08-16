@@ -62,6 +62,62 @@ abstract class _$AndroidProxyServerState extends $Notifier<String> {
   }
 }
 
+@ProviderFor(AutoStartExtensionServerOnLaunchState)
+final autoStartExtensionServerOnLaunchStateProvider =
+    AutoStartExtensionServerOnLaunchStateProvider._();
+
+final class AutoStartExtensionServerOnLaunchStateProvider
+    extends $NotifierProvider<AutoStartExtensionServerOnLaunchState, bool> {
+  AutoStartExtensionServerOnLaunchStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'autoStartExtensionServerOnLaunchStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() =>
+      _$autoStartExtensionServerOnLaunchStateHash();
+
+  @$internal
+  @override
+  AutoStartExtensionServerOnLaunchState create() =>
+      AutoStartExtensionServerOnLaunchState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$autoStartExtensionServerOnLaunchStateHash() =>
+    r'e2137ed3c05a099db7c2a9b3d16bd1877ad8fac3';
+
+abstract class _$AutoStartExtensionServerOnLaunchState extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(OnlyIncludePinnedSourceState)
 final onlyIncludePinnedSourceStateProvider =
     OnlyIncludePinnedSourceStateProvider._();

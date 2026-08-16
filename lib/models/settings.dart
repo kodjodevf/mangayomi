@@ -238,6 +238,7 @@ class Settings {
   String? jrePath;
 
   String? extensionServerPath;
+  bool? autoStartExtensionServerOnLaunch;
 
   @enumerated
   late SectionType disableSectionType;
@@ -554,6 +555,7 @@ class Settings {
     this.androidProxyServer,
     this.jrePath = "",
     this.extensionServerPath = "",
+    this.autoStartExtensionServerOnLaunch = false,
     this.lastTrackerLibraryLocation,
     this.mergeLibraryNavMobile = false,
     this.enableDiscordRpc = true,
@@ -879,6 +881,7 @@ class Settings {
     androidProxyServer = json['androidProxyServer'];
     jrePath = json['jrePath'];
     extensionServerPath = json['extensionServerPath'];
+    autoStartExtensionServerOnLaunch = json['autoStartExtensionServerOnLaunch'];
     lastTrackerLibraryLocation = json['lastTrackerLibraryLocation'];
     mergeLibraryNavMobile = json['mergeLibraryNavMobile'];
     enableDiscordRpc = json['enableDiscordRpc'];
@@ -1116,6 +1119,7 @@ class Settings {
     'androidProxyServer': androidProxyServer,
     'jrePath': jrePath,
     'extensionServerPath': extensionServerPath,
+    'autoStartExtensionServerOnLaunch': autoStartExtensionServerOnLaunch,
     'lastTrackerLibraryLocation': lastTrackerLibraryLocation,
     'mergeLibraryNavMobile': mergeLibraryNavMobile,
     'enableDiscordRpc': enableDiscordRpc,

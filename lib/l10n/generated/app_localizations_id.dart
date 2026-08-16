@@ -2512,7 +2512,10 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get zero_interpreter_description =>
-      'The server starts automatically on launch. You can also control it manually.';
+      'Control the Zero interpreter server automatically or manually.';
+
+  @override
+  String get start_server_on_launch => 'Start server on launch';
 
   @override
   String get runtime_status => 'Runtime status';
