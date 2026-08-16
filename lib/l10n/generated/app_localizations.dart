@@ -4598,8 +4598,14 @@ abstract class AppLocalizations {
   /// No description provided for @zero_interpreter_description.
   ///
   /// In en, this message translates to:
-  /// **'The server starts automatically on launch. You can also control it manually.'**
+  /// **'Control the Zero interpreter server automatically or manually.'**
   String get zero_interpreter_description;
+
+  /// No description provided for @start_server_on_launch.
+  ///
+  /// In en, this message translates to:
+  /// **'Start server on launch'**
+  String get start_server_on_launch;
 
   /// No description provided for @runtime_status.
   ///
