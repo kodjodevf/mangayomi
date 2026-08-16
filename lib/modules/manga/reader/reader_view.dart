@@ -1454,13 +1454,16 @@ class _MangaChapterPageGalleryState
       _readerController.setPageIndex(prevIdx, false, _chapterUrlModel.pageUrls);
     }
     _updateChapterIfNeeded(actualIndex);
-    // Reset zoom of the previous page so user can swipe back freely (#443).
-    _pageControllers[prevActualIndex]?.resetScaleAndCenter();
-    if (_isDoublePageActive) {
-      final prevController = _doublePageControllers[prevActualIndex];
-      if (prevController != null) {
-        prevController.scale = 1.0;
-        prevController.position = Offset.zero;
+    // Avoid rebuilding the tile map when an untransformed page crosses
+    // PageView's 50% onPageChanged threshold.
+    if (_isCurrentPageZoomed) {
+      _pageControllers[prevActualIndex]?.resetScaleAndCenter();
+      if (_isDoublePageActive) {
+        final previousController = _doublePageControllers[prevActualIndex];
+        if (previousController != null) {
+          previousController.scale = 1.0;
+          previousController.position = Offset.zero;
+        }
       }
     }
 
