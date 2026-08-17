@@ -1,6 +1,6 @@
 // ignore_for_file: implementation_imports
 
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'package:grouped_list/src/grouped_list_order.dart';
@@ -102,7 +102,11 @@ class _CustomSliverGroupedListViewState<T, E>
   @override
   void didUpdateWidget(covariant CustomSliverGroupedListView<T, E> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!identical(oldWidget.elements, widget.elements) ||
+    // By contents, not by identity. Callers collect into a freshly built list
+    // on every build, so identity never matches and the memo below never held:
+    // the keys were recomputed and the sort redone on each rebuild regardless.
+    // listEquals walks the list once, which is nothing beside sorting it.
+    if (!listEquals(oldWidget.elements, widget.elements) ||
         oldWidget.sort != widget.sort ||
         oldWidget.order != widget.order) {
       _needsPrepare = true;
