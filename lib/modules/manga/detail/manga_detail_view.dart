@@ -1918,8 +1918,18 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                       widget.manga!.sourceId,
                     );
                     if (source == null) return;
-                    final url =
-                        "${source.baseUrl}${widget.manga!.link!.getUrlWithoutDomain}";
+                    String url = "";
+                    final baseUrl = source.baseUrl;
+                    final link = widget.manga!.link!.getUrlWithoutDomain;
+                    if (baseUrl == null) return;
+                    if (baseUrl.endsWith("/") && link.startsWith("/")) {
+                      url = baseUrl + link.substring(1);
+                    } else if (!baseUrl.endsWith("/") &&
+                        !link.startsWith("/")) {
+                      url = "$baseUrl/$link";
+                    } else {
+                      url = "$baseUrl$link";
+                    }
 
                     Map<String, dynamic> data = {
                       'url': url,
