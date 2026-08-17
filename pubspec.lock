@@ -496,6 +496,22 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_avif_ios:
+    dependency: "direct main"
+    description:
+      name: flutter_avif_ios
+      sha256: "3daaa599d8fe0193d3ade6cafa1fd4f166d4063b8d499c7c311ce1d170b2759f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.0"
+  flutter_avif_platform_interface:
+    dependency: "direct main"
+    description:
+      name: flutter_avif_platform_interface
+      sha256: f5c110bdb7de2d4ab4902bfe2ec331fe24bc19b6d54f00ac4fa165effc0edcda
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.0"
   flutter_discord_rpc_fork:
     dependency: "direct main"
     description:
