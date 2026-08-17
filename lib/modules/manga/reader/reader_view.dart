@@ -78,14 +78,19 @@ class _MangaReaderViewState extends ConsumerState<MangaReaderView> {
 
     return chapterData.when(
       loading: () => scaffoldWith(context, const ProgressCenter()),
-      error: (error, _) => scaffoldWith(
-        context,
-        ErrorState(
-          detail: error.toString(),
-          onRetry: () =>
-              ref.invalidate(mangaReaderProvider(widget.chapterId)),
-        ),
-      ),
+      error: (error, _) {
+        if (chapterData.isRefreshing || chapterData.isReloading) {
+          return scaffoldWith(context, const ProgressCenter());
+        }
+        return scaffoldWith(
+          context,
+          ErrorState(
+            detail: error.toString(),
+            onRetry: () =>
+                ref.invalidate(mangaReaderProvider(widget.chapterId)),
+          ),
+        );
+      },
       data: (data) {
         final chapter = data.chapter;
         final model = data.pages;

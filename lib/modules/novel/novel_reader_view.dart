@@ -777,15 +777,23 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                 context,
                 Center(child: CircularProgressIndicator()),
               ),
-              error: (err, stack) => scaffoldWith(
-                context,
-                ErrorState(
-                  detail: err.toString(),
-                  onRetry: () => ref.invalidate(
-                    getHtmlContentProvider(chapter: widget.chapter),
+              error: (err, stack) {
+                if (widget.result.isRefreshing || widget.result.isReloading) {
+                  return scaffoldWith(
+                    context,
+                    Center(child: CircularProgressIndicator()),
+                  );
+                }
+                return scaffoldWith(
+                  context,
+                  ErrorState(
+                    detail: err.toString(),
+                    onRetry: () => ref.invalidate(
+                      getHtmlContentProvider(chapter: widget.chapter),
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ),
         ),
