@@ -1,7 +1,8 @@
+import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:flutter_avif/flutter_avif.dart';
+import 'package:flutter_avif_platform_interface/flutter_avif_platform_interface.dart';
 
 bool isAvifImage(Uint8List bytes) {
   if (bytes.length < 12 ||
@@ -34,16 +35,31 @@ Future<Uint8List> decodeAvifToPng(Uint8List bytes) async {
     throw ArgumentError.value(bytes, 'bytes', 'Not an AVIF image');
   }
 
-  final codec = SingleFrameAvifCodec(bytes: bytes);
-  ui.Image? image;
+  final frame = await FlutterAvifPlatform.api.decodeSingleFrameImage(
+    avifBytes: bytes,
+  );
+  if (frame.width == 0 || frame.height == 0) {
+    throw StateError('libavif returned an empty frame');
+  }
+
+  final image = await _imageFromRgba(frame.data, frame.width, frame.height);
   try {
-    await codec.ready();
-    image = (await codec.getNextFrame()).image;
     final png = await image.toByteData(format: ui.ImageByteFormat.png);
     if (png == null) throw StateError('Failed to encode decoded AVIF as PNG');
     return png.buffer.asUint8List(png.offsetInBytes, png.lengthInBytes);
   } finally {
-    image?.dispose();
-    codec.dispose();
+    image.dispose();
   }
+}
+
+Future<ui.Image> _imageFromRgba(List<int> rgba, int width, int height) {
+  final completer = Completer<ui.Image>();
+  ui.decodeImageFromPixels(
+    rgba is Uint8List ? rgba : Uint8List.fromList(rgba),
+    width,
+    height,
+    ui.PixelFormat.rgba8888,
+    completer.complete,
+  );
+  return completer.future;
 }

@@ -50,9 +50,6 @@ PODS:
     - Flutter
   - share_plus (0.0.1):
     - Flutter
-  - sqflite_darwin (0.0.4):
-    - Flutter
-    - FlutterMacOS
   - swift-collections (1.1.1):
     - swift-collections/BitCollections (= 1.1.1)
     - swift-collections/DequeModule (= 1.1.1)
@@ -99,7 +96,6 @@ DEPENDENCIES:
   - rust_lib_mangayomi (from `.symlinks/plugins/rust_lib_mangayomi/ios`)
   - screen_brightness_ios (from `.symlinks/plugins/screen_brightness_ios/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
-  - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - volume_controller (from `.symlinks/plugins/volume_controller/ios`)
   - wakelock_plus (from `.symlinks/plugins/wakelock_plus/ios`)
@@ -154,8 +150,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/screen_brightness_ios/ios"
   share_plus:
     :path: ".symlinks/plugins/share_plus/ios"
-  sqflite_darwin:
-    :path: ".symlinks/plugins/sqflite_darwin/darwin"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
   volume_controller:
@@ -187,7 +181,6 @@ SPEC CHECKSUMS:
   rust_lib_mangayomi: 360a904274b47351a0f7c26d3ce5aa6392bb8db3
   screen_brightness_ios: 212d950bb99c915eee971c884f4a6c87c92cd13d
   share_plus: 50da8cb520a8f0f65671c6c6a99b3617ed10a58a
-  sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0
   swift-collections: ba248ecaf44ef500b27d5cf94d304218c89892ff
   url_launcher_ios: 7a95fa5b60cc718a708b8f2966718e93db0cef1b
   volume_controller: 3657a1f65bedb98fa41ff7dc5793537919f31b12

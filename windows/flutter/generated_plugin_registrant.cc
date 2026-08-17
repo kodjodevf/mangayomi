@@ -8,7 +8,6 @@
 
 #include <app_links/app_links_plugin_c_api.h>
 #include <connectivity_plus/connectivity_plus_windows_plugin.h>
-#include <flutter_avif_windows/flutter_avif_windows_plugin.h>
 #include <flutter_inappwebview_windows/flutter_inappwebview_windows_plugin_c_api.h>
 #include <flutter_qjs/flutter_qjs_plugin.h>
 #include <flutter_tts/flutter_tts_plugin.h>
@@ -31,8 +30,6 @@ void RegisterPlugins(flutter::PluginRegistry* registry) {
       registry->GetRegistrarForPlugin("AppLinksPluginCApi"));
   ConnectivityPlusWindowsPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("ConnectivityPlusWindowsPlugin"));
-  FlutterAvifWindowsPluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("FlutterAvifWindowsPlugin"));
   FlutterInappwebviewWindowsPluginCApiRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("FlutterInappwebviewWindowsPluginCApi"));
   FlutterQjsPluginRegisterWithRegistrar(
