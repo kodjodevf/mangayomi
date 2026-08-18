@@ -1331,6 +1331,8 @@ class _MangaChapterPageGalleryState
   /// This is fully async — [await] inside a fire-and-forget call — so the
   /// UI stays interactive throughout.
   Future<void> _checkAndReloadEvictedPages(Chapter currentChapter) async {
+    if (!preloadManager.isChapterEvicted(currentChapter)) return;
+
     final chapterId = currentChapter.id;
     bool needsReload = false;
     for (final page in pages) {
