@@ -104,10 +104,16 @@ separate colour. Use `Color.withValues(alpha:)`, not `withOpacity` (deprecated).
 | `--alpha-accent-tint` | `0.16` | `--accent` | accent tinted badge fill ("up next") |
 | `--alpha-secondary` | `0.70` | `--fg` | secondary text |
 | `--alpha-tv-focus` | `0.45` | `--accent` | ambient `focusColor` on TV only |
+| `--alpha-disabled` | `0.38` | `--fg` | disabled text and icons |
 
-Nothing else. If you reach for a seventh value, you are almost certainly duplicating one
+Nothing else. If you reach for an eighth value, you are almost certainly duplicating one
 of these, and the two files audited for this document prove how easily that happens
 (see 9).
+
+`--alpha-disabled` was promoted here on 2026-08-17, which is what this rule requires.
+The codebase already dims things three different ways: `0.5` in 24 places, `0.6` in 7 and
+Material's own `0.38` in 2. Material's value wins because disabled text has a contrast
+floor to clear, and `0.5` does not clear it against every palette in the catalogue.
 
 ---
 

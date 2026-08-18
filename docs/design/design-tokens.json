@@ -61,7 +61,7 @@
   },
   "alpha": {
     "$type": "number",
-    "$description": "The alpha ladder. Tints are an alpha over color.fg or color.accent so they survive any palette. Applied with Color.withValues(alpha:). Six values; a seventh must be promoted in DESIGN.md first.",
+    "$description": "The alpha ladder. Tints are an alpha over color.fg or color.accent so they survive any palette. Applied with Color.withValues(alpha:). Seven values; an eighth must be promoted in DESIGN.md first.",
     "tint": {
       "$value": 0.08,
       "$description": "over fg: chip and neutral badge fill"

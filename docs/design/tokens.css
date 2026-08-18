@@ -86,7 +86,7 @@
    * The load bearing idea of this system. Tints are an alpha over --fg
    * or --accent so they survive any palette the user picks. Applied in
    * Dart with Color.withValues(alpha:), never withOpacity.
-   * Six values. If you need a seventh, promote it in DESIGN.md first. */
+   * Seven values. If you need an eighth, promote it in DESIGN.md first. */
   --alpha-tint: 0.08;               /* --fg: chip and neutral badge fill */
   --alpha-hairline: 0.16;           /* --fg: connectors, thin rules */
   --alpha-focus: 0.14;              /* --accent: InkWell focus wash */
