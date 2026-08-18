@@ -1,0 +1,474 @@
+{
+  "$schema": "https://tr.designtokens.org/format/",
+  "$description": "Mangayomi design tokens, derived from tokens.css. Colour values are a reference instantiation of the shipped defaults (FlexColor.blue, blend 10, pure black off); the runtime contract is the role mapping in DESIGN.md section 3. Non colour tokens are authoritative.",
+  "color": {
+    "$type": "color",
+    "$description": "Runtime bound. See DESIGN.md section 3.1 for the Flutter accessor each role maps to.",
+    "bg": {
+      "$value": "#f1f5fa",
+      "$description": "scaffoldBackgroundColor. Dark reference #16191c, pure black #000000."
+    },
+    "surface": {
+      "$value": "#fafbfd",
+      "$description": "colorScheme.surface. Dark reference #1c2024."
+    },
+    "surface-warm": {
+      "$value": "{color.surface}",
+      "$description": "B slot alias: single surface tier."
+    },
+    "fg": {
+      "$value": "#1a1c1e",
+      "$description": "context.textColor (textTheme.bodyLarge.color). Dark reference #e2e2e6."
+    },
+    "fg-2": {
+      "$value": "{color.fg}",
+      "$description": "B slot alias: two level ramp only."
+    },
+    "muted": {
+      "$value": "#5c6166",
+      "$description": "Not a distinct colour at runtime: fg at alpha.secondary. Dark reference #a6abb0."
+    },
+    "meta": {
+      "$value": "{color.muted}",
+      "$description": "B slot alias: no third text tier."
+    },
+    "border": {
+      "$value": "#d3d8dd",
+      "$description": "fg at alpha.hairline. Dark reference #2f3338."
+    },
+    "border-soft": {
+      "$value": "{color.border}",
+      "$description": "B slot alias."
+    },
+    "accent": {
+      "$value": "#1565c0",
+      "$description": "context.primaryColor. User controlled. Dark reference #90caf9."
+    },
+    "accent-on": {
+      "$value": "#ffffff",
+      "$description": "COMPUTED, never authored: accent.computeLuminance() > 0.5 ? black : white. Flips to #000000 in the dark reference because that accent is the pale blue."
+    },
+    "success": {
+      "$value": "#17a34a"
+    },
+    "warn": {
+      "$value": "#eab308"
+    },
+    "danger": {
+      "$value": "#ba1a1a",
+      "$description": "Prefer colorScheme.error at runtime. Dark reference #ffb4ab."
+    }
+  },
+  "alpha": {
+    "$type": "number",
+    "$description": "The alpha ladder. Tints are an alpha over color.fg or color.accent so they survive any palette. Applied with Color.withValues(alpha:). Six values; a seventh must be promoted in DESIGN.md first.",
+    "tint": {
+      "$value": 0.08,
+      "$description": "over fg: chip and neutral badge fill"
+    },
+    "hairline": {
+      "$value": 0.16,
+      "$description": "over fg: connectors, thin rules"
+    },
+    "focus": {
+      "$value": 0.14,
+      "$description": "over accent: InkWell focus wash"
+    },
+    "accent-tint": {
+      "$value": 0.16,
+      "$description": "over accent: accent tinted badge fill"
+    },
+    "secondary": {
+      "$value": 0.7,
+      "$description": "over fg: secondary text"
+    },
+    "tv-focus": {
+      "$value": 0.45,
+      "$description": "over accent: ambient focusColor, TV only"
+    }
+  },
+  "tint": {
+    "$type": "color",
+    "$description": "The alpha ladder pre-composed for CSS consumers, so a percentage is never retyped. Dart applies the raw alpha.* value with Color.withValues(alpha:) instead.",
+    "neutral": {
+      "$value": "color-mix(in oklab, {color.fg} 8%, transparent)",
+      "$description": "fg at alpha.tint"
+    },
+    "hairline": {
+      "$value": "color-mix(in oklab, {color.fg} 16%, transparent)",
+      "$description": "fg at alpha.hairline"
+    },
+    "accent": {
+      "$value": "color-mix(in oklab, {color.accent} 16%, transparent)",
+      "$description": "accent at alpha.accent-tint"
+    },
+    "focus-wash": {
+      "$value": "color-mix(in oklab, {color.accent} 14%, transparent)",
+      "$description": "accent at alpha.focus"
+    },
+    "fg-secondary": {
+      "$value": "color-mix(in oklab, {color.fg} 70%, transparent)",
+      "$description": "fg at alpha.secondary"
+    }
+  },
+  "font": {
+    "$type": "fontFamily",
+    "$description": "Never named in Dart: appFontFamily is user selectable. Recorded so previews render.",
+    "display": {
+      "$value": [
+        "Roboto",
+        "system-ui",
+        "-apple-system",
+        "Segoe UI",
+        "sans-serif"
+      ]
+    },
+    "body": {
+      "$value": [
+        "Roboto",
+        "system-ui",
+        "-apple-system",
+        "Segoe UI",
+        "sans-serif"
+      ]
+    },
+    "mono": {
+      "$value": [
+        "ui-monospace",
+        "Roboto Mono",
+        "Menlo",
+        "monospace"
+      ]
+    }
+  },
+  "text": {
+    "$type": "dimension",
+    "$description": "Compact scale. Steps are 1px apart, so weight carries hierarchy.",
+    "xs": {
+      "$value": "11px",
+      "$description": "badges, pills, chips, overlines"
+    },
+    "sm": {
+      "$value": "12px",
+      "$description": "synopsis, secondary metadata"
+    },
+    "base": {
+      "$value": "13px",
+      "$description": "list body, download rows"
+    },
+    "lg": {
+      "$value": "14px",
+      "$description": "card and entry titles"
+    },
+    "xl": {
+      "$value": "16px",
+      "$description": "section headings"
+    },
+    "2xl": {
+      "$value": "20px",
+      "$description": "screen titles"
+    },
+    "3xl": {
+      "$value": "24px"
+    },
+    "4xl": {
+      "$value": "32px"
+    },
+    "5xl": {
+      "$value": "40px",
+      "$description": "Screen title that carries a page"
+    },
+    "6xl": {
+      "$value": "48px",
+      "$description": "The one big moment per screen"
+    }
+  },
+  "leading": {
+    "$type": "number",
+    "body": {
+      "$value": 1.35
+    },
+    "tight": {
+      "$value": 1.1
+    }
+  },
+  "weight": {
+    "$type": "fontWeight",
+    "body": {
+      "$value": 400
+    },
+    "muted-badge": {
+      "$value": 600
+    },
+    "title": {
+      "$value": 700
+    },
+    "numeric": {
+      "$value": 800,
+      "$description": "reserved for a number inside a filled pill"
+    },
+    "display": {
+      "$value": 750,
+      "$description": "Display headings; distinct from title at 700"
+    }
+  },
+  "space": {
+    "$type": "dimension",
+    "$description": "4px base unit.",
+    "1": {
+      "$value": "4px"
+    },
+    "2": {
+      "$value": "8px"
+    },
+    "3": {
+      "$value": "12px"
+    },
+    "4": {
+      "$value": "16px"
+    },
+    "5": {
+      "$value": "20px"
+    },
+    "6": {
+      "$value": "24px"
+    },
+    "8": {
+      "$value": "32px"
+    },
+    "12": {
+      "$value": "48px"
+    }
+  },
+  "radius": {
+    "$type": "dimension",
+    "sm": {
+      "$value": "6px",
+      "$description": "hand built badges, pills, chips, covers"
+    },
+    "md": {
+      "$value": "8px",
+      "$description": "cards with their own ink surface"
+    },
+    "lg": {
+      "$value": "12px",
+      "$description": "sheets, dialogs, large panels"
+    },
+    "pill": {
+      "$value": "24px",
+      "$description": "real Material Chip and TextField, set by FlexSubThemesData"
+    },
+    "xl": {
+      "$value": "16px",
+      "$description": "Cards over content"
+    },
+    "2xl": {
+      "$value": "20px",
+      "$description": "Sheets; softer than the 2018 Material card"
+    }
+  },
+  "cover": {
+    "$type": "dimension",
+    "$description": "Manga and anime covers are 2:3 at every size.",
+    "sm-w": {
+      "$value": "64px"
+    },
+    "sm-h": {
+      "$value": "96px"
+    },
+    "md-w": {
+      "$value": "96px"
+    },
+    "md-h": {
+      "$value": "144px"
+    },
+    "lg-w": {
+      "$value": "120px"
+    },
+    "lg-h": {
+      "$value": "180px"
+    },
+    "ring-width": {
+      "$value": "3px",
+      "$description": "accent ring on the anchor item, the only brand coloured border"
+    }
+  },
+  "layout": {
+    "$type": "dimension",
+    "container-max": {
+      "$value": "820px",
+      "$description": "reading measure, not page width"
+    },
+    "bp-tablet": {
+      "$value": "600px",
+      "$description": "context.isTablet"
+    },
+    "bp-wide": {
+      "$value": "700px",
+      "$description": "one column becomes two"
+    },
+    "tv-reference-width": {
+      "$value": "1280px",
+      "$description": "AppUiScale design canvas, density independent"
+    },
+    "tv-page-inset-x": {
+      "$value": "16px",
+      "$description": "tvPageInsets, TV overscan only"
+    }
+  },
+  "grid": {
+    "max-columns": {
+      "$value": 8,
+      "$description": "The shipped size slider runs well past the old value of 2"
+    }
+  },
+  "motion": {
+    "$type": "duration",
+    "fast": {
+      "$value": "150ms"
+    },
+    "base": {
+      "$value": "200ms"
+    },
+    "slow": {
+      "$value": "300ms",
+      "$description": "Crossing the whole screen"
+    }
+  },
+  "focus": {
+    "ring-width": {
+      "$type": "dimension",
+      "$value": "2.5px",
+      "$description": "TV only onSurface ring on Text/Elevated/Filled buttons"
+    }
+  },
+  "track": {
+    "$description": "Letter-spacing. Roboto's default is tuned for body text and goes slack above 24px, so large type must set this explicitly.",
+    "tight": {
+      "$value": "-0.02em",
+      "$description": "24px and up"
+    },
+    "tighter": {
+      "$value": "-0.03em",
+      "$description": "32px and up"
+    },
+    "display": {
+      "$value": "-0.04em",
+      "$description": "40px and up"
+    },
+    "label": {
+      "$value": "0.12em",
+      "$description": "uppercase eyebrows"
+    }
+  },
+  "blur": {
+    "$description": "Backdrop blur radii. A blurred surface must never sit inside a layer that forces an offscreen (a Transform with filterQuality does): the blur then samples that layer instead of the page and silently stops working.",
+    "sm": {
+      "$value": "12px",
+      "$description": "small translucent chips"
+    },
+    "md": {
+      "$value": "24px",
+      "$description": "sheets"
+    },
+    "lg": {
+      "$value": "40px",
+      "$description": "the floating bar"
+    }
+  },
+  "mark": {
+    "$description": "Progress, unread and offline. The app's real subject matter, and previously undescribed. A cover carrying no marks is finished, which is the resting state.",
+    "progress-h": {
+      "$value": "3px",
+      "$description": "hairline along the foot of a cover"
+    },
+    "badge-min": {
+      "$value": "18px",
+      "$description": "unread count, minimum tap-independent size"
+    },
+    "badge-radius": {
+      "$value": "9px",
+      "$description": "half of badge-min"
+    },
+    "dot": {
+      "$value": "8px",
+      "$description": "offline square"
+    },
+    "progress": {
+      "$value": "{color.accent}",
+      "$description": "Something in flight"
+    },
+    "unread": {
+      "$value": "{color.accent}",
+      "$description": "Something waiting"
+    },
+    "offline": {
+      "$value": "{color.fg}",
+      "$description": "Deliberately NOT the accent: a fact about the file, not an invitation"
+    }
+  },
+  "ease": {
+    "$description": "Easing. Every curve in the app is currently written at the call site, so no two agree.",
+    "standard": {
+      "$value": "cubic-bezier(0.2, 0, 0, 1)",
+      "$description": "almost everything"
+    },
+    "emphasized": {
+      "$value": "cubic-bezier(0.3, 0, 0, 1)",
+      "$description": "chrome entering"
+    },
+    "exit": {
+      "$value": "cubic-bezier(0.4, 0, 1, 1)",
+      "$description": "chrome leaving"
+    }
+  },
+  "density": {
+    "$description": "The four display modes share no vocabulary today, so each screen re-decides its own gaps.",
+    "compact-gap": {
+      "$value": "8px",
+      "$description": "compact grid"
+    },
+    "comfortable-gap": {
+      "$value": "12px",
+      "$description": "comfortable grid"
+    },
+    "list-row-h": {
+      "$value": "72px",
+      "$description": "list mode row"
+    }
+  },
+  "elev": {
+    "$description": "Explicit shadow. Material 3 tonal elevation does most of the work, so these are rare and shallow. Cast outside any clip: a clipped child cannot paint past its own bounds.",
+    "flat": {
+      "$value": "none",
+      "$description": "the default"
+    },
+    "ring": {
+      "$value": "0 0 0 1px {color.border}",
+      "$description": "hairline instead of a shadow"
+    },
+    "raised": {
+      "$value": "0 2px 8px rgba(0, 0, 0, 0.18)",
+      "$description": "resting card"
+    },
+    "floating": {
+      "$value": "0 6px 20px rgba(0, 0, 0, 0.16)",
+      "$description": "the bar over content"
+    },
+    "sheet": {
+      "$value": "0 12px 32px rgba(0, 0, 0, 0.24)",
+      "$description": "sheets and dialogs"
+    }
+  },
+  "surface": {
+    "$description": "Translucent chrome over content.",
+    "glass": {
+      "$value": "color-mix(in oklab, {color.surface} 62%, transparent)",
+      "$description": "Translucent chrome over content. Nearly opaque in light themes, where there is nothing dark behind for the blur to pull in."
+    },
+    "glass-light": {
+      "$value": "color-mix(in oklab, {color.surface} 94%, transparent)",
+      "$description": "A light theme has nothing dark behind for the blur to pull in, so translucency alone leaves the bar invisible against the page."
+    }
+  }
+}
