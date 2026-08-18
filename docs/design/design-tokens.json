@@ -377,7 +377,7 @@
     },
     "lg": {
       "$value": "40px",
-      "$description": "the floating bar"
+      "$description": "full-width chrome over content"
     }
   },
   "mark": {
@@ -457,7 +457,7 @@
     },
     "floating": {
       "$value": "0 6px 20px rgba(0, 0, 0, 0.16)",
-      "$description": "the bar over content"
+      "$description": "a surface floating over content"
     },
     "sheet": {
       "$value": "0 12px 32px rgba(0, 0, 0, 0.24)",
@@ -472,7 +472,7 @@
     },
     "glass-light": {
       "$value": "color-mix(in oklab, {color.surface} 94%, transparent)",
-      "$description": "A light theme has nothing dark behind for the blur to pull in, so translucency alone leaves the bar invisible against the page."
+      "$description": "A light theme has nothing dark behind for the blur to pull in, so translucency alone leaves a glass surface invisible against the page."
     }
   },
   "skeleton": {

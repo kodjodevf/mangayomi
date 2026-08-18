@@ -99,7 +99,7 @@ separate colour. Use `Color.withValues(alpha:)`, not `withOpacity` (deprecated).
 | Token | Value | Applied to | Use |
 | --- | --- | --- | --- |
 | `--alpha-tint` | `0.08` | `--fg` | chip and neutral badge fill |
-| `--alpha-hairline` | `0.16` | `--fg` | timeline connectors, thin rules |
+| `--alpha-hairline` | `0.16` | `--fg` | watch-order connectors, thin rules |
 | `--alpha-focus` | `0.14` | `--accent` | pointer / d-pad focus wash on `InkWell` |
 | `--alpha-accent-tint` | `0.16` | `--accent` | accent tinted badge fill ("up next") |
 | `--alpha-secondary` | `0.70` | `--fg` | secondary text |
@@ -174,7 +174,7 @@ mixed sources does not visibly jitter.
 | Token | Size | Use |
 | --- | --- | --- |
 | `--cover-sm` | 64 x 96 | dense list rows |
-| `--cover-md` | 96 x 144 | recommendation cards, timeline entries |
+| `--cover-md` | 96 x 144 | recommendation cards, watch-order entries |
 | `--cover-lg` | 120 x 180 | the current / anchor item, with a 3px accent ring |
 
 The accent ring on the anchor is `Border.all(color: accent, width: 3)` and is the only

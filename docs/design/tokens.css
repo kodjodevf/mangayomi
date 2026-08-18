@@ -210,7 +210,7 @@
    * silently stops working for as long as the transform is applied. */
   --blur-sm: 12px;                  /* chips */
   --blur-md: 24px;                  /* sheets */
-  --blur-lg: 40px;                  /* the floating bar */
+  --blur-lg: 40px;                  /* full width chrome over content */
   --surface-glass: color-mix(in oklab, var(--surface) 62%, transparent);
   --surface-glass-light: color-mix(in oklab, var(--surface) 94%, transparent);
 
@@ -218,8 +218,8 @@
    * --elev-raised above is the resting card. These two are for surfaces
    * that float over content and must read as separate from it. Cast the
    * shadow OUTSIDE any clip: a clipped child cannot paint past its own
-   * bounds, and in a light theme the shadow is most of what separates
-   * the bar from the page. */
+   * bounds, and in a light theme the shadow is most of what separates a
+   * floating surface from the page behind it. */
   --elev-floating: 0 6px 20px rgba(0, 0, 0, 0.16);
   --elev-sheet: 0 12px 32px rgba(0, 0, 0, 0.24);
 
