@@ -36,7 +36,8 @@ Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08)
 Never `Colors.grey`. It is a fixed value in a palette that is not fixed, which
 is why it is wrong on somebody's theme every time.
 
-One exception worth knowing: inside the novel reader, the page colour is chosen
-by the reader and is independent of the app theme, so anything drawn on it
-derives from the reader's own text colour rather than the scheme. See
-`lib/modules/novel/novel_content_colors.dart`.
+One exception worth knowing: inside the novel reader the page colour is chosen
+by the reader and is independent of the app theme, so a light page under a dark
+theme is an ordinary combination. Anything drawn on that page has to derive from
+the reader's own text colour rather than from the scheme, or a rule ends up
+light-on-light and disappears.

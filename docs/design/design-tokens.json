@@ -88,7 +88,7 @@
     },
     "disabled": {
       "$value": 0.38,
-      "$description": "Dimmed means 0.5 in 26 places, 0.6 in 9 and 0.38 in 2 today. Material's value, because disabled text has a contrast floor 0.5 does not clear on every palette."
+      "$description": "Dimmed means alpha 0.5 in 24 places, 0.6 in 7 and 0.38 in 2 today. Material's value, because disabled text has a contrast floor 0.5 does not clear on every palette."
     }
   },
   "tint": {
@@ -495,7 +495,7 @@
     }
   },
   "icon": {
-    "$description": "Six sizes are in use across lib/modules today with no rule; these three are the intended scale.",
+    "$description": "Seven sizes are in use on Icon widgets across lib/modules today (14, 16, 18, 19, 20, 24, 30) with no rule, plus 56 and 140 for empty-state illustrations, which are not controls. These three are the intended scale.",
     "sm": {
       "$value": "16px",
       "$description": "inline with text"
@@ -510,7 +510,7 @@
     }
   },
   "tap": {
-    "$description": "Interaction floors. height: 40 appears 9 times in lib/modules and is under both.",
+    "$description": "Interaction floors. height: 40 appears 7 times in lib/modules; the ones that are interactive are under both.",
     "min": {
       "$value": "48px",
       "$description": "Material"

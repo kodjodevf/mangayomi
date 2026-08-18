@@ -278,20 +278,25 @@ Counted over `lib/modules`, not estimated.
 
 | Drift | Count | Contract says |
 | --- | --- | --- |
-| Icon sizes with no rule: 16, 18, 20, 22, 25, 30 | 6 distinct | `--icon-sm/md/lg` = 16 / 20 / 24 |
-| "Dimmed" as alpha 0.5 | 26 | `--alpha-disabled` = 0.38 |
-| "Dimmed" as alpha 0.6 | 9 | as above |
+| Sizes on `Icon` widgets: 14, 16, 18, 19, 20, 24, 30 | 7 distinct | `--icon-sm/md/lg` = 16 / 20 / 24 |
+| "Dimmed" as alpha 0.5 | 24 | `--alpha-disabled` = 0.38 |
+| "Dimmed" as alpha 0.6 | 7 | as above |
 | "Dimmed" as alpha 0.38 | 2 | already correct |
-| `height: 40` controls | 9 | under both `--tap-min` (48) and `--tap-min-apple` (44) |
+| `height: 40` boxes | 7 | under both `--tap-min` (48) and `--tap-min-apple` (44) |
 
-The tap-target one is the only entry here that is an accessibility
-problem rather than an inconsistency, and it is the one worth fixing
-first.
+Two caveats on that table, because the numbers are only useful if they
+are honest. `Icon` also appears at 56 and 140, which are empty-state
+illustrations rather than controls and are excluded above. And not every
+`height: 40` is an interactive target; each needs looking at
+individually, and only the interactive ones are a floor violation.
+
+That last row is the only entry here that is an accessibility problem
+rather than an inconsistency, and it is the one worth checking first.
 
 Skeleton loading was listed as absent in an earlier assessment. It
 exists now, in `lib/modules/widgets/cover_grid_skeleton.dart`, and it
 already derives its tint from the foreground at `--alpha-tint` rather
-than a fixed grey. The tokens now describe it.
+than a fixed grey. The tokens now describe what it does.
 
 ## 10. Token layers
 

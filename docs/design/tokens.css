@@ -253,23 +253,24 @@
   --skeleton-radius: var(--radius-sm);
 
   /* ─── Icon ────────────────────────────────────────────────────────
-   * Six sizes are in use across lib/modules today (16, 18, 20, 22, 25,
-   * 30) with no rule. These three are the intended scale; see the drift
-   * note in DESIGN.md section 9. */
+   * Seven sizes are in use on Icon widgets across lib/modules today
+   * (14, 16, 18, 19, 20, 24, 30) with no rule, plus 56 and 140 for
+   * empty state illustrations, which are not controls. These three are
+   * the intended scale; see the drift note in DESIGN.md section 9. */
   --icon-sm: 16px;                  /* inline with text */
   --icon-md: 20px;                  /* the default, and the commonest today */
   --icon-lg: 24px;                  /* primary actions, app bar */
 
   /* ─── Interaction floors ──────────────────────────────────────────
    * A control smaller than this is hard to hit and fails both platform
-   * baselines. `height: 40` currently appears 9 times in lib/modules and
-   * is under both. */
+   * baselines. `height: 40` appears 7 times in lib/modules; the ones
+   * that are interactive are under both. */
   --tap-min: 48px;                  /* Material */
   --tap-min-apple: 44px;            /* Apple HIG */
 
   /* ─── Emphasis ────────────────────────────────────────────────────
    * "Dimmed" means three different things in the codebase right now:
-   * alpha 0.5 in 26 places, 0.6 in 9, and Material's own 0.38 in 2.
+   * alpha 0.5 in 24 places, 0.6 in 7, and Material's own 0.38 in 2.
    * The contract picks Material's, because disabled text has a contrast
    * floor to clear and 0.5 does not clear it on every palette. */
   --alpha-disabled: 0.38;
