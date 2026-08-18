@@ -1198,6 +1198,16 @@ class _MangaChapterPageGalleryState
       //   _triggerPrevChapterPreload();
       // }
 
+      // Ensure the current chapter's pages are reloaded if they were evicted,
+      // and evict old chapters' pages to free memory. Gated on pageChanged
+      // (not just index-in-bounds) since this listener fires on every scroll
+      // frame during a fling, not just once per settled page - unlike the
+      // paged-mode handler, which only runs on discrete PageView transitions.
+      // Both checks below do a linear scan over `pages`, so running them
+      // unconditionally here would re-scan dozens of times per second during
+      // continuous scrolling.
+      if (pageChanged) await _handleEvictionsAndPrefetch();
+
       _updateDisplayIndex(_currentIndex!, false /*Note Paged, Continuous*/);
     }
   }
@@ -1491,6 +1501,10 @@ class _MangaChapterPageGalleryState
     //   _triggerPrevChapterPreload();
     // }
 
+    await _handleEvictionsAndPrefetch();
+  }
+
+  Future<void> _handleEvictionsAndPrefetch() async {
     // Ensure the current chapter's pages are reloaded if they were evicted
     await _checkAndReloadEvictedPages(chapter);
 
