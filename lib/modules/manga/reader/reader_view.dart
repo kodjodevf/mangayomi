@@ -1323,23 +1323,15 @@ class _MangaChapterPageGalleryState
     }
   }
 
-  /// Warms Flutter's [ImageCache] in page order before the widget tree renders.
+  /// Reloads a chapter's page image data if it was previously evicted by
+  /// [ChapterPreloadManager.evictOldChapters] (e.g. the reader scrolled
+  /// forward far enough that this chapter's data was cleared to free memory,
+  /// then scrolled back into it). Re-reads the local `.cbz` archive and
+  /// re-populates each page's `archiveImage`.
   ///
-  /// [ScrollablePositionedList] builds all items within [minCacheExtent] in a
-  /// single frame, firing every network request simultaneously, which means
-  /// pages complete in arbitrary (server-response) order.  By resolving each
-  /// provider sequentially here — starting before that first frame — we seed
-  /// the cache so that earlier pages win the HTTP race: lower-indexed pages
-  /// start their requests first and are therefore ready sooner.
-  ///
-  /// For pages already within the cache extent the widget will attach to the
-  /// already-pending Future (Flutter deduplicates by provider key), so no
-  /// extra requests are made.  Pages beyond the cache extent are fetched
-  /// strictly one at a time in reading order, so the reader never sees a
-  /// later page appear before an earlier one.
-  ///
-  /// This is fully async — [await] inside a fire-and-forget call — so the
-  /// UI stays interactive throughout.
+  /// Cheap no-op for the common case where [currentChapter] was never
+  /// evicted, via [ChapterPreloadManager.isChapterEvicted] - avoids scanning
+  /// every page of the chapter on every page-change.
   Future<void> _checkAndReloadEvictedPages(Chapter currentChapter) async {
     if (!preloadManager.isChapterEvicted(currentChapter)) return;
 
@@ -1396,6 +1388,22 @@ class _MangaChapterPageGalleryState
     }
   }
 
+  /// Warms Flutter's [ImageCache] and pre-resolves each page’s
+  /// local/archive file path in reading order before the widget tree renders.
+  ///
+  /// Instead of letting [ScrollablePositionedList] trigger many
+  /// simultaneous network requests in arbitrary server-response order,
+  /// this method starts image fetches early and in a prioritized sequence.
+  /// Pages near the current reading position are queued first,
+  /// and multiple background workers resolve their providers concurrently,
+  /// giving earlier pages a head start without strictly serializing downloads.
+  ///
+  /// Flutter deduplicates identical image providers, so pages already within
+  /// the cache extent attach to existing pending requests without
+  /// issuing duplicates. Pages beyond the cache extent are fetched in
+  /// reading order but may overlap due to parallel workers.
+  ///
+  /// The work is fully asynchronous and does not block UI interaction.
   Future<void> _prefetchPagesInOrder() async {
     final sessionId = ++_prefetchSessionId;
     final startIdx = (_currentIndex ?? 0).clamp(0, pages.length - 1);
