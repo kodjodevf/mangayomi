@@ -228,6 +228,50 @@ startup from a platform channel.
 
 ---
 
+## 7b. What the contract does not cover, and why
+
+Two things were left out of earlier drafts as "needs hardware to measure". That was
+wrong on both counts: both are readable from the source, and both turned out to matter.
+
+### Television type
+
+The TV layer, 23 files, uses **eleven distinct sizes**: 9, 11, 12, 13, 14, 15, 16, 18,
+20, 28 and 30. There is no TV scale; the sizes were chosen per file.
+
+The problem is not the spread, it is the direction. The phone scale starts at
+`--text-xs: 11px` and is described in section 4 as deliberately compact, for a screen
+held about 30cm away. **The TV layer goes below it**, to 9px, on a display watched from
+roughly ten times that distance. A 10-foot interface needs type larger than a phone's,
+not smaller.
+
+A scale is not proposed here, because the right multiplier is a judgement about the
+reference resolution (`--tv-reference-width` is 1280) and is worth deciding once,
+deliberately, rather than inferring from what the files happen to do. What the contract
+does assert is that **no size below `--text-xs` may ship on TV**, and that the TV scale
+must be defined relative to the phone scale rather than picked per file.
+
+### Apple adaptation
+
+Counted on `main`:
+
+| Surface | State |
+| --- | --- |
+| Page transitions, back-swipe | `CupertinoPage` / `CupertinoPageRoute`, 1 file |
+| `.adaptive` constructors | 3 files |
+| `isApple` branches in `lib/` | 3 references |
+| `CupertinoActivityIndicator` | 0 |
+| `CupertinoNavigationBar` | 0 |
+| `CupertinoPageScaffold` | 0 |
+| `CupertinoTabBar` | 0 |
+
+So navigation is genuinely Cupertino on Apple and everything above it is Material. That
+is a defensible position, and it is the one the app currently takes; it is recorded here
+so it reads as a decision rather than an oversight. If it is ever revisited, the
+adaptations users feel every session are the activity indicator and the `.adaptive`
+constructors for dialogs and action sheets, not a wholesale port.
+
+---
+
 ## 8. Do and do not
 
 **Do**
@@ -289,6 +333,8 @@ Counted over `lib/modules`, not estimated.
 | "Dimmed" as alpha 0.6 | 7 | as above |
 | "Dimmed" as alpha 0.38 | 2 | already correct |
 | `height: 40` boxes | 7 | under both `--tap-min` (48) and `--tap-min-apple` (44) |
+| Type sizes in the 23 TV files | 11 distinct | no TV scale exists; see 7b |
+| TV sizes below `--text-xs` (11px) | 2 uses of 9px | nothing below 11px may ship on TV |
 
 Two caveats on that table, because the numbers are only useful if they
 are honest. `Icon` also appears at 56 and 140, which are empty-state
