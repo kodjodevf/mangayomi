@@ -241,6 +241,39 @@
   --mark-offline: var(--fg);        /* deliberately NOT the accent: a fact
                                      * about the file, not an invitation */
 
+
+  /* ─── Loading (C extension) ───────────────────────────────────────
+   * The pulse tint is the theme foreground at low alpha, never a fixed
+   * grey, so it survives a palette we do not control. Resting value is
+   * --alpha-tint; the pulse rides from there to twice it.
+   * Implemented in lib/modules/widgets/cover_grid_skeleton.dart. */
+  --skeleton-rest: 0.06;
+  --skeleton-peak: 0.12;
+  --skeleton-pulse: 900ms;
+  --skeleton-radius: var(--radius-sm);
+
+  /* ─── Icon ────────────────────────────────────────────────────────
+   * Six sizes are in use across lib/modules today (16, 18, 20, 22, 25,
+   * 30) with no rule. These three are the intended scale; see the drift
+   * note in DESIGN.md section 9. */
+  --icon-sm: 16px;                  /* inline with text */
+  --icon-md: 20px;                  /* the default, and the commonest today */
+  --icon-lg: 24px;                  /* primary actions, app bar */
+
+  /* ─── Interaction floors ──────────────────────────────────────────
+   * A control smaller than this is hard to hit and fails both platform
+   * baselines. `height: 40` currently appears 9 times in lib/modules and
+   * is under both. */
+  --tap-min: 48px;                  /* Material */
+  --tap-min-apple: 44px;            /* Apple HIG */
+
+  /* ─── Emphasis ────────────────────────────────────────────────────
+   * "Dimmed" means three different things in the codebase right now:
+   * alpha 0.5 in 26 places, 0.6 in 9, and Material's own 0.38 in 2.
+   * The contract picks Material's, because disabled text has a contrast
+   * floor to clear and 0.5 does not clear it on every palette. */
+  --alpha-disabled: 0.38;
+
   /* ─── Density ─────────────────────────────────────────────────────
    * Four display modes ship with no shared vocabulary, so each screen
    * re decides its own gaps. Every mark above has to stay readable at

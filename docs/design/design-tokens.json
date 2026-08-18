@@ -85,6 +85,10 @@
     "tv-focus": {
       "$value": 0.45,
       "$description": "over accent: ambient focusColor, TV only"
+    },
+    "disabled": {
+      "$value": 0.38,
+      "$description": "Dimmed means 0.5 in 26 places, 0.6 in 9 and 0.38 in 2 today. Material's value, because disabled text has a contrast floor 0.5 does not clear on every palette."
     }
   },
   "tint": {
@@ -469,6 +473,51 @@
     "glass-light": {
       "$value": "color-mix(in oklab, {color.surface} 94%, transparent)",
       "$description": "A light theme has nothing dark behind for the blur to pull in, so translucency alone leaves the bar invisible against the page."
+    }
+  },
+  "skeleton": {
+    "$description": "Loading placeholders. The tint is the theme foreground at low alpha, never a fixed grey.",
+    "rest": {
+      "$value": 0.06,
+      "$description": "resting alpha over fg"
+    },
+    "peak": {
+      "$value": 0.12,
+      "$description": "pulse peak"
+    },
+    "pulse": {
+      "$value": "900ms",
+      "$description": "one breath"
+    },
+    "radius": {
+      "$value": "{radius.sm}",
+      "$description": "matches the cover it stands in for"
+    }
+  },
+  "icon": {
+    "$description": "Six sizes are in use across lib/modules today with no rule; these three are the intended scale.",
+    "sm": {
+      "$value": "16px",
+      "$description": "inline with text"
+    },
+    "md": {
+      "$value": "20px",
+      "$description": "default"
+    },
+    "lg": {
+      "$value": "24px",
+      "$description": "primary actions"
+    }
+  },
+  "tap": {
+    "$description": "Interaction floors. height: 40 appears 9 times in lib/modules and is under both.",
+    "min": {
+      "$value": "48px",
+      "$description": "Material"
+    },
+    "min-apple": {
+      "$value": "44px",
+      "$description": "Apple HIG"
     }
   }
 }

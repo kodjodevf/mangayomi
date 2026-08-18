@@ -272,6 +272,27 @@ across platforms and cost more than they buy.
 
 ---
 
+### Found by audit, 2026-08-17
+
+Counted over `lib/modules`, not estimated.
+
+| Drift | Count | Contract says |
+| --- | --- | --- |
+| Icon sizes with no rule: 16, 18, 20, 22, 25, 30 | 6 distinct | `--icon-sm/md/lg` = 16 / 20 / 24 |
+| "Dimmed" as alpha 0.5 | 26 | `--alpha-disabled` = 0.38 |
+| "Dimmed" as alpha 0.6 | 9 | as above |
+| "Dimmed" as alpha 0.38 | 2 | already correct |
+| `height: 40` controls | 9 | under both `--tap-min` (48) and `--tap-min-apple` (44) |
+
+The tap-target one is the only entry here that is an accessibility
+problem rather than an inconsistency, and it is the one worth fixing
+first.
+
+Skeleton loading was listed as absent in an earlier assessment. It
+exists now, in `lib/modules/widgets/cover_grid_skeleton.dart`, and it
+already derives its tint from the foreground at `--alpha-tint` rather
+than a fixed grey. The tokens now describe it.
+
 ## 10. Token layers
 
 Following the Open Design `_schema` contract:
