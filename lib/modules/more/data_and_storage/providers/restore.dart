@@ -44,8 +44,9 @@ Future<void> doRestore(
   Map<String, bool> categoryDecisions = const {},
   Map<String, int> sourceDecisions = const {},
 }) async {
-  final inputStream = InputFileStream(path);
+  InputFileStream? inputStream;
   try {
+    inputStream = InputFileStream(path);
     final archive = ZipDecoder().decodeStream(inputStream);
     final backupType = checkBackupType(path, archive);
     switch (backupType) {
@@ -81,7 +82,7 @@ Future<void> doRestore(
   } catch (e, s) {
     botToast('$e\n$s');
   } finally {
-    inputStream.close();
+    inputStream?.close();
   }
 }
 
@@ -607,7 +608,7 @@ Future<void> restoreTachiBkBackup(
     );
   }
 
-  List<Category> cats = [];
+  final categoryByOrder = <int, Category>{};
   await writeTxnSyncWithRetry(() {
     if (!merge) {
       isar.categorys.clearSync();
@@ -622,21 +623,22 @@ Future<void> restoreTachiBkBackup(
               .findAllSync()
         : <Category>[];
     for (var category in backup.backupCategories) {
+      final order = _protoInt(category.order);
       final existing = existingCategories.firstWhereOrNull(
         (c) => c.name == category.name,
       );
       if (existing != null) {
         if (categoryDecisions[category.name] == false) continue;
-        cats.add(existing);
+        categoryByOrder[order] = existing;
         continue;
       }
       final cat = Category(
         name: category.name,
         forItemType: ItemType.manga,
-        pos: _protoInt(category.order),
+        pos: order,
       );
       isar.categorys.putSync(cat);
-      cats.add(cat);
+      categoryByOrder[order] = cat;
     }
     final existingMangaByLink = merge
         ? {
@@ -651,9 +653,9 @@ Future<void> restoreTachiBkBackup(
     for (var tempManga in backup.backupManga) {
       final sourceId = _protoInt(tempManga.source);
       final categoryOrders = tempManga.categories.map(_protoInt).toSet();
-      final newCategoryIds = cats
-          .where((cat) => categoryOrders.contains(cat.pos))
-          .map((cat) => cat.id!)
+      final newCategoryIds = categoryOrders
+          .map((o) => categoryByOrder[o]?.id)
+          .whereType<int>()
           .toList();
       final existingManga = existingMangaByLink[tempManga.url];
       final Manga manga;
@@ -683,8 +685,8 @@ Future<void> restoreTachiBkBackup(
           categories: newCategoryIds,
           itemType: ItemType.manga,
           favorite: true,
-          dateAdded: _protoMillis(tempManga.dateAdded),
-          lastUpdate: _protoMillis(tempManga.lastModifiedAt),
+          dateAdded: _protoInt(tempManga.dateAdded),
+          lastUpdate: _protoInt(tempManga.lastModifiedAt),
           sourceId: boundSource?.id,
         );
         if (bkType == BackupType.neko && boundSource == null) {
@@ -709,7 +711,7 @@ Future<void> restoreTachiBkBackup(
           mangaId: manga.id!,
           name: tempChapter.name,
           dateUpload: bkType != BackupType.neko
-              ? "${_protoMillis(tempChapter.dateUpload)}"
+              ? "${_protoInt(tempChapter.dateUpload)}"
               : "${DateTime.now().millisecondsSinceEpoch - _protoInt(tempChapter.dateUpload).abs()}",
           isBookmarked: tempChapter.bookmark,
           isRead: tempChapter.read,
@@ -723,11 +725,11 @@ Future<void> restoreTachiBkBackup(
         chapter.manga.saveSync();
         if ((history == null ||
             int.parse(history.date ?? "0") <
-                _protoMillis(tempChapter.lastModifiedAt))) {
+                _protoInt(tempChapter.lastModifiedAt))) {
           history = History(
             mangaId: manga.id,
             date: bkType != BackupType.neko
-                ? "${_protoMillis(tempChapter.lastModifiedAt)}"
+                ? "${_protoInt(tempChapter.lastModifiedAt)}"
                 : "${DateTime.now().millisecondsSinceEpoch - _protoInt(tempChapter.dateUpload).abs()}",
             itemType: ItemType.manga,
             chapterId: chapter.id,
@@ -754,7 +756,7 @@ Future<void> restoreTachiBkBackup(
     final animeSources = backupAnime.backupAnimeSources.isNotEmpty
         ? backupAnime.backupAnimeSources
         : backupAnime.legacyBackupAnimeSources;
-    List<Category> cats = [];
+    final categoryByOrder = <int, Category>{};
     await writeTxnSyncWithRetry(() {
       final existingAnimeCategories = merge
           ? isar.categorys
@@ -763,21 +765,22 @@ Future<void> restoreTachiBkBackup(
                 .findAllSync()
           : <Category>[];
       for (var category in animeCategories) {
+        final order = _protoInt(category.order);
         final existing = existingAnimeCategories.firstWhereOrNull(
           (c) => c.name == category.name,
         );
         if (existing != null) {
           if (categoryDecisions[category.name] == false) continue;
-          cats.add(existing);
+          categoryByOrder[order] = existing;
           continue;
         }
         final cat = Category(
           name: category.name,
           forItemType: ItemType.anime,
-          pos: _protoInt(category.order),
+          pos: order,
         );
         isar.categorys.putSync(cat);
-        cats.add(cat);
+        categoryByOrder[order] = cat;
       }
       final existingAnimeByLink = merge
           ? {
@@ -792,9 +795,9 @@ Future<void> restoreTachiBkBackup(
       for (var tempAnime in animeEntries) {
         final sourceId = _protoInt(tempAnime.source);
         final categoryOrders = tempAnime.categories.map(_protoInt).toSet();
-        final newCategoryIds = cats
-            .where((cat) => categoryOrders.contains(cat.pos))
-            .map((cat) => cat.id!)
+        final newCategoryIds = categoryOrders
+            .map((o) => categoryByOrder[o]?.id)
+            .whereType<int>()
             .toList();
         final existingAnime = existingAnimeByLink[tempAnime.url];
         final Manga anime;
@@ -826,8 +829,8 @@ Future<void> restoreTachiBkBackup(
             categories: newCategoryIds,
             itemType: ItemType.anime,
             favorite: true,
-            dateAdded: _protoMillis(tempAnime.dateAdded),
-            lastUpdate: _protoMillis(tempAnime.lastModifiedAt),
+            dateAdded: _protoInt(tempAnime.dateAdded),
+            lastUpdate: _protoInt(tempAnime.lastModifiedAt),
             sourceId: boundSource?.id,
           );
         }
@@ -848,11 +851,11 @@ Future<void> restoreTachiBkBackup(
           final episode = Chapter(
             mangaId: anime.id!,
             name: tempEpisode.name,
-            dateUpload: "${_protoMillis(tempEpisode.dateUpload)}",
+            dateUpload: "${_protoInt(tempEpisode.dateUpload)}",
             isBookmarked: tempEpisode.bookmark,
             isRead: tempEpisode.seen,
             lastPageRead: _protoInt(tempEpisode.lastSecondSeen) != 0
-                ? "${_protoMillis(tempEpisode.lastSecondSeen)}"
+                ? "${_secondsToMillis(tempEpisode.lastSecondSeen)}"
                 : "1",
             scanlator: tempEpisode.scanlator,
             url: tempEpisode.url,
@@ -861,10 +864,10 @@ Future<void> restoreTachiBkBackup(
           episode.manga.saveSync();
           if ((history == null ||
               int.parse(history.date ?? "0") <
-                  _protoMillis(tempEpisode.lastModifiedAt))) {
+                  _protoInt(tempEpisode.lastModifiedAt))) {
             history = History(
               mangaId: anime.id,
-              date: "${_protoMillis(tempEpisode.lastModifiedAt)}",
+              date: "${_protoInt(tempEpisode.lastModifiedAt)}",
               itemType: ItemType.anime,
               chapterId: episode.id,
             )..chapter.value = episode;
@@ -901,7 +904,7 @@ int _protoInt(Object value) {
   return (value as dynamic).toInt() as int;
 }
 
-int _protoMillis(Object seconds) => _protoInt(seconds) * 1000;
+int _secondsToMillis(Object seconds) => _protoInt(seconds) * 1000;
 
 Settings _preserveDeviceLocalSettings(Settings incoming, Settings current) {
   return incoming

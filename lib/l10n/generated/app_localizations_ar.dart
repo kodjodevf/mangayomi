@@ -2842,6 +2842,11 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String roll_back_available_count(Object count) {
+    return '$count recent changes available to roll back to';
+  }
+
+  @override
   String get delete_source_title => 'Delete a source & its manga';
 
   @override
@@ -2865,14 +2870,19 @@ class AppLocalizationsAr extends AppLocalizations {
     Object chapterCount,
     Object historyCount,
     Object updateCount,
-    Object trackCount,
   ) {
-    return 'This permanently deletes $mangaCount manga, $chapterCount chapters, $historyCount history entries, $updateCount update entries and $trackCount tracking links. This cannot be undone except by rolling back.';
+    return 'This permanently deletes $mangaCount manga, $chapterCount chapters, $historyCount history entries and $updateCount update entries. Tracking links are kept. This cannot be undone except by rolling back.';
   }
 
   @override
   String get delete_source_also_remove_extension =>
       'Also remove the installed extension';
+
+  @override
+  String get delete_source_keep_history => 'Keep reading history';
+
+  @override
+  String get delete_source_keep_downloads => 'Keep download records';
 
   @override
   String get delete_source_button => 'Delete';
@@ -2883,32 +2893,56 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get merge_sources_title => 'Merge duplicate sources';
+  String get merge_manga_title => 'Merge duplicate manga';
 
   @override
-  String get merge_sources_subtitle =>
-      'Finds sources in your library that are likely the same one under different names (e.g. from separate imports) and folds them into one, without deleting anything.';
+  String get merge_manga_subtitle =>
+      'Finds manga with matching titles under the same source (e.g. after merging duplicate sources) and folds them into one, without deleting anything you\'d want kept.';
 
   @override
-  String get merge_sources_none_found => 'No likely duplicate sources found.';
+  String get merge_manga_none_found => 'No likely duplicate manga found.';
 
   @override
-  String get merge_sources_pick_title => 'Possible duplicates';
+  String get merge_manga_pick_title => 'Possible duplicate manga';
 
   @override
-  String get merge_sources_choose_primary_title =>
+  String get merge_manga_choose_primary_title =>
       'Which one should the others merge into?';
 
   @override
-  String get merge_sources_choose_primary_message =>
-      'The manga from the other source(s) will be rebound to whichever one you pick here — nothing is deleted.';
+  String get merge_manga_choose_primary_message =>
+      'Chapters, history and tracking from the other entries will be folded into whichever one you pick — nothing is deleted.';
 
   @override
-  String get merge_sources_button => 'Merge';
+  String merge_manga_chapters_subtitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count chapters',
+      one: '1 chapter',
+    );
+    return '$_temp0';
+  }
 
   @override
-  String merge_sources_result_message(Object mangaCount, Object sourceName) {
-    return 'Merged $mangaCount manga into $sourceName.';
+  String get merge_manga_button => 'Merge';
+
+  @override
+  String merge_manga_result_message(Object count, Object mangaName) {
+    return 'Merged $count duplicate manga into $mangaName.';
+  }
+
+  @override
+  String get merge_preview_title => 'Confirm merge';
+
+  @override
+  String merge_manga_preview_message(
+    Object totalChapters,
+    Object duplicateChapters,
+    Object keptChapters,
+    Object duplicateTracks,
+  ) {
+    return '$totalChapters chapters found across the other entries. $duplicateChapters are duplicates and will be dropped (keeping whichever copy has reading progress); $keptChapters will be added. $duplicateTracks duplicate tracking link(s) will also be dropped.';
   }
 
   @override

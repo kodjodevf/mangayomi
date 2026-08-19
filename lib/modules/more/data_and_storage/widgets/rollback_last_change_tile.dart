@@ -12,10 +12,33 @@ class RollbackLastChangeTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final snapshot = ref.watch(lastLibrarySnapshotProvider).asData?.value;
-    if (snapshot == null) return const SizedBox.shrink();
+    final snapshots = ref.watch(lastLibrarySnapshotProvider).asData?.value;
+    if (snapshots == null || snapshots.isEmpty) return const SizedBox.shrink();
     final l10n = context.l10n;
-    return ListTile(
+
+    if (snapshots.length == 1) {
+      final snapshot = snapshots.first;
+      return ListTile(
+        leading: const Icon(
+          Icons.settings_backup_restore_rounded,
+          color: Colors.red,
+        ),
+        title: Text(
+          l10n.roll_back_last_change,
+          style: const TextStyle(color: Colors.red),
+        ),
+        subtitle: Text(
+          l10n.roll_back_last_change_subtitle(
+            DateTime.fromMillisecondsSinceEpoch(snapshot.createdAt).toString(),
+            snapshot.description,
+          ),
+          style: TextStyle(fontSize: 11, color: context.secondaryColor),
+        ),
+        onTap: () => offerLibraryRollback(context, ref, snapshot.backupPath),
+      );
+    }
+
+    return ExpansionTile(
       leading: const Icon(
         Icons.settings_backup_restore_rounded,
         color: Colors.red,
@@ -25,13 +48,27 @@ class RollbackLastChangeTile extends ConsumerWidget {
         style: const TextStyle(color: Colors.red),
       ),
       subtitle: Text(
-        l10n.roll_back_last_change_subtitle(
-          DateTime.fromMillisecondsSinceEpoch(snapshot.createdAt).toString(),
-          snapshot.description,
-        ),
+        l10n.roll_back_available_count(snapshots.length),
         style: TextStyle(fontSize: 11, color: context.secondaryColor),
       ),
-      onTap: () => offerLibraryRollback(context, ref, snapshot.backupPath),
+      children: [
+        for (final snapshot in snapshots)
+          ListTile(
+            contentPadding: const EdgeInsets.fromLTRB(32, 0, 16, 0),
+            title: Text(
+              snapshot.description,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            subtitle: Text(
+              DateTime.fromMillisecondsSinceEpoch(
+                snapshot.createdAt,
+              ).toString(),
+              style: TextStyle(fontSize: 11, color: context.secondaryColor),
+            ),
+            onTap: () => offerLibraryRollback(context, ref, snapshot.backupPath),
+          ),
+      ],
     );
   }
 }

@@ -40,33 +40,67 @@ class LibrarySafetySnapshot {
       );
 }
 
+const maxLibrarySnapshots = 3;
+
 Future<void> writeLastLibrarySnapshot(LibrarySafetySnapshot snapshot) async {
   final file = await _snapshotMetaFile();
-  await file.writeAsString(jsonEncode(snapshot.toJson()));
+  final current = await _readSnapshots(file);
+  final updated = [snapshot, ...current];
+  final overflow = updated.length > maxLibrarySnapshots
+      ? updated.sublist(maxLibrarySnapshots)
+      : const <LibrarySafetySnapshot>[];
+  for (final old in overflow) {
+    final oldFile = File(old.backupPath);
+    if (await oldFile.exists()) await oldFile.delete();
+  }
+  final kept = updated.take(maxLibrarySnapshots).toList();
+  await file.writeAsString(
+    jsonEncode(kept.map((s) => s.toJson()).toList()),
+  );
 }
 
 Future<void> clearLastLibrarySnapshot() async {
   final file = await _snapshotMetaFile();
+  final current = await _readSnapshots(file);
+  for (final snapshot in current) {
+    final snapshotFile = File(snapshot.backupPath);
+    if (await snapshotFile.exists()) await snapshotFile.delete();
+  }
   if (await file.exists()) await file.delete();
 }
 
-@riverpod
-Future<LibrarySafetySnapshot?> lastLibrarySnapshot(Ref ref) async {
-  final file = await _snapshotMetaFile();
-  if (!await file.exists()) return null;
+Future<List<LibrarySafetySnapshot>> _readSnapshots(File file) async {
+  if (!await file.exists()) return const [];
   try {
-    final snapshot = LibrarySafetySnapshot.fromJson(
-      jsonDecode(await file.readAsString()) as Map<String, dynamic>,
-    );
-    if (!await File(snapshot.backupPath).exists()) return null;
-    return snapshot;
+    final decoded = jsonDecode(await file.readAsString());
+    if (decoded is! List) return const [];
+    return decoded
+        .cast<Map<String, dynamic>>()
+        .map(LibrarySafetySnapshot.fromJson)
+        .toList();
   } catch (_) {
-    return null;
+    return const [];
   }
 }
 
-Future<Directory> _snapshotDirectory() =>
-    StorageProvider().createCacheDirectory('pre_import_backup');
+@riverpod
+Future<List<LibrarySafetySnapshot>> lastLibrarySnapshot(Ref ref) async {
+  final file = await _snapshotMetaFile();
+  final snapshots = await _readSnapshots(file);
+  final valid = <LibrarySafetySnapshot>[];
+  for (final snapshot in snapshots) {
+    if (await File(snapshot.backupPath).exists()) valid.add(snapshot);
+  }
+  return valid;
+}
+
+Future<Directory> _snapshotDirectory() async {
+  final storageProvider = StorageProvider();
+  final defaultDirectory = await storageProvider.getDefaultDirectory();
+  final dirPath = p.join(defaultDirectory!.path, 'pre_import_backup');
+  await storageProvider.createDirectorySafely(dirPath);
+  return Directory(dirPath);
+}
 
 Future<File> _snapshotMetaFile() async {
   final dir = await _snapshotDirectory();

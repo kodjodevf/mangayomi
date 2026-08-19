@@ -89,12 +89,6 @@ Future<dynamic> updateMangaDetail(
         return num > 0 ? num : null;
       }
 
-      // Match by the domain-less URL (path + query), not the full URL. Sources
-      // (anime ones especially) migrate domains, so the stored URL keeps the old
-      // host while a fresh fetch returns the new one — matching on the full URL
-      // then misses and re-adds every chapter each update, which is how episodes
-      // ended up duplicated/tripled. Also fall back to a chapter-number +
-      // scanlator composite key, so a URL change alone doesn't create a dupe.
       final existingByUrl = <String, Chapter>{};
       final existingByComposite = <String, Chapter>{};
       final duplicateIds = <int>{};

@@ -5179,6 +5179,12 @@ abstract class AppLocalizations {
   /// **'Snapshot from {date} — {description}'**
   String roll_back_last_change_subtitle(Object date, Object description);
 
+  /// No description provided for @roll_back_available_count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} recent changes available to roll back to'**
+  String roll_back_available_count(Object count);
+
   /// No description provided for @delete_source_title.
   ///
   /// In en, this message translates to:
@@ -5212,13 +5218,12 @@ abstract class AppLocalizations {
   /// No description provided for @delete_source_confirm_message.
   ///
   /// In en, this message translates to:
-  /// **'This permanently deletes {mangaCount} manga, {chapterCount} chapters, {historyCount} history entries, {updateCount} update entries and {trackCount} tracking links. This cannot be undone except by rolling back.'**
+  /// **'This permanently deletes {mangaCount} manga, {chapterCount} chapters, {historyCount} history entries and {updateCount} update entries. Tracking links are kept. This cannot be undone except by rolling back.'**
   String delete_source_confirm_message(
     Object mangaCount,
     Object chapterCount,
     Object historyCount,
     Object updateCount,
-    Object trackCount,
   );
 
   /// No description provided for @delete_source_also_remove_extension.
@@ -5226,6 +5231,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Also remove the installed extension'**
   String get delete_source_also_remove_extension;
+
+  /// No description provided for @delete_source_keep_history.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep reading history'**
+  String get delete_source_keep_history;
+
+  /// No description provided for @delete_source_keep_downloads.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep download records'**
+  String get delete_source_keep_downloads;
 
   /// No description provided for @delete_source_button.
   ///
@@ -5239,53 +5256,76 @@ abstract class AppLocalizations {
   /// **'Deleted {mangaCount} manga from {sourceName}.'**
   String delete_source_result_message(Object mangaCount, Object sourceName);
 
-  /// No description provided for @merge_sources_title.
+  /// No description provided for @merge_manga_title.
   ///
   /// In en, this message translates to:
-  /// **'Merge duplicate sources'**
-  String get merge_sources_title;
+  /// **'Merge duplicate manga'**
+  String get merge_manga_title;
 
-  /// No description provided for @merge_sources_subtitle.
+  /// No description provided for @merge_manga_subtitle.
   ///
   /// In en, this message translates to:
-  /// **'Finds sources in your library that are likely the same one under different names (e.g. from separate imports) and folds them into one, without deleting anything.'**
-  String get merge_sources_subtitle;
+  /// **'Finds manga with matching titles under the same source (e.g. after merging duplicate sources) and folds them into one, without deleting anything you\'d want kept.'**
+  String get merge_manga_subtitle;
 
-  /// No description provided for @merge_sources_none_found.
+  /// No description provided for @merge_manga_none_found.
   ///
   /// In en, this message translates to:
-  /// **'No likely duplicate sources found.'**
-  String get merge_sources_none_found;
+  /// **'No likely duplicate manga found.'**
+  String get merge_manga_none_found;
 
-  /// No description provided for @merge_sources_pick_title.
+  /// No description provided for @merge_manga_pick_title.
   ///
   /// In en, this message translates to:
-  /// **'Possible duplicates'**
-  String get merge_sources_pick_title;
+  /// **'Possible duplicate manga'**
+  String get merge_manga_pick_title;
 
-  /// No description provided for @merge_sources_choose_primary_title.
+  /// No description provided for @merge_manga_choose_primary_title.
   ///
   /// In en, this message translates to:
   /// **'Which one should the others merge into?'**
-  String get merge_sources_choose_primary_title;
+  String get merge_manga_choose_primary_title;
 
-  /// No description provided for @merge_sources_choose_primary_message.
+  /// No description provided for @merge_manga_choose_primary_message.
   ///
   /// In en, this message translates to:
-  /// **'The manga from the other source(s) will be rebound to whichever one you pick here — nothing is deleted.'**
-  String get merge_sources_choose_primary_message;
+  /// **'Chapters, history and tracking from the other entries will be folded into whichever one you pick — nothing is deleted.'**
+  String get merge_manga_choose_primary_message;
 
-  /// No description provided for @merge_sources_button.
+  /// No description provided for @merge_manga_chapters_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 chapter} other{{count} chapters}}'**
+  String merge_manga_chapters_subtitle(int count);
+
+  /// No description provided for @merge_manga_button.
   ///
   /// In en, this message translates to:
   /// **'Merge'**
-  String get merge_sources_button;
+  String get merge_manga_button;
 
-  /// No description provided for @merge_sources_result_message.
+  /// No description provided for @merge_manga_result_message.
   ///
   /// In en, this message translates to:
-  /// **'Merged {mangaCount} manga into {sourceName}.'**
-  String merge_sources_result_message(Object mangaCount, Object sourceName);
+  /// **'Merged {count} duplicate manga into {mangaName}.'**
+  String merge_manga_result_message(Object count, Object mangaName);
+
+  /// No description provided for @merge_preview_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm merge'**
+  String get merge_preview_title;
+
+  /// No description provided for @merge_manga_preview_message.
+  ///
+  /// In en, this message translates to:
+  /// **'{totalChapters} chapters found across the other entries. {duplicateChapters} are duplicates and will be dropped (keeping whichever copy has reading progress); {keptChapters} will be added. {duplicateTracks} duplicate tracking link(s) will also be dropped.'**
+  String merge_manga_preview_message(
+    Object totalChapters,
+    Object duplicateChapters,
+    Object keptChapters,
+    Object duplicateTracks,
+  );
 
   /// No description provided for @beta.
   ///

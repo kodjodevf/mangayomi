@@ -15,13 +15,13 @@ final lastLibrarySnapshotProvider = LastLibrarySnapshotProvider._();
 final class LastLibrarySnapshotProvider
     extends
         $FunctionalProvider<
-          AsyncValue<LibrarySafetySnapshot?>,
-          LibrarySafetySnapshot?,
-          FutureOr<LibrarySafetySnapshot?>
+          AsyncValue<List<LibrarySafetySnapshot>>,
+          List<LibrarySafetySnapshot>,
+          FutureOr<List<LibrarySafetySnapshot>>
         >
     with
-        $FutureModifier<LibrarySafetySnapshot?>,
-        $FutureProvider<LibrarySafetySnapshot?> {
+        $FutureModifier<List<LibrarySafetySnapshot>>,
+        $FutureProvider<List<LibrarySafetySnapshot>> {
   LastLibrarySnapshotProvider._()
     : super(
         from: null,
@@ -38,15 +38,15 @@ final class LastLibrarySnapshotProvider
 
   @$internal
   @override
-  $FutureProviderElement<LibrarySafetySnapshot?> $createElement(
+  $FutureProviderElement<List<LibrarySafetySnapshot>> $createElement(
     $ProviderPointer pointer,
   ) => $FutureProviderElement(pointer);
 
   @override
-  FutureOr<LibrarySafetySnapshot?> create(Ref ref) {
+  FutureOr<List<LibrarySafetySnapshot>> create(Ref ref) {
     return lastLibrarySnapshot(ref);
   }
 }
 
 String _$lastLibrarySnapshotHash() =>
-    r'3250af4c54279cc95875f1dca1fa9d831fb828d8';
+    r'b662e85baeacf7074597f3b4533bcada028f2d66';

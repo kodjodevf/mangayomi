@@ -125,7 +125,13 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
       ),
     );
     return history.when(
-      data: (entries) {
+      data: (allEntries) {
+        final entries = allEntries
+            .where(
+              (e) =>
+                  e.chapter.value != null && e.chapter.value!.manga.value != null,
+            )
+            .toList();
         if (entries.isNotEmpty) {
           return CustomScrollView(
             slivers: [

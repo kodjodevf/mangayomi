@@ -1116,6 +1116,12 @@
       "description": {}
     }
   },
+  "roll_back_available_count": "{count} recent changes available to roll back to",
+  "@roll_back_available_count": {
+    "placeholders": {
+      "count": {}
+    }
+  },
   "delete_source_title": "Delete a source & its manga",
   "delete_source_subtitle": "Pick a source and remove every manga it has in your library, along with their chapters, downloads, history and tracking.",
   "delete_source_pick_title": "Pick a source to delete",
@@ -1126,17 +1132,18 @@
       "sourceName": {}
     }
   },
-  "delete_source_confirm_message": "This permanently deletes {mangaCount} manga, {chapterCount} chapters, {historyCount} history entries, {updateCount} update entries and {trackCount} tracking links. This cannot be undone except by rolling back.",
+  "delete_source_confirm_message": "This permanently deletes {mangaCount} manga, {chapterCount} chapters, {historyCount} history entries and {updateCount} update entries. Tracking links are kept. This cannot be undone except by rolling back.",
   "@delete_source_confirm_message": {
     "placeholders": {
       "mangaCount": {},
       "chapterCount": {},
       "historyCount": {},
-      "updateCount": {},
-      "trackCount": {}
+      "updateCount": {}
     }
   },
   "delete_source_also_remove_extension": "Also remove the installed extension",
+  "delete_source_keep_history": "Keep reading history",
+  "delete_source_keep_downloads": "Keep download records",
   "delete_source_button": "Delete",
   "delete_source_result_message": "Deleted {mangaCount} manga from {sourceName}.",
   "@delete_source_result_message": {
@@ -1145,18 +1152,36 @@
       "sourceName": {}
     }
   },
-  "merge_sources_title": "Merge duplicate sources",
-  "merge_sources_subtitle": "Finds sources in your library that are likely the same one under different names (e.g. from separate imports) and folds them into one, without deleting anything.",
-  "merge_sources_none_found": "No likely duplicate sources found.",
-  "merge_sources_pick_title": "Possible duplicates",
-  "merge_sources_choose_primary_title": "Which one should the others merge into?",
-  "merge_sources_choose_primary_message": "The manga from the other source(s) will be rebound to whichever one you pick here — nothing is deleted.",
-  "merge_sources_button": "Merge",
-  "merge_sources_result_message": "Merged {mangaCount} manga into {sourceName}.",
-  "@merge_sources_result_message": {
+  "merge_manga_title": "Merge duplicate manga",
+  "merge_manga_subtitle": "Finds manga with matching titles under the same source (e.g. after merging duplicate sources) and folds them into one, without deleting anything you'd want kept.",
+  "merge_manga_none_found": "No likely duplicate manga found.",
+  "merge_manga_pick_title": "Possible duplicate manga",
+  "merge_manga_choose_primary_title": "Which one should the others merge into?",
+  "merge_manga_choose_primary_message": "Chapters, history and tracking from the other entries will be folded into whichever one you pick — nothing is deleted.",
+  "merge_manga_chapters_subtitle": "{count, plural, =1{1 chapter} other{{count} chapters}}",
+  "@merge_manga_chapters_subtitle": {
     "placeholders": {
-      "mangaCount": {},
-      "sourceName": {}
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "merge_manga_button": "Merge",
+  "merge_manga_result_message": "Merged {count} duplicate manga into {mangaName}.",
+  "@merge_manga_result_message": {
+    "placeholders": {
+      "count": {},
+      "mangaName": {}
+    }
+  },
+  "merge_preview_title": "Confirm merge",
+  "merge_manga_preview_message": "{totalChapters} chapters found across the other entries. {duplicateChapters} are duplicates and will be dropped (keeping whichever copy has reading progress); {keptChapters} will be added. {duplicateTracks} duplicate tracking link(s) will also be dropped.",
+  "@merge_manga_preview_message": {
+    "placeholders": {
+      "totalChapters": {},
+      "duplicateChapters": {},
+      "keptChapters": {},
+      "duplicateTracks": {}
     }
   },
   "beta": "Beta"

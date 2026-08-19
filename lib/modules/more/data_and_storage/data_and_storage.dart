@@ -190,7 +190,7 @@ class DataAndStorage extends ConsumerWidget {
             ),
             const RollbackLastChangeTile(),
             const DeleteSourceTile(),
-            const MergeDuplicateSourcesTile(),
+            const MergeDuplicateMangaTile(),
             ListTile(
               onTap: () {
                 showDialog(
