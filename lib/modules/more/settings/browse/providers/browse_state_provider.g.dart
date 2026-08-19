@@ -98,7 +98,7 @@ final class AutoStartExtensionServerOnLaunchStateProvider
 }
 
 String _$autoStartExtensionServerOnLaunchStateHash() =>
-    r'e2137ed3c05a099db7c2a9b3d16bd1877ad8fac3';
+    r'be04fc2923244e09d51c699d411e692c7d139ac6';
 
 abstract class _$AutoStartExtensionServerOnLaunchState extends $Notifier<bool> {
   bool build();

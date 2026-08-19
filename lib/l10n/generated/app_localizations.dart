@@ -5008,6 +5008,290 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 source with no results} other{{count} sources with no results}}'**
   String sources_with_no_results(int count);
+
+  /// No description provided for @import_mode_title.
+  ///
+  /// In en, this message translates to:
+  /// **'How should this be imported?'**
+  String get import_mode_title;
+
+  /// No description provided for @import_mode_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose whether to merge this backup into your current library, or replace your entire library with it.'**
+  String get import_mode_message;
+
+  /// No description provided for @import_mode_keep_existing.
+  ///
+  /// In en, this message translates to:
+  /// **'Merge'**
+  String get import_mode_keep_existing;
+
+  /// No description provided for @import_mode_keep_existing_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Adds new series and updates matching ones. Nothing in your current library is removed.'**
+  String get import_mode_keep_existing_subtitle;
+
+  /// No description provided for @import_mode_replace.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace'**
+  String get import_mode_replace;
+
+  /// No description provided for @import_mode_replace_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Deletes your entire current library and replaces it with this backup.'**
+  String get import_mode_replace_subtitle;
+
+  /// No description provided for @replace_summary_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to replace your library'**
+  String get replace_summary_title;
+
+  /// No description provided for @replace_summary_message.
+  ///
+  /// In en, this message translates to:
+  /// **'This deletes your entire current library ({currentCount} series) and replaces it with {backupCount} series from this backup. This can only be undone by rolling back.'**
+  String replace_summary_message(Object currentCount, Object backupCount);
+
+  /// No description provided for @replace_summary_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace'**
+  String get replace_summary_confirm;
+
+  /// No description provided for @replace_result_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Replaced your library with {count} series from this backup.'**
+  String replace_result_message(Object count);
+
+  /// No description provided for @category_conflict_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Existing categories found'**
+  String get category_conflict_title;
+
+  /// No description provided for @category_conflict_message.
+  ///
+  /// In en, this message translates to:
+  /// **'The backup has categories that already exist in your library. Keep to fold incoming series into the existing category, or delete to leave those series uncategorized instead.'**
+  String get category_conflict_message;
+
+  /// No description provided for @category_conflict_keep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep — merge into existing category'**
+  String get category_conflict_keep;
+
+  /// No description provided for @category_conflict_delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete — leave series uncategorized'**
+  String get category_conflict_delete;
+
+  /// No description provided for @source_conflict_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sources not found'**
+  String get source_conflict_title;
+
+  /// No description provided for @source_conflict_message.
+  ///
+  /// In en, this message translates to:
+  /// **'These backup sources don\'t match an installed extension. Keep the original name (imported without a working source), or migrate to an installed extension so these series can be updated.'**
+  String get source_conflict_message;
+
+  /// No description provided for @source_conflict_keep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep original name (no live source)'**
+  String get source_conflict_keep;
+
+  /// No description provided for @import_summary_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to import'**
+  String get import_summary_title;
+
+  /// No description provided for @import_summary_message.
+  ///
+  /// In en, this message translates to:
+  /// **'{newSeries} new series, {updatedSeries} existing series will be updated, and {newChapters} new chapters will be added. Nothing already in your library will be removed.'**
+  String import_summary_message(
+    Object newSeries,
+    Object updatedSeries,
+    Object newChapters,
+  );
+
+  /// No description provided for @import_summary_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Import'**
+  String get import_summary_confirm;
+
+  /// No description provided for @import_result_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported {newSeries} new series, updated {updatedSeries} existing, added {newChapters} new chapters.'**
+  String import_result_message(
+    Object newSeries,
+    Object updatedSeries,
+    Object newChapters,
+  );
+
+  /// No description provided for @roll_back.
+  ///
+  /// In en, this message translates to:
+  /// **'Roll back'**
+  String get roll_back;
+
+  /// No description provided for @roll_back_confirm_message.
+  ///
+  /// In en, this message translates to:
+  /// **'This restores your library to the safety snapshot taken right before this change, undoing everything it just did.'**
+  String get roll_back_confirm_message;
+
+  /// No description provided for @roll_back_done.
+  ///
+  /// In en, this message translates to:
+  /// **'Rolled back to the pre-change snapshot.'**
+  String get roll_back_done;
+
+  /// No description provided for @restoring_backup.
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring your library…'**
+  String get restoring_backup;
+
+  /// No description provided for @roll_back_last_change.
+  ///
+  /// In en, this message translates to:
+  /// **'Roll back last change'**
+  String get roll_back_last_change;
+
+  /// No description provided for @roll_back_last_change_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Snapshot from {date} — {description}'**
+  String roll_back_last_change_subtitle(Object date, Object description);
+
+  /// No description provided for @delete_source_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete a source & its manga'**
+  String get delete_source_title;
+
+  /// No description provided for @delete_source_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a source and remove every manga it has in your library, along with their chapters, downloads, history and tracking.'**
+  String get delete_source_subtitle;
+
+  /// No description provided for @delete_source_pick_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a source to delete'**
+  String get delete_source_pick_title;
+
+  /// No description provided for @delete_source_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'No sources found in your library.'**
+  String get delete_source_empty;
+
+  /// No description provided for @delete_source_confirm_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {sourceName}?'**
+  String delete_source_confirm_title(Object sourceName);
+
+  /// No description provided for @delete_source_confirm_message.
+  ///
+  /// In en, this message translates to:
+  /// **'This permanently deletes {mangaCount} manga, {chapterCount} chapters, {historyCount} history entries, {updateCount} update entries and {trackCount} tracking links. This cannot be undone except by rolling back.'**
+  String delete_source_confirm_message(
+    Object mangaCount,
+    Object chapterCount,
+    Object historyCount,
+    Object updateCount,
+    Object trackCount,
+  );
+
+  /// No description provided for @delete_source_also_remove_extension.
+  ///
+  /// In en, this message translates to:
+  /// **'Also remove the installed extension'**
+  String get delete_source_also_remove_extension;
+
+  /// No description provided for @delete_source_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete_source_button;
+
+  /// No description provided for @delete_source_result_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted {mangaCount} manga from {sourceName}.'**
+  String delete_source_result_message(Object mangaCount, Object sourceName);
+
+  /// No description provided for @merge_sources_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Merge duplicate sources'**
+  String get merge_sources_title;
+
+  /// No description provided for @merge_sources_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Finds sources in your library that are likely the same one under different names (e.g. from separate imports) and folds them into one, without deleting anything.'**
+  String get merge_sources_subtitle;
+
+  /// No description provided for @merge_sources_none_found.
+  ///
+  /// In en, this message translates to:
+  /// **'No likely duplicate sources found.'**
+  String get merge_sources_none_found;
+
+  /// No description provided for @merge_sources_pick_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Possible duplicates'**
+  String get merge_sources_pick_title;
+
+  /// No description provided for @merge_sources_choose_primary_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Which one should the others merge into?'**
+  String get merge_sources_choose_primary_title;
+
+  /// No description provided for @merge_sources_choose_primary_message.
+  ///
+  /// In en, this message translates to:
+  /// **'The manga from the other source(s) will be rebound to whichever one you pick here — nothing is deleted.'**
+  String get merge_sources_choose_primary_message;
+
+  /// No description provided for @merge_sources_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Merge'**
+  String get merge_sources_button;
+
+  /// No description provided for @merge_sources_result_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Merged {mangaCount} manga into {sourceName}.'**
+  String merge_sources_result_message(Object mangaCount, Object sourceName);
+
+  /// No description provided for @beta.
+  ///
+  /// In en, this message translates to:
+  /// **'Beta'**
+  String get beta;
 }
 
 class _AppLocalizationsDelegate
