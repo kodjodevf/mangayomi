@@ -1,4 +1,4 @@
-git remote add myfork https://github.com/not-akari/mangayomi.gitimport 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
