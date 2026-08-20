@@ -29,18 +29,15 @@ class _ExtensionListTileWidgetState
     extends ConsumerState<ExtensionListTileWidget> {
   bool _isLoading = false;
 
-  late final bool _updateAvailable;
-  late final bool _sourceNotEmpty;
+  bool get _updateAvailable =>
+      compareVersions(
+        widget.source.version ?? '',
+        widget.source.versionLast ?? '',
+      ) <
+      0;
 
-  @override
-  void initState() {
-    super.initState();
-    _updateAvailable =
-        compareVersions(widget.source.version!, widget.source.versionLast!) < 0;
-    _sourceNotEmpty =
-        widget.source.sourceCode != null &&
-        widget.source.sourceCode!.isNotEmpty;
-  }
+  bool get _sourceNotEmpty =>
+      widget.source.sourceCode != null && widget.source.sourceCode!.isNotEmpty;
 
   Future<void> _handleSourceFetch() async {
     setState(() => _isLoading = true);
