@@ -424,7 +424,7 @@ jobs:
           Version: ${VERSION}
           Release: 1%{?dist}
           Summary: Mangayomi is an open-source Flutter app for reading manga, novels, and watching animes across multiple platforms
-          Requires: libjpeg libpng libavif webkit2gtk4.1 mpv
+          Requires: (libjpeg-turbo or libjpeg) libpng libavif webkit2gtk4.1 mpv
           License: MIT
           Source0: %{name}-%{version}.tar.gz
           BuildArch: x86_64
