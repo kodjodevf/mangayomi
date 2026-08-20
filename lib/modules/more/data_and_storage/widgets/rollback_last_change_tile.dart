@@ -61,12 +61,12 @@ class RollbackLastChangeTile extends ConsumerWidget {
               overflow: TextOverflow.ellipsis,
             ),
             subtitle: Text(
-              DateTime.fromMillisecondsSinceEpoch(
-                snapshot.createdAt,
-              ).toString(),
+              DateTime.fromMillisecondsSinceEpoch(snapshot.createdAt)
+                  .toString(),
               style: TextStyle(fontSize: 11, color: context.secondaryColor),
             ),
-            onTap: () => offerLibraryRollback(context, ref, snapshot.backupPath),
+            onTap: () =>
+                offerLibraryRollback(context, ref, snapshot.backupPath),
           ),
       ],
     );
@@ -96,7 +96,7 @@ Future<void> offerLibraryRollback(
   if (confirmed != true || !context.mounted) return;
   showBusyDialog(context, l10n.restoring_backup);
   try {
-    await ref.read(
+    await ref.watch(
       doRestoreProvider(
         path: safetyBackupPath,
         context: context,
