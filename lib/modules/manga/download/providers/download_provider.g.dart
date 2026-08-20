@@ -87,12 +87,7 @@ final class DownloadChapterProvider
     with $FutureModifier<void>, $FutureProvider<void> {
   DownloadChapterProvider._({
     required DownloadChapterFamily super.from,
-    required ({
-      Chapter chapter,
-      bool? useWifi,
-      LocalFolder? localFolder,
-      VoidCallback? callback,
-    })
+    required ({Chapter chapter, bool? useWifi, VoidCallback? callback})
     super.argument,
   }) : super(
          retry: null,
@@ -121,17 +116,11 @@ final class DownloadChapterProvider
   FutureOr<void> create(Ref ref) {
     final argument =
         this.argument
-            as ({
-              Chapter chapter,
-              bool? useWifi,
-              LocalFolder? localFolder,
-              VoidCallback? callback,
-            });
+            as ({Chapter chapter, bool? useWifi, VoidCallback? callback});
     return downloadChapter(
       ref,
       chapter: argument.chapter,
       useWifi: argument.useWifi,
-      localFolder: argument.localFolder,
       callback: argument.callback,
     );
   }
@@ -147,18 +136,13 @@ final class DownloadChapterProvider
   }
 }
 
-String _$downloadChapterHash() => r'36aa5c68bfe64281d4c485ba67958e8412eea1e6';
+String _$downloadChapterHash() => r'd559dacda3f5e63935c9c112bf2857dc99f01cbc';
 
 final class DownloadChapterFamily extends $Family
     with
         $FunctionalFamilyOverride<
           FutureOr<void>,
-          ({
-            Chapter chapter,
-            bool? useWifi,
-            LocalFolder? localFolder,
-            VoidCallback? callback,
-          })
+          ({Chapter chapter, bool? useWifi, VoidCallback? callback})
         > {
   DownloadChapterFamily._()
     : super(
@@ -172,15 +156,9 @@ final class DownloadChapterFamily extends $Family
   DownloadChapterProvider call({
     required Chapter chapter,
     bool? useWifi,
-    LocalFolder? localFolder,
     VoidCallback? callback,
   }) => DownloadChapterProvider._(
-    argument: (
-      chapter: chapter,
-      useWifi: useWifi,
-      localFolder: localFolder,
-      callback: callback,
-    ),
+    argument: (chapter: chapter, useWifi: useWifi, callback: callback),
     from: this,
   );
 
@@ -196,7 +174,7 @@ final class ProcessDownloadsProvider
     with $FutureModifier<void>, $FutureProvider<void> {
   ProcessDownloadsProvider._({
     required ProcessDownloadsFamily super.from,
-    required ({bool? useWifi, LocalFolder? localFolder}) super.argument,
+    required bool? super.argument,
   }) : super(
          retry: null,
          name: r'processDownloadsProvider',
@@ -212,7 +190,7 @@ final class ProcessDownloadsProvider
   String toString() {
     return r'processDownloadsProvider'
         ''
-        '$argument';
+        '($argument)';
   }
 
   @$internal
@@ -222,13 +200,8 @@ final class ProcessDownloadsProvider
 
   @override
   FutureOr<void> create(Ref ref) {
-    final argument =
-        this.argument as ({bool? useWifi, LocalFolder? localFolder});
-    return processDownloads(
-      ref,
-      useWifi: argument.useWifi,
-      localFolder: argument.localFolder,
-    );
+    final argument = this.argument as bool?;
+    return processDownloads(ref, useWifi: argument);
   }
 
   @override
@@ -242,14 +215,10 @@ final class ProcessDownloadsProvider
   }
 }
 
-String _$processDownloadsHash() => r'0f351dc857d3bf528c68b4eda1582b0f79b48157';
+String _$processDownloadsHash() => r'4d28ebdbcfd04dace4b0b42aeaceb1d99490cb23';
 
 final class ProcessDownloadsFamily extends $Family
-    with
-        $FunctionalFamilyOverride<
-          FutureOr<void>,
-          ({bool? useWifi, LocalFolder? localFolder})
-        > {
+    with $FunctionalFamilyOverride<FutureOr<void>, bool?> {
   ProcessDownloadsFamily._()
     : super(
         retry: null,
@@ -259,11 +228,8 @@ final class ProcessDownloadsFamily extends $Family
         isAutoDispose: true,
       );
 
-  ProcessDownloadsProvider call({bool? useWifi, LocalFolder? localFolder}) =>
-      ProcessDownloadsProvider._(
-        argument: (useWifi: useWifi, localFolder: localFolder),
-        from: this,
-      );
+  ProcessDownloadsProvider call({bool? useWifi}) =>
+      ProcessDownloadsProvider._(argument: useWifi, from: this);
 
   @override
   String toString() => r'processDownloadsProvider';

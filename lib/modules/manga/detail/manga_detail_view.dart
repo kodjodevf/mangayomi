@@ -12,12 +12,10 @@ import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/manga.dart';
-import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/track_search.dart';
 import 'package:mangayomi/modules/library/library_screen.dart';
-import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/modules/library/providers/library_filter_provider.dart';
 import 'package:mangayomi/modules/library/providers/local_archive.dart';
 import 'package:mangayomi/modules/manga/detail/providers/export_metadata.dart';
@@ -33,7 +31,6 @@ import 'package:mangayomi/modules/manga/detail/widgets/tracking_menu.dart';
 import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
 import 'package:mangayomi/modules/more/categories/providers/isar_providers.dart';
 import 'package:mangayomi/modules/more/providers/algorithm_weights_state_provider.dart';
-import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
 import 'package:mangayomi/modules/tracker_library/tracker_library_screen.dart';
 import 'package:mangayomi/modules/widgets/bottom_select_bar.dart';
 import 'package:mangayomi/modules/widgets/category_selection_dialog.dart';
@@ -254,62 +251,10 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
     }).toList();
     if (chaptersToDownload.isEmpty) return;
 
-    final shouldAsk = ref.read(askDownloadDestinationStateProvider);
-    if (!shouldAsk) {
-      await _queueDownloads(
-        chaptersToDownload,
-        localFolder: await getDownloadLocalFolder(),
-      );
-      return;
-    }
-
-    final folders = await getAllLocalFolders();
-    if (folders.isEmpty || !context.mounted) return;
-    if (folders.length == 1) {
-      await _queueDownloads(chaptersToDownload, localFolder: folders.first);
-      return;
-    }
-
-    final selectedFolder = await _showDownloadDestinationDialog(
-      context,
-      folders,
-    );
-    if (selectedFolder == null) return;
-    await _queueDownloads(chaptersToDownload, localFolder: selectedFolder);
-  }
-
-  Future<void> _queueDownloads(
-    List<Chapter> chapters, {
-    LocalFolder? localFolder,
-  }) async {
-    for (final chapter in chapters) {
+    for (final chapter in chaptersToDownload) {
       await ref.read(addDownloadToQueueProvider(chapter: chapter).future);
     }
-    ref.read(processDownloadsProvider(localFolder: localFolder));
-  }
-
-  Future<LocalFolder?> _showDownloadDestinationDialog(
-    BuildContext context,
-    List<LocalFolder> folders,
-  ) {
-    return showDialog<LocalFolder>(
-      context: context,
-      builder: (context) => SimpleDialog(
-        title: Text(context.l10n.select_download_destination),
-        children: folders
-            .map(
-              (folder) => SimpleDialogOption(
-                onPressed: () => Navigator.pop(context, folder),
-                child: ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(folder.name ?? ""),
-                  subtitle: Text(folder.path ?? ""),
-                ),
-              ),
-            )
-            .toList(),
-      ),
-    );
+    ref.read(processDownloadsProvider());
   }
 
   Widget _buildWidget({required List<Chapter> chapters}) {
