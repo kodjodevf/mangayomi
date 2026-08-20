@@ -20,6 +20,7 @@ import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/backup_compression.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/services/backup_password_storage.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:share_plus/share_plus.dart';
@@ -114,6 +115,7 @@ Future<String> writeMangayomiBackupZip({
   required List<int> list,
   required String directory,
   int compressionLevel = 6,
+  bool encrypt = true,
 }) async {
   Map<String, dynamic> datas = {};
   datas.addAll({"version": "2"});
@@ -230,6 +232,18 @@ Future<String> writeMangayomiBackupZip({
         .toList();
     datas.addAll({"customButtons": res});
   }
+  String? encryptionPassword;
+  if (encrypt &&
+      (isar.settings.getSync(227)?.backupEncryptionEnabled ?? false)) {
+    encryptionPassword = await BackupPasswordStorage.get();
+    if (encryptionPassword == null) {
+      throw Exception(
+        'Backup encryption is enabled but no password is set. '
+        'Re-enter it in Data and Storage settings.',
+      );
+    }
+    datas.addAll({"backupEncryptionPassword": encryptionPassword});
+  }
   final regExp = RegExp(r'[^a-zA-Z0-9 .()\-\s]');
   final name =
       'mangayomi_${DateTime.now().toString().replaceAll(regExp, '_').replaceAll(' ', '_')}';
@@ -238,7 +252,7 @@ Future<String> writeMangayomiBackupZip({
 
   await file.writeAsString(jsonEncode(datas));
   final zipPath = p.join(directory, "$name.backup");
-  final zipEncoder = ZipFileEncoder();
+  final zipEncoder = ZipFileEncoder(password: encryptionPassword);
   zipEncoder.create(zipPath, level: compressionLevel);
   await zipEncoder.addFile(file);
   await zipEncoder.close();
