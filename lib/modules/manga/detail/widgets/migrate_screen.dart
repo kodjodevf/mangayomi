@@ -122,7 +122,7 @@ class _MigrationScreenScreenState extends ConsumerState<MigrationScreen> {
               itemBuilder: (context, index) {
                 final source = sourceList[index];
                 return SizedBox(
-                  height: 260,
+                  height: 280,
                   child: MigrationSourceSearchScreen(
                     key: ValueKey(query),
                     query: query,
@@ -231,7 +231,7 @@ class _MigrationSourceSearchScreenState
 
     return Scaffold(
       body: SizedBox(
-        height: 260,
+        height: 280,
         child: Column(
           children: [
             ListTile(
