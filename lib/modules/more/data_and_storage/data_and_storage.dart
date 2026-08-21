@@ -254,9 +254,9 @@ class DataAndStorage extends ConsumerWidget {
               ),
             ),
             SwitchListTile(
-              title: const Text('Encrypt backups'),
-              subtitle: const Text(
-                'Password-protect backup files using AES encryption',
+              title: Text(l10n.encrypt_backups),
+              subtitle: Text(
+                l10n.encrypt_backups_info,
                 style: TextStyle(fontSize: 11),
               ),
               value: backupEncryptionEnabled,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/backup_password_storage.dart';
 
 /// Shows the backup-encryption password setup dialog. Returns `true` if a
@@ -19,26 +20,20 @@ Future<bool?> showBackupEncryptionPasswordDialog(BuildContext context) {
 /// Shared by both the "set a new password" and "restore persisted an
 /// embedded password" flows, so the wording/behavior stays consistent.
 Future<bool?> showSecureStorageFallbackPrompt(BuildContext context) {
+  final l10n = l10nLocalizations(context)!;
   return showDialog<bool>(
     context: context,
     builder: (context) => AlertDialog(
-      title: const Text('No secure storage found'),
-      content: const Text(
-        'This system doesn\'t have a keyring service available '
-        '(e.g. gnome-keyring or kwallet on Linux), so the password '
-        'can\'t be stored securely.\n\n'
-        'Store it unencrypted in the local app database instead? '
-        'Anyone with access to this device\'s app data would be able '
-        'to read it.',
-      ),
+      title: Text(l10n.no_secure_storage),
+      content: Text(l10n.no_keyring_warning),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, false),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancel),
         ),
         TextButton(
           onPressed: () => Navigator.pop(context, true),
-          child: const Text('Store unencrypted'),
+          child: Text(l10n.ok),
         ),
       ],
     ),
@@ -105,18 +100,19 @@ class _BackupDecryptPasswordDialogState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = l10nLocalizations(context)!;
     return AlertDialog(
-      title: const Text('Enter backup password'),
+      title: Text(l10n.enter_backup_password),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (widget.wasIncorrect)
-            const Padding(
-              padding: EdgeInsets.only(bottom: 8),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
               child: Text(
-                'Incorrect password, try again.',
-                style: TextStyle(color: Colors.red),
+                l10n.incorrect_password_try_again,
+                style: const TextStyle(color: Colors.red),
               ),
             ),
           TextField(
@@ -124,7 +120,7 @@ class _BackupDecryptPasswordDialogState
             obscureText: _obscure,
             autofocus: true,
             decoration: InputDecoration(
-              labelText: 'Password',
+              labelText: l10n.password,
               suffixIcon: IconButton(
                 icon: Icon(_obscure ? Icons.visibility : Icons.visibility_off),
                 onPressed: () => setState(() => _obscure = !_obscure),
@@ -142,13 +138,13 @@ class _BackupDecryptPasswordDialogState
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, null),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancel),
         ),
         TextButton(
           onPressed: _controller.text.isEmpty
               ? null
               : () => Navigator.pop(context, _controller.text),
-          child: const Text('OK'),
+          child: Text(l10n.ok),
         ),
       ],
     );
@@ -200,8 +196,9 @@ class _BackupEncryptionPasswordDialogState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = l10nLocalizations(context)!;
     return AlertDialog(
-      title: const Text('Set backup password'),
+      title: Text(l10n.set_backup_password),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,7 +208,7 @@ class _BackupEncryptionPasswordDialogState
             obscureText: _obscure,
             autofocus: true,
             decoration: InputDecoration(
-              labelText: 'Password',
+              labelText: l10n.password,
               suffixIcon: IconButton(
                 icon: Icon(_obscure ? Icons.visibility : Icons.visibility_off),
                 onPressed: () => setState(() => _obscure = !_obscure),
@@ -225,11 +222,11 @@ class _BackupEncryptionPasswordDialogState
               controller: _confirmController,
               obscureText: true,
               decoration: InputDecoration(
-                labelText: 'Confirm password',
+                labelText: l10n.confirm_password,
                 errorText:
                     _confirmController.text.isNotEmpty &&
                         _confirmController.text != _passwordController.text
-                    ? 'Passwords do not match'
+                    ? l10n.passwords_do_not_match
                     : null,
               ),
               onChanged: (_) => setState(() {}),
@@ -240,7 +237,7 @@ class _BackupEncryptionPasswordDialogState
       actions: [
         TextButton(
           onPressed: _saving ? null : () => Navigator.pop(context, false),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancel),
         ),
         TextButton(
           onPressed: (_canSubmit && !_saving) ? _submit : null,
@@ -250,7 +247,7 @@ class _BackupEncryptionPasswordDialogState
                   height: 16,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
-              : const Text('OK'),
+              : Text(l10n.ok),
         ),
       ],
     );

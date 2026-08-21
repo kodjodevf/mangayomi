@@ -110,6 +110,7 @@ Future<Map<String, dynamic>> _decodeMangayomiBackup(
   String? passwordToTry;
   var triedStoredPassword = false;
   var wasIncorrect = false;
+  final l10n = l10nLocalizations(context)!;
 
   while (true) {
     final stream = InputFileStream(path);
@@ -145,7 +146,7 @@ Future<Map<String, dynamic>> _decodeMangayomiBackup(
         wasIncorrect: wasIncorrect,
       );
       if (entered == null) {
-        throw Exception('A password is required to restore this backup.');
+        throw Exception(l10n.password_required_to_restore);
       }
       passwordToTry = entered;
       wasIncorrect = true;
