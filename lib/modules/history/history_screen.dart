@@ -136,8 +136,7 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
             .toSet()
             .toList();
         final chapterById = {
-          for (final c in isar.chapters.getAllSync(chapterIds))
-            if (c != null) c.id!: c,
+          for (final c in isar.chapters.getAllSync(chapterIds)) c?.id!: c!,
         };
         final mangaIds = chapterById.values
             .map((c) => c.mangaId)
@@ -145,8 +144,7 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
             .toSet()
             .toList();
         final mangaById = {
-          for (final m in isar.mangas.getAllSync(mangaIds))
-            if (m != null) m.id!: m,
+          for (final m in isar.mangas.getAllSync(mangaIds)) m?.id!: m!,
         };
         final entries = allEntries.where((e) {
           final c = chapterById[e.chapterId];
