@@ -2027,6 +2027,48 @@ abstract class AppLocalizations {
   /// **'This operation will fully replace the local data with remote data!'**
   String get sync_button_download_info;
 
+  /// No description provided for @sync_status_not_configured.
+  ///
+  /// In en, this message translates to:
+  /// **'Not connected'**
+  String get sync_status_not_configured;
+
+  /// No description provided for @sync_status_checking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking connection...'**
+  String get sync_status_checking;
+
+  /// No description provided for @sync_status_connected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get sync_status_connected;
+
+  /// No description provided for @sync_status_unauthorized.
+  ///
+  /// In en, this message translates to:
+  /// **'Session expired, please log in again'**
+  String get sync_status_unauthorized;
+
+  /// No description provided for @sync_status_unreachable.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t reach server'**
+  String get sync_status_unreachable;
+
+  /// No description provided for @sync_section_general.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get sync_section_general;
+
+  /// No description provided for @sync_section_data_types.
+  ///
+  /// In en, this message translates to:
+  /// **'What to sync'**
+  String get sync_section_data_types;
+
   /// No description provided for @sync_on.
   ///
   /// In en, this message translates to:
