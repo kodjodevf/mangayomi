@@ -8,6 +8,56 @@ part of 'date_format_state_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// Live view of the single Settings row (id 227), shared by every provider
+/// that only needs one field off it. Settings is a large row (several list
+/// fields, some unbounded), so this exists to make sure it only gets
+/// deserialized when it actually changes — once — instead of every reader
+/// doing its own isar.settings.getSync() on every single read.
+
+@ProviderFor(settingsStream)
+final settingsStreamProvider = SettingsStreamProvider._();
+
+/// Live view of the single Settings row (id 227), shared by every provider
+/// that only needs one field off it. Settings is a large row (several list
+/// fields, some unbounded), so this exists to make sure it only gets
+/// deserialized when it actually changes — once — instead of every reader
+/// doing its own isar.settings.getSync() on every single read.
+
+final class SettingsStreamProvider
+    extends
+        $FunctionalProvider<AsyncValue<Settings>, Settings, Stream<Settings>>
+    with $FutureModifier<Settings>, $StreamProvider<Settings> {
+  /// Live view of the single Settings row (id 227), shared by every provider
+  /// that only needs one field off it. Settings is a large row (several list
+  /// fields, some unbounded), so this exists to make sure it only gets
+  /// deserialized when it actually changes — once — instead of every reader
+  /// doing its own isar.settings.getSync() on every single read.
+  SettingsStreamProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'settingsStreamProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$settingsStreamHash();
+
+  @$internal
+  @override
+  $StreamProviderElement<Settings> $createElement($ProviderPointer pointer) =>
+      $StreamProviderElement(pointer);
+
+  @override
+  Stream<Settings> create(Ref ref) {
+    return settingsStream(ref);
+  }
+}
+
+String _$settingsStreamHash() => r'c868936fe474c9c77cd4709f4963526da39b625a';
 
 @ProviderFor(DateFormatState)
 final dateFormatStateProvider = DateFormatStateProvider._();
@@ -20,7 +70,7 @@ final class DateFormatStateProvider
         argument: null,
         retry: null,
         name: r'dateFormatStateProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -41,7 +91,7 @@ final class DateFormatStateProvider
   }
 }
 
-String _$dateFormatStateHash() => r'9b11f72b8fa535b74873365618089dfca957e445';
+String _$dateFormatStateHash() => r'8e18a6bdf0858544ab2532aa3980a456c742da69';
 
 abstract class _$DateFormatState extends $Notifier<String> {
   String build();
@@ -72,7 +122,7 @@ final class RelativeTimesTampsStateProvider
         argument: null,
         retry: null,
         name: r'relativeTimesTampsStateProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -94,7 +144,7 @@ final class RelativeTimesTampsStateProvider
 }
 
 String _$relativeTimesTampsStateHash() =>
-    r'fc39b88871e857dcd363c01df59de9ca174cb1d6';
+    r'f0b503eed4c0e574a5d0e4c95b3227f9f7504d01';
 
 abstract class _$RelativeTimesTampsState extends $Notifier<int> {
   int build();
