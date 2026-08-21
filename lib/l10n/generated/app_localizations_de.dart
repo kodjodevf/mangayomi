@@ -1797,10 +1797,11 @@ class AppLocalizationsDe extends AppLocalizations {
       'Benutzerdefiniertes DNS (leer lassen, um System-DNS zu verwenden)';
 
   @override
-  String get android_proxy_server => 'Android Proxy Server (ApkBridge)';
+  String get android_proxy_server =>
+      'Android Proxy Server (M-Extension-Server)';
 
   @override
-  String get get_apk_bridge => 'ApkBridge herunterladen';
+  String get get_m_extension_server => 'M-Extension-Server herunterladen';
 
   @override
   String get get_sync_server => 'Sync-Server hier holen';
@@ -2447,8 +2448,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get latest_version => 'Neueste Version';
 
   @override
-  String get apkbridge_description =>
-      'Verwenden Sie ApkBridge, wenn Sie einen separaten Android-Geräte-Proxy benötigen. Stellen Sie die Proxy-Adresse hier ein und laden Sie die APK von GitHub herunter.';
+  String get m_extension_server_description =>
+      'Verwenden Sie M-Extension-Server, wenn Sie einen separaten Android-Geräte-Proxy benötigen. Stellen Sie die Proxy-Adresse hier ein und laden Sie die APK von GitHub herunter.';
 
   @override
   String get set_proxy_address => 'Proxy-Adresse festlegen';
@@ -2510,7 +2511,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get could_not_launch_apk_bridge_page =>
-      'ApkBridge-Seite konnte nicht geöffnet werden.';
+      'M-Extension-Server-Seite konnte nicht geöffnet werden.';
 
   @override
   String get proxy_server_ip_hint =>

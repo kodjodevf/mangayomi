@@ -1792,10 +1792,11 @@ class AppLocalizationsId extends AppLocalizations {
       'DNS kustom (biarkan kosong untuk menggunakan DNS sistem)';
 
   @override
-  String get android_proxy_server => 'Server Proxy Android (ApkBridge)';
+  String get android_proxy_server =>
+      'Server Proxy Android (M-Extension-Server)';
 
   @override
-  String get get_apk_bridge => 'Dapatkan ApkBridge';
+  String get get_m_extension_server => 'Dapatkan M-Extension-Server';
 
   @override
   String get get_sync_server => 'Dapatkan Server Sinkronisasi di sini';
@@ -2437,8 +2438,8 @@ class AppLocalizationsId extends AppLocalizations {
   String get latest_version => 'Versi terbaru';
 
   @override
-  String get apkbridge_description =>
-      'Gunakan ApkBridge saat Anda memerlukan proxy perangkat Android terpisah. Atur alamat proxy di sini dan unduh APK dari GitHub.';
+  String get m_extension_server_description =>
+      'Gunakan M-Extension-Server saat Anda memerlukan proxy perangkat Android terpisah. Atur alamat proxy di sini dan unduh APK dari GitHub.';
 
   @override
   String get set_proxy_address => 'Atur alamat proxy';
@@ -2498,7 +2499,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get could_not_launch_apk_bridge_page =>
-      'Tidak dapat meluncurkan halaman ApkBridge.';
+      'Tidak dapat meluncurkan halaman M-Extension-Server.';
 
   @override
   String get proxy_server_ip_hint =>

@@ -3326,14 +3326,14 @@ abstract class AppLocalizations {
   /// No description provided for @android_proxy_server.
   ///
   /// In en, this message translates to:
-  /// **'Android Proxy Server (ApkBridge)'**
+  /// **'Android Proxy Server (M-Extension-Server)'**
   String get android_proxy_server;
 
-  /// No description provided for @get_apk_bridge.
+  /// No description provided for @get_m_extension_server.
   ///
   /// In en, this message translates to:
-  /// **'Get ApkBridge'**
-  String get get_apk_bridge;
+  /// **'Get M-Extension-Server'**
+  String get get_m_extension_server;
 
   /// No description provided for @get_sync_server.
   ///
@@ -4475,11 +4475,11 @@ abstract class AppLocalizations {
   /// **'Latest version'**
   String get latest_version;
 
-  /// No description provided for @apkbridge_description.
+  /// No description provided for @m_extension_server_description.
   ///
   /// In en, this message translates to:
-  /// **'Use ApkBridge when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.'**
-  String get apkbridge_description;
+  /// **'Use M-Extension-Server when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.'**
+  String get m_extension_server_description;
 
   /// No description provided for @set_proxy_address.
   ///
@@ -4574,7 +4574,7 @@ abstract class AppLocalizations {
   /// No description provided for @could_not_launch_apk_bridge_page.
   ///
   /// In en, this message translates to:
-  /// **'Could not launch the ApkBridge page.'**
+  /// **'Could not launch the M-Extension-Server page.'**
   String get could_not_launch_apk_bridge_page;
 
   /// No description provided for @proxy_server_ip_hint.

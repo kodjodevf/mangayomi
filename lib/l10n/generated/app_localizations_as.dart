@@ -1787,10 +1787,11 @@ class AppLocalizationsAs extends AppLocalizations {
   String get custom_dns => 'কাষ্টম DNS (ছিষ্টেম DNS ব্যৱহাৰ কৰিবলৈ খালী ৰাখক)';
 
   @override
-  String get android_proxy_server => 'Android প্ৰক্সি চাৰ্ভাৰ (ApkBridge)';
+  String get android_proxy_server =>
+      'Android প্ৰক্সি চাৰ্ভাৰ (M-Extension-Server)';
 
   @override
-  String get get_apk_bridge => 'ApkBridge প্ৰাপ্ত কৰক';
+  String get get_m_extension_server => 'M-Extension-Server প্ৰাপ্ত কৰক';
 
   @override
   String get get_sync_server => 'সিংক চাৰ্ভাৰ ইয়াত প্ৰাপ্ত কৰক';
@@ -2433,8 +2434,8 @@ class AppLocalizationsAs extends AppLocalizations {
   String get latest_version => 'Latest version';
 
   @override
-  String get apkbridge_description =>
-      'Use ApkBridge when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.';
+  String get m_extension_server_description =>
+      'Use M-Extension-Server when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.';
 
   @override
   String get set_proxy_address => 'Set proxy address';
@@ -2496,7 +2497,7 @@ class AppLocalizationsAs extends AppLocalizations {
 
   @override
   String get could_not_launch_apk_bridge_page =>
-      'Could not launch the ApkBridge page.';
+      'Could not launch the M-Extension-Server page.';
 
   @override
   String get proxy_server_ip_hint =>

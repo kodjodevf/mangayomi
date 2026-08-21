@@ -1799,10 +1799,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get custom_dns => 'DNS مخصص (اتركه فارغًا لاستخدام DNS النظام)';
 
   @override
-  String get android_proxy_server => 'خادم بروكسي Android (ApkBridge)';
+  String get android_proxy_server => 'خادم بروكسي Android (M-Extension-Server)';
 
   @override
-  String get get_apk_bridge => 'احصل على ApkBridge';
+  String get get_m_extension_server => 'احصل على M-Extension-Server';
 
   @override
   String get get_sync_server => 'احصل على خادم المزامنة من هنا';
@@ -2438,8 +2438,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get latest_version => 'أحدث إصدار';
 
   @override
-  String get apkbridge_description =>
-      'استخدم ApkBridge عندما تحتاج إلى وكيل جهاز أندرويد منفصل. اضبط عنوان الوكيل هنا وقم بتحميل APK من GitHub.';
+  String get m_extension_server_description =>
+      'استخدم M-Extension-Server عندما تحتاج إلى وكيل جهاز أندرويد منفصل. اضبط عنوان الوكيل هنا وقم بتحميل APK من GitHub.';
 
   @override
   String get set_proxy_address => 'ضبط عنوان الوكيل';
@@ -2497,7 +2497,8 @@ class AppLocalizationsAr extends AppLocalizations {
       'تم استيراد ملف JAR لخادم الإضافات.';
 
   @override
-  String get could_not_launch_apk_bridge_page => 'تعذر تشغيل صفحة ApkBridge.';
+  String get could_not_launch_apk_bridge_page =>
+      'تعذر تشغيل صفحة M-Extension-Server.';
 
   @override
   String get proxy_server_ip_hint =>

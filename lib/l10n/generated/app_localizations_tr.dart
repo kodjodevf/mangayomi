@@ -1792,10 +1792,11 @@ class AppLocalizationsTr extends AppLocalizations {
       'Özel DNS (sistem DNS\'ini kullanmak için boş bırakın)';
 
   @override
-  String get android_proxy_server => 'Android Proxy Sunucusu (ApkBridge)';
+  String get android_proxy_server =>
+      'Android Proxy Sunucusu (M-Extension-Server)';
 
   @override
-  String get get_apk_bridge => 'ApkBridge\'i edinin';
+  String get get_m_extension_server => 'M-Extension-Server\'i edinin';
 
   @override
   String get get_sync_server => 'Senkronizasyon Sunucusunu buradan alın';
@@ -2437,8 +2438,8 @@ class AppLocalizationsTr extends AppLocalizations {
   String get latest_version => 'Son sürüm';
 
   @override
-  String get apkbridge_description =>
-      'Ayrı bir Android cihaz proxy\'sine ihtiyacınız olduğunda ApkBridge kullanın. Proxy adresini buradan ayarlayın ve APK\'yı GitHub\'dan indirin.';
+  String get m_extension_server_description =>
+      'Ayrı bir Android cihaz proxy\'sine ihtiyacınız olduğunda M-Extension-Server kullanın. Proxy adresini buradan ayarlayın ve APK\'yı GitHub\'dan indirin.';
 
   @override
   String get set_proxy_address => 'Proxy adresini ayarla';
@@ -2501,7 +2502,7 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get could_not_launch_apk_bridge_page =>
-      'ApkBridge sayfası başlatılamadı.';
+      'M-Extension-Server sayfası başlatılamadı.';
 
   @override
   String get proxy_server_ip_hint =>

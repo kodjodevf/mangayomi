@@ -1811,10 +1811,11 @@ class AppLocalizationsRu extends AppLocalizations {
       'Пользовательский DNS (оставьте пустым для использования системного DNS)';
 
   @override
-  String get android_proxy_server => 'Прокси-сервер Android (ApkBridge)';
+  String get android_proxy_server =>
+      'Прокси-сервер Android (M-Extension-Server)';
 
   @override
-  String get get_apk_bridge => 'Получить ApkBridge';
+  String get get_m_extension_server => 'Получить M-Extension-Server';
 
   @override
   String get get_sync_server => 'Получить сервер синхронизации здесь';
@@ -2466,8 +2467,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get latest_version => 'Последняя версия';
 
   @override
-  String get apkbridge_description =>
-      'Используйте ApkBridge, когда вам нужен отдельный прокси-сервер для Android-устройства. Установите адрес прокси здесь и загрузите APK с GitHub.';
+  String get m_extension_server_description =>
+      'Используйте M-Extension-Server, когда вам нужен отдельный прокси-сервер для Android-устройства. Установите адрес прокси здесь и загрузите APK с GitHub.';
 
   @override
   String get set_proxy_address => 'Установить адрес прокси';
@@ -2528,7 +2529,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get could_not_launch_apk_bridge_page =>
-      'Не удалось запустить страницу ApkBridge.';
+      'Не удалось запустить страницу M-Extension-Server.';
 
   @override
   String get proxy_server_ip_hint =>

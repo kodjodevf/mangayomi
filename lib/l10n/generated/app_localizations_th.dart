@@ -1787,10 +1787,11 @@ class AppLocalizationsTh extends AppLocalizations {
   String get custom_dns => 'DNS กำหนดเอง (เว้นว่างไว้เพื่อใช้ DNS ของระบบ)';
 
   @override
-  String get android_proxy_server => 'เซิร์ฟเวอร์พร็อกซี Android (ApkBridge)';
+  String get android_proxy_server =>
+      'เซิร์ฟเวอร์พร็อกซี Android (M-Extension-Server)';
 
   @override
-  String get get_apk_bridge => 'รับ ApkBridge';
+  String get get_m_extension_server => 'รับ M-Extension-Server';
 
   @override
   String get get_sync_server => 'รับเซิร์ฟเวอร์ซิงค์ที่นี่';
@@ -2426,8 +2427,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get latest_version => 'Latest version';
 
   @override
-  String get apkbridge_description =>
-      'Use ApkBridge when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.';
+  String get m_extension_server_description =>
+      'Use M-Extension-Server when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.';
 
   @override
   String get set_proxy_address => 'Set proxy address';
@@ -2489,7 +2490,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get could_not_launch_apk_bridge_page =>
-      'Could not launch the ApkBridge page.';
+      'Could not launch the M-Extension-Server page.';
 
   @override
   String get proxy_server_ip_hint =>
