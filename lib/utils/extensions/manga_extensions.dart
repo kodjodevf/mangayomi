@@ -6,6 +6,36 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 
+/// Sort keys that only bucket by season if numbering actually repeats
+/// across seasons (a real reset) — otherwise chapters sort by raw number.
+Map<int?, int> _chapterSortKeys(String mangaTitle, List<Chapter> chapterList) {
+  final recognition = ChapterRecognition();
+  final raw = <int?, (int, int)>{
+    for (final c in chapterList)
+      c.id: recognition.rawSeasonAndNumber(mangaTitle, c.name ?? ''),
+  };
+  final episodeToSeasons = <int, Set<int>>{};
+  for (final pair in raw.values) {
+    episodeToSeasons.putIfAbsent(pair.$2, () => {}).add(pair.$1);
+  }
+  // A single collision is more likely a stray "S1-5 Recap"-style title
+  // falsely matching the season regex than a real reset — require several
+  // before trusting it, since a genuine per-season reset repeats numbers
+  // across many chapters, not just one.
+  final collisions = episodeToSeasons.values
+      .where((seasons) => seasons.length > 1)
+      .length;
+  final resets = collisions >= 3;
+  return {
+    for (final entry in raw.entries)
+      entry.key: resets
+          ? (entry.value.$1 > 0
+                ? entry.value.$1 * 100000 + entry.value.$2
+                : entry.value.$2)
+          : entry.value.$2,
+  };
+}
+
 extension MangaExtensions on Manga {
   /// Number of unread chapters, excluding chapters from scanlators the user has
   /// filtered out for this manga. Mirrors the chapter list's scanlator filter,
@@ -55,19 +85,12 @@ extension MangaExtensions on Manga {
     final scanlators = settings.filterScanlatorList ?? [];
     final filter = scanlators.where((e) => e.mangaId == id);
     final filterScanlator = filter.firstOrNull?.scanlators ?? [];
-    final recognition = ChapterRecognition();
-    final mangaTitle = name ?? '';
 
-    // Memoize so each chapter name is parsed at most once during the sort.
-    final numCache = <int?, int>{};
-    int chapNum(Chapter c) => numCache[c.id] ??= recognition.parseChapterNumber(
-      mangaTitle,
-      c.name ?? '',
+    final data = chapters.toList();
+    final sortKeys = _chapterSortKeys(name ?? '', data);
+    data.sort(
+      (a, b) => (sortKeys[a.id] ?? 0).compareTo(sortKeys[b.id] ?? 0),
     );
-
-    // Sort by chapter number — DB insertion order is NOT guaranteed to be ascending
-    final data = chapters.toList()
-      ..sort((a, b) => chapNum(a).compareTo(chapNum(b)));
 
     final chapterIds = data.map((c) => c.id).whereType<int>().toList();
     final downloadedIds = (filterDownloaded == 0 || chapterIds.isEmpty)
@@ -121,20 +144,11 @@ extension MangaExtensions on Manga {
 
     switch (sortIndex) {
       case 0: // by scanlator, then chapter number
-        // Cache recognition instance — parseChapterNumber is called O(n log n)
-        // times during sort, so avoid constructing it inside the comparator.
-        final recognition = ChapterRecognition();
-        final mangaTitle = name ?? '';
-
-        // Returns the parsed chapter number for a chapter, used as the primary
-        // numeric sort key for cases 0 and 1.
-        final numCache = <int?, int>{};
-        int chapNum(Chapter c) => numCache[c.id] ??= recognition
-            .parseChapterNumber(mangaTitle, c.name ?? '');
+        final sortKeys = _chapterSortKeys(name ?? '', chapters.toList());
         list.sort((a, b) {
           final s = (a.scanlator ?? '').compareTo(b.scanlator ?? '');
           if (s != 0) return s;
-          return chapNum(a).compareTo(chapNum(b));
+          return (sortKeys[a.id] ?? 0).compareTo(sortKeys[b.id] ?? 0);
         });
         break;
       case 2: // by upload date

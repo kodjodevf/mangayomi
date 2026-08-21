@@ -15,23 +15,23 @@ class ChapterRecognition {
   );
   static final _bareNumber = RegExp(r"([0-9]+)(\.[0-9]+)?(\.?[a-z]+)?");
 
-  /// Sort key for the UI list. Encodes season into the key so multi-season
-  /// anime sort correctly: key = season * 100000 + episode.
-  int parseChapterNumber(String mangaTitle, String chapterName) =>
-      _parse(mangaTitle, chapterName, applySeason: true);
+  /// Sort key for a single chapter with no list context. Always buckets by
+  /// season when present: key = season * 100000 + episode.
+  int parseChapterNumber(String mangaTitle, String chapterName) {
+    final (season, ep) = rawSeasonAndNumber(mangaTitle, chapterName);
+    return _withSeason(season, ep);
+  }
 
   /// Episode number within a season, for tracker updates (MAL/AniList/Kitsu)
   /// and AniSkip results. The tracker entry is already season-specific,
-  /// so season is stripped.
-  int parseEpisodeNumber(String mangaTitle, String chapterName) =>
-      _parse(mangaTitle, chapterName, applySeason: false);
+  /// so season is never applied.
+  int parseEpisodeNumber(String mangaTitle, String chapterName) {
+    final (_, ep) = rawSeasonAndNumber(mangaTitle, chapterName);
+    return ep;
+  }
 
-  int _parse(
-    String mangaTitle,
-    String chapterName, {
-    required bool applySeason,
-  }) {
-    // Normalize the chapter name by removing title, punctuation noise, etc.
+  /// Raw (season, episode) pair, unbucketed — season is 0 if none matched.
+  (int, int) rawSeasonAndNumber(String mangaTitle, String chapterName) {
     final name = chapterName
         .toLowerCase()
         .replaceAll(mangaTitle.toLowerCase(), '')
@@ -40,20 +40,16 @@ class ChapterRecognition {
         .replaceAll('-', '.')
         .replaceAll(_unwantedWhiteSpace, '');
 
-    final season = applySeason
-        ? int.tryParse(_seasonKeyword.firstMatch(name)?.group(1) ?? '') ?? 0
-        : 0;
+    final season =
+        int.tryParse(_seasonKeyword.firstMatch(name)?.group(1) ?? '') ?? 0;
 
     final epMatch = _episodeKeyword.firstMatch(name);
     if (epMatch != null) {
-      final ep = double.parse(epMatch.group(1)!).toInt();
-      return _withSeason(season, ep);
+      return (season, double.parse(epMatch.group(1)!).toInt());
     }
 
-    // strip season/volume noise, then look for ch. or bare number.
     final stripped = name.replaceAll(_unwanted, '');
-    final ep = _extractNumber(stripped);
-    return ep != null ? _withSeason(season, ep) : 0;
+    return (season, _extractNumber(stripped) ?? 0);
   }
 
   // Combines season + episode into a sortable integer.
