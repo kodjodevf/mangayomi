@@ -3,11 +3,25 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'date_format_state_provider.g.dart';
 
-@riverpod
+/// Live view of the single Settings row (id 227), shared by every provider
+/// that only needs one field off it. Settings is a large row (several list
+/// fields, some unbounded), so this exists to make sure it only gets
+/// deserialized when it actually changes — once — instead of every reader
+/// doing its own isar.settings.getSync() on every single read.
+@Riverpod(keepAlive: true)
+Stream<Settings> settingsStream(Ref ref) {
+  return isar.settings
+      .watchObject(227, fireImmediately: true)
+      .where((s) => s != null)
+      .map((s) => s!);
+}
+
+@Riverpod(keepAlive: true)
 class DateFormatState extends _$DateFormatState {
   @override
   String build() {
-    return isar.settings.getSync(227)!.dateFormat!;
+    return ref.watch(settingsStreamProvider).value?.dateFormat ??
+        isar.settings.getSync(227)!.dateFormat!;
   }
 
   void set(String dateFormat) {
@@ -23,11 +37,12 @@ class DateFormatState extends _$DateFormatState {
   }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class RelativeTimesTampsState extends _$RelativeTimesTampsState {
   @override
   int build() {
-    return isar.settings.getSync(227)!.relativeTimesTamps!;
+    return ref.watch(settingsStreamProvider).value?.relativeTimesTamps ??
+        isar.settings.getSync(227)!.relativeTimesTamps!;
   }
 
   void set(int type) {

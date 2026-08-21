@@ -126,12 +126,32 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
     );
     return history.when(
       data: (allEntries) {
-        final entries = allEntries
-            .where(
-              (e) =>
-                  e.chapter.value != null && e.chapter.value!.manga.value != null,
-            )
+        // Batch-resolve chapter/manga for every entry in one multi-get each,
+        // instead of each row's IsarLink.value doing its own blocking sync
+        // DB read — that was firing per row as it scrolled into view (every
+        // unloaded IsarLink.value synchronously calls loadSync()).
+        final chapterIds = allEntries
+            .map((e) => e.chapterId)
+            .whereType<int>()
+            .toSet()
             .toList();
+        final chapterById = {
+          for (final c in isar.chapters.getAllSync(chapterIds))
+            if (c != null) c.id!: c,
+        };
+        final mangaIds = chapterById.values
+            .map((c) => c.mangaId)
+            .whereType<int>()
+            .toSet()
+            .toList();
+        final mangaById = {
+          for (final m in isar.mangas.getAllSync(mangaIds))
+            if (m != null) m.id!: m,
+        };
+        final entries = allEntries.where((e) {
+          final c = chapterById[e.chapterId];
+          return c != null && mangaById[c.mangaId] != null;
+        }).toList();
         if (entries.isNotEmpty) {
           return CustomScrollView(
             slivers: [
@@ -160,8 +180,8 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
                   ),
                 ),
                 itemBuilder: (context, History element) {
-                  final chapter = element.chapter.value!;
-                  final manga = chapter.manga.value!;
+                  final chapter = chapterById[element.chapterId]!;
+                  final manga = mangaById[chapter.mangaId]!;
                   // Two focusable targets on TV, matching the Browse source
                   // rows: the entry itself, and remove. The cover's own
                   // tap-to-detail folds into the entry rather than becoming a
@@ -397,23 +417,27 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
   }
 
   Widget _getCoverImage(Manga manga) {
-    return manga.customCoverImage != null
-        ? Image.memory(manga.customCoverImage as Uint8List)
-        : cachedCompressedNetworkImage(
-            headers: ref.watch(
-              headersProvider(
-                source: manga.source!,
-                lang: manga.lang!,
-                sourceId: manga.sourceId,
+    return _DeferredCoverImage(
+      width: 60,
+      height: 90,
+      builder: (context) => manga.customCoverImage != null
+          ? Image.memory(manga.customCoverImage as Uint8List)
+          : cachedCompressedNetworkImage(
+              headers: ref.watch(
+                headersProvider(
+                  source: manga.source!,
+                  lang: manga.lang!,
+                  sourceId: manga.sourceId,
+                ),
               ),
+              imageUrl: toImgUrl(
+                manga.customCoverFromTracker ?? manga.imageUrl ?? "",
+              ),
+              width: 60,
+              height: 90,
+              fit: BoxFit.cover,
             ),
-            imageUrl: toImgUrl(
-              manga.customCoverFromTracker ?? manga.imageUrl ?? "",
-            ),
-            width: 60,
-            height: 90,
-            fit: BoxFit.cover,
-          );
+    );
   }
 
   void _openDeleteDialog(AppLocalizations l10n, Manga manga, int? deleteId) {
@@ -460,5 +484,57 @@ class _HistoryTabState extends ConsumerState<HistoryTab>
     if (context.mounted) {
       Navigator.pop(context);
     }
+  }
+}
+
+/// Skips building the real cover — a network fetch + decode — while the
+/// nearest Scrollable is flinging fast, showing an empty box of the same
+/// size instead. Swaps in the real image once scrolling settles, using
+/// ScrollerNotif to know when to re-check.
+class _DeferredCoverImage extends StatefulWidget {
+  final Widget Function(BuildContext context) builder;
+  final double width;
+  final double height;
+
+  const _DeferredCoverImage({
+    required this.builder,
+    required this.width,
+    required this.height,
+  });
+
+  @override
+  State<_DeferredCoverImage> createState() => _DeferredCoverImageState();
+}
+
+class _DeferredCoverImageState extends State<_DeferredCoverImage> {
+  ScrollPosition? _scrollPosition;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final position = Scrollable.maybeOf(context)?.position;
+    if (!identical(position, _scrollPosition)) {
+      _scrollPosition?.isScrollingNotifier.removeListener(_onScrollingChanged);
+      _scrollPosition = position;
+      _scrollPosition?.isScrollingNotifier.addListener(_onScrollingChanged);
+    }
+  }
+
+  void _onScrollingChanged() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _scrollPosition?.isScrollingNotifier.removeListener(_onScrollingChanged);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (Scrollable.recommendDeferredLoadingForContext(context)) {
+      return SizedBox(width: widget.width, height: widget.height);
+    }
+    return widget.builder(context);
   }
 }
