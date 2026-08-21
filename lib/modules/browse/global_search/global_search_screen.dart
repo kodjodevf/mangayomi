@@ -315,7 +315,7 @@ class _SourceSearchScreenState extends ConsumerState<SourceSearchScreen> {
     // A Scaffold per list row was never needed; it also forces the row to
     // expand, which would defeat the collapse.
     return SizedBox(
-      height: 260,
+      height: 280,
       child: Column(
         children: [
           header,
