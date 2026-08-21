@@ -11,6 +11,7 @@ import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/modules/widgets/deferred_cover_image.dart';
 import 'package:mangayomi/modules/widgets/tv_row_button.dart';
 
 class UpdateChapterListTileWidget extends ConsumerWidget {
@@ -32,23 +33,27 @@ class UpdateChapterListTileWidget extends ConsumerWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(5),
-            child: Image(
-              image: manga.customCoverImage != null
-                  ? MemoryImage(manga.customCoverImage as Uint8List)
-                        as ImageProvider
-                  : coverProvider(
-                      toImgUrl(manga.customCoverFromTracker ?? manga.imageUrl!),
-                      headers: ref.watch(
-                        headersProvider(
-                          source: manga.source!,
-                          lang: manga.lang!,
-                          sourceId: manga.sourceId,
-                        ),
-                      ),
-                    ),
-              fit: BoxFit.cover,
+            child: DeferredCoverImage(
               width: 40,
               height: 45,
+              builder: (context) => Image(
+                image: manga.customCoverImage != null
+                    ? MemoryImage(manga.customCoverImage as Uint8List)
+                          as ImageProvider
+                    : coverProvider(
+                        toImgUrl(manga.customCoverFromTracker ?? manga.imageUrl!),
+                        headers: ref.watch(
+                          headersProvider(
+                            source: manga.source!,
+                            lang: manga.lang!,
+                            sourceId: manga.sourceId,
+                          ),
+                        ),
+                      ),
+                fit: BoxFit.cover,
+                width: 40,
+                height: 45,
+              ),
             ),
           ),
           const SizedBox(width: 12),
@@ -141,28 +146,32 @@ class UpdateChapterListTileWidget extends ConsumerWidget {
                                 extra: manga.id,
                               );
                             },
-                            child: Ink.image(
-                              fit: BoxFit.cover,
+                            child: DeferredCoverImage(
                               width: 40,
                               height: 45,
-                              image: manga.customCoverImage != null
-                                  ? MemoryImage(
-                                      manga.customCoverImage as Uint8List,
-                                    ) as ImageProvider
-                                  : coverProvider(
-                                      toImgUrl(
-                                        manga.customCoverFromTracker ??
-                                            manga.imageUrl!,
-                                      ),
-                                      headers: ref.watch(
-                                        headersProvider(
-                                          source: manga.source!,
-                                          lang: manga.lang!,
-                                          sourceId: manga.sourceId,
+                              builder: (context) => Ink.image(
+                                fit: BoxFit.cover,
+                                width: 40,
+                                height: 45,
+                                image: manga.customCoverImage != null
+                                    ? MemoryImage(
+                                        manga.customCoverImage as Uint8List,
+                                      ) as ImageProvider
+                                    : coverProvider(
+                                        toImgUrl(
+                                          manga.customCoverFromTracker ??
+                                              manga.imageUrl!,
+                                        ),
+                                        headers: ref.watch(
+                                          headersProvider(
+                                            source: manga.source!,
+                                            lang: manga.lang!,
+                                            sourceId: manga.sourceId,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                              child: InkWell(child: Container()),
+                                child: InkWell(child: Container()),
+                              ),
                             ),
                           ),
                         ),
