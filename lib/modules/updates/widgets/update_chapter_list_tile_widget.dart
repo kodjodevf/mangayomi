@@ -15,9 +15,11 @@ import 'package:mangayomi/modules/widgets/tv_row_button.dart';
 
 class UpdateChapterListTileWidget extends ConsumerWidget {
   final Chapter chapter;
+  final Manga manga;
   final bool sourceExist;
   const UpdateChapterListTileWidget({
     required this.chapter,
+    required this.manga,
     required this.sourceExist,
     super.key,
   });
@@ -83,7 +85,6 @@ class UpdateChapterListTileWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final manga = chapter.manga.value!;
     // Two focusable targets on TV, matching the Browse source rows: the entry
     // itself, and its download control. The cover's tap-to-detail is folded
     // into the entry, since a third stop for it would only slow the remote
