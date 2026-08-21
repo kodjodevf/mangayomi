@@ -12,6 +12,7 @@ Future<String> createLibrarySafetyBackup() async {
   return writeMangayomiBackupZip(
     list: const [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
     directory: dir.path,
+    encrypt: false,
   );
 }
 
@@ -54,9 +55,7 @@ Future<void> writeLastLibrarySnapshot(LibrarySafetySnapshot snapshot) async {
     if (await oldFile.exists()) await oldFile.delete();
   }
   final kept = updated.take(maxLibrarySnapshots).toList();
-  await file.writeAsString(
-    jsonEncode(kept.map((s) => s.toJson()).toList()),
-  );
+  await file.writeAsString(jsonEncode(kept.map((s) => s.toJson()).toList()));
 }
 
 Future<void> clearLastLibrarySnapshot() async {

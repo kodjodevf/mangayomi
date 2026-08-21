@@ -380,6 +380,8 @@ class Settings {
 
   int? backupCompressionLevel;
 
+  bool? backupEncryptionEnabled;
+
   bool? showNSFW;
 
   /// Show a small source badge on library covers. Off by default.
@@ -595,6 +597,7 @@ class Settings {
     this.readerSaturation = 1.0,
     this.readerNavigationLayout = 0,
     this.backupCompressionLevel,
+    this.backupEncryptionEnabled = false,
     this.showNSFW = false,
     this.showSourceBadge = false,
     this.ttsSpeechRate = 0.5,
@@ -932,6 +935,7 @@ class Settings {
     readerSaturation = json['readerSaturation']?.toDouble();
     readerNavigationLayout = json['readerNavigationLayout'];
     backupCompressionLevel = json['backupCompressionLevel'];
+    backupEncryptionEnabled = json['backupEncryptionEnabled'];
     showNSFW = json['showNSFW'];
     showSourceBadge = json['showSourceBadge'];
     ttsSpeechRate = json['ttsSpeechRate']?.toDouble();
@@ -1160,6 +1164,7 @@ class Settings {
     'readerSaturation': readerSaturation,
     'readerNavigationLayout': readerNavigationLayout,
     'backupCompressionLevel': backupCompressionLevel,
+    'backupEncryptionEnabled': backupEncryptionEnabled,
     'showNSFW': showNSFW,
     'showSourceBadge': showSourceBadge,
     'ttsSpeechRate': ttsSpeechRate,

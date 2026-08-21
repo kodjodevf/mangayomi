@@ -21,6 +21,7 @@ import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/proto/BackupAniyomi.pb.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/proto/BackupMihon.pb.dart';
+import 'package:mangayomi/modules/more/data_and_storage/widgets/backup_encryption_password_dialog.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/blend_level_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
@@ -30,6 +31,7 @@ import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_pr
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
+import 'package:mangayomi/services/backup_password_storage.dart';
 import 'package:mangayomi/utils/isar_txn_retry.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -44,16 +46,23 @@ Future<void> doRestore(
   Map<String, bool> categoryDecisions = const {},
   Map<String, int> sourceDecisions = const {},
 }) async {
-  InputFileStream? inputStream;
   try {
-    inputStream = InputFileStream(path);
-    final archive = ZipDecoder().decodeStream(inputStream);
+    // Zip filenames aren't encrypted even when file content is, so this
+    // initial pass (no password) is always enough to list files and
+    // determine backup type. Password resolution only happens below, and
+    // only for the mangayomi format, right before reading file *content*.
+    final probeStream = InputFileStream(path);
+    final Archive archive;
+    try {
+      archive = ZipDecoder().decodeStream(probeStream);
+    } finally {
+      probeStream.close();
+    }
     final backupType = checkBackupType(path, archive);
     switch (backupType) {
       case BackupType.mangayomi:
-        final backup = jsonDecode(
-          utf8.decode(archive.files.first.content),
-        ) as Map<String, dynamic>;
+        if (!context.mounted) return;
+        final backup = await _decodeMangayomiBackup(path, context);
         await ref.read(restoreBackupProvider(backup).future);
         break;
       case BackupType.kotatsu:
@@ -81,8 +90,69 @@ Future<void> doRestore(
     }
   } catch (e, s) {
     botToast('$e\n$s');
-  } finally {
-    inputStream?.close();
+  }
+}
+
+/// Decodes a mangayomi-format backup's JSON contents, transparently
+/// handling AES-encrypted backups: tries with no password, then the
+/// locally-stored password (if any), then prompts the user - retrying on a
+/// wrong password until it succeeds or the user cancels.
+///
+/// On success, if the backup embeds an encryption password (see
+/// `backup.dart`), persists it locally so future backups/restores on this
+/// device don't need it retyped - mirroring how every other part of a
+/// restored backup overwrites the local settings, just kept out of the
+/// generic Settings JSON round-trip (see backup_password_fallback.dart).
+Future<Map<String, dynamic>> _decodeMangayomiBackup(
+  String path,
+  BuildContext context,
+) async {
+  String? passwordToTry;
+  var triedStoredPassword = false;
+  var wasIncorrect = false;
+  final l10n = l10nLocalizations(context)!;
+
+  while (true) {
+    final stream = InputFileStream(path);
+    try {
+      final archive = ZipDecoder().decodeStream(
+        stream,
+        password: passwordToTry,
+      );
+      // decodeStream() only parses headers and buffers raw compressed
+      // bytes - it doesn't verify/decrypt content (and so won't throw on a
+      // wrong password) until the content is actually read, hence forcing
+      // that access here rather than after returning.
+      final bytes = archive.files.first.content as List<int>;
+      final backup = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
+
+      final embeddedPassword = backup['backupEncryptionPassword'] as String?;
+      if (embeddedPassword != null && context.mounted) {
+        await persistResolvedPassword(embeddedPassword, context);
+      }
+      return backup;
+    } catch (_) {
+      if (!triedStoredPassword) {
+        triedStoredPassword = true;
+        final stored = await BackupPasswordStorage.get();
+        if (stored != null) {
+          passwordToTry = stored;
+          continue;
+        }
+      }
+      if (!context.mounted) rethrow;
+      final entered = await showBackupDecryptPasswordDialog(
+        context,
+        wasIncorrect: wasIncorrect,
+      );
+      if (entered == null) {
+        throw Exception(l10n.password_required_to_restore);
+      }
+      passwordToTry = entered;
+      wasIncorrect = true;
+    } finally {
+      stream.close();
+    }
   }
 }
 

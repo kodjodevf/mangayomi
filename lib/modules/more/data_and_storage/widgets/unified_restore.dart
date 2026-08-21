@@ -30,7 +30,7 @@ Future<void> performRestore(BuildContext context, WidgetRef ref) async {
       if (confirmed != true || !context.mounted) return;
       showBusyDialog(context, context.l10n.restoring_backup);
       try {
-        await ref.read(doRestoreProvider(path: path, context: context).future);
+        await ref.watch(doRestoreProvider(path: path, context: context).future);
       } finally {
         if (context.mounted) hideBusyDialog(context);
       }
@@ -104,7 +104,7 @@ Future<void> performRestore(BuildContext context, WidgetRef ref) async {
       }
 
       if (!context.mounted) return;
-      await ref.read(
+      await ref.watch(
         doRestoreProvider(
           path: path,
           context: context,
