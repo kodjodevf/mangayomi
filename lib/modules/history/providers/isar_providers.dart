@@ -34,15 +34,21 @@ Stream<List<Update>> getAllUpdateStream(
   required ItemType itemType,
   String search = "",
 }) async* {
-  yield* isar.updates
+  // Filtering via .chapter((q) => q.manga(...)) makes Isar walk and fully
+  // deserialize the linked Chapter+Manga for every Update row on every watch
+  // re-evaluation. Resolving matching manga ids up front (indexed) and
+  // filtering Updates by mangaId (also indexed) avoids that link traversal.
+  final mangaIdsStream = isar.mangas
       .filter()
-      .chapter(
-        (q) => q.manga(
-          (q) => q
-              .itemTypeEqualTo(itemType)
-              .and()
-              .nameContains(search, caseSensitive: false),
-        ),
-      )
+      .itemTypeEqualTo(itemType)
+      .nameContains(search, caseSensitive: false)
+      .idProperty()
       .watch(fireImmediately: true);
+
+  await for (final mangaIds in mangaIdsStream) {
+    yield* isar.updates
+        .filter()
+        .anyOf(mangaIds, (q, int id) => q.mangaIdEqualTo(id))
+        .watch(fireImmediately: true);
+  }
 }
