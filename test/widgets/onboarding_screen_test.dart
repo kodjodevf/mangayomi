@@ -193,14 +193,14 @@ void main() {
       expect(logo(tester).color, Colors.white);
     });
 
-    testWidgets('is the real app icon, untinted, on a light theme', (
+    testWidgets('is the same silhouette, tinted black, on a light theme', (
       tester,
     ) async {
-      // Both full colour icons are drawn on a white tile, so they suit a light
-      // background and would read as a bright block on a dark one.
+      // The mark is a silhouette, so it vanishes into one background or the
+      // other unless the tint is flipped with the theme.
       await pump(tester, brightness: Brightness.light);
-      expect(asset(tester), 'assets/app_icons/icon-red.png');
-      expect(logo(tester).color, isNull);
+      expect(asset(tester), 'assets/app_icons/icon.png');
+      expect(logo(tester).color, Colors.black);
     });
   });
 

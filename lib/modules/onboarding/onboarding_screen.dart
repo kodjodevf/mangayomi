@@ -174,23 +174,19 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // The app's own mark, in whichever form suits the background.
-                  // Both full colour icons are drawn on a white tile, which
-                  // reads as a bright block on a dark theme, so dark gets the
-                  // bare silhouette tinted white and light gets the real icon.
-                  if (theme.brightness == Brightness.light)
-                    Image.asset(
-                      'assets/app_icons/icon-red.png',
-                      height: isTv ? 96 : 80,
-                      fit: BoxFit.contain,
-                    )
-                  else
-                    Image.asset(
-                      'assets/app_icons/icon.png',
-                      height: isTv ? 96 : 80,
-                      color: Colors.white,
-                      fit: BoxFit.contain,
-                    ),
+                  // The app's own mark rather than a stock glyph. icon.png is
+                  // the bare silhouette, tinted against the background the same
+                  // way the More and About screens tint it. The full colour
+                  // icons are drawn on a white tile, which reads as a bright
+                  // block on a dark theme, so they are not used here.
+                  Image.asset(
+                    'assets/app_icons/icon.png',
+                    height: isTv ? 96 : 80,
+                    color: theme.brightness == Brightness.light
+                        ? Colors.black
+                        : Colors.white,
+                    fit: BoxFit.contain,
+                  ),
                   const SizedBox(height: 20),
                   Text(
                     _title(l10n),
