@@ -10,25 +10,43 @@ part of 'onboarding_state_provider.dart';
 // ignore_for_file: type=lint, type=warning
 /// Whether the first-run screen has already been dismissed.
 ///
-/// Null means an install from before the screen existed. Those are treated as
-/// done when the user already has a repository, because somebody with a library
+/// Null means the question has never been answered on this install, either
+/// because it predates the screen or because the install is new. An existing
+/// user with a repository is treated as done, because somebody with a library
 /// should not be welcomed to the app they have been using for months.
+///
+/// A debug build answers null as done too. Those get installed over and over
+/// during development and a welcome screen on every one of them is noise; the
+/// entry in General settings is how to see the screen on purpose. Release
+/// builds keep the real first-run behaviour.
 
 @ProviderFor(OnboardingCompletedState)
 final onboardingCompletedStateProvider = OnboardingCompletedStateProvider._();
 
 /// Whether the first-run screen has already been dismissed.
 ///
-/// Null means an install from before the screen existed. Those are treated as
-/// done when the user already has a repository, because somebody with a library
+/// Null means the question has never been answered on this install, either
+/// because it predates the screen or because the install is new. An existing
+/// user with a repository is treated as done, because somebody with a library
 /// should not be welcomed to the app they have been using for months.
+///
+/// A debug build answers null as done too. Those get installed over and over
+/// during development and a welcome screen on every one of them is noise; the
+/// entry in General settings is how to see the screen on purpose. Release
+/// builds keep the real first-run behaviour.
 final class OnboardingCompletedStateProvider
     extends $NotifierProvider<OnboardingCompletedState, bool> {
   /// Whether the first-run screen has already been dismissed.
   ///
-  /// Null means an install from before the screen existed. Those are treated as
-  /// done when the user already has a repository, because somebody with a library
+  /// Null means the question has never been answered on this install, either
+  /// because it predates the screen or because the install is new. An existing
+  /// user with a repository is treated as done, because somebody with a library
   /// should not be welcomed to the app they have been using for months.
+  ///
+  /// A debug build answers null as done too. Those get installed over and over
+  /// during development and a welcome screen on every one of them is noise; the
+  /// entry in General settings is how to see the screen on purpose. Release
+  /// builds keep the real first-run behaviour.
   OnboardingCompletedStateProvider._()
     : super(
         from: null,
@@ -57,13 +75,19 @@ final class OnboardingCompletedStateProvider
 }
 
 String _$onboardingCompletedStateHash() =>
-    r'721fdbf7b4074bb4623870fa1ca49ca5f821b605';
+    r'1cf7729b66a79b9584ee8266d41f26030fcec9e0';
 
 /// Whether the first-run screen has already been dismissed.
 ///
-/// Null means an install from before the screen existed. Those are treated as
-/// done when the user already has a repository, because somebody with a library
+/// Null means the question has never been answered on this install, either
+/// because it predates the screen or because the install is new. An existing
+/// user with a repository is treated as done, because somebody with a library
 /// should not be welcomed to the app they have been using for months.
+///
+/// A debug build answers null as done too. Those get installed over and over
+/// during development and a welcome screen on every one of them is noise; the
+/// entry in General settings is how to see the screen on purpose. Release
+/// builds keep the real first-run behaviour.
 
 abstract class _$OnboardingCompletedState extends $Notifier<bool> {
   bool build();
