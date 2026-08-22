@@ -521,22 +521,38 @@ class _NavPreviewItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    // hintColor is very pale on the light schemes, which left the unselected
-    // entries almost invisible against the bar.
-    final color = selected ? scheme.primary : scheme.onSurfaceVariant;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    // The current entry carries an indicator behind its icon, which is what a
+    // NavigationBar actually draws and what makes it read as current. Bare
+    // primary was doing that job on its own, and on a light scheme primary is
+    // a pale blue that came out fainter than the entries around it.
+    final color = selected
+        ? scheme.onSecondaryContainer
+        : scheme.onSurfaceVariant;
     return Flexible(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 20, color: color),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: selected ? scheme.secondaryContainer : null,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+              child: Icon(icon, size: 20, color: color),
+            ),
+          ),
           const SizedBox(height: 4),
           Text(
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.labelSmall
-                ?.copyWith(color: color),
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: color,
+              fontWeight: selected ? FontWeight.w600 : null,
+            ),
           ),
         ],
       ),

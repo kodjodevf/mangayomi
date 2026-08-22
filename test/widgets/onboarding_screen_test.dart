@@ -201,6 +201,27 @@ void main() {
     }
   });
 
+  group('the preview bar', () {
+    for (final brightness in Brightness.values) {
+      testWidgets('the current entry reads against the bar on $brightness', (
+        tester,
+      ) async {
+        await pump(tester, brightness: brightness);
+        await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+        await tester.pumpAndSettle();
+        final scheme = ThemeData(brightness: brightness).colorScheme;
+        // Bare primary is a pale blue on the light schemes and came out
+        // fainter than the entries it was supposed to stand out from.
+        final current = tester.widget<Text>(
+          find
+              .descendant(of: find.byType(Column), matching: find.text('Manga'))
+              .first,
+        );
+        expect(current.style?.color, scheme.onSecondaryContainer);
+      });
+    }
+  });
+
   group('the app mark', () {
     Image logo(WidgetTester tester) =>
         tester.widget<Image>(find.byType(Image).first);
