@@ -56,6 +56,19 @@ class FloatingNavBar extends StatefulWidget {
   static const _duration = Duration(milliseconds: 260);
   static const _curve = Curves.easeOutCubic;
 
+  /// The shrink has its own timing, and it is not symmetric.
+  ///
+  /// Stepping back is a background movement and should be unhurried, so it
+  /// takes noticeably longer than the shared duration the rest of the bar
+  /// uses, and lands on a curve that eases out further into the tail.
+  /// Returning is a response to the user reaching for the bar, so it keeps
+  /// close to the old timing: the same asymmetry NavShrink already applies to
+  /// its thresholds, where hiding needs a long run and coming back needs a
+  /// short one.
+  static const _shrinkDuration = Duration(milliseconds: 460);
+  static const _shrinkReleaseDuration = Duration(milliseconds: 240);
+  static const _shrinkCurve = Curves.easeOutQuart;
+
   /// How the glass edge varies along the bar. Irregular on purpose, and never
   /// far from full: glass catches light in patches, but a stretch that dips
   /// too low reads as the washed-out centre that a fade produced.
@@ -523,8 +536,10 @@ class _FloatingNavBarState extends State<FloatingNavBar> {
       // underneath never reflows while it is being scrolled.
       child: TweenAnimationBuilder<double>(
         tween: Tween<double>(end: widget.shrink.clamp(0.0, 1.0)),
-        duration: FloatingNavBar._duration,
-        curve: FloatingNavBar._curve,
+        duration: widget.shrink > 0
+            ? FloatingNavBar._shrinkDuration
+            : FloatingNavBar._shrinkReleaseDuration,
+        curve: FloatingNavBar._shrinkCurve,
         builder: (context, shrink, child) => Transform.scale(
           scale: 1 - shrink * FloatingNavBar._shrinkScale,
           alignment: Alignment.bottomCenter,
