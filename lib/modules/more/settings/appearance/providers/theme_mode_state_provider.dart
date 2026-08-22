@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
+import 'package:mangayomi/utils/settings_write.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'theme_mode_state_provider.g.dart';
 
@@ -24,8 +25,6 @@ class ThemeModeState extends _$ThemeModeState {
   void setDarkTheme() => _applyTheme(true);
 
   void _applyTheme(bool isDark) {
-    final settings = isar.settings.getSync(227);
-
     state = isDark;
 
     final schemeIndex = ref.read(flexSchemeColorStateProvider).$2;
@@ -35,13 +34,8 @@ class ThemeModeState extends _$ThemeModeState {
         .read(flexSchemeColorStateProvider.notifier)
         .setTheme(isDark ? scheme.dark : scheme.light, schemeIndex);
 
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..themeIsDark = isDark
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    // After setTheme, which writes the same row.
+    updateSettings((settings) => settings.themeIsDark = isDark);
   }
 }
 
@@ -53,7 +47,6 @@ class FollowSystemThemeState extends _$FollowSystemThemeState {
   }
 
   void set(bool value) {
-    final settings = isar.settings.getSync(227);
     state = value;
     if (value) {
       if (WidgetsBinding.instance.platformDispatcher.platformBrightness ==
@@ -63,12 +56,10 @@ class FollowSystemThemeState extends _$FollowSystemThemeState {
         ref.read(themeModeStateProvider.notifier).setDarkTheme();
       }
     }
-    isar.writeTxnSync(
-      () => isar.settings.putSync(
-        settings!
-          ..followSystemTheme = value
-          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-      ),
-    );
+    // After the theme setters above, which write the same row. Reading it
+    // before them and writing it here put their themeIsDark back to what it
+    // was, so turning this on under a light system came back dark on the next
+    // launch.
+    updateSettings((settings) => settings.followSystemTheme = value);
   }
 }
