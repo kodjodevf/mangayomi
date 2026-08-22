@@ -623,7 +623,9 @@ class _MangaChapterPageGalleryState
                           )
                         : TweenAnimationBuilder<Color?>(
                             tween: ColorTween(
-                              end: getBackgroundColor(backgroundColor),
+                              end:
+                                  getBackgroundColor(backgroundColor) ??
+                                  Theme.of(context).scaffoldBackgroundColor,
                             ),
                             duration: const Duration(milliseconds: 300),
                             builder: (context, animColor, animChild) {
@@ -1027,7 +1029,9 @@ class _MangaChapterPageGalleryState
                     loadingProgress.expectedTotalBytes!
               : 0;
           return Container(
-            color: getBackgroundColor(backgroundColor),
+            color:
+                getBackgroundColor(backgroundColor) ??
+                Theme.of(context).scaffoldBackgroundColor,
             height: context.height(0.8),
             child: CircularProgressIndicatorAnimateRotate(progress: progress),
           );
@@ -1040,7 +1044,9 @@ class _MangaChapterPageGalleryState
           _onFailedToLoadImage(index, true);
           final l10n = l10nLocalizations(context)!;
           return Container(
-            color: getBackgroundColor(backgroundColor),
+            color:
+                getBackgroundColor(backgroundColor) ??
+                Theme.of(context).scaffoldBackgroundColor,
             height: context.height(0.8),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -1622,7 +1628,9 @@ class _MangaChapterPageGalleryState
     await WidgetsBinding.instance.endOfFrame;
 
     if (value == ReaderMode.vertical || value.isHorizontalPaged) {
-      _extendedController.jumpToPage(index);
+      if (_extendedController.hasClients) {
+        _extendedController.jumpToPage(index);
+      }
     } else {
       _itemScrollController.scrollTo(
         index: index,
