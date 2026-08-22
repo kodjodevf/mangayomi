@@ -12,7 +12,7 @@ import 'package:mangayomi/utils/platform_utils.dart';
 void main() {
   tearDown(() => debugIsTvOverride = null);
 
-  Future<void> pump(WidgetTester tester) async {
+  Future<void> pump(WidgetTester tester, {Brightness? brightness}) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -22,10 +22,11 @@ void main() {
             extensionsRepoStateProvider(type)
                 .overrideWith(() => _StubRepoState()),
         ],
-        child: const MaterialApp(
+        child: MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          home: OnboardingScreen(),
+          theme: ThemeData(brightness: brightness ?? Brightness.dark),
+          home: const OnboardingScreen(),
         ),
       ),
     );
@@ -75,6 +76,32 @@ void main() {
     );
     expect(picker.selected, {ItemType.manga});
     expect(picker.segments.map((s) => s.value), ItemType.values);
+  });
+
+  group('the app mark', () {
+    Image logo(WidgetTester tester) =>
+        tester.widget<Image>(find.byType(Image).first);
+
+    testWidgets('is the app icon, not a stock glyph', (tester) async {
+      await pump(tester);
+      expect(logo(tester).image, isA<AssetImage>());
+      expect(
+        (logo(tester).image as AssetImage).assetName,
+        'assets/app_icons/icon.png',
+      );
+    });
+
+    testWidgets('is tinted white on a dark theme', (tester) async {
+      await pump(tester, brightness: Brightness.dark);
+      expect(logo(tester).color, Colors.white);
+    });
+
+    testWidgets('is tinted black on a light theme', (tester) async {
+      // The mark is a silhouette, so it disappears into the background
+      // entirely if it is not flipped with the theme.
+      await pump(tester, brightness: Brightness.light);
+      expect(logo(tester).color, Colors.black);
+    });
   });
 
   group('on a TV', () {

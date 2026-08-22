@@ -101,10 +101,16 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    Icons.collections_bookmark_outlined,
-                    size: isTv ? 56 : 44,
-                    color: theme.colorScheme.primary,
+                  // The app's own mark rather than a stock glyph. icon.png is a
+                  // silhouette, tinted against the background the same way the
+                  // More and About screens tint it.
+                  Image.asset(
+                    'assets/app_icons/icon.png',
+                    height: isTv ? 96 : 80,
+                    color: theme.brightness == Brightness.light
+                        ? Colors.black
+                        : Colors.white,
+                    fit: BoxFit.contain,
                   ),
                   const SizedBox(height: 20),
                   Text(
