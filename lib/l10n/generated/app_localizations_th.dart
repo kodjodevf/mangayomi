@@ -878,6 +878,11 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
+  String missing_chapters(Object count) {
+    return 'Missing $count chapters';
+  }
+
+  @override
   String get no_description => 'ไม่มีคำอธิบาย';
 
   @override
@@ -1089,6 +1094,27 @@ class AppLocalizationsTh extends AppLocalizations {
       'การดำเนินการนี้จะแทนที่ข้อมูลในเครื่องด้วยข้อมูลระยะไกลทั้งหมด!';
 
   @override
+  String get sync_status_not_configured => 'Not connected';
+
+  @override
+  String get sync_status_checking => 'Checking connection...';
+
+  @override
+  String get sync_status_connected => 'Connected';
+
+  @override
+  String get sync_status_unauthorized => 'Session expired, please log in again';
+
+  @override
+  String get sync_status_unreachable => 'Can\'t reach server';
+
+  @override
+  String get sync_section_general => 'General';
+
+  @override
+  String get sync_section_data_types => 'What to sync';
+
+  @override
   String get sync_on => 'เปิดการซิงค์';
 
   @override
@@ -1152,6 +1178,11 @@ class AppLocalizationsTh extends AppLocalizations {
   @override
   String n_episodes(Object n) {
     return '$n ตอน';
+  }
+
+  @override
+  String missing_episodes(Object count) {
+    return 'Missing $count episodes';
   }
 
   @override
@@ -1820,10 +1851,11 @@ class AppLocalizationsTh extends AppLocalizations {
   String get custom_dns => 'DNS กำหนดเอง (เว้นว่างไว้เพื่อใช้ DNS ของระบบ)';
 
   @override
-  String get android_proxy_server => 'เซิร์ฟเวอร์พร็อกซี Android (ApkBridge)';
+  String get android_proxy_server =>
+      'เซิร์ฟเวอร์พร็อกซี Android (M-Extension-Server)';
 
   @override
-  String get get_apk_bridge => 'รับ ApkBridge';
+  String get get_m_extension_server => 'รับ M-Extension-Server';
 
   @override
   String get get_sync_server => 'รับเซิร์ฟเวอร์ซิงค์ที่นี่';
@@ -2223,6 +2255,11 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
+  String unrecognized_chapter_numbers(Object count) {
+    return '$count chapter(s) couldn\'t be auto-numbered and may be out of order or missing from the reader.';
+  }
+
+  @override
   String get cloudflare_resolution_webview_server_start_failed =>
       'Couldn\'t start Cloudflare Resolution Webview Server.';
 
@@ -2459,8 +2496,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get latest_version => 'Latest version';
 
   @override
-  String get apkbridge_description =>
-      'Use ApkBridge when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.';
+  String get m_extension_server_description =>
+      'Use M-Extension-Server when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.';
 
   @override
   String get set_proxy_address => 'Set proxy address';
@@ -2522,7 +2559,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get could_not_launch_apk_bridge_page =>
-      'Could not launch the ApkBridge page.';
+      'Could not launch the M-Extension-Server page.';
 
   @override
   String get proxy_server_ip_hint =>

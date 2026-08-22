@@ -315,33 +315,35 @@ class _SourceSearchScreenState extends ConsumerState<SourceSearchScreen> {
     // A Scaffold per list row was never needed; it also forces the row to
     // expand, which would defeat the collapse.
     return SizedBox(
-      height: 260,
-      child: Column(
-        children: [
-          header,
-          // Only loading or results reach here; failures and empty results
-          // returned above as a single header row. No retry: these are almost
-          // always a broken extension returning the same error every time, not
-          // a transient blip, and the header still opens the source.
-          Flexible(
-            child: _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : SuperListView.builder(
-                    extentPrecalculationPolicy: SuperPrecalculationPolicy(),
-                    scrollDirection: Axis.horizontal,
-                    padding: isTv
-                        ? const EdgeInsets.symmetric(horizontal: 8)
-                        : null,
-                    itemCount: pages!.list.length,
-                    itemBuilder: (context, index) {
-                      return MangaGlobalImageCard(
-                        manga: pages!.list[index],
-                        source: widget.source,
-                      );
-                    },
-                  ),
-          ),
-        ],
+      height: 300,
+      child: ClipRect(
+        child: Column(
+          children: [
+            header,
+            // Only loading or results reach here; failures and empty results
+            // returned above as a single header row. No retry: these are almost
+            // always a broken extension returning the same error every time, not
+            // a transient blip, and the header still opens the source.
+            Flexible(
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : SuperListView.builder(
+                      extentPrecalculationPolicy: SuperPrecalculationPolicy(),
+                      scrollDirection: Axis.horizontal,
+                      padding: isTv
+                          ? const EdgeInsets.symmetric(horizontal: 8)
+                          : null,
+                      itemCount: pages!.list.length,
+                      itemBuilder: (context, index) {
+                        return MangaGlobalImageCard(
+                          manga: pages!.list[index],
+                          source: widget.source,
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }

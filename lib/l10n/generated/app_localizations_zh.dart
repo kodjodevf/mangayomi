@@ -860,6 +860,11 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String missing_chapters(Object count) {
+    return 'Missing $count chapters';
+  }
+
+  @override
   String get no_description => '无描述';
 
   @override
@@ -1068,6 +1073,27 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sync_button_download_info => '此操作将完全用远程数据替换本地数据！';
 
   @override
+  String get sync_status_not_configured => 'Not connected';
+
+  @override
+  String get sync_status_checking => 'Checking connection...';
+
+  @override
+  String get sync_status_connected => 'Connected';
+
+  @override
+  String get sync_status_unauthorized => 'Session expired, please log in again';
+
+  @override
+  String get sync_status_unreachable => 'Can\'t reach server';
+
+  @override
+  String get sync_section_general => 'General';
+
+  @override
+  String get sync_section_data_types => 'What to sync';
+
+  @override
   String get sync_on => '启用同步';
 
   @override
@@ -1129,6 +1155,11 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String n_episodes(Object n) {
     return '$n集';
+  }
+
+  @override
+  String missing_episodes(Object count) {
+    return 'Missing $count episodes';
   }
 
   @override
@@ -1779,10 +1810,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get custom_dns => '自定义 DNS（留空使用系统 DNS）';
 
   @override
-  String get android_proxy_server => 'Android 代理服务器（ApkBridge）';
+  String get android_proxy_server => 'Android 代理服务器（M-Extension-Server）';
 
   @override
-  String get get_apk_bridge => '获取 ApkBridge';
+  String get get_m_extension_server => '获取 M-Extension-Server';
 
   @override
   String get get_sync_server => '在此获取同步服务器';
@@ -2169,6 +2200,11 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String unrecognized_chapter_numbers(Object count) {
+    return '$count chapter(s) couldn\'t be auto-numbered and may be out of order or missing from the reader.';
+  }
+
+  @override
   String get cloudflare_resolution_webview_server_start_failed =>
       'Couldn\'t start Cloudflare Resolution Webview Server.';
 
@@ -2399,8 +2435,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get latest_version => '最新版本';
 
   @override
-  String get apkbridge_description =>
-      '当您需要独立的 Android 设备代理时，请使用 ApkBridge。在此设置代理地址，并从 GitHub 下载 APK。';
+  String get m_extension_server_description =>
+      '当您需要独立的 Android 设备代理时，请使用 M-Extension-Server。在此设置代理地址，并从 GitHub 下载 APK。';
 
   @override
   String get set_proxy_address => '设置代理地址';
@@ -2453,7 +2489,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get extension_server_jar_imported => '扩展服务器 JAR 已导入。';
 
   @override
-  String get could_not_launch_apk_bridge_page => '无法启动 ApkBridge 页面。';
+  String get could_not_launch_apk_bridge_page => '无法启动 M-Extension-Server 页面。';
 
   @override
   String get proxy_server_ip_hint =>
