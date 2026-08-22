@@ -2973,6 +2973,22 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get beta => 'Beta';
+
+  @override
+  String get onboarding_title => 'Welcome to Mangayomi';
+
+  @override
+  String get onboarding_body =>
+      'Mangayomi comes with no sources of its own. Add a repository and the extensions it holds become available to install and browse.';
+
+  @override
+  String get onboarding_add => 'Add repository';
+
+  @override
+  String get onboarding_skip => 'Skip for now';
+
+  @override
+  String get onboarding_continue => 'Continue';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).

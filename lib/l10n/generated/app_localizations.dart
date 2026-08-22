@@ -5332,6 +5332,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Beta'**
   String get beta;
+
+  /// No description provided for @onboarding_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Mangayomi'**
+  String get onboarding_title;
+
+  /// No description provided for @onboarding_body.
+  ///
+  /// In en, this message translates to:
+  /// **'Mangayomi comes with no sources of its own. Add a repository and the extensions it holds become available to install and browse.'**
+  String get onboarding_body;
+
+  /// No description provided for @onboarding_add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add repository'**
+  String get onboarding_add;
+
+  /// No description provided for @onboarding_skip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip for now'**
+  String get onboarding_skip;
+
+  /// No description provided for @onboarding_continue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get onboarding_continue;
 }
 
 class _AppLocalizationsDelegate

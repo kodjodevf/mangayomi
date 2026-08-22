@@ -1184,5 +1184,10 @@
       "duplicateTracks": {}
     }
   },
-  "beta": "Beta"
+  "beta": "Beta",
+  "onboarding_title": "Welcome to Mangayomi",
+  "onboarding_body": "Mangayomi comes with no sources of its own. Add a repository and the extensions it holds become available to install and browse.",
+  "onboarding_add": "Add repository",
+  "onboarding_skip": "Skip for now",
+  "onboarding_continue": "Continue"
 }
