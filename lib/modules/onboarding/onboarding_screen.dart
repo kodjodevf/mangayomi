@@ -19,6 +19,7 @@ import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/modules/widgets/tv_pill.dart';
 import 'package:mangayomi/utils/local_directory_access.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
@@ -125,6 +126,10 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
   /// see what they just added rather than only how many.
   List<String> _foundTitleNames = const [];
   bool _scanningFolder = false;
+
+  /// Whether the picked folder sits inside the app's own downloads directory,
+  /// which is almost always a mistake.
+  bool _folderIsInDownloads = false;
 
   /// How many titles the scan found, once it has finished. Zero is the
   /// interesting answer: it almost always means the folder above the one that
@@ -271,9 +276,18 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
       );
       ref.read(localFoldersStateProvider.notifier).set(folders);
     }
+    // The downloads directory already belongs to the app. Scanning it as a
+    // local folder builds a second, local copy of a library it is already
+    // managing, and the two then drift apart. Easy to do by accident, because
+    // it holds exactly the folder layout the scanner is looking for.
+    final base = await StorageProvider().getDirectory();
+    final inDownloads =
+        base != null && p.isWithin(p.join(base.path, 'downloads'), path);
+
     setState(() {
       _addedLocalFolder = true;
       _addedFolderPath = path;
+      _folderIsInDownloads = inDownloads;
       _scanningFolder = true;
       _foundTitles = null;
     });
@@ -324,6 +338,7 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
     setState(() {
       _addedLocalFolder = false;
       _addedFolderPath = null;
+      _folderIsInDownloads = false;
       _foundTitles = null;
       _foundTitleNames = const [];
     });
@@ -706,9 +721,12 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
           _FolderStatus(message: l10n.onboarding_local_scanning, busy: true)
         else if ((_foundTitles ?? 0) > 0)
           _FolderStatus(
-            message: l10n.onboarding_local_found('$_foundTitles'),
+            message: _folderIsInDownloads
+                ? l10n.onboarding_local_in_downloads
+                : l10n.onboarding_local_found('$_foundTitles'),
             path: _addedFolderPath,
             titles: _foundTitleNames,
+            warn: _folderIsInDownloads,
           )
         else
           // Zero almost always means the folder above this one. The scanner

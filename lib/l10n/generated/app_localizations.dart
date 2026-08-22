@@ -5417,6 +5417,12 @@ abstract class AppLocalizations {
   /// **'Remove that folder'**
   String get onboarding_local_remove;
 
+  /// No description provided for @onboarding_local_in_downloads.
+  ///
+  /// In en, this message translates to:
+  /// **'That is the app\'s downloads folder. Adding it makes a second, local copy of a library the app already manages.'**
+  String get onboarding_local_in_downloads;
+
   /// No description provided for @onboarding_local_empty.
   ///
   /// In en, this message translates to:

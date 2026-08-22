@@ -2995,6 +2995,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get onboarding_local_remove => 'Remove that folder';
 
   @override
+  String get onboarding_local_in_downloads =>
+      'That is the app\'s downloads folder. Adding it makes a second, local copy of a library the app already manages.';
+
+  @override
   String get onboarding_local_empty =>
       'Nothing found. Pick the folder that holds your manga folders, not one manga.';
 
