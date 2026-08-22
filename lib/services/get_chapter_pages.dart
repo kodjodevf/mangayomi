@@ -14,6 +14,7 @@ import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/services/downloaded_chapter.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
@@ -65,12 +66,18 @@ Future<GetChapterPagesModel> getChapterPages(
     final resolvedArchivePath = isLocalArchive
         ? await resolveLocalArchivePath(chapter.archivePath!)
         : null;
+
+    // A downloaded chapter has to open from disk, not from its source. Finding
+    // the local copy before any network call is what lets it open with the
+    // extension uninstalled, the site down, or no connection at all: getPageList
+    // used to run first and its failure took the whole chapter down even though
+    // every page was already on disk.
+    final downloaded = isLocalArchive
+        ? null
+        : await findDownloadedChapter(chapter);
+    if (downloaded?.pagesDirectory != null) path = downloaded!.pagesDirectory;
+
     if (!chapter.manga.value!.isLocalArchive!) {
-      final source = getSource(
-        chapter.manga.value!.lang!,
-        chapter.manga.value!.source!,
-        chapter.manga.value!.sourceId,
-      )!;
       if ((isarPageUrls?.urls?.isNotEmpty ?? false) &&
           (isarPageUrls?.chapterUrl ?? chapter.url) == chapter.url) {
         pagesFromCache = true;
@@ -83,7 +90,15 @@ Future<GetChapterPagesModel> getChapterPages(
           }
           pageUrls.add(PageUrl(isarPageUrls.urls![i], headers: headers));
         }
-      } else {
+      } else if (downloaded == null) {
+        // Only ask the source when there is nothing on disk to read. The
+        // extension is also resolved here rather than above, so a missing one
+        // can't take down a chapter that never needed it.
+        final source = getSource(
+          chapter.manga.value!.lang!,
+          chapter.manga.value!.source!,
+          chapter.manga.value!.sourceId,
+        )!;
         pageUrls = await getIsolateService.get<List<PageUrl>>(
           url: chapter.url!,
           source: source,
@@ -101,22 +116,26 @@ Future<GetChapterPagesModel> getChapterPages(
       uChapDataPreload: [],
     );
 
-    if (pageUrls.isNotEmpty || isLocalArchive) {
-      if (await File(p.join(mangaDirectory!.path, "${chapter.name}.cbz"))
-              .exists() ||
-          isLocalArchive) {
-        final path = isLocalArchive
-            ? resolvedArchivePath
-            : p.join(mangaDirectory.path, "${chapter.name}.cbz");
+    final archivePath = isLocalArchive
+        ? resolvedArchivePath
+        : downloaded?.archive?.path;
+
+    if (pageUrls.isNotEmpty || archivePath != null || downloaded != null) {
+      if (archivePath != null) {
         final local = await ref.read(
-          getArchiveDataFromFileProvider(path!).future,
+          getArchiveDataFromFileProvider(archivePath).future,
         );
         for (var image in local.images!) {
           archiveImages.add(image.image!);
           isLocaleList.add(true);
         }
       } else {
-        for (var i = 0; i < pageUrls.length; i++) {
+        // With no urls from the cache and none from the source, the folder on
+        // disk is the only thing that knows how many pages there are.
+        final pageCount = pageUrls.isNotEmpty
+            ? pageUrls.length
+            : downloaded!.pageCount;
+        for (var i = 0; i < pageCount; i++) {
           archiveImages.add(null);
           if (await File(p.join(path!.path, '${padIndex(i)}.jpg')).exists()) {
             isLocaleList.add(true);
@@ -125,10 +144,17 @@ Future<GetChapterPagesModel> getChapterPages(
           }
         }
       }
-      if (isLocalArchive) {
-        for (var i = 0; i < archiveImages.length; i++) {
+      // The reader indexes pageUrls, isLocaleList and archiveImages together,
+      // so the three have to agree: local pages carry no url, and an archive
+      // is the authority on how many pages the chapter actually has.
+      if (pageUrls.length > isLocaleList.length) {
+        pageUrls.removeRange(isLocaleList.length, pageUrls.length);
+      } else {
+        for (var i = pageUrls.length; i < isLocaleList.length; i++) {
           pageUrls.add(PageUrl(""));
         }
+      }
+      if (isLocalArchive) {
         // Archives store placeholder urls only for the page count; skip the
         // write when the stored entry already matches.
         if ((isarPageUrls?.urls?.length ?? -1) == pageUrls.length &&
@@ -140,7 +166,9 @@ Future<GetChapterPagesModel> getChapterPages(
       // row, so only do it when there is something new to store — never when
       // the pages came from that cache. The cache is also capped to the most
       // recent chapters so the row doesn't grow with reading history.
-      if (!incognitoMode && !pagesFromCache) {
+      // A downloaded chapter's urls are placeholders; storing them would make
+      // it unreadable online once the download is deleted.
+      if (!incognitoMode && !pagesFromCache && downloaded == null) {
         const maxCachedChapters = 40;
         List<ChapterPageurls>? chapterPageUrls = [];
         for (var chapterPageUrl in settings.chapterPageUrlsList ?? []) {
