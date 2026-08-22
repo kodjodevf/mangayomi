@@ -1094,6 +1094,27 @@ class AppLocalizationsTh extends AppLocalizations {
       'การดำเนินการนี้จะแทนที่ข้อมูลในเครื่องด้วยข้อมูลระยะไกลทั้งหมด!';
 
   @override
+  String get sync_status_not_configured => 'Not connected';
+
+  @override
+  String get sync_status_checking => 'Checking connection...';
+
+  @override
+  String get sync_status_connected => 'Connected';
+
+  @override
+  String get sync_status_unauthorized => 'Session expired, please log in again';
+
+  @override
+  String get sync_status_unreachable => 'Can\'t reach server';
+
+  @override
+  String get sync_section_general => 'General';
+
+  @override
+  String get sync_section_data_types => 'What to sync';
+
+  @override
   String get sync_on => 'เปิดการซิงค์';
 
   @override
