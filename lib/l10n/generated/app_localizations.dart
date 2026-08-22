@@ -5387,6 +5387,24 @@ abstract class AppLocalizations {
   /// **'Restore a backup'**
   String get onboarding_restore;
 
+  /// No description provided for @onboarding_or_local.
+  ///
+  /// In en, this message translates to:
+  /// **'Or read files you already have'**
+  String get onboarding_or_local;
+
+  /// No description provided for @onboarding_local_folder.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a folder'**
+  String get onboarding_local_folder;
+
+  /// No description provided for @onboarding_local_folder_added.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder added, scanning it now'**
+  String get onboarding_local_folder_added;
+
   /// No description provided for @onboarding_repo_failed.
   ///
   /// In en, this message translates to:

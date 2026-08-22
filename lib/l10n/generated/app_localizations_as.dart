@@ -2979,6 +2979,15 @@ class AppLocalizationsAs extends AppLocalizations {
   String get onboarding_restore => 'Restore a backup';
 
   @override
+  String get onboarding_or_local => 'Or read files you already have';
+
+  @override
+  String get onboarding_local_folder => 'Add a folder';
+
+  @override
+  String get onboarding_local_folder_added => 'Folder added, scanning it now';
+
+  @override
   String get onboarding_repo_failed =>
       'Couldn\'t read that repository. Check the address and your connection.';
 

@@ -1,4 +1,8 @@
+import 'dart:async';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as p;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -9,7 +13,9 @@ import 'package:mangayomi/modules/more/data_and_storage/widgets/unified_restore.
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/onboarding/providers/onboarding_state_provider.dart';
+import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/modules/widgets/tv_pill.dart';
+import 'package:mangayomi/utils/local_directory_access.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
@@ -104,6 +110,10 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody> {
   /// go back and stop reading that library altogether.
   ItemType? _addedFor;
 
+  /// Whether a folder of the user's own files was added, which is content the
+  /// app can open with no repository and no network at all.
+  bool _addedLocalFolder = false;
+
   @override
   void dispose() {
     _controller.dispose();
@@ -183,6 +193,30 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody> {
         _step = _Step.repository;
       });
     }
+  }
+
+  /// Adds a folder of the user's own files.
+  ///
+  /// A peer of the repository, not a footnote under it. It is the one thing
+  /// the app can do with nothing installed and no connection, so somebody who
+  /// already has files should not have to skip past an empty screen to use
+  /// them. The folder is named after itself rather than asking, since a name
+  /// is one more decision and Settings can rename it later.
+  Future<void> _addLocalFolder() async {
+    final path =
+        await LocalDirectoryAccess.pickDirectory() ??
+        await FilePicker.getDirectoryPath();
+    if (path == null || !mounted) return;
+    final folders = ref.read(localFoldersStateProvider).toList()
+      ..add(
+        LocalFolder(
+          name: LocalFolder.fromPath(path: path).name ?? p.basename(path),
+          path: path,
+        ),
+      );
+    ref.read(localFoldersStateProvider.notifier).set(folders);
+    unawaited(ref.read(scanLocalLibraryProvider.future));
+    if (mounted) setState(() => _addedLocalFolder = true);
   }
 
   /// Whether any library has a repository, asked after a restore that may have
@@ -441,7 +475,7 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody> {
   };
 
   String _leaveLabel(AppLocalizations l10n) =>
-      _step == _Step.repository && _added != null
+      _step == _Step.repository && (_added != null || _addedLocalFolder)
       ? l10n.onboarding_continue
       : l10n.onboarding_skip;
 
@@ -531,6 +565,23 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody> {
       if (_added != null) ...[
         const SizedBox(height: 14),
         _AddedRepo(name: _added!.name ?? _added!.jsonUrl ?? ''),
+      ],
+      const SizedBox(height: 20),
+      Text(
+        l10n.onboarding_or_local,
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.bodySmall
+            ?.copyWith(color: Theme.of(context).hintColor),
+      ),
+      const SizedBox(height: 8),
+      OutlinedButton.icon(
+        onPressed: _adding ? null : _addLocalFolder,
+        icon: const Icon(Icons.folder_open, size: 20),
+        label: Text(l10n.onboarding_local_folder),
+      ),
+      if (_addedLocalFolder) ...[
+        const SizedBox(height: 14),
+        _AddedRepo(name: l10n.onboarding_local_folder_added),
       ],
     ],
   };

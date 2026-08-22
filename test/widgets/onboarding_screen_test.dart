@@ -258,6 +258,28 @@ void main() {
     });
   });
 
+  group('files you already have', () {
+    testWidgets('are offered beside the repository, not under it', (
+      tester,
+    ) async {
+      // The one thing the app can do with nothing installed and no
+      // connection. Somebody who already has files should not have to skip
+      // past an empty screen to use them.
+      await pump(tester);
+      await toRepoStep(tester);
+      expect(
+        find.widgetWithText(OutlinedButton, 'Add a folder'),
+        findsOneWidget,
+      );
+      expect(find.text('Or read files you already have'), findsOneWidget);
+    });
+
+    testWidgets('are not offered before the source step', (tester) async {
+      await pump(tester);
+      expect(find.widgetWithText(OutlinedButton, 'Add a folder'), findsNothing);
+    });
+  });
+
   group('restoring instead', () {
     testWidgets('the first step offers it, the later ones do not', (
       tester,
