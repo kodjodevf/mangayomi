@@ -475,9 +475,11 @@ Future<void> restoreBackup(
           if (customButtons != null) {
             isar.customButtons.putAllSync(customButtons);
           }
-          _invalidateCommonState(ref);
         }
       });
+      if (full) {
+        _invalidateCommonState(ref);
+      }
     } catch (e) {
       rethrow;
     }
@@ -570,8 +572,8 @@ Future<void> restoreKotatsuBackup(Ref ref, Archive archive) async {
       isar.updates.clearSync();
       isar.tracks.clearSync();
       isar.trackPreferences.clearSync();
-      _invalidateCommonState(ref);
     });
+    _invalidateCommonState(ref);
   } catch (e) {
     rethrow;
   }
@@ -893,8 +895,8 @@ Future<void> restoreTachiBkBackup(
       isar.tracks.clearSync();
       isar.trackPreferences.clearSync();
     }
-    _invalidateCommonState(ref);
   });
+  _invalidateCommonState(ref);
 }
 
 int _protoInt(Object value) {
@@ -919,7 +921,9 @@ Settings _preserveDeviceLocalSettings(Settings incoming, Settings current) {
 }
 
 void _invalidateCommonState(Ref ref) {
-  ref.read(synchingProvider(syncId: 1).notifier).clearAllChangedParts(false);
+  // Now called after the restore's own transaction has already closed (see
+  // the three call sites above), so this needs its own transaction too.
+  ref.read(synchingProvider(syncId: 1).notifier).clearAllChangedParts(true);
   ref.invalidate(followSystemThemeStateProvider);
   ref.invalidate(themeModeStateProvider);
   ref.invalidate(blendLevelStateProvider);
