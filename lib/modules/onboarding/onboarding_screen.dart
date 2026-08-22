@@ -359,6 +359,7 @@ class _ChoiceRow<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     if (isTv) {
       return Wrap(
         alignment: WrapAlignment.center,
@@ -387,6 +388,15 @@ class _ChoiceRow<T> extends StatelessWidget {
             // chip in the row changed width and the row jumped around as the
             // user tapped through it. The fill already says which is on.
             showCheckmark: false,
+            // The default selected fill comes from the scheme's secondary
+            // container while the label stays on the surface colour, and on
+            // some of the light schemes that lands dark text on a dark fill.
+            // Pairing primary with onPrimary keeps them legible together
+            // whatever palette the user has chosen.
+            selectedColor: scheme.primary,
+            labelStyle: TextStyle(
+              color: isSelected(value) ? scheme.onPrimary : scheme.onSurface,
+            ),
             onSelected: onTap == null ? null : (_) => onTap!(value),
           ),
       ],
@@ -421,7 +431,7 @@ class _NavPreview extends StatelessWidget {
       ItemType.novel: l10n.novel,
     };
 
-    final items = <(IconData, String)>[
+    final bar = <(IconData, String)>[
       if (merged)
         (Icons.collections_bookmark_outlined, l10n.library)
       else
@@ -430,9 +440,53 @@ class _NavPreview extends StatelessWidget {
       (Icons.more_horiz_outlined, l10n.more),
     ];
 
+    // Merged hides a second bar behind the first: tapping Library swaps the
+    // whole row for the libraries plus a way back. That is the part of the
+    // choice the words cannot describe, so it is drawn too.
+    final insideLibrary = <(IconData, String)>[
+      (Icons.arrow_back, l10n.go_back),
+      for (final type in libraries) (_icons[type]!, labels[type]!),
+    ];
+
+    return Column(
+      children: [
+        _NavPreviewBar(items: bar),
+        if (merged) ...[
+          const SizedBox(height: 6),
+          Icon(
+            Icons.keyboard_arrow_down,
+            size: 18,
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            l10n.onboarding_nav_inside,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 8),
+          _NavPreviewBar(items: insideLibrary),
+        ],
+      ],
+    );
+  }
+}
+
+class _NavPreviewBar extends StatelessWidget {
+  const _NavPreviewBar({required this.items});
+
+  final List<(IconData, String)> items;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        // Solid, not a half transparent wash. On a light scheme the wash left
+        // the bar barely separated from the page behind it.
+        color: scheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Padding(
@@ -444,8 +498,8 @@ class _NavPreview extends StatelessWidget {
               _NavPreviewItem(
                 icon: item.$1,
                 label: item.$2,
-                // The first entry is the one the bar opens on.
-                selected: index == 0,
+                // The entry the bar opens on. A back arrow never is one.
+                selected: index == 0 && item.$1 != Icons.arrow_back,
               ),
           ],
         ),
@@ -467,8 +521,10 @@ class _NavPreviewItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final color = selected ? theme.colorScheme.primary : theme.hintColor;
+    final scheme = Theme.of(context).colorScheme;
+    // hintColor is very pale on the light schemes, which left the unselected
+    // entries almost invisible against the bar.
+    final color = selected ? scheme.primary : scheme.onSurfaceVariant;
     return Flexible(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -479,7 +535,8 @@ class _NavPreviewItem extends StatelessWidget {
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.labelSmall?.copyWith(color: color),
+            style: Theme.of(context).textTheme.labelSmall
+                ?.copyWith(color: color),
           ),
         ],
       ),

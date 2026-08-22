@@ -116,8 +116,13 @@ void main() {
 
       await tester.tap(find.widgetWithText(FilterChip, 'One Library tab'));
       await tester.pumpAndSettle();
-      // Merged, so they collapse into one entry in the preview.
+      // Merged, so they collapse into one entry in the preview, and the bar
+      // that tapping it swaps in is drawn underneath.
       expect(find.text('Library'), findsOneWidget);
+      expect(find.byIcon(Icons.arrow_back), findsOneWidget);
+      for (final label in ['Manga', 'Anime', 'Novel']) {
+        expect(find.text(label), findsWidgets);
+      }
 
       await tester.tap(find.widgetWithText(FilledButton, 'Next'));
       await tester.pumpAndSettle();
@@ -176,6 +181,24 @@ void main() {
       // row jump about as the user tapped through it.
       expect(tester.getSize(chip), before);
     });
+  });
+
+  group('contrast', () {
+    for (final brightness in Brightness.values) {
+      testWidgets('a selected chip reads against its fill on $brightness', (
+        tester,
+      ) async {
+        await pump(tester, brightness: brightness);
+        final scheme = ThemeData(brightness: brightness).colorScheme;
+        final chip = tester.widget<FilterChip>(
+          find.widgetWithText(FilterChip, 'Manga'),
+        );
+        // The default pairs a secondary-container fill with an on-surface
+        // label, which lands dark on dark under some light schemes.
+        expect(chip.selectedColor, scheme.primary);
+        expect(chip.labelStyle?.color, scheme.onPrimary);
+      });
+    }
   });
 
   group('the app mark', () {

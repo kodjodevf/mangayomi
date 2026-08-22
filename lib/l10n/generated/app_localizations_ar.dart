@@ -2969,6 +2969,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get onboarding_nav_merged => 'One Library tab';
 
   @override
+  String get onboarding_nav_inside => 'Tapping Library swaps the bar for these';
+
+  @override
   String get onboarding_next => 'Next';
 
   @override

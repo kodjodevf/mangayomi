@@ -1191,6 +1191,7 @@
   "onboarding_nav_body": "Keep a tab for each of them, or put them together behind one Library tab you can switch inside.",
   "onboarding_nav_split": "A tab each",
   "onboarding_nav_merged": "One Library tab",
+  "onboarding_nav_inside": "Tapping Library swaps the bar for these",
   "onboarding_next": "Next",
   "onboarding_repo_title": "Add a source",
   "onboarding_body": "Mangayomi comes with no sources of its own. Add a repository and the extensions it holds become available to install and browse.",

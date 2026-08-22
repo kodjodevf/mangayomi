@@ -5369,6 +5369,12 @@ abstract class AppLocalizations {
   /// **'One Library tab'**
   String get onboarding_nav_merged;
 
+  /// No description provided for @onboarding_nav_inside.
+  ///
+  /// In en, this message translates to:
+  /// **'Tapping Library swaps the bar for these'**
+  String get onboarding_nav_inside;
+
   /// No description provided for @onboarding_next.
   ///
   /// In en, this message translates to:
