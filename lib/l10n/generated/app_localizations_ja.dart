@@ -871,6 +871,11 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String missing_chapters(Object count) {
+    return 'Missing $count chapters';
+  }
+
+  @override
   String get no_description => '説明なし';
 
   @override
@@ -1079,6 +1084,27 @@ class AppLocalizationsJa extends AppLocalizations {
   String get sync_button_download_info => 'この操作はローカルデータを完全にリモートデータで置き換えます！';
 
   @override
+  String get sync_status_not_configured => 'Not connected';
+
+  @override
+  String get sync_status_checking => 'Checking connection...';
+
+  @override
+  String get sync_status_connected => 'Connected';
+
+  @override
+  String get sync_status_unauthorized => 'Session expired, please log in again';
+
+  @override
+  String get sync_status_unreachable => 'Can\'t reach server';
+
+  @override
+  String get sync_section_general => 'General';
+
+  @override
+  String get sync_section_data_types => 'What to sync';
+
+  @override
   String get sync_on => '同期を有効化';
 
   @override
@@ -1141,6 +1167,11 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String n_episodes(Object n) {
     return '$n エピソード';
+  }
+
+  @override
+  String missing_episodes(Object count) {
+    return 'Missing $count episodes';
   }
 
   @override
@@ -1798,10 +1829,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get custom_dns => 'カスタムDNS（システムDNSを使用する場合は空のままにしてください）';
 
   @override
-  String get android_proxy_server => 'Androidプロキシサーバー（ApkBridge）';
+  String get android_proxy_server => 'Androidプロキシサーバー（M-Extension-Server）';
 
   @override
-  String get get_apk_bridge => 'ApkBridgeを入手';
+  String get get_m_extension_server => 'M-Extension-Serverを入手';
 
   @override
   String get get_sync_server => '同期サーバーをここで入手';
@@ -2194,6 +2225,11 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String unrecognized_chapter_numbers(Object count) {
+    return '$count chapter(s) couldn\'t be auto-numbered and may be out of order or missing from the reader.';
+  }
+
+  @override
   String get cloudflare_resolution_webview_server_start_failed =>
       'Couldn\'t start Cloudflare Resolution Webview Server.';
 
@@ -2428,8 +2464,8 @@ class AppLocalizationsJa extends AppLocalizations {
   String get latest_version => 'Latest version';
 
   @override
-  String get apkbridge_description =>
-      'Use ApkBridge when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.';
+  String get m_extension_server_description =>
+      'Use M-Extension-Server when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.';
 
   @override
   String get set_proxy_address => 'Set proxy address';
@@ -2491,7 +2527,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get could_not_launch_apk_bridge_page =>
-      'Could not launch the ApkBridge page.';
+      'Could not launch the M-Extension-Server page.';
 
   @override
   String get proxy_server_ip_hint =>
