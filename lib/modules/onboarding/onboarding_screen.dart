@@ -116,7 +116,16 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
 
   /// Whether a folder of the user's own files was added, which is content the
   /// app can open with no repository and no network at all.
-  bool _addedLocalFolder = false;
+  /// Whether the folder this screen added is still on the list.
+  ///
+  /// Asked of the list rather than remembered, because the list can change
+  /// underneath: removing the folder from Settings, or from the button below,
+  /// used to leave this step still reporting a folder that had gone.
+  bool get _addedLocalFolder =>
+      _addedFolderPath != null &&
+      ref
+          .watch(localFoldersStateProvider)
+          .any((folder) => folder.path == _addedFolderPath);
 
   /// The folder that was added here, so a wrong pick can be undone without
   /// going to look for it in Settings.
@@ -285,7 +294,6 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
         base != null && p.isWithin(p.join(base.path, 'downloads'), path);
 
     setState(() {
-      _addedLocalFolder = true;
       _addedFolderPath = path;
       _folderIsInDownloads = inDownloads;
       _scanningFolder = true;
@@ -336,7 +344,6 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
               .toList(),
         );
     setState(() {
-      _addedLocalFolder = false;
       _addedFolderPath = null;
       _folderIsInDownloads = false;
       _foundTitles = null;
