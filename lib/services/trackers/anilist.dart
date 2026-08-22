@@ -14,6 +14,8 @@ import 'package:mangayomi/modules/more/settings/track/myanimelist/model.dart';
 import 'package:mangayomi/modules/more/settings/track/providers/track_providers.dart';
 import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/utils/localized_message.dart';
+import 'package:mangayomi/services/discovery/service_availability.dart';
+
 import 'base_tracker.dart';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -374,6 +376,12 @@ class Anilist extends _$Anilist implements BaseTracker {
     String document,
     Map<String, dynamic> variables,
   ) async {
+    // Same host as discovery, so the same outage applies: skip the request
+    // rather than wait out a client timeout on a service already known to be
+    // refusing.
+    final known = ServiceAvailability.outage(DiscoveryService.anilist);
+    if (known != null) throw known;
+
     final response = await http.post(
       Uri.parse(_baseApiUrl),
       headers: {
@@ -383,9 +391,29 @@ class Anilist extends _$Anilist implements BaseTracker {
       body: jsonEncode({'query': document, 'variables': variables}),
     );
 
-    final decoded = jsonDecode(response.body) as Map<String, dynamic>;
+    Map<String, dynamic>? decoded;
+    try {
+      final parsed = jsonDecode(response.body);
+      if (parsed is Map<String, dynamic>) decoded = parsed;
+    } catch (_) {
+      decoded = null;
+    }
 
-    return decoded['data'] as Map<String, dynamic>;
+    // Without this a refusal reached `decoded['data'] as Map` and died as a
+    // null cast, so a service saying plainly why it will not answer surfaced
+    // as a type error or, through the client's own timeout, as "Request timed
+    // out".
+    final refusal = anilistRefusal(response.statusCode, decoded);
+    if (refusal != null) {
+      throw ServiceAvailability.markDown(DiscoveryService.anilist, refusal);
+    }
+
+    final data = decoded?['data'];
+    if (data is! Map<String, dynamic>) {
+      throw Exception('AniList returned no data: ${response.statusCode}');
+    }
+    ServiceAvailability.markUp(DiscoveryService.anilist);
+    return data;
   }
 
   Future<(String, String)> _getCurrentUser(String accessToken) async {
