@@ -2992,6 +2992,9 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get onboarding_local_remove => 'Remove that folder';
+
+  @override
   String get onboarding_local_empty =>
       'Nothing found. Pick the folder that holds your manga folders, not one manga.';
 

@@ -90,7 +90,8 @@ class _OnboardingBody extends ConsumerStatefulWidget {
 
 enum _Step { libraries, navigation, repository }
 
-class _OnboardingScreenState extends ConsumerState<_OnboardingBody> {
+class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
+    with WidgetsBindingObserver {
   final _controller = TextEditingController();
 
   _Step _step = _Step.libraries;
@@ -115,6 +116,10 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody> {
   /// Whether a folder of the user's own files was added, which is content the
   /// app can open with no repository and no network at all.
   bool _addedLocalFolder = false;
+
+  /// The folder that was added here, so a wrong pick can be undone without
+  /// going to look for it in Settings.
+  String? _addedFolderPath;
   bool _scanningFolder = false;
 
   /// How many titles the scan found, once it has finished. Zero is the
@@ -123,9 +128,32 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody> {
   int? _foundTitles;
 
   @override
+  void initState() {
+    super.initState();
+    // Back has to be claimed from the binding, not from a route or a Router.
+    // This screen replaces MaterialApp.builder's child, which puts it above
+    // both the router and its Navigator, so a PopScope never sees the press
+    // and BackButtonListener cannot find a Router to ask. Observers are
+    // offered the press in reverse order of registration, and this one
+    // registers after the router, so it gets first refusal for as long as it
+    // is on screen.
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _controller.dispose();
     super.dispose();
+  }
+
+  /// Always handled, so back never reaches the router underneath and pops from
+  /// behind a first run that is still going. On the first step there is
+  /// nothing behind it, so it does nothing and Skip stays the way out.
+  @override
+  Future<bool> didPopRoute() async {
+    if (!_adding && _step != _Step.libraries) _back();
+    return true;
   }
 
   /// How long a step change takes, or nothing at all when the platform has
@@ -231,6 +259,7 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody> {
     }
     setState(() {
       _addedLocalFolder = true;
+      _addedFolderPath = path;
       _scanningFolder = true;
       _foundTitles = null;
     });
@@ -249,6 +278,29 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody> {
         });
       }
     }
+  }
+
+  /// Takes back the folder this screen added.
+  ///
+  /// Picking the wrong level is easy, and the wrong level is silent: the
+  /// scanner reads a single manga's folder as a shelf of empty titles. Without
+  /// this the only way back is Settings, after the first run is over.
+  void _removeLocalFolder() {
+    final path = _addedFolderPath;
+    if (path == null) return;
+    ref
+        .read(localFoldersStateProvider.notifier)
+        .set(
+          ref
+              .read(localFoldersStateProvider)
+              .where((folder) => folder.path != path)
+              .toList(),
+        );
+    setState(() {
+      _addedLocalFolder = false;
+      _addedFolderPath = null;
+      _foundTitles = null;
+    });
   }
 
   /// Whether any library has a repository, asked after a restore that may have
@@ -352,7 +404,7 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody> {
     final l10n = l10nLocalizations(context)!;
     final theme = Theme.of(context);
 
-    return Scaffold(
+    final scaffold = Scaffold(
       body: SafeArea(
         child: Stack(
           children: [
@@ -375,6 +427,7 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody> {
         ),
       ),
     );
+    return scaffold;
   }
 
   Widget _content(AppLocalizations l10n, ThemeData theme) {
@@ -622,6 +675,13 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody> {
           // reads the picked folder as a shelf of titles, so a single title's
           // own folder looks like a shelf of chapters with nothing in them.
           _FolderStatus(message: l10n.onboarding_local_empty, warn: true),
+        if (!_scanningFolder) ...[
+          const SizedBox(height: 4),
+          TextButton(
+            onPressed: _removeLocalFolder,
+            child: Text(l10n.onboarding_local_remove),
+          ),
+        ],
       ],
     ],
   };

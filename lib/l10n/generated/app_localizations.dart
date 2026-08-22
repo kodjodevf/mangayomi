@@ -5411,6 +5411,12 @@ abstract class AppLocalizations {
   /// **'{count} titles found'**
   String onboarding_local_found(Object count);
 
+  /// No description provided for @onboarding_local_remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove that folder'**
+  String get onboarding_local_remove;
+
   /// No description provided for @onboarding_local_empty.
   ///
   /// In en, this message translates to:

@@ -1199,6 +1199,7 @@
   "onboarding_local_scanning": "Scanning the folder",
   "onboarding_local_found": "{count} titles found",
   "@onboarding_local_found": { "placeholders": { "count": {} } },
+  "onboarding_local_remove": "Remove that folder",
   "onboarding_local_empty": "Nothing found. Pick the folder that holds your manga folders, not one manga.",
   "onboarding_repo_failed": "Couldn't read that repository. Check the address and your connection.",
   "onboarding_repo_title": "Add a source",

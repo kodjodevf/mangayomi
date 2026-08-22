@@ -20,6 +20,7 @@ void main() {
     WidgetTester tester, {
     Brightness? brightness,
     bool disableAnimations = false,
+    double textScale = 1,
   }) async {
     // Phone width, because the arrange step is skipped at 600dp and wider,
     // and tall, because the TV layout overflows the default 600 and puts the
@@ -53,8 +54,10 @@ void main() {
           // mounts it: outside the Navigator, with no Overlay above it.
           home: const SizedBox.shrink(),
           builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(context)
-                .copyWith(disableAnimations: disableAnimations),
+            data: MediaQuery.of(context).copyWith(
+              disableAnimations: disableAnimations,
+              textScaler: TextScaler.linear(textScale),
+            ),
             child: const OnboardingScreen(),
           ),
         ),
@@ -395,6 +398,24 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Your libraries'), findsNothing);
       expect(find.text('Welcome to Mangayomi'), findsOneWidget);
+    });
+  });
+
+  group('large text', () {
+    testWidgets('the first step still fits at double size', (tester) async {
+      // Wrap and a scroll view should cope, but nobody had tried it.
+      await pump(tester, textScale: 2);
+      expect(tester.takeException(), isNull);
+      expect(find.widgetWithText(FilledButton, 'Next'), findsOneWidget);
+    });
+
+    testWidgets('and so does the source step, which carries the most', (
+      tester,
+    ) async {
+      await pump(tester, textScale: 2);
+      await toRepoStep(tester);
+      expect(tester.takeException(), isNull);
+      expect(find.byType(TextField), findsOneWidget);
     });
   });
 
