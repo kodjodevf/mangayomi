@@ -106,6 +106,19 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     setState(() => _step = _Step.repository);
   }
 
+  /// Returns to the previous question, skipping the arrange step when it was
+  /// skipped on the way in.
+  ///
+  /// Nothing is undone. Each step applies its answer as it is left, and coming
+  /// back and going forward again simply applies the new one.
+  void _back() {
+    setState(() {
+      _step = _step == _Step.repository && _shouldArrangeBar
+          ? _Step.navigation
+          : _Step.libraries;
+    });
+  }
+
   /// Keeps the chosen libraries in the nav bar and hides the rest, leaving
   /// anything else already hidden alone.
   void _applyLibraries() {
@@ -171,73 +184,95 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
     return Scaffold(
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(
-              horizontal: isTv ? 48 : 24,
-              vertical: 32,
-            ).add(tvPageInsets),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: isTv ? 620 : 420),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // The app's own mark rather than a stock glyph. icon.png is
-                  // the bare silhouette, tinted against the background the same
-                  // way the More and About screens tint it. The full colour
-                  // icons are drawn on a white tile, which reads as a bright
-                  // block on a dark theme, so they are not used here.
-                  Image.asset(
-                    'assets/app_icons/icon.png',
-                    height: isTv ? 96 : 80,
-                    color: theme.brightness == Brightness.light
-                        ? Colors.black
-                        : Colors.white,
-                    fit: BoxFit.contain,
+        child: Stack(
+          children: [
+            _content(l10n, theme),
+            // A way back to change an earlier answer. Absent on the first
+            // step, where there is nothing behind it.
+            if (_step != _Step.libraries)
+              Align(
+                alignment: AlignmentDirectional.topStart,
+                child: Padding(
+                  padding: EdgeInsets.all(isTv ? 12 : 4).add(tvPageInsets),
+                  child: IconButton(
+                    onPressed: _adding ? null : _back,
+                    tooltip: l10n.go_back,
+                    icon: const Icon(Icons.arrow_back),
                   ),
-                  const SizedBox(height: 20),
-                  Text(
-                    _title(l10n),
-                    textAlign: TextAlign.center,
-                    style:
-                        (isTv
-                                ? theme.textTheme.headlineMedium
-                                : theme.textTheme.headlineSmall)
-                            ?.copyWith(fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    _body(l10n),
-                    textAlign: TextAlign.center,
-                    style:
-                        (isTv
-                                ? theme.textTheme.bodyLarge
-                                : theme.textTheme.bodyMedium)
-                            ?.copyWith(color: theme.hintColor, height: 1.45),
-                  ),
-                  const SizedBox(height: 28),
-                  ..._stepBody(l10n),
-                  const SizedBox(height: 20),
-                  TextButton(
-                    onPressed: _adding ? null : _finish,
-                    child: Text(_leaveLabel(l10n)),
-                  ),
-                  // Typing a URL on a d-pad is miserable, so on a TV say
-                  // plainly that leaving now costs nothing.
-                  if (isTv && _step == _Step.repository && _added == null) ...[
-                    const SizedBox(height: 8),
-                    Text(
-                      l10n.onboarding_later,
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.hintColor,
-                      ),
-                    ),
-                  ],
-                ],
+                ),
               ),
-            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _content(AppLocalizations l10n, ThemeData theme) {
+    return Center(
+      child: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(
+          horizontal: isTv ? 48 : 24,
+          vertical: 32,
+        ).add(tvPageInsets),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: isTv ? 620 : 420),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // The app's own mark rather than a stock glyph. icon.png is
+              // the bare silhouette, tinted against the background the same
+              // way the More and About screens tint it. The full colour
+              // icons are drawn on a white tile, which reads as a bright
+              // block on a dark theme, so they are not used here.
+              Image.asset(
+                'assets/app_icons/icon.png',
+                height: isTv ? 96 : 80,
+                color: theme.brightness == Brightness.light
+                    ? Colors.black
+                    : Colors.white,
+                fit: BoxFit.contain,
+              ),
+              const SizedBox(height: 20),
+              Text(
+                _title(l10n),
+                textAlign: TextAlign.center,
+                style:
+                    (isTv
+                            ? theme.textTheme.headlineMedium
+                            : theme.textTheme.headlineSmall)
+                        ?.copyWith(fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                _body(l10n),
+                textAlign: TextAlign.center,
+                style:
+                    (isTv
+                            ? theme.textTheme.bodyLarge
+                            : theme.textTheme.bodyMedium)
+                        ?.copyWith(color: theme.hintColor, height: 1.45),
+              ),
+              const SizedBox(height: 28),
+              ..._stepBody(l10n),
+              const SizedBox(height: 20),
+              TextButton(
+                onPressed: _adding ? null : _finish,
+                child: Text(_leaveLabel(l10n)),
+              ),
+              // Typing a URL on a d-pad is miserable, so on a TV say
+              // plainly that leaving now costs nothing.
+              if (isTv && _step == _Step.repository && _added == null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  l10n.onboarding_later,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.hintColor,
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
       ),

@@ -120,7 +120,9 @@ void main() {
       // Merged, so they collapse into one entry in the preview, and the bar
       // that tapping it swaps in is drawn underneath.
       expect(find.text('Library'), findsOneWidget);
-      expect(find.byIcon(Icons.arrow_back), findsOneWidget);
+      // By its label, not its icon: the step's own back button is an
+      // arrow_back too and would match either way.
+      expect(find.text('Go back'), findsOneWidget);
       for (final label in ['Manga', 'Anime', 'Novel']) {
         expect(find.text(label), findsWidgets);
       }
@@ -195,6 +197,51 @@ void main() {
       // A tick appearing on selection changed every chip's width and made the
       // row jump about as the user tapped through it.
       expect(tester.getSize(chip), before);
+    });
+  });
+
+  group('going back', () {
+    testWidgets('the first step has nothing to go back to', (tester) async {
+      await pump(tester);
+      expect(find.widgetWithIcon(IconButton, Icons.arrow_back), findsNothing);
+    });
+
+    testWidgets('walks back through the steps it walked forward', (
+      tester,
+    ) async {
+      await pump(tester);
+      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      await tester.pumpAndSettle();
+      expect(find.text('Add a source'), findsOneWidget);
+
+      await tester.tap(find.widgetWithIcon(IconButton, Icons.arrow_back));
+      await tester.pumpAndSettle();
+      expect(find.text('Your libraries'), findsOneWidget);
+
+      await tester.tap(find.widgetWithIcon(IconButton, Icons.arrow_back));
+      await tester.pumpAndSettle();
+      expect(find.text('Welcome to Mangayomi'), findsOneWidget);
+      expect(find.widgetWithIcon(IconButton, Icons.arrow_back), findsNothing);
+    });
+
+    testWidgets('skips the arrange step on the way back too', (tester) async {
+      await pump(tester);
+      // One library, so arranging was skipped going forward and going back
+      // through it would show a step that was never offered.
+      await tester.tap(find.widgetWithText(FilterChip, 'Anime'));
+      await tester.pump();
+      await tester.tap(find.widgetWithText(FilterChip, 'Novel'));
+      await tester.pump();
+      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      await tester.pumpAndSettle();
+      expect(find.text('Add a source'), findsOneWidget);
+
+      await tester.tap(find.widgetWithIcon(IconButton, Icons.arrow_back));
+      await tester.pumpAndSettle();
+      expect(find.text('Your libraries'), findsNothing);
+      expect(find.text('Welcome to Mangayomi'), findsOneWidget);
     });
   });
 
