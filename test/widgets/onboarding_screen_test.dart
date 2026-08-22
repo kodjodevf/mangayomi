@@ -5,6 +5,7 @@ import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
+import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/onboarding/onboarding_screen.dart';
 import 'package:mangayomi/modules/widgets/tv_pill.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
@@ -13,6 +14,11 @@ void main() {
   tearDown(() => debugIsTvOverride = null);
 
   Future<void> pump(WidgetTester tester, {Brightness? brightness}) async {
+    // The TV layout is taller than the default 800x600 surface, which puts the
+    // step buttons outside the viewport where a tap cannot reach them.
+    tester.view.physicalSize = const Size(1200, 2400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -21,6 +27,10 @@ void main() {
           for (final type in ItemType.values)
             extensionsRepoStateProvider(type)
                 .overrideWith(() => _StubRepoState()),
+          // Read and written as the steps advance, and both go through Isar,
+          // which is not open in a test.
+          hideItemsStateProvider.overrideWith(_StubHideItems.new),
+          mergeLibraryNavMobileStateProvider.overrideWith(_StubMergeNav.new),
         ],
         child: MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -36,6 +46,16 @@ void main() {
   ButtonStyleButton addButton(WidgetTester tester) =>
       tester.widget<FilledButton>(find.byType(FilledButton));
 
+  /// Walks past the library and navigation steps to the repository step.
+  Future<void> toRepoStep(WidgetTester tester) async {
+    await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+    await tester.pumpAndSettle();
+    if (find.widgetWithText(FilledButton, 'Next').evaluate().isNotEmpty) {
+      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      await tester.pumpAndSettle();
+    }
+  }
+
   testWidgets('offers a way out without adding anything', (tester) async {
     await pump(tester);
     // A first-run screen that can only be left by supplying a repository would
@@ -45,11 +65,13 @@ void main() {
 
   testWidgets('cannot add an empty repository', (tester) async {
     await pump(tester);
+    await toRepoStep(tester);
     expect(addButton(tester).onPressed, isNull);
   });
 
   testWidgets('cannot add something that is not a url', (tester) async {
     await pump(tester);
+    await toRepoStep(tester);
     await tester.enterText(find.byType(TextField), 'not a url');
     await tester.pump();
     expect(addButton(tester).onPressed, isNull);
@@ -57,6 +79,7 @@ void main() {
 
   testWidgets('accepts an absolute url', (tester) async {
     await pump(tester);
+    await toRepoStep(tester);
     await tester.enterText(
       find.byType(TextField),
       'https://example.invalid/index.json',
@@ -65,17 +88,74 @@ void main() {
     expect(addButton(tester).onPressed, isNotNull);
   });
 
-  testWidgets('asks which library the repository stocks, manga first', (
-    tester,
-  ) async {
-    await pump(tester);
-    // Repositories are per item type, so a wrong guess would file the sources
-    // where the user will not look for them.
-    final picker = tester.widget<SegmentedButton<ItemType>>(
-      find.byType(SegmentedButton<ItemType>),
-    );
-    expect(picker.selected, {ItemType.manga});
-    expect(picker.segments.map((s) => s.value), ItemType.values);
+  group('the steps', () {
+    testWidgets('opens by asking which libraries the user reads', (
+      tester,
+    ) async {
+      await pump(tester);
+      expect(find.text('Welcome to Mangayomi'), findsOneWidget);
+      for (final label in ['Manga', 'Anime', 'Novel']) {
+        expect(find.widgetWithText(FilterChip, label), findsOneWidget);
+      }
+    });
+
+    testWidgets('asks how the libraries sit in the bar, then for a repo', (
+      tester,
+    ) async {
+      await pump(tester);
+      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      await tester.pumpAndSettle();
+      expect(find.text('Your libraries'), findsOneWidget);
+      expect(find.widgetWithText(FilterChip, 'A tab each'), findsOneWidget);
+      expect(
+        find.widgetWithText(FilterChip, 'One Library tab'),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      await tester.pumpAndSettle();
+      expect(find.text('Add a source'), findsOneWidget);
+      expect(find.byType(TextField), findsOneWidget);
+    });
+
+    testWidgets('skips arranging a bar that holds one library', (tester) async {
+      await pump(tester);
+      // Two off, one left. There is nothing to arrange, so asking would be
+      // asking for the sake of it.
+      await tester.tap(find.widgetWithText(FilterChip, 'Anime'));
+      await tester.pump();
+      await tester.tap(find.widgetWithText(FilterChip, 'Novel'));
+      await tester.pump();
+      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      await tester.pumpAndSettle();
+      expect(find.text('Your libraries'), findsNothing);
+      expect(find.text('Add a source'), findsOneWidget);
+    });
+
+    testWidgets('keeps at least one library selected', (tester) async {
+      await pump(tester);
+      // Turning them all off would leave a bar with no library in it.
+      for (final label in ['Manga', 'Anime', 'Novel']) {
+        await tester.tap(find.widgetWithText(FilterChip, label));
+        await tester.pump();
+      }
+      final selected = tester
+          .widgetList<FilterChip>(find.byType(FilterChip))
+          .where((chip) => chip.selected);
+      expect(selected, isNotEmpty);
+    });
+
+    testWidgets('only offers a repo type the user actually reads', (
+      tester,
+    ) async {
+      await pump(tester);
+      await tester.tap(find.widgetWithText(FilterChip, 'Novel'));
+      await tester.pump();
+      await toRepoStep(tester);
+      expect(find.widgetWithText(FilterChip, 'Manga'), findsOneWidget);
+      expect(find.widgetWithText(FilterChip, 'Anime'), findsOneWidget);
+      expect(find.widgetWithText(FilterChip, 'Novel'), findsNothing);
+    });
   });
 
   group('the app mark', () {
@@ -107,12 +187,10 @@ void main() {
   group('on a TV', () {
     setUp(() => debugIsTvOverride = true);
 
-    testWidgets('picks the item type with pills, not a segmented button', (
-      tester,
-    ) async {
+    testWidgets('chooses with pills, not chips', (tester) async {
       await pump(tester);
-      // A SegmentedButton's segments are not reliably reachable with a d-pad.
-      expect(find.byType(SegmentedButton<ItemType>), findsNothing);
+      // A chip row is not reliably reachable with a d-pad.
+      expect(find.byType(FilterChip), findsNothing);
       expect(find.byType(TvPill), findsNWidgets(ItemType.values.length));
     });
 
@@ -120,6 +198,7 @@ void main() {
       tester,
     ) async {
       await pump(tester);
+      await toRepoStep(tester);
       final field = tester.widget<TextField>(find.byType(TextField));
       expect(field.autofocus, isTrue);
     });
@@ -128,6 +207,7 @@ void main() {
       tester,
     ) async {
       await pump(tester);
+      await toRepoStep(tester);
       // Typing a url on a remote is miserable; leaving now has to look like a
       // real option rather than a failure.
       expect(
@@ -137,11 +217,14 @@ void main() {
       expect(find.widgetWithText(TextButton, 'Skip for now'), findsOneWidget);
     });
 
-    testWidgets('the phone layout keeps the segmented button', (tester) async {
+    testWidgets('the phone layout keeps chips and loses the hint', (
+      tester,
+    ) async {
       debugIsTvOverride = false;
       await pump(tester);
-      expect(find.byType(SegmentedButton<ItemType>), findsOneWidget);
+      expect(find.byType(FilterChip), findsNWidgets(ItemType.values.length));
       expect(find.byType(TvPill), findsNothing);
+      await toRepoStep(tester);
       expect(
         find.text('You can add one later under More, Source repositories.'),
         findsNothing,
@@ -153,4 +236,20 @@ void main() {
 class _StubRepoState extends ExtensionsRepoState {
   @override
   List<Repo> build(ItemType itemType) => const [];
+}
+
+class _StubHideItems extends HideItemsState {
+  @override
+  List<String> build() => const ['/trackerLibrary'];
+
+  @override
+  void set(List<String> values) => state = values;
+}
+
+class _StubMergeNav extends MergeLibraryNavMobileState {
+  @override
+  bool build() => false;
+
+  @override
+  void set(bool value) => state = value;
 }

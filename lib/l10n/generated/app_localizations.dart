@@ -5339,6 +5339,48 @@ abstract class AppLocalizations {
   /// **'Welcome to Mangayomi'**
   String get onboarding_title;
 
+  /// No description provided for @onboarding_libraries_body.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick what you read. The ones you leave out stay out of the navigation bar, and you can change this later under Appearance.'**
+  String get onboarding_libraries_body;
+
+  /// No description provided for @onboarding_nav_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Your libraries'**
+  String get onboarding_nav_title;
+
+  /// No description provided for @onboarding_nav_body.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep a tab for each of them, or put them together behind one Library tab you can switch inside.'**
+  String get onboarding_nav_body;
+
+  /// No description provided for @onboarding_nav_split.
+  ///
+  /// In en, this message translates to:
+  /// **'A tab each'**
+  String get onboarding_nav_split;
+
+  /// No description provided for @onboarding_nav_merged.
+  ///
+  /// In en, this message translates to:
+  /// **'One Library tab'**
+  String get onboarding_nav_merged;
+
+  /// No description provided for @onboarding_next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboarding_next;
+
+  /// No description provided for @onboarding_repo_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a source'**
+  String get onboarding_repo_title;
+
   /// No description provided for @onboarding_body.
   ///
   /// In en, this message translates to:

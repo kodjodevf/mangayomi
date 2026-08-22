@@ -2912,6 +2912,29 @@ class AppLocalizationsJa extends AppLocalizations {
   String get onboarding_title => 'Welcome to Mangayomi';
 
   @override
+  String get onboarding_libraries_body =>
+      'Pick what you read. The ones you leave out stay out of the navigation bar, and you can change this later under Appearance.';
+
+  @override
+  String get onboarding_nav_title => 'Your libraries';
+
+  @override
+  String get onboarding_nav_body =>
+      'Keep a tab for each of them, or put them together behind one Library tab you can switch inside.';
+
+  @override
+  String get onboarding_nav_split => 'A tab each';
+
+  @override
+  String get onboarding_nav_merged => 'One Library tab';
+
+  @override
+  String get onboarding_next => 'Next';
+
+  @override
+  String get onboarding_repo_title => 'Add a source';
+
+  @override
   String get onboarding_body =>
       'Mangayomi comes with no sources of its own. Add a repository and the extensions it holds become available to install and browse.';
 
