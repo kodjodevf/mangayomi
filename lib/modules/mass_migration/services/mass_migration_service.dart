@@ -4,6 +4,7 @@ import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/changed.dart';
 import 'package:mangayomi/models/chapter.dart';
+import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/source.dart';
@@ -45,12 +46,20 @@ Future<void> migrateLibraryItem({
 class _MigrationSnapshot {
   const _MigrationSnapshot({
     required this.chaptersProgress,
+    required this.sourceTitle,
     this.historyChapter,
     this.historyDate,
   });
 
   final List<Chapter> chaptersProgress;
-  final String? historyChapter;
+
+  /// The title the item had before the migration rewrote it. Chapter names are
+  /// parsed with their own item's title stripped out, so the old chapters have
+  /// to be read against the old title and the new ones against the new one.
+  final String sourceTitle;
+
+  /// Chapter number of the last thing read, as [ChapterRecognition] sees it.
+  final int? historyChapter;
   final String? historyDate;
 }
 
@@ -58,9 +67,10 @@ _MigrationSnapshot _captureMigrationSnapshot({
   required WidgetRef ref,
   required Manga oldManga,
 }) {
-  String? historyChapter;
+  int? historyChapter;
   String? historyDate;
   final chaptersProgress = <Chapter>[];
+  final sourceTitle = oldManga.name ?? '';
 
   isar.writeTxnSync(() {
     final histories = isar.historys
@@ -68,8 +78,9 @@ _MigrationSnapshot _captureMigrationSnapshot({
         .mangaIdEqualTo(oldManga.id)
         .sortByDate()
         .findAllSync();
-    historyChapter = extractMigrationChapterNumber(
-      histories.lastOrNull?.chapter.value?.name ?? '',
+    historyChapter = _chapterNumber(
+      sourceTitle,
+      histories.lastOrNull?.chapter.value?.name,
     );
     historyDate = histories.lastOrNull?.date;
     for (final history in histories) {
@@ -92,6 +103,7 @@ _MigrationSnapshot _captureMigrationSnapshot({
 
   return _MigrationSnapshot(
     chaptersProgress: chaptersProgress,
+    sourceTitle: sourceTitle,
     historyChapter: historyChapter,
     historyDate: historyDate,
   );
@@ -191,17 +203,26 @@ void _restoreMigrationProgress({
   required _MigrationSnapshot snapshot,
 }) {
   isar.writeTxnSync(() {
+    // Index the destination's chapters by number once, then match on that
+    // number. The old lookup extracted the leading digits of the name and ran
+    // nameContains against them, so "Chapter 1" also matched "Chapter 10" and
+    // "Chapter 19" and findFirst took whichever the index happened to return:
+    // progress could land on a chapter the reader had never opened.
+    final destinationTitle = oldManga.name ?? '';
+    final byNumber = <int, Chapter>{};
+    for (final chapter
+        in isar.chapters
+            .where()
+            .mangaIdEqualToAnyIsRead(oldManga.id)
+            .findAllSync()) {
+      final number = _chapterNumber(destinationTitle, chapter.name);
+      if (number != null) byNumber.putIfAbsent(number, () => chapter);
+    }
+
     final updatedChapters = <Chapter>[];
     for (final oldChapter in snapshot.chaptersProgress) {
-      final chapter = isar.chapters
-          .where()
-          .mangaIdEqualToAnyIsRead(oldManga.id)
-          .filter()
-          .nameContains(
-            extractMigrationChapterNumber(oldChapter.name ?? '') ?? '.....',
-            caseSensitive: false,
-          )
-          .findFirstSync();
+      final number = _chapterNumber(snapshot.sourceTitle, oldChapter.name);
+      final chapter = number == null ? null : byNumber[number];
       if (chapter != null) {
         chapter.isBookmarked = oldChapter.isBookmarked;
         chapter.lastPageRead = oldChapter.lastPageRead;
@@ -213,11 +234,9 @@ void _restoreMigrationProgress({
       isar.chapters.putAllSync(updatedChapters);
     }
 
-    final historyChapter = isar.chapters
-        .filter()
-        .mangaIdEqualTo(oldManga.id)
-        .nameContains(snapshot.historyChapter ?? '.....', caseSensitive: false)
-        .findFirstSync();
+    final historyChapter = snapshot.historyChapter == null
+        ? null
+        : byNumber[snapshot.historyChapter];
     if (historyChapter != null) {
       isar.historys.putSync(
         History(
@@ -386,12 +405,19 @@ List<String> buildMassMigrationQueries(Manga manga) {
   return queries.toList();
 }
 
-String? extractMigrationChapterNumber(String chapterName) {
-  return RegExp(
-        r'\s*(\d+\.\d+)\s*',
-        multiLine: true,
-      ).firstMatch(chapterName)?.group(0) ??
-      RegExp(r'\s*(\d+)\s*', multiLine: true).firstMatch(chapterName)?.group(0);
+/// The chapter number [ChapterRecognition] reads out of [chapterName], or null
+/// when the name carries no number at all.
+///
+/// Migration used to do its own extraction, which meant it did not understand
+/// decimal chapters, `ch.` notation, or volume and season noise, and it never
+/// benefited from fixes to the shared parser.
+int? _chapterNumber(String itemTitle, String? chapterName) {
+  if (chapterName == null || chapterName.isEmpty) return null;
+  final number = ChapterRecognition().parseChapterNumber(
+    itemTitle,
+    chapterName,
+  );
+  return number > 0 ? number : null;
 }
 
 MManga _selectBestCandidate({
