@@ -267,13 +267,13 @@ void main() {
       // it.
       await pump(tester);
       expect(
-        find.widgetWithText(TextButton, 'Restore from a backup instead'),
+        find.widgetWithText(OutlinedButton, 'Restore a backup'),
         findsOneWidget,
       );
       await tester.tap(find.widgetWithText(FilledButton, 'Next'));
       await tester.pumpAndSettle();
       expect(
-        find.widgetWithText(TextButton, 'Restore from a backup instead'),
+        find.widgetWithText(OutlinedButton, 'Restore a backup'),
         findsNothing,
       );
     });

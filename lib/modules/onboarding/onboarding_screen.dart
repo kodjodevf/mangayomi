@@ -163,11 +163,29 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody> {
   Future<void> _restore() async {
     await performRestore(context, ref);
     if (!mounted) return;
-    // Whether or not a file was chosen, the user came here to restore rather
-    // than to answer questions. Leaving without applying any of them is the
-    // honest outcome; the welcome screen is still in Settings if they want it.
-    ref.read(onboardingCompletedStateProvider.notifier).complete();
+    // Whether the backup brought sources with it depends on what it was. A
+    // Mangayomi backup carries the repositories, but only when its settings
+    // were included in it, and a Mihon, Aniyomi or Neko backup references its
+    // own ecosystem's extensions and never carries Mangayomi repositories.
+    //
+    // So ask rather than assume. Repositories present means the rest of this
+    // screen has been answered already; none means the one question still
+    // worth asking is where sources come from.
+    if (_hasAnyRepo) {
+      ref.read(onboardingCompletedStateProvider.notifier).complete();
+    } else {
+      setState(() {
+        _forward = true;
+        _step = _Step.repository;
+      });
+    }
   }
+
+  /// Whether any library has a repository, asked after a restore that may have
+  /// brought some in.
+  bool get _hasAnyRepo => ItemType.values.any(
+    (type) => ref.read(extensionsRepoStateProvider(type)).isNotEmpty,
+  );
 
   /// Returns to the previous question, skipping the arrange step when it was
   /// skipped on the way in.
@@ -431,10 +449,16 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody> {
       ),
       const SizedBox(height: 16),
       FilledButton(onPressed: _next, child: Text(l10n.onboarding_next)),
-      const SizedBox(height: 4),
-      // The escape hatch for anyone arriving with a backup, offered here
-      // because it makes the rest of the screen unnecessary.
-      TextButton(onPressed: _restore, child: Text(l10n.onboarding_restore)),
+      const SizedBox(height: 12),
+      // Given weight next to Next rather than tucked under it. For anyone
+      // arriving from another app or a reinstall this is the whole job, and
+      // burying it costs them a walk through three questions they have
+      // already answered somewhere else.
+      OutlinedButton.icon(
+        onPressed: _restore,
+        icon: const Icon(Icons.settings_backup_restore, size: 20),
+        label: Text(l10n.onboarding_restore),
+      ),
     ],
     _Step.navigation => [
       _ChoiceRow<bool>(

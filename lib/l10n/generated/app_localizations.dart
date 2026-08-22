@@ -5384,7 +5384,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboarding_restore.
   ///
   /// In en, this message translates to:
-  /// **'Restore from a backup instead'**
+  /// **'Restore a backup'**
   String get onboarding_restore;
 
   /// No description provided for @onboarding_repo_failed.
