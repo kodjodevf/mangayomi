@@ -5342,7 +5342,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboarding_libraries_body.
   ///
   /// In en, this message translates to:
-  /// **'Pick what you read. The ones you leave out stay out of the navigation bar, and you can change this later under Appearance.'**
+  /// **'Pick what you read and watch. The ones you leave out stay out of the navigation bar, and you can change this later under Appearance.'**
   String get onboarding_libraries_body;
 
   /// No description provided for @onboarding_nav_title.
@@ -5390,7 +5390,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboarding_or_local.
   ///
   /// In en, this message translates to:
-  /// **'Or read files you already have'**
+  /// **'Or use files you already have'**
   String get onboarding_or_local;
 
   /// No description provided for @onboarding_local_folder.

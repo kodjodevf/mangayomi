@@ -2979,7 +2979,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get onboarding_libraries_body =>
-      'Pick what you read. The ones you leave out stay out of the navigation bar, and you can change this later under Appearance.';
+      'Pick what you read and watch. The ones you leave out stay out of the navigation bar, and you can change this later under Appearance.';
 
   @override
   String get onboarding_nav_title => 'Your libraries';
@@ -3004,7 +3004,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get onboarding_restore => 'Restore a backup';
 
   @override
-  String get onboarding_or_local => 'Or read files you already have';
+  String get onboarding_or_local => 'Or use files you already have';
 
   @override
   String get onboarding_local_folder => 'Add a folder';

@@ -277,7 +277,7 @@ void main() {
         find.widgetWithText(OutlinedButton, 'Add a folder'),
         findsOneWidget,
       );
-      expect(find.text('Or read files you already have'), findsOneWidget);
+      expect(find.text('Or use files you already have'), findsOneWidget);
     });
 
     testWidgets('are not offered before the source step', (tester) async {
