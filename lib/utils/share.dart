@@ -30,9 +30,17 @@ Future<void> shareOrCopy(
     await SharePlus.instance.share(params);
     return;
   }
+  Directory? directory;
+  try {
+    directory = await StorageProvider().getGalleryDirectory();
+  } catch (_) {
+    // Only needed to write byte-backed files out. Losing it costs those their
+    // path, but the point of this function is that sharing stops throwing.
+    directory = null;
+  }
   final text = await shareFallbackText(
     params,
-    await StorageProvider().getGalleryDirectory(),
+    directory,
     fallbackName: fallbackName,
   );
   if (text == null || text.isEmpty) return;
