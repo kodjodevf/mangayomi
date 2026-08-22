@@ -884,6 +884,11 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
+  String missing_chapters(Object count) {
+    return 'Missing $count chapters';
+  }
+
+  @override
   String get no_description => 'Nessuna descrizione';
 
   @override
@@ -1159,6 +1164,11 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String n_episodes(Object n) {
     return '$n episodi';
+  }
+
+  @override
+  String missing_episodes(Object count) {
+    return 'Missing $count episodes';
   }
 
   @override
@@ -2247,6 +2257,11 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String failed_to_export_metadata(Object error) {
     return 'Failed to export metadata: $error';
+  }
+
+  @override
+  String unrecognized_chapter_numbers(Object count) {
+    return '$count chapter(s) couldn\'t be auto-numbered and may be out of order or missing from the reader.';
   }
 
   @override

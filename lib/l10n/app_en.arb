@@ -407,6 +407,7 @@
   "episode_number": "Episode number",
   "share": "Share",
   "n_chapters": "{n} chapters",
+  "missing_chapters": "Missing {count} chapters",
   "no_description": "No description",
   "resume": "Resume",
   "read": "Read",
@@ -492,6 +493,7 @@
   "full_screen_player_info": "Automatically use fullscreen when playing a video.",
   "episode_progress": "Progress: {n}",
   "n_episodes": "{n} episodes",
+  "missing_episodes": "Missing {count} episodes",
   "manga_sources": "Manga Sources",
   "anime_sources": "Anime Sources",
   "novel_sources": "Novel Sources",
@@ -857,6 +859,12 @@
   "@failed_to_export_metadata": {
     "placeholders": {
       "error": {}
+    }
+  },
+  "unrecognized_chapter_numbers": "{count} chapter(s) couldn't be auto-numbered and may be out of order or missing from the reader.",
+  "@unrecognized_chapter_numbers": {
+    "placeholders": {
+      "count": {}
     }
   },
   "cloudflare_resolution_webview_server_start_failed": "Couldn't start Cloudflare Resolution Webview Server.",

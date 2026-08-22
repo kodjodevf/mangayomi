@@ -1637,6 +1637,12 @@ abstract class AppLocalizations {
   /// **'{n} chapters'**
   String n_chapters(Object n);
 
+  /// No description provided for @missing_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing {count} chapters'**
+  String missing_chapters(Object count);
+
   /// No description provided for @no_description.
   ///
   /// In en, this message translates to:
@@ -2146,6 +2152,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{n} episodes'**
   String n_episodes(Object n);
+
+  /// No description provided for @missing_episodes.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing {count} episodes'**
+  String missing_episodes(Object count);
 
   /// No description provided for @manga_sources.
   ///
@@ -4102,6 +4114,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to export metadata: {error}'**
   String failed_to_export_metadata(Object error);
+
+  /// No description provided for @unrecognized_chapter_numbers.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} chapter(s) couldn\'t be auto-numbered and may be out of order or missing from the reader.'**
+  String unrecognized_chapter_numbers(Object count);
 
   /// No description provided for @cloudflare_resolution_webview_server_start_failed.
   ///
