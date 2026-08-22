@@ -9,19 +9,23 @@ import 'package:mangayomi/utils/chapter_recognition.dart';
 /// Sort/identity keys that only bucket by season if numbering actually
 /// repeats across seasons (a real reset) — otherwise chapters key by raw
 /// number. Precise (not truncated) so split chapters (12, 12.1, 12.5, ...)
-/// sort and dedup correctly instead of colliding at the same integer.
-Map<int?, double> _chapterSortKeys(
+/// sort and dedup correctly instead of colliding at the same integer. A
+/// null value means the name had no detectable number at all (e.g.
+/// "Special") — distinct from a genuine chapter 0, so callers know not to
+/// treat every such chapter as a duplicate of every other one.
+Map<int?, double?> _chapterSortKeys(
   String mangaTitle,
   List<Chapter> chapterList,
 ) {
   final recognition = ChapterRecognition();
-  final raw = <int?, (int, double)>{
+  final raw = <int?, (int, double?)>{
     for (final c in chapterList)
       c.id: recognition.rawSeasonAndNumber(mangaTitle, c.name ?? ''),
   };
   final episodeToSeasons = <double, Set<int>>{};
   for (final pair in raw.values) {
-    episodeToSeasons.putIfAbsent(pair.$2, () => {}).add(pair.$1);
+    if (pair.$2 == null) continue;
+    episodeToSeasons.putIfAbsent(pair.$2!, () => {}).add(pair.$1);
   }
   // A single collision is more likely a stray "S1-5 Recap"-style title
   // falsely matching the season regex than a real reset — require several
@@ -33,11 +37,12 @@ Map<int?, double> _chapterSortKeys(
   final resets = collisions >= 3;
   return {
     for (final entry in raw.entries)
-      entry.key: resets
-          ? (entry.value.$1 > 0
-                ? entry.value.$1 * 100000 + entry.value.$2
-                : entry.value.$2)
-          : entry.value.$2,
+      entry.key: switch (entry.value.$2) {
+        null => null,
+        final ep => resets
+            ? (entry.value.$1 > 0 ? entry.value.$1 * 100000 + ep : ep)
+            : ep,
+      },
   };
 }
 
@@ -182,11 +187,17 @@ extension MangaExtensions on Manga {
   /// Filtered chapters ready for sequential reading: same filters as
   /// [getFilteredChapters] but with duplicate chapter numbers collapsed to a
   /// single entry so the reader advances to the next story chapter rather than
-  /// another scanlator's copy of the same one.
+  /// another scanlator's copy of the same one. Chapters with no detectable
+  /// number (key is null — e.g. "Special") are never collapsed: there is no
+  /// reliable way to tell them apart, so treating them all as duplicates
+  /// would silently drop real chapters instead of just scanlator copies.
   List<Chapter> getChapterListForReading() {
     final list = getFilteredChapters();
     final sortKeys = _chapterSortKeys(name ?? '', list);
     final seen = <double>{};
-    return list.where((c) => seen.add(sortKeys[c.id] ?? 0)).toList();
+    return list.where((c) {
+      final key = sortKeys[c.id];
+      return key == null || seen.add(key);
+    }).toList();
   }
 }

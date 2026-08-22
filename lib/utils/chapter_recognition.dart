@@ -19,7 +19,7 @@ class ChapterRecognition {
   /// season when present: key = season * 100000 + episode.
   int parseChapterNumber(String mangaTitle, String chapterName) {
     final (season, ep) = rawSeasonAndNumber(mangaTitle, chapterName);
-    return _withSeason(season, ep).toInt();
+    return _withSeason(season, ep ?? 0).toInt();
   }
 
   /// Episode number within a season, for tracker updates (MAL/AniList/Kitsu)
@@ -27,14 +27,17 @@ class ChapterRecognition {
   /// so season is never applied.
   int parseEpisodeNumber(String mangaTitle, String chapterName) {
     final (_, ep) = rawSeasonAndNumber(mangaTitle, chapterName);
-    return ep.toInt();
+    return (ep ?? 0).toInt();
   }
 
   /// Raw (season, episode) pair, unbucketed — season is 0 if none matched.
   /// Episode keeps its fractional part (e.g. 12.5) so callers needing exact
   /// chapter identity (dedup, stable sort of split chapters) don't collide
-  /// at the same truncated integer.
-  (int, double) rawSeasonAndNumber(String mangaTitle, String chapterName) {
+  /// at the same truncated integer. Episode is null when the name has no
+  /// detectable number at all (e.g. "Special", "Prologue") — distinct from
+  /// a genuine chapter 0, so callers can avoid treating every such chapter
+  /// as a duplicate of every other one.
+  (int, double?) rawSeasonAndNumber(String mangaTitle, String chapterName) {
     final name = chapterName
         .toLowerCase()
         .replaceAll(mangaTitle.toLowerCase(), '')
@@ -52,7 +55,7 @@ class ChapterRecognition {
     }
 
     final stripped = name.replaceAll(_unwanted, '');
-    return (season, _extractNumber(stripped) ?? 0);
+    return (season, _extractNumber(stripped));
   }
 
   // Combines season + episode into a sortable number.
