@@ -1190,5 +1190,7 @@
   "onboarding_add": "Add repository",
   "onboarding_skip": "Skip for now",
   "onboarding_continue": "Continue",
-  "onboarding_later": "You can add one later under More, Source repositories."
+  "onboarding_later": "You can add one later under More, Source repositories.",
+  "onboarding_replay": "Show the welcome screen",
+  "onboarding_replay_subtitle": "Opens the first-run screen again, the one a new install starts on."
 }

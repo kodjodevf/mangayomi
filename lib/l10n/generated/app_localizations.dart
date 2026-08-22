@@ -5368,6 +5368,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You can add one later under More, Source repositories.'**
   String get onboarding_later;
+
+  /// No description provided for @onboarding_replay.
+  ///
+  /// In en, this message translates to:
+  /// **'Show the welcome screen'**
+  String get onboarding_replay;
+
+  /// No description provided for @onboarding_replay_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens the first-run screen again, the one a new install starts on.'**
+  String get onboarding_replay_subtitle;
 }
 
 class _AppLocalizationsDelegate

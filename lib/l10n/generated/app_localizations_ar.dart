@@ -2967,4 +2967,11 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get onboarding_later =>
       'You can add one later under More, Source repositories.';
+
+  @override
+  String get onboarding_replay => 'Show the welcome screen';
+
+  @override
+  String get onboarding_replay_subtitle =>
+      'Opens the first-run screen again, the one a new install starts on.';
 }
