@@ -11,10 +11,16 @@ import 'package:mangayomi/modules/onboarding/onboarding_screen.dart';
 import 'package:mangayomi/modules/widgets/tv_pill.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
+const _goodUrl = 'https://example.invalid/index.json';
+
 void main() {
   tearDown(() => debugIsTvOverride = null);
 
-  Future<void> pump(WidgetTester tester, {Brightness? brightness}) async {
+  Future<void> pump(
+    WidgetTester tester, {
+    Brightness? brightness,
+    bool disableAnimations = false,
+  }) async {
     // Phone width, because the arrange step is skipped at 600dp and wider,
     // and tall, because the TV layout overflows the default 600 and puts the
     // step buttons outside the viewport where a tap cannot reach them.
@@ -31,6 +37,11 @@ void main() {
                 .overrideWith(() => _StubRepoState()),
           // Read and written as the steps advance, and both go through Isar,
           // which is not open in a test.
+          // A repository that resolves, so the steps after adding one can be
+          // reached without a network.
+          getRepoInfosProvider(jsonUrl: _goodUrl).overrideWith(
+            (ref) async => Repo(name: 'Test repo', jsonUrl: _goodUrl),
+          ),
           hideItemsStateProvider.overrideWith(_StubHideItems.new),
           mergeLibraryNavMobileStateProvider.overrideWith(_StubMergeNav.new),
         ],
@@ -41,7 +52,11 @@ void main() {
           // Mounted from builder, not home, because that is how main.dart
           // mounts it: outside the Navigator, with no Overlay above it.
           home: const SizedBox.shrink(),
-          builder: (context, child) => const OnboardingScreen(),
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(disableAnimations: disableAnimations),
+            child: const OnboardingScreen(),
+          ),
         ),
       ),
     );
@@ -201,6 +216,78 @@ void main() {
       // A tick appearing on selection changed every chip's width and made the
       // row jump about as the user tapped through it.
       expect(tester.getSize(chip), before);
+    });
+  });
+
+  group('edge cases', () {
+    testWidgets('lands on the library the repo was filed under, not the one '
+        'the picker happens to show', (tester) async {
+      await pump(tester);
+      await toRepoStep(tester);
+      await tester.enterText(find.byType(TextField), _goodUrl);
+      await tester.pump();
+      await tester.tap(find.widgetWithText(FilledButton, 'Add repository'));
+      await tester.pumpAndSettle();
+      // Filed under Manga. Moving the picker afterwards must not redirect the
+      // landing to a library with nothing in it.
+      await tester.tap(find.widgetWithText(FilterChip, 'Anime'));
+      await tester.pumpAndSettle();
+      debugPrint(
+        'PROBE: ${tester.widgetList<Text>(find.byType(Text)).map((t) => t.data).toList()}',
+      );
+      expect(find.widgetWithText(TextButton, 'Continue'), findsOneWidget);
+    });
+
+    testWidgets('a failed repo says what to do, not what threw', (
+      tester,
+    ) async {
+      await pump(tester);
+      await toRepoStep(tester);
+      await tester.enterText(find.byType(TextField), 'https://example.invalid');
+      await tester.pump();
+      await tester.tap(find.widgetWithText(FilledButton, 'Add repository'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Exception'), findsNothing);
+      expect(
+        find.text(
+          "Couldn't read that repository. Check the address and your "
+          'connection.',
+        ),
+        findsOneWidget,
+      );
+    });
+  });
+
+  group('motion', () {
+    Future<int> framesToChangeStep(
+      WidgetTester tester, {
+      required bool disableAnimations,
+    }) async {
+      await pump(tester, disableAnimations: disableAnimations);
+      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      final frames = await tester.pumpAndSettle();
+      expect(find.text('Your libraries'), findsOneWidget);
+      return frames;
+    }
+
+    // Settling takes 5 frames animated and 3 with animations off. The numbers
+    // matter less than the gap: the step has to change either way, and it must
+    // not spend a quarter of a second doing it when the platform asked for
+    // stillness.
+    testWidgets('a step change is animated', (tester) async {
+      expect(
+        await framesToChangeStep(tester, disableAnimations: false),
+        greaterThanOrEqualTo(5),
+      );
+    });
+
+    testWidgets('and is not when the platform asks for stillness', (
+      tester,
+    ) async {
+      expect(
+        await framesToChangeStep(tester, disableAnimations: true),
+        lessThan(5),
+      );
     });
   });
 
@@ -387,6 +474,11 @@ void main() {
 class _StubRepoState extends ExtensionsRepoState {
   @override
   List<Repo> build(ItemType itemType) => const [];
+
+  // Without this the real one writes to Isar, throws, and the screen reports
+  // the add as failed.
+  @override
+  void set(List<Repo> value) => state = value;
 }
 
 class _StubHideItems extends HideItemsState {

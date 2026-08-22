@@ -2935,6 +2935,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get onboarding_next => 'Next';
 
   @override
+  String get onboarding_repo_failed =>
+      'Couldn\'t read that repository. Check the address and your connection.';
+
+  @override
   String get onboarding_repo_title => 'Add a source';
 
   @override

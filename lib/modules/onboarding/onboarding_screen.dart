@@ -68,11 +68,24 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   String? _error;
   Repo? _added;
 
+  /// The library the repository was filed under, which is not necessarily
+  /// [_repoType] by the time the user leaves: they can change the picker, or
+  /// go back and stop reading that library altogether.
+  ItemType? _addedFor;
+
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
+
+  /// How long a step change takes, or nothing at all when the platform has
+  /// been asked to keep still.
+  /// A single frame rather than [Duration.zero], because the implicit
+  /// animations assert on a zero-length controller.
+  Duration get _motion => MediaQuery.disableAnimationsOf(context)
+      ? const Duration(milliseconds: 1)
+      : const Duration(milliseconds: 260);
 
   bool get _urlLooksValid {
     final text = _controller.text.trim();
@@ -151,10 +164,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       ref.read(extensionsRepoStateProvider(_repoType).notifier).set(repos);
       setState(() {
         _added = repo;
+        _addedFor = _repoType;
         _controller.clear();
       });
     } catch (e) {
-      setState(() => _error = e.toString());
+      // Whatever went wrong, the user's move is the same: check the address
+      // or the connection. A raw exception under a text field is noise.
+      setState(() => _error = l10n.onboarding_repo_failed);
     } finally {
       if (mounted) setState(() => _adding = false);
     }
@@ -168,10 +184,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   /// Only when a repository was actually added. Somebody who skipped has
   /// nothing to install and is better off in their library.
   void _finish() {
-    if (_added != null) {
+    // The library the repository was filed under, and only while the user
+    // still reads it. Changing the picker afterwards, or going back and
+    // dropping that library, would otherwise land them on an extensions list
+    // with nothing in it.
+    final landing = _addedFor;
+    if (landing != null && _libraries.contains(landing)) {
       ref
           .read(browseInitialTabProvider.notifier)
-          .request(BrowseTab(_repoType, BrowseTabKind.extensions));
+          .request(BrowseTab(landing, BrowseTabKind.extensions));
       ref.read(routerProvider).go('/browse');
     }
     ref.read(onboardingCompletedStateProvider.notifier).complete();
@@ -223,10 +244,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Widget _content(AppLocalizations l10n, ThemeData theme) {
     return Center(
       child: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(
-          horizontal: isTv ? 48 : 24,
-          vertical: 32,
-        ).add(tvPageInsets),
+        padding: EdgeInsets.symmetric(horizontal: isTv ? 48 : 24, vertical: 32)
+            .add(tvPageInsets)
+            // Room for the keyboard, so the repository field and the button
+            // under it stay reachable on a short screen.
+            .add(
+              EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+            ),
         child: ConstrainedBox(
           constraints: BoxConstraints(maxWidth: isTv ? 620 : 420),
           child: Column(
@@ -247,27 +271,62 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 fit: BoxFit.contain,
               ),
               const SizedBox(height: 20),
-              Text(
-                _title(l10n),
-                textAlign: TextAlign.center,
-                style:
-                    (isTv
-                            ? theme.textTheme.headlineMedium
-                            : theme.textTheme.headlineSmall)
-                        ?.copyWith(fontWeight: FontWeight.w600),
+              // Only the words and the controls change between steps. The mark
+              // above keeps its place, so the screen reads as one place being
+              // rewritten rather than three screens flipped through. The height
+              // eases as well, or the buttons below would jump between steps
+              // that say more and steps that say less.
+              AnimatedSize(
+                duration: _motion,
+                curve: Curves.easeOutCubic,
+                alignment: Alignment.topCenter,
+                child: AnimatedSwitcher(
+                  duration: _motion,
+                  switchInCurve: Curves.easeOutCubic,
+                  switchOutCurve: Curves.easeIn,
+                  transitionBuilder: (child, animation) => FadeTransition(
+                    opacity: animation,
+                    child: SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(0, 0.04),
+                        end: Offset.zero,
+                      ).animate(animation),
+                      child: child,
+                    ),
+                  ),
+                  child: Column(
+                    key: ValueKey(_step),
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        _title(l10n),
+                        textAlign: TextAlign.center,
+                        style:
+                            (isTv
+                                    ? theme.textTheme.headlineMedium
+                                    : theme.textTheme.headlineSmall)
+                                ?.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        _body(l10n),
+                        textAlign: TextAlign.center,
+                        style:
+                            (isTv
+                                    ? theme.textTheme.bodyLarge
+                                    : theme.textTheme.bodyMedium)
+                                ?.copyWith(
+                                  color: theme.hintColor,
+                                  height: 1.45,
+                                ),
+                      ),
+                      const SizedBox(height: 28),
+                      ..._stepBody(l10n),
+                    ],
+                  ),
+                ),
               ),
-              const SizedBox(height: 12),
-              Text(
-                _body(l10n),
-                textAlign: TextAlign.center,
-                style:
-                    (isTv
-                            ? theme.textTheme.bodyLarge
-                            : theme.textTheme.bodyMedium)
-                        ?.copyWith(color: theme.hintColor, height: 1.45),
-              ),
-              const SizedBox(height: 28),
-              ..._stepBody(l10n),
               const SizedBox(height: 20),
               TextButton(
                 onPressed: _adding ? null : _finish,

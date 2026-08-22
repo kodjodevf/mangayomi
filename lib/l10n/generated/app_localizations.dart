@@ -5381,6 +5381,12 @@ abstract class AppLocalizations {
   /// **'Next'**
   String get onboarding_next;
 
+  /// No description provided for @onboarding_repo_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t read that repository. Check the address and your connection.'**
+  String get onboarding_repo_failed;
+
   /// No description provided for @onboarding_repo_title.
   ///
   /// In en, this message translates to:
