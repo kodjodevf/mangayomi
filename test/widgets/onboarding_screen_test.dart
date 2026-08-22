@@ -6,8 +6,12 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/onboarding/onboarding_screen.dart';
+import 'package:mangayomi/modules/widgets/tv_pill.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 void main() {
+  tearDown(() => debugIsTvOverride = null);
+
   Future<void> pump(WidgetTester tester) async {
     await tester.pumpWidget(
       ProviderScope(
@@ -15,9 +19,8 @@ void main() {
           // The screen only reads the repo list to append to it, and writing
           // goes through Isar, which is not open in a test.
           for (final type in ItemType.values)
-            extensionsRepoStateProvider(type).overrideWith(
-              () => _StubRepoState(),
-            ),
+            extensionsRepoStateProvider(type)
+                .overrideWith(() => _StubRepoState()),
         ],
         child: const MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -72,6 +75,51 @@ void main() {
     );
     expect(picker.selected, {ItemType.manga});
     expect(picker.segments.map((s) => s.value), ItemType.values);
+  });
+
+  group('on a TV', () {
+    setUp(() => debugIsTvOverride = true);
+
+    testWidgets('picks the item type with pills, not a segmented button', (
+      tester,
+    ) async {
+      await pump(tester);
+      // A SegmentedButton's segments are not reliably reachable with a d-pad.
+      expect(find.byType(SegmentedButton<ItemType>), findsNothing);
+      expect(find.byType(TvPill), findsNWidgets(ItemType.values.length));
+    });
+
+    testWidgets('the url field takes focus, so OK opens the keyboard', (
+      tester,
+    ) async {
+      await pump(tester);
+      final field = tester.widget<TextField>(find.byType(TextField));
+      expect(field.autofocus, isTrue);
+    });
+
+    testWidgets('says the repository can be added later instead', (
+      tester,
+    ) async {
+      await pump(tester);
+      // Typing a url on a remote is miserable; leaving now has to look like a
+      // real option rather than a failure.
+      expect(
+        find.text('You can add one later under More, Source repositories.'),
+        findsOneWidget,
+      );
+      expect(find.widgetWithText(TextButton, 'Skip for now'), findsOneWidget);
+    });
+
+    testWidgets('the phone layout keeps the segmented button', (tester) async {
+      debugIsTvOverride = false;
+      await pump(tester);
+      expect(find.byType(SegmentedButton<ItemType>), findsOneWidget);
+      expect(find.byType(TvPill), findsNothing);
+      expect(
+        find.text('You can add one later under More, Source repositories.'),
+        findsNothing,
+      );
+    });
   });
 }
 

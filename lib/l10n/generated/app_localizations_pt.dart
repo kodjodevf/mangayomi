@@ -2984,6 +2984,10 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get onboarding_continue => 'Continue';
+
+  @override
+  String get onboarding_later =>
+      'You can add one later under More, Source repositories.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).

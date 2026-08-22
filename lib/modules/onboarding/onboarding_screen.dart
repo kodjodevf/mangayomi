@@ -4,7 +4,9 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/onboarding/providers/onboarding_state_provider.dart';
+import 'package:mangayomi/modules/widgets/tv_pill.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/utils/platform_utils.dart';
 
 /// Shown once, on the first launch of a fresh install.
 ///
@@ -15,6 +17,16 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 ///
 /// No repository is suggested or shipped. The field starts empty and the user
 /// can leave without filling it in.
+///
+/// ## On a TV
+///
+/// The same three decisions, laid out for a remote instead of a thumb. Typing a
+/// repository URL on a d-pad is genuinely unpleasant, so the TV build says out
+/// loud that this can be done later from Settings, and Skip is a first-class
+/// way off the screen rather than a consolation. The field takes focus on
+/// arrival so the first press of OK opens the keyboard, and the item type is a
+/// row of [TvPill]s because a SegmentedButton's internals are not reliably
+/// reachable with a d-pad.
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -79,34 +91,40 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+            padding: EdgeInsets.symmetric(
+              horizontal: isTv ? 48 : 24,
+              vertical: 32,
+            ).add(tvPageInsets),
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 420),
+              constraints: BoxConstraints(maxWidth: isTv ? 620 : 420),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
                     Icons.collections_bookmark_outlined,
-                    size: 44,
+                    size: isTv ? 56 : 44,
                     color: theme.colorScheme.primary,
                   ),
                   const SizedBox(height: 20),
                   Text(
                     l10n.onboarding_title,
                     textAlign: TextAlign.center,
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style:
+                        (isTv
+                                ? theme.textTheme.headlineMedium
+                                : theme.textTheme.headlineSmall)
+                            ?.copyWith(fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 12),
                   Text(
                     l10n.onboarding_body,
                     textAlign: TextAlign.center,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.hintColor,
-                      height: 1.45,
-                    ),
+                    style:
+                        (isTv
+                                ? theme.textTheme.bodyLarge
+                                : theme.textTheme.bodyMedium)
+                            ?.copyWith(color: theme.hintColor, height: 1.45),
                   ),
                   const SizedBox(height: 28),
                   _ItemTypePicker(
@@ -118,6 +136,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   const SizedBox(height: 16),
                   TextField(
                     controller: _controller,
+                    // The remote's first OK should open the keyboard rather
+                    // than land on something the user has to hunt for.
+                    autofocus: isTv,
                     autocorrect: false,
                     enabled: !_adding,
                     keyboardType: TextInputType.url,
@@ -156,6 +177,18 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           : l10n.onboarding_continue,
                     ),
                   ),
+                  // Typing a URL on a d-pad is miserable, so on a TV say
+                  // plainly that leaving now costs nothing.
+                  if (isTv && _added == null) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      l10n.onboarding_later,
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.hintColor,
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -183,6 +216,23 @@ class _ItemTypePicker extends StatelessWidget {
       ItemType.anime: l10n.anime,
       ItemType.novel: l10n.novel,
     };
+    // A SegmentedButton's segments are not reliably reachable with a d-pad, so
+    // the TV build uses the same pills as the TV home and Browse switchers.
+    if (isTv) {
+      return Wrap(
+        alignment: WrapAlignment.center,
+        spacing: 10,
+        runSpacing: 10,
+        children: [
+          for (final entry in labels.entries)
+            TvPill(
+              label: entry.value,
+              selected: entry.key == selected,
+              onTap: () => onChanged?.call(entry.key),
+            ),
+        ],
+      );
+    }
     return SegmentedButton<ItemType>(
       segments: [
         for (final entry in labels.entries)

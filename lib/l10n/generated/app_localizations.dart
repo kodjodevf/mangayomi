@@ -5362,6 +5362,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue'**
   String get onboarding_continue;
+
+  /// No description provided for @onboarding_later.
+  ///
+  /// In en, this message translates to:
+  /// **'You can add one later under More, Source repositories.'**
+  String get onboarding_later;
 }
 
 class _AppLocalizationsDelegate

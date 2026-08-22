@@ -2989,6 +2989,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get onboarding_continue => 'Continue';
+
+  @override
+  String get onboarding_later =>
+      'You can add one later under More, Source repositories.';
 }
 
 /// The translations for Spanish Castilian, as used in Latin America and the Caribbean (`es_419`).
