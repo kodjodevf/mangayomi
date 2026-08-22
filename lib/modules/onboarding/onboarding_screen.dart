@@ -215,14 +215,20 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody> {
         await LocalDirectoryAccess.pickDirectory() ??
         await FilePicker.getDirectoryPath();
     if (path == null || !mounted) return;
-    final folders = ref.read(localFoldersStateProvider).toList()
-      ..add(
+    final folders = ref.read(localFoldersStateProvider).toList();
+    // Picking the same folder twice used to add it twice, and the name
+    // de-duplication turned that into "Manga 2", "Manga 3" and so on. Trying
+    // again after a scan found nothing is the most likely thing a user does
+    // here, so it has to be the cheapest.
+    if (!folders.any((folder) => folder.path == path)) {
+      folders.add(
         LocalFolder(
           name: LocalFolder.fromPath(path: path).name ?? p.basename(path),
           path: path,
         ),
       );
-    ref.read(localFoldersStateProvider.notifier).set(folders);
+      ref.read(localFoldersStateProvider.notifier).set(folders);
+    }
     setState(() {
       _addedLocalFolder = true;
       _scanningFolder = true;
