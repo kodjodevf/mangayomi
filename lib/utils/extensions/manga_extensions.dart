@@ -6,15 +6,20 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 
-/// Sort keys that only bucket by season if numbering actually repeats
-/// across seasons (a real reset) — otherwise chapters sort by raw number.
-Map<int?, int> _chapterSortKeys(String mangaTitle, List<Chapter> chapterList) {
+/// Sort/identity keys that only bucket by season if numbering actually
+/// repeats across seasons (a real reset) — otherwise chapters key by raw
+/// number. Precise (not truncated) so split chapters (12, 12.1, 12.5, ...)
+/// sort and dedup correctly instead of colliding at the same integer.
+Map<int?, double> _chapterSortKeys(
+  String mangaTitle,
+  List<Chapter> chapterList,
+) {
   final recognition = ChapterRecognition();
-  final raw = <int?, (int, int)>{
+  final raw = <int?, (int, double)>{
     for (final c in chapterList)
       c.id: recognition.rawSeasonAndNumber(mangaTitle, c.name ?? ''),
   };
-  final episodeToSeasons = <int, Set<int>>{};
+  final episodeToSeasons = <double, Set<int>>{};
   for (final pair in raw.values) {
     episodeToSeasons.putIfAbsent(pair.$2, () => {}).add(pair.$1);
   }
@@ -180,15 +185,8 @@ extension MangaExtensions on Manga {
   /// another scanlator's copy of the same one.
   List<Chapter> getChapterListForReading() {
     final list = getFilteredChapters();
-    final mangaTitle = name ?? '';
-    final recognition = ChapterRecognition();
-    final seen = <int>{};
-    return list
-        .where(
-          (c) => seen.add(
-            recognition.parseChapterNumber(mangaTitle, c.name ?? ''),
-          ),
-        )
-        .toList();
+    final sortKeys = _chapterSortKeys(name ?? '', list);
+    final seen = <double>{};
+    return list.where((c) => seen.add(sortKeys[c.id] ?? 0)).toList();
   }
 }

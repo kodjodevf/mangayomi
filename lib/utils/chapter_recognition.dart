@@ -19,7 +19,7 @@ class ChapterRecognition {
   /// season when present: key = season * 100000 + episode.
   int parseChapterNumber(String mangaTitle, String chapterName) {
     final (season, ep) = rawSeasonAndNumber(mangaTitle, chapterName);
-    return _withSeason(season, ep);
+    return _withSeason(season, ep).toInt();
   }
 
   /// Episode number within a season, for tracker updates (MAL/AniList/Kitsu)
@@ -27,11 +27,14 @@ class ChapterRecognition {
   /// so season is never applied.
   int parseEpisodeNumber(String mangaTitle, String chapterName) {
     final (_, ep) = rawSeasonAndNumber(mangaTitle, chapterName);
-    return ep;
+    return ep.toInt();
   }
 
   /// Raw (season, episode) pair, unbucketed — season is 0 if none matched.
-  (int, int) rawSeasonAndNumber(String mangaTitle, String chapterName) {
+  /// Episode keeps its fractional part (e.g. 12.5) so callers needing exact
+  /// chapter identity (dedup, stable sort of split chapters) don't collide
+  /// at the same truncated integer.
+  (int, double) rawSeasonAndNumber(String mangaTitle, String chapterName) {
     final name = chapterName
         .toLowerCase()
         .replaceAll(mangaTitle.toLowerCase(), '')
@@ -45,22 +48,23 @@ class ChapterRecognition {
 
     final epMatch = _episodeKeyword.firstMatch(name);
     if (epMatch != null) {
-      return (season, double.parse(epMatch.group(1)!).toInt());
+      return (season, double.parse(epMatch.group(1)!));
     }
 
     final stripped = name.replaceAll(_unwanted, '');
     return (season, _extractNumber(stripped) ?? 0);
   }
 
-  // Combines season + episode into a sortable integer.
-  int _withSeason(int season, int ep) => season > 0 ? season * 100000 + ep : ep;
+  // Combines season + episode into a sortable number.
+  double _withSeason(int season, double ep) =>
+      season > 0 ? season * 100000 + ep : ep;
 
-  int? _extractNumber(String name) {
+  double? _extractNumber(String name) {
     final chMatch = _chNotation.firstMatch(name);
-    if (chMatch != null) return _fromMatch(chMatch).toInt();
+    if (chMatch != null) return _fromMatch(chMatch);
 
     final numMatch = _bareNumber.firstMatch(name);
-    if (numMatch != null) return _fromMatch(numMatch).toInt();
+    if (numMatch != null) return _fromMatch(numMatch);
 
     return null;
   }
