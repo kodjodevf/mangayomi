@@ -2982,7 +2982,16 @@ class AppLocalizationsHi extends AppLocalizations {
   String get onboarding_local_folder => 'Add a folder';
 
   @override
-  String get onboarding_local_folder_added => 'Folder added, scanning it now';
+  String get onboarding_local_scanning => 'Scanning the folder';
+
+  @override
+  String onboarding_local_found(Object count) {
+    return '$count titles found';
+  }
+
+  @override
+  String get onboarding_local_empty =>
+      'Nothing found. Pick the folder that holds your manga folders, not one manga.';
 
   @override
   String get onboarding_repo_failed =>

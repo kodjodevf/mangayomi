@@ -5399,11 +5399,23 @@ abstract class AppLocalizations {
   /// **'Add a folder'**
   String get onboarding_local_folder;
 
-  /// No description provided for @onboarding_local_folder_added.
+  /// No description provided for @onboarding_local_scanning.
   ///
   /// In en, this message translates to:
-  /// **'Folder added, scanning it now'**
-  String get onboarding_local_folder_added;
+  /// **'Scanning the folder'**
+  String get onboarding_local_scanning;
+
+  /// No description provided for @onboarding_local_found.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} titles found'**
+  String onboarding_local_found(Object count);
+
+  /// No description provided for @onboarding_local_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing found. Pick the folder that holds your manga folders, not one manga.'**
+  String get onboarding_local_empty;
 
   /// No description provided for @onboarding_repo_failed.
   ///

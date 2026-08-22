@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
+import 'package:isar_community/isar.dart';
+import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/browse/browse_screen.dart';
 import 'package:mangayomi/modules/browse/providers/browse_initial_tab_provider.dart';
@@ -113,6 +115,12 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody> {
   /// Whether a folder of the user's own files was added, which is content the
   /// app can open with no repository and no network at all.
   bool _addedLocalFolder = false;
+  bool _scanningFolder = false;
+
+  /// How many titles the scan found, once it has finished. Zero is the
+  /// interesting answer: it almost always means the folder above the one that
+  /// was picked.
+  int? _foundTitles;
 
   @override
   void dispose() {
@@ -215,8 +223,26 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody> {
         ),
       );
     ref.read(localFoldersStateProvider.notifier).set(folders);
-    unawaited(ref.read(scanLocalLibraryProvider.future));
-    if (mounted) setState(() => _addedLocalFolder = true);
+    setState(() {
+      _addedLocalFolder = true;
+      _scanningFolder = true;
+      _foundTitles = null;
+    });
+    // Awaited, because saying "scanning it now" and then never saying anything
+    // else leaves the user watching a sentence that has stopped being true.
+    try {
+      await ref.read(scanLocalLibraryProvider.future);
+    } finally {
+      if (mounted) {
+        setState(() {
+          _scanningFolder = false;
+          _foundTitles = isar.mangas
+              .filter()
+              .isLocalArchiveEqualTo(true)
+              .countSync();
+        });
+      }
+    }
   }
 
   /// Whether any library has a repository, asked after a restore that may have
@@ -581,7 +607,15 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody> {
       ),
       if (_addedLocalFolder) ...[
         const SizedBox(height: 14),
-        _AddedRepo(name: l10n.onboarding_local_folder_added),
+        if (_scanningFolder)
+          _FolderStatus(message: l10n.onboarding_local_scanning, busy: true)
+        else if ((_foundTitles ?? 0) > 0)
+          _FolderStatus(message: l10n.onboarding_local_found('$_foundTitles'))
+        else
+          // Zero almost always means the folder above this one. The scanner
+          // reads the picked folder as a shelf of titles, so a single title's
+          // own folder looks like a shelf of chapters with nothing in them.
+          _FolderStatus(message: l10n.onboarding_local_empty, warn: true),
       ],
     ],
   };
@@ -814,6 +848,49 @@ class _NavPreviewItem extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// What became of the folder that was just added.
+class _FolderStatus extends StatelessWidget {
+  const _FolderStatus({
+    required this.message,
+    this.busy = false,
+    this.warn = false,
+  });
+
+  final String message;
+  final bool busy;
+  final bool warn;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final color = warn ? theme.colorScheme.error : theme.hintColor;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (busy)
+          SizedBox(
+            height: 14,
+            width: 14,
+            child: CircularProgressIndicator(strokeWidth: 2, color: color),
+          )
+        else
+          Icon(
+            warn ? Icons.info_outline : Icons.check_circle_outline,
+            size: 18,
+            color: color,
+          ),
+        const SizedBox(width: 8),
+        Flexible(
+          child: Text(
+            message,
+            style: theme.textTheme.bodySmall?.copyWith(color: color),
+          ),
+        ),
+      ],
     );
   }
 }
