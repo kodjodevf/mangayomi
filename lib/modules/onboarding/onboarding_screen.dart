@@ -120,6 +120,10 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
   /// The folder that was added here, so a wrong pick can be undone without
   /// going to look for it in Settings.
   String? _addedFolderPath;
+
+  /// The names of the titles that folder turned out to hold, so the user can
+  /// see what they just added rather than only how many.
+  List<String> _foundTitleNames = const [];
   bool _scanningFolder = false;
 
   /// How many titles the scan found, once it has finished. Zero is the
@@ -281,10 +285,21 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
       if (mounted) {
         setState(() {
           _scanningFolder = false;
-          _foundTitles = isar.mangas
+          // Only what came from this folder. A global count would include
+          // every local title the library already had and tell the user
+          // nothing about the folder they just picked.
+          final prefix = '${p.basename(path)}/';
+          final mine = isar.mangas
               .filter()
               .isLocalArchiveEqualTo(true)
-              .countSync();
+              .findAllSync()
+              .where((manga) => (manga.link ?? '').startsWith(prefix))
+              .toList();
+          _foundTitles = mine.length;
+          _foundTitleNames = mine
+              .map((manga) => manga.name ?? '')
+              .where((name) => name.isNotEmpty)
+              .toList();
         });
       }
     }
@@ -310,6 +325,7 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
       _addedLocalFolder = false;
       _addedFolderPath = null;
       _foundTitles = null;
+      _foundTitleNames = const [];
     });
   }
 
@@ -689,12 +705,20 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
         if (_scanningFolder)
           _FolderStatus(message: l10n.onboarding_local_scanning, busy: true)
         else if ((_foundTitles ?? 0) > 0)
-          _FolderStatus(message: l10n.onboarding_local_found('$_foundTitles'))
+          _FolderStatus(
+            message: l10n.onboarding_local_found('$_foundTitles'),
+            path: _addedFolderPath,
+            titles: _foundTitleNames,
+          )
         else
           // Zero almost always means the folder above this one. The scanner
           // reads the picked folder as a shelf of titles, so a single title's
           // own folder looks like a shelf of chapters with nothing in them.
-          _FolderStatus(message: l10n.onboarding_local_empty, warn: true),
+          _FolderStatus(
+            message: l10n.onboarding_local_empty,
+            path: _addedFolderPath,
+            warn: true,
+          ),
         if (!_scanningFolder) ...[
           const SizedBox(height: 4),
           TextButton(
@@ -985,40 +1009,93 @@ class _StepDots extends StatelessWidget {
 class _FolderStatus extends StatelessWidget {
   const _FolderStatus({
     required this.message,
+    this.path,
+    this.titles = const [],
     this.busy = false,
     this.warn = false,
   });
 
   final String message;
+
+  /// Where the folder is, so the user can tell which one they picked before
+  /// deciding whether to take it back.
+  final String? path;
+
+  /// What it turned out to hold. A count says the scan worked; the names say
+  /// it found the right things.
+  final List<String> titles;
+
   final bool busy;
   final bool warn;
+
+  /// The tail of a path.
+  ///
+  /// On iOS the front of one of these is a hundred characters of container
+  /// UUID, so truncating the end would leave only the part that identifies
+  /// nothing.
+  static String _tail(String path) {
+    final parts = p.split(path).where((part) => part != '/').toList();
+    if (parts.length <= 3) return path;
+    return '…/${parts.sublist(parts.length - 3).join('/')}';
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final color = warn ? theme.colorScheme.error : theme.hintColor;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    final muted = theme.textTheme.bodySmall?.copyWith(
+      color: theme.colorScheme.onSurfaceVariant,
+    );
+    return Column(
       children: [
-        if (busy)
-          SizedBox(
-            height: 14,
-            width: 14,
-            child: CircularProgressIndicator(strokeWidth: 2, color: color),
-          )
-        else
-          Icon(
-            warn ? Icons.info_outline : Icons.check_circle_outline,
-            size: 18,
-            color: color,
-          ),
-        const SizedBox(width: 8),
-        Flexible(
-          child: Text(
-            message,
-            style: theme.textTheme.bodySmall?.copyWith(color: color),
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (busy)
+              SizedBox(
+                height: 14,
+                width: 14,
+                child: CircularProgressIndicator(strokeWidth: 2, color: color),
+              )
+            else
+              Icon(
+                warn ? Icons.info_outline : Icons.check_circle_outline,
+                size: 18,
+                color: color,
+              ),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                message,
+                style: theme.textTheme.bodySmall?.copyWith(color: color),
+              ),
+            ),
+          ],
         ),
+        if (path != null) ...[
+          const SizedBox(height: 6),
+          Text(
+            _tail(path!),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: muted?.copyWith(fontSize: 11),
+          ),
+        ],
+        if (titles.isNotEmpty) ...[
+          const SizedBox(height: 4),
+          Text(
+            // A few names, then how many more. Enough to recognise the folder
+            // without turning the step into a library listing.
+            titles.length <= 4
+                ? titles.join(' · ')
+                : '${titles.take(3).join(' · ')} +${titles.length - 3}',
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: muted,
+          ),
+        ],
       ],
     );
   }
