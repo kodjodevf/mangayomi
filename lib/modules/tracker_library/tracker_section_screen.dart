@@ -73,49 +73,52 @@ class _TrackerSectionScreenState extends State<TrackerSectionScreen> {
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
     return Scaffold(
-      body: SizedBox(
-        height: 260,
+      body: IntrinsicHeight(
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(dense: true, title: Text(widget.section.name)),
-            Flexible(
-              child: _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : Builder(
-                      builder: (context) {
-                        if (_errorMessage.isNotEmpty) {
-                          return ErrorState(
-                            compact: true,
-                            detail: _errorMessage,
-                            onRetry: () {
-                              setState(() {
-                                _isLoading = true;
-                                _errorMessage = "";
-                              });
-                              _fetchData();
-                            },
-                          );
-                        }
-                        if (_tracks.isNotEmpty) {
-                          return SuperListView.builder(
-                            extentPrecalculationPolicy:
-                                SuperPrecalculationPolicy(),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: _tracks.length,
-                            itemBuilder: (context, index) {
-                              final track = _tracks[index];
-                              return TrackerLibraryImageCard(
-                                track: track,
-                                itemType: widget.section.itemType,
-                                libraryTrack: _trackIndex[track.mediaId],
-                              );
-                            },
-                          );
-                        }
-                        return Center(child: Text(l10n.no_result));
-                      },
-                    ),
-            ),
+            _isLoading
+                ? const SizedBox(
+                    height: 60,
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                : Builder(
+                    builder: (context) {
+                      if (_errorMessage.isNotEmpty) {
+                        return ErrorState(
+                          compact: true,
+                          detail: _errorMessage,
+                          onRetry: () {
+                            setState(() {
+                              _isLoading = true;
+                              _errorMessage = "";
+                            });
+                            _fetchData();
+                          },
+                        );
+                      }
+                      if (_tracks.isNotEmpty) {
+                        return SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: [
+                              for (final track in _tracks)
+                                TrackerLibraryImageCard(
+                                  track: track,
+                                  itemType: widget.section.itemType,
+                                  libraryTrack: _trackIndex[track.mediaId],
+                                ),
+                            ],
+                          ),
+                        );
+                      }
+                      return SizedBox(
+                        height: 60,
+                        child: Center(child: Text(l10n.no_result)),
+                      );
+                    },
+                  ),
           ],
         ),
       ),

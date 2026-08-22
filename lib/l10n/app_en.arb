@@ -407,6 +407,7 @@
   "episode_number": "Episode number",
   "share": "Share",
   "n_chapters": "{n} chapters",
+  "missing_chapters": "Missing {count} chapters",
   "no_description": "No description",
   "resume": "Resume",
   "read": "Read",
@@ -472,6 +473,13 @@
   "sync_button_upload_info": "This operation will fully replace the remote data with local data!",
   "sync_button_download": "Download only",
   "sync_button_download_info": "This operation will fully replace the local data with remote data!",
+  "sync_status_not_configured": "Not connected",
+  "sync_status_checking": "Checking connection...",
+  "sync_status_connected": "Connected",
+  "sync_status_unauthorized": "Session expired, please log in again",
+  "sync_status_unreachable": "Can't reach server",
+  "sync_section_general": "General",
+  "sync_section_data_types": "What to sync",
   "sync_on": "Enable sync",
   "sync_auto": "Auto Sync",
   "sync_auto_warning": "Auto Sync is currently an experimental feature!",
@@ -492,6 +500,7 @@
   "full_screen_player_info": "Automatically use fullscreen when playing a video.",
   "episode_progress": "Progress: {n}",
   "n_episodes": "{n} episodes",
+  "missing_episodes": "Missing {count} episodes",
   "manga_sources": "Manga Sources",
   "anime_sources": "Anime Sources",
   "novel_sources": "Novel Sources",
@@ -556,6 +565,16 @@
   "create_backup_dialog_title": "What do you want to backup?",
   "create_backup_subtitle": "Can be used to restore current library",
   "restore_backup": "Restore backup",
+  "encrypt_backups": "Encrypt backups",
+  "encrypt_backups_info": "Password-protect backup files using AES encryption",
+  "no_secure_storage": "No secure storage found",
+  "no_keyring_warning": "This system doesn't have a keyring service available (e.g. gnome-keyring or kwallet on Linux), so the password can't be stored securely.\n\nStore it unencrypted in the local app database instead? Anyone with access to this device's app data would be able to read it.",
+  "enter_backup_password": "Enter backup password",
+  "incorrect_password_try_again": "Incorrect password, try again.",
+  "set_backup_password": "Set backup password",
+  "confirm_password": "Confirm password",
+  "passwords_do_not_match": "Passwords do not match",
+  "password_required_to_restore": "A password is required to restore this backup.",
   "restore_backup_subtitle": "Restore library from backup file",
   "automatic_backups": "Automatic backups",
   "backup_frequency": "Backup frequency",
@@ -847,6 +866,12 @@
   "@failed_to_export_metadata": {
     "placeholders": {
       "error": {}
+    }
+  },
+  "unrecognized_chapter_numbers": "{count} chapter(s) couldn't be auto-numbered and may be out of order or missing from the reader.",
+  "@unrecognized_chapter_numbers": {
+    "placeholders": {
+      "count": {}
     }
   },
   "cloudflare_resolution_webview_server_start_failed": "Couldn't start Cloudflare Resolution Webview Server.",

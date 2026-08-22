@@ -879,6 +879,11 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String missing_chapters(Object count) {
+    return 'Missing $count chapters';
+  }
+
+  @override
   String get no_description => 'Keine Beschreibung';
 
   @override
@@ -1090,6 +1095,27 @@ class AppLocalizationsDe extends AppLocalizations {
       'Dieser Vorgang ersetzt die lokalen Daten vollständig durch die Remote-Daten!';
 
   @override
+  String get sync_status_not_configured => 'Not connected';
+
+  @override
+  String get sync_status_checking => 'Checking connection...';
+
+  @override
+  String get sync_status_connected => 'Connected';
+
+  @override
+  String get sync_status_unauthorized => 'Session expired, please log in again';
+
+  @override
+  String get sync_status_unreachable => 'Can\'t reach server';
+
+  @override
+  String get sync_section_general => 'General';
+
+  @override
+  String get sync_section_data_types => 'What to sync';
+
+  @override
   String get sync_on => 'Sync aktivieren';
 
   @override
@@ -1154,6 +1180,11 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String n_episodes(Object n) {
     return '$n Episoden';
+  }
+
+  @override
+  String missing_episodes(Object count) {
+    return 'Missing $count episodes';
   }
 
   @override
@@ -1360,6 +1391,40 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get restore_backup => 'Backup wiederherstellen';
+
+  @override
+  String get encrypt_backups => 'Backups verschlüsseln';
+
+  @override
+  String get encrypt_backups_info =>
+      'Backups mittels AES Verfahren verschlüsseln';
+
+  @override
+  String get no_secure_storage => 'Keinen geschützten Speicher gefunden';
+
+  @override
+  String get no_keyring_warning =>
+      'Auf diesem System ist kein Schlüsselbund verfügbar (z. B. gnome-keyring oder KWallet unter Linux), daher kann das Passwort nicht sicher gespeichert werden.\n\nSoll es stattdessen unverschlüsselt in der lokalen App-Datenbank gespeichert werden? Jeder, der Zugriff auf die App-Daten dieses Geräts hat, könnte es lesen.';
+
+  @override
+  String get enter_backup_password => 'Backup-Passwort eingeben';
+
+  @override
+  String get incorrect_password_try_again =>
+      'Falsches Passwort, versuche es erneut.';
+
+  @override
+  String get set_backup_password => 'Backup-Passwort festlegen';
+
+  @override
+  String get confirm_password => 'Passwort bestätigen';
+
+  @override
+  String get passwords_do_not_match => 'Passwörter stimmen nicht überein';
+
+  @override
+  String get password_required_to_restore =>
+      'Zum Wiederherstellen dieses Backups ist ein Passwort erforderlich.';
 
   @override
   String get restore_backup_subtitle =>
@@ -2207,6 +2272,11 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String failed_to_export_metadata(Object error) {
     return 'Failed to export metadata: $error';
+  }
+
+  @override
+  String unrecognized_chapter_numbers(Object count) {
+    return '$count chapter(s) couldn\'t be auto-numbered and may be out of order or missing from the reader.';
   }
 
   @override

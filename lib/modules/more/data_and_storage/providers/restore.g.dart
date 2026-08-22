@@ -80,7 +80,7 @@ final class DoRestoreProvider
   }
 }
 
-String _$doRestoreHash() => r'e9a6e18d390cde83ce3721016e2c8fd104fca3f4';
+String _$doRestoreHash() => r'44cee71b4ad28492800f34f72a9c8b385d8b6ca3';
 
 final class DoRestoreFamily extends $Family
     with

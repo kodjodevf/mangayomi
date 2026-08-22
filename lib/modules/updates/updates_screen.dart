@@ -75,11 +75,30 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
             MaterialPageRoute(builder: (_) => const UpdateErrorsScreen()),
           ),
         ),
-      IconButton(
-        splashRadius: 20,
-        icon: Icon(Icons.refresh_outlined, color: Theme.of(context).hintColor),
-        onPressed: _updateLibrary,
-      ),
+      // While an update is running this is the way to stop it, the same as on
+      // the library screen. Watching the provider rather than this screen's own
+      // flag means the button is also correct for an update started elsewhere.
+      if (ref.watch(libraryUpdateProvider.select((s) => s.running)))
+        IconButton(
+          splashRadius: 20,
+          tooltip: l10n.cancel,
+          icon: Icon(
+            Icons.stop_circle_outlined,
+            color: Theme.of(context).hintColor,
+          ),
+          onPressed: () =>
+              ref.read(libraryUpdateProvider.notifier).requestCancel(),
+        )
+      else
+        IconButton(
+          splashRadius: 20,
+          tooltip: l10n.refresh,
+          icon: Icon(
+            Icons.refresh_outlined,
+            color: Theme.of(context).hintColor,
+          ),
+          onPressed: _updateLibrary,
+        ),
       IconButton(
         splashRadius: 20,
         icon: Icon(
@@ -201,9 +220,20 @@ class _UpdateTabState extends ConsumerState<UpdateTab>
                 .toSet()
                 .toList();
             final mangaById = {
-              for (final m in isar.mangas.getAllSync(mangaIds))
-                if (m != null) m.id!: m,
+              for (final m in isar.mangas.getAllSync(mangaIds)) m?.id!: m!,
             };
+
+            // Both maps above skip an entry that no longer resolves, and the
+            // itemBuilder below then asserted it was there. An update whose
+            // chapter has been deleted (a refresh cleaning up duplicates) or
+            // whose manga has left the library therefore threw mid-build, and
+            // in a release build a throwing child is replaced by a plain grey
+            // box, leaving the list ending in scrollable grey. Drop those
+            // updates instead: the row has nothing left to show anyway.
+            final resolved = entries.where((e) {
+              final chapter = chapterByUpdateId[e.id];
+              return chapter != null && mangaById.containsKey(chapter.mangaId);
+            }).toList();
 
             int? lastUpdated;
             for (final c in chapterByUpdateId.values) {
@@ -213,7 +243,7 @@ class _UpdateTabState extends ConsumerState<UpdateTab>
                 lastUpdated = value;
               }
             }
-            if (entries.isNotEmpty) {
+            if (resolved.isNotEmpty) {
               return CustomScrollView(
                 slivers: [
                   if (lastUpdated != null)
@@ -244,7 +274,7 @@ class _UpdateTabState extends ConsumerState<UpdateTab>
                       ),
                     ),
                   CustomSliverGroupedListView<Update, String>(
-                    elements: entries,
+                    elements: resolved,
                     groupBy: (element) => dateFormat(
                       element.date!,
                       context: context,

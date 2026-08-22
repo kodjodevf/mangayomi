@@ -1637,6 +1637,12 @@ abstract class AppLocalizations {
   /// **'{n} chapters'**
   String n_chapters(Object n);
 
+  /// No description provided for @missing_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing {count} chapters'**
+  String missing_chapters(Object count);
+
   /// No description provided for @no_description.
   ///
   /// In en, this message translates to:
@@ -2027,6 +2033,48 @@ abstract class AppLocalizations {
   /// **'This operation will fully replace the local data with remote data!'**
   String get sync_button_download_info;
 
+  /// No description provided for @sync_status_not_configured.
+  ///
+  /// In en, this message translates to:
+  /// **'Not connected'**
+  String get sync_status_not_configured;
+
+  /// No description provided for @sync_status_checking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking connection...'**
+  String get sync_status_checking;
+
+  /// No description provided for @sync_status_connected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get sync_status_connected;
+
+  /// No description provided for @sync_status_unauthorized.
+  ///
+  /// In en, this message translates to:
+  /// **'Session expired, please log in again'**
+  String get sync_status_unauthorized;
+
+  /// No description provided for @sync_status_unreachable.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t reach server'**
+  String get sync_status_unreachable;
+
+  /// No description provided for @sync_section_general.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get sync_section_general;
+
+  /// No description provided for @sync_section_data_types.
+  ///
+  /// In en, this message translates to:
+  /// **'What to sync'**
+  String get sync_section_data_types;
+
   /// No description provided for @sync_on.
   ///
   /// In en, this message translates to:
@@ -2146,6 +2194,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{n} episodes'**
   String n_episodes(Object n);
+
+  /// No description provided for @missing_episodes.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing {count} episodes'**
+  String missing_episodes(Object count);
 
   /// No description provided for @manga_sources.
   ///
@@ -2530,6 +2584,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Restore backup'**
   String get restore_backup;
+
+  /// No description provided for @encrypt_backups.
+  ///
+  /// In en, this message translates to:
+  /// **'Encrypt backups'**
+  String get encrypt_backups;
+
+  /// No description provided for @encrypt_backups_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Password-protect backup files using AES encryption'**
+  String get encrypt_backups_info;
+
+  /// No description provided for @no_secure_storage.
+  ///
+  /// In en, this message translates to:
+  /// **'No secure storage found'**
+  String get no_secure_storage;
+
+  /// No description provided for @no_keyring_warning.
+  ///
+  /// In en, this message translates to:
+  /// **'This system doesn\'t have a keyring service available (e.g. gnome-keyring or kwallet on Linux), so the password can\'t be stored securely.\n\nStore it unencrypted in the local app database instead? Anyone with access to this device\'s app data would be able to read it.'**
+  String get no_keyring_warning;
+
+  /// No description provided for @enter_backup_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter backup password'**
+  String get enter_backup_password;
+
+  /// No description provided for @incorrect_password_try_again.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect password, try again.'**
+  String get incorrect_password_try_again;
+
+  /// No description provided for @set_backup_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Set backup password'**
+  String get set_backup_password;
+
+  /// No description provided for @confirm_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get confirm_password;
+
+  /// No description provided for @passwords_do_not_match.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwords_do_not_match;
+
+  /// No description provided for @password_required_to_restore.
+  ///
+  /// In en, this message translates to:
+  /// **'A password is required to restore this backup.'**
+  String get password_required_to_restore;
 
   /// No description provided for @restore_backup_subtitle.
   ///
@@ -4042,6 +4156,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to export metadata: {error}'**
   String failed_to_export_metadata(Object error);
+
+  /// No description provided for @unrecognized_chapter_numbers.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} chapter(s) couldn\'t be auto-numbered and may be out of order or missing from the reader.'**
+  String unrecognized_chapter_numbers(Object count);
 
   /// No description provided for @cloudflare_resolution_webview_server_start_failed.
   ///

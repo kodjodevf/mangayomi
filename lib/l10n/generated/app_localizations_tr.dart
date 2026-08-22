@@ -876,6 +876,11 @@ class AppLocalizationsTr extends AppLocalizations {
   }
 
   @override
+  String missing_chapters(Object count) {
+    return 'Missing $count chapters';
+  }
+
+  @override
   String get no_description => 'Açıklama Yok';
 
   @override
@@ -1087,6 +1092,27 @@ class AppLocalizationsTr extends AppLocalizations {
       'Bu işlem yerel verileri uzak verilerle tamamen değiştirecektir!';
 
   @override
+  String get sync_status_not_configured => 'Not connected';
+
+  @override
+  String get sync_status_checking => 'Checking connection...';
+
+  @override
+  String get sync_status_connected => 'Connected';
+
+  @override
+  String get sync_status_unauthorized => 'Session expired, please log in again';
+
+  @override
+  String get sync_status_unreachable => 'Can\'t reach server';
+
+  @override
+  String get sync_section_general => 'General';
+
+  @override
+  String get sync_section_data_types => 'What to sync';
+
+  @override
   String get sync_on => 'Senkronizasyonu etkinleştir';
 
   @override
@@ -1151,6 +1177,11 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String n_episodes(Object n) {
     return '$n bölüm';
+  }
+
+  @override
+  String missing_episodes(Object count) {
+    return 'Missing $count episodes';
   }
 
   @override
@@ -1357,6 +1388,39 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get restore_backup => 'Yedeği Geri Yükle';
+
+  @override
+  String get encrypt_backups => 'Encrypt backups';
+
+  @override
+  String get encrypt_backups_info =>
+      'Password-protect backup files using AES encryption';
+
+  @override
+  String get no_secure_storage => 'No secure storage found';
+
+  @override
+  String get no_keyring_warning =>
+      'This system doesn\'t have a keyring service available (e.g. gnome-keyring or kwallet on Linux), so the password can\'t be stored securely.\n\nStore it unencrypted in the local app database instead? Anyone with access to this device\'s app data would be able to read it.';
+
+  @override
+  String get enter_backup_password => 'Enter backup password';
+
+  @override
+  String get incorrect_password_try_again => 'Incorrect password, try again.';
+
+  @override
+  String get set_backup_password => 'Set backup password';
+
+  @override
+  String get confirm_password => 'Confirm password';
+
+  @override
+  String get passwords_do_not_match => 'Passwords do not match';
+
+  @override
+  String get password_required_to_restore =>
+      'A password is required to restore this backup.';
 
   @override
   String get restore_backup_subtitle =>
@@ -2197,6 +2261,11 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String failed_to_export_metadata(Object error) {
     return 'Failed to export metadata: $error';
+  }
+
+  @override
+  String unrecognized_chapter_numbers(Object count) {
+    return '$count chapter(s) couldn\'t be auto-numbered and may be out of order or missing from the reader.';
   }
 
   @override
