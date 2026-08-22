@@ -51,6 +51,87 @@ void main() {
     });
   });
 
+  group('findDownloadedChapterIn', () {
+    late Directory downloads;
+    late Directory localFolder;
+
+    setUp(() {
+      downloads = Directory(p.join(directory.path, 'downloads', 'Manga'))
+        ..createSync(recursive: true);
+      localFolder = Directory(p.join(directory.path, 'local', 'Manga'))
+        ..createSync(recursive: true);
+    });
+
+    DownloadedChapter? find({bool isComplete = true}) =>
+        findDownloadedChapterIn(
+          [downloads, localFolder],
+          chapterName: 'Chapter 1',
+          chapterDirectoryName: 'Chapter 1',
+          isComplete: isComplete,
+        );
+
+    void writeArchive(Directory into) =>
+        File(p.join(into.path, 'Chapter 1.cbz')).writeAsStringSync('');
+
+    void writePages(Directory into, int count) {
+      final pages = Directory(p.join(into.path, 'Chapter 1'))..createSync();
+      for (var i = 1; i <= count; i++) {
+        File(p.join(pages.path, '${i.toString().padLeft(3, '0')}.jpg'))
+            .writeAsStringSync('');
+      }
+    }
+
+    test('is null when nothing was downloaded anywhere', () {
+      expect(find(), isNull);
+    });
+
+    test('finds an archive in the downloads directory', () {
+      writeArchive(downloads);
+      expect(find()?.archive?.path, startsWith(downloads.path));
+    });
+
+    test('falls back to a local folder, where older builds put it', () {
+      writeArchive(localFolder);
+      expect(find()?.archive?.path, startsWith(localFolder.path));
+    });
+
+    test('prefers the downloads directory when both hold a copy', () {
+      writeArchive(downloads);
+      writeArchive(localFolder);
+      expect(find()?.archive?.path, startsWith(downloads.path));
+    });
+
+    test('finds a page folder and counts it', () {
+      writePages(downloads, 3);
+      final found = find();
+      expect(found?.pagesDirectory?.path, startsWith(downloads.path));
+      expect(found?.pageCount, 3);
+    });
+
+    test('finds a page folder in a local folder too', () {
+      writePages(localFolder, 2);
+      expect(find()?.pagesDirectory?.path, startsWith(localFolder.path));
+    });
+
+    test('ignores a page folder while the download is still running', () {
+      writePages(downloads, 3);
+      expect(find(isComplete: false), isNull);
+    });
+
+    test('still takes an archive while a download is running, since an archive '
+        'is only written once the download finished', () {
+      writeArchive(downloads);
+      expect(find(isComplete: false)?.archive, isNotNull);
+    });
+
+    test('prefers the archive over a page folder beside it', () {
+      writeArchive(downloads);
+      writePages(downloads, 3);
+      expect(find()?.archive, isNotNull);
+      expect(find()?.pagesDirectory, isNull);
+    });
+  });
+
   group('countDownloadedPages', () {
     test('counts a complete chapter', () {
       for (final name in ['001.jpg', '002.jpg', '003.jpg']) {

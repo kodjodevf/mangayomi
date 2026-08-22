@@ -70,22 +70,43 @@ Future<DownloadedChapter?> findDownloadedChapter(Chapter chapter) async {
   final chapterId = chapter.id;
   if (chapterId == null || chapter.name == null) return null;
 
-  final storageProvider = StorageProvider();
   // The folder is written page by page, so a download still in flight has a
   // partial one; only the Isar record knows it is finished. An archive needs no
   // such check, since it is written once, at the end, from the complete folder.
   final isComplete = isar.downloads.getSync(chapterId)?.isDownload ?? false;
+  final chapterDirectory = await StorageProvider().getMangaChapterDirectory(
+    chapter,
+  );
+  if (chapterDirectory == null) return null;
 
-  for (final mangaDirectory in await downloadedMangaDirectories(chapter)) {
-    final archive = findChapterArchive(mangaDirectory, chapter.name!);
+  return findDownloadedChapterIn(
+    await downloadedMangaDirectories(chapter),
+    chapterName: chapter.name!,
+    chapterDirectoryName: p.basename(chapterDirectory.path),
+    isComplete: isComplete,
+  );
+}
+
+/// The local copy in the first of [mangaDirectories] that holds one.
+///
+/// The chapter's own folder carries the same name under every manga directory,
+/// so [chapterDirectoryName] is the basename the downloader gave it and only
+/// the parent changes. [isComplete] gates that folder and not the archive, for
+/// the reason given in [findDownloadedChapter].
+DownloadedChapter? findDownloadedChapterIn(
+  Iterable<Directory> mangaDirectories, {
+  required String chapterName,
+  required String chapterDirectoryName,
+  required bool isComplete,
+}) {
+  for (final mangaDirectory in mangaDirectories) {
+    final archive = findChapterArchive(mangaDirectory, chapterName);
     if (archive != null) return DownloadedChapter.fromArchive(archive);
 
     if (!isComplete) continue;
-    final pagesDirectory = await storageProvider.getMangaChapterDirectory(
-      chapter,
-      mangaMainDirectory: mangaDirectory,
+    final pagesDirectory = Directory(
+      p.join(mangaDirectory.path, chapterDirectoryName),
     );
-    if (pagesDirectory == null) continue;
     final pageCount = countDownloadedPages(pagesDirectory);
     if (pageCount > 0) {
       return DownloadedChapter.fromPages(pagesDirectory, pageCount: pageCount);
