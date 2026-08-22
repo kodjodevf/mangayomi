@@ -11,7 +11,9 @@ import 'package:mangayomi/modules/more/about/providers/download_file_screen.dart
 import 'package:mangayomi/modules/more/about/providers/get_package_info.dart';
 import 'package:mangayomi/modules/more/about/providers/logs_state.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/services/crash_report.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/log/logger.dart';
 import 'package:path/path.dart' as path;
@@ -95,6 +97,14 @@ class AboutScreen extends ConsumerWidget {
                           }
                         },
                         title: Text(l10n.check_for_update),
+                      ),
+                      ListTile(
+                        onTap: () => context.push('/errorReports'),
+                        title: Text(l10n.error_reports),
+                        subtitle: Text(l10n.error_reports_subtitle),
+                        trailing: CrashReports.reports.isEmpty
+                            ? null
+                            : Text('${CrashReports.reports.length}'),
                       ),
                       SwitchListTile(
                         title: Text(l10n.logs_on),

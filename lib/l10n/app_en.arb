@@ -1209,5 +1209,15 @@
       "duplicateTracks": {}
     }
   },
-  "beta": "Beta"
+  "beta": "Beta",
+  "error_reports": "Error reports",
+  "error_reports_subtitle": "Errors the app caught, and a way to report them",
+  "error_reports_empty": "Nothing has gone wrong. Errors the app catches are kept here so you can report them.",
+  "error_reports_likely_cause": "Likely cause",
+  "error_reports_report": "Report on GitHub",
+  "error_reports_banner": "Mangayomi ran into an error",
+  "error_reports_banner_action": "See it",
+  "error_reports_copy": "Copy",
+  "error_reports_copied": "Copied to the clipboard",
+  "error_reports_clear": "Clear"
 }
