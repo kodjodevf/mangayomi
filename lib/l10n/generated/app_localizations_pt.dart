@@ -3013,7 +3013,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get onboarding_later =>
-      'You can add one later under More, Source repositories.';
+      'You can add one later in Settings, under Browse.';
 
   @override
   String get onboarding_replay => 'Show the welcome screen';

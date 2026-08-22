@@ -11,6 +11,7 @@ import 'package:mangayomi/modules/onboarding/providers/onboarding_state_provider
 import 'package:mangayomi/modules/widgets/tv_pill.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
+import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 
 /// The nav destination for each library, so a library the user does not read
@@ -83,13 +84,21 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   List<ItemType> get _chosen =>
       ItemType.values.where(_libraries.contains).toList();
 
+  /// Whether the arrange step has anything to offer.
+  ///
+  /// Nothing to arrange with one library in the bar. And the merge setting it
+  /// writes is read as `mergeLibraryNavMobile && !context.isTablet`, so on
+  /// anything 600dp or wider, tablets and TVs included, the answer would be
+  /// stored and then ignored. Better not to ask.
+  bool get _shouldArrangeBar =>
+      _chosen.length > 1 && !context.isTablet && !isTv;
+
   void _next() {
     if (_step == _Step.libraries) {
       _applyLibraries();
       setState(() {
         _repoType = _chosen.first;
-        // Nothing to arrange when only one library is in the bar.
-        _step = _chosen.length > 1 ? _Step.navigation : _Step.repository;
+        _step = _shouldArrangeBar ? _Step.navigation : _Step.repository;
       });
       return;
     }
@@ -524,12 +533,16 @@ class _NavPreviewItem extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     // The current entry carries an indicator behind its icon, which is what a
-    // NavigationBar actually draws and what makes it read as current. Bare
-    // primary was doing that job on its own, and on a light scheme primary is
-    // a pale blue that came out fainter than the entries around it.
-    final color = selected
+    // NavigationBar actually draws and what makes it read as current.
+    //
+    // The icon sits on that indicator and takes its colour. The label sits on
+    // the bar and takes the bar's. Colouring both from the indicator put a
+    // near white label on a light grey bar under the rose schemes, which made
+    // the current entry the one word in the row you could not read.
+    final iconColor = selected
         ? scheme.onSecondaryContainer
         : scheme.onSurfaceVariant;
+    final labelColor = selected ? scheme.onSurface : scheme.onSurfaceVariant;
     return Flexible(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -541,7 +554,7 @@ class _NavPreviewItem extends StatelessWidget {
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-              child: Icon(icon, size: 20, color: color),
+              child: Icon(icon, size: 20, color: iconColor),
             ),
           ),
           const SizedBox(height: 4),
@@ -550,7 +563,7 @@ class _NavPreviewItem extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.labelSmall?.copyWith(
-              color: color,
+              color: labelColor,
               fontWeight: selected ? FontWeight.w600 : null,
             ),
           ),

@@ -5414,7 +5414,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboarding_later.
   ///
   /// In en, this message translates to:
-  /// **'You can add one later under More, Source repositories.'**
+  /// **'You can add one later in Settings, under Browse.'**
   String get onboarding_later;
 
   /// No description provided for @onboarding_replay.

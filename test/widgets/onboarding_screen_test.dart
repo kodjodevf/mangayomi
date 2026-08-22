@@ -14,9 +14,10 @@ void main() {
   tearDown(() => debugIsTvOverride = null);
 
   Future<void> pump(WidgetTester tester, {Brightness? brightness}) async {
-    // The TV layout is taller than the default 800x600 surface, which puts the
+    // Phone width, because the arrange step is skipped at 600dp and wider,
+    // and tall, because the TV layout overflows the default 600 and puts the
     // step buttons outside the viewport where a tap cannot reach them.
-    tester.view.physicalSize = const Size(1200, 2400);
+    tester.view.physicalSize = const Size(400, 2400);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     await tester.pumpWidget(
@@ -130,6 +131,20 @@ void main() {
       expect(find.byType(TextField), findsOneWidget);
     });
 
+    testWidgets('skips arranging on a wide screen, where it is ignored', (
+      tester,
+    ) async {
+      // The merge setting is read as mergeLibraryNavMobile && !isTablet, so on
+      // anything 600dp or wider the answer would be stored and then ignored.
+      await pump(tester);
+      tester.view.physicalSize = const Size(900, 2400);
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      await tester.pumpAndSettle();
+      expect(find.text('Your libraries'), findsNothing);
+      expect(find.text('Add a source'), findsOneWidget);
+    });
+
     testWidgets('skips arranging a bar that holds one library', (tester) async {
       await pump(tester);
       // Two off, one left. There is nothing to arrange, so asking would be
@@ -217,7 +232,9 @@ void main() {
               .descendant(of: find.byType(Column), matching: find.text('Manga'))
               .first,
         );
-        expect(current.style?.color, scheme.onSecondaryContainer);
+        // The label sits on the bar, not on the indicator, so it has to read
+        // against the bar's colour.
+        expect(current.style?.color, scheme.onSurface);
       });
     }
   });
@@ -275,7 +292,7 @@ void main() {
       // Typing a url on a remote is miserable; leaving now has to look like a
       // real option rather than a failure.
       expect(
-        find.text('You can add one later under More, Source repositories.'),
+        find.text('You can add one later in Settings, under Browse.'),
         findsOneWidget,
       );
       expect(find.widgetWithText(TextButton, 'Skip for now'), findsOneWidget);
@@ -290,7 +307,7 @@ void main() {
       expect(find.byType(TvPill), findsNothing);
       await toRepoStep(tester);
       expect(
-        find.text('You can add one later under More, Source repositories.'),
+        find.text('You can add one later in Settings, under Browse.'),
         findsNothing,
       );
     });
