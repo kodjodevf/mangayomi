@@ -75,11 +75,30 @@ class _UpdatesScreenState extends BaseLibraryTabScreenState<UpdatesScreen> {
             MaterialPageRoute(builder: (_) => const UpdateErrorsScreen()),
           ),
         ),
-      IconButton(
-        splashRadius: 20,
-        icon: Icon(Icons.refresh_outlined, color: Theme.of(context).hintColor),
-        onPressed: _updateLibrary,
-      ),
+      // While an update is running this is the way to stop it, the same as on
+      // the library screen. Watching the provider rather than this screen's own
+      // flag means the button is also correct for an update started elsewhere.
+      if (ref.watch(libraryUpdateProvider).running)
+        IconButton(
+          splashRadius: 20,
+          tooltip: l10n.cancel,
+          icon: Icon(
+            Icons.stop_circle_outlined,
+            color: Theme.of(context).hintColor,
+          ),
+          onPressed: () =>
+              ref.read(libraryUpdateProvider.notifier).requestCancel(),
+        )
+      else
+        IconButton(
+          splashRadius: 20,
+          tooltip: l10n.refresh,
+          icon: Icon(
+            Icons.refresh_outlined,
+            color: Theme.of(context).hintColor,
+          ),
+          onPressed: _updateLibrary,
+        ),
       IconButton(
         splashRadius: 20,
         icon: Icon(
