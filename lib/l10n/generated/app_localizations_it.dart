@@ -3011,6 +3011,11 @@ class AppLocalizationsIt extends AppLocalizations {
   String get onboarding_local_folder => 'Add a folder';
 
   @override
+  String onboarding_local_existing(Object count) {
+    return '$count folders already set up';
+  }
+
+  @override
   String get onboarding_local_any_type =>
       'Manga, anime and novels all work. Each title goes to the right library based on what is inside it.';
 

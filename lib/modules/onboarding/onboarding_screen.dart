@@ -116,6 +116,13 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
 
   /// Whether a folder of the user's own files was added, which is content the
   /// app can open with no repository and no network at all.
+  /// The local folders already set up before this screen ran.
+  ///
+  /// The default `local` folder is not among these; the provider holds the
+  /// ones a user has added themselves.
+  List<LocalFolder> get _existingFolders =>
+      ref.watch(localFoldersStateProvider);
+
   /// Whether the folder this screen added is still on the list.
   ///
   /// Asked of the list rather than remembered, because the list can change
@@ -640,7 +647,8 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
   };
 
   String _leaveLabel(AppLocalizations l10n) =>
-      _step == _Step.repository && (_added != null || _addedLocalFolder)
+      _step == _Step.repository &&
+          (_added != null || _addedLocalFolder || _existingFolders.isNotEmpty)
       ? l10n.onboarding_continue
       : l10n.onboarding_skip;
 
@@ -744,6 +752,19 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
         icon: const Icon(Icons.folder_open, size: 20),
         label: Text(l10n.onboarding_local_folder),
       ),
+      // What is already set up, for anyone who restored a backup or had
+      // folders from before. Without it the step looks like they have none
+      // and invites them to add one they already have.
+      if (_addedFolderPath == null && _existingFolders.isNotEmpty) ...[
+        const SizedBox(height: 12),
+        _FolderStatus(
+          message: l10n.onboarding_local_existing('${_existingFolders.length}'),
+          titles: _existingFolders
+              .map((folder) => folder.name ?? '')
+              .where((name) => name.isNotEmpty)
+              .toList(),
+        ),
+      ],
       const SizedBox(height: 6),
       // No type to choose here, unlike the repository above it. A folder is
       // not bound to one: the scanner reads each title's contents and files

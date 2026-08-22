@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
@@ -24,6 +25,8 @@ void main() {
           for (final type in ItemType.values)
             extensionsRepoStateProvider(type)
                 .overrideWith(() => _StubRepoState()),
+          // Reads Isar, which is not open in a test.
+          localFoldersStateProvider.overrideWith(_StubLocalFolders.new),
           hideItemsStateProvider.overrideWith(_StubHideItems.new),
           mergeLibraryNavMobileStateProvider.overrideWith(_StubMergeNav.new),
         ],
@@ -76,6 +79,14 @@ class _StubRepoState extends ExtensionsRepoState {
 
   @override
   void set(List<Repo> value) => state = value;
+}
+
+class _StubLocalFolders extends LocalFoldersState {
+  @override
+  List<LocalFolder> build() => const [];
+
+  @override
+  void set(List<LocalFolder> value) => state = value;
 }
 
 class _StubHideItems extends HideItemsState {

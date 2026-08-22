@@ -1196,6 +1196,8 @@
   "onboarding_restore": "Restore a backup",
   "onboarding_or_local": "Or read files you already have",
   "onboarding_local_folder": "Add a folder",
+  "onboarding_local_existing": "{count} folders already set up",
+  "@onboarding_local_existing": { "placeholders": { "count": {} } },
   "onboarding_local_any_type": "Manga, anime and novels all work. Each title goes to the right library based on what is inside it.",
   "onboarding_local_scanning": "Scanning the folder",
   "onboarding_local_found": "{count} titles found",

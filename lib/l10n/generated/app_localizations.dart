@@ -5399,6 +5399,12 @@ abstract class AppLocalizations {
   /// **'Add a folder'**
   String get onboarding_local_folder;
 
+  /// No description provided for @onboarding_local_existing.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} folders already set up'**
+  String onboarding_local_existing(Object count);
+
   /// No description provided for @onboarding_local_any_type.
   ///
   /// In en, this message translates to:
