@@ -1,10 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:path/path.dart' as p;
 import 'package:photo_view/photo_view.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
-import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/services/downloaded_chapter.dart';
 import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/modules/manga/reader/subsampling_scale_image_view/subsampling_scale_image_view.dart'
@@ -624,7 +623,9 @@ class _MangaChapterPageGalleryState
                           )
                         : TweenAnimationBuilder<Color?>(
                             tween: ColorTween(
-                              end: getBackgroundColor(backgroundColor),
+                              end:
+                                  getBackgroundColor(backgroundColor) ??
+                                  Theme.of(context).scaffoldBackgroundColor,
                             ),
                             duration: const Duration(milliseconds: 300),
                             builder: (context, animColor, animChild) {
@@ -1028,7 +1029,9 @@ class _MangaChapterPageGalleryState
                     loadingProgress.expectedTotalBytes!
               : 0;
           return Container(
-            color: getBackgroundColor(backgroundColor),
+            color:
+                getBackgroundColor(backgroundColor) ??
+                Theme.of(context).scaffoldBackgroundColor,
             height: context.height(0.8),
             child: CircularProgressIndicatorAnimateRotate(progress: progress),
           );
@@ -1041,7 +1044,9 @@ class _MangaChapterPageGalleryState
           _onFailedToLoadImage(index, true);
           final l10n = l10nLocalizations(context)!;
           return Container(
-            color: getBackgroundColor(backgroundColor),
+            color:
+                getBackgroundColor(backgroundColor) ??
+                Theme.of(context).scaffoldBackgroundColor,
             height: context.height(0.8),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -1349,15 +1354,9 @@ class _MangaChapterPageGalleryState
 
     if (needsReload) {
       final isLocalArchive = (currentChapter.archivePath ?? '').isNotEmpty;
-      final storageProvider = StorageProvider();
-      final mangaDirectory = await storageProvider.getMangaMainDirectory(
-        currentChapter,
-      );
       final archivePath = isLocalArchive
           ? currentChapter.archivePath
-          : (mangaDirectory != null
-                ? p.join(mangaDirectory.path, "${currentChapter.name}.cbz")
-                : null);
+          : (await findDownloadedChapter(currentChapter))?.archive?.path;
 
       if (archivePath != null && await File(archivePath).exists()) {
         try {
@@ -1629,7 +1628,9 @@ class _MangaChapterPageGalleryState
     await WidgetsBinding.instance.endOfFrame;
 
     if (value == ReaderMode.vertical || value.isHorizontalPaged) {
-      _extendedController.jumpToPage(index);
+      if (_extendedController.hasClients) {
+        _extendedController.jumpToPage(index);
+      }
     } else {
       _itemScrollController.scrollTo(
         index: index,

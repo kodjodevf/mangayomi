@@ -893,6 +893,11 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String missing_chapters(Object count) {
+    return 'Missing $count chapters';
+  }
+
+  @override
   String get no_description => 'Нет описания';
 
   @override
@@ -1105,6 +1110,27 @@ class AppLocalizationsRu extends AppLocalizations {
       'Эта операция полностью заменит локальные данные удаленными данными!';
 
   @override
+  String get sync_status_not_configured => 'Not connected';
+
+  @override
+  String get sync_status_checking => 'Checking connection...';
+
+  @override
+  String get sync_status_connected => 'Connected';
+
+  @override
+  String get sync_status_unauthorized => 'Session expired, please log in again';
+
+  @override
+  String get sync_status_unreachable => 'Can\'t reach server';
+
+  @override
+  String get sync_section_general => 'General';
+
+  @override
+  String get sync_section_data_types => 'What to sync';
+
+  @override
   String get sync_on => 'Включить синхронизацию';
 
   @override
@@ -1169,6 +1195,11 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String n_episodes(Object n) {
     return '$n эпизодов';
+  }
+
+  @override
+  String missing_episodes(Object count) {
+    return 'Missing $count episodes';
   }
 
   @override
@@ -1844,10 +1875,11 @@ class AppLocalizationsRu extends AppLocalizations {
       'Пользовательский DNS (оставьте пустым для использования системного DNS)';
 
   @override
-  String get android_proxy_server => 'Прокси-сервер Android (ApkBridge)';
+  String get android_proxy_server =>
+      'Прокси-сервер Android (M-Extension-Server)';
 
   @override
-  String get get_apk_bridge => 'Получить ApkBridge';
+  String get get_m_extension_server => 'Получить M-Extension-Server';
 
   @override
   String get get_sync_server => 'Получить сервер синхронизации здесь';
@@ -2268,6 +2300,11 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String unrecognized_chapter_numbers(Object count) {
+    return '$count chapter(s) couldn\'t be auto-numbered and may be out of order or missing from the reader.';
+  }
+
+  @override
   String get cloudflare_resolution_webview_server_start_failed =>
       'Couldn\'t start Cloudflare Resolution Webview Server.';
 
@@ -2506,8 +2543,8 @@ class AppLocalizationsRu extends AppLocalizations {
   String get latest_version => 'Последняя версия';
 
   @override
-  String get apkbridge_description =>
-      'Используйте ApkBridge, когда вам нужен отдельный прокси-сервер для Android-устройства. Установите адрес прокси здесь и загрузите APK с GitHub.';
+  String get m_extension_server_description =>
+      'Используйте M-Extension-Server, когда вам нужен отдельный прокси-сервер для Android-устройства. Установите адрес прокси здесь и загрузите APK с GitHub.';
 
   @override
   String get set_proxy_address => 'Установить адрес прокси';
@@ -2568,7 +2605,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get could_not_launch_apk_bridge_page =>
-      'Не удалось запустить страницу ApkBridge.';
+      'Не удалось запустить страницу M-Extension-Server.';
 
   @override
   String get proxy_server_ip_hint =>

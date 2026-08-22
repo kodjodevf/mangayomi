@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -73,23 +75,24 @@ class BrowseSScreen extends ConsumerWidget {
                     ),
                   ),
                   const ExtensionServerWarningBanner(),
-                  ListTile(
-                    onTap: () => context.push('/extensionServer'),
-                    title: Text(
-                      isMobile
-                          ? l10n.android_proxy_server
-                          : l10n.android_proxy_server_mihon,
-                    ),
-                    subtitle: Text(
-                      isMobile
-                          ? l10n.apkbridge_description
-                          : l10n.android_proxy_server_mihon_description,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: context.secondaryColor,
+                  if (!Platform.isAndroid)
+                    ListTile(
+                      onTap: () => context.push('/extensionServer'),
+                      title: Text(
+                        isMobile
+                            ? l10n.android_proxy_server
+                            : l10n.android_proxy_server_mihon,
+                      ),
+                      subtitle: Text(
+                        isMobile
+                            ? l10n.m_extension_server_description
+                            : l10n.android_proxy_server_mihon_description,
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: context.secondaryColor,
+                        ),
                       ),
                     ),
-                  ),
                   if (!animeOnly)
                     ListTile(
                       onTap: () {

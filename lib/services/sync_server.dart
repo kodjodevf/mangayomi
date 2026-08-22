@@ -478,16 +478,16 @@ class SyncServer extends _$SyncServer {
         _preserveDeviceLocalSettings(settings, oldSettings)
           ..cookiesList = oldSettings.cookiesList,
       );
-      ref.invalidate(followSystemThemeStateProvider);
-      ref.invalidate(themeModeStateProvider);
-      ref.invalidate(blendLevelStateProvider);
-      ref.invalidate(flexSchemeColorStateProvider);
-      ref.invalidate(pureBlackDarkModeStateProvider);
-      ref.invalidate(l10nLocaleStateProvider);
-      ref.invalidate(extensionsRepoStateProvider(ItemType.manga));
-      ref.invalidate(extensionsRepoStateProvider(ItemType.anime));
-      ref.invalidate(extensionsRepoStateProvider(ItemType.novel));
     });
+    ref.invalidate(followSystemThemeStateProvider);
+    ref.invalidate(themeModeStateProvider);
+    ref.invalidate(blendLevelStateProvider);
+    ref.invalidate(flexSchemeColorStateProvider);
+    ref.invalidate(pureBlackDarkModeStateProvider);
+    ref.invalidate(l10nLocaleStateProvider);
+    ref.invalidate(extensionsRepoStateProvider(ItemType.manga));
+    ref.invalidate(extensionsRepoStateProvider(ItemType.anime));
+    ref.invalidate(extensionsRepoStateProvider(ItemType.novel));
   }
 
   String _getMangaData({bool upload = false, bool download = false}) {

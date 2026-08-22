@@ -64,7 +64,7 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
 
   bool get _showAndroidProxyServerSection => isMobile;
 
-  bool get _showDesktopAdvancedApkBridgeSection => isDesktop;
+  bool get _showDesktopAdvancedMExtensionServerSection => isDesktop;
 
   bool get _isInstalled => _serverExists && (!_requiresJre || _jreExists);
 
@@ -249,7 +249,7 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                l10n.apkbridge_description,
+                l10n.m_extension_server_description,
                 style: TextStyle(color: context.secondaryColor),
               ),
               const SizedBox(height: 12),
@@ -279,9 +279,9 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: OutlinedButton.icon(
-                      onPressed: _openApkBridgeRelease,
+                      onPressed: _openMExtensionServerRelease,
                       icon: const Icon(Icons.download_outlined),
-                      label: Text(l10n.get_apk_bridge),
+                      label: Text(l10n.get_m_extension_server),
                     ),
                   ),
                 ],
@@ -328,7 +328,7 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
                 ),
               ],
             ],
-            if (_showDesktopAdvancedApkBridgeSection) ...[
+            if (_showDesktopAdvancedMExtensionServerSection) ...[
               const SizedBox(height: 24),
               Theme(
                 data: Theme.of(context)
@@ -350,7 +350,7 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      l10n.apkbridge_description,
+                      l10n.m_extension_server_description,
                       style: TextStyle(color: context.secondaryColor),
                     ),
                     const SizedBox(height: 12),
@@ -382,9 +382,9 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: OutlinedButton.icon(
-                            onPressed: _openApkBridgeRelease,
+                            onPressed: _openMExtensionServerRelease,
                             icon: const Icon(Icons.download_outlined),
-                            label: Text(l10n.get_apk_bridge),
+                            label: Text(l10n.get_m_extension_server),
                           ),
                         ),
                       ],
@@ -611,10 +611,10 @@ class _ExtensionServerScreenState extends ConsumerState<ExtensionServerScreen> {
     }
   }
 
-  Future<void> _openApkBridgeRelease() async {
+  Future<void> _openMExtensionServerRelease() async {
     final l10n = l10nLocalizations(context)!;
     if (!await launchUrl(
-      Uri.parse(apkBridgeReleaseUrl),
+      Uri.parse(mExtensionServerReleaseUrl),
       mode: LaunchMode.externalApplication,
     )) {
       botToast(l10n.could_not_launch_apk_bridge_page);

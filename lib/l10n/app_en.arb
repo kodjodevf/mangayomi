@@ -407,6 +407,7 @@
   "episode_number": "Episode number",
   "share": "Share",
   "n_chapters": "{n} chapters",
+  "missing_chapters": "Missing {count} chapters",
   "no_description": "No description",
   "resume": "Resume",
   "read": "Read",
@@ -472,6 +473,13 @@
   "sync_button_upload_info": "This operation will fully replace the remote data with local data!",
   "sync_button_download": "Download only",
   "sync_button_download_info": "This operation will fully replace the local data with remote data!",
+  "sync_status_not_configured": "Not connected",
+  "sync_status_checking": "Checking connection...",
+  "sync_status_connected": "Connected",
+  "sync_status_unauthorized": "Session expired, please log in again",
+  "sync_status_unreachable": "Can't reach server",
+  "sync_section_general": "General",
+  "sync_section_data_types": "What to sync",
   "sync_on": "Enable sync",
   "sync_auto": "Auto Sync",
   "sync_auto_warning": "Auto Sync is currently an experimental feature!",
@@ -492,6 +500,7 @@
   "full_screen_player_info": "Automatically use fullscreen when playing a video.",
   "episode_progress": "Progress: {n}",
   "n_episodes": "{n} episodes",
+  "missing_episodes": "Missing {count} episodes",
   "manga_sources": "Manga Sources",
   "anime_sources": "Anime Sources",
   "novel_sources": "Novel Sources",
@@ -698,8 +707,8 @@
   "anime_extensions_repo": "Anime extensions repo",
   "novel_extensions_repo": "Novel extensions repo",
   "custom_dns": "Custom DNS (leave blank to use system DNS)",
-  "android_proxy_server": "Android Proxy Server (ApkBridge)",
-  "get_apk_bridge": "Get ApkBridge",
+  "android_proxy_server": "Android Proxy Server (M-Extension-Server)",
+  "get_m_extension_server": "Get M-Extension-Server",
   "get_sync_server": "Get Sync Server here",
   "undefined": "undefined",
   "empty_extensions_repo": "You don't have any repository urls here. Click on the plus button to add one!",
@@ -861,6 +870,12 @@
       "error": {}
     }
   },
+  "unrecognized_chapter_numbers": "{count} chapter(s) couldn't be auto-numbered and may be out of order or missing from the reader.",
+  "@unrecognized_chapter_numbers": {
+    "placeholders": {
+      "count": {}
+    }
+  },
   "cloudflare_resolution_webview_server_start_failed": "Couldn't start Cloudflare Resolution Webview Server.",
   "tracker_token_expired": "{tracker} Token expired",
   "@tracker_token_expired": {
@@ -948,7 +963,7 @@
   "extension_server_jar": "Extension server JAR",
   "installed_version": "Installed version",
   "latest_version": "Latest version",
-  "apkbridge_description": "Use ApkBridge when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.",
+  "m_extension_server_description": "Use M-Extension-Server when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.",
   "set_proxy_address": "Set proxy address",
   "no_newer_proxy_server_release_available": "No newer proxy server release is available.",
   "could_not_check_proxy_server_updates": "Could not check for proxy server updates.",
@@ -969,7 +984,7 @@
   "select_extension_server_jar": "Select extension server JAR",
   "selected_file_could_not_be_accessed": "The selected file could not be accessed.",
   "extension_server_jar_imported": "Extension server JAR was imported.",
-  "could_not_launch_apk_bridge_page": "Could not launch the ApkBridge page.",
+  "could_not_launch_apk_bridge_page": "Could not launch the M-Extension-Server page.",
   "proxy_server_ip_hint": "Server IP (e.g., 10.0.0.5 or https://example.com)",
   "not_configured": "Not configured",
   "zero_interpreter": "Zero interpreter",

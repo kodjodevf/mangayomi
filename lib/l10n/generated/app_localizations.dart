@@ -1637,6 +1637,12 @@ abstract class AppLocalizations {
   /// **'{n} chapters'**
   String n_chapters(Object n);
 
+  /// No description provided for @missing_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing {count} chapters'**
+  String missing_chapters(Object count);
+
   /// No description provided for @no_description.
   ///
   /// In en, this message translates to:
@@ -2027,6 +2033,48 @@ abstract class AppLocalizations {
   /// **'This operation will fully replace the local data with remote data!'**
   String get sync_button_download_info;
 
+  /// No description provided for @sync_status_not_configured.
+  ///
+  /// In en, this message translates to:
+  /// **'Not connected'**
+  String get sync_status_not_configured;
+
+  /// No description provided for @sync_status_checking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking connection...'**
+  String get sync_status_checking;
+
+  /// No description provided for @sync_status_connected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get sync_status_connected;
+
+  /// No description provided for @sync_status_unauthorized.
+  ///
+  /// In en, this message translates to:
+  /// **'Session expired, please log in again'**
+  String get sync_status_unauthorized;
+
+  /// No description provided for @sync_status_unreachable.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t reach server'**
+  String get sync_status_unreachable;
+
+  /// No description provided for @sync_section_general.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get sync_section_general;
+
+  /// No description provided for @sync_section_data_types.
+  ///
+  /// In en, this message translates to:
+  /// **'What to sync'**
+  String get sync_section_data_types;
+
   /// No description provided for @sync_on.
   ///
   /// In en, this message translates to:
@@ -2146,6 +2194,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{n} episodes'**
   String n_episodes(Object n);
+
+  /// No description provided for @missing_episodes.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing {count} episodes'**
+  String missing_episodes(Object count);
 
   /// No description provided for @manga_sources.
   ///
@@ -3386,14 +3440,14 @@ abstract class AppLocalizations {
   /// No description provided for @android_proxy_server.
   ///
   /// In en, this message translates to:
-  /// **'Android Proxy Server (ApkBridge)'**
+  /// **'Android Proxy Server (M-Extension-Server)'**
   String get android_proxy_server;
 
-  /// No description provided for @get_apk_bridge.
+  /// No description provided for @get_m_extension_server.
   ///
   /// In en, this message translates to:
-  /// **'Get ApkBridge'**
-  String get get_apk_bridge;
+  /// **'Get M-Extension-Server'**
+  String get get_m_extension_server;
 
   /// No description provided for @get_sync_server.
   ///
@@ -4115,6 +4169,12 @@ abstract class AppLocalizations {
   /// **'Failed to export metadata: {error}'**
   String failed_to_export_metadata(Object error);
 
+  /// No description provided for @unrecognized_chapter_numbers.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} chapter(s) couldn\'t be auto-numbered and may be out of order or missing from the reader.'**
+  String unrecognized_chapter_numbers(Object count);
+
   /// No description provided for @cloudflare_resolution_webview_server_start_failed.
   ///
   /// In en, this message translates to:
@@ -4547,11 +4607,11 @@ abstract class AppLocalizations {
   /// **'Latest version'**
   String get latest_version;
 
-  /// No description provided for @apkbridge_description.
+  /// No description provided for @m_extension_server_description.
   ///
   /// In en, this message translates to:
-  /// **'Use ApkBridge when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.'**
-  String get apkbridge_description;
+  /// **'Use M-Extension-Server when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.'**
+  String get m_extension_server_description;
 
   /// No description provided for @set_proxy_address.
   ///
@@ -4646,7 +4706,7 @@ abstract class AppLocalizations {
   /// No description provided for @could_not_launch_apk_bridge_page.
   ///
   /// In en, this message translates to:
-  /// **'Could not launch the ApkBridge page.'**
+  /// **'Could not launch the M-Extension-Server page.'**
   String get could_not_launch_apk_bridge_page;
 
   /// No description provided for @proxy_server_ip_hint.

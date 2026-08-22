@@ -300,6 +300,10 @@ Future<void> downloadChapter(
 
     setProgress(DownloadProgress(0, 0, itemType));
     void savePageUrls() {
+      // Re-downloading a chapter that is already on disk reads it locally, and
+      // local pages carry no url. Storing those placeholders would leave the
+      // chapter unreadable from its source once the download is deleted.
+      if (pageUrls.every((pageUrl) => pageUrl.url.isEmpty)) return;
       final settings = isar.settings.getSync(227)!;
       List<ChapterPageurls>? chapterPageUrls = [];
       for (var chapterPageUrl in settings.chapterPageUrlsList ?? []) {
