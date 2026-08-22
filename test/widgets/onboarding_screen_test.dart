@@ -82,25 +82,25 @@ void main() {
     Image logo(WidgetTester tester) =>
         tester.widget<Image>(find.byType(Image).first);
 
-    testWidgets('is the app icon, not a stock glyph', (tester) async {
-      await pump(tester);
-      expect(logo(tester).image, isA<AssetImage>());
-      expect(
-        (logo(tester).image as AssetImage).assetName,
-        'assets/app_icons/icon.png',
-      );
-    });
+    String asset(WidgetTester tester) =>
+        (logo(tester).image as AssetImage).assetName;
 
-    testWidgets('is tinted white on a dark theme', (tester) async {
+    testWidgets('is the silhouette, tinted white, on a dark theme', (
+      tester,
+    ) async {
       await pump(tester, brightness: Brightness.dark);
+      expect(asset(tester), 'assets/app_icons/icon.png');
       expect(logo(tester).color, Colors.white);
     });
 
-    testWidgets('is tinted black on a light theme', (tester) async {
-      // The mark is a silhouette, so it disappears into the background
-      // entirely if it is not flipped with the theme.
+    testWidgets('is the real app icon, untinted, on a light theme', (
+      tester,
+    ) async {
+      // Both full colour icons are drawn on a white tile, so they suit a light
+      // background and would read as a bright block on a dark one.
       await pump(tester, brightness: Brightness.light);
-      expect(logo(tester).color, Colors.black);
+      expect(asset(tester), 'assets/app_icons/icon-red.png');
+      expect(logo(tester).color, isNull);
     });
   });
 
