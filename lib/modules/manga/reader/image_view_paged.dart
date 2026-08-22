@@ -1,9 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/utils/reg_exp_matcher.dart';
+import 'package:mangayomi/utils/downloaded_page_file.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/manga/reader/widgets/color_filter_widget.dart';
 import 'package:mangayomi/modules/manga/reader/providers/reader_controller_provider.dart';
@@ -90,10 +88,16 @@ class _ImageViewPagedState extends ConsumerState<ImageViewPaged> {
       }
     } else if (widget.data.directory != null && widget.data.index != null) {
       try {
-        final file = File(
-          '${widget.data.directory!.path}/${padIndex(widget.data.index!)}.jpg',
+        // Look up whatever extension this page was actually saved under
+        // (findDownloadedPageFile), rather than assuming .jpg - still
+        // sniffing the real bytes here rather than trusting the extension,
+        // so this keeps working for pages downloaded before this fix that
+        // may still be labeled .jpg despite actually being a GIF.
+        final file = await findDownloadedPageFileAsync(
+          widget.data.directory!,
+          widget.data.index!,
         );
-        if (await file.exists()) {
+        if (file != null) {
           final raf = await file.open();
           try {
             final fBytes = await raf.read(3);

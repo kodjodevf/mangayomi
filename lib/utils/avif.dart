@@ -5,23 +5,24 @@ import 'dart:ui' as ui;
 import 'package:flutter_avif_platform_interface/flutter_avif_platform_interface.dart';
 
 bool isAvifImage(Uint8List bytes) {
-  if (bytes.length < 12 ||
-      bytes[4] != 0x66 ||
-      bytes[5] != 0x74 ||
-      bytes[6] != 0x79 ||
-      bytes[7] != 0x70) {
-    return false;
-  }
+  // ISO Base Media File Format (ISOBMFF) file (container for MP4, HEIF, AVIF, QuickTime, ...)
+  final isNotISOBMFF =
+      bytes.length < 12 ||
+      bytes[4] != 0x66 || // 'f'
+      bytes[5] != 0x74 || // 't'
+      bytes[6] != 0x79 || // 'y'
+      bytes[7] != 0x70; // 'p'
+  if (isNotISOBMFF) return false;
 
   final boxSize = ByteData.sublistView(bytes, 0, 4).getUint32(0);
   final end = boxSize == 0 || boxSize > bytes.length ? bytes.length : boxSize;
 
   bool isAvifBrand(int offset) =>
       offset + 4 <= end &&
-      bytes[offset] == 0x61 &&
-      bytes[offset + 1] == 0x76 &&
-      bytes[offset + 2] == 0x69 &&
-      (bytes[offset + 3] == 0x66 || bytes[offset + 3] == 0x73);
+      bytes[offset] == 0x61 && // 'a'
+      bytes[offset + 1] == 0x76 && // 'v'
+      bytes[offset + 2] == 0x69 && // 'i'
+      (bytes[offset + 3] == 0x66 || bytes[offset + 3] == 0x73); // 'f' or 's'
 
   if (isAvifBrand(8)) return true;
   for (var offset = 16; offset + 4 <= end; offset += 4) {
