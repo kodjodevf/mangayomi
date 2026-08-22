@@ -401,6 +401,44 @@ void main() {
     });
   });
 
+  group('the step indicator', () {
+    Iterable<double> dotWidths(WidgetTester tester) => tester
+        .widgetList<AnimatedContainer>(find.byType(AnimatedContainer))
+        .map((c) => (c.constraints?.maxWidth) ?? 0);
+
+    testWidgets('shows one mark per step that will actually be asked', (
+      tester,
+    ) async {
+      await pump(tester);
+      expect(dotWidths(tester).length, 3);
+    });
+
+    testWidgets('drops to two when the arrange step will be skipped', (
+      tester,
+    ) async {
+      // Three marks followed by two questions would be a small lie about how
+      // long this takes.
+      await pump(tester);
+      await tester.tap(find.widgetWithText(FilterChip, 'Anime'));
+      await tester.pump();
+      await tester.tap(find.widgetWithText(FilterChip, 'Novel'));
+      await tester.pumpAndSettle();
+      expect(dotWidths(tester).length, 2);
+    });
+
+    testWidgets('marks the step you are on, and moves with you', (
+      tester,
+    ) async {
+      await pump(tester);
+      expect(dotWidths(tester).first, greaterThan(dotWidths(tester).last));
+
+      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      await tester.pumpAndSettle();
+      final widths = dotWidths(tester).toList();
+      expect(widths[1], greaterThan(widths[0]));
+    });
+  });
+
   group('large text', () {
     testWidgets('the first step still fits at double size', (tester) async {
       // Wrap and a scroll view should cope, but nobody had tried it.

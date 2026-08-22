@@ -174,6 +174,16 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
   List<ItemType> get _chosen =>
       ItemType.values.where(_libraries.contains).toList();
 
+  /// The steps that will actually be shown, in order.
+  ///
+  /// Not a constant: the arrange step drops out for a single library or a wide
+  /// window, so the flow is two steps long as often as three.
+  List<_Step> get _visibleSteps => [
+    _Step.libraries,
+    if (_shouldArrangeBar) _Step.navigation,
+    _Step.repository,
+  ];
+
   /// Whether the arrange step has anything to offer.
   ///
   /// Nothing to arrange with one library in the bar. And the merge setting it
@@ -459,7 +469,17 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
                     : Colors.white,
                 fit: BoxFit.contain,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
+              // Above the words rather than below them, so it keeps its place
+              // while the content underneath changes height. Not tappable:
+              // going forward has to run through _next so each answer is
+              // applied, and going back is the arrow's job.
+              _StepDots(
+                steps: _visibleSteps.length,
+                current: _visibleSteps.indexOf(_step),
+                duration: _motion,
+              ),
+              const SizedBox(height: 16),
               // Only the words and the controls change between steps. The mark
               // above keeps its place, so the screen reads as one place being
               // rewritten rather than three screens flipped through. The height
@@ -914,6 +934,49 @@ class _NavPreviewItem extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Where the user is in the flow, and how much of it is left.
+///
+/// The count is not fixed, because the arrange step drops out for a single
+/// library or a wide window. Three dots followed by only two questions would
+/// be a small lie about how long this takes.
+class _StepDots extends StatelessWidget {
+  const _StepDots({
+    required this.steps,
+    required this.current,
+    required this.duration,
+  });
+
+  final int steps;
+  final int current;
+  final Duration duration;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        for (var i = 0; i < steps; i++)
+          AnimatedContainer(
+            duration: duration,
+            curve: Curves.easeOutCubic,
+            margin: const EdgeInsets.symmetric(horizontal: 3),
+            height: 6,
+            // The one you are on is a bar, the rest are dots, so it reads at a
+            // glance without colour having to carry it alone.
+            width: i == current ? 20 : 6,
+            decoration: BoxDecoration(
+              color: i == current
+                  ? scheme.primary
+                  : scheme.onSurfaceVariant.withValues(alpha: 0.35),
+              borderRadius: BorderRadius.circular(3),
+            ),
+          ),
+      ],
     );
   }
 }
