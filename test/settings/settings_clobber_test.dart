@@ -20,7 +20,17 @@ void main() {
 
   setUpAll(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
-    await Isar.initializeIsarCore(download: true);
+    // The binding installs an HttpOverrides that answers every request with a
+    // 400, so the core's own download silently fails and the whole suite dies
+    // in setUpAll on any machine that has not already fetched it. Step out of
+    // the override for the one request that has to be real.
+    final overrides = HttpOverrides.current;
+    HttpOverrides.global = null;
+    try {
+      await Isar.initializeIsarCore(download: true);
+    } finally {
+      HttpOverrides.global = overrides;
+    }
   });
 
   setUp(() async {
