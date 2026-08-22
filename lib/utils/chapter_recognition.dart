@@ -1,3 +1,5 @@
+import 'package:mangayomi/utils/log/logger.dart';
+
 class ChapterRecognition {
   static final _unwanted = RegExp(
     r"\b(?:v|ver|vol|version|volume|season|staffel|saison|temporada|s)[^a-z]?[0-9]+",
@@ -14,6 +16,10 @@ class ChapterRecognition {
     r"(?<=ch\.) *([0-9]+)(\.[0-9]+)?(\.?[a-z]+)?",
   );
   static final _bareNumber = RegExp(r"([0-9]+)(\.[0-9]+)?(\.?[a-z]+)?");
+
+  // Dedup so a repeatedly-rebuilt chapter list doesn't spam the log file
+  // with the same unrecognized name on every rebuild.
+  static final Set<String> _loggedUnrecognized = {};
 
   /// Sort key for a single chapter with no list context. Always buckets by
   /// season when present: key = season * 100000 + episode.
@@ -55,7 +61,14 @@ class ChapterRecognition {
     }
 
     final stripped = name.replaceAll(_unwanted, '');
-    return (season, _extractNumber(stripped));
+    final ep = _extractNumber(stripped);
+    if (ep == null && _loggedUnrecognized.add('$mangaTitle|$chapterName')) {
+      AppLogger.log(
+        'ChapterRecognition: no number detected in "$chapterName" (manga: "$mangaTitle")',
+        logLevel: LogLevel.warning,
+      );
+    }
+    return (season, ep);
   }
 
   // Combines season + episode into a sortable number.

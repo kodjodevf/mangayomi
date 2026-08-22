@@ -39,9 +39,10 @@ Map<int?, double?> _chapterSortKeys(
     for (final entry in raw.entries)
       entry.key: switch (entry.value.$2) {
         null => null,
-        final ep => resets
-            ? (entry.value.$1 > 0 ? entry.value.$1 * 100000 + ep : ep)
-            : ep,
+        final ep =>
+          resets
+              ? (entry.value.$1 > 0 ? entry.value.$1 * 100000 + ep : ep)
+              : ep,
       },
   };
 }
@@ -98,9 +99,16 @@ extension MangaExtensions on Manga {
 
     final data = chapters.toList();
     final sortKeys = _chapterSortKeys(name ?? '', data);
-    data.sort(
-      (a, b) => (sortKeys[a.id] ?? 0).compareTo(sortKeys[b.id] ?? 0),
-    );
+    // List.sort isn't stable, so chapters tying at the same key (notably
+    // every unrecognized-number chapter, which falls back to 0) would
+    // otherwise shuffle unpredictably between rebuilds. Break ties by
+    // original position to keep them in a consistent, deterministic order.
+    final originalIndex = {for (var i = 0; i < data.length; i++) data[i].id: i};
+    data.sort((a, b) {
+      final cmp = (sortKeys[a.id] ?? 0).compareTo(sortKeys[b.id] ?? 0);
+      if (cmp != 0) return cmp;
+      return (originalIndex[a.id] ?? 0).compareTo(originalIndex[b.id] ?? 0);
+    });
 
     final chapterIds = data.map((c) => c.id).whereType<int>().toList();
     final downloadedIds = (filterDownloaded == 0 || chapterIds.isEmpty)
@@ -155,10 +163,19 @@ extension MangaExtensions on Manga {
     switch (sortIndex) {
       case 0: // by scanlator, then chapter number
         final sortKeys = _chapterSortKeys(name ?? '', chapters.toList());
+        // Same stability concern as getFilteredChapters: break remaining
+        // ties by list's current (already deterministic) order.
+        final originalIndex = {
+          for (var i = 0; i < list.length; i++) list[i].id: i,
+        };
         list.sort((a, b) {
           final s = (a.scanlator ?? '').compareTo(b.scanlator ?? '');
           if (s != 0) return s;
-          return (sortKeys[a.id] ?? 0).compareTo(sortKeys[b.id] ?? 0);
+          final cmp = (sortKeys[a.id] ?? 0).compareTo(sortKeys[b.id] ?? 0);
+          if (cmp != 0) return cmp;
+          return (originalIndex[a.id] ?? 0).compareTo(
+            originalIndex[b.id] ?? 0,
+          );
         });
         break;
       case 2: // by upload date
@@ -199,5 +216,35 @@ extension MangaExtensions on Manga {
       final key = sortKeys[c.id];
       return key == null || seen.add(key);
     }).toList();
+  }
+
+  /// Number of currently-filtered chapters whose name has no detectable
+  /// chapter/episode number at all — surfaced to the user since it means
+  /// automatic sort/dedup can't place them reliably.
+  int unrecognizedChapterNumberCount() {
+    final list = getFilteredChapters();
+    final sortKeys = _chapterSortKeys(name ?? '', list);
+    return list.where((c) => sortKeys[c.id] == null).length;
+  }
+
+  /// Count of whole numbers missing from the recognized chapter sequence —
+  /// e.g. chapters 1, 2, 4, 5 present means 1 (chapter 3) is missing. Decimal
+  /// extras (12.5) are floored into their whole chapter, since they aren't
+  /// part of the main numbering. Season-bucketed keys are unbucketed back to
+  /// their raw episode number first, since gaps only make sense within one
+  /// season's own numbering, not across a season * 100000 jump.
+  int missingChapterCount() {
+    final list = getFilteredChapters();
+    final mangaTitle = name ?? '';
+    final recognition = ChapterRecognition();
+    final numbers = <int>{};
+    for (final c in list) {
+      final (_, ep) = recognition.rawSeasonAndNumber(mangaTitle, c.name ?? '');
+      if (ep != null) numbers.add(ep.floor());
+    }
+    if (numbers.length < 2) return 0;
+    final lowest = numbers.reduce((a, b) => a < b ? a : b);
+    final highest = numbers.reduce((a, b) => a > b ? a : b);
+    return (highest - lowest + 1) - numbers.length;
   }
 }
