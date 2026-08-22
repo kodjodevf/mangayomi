@@ -2996,6 +2996,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get onboarding_next => 'Next';
 
   @override
+  String get onboarding_restore => 'Restore from a backup instead';
+
+  @override
   String get onboarding_repo_failed =>
       'Couldn\'t read that repository. Check the address and your connection.';
 

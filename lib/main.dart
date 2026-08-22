@@ -281,9 +281,19 @@ class _MyAppState extends ConsumerState<MyApp>
         // so say so before dropping the user into an empty Browse. Gating here
         // rather than in the router keeps the TV shortcuts, the UI scale and
         // the toast host below wrapping it exactly as they wrap everything else.
-        if (!ref.watch(onboardingCompletedStateProvider)) {
-          content = const OnboardingScreen();
-        }
+        // Fading rather than swapping. The first run used to vanish in a
+        // single frame onto whatever the router had underneath it, which is
+        // also the frame the browse branch is still building in, so the end of
+        // the flow was the roughest part of it.
+        final onboarding = !ref.watch(onboardingCompletedStateProvider);
+        content = AnimatedSwitcher(
+          duration: const Duration(milliseconds: 320),
+          switchInCurve: Curves.easeOut,
+          switchOutCurve: Curves.easeIn,
+          child: onboarding
+              ? const OnboardingScreen()
+              : KeyedSubtree(key: const ValueKey('app'), child: content),
+        );
         // On TV, a single-line text field consumes Up/Down for the text cursor,
         // trapping focus so the remote can't reach the surrounding buttons (a
         // dialog's Cancel/Add, etc.). Remap Up/Down to move focus app-wide: a

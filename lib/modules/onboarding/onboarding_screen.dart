@@ -5,6 +5,7 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/browse/browse_screen.dart';
 import 'package:mangayomi/modules/browse/providers/browse_initial_tab_provider.dart';
 import 'package:mangayomi/models/settings.dart';
+import 'package:mangayomi/modules/more/data_and_storage/widgets/unified_restore.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/onboarding/providers/onboarding_state_provider.dart';
@@ -47,19 +48,49 @@ const _libraryRoutes = {
 /// arrival so the first press of OK opens the keyboard, and every choice is a
 /// row of [TvPill]s, because a SegmentedButton's internals are not reliably
 /// reachable with a d-pad.
-class OnboardingScreen extends ConsumerStatefulWidget {
+class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
 
   @override
-  ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
+  Widget build(BuildContext context) {
+    // A Navigator of its own, because this is mounted from
+    // MaterialApp.builder, outside the router's, and everything that floats
+    // needs one above it: the back arrow's tooltip, the repository field's
+    // selection handles, and the dialogs the restore flow puts up.
+    //
+    // The state lives in the route rather than around the Navigator, or a
+    // step change would rebuild the Navigator and leave the route showing the
+    // step before it.
+    return Navigator(
+      onGenerateRoute: (_) => PageRouteBuilder(
+        pageBuilder: (_, _, _) => const _OnboardingBody(),
+        // The screen is already being faded in by the caller; a second
+        // transition here would fight it.
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
+      ),
+    );
+  }
+}
+
+class _OnboardingBody extends ConsumerStatefulWidget {
+  const _OnboardingBody();
+
+  @override
+  ConsumerState<_OnboardingBody> createState() => _OnboardingScreenState();
 }
 
 enum _Step { libraries, navigation, repository }
 
-class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
+class _OnboardingScreenState extends ConsumerState<_OnboardingBody> {
   final _controller = TextEditingController();
 
   _Step _step = _Step.libraries;
+
+  /// Which way the last step change went, so the new words arrive from the
+  /// side they came from. Going back animating like going forward is what made
+  /// the movement feel arbitrary.
+  bool _forward = true;
   final Set<ItemType> _libraries = {...ItemType.values};
   bool _mergeLibraries = false;
   ItemType _repoType = ItemType.manga;
@@ -110,13 +141,32 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     if (_step == _Step.libraries) {
       _applyLibraries();
       setState(() {
+        _forward = true;
         _repoType = _chosen.first;
         _step = _shouldArrangeBar ? _Step.navigation : _Step.repository;
       });
       return;
     }
     ref.read(mergeLibraryNavMobileStateProvider.notifier).set(_mergeLibraries);
-    setState(() => _step = _Step.repository);
+    setState(() {
+      _forward = true;
+      _step = _Step.repository;
+    });
+  }
+
+  /// Runs the existing restore flow, then leaves.
+  ///
+  /// A backup carries repositories, library and settings, which answers every
+  /// question this screen asks. Anyone who has one should not have to walk the
+  /// steps first and find Settings afterwards. Mangayomi's own backups and
+  /// Mihon, Aniyomi and Neko ones all go through the same picker.
+  Future<void> _restore() async {
+    await performRestore(context, ref);
+    if (!mounted) return;
+    // Whether or not a file was chosen, the user came here to restore rather
+    // than to answer questions. Leaving without applying any of them is the
+    // honest outcome; the welcome screen is still in Settings if they want it.
+    ref.read(onboardingCompletedStateProvider.notifier).complete();
   }
 
   /// Returns to the previous question, skipping the arrange step when it was
@@ -126,6 +176,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   /// back and going forward again simply applies the new one.
   void _back() {
     setState(() {
+      _forward = false;
       _step = _step == _Step.repository && _shouldArrangeBar
           ? _Step.navigation
           : _Step.libraries;
@@ -203,19 +254,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final l10n = l10nLocalizations(context)!;
     final theme = Theme.of(context);
 
-    // The screen is mounted from MaterialApp.builder, outside the router's
-    // Navigator, so nothing above it supplies an Overlay. Anything that floats
-    // needs one: the back arrow's tooltip, and the selection handles and
-    // context menu on the repository field. Carrying its own means the screen
-    // works wherever it is put rather than only where it happens to be.
-    return Overlay(
-      initialEntries: [
-        OverlayEntry(builder: (context) => _scaffold(l10n, theme)),
-      ],
-    );
-  }
-
-  Widget _scaffold(AppLocalizations l10n, ThemeData theme) {
     return Scaffold(
       body: SafeArea(
         child: Stack(
@@ -284,16 +322,23 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   duration: _motion,
                   switchInCurve: Curves.easeOutCubic,
                   switchOutCurve: Curves.easeIn,
-                  transitionBuilder: (child, animation) => FadeTransition(
-                    opacity: animation,
-                    child: SlideTransition(
-                      position: Tween<Offset>(
-                        begin: const Offset(0, 0.04),
-                        end: Offset.zero,
-                      ).animate(animation),
-                      child: child,
-                    ),
-                  ),
+                  transitionBuilder: (child, animation) {
+                    // Forward arrives from below and leaves upward; back does
+                    // the reverse, so the movement matches the direction of
+                    // travel instead of always looking like a step forward.
+                    final entering = child.key == ValueKey(_step);
+                    final from = _forward ? 0.05 : -0.05;
+                    return FadeTransition(
+                      opacity: animation,
+                      child: SlideTransition(
+                        position: Tween<Offset>(
+                          begin: Offset(0, entering ? from : -from),
+                          end: Offset.zero,
+                        ).animate(animation),
+                        child: child,
+                      ),
+                    );
+                  },
                   child: Column(
                     key: ValueKey(_step),
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -386,6 +431,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       ),
       const SizedBox(height: 16),
       FilledButton(onPressed: _next, child: Text(l10n.onboarding_next)),
+      const SizedBox(height: 4),
+      // The escape hatch for anyone arriving with a backup, offered here
+      // because it makes the rest of the screen unnecessary.
+      TextButton(onPressed: _restore, child: Text(l10n.onboarding_restore)),
     ],
     _Step.navigation => [
       _ChoiceRow<bool>(

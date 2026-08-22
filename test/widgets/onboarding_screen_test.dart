@@ -258,6 +258,27 @@ void main() {
     });
   });
 
+  group('restoring instead', () {
+    testWidgets('the first step offers it, the later ones do not', (
+      tester,
+    ) async {
+      // A backup carries repositories, library and settings, so it answers
+      // every question here. It belongs where it can save the walk, not after
+      // it.
+      await pump(tester);
+      expect(
+        find.widgetWithText(TextButton, 'Restore from a backup instead'),
+        findsOneWidget,
+      );
+      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      await tester.pumpAndSettle();
+      expect(
+        find.widgetWithText(TextButton, 'Restore from a backup instead'),
+        findsNothing,
+      );
+    });
+  });
+
   group('motion', () {
     Future<int> framesToChangeStep(
       WidgetTester tester, {
