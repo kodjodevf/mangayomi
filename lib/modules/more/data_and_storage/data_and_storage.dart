@@ -7,12 +7,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/auto_backup.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/backup_compression.dart';
+import 'package:mangayomi/modules/more/data_and_storage/providers/backup_encryption.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/storage_usage.dart';
+import 'package:mangayomi/modules/more/data_and_storage/widgets/backup_encryption_password_dialog.dart';
 import 'package:mangayomi/modules/more/data_and_storage/widgets/rollback_last_change_tile.dart';
 import 'package:mangayomi/modules/more/data_and_storage/widgets/source_management_tiles.dart';
 import 'package:mangayomi/modules/more/data_and_storage/widgets/unified_restore.dart';
 import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/services/backup_password_storage.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/widgets/tv_escapable_slider.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
@@ -32,6 +35,7 @@ class DataAndStorage extends ConsumerWidget {
     );
     final l10n = l10nLocalizations(context)!;
     final compression = ref.watch(backupCompressionLevelProvider);
+    final backupEncryptionEnabled = ref.watch(backupEncryptionEnabledProvider);
     return Scaffold(
       appBar: AppBar(title: Text(l10n.data_and_storage)),
       body: SingleChildScrollView(
@@ -248,6 +252,29 @@ class DataAndStorage extends ConsumerWidget {
                 _getBackupFrequencyList(context)[backupFrequency],
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
+            ),
+            SwitchListTile(
+              title: Text(l10n.encrypt_backups),
+              subtitle: Text(
+                l10n.encrypt_backups_info,
+                style: TextStyle(fontSize: 11),
+              ),
+              value: backupEncryptionEnabled,
+              onChanged: (value) async {
+                if (!value) {
+                  await ref
+                      .read(backupEncryptionEnabledProvider.notifier)
+                      .set(false);
+                  await BackupPasswordStorage.clear();
+                  return;
+                }
+                final saved = await showBackupEncryptionPasswordDialog(context);
+                if (saved == true) {
+                  await ref
+                      .read(backupEncryptionEnabledProvider.notifier)
+                      .set(true);
+                }
+              },
             ),
             ListTile(
               title: Text(l10n.compression_level),

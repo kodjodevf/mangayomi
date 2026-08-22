@@ -1369,6 +1369,39 @@ class AppLocalizationsFr extends AppLocalizations {
   String get restore_backup => 'Restaurer une sauvegarde';
 
   @override
+  String get encrypt_backups => 'Encrypt backups';
+
+  @override
+  String get encrypt_backups_info =>
+      'Password-protect backup files using AES encryption';
+
+  @override
+  String get no_secure_storage => 'No secure storage found';
+
+  @override
+  String get no_keyring_warning =>
+      'This system doesn\'t have a keyring service available (e.g. gnome-keyring or kwallet on Linux), so the password can\'t be stored securely.\n\nStore it unencrypted in the local app database instead? Anyone with access to this device\'s app data would be able to read it.';
+
+  @override
+  String get enter_backup_password => 'Enter backup password';
+
+  @override
+  String get incorrect_password_try_again => 'Incorrect password, try again.';
+
+  @override
+  String get set_backup_password => 'Set backup password';
+
+  @override
+  String get confirm_password => 'Confirm password';
+
+  @override
+  String get passwords_do_not_match => 'Passwords do not match';
+
+  @override
+  String get password_required_to_restore =>
+      'A password is required to restore this backup.';
+
+  @override
   String get restore_backup_subtitle =>
       'Restaurer la bibliothèque à partir d\'un fichier de sauvegarde';
 

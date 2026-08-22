@@ -1362,6 +1362,40 @@ class AppLocalizationsDe extends AppLocalizations {
   String get restore_backup => 'Backup wiederherstellen';
 
   @override
+  String get encrypt_backups => 'Backups verschlüsseln';
+
+  @override
+  String get encrypt_backups_info =>
+      'Backups mittels AES Verfahren verschlüsseln';
+
+  @override
+  String get no_secure_storage => 'Keinen geschützten Speicher gefunden';
+
+  @override
+  String get no_keyring_warning =>
+      'Auf diesem System ist kein Schlüsselbund verfügbar (z. B. gnome-keyring oder KWallet unter Linux), daher kann das Passwort nicht sicher gespeichert werden.\n\nSoll es stattdessen unverschlüsselt in der lokalen App-Datenbank gespeichert werden? Jeder, der Zugriff auf die App-Daten dieses Geräts hat, könnte es lesen.';
+
+  @override
+  String get enter_backup_password => 'Backup-Passwort eingeben';
+
+  @override
+  String get incorrect_password_try_again =>
+      'Falsches Passwort, versuche es erneut.';
+
+  @override
+  String get set_backup_password => 'Backup-Passwort festlegen';
+
+  @override
+  String get confirm_password => 'Passwort bestätigen';
+
+  @override
+  String get passwords_do_not_match => 'Passwörter stimmen nicht überein';
+
+  @override
+  String get password_required_to_restore =>
+      'Zum Wiederherstellen dieses Backups ist ein Passwort erforderlich.';
+
+  @override
   String get restore_backup_subtitle =>
       'Bibliothek aus Backup-Datei wiederherstellen';
 

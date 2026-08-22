@@ -36,7 +36,7 @@ Future<bool> performRestore(BuildContext context, WidgetRef ref) async {
       if (confirmed != true || !context.mounted) return false;
       showBusyDialog(context, context.l10n.restoring_backup);
       try {
-        await ref.read(doRestoreProvider(path: path, context: context).future);
+        await ref.watch(doRestoreProvider(path: path, context: context).future);
       } finally {
         if (context.mounted) hideBusyDialog(context);
       }
@@ -109,8 +109,11 @@ Future<bool> performRestore(BuildContext context, WidgetRef ref) async {
         safetyBackupPath = null;
       }
 
+      // false, not a bare return: performRestore reports whether anything was
+      // actually restored, so the first-run screen can tell a cancel from a
+      // completed restore. ref.watch is upstream's.
       if (!context.mounted) return false;
-      await ref.read(
+      await ref.watch(
         doRestoreProvider(
           path: path,
           context: context,

@@ -2531,6 +2531,66 @@ abstract class AppLocalizations {
   /// **'Restore backup'**
   String get restore_backup;
 
+  /// No description provided for @encrypt_backups.
+  ///
+  /// In en, this message translates to:
+  /// **'Encrypt backups'**
+  String get encrypt_backups;
+
+  /// No description provided for @encrypt_backups_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Password-protect backup files using AES encryption'**
+  String get encrypt_backups_info;
+
+  /// No description provided for @no_secure_storage.
+  ///
+  /// In en, this message translates to:
+  /// **'No secure storage found'**
+  String get no_secure_storage;
+
+  /// No description provided for @no_keyring_warning.
+  ///
+  /// In en, this message translates to:
+  /// **'This system doesn\'t have a keyring service available (e.g. gnome-keyring or kwallet on Linux), so the password can\'t be stored securely.\n\nStore it unencrypted in the local app database instead? Anyone with access to this device\'s app data would be able to read it.'**
+  String get no_keyring_warning;
+
+  /// No description provided for @enter_backup_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter backup password'**
+  String get enter_backup_password;
+
+  /// No description provided for @incorrect_password_try_again.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect password, try again.'**
+  String get incorrect_password_try_again;
+
+  /// No description provided for @set_backup_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Set backup password'**
+  String get set_backup_password;
+
+  /// No description provided for @confirm_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get confirm_password;
+
+  /// No description provided for @passwords_do_not_match.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwords_do_not_match;
+
+  /// No description provided for @password_required_to_restore.
+  ///
+  /// In en, this message translates to:
+  /// **'A password is required to restore this backup.'**
+  String get password_required_to_restore;
+
   /// No description provided for @restore_backup_subtitle.
   ///
   /// In en, this message translates to:
