@@ -22,6 +22,7 @@ import 'package:mangayomi/modules/more/data_and_storage/providers/backup_compres
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/backup_password_storage.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
+import 'package:mangayomi/utils/share.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path/path.dart' as p;
@@ -58,29 +59,28 @@ Future<void> doBackUp(
           "Backup created!",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        trailing: Platform.isLinux
-            ? null
-            : // Don't show share button on Linux, as there is no share-feature
-              (_) => UnconstrainedBox(
-                alignment: Alignment.topLeft,
-                child: ElevatedButton(
-                  onPressed: () {
-                    final RenderBox? box =
-                        context.findRenderObject() as RenderBox?;
-                    SharePlus.instance.share(
-                      ShareParams(
-                        files: [XFile(zipPath)],
-                        subject: p.basename(zipPath),
-                        title: "Share Mangayomi backup file",
-                        sharePositionOrigin: box == null
-                            ? null
-                            : box.localToGlobal(Offset.zero) & box.size,
-                      ),
-                    );
-                  },
-                  child: Text(context.l10n.share),
+        // The button used to be hidden on Linux, where share_plus throws on a
+        // file. shareOrCopy answers there with the backup's path on the
+        // clipboard, which is the thing a Linux user wanted from it anyway.
+        trailing: (_) => UnconstrainedBox(
+          alignment: Alignment.topLeft,
+          child: ElevatedButton(
+            onPressed: () {
+              final RenderBox? box = context.findRenderObject() as RenderBox?;
+              shareOrCopy(
+                ShareParams(
+                  files: [XFile(zipPath)],
+                  subject: p.basename(zipPath),
+                  title: "Share Mangayomi backup file",
+                  sharePositionOrigin: box == null
+                      ? null
+                      : box.localToGlobal(Offset.zero) & box.size,
                 ),
-              ),
+              );
+            },
+            child: Text(context.l10n.share),
+          ),
+        ),
         enableSlideOff: true,
         onlyOne: true,
         crossPage: true,

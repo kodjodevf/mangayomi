@@ -5452,6 +5452,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Beta'**
   String get beta;
+
+  /// No description provided for @share_unavailable_copied.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharing isn\'t available on this platform, so it was copied to the clipboard instead.'**
+  String get share_unavailable_copied;
 }
 
 class _AppLocalizationsDelegate

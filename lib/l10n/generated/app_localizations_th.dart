@@ -3012,4 +3012,8 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get beta => 'Beta';
+
+  @override
+  String get share_unavailable_copied =>
+      'Sharing isn\'t available on this platform, so it was copied to the clipboard instead.';
 }
