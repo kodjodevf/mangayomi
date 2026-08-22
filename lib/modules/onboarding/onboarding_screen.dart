@@ -182,6 +182,19 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     final l10n = l10nLocalizations(context)!;
     final theme = Theme.of(context);
 
+    // The screen is mounted from MaterialApp.builder, outside the router's
+    // Navigator, so nothing above it supplies an Overlay. Anything that floats
+    // needs one: the back arrow's tooltip, and the selection handles and
+    // context menu on the repository field. Carrying its own means the screen
+    // works wherever it is put rather than only where it happens to be.
+    return Overlay(
+      initialEntries: [
+        OverlayEntry(builder: (context) => _scaffold(l10n, theme)),
+      ],
+    );
+  }
+
+  Widget _scaffold(AppLocalizations l10n, ThemeData theme) {
     return Scaffold(
       body: SafeArea(
         child: Stack(

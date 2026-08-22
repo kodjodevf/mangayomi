@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -37,7 +38,10 @@ void main() {
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
           theme: ThemeData(brightness: brightness ?? Brightness.dark),
-          home: const OnboardingScreen(),
+          // Mounted from builder, not home, because that is how main.dart
+          // mounts it: outside the Navigator, with no Overlay above it.
+          home: const SizedBox.shrink(),
+          builder: (context, child) => const OnboardingScreen(),
         ),
       ),
     );
@@ -197,6 +201,25 @@ void main() {
       // A tick appearing on selection changed every chip's width and made the
       // row jump about as the user tapped through it.
       expect(tester.getSize(chip), before);
+    });
+  });
+
+  group('floating widgets', () {
+    testWidgets('the back arrow can show its tooltip', (tester) async {
+      // The screen renders in MaterialApp.builder, outside the router's
+      // Navigator, so it has no Overlay unless one is given to it. Without
+      // that the first hover over this button throws.
+      await pump(tester);
+      await tester.tap(find.widgetWithText(FilledButton, 'Next'));
+      await tester.pumpAndSettle();
+      final back = find.widgetWithIcon(IconButton, Icons.arrow_back);
+      final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await gesture.addPointer(location: tester.getCenter(back));
+      addTearDown(gesture.removePointer);
+      await tester.pump();
+      await gesture.moveTo(tester.getCenter(back));
+      await tester.pump(const Duration(seconds: 2));
+      expect(tester.takeException(), isNull);
     });
   });
 
