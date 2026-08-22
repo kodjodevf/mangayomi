@@ -1,10 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:path/path.dart' as p;
 import 'package:photo_view/photo_view.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
-import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/services/downloaded_chapter.dart';
 import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_providers.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/modules/manga/reader/subsampling_scale_image_view/subsampling_scale_image_view.dart'
@@ -1349,15 +1348,9 @@ class _MangaChapterPageGalleryState
 
     if (needsReload) {
       final isLocalArchive = (currentChapter.archivePath ?? '').isNotEmpty;
-      final storageProvider = StorageProvider();
-      final mangaDirectory = await storageProvider.getMangaMainDirectory(
-        currentChapter,
-      );
       final archivePath = isLocalArchive
           ? currentChapter.archivePath
-          : (mangaDirectory != null
-                ? p.join(mangaDirectory.path, "${currentChapter.name}.cbz")
-                : null);
+          : (await findDownloadedChapter(currentChapter))?.archive?.path;
 
       if (archivePath != null && await File(archivePath).exists()) {
         try {
