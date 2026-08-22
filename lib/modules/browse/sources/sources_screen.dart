@@ -281,6 +281,12 @@ class _SourcesScreenState extends ConsumerState<SourcesScreen> {
                     ],
                   ),
                 ),
+                // Trailing room rather than padding around the viewport, so rows
+                // scroll under the translucent bar, which is what gives it
+                // something to blur, and only the last one clears it.
+                SliverToBoxAdapter(
+                  child: SizedBox(height: pageBottomInsets(context).bottom),
+                ),
               ],
             ),
           );

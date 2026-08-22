@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mangayomi/modules/main_view/providers/swipe_tabs_provider.dart';
 import 'package:mangayomi/modules/main_view/providers/tv_mode_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/appearance_screen.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
@@ -49,6 +50,18 @@ class _CustomNavigationSettingsState
                         .set(value);
                   },
                 ),
+                // Hidden where the gesture cannot be made at all rather than
+                // shown switched off, which would only invite the question of
+                // why turning it on does nothing.
+                if (swipeBetweenTabsSupported)
+                  SwitchListTile(
+                    value: ref.watch(swipeBetweenTabsProvider),
+                    title: Text(context.l10n.swipe_between_tabs),
+                    subtitle: Text(context.l10n.swipe_between_tabs_subtitle),
+                    onChanged: (value) {
+                      ref.read(swipeBetweenTabsProvider.notifier).set(value);
+                    },
+                  ),
               ],
             ),
           ),

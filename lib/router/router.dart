@@ -3,6 +3,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mangayomi/modules/main_view/nav_shell_container.dart';
 import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
@@ -126,9 +127,15 @@ class RouterNotifier extends ChangeNotifier {
   List<RouteBase> get _routes => [
     // Each tab lives in its own StatefulShellBranch so switching tabs keeps
     // the other screens mounted (scroll position, queries, images preserved).
-    StatefulShellRoute.indexedStack(
+    StatefulShellRoute(
       builder: (context, state, navigationShell) =>
           MainScreen(child: navigationShell),
+      // The branches are laid out by hand rather than by an IndexedStack, so a
+      // swipe can hold two of them on screen at once and a tab change can
+      // arrive from the side its tab sits on. Every branch still stays
+      // mounted, which is the point of the stateful shell.
+      navigatorContainerBuilder: (context, navigationShell, children) =>
+          NavShellContainer(shell: navigationShell, children: children),
       branches: [
         _branch(
           _genericRoute<String?>(

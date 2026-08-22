@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:mangayomi/modules/main_view/section_memory.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/manga.dart';
@@ -57,7 +58,13 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
   bool _ignoreFiltersOnSearch = false;
   final _textEditingController = TextEditingController();
   TabController? tabBarController;
-  int _tabIndex = 0;
+
+  /// Seeded from the section this library was last left on. The shell
+  /// disposes the screen on every tab switch, so without this a swipe out and
+  /// straight back landed on the first category rather than the one you left.
+  late int _tabIndex = rememberedSection(_sectionKey);
+
+  String get _sectionKey => 'library:${widget.itemType.name}';
   Timer? _searchDebounce;
 
   @override
@@ -362,6 +369,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen>
       _tabIndex = newTabIndex;
       tabBarController!.addListener(() {
         if (_tabIndex != tabBarController!.index) {
+          rememberSection(_sectionKey, tabBarController!.index);
           setState(() => _tabIndex = tabBarController!.index);
         }
       });

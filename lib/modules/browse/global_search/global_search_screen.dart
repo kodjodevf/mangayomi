@@ -119,6 +119,9 @@ class _GlobalSearchScreenState extends ConsumerState<GlobalSearchScreen> {
           // Building all of them keeps the extent stable. There is one row per
           // installed source, and a global search queries all of them anyway.
           ? SingleChildScrollView(
+              // Keeps the last group clear of the home indicator, and of the
+              // floating nav bar on the routes that show one.
+              padding: pageBottomInsets(context),
               child: Column(
                 children: [
                   for (final source in sourceList)

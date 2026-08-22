@@ -3575,6 +3575,18 @@ abstract class AppLocalizations {
   /// **'Merge library navigation on mobile'**
   String get merge_library_nav_mobile;
 
+  /// No description provided for @swipe_between_tabs.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe between tabs'**
+  String get swipe_between_tabs;
+
+  /// No description provided for @swipe_between_tabs_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag sideways on a page to move to the next tab'**
+  String get swipe_between_tabs_subtitle;
+
   /// No description provided for @enable_discord_rpc.
   ///
   /// In en, this message translates to:
