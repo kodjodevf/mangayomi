@@ -5332,6 +5332,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Beta'**
   String get beta;
+
+  /// No description provided for @onboarding_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Mangayomi'**
+  String get onboarding_title;
+
+  /// No description provided for @onboarding_libraries_body.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick what you read and watch. The ones you leave out stay out of the navigation bar, and you can change this later under Appearance.'**
+  String get onboarding_libraries_body;
+
+  /// No description provided for @onboarding_nav_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Your libraries'**
+  String get onboarding_nav_title;
+
+  /// No description provided for @onboarding_nav_body.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep a tab for each of them, or put them together behind one Library tab you can switch inside.'**
+  String get onboarding_nav_body;
+
+  /// No description provided for @onboarding_nav_split.
+  ///
+  /// In en, this message translates to:
+  /// **'A tab each'**
+  String get onboarding_nav_split;
+
+  /// No description provided for @onboarding_nav_merged.
+  ///
+  /// In en, this message translates to:
+  /// **'One Library tab'**
+  String get onboarding_nav_merged;
+
+  /// No description provided for @onboarding_nav_inside.
+  ///
+  /// In en, this message translates to:
+  /// **'Tapping Library swaps the bar for these'**
+  String get onboarding_nav_inside;
+
+  /// No description provided for @onboarding_next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboarding_next;
+
+  /// No description provided for @onboarding_restore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore a backup'**
+  String get onboarding_restore;
+
+  /// No description provided for @onboarding_or_local.
+  ///
+  /// In en, this message translates to:
+  /// **'Or use files you already have'**
+  String get onboarding_or_local;
+
+  /// No description provided for @onboarding_local_folder.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a folder'**
+  String get onboarding_local_folder;
+
+  /// No description provided for @onboarding_local_existing.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} folders already set up'**
+  String onboarding_local_existing(Object count);
+
+  /// No description provided for @onboarding_local_any_type.
+  ///
+  /// In en, this message translates to:
+  /// **'Manga, anime and novels all work. Each title goes to the right library based on what is inside it.'**
+  String get onboarding_local_any_type;
+
+  /// No description provided for @onboarding_local_scanning.
+  ///
+  /// In en, this message translates to:
+  /// **'Scanning the folder'**
+  String get onboarding_local_scanning;
+
+  /// No description provided for @onboarding_local_found.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} titles found'**
+  String onboarding_local_found(Object count);
+
+  /// No description provided for @onboarding_local_remove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove that folder'**
+  String get onboarding_local_remove;
+
+  /// No description provided for @onboarding_local_in_downloads.
+  ///
+  /// In en, this message translates to:
+  /// **'That is the app\'s downloads folder. Adding it makes a second, local copy of a library the app already manages.'**
+  String get onboarding_local_in_downloads;
+
+  /// No description provided for @onboarding_local_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing found. Pick the folder that holds your manga folders, not one manga.'**
+  String get onboarding_local_empty;
+
+  /// No description provided for @onboarding_repo_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t read that repository. Check the address and your connection.'**
+  String get onboarding_repo_failed;
+
+  /// No description provided for @onboarding_repo_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a source'**
+  String get onboarding_repo_title;
+
+  /// No description provided for @onboarding_body.
+  ///
+  /// In en, this message translates to:
+  /// **'Mangayomi comes with no sources of its own. Add a repository and the extensions it holds become available to install and browse.'**
+  String get onboarding_body;
+
+  /// No description provided for @onboarding_add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add repository'**
+  String get onboarding_add;
+
+  /// No description provided for @onboarding_skip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip for now'**
+  String get onboarding_skip;
+
+  /// No description provided for @onboarding_continue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get onboarding_continue;
+
+  /// No description provided for @onboarding_later.
+  ///
+  /// In en, this message translates to:
+  /// **'You can add one later in Settings, under Browse.'**
+  String get onboarding_later;
+
+  /// No description provided for @onboarding_replay.
+  ///
+  /// In en, this message translates to:
+  /// **'Show the welcome screen'**
+  String get onboarding_replay;
+
+  /// No description provided for @onboarding_replay_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens the first-run screen again, the one a new install starts on.'**
+  String get onboarding_replay_subtitle;
 }
 
 class _AppLocalizationsDelegate

@@ -2968,6 +2968,100 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get beta => 'Beta';
+
+  @override
+  String get onboarding_title => 'Welcome to Mangayomi';
+
+  @override
+  String get onboarding_libraries_body =>
+      'Pick what you read and watch. The ones you leave out stay out of the navigation bar, and you can change this later under Appearance.';
+
+  @override
+  String get onboarding_nav_title => 'Your libraries';
+
+  @override
+  String get onboarding_nav_body =>
+      'Keep a tab for each of them, or put them together behind one Library tab you can switch inside.';
+
+  @override
+  String get onboarding_nav_split => 'A tab each';
+
+  @override
+  String get onboarding_nav_merged => 'One Library tab';
+
+  @override
+  String get onboarding_nav_inside => 'Tapping Library swaps the bar for these';
+
+  @override
+  String get onboarding_next => 'Next';
+
+  @override
+  String get onboarding_restore => 'Restore a backup';
+
+  @override
+  String get onboarding_or_local => 'Or use files you already have';
+
+  @override
+  String get onboarding_local_folder => 'Add a folder';
+
+  @override
+  String onboarding_local_existing(Object count) {
+    return '$count folders already set up';
+  }
+
+  @override
+  String get onboarding_local_any_type =>
+      'Manga, anime and novels all work. Each title goes to the right library based on what is inside it.';
+
+  @override
+  String get onboarding_local_scanning => 'Scanning the folder';
+
+  @override
+  String onboarding_local_found(Object count) {
+    return '$count titles found';
+  }
+
+  @override
+  String get onboarding_local_remove => 'Remove that folder';
+
+  @override
+  String get onboarding_local_in_downloads =>
+      'That is the app\'s downloads folder. Adding it makes a second, local copy of a library the app already manages.';
+
+  @override
+  String get onboarding_local_empty =>
+      'Nothing found. Pick the folder that holds your manga folders, not one manga.';
+
+  @override
+  String get onboarding_repo_failed =>
+      'Couldn\'t read that repository. Check the address and your connection.';
+
+  @override
+  String get onboarding_repo_title => 'Add a source';
+
+  @override
+  String get onboarding_body =>
+      'Mangayomi comes with no sources of its own. Add a repository and the extensions it holds become available to install and browse.';
+
+  @override
+  String get onboarding_add => 'Add repository';
+
+  @override
+  String get onboarding_skip => 'Skip for now';
+
+  @override
+  String get onboarding_continue => 'Continue';
+
+  @override
+  String get onboarding_later =>
+      'You can add one later in Settings, under Browse.';
+
+  @override
+  String get onboarding_replay => 'Show the welcome screen';
+
+  @override
+  String get onboarding_replay_subtitle =>
+      'Opens the first-run screen again, the one a new install starts on.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).

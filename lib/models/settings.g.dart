@@ -836,282 +836,287 @@ const SettingsSchema = CollectionSchema(
       type: IsarType.byte,
       enumMap: _SettingsnovelTextAlignEnumValueMap,
     ),
-    r'onlyIncludePinnedSources': PropertySchema(
+    r'onboardingCompleted': PropertySchema(
       id: 156,
+      name: r'onboardingCompleted',
+      type: IsarType.bool,
+    ),
+    r'onlyIncludePinnedSources': PropertySchema(
+      id: 157,
       name: r'onlyIncludePinnedSources',
       type: IsarType.bool,
     ),
     r'pagePreloadAmount': PropertySchema(
-      id: 157,
+      id: 158,
       name: r'pagePreloadAmount',
       type: IsarType.long,
     ),
     r'personalPageModeList': PropertySchema(
-      id: 158,
+      id: 159,
       name: r'personalPageModeList',
       type: IsarType.objectList,
 
       target: r'PersonalPageMode',
     ),
     r'personalReaderModeList': PropertySchema(
-      id: 159,
+      id: 160,
       name: r'personalReaderModeList',
       type: IsarType.objectList,
 
       target: r'PersonalReaderMode',
     ),
     r'playerSubtitleSettings': PropertySchema(
-      id: 160,
+      id: 161,
       name: r'playerSubtitleSettings',
       type: IsarType.object,
 
       target: r'PlayerSubtitleSettings',
     ),
     r'pureBlackDarkMode': PropertySchema(
-      id: 161,
+      id: 162,
       name: r'pureBlackDarkMode',
       type: IsarType.bool,
     ),
     r'readerBrightness': PropertySchema(
-      id: 162,
+      id: 163,
       name: r'readerBrightness',
       type: IsarType.double,
     ),
     r'readerContrast': PropertySchema(
-      id: 163,
+      id: 164,
       name: r'readerContrast',
       type: IsarType.double,
     ),
     r'readerHideThreshold': PropertySchema(
-      id: 164,
+      id: 165,
       name: r'readerHideThreshold',
       type: IsarType.long,
     ),
     r'readerNavigationLayout': PropertySchema(
-      id: 165,
+      id: 166,
       name: r'readerNavigationLayout',
       type: IsarType.long,
     ),
     r'readerSaturation': PropertySchema(
-      id: 166,
+      id: 167,
       name: r'readerSaturation',
       type: IsarType.double,
     ),
     r'relativeTimesTamps': PropertySchema(
-      id: 167,
+      id: 168,
       name: r'relativeTimesTamps',
       type: IsarType.long,
     ),
     r'rpcShowCoverImage': PropertySchema(
-      id: 168,
+      id: 169,
       name: r'rpcShowCoverImage',
       type: IsarType.bool,
     ),
     r'rpcShowReadingWatchingProgress': PropertySchema(
-      id: 169,
+      id: 170,
       name: r'rpcShowReadingWatchingProgress',
       type: IsarType.bool,
     ),
     r'rpcShowTitle': PropertySchema(
-      id: 170,
+      id: 171,
       name: r'rpcShowTitle',
       type: IsarType.bool,
     ),
     r'saveAsCBZArchive': PropertySchema(
-      id: 171,
+      id: 172,
       name: r'saveAsCBZArchive',
       type: IsarType.bool,
     ),
     r'savedSearchesList': PropertySchema(
-      id: 172,
+      id: 173,
       name: r'savedSearchesList',
       type: IsarType.objectList,
 
       target: r'SavedSearch',
     ),
     r'scaleType': PropertySchema(
-      id: 173,
+      id: 174,
       name: r'scaleType',
       type: IsarType.byte,
       enumMap: _SettingsscaleTypeEnumValueMap,
     ),
     r'showNSFW': PropertySchema(
-      id: 174,
+      id: 175,
       name: r'showNSFW',
       type: IsarType.bool,
     ),
     r'showNavigationOverlayOnStart': PropertySchema(
-      id: 175,
+      id: 176,
       name: r'showNavigationOverlayOnStart',
       type: IsarType.bool,
     ),
     r'showPageGaps': PropertySchema(
-      id: 176,
+      id: 177,
       name: r'showPageGaps',
       type: IsarType.bool,
     ),
     r'showPagesNumber': PropertySchema(
-      id: 177,
+      id: 178,
       name: r'showPagesNumber',
       type: IsarType.bool,
     ),
     r'showSourceBadge': PropertySchema(
-      id: 178,
+      id: 179,
       name: r'showSourceBadge',
       type: IsarType.bool,
     ),
     r'sortChapterList': PropertySchema(
-      id: 179,
+      id: 180,
       name: r'sortChapterList',
       type: IsarType.objectList,
 
       target: r'SortChapter',
     ),
     r'sortLibraryAnime': PropertySchema(
-      id: 180,
+      id: 181,
       name: r'sortLibraryAnime',
       type: IsarType.object,
 
       target: r'SortLibraryManga',
     ),
     r'sortLibraryManga': PropertySchema(
-      id: 181,
+      id: 182,
       name: r'sortLibraryManga',
       type: IsarType.object,
 
       target: r'SortLibraryManga',
     ),
     r'sortLibraryNovel': PropertySchema(
-      id: 182,
+      id: 183,
       name: r'sortLibraryNovel',
       type: IsarType.object,
 
       target: r'SortLibraryManga',
     ),
     r'splitWidePages': PropertySchema(
-      id: 183,
+      id: 184,
       name: r'splitWidePages',
       type: IsarType.bool,
     ),
     r'startDatebackup': PropertySchema(
-      id: 184,
+      id: 185,
       name: r'startDatebackup',
       type: IsarType.long,
     ),
     r'tappingInversion': PropertySchema(
-      id: 185,
+      id: 186,
       name: r'tappingInversion',
       type: IsarType.long,
     ),
     r'themeIsDark': PropertySchema(
-      id: 186,
+      id: 187,
       name: r'themeIsDark',
       type: IsarType.bool,
     ),
     r'ttsLanguage': PropertySchema(
-      id: 187,
+      id: 188,
       name: r'ttsLanguage',
       type: IsarType.string,
     ),
     r'ttsPitch': PropertySchema(
-      id: 188,
+      id: 189,
       name: r'ttsPitch',
       type: IsarType.double,
     ),
     r'ttsSpeechRate': PropertySchema(
-      id: 189,
+      id: 190,
       name: r'ttsSpeechRate',
       type: IsarType.double,
     ),
     r'ttsVoice': PropertySchema(
-      id: 190,
+      id: 191,
       name: r'ttsVoice',
       type: IsarType.string,
     ),
     r'tvAnimeOnlyOverride': PropertySchema(
-      id: 191,
+      id: 192,
       name: r'tvAnimeOnlyOverride',
       type: IsarType.bool,
     ),
     r'tvHomeGenreRows': PropertySchema(
-      id: 192,
+      id: 193,
       name: r'tvHomeGenreRows',
       type: IsarType.bool,
     ),
     r'tvHomeStyle': PropertySchema(
-      id: 193,
+      id: 194,
       name: r'tvHomeStyle',
       type: IsarType.bool,
     ),
     r'tvPlayerStyle': PropertySchema(
-      id: 194,
+      id: 195,
       name: r'tvPlayerStyle',
       type: IsarType.bool,
     ),
     r'updateErrorsList': PropertySchema(
-      id: 195,
+      id: 196,
       name: r'updateErrorsList',
       type: IsarType.objectList,
 
       target: r'UpdateError',
     ),
     r'updateProgressAfterReading': PropertySchema(
-      id: 196,
+      id: 197,
       name: r'updateProgressAfterReading',
       type: IsarType.bool,
     ),
     r'updatedAt': PropertySchema(
-      id: 197,
+      id: 198,
       name: r'updatedAt',
       type: IsarType.long,
     ),
     r'useLibass': PropertySchema(
-      id: 198,
+      id: 199,
       name: r'useLibass',
       type: IsarType.bool,
     ),
     r'useMpvConfig': PropertySchema(
-      id: 199,
+      id: 200,
       name: r'useMpvConfig',
       type: IsarType.bool,
     ),
     r'usePageTapZones': PropertySchema(
-      id: 200,
+      id: 201,
       name: r'usePageTapZones',
       type: IsarType.bool,
     ),
     r'useYUV420P': PropertySchema(
-      id: 201,
+      id: 202,
       name: r'useYUV420P',
       type: IsarType.bool,
     ),
     r'userAgent': PropertySchema(
-      id: 202,
+      id: 203,
       name: r'userAgent',
       type: IsarType.string,
     ),
     r'volumeBoostCap': PropertySchema(
-      id: 203,
+      id: 204,
       name: r'volumeBoostCap',
       type: IsarType.long,
     ),
     r'webtoonDisableZoomOut': PropertySchema(
-      id: 204,
+      id: 205,
       name: r'webtoonDisableZoomOut',
       type: IsarType.bool,
     ),
     r'webtoonDoubleTapZoomEnabled': PropertySchema(
-      id: 205,
+      id: 206,
       name: r'webtoonDoubleTapZoomEnabled',
       type: IsarType.bool,
     ),
     r'webtoonSidePadding': PropertySchema(
-      id: 206,
+      id: 207,
       name: r'webtoonSidePadding',
       type: IsarType.long,
     ),
     r'zoomStartPosition': PropertySchema(
-      id: 207,
+      id: 208,
       name: r'zoomStartPosition',
       type: IsarType.long,
     ),
@@ -1984,103 +1989,104 @@ void _settingsSerialize(
   writer.writeBool(offsets[153], object.novelShowScrollPercentage);
   writer.writeBool(offsets[154], object.novelTapToScroll);
   writer.writeByte(offsets[155], object.novelTextAlign.index);
-  writer.writeBool(offsets[156], object.onlyIncludePinnedSources);
-  writer.writeLong(offsets[157], object.pagePreloadAmount);
+  writer.writeBool(offsets[156], object.onboardingCompleted);
+  writer.writeBool(offsets[157], object.onlyIncludePinnedSources);
+  writer.writeLong(offsets[158], object.pagePreloadAmount);
   writer.writeObjectList<PersonalPageMode>(
-    offsets[158],
+    offsets[159],
     allOffsets,
     PersonalPageModeSchema.serialize,
     object.personalPageModeList,
   );
   writer.writeObjectList<PersonalReaderMode>(
-    offsets[159],
+    offsets[160],
     allOffsets,
     PersonalReaderModeSchema.serialize,
     object.personalReaderModeList,
   );
   writer.writeObject<PlayerSubtitleSettings>(
-    offsets[160],
+    offsets[161],
     allOffsets,
     PlayerSubtitleSettingsSchema.serialize,
     object.playerSubtitleSettings,
   );
-  writer.writeBool(offsets[161], object.pureBlackDarkMode);
-  writer.writeDouble(offsets[162], object.readerBrightness);
-  writer.writeDouble(offsets[163], object.readerContrast);
-  writer.writeLong(offsets[164], object.readerHideThreshold);
-  writer.writeLong(offsets[165], object.readerNavigationLayout);
-  writer.writeDouble(offsets[166], object.readerSaturation);
-  writer.writeLong(offsets[167], object.relativeTimesTamps);
-  writer.writeBool(offsets[168], object.rpcShowCoverImage);
-  writer.writeBool(offsets[169], object.rpcShowReadingWatchingProgress);
-  writer.writeBool(offsets[170], object.rpcShowTitle);
-  writer.writeBool(offsets[171], object.saveAsCBZArchive);
+  writer.writeBool(offsets[162], object.pureBlackDarkMode);
+  writer.writeDouble(offsets[163], object.readerBrightness);
+  writer.writeDouble(offsets[164], object.readerContrast);
+  writer.writeLong(offsets[165], object.readerHideThreshold);
+  writer.writeLong(offsets[166], object.readerNavigationLayout);
+  writer.writeDouble(offsets[167], object.readerSaturation);
+  writer.writeLong(offsets[168], object.relativeTimesTamps);
+  writer.writeBool(offsets[169], object.rpcShowCoverImage);
+  writer.writeBool(offsets[170], object.rpcShowReadingWatchingProgress);
+  writer.writeBool(offsets[171], object.rpcShowTitle);
+  writer.writeBool(offsets[172], object.saveAsCBZArchive);
   writer.writeObjectList<SavedSearch>(
-    offsets[172],
+    offsets[173],
     allOffsets,
     SavedSearchSchema.serialize,
     object.savedSearchesList,
   );
-  writer.writeByte(offsets[173], object.scaleType.index);
-  writer.writeBool(offsets[174], object.showNSFW);
-  writer.writeBool(offsets[175], object.showNavigationOverlayOnStart);
-  writer.writeBool(offsets[176], object.showPageGaps);
-  writer.writeBool(offsets[177], object.showPagesNumber);
-  writer.writeBool(offsets[178], object.showSourceBadge);
+  writer.writeByte(offsets[174], object.scaleType.index);
+  writer.writeBool(offsets[175], object.showNSFW);
+  writer.writeBool(offsets[176], object.showNavigationOverlayOnStart);
+  writer.writeBool(offsets[177], object.showPageGaps);
+  writer.writeBool(offsets[178], object.showPagesNumber);
+  writer.writeBool(offsets[179], object.showSourceBadge);
   writer.writeObjectList<SortChapter>(
-    offsets[179],
+    offsets[180],
     allOffsets,
     SortChapterSchema.serialize,
     object.sortChapterList,
   );
   writer.writeObject<SortLibraryManga>(
-    offsets[180],
+    offsets[181],
     allOffsets,
     SortLibraryMangaSchema.serialize,
     object.sortLibraryAnime,
   );
   writer.writeObject<SortLibraryManga>(
-    offsets[181],
+    offsets[182],
     allOffsets,
     SortLibraryMangaSchema.serialize,
     object.sortLibraryManga,
   );
   writer.writeObject<SortLibraryManga>(
-    offsets[182],
+    offsets[183],
     allOffsets,
     SortLibraryMangaSchema.serialize,
     object.sortLibraryNovel,
   );
-  writer.writeBool(offsets[183], object.splitWidePages);
-  writer.writeLong(offsets[184], object.startDatebackup);
-  writer.writeLong(offsets[185], object.tappingInversion);
-  writer.writeBool(offsets[186], object.themeIsDark);
-  writer.writeString(offsets[187], object.ttsLanguage);
-  writer.writeDouble(offsets[188], object.ttsPitch);
-  writer.writeDouble(offsets[189], object.ttsSpeechRate);
-  writer.writeString(offsets[190], object.ttsVoice);
-  writer.writeBool(offsets[191], object.tvAnimeOnlyOverride);
-  writer.writeBool(offsets[192], object.tvHomeGenreRows);
-  writer.writeBool(offsets[193], object.tvHomeStyle);
-  writer.writeBool(offsets[194], object.tvPlayerStyle);
+  writer.writeBool(offsets[184], object.splitWidePages);
+  writer.writeLong(offsets[185], object.startDatebackup);
+  writer.writeLong(offsets[186], object.tappingInversion);
+  writer.writeBool(offsets[187], object.themeIsDark);
+  writer.writeString(offsets[188], object.ttsLanguage);
+  writer.writeDouble(offsets[189], object.ttsPitch);
+  writer.writeDouble(offsets[190], object.ttsSpeechRate);
+  writer.writeString(offsets[191], object.ttsVoice);
+  writer.writeBool(offsets[192], object.tvAnimeOnlyOverride);
+  writer.writeBool(offsets[193], object.tvHomeGenreRows);
+  writer.writeBool(offsets[194], object.tvHomeStyle);
+  writer.writeBool(offsets[195], object.tvPlayerStyle);
   writer.writeObjectList<UpdateError>(
-    offsets[195],
+    offsets[196],
     allOffsets,
     UpdateErrorSchema.serialize,
     object.updateErrorsList,
   );
-  writer.writeBool(offsets[196], object.updateProgressAfterReading);
-  writer.writeLong(offsets[197], object.updatedAt);
-  writer.writeBool(offsets[198], object.useLibass);
-  writer.writeBool(offsets[199], object.useMpvConfig);
-  writer.writeBool(offsets[200], object.usePageTapZones);
-  writer.writeBool(offsets[201], object.useYUV420P);
-  writer.writeString(offsets[202], object.userAgent);
-  writer.writeLong(offsets[203], object.volumeBoostCap);
-  writer.writeBool(offsets[204], object.webtoonDisableZoomOut);
-  writer.writeBool(offsets[205], object.webtoonDoubleTapZoomEnabled);
-  writer.writeLong(offsets[206], object.webtoonSidePadding);
-  writer.writeLong(offsets[207], object.zoomStartPosition);
+  writer.writeBool(offsets[197], object.updateProgressAfterReading);
+  writer.writeLong(offsets[198], object.updatedAt);
+  writer.writeBool(offsets[199], object.useLibass);
+  writer.writeBool(offsets[200], object.useMpvConfig);
+  writer.writeBool(offsets[201], object.usePageTapZones);
+  writer.writeBool(offsets[202], object.useYUV420P);
+  writer.writeString(offsets[203], object.userAgent);
+  writer.writeLong(offsets[204], object.volumeBoostCap);
+  writer.writeBool(offsets[205], object.webtoonDisableZoomOut);
+  writer.writeBool(offsets[206], object.webtoonDoubleTapZoomEnabled);
+  writer.writeLong(offsets[207], object.webtoonSidePadding);
+  writer.writeLong(offsets[208], object.zoomStartPosition);
 }
 
 Settings _settingsDeserialize(
@@ -2336,101 +2342,102 @@ Settings _settingsDeserialize(
           offsets[155],
         )] ??
         NovelTextAlign.left,
-    onlyIncludePinnedSources: reader.readBoolOrNull(offsets[156]),
-    pagePreloadAmount: reader.readLongOrNull(offsets[157]),
+    onboardingCompleted: reader.readBoolOrNull(offsets[156]),
+    onlyIncludePinnedSources: reader.readBoolOrNull(offsets[157]),
+    pagePreloadAmount: reader.readLongOrNull(offsets[158]),
     personalPageModeList: reader.readObjectList<PersonalPageMode>(
-      offsets[158],
+      offsets[159],
       PersonalPageModeSchema.deserialize,
       allOffsets,
       PersonalPageMode(),
     ),
     personalReaderModeList: reader.readObjectList<PersonalReaderMode>(
-      offsets[159],
+      offsets[160],
       PersonalReaderModeSchema.deserialize,
       allOffsets,
       PersonalReaderMode(),
     ),
     playerSubtitleSettings: reader.readObjectOrNull<PlayerSubtitleSettings>(
-      offsets[160],
+      offsets[161],
       PlayerSubtitleSettingsSchema.deserialize,
       allOffsets,
     ),
-    pureBlackDarkMode: reader.readBoolOrNull(offsets[161]),
-    readerBrightness: reader.readDoubleOrNull(offsets[162]),
-    readerContrast: reader.readDoubleOrNull(offsets[163]),
-    readerHideThreshold: reader.readLongOrNull(offsets[164]),
-    readerNavigationLayout: reader.readLongOrNull(offsets[165]),
-    readerSaturation: reader.readDoubleOrNull(offsets[166]),
-    relativeTimesTamps: reader.readLongOrNull(offsets[167]),
-    rpcShowCoverImage: reader.readBoolOrNull(offsets[168]),
-    rpcShowReadingWatchingProgress: reader.readBoolOrNull(offsets[169]),
-    rpcShowTitle: reader.readBoolOrNull(offsets[170]),
-    saveAsCBZArchive: reader.readBoolOrNull(offsets[171]),
+    pureBlackDarkMode: reader.readBoolOrNull(offsets[162]),
+    readerBrightness: reader.readDoubleOrNull(offsets[163]),
+    readerContrast: reader.readDoubleOrNull(offsets[164]),
+    readerHideThreshold: reader.readLongOrNull(offsets[165]),
+    readerNavigationLayout: reader.readLongOrNull(offsets[166]),
+    readerSaturation: reader.readDoubleOrNull(offsets[167]),
+    relativeTimesTamps: reader.readLongOrNull(offsets[168]),
+    rpcShowCoverImage: reader.readBoolOrNull(offsets[169]),
+    rpcShowReadingWatchingProgress: reader.readBoolOrNull(offsets[170]),
+    rpcShowTitle: reader.readBoolOrNull(offsets[171]),
+    saveAsCBZArchive: reader.readBoolOrNull(offsets[172]),
     savedSearchesList: reader.readObjectList<SavedSearch>(
-      offsets[172],
+      offsets[173],
       SavedSearchSchema.deserialize,
       allOffsets,
       SavedSearch(),
     ),
     scaleType:
-        _SettingsscaleTypeValueEnumMap[reader.readByteOrNull(offsets[173])] ??
+        _SettingsscaleTypeValueEnumMap[reader.readByteOrNull(offsets[174])] ??
         ScaleType.fitScreen,
-    showNSFW: reader.readBoolOrNull(offsets[174]),
-    showNavigationOverlayOnStart: reader.readBoolOrNull(offsets[175]),
-    showPageGaps: reader.readBoolOrNull(offsets[176]),
-    showPagesNumber: reader.readBoolOrNull(offsets[177]),
-    showSourceBadge: reader.readBoolOrNull(offsets[178]),
+    showNSFW: reader.readBoolOrNull(offsets[175]),
+    showNavigationOverlayOnStart: reader.readBoolOrNull(offsets[176]),
+    showPageGaps: reader.readBoolOrNull(offsets[177]),
+    showPagesNumber: reader.readBoolOrNull(offsets[178]),
+    showSourceBadge: reader.readBoolOrNull(offsets[179]),
     sortChapterList: reader.readObjectList<SortChapter>(
-      offsets[179],
+      offsets[180],
       SortChapterSchema.deserialize,
       allOffsets,
       SortChapter(),
     ),
     sortLibraryAnime: reader.readObjectOrNull<SortLibraryManga>(
-      offsets[180],
-      SortLibraryMangaSchema.deserialize,
-      allOffsets,
-    ),
-    sortLibraryManga: reader.readObjectOrNull<SortLibraryManga>(
       offsets[181],
       SortLibraryMangaSchema.deserialize,
       allOffsets,
     ),
-    sortLibraryNovel: reader.readObjectOrNull<SortLibraryManga>(
+    sortLibraryManga: reader.readObjectOrNull<SortLibraryManga>(
       offsets[182],
       SortLibraryMangaSchema.deserialize,
       allOffsets,
     ),
-    splitWidePages: reader.readBoolOrNull(offsets[183]),
-    startDatebackup: reader.readLongOrNull(offsets[184]),
-    tappingInversion: reader.readLongOrNull(offsets[185]),
-    themeIsDark: reader.readBoolOrNull(offsets[186]),
-    ttsLanguage: reader.readStringOrNull(offsets[187]),
-    ttsPitch: reader.readDoubleOrNull(offsets[188]),
-    ttsSpeechRate: reader.readDoubleOrNull(offsets[189]),
-    ttsVoice: reader.readStringOrNull(offsets[190]),
-    tvAnimeOnlyOverride: reader.readBoolOrNull(offsets[191]),
-    tvHomeGenreRows: reader.readBoolOrNull(offsets[192]),
-    tvHomeStyle: reader.readBoolOrNull(offsets[193]),
-    tvPlayerStyle: reader.readBoolOrNull(offsets[194]),
+    sortLibraryNovel: reader.readObjectOrNull<SortLibraryManga>(
+      offsets[183],
+      SortLibraryMangaSchema.deserialize,
+      allOffsets,
+    ),
+    splitWidePages: reader.readBoolOrNull(offsets[184]),
+    startDatebackup: reader.readLongOrNull(offsets[185]),
+    tappingInversion: reader.readLongOrNull(offsets[186]),
+    themeIsDark: reader.readBoolOrNull(offsets[187]),
+    ttsLanguage: reader.readStringOrNull(offsets[188]),
+    ttsPitch: reader.readDoubleOrNull(offsets[189]),
+    ttsSpeechRate: reader.readDoubleOrNull(offsets[190]),
+    ttsVoice: reader.readStringOrNull(offsets[191]),
+    tvAnimeOnlyOverride: reader.readBoolOrNull(offsets[192]),
+    tvHomeGenreRows: reader.readBoolOrNull(offsets[193]),
+    tvHomeStyle: reader.readBoolOrNull(offsets[194]),
+    tvPlayerStyle: reader.readBoolOrNull(offsets[195]),
     updateErrorsList: reader.readObjectList<UpdateError>(
-      offsets[195],
+      offsets[196],
       UpdateErrorSchema.deserialize,
       allOffsets,
       UpdateError(),
     ),
-    updateProgressAfterReading: reader.readBoolOrNull(offsets[196]),
-    updatedAt: reader.readLongOrNull(offsets[197]),
-    useLibass: reader.readBoolOrNull(offsets[198]),
-    useMpvConfig: reader.readBoolOrNull(offsets[199]),
-    usePageTapZones: reader.readBoolOrNull(offsets[200]),
-    useYUV420P: reader.readBoolOrNull(offsets[201]),
-    userAgent: reader.readStringOrNull(offsets[202]),
-    volumeBoostCap: reader.readLongOrNull(offsets[203]),
-    webtoonDisableZoomOut: reader.readBoolOrNull(offsets[204]),
-    webtoonDoubleTapZoomEnabled: reader.readBoolOrNull(offsets[205]),
-    webtoonSidePadding: reader.readLongOrNull(offsets[206]),
-    zoomStartPosition: reader.readLongOrNull(offsets[207]),
+    updateProgressAfterReading: reader.readBoolOrNull(offsets[197]),
+    updatedAt: reader.readLongOrNull(offsets[198]),
+    useLibass: reader.readBoolOrNull(offsets[199]),
+    useMpvConfig: reader.readBoolOrNull(offsets[200]),
+    usePageTapZones: reader.readBoolOrNull(offsets[201]),
+    useYUV420P: reader.readBoolOrNull(offsets[202]),
+    userAgent: reader.readStringOrNull(offsets[203]),
+    volumeBoostCap: reader.readLongOrNull(offsets[204]),
+    webtoonDisableZoomOut: reader.readBoolOrNull(offsets[205]),
+    webtoonDoubleTapZoomEnabled: reader.readBoolOrNull(offsets[206]),
+    webtoonSidePadding: reader.readLongOrNull(offsets[207]),
+    zoomStartPosition: reader.readLongOrNull(offsets[208]),
   );
   object.chapterFilterBookmarkedList = reader
       .readObjectList<ChapterFilterBookmarked>(
@@ -2921,8 +2928,10 @@ P _settingsDeserializeProp<P>(
     case 156:
       return (reader.readBoolOrNull(offset)) as P;
     case 157:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 158:
+      return (reader.readLongOrNull(offset)) as P;
+    case 159:
       return (reader.readObjectList<PersonalPageMode>(
             offset,
             PersonalPageModeSchema.deserialize,
@@ -2930,7 +2939,7 @@ P _settingsDeserializeProp<P>(
             PersonalPageMode(),
           ))
           as P;
-    case 159:
+    case 160:
       return (reader.readObjectList<PersonalReaderMode>(
             offset,
             PersonalReaderModeSchema.deserialize,
@@ -2938,29 +2947,27 @@ P _settingsDeserializeProp<P>(
             PersonalReaderMode(),
           ))
           as P;
-    case 160:
+    case 161:
       return (reader.readObjectOrNull<PlayerSubtitleSettings>(
             offset,
             PlayerSubtitleSettingsSchema.deserialize,
             allOffsets,
           ))
           as P;
-    case 161:
-      return (reader.readBoolOrNull(offset)) as P;
     case 162:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 163:
       return (reader.readDoubleOrNull(offset)) as P;
     case 164:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 165:
       return (reader.readLongOrNull(offset)) as P;
     case 166:
-      return (reader.readDoubleOrNull(offset)) as P;
-    case 167:
       return (reader.readLongOrNull(offset)) as P;
+    case 167:
+      return (reader.readDoubleOrNull(offset)) as P;
     case 168:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 169:
       return (reader.readBoolOrNull(offset)) as P;
     case 170:
@@ -2968,6 +2975,8 @@ P _settingsDeserializeProp<P>(
     case 171:
       return (reader.readBoolOrNull(offset)) as P;
     case 172:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 173:
       return (reader.readObjectList<SavedSearch>(
             offset,
             SavedSearchSchema.deserialize,
@@ -2975,12 +2984,10 @@ P _settingsDeserializeProp<P>(
             SavedSearch(),
           ))
           as P;
-    case 173:
+    case 174:
       return (_SettingsscaleTypeValueEnumMap[reader.readByteOrNull(offset)] ??
               ScaleType.fitScreen)
           as P;
-    case 174:
-      return (reader.readBoolOrNull(offset)) as P;
     case 175:
       return (reader.readBoolOrNull(offset)) as P;
     case 176:
@@ -2990,18 +2997,13 @@ P _settingsDeserializeProp<P>(
     case 178:
       return (reader.readBoolOrNull(offset)) as P;
     case 179:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 180:
       return (reader.readObjectList<SortChapter>(
             offset,
             SortChapterSchema.deserialize,
             allOffsets,
             SortChapter(),
-          ))
-          as P;
-    case 180:
-      return (reader.readObjectOrNull<SortLibraryManga>(
-            offset,
-            SortLibraryMangaSchema.deserialize,
-            allOffsets,
           ))
           as P;
     case 181:
@@ -3019,23 +3021,28 @@ P _settingsDeserializeProp<P>(
           ))
           as P;
     case 183:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readObjectOrNull<SortLibraryManga>(
+            offset,
+            SortLibraryMangaSchema.deserialize,
+            allOffsets,
+          ))
+          as P;
     case 184:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 185:
       return (reader.readLongOrNull(offset)) as P;
     case 186:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 187:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 188:
-      return (reader.readDoubleOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 189:
       return (reader.readDoubleOrNull(offset)) as P;
     case 190:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readDoubleOrNull(offset)) as P;
     case 191:
-      return (reader.readBoolOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 192:
       return (reader.readBoolOrNull(offset)) as P;
     case 193:
@@ -3043,6 +3050,8 @@ P _settingsDeserializeProp<P>(
     case 194:
       return (reader.readBoolOrNull(offset)) as P;
     case 195:
+      return (reader.readBoolOrNull(offset)) as P;
+    case 196:
       return (reader.readObjectList<UpdateError>(
             offset,
             UpdateErrorSchema.deserialize,
@@ -3050,12 +3059,10 @@ P _settingsDeserializeProp<P>(
             UpdateError(),
           ))
           as P;
-    case 196:
-      return (reader.readBoolOrNull(offset)) as P;
     case 197:
-      return (reader.readLongOrNull(offset)) as P;
-    case 198:
       return (reader.readBoolOrNull(offset)) as P;
+    case 198:
+      return (reader.readLongOrNull(offset)) as P;
     case 199:
       return (reader.readBoolOrNull(offset)) as P;
     case 200:
@@ -3063,16 +3070,18 @@ P _settingsDeserializeProp<P>(
     case 201:
       return (reader.readBoolOrNull(offset)) as P;
     case 202:
-      return (reader.readStringOrNull(offset)) as P;
-    case 203:
-      return (reader.readLongOrNull(offset)) as P;
-    case 204:
       return (reader.readBoolOrNull(offset)) as P;
+    case 203:
+      return (reader.readStringOrNull(offset)) as P;
+    case 204:
+      return (reader.readLongOrNull(offset)) as P;
     case 205:
       return (reader.readBoolOrNull(offset)) as P;
     case 206:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset)) as P;
     case 207:
+      return (reader.readLongOrNull(offset)) as P;
+    case 208:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -14808,6 +14817,33 @@ extension SettingsQueryFilter
   }
 
   QueryBuilder<Settings, Settings, QAfterFilterCondition>
+  onboardingCompletedIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'onboardingCompleted'),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+  onboardingCompletedIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'onboardingCompleted'),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
+  onboardingCompletedEqualTo(bool? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'onboardingCompleted', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterFilterCondition>
   onlyIncludePinnedSourcesIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
@@ -19706,6 +19742,19 @@ extension SettingsQuerySortBy on QueryBuilder<Settings, Settings, QSortBy> {
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> sortByOnboardingCompleted() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'onboardingCompleted', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+  sortByOnboardingCompletedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'onboardingCompleted', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy>
   sortByOnlyIncludePinnedSources() {
     return QueryBuilder.apply(this, (query) {
@@ -21991,6 +22040,19 @@ extension SettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<Settings, Settings, QAfterSortBy> thenByOnboardingCompleted() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'onboardingCompleted', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Settings, Settings, QAfterSortBy>
+  thenByOnboardingCompletedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'onboardingCompleted', Sort.desc);
+    });
+  }
+
   QueryBuilder<Settings, Settings, QAfterSortBy>
   thenByOnlyIncludePinnedSources() {
     return QueryBuilder.apply(this, (query) {
@@ -23492,6 +23554,12 @@ extension SettingsQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Settings, Settings, QDistinct> distinctByOnboardingCompleted() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'onboardingCompleted');
+    });
+  }
+
   QueryBuilder<Settings, Settings, QDistinct>
   distinctByOnlyIncludePinnedSources() {
     return QueryBuilder.apply(this, (query) {
@@ -24811,6 +24879,13 @@ extension SettingsQueryProperty
   novelTextAlignProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'novelTextAlign');
+    });
+  }
+
+  QueryBuilder<Settings, bool?, QQueryOperations>
+  onboardingCompletedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'onboardingCompleted');
     });
   }
 
