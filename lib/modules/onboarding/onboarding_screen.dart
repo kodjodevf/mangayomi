@@ -134,6 +134,11 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
   /// The names of the titles that folder turned out to hold, so the user can
   /// see what they just added rather than only how many.
   List<String> _foundTitleNames = const [];
+
+  /// How the folder's titles were split across the libraries. The scanner
+  /// decides that per title from what is inside it, so this is the answer to
+  /// "did my anime land in Anime", which a bare count cannot give.
+  Map<ItemType, int> _foundByType = const {};
   bool _scanningFolder = false;
 
   /// Whether the picked folder sits inside the app's own downloads directory,
@@ -322,6 +327,11 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
               .map((manga) => manga.name ?? '')
               .where((name) => name.isNotEmpty)
               .toList();
+          _foundByType = {
+            for (final type in ItemType.values)
+              if (mine.any((manga) => manga.itemType == type))
+                type: mine.where((manga) => manga.itemType == type).length,
+          };
         });
       }
     }
@@ -348,7 +358,19 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
       _folderIsInDownloads = false;
       _foundTitles = null;
       _foundTitleNames = const [];
+      _foundByType = const {};
     });
+  }
+
+  /// "6 manga, 3 anime" rather than "9 titles found", when the folder turned
+  /// out to hold more than one kind.
+  String _typeBreakdown(AppLocalizations l10n) {
+    if (_foundByType.length <= 1) {
+      return l10n.onboarding_local_found('$_foundTitles');
+    }
+    return _foundByType.entries
+        .map((entry) => '${entry.value} ${_libraryLabel(l10n, entry.key)}')
+        .join(', ');
   }
 
   /// Whether any library has a repository, asked after a restore that may have
@@ -722,6 +744,17 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
         icon: const Icon(Icons.folder_open, size: 20),
         label: Text(l10n.onboarding_local_folder),
       ),
+      const SizedBox(height: 6),
+      // No type to choose here, unlike the repository above it. A folder is
+      // not bound to one: the scanner reads each title's contents and files
+      // it accordingly, so one folder can feed all three libraries. Saying so
+      // is better than offering a choice that does not exist.
+      Text(
+        l10n.onboarding_local_any_type,
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.bodySmall
+            ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+      ),
       if (_addedLocalFolder) ...[
         const SizedBox(height: 14),
         if (_scanningFolder)
@@ -730,7 +763,7 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody>
           _FolderStatus(
             message: _folderIsInDownloads
                 ? l10n.onboarding_local_in_downloads
-                : l10n.onboarding_local_found('$_foundTitles'),
+                : _typeBreakdown(l10n),
             path: _addedFolderPath,
             titles: _foundTitleNames,
             warn: _folderIsInDownloads,

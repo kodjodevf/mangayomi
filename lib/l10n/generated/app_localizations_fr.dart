@@ -3011,6 +3011,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get onboarding_local_folder => 'Add a folder';
 
   @override
+  String get onboarding_local_any_type =>
+      'Manga, anime and novels all work. Each title goes to the right library based on what is inside it.';
+
+  @override
   String get onboarding_local_scanning => 'Scanning the folder';
 
   @override

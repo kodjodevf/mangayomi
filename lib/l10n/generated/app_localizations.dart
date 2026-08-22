@@ -5399,6 +5399,12 @@ abstract class AppLocalizations {
   /// **'Add a folder'**
   String get onboarding_local_folder;
 
+  /// No description provided for @onboarding_local_any_type.
+  ///
+  /// In en, this message translates to:
+  /// **'Manga, anime and novels all work. Each title goes to the right library based on what is inside it.'**
+  String get onboarding_local_any_type;
+
   /// No description provided for @onboarding_local_scanning.
   ///
   /// In en, this message translates to:
