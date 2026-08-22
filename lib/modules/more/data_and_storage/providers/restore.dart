@@ -21,6 +21,7 @@ import 'package:mangayomi/models/track.dart';
 import 'package:mangayomi/models/track_preference.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/proto/BackupAniyomi.pb.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/proto/BackupMihon.pb.dart';
+import 'package:mangayomi/modules/more/data_and_storage/widgets/backup_encryption_password_dialog.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/blend_level_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/flex_scheme_color_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/pure_black_dark_mode_state_provider.dart';
@@ -30,30 +31,55 @@ import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_pr
 import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
+import 'package:mangayomi/services/backup_password_storage.dart';
+import 'package:mangayomi/utils/isar_txn_retry.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'restore.g.dart';
 
 @riverpod
-void doRestore(Ref ref, {required String path, required BuildContext context}) {
-  final inputStream = InputFileStream(path);
+Future<void> doRestore(
+  Ref ref, {
+  required String path,
+  required BuildContext context,
+  bool merge = false,
+  Map<String, bool> categoryDecisions = const {},
+  Map<String, int> sourceDecisions = const {},
+}) async {
   try {
-    final archive = ZipDecoder().decodeStream(inputStream);
+    // Zip filenames aren't encrypted even when file content is, so this
+    // initial pass (no password) is always enough to list files and
+    // determine backup type. Password resolution only happens below, and
+    // only for the mangayomi format, right before reading file *content*.
+    final probeStream = InputFileStream(path);
+    final Archive archive;
+    try {
+      archive = ZipDecoder().decodeStream(probeStream);
+    } finally {
+      probeStream.close();
+    }
     final backupType = checkBackupType(path, archive);
     switch (backupType) {
       case BackupType.mangayomi:
-        final backup = jsonDecode(
-          utf8.decode(archive.files.first.content),
-        ) as Map<String, dynamic>;
-        ref.read(restoreBackupProvider(backup));
+        if (!context.mounted) return;
+        final backup = await _decodeMangayomiBackup(path, context);
+        await ref.read(restoreBackupProvider(backup).future);
         break;
       case BackupType.kotatsu:
-        ref.read(restoreKotatsuBackupProvider(archive));
+        await ref.read(restoreKotatsuBackupProvider(archive).future);
         break;
       case BackupType.mihon:
       case BackupType.aniyomi:
       case BackupType.neko:
-        ref.read(restoreTachiBkBackupProvider(path, backupType));
+        await ref.read(
+          restoreTachiBkBackupProvider(
+            path,
+            backupType,
+            merge: merge,
+            categoryDecisions: categoryDecisions,
+            sourceDecisions: sourceDecisions,
+          ).future,
+        );
         break;
       default:
     }
@@ -64,8 +90,69 @@ void doRestore(Ref ref, {required String path, required BuildContext context}) {
     }
   } catch (e, s) {
     botToast('$e\n$s');
-  } finally {
-    inputStream.close();
+  }
+}
+
+/// Decodes a mangayomi-format backup's JSON contents, transparently
+/// handling AES-encrypted backups: tries with no password, then the
+/// locally-stored password (if any), then prompts the user - retrying on a
+/// wrong password until it succeeds or the user cancels.
+///
+/// On success, if the backup embeds an encryption password (see
+/// `backup.dart`), persists it locally so future backups/restores on this
+/// device don't need it retyped - mirroring how every other part of a
+/// restored backup overwrites the local settings, just kept out of the
+/// generic Settings JSON round-trip (see backup_password_fallback.dart).
+Future<Map<String, dynamic>> _decodeMangayomiBackup(
+  String path,
+  BuildContext context,
+) async {
+  String? passwordToTry;
+  var triedStoredPassword = false;
+  var wasIncorrect = false;
+  final l10n = l10nLocalizations(context)!;
+
+  while (true) {
+    final stream = InputFileStream(path);
+    try {
+      final archive = ZipDecoder().decodeStream(
+        stream,
+        password: passwordToTry,
+      );
+      // decodeStream() only parses headers and buffers raw compressed
+      // bytes - it doesn't verify/decrypt content (and so won't throw on a
+      // wrong password) until the content is actually read, hence forcing
+      // that access here rather than after returning.
+      final bytes = archive.files.first.content as List<int>;
+      final backup = jsonDecode(utf8.decode(bytes)) as Map<String, dynamic>;
+
+      final embeddedPassword = backup['backupEncryptionPassword'] as String?;
+      if (embeddedPassword != null && context.mounted) {
+        await persistResolvedPassword(embeddedPassword, context);
+      }
+      return backup;
+    } catch (_) {
+      if (!triedStoredPassword) {
+        triedStoredPassword = true;
+        final stored = await BackupPasswordStorage.get();
+        if (stored != null) {
+          passwordToTry = stored;
+          continue;
+        }
+      }
+      if (!context.mounted) rethrow;
+      final entered = await showBackupDecryptPasswordDialog(
+        context,
+        wasIncorrect: wasIncorrect,
+      );
+      if (entered == null) {
+        throw Exception(l10n.password_required_to_restore);
+      }
+      passwordToTry = entered;
+      wasIncorrect = true;
+    } finally {
+      stream.close();
+    }
   }
 }
 
@@ -105,7 +192,9 @@ BackupType checkBackupType(String path, Archive archive) {
       path.toLowerCase().endsWith(".proto.gz")) {
     return path.contains("xyz.jmir.tachiyomi.mi") || path.contains("aniyomi.mi")
         ? BackupType.aniyomi
-        : path.contains("tachiyomi") || path.contains("mihon")
+        : path.contains("tachiyomi") ||
+              path.contains("mihon") ||
+              path.contains("komikku")
         ? BackupType.mihon
         : path.contains("neko")
         ? BackupType.neko
@@ -114,8 +203,179 @@ BackupType checkBackupType(String path, Archive archive) {
   return BackupType.unknown;
 }
 
+BackupType peekBackupType(String path) {
+  final inputStream = InputFileStream(path);
+  try {
+    final archive = ZipDecoder().decodeStream(inputStream);
+    return checkBackupType(path, archive);
+  } finally {
+    inputStream.close();
+  }
+}
+
+class TachiBkImportPreview {
+  TachiBkImportPreview({
+    required this.conflictingCategories,
+    required this.unmatchedSourceNames,
+    required this.newSeriesCount,
+    required this.updatedSeriesCount,
+    required this.newChapterCount,
+  });
+
+  final List<String> conflictingCategories;
+
+  final Map<String, ItemType> unmatchedSourceNames;
+
+  final int newSeriesCount;
+  final int updatedSeriesCount;
+  final int newChapterCount;
+}
+
+TachiBkImportPreview? previewTachiBkImport(String path) {
+  final backupType = peekBackupType(path);
+  if (backupType != BackupType.mihon &&
+      backupType != BackupType.aniyomi &&
+      backupType != BackupType.neko) {
+    return null;
+  }
+  final inputStream = InputFileStream(path);
+  final content = GZipDecoder().decodeBytes(inputStream.toUint8List());
+  inputStream.close();
+  final backup = BackupMihon.create();
+  backup.mergeFromCodedBufferReader(
+    CodedBufferReader(content, sizeLimit: 250 << 20),
+  );
+
+  final existingCategoryNames = isar.categorys
+      .where()
+      .findAllSync()
+      .map((c) => c.name)
+      .whereType<String>()
+      .toSet();
+  final categoryNames = <String>{for (var c in backup.backupCategories) c.name};
+
+  final installedSourceNames = isar.sources
+      .where()
+      .findAllSync()
+      .where((s) => s.sourceCode != null)
+      .map((s) => (s.itemType, s.name?.toLowerCase()))
+      .toSet();
+  final unmatchedSources = <String, ItemType>{};
+
+  final existingMangaByLink = {
+    for (var m
+        in isar.mangas.filter().itemTypeEqualTo(ItemType.manga).findAllSync())
+      if (m.link != null) m.link!: m,
+  };
+  int newSeries = 0, updatedSeries = 0, newChapters = 0;
+  for (var m in backup.backupManga) {
+    final sourceId = _protoInt(m.source);
+    final srcName =
+        backup.backupSources
+            .firstWhereOrNull((s) => _protoInt(s.sourceId) == sourceId)
+            ?.name ??
+        "Unknown";
+    if (!installedSourceNames.contains((
+      ItemType.manga,
+      srcName.toLowerCase(),
+    ))) {
+      unmatchedSources[srcName] = ItemType.manga;
+    }
+    final existing = existingMangaByLink[m.url];
+    if (existing != null) {
+      updatedSeries++;
+      final existingUrls = isar.chapters
+          .filter()
+          .mangaIdEqualTo(existing.id)
+          .findAllSync()
+          .map((c) => c.url)
+          .whereType<String>()
+          .toSet();
+      newChapters += m.chapters
+          .where((c) => !existingUrls.contains(c.url))
+          .length;
+    } else {
+      newSeries++;
+      newChapters += m.chapters.length;
+    }
+  }
+
+  if (backupType == BackupType.aniyomi) {
+    final backupAnime = BackupAniyomi.fromBuffer(content);
+    final animeCategories = backupAnime.backupAnimeCategories.isNotEmpty
+        ? backupAnime.backupAnimeCategories
+        : backupAnime.legacyBackupAnimeCategories;
+    final animeEntries = backupAnime.backupAnime.isNotEmpty
+        ? backupAnime.backupAnime
+        : backupAnime.legacyBackupAnime;
+    final animeSources = backupAnime.backupAnimeSources.isNotEmpty
+        ? backupAnime.backupAnimeSources
+        : backupAnime.legacyBackupAnimeSources;
+    categoryNames.addAll(animeCategories.map((c) => c.name));
+    final existingAnimeByLink = {
+      for (var m
+          in isar.mangas.filter().itemTypeEqualTo(ItemType.anime).findAllSync())
+        if (m.link != null) m.link!: m,
+    };
+    for (var a in animeEntries) {
+      final sourceId = _protoInt(a.source);
+      final srcName =
+          animeSources
+              .firstWhereOrNull((s) => _protoInt(s.sourceId) == sourceId)
+              ?.name ??
+          "Unknown";
+      if (!installedSourceNames.contains((
+        ItemType.anime,
+        srcName.toLowerCase(),
+      ))) {
+        unmatchedSources[srcName] = ItemType.anime;
+      }
+      final existing = existingAnimeByLink[a.url];
+      if (existing != null) {
+        updatedSeries++;
+        final existingUrls = isar.chapters
+            .filter()
+            .mangaIdEqualTo(existing.id)
+            .findAllSync()
+            .map((c) => c.url)
+            .whereType<String>()
+            .toSet();
+        newChapters += a.episodes
+            .where((c) => !existingUrls.contains(c.url))
+            .length;
+      } else {
+        newSeries++;
+        newChapters += a.episodes.length;
+      }
+    }
+  }
+
+  return TachiBkImportPreview(
+    conflictingCategories: categoryNames
+        .where(existingCategoryNames.contains)
+        .toList(),
+    unmatchedSourceNames: unmatchedSources,
+    newSeriesCount: newSeries,
+    updatedSeriesCount: updatedSeries,
+    newChapterCount: newChapters,
+  );
+}
+
+List<Source> installedSourcesFor(ItemType itemType) => isar.sources
+    .where()
+    .findAllSync()
+    .where((s) => s.itemType == itemType && s.sourceCode != null)
+    .toList();
+
+int currentFavoriteMangaCount() =>
+    isar.mangas.filter().favoriteEqualTo(true).countSync();
+
 @riverpod
-void restoreBackup(Ref ref, Map<String, dynamic> backup, {bool full = true}) {
+Future<void> restoreBackup(
+  Ref ref,
+  Map<String, dynamic> backup, {
+  bool full = true,
+}) async {
   final version = backup['version'];
   if (["1", "2"].any((e) => e == version)) {
     try {
@@ -161,7 +421,7 @@ void restoreBackup(Ref ref, Map<String, dynamic> backup, {bool full = true}) {
           .toList();
 
       final currentSettings = isar.settings.getSync(227);
-      isar.writeTxnSync(() {
+      await writeTxnSyncWithRetry(() {
         isar.mangas.clearSync();
         if (manga != null) {
           isar.mangas.putAllSync(manga);
@@ -315,14 +575,14 @@ ItemType _convertToItemTypeCategory(Map<String, dynamic> backup) {
 }
 
 @riverpod
-void restoreKotatsuBackup(Ref ref, Archive archive) {
+Future<void> restoreKotatsuBackup(Ref ref, Archive archive) async {
   try {
     for (var f in archive.files) {
       List<Category> cats = [];
       switch (f.name) {
         case "categories":
           final categories = jsonDecode(utf8.decode(f.content)) as List? ?? [];
-          isar.writeTxnSync(() {
+          await writeTxnSyncWithRetry(() {
             isar.categorys.clearSync();
             for (var category in categories) {
               final cat = Category(
@@ -337,7 +597,7 @@ void restoreKotatsuBackup(Ref ref, Archive archive) {
           });
         case "favourites":
           final favourites = jsonDecode(utf8.decode(f.content)) as List? ?? [];
-          isar.writeTxnSync(() {
+          await writeTxnSyncWithRetry(() {
             isar.mangas.clearSync();
             for (var favourite in favourites) {
               final tempManga = favourite["manga"];
@@ -373,7 +633,7 @@ void restoreKotatsuBackup(Ref ref, Archive archive) {
           continue;
       }
     }
-    isar.writeTxnSync(() {
+    await writeTxnSyncWithRetry(() {
       isar.chapters.clearSync();
       isar.downloads.clearSync();
       isar.historys.clearSync();
@@ -388,7 +648,14 @@ void restoreKotatsuBackup(Ref ref, Archive archive) {
 }
 
 @riverpod
-void restoreTachiBkBackup(Ref ref, String path, BackupType bkType) {
+Future<void> restoreTachiBkBackup(
+  Ref ref,
+  String path,
+  BackupType bkType, {
+  bool merge = false,
+  Map<String, bool> categoryDecisions = const {},
+  Map<String, int> sourceDecisions = const {},
+}) async {
   final inputStream = InputFileStream(path);
   final content = GZipDecoder().decodeBytes(inputStream.toUint8List());
   inputStream.close();
@@ -396,60 +663,125 @@ void restoreTachiBkBackup(Ref ref, String path, BackupType bkType) {
   backup.mergeFromCodedBufferReader(
     CodedBufferReader(content, sizeLimit: 250 << 20),
   );
-  List<Category> cats = [];
-  isar.writeTxnSync(() {
-    isar.categorys.clearSync();
-    isar.mangas.clearSync();
-    isar.chapters.clearSync();
-    isar.historys.clearSync();
+  final installedSources = isar.sources
+      .where()
+      .findAllSync()
+      .where((s) => s.sourceCode != null)
+      .toList();
+  Source? resolveSource(String originalName, ItemType itemType) {
+    final decision = sourceDecisions[originalName];
+    if (decision != null) return isar.sources.getSync(decision);
+    return installedSources.firstWhereOrNull(
+      (s) =>
+          s.itemType == itemType &&
+          s.name?.toLowerCase() == originalName.toLowerCase(),
+    );
+  }
+
+  final categoryByOrder = <int, Category>{};
+  await writeTxnSyncWithRetry(() {
+    if (!merge) {
+      isar.categorys.clearSync();
+      isar.mangas.clearSync();
+      isar.chapters.clearSync();
+      isar.historys.clearSync();
+    }
+    final existingCategories = merge
+        ? isar.categorys
+              .filter()
+              .forItemTypeEqualTo(ItemType.manga)
+              .findAllSync()
+        : <Category>[];
     for (var category in backup.backupCategories) {
+      final order = _protoInt(category.order);
+      final existing = existingCategories.firstWhereOrNull(
+        (c) => c.name == category.name,
+      );
+      if (existing != null) {
+        if (categoryDecisions[category.name] == false) continue;
+        categoryByOrder[order] = existing;
+        continue;
+      }
       final cat = Category(
         name: category.name,
         forItemType: ItemType.manga,
-        pos: _protoInt(category.order),
+        pos: order,
       );
       isar.categorys.putSync(cat);
-      cats.add(cat);
+      categoryByOrder[order] = cat;
     }
+    final existingMangaByLink = merge
+        ? {
+            for (var m
+                in isar.mangas
+                    .filter()
+                    .itemTypeEqualTo(ItemType.manga)
+                    .findAllSync())
+              if (m.link != null) m.link!: m,
+          }
+        : <String, Manga>{};
     for (var tempManga in backup.backupManga) {
       final sourceId = _protoInt(tempManga.source);
       final categoryOrders = tempManga.categories.map(_protoInt).toSet();
-      final manga = Manga(
-        source:
+      final newCategoryIds = categoryOrders
+          .map((o) => categoryByOrder[o]?.id)
+          .whereType<int>()
+          .toList();
+      final existingManga = existingMangaByLink[tempManga.url];
+      final Manga manga;
+      final bool isNewManga = existingManga == null;
+      if (existingManga != null) {
+        manga = existingManga;
+        manga.favorite = true;
+        manga.categories = {...?manga.categories, ...newCategoryIds}.toList();
+      } else {
+        final originalSourceName =
             backup.backupSources
                 .firstWhereOrNull((src) => _protoInt(src.sourceId) == sourceId)
                 ?.name ??
-            "Unknown",
-        author: tempManga.author,
-        artist: tempManga.artist,
-        genre: tempManga.genre,
-        imageUrl: tempManga.thumbnailUrl,
-        lang: 'en',
-        link: tempManga.url,
-        name: tempManga.title,
-        status: _convertStatusFromTachiBk(tempManga.status),
-        description: tempManga.description,
-        categories: cats
-            .where((cat) => categoryOrders.contains(cat.pos))
-            .map((cat) => cat.id!)
-            .toList(),
-        itemType: ItemType.manga,
-        favorite: true,
-        dateAdded: _protoMillis(tempManga.dateAdded),
-        lastUpdate: _protoMillis(tempManga.lastModifiedAt),
-        sourceId: null,
-      );
-      if (bkType == BackupType.neko) {
-        manga.source = "MangaDex";
+            "Unknown";
+        final boundSource = resolveSource(originalSourceName, ItemType.manga);
+        manga = Manga(
+          source: boundSource?.name ?? originalSourceName,
+          author: tempManga.author,
+          artist: tempManga.artist,
+          genre: tempManga.genre,
+          imageUrl: tempManga.thumbnailUrl,
+          lang: boundSource?.lang ?? 'en',
+          link: tempManga.url,
+          name: tempManga.title,
+          status: _convertStatusFromTachiBk(tempManga.status),
+          description: tempManga.description,
+          categories: newCategoryIds,
+          itemType: ItemType.manga,
+          favorite: true,
+          dateAdded: _protoInt(tempManga.dateAdded),
+          lastUpdate: _protoInt(tempManga.lastModifiedAt),
+          sourceId: boundSource?.id,
+        );
+        if (bkType == BackupType.neko && boundSource == null) {
+          manga.source = "MangaDex";
+        }
       }
       isar.mangas.putSync(manga);
+      final existingChaptersByUrl = merge && !isNewManga
+          ? {
+              for (var c
+                  in isar.chapters
+                      .filter()
+                      .mangaIdEqualTo(manga.id)
+                      .findAllSync())
+                if (c.url != null) c.url!: c,
+            }
+          : <String, Chapter>{};
       History? history;
       for (var tempChapter in tempManga.chapters) {
+        if (existingChaptersByUrl.containsKey(tempChapter.url)) continue;
         final chapter = Chapter(
           mangaId: manga.id!,
           name: tempChapter.name,
           dateUpload: bkType != BackupType.neko
-              ? "${_protoMillis(tempChapter.dateUpload)}"
+              ? "${_protoInt(tempChapter.dateUpload)}"
               : "${DateTime.now().millisecondsSinceEpoch - _protoInt(tempChapter.dateUpload).abs()}",
           isBookmarked: tempChapter.bookmark,
           isRead: tempChapter.read,
@@ -463,18 +795,21 @@ void restoreTachiBkBackup(Ref ref, String path, BackupType bkType) {
         chapter.manga.saveSync();
         if ((history == null ||
             int.parse(history.date ?? "0") <
-                _protoMillis(tempChapter.lastModifiedAt))) {
+                _protoInt(tempChapter.lastModifiedAt))) {
           history = History(
             mangaId: manga.id,
             date: bkType != BackupType.neko
-                ? "${_protoMillis(tempChapter.lastModifiedAt)}"
+                ? "${_protoInt(tempChapter.lastModifiedAt)}"
                 : "${DateTime.now().millisecondsSinceEpoch - _protoInt(tempChapter.dateUpload).abs()}",
             itemType: ItemType.manga,
             chapterId: chapter.id,
           )..chapter.value = chapter;
         }
       }
-      if (history != null) {
+      if (history != null &&
+          (!merge ||
+              isar.historys.filter().mangaIdEqualTo(manga.id).findFirstSync() ==
+                  null)) {
         isar.historys.putSync(history);
         history.chapter.saveSync();
       }
@@ -491,58 +826,106 @@ void restoreTachiBkBackup(Ref ref, String path, BackupType bkType) {
     final animeSources = backupAnime.backupAnimeSources.isNotEmpty
         ? backupAnime.backupAnimeSources
         : backupAnime.legacyBackupAnimeSources;
-    List<Category> cats = [];
-    isar.writeTxnSync(() {
+    final categoryByOrder = <int, Category>{};
+    await writeTxnSyncWithRetry(() {
+      final existingAnimeCategories = merge
+          ? isar.categorys
+                .filter()
+                .forItemTypeEqualTo(ItemType.anime)
+                .findAllSync()
+          : <Category>[];
       for (var category in animeCategories) {
+        final order = _protoInt(category.order);
+        final existing = existingAnimeCategories.firstWhereOrNull(
+          (c) => c.name == category.name,
+        );
+        if (existing != null) {
+          if (categoryDecisions[category.name] == false) continue;
+          categoryByOrder[order] = existing;
+          continue;
+        }
         final cat = Category(
           name: category.name,
           forItemType: ItemType.anime,
-          pos: _protoInt(category.order),
+          pos: order,
         );
         isar.categorys.putSync(cat);
-        cats.add(cat);
+        categoryByOrder[order] = cat;
       }
+      final existingAnimeByLink = merge
+          ? {
+              for (var m
+                  in isar.mangas
+                      .filter()
+                      .itemTypeEqualTo(ItemType.anime)
+                      .findAllSync())
+                if (m.link != null) m.link!: m,
+            }
+          : <String, Manga>{};
       for (var tempAnime in animeEntries) {
         final sourceId = _protoInt(tempAnime.source);
         final categoryOrders = tempAnime.categories.map(_protoInt).toSet();
-        final anime = Manga(
-          source:
+        final newCategoryIds = categoryOrders
+            .map((o) => categoryByOrder[o]?.id)
+            .whereType<int>()
+            .toList();
+        final existingAnime = existingAnimeByLink[tempAnime.url];
+        final Manga anime;
+        final bool isNewAnime = existingAnime == null;
+        if (existingAnime != null) {
+          anime = existingAnime;
+          anime.favorite = true;
+          anime.categories = {...?anime.categories, ...newCategoryIds}.toList();
+        } else {
+          final originalSourceName =
               animeSources
                   .firstWhereOrNull(
                     (src) => _protoInt(src.sourceId) == sourceId,
                   )
                   ?.name ??
-              "Unknown",
-          author: tempAnime.author,
-          artist: tempAnime.artist,
-          genre: tempAnime.genre,
-          imageUrl: tempAnime.thumbnailUrl,
-          lang: 'en',
-          link: tempAnime.url,
-          name: tempAnime.title,
-          status: _convertStatusFromTachiBk(tempAnime.status),
-          description: tempAnime.description,
-          categories: cats
-              .where((cat) => categoryOrders.contains(cat.pos))
-              .map((cat) => cat.id!)
-              .toList(),
-          itemType: ItemType.anime,
-          favorite: true,
-          dateAdded: _protoMillis(tempAnime.dateAdded),
-          lastUpdate: _protoMillis(tempAnime.lastModifiedAt),
-          sourceId: null,
-        );
+              "Unknown";
+          final boundSource = resolveSource(originalSourceName, ItemType.anime);
+          anime = Manga(
+            source: boundSource?.name ?? originalSourceName,
+            author: tempAnime.author,
+            artist: tempAnime.artist,
+            genre: tempAnime.genre,
+            imageUrl: tempAnime.thumbnailUrl,
+            lang: boundSource?.lang ?? 'en',
+            link: tempAnime.url,
+            name: tempAnime.title,
+            status: _convertStatusFromTachiBk(tempAnime.status),
+            description: tempAnime.description,
+            categories: newCategoryIds,
+            itemType: ItemType.anime,
+            favorite: true,
+            dateAdded: _protoInt(tempAnime.dateAdded),
+            lastUpdate: _protoInt(tempAnime.lastModifiedAt),
+            sourceId: boundSource?.id,
+          );
+        }
         isar.mangas.putSync(anime);
+        final existingEpisodesByUrl = merge && !isNewAnime
+            ? {
+                for (var c
+                    in isar.chapters
+                        .filter()
+                        .mangaIdEqualTo(anime.id)
+                        .findAllSync())
+                  if (c.url != null) c.url!: c,
+              }
+            : <String, Chapter>{};
         History? history;
         for (var tempEpisode in tempAnime.episodes) {
+          if (existingEpisodesByUrl.containsKey(tempEpisode.url)) continue;
           final episode = Chapter(
             mangaId: anime.id!,
             name: tempEpisode.name,
-            dateUpload: "${_protoMillis(tempEpisode.dateUpload)}",
+            dateUpload: "${_protoInt(tempEpisode.dateUpload)}",
             isBookmarked: tempEpisode.bookmark,
             isRead: tempEpisode.seen,
             lastPageRead: _protoInt(tempEpisode.lastSecondSeen) != 0
-                ? "${_protoMillis(tempEpisode.lastSecondSeen)}"
+                ? "${_secondsToMillis(tempEpisode.lastSecondSeen)}"
                 : "1",
             scanlator: tempEpisode.scanlator,
             url: tempEpisode.url,
@@ -551,27 +934,35 @@ void restoreTachiBkBackup(Ref ref, String path, BackupType bkType) {
           episode.manga.saveSync();
           if ((history == null ||
               int.parse(history.date ?? "0") <
-                  _protoMillis(tempEpisode.lastModifiedAt))) {
+                  _protoInt(tempEpisode.lastModifiedAt))) {
             history = History(
               mangaId: anime.id,
-              date: "${_protoMillis(tempEpisode.lastModifiedAt)}",
+              date: "${_protoInt(tempEpisode.lastModifiedAt)}",
               itemType: ItemType.anime,
               chapterId: episode.id,
             )..chapter.value = episode;
           }
         }
-        if (history != null) {
+        if (history != null &&
+            (!merge ||
+                isar.historys
+                        .filter()
+                        .mangaIdEqualTo(anime.id)
+                        .findFirstSync() ==
+                    null)) {
           isar.historys.putSync(history);
           history.chapter.saveSync();
         }
       }
     });
   }
-  isar.writeTxnSync(() {
-    isar.downloads.clearSync();
-    isar.updates.clearSync();
-    isar.tracks.clearSync();
-    isar.trackPreferences.clearSync();
+  await writeTxnSyncWithRetry(() {
+    if (!merge) {
+      isar.downloads.clearSync();
+      isar.updates.clearSync();
+      isar.tracks.clearSync();
+      isar.trackPreferences.clearSync();
+    }
     _invalidateCommonState(ref);
   });
 }
@@ -583,7 +974,7 @@ int _protoInt(Object value) {
   return (value as dynamic).toInt() as int;
 }
 
-int _protoMillis(Object seconds) => _protoInt(seconds) * 1000;
+int _secondsToMillis(Object seconds) => _protoInt(seconds) * 1000;
 
 Settings _preserveDeviceLocalSettings(Settings incoming, Settings current) {
   return incoming
@@ -596,6 +987,7 @@ Settings _preserveDeviceLocalSettings(Settings incoming, Settings current) {
     ..jrePath = current.jrePath
     ..extensionServerPath = current.extensionServerPath;
 }
+
 void _invalidateCommonState(Ref ref) {
   ref.read(synchingProvider(syncId: 1).notifier).clearAllChangedParts(false);
   ref.invalidate(followSystemThemeStateProvider);

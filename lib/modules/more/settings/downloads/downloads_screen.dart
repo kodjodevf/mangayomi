@@ -33,12 +33,7 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
     );
     final downloadDelaySeconds = ref.watch(downloadDelaySecondsStateProvider);
     final localFolders = ref.watch(localFoldersStateProvider);
-    final downloadLocalFolderName = ref.watch(
-      downloadLocalFolderNameStateProvider,
-    );
-    final askDownloadDestination = ref.watch(
-      askDownloadDestinationStateProvider,
-    );
+    final downloadLocation = ref.watch(downloadLocationStateProvider);
     final l10n = l10nLocalizations(context);
     return Scaffold(
       appBar: AppBar(title: Text(l10n!.downloads)),
@@ -218,48 +213,22 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
-            SwitchListTile(
-              value: askDownloadDestination,
-              title: Text(context.l10n.ask_download_destination),
-              subtitle: Text(context.l10n.ask_download_destination_desc),
-              onChanged: (value) {
-                ref
-                    .read(askDownloadDestinationStateProvider.notifier)
-                    .set(value);
+            ListTile(
+              onTap: () async {
+                final result =
+                    await LocalDirectoryAccess.pickDirectory() ??
+                    await FilePicker.getDirectoryPath();
+                if (result != null) {
+                  ref.read(downloadLocationStateProvider.notifier).set(result);
+                }
               },
-            ),
-            FutureBuilder(
-              future: getAllLocalFolders(),
-              builder: (context, snapshot) {
-                final folders = snapshot.data ?? [];
-                final selectedFolder =
-                    folders
-                        .where(
-                          (folder) => folder.name == downloadLocalFolderName,
-                        )
-                        .firstOrNull ??
-                    folders.firstOrNull;
-                return ListTile(
-                  enabled: folders.isNotEmpty,
-                  title: Text(context.l10n.default_download_destination),
-                  subtitle: Text(
-                    selectedFolder == null
-                        ? ""
-                        : "${selectedFolder.name} - ${selectedFolder.path}",
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: context.secondaryColor,
-                    ),
-                  ),
-                  onTap: folders.isEmpty
-                      ? null
-                      : () => _showDownloadFolderDialog(
-                          context,
-                          folders,
-                          selectedFolder?.name,
-                        ),
-                );
-              },
+              title: Text(l10n.download_location),
+              subtitle: Text(
+                downloadLocation.$2.isEmpty
+                    ? downloadLocation.$1
+                    : downloadLocation.$2,
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
+              ),
             ),
             ListTile(
               onTap: () async {
@@ -365,35 +334,6 @@ class _DownloadsScreenState extends ConsumerState<DownloadsScreen> {
     );
   }
 
-  void _showDownloadFolderDialog(
-    BuildContext context,
-    List<LocalFolder> folders,
-    String? selectedName,
-  ) {
-    showDialog(
-      context: context,
-      builder: (context) => SimpleDialog(
-        title: Text(context.l10n.default_download_destination),
-        children: folders
-            .map(
-              (folder) => ListTile(
-                leading: folder.name == selectedName
-                    ? const Icon(Icons.check)
-                    : const SizedBox(width: 24),
-                title: Text(folder.name ?? ""),
-                subtitle: Text(folder.path ?? ""),
-                onTap: () {
-                  ref
-                      .read(downloadLocalFolderNameStateProvider.notifier)
-                      .set(folder.name);
-                  Navigator.pop(context);
-                },
-              ),
-            )
-            .toList(),
-      ),
-    );
-  }
 
   void _showHelpDialog(BuildContext context) {
     final data = (

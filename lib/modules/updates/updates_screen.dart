@@ -188,11 +188,25 @@ class _UpdateTabState extends ConsumerState<UpdateTab>
       children: [
         update.when(
           data: (entries) {
-            // Single pass for the max — this runs on every rebuild and only
-            // feeds the "last updated" header line.
-            int? lastUpdated;
+            // Resolve chapter/manga once here instead of per row in itemBuilder.
+            final chapterByUpdateId = <int, Chapter>{};
             for (final e in entries) {
-              final value = e.chapter.value?.manga.value?.lastUpdate;
+              if (!e.chapter.isLoaded) e.chapter.loadSync();
+              final c = e.chapter.value;
+              if (c != null) chapterByUpdateId[e.id!] = c;
+            }
+            final mangaIds = chapterByUpdateId.values
+                .map((c) => c.mangaId)
+                .whereType<int>()
+                .toSet()
+                .toList();
+            final mangaById = {
+              for (final m in isar.mangas.getAllSync(mangaIds)) m?.id!: m!,
+            };
+
+            int? lastUpdated;
+            for (final c in chapterByUpdateId.values) {
+              final value = mangaById[c.mangaId]?.lastUpdate;
               if (value != null &&
                   (lastUpdated == null || value > lastUpdated)) {
                 lastUpdated = value;
@@ -253,9 +267,11 @@ class _UpdateTabState extends ConsumerState<UpdateTab>
                       ),
                     ),
                     itemBuilder: (context, element) {
-                      final chapter = element.chapter.value!;
+                      final chapter = chapterByUpdateId[element.id]!;
+                      final manga = mangaById[chapter.mangaId]!;
                       return UpdateChapterListTileWidget(
                         chapter: chapter,
+                        manga: manga,
                         sourceExist: true,
                       );
                     },

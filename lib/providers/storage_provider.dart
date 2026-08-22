@@ -13,6 +13,7 @@ import 'package:mangayomi/models/download.dart';
 import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/models/history.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/models/backup_password_fallback.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/models/source.dart';
 import 'package:mangayomi/models/sync_preference.dart';
@@ -311,6 +312,7 @@ class StorageProvider {
         SyncPreferenceSchema,
         SourcePreferenceSchema,
         SourcePreferenceStringValueSchema,
+        BackupPasswordFallbackSchema,
       ],
       directory: dir!.path,
       name: "mangayomiDb",

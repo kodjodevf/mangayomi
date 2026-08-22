@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:isar_community/isar.dart';
@@ -12,29 +13,35 @@ void setPreferenceSetting(SourcePreference sourcePreference, Source source) {
       .sourceIdEqualTo(source.id)
       .keyEqualTo(sourcePreference.key)
       .findFirstSync();
-  isar.writeTxnSync(() {
-    if (source.sourceCodeLanguage == SourceCodeLanguage.mihon &&
-        source.preferenceList != null) {
-      final prefs = (jsonDecode(source.preferenceList!) as List)
-          .map((e) => SourcePreference.fromJson(e))
-          .toList();
-      final idx = prefs.indexWhere((e) => e.key == sourcePreference.key);
-      if (idx != -1) {
-        prefs[idx] = sourcePreference..id = null;
-        isar.sources.putSync(
-          source
-            ..preferenceList = jsonEncode(
-              prefs.map((e) => e.toJson()).toList(),
-            ),
-        );
-      }
-    }
-    if (sourcePref != null) {
-      isar.sourcePreferences.putSync(sourcePreference);
-    } else {
-      isar.sourcePreferences.putSync(sourcePreference..sourceId = source.id);
-    }
-  });
+  unawaited(
+    isar
+        .writeTxn(() async {
+          if (source.sourceCodeLanguage == SourceCodeLanguage.mihon &&
+              source.preferenceList != null) {
+            final prefs = (jsonDecode(source.preferenceList!) as List)
+                .map((e) => SourcePreference.fromJson(e))
+                .toList();
+            final idx = prefs.indexWhere((e) => e.key == sourcePreference.key);
+            if (idx != -1) {
+              prefs[idx] = sourcePreference..id = null;
+              await isar.sources.put(
+                source
+                  ..preferenceList = jsonEncode(
+                    prefs.map((e) => e.toJson()).toList(),
+                  ),
+              );
+            }
+          }
+          if (sourcePref != null) {
+            await isar.sourcePreferences.put(sourcePreference);
+          } else {
+            await isar.sourcePreferences.put(
+              sourcePreference..sourceId = source.id,
+            );
+          }
+        })
+        .catchError((_) {}),
+  );
 }
 
 dynamic getPreferenceValue(int sourceId, String key) {
@@ -96,16 +103,22 @@ void setSourcePreferenceStringValue(int sourceId, String key, String value) {
       .sourceIdEqualTo(sourceId)
       .keyEqualTo(key)
       .findFirstSync();
-  isar.writeTxnSync(() {
-    if (sourcePref != null) {
-      isar.sourcePreferenceStringValues.putSync(sourcePref..value = value);
-    } else {
-      isar.sourcePreferenceStringValues.putSync(
-        SourcePreferenceStringValue()
-          ..key = key
-          ..sourceId = sourceId
-          ..value = value,
-      );
-    }
-  });
+  unawaited(
+    isar
+        .writeTxn(() async {
+          if (sourcePref != null) {
+            await isar.sourcePreferenceStringValues.put(
+              sourcePref..value = value,
+            );
+          } else {
+            await isar.sourcePreferenceStringValues.put(
+              SourcePreferenceStringValue()
+                ..key = key
+                ..sourceId = sourceId
+                ..value = value,
+            );
+          }
+        })
+        .catchError((_) {}),
+  );
 }

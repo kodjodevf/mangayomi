@@ -222,7 +222,7 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
         },
       ),
       itemBuilder: (context, Source element) =>
-          ExtensionListTileWidget(source: element),
+          ExtensionListTileWidget(key: ValueKey(element.id), source: element),
       groupComparator: (group1, group2) => group1.compareTo(group2),
       itemComparator: (item1, item2) =>
           item1.name?.compareTo(item2.name ?? '') ?? 0,
@@ -242,7 +242,7 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
         ),
       ),
       itemBuilder: (context, Source element) =>
-          ExtensionListTileWidget(source: element),
+          ExtensionListTileWidget(key: ValueKey(element.id), source: element),
       groupComparator: (group1, group2) => group1.compareTo(group2),
       itemComparator: (item1, item2) =>
           item1.name?.compareTo(item2.name ?? '') ?? 0,
@@ -263,7 +263,7 @@ class _ExtensionScreenState extends ConsumerState<ExtensionScreen> {
         ),
       ),
       itemBuilder: (context, Source element) =>
-          ExtensionListTileWidget(source: element),
+          ExtensionListTileWidget(key: ValueKey(element.id), source: element),
       groupComparator: (group1, group2) => group1.compareTo(group2),
       itemComparator: (item1, item2) =>
           item1.name?.compareTo(item2.name ?? '') ?? 0,

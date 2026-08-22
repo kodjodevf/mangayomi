@@ -66,7 +66,6 @@ Future<void> downloadChapter(
   Ref ref, {
   required Chapter chapter,
   bool? useWifi,
-  LocalFolder? localFolder,
   VoidCallback? callback,
 }) async {
   final keepAlive = ref.keepAlive();
@@ -132,20 +131,8 @@ Future<void> downloadChapter(
     await storageProvider.requestPermission();
     final manga = chapter.manga.value!;
     final itemType = manga.itemType;
-    final targetLocalFolder = localFolder ?? await getDownloadLocalFolder();
-    final targetPath = targetLocalFolder?.path;
-    if (targetPath == null || targetPath.isEmpty) {
-      botToast(
-        localizedMessage(
-          (l10n) => l10n.no_local_folder_available_for_downloads,
-        ),
-      );
-      keepAlive.close();
-      return;
-    }
-    final mangaMainDirectory = Directory(
-      p.join(targetPath, manga.name!.replaceForbiddenCharacters('_')),
-    );
+    final mangaMainDirectory =
+        (await storageProvider.getMangaMainDirectory(chapter))!;
     await storageProvider.createDirectorySafely(mangaMainDirectory.path);
     final metadataHeaders = (manga.isLocalArchive ?? false)
         ? null
@@ -485,7 +472,7 @@ Future<void> downloadChapter(
       if (!cbzFileExist && itemType == ItemType.manga ||
           !mp4FileExist && itemType == ItemType.anime ||
           !htmlFileExist && itemType == ItemType.novel) {
-        final mainDirectory = Directory(targetPath);
+        final mainDirectory = (await storageProvider.getDirectory())!;
         storageProvider.createDirectorySafely(mainDirectory.path);
         for (var index = 0; index < pageUrls.length; index++) {
           if (Platform.isAndroid) {
@@ -755,7 +742,6 @@ class _DownloadGate {
 Future<void> processDownloads(
   Ref ref, {
   bool? useWifi,
-  LocalFolder? localFolder,
 }) async {
   final keepAlive = ref.keepAlive();
   try {
@@ -788,7 +774,6 @@ Future<void> processDownloads(
         downloadChapterProvider(
           chapter: chapter,
           useWifi: useWifi,
-          localFolder: localFolder,
         ),
       );
     }

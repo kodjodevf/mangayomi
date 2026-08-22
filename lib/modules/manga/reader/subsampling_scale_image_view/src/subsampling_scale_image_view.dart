@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:crypto/crypto.dart';
+import 'package:mangayomi/utils/avif.dart';
 
 import 'coordinate_transformer.dart';
 import 'ffi_image_decoder.dart';
@@ -916,14 +917,66 @@ class _SubsamplingScaleImageViewState extends State<SubsamplingScaleImageView>
 
   // ── Initialization ──────────────────────────────────────────────────────────
 
+  Future<String?> _legacyIosAvifPng(String path) async {
+    if (!Platform.isIOS) return null;
+
+    final source = File(path);
+    final reader = await source.open();
+    late final Uint8List header;
+    try {
+      header = await reader.read(256);
+    } finally {
+      await reader.close();
+    }
+    if (!isAvifImage(header)) return null;
+
+    final stat = await source.stat();
+    final key = _md5Hash(
+      '$path:${stat.size}:${stat.modified.millisecondsSinceEpoch}',
+    );
+    final target = File(
+      '${(await getTemporaryDirectory()).path}/ssiv_avif_$key.png',
+    );
+    if (!await target.exists()) {
+      await target.writeAsBytes(
+        await decodeAvifToPng(await source.readAsBytes()),
+        flush: true,
+      );
+    }
+    return target.path;
+  }
+
   Future<void> _initImage() async {
-    final path = _resolvedFilePath;
+    var path = _resolvedFilePath;
     if (path == null) return;
 
-    final outSize = await ffiImageDecoder.getImageDimensionsAsync(
+    var outSize = await ffiImageDecoder.getImageDimensionsAsync(
       path,
       cropBorders: widget.cropBorders,
     );
+
+    if (!mounted || _resolvedFilePath != path) return;
+
+    if (outSize == null || outSize[0] == 0 || outSize[1] == 0) {
+      try {
+        final convertedPath = await _legacyIosAvifPng(path);
+        if (!mounted || _resolvedFilePath != path) return;
+        if (convertedPath != null) {
+          path = convertedPath;
+          _resolvedFilePath = path;
+          outSize = await ffiImageDecoder.getImageDimensionsAsync(
+            path,
+            cropBorders: widget.cropBorders,
+          );
+        }
+      } catch (e, st) {
+        if (kDebugMode) {
+          debugPrint(
+            'SubsamplingScaleImageView: Failed to decode AVIF: $e\n$st',
+          );
+        }
+      }
+    }
 
     if (!mounted || _resolvedFilePath != path) return;
 

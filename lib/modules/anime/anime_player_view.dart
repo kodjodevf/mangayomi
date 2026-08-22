@@ -89,6 +89,28 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
     super.dispose();
   }
 
+  Widget _buildLoading() {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        title: const Text(''),
+        leading: IconButton(
+          color: Colors.white,
+          // Lets the remote bail out of a hung load. IconButton, not
+          // BackButton, because only it takes autofocus.
+          autofocus: isTv,
+          icon: const BackButtonIcon(),
+          onPressed: () {
+            restoreSystemUI();
+            Navigator.pop(context);
+          },
+        ),
+      ),
+      body: const ProgressCenter(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final defaultSubtitleLang = ref.watch(defaultSubtitleLangStateProvider);
@@ -127,39 +149,17 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
           mpvDirectory: mpvDirectory,
         );
       },
-      error: (error, stackTrace) => Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        appBar: AppBar(
-          title: const Text(''),
-          leading: IconButton(
-            // The error body is just text, so focus this or the remote is stuck.
-            // IconButton, not BackButton, because only it takes autofocus.
-            autofocus: isTv,
-            icon: const BackButtonIcon(),
-            onPressed: () {
-              restoreSystemUI();
-              Navigator.pop(context);
-            },
-          ),
-        ),
-        // The back button above already claims TV focus, so the retry must
-        // not also ask for it; it stays reachable with the d-pad.
-        body: ErrorState(
-          autofocusRetry: false,
-          detail: error.toString(),
-          onRetry: () => ref.invalidate(getVideoListProvider(episode: episode)),
-        ),
-      ),
-      loading: () {
+      error: (error, stackTrace) {
+        if (serversData.isRefreshing || serversData.isReloading) {
+          return _buildLoading();
+        }
         return Scaffold(
-          backgroundColor: Colors.black,
-          extendBodyBehindAppBar: true,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: AppBar(
             title: const Text(''),
             leading: IconButton(
-              color: Colors.white,
-              // Lets the remote bail out of a hung load. IconButton, not
-              // BackButton, because only it takes autofocus.
+              // The error body is just text, so focus this or the remote is stuck.
+              // IconButton, not BackButton, because only it takes autofocus.
               autofocus: isTv,
               icon: const BackButtonIcon(),
               onPressed: () {
@@ -168,8 +168,18 @@ class _AnimePlayerViewState extends riv.ConsumerState<AnimePlayerView> {
               },
             ),
           ),
-          body: const ProgressCenter(),
+          // The back button above already claims TV focus, so the retry must
+          // not also ask for it; it stays reachable with the d-pad.
+          body: ErrorState(
+            autofocusRetry: false,
+            detail: error.toString(),
+            onRetry: () =>
+                ref.invalidate(getVideoListProvider(episode: episode)),
+          ),
         );
+      },
+      loading: () {
+        return _buildLoading();
       },
     );
   }
@@ -2351,9 +2361,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
     final Widget player = Stack(
       children: [
         Video(
-          pip: const PipConfig(
-            autoEnter: true
-          ),
+          pip: const PipConfig(autoEnter: true),
           subtitleViewConfiguration: SubtitleViewConfiguration(
             visible: false,
             style: subtileTextStyle(ref),
