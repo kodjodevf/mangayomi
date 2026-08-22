@@ -5,7 +5,6 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_qjs/quickjs/ffi.dart';
 import 'package:isar_community/isar.dart';
-import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/eval/model/source_preference.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/category.dart';
@@ -33,6 +32,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/services/backup_password_storage.dart';
 import 'package:mangayomi/utils/isar_txn_retry.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'restore.g.dart';
@@ -89,7 +89,7 @@ Future<void> doRestore(
       showBotToast("Backup Type not supported!");
     }
   } catch (e, s) {
-    botToast('$e\n$s');
+    toastError(e, stack: s, source: 'restore');
   }
 }
 
