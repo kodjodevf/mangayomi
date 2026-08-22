@@ -121,17 +121,14 @@ class _MigrationScreenScreenState extends ConsumerState<MigrationScreen> {
               extentPrecalculationPolicy: SuperPrecalculationPolicy(),
               itemBuilder: (context, index) {
                 final source = sourceList[index];
-                return SizedBox(
-                  height: 260,
-                  child: MigrationSourceSearchScreen(
-                    key: ValueKey(query),
-                    query: query,
-                    manga: widget.manga,
-                    source: source,
-                    trackSearch: widget.trackSearch,
-                    isFirst: index == 0,
-                    claimAutofocus: isTv ? _claimAutofocus : null,
-                  ),
+                return MigrationSourceSearchScreen(
+                  key: ValueKey(query),
+                  query: query,
+                  manga: widget.manga,
+                  source: source,
+                  trackSearch: widget.trackSearch,
+                  isFirst: index == 0,
+                  claimAutofocus: isTv ? _claimAutofocus : null,
                 );
               },
             )
@@ -229,60 +226,68 @@ class _MigrationSourceSearchScreenState
   Widget build(BuildContext context) {
     final l10n = l10nLocalizations(context)!;
 
-    return Scaffold(
-      body: SizedBox(
-        height: 260,
-        child: Column(
-          children: [
-            ListTile(
-              dense: true,
-              title: Text(widget.source.name!),
-              subtitle: Text(
-                completeLanguageName(widget.source.lang!),
-                style: const TextStyle(fontSize: 10),
-              ),
+    // IntrinsicHeight instead of a fixed pixel height: sizes to the actual
+    // (up to 2-line) title instead of a magic number that kept overflowing.
+    return IntrinsicHeight(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            dense: true,
+            title: Text(widget.source.name!),
+            subtitle: Text(
+              completeLanguageName(widget.source.lang!),
+              style: const TextStyle(fontSize: 10),
             ),
-            Flexible(
-              child: _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : Builder(
-                      builder: (context) {
-                        if (_errorMessage.isNotEmpty) {
-                          return ErrorState(
-                            compact: true,
-                            detail: _errorMessage,
-                            onRetry: () {
-                              setState(() {
-                                _isLoading = true;
-                                _errorMessage = "";
-                              });
-                              _init();
-                            },
-                          );
-                        }
-                        if (pages!.list.isNotEmpty) {
-                          return SuperListView.builder(
-                            extentPrecalculationPolicy:
-                                SuperPrecalculationPolicy(),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: pages!.list.length,
-                            itemBuilder: (context, index) {
-                              return MigrationMangaGlobalImageCard(
+          ),
+          _isLoading
+              ? const SizedBox(
+                  height: 60,
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              : Builder(
+                  builder: (context) {
+                    if (_errorMessage.isNotEmpty) {
+                      return ErrorState(
+                        compact: true,
+                        detail: _errorMessage,
+                        onRetry: () {
+                          setState(() {
+                            _isLoading = true;
+                            _errorMessage = "";
+                          });
+                          _init();
+                        },
+                      );
+                    }
+                    if (pages!.list.isNotEmpty) {
+                      return SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            for (
+                              var index = 0;
+                              index < pages!.list.length;
+                              index++
+                            )
+                              MigrationMangaGlobalImageCard(
                                 oldManga: widget.manga,
                                 manga: pages!.list[index],
                                 source: widget.source,
                                 trackSearch: widget.trackSearch,
                                 autofocus: _autofocusFirst && index == 0,
-                              );
-                            },
-                          );
-                        }
-                        return Center(child: Text(l10n.no_result));
-                      },
-                    ),
-            ),
-          ],
-        ),
+                              ),
+                          ],
+                        ),
+                      );
+                    }
+                    return SizedBox(
+                      height: 60,
+                      child: Center(child: Text(l10n.no_result)),
+                    );
+                  },
+                ),
+        ],
       ),
     );
   }
