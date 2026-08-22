@@ -15,18 +15,44 @@ class ChapterRecognition {
   );
   static final _bareNumber = RegExp(r"([0-9]+)(\.[0-9]+)?(\.?[a-z]+)?");
 
-  /// Sort key for the UI list. Encodes season into the key so multi-season
-  /// anime sort correctly: key = season * 100000 + episode.
-  int parseChapterNumber(String mangaTitle, String chapterName) =>
-      _parse(mangaTitle, chapterName, applySeason: true);
+  /// How many decimal places [parseChapterNumber] keeps.
+  ///
+  /// The key is an int so it can be compared, sorted and used as a map key
+  /// exactly as before, but it is scaled so the fraction survives: chapter 1.5
+  /// is 1500, not 1.
+  static const int _scale = 1000;
+
+  /// Room for one season, wide enough for the scaled chapter numbers below it.
+  static const int _seasonStride = 100000 * _scale;
+
+  /// Sort key for the UI list, and the identity used to tell two chapters
+  /// apart. Encodes season so multi-season anime sort correctly:
+  /// key = season * [_seasonStride] + chapter * [_scale].
+  ///
+  /// The fraction has to survive. Chapters numbered 1, 1.1 and 1.5 are three
+  /// different chapters, and truncating them to 1 made the app treat them as
+  /// one: the refresh in update_manga_detail_providers de-duplicates on this
+  /// number and drops the collisions, so the decimal ones never reached the
+  /// library at all. See #812.
+  int parseChapterNumber(String mangaTitle, String chapterName) {
+    final (season, number) = _parse(mangaTitle, chapterName, applySeason: true);
+    if (number == null) return 0;
+    final scaled = (number * _scale).round();
+    return season > 0 ? season * _seasonStride + scaled : scaled;
+  }
 
   /// Episode number within a season, for tracker updates (MAL/AniList/Kitsu)
   /// and AniSkip results. The tracker entry is already season-specific,
   /// so season is stripped.
-  int parseEpisodeNumber(String mangaTitle, String chapterName) =>
-      _parse(mangaTitle, chapterName, applySeason: false);
+  ///
+  /// Trackers count whole chapters, so the fraction is dropped here on
+  /// purpose. This is not the same number as [parseChapterNumber].
+  int parseEpisodeNumber(String mangaTitle, String chapterName) {
+    final (_, number) = _parse(mangaTitle, chapterName, applySeason: false);
+    return number?.toInt() ?? 0;
+  }
 
-  int _parse(
+  (int, double?) _parse(
     String mangaTitle,
     String chapterName, {
     required bool applySeason,
@@ -46,25 +72,20 @@ class ChapterRecognition {
 
     final epMatch = _episodeKeyword.firstMatch(name);
     if (epMatch != null) {
-      final ep = double.parse(epMatch.group(1)!).toInt();
-      return _withSeason(season, ep);
+      return (season, double.parse(epMatch.group(1)!));
     }
 
     // strip season/volume noise, then look for ch. or bare number.
     final stripped = name.replaceAll(_unwanted, '');
-    final ep = _extractNumber(stripped);
-    return ep != null ? _withSeason(season, ep) : 0;
+    return (season, _extractNumber(stripped));
   }
 
-  // Combines season + episode into a sortable integer.
-  int _withSeason(int season, int ep) => season > 0 ? season * 100000 + ep : ep;
-
-  int? _extractNumber(String name) {
+  double? _extractNumber(String name) {
     final chMatch = _chNotation.firstMatch(name);
-    if (chMatch != null) return _fromMatch(chMatch).toInt();
+    if (chMatch != null) return _fromMatch(chMatch);
 
     final numMatch = _bareNumber.firstMatch(name);
-    if (numMatch != null) return _fromMatch(numMatch).toInt();
+    if (numMatch != null) return _fromMatch(numMatch);
 
     return null;
   }
