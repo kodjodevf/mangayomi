@@ -407,6 +407,7 @@
   "episode_number": "Episode number",
   "share": "Share",
   "n_chapters": "{n} chapters",
+  "missing_chapters": "Missing {count} chapters",
   "no_description": "No description",
   "resume": "Resume",
   "read": "Read",
@@ -472,6 +473,13 @@
   "sync_button_upload_info": "This operation will fully replace the remote data with local data!",
   "sync_button_download": "Download only",
   "sync_button_download_info": "This operation will fully replace the local data with remote data!",
+  "sync_status_not_configured": "Not connected",
+  "sync_status_checking": "Checking connection...",
+  "sync_status_connected": "Connected",
+  "sync_status_unauthorized": "Session expired, please log in again",
+  "sync_status_unreachable": "Can't reach server",
+  "sync_section_general": "General",
+  "sync_section_data_types": "What to sync",
   "sync_on": "Enable sync",
   "sync_auto": "Auto Sync",
   "sync_auto_warning": "Auto Sync is currently an experimental feature!",
@@ -492,6 +500,7 @@
   "full_screen_player_info": "Automatically use fullscreen when playing a video.",
   "episode_progress": "Progress: {n}",
   "n_episodes": "{n} episodes",
+  "missing_episodes": "Missing {count} episodes",
   "manga_sources": "Manga Sources",
   "anime_sources": "Anime Sources",
   "novel_sources": "Novel Sources",
@@ -556,6 +565,16 @@
   "create_backup_dialog_title": "What do you want to backup?",
   "create_backup_subtitle": "Can be used to restore current library",
   "restore_backup": "Restore backup",
+  "encrypt_backups": "Encrypt backups",
+  "encrypt_backups_info": "Password-protect backup files using AES encryption",
+  "no_secure_storage": "No secure storage found",
+  "no_keyring_warning": "This system doesn't have a keyring service available (e.g. gnome-keyring or kwallet on Linux), so the password can't be stored securely.\n\nStore it unencrypted in the local app database instead? Anyone with access to this device's app data would be able to read it.",
+  "enter_backup_password": "Enter backup password",
+  "incorrect_password_try_again": "Incorrect password, try again.",
+  "set_backup_password": "Set backup password",
+  "confirm_password": "Confirm password",
+  "passwords_do_not_match": "Passwords do not match",
+  "password_required_to_restore": "A password is required to restore this backup.",
   "restore_backup_subtitle": "Restore library from backup file",
   "automatic_backups": "Automatic backups",
   "backup_frequency": "Backup frequency",
@@ -688,8 +707,8 @@
   "anime_extensions_repo": "Anime extensions repo",
   "novel_extensions_repo": "Novel extensions repo",
   "custom_dns": "Custom DNS (leave blank to use system DNS)",
-  "android_proxy_server": "Android Proxy Server (ApkBridge)",
-  "get_apk_bridge": "Get ApkBridge",
+  "android_proxy_server": "Android Proxy Server (M-Extension-Server)",
+  "get_m_extension_server": "Get M-Extension-Server",
   "get_sync_server": "Get Sync Server here",
   "undefined": "undefined",
   "empty_extensions_repo": "You don't have any repository urls here. Click on the plus button to add one!",
@@ -849,6 +868,12 @@
       "error": {}
     }
   },
+  "unrecognized_chapter_numbers": "{count} chapter(s) couldn't be auto-numbered and may be out of order or missing from the reader.",
+  "@unrecognized_chapter_numbers": {
+    "placeholders": {
+      "count": {}
+    }
+  },
   "cloudflare_resolution_webview_server_start_failed": "Couldn't start Cloudflare Resolution Webview Server.",
   "tracker_token_expired": "{tracker} Token expired",
   "@tracker_token_expired": {
@@ -936,7 +961,7 @@
   "extension_server_jar": "Extension server JAR",
   "installed_version": "Installed version",
   "latest_version": "Latest version",
-  "apkbridge_description": "Use ApkBridge when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.",
+  "m_extension_server_description": "Use M-Extension-Server when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.",
   "set_proxy_address": "Set proxy address",
   "no_newer_proxy_server_release_available": "No newer proxy server release is available.",
   "could_not_check_proxy_server_updates": "Could not check for proxy server updates.",
@@ -957,11 +982,12 @@
   "select_extension_server_jar": "Select extension server JAR",
   "selected_file_could_not_be_accessed": "The selected file could not be accessed.",
   "extension_server_jar_imported": "Extension server JAR was imported.",
-  "could_not_launch_apk_bridge_page": "Could not launch the ApkBridge page.",
+  "could_not_launch_apk_bridge_page": "Could not launch the M-Extension-Server page.",
   "proxy_server_ip_hint": "Server IP (e.g., 10.0.0.5 or https://example.com)",
   "not_configured": "Not configured",
   "zero_interpreter": "Zero interpreter",
-  "zero_interpreter_description": "The server starts automatically on launch. You can also control it manually.",
+  "zero_interpreter_description": "Control the Zero interpreter server automatically or manually.",
+  "start_server_on_launch": "Start server on launch",
   "runtime_status": "Runtime status",
   "running": "Running",
   "stopped": "Stopped",
@@ -1056,5 +1082,132 @@
         "type": "int"
       }
     }
-  }
+  },
+  "import_mode_title": "How should this be imported?",
+  "import_mode_message": "Choose whether to merge this backup into your current library, or replace your entire library with it.",
+  "import_mode_keep_existing": "Merge",
+  "import_mode_keep_existing_subtitle": "Adds new series and updates matching ones. Nothing in your current library is removed.",
+  "import_mode_replace": "Replace",
+  "import_mode_replace_subtitle": "Deletes your entire current library and replaces it with this backup.",
+  "replace_summary_title": "Ready to replace your library",
+  "replace_summary_message": "This deletes your entire current library ({currentCount} series) and replaces it with {backupCount} series from this backup. This can only be undone by rolling back.",
+  "@replace_summary_message": {
+    "placeholders": {
+      "currentCount": {},
+      "backupCount": {}
+    }
+  },
+  "replace_summary_confirm": "Replace",
+  "replace_result_message": "Replaced your library with {count} series from this backup.",
+  "@replace_result_message": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "category_conflict_title": "Existing categories found",
+  "category_conflict_message": "The backup has categories that already exist in your library. Keep to fold incoming series into the existing category, or delete to leave those series uncategorized instead.",
+  "category_conflict_keep": "Keep — merge into existing category",
+  "category_conflict_delete": "Delete — leave series uncategorized",
+  "source_conflict_title": "Sources not found",
+  "source_conflict_message": "These backup sources don't match an installed extension. Keep the original name (imported without a working source), or migrate to an installed extension so these series can be updated.",
+  "source_conflict_keep": "Keep original name (no live source)",
+  "import_summary_title": "Ready to import",
+  "import_summary_message": "{newSeries} new series, {updatedSeries} existing series will be updated, and {newChapters} new chapters will be added. Nothing already in your library will be removed.",
+  "@import_summary_message": {
+    "placeholders": {
+      "newSeries": {},
+      "updatedSeries": {},
+      "newChapters": {}
+    }
+  },
+  "import_summary_confirm": "Import",
+  "import_result_message": "Imported {newSeries} new series, updated {updatedSeries} existing, added {newChapters} new chapters.",
+  "@import_result_message": {
+    "placeholders": {
+      "newSeries": {},
+      "updatedSeries": {},
+      "newChapters": {}
+    }
+  },
+  "roll_back": "Roll back",
+  "roll_back_confirm_message": "This restores your library to the safety snapshot taken right before this change, undoing everything it just did.",
+  "roll_back_done": "Rolled back to the pre-change snapshot.",
+  "restoring_backup": "Restoring your library…",
+  "roll_back_last_change": "Roll back last change",
+  "roll_back_last_change_subtitle": "Snapshot from {date} — {description}",
+  "@roll_back_last_change_subtitle": {
+    "placeholders": {
+      "date": {},
+      "description": {}
+    }
+  },
+  "roll_back_available_count": "{count} recent changes available to roll back to",
+  "@roll_back_available_count": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "delete_source_title": "Delete a source & its manga",
+  "delete_source_subtitle": "Pick a source and remove every manga it has in your library, along with their chapters, downloads, history and tracking.",
+  "delete_source_pick_title": "Pick a source to delete",
+  "delete_source_empty": "No sources found in your library.",
+  "delete_source_confirm_title": "Delete {sourceName}?",
+  "@delete_source_confirm_title": {
+    "placeholders": {
+      "sourceName": {}
+    }
+  },
+  "delete_source_confirm_message": "This permanently deletes {mangaCount} manga, {chapterCount} chapters, {historyCount} history entries and {updateCount} update entries. Tracking links are kept. This cannot be undone except by rolling back.",
+  "@delete_source_confirm_message": {
+    "placeholders": {
+      "mangaCount": {},
+      "chapterCount": {},
+      "historyCount": {},
+      "updateCount": {}
+    }
+  },
+  "delete_source_also_remove_extension": "Also remove the installed extension",
+  "delete_source_keep_history": "Keep reading history",
+  "delete_source_keep_downloads": "Keep download records",
+  "delete_source_button": "Delete",
+  "delete_source_result_message": "Deleted {mangaCount} manga from {sourceName}.",
+  "@delete_source_result_message": {
+    "placeholders": {
+      "mangaCount": {},
+      "sourceName": {}
+    }
+  },
+  "merge_manga_title": "Merge duplicate manga",
+  "merge_manga_subtitle": "Finds manga with matching titles under the same source (e.g. after merging duplicate sources) and folds them into one, without deleting anything you'd want kept.",
+  "merge_manga_none_found": "No likely duplicate manga found.",
+  "merge_manga_pick_title": "Possible duplicate manga",
+  "merge_manga_choose_primary_title": "Which one should the others merge into?",
+  "merge_manga_choose_primary_message": "Chapters, history and tracking from the other entries will be folded into whichever one you pick — nothing is deleted.",
+  "merge_manga_chapters_subtitle": "{count, plural, =1{1 chapter} other{{count} chapters}}",
+  "@merge_manga_chapters_subtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "merge_manga_button": "Merge",
+  "merge_manga_result_message": "Merged {count} duplicate manga into {mangaName}.",
+  "@merge_manga_result_message": {
+    "placeholders": {
+      "count": {},
+      "mangaName": {}
+    }
+  },
+  "merge_preview_title": "Confirm merge",
+  "merge_manga_preview_message": "{totalChapters} chapters found across the other entries. {duplicateChapters} are duplicates and will be dropped (keeping whichever copy has reading progress); {keptChapters} will be added. {duplicateTracks} duplicate tracking link(s) will also be dropped.",
+  "@merge_manga_preview_message": {
+    "placeholders": {
+      "totalChapters": {},
+      "duplicateChapters": {},
+      "keptChapters": {},
+      "duplicateTracks": {}
+    }
+  },
+  "beta": "Beta"
 }

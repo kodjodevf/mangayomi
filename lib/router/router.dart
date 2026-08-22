@@ -173,15 +173,20 @@ class RouterNotifier extends ChangeNotifier {
     ),
     _genericRoute<int>(
       name: "mangaReaderView",
-      builder: (id) => MangaReaderView(chapterId: id),
+      // Keyed by chapter id so a chapter-to-chapter pushReplacement fully
+      // remounts instead of reusing the Element and going stale.
+      builder: (id) =>
+          MangaReaderView(key: ValueKey('mangaReader-$id'), chapterId: id),
     ),
     _genericRoute<int>(
       name: "animePlayerView",
-      builder: (id) => AnimePlayerView(episodeId: id),
+      builder: (id) =>
+          AnimePlayerView(key: ValueKey('animePlayer-$id'), episodeId: id),
     ),
     _genericRoute<int>(
       name: "novelReaderView",
-      builder: (id) => NovelReaderView(chapterId: id),
+      builder: (id) =>
+          NovelReaderView(key: ValueKey('novelReader-$id'), chapterId: id),
     ),
     _genericRoute<ItemType>(
       name: "ExtensionLang",

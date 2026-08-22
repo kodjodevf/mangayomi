@@ -238,6 +238,7 @@ class Settings {
   String? jrePath;
 
   String? extensionServerPath;
+  bool? autoStartExtensionServerOnLaunch;
 
   @enumerated
   late SectionType disableSectionType;
@@ -378,6 +379,8 @@ class Settings {
   int? readerNavigationLayout;
 
   int? backupCompressionLevel;
+
+  bool? backupEncryptionEnabled;
 
   bool? showNSFW;
 
@@ -554,6 +557,7 @@ class Settings {
     this.androidProxyServer,
     this.jrePath = "",
     this.extensionServerPath = "",
+    this.autoStartExtensionServerOnLaunch = false,
     this.lastTrackerLibraryLocation,
     this.mergeLibraryNavMobile = false,
     this.enableDiscordRpc = true,
@@ -593,6 +597,7 @@ class Settings {
     this.readerSaturation = 1.0,
     this.readerNavigationLayout = 0,
     this.backupCompressionLevel,
+    this.backupEncryptionEnabled = false,
     this.showNSFW = false,
     this.showSourceBadge = false,
     this.ttsSpeechRate = 0.5,
@@ -879,6 +884,7 @@ class Settings {
     androidProxyServer = json['androidProxyServer'];
     jrePath = json['jrePath'];
     extensionServerPath = json['extensionServerPath'];
+    autoStartExtensionServerOnLaunch = json['autoStartExtensionServerOnLaunch'];
     lastTrackerLibraryLocation = json['lastTrackerLibraryLocation'];
     mergeLibraryNavMobile = json['mergeLibraryNavMobile'];
     enableDiscordRpc = json['enableDiscordRpc'];
@@ -929,6 +935,7 @@ class Settings {
     readerSaturation = json['readerSaturation']?.toDouble();
     readerNavigationLayout = json['readerNavigationLayout'];
     backupCompressionLevel = json['backupCompressionLevel'];
+    backupEncryptionEnabled = json['backupEncryptionEnabled'];
     showNSFW = json['showNSFW'];
     showSourceBadge = json['showSourceBadge'];
     ttsSpeechRate = json['ttsSpeechRate']?.toDouble();
@@ -1116,6 +1123,7 @@ class Settings {
     'androidProxyServer': androidProxyServer,
     'jrePath': jrePath,
     'extensionServerPath': extensionServerPath,
+    'autoStartExtensionServerOnLaunch': autoStartExtensionServerOnLaunch,
     'lastTrackerLibraryLocation': lastTrackerLibraryLocation,
     'mergeLibraryNavMobile': mergeLibraryNavMobile,
     'enableDiscordRpc': enableDiscordRpc,
@@ -1156,6 +1164,7 @@ class Settings {
     'readerSaturation': readerSaturation,
     'readerNavigationLayout': readerNavigationLayout,
     'backupCompressionLevel': backupCompressionLevel,
+    'backupEncryptionEnabled': backupEncryptionEnabled,
     'showNSFW': showNSFW,
     'showSourceBadge': showSourceBadge,
     'ttsSpeechRate': ttsSpeechRate,

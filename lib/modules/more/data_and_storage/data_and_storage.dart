@@ -5,13 +5,17 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/auto_backup.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/backup_compression.dart';
-import 'package:mangayomi/modules/more/data_and_storage/providers/restore.dart';
+import 'package:mangayomi/modules/more/data_and_storage/providers/backup_encryption.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/storage_usage.dart';
+import 'package:mangayomi/modules/more/data_and_storage/widgets/backup_encryption_password_dialog.dart';
+import 'package:mangayomi/modules/more/data_and_storage/widgets/rollback_last_change_tile.dart';
+import 'package:mangayomi/modules/more/data_and_storage/widgets/source_management_tiles.dart';
+import 'package:mangayomi/modules/more/data_and_storage/widgets/unified_restore.dart';
 import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/services/backup_password_storage.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/modules/widgets/tv_escapable_slider.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
@@ -31,6 +35,7 @@ class DataAndStorage extends ConsumerWidget {
     );
     final l10n = l10nLocalizations(context)!;
     final compression = ref.watch(backupCompressionLevelProvider);
+    final backupEncryptionEnabled = ref.watch(backupEncryptionEnabledProvider);
     return Scaffold(
       appBar: AppBar(title: Text(l10n.data_and_storage)),
       body: SingleChildScrollView(
@@ -179,87 +184,7 @@ class DataAndStorage extends ConsumerWidget {
                         if (newSelection.contains('create')) {
                           context.push('/createBackup');
                         } else if (newSelection.contains('restore')) {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: Text(l10n.restore_backup),
-                                content: SizedBox(
-                                  width: context.width(0.8),
-                                  child: SuperListView(
-                                    shrinkWrap: true,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.info_outline_rounded,
-                                            color: context.secondaryColor,
-                                          ),
-                                        ],
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          vertical: 5,
-                                        ),
-                                        child: Text(
-                                          l10n.restore_backup_warning_title,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                actions: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      TextButton(
-                                        onPressed: () async {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text(
-                                          l10n.cancel,
-                                          style: TextStyle(
-                                            color: context.primaryColor,
-                                          ),
-                                        ),
-                                      ),
-                                      TextButton(
-                                        onPressed: () async {
-                                          try {
-                                            final file =
-                                                await FilePicker.pickFile();
-
-                                            if (file != null &&
-                                                context.mounted) {
-                                              ref.watch(
-                                                doRestoreProvider(
-                                                  path: file.path!,
-                                                  context: context,
-                                                ),
-                                              );
-                                            }
-                                            if (!context.mounted) return;
-                                            Navigator.pop(context);
-                                          } catch (e) {
-                                            botToast(
-                                              "Error restoring backup: $e",
-                                            );
-                                            Navigator.pop(context);
-                                          }
-                                        },
-                                        child: Text(
-                                          l10n.ok,
-                                          style: TextStyle(
-                                            color: context.primaryColor,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              );
-                            },
-                          );
+                          performRestore(context, ref);
                         }
                       },
                     ),
@@ -267,6 +192,9 @@ class DataAndStorage extends ConsumerWidget {
                 ],
               ),
             ),
+            const RollbackLastChangeTile(),
+            const DeleteSourceTile(),
+            const MergeDuplicateMangaTile(),
             ListTile(
               onTap: () {
                 showDialog(
@@ -324,6 +252,29 @@ class DataAndStorage extends ConsumerWidget {
                 _getBackupFrequencyList(context)[backupFrequency],
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
+            ),
+            SwitchListTile(
+              title: Text(l10n.encrypt_backups),
+              subtitle: Text(
+                l10n.encrypt_backups_info,
+                style: TextStyle(fontSize: 11),
+              ),
+              value: backupEncryptionEnabled,
+              onChanged: (value) async {
+                if (!value) {
+                  await ref
+                      .read(backupEncryptionEnabledProvider.notifier)
+                      .set(false);
+                  await BackupPasswordStorage.clear();
+                  return;
+                }
+                final saved = await showBackupEncryptionPasswordDialog(context);
+                if (saved == true) {
+                  await ref
+                      .read(backupEncryptionEnabledProvider.notifier)
+                      .set(true);
+                }
+              },
             ),
             ListTile(
               title: Text(l10n.compression_level),

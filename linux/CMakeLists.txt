@@ -134,33 +134,34 @@ add_library(subsampling_scale_image_view SHARED
 apply_standard_settings(subsampling_scale_image_view)
 target_include_directories(subsampling_scale_image_view PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../lib/ffi")
 
-# Link libjpeg if found (enables JPEG decoding on Linux)
+# Link dl library for runtime dynamic loading (dlopen)
+target_link_libraries(subsampling_scale_image_view PRIVATE ${CMAKE_DL_LIBS})
+
+# Include headers for type definitions during compilation (symbols are resolved dynamically at runtime via dlopen)
 if(JPEG_FOUND)
-  target_link_libraries(subsampling_scale_image_view PRIVATE ${JPEG_LIBRARIES})
   target_include_directories(subsampling_scale_image_view PRIVATE ${JPEG_INCLUDE_DIRS})
   target_compile_definitions(subsampling_scale_image_view PRIVATE HAVE_LIBJPEG)
-  message(STATUS "libjpeg found: JPEG decoding enabled for Linux")
+  message(STATUS "libjpeg headers found: JPEG dynamic decoding enabled for Linux")
 else()
-  message(WARNING "libjpeg not found: JPEG images will not display on Linux. Install libjpeg-dev.")
+  message(WARNING "libjpeg headers not found. Install libjpeg-dev (Ubuntu) or libjpeg-turbo-devel (Fedora).")
 endif()
 
-# Link libpng if found (enables PNG decoding on Linux)
+# Link libpng headers if found
 if(PNG_FOUND)
-  target_link_libraries(subsampling_scale_image_view PRIVATE ${PNG_LIBRARIES})
   target_include_directories(subsampling_scale_image_view PRIVATE ${PNG_INCLUDE_DIRS})
   target_compile_definitions(subsampling_scale_image_view PRIVATE HAVE_LIBPNG)
-  message(STATUS "libpng found: PNG decoding enabled for Linux")
+  message(STATUS "libpng headers found: PNG dynamic decoding enabled for Linux")
 else()
-  message(WARNING "libpng not found: PNG images will not display on Linux. Install libpng-dev.")
+  message(WARNING "libpng headers not found. Install libpng-dev (Ubuntu) or libpng-devel (Fedora).")
 endif()
 
-# Link libavif if found (enables AVIF decoding on Linux)
+# Link libavif headers if found
 if(AVIF_FOUND)
-  target_link_libraries(subsampling_scale_image_view PRIVATE PkgConfig::AVIF)
+  target_include_directories(subsampling_scale_image_view PRIVATE ${AVIF_INCLUDE_DIRS})
   target_compile_definitions(subsampling_scale_image_view PRIVATE HAVE_LIBAVIF)
-  message(STATUS "libavif found: AVIF decoding enabled for Linux")
+  message(STATUS "libavif headers found: AVIF dynamic decoding enabled for Linux")
 else()
-  message(WARNING "libavif not found: AVIF images will not display on Linux. Install libavif-dev.")
+  message(WARNING "libavif headers not found. Install libavif-dev (Ubuntu) or libavif-devel (Fedora).")
 endif()
 
 install(TARGETS subsampling_scale_image_view

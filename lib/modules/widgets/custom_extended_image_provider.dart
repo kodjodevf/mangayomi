@@ -1,7 +1,7 @@
 // ignore_for_file: non_nullable_equals_parameter, depend_on_referenced_packages, implementation_imports
 import 'dart:async';
 import 'dart:io';
-import 'dart:ui' as ui show Codec;
+import 'dart:ui' as ui show Codec, ImmutableBuffer;
 
 import 'package:extended_image_library/src/extended_image_provider.dart';
 import 'package:extended_image_library/src/platform.dart';
@@ -10,6 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'package:http_client_helper/http_client_helper.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/http/m_client.dart';
+import 'package:mangayomi/utils/avif.dart';
 import 'package:path/path.dart';
 import 'package:extended_image_library/src/network/extended_network_image_provider.dart'
     as image_provider;
@@ -207,6 +208,20 @@ class CustomExtendedNetworkImageProvider
     return SynchronousFuture<CustomExtendedNetworkImageProvider>(this);
   }
 
+  @override
+  Future<ui.Codec> instantiateImageCodec(
+    Uint8List data,
+    ImageDecoderCallback decode,
+  ) async {
+    try {
+      return await super.instantiateImageCodec(data, decode);
+    } catch (_) {
+      if (!Platform.isIOS || !isAvifImage(data)) rethrow;
+      final png = await decodeAvifToPng(data);
+      return decode(await ui.ImmutableBuffer.fromUint8List(png));
+    }
+  }
+
   Future<ui.Codec> _loadAsync(
     CustomExtendedNetworkImageProvider key,
     StreamController<ImageChunkEvent> chunkEvents,
@@ -215,6 +230,9 @@ class CustomExtendedNetworkImageProvider
     assert(key == this);
     final String md5Key = cacheKey ?? keyToMd5(key.url);
     ui.Codec? result;
+    // Kept so the final error, if any, says why instead of just "failed" —
+    // both attempts below were previously swallowing the real exception.
+    Object? lastError;
     if (cache) {
       try {
         final Uint8List? data = await _loadCache(key, chunkEvents, md5Key);
@@ -222,6 +240,7 @@ class CustomExtendedNetworkImageProvider
           result = await instantiateImageCodec(data, decode);
         }
       } catch (e) {
+        lastError = e;
         if (kDebugMode) {
           print(e);
         }
@@ -235,6 +254,7 @@ class CustomExtendedNetworkImageProvider
           result = await instantiateImageCodec(data, decode);
         }
       } catch (e) {
+        lastError = e;
         if (kDebugMode) {
           print(e);
         }
@@ -244,7 +264,11 @@ class CustomExtendedNetworkImageProvider
     //Failed to load
     if (result == null) {
       //result = await ui.instantiateImageCodec(kTransparentImage);
-      return Future<ui.Codec>.error(StateError('Failed to load $url.'));
+      return Future<ui.Codec>.error(
+        StateError(
+          'Failed to load $url.${lastError != null ? ' Cause: $lastError' : ''}',
+        ),
+      );
     }
 
     return result;

@@ -264,9 +264,7 @@ class ExtensionStoreService {
                   ? ItemType.anime
                   : ItemType.manga
               ..iconUrl = '$repoBaseUrl/icon/${e['pkg']}.png'
-              ..notes = Platform.isAndroid
-                  ? null
-                  : 'Requires Android Proxy Server (ApkBridge) for installing and using the extensions!';
+              ..notes = null;
             src.id = 'mihon-${source['id']}'.hashCode;
             sources.add(src);
           }
@@ -338,9 +336,7 @@ class ExtensionStoreService {
           ..iconUrl = iconUrl
           ..sourceCodeLanguage = SourceCodeLanguage.mihon
           ..itemType = itemType
-          ..notes = Platform.isAndroid
-              ? null
-              : 'Requires Android Proxy Server (ApkBridge) for installing and using the extensions!';
+          ..notes = null;
 
         source.id = 'mihon-${src.id}'.hashCode;
         sources.add(source);
@@ -428,9 +424,7 @@ class ExtensionStoreService {
             ..iconUrl = iconUrl
             ..sourceCodeLanguage = SourceCodeLanguage.mihon
             ..itemType = itemType
-            ..notes = Platform.isAndroid
-                ? null
-                : 'Requires Android Proxy Server (ApkBridge) for installing and using the extensions!';
+            ..notes = null;
 
           source.id = 'mihon-$srcId'.hashCode;
           sources.add(source);

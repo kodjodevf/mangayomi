@@ -1637,6 +1637,12 @@ abstract class AppLocalizations {
   /// **'{n} chapters'**
   String n_chapters(Object n);
 
+  /// No description provided for @missing_chapters.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing {count} chapters'**
+  String missing_chapters(Object count);
+
   /// No description provided for @no_description.
   ///
   /// In en, this message translates to:
@@ -2027,6 +2033,48 @@ abstract class AppLocalizations {
   /// **'This operation will fully replace the local data with remote data!'**
   String get sync_button_download_info;
 
+  /// No description provided for @sync_status_not_configured.
+  ///
+  /// In en, this message translates to:
+  /// **'Not connected'**
+  String get sync_status_not_configured;
+
+  /// No description provided for @sync_status_checking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking connection...'**
+  String get sync_status_checking;
+
+  /// No description provided for @sync_status_connected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get sync_status_connected;
+
+  /// No description provided for @sync_status_unauthorized.
+  ///
+  /// In en, this message translates to:
+  /// **'Session expired, please log in again'**
+  String get sync_status_unauthorized;
+
+  /// No description provided for @sync_status_unreachable.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t reach server'**
+  String get sync_status_unreachable;
+
+  /// No description provided for @sync_section_general.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get sync_section_general;
+
+  /// No description provided for @sync_section_data_types.
+  ///
+  /// In en, this message translates to:
+  /// **'What to sync'**
+  String get sync_section_data_types;
+
   /// No description provided for @sync_on.
   ///
   /// In en, this message translates to:
@@ -2146,6 +2194,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{n} episodes'**
   String n_episodes(Object n);
+
+  /// No description provided for @missing_episodes.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing {count} episodes'**
+  String missing_episodes(Object count);
 
   /// No description provided for @manga_sources.
   ///
@@ -2530,6 +2584,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Restore backup'**
   String get restore_backup;
+
+  /// No description provided for @encrypt_backups.
+  ///
+  /// In en, this message translates to:
+  /// **'Encrypt backups'**
+  String get encrypt_backups;
+
+  /// No description provided for @encrypt_backups_info.
+  ///
+  /// In en, this message translates to:
+  /// **'Password-protect backup files using AES encryption'**
+  String get encrypt_backups_info;
+
+  /// No description provided for @no_secure_storage.
+  ///
+  /// In en, this message translates to:
+  /// **'No secure storage found'**
+  String get no_secure_storage;
+
+  /// No description provided for @no_keyring_warning.
+  ///
+  /// In en, this message translates to:
+  /// **'This system doesn\'t have a keyring service available (e.g. gnome-keyring or kwallet on Linux), so the password can\'t be stored securely.\n\nStore it unencrypted in the local app database instead? Anyone with access to this device\'s app data would be able to read it.'**
+  String get no_keyring_warning;
+
+  /// No description provided for @enter_backup_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter backup password'**
+  String get enter_backup_password;
+
+  /// No description provided for @incorrect_password_try_again.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect password, try again.'**
+  String get incorrect_password_try_again;
+
+  /// No description provided for @set_backup_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Set backup password'**
+  String get set_backup_password;
+
+  /// No description provided for @confirm_password.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get confirm_password;
+
+  /// No description provided for @passwords_do_not_match.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwords_do_not_match;
+
+  /// No description provided for @password_required_to_restore.
+  ///
+  /// In en, this message translates to:
+  /// **'A password is required to restore this backup.'**
+  String get password_required_to_restore;
 
   /// No description provided for @restore_backup_subtitle.
   ///
@@ -3326,14 +3440,14 @@ abstract class AppLocalizations {
   /// No description provided for @android_proxy_server.
   ///
   /// In en, this message translates to:
-  /// **'Android Proxy Server (ApkBridge)'**
+  /// **'Android Proxy Server (M-Extension-Server)'**
   String get android_proxy_server;
 
-  /// No description provided for @get_apk_bridge.
+  /// No description provided for @get_m_extension_server.
   ///
   /// In en, this message translates to:
-  /// **'Get ApkBridge'**
-  String get get_apk_bridge;
+  /// **'Get M-Extension-Server'**
+  String get get_m_extension_server;
 
   /// No description provided for @get_sync_server.
   ///
@@ -4043,6 +4157,12 @@ abstract class AppLocalizations {
   /// **'Failed to export metadata: {error}'**
   String failed_to_export_metadata(Object error);
 
+  /// No description provided for @unrecognized_chapter_numbers.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} chapter(s) couldn\'t be auto-numbered and may be out of order or missing from the reader.'**
+  String unrecognized_chapter_numbers(Object count);
+
   /// No description provided for @cloudflare_resolution_webview_server_start_failed.
   ///
   /// In en, this message translates to:
@@ -4475,11 +4595,11 @@ abstract class AppLocalizations {
   /// **'Latest version'**
   String get latest_version;
 
-  /// No description provided for @apkbridge_description.
+  /// No description provided for @m_extension_server_description.
   ///
   /// In en, this message translates to:
-  /// **'Use ApkBridge when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.'**
-  String get apkbridge_description;
+  /// **'Use M-Extension-Server when you need a separate Android device proxy. Set the proxy address here and download the APK from GitHub.'**
+  String get m_extension_server_description;
 
   /// No description provided for @set_proxy_address.
   ///
@@ -4574,7 +4694,7 @@ abstract class AppLocalizations {
   /// No description provided for @could_not_launch_apk_bridge_page.
   ///
   /// In en, this message translates to:
-  /// **'Could not launch the ApkBridge page.'**
+  /// **'Could not launch the M-Extension-Server page.'**
   String get could_not_launch_apk_bridge_page;
 
   /// No description provided for @proxy_server_ip_hint.
@@ -4598,8 +4718,14 @@ abstract class AppLocalizations {
   /// No description provided for @zero_interpreter_description.
   ///
   /// In en, this message translates to:
-  /// **'The server starts automatically on launch. You can also control it manually.'**
+  /// **'Control the Zero interpreter server automatically or manually.'**
   String get zero_interpreter_description;
+
+  /// No description provided for @start_server_on_launch.
+  ///
+  /// In en, this message translates to:
+  /// **'Start server on launch'**
+  String get start_server_on_launch;
 
   /// No description provided for @runtime_status.
   ///
@@ -5002,6 +5128,330 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 source with no results} other{{count} sources with no results}}'**
   String sources_with_no_results(int count);
+
+  /// No description provided for @import_mode_title.
+  ///
+  /// In en, this message translates to:
+  /// **'How should this be imported?'**
+  String get import_mode_title;
+
+  /// No description provided for @import_mode_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose whether to merge this backup into your current library, or replace your entire library with it.'**
+  String get import_mode_message;
+
+  /// No description provided for @import_mode_keep_existing.
+  ///
+  /// In en, this message translates to:
+  /// **'Merge'**
+  String get import_mode_keep_existing;
+
+  /// No description provided for @import_mode_keep_existing_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Adds new series and updates matching ones. Nothing in your current library is removed.'**
+  String get import_mode_keep_existing_subtitle;
+
+  /// No description provided for @import_mode_replace.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace'**
+  String get import_mode_replace;
+
+  /// No description provided for @import_mode_replace_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Deletes your entire current library and replaces it with this backup.'**
+  String get import_mode_replace_subtitle;
+
+  /// No description provided for @replace_summary_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to replace your library'**
+  String get replace_summary_title;
+
+  /// No description provided for @replace_summary_message.
+  ///
+  /// In en, this message translates to:
+  /// **'This deletes your entire current library ({currentCount} series) and replaces it with {backupCount} series from this backup. This can only be undone by rolling back.'**
+  String replace_summary_message(Object currentCount, Object backupCount);
+
+  /// No description provided for @replace_summary_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace'**
+  String get replace_summary_confirm;
+
+  /// No description provided for @replace_result_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Replaced your library with {count} series from this backup.'**
+  String replace_result_message(Object count);
+
+  /// No description provided for @category_conflict_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Existing categories found'**
+  String get category_conflict_title;
+
+  /// No description provided for @category_conflict_message.
+  ///
+  /// In en, this message translates to:
+  /// **'The backup has categories that already exist in your library. Keep to fold incoming series into the existing category, or delete to leave those series uncategorized instead.'**
+  String get category_conflict_message;
+
+  /// No description provided for @category_conflict_keep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep — merge into existing category'**
+  String get category_conflict_keep;
+
+  /// No description provided for @category_conflict_delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete — leave series uncategorized'**
+  String get category_conflict_delete;
+
+  /// No description provided for @source_conflict_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sources not found'**
+  String get source_conflict_title;
+
+  /// No description provided for @source_conflict_message.
+  ///
+  /// In en, this message translates to:
+  /// **'These backup sources don\'t match an installed extension. Keep the original name (imported without a working source), or migrate to an installed extension so these series can be updated.'**
+  String get source_conflict_message;
+
+  /// No description provided for @source_conflict_keep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep original name (no live source)'**
+  String get source_conflict_keep;
+
+  /// No description provided for @import_summary_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to import'**
+  String get import_summary_title;
+
+  /// No description provided for @import_summary_message.
+  ///
+  /// In en, this message translates to:
+  /// **'{newSeries} new series, {updatedSeries} existing series will be updated, and {newChapters} new chapters will be added. Nothing already in your library will be removed.'**
+  String import_summary_message(
+    Object newSeries,
+    Object updatedSeries,
+    Object newChapters,
+  );
+
+  /// No description provided for @import_summary_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Import'**
+  String get import_summary_confirm;
+
+  /// No description provided for @import_result_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported {newSeries} new series, updated {updatedSeries} existing, added {newChapters} new chapters.'**
+  String import_result_message(
+    Object newSeries,
+    Object updatedSeries,
+    Object newChapters,
+  );
+
+  /// No description provided for @roll_back.
+  ///
+  /// In en, this message translates to:
+  /// **'Roll back'**
+  String get roll_back;
+
+  /// No description provided for @roll_back_confirm_message.
+  ///
+  /// In en, this message translates to:
+  /// **'This restores your library to the safety snapshot taken right before this change, undoing everything it just did.'**
+  String get roll_back_confirm_message;
+
+  /// No description provided for @roll_back_done.
+  ///
+  /// In en, this message translates to:
+  /// **'Rolled back to the pre-change snapshot.'**
+  String get roll_back_done;
+
+  /// No description provided for @restoring_backup.
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring your library…'**
+  String get restoring_backup;
+
+  /// No description provided for @roll_back_last_change.
+  ///
+  /// In en, this message translates to:
+  /// **'Roll back last change'**
+  String get roll_back_last_change;
+
+  /// No description provided for @roll_back_last_change_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Snapshot from {date} — {description}'**
+  String roll_back_last_change_subtitle(Object date, Object description);
+
+  /// No description provided for @roll_back_available_count.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} recent changes available to roll back to'**
+  String roll_back_available_count(Object count);
+
+  /// No description provided for @delete_source_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete a source & its manga'**
+  String get delete_source_title;
+
+  /// No description provided for @delete_source_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a source and remove every manga it has in your library, along with their chapters, downloads, history and tracking.'**
+  String get delete_source_subtitle;
+
+  /// No description provided for @delete_source_pick_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a source to delete'**
+  String get delete_source_pick_title;
+
+  /// No description provided for @delete_source_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'No sources found in your library.'**
+  String get delete_source_empty;
+
+  /// No description provided for @delete_source_confirm_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {sourceName}?'**
+  String delete_source_confirm_title(Object sourceName);
+
+  /// No description provided for @delete_source_confirm_message.
+  ///
+  /// In en, this message translates to:
+  /// **'This permanently deletes {mangaCount} manga, {chapterCount} chapters, {historyCount} history entries and {updateCount} update entries. Tracking links are kept. This cannot be undone except by rolling back.'**
+  String delete_source_confirm_message(
+    Object mangaCount,
+    Object chapterCount,
+    Object historyCount,
+    Object updateCount,
+  );
+
+  /// No description provided for @delete_source_also_remove_extension.
+  ///
+  /// In en, this message translates to:
+  /// **'Also remove the installed extension'**
+  String get delete_source_also_remove_extension;
+
+  /// No description provided for @delete_source_keep_history.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep reading history'**
+  String get delete_source_keep_history;
+
+  /// No description provided for @delete_source_keep_downloads.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep download records'**
+  String get delete_source_keep_downloads;
+
+  /// No description provided for @delete_source_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete_source_button;
+
+  /// No description provided for @delete_source_result_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted {mangaCount} manga from {sourceName}.'**
+  String delete_source_result_message(Object mangaCount, Object sourceName);
+
+  /// No description provided for @merge_manga_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Merge duplicate manga'**
+  String get merge_manga_title;
+
+  /// No description provided for @merge_manga_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Finds manga with matching titles under the same source (e.g. after merging duplicate sources) and folds them into one, without deleting anything you\'d want kept.'**
+  String get merge_manga_subtitle;
+
+  /// No description provided for @merge_manga_none_found.
+  ///
+  /// In en, this message translates to:
+  /// **'No likely duplicate manga found.'**
+  String get merge_manga_none_found;
+
+  /// No description provided for @merge_manga_pick_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Possible duplicate manga'**
+  String get merge_manga_pick_title;
+
+  /// No description provided for @merge_manga_choose_primary_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Which one should the others merge into?'**
+  String get merge_manga_choose_primary_title;
+
+  /// No description provided for @merge_manga_choose_primary_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapters, history and tracking from the other entries will be folded into whichever one you pick — nothing is deleted.'**
+  String get merge_manga_choose_primary_message;
+
+  /// No description provided for @merge_manga_chapters_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 chapter} other{{count} chapters}}'**
+  String merge_manga_chapters_subtitle(int count);
+
+  /// No description provided for @merge_manga_button.
+  ///
+  /// In en, this message translates to:
+  /// **'Merge'**
+  String get merge_manga_button;
+
+  /// No description provided for @merge_manga_result_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Merged {count} duplicate manga into {mangaName}.'**
+  String merge_manga_result_message(Object count, Object mangaName);
+
+  /// No description provided for @merge_preview_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm merge'**
+  String get merge_preview_title;
+
+  /// No description provided for @merge_manga_preview_message.
+  ///
+  /// In en, this message translates to:
+  /// **'{totalChapters} chapters found across the other entries. {duplicateChapters} are duplicates and will be dropped (keeping whichever copy has reading progress); {keptChapters} will be added. {duplicateTracks} duplicate tracking link(s) will also be dropped.'**
+  String merge_manga_preview_message(
+    Object totalChapters,
+    Object duplicateChapters,
+    Object keptChapters,
+    Object duplicateTracks,
+  );
+
+  /// No description provided for @beta.
+  ///
+  /// In en, this message translates to:
+  /// **'Beta'**
+  String get beta;
 }
 
 class _AppLocalizationsDelegate

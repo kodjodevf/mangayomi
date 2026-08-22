@@ -7,6 +7,7 @@ import 'package:mangayomi/modules/library/providers/file_scanner.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/player/providers/player_state_provider.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/services/downloaded_chapter.dart';
 import 'package:mangayomi/services/isolate_service.dart';
 import 'package:mangayomi/services/torrent_server.dart';
 import 'package:mangayomi/utils/utils.dart';
@@ -34,14 +35,20 @@ Future<(List<Video>, bool, List<String>, Directory?)> getVideoList(
     final mpvDirectory = useMpvConfig
         ? await storageProvider.getMpvDirectory()
         : null;
-    final mangaDirectory = await storageProvider.getMangaMainDirectory(episode);
     final isLocalArchive =
         episode.manga.value!.isLocalArchive! &&
         episode.manga.value!.source != "torrent";
-    final mp4animePath = p.join(
-      mangaDirectory!.path,
-      "${episode.name!.replaceForbiddenCharacters(' ')}.mp4",
+    // Episodes downloaded on the builds that sent downloads to a local folder
+    // are still in that folder, so look there as well as in the downloads
+    // directory rather than only where new downloads land.
+    final episodeFileName =
+        "${episode.name!.replaceForbiddenCharacters(' ')}.mp4";
+    final candidateDirectories = await downloadedMangaDirectories(episode);
+    final downloadedDirectory = candidateDirectories.firstWhere(
+      (directory) => File(p.join(directory.path, episodeFileName)).existsSync(),
+      orElse: () => candidateDirectories.first,
     );
+    final mp4animePath = p.join(downloadedDirectory.path, episodeFileName);
     final resolvedArchivePath = episode.archivePath?.isNotEmpty ?? false
         ? await resolveLocalArchivePath(episode.archivePath!)
         : null;
@@ -53,7 +60,7 @@ Future<(List<Video>, bool, List<String>, Directory?)> getVideoList(
           : null;
       final chapterDirectory = (await storageProvider.getMangaChapterDirectory(
         episode,
-        mangaMainDirectory: animeDir ?? mangaDirectory,
+        mangaMainDirectory: animeDir ?? downloadedDirectory,
       ))!;
       final path = isLocalArchive ? resolvedArchivePath : mp4animePath;
       final subtitlesDir = Directory(

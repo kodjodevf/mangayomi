@@ -88,6 +88,11 @@ mixin ReaderMemoryManagement {
     return _preloadManager.isChapterLoaded(chapter);
   }
 
+  /// Whether [chapter]'s pages were evicted and need a reload.
+  bool isChapterEvicted(Chapter? chapter) {
+    return _preloadManager.isChapterEvicted(chapter);
+  }
+
   /// Adds a "last chapter" transition page.
   ///
   /// Returns `true` if added successfully, `false` if already added.

@@ -65,13 +65,23 @@ extension ChapterExtension on Chapter {
 
     final storageProvider = StorageProvider();
     final chapterName = name!.replaceForbiddenCharacters(' ');
+
+    final mangaDirList = <Directory>[];
+    final defaultMangaDir = await storageProvider.getMangaMainDirectory(this);
+    if (defaultMangaDir != null) mangaDirList.add(defaultMangaDir);
+
     final folders = await getAllLocalFolders();
     for (final folder in folders) {
       final folderPath = folder.path;
       if (folderPath == null || folderPath.isEmpty) continue;
-      final mangaDir = Directory(
-        p.join(folderPath, manga.value!.name!.replaceForbiddenCharacters('_')),
+      mangaDirList.add(
+        Directory(
+          p.join(folderPath, manga.value!.name!.replaceForbiddenCharacters('_')),
+        ),
       );
+    }
+
+    for (final mangaDir in mangaDirList) {
       final chapterDir = await storageProvider.getMangaChapterDirectory(
         this,
         mangaMainDirectory: mangaDir,

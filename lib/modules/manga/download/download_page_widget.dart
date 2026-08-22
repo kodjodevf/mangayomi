@@ -7,9 +7,6 @@ import 'package:isar_community/isar.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
 import 'package:mangayomi/models/download.dart';
-import 'package:mangayomi/models/settings.dart';
-import 'package:mangayomi/modules/library/providers/file_scanner.dart';
-import 'package:mangayomi/modules/more/settings/downloads/providers/downloads_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/modules/manga/download/providers/download_provider.dart';
@@ -27,15 +24,13 @@ class ChapterPageDownload extends ConsumerWidget {
   void _startDownload(
     bool? useWifi,
     int? downloadId,
-    WidgetRef ref, {
-    LocalFolder? localFolder,
-  }) async {
+    WidgetRef ref,
+  ) async {
     _cancelTasks(downloadId: downloadId);
     ref.read(
       downloadChapterProvider(
         chapter: chapter,
         useWifi: useWifi,
-        localFolder: localFolder,
       ),
     );
   }
@@ -68,17 +63,11 @@ class ChapterPageDownload extends ConsumerWidget {
 
   Future<List<FileSystemEntity>> _downloadedFileEntities() async {
     final storageProvider = StorageProvider();
-    final folders = await getAllLocalFolders();
-    final manga = chapter.manga.value!;
     final chapterName = chapter.name!.replaceForbiddenCharacters(' ');
     final candidates = <FileSystemEntity>[];
 
-    for (final folder in folders) {
-      final folderPath = folder.path;
-      if (folderPath == null || folderPath.isEmpty) continue;
-      final mangaDir = Directory(
-        p.join(folderPath, manga.name!.replaceForbiddenCharacters('_')),
-      );
+    final mangaDir = await storageProvider.getMangaMainDirectory(chapter);
+    if (mangaDir != null) {
       final chapterDir = await storageProvider.getMangaChapterDirectory(
         chapter,
         mangaMainDirectory: mangaDir,
@@ -95,44 +84,13 @@ class ChapterPageDownload extends ConsumerWidget {
     return candidates;
   }
 
-  Future<void> _showDownloadFolderDialog(
+  void _downloadChapter(
     BuildContext context,
     WidgetRef ref, {
     bool? useWifi,
     int? downloadId,
-  }) async {
-    final folders = await getAllLocalFolders();
-    if (folders.isEmpty || !context.mounted) return;
-    final shouldAsk = ref.read(askDownloadDestinationStateProvider);
-    if (!shouldAsk || folders.length == 1) {
-      final folder = !shouldAsk
-          ? await getDownloadLocalFolder()
-          : folders.first;
-      if (folder == null) return;
-      _startDownload(useWifi, downloadId, ref, localFolder: folder);
-      return;
-    }
-    showDialog(
-      context: context,
-      builder: (context) => SimpleDialog(
-        title: Text(context.l10n.select_download_destination),
-        children: folders
-            .map(
-              (folder) => SimpleDialogOption(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _startDownload(useWifi, downloadId, ref, localFolder: folder);
-                },
-                child: ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(folder.name ?? ""),
-                  subtitle: Text(folder.path ?? ""),
-                ),
-              ),
-            )
-            .toList(),
-      ),
-    );
+  }) {
+    _startDownload(useWifi, downloadId, ref);
   }
 
   @override
@@ -184,7 +142,7 @@ class ChapterPageDownload extends ConsumerWidget {
                           if (value == 0) {
                             _cancelTasks(downloadId: download.id!);
                           } else if (value == 1) {
-                            _showDownloadFolderDialog(
+                            _downloadChapter(
                               context,
                               ref,
                               useWifi: false,
@@ -248,7 +206,7 @@ class ChapterPageDownload extends ConsumerWidget {
                           if (value == 0) {
                             _cancelTasks(downloadId: download.id!);
                           } else if (value == 1) {
-                            _showDownloadFolderDialog(
+                            _downloadChapter(
                               context,
                               ref,
                               useWifi: false,
@@ -268,7 +226,7 @@ class ChapterPageDownload extends ConsumerWidget {
                   : download.succeeded == 0
                   ? IconButton(
                       onPressed: () {
-                        _showDownloadFolderDialog(
+                        _downloadChapter(
                           context,
                           ref,
                           downloadId: download.id,
@@ -293,7 +251,7 @@ class ChapterPageDownload extends ConsumerWidget {
                         ),
                         onSelected: (value) {
                           if (value == 0) {
-                            _showDownloadFolderDialog(
+                            _downloadChapter(
                               context,
                               ref,
                               downloadId: download.id,
@@ -310,7 +268,7 @@ class ChapterPageDownload extends ConsumerWidget {
               splashRadius: 5,
               iconSize: 17,
               onPressed: () {
-                _showDownloadFolderDialog(context, ref);
+                _downloadChapter(context, ref);
               },
               icon: _downloadWidget(context, false),
             );
