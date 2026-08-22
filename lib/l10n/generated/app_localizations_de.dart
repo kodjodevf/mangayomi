@@ -1362,6 +1362,40 @@ class AppLocalizationsDe extends AppLocalizations {
   String get restore_backup => 'Backup wiederherstellen';
 
   @override
+  String get encrypt_backups => 'Backups verschlüsseln';
+
+  @override
+  String get encrypt_backups_info =>
+      'Backups mittels AES Verfahren verschlüsseln';
+
+  @override
+  String get no_secure_storage => 'Keinen geschützten Speicher gefunden';
+
+  @override
+  String get no_keyring_warning =>
+      'Auf diesem System ist kein Schlüsselbund verfügbar (z. B. gnome-keyring oder KWallet unter Linux), daher kann das Passwort nicht sicher gespeichert werden.\n\nSoll es stattdessen unverschlüsselt in der lokalen App-Datenbank gespeichert werden? Jeder, der Zugriff auf die App-Daten dieses Geräts hat, könnte es lesen.';
+
+  @override
+  String get enter_backup_password => 'Backup-Passwort eingeben';
+
+  @override
+  String get incorrect_password_try_again =>
+      'Falsches Passwort, versuche es erneut.';
+
+  @override
+  String get set_backup_password => 'Backup-Passwort festlegen';
+
+  @override
+  String get confirm_password => 'Passwort bestätigen';
+
+  @override
+  String get passwords_do_not_match => 'Passwörter stimmen nicht überein';
+
+  @override
+  String get password_required_to_restore =>
+      'Zum Wiederherstellen dieses Backups ist ein Passwort erforderlich.';
+
+  @override
   String get restore_backup_subtitle =>
       'Bibliothek aus Backup-Datei wiederherstellen';
 
@@ -2531,7 +2565,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get zero_interpreter_description =>
-      'The server starts automatically on launch. You can also control it manually.';
+      'Control the Zero interpreter server automatically or manually.';
+
+  @override
+  String get start_server_on_launch => 'Start server on launch';
 
   @override
   String get runtime_status => 'Runtime status';
@@ -2755,4 +2792,216 @@ class AppLocalizationsDe extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get import_mode_title => 'How should this be imported?';
+
+  @override
+  String get import_mode_message =>
+      'Choose whether to merge this backup into your current library, or replace your entire library with it.';
+
+  @override
+  String get import_mode_keep_existing => 'Merge';
+
+  @override
+  String get import_mode_keep_existing_subtitle =>
+      'Adds new series and updates matching ones. Nothing in your current library is removed.';
+
+  @override
+  String get import_mode_replace => 'Replace';
+
+  @override
+  String get import_mode_replace_subtitle =>
+      'Deletes your entire current library and replaces it with this backup.';
+
+  @override
+  String get replace_summary_title => 'Ready to replace your library';
+
+  @override
+  String replace_summary_message(Object currentCount, Object backupCount) {
+    return 'This deletes your entire current library ($currentCount series) and replaces it with $backupCount series from this backup. This can only be undone by rolling back.';
+  }
+
+  @override
+  String get replace_summary_confirm => 'Replace';
+
+  @override
+  String replace_result_message(Object count) {
+    return 'Replaced your library with $count series from this backup.';
+  }
+
+  @override
+  String get category_conflict_title => 'Existing categories found';
+
+  @override
+  String get category_conflict_message =>
+      'The backup has categories that already exist in your library. Keep to fold incoming series into the existing category, or delete to leave those series uncategorized instead.';
+
+  @override
+  String get category_conflict_keep => 'Keep — merge into existing category';
+
+  @override
+  String get category_conflict_delete => 'Delete — leave series uncategorized';
+
+  @override
+  String get source_conflict_title => 'Sources not found';
+
+  @override
+  String get source_conflict_message =>
+      'These backup sources don\'t match an installed extension. Keep the original name (imported without a working source), or migrate to an installed extension so these series can be updated.';
+
+  @override
+  String get source_conflict_keep => 'Keep original name (no live source)';
+
+  @override
+  String get import_summary_title => 'Ready to import';
+
+  @override
+  String import_summary_message(
+    Object newSeries,
+    Object updatedSeries,
+    Object newChapters,
+  ) {
+    return '$newSeries new series, $updatedSeries existing series will be updated, and $newChapters new chapters will be added. Nothing already in your library will be removed.';
+  }
+
+  @override
+  String get import_summary_confirm => 'Import';
+
+  @override
+  String import_result_message(
+    Object newSeries,
+    Object updatedSeries,
+    Object newChapters,
+  ) {
+    return 'Imported $newSeries new series, updated $updatedSeries existing, added $newChapters new chapters.';
+  }
+
+  @override
+  String get roll_back => 'Roll back';
+
+  @override
+  String get roll_back_confirm_message =>
+      'This restores your library to the safety snapshot taken right before this change, undoing everything it just did.';
+
+  @override
+  String get roll_back_done => 'Rolled back to the pre-change snapshot.';
+
+  @override
+  String get restoring_backup => 'Restoring your library…';
+
+  @override
+  String get roll_back_last_change => 'Roll back last change';
+
+  @override
+  String roll_back_last_change_subtitle(Object date, Object description) {
+    return 'Snapshot from $date — $description';
+  }
+
+  @override
+  String roll_back_available_count(Object count) {
+    return '$count recent changes available to roll back to';
+  }
+
+  @override
+  String get delete_source_title => 'Delete a source & its manga';
+
+  @override
+  String get delete_source_subtitle =>
+      'Pick a source and remove every manga it has in your library, along with their chapters, downloads, history and tracking.';
+
+  @override
+  String get delete_source_pick_title => 'Pick a source to delete';
+
+  @override
+  String get delete_source_empty => 'No sources found in your library.';
+
+  @override
+  String delete_source_confirm_title(Object sourceName) {
+    return 'Delete $sourceName?';
+  }
+
+  @override
+  String delete_source_confirm_message(
+    Object mangaCount,
+    Object chapterCount,
+    Object historyCount,
+    Object updateCount,
+  ) {
+    return 'This permanently deletes $mangaCount manga, $chapterCount chapters, $historyCount history entries and $updateCount update entries. Tracking links are kept. This cannot be undone except by rolling back.';
+  }
+
+  @override
+  String get delete_source_also_remove_extension =>
+      'Also remove the installed extension';
+
+  @override
+  String get delete_source_keep_history => 'Keep reading history';
+
+  @override
+  String get delete_source_keep_downloads => 'Keep download records';
+
+  @override
+  String get delete_source_button => 'Delete';
+
+  @override
+  String delete_source_result_message(Object mangaCount, Object sourceName) {
+    return 'Deleted $mangaCount manga from $sourceName.';
+  }
+
+  @override
+  String get merge_manga_title => 'Merge duplicate manga';
+
+  @override
+  String get merge_manga_subtitle =>
+      'Finds manga with matching titles under the same source (e.g. after merging duplicate sources) and folds them into one, without deleting anything you\'d want kept.';
+
+  @override
+  String get merge_manga_none_found => 'No likely duplicate manga found.';
+
+  @override
+  String get merge_manga_pick_title => 'Possible duplicate manga';
+
+  @override
+  String get merge_manga_choose_primary_title =>
+      'Which one should the others merge into?';
+
+  @override
+  String get merge_manga_choose_primary_message =>
+      'Chapters, history and tracking from the other entries will be folded into whichever one you pick — nothing is deleted.';
+
+  @override
+  String merge_manga_chapters_subtitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count chapters',
+      one: '1 chapter',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get merge_manga_button => 'Merge';
+
+  @override
+  String merge_manga_result_message(Object count, Object mangaName) {
+    return 'Merged $count duplicate manga into $mangaName.';
+  }
+
+  @override
+  String get merge_preview_title => 'Confirm merge';
+
+  @override
+  String merge_manga_preview_message(
+    Object totalChapters,
+    Object duplicateChapters,
+    Object keptChapters,
+    Object duplicateTracks,
+  ) {
+    return '$totalChapters chapters found across the other entries. $duplicateChapters are duplicates and will be dropped (keeping whichever copy has reading progress); $keptChapters will be added. $duplicateTracks duplicate tracking link(s) will also be dropped.';
+  }
+
+  @override
+  String get beta => 'Beta';
 }

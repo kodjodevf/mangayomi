@@ -47,6 +47,27 @@ class AndroidProxyServerState extends _$AndroidProxyServerState {
 }
 
 @riverpod
+class AutoStartExtensionServerOnLaunchState
+    extends _$AutoStartExtensionServerOnLaunchState {
+  @override
+  bool build() {
+    return isar.settings.getSync(227)!.autoStartExtensionServerOnLaunch ?? false;
+  }
+
+  void set(bool value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..autoStartExtensionServerOnLaunch = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
 class OnlyIncludePinnedSourceState extends _$OnlyIncludePinnedSourceState {
   @override
   bool build() {

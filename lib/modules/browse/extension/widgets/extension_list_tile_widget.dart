@@ -29,18 +29,15 @@ class _ExtensionListTileWidgetState
     extends ConsumerState<ExtensionListTileWidget> {
   bool _isLoading = false;
 
-  late final bool _updateAvailable;
-  late final bool _sourceNotEmpty;
+  bool get _updateAvailable =>
+      compareVersions(
+        widget.source.version ?? '',
+        widget.source.versionLast ?? '',
+      ) <
+      0;
 
-  @override
-  void initState() {
-    super.initState();
-    _updateAvailable =
-        compareVersions(widget.source.version!, widget.source.versionLast!) < 0;
-    _sourceNotEmpty =
-        widget.source.sourceCode != null &&
-        widget.source.sourceCode!.isNotEmpty;
-  }
+  bool get _sourceNotEmpty =>
+      widget.source.sourceCode != null && widget.source.sourceCode!.isNotEmpty;
 
   Future<void> _handleSourceFetch() async {
     setState(() => _isLoading = true);
@@ -184,58 +181,61 @@ class _ExtensionListTileWidgetState
 
   /// Language, version and the NSFW / repo / obsolete badges.
   Widget _meta(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Text(
-          completeLanguageName(widget.source.lang!.toLowerCase()),
-          style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 12),
-        ),
-        const SizedBox(width: 4),
-        Text(
-          widget.source.version!,
-          style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 12),
-        ),
-        if (widget.source.isNsfw ?? false)
-          Padding(
-            padding: const EdgeInsets.only(left: 4),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-              decoration: BoxDecoration(
-                color: Colors.red.withValues(alpha: 0.8),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: const Text(
-                "NSFW",
-                style: TextStyle(
-                  fontSize: 8,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(
+            completeLanguageName(widget.source.lang!.toLowerCase()),
+            style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 12),
+          ),
+          const SizedBox(width: 4),
+          Text(
+            widget.source.version!,
+            style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 12),
+          ),
+          if (widget.source.isNsfw ?? false)
+            Padding(
+              padding: const EdgeInsets.only(left: 4),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                decoration: BoxDecoration(
+                  color: Colors.red.withValues(alpha: 0.8),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: const Text(
+                  "NSFW",
+                  style: TextStyle(
+                    fontSize: 8,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
-          ),
-        if (widget.source.repo?.name != null)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Text(
-              "- ${widget.source.repo!.name!}",
-              style: TextStyle(fontSize: 12),
-            ),
-          ),
-        if (widget.source.isObsolete ?? false)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Text(
-              "OBSOLETE",
-              style: TextStyle(
-                color: context.primaryColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
+          if (widget.source.repo?.name != null)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Text(
+                "- ${widget.source.repo!.name!}",
+                style: TextStyle(fontSize: 12),
               ),
             ),
-          ),
-      ],
+          if (widget.source.isObsolete ?? false)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Text(
+                "OBSOLETE",
+                style: TextStyle(
+                  color: context.primaryColor,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 

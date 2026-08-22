@@ -225,7 +225,10 @@ class _MyAppState extends ConsumerState<MyApp>
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      MExtensionServerPlatform(ref).startServer();
+      if (!Platform.isIOS ||
+          ref.read(autoStartExtensionServerOnLaunchStateProvider)) {
+        MExtensionServerPlatform(ref).startServer();
+      }
       if (ref.read(clearChapterCacheOnAppLaunchStateProvider)) {
         // Watch before calling clearcache to keep it alive, so that _getTotalDiskSpace completes safely
         ref.watch(totalChapterCacheSizeStateProvider);

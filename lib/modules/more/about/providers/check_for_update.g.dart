@@ -65,7 +65,8 @@ abstract class _$CheckForAppUpdates extends $Notifier<bool> {
 /// Automatic update-check provider.
 ///
 /// Respects the user's [checkForAppUpdatesProvider] preference.  Returns
-/// [UpdateInfo] when a newer version exists, `null` otherwise.
+/// [UpdateInfo] when a newer version exists and downloadable assets are ready,
+/// `null` otherwise.
 
 @ProviderFor(checkForUpdate)
 final checkForUpdateProvider = CheckForUpdateProvider._();
@@ -73,7 +74,8 @@ final checkForUpdateProvider = CheckForUpdateProvider._();
 /// Automatic update-check provider.
 ///
 /// Respects the user's [checkForAppUpdatesProvider] preference.  Returns
-/// [UpdateInfo] when a newer version exists, `null` otherwise.
+/// [UpdateInfo] when a newer version exists and downloadable assets are ready,
+/// `null` otherwise.
 
 final class CheckForUpdateProvider
     extends
@@ -86,7 +88,8 @@ final class CheckForUpdateProvider
   /// Automatic update-check provider.
   ///
   /// Respects the user's [checkForAppUpdatesProvider] preference.  Returns
-  /// [UpdateInfo] when a newer version exists, `null` otherwise.
+  /// [UpdateInfo] when a newer version exists and downloadable assets are ready,
+  /// `null` otherwise.
   CheckForUpdateProvider._()
     : super(
         from: null,

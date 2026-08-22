@@ -22,7 +22,6 @@ Future<dynamic> updateMangaDetail(
     final manga = isar.mangas.getSync(mangaId!);
     if (manga == null) return;
 
-    // loadSync() so .isNotEmpty is reliable (IsarLinks are lazy by default).
     manga.chapters.loadSync();
 
     if ((manga.isLocalArchive ?? false) ||
@@ -77,75 +76,80 @@ Future<dynamic> updateMangaDetail(
     final chaps = getManga.chapters;
 
     await isar.writeTxn(() async {
-      // Persist updated manga metadata.
       final savedMangaId = await isar.mangas.put(manga);
 
       if (chaps == null || chaps.isEmpty) return;
 
-      // loadSync() was called before the transaction; the set is still valid
-      // here because we haven't written to chapters yet.
       final existingChapters = manga.chapters.toList();
-      // Match by the domain-less URL (path + query), not the full URL. Sources
-      // (anime ones especially) migrate domains, so the stored URL keeps the old
-      // host while a fresh fetch returns the new one — matching on the full URL
-      // then misses and re-adds every chapter each update, which is how episodes
-      // ended up duplicated/tripled.
+      final recognition = ChapterRecognition();
+
+      int? numberOf(Chapter c) {
+        if (c.name == null) return null;
+        final num = recognition.parseChapterNumber(manga.name ?? '', c.name!);
+        return num > 0 ? num : null;
+      }
+
       final existingByUrl = <String, Chapter>{};
-      // IDs of pre-existing duplicates (same domain-less URL) to remove, so the
-      // list stops showing copies created before this fix. The read/started copy
-      // is the one kept.
-      final duplicateIds = <int>[];
+      final existingByComposite = <String, Chapter>{};
+      final duplicateIds = <int>{};
       for (final c in existingChapters) {
         final u = c.url?.trim();
-        if (u == null || u.isEmpty) continue;
-        final key = u.getUrlWithoutDomain;
-        final prior = existingByUrl[key];
+        final urlKey = (u == null || u.isEmpty) ? null : u.getUrlWithoutDomain;
+        final num = numberOf(c);
+        final compositeKey = num == null ? null : '$num::${c.scanlator ?? ''}';
+
+        final prior =
+            (urlKey != null ? existingByUrl[urlKey] : null) ??
+            (compositeKey != null ? existingByComposite[compositeKey] : null);
         if (prior == null) {
-          existingByUrl[key] = c;
+          if (urlKey != null) existingByUrl[urlKey] = c;
+          if (compositeKey != null) existingByComposite[compositeKey] = c;
         } else {
-          // Keep the copy with reading state; drop the other.
           final priorHasState =
               (prior.isRead ?? false) || (prior.lastPageRead ?? '').isNotEmpty;
           final keep = priorHasState ? prior : c;
           final drop = identical(keep, prior) ? c : prior;
-          existingByUrl[key] = keep;
+          if (urlKey != null) existingByUrl[urlKey] = keep;
+          if (compositeKey != null) existingByComposite[compositeKey] = keep;
           if (drop.id != null) duplicateIds.add(drop.id!);
         }
       }
 
-      // Build a chapterNumber -> isRead map so that when a new scanlator covers
-      // a chapter the user has already read, the new entry is pre-marked read.
-      // The value is true if ANY existing chapter at that number is read.
-      final recognition = ChapterRecognition();
       final readByNumber = <int, bool>{};
       for (final c in existingChapters) {
-        if (c.name == null) continue;
-        final num = recognition.parseChapterNumber(manga.name ?? '', c.name!);
-        if (num > 0) {
+        final num = numberOf(c);
+        if (num != null) {
           readByNumber[num] =
               (readByNumber[num] ?? false) || (c.isRead ?? false);
         }
       }
 
       final newChapters = <Chapter>[];
-      // Guards against a source repeating the same episode within one fetch.
       final seenKeys = <String>{};
-      // Existing chapters whose metadata changed — batch-updated at the end.
       final chaptersToUpdate = <Chapter>[];
 
       for (final chap in chaps) {
         final url = chap.url?.trim();
         if (url == null || url.isEmpty) continue;
         final key = url.getUrlWithoutDomain;
+
+        final chapNum = chap.name != null
+            ? recognition.parseChapterNumber(manga.name!, chap.name!)
+            : 0;
+        final compositeKey = chapNum > 0
+            ? '$chapNum::${chap.scanlator ?? ''}'
+            : null;
+
         if (!seenKeys.add(key)) continue;
-        final existing = existingByUrl[key];
+        if (compositeKey != null && !seenKeys.add('c:$compositeKey')) {
+          continue;
+        }
+
+        final existing =
+            existingByUrl[key] ??
+            (compositeKey != null ? existingByComposite[compositeKey] : null);
 
         if (existing == null) {
-          // Determine whether this chapter number has already been read under
-          // a different scanlator, so we don't show it as unread to the user.
-          final chapNum = chap.name != null
-              ? recognition.parseChapterNumber(manga.name!, chap.name!)
-              : 0;
           final alreadyRead = chapNum > 0 && (readByNumber[chapNum] ?? false);
 
           final newChapter = Chapter(
@@ -164,17 +168,21 @@ Future<dynamic> updateMangaDetail(
             duration: chap.duration,
           )..manga.value = manga;
 
-          // Carry over read state if another scanlator's version was read.
           if (alreadyRead) {
             newChapter.isRead = alreadyRead;
             newChapter.lastPageRead = "1";
           }
 
+          existingByUrl[key] = newChapter;
+          if (compositeKey != null) {
+            existingByComposite[compositeKey] = newChapter;
+          }
+
           newChapters.add(newChapter);
         } else {
-          // Existing chapter - refresh metadata only (collected for batch write).
           existing
             ..name = chap.name
+            ..url = url
             ..scanlator = chap.scanlator
             ..updatedAt = now
             ..isFiller = chap.isFiller
@@ -186,31 +194,24 @@ Future<dynamic> updateMangaDetail(
         }
       }
 
-      // ── Batch write existing chapters metadata ──────────────────────────
       if (chaptersToUpdate.isNotEmpty) {
         await isar.chapters.putAll(chaptersToUpdate);
       }
 
-      // ── Batch insert new chapters (oldest-first) + their Updates ────────
       if (newChapters.isNotEmpty) {
         final hasExisting = existingChapters.isNotEmpty;
 
-        // Reverse so oldest chapters get inserted first (API returns newest-first).
         final orderedNew = newChapters.reversed.toList();
 
-        // Set manga link on each chapter before batch insert.
         for (final chap in orderedNew) {
           chap.manga.value = manga;
         }
 
         await isar.chapters.putAll(orderedNew);
-        // Save the IsarLink for every chapter in one pass.
         for (final chap in orderedNew) {
           await chap.manga.save();
         }
 
-        // Build Update entries for genuinely new (unread) chapters only,
-        // so pre-read cross-scanlator chapters don't spam the updates feed.
         final updatesToInsert = <Update>[];
         for (final chap in orderedNew) {
           if (hasExisting && !(chap.isRead ?? false)) {
@@ -233,13 +234,10 @@ Future<dynamic> updateMangaDetail(
         }
       }
 
-      // ── Remove pre-existing duplicate chapters ───────────────────────────
       if (duplicateIds.isNotEmpty) {
-        await isar.chapters.deleteAll(duplicateIds);
+        await isar.chapters.deleteAll(duplicateIds.toList());
       }
 
-      // Calculate fetch interval:
-      // median of gaps between recent distinct chapter dates, clamped [1, 28].
       final dedupedExisting = duplicateIds.isEmpty
           ? existingChapters
           : existingChapters
