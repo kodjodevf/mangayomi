@@ -230,6 +230,9 @@ class CustomExtendedNetworkImageProvider
     assert(key == this);
     final String md5Key = cacheKey ?? keyToMd5(key.url);
     ui.Codec? result;
+    // Kept so the final error, if any, says why instead of just "failed" —
+    // both attempts below were previously swallowing the real exception.
+    Object? lastError;
     if (cache) {
       try {
         final Uint8List? data = await _loadCache(key, chunkEvents, md5Key);
@@ -237,6 +240,7 @@ class CustomExtendedNetworkImageProvider
           result = await instantiateImageCodec(data, decode);
         }
       } catch (e) {
+        lastError = e;
         if (kDebugMode) {
           print(e);
         }
@@ -250,6 +254,7 @@ class CustomExtendedNetworkImageProvider
           result = await instantiateImageCodec(data, decode);
         }
       } catch (e) {
+        lastError = e;
         if (kDebugMode) {
           print(e);
         }
@@ -259,7 +264,11 @@ class CustomExtendedNetworkImageProvider
     //Failed to load
     if (result == null) {
       //result = await ui.instantiateImageCodec(kTransparentImage);
-      return Future<ui.Codec>.error(StateError('Failed to load $url.'));
+      return Future<ui.Codec>.error(
+        StateError(
+          'Failed to load $url.${lastError != null ? ' Cause: $lastError' : ''}',
+        ),
+      );
     }
 
     return result;
