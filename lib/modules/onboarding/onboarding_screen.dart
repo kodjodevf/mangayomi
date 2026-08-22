@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/l10n/generated/app_localizations.dart';
 import 'package:mangayomi/models/manga.dart';
+import 'package:mangayomi/modules/browse/browse_screen.dart';
+import 'package:mangayomi/modules/browse/providers/browse_initial_tab_provider.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
@@ -136,14 +138,20 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     }
   }
 
-  /// Leaves on Browse, where the extensions the new repository provides are
-  /// waiting to be installed. That is the next thing to do, so there is no
-  /// reason to make the user go and find it.
+  /// Leaves on the extensions list for the library the repository stocks,
+  /// which is where the extensions it provides are waiting to be installed.
+  /// That is the next thing to do, so there is no reason to make the user go
+  /// and find it.
   ///
   /// Only when a repository was actually added. Somebody who skipped has
   /// nothing to install and is better off in their library.
   void _finish() {
-    if (_added != null) ref.read(routerProvider).go('/browse');
+    if (_added != null) {
+      ref
+          .read(browseInitialTabProvider.notifier)
+          .request(BrowseTab(_repoType, BrowseTabKind.extensions));
+      ref.read(routerProvider).go('/browse');
+    }
     ref.read(onboardingCompletedStateProvider.notifier).complete();
   }
 
@@ -275,7 +283,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         isSelected: (merged) => merged == _mergeLibraries,
         onTap: (merged) => setState(() => _mergeLibraries = merged),
       ),
-      const SizedBox(height: 16),
+      const SizedBox(height: 18),
+      // The words alone do not settle it. This is the bar the choice produces,
+      // with the libraries they actually picked in it.
+      _NavPreview(libraries: _chosen, merged: _mergeLibraries),
+      const SizedBox(height: 18),
       FilledButton(onPressed: _next, child: Text(l10n.onboarding_next)),
     ],
     _Step.repository => [
@@ -375,9 +387,106 @@ class _ChoiceRow<T> extends StatelessWidget {
           FilterChip(
             label: Text(label(value)),
             selected: isSelected(value),
+            // The tick would appear and disappear with the selection, so every
+            // chip in the row changed width and the row jumped around as the
+            // user tapped through it. The fill already says which is on.
+            showCheckmark: false,
             onSelected: onTap == null ? null : (_) => onTap!(value),
           ),
       ],
+    );
+  }
+}
+
+/// A small drawing of the navigation bar the current choice would produce.
+///
+/// Not a screenshot: it is built from the same icons and labels the real bar
+/// uses, so it stays honest if those change, and it shows the libraries the
+/// user actually picked rather than a stock three.
+class _NavPreview extends StatelessWidget {
+  const _NavPreview({required this.libraries, required this.merged});
+
+  final List<ItemType> libraries;
+  final bool merged;
+
+  static const _icons = {
+    ItemType.manga: Icons.collections_bookmark_outlined,
+    ItemType.anime: Icons.video_collection_outlined,
+    ItemType.novel: Icons.local_library_outlined,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = l10nLocalizations(context)!;
+    final labels = {
+      ItemType.manga: l10n.manga,
+      ItemType.anime: l10n.anime,
+      ItemType.novel: l10n.novel,
+    };
+
+    final items = <(IconData, String)>[
+      if (merged)
+        (Icons.collections_bookmark_outlined, l10n.library)
+      else
+        for (final type in libraries) (_icons[type]!, labels[type]!),
+      (Icons.explore_outlined, l10n.browse),
+      (Icons.more_horiz_outlined, l10n.more),
+    ];
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            for (final (index, item) in items.indexed)
+              _NavPreviewItem(
+                icon: item.$1,
+                label: item.$2,
+                // The first entry is the one the bar opens on.
+                selected: index == 0,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NavPreviewItem extends StatelessWidget {
+  const _NavPreviewItem({
+    required this.icon,
+    required this.label,
+    required this.selected,
+  });
+
+  final IconData icon;
+  final String label;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final color = selected ? theme.colorScheme.primary : theme.hintColor;
+    return Flexible(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 20, color: color),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.labelSmall?.copyWith(color: color),
+          ),
+        ],
+      ),
     );
   }
 }

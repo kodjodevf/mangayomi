@@ -111,6 +111,13 @@ void main() {
         find.widgetWithText(FilterChip, 'One Library tab'),
         findsOneWidget,
       );
+      // A tab each, so the preview bar names every chosen library.
+      expect(find.text('Library'), findsNothing);
+
+      await tester.tap(find.widgetWithText(FilterChip, 'One Library tab'));
+      await tester.pumpAndSettle();
+      // Merged, so they collapse into one entry in the preview.
+      expect(find.text('Library'), findsOneWidget);
 
       await tester.tap(find.widgetWithText(FilledButton, 'Next'));
       await tester.pumpAndSettle();
@@ -155,6 +162,19 @@ void main() {
       expect(find.widgetWithText(FilterChip, 'Manga'), findsOneWidget);
       expect(find.widgetWithText(FilterChip, 'Anime'), findsOneWidget);
       expect(find.widgetWithText(FilterChip, 'Novel'), findsNothing);
+    });
+  });
+
+  group('choices do not resize', () {
+    testWidgets('a chip is the same width selected and not', (tester) async {
+      await pump(tester);
+      final chip = find.widgetWithText(FilterChip, 'Anime');
+      final before = tester.getSize(chip);
+      await tester.tap(chip);
+      await tester.pumpAndSettle();
+      // A tick appearing on selection changed every chip's width and made the
+      // row jump about as the user tapped through it.
+      expect(tester.getSize(chip), before);
     });
   });
 

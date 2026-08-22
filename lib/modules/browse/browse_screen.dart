@@ -18,6 +18,7 @@ import 'package:mangayomi/modules/widgets/tv_pill.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
+import 'package:mangayomi/modules/browse/providers/browse_initial_tab_provider.dart';
 
 class BrowseScreen extends ConsumerStatefulWidget {
   const BrowseScreen({super.key});
@@ -69,8 +70,22 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
   void initState() {
     super.initState();
     _tabList = _computeTabList(ref.read(animeOnlyTvModeProvider));
-    _tabBarController = TabController(length: _tabList.length, vsync: this);
+    _tabBarController = TabController(
+      length: _tabList.length,
+      initialIndex: _takeRequestedTabIndex(),
+      vsync: this,
+    );
     _tabBarController.addListener(_onTabChanged);
+  }
+
+  /// The index of the tab somebody asked us to open on, or zero.
+  int _takeRequestedTabIndex() {
+    final requested = ref.read(browseInitialTabProvider.notifier).take();
+    if (requested == null) return 0;
+    final index = _tabList.indexWhere(
+      (tab) => tab.kind == requested.kind && tab.type == requested.type,
+    );
+    return index < 0 ? 0 : index;
   }
 
   void _onTabChanged() {
