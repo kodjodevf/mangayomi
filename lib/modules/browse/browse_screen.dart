@@ -79,9 +79,16 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
   }
 
   /// The index of the tab somebody asked us to open on, or zero.
+  ///
+  /// The request is cleared after this frame rather than as it is read.
+  /// Riverpod counts initState as part of the build and throws on a write
+  /// there, which took the whole Browse screen down.
   int _takeRequestedTabIndex() {
-    final requested = ref.read(browseInitialTabProvider.notifier).take();
+    final requested = ref.read(browseInitialTabProvider);
     if (requested == null) return 0;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) ref.read(browseInitialTabProvider.notifier).clear();
+    });
     final index = _tabList.indexWhere(
       (tab) => tab.kind == requested.kind && tab.type == requested.type,
     );
