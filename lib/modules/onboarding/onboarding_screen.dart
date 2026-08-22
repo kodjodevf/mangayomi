@@ -161,8 +161,12 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody> {
   /// steps first and find Settings afterwards. Mangayomi's own backups and
   /// Mihon, Aniyomi and Neko ones all go through the same picker.
   Future<void> _restore() async {
-    await performRestore(context, ref);
+    final restored = await performRestore(context, ref);
     if (!mounted) return;
+    // Nothing was restored, so nothing has been answered. Backing out of the
+    // file picker used to drop the user into an empty library, which is the
+    // opposite of what cancelling should do.
+    if (!restored) return;
     // Whether the backup brought sources with it depends on what it was. A
     // Mangayomi backup carries the repositories, but only when its settings
     // were included in it, and a Mihon, Aniyomi or Neko backup references its
@@ -258,13 +262,23 @@ class _OnboardingScreenState extends ConsumerState<_OnboardingBody> {
     // dropping that library, would otherwise land them on an extensions list
     // with nothing in it.
     final landing = _addedFor;
-    if (landing != null && _libraries.contains(landing)) {
-      ref
-          .read(browseInitialTabProvider.notifier)
-          .request(BrowseTab(landing, BrowseTabKind.extensions));
-      ref.read(routerProvider).go('/browse');
+    if (landing == null || !_libraries.contains(landing)) {
+      ref.read(onboardingCompletedStateProvider.notifier).complete();
+      return;
     }
-    ref.read(onboardingCompletedStateProvider.notifier).complete();
+    ref
+        .read(browseInitialTabProvider.notifier)
+        .request(BrowseTab(landing, BrowseTabKind.extensions));
+    ref.read(routerProvider).go('/browse');
+    // Let Browse build behind this screen before fading to it. Navigating and
+    // finishing in the same frame meant the fade ran over the frame the branch
+    // was still being created in, tab controllers, permission check and all,
+    // which is what made the end of the flow the roughest part of it.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ref.read(onboardingCompletedStateProvider.notifier).complete();
+      }
+    });
   }
 
   @override

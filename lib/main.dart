@@ -287,9 +287,12 @@ class _MyAppState extends ConsumerState<MyApp>
         // the flow was the roughest part of it.
         final onboarding = !ref.watch(onboardingCompletedStateProvider);
         content = AnimatedSwitcher(
-          duration: const Duration(milliseconds: 320),
-          switchInCurve: Curves.easeOut,
-          switchOutCurve: Curves.easeIn,
+          duration: const Duration(milliseconds: 380),
+          // The app fades up over most of the window while the first run
+          // holds, then leaves. Crossing them evenly showed both at half
+          // strength through the middle, which reads as a flicker.
+          switchInCurve: const Interval(0.35, 1, curve: Curves.easeOut),
+          switchOutCurve: const Interval(0, 0.5, curve: Curves.easeIn),
           child: onboarding
               ? const OnboardingScreen()
               : KeyedSubtree(key: const ValueKey('app'), child: content),
