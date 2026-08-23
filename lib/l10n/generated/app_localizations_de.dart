@@ -1078,6 +1078,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get sync_failed => 'Sync fehlgeschlagen!';
 
   @override
+  String get sync_restore_in_progress => 'Sync skipped — restore in progress';
+
+  @override
   String get sync_button_sync => 'Jetzt synchronisieren';
 
   @override
@@ -1477,6 +1480,43 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get restore_backup_warning_title =>
       'Das Wiederherstellen einer Sicherung überschreibt alle vorhandenen Daten.\n\nFortfahren mit der Wiederherstellung?';
+
+  @override
+  String get restore_sync_question_title => 'Sync this restore?';
+
+  @override
+  String get restore_sync_question_message =>
+      'This device is connected to a sync server. Upload this restored data to it now? If not, sync will be turned off so the server\'s old data doesn\'t overwrite what you just restored.';
+
+  @override
+  String get restore_sync_question_confirm => 'Yes, sync';
+
+  @override
+  String get restore_sync_question_deny => 'No, disable sync';
+
+  @override
+  String get sync_disabled_after_restore =>
+      'Sync is disabled. You can turn it on again in Settings.';
+
+  @override
+  String get restore_sync_disabled_question_title =>
+      'Sync is currently disabled';
+
+  @override
+  String get restore_sync_disabled_question_message =>
+      'Sync is turned off. Turn it back on and upload this restored data to your server?';
+
+  @override
+  String get restore_sync_question_reenable => 'Yes, re-enable and sync';
+
+  @override
+  String get restore_sync_question_keep_disabled => 'Keep it disabled';
+
+  @override
+  String get restore_sync_uploading => 'Syncing restored data to server…';
+
+  @override
+  String get restore_sync_upload_success => 'Restored data synced to server';
 
   @override
   String get services => 'Dienste';

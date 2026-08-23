@@ -7,9 +7,20 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/pre_import_backup.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/restore.dart';
 import 'package:mangayomi/modules/more/data_and_storage/widgets/rollback_last_change_tile.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/more/widgets/dialog_actions.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
+
+/// Whether there's a sync server configured to ask about (regardless of
+/// whether sync is currently on or off) and, if so, whether it's on.
+(bool hasServer, bool syncOn) _syncState(WidgetRef ref) {
+  final syncPreference = ref.read(synchingProvider(syncId: 1));
+  final hasServer =
+      (syncPreference.authToken?.isNotEmpty ?? false) &&
+      (syncPreference.server?.isNotEmpty ?? false);
+  return (hasServer, syncPreference.syncOn);
+}
 
 /// Runs the restore flow and reports whether anything was actually restored.
 ///
@@ -23,6 +34,9 @@ Future<bool> performRestore(BuildContext context, WidgetRef ref) async {
     final file = await FilePicker.pickFile();
     if (file?.path == null || !context.mounted) return false;
     final path = file!.path!;
+    // A successful restore pushes to the sync server automatically, so a
+    // wrong backup here could overwrite good server data — ask first.
+    final (hasServer, syncOn) = _syncState(ref);
 
     final backupType = peekBackupType(path);
     final isMihonFamily =
@@ -34,9 +48,24 @@ Future<bool> performRestore(BuildContext context, WidgetRef ref) async {
       if (!context.mounted) return false;
       final confirmed = await _confirmPlainRestore(context);
       if (confirmed != true || !context.mounted) return false;
+      bool? syncAfterRestore;
+      if (hasServer) {
+        if (!context.mounted) return false;
+        syncAfterRestore = await confirmSyncAfterRestore(
+          context,
+          syncOn: syncOn,
+        );
+        if (!context.mounted) return false;
+      }
       showBusyDialog(context, context.l10n.restoring_backup);
       try {
-        await ref.watch(doRestoreProvider(path: path, context: context).future);
+        await ref.watch(
+          doRestoreProvider(
+            path: path,
+            context: context,
+            syncAfterRestore: syncAfterRestore,
+          ).future,
+        );
       } finally {
         if (context.mounted) hideBusyDialog(context);
       }
@@ -83,6 +112,13 @@ Future<bool> performRestore(BuildContext context, WidgetRef ref) async {
         : await _confirmReplaceSummary(context, preview);
     if (proceed != true || !context.mounted) return false;
 
+    bool? syncAfterRestore;
+    if (hasServer) {
+      if (!context.mounted) return false;
+      syncAfterRestore = await confirmSyncAfterRestore(context, syncOn: syncOn);
+      if (!context.mounted) return false;
+    }
+
     final resultDescription = keepExisting
         ? l10n.import_result_message(
             preview.newSeriesCount,
@@ -120,6 +156,7 @@ Future<bool> performRestore(BuildContext context, WidgetRef ref) async {
           merge: keepExisting,
           categoryDecisions: categoryDecisions,
           sourceDecisions: sourceDecisions,
+          syncAfterRestore: syncAfterRestore,
         ).future,
       );
     } finally {
