@@ -3070,4 +3070,30 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get onboarding_replay_subtitle =>
       'Opens the first-run screen again, the one a new install starts on.';
+
+  @override
+  String get missing_source_check_title => 'Check for missing sources';
+
+  @override
+  String get missing_source_check_subtitle =>
+      'Find library entries whose extension isn\'t installed - restoring a backup can leave entries pointing at a source you never installed on this device.';
+
+  @override
+  String get missing_source_check_none_found =>
+      'Every library entry\'s source is installed.';
+
+  @override
+  String missing_source_check_result_title(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sources missing',
+      one: '1 source missing',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get missing_source_check_result_message =>
+      'These library entries point at a source that isn\'t installed on this device. Tap one to migrate it to an installed source, install the matching extension, or use \"Delete a source & its manga\" to remove them.';
 }

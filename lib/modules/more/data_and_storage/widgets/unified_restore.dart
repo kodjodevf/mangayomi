@@ -30,6 +30,11 @@ Future<bool> performRestore(BuildContext context, WidgetRef ref) async {
         backupType == BackupType.aniyomi ||
         backupType == BackupType.neko;
 
+    if (backupType == BackupType.mangayomi) {
+      await _performMangayomiRestore(context, ref, path);
+      return true;
+    }
+
     if (!isMihonFamily) {
       if (!context.mounted) return false;
       final confirmed = await _confirmPlainRestore(context);
@@ -136,6 +141,111 @@ Future<bool> performRestore(BuildContext context, WidgetRef ref) async {
       offerLibraryRollback(context, ref, safetyBackupPath);
     }
     return false;
+  }
+}
+
+/// Native mangayomi-format restore, with the same merge/replace choice and
+/// category/source conflict resolution the Mihon-family path already has -
+/// the dialogs below are shared with it, not duplicated.
+Future<void> _performMangayomiRestore(
+  BuildContext context,
+  WidgetRef ref,
+  String path,
+) async {
+  String? safetyBackupPath;
+  try {
+    final Map<String, dynamic> backup;
+    try {
+      backup = await decodeMangayomiBackup(path, context);
+    } catch (e) {
+      if (context.mounted) botToast("$e");
+      return;
+    }
+    if (!context.mounted) return;
+    final l10n = context.l10n;
+    final preview = previewMangayomiBackup(backup);
+
+    final keepExisting = await _chooseImportMode(context);
+    if (keepExisting == null || !context.mounted) return;
+
+    var categoryDecisions = const <String, bool>{};
+    var sourceDecisions = const <String, int>{};
+
+    if (keepExisting && preview.conflictingCategories.isNotEmpty) {
+      if (!context.mounted) return;
+      final decisions = await _resolveCategoryConflicts(
+        context,
+        preview.conflictingCategories,
+      );
+      if (decisions == null || !context.mounted) return;
+      categoryDecisions = decisions;
+    }
+
+    if (preview.unmatchedSourceNames.isNotEmpty) {
+      if (!context.mounted) return;
+      final decisions = await _resolveSourceConflicts(
+        context,
+        preview.unmatchedSourceNames,
+      );
+      if (decisions == null || !context.mounted) return;
+      sourceDecisions = decisions;
+    }
+
+    if (!context.mounted) return;
+    final proceed = keepExisting
+        ? await _confirmImportSummary(context, preview)
+        : await _confirmReplaceSummary(context, preview);
+    if (proceed != true || !context.mounted) return;
+
+    final resultDescription = keepExisting
+        ? l10n.import_result_message(
+            preview.newSeriesCount,
+            preview.updatedSeriesCount,
+            preview.newChapterCount,
+          )
+        : l10n.replace_result_message(
+            preview.newSeriesCount + preview.updatedSeriesCount,
+          );
+
+    if (!context.mounted) return;
+    showBusyDialog(context, l10n.restoring_backup);
+    try {
+      try {
+        safetyBackupPath = await createLibrarySafetyBackup();
+        await writeLastLibrarySnapshot(
+          LibrarySafetySnapshot(
+            backupPath: safetyBackupPath,
+            createdAt: DateTime.now().millisecondsSinceEpoch,
+            description: resultDescription,
+          ),
+        );
+      } catch (_) {
+        safetyBackupPath = null;
+      }
+
+      if (!context.mounted) return;
+      await ref.watch(
+        doRestoreProvider(
+          path: path,
+          context: context,
+          merge: keepExisting,
+          categoryDecisions: categoryDecisions,
+          sourceDecisions: sourceDecisions,
+          decodedMangayomiBackup: backup,
+        ).future,
+      );
+    } finally {
+      if (context.mounted) hideBusyDialog(context);
+    }
+    if (!context.mounted) return;
+    ref.invalidate(lastLibrarySnapshotProvider);
+
+    _showImportResultToast(context, ref, resultDescription, safetyBackupPath);
+  } catch (e) {
+    botToast("Error restoring backup: $e");
+    if (safetyBackupPath != null && context.mounted) {
+      offerLibraryRollback(context, ref, safetyBackupPath);
+    }
   }
 }
 

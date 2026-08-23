@@ -5614,6 +5614,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Opens the first-run screen again, the one a new install starts on.'**
   String get onboarding_replay_subtitle;
+
+  /// No description provided for @missing_source_check_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Check for missing sources'**
+  String get missing_source_check_title;
+
+  /// No description provided for @missing_source_check_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Find library entries whose extension isn\'t installed - restoring a backup can leave entries pointing at a source you never installed on this device.'**
+  String get missing_source_check_subtitle;
+
+  /// No description provided for @missing_source_check_none_found.
+  ///
+  /// In en, this message translates to:
+  /// **'Every library entry\'s source is installed.'**
+  String get missing_source_check_none_found;
+
+  /// No description provided for @missing_source_check_result_title.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 source missing} other{{count} sources missing}}'**
+  String missing_source_check_result_title(int count);
+
+  /// No description provided for @missing_source_check_result_message.
+  ///
+  /// In en, this message translates to:
+  /// **'These library entries point at a source that isn\'t installed on this device. Tap one to migrate it to an installed source, install the matching extension, or use \"Delete a source & its manga\" to remove them.'**
+  String get missing_source_check_result_message;
 }
 
 class _AppLocalizationsDelegate
