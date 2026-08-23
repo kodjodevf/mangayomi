@@ -14,6 +14,7 @@ import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:mangayomi/modules/widgets/tv_escapable_slider.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
+import 'package:mangayomi/modules/onboarding/providers/onboarding_state_provider.dart';
 
 class GeneralScreen extends ConsumerStatefulWidget {
   const GeneralScreen({super.key});
@@ -174,6 +175,19 @@ class _GeneralStateScreen extends ConsumerState<GeneralScreen> {
               title: Text(context.l10n.default_user_agent),
               subtitle: Text(
                 userAgent,
+                style: TextStyle(fontSize: 11, color: context.secondaryColor),
+              ),
+            ),
+            // A way back to the first-run screen. It is the only way to see it
+            // once it has been dismissed, and on a debug build, where a fresh
+            // install skips it, the only way to see it at all.
+            ListTile(
+              onTap: () => ref
+                  .read(onboardingCompletedStateProvider.notifier)
+                  .showAgain(),
+              title: Text(context.l10n.onboarding_replay),
+              subtitle: Text(
+                context.l10n.onboarding_replay_subtitle,
                 style: TextStyle(fontSize: 11, color: context.secondaryColor),
               ),
             ),
