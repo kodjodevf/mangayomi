@@ -81,11 +81,8 @@ class _ImageViewPagedState extends ConsumerState<ImageViewPaged> {
     if (url.contains('.gif')) {
       isAnimated = true;
     } else if (widget.data.archiveImage != null &&
-        widget.data.archiveImage!.length > 3) {
-      final bytes = widget.data.archiveImage!;
-      if (bytes[0] == 0x47 && bytes[1] == 0x49 && bytes[2] == 0x46) {
-        isAnimated = true;
-      }
+        widget.data.archiveImage!.length > 5) {
+      if (isGifImage(widget.data.archiveImage!)) isAnimated = true;
     } else if (widget.data.directory != null && widget.data.index != null) {
       try {
         // Look up whatever extension this page was actually saved under
@@ -100,13 +97,7 @@ class _ImageViewPagedState extends ConsumerState<ImageViewPaged> {
         if (file != null) {
           final raf = await file.open();
           try {
-            final fBytes = await raf.read(3);
-            if (fBytes.length > 2 &&
-                fBytes[0] == 0x47 &&
-                fBytes[1] == 0x49 &&
-                fBytes[2] == 0x46) {
-              isAnimated = true;
-            }
+            if (isGifImage(await raf.read(6))) isAnimated = true;
           } finally {
             await raf.close();
           }
