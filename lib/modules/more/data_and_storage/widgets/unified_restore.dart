@@ -11,11 +11,17 @@ import 'package:mangayomi/modules/more/widgets/dialog_actions.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
-Future<void> performRestore(BuildContext context, WidgetRef ref) async {
+/// Runs the restore flow and reports whether anything was actually restored.
+///
+/// False covers every way out that leaves the app as it was: no file chosen,
+/// a confirmation declined, a conflict sheet dismissed. Callers that act on
+/// the result, like the first-run screen, need to tell that apart from a
+/// restore that went through.
+Future<bool> performRestore(BuildContext context, WidgetRef ref) async {
   String? safetyBackupPath;
   try {
     final file = await FilePicker.pickFile();
-    if (file?.path == null || !context.mounted) return;
+    if (file?.path == null || !context.mounted) return false;
     final path = file!.path!;
 
     final backupType = peekBackupType(path);
@@ -25,57 +31,57 @@ Future<void> performRestore(BuildContext context, WidgetRef ref) async {
         backupType == BackupType.neko;
 
     if (!isMihonFamily) {
-      if (!context.mounted) return;
+      if (!context.mounted) return false;
       final confirmed = await _confirmPlainRestore(context);
-      if (confirmed != true || !context.mounted) return;
+      if (confirmed != true || !context.mounted) return false;
       showBusyDialog(context, context.l10n.restoring_backup);
       try {
         await ref.watch(doRestoreProvider(path: path, context: context).future);
       } finally {
         if (context.mounted) hideBusyDialog(context);
       }
-      return;
+      return true;
     }
 
     final l10n = context.l10n;
     final preview = previewTachiBkImport(path);
     if (preview == null) {
       botToast("Unsupported or unrecognized backup file.");
-      return;
+      return false;
     }
 
-    if (!context.mounted) return;
+    if (!context.mounted) return false;
     final keepExisting = await _chooseImportMode(context);
-    if (keepExisting == null || !context.mounted) return;
+    if (keepExisting == null || !context.mounted) return false;
 
     var categoryDecisions = const <String, bool>{};
     var sourceDecisions = const <String, int>{};
 
     if (keepExisting && preview.conflictingCategories.isNotEmpty) {
-      if (!context.mounted) return;
+      if (!context.mounted) return false;
       final decisions = await _resolveCategoryConflicts(
         context,
         preview.conflictingCategories,
       );
-      if (decisions == null || !context.mounted) return;
+      if (decisions == null || !context.mounted) return false;
       categoryDecisions = decisions;
     }
 
     if (preview.unmatchedSourceNames.isNotEmpty) {
-      if (!context.mounted) return;
+      if (!context.mounted) return false;
       final decisions = await _resolveSourceConflicts(
         context,
         preview.unmatchedSourceNames,
       );
-      if (decisions == null || !context.mounted) return;
+      if (decisions == null || !context.mounted) return false;
       sourceDecisions = decisions;
     }
 
-    if (!context.mounted) return;
+    if (!context.mounted) return false;
     final proceed = keepExisting
         ? await _confirmImportSummary(context, preview)
         : await _confirmReplaceSummary(context, preview);
-    if (proceed != true || !context.mounted) return;
+    if (proceed != true || !context.mounted) return false;
 
     final resultDescription = keepExisting
         ? l10n.import_result_message(
@@ -87,7 +93,7 @@ Future<void> performRestore(BuildContext context, WidgetRef ref) async {
             preview.newSeriesCount + preview.updatedSeriesCount,
           );
 
-    if (!context.mounted) return;
+    if (!context.mounted) return false;
     showBusyDialog(context, l10n.restoring_backup);
     try {
       try {
@@ -103,7 +109,10 @@ Future<void> performRestore(BuildContext context, WidgetRef ref) async {
         safetyBackupPath = null;
       }
 
-      if (!context.mounted) return;
+      // false, not a bare return: performRestore reports whether anything was
+      // actually restored, so the first-run screen can tell a cancel from a
+      // completed restore. ref.watch is upstream's.
+      if (!context.mounted) return false;
       await ref.watch(
         doRestoreProvider(
           path: path,
@@ -116,15 +125,17 @@ Future<void> performRestore(BuildContext context, WidgetRef ref) async {
     } finally {
       if (context.mounted) hideBusyDialog(context);
     }
-    if (!context.mounted) return;
+    if (!context.mounted) return false;
     ref.invalidate(lastLibrarySnapshotProvider);
 
     _showImportResultToast(context, ref, resultDescription, safetyBackupPath);
+    return true;
   } catch (e) {
     botToast("Error restoring backup: $e");
     if (safetyBackupPath != null && context.mounted) {
       offerLibraryRollback(context, ref, safetyBackupPath);
     }
+    return false;
   }
 }
 
