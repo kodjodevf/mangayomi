@@ -16,6 +16,7 @@ import 'package:mangayomi/modules/manga/archive_reader/providers/archive_reader_
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/downloaded_chapter.dart';
 import 'package:mangayomi/utils/utils.dart';
+import 'package:mangayomi/utils/settings_write.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -170,36 +171,36 @@ Future<GetChapterPagesModel> getChapterPages(
       // it unreadable online once the download is deleted.
       if (!incognitoMode && !pagesFromCache && downloaded == null) {
         const maxCachedChapters = 40;
-        List<ChapterPageurls>? chapterPageUrls = [];
-        for (var chapterPageUrl in settings.chapterPageUrlsList ?? []) {
-          if (chapterPageUrl.chapterId != chapter.id) {
-            chapterPageUrls.add(chapterPageUrl);
-          }
-        }
         final chapterPageHeaders = pageUrls
             .map((e) => e.headers == null ? null : jsonEncode(e.headers))
             .toList();
-        chapterPageUrls.add(
-          ChapterPageurls()
-            ..chapterId = chapter.id
-            ..urls = pageUrls.map((e) => e.url).toList()
-            ..chapterUrl = chapter.url
-            ..headers = chapterPageHeaders.first != null
-                ? chapterPageHeaders.map((e) => e.toString()).toList()
-                : null,
-        );
-        if (chapterPageUrls.length > maxCachedChapters) {
-          chapterPageUrls.removeRange(
-            0,
-            chapterPageUrls.length - maxCachedChapters,
+        // Re-read the row here rather than reuse the one loaded at the top of
+        // this function. Fetching the pages ran several awaits, and writing the
+        // row puts all of it back, so the old copy would undo every setting
+        // changed while the chapter was loading.
+        updateSettings((settings) {
+          final chapterPageUrls = <ChapterPageurls>[];
+          for (final chapterPageUrl in settings.chapterPageUrlsList ?? []) {
+            if (chapterPageUrl.chapterId != chapter.id) {
+              chapterPageUrls.add(chapterPageUrl);
+            }
+          }
+          chapterPageUrls.add(
+            ChapterPageurls()
+              ..chapterId = chapter.id
+              ..urls = pageUrls.map((e) => e.url).toList()
+              ..chapterUrl = chapter.url
+              ..headers = chapterPageHeaders.first != null
+                  ? chapterPageHeaders.map((e) => e.toString()).toList()
+                  : null,
           );
-        }
-        isar.writeTxnSync(() {
-          isar.settings.putSync(
-            settings
-              ..chapterPageUrlsList = chapterPageUrls
-              ..updatedAt = DateTime.now().millisecondsSinceEpoch,
-          );
+          if (chapterPageUrls.length > maxCachedChapters) {
+            chapterPageUrls.removeRange(
+              0,
+              chapterPageUrls.length - maxCachedChapters,
+            );
+          }
+          settings.chapterPageUrlsList = chapterPageUrls;
         });
       }
       for (var i = 0; i < pageUrls.length; i++) {
