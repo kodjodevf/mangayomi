@@ -2003,6 +2003,12 @@ abstract class AppLocalizations {
   /// **'Sync failed'**
   String get sync_failed;
 
+  /// No description provided for @sync_restore_in_progress.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync skipped — restore in progress'**
+  String get sync_restore_in_progress;
+
   /// No description provided for @sync_button_sync.
   ///
   /// In en, this message translates to:
@@ -2740,6 +2746,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Restoring a backup will overwrite all existing data.\n\nContinue restoring?'**
   String get restore_backup_warning_title;
+
+  /// No description provided for @restore_sync_question_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync this restore?'**
+  String get restore_sync_question_title;
+
+  /// No description provided for @restore_sync_question_message.
+  ///
+  /// In en, this message translates to:
+  /// **'This device is connected to a sync server. Upload this restored data to it now? If not, sync will be turned off so the server\'s old data doesn\'t overwrite what you just restored.'**
+  String get restore_sync_question_message;
+
+  /// No description provided for @restore_sync_question_confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, sync'**
+  String get restore_sync_question_confirm;
+
+  /// No description provided for @restore_sync_question_deny.
+  ///
+  /// In en, this message translates to:
+  /// **'No, disable sync'**
+  String get restore_sync_question_deny;
+
+  /// No description provided for @sync_disabled_after_restore.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync is disabled. You can turn it on again in Settings.'**
+  String get sync_disabled_after_restore;
+
+  /// No description provided for @restore_sync_disabled_question_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync is currently disabled'**
+  String get restore_sync_disabled_question_title;
+
+  /// No description provided for @restore_sync_disabled_question_message.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync is turned off. Turn it back on and upload this restored data to your server?'**
+  String get restore_sync_disabled_question_message;
+
+  /// No description provided for @restore_sync_question_reenable.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, re-enable and sync'**
+  String get restore_sync_question_reenable;
+
+  /// No description provided for @restore_sync_question_keep_disabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it disabled'**
+  String get restore_sync_question_keep_disabled;
+
+  /// No description provided for @restore_sync_uploading.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing restored data to server…'**
+  String get restore_sync_uploading;
+
+  /// No description provided for @restore_sync_upload_success.
+  ///
+  /// In en, this message translates to:
+  /// **'Restored data synced to server'**
+  String get restore_sync_upload_success;
 
   /// No description provided for @services.
   ///

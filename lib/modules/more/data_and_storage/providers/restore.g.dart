@@ -24,6 +24,7 @@ final class DoRestoreProvider
       Map<String, bool> categoryDecisions,
       Map<String, int> sourceDecisions,
       Map<String, dynamic>? decodedMangayomiBackup,
+      bool? syncAfterRestore,
     })
     super.argument,
   }) : super(
@@ -60,6 +61,7 @@ final class DoRestoreProvider
               Map<String, bool> categoryDecisions,
               Map<String, int> sourceDecisions,
               Map<String, dynamic>? decodedMangayomiBackup,
+              bool? syncAfterRestore,
             });
     return doRestore(
       ref,
@@ -69,6 +71,7 @@ final class DoRestoreProvider
       categoryDecisions: argument.categoryDecisions,
       sourceDecisions: argument.sourceDecisions,
       decodedMangayomiBackup: argument.decodedMangayomiBackup,
+      syncAfterRestore: argument.syncAfterRestore,
     );
   }
 
@@ -83,7 +86,7 @@ final class DoRestoreProvider
   }
 }
 
-String _$doRestoreHash() => r'56b4820179a19f55ef8d17527f23ea6e3bdcdec3';
+String _$doRestoreHash() => r'10e58343c6ae92c7d31664fcd94ca7239187a392';
 
 final class DoRestoreFamily extends $Family
     with
@@ -96,6 +99,7 @@ final class DoRestoreFamily extends $Family
             Map<String, bool> categoryDecisions,
             Map<String, int> sourceDecisions,
             Map<String, dynamic>? decodedMangayomiBackup,
+            bool? syncAfterRestore,
           })
         > {
   DoRestoreFamily._()
@@ -114,6 +118,7 @@ final class DoRestoreFamily extends $Family
     Map<String, bool> categoryDecisions = const {},
     Map<String, int> sourceDecisions = const {},
     Map<String, dynamic>? decodedMangayomiBackup,
+    bool? syncAfterRestore,
   }) => DoRestoreProvider._(
     argument: (
       path: path,
@@ -122,6 +127,7 @@ final class DoRestoreFamily extends $Family
       categoryDecisions: categoryDecisions,
       sourceDecisions: sourceDecisions,
       decodedMangayomiBackup: decodedMangayomiBackup,
+      syncAfterRestore: syncAfterRestore,
     ),
     from: this,
   );

@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/services/isolate_service.dart';
-import 'package:path/path.dart' as p;
+import 'package:mangayomi/utils/downloaded_page_file.dart';
 import 'package:mangayomi/eval/javascript/http.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -17,7 +17,6 @@ import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/services/downloaded_chapter.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:mangayomi/utils/settings_write.dart';
-import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:mangayomi/modules/more/providers/incognito_mode_state_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'get_chapter_pages.g.dart';
@@ -139,7 +138,7 @@ Future<GetChapterPagesModel> getChapterPages(
             : downloaded!.pageCount;
         for (var i = 0; i < pageCount; i++) {
           archiveImages.add(null);
-          if (await File(p.join(path!.path, '${padIndex(i)}.jpg')).exists()) {
+          if (await findDownloadedPageFileAsync(path!, i) != null) {
             isLocaleList.add(true);
           } else {
             isLocaleList.add(false);

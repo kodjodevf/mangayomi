@@ -20,6 +20,7 @@ import 'package:mangayomi/modules/novel/novel_reader_controller_provider.dart';
 import 'package:mangayomi/modules/novel/tts/novel_tts_service.dart';
 import 'package:mangayomi/modules/novel/tts/tts_player_bar.dart';
 import 'package:mangayomi/modules/novel/tts/tts_settings_tab.dart';
+import 'package:mangayomi/modules/novel/utils/novel_reader_fonts.dart';
 import 'package:mangayomi/modules/novel/widgets/novel_reader_settings_sheet.dart';
 import 'package:mangayomi/modules/widgets/custom_draggable_tabbar.dart';
 import 'package:mangayomi/modules/widgets/error_state.dart';
@@ -307,6 +308,9 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                               final customTextColor = ref.watch(
                                 novelReaderTextColorStateProvider,
                               );
+                              final fontFamily = resolveNovelFontFamily(
+                                ref.watch(novelFontFamilyStateProvider),
+                              );
 
                               Color parseColor(String hex, {Color? fallback}) {
                                 try {
@@ -418,6 +422,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                       data: htmlData,
                                                       style: {
                                                         "body": Style(
+                                                          fontFamily:
+                                                              fontFamily,
                                                           fontSize: FontSize(
                                                             fontSize.toDouble(),
                                                           ),
@@ -448,6 +454,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                               getTextAlign(),
                                                         ),
                                                         "p": Style(
+                                                          fontFamily:
+                                                              fontFamily,
                                                           margin:
                                                               removeExtraSpacing
                                                               ? Margins.only(
@@ -467,6 +475,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                               getTextAlign(),
                                                         ),
                                                         "div": Style(
+                                                          fontFamily:
+                                                              fontFamily,
                                                           fontSize: FontSize(
                                                             fontSize.toDouble(),
                                                           ),
@@ -478,6 +488,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                               getTextAlign(),
                                                         ),
                                                         "span": Style(
+                                                          fontFamily:
+                                                              fontFamily,
                                                           fontSize: FontSize(
                                                             fontSize.toDouble(),
                                                           ),
@@ -488,6 +500,8 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                                                         ),
                                                         "h1, h2, h3, h4, h5, h6":
                                                             Style(
+                                                              fontFamily:
+                                                                  fontFamily,
                                                               color: parseColor(
                                                                 customTextColor,
                                                                 fallback: Colors
@@ -973,330 +987,342 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
         duration: const Duration(milliseconds: 300),
         width: context.width(1),
         height: (_isView ? 140 : 0),
-        child: Column(
-          children: [
-            if (_isView)
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CircleAvatar(
-                      radius: 21,
-                      backgroundColor: _backgroundColor(context),
-                      child: IconButton(
-                        onPressed: hasPrevChapter
-                            ? () {
-                                pushReplacementMangaReaderView(
-                                  context: context,
-                                  chapter: _readerController.getPrevChapter(),
-                                );
-                              }
-                            : null,
-                        icon: Icon(
-                          Icons.skip_previous_rounded,
-                          color: hasPrevChapter
-                              ? bodyLargeColor
-                              : bodyLargeColor!.withValues(alpha: 0.4),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Flexible(
-                    child: Container(
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: _backgroundColor(context),
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: StreamBuilder(
-                        stream: _rebuildDetail.stream,
-                        builder: (context, asyncSnapshot) {
-                          return Consumer(
-                            builder: (context, ref, child) {
-                              final scrollPercentage = maxOffset > 0
-                                  ? ((offset / maxOffset) * 100)
-                                        .clamp(0, 100)
-                                        .toInt()
-                                  : 0;
-                              return Row(
-                                children: [
-                                  SizedBox(width: 10),
-                                  Padding(
-                                    padding: const EdgeInsets.all(4),
-                                    child: Text(
-                                      scrollPercentage.toInt().toString(),
-                                      style: TextStyle(
-                                        color: bodyLargeColor,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  if (_isView)
-                                    Expanded(
-                                      flex: 14,
-                                      child: SliderTheme(
-                                        data: SliderTheme.of(context).copyWith(
-                                          trackHeight: 2.0,
-                                          thumbShape:
-                                              const RoundSliderThumbShape(
-                                                enabledThumbRadius: 6.0,
-                                              ),
-                                          overlayShape:
-                                              const RoundSliderOverlayShape(
-                                                overlayRadius: 12.0,
-                                              ),
-                                        ),
-                                        child: Slider(
-                                          onChanged: (value) {
-                                            _scrollController.jumpTo(
-                                              _scrollController
-                                                      .position
-                                                      .maxScrollExtent *
-                                                  value,
-                                            );
-                                          },
-                                          value: scrollPercentage / 100,
-                                          min: 0,
-                                          max: 1,
-                                        ),
-                                      ),
-                                    ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Text(
-                                      '100',
-                                      style: TextStyle(
-                                        color: bodyLargeColor,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 10),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CircleAvatar(
-                      radius: 21,
-                      backgroundColor: _backgroundColor(context),
-                      child: IconButton(
-                        onPressed: hasNextChapter
-                            ? () {
-                                pushReplacementMangaReaderView(
-                                  context: context,
-                                  chapter: _readerController.getNextChapter(),
-                                );
-                              }
-                            : null,
-                        icon: Transform.scale(
-                          scaleX: 1,
-                          child: Icon(
-                            Icons.skip_next_rounded,
-                            color: hasNextChapter
+        // The Column's natural content height briefly exceeds this box
+        // mid-animation (it's animating between 0 and 140), which is a
+        // transient overflow, not a real layout bug - clip it during the
+        // transition instead of restructuring content that fits fine once
+        // the animation settles. Container's own clipBehavior requires a
+        // decoration to be set, which this doesn't have, so ClipRect here
+        // instead.
+        child: ClipRect(
+          child: Column(
+            children: [
+              if (_isView)
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CircleAvatar(
+                        radius: 21,
+                        backgroundColor: _backgroundColor(context),
+                        child: IconButton(
+                          onPressed: hasPrevChapter
+                              ? () {
+                                  pushReplacementMangaReaderView(
+                                    context: context,
+                                    chapter: _readerController.getPrevChapter(),
+                                  );
+                                }
+                              : null,
+                          icon: Icon(
+                            Icons.skip_previous_rounded,
+                            color: hasPrevChapter
                                 ? bodyLargeColor
                                 : bodyLargeColor!.withValues(alpha: 0.4),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            if (_isView)
-              Expanded(
-                child: Container(
-                  color: _backgroundColor(context),
-                  child: Row(
-                    children: [
-                      Flexible(
-                        child: SizedBox(
-                          height: 50,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: bodyLargeColor!,
-                                    width: 0.2,
-                                  ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
+                    Flexible(
+                      child: Container(
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: _backgroundColor(context),
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: StreamBuilder(
+                          stream: _rebuildDetail.stream,
+                          builder: (context, asyncSnapshot) {
+                            return Consumer(
+                              builder: (context, ref, child) {
+                                final scrollPercentage = maxOffset > 0
+                                    ? ((offset / maxOffset) * 100)
+                                          .clamp(0, 100)
+                                          .toInt()
+                                    : 0;
+                                return Row(
                                   children: [
-                                    Text(
-                                      context.l10n.text_size,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: bodyLargeColor,
-                                      ),
-                                    ),
-                                    IconButton(
-                                      onPressed: () {
-                                        final newFontSize = max(
-                                          4,
-                                          fontSize - 1,
-                                        );
-                                        ref
-                                            .read(
-                                              novelFontSizeStateProvider
-                                                  .notifier,
-                                            )
-                                            .set(newFontSize);
-                                        setState(() {
-                                          fontSize = newFontSize;
-                                        });
-                                      },
-                                      icon: Icon(Icons.text_decrease),
-                                      iconSize: 20,
-                                      padding: EdgeInsets.zero,
-                                      constraints: const BoxConstraints(
-                                        minWidth: 40,
-                                        minHeight: 40,
-                                      ),
-                                    ),
+                                    SizedBox(width: 10),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 5,
-                                      ),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 6,
+                                      padding: const EdgeInsets.all(4),
+                                      child: Text(
+                                        scrollPercentage.toInt().toString(),
+                                        style: TextStyle(
+                                          color: bodyLargeColor,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                        decoration: BoxDecoration(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primaryContainer
-                                              .withValues(alpha: 0.5),
-                                          borderRadius: BorderRadius.circular(
-                                            8,
+                                      ),
+                                    ),
+                                    if (_isView)
+                                      Expanded(
+                                        flex: 14,
+                                        child: SliderTheme(
+                                          data: SliderTheme.of(context).copyWith(
+                                            trackHeight: 2.0,
+                                            thumbShape:
+                                                const RoundSliderThumbShape(
+                                                  enabledThumbRadius: 6.0,
+                                                ),
+                                            overlayShape:
+                                                const RoundSliderOverlayShape(
+                                                  overlayRadius: 12.0,
+                                                ),
+                                          ),
+                                          child: Slider(
+                                            onChanged: (value) {
+                                              _scrollController.jumpTo(
+                                                _scrollController
+                                                        .position
+                                                        .maxScrollExtent *
+                                                    value,
+                                              );
+                                            },
+                                            value: scrollPercentage / 100,
+                                            min: 0,
+                                            max: 1,
                                           ),
                                         ),
-                                        child: Consumer(
-                                          builder: (context, ref, child) {
-                                            final currentFontSize = ref.watch(
-                                              novelFontSizeStateProvider,
-                                            );
-                                            return Text(
-                                              "$currentFontSize px",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onPrimaryContainer,
-                                              ),
-                                            );
-                                          },
+                                      ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Text(
+                                        '100',
+                                        style: TextStyle(
+                                          color: bodyLargeColor,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                     ),
-                                    IconButton(
-                                      onPressed: () {
-                                        final newFontSize = min(
-                                          40,
-                                          fontSize + 1,
-                                        );
-                                        ref
-                                            .read(
-                                              novelFontSizeStateProvider
-                                                  .notifier,
-                                            )
-                                            .set(newFontSize);
-                                        setState(() {
-                                          fontSize = newFontSize;
-                                        });
-                                      },
-                                      icon: const Icon(Icons.text_increase),
-                                      iconSize: 20,
-                                      padding: EdgeInsets.zero,
-                                      constraints: const BoxConstraints(
-                                        minWidth: 40,
-                                        minHeight: 40,
-                                      ),
-                                    ),
+                                    SizedBox(width: 10),
                                   ],
-                                ),
-                              ),
-
-                              if (_ttsSupported)
-                                IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _showTts = !_showTts;
-                                    });
-                                  },
-                                  icon: Icon(
-                                    _showTts
-                                        ? Icons.record_voice_over
-                                        : Icons.record_voice_over_outlined,
-                                    color: _showTts
-                                        ? Theme.of(context).colorScheme.primary
-                                        : null,
-                                  ),
-                                  tooltip: context.l10n.tts,
-                                ),
-
-                              IconButton(
-                                onPressed: () async {
-                                  bool autoScrollAreadyFalse =
-                                      _autoScroll.value == false;
-                                  if (!autoScrollAreadyFalse) {
-                                    _autoScroll.value = false;
-                                  }
-                                  await customDraggableTabBar(
-                                    tabs: [
-                                      Tab(text: context.l10n.reader),
-                                      Tab(text: context.l10n.general),
-                                      if (_ttsSupported)
-                                        Tab(text: context.l10n.tts),
-                                    ],
-                                    children: [
-                                      ReaderSettingsTab(),
-                                      GeneralSettingsTab(
-                                        autoScrollPage: _autoScrollPage,
-                                        autoScroll: _autoScroll,
-                                        readerController: _readerController,
-                                        pageOffset: _pageOffset,
-                                      ),
-                                      if (_ttsSupported) const TtsSettingsTab(),
-                                    ],
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CircleAvatar(
+                        radius: 21,
+                        backgroundColor: _backgroundColor(context),
+                        child: IconButton(
+                          onPressed: hasNextChapter
+                              ? () {
+                                  pushReplacementMangaReaderView(
                                     context: context,
-                                    vsync: this,
+                                    chapter: _readerController.getNextChapter(),
                                   );
-                                  if (!autoScrollAreadyFalse ||
-                                      _autoScroll.value) {
-                                    if (_autoScrollPage.value) {
-                                      _autoPagescroll();
-                                      _autoScroll.value = true;
-                                    }
-                                  }
-                                },
-                                icon: const Icon(Icons.settings),
-                              ),
-                            ],
+                                }
+                              : null,
+                          icon: Transform.scale(
+                            scaleX: 1,
+                            child: Icon(
+                              Icons.skip_next_rounded,
+                              color: hasNextChapter
+                                  ? bodyLargeColor
+                                  : bodyLargeColor!.withValues(alpha: 0.4),
+                            ),
                           ),
                         ),
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+              if (_isView)
+                Expanded(
+                  child: Container(
+                    color: _backgroundColor(context),
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: SizedBox(
+                            height: 50,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: bodyLargeColor!,
+                                      width: 0.2,
+                                    ),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        context.l10n.text_size,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: bodyLargeColor,
+                                        ),
+                                      ),
+                                      IconButton(
+                                        onPressed: () {
+                                          final newFontSize = max(
+                                            4,
+                                            fontSize - 1,
+                                          );
+                                          ref
+                                              .read(
+                                                novelFontSizeStateProvider
+                                                    .notifier,
+                                              )
+                                              .set(newFontSize);
+                                          setState(() {
+                                            fontSize = newFontSize;
+                                          });
+                                        },
+                                        icon: Icon(Icons.text_decrease),
+                                        iconSize: 20,
+                                        padding: EdgeInsets.zero,
+                                        constraints: const BoxConstraints(
+                                          minWidth: 40,
+                                          minHeight: 40,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 5,
+                                        ),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 6,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primaryContainer
+                                                .withValues(alpha: 0.5),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                          ),
+                                          child: Consumer(
+                                            builder: (context, ref, child) {
+                                              final currentFontSize = ref.watch(
+                                                novelFontSizeStateProvider,
+                                              );
+                                              return Text(
+                                                "$currentFontSize px",
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 14,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onPrimaryContainer,
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                      IconButton(
+                                        onPressed: () {
+                                          final newFontSize = min(
+                                            40,
+                                            fontSize + 1,
+                                          );
+                                          ref
+                                              .read(
+                                                novelFontSizeStateProvider
+                                                    .notifier,
+                                              )
+                                              .set(newFontSize);
+                                          setState(() {
+                                            fontSize = newFontSize;
+                                          });
+                                        },
+                                        icon: const Icon(Icons.text_increase),
+                                        iconSize: 20,
+                                        padding: EdgeInsets.zero,
+                                        constraints: const BoxConstraints(
+                                          minWidth: 40,
+                                          minHeight: 40,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                if (_ttsSupported)
+                                  IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _showTts = !_showTts;
+                                      });
+                                    },
+                                    icon: Icon(
+                                      _showTts
+                                          ? Icons.record_voice_over
+                                          : Icons.record_voice_over_outlined,
+                                      color: _showTts
+                                          ? Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                          : null,
+                                    ),
+                                    tooltip: context.l10n.tts,
+                                  ),
+
+                                IconButton(
+                                  onPressed: () async {
+                                    bool autoScrollAreadyFalse =
+                                        _autoScroll.value == false;
+                                    if (!autoScrollAreadyFalse) {
+                                      _autoScroll.value = false;
+                                    }
+                                    await customDraggableTabBar(
+                                      tabs: [
+                                        Tab(text: context.l10n.reader),
+                                        Tab(text: context.l10n.general),
+                                        if (_ttsSupported)
+                                          Tab(text: context.l10n.tts),
+                                      ],
+                                      children: [
+                                        ReaderSettingsTab(),
+                                        GeneralSettingsTab(
+                                          autoScrollPage: _autoScrollPage,
+                                          autoScroll: _autoScroll,
+                                          readerController: _readerController,
+                                          pageOffset: _pageOffset,
+                                        ),
+                                        if (_ttsSupported)
+                                          const TtsSettingsTab(),
+                                      ],
+                                      context: context,
+                                      vsync: this,
+                                    );
+                                    if (!autoScrollAreadyFalse ||
+                                        _autoScroll.value) {
+                                      if (_autoScrollPage.value) {
+                                        _autoPagescroll();
+                                        _autoScroll.value = true;
+                                      }
+                                    }
+                                  },
+                                  icon: const Icon(Icons.settings),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );

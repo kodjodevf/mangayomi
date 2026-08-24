@@ -33,6 +33,7 @@ import 'package:mangayomi/services/http/m_client.dart';
 import 'package:mangayomi/services/download_manager/m3u8/m3u8_downloader.dart';
 import 'package:mangayomi/services/download_manager/m3u8/models/download.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
+import 'package:mangayomi/utils/downloaded_page_file.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/headers.dart';
@@ -131,8 +132,9 @@ Future<void> downloadChapter(
     await storageProvider.requestPermission();
     final manga = chapter.manga.value!;
     final itemType = manga.itemType;
-    final mangaMainDirectory =
-        (await storageProvider.getMangaMainDirectory(chapter))!;
+    final mangaMainDirectory = (await storageProvider.getMangaMainDirectory(
+      chapter,
+    ))!;
     await storageProvider.createDirectorySafely(mangaMainDirectory.path);
     final metadataHeaders = (manga.isLocalArchive ?? false)
         ? null
@@ -512,18 +514,18 @@ Future<void> downloadChapter(
           pageHeaders.addAll(page.headers ?? {});
 
           if (itemType == ItemType.manga) {
-            final file = File(
-              p.join(chapterDirectory.path, "${padIndex(index)}.jpg"),
-            );
-            if (!file.existsSync()) {
+            final existing = findDownloadedPageFile(chapterDirectory, index);
+            if (existing == null) {
               pages.add(
                 PageUrl(
                   page.url.trim(),
                   headers: pageHeaders,
-                  fileName: p.join(
-                    chapterDirectory.path,
-                    "${padIndex(index)}.jpg",
-                  ),
+                  // No extension - the real one is only knowable once the
+                  // response arrives (see download_isolate_pool.dart), which
+                  // appends whatever detectImageExtension() finds. Every
+                  // later lookup goes through findDownloadedPageFile, not
+                  // this literal path.
+                  fileName: p.join(chapterDirectory.path, padIndex(index)),
                 ),
               );
             }
@@ -753,10 +755,7 @@ class _DownloadGate {
 }
 
 @riverpod
-Future<void> processDownloads(
-  Ref ref, {
-  bool? useWifi,
-}) async {
+Future<void> processDownloads(Ref ref, {bool? useWifi}) async {
   final keepAlive = ref.keepAlive();
   try {
     // Fire in the user's manual queue order (#514) so the initial slots go to
@@ -784,12 +783,7 @@ Future<void> processDownloads(
       final chapter = downloadItem.chapter.value;
       if (chapter == null) continue;
       chapter.cancelDownloads(downloadItem.id);
-      ref.read(
-        downloadChapterProvider(
-          chapter: chapter,
-          useWifi: useWifi,
-        ),
-      );
+      ref.read(downloadChapterProvider(chapter: chapter, useWifi: useWifi));
     }
   } catch (_) {
   } finally {
