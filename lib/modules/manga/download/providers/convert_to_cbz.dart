@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:archive/archive_io.dart';
 import 'package:flutter/foundation.dart';
+import 'package:mangayomi/utils/downloaded_page_file.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:path/path.dart' as path;
 part 'convert_to_cbz.g.dart';
@@ -97,8 +98,18 @@ List<String> _convertToCBZ(
   (String, String, String, List<String>, ComicInfoData?) datas,
 ) {
   final (chapterDir, mangaDir, chapterName, pageList, comicInfo) = datas;
-  final imagesPaths = pageList.where((path) => path.endsWith('.jpg')).toList()
-    ..sort();
+  // pageList's individual path strings are decided before download, always
+  // under a placeholder .jpg extension - the real, sniffed extension each
+  // page actually got saved under can differ (see download_isolate_pool.dart
+  // and downloaded_page_file.dart), so only its *length* (the page count)
+  // is trusted here; each page's real file is re-resolved by index.
+  final chapterDirectory = Directory(chapterDir);
+  final imagesPaths = <String>[];
+  for (var index = 0; index < pageList.length; index++) {
+    final file = findDownloadedPageFile(chapterDirectory, index);
+    if (file != null) imagesPaths.add(file.path);
+  }
+  imagesPaths.sort();
 
   if (imagesPaths.isEmpty) return imagesPaths;
 

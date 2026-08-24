@@ -964,6 +964,59 @@ abstract class _$NovelReaderLineHeightState extends $Notifier<double> {
   }
 }
 
+@ProviderFor(NovelFontFamilyState)
+final novelFontFamilyStateProvider = NovelFontFamilyStateProvider._();
+
+final class NovelFontFamilyStateProvider
+    extends $NotifierProvider<NovelFontFamilyState, String?> {
+  NovelFontFamilyStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'novelFontFamilyStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$novelFontFamilyStateHash();
+
+  @$internal
+  @override
+  NovelFontFamilyState create() => NovelFontFamilyState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String?>(value),
+    );
+  }
+}
+
+String _$novelFontFamilyStateHash() =>
+    r'1b069397f08cb43ac011cb6ca99dfeed0083f34f';
+
+abstract class _$NovelFontFamilyState extends $Notifier<String?> {
+  String? build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<String?, String?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String?, String?>,
+              String?,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(NovelShowScrollPercentageState)
 final novelShowScrollPercentageStateProvider =
     NovelShowScrollPercentageStateProvider._();

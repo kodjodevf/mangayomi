@@ -16,6 +16,7 @@ import 'package:mangayomi/utils/global_style.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
+import 'package:mangayomi/utils/share.dart';
 
 class MangaWebView extends ConsumerStatefulWidget {
   final String url;
@@ -285,7 +286,7 @@ class _MangaWebViewState extends ConsumerState<MangaWebView> {
                               } else if (value == 1) {
                                 final box =
                                     context.findRenderObject() as RenderBox?;
-                                SharePlus.instance.share(
+                                shareOrCopy(
                                   ShareParams(
                                     text: _url,
                                     sharePositionOrigin:

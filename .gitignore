@@ -48,3 +48,9 @@ app.*.map.json
 
 /android/app/.cxx
 untranslated_messages.txt
+
+# Isar's native core, downloaded into the repo root by tests that open a
+# real database (Isar.initializeIsarCore).
+libisar.dylib
+libisar.so
+isar.dll

@@ -6,11 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 /// whatever width the cover asks for, so every cover renders at the rail width
 /// and only its height ever changes. Centring restores the cover's own width.
 Widget _rail({required bool centred}) {
-  const cover = SizedBox(
-    key: Key('cover'),
-    width: 100,
-    height: 146,
-  );
+  const cover = SizedBox(key: Key('cover'), width: 100, height: 146);
   return MaterialApp(
     home: Scaffold(
       body: Row(

@@ -83,10 +83,20 @@ Future<dynamic> updateMangaDetail(
       final existingChapters = manga.chapters.toList();
       final recognition = ChapterRecognition();
 
-      int? numberOf(Chapter c) {
+      // The exact number, not the sort key. parseChapterNumber truncates, so
+      // chapters 12, 12.1 and 12.5 all answer 12 and every use of this below
+      // treats them as the same chapter: the composite key drops two of the
+      // three before they reach the library, and read state carries across
+      // all three. rawSeasonAndNumber keeps the fraction, and answers null
+      // for a name with no number at all rather than folding every "Special"
+      // and "Prologue" onto zero.
+      double? numberOf(Chapter c) {
         if (c.name == null) return null;
-        final num = recognition.parseChapterNumber(manga.name ?? '', c.name!);
-        return num > 0 ? num : null;
+        final (_, number) = recognition.rawSeasonAndNumber(
+          manga.name ?? '',
+          c.name!,
+        );
+        return (number ?? 0) > 0 ? number : null;
       }
 
       final existingByUrl = <String, Chapter>{};
@@ -115,7 +125,7 @@ Future<dynamic> updateMangaDetail(
         }
       }
 
-      final readByNumber = <int, bool>{};
+      final readByNumber = <double, bool>{};
       for (final c in existingChapters) {
         final num = numberOf(c);
         if (num != null) {
@@ -133,9 +143,10 @@ Future<dynamic> updateMangaDetail(
         if (url == null || url.isEmpty) continue;
         final key = url.getUrlWithoutDomain;
 
-        final chapNum = chap.name != null
-            ? recognition.parseChapterNumber(manga.name!, chap.name!)
-            : 0;
+        final (_, chapNumber) = chap.name != null
+            ? recognition.rawSeasonAndNumber(manga.name!, chap.name!)
+            : (0, null);
+        final chapNum = chapNumber ?? 0;
         final compositeKey = chapNum > 0
             ? '$chapNum::${chap.scanlator ?? ''}'
             : null;

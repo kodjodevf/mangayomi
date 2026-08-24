@@ -105,3 +105,73 @@ abstract class _$Synching extends $Notifier<SyncPreference> {
     element.handleCreate(ref, () => build(syncId: _$args));
   }
 }
+
+/// True while a restore (and its post-restore upload) is in progress.
+/// main_screen.dart pauses the auto-sync timer while this is true, and
+/// syncServerProvider itself checks it too, so a manual sync trigger or an
+/// already-running periodic timer can't race with an in-progress restore.
+
+@ProviderFor(RestoreSyncGuard)
+final restoreSyncGuardProvider = RestoreSyncGuardProvider._();
+
+/// True while a restore (and its post-restore upload) is in progress.
+/// main_screen.dart pauses the auto-sync timer while this is true, and
+/// syncServerProvider itself checks it too, so a manual sync trigger or an
+/// already-running periodic timer can't race with an in-progress restore.
+final class RestoreSyncGuardProvider
+    extends $NotifierProvider<RestoreSyncGuard, bool> {
+  /// True while a restore (and its post-restore upload) is in progress.
+  /// main_screen.dart pauses the auto-sync timer while this is true, and
+  /// syncServerProvider itself checks it too, so a manual sync trigger or an
+  /// already-running periodic timer can't race with an in-progress restore.
+  RestoreSyncGuardProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'restoreSyncGuardProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$restoreSyncGuardHash();
+
+  @$internal
+  @override
+  RestoreSyncGuard create() => RestoreSyncGuard();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$restoreSyncGuardHash() => r'e8509758528b2054d27ffe7e04b34e540e810359';
+
+/// True while a restore (and its post-restore upload) is in progress.
+/// main_screen.dart pauses the auto-sync timer while this is true, and
+/// syncServerProvider itself checks it too, so a manual sync trigger or an
+/// already-running periodic timer can't race with an in-progress restore.
+
+abstract class _$RestoreSyncGuard extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
