@@ -107,6 +107,7 @@ Future<(String, EpubNovel?)> getHtmlContent(
           chapter.manga.value!.lang!,
           chapter.manga.value!.source!,
           chapter.manga.value!.sourceId,
+          installedOnly: true,
         );
         final proxyServer = ref.read(androidProxyServerStateProvider);
         final html = await withExtensionService(

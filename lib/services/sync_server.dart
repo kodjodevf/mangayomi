@@ -71,12 +71,23 @@ class SyncServer extends _$SyncServer {
     }
   }
 
-  Future<void> startSync(
+  Future<bool> startSync(
     AppLocalizations l10n,
     bool silent, {
     bool upload = false,
     bool download = false,
+    bool bypassRestoreGuard = false,
   }) async {
+    // A restore in progress owns the sync server state until its own
+    // post-restore upload runs (that call passes bypassRestoreGuard: true).
+    // Anything else — the periodic timer or a manual trigger — must wait,
+    // otherwise it could race the restore and pull stale data back down.
+    if (!bypassRestoreGuard && ref.read(restoreSyncGuardProvider)) {
+      if (!silent) {
+        botToast(l10n.sync_restore_in_progress, second: 3);
+      }
+      return false;
+    }
     if (!silent) {
       botToast(l10n.sync_starting, second: 500);
     }
@@ -92,7 +103,7 @@ class SyncServer extends _$SyncServer {
       );
       if (!resultManga) {
         botToast(l10n.sync_failed, second: 5);
-        return;
+        return false;
       }
       if (syncPreference.syncHistories) {
         final resultHistory = await _syncHistory(
@@ -103,7 +114,7 @@ class SyncServer extends _$SyncServer {
         );
         if (!resultHistory) {
           botToast(l10n.sync_failed, second: 5);
-          return;
+          return false;
         }
       }
       if (syncPreference.syncUpdates) {
@@ -115,7 +126,7 @@ class SyncServer extends _$SyncServer {
         );
         if (!resultUpdate) {
           botToast(l10n.sync_failed, second: 5);
-          return;
+          return false;
         }
       }
       if (syncPreference.syncSettings) {
@@ -126,7 +137,7 @@ class SyncServer extends _$SyncServer {
         );
         if (!resultSettings) {
           botToast(l10n.sync_failed, second: 5);
-          return;
+          return false;
         }
       }
 
@@ -134,8 +145,10 @@ class SyncServer extends _$SyncServer {
       if (!silent) {
         botToast(l10n.sync_finished, second: 2);
       }
+      return true;
     } catch (error) {
       botToast(error.toString(), second: 5);
+      return false;
     }
   }
 

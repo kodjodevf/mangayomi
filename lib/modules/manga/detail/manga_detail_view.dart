@@ -146,6 +146,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
           widget.manga!.lang!,
           widget.manga!.source!,
           widget.manga!.sourceId,
+          installedOnly: true,
         );
         if (source == null) return;
         final url =
@@ -166,6 +167,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
           widget.manga!.lang!,
           widget.manga!.source!,
           widget.manga!.sourceId,
+          installedOnly: true,
         );
         if (source == null) return;
         context.push('/extension_detail', extra: source);

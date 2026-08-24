@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:mangayomi/modules/manga/reader/u_chap_data_preload.dart';
 import 'package:mangayomi/modules/widgets/custom_extended_image_provider.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
+import 'package:mangayomi/utils/downloaded_page_file.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/reg_exp_matcher.dart';
 import 'package:path/path.dart' as p;
@@ -90,7 +91,7 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
       return tempFile.path;
     }
     if (isLocale == true && directory != null && index != null) {
-      return p.join(directory!.path, "${padIndex(index!)}.jpg");
+      return findDownloadedPageFile(directory!, index!)?.path;
     }
     if (pageUrl != null) {
       final cachedImage = await _getCachedImageFile(pageUrl!.url);
@@ -106,9 +107,8 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
     if (archiveImage != null) {
       imageBytes = archiveImage;
     } else if (isLocale == true && directory != null && index != null) {
-      imageBytes = await File(
-        p.join(directory!.path, "${padIndex(index!)}.jpg"),
-      ).readAsBytes();
+      final file = await findDownloadedPageFileAsync(directory!, index!);
+      imageBytes = await file?.readAsBytes();
     } else {
       File? cachedImage;
       if (pageUrl != null) {
@@ -140,12 +140,17 @@ extension UChapDataPreloadExtensions on UChapDataPreload {
         ? archiveImage != null
               ? MemoryImage(archiveImage)
               : FileImage(
-                  File(
-                    p.join(
-                      data.directory!.path,
-                      "${padIndex(data.index!)}.jpg",
-                    ),
-                  ),
+                  findDownloadedPageFile(data.directory!, data.index!) ??
+                      // Nothing found under any known extension - fall back
+                      // to the historical .jpg guess so this still fails via
+                      // FileImage's own "file not found" error handling
+                      // rather than throwing here.
+                      File(
+                        p.join(
+                          data.directory!.path,
+                          "${padIndex(data.index!)}.jpg",
+                        ),
+                      ),
                 )
         : CustomExtendedNetworkImageProvider(
             data.pageUrl!.url.trim(),
