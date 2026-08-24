@@ -13,6 +13,7 @@ import 'package:mangayomi/modules/widgets/progress_center.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/services/fetch_item_sources.dart';
 import 'package:mangayomi/utils/cached_network.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -444,7 +445,7 @@ class _SourceRepositoriesState extends ConsumerState<SourceRepositories> {
                                           .set(mangaRepos);
                                     } catch (e, s) {
                                       setState(() => isLoading = false);
-                                      botToast('$e\n$s');
+                                      toastError(e, stack: s, source: 'sourceRepositories');
                                     }
 
                                     if (context.mounted) {

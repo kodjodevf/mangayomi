@@ -11,6 +11,7 @@ import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/extensions/others.dart';
+import 'package:mangayomi/utils/share.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import 'package:path/path.dart' as p;
@@ -164,7 +165,7 @@ class _ImageActionsSheet extends StatelessWidget {
     if (!context.mounted) return;
 
     final box = context.findRenderObject() as RenderBox?;
-    await SharePlus.instance.share(
+    await shareOrCopy(
       ShareParams(
         files: [
           XFile.fromData(
@@ -175,6 +176,7 @@ class _ImageActionsSheet extends StatelessWidget {
         ],
         sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
       ),
+      fallbackName: fileName,
     );
   }
 

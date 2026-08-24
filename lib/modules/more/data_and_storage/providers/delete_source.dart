@@ -10,6 +10,7 @@ import 'package:mangayomi/models/update.dart';
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/isar_txn_retry.dart';
+import 'package:mangayomi/utils/utils.dart';
 
 class LibrarySourceGroup {
   LibrarySourceGroup({
@@ -46,6 +47,21 @@ List<LibrarySourceGroup> librarySourceGroups({bool favoritesOnly = false}) {
   final list = counts.values.toList()
     ..sort((a, b) => b.mangaCount.compareTo(a.mangaCount));
   return list;
+}
+
+/// Library source groups whose extension isn't actually installed - e.g. a
+/// restored backup bound entries to a source that was only ever browsed
+/// (never installed) on this device, or the extension was uninstalled since.
+List<LibrarySourceGroup> librarySourceGroupsMissingSource() {
+  return librarySourceGroups(favoritesOnly: true).where((g) {
+    return getSource(
+          g.lang ?? '',
+          g.sourceName,
+          g.sourceId,
+          installedOnly: true,
+        ) ==
+        null;
+  }).toList();
 }
 
 List<Manga> mangaForGroup(LibrarySourceGroup group, {bool favoritesOnly = false}) {

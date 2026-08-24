@@ -1,4 +1,6 @@
 import 'package:d4rt/d4rt.dart';
+import 'package:mangayomi/eval/dart/bridge/bridge_cast.dart';
+import 'package:mangayomi/eval/model/m_chapter.dart';
 import 'package:mangayomi/eval/model/m_manga.dart';
 import 'package:mangayomi/models/manga.dart';
 
@@ -41,16 +43,16 @@ class MMangaBridge {
           (target as MManga).author = value as String?,
       'description': (visitor, target, value) =>
           (target as MManga).description = value as String?,
-      'genre': (visitor, target, value) =>
-          (target as MManga).genre = (value as List?)?.cast(),
+      'genre': (visitor, target, value) => (target as MManga).genre =
+          asBridgedList<String>(value, 'MManga.genre'),
       'status': (visitor, target, value) =>
           (target as MManga).status = value as Status?,
       'imageUrl': (visitor, target, value) =>
           (target as MManga).imageUrl = value as String?,
       'link': (visitor, target, value) =>
           (target as MManga).link = value as String,
-      'chapters': (visitor, target, value) =>
-          (target as MManga).chapters = (value as List?)?.cast(),
+      'chapters': (visitor, target, value) => (target as MManga).chapters =
+          asBridgedList<MChapter>(value, 'MManga.chapters'),
     },
   );
   void registerBridgedClasses(D4rt interpreter) {
