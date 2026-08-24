@@ -1,4 +1,3 @@
-import 'package:mangayomi/eval/model/m_bridge.dart';
 import 'package:mangayomi/utils/chapter_recognition.dart';
 import 'package:mangayomi/main.dart';
 import 'package:mangayomi/models/chapter.dart';
@@ -8,6 +7,7 @@ import 'package:mangayomi/services/get_detail.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/fetch_interval.dart';
 import 'package:mangayomi/utils/utils.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'update_manga_detail_providers.g.dart';
 
@@ -267,7 +267,7 @@ Future<dynamic> updateMangaDetail(
     });
   } catch (e, s) {
     if (showToast) {
-      botToast('$e\n$s');
+      toastError(e, stack: s, source: 'updateMangaDetail');
     } else {
       rethrow;
     }

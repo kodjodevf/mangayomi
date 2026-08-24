@@ -1,4 +1,5 @@
 import 'package:d4rt/d4rt.dart';
+import 'package:mangayomi/eval/dart/bridge/bridge_cast.dart';
 import 'package:mangayomi/models/video.dart';
 
 class MVideoBridge {
@@ -32,12 +33,12 @@ class MVideoBridge {
           (target as Video).quality = value as String,
       'originalUrl': (visitor, target, value) =>
           (target as Video).originalUrl = value as String,
-      'headers': (visitor, target, value) =>
-          (target as Video).headers = (value as Map?)?.cast(),
-      'subtitles': (visitor, target, value) =>
-          (target as Video).subtitles = (value as List?)?.cast(),
-      'audios': (visitor, target, value) =>
-          (target as Video).audios = (value as List?)?.cast(),
+      'headers': (visitor, target, value) => (target as Video).headers =
+          asBridgedMap<String, String>(value, 'Video.headers'),
+      'subtitles': (visitor, target, value) => (target as Video).subtitles =
+          asBridgedList<Track>(value, 'Video.subtitles'),
+      'audios': (visitor, target, value) => (target as Video).audios =
+          asBridgedList<Track>(value, 'Video.audios'),
     },
   );
   void registerBridgedClasses(D4rt interpreter) {

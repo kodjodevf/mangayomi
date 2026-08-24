@@ -5525,6 +5525,66 @@ abstract class AppLocalizations {
   /// **'Beta'**
   String get beta;
 
+  /// No description provided for @error_reports.
+  ///
+  /// In en, this message translates to:
+  /// **'Error reports'**
+  String get error_reports;
+
+  /// No description provided for @error_reports_subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Errors the app caught, and a way to report them'**
+  String get error_reports_subtitle;
+
+  /// No description provided for @error_reports_empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing has gone wrong. Errors the app catches are kept here so you can report them.'**
+  String get error_reports_empty;
+
+  /// No description provided for @error_reports_likely_cause.
+  ///
+  /// In en, this message translates to:
+  /// **'Likely cause'**
+  String get error_reports_likely_cause;
+
+  /// No description provided for @error_reports_report.
+  ///
+  /// In en, this message translates to:
+  /// **'Report on GitHub'**
+  String get error_reports_report;
+
+  /// No description provided for @error_reports_banner.
+  ///
+  /// In en, this message translates to:
+  /// **'Mangayomi ran into an error'**
+  String get error_reports_banner;
+
+  /// No description provided for @error_reports_banner_action.
+  ///
+  /// In en, this message translates to:
+  /// **'See it'**
+  String get error_reports_banner_action;
+
+  /// No description provided for @error_reports_copy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get error_reports_copy;
+
+  /// No description provided for @error_reports_copied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to the clipboard'**
+  String get error_reports_copied;
+
+  /// No description provided for @error_reports_clear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get error_reports_clear;
+
   /// No description provided for @share_unavailable_copied.
   ///
   /// In en, this message translates to:

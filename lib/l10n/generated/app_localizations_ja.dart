@@ -3018,6 +3018,38 @@ class AppLocalizationsJa extends AppLocalizations {
   String get beta => 'Beta';
 
   @override
+  String get error_reports => 'Error reports';
+
+  @override
+  String get error_reports_subtitle =>
+      'Errors the app caught, and a way to report them';
+
+  @override
+  String get error_reports_empty =>
+      'Nothing has gone wrong. Errors the app catches are kept here so you can report them.';
+
+  @override
+  String get error_reports_likely_cause => 'Likely cause';
+
+  @override
+  String get error_reports_report => 'Report on GitHub';
+
+  @override
+  String get error_reports_banner => 'Mangayomi ran into an error';
+
+  @override
+  String get error_reports_banner_action => 'See it';
+
+  @override
+  String get error_reports_copy => 'Copy';
+
+  @override
+  String get error_reports_copied => 'Copied to the clipboard';
+
+  @override
+  String get error_reports_clear => 'Clear';
+
+  @override
   String get share_unavailable_copied =>
       'Sharing isn\'t available on this platform, so it was copied to the clipboard instead.';
 

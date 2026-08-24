@@ -36,6 +36,7 @@ import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/services/backup_password_storage.dart';
 import 'package:mangayomi/services/sync_server.dart';
 import 'package:mangayomi/utils/isar_txn_retry.dart';
+import 'package:mangayomi/utils/error_toast.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'restore.g.dart';
@@ -147,7 +148,7 @@ Future<void> doRestore(
       showBotToast("Backup Type not supported!");
     }
   } catch (e, s) {
-    botToast('$e\n$s');
+    toastError(e, stack: s, source: 'restore');
   } finally {
     if (!uploadStarted) {
       ref.read(restoreSyncGuardProvider.notifier).finish();
@@ -482,7 +483,8 @@ TachiBkImportPreview previewMangayomiBackup(Map<String, dynamic> backup) {
       .toList();
   final categoryList = (backup["categories"] as List?)
       ?.map(
-        (e) => Category.fromJson(e)..forItemType = _convertToItemTypeCategory(e),
+        (e) =>
+            Category.fromJson(e)..forItemType = _convertToItemTypeCategory(e),
       )
       .toList();
 
@@ -812,9 +814,7 @@ void _mergeMangayomiBackup({
     for (final tempManga in manga) {
       final oldId = tempManga.id;
       final key = '${tempManga.itemType.index}|${tempManga.link}';
-      final existing = tempManga.link != null
-          ? existingMangaByKey[key]
-          : null;
+      final existing = tempManga.link != null ? existingMangaByKey[key] : null;
       final remappedCategories = (tempManga.categories ?? [])
           .map((id) => oldToNewCategoryId[id])
           .whereType<int>()
@@ -833,9 +833,7 @@ void _mergeMangayomiBackup({
       final decidedSourceId = sourceDecisions[originalSourceName];
       final boundSource = decidedSourceId != null
           ? isar.sources.getSync(decidedSourceId)
-          : installedSourcesFor(
-              tempManga.itemType,
-            ).firstWhereOrNull(
+          : installedSourcesFor(tempManga.itemType).firstWhereOrNull(
               (s) => s.name?.toLowerCase() == originalSourceName.toLowerCase(),
             );
       tempManga.id = null;
