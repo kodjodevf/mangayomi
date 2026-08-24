@@ -15,6 +15,7 @@ tokio = { version = "1.50.0", features = ["full"] }
 tokio-util = "0.7.16"
 epub = "2.1.5"
 zip = "8.5.0"
+libc = "0.2"
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }

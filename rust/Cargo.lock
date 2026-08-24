@@ -1548,6 +1548,7 @@ dependencies = [
  "epub",
  "flutter_rust_bridge",
  "futures-util",
+ "libc",
  "reqwest",
  "tokio",
  "tokio-util",

@@ -40,6 +40,7 @@ import 'package:mangayomi/services/download_manager/m_downloader.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
 import 'package:mangayomi/utils/discord_rpc.dart';
 import 'package:mangayomi/modules/more/about/widgets/crash_report_banner.dart';
+import 'package:mangayomi/services/crash_native.dart';
 import 'package:mangayomi/services/crash_report.dart';
 import 'package:mangayomi/utils/log/logger.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
@@ -138,7 +139,15 @@ void main(List<String> args) async {
       // "Enable logs". Anything raised before this is held in memory and
       // written out here.
       unawaited(
-        storage.getDefaultDirectory().then(CrashReports.init).catchError((_) {}),
+        storage
+            .getDefaultDirectory()
+            .then((directory) async {
+              await CrashReports.init(directory);
+              // After CrashReports, because a native crash from the last run
+              // is recorded into it.
+              await NativeCrashHandler.init(directory);
+            })
+            .catchError((_) {}),
       );
       Object? startupError;
       try {

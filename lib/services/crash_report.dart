@@ -231,6 +231,7 @@ class CrashReports {
     required String source,
     required Object error,
     StackTrace? stack,
+    String? screen,
   }) {
     try {
       final report = CrashReport(
@@ -238,7 +239,9 @@ class CrashReports {
         source: source,
         error: redact(error.toString()),
         stack: stack == null ? null : _trimStack(redact(stack.toString())),
-        screen: _screen,
+        // A native crash is reported on the launch after it happened, so it
+        // has to say where it was rather than where we are now.
+        screen: screen ?? _screen,
       );
       _reports.add(report);
       if (!_loaded) _pending.add(report);
