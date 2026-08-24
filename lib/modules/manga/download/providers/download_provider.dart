@@ -396,7 +396,12 @@ Future<void> downloadChapter(
           });
     } else if (itemType == ItemType.novel && chapter.url != null) {
       final manga = chapter.manga.value!;
-      final source = getSource(manga.lang!, manga.source!, manga.sourceId)!;
+      final source = getSource(
+        manga.lang!,
+        manga.source!,
+        manga.sourceId,
+        installedOnly: true,
+      )!;
       final chapterUrl = "${source.baseUrl}${chapter.url!.getUrlWithoutDomain}";
       final cookie = MClient.getCookiesPref(chapterUrl);
       final headers = htmlHeader;
@@ -560,7 +565,12 @@ Future<void> downloadChapter(
     } else if (itemType == ItemType.novel) {
       final file = File(p.join(chapterDirectory.path, "$chapterName.html"));
       if (!file.existsSync() && novelPage != null) {
-        final source = getSource(manga.lang!, manga.source!, manga.sourceId)!;
+        final source = getSource(
+          manga.lang!,
+          manga.source!,
+          manga.sourceId,
+          installedOnly: true,
+        )!;
         p.join(chapterDirectory.path, "$chapterName.html");
         final html = await withExtensionService(
           source,

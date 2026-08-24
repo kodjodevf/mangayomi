@@ -98,6 +98,7 @@ Future<GetChapterPagesModel> getChapterPages(
           chapter.manga.value!.lang!,
           chapter.manga.value!.source!,
           chapter.manga.value!.sourceId,
+          installedOnly: true,
         )!;
         pageUrls = await getIsolateService.get<List<PageUrl>>(
           url: chapter.url!,

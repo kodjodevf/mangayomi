@@ -1250,5 +1250,17 @@
   "onboarding_continue": "Continue",
   "onboarding_later": "You can add one later in Settings, under Browse.",
   "onboarding_replay": "Show the welcome screen",
-  "onboarding_replay_subtitle": "Opens the first-run screen again, the one a new install starts on."
+  "onboarding_replay_subtitle": "Opens the first-run screen again, the one a new install starts on.",
+  "missing_source_check_title": "Check for missing sources",
+  "missing_source_check_subtitle": "Find library entries whose extension isn't installed - restoring a backup can leave entries pointing at a source you never installed on this device.",
+  "missing_source_check_none_found": "Every library entry's source is installed.",
+  "missing_source_check_result_title": "{count, plural, =1{1 source missing} other{{count} sources missing}}",
+  "@missing_source_check_result_title": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "missing_source_check_result_message": "These library entries point at a source that isn't installed on this device. Tap one to migrate it to an installed source, install the matching extension, or use \"Delete a source & its manga\" to remove them."
 }

@@ -90,6 +90,7 @@ Future<(List<Video>, bool, List<String>, Directory?)> getVideoList(
       episode.manga.value!.lang!,
       episode.manga.value!.source!,
       episode.manga.value!.sourceId,
+      installedOnly: true,
     );
     final proxyServer = ref.read(androidProxyServerStateProvider);
 

@@ -946,6 +946,7 @@ class _NovelWebViewState extends ConsumerState<NovelWebView>
                 manga.lang!,
                 manga.source!,
                 manga.sourceId,
+                installedOnly: true,
               )!;
               final url = chapter.url!.startsWith('/')
                   ? '${source.baseUrl}/${chapter.url!}'

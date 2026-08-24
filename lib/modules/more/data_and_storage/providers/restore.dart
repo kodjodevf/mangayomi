@@ -48,6 +48,10 @@ Future<void> doRestore(
   bool merge = false,
   Map<String, bool> categoryDecisions = const {},
   Map<String, int> sourceDecisions = const {},
+  // Already-decoded/decrypted mangayomi-format backup, if the caller ran
+  // decodeMangayomiBackup itself to preview it first. Skips re-decoding
+  // (and re-prompting for a password) here.
+  Map<String, dynamic>? decodedMangayomiBackup,
   // Caller's answer to "upload this restore to your sync server?", asked
   // only when a server was connected. true = upload, false = the user chose
   // to turn sync off instead (so stale server data can't come back and
@@ -88,8 +92,17 @@ Future<void> doRestore(
     switch (backupType) {
       case BackupType.mangayomi:
         if (!context.mounted) return;
-        final backup = await _decodeMangayomiBackup(path, context);
-        await ref.read(restoreBackupProvider(backup).future);
+        final backup =
+            decodedMangayomiBackup ??
+            await decodeMangayomiBackup(path, context);
+        await ref.read(
+          restoreBackupProvider(
+            backup,
+            merge: merge,
+            categoryDecisions: categoryDecisions,
+            sourceDecisions: sourceDecisions,
+          ).future,
+        );
         break;
       case BackupType.kotatsu:
         await ref.read(restoreKotatsuBackupProvider(archive).future);
@@ -187,7 +200,13 @@ Future<void> _uploadToSyncServerIfConnected(
 /// device don't need it retyped - mirroring how every other part of a
 /// restored backup overwrites the local settings, just kept out of the
 /// generic Settings JSON round-trip (see backup_password_fallback.dart).
-Future<Map<String, dynamic>> _decodeMangayomiBackup(
+///
+/// Public so the restore UI can decode+preview a mangayomi-format backup
+/// (merge/replace choice, category/source conflicts) before committing to
+/// the actual restore - doRestore accepts the result back as
+/// decodedMangayomiBackup so it isn't decrypted (and the password
+/// re-prompted) a second time.
+Future<Map<String, dynamic>> decodeMangayomiBackup(
   String path,
   BuildContext context,
 ) async {
@@ -341,7 +360,7 @@ TachiBkImportPreview? previewTachiBkImport(String path) {
   final installedSourceNames = isar.sources
       .where()
       .findAllSync()
-      .where((s) => s.sourceCode != null)
+      .where((s) => s.isAdded ?? false)
       .map((s) => (s.itemType, s.name?.toLowerCase()))
       .toSet();
   final unmatchedSources = <String, ItemType>{};
@@ -448,8 +467,93 @@ TachiBkImportPreview? previewTachiBkImport(String path) {
 List<Source> installedSourcesFor(ItemType itemType) => isar.sources
     .where()
     .findAllSync()
-    .where((s) => s.itemType == itemType && s.sourceCode != null)
+    .where((s) => s.itemType == itemType && (s.isAdded ?? false))
     .toList();
+
+/// Same preview shape as previewTachiBkImport, but for the native
+/// mangayomi backup format - already-decoded (and, for encrypted backups,
+/// already-decrypted) JSON rather than a path to re-read from disk.
+TachiBkImportPreview previewMangayomiBackup(Map<String, dynamic> backup) {
+  final mangaList = (backup["manga"] as List?)
+      ?.map((e) => Manga.fromJson(e)..itemType = _convertToItemType(e))
+      .toList();
+  final chapterList = (backup["chapters"] as List?)
+      ?.map((e) => Chapter.fromJson(e))
+      .toList();
+  final categoryList = (backup["categories"] as List?)
+      ?.map(
+        (e) => Category.fromJson(e)..forItemType = _convertToItemTypeCategory(e),
+      )
+      .toList();
+
+  final existingCategoryNames = isar.categorys
+      .where()
+      .findAllSync()
+      .map((c) => c.name)
+      .whereType<String>()
+      .toSet();
+  final categoryNames = <String>{
+    for (final c in categoryList ?? <Category>[])
+      if (c.name != null) c.name!,
+  };
+
+  final installedSourceNames = isar.sources
+      .where()
+      .findAllSync()
+      .where((s) => s.isAdded ?? false)
+      .map((s) => (s.itemType, s.name?.toLowerCase()))
+      .toSet();
+  final unmatchedSources = <String, ItemType>{};
+
+  final existingMangaByKey = {
+    for (final m in isar.mangas.where().findAllSync())
+      if (m.link != null) '${m.itemType.index}|${m.link}': m,
+  };
+  final chaptersByMangaId = <int, List<Chapter>>{};
+  for (final c in chapterList ?? <Chapter>[]) {
+    if (c.mangaId == null) continue;
+    chaptersByMangaId.putIfAbsent(c.mangaId!, () => []).add(c);
+  }
+
+  int newSeries = 0, updatedSeries = 0, newChapters = 0;
+  for (final m in mangaList ?? <Manga>[]) {
+    final srcName = m.source ?? "Unknown";
+    if (!installedSourceNames.contains((m.itemType, srcName.toLowerCase()))) {
+      unmatchedSources[srcName] = m.itemType;
+    }
+    final key = '${m.itemType.index}|${m.link}';
+    final existing = m.link != null ? existingMangaByKey[key] : null;
+    final mangaChapters = m.id != null
+        ? chaptersByMangaId[m.id!] ?? const <Chapter>[]
+        : const <Chapter>[];
+    if (existing != null) {
+      updatedSeries++;
+      final existingUrls = isar.chapters
+          .filter()
+          .mangaIdEqualTo(existing.id)
+          .findAllSync()
+          .map((c) => c.url)
+          .whereType<String>()
+          .toSet();
+      newChapters += mangaChapters
+          .where((c) => c.url != null && !existingUrls.contains(c.url))
+          .length;
+    } else {
+      newSeries++;
+      newChapters += mangaChapters.length;
+    }
+  }
+
+  return TachiBkImportPreview(
+    conflictingCategories: categoryNames
+        .where(existingCategoryNames.contains)
+        .toList(),
+    unmatchedSourceNames: unmatchedSources,
+    newSeriesCount: newSeries,
+    updatedSeriesCount: updatedSeries,
+    newChapterCount: newChapters,
+  );
+}
 
 int currentFavoriteMangaCount() =>
     isar.mangas.filter().favoriteEqualTo(true).countSync();
@@ -459,6 +563,13 @@ Future<void> restoreBackup(
   Ref ref,
   Map<String, dynamic> backup, {
   bool full = true,
+  // When true, adds this backup's library into the existing one instead of
+  // wiping it first - only categories/manga/chapters/history/updates
+  // participate (mirrors what Mihon-family merge covers; device config like
+  // settings/sources/customButtons is a replace-only concept either way).
+  bool merge = false,
+  Map<String, bool> categoryDecisions = const {},
+  Map<String, int> sourceDecisions = const {},
 }) async {
   final version = backup['version'];
   if (["1", "2"].any((e) => e == version)) {
@@ -506,6 +617,18 @@ Future<void> restoreBackup(
 
       final currentSettings = isar.settings.getSync(227);
       await writeTxnSyncWithRetry(() {
+        if (merge) {
+          _mergeMangayomiBackup(
+            manga: manga,
+            chapters: chapters,
+            categories: categories,
+            history: history,
+            updates: updates,
+            categoryDecisions: categoryDecisions,
+            sourceDecisions: sourceDecisions,
+          );
+          return;
+        }
         isar.mangas.clearSync();
         if (manga != null) {
           isar.mangas.putAllSync(manga);
@@ -642,6 +765,171 @@ Future<void> restoreBackup(
   }
 }
 
+/// Adds a mangayomi-format backup's library into the existing one instead of
+/// wiping it first. Mirrors what restoreTachiBkBackup already does for
+/// Mihon-family merges: match manga by link, keep the existing entry's
+/// state on conflict, only carry over chapters/history/updates that don't
+/// already exist. Everything here re-inserts with a fresh id rather than
+/// reusing the backup's original one - unlike a full replace (which clears
+/// the tables first, so reusing ids is safe), a merge runs against a
+/// non-empty library where the backup's ids could belong to something else
+/// entirely on this device.
+void _mergeMangayomiBackup({
+  required List<Manga>? manga,
+  required List<Chapter>? chapters,
+  required List<Category>? categories,
+  required List<History>? history,
+  required List<Update>? updates,
+  required Map<String, bool> categoryDecisions,
+  required Map<String, int> sourceDecisions,
+}) {
+  final oldToNewCategoryId = <int, int>{};
+  if (categories != null) {
+    final existingCategories = isar.categorys.where().findAllSync();
+    for (final category in categories) {
+      final oldId = category.id;
+      final existing = existingCategories.firstWhereOrNull(
+        (c) => c.name == category.name && c.forItemType == category.forItemType,
+      );
+      if (existing != null) {
+        if (oldId != null) oldToNewCategoryId[oldId] = existing.id!;
+        continue;
+      }
+      if (categoryDecisions[category.name] == false) continue;
+      category.id = null;
+      isar.categorys.putSync(category);
+      if (oldId != null) oldToNewCategoryId[oldId] = category.id!;
+    }
+  }
+
+  final oldToNewMangaId = <int, int>{};
+  final newMangaIds = <int>{};
+  if (manga != null) {
+    final existingMangaByKey = {
+      for (final m in isar.mangas.where().findAllSync())
+        if (m.link != null) '${m.itemType.index}|${m.link}': m,
+    };
+    for (final tempManga in manga) {
+      final oldId = tempManga.id;
+      final key = '${tempManga.itemType.index}|${tempManga.link}';
+      final existing = tempManga.link != null
+          ? existingMangaByKey[key]
+          : null;
+      final remappedCategories = (tempManga.categories ?? [])
+          .map((id) => oldToNewCategoryId[id])
+          .whereType<int>()
+          .toList();
+      if (existing != null) {
+        existing.favorite = true;
+        existing.categories = {
+          ...?existing.categories,
+          ...remappedCategories,
+        }.toList();
+        isar.mangas.putSync(existing);
+        if (oldId != null) oldToNewMangaId[oldId] = existing.id!;
+        continue;
+      }
+      final originalSourceName = tempManga.source ?? "Unknown";
+      final decidedSourceId = sourceDecisions[originalSourceName];
+      final boundSource = decidedSourceId != null
+          ? isar.sources.getSync(decidedSourceId)
+          : installedSourcesFor(
+              tempManga.itemType,
+            ).firstWhereOrNull(
+              (s) => s.name?.toLowerCase() == originalSourceName.toLowerCase(),
+            );
+      tempManga.id = null;
+      tempManga.categories = remappedCategories;
+      tempManga.favorite = true;
+      if (boundSource != null) {
+        tempManga.sourceId = boundSource.id;
+        tempManga.source = boundSource.name;
+      } else {
+        tempManga.sourceId = null;
+      }
+      isar.mangas.putSync(tempManga);
+      if (oldId != null) oldToNewMangaId[oldId] = tempManga.id!;
+      newMangaIds.add(tempManga.id!);
+    }
+  }
+
+  final oldToNewChapterId = <int, int>{};
+  if (chapters != null) {
+    final existingUrlsByMangaId = <int, Set<String>>{};
+    for (final tempChapter in chapters) {
+      final newMangaId = tempChapter.mangaId != null
+          ? oldToNewMangaId[tempChapter.mangaId]
+          : null;
+      if (newMangaId == null) continue;
+      // Only ever landed on genuinely new manga above - an existing manga's
+      // own chapters (with real read/download state) are left untouched.
+      if (!newMangaIds.contains(newMangaId)) continue;
+      final existingUrls = existingUrlsByMangaId.putIfAbsent(
+        newMangaId,
+        () => isar.chapters
+            .filter()
+            .mangaIdEqualTo(newMangaId)
+            .findAllSync()
+            .map((c) => c.url)
+            .whereType<String>()
+            .toSet(),
+      );
+      if (tempChapter.url != null && existingUrls.contains(tempChapter.url)) {
+        continue;
+      }
+      final mangaRef = isar.mangas.getSync(newMangaId);
+      if (mangaRef == null) continue;
+      final oldId = tempChapter.id;
+      tempChapter.id = null;
+      tempChapter.mangaId = newMangaId;
+      isar.chapters.putSync(tempChapter..manga.value = mangaRef);
+      tempChapter.manga.saveSync();
+      if (tempChapter.url != null) existingUrls.add(tempChapter.url!);
+      if (oldId != null) oldToNewChapterId[oldId] = tempChapter.id!;
+    }
+  }
+
+  if (history != null) {
+    for (final tempHistory in history) {
+      final newChapterId = tempHistory.chapterId != null
+          ? oldToNewChapterId[tempHistory.chapterId]
+          : null;
+      final newMangaId = tempHistory.mangaId != null
+          ? oldToNewMangaId[tempHistory.mangaId]
+          : null;
+      // Only for chapters we just inserted above - an existing chapter's
+      // history already reflects this device's own progress.
+      if (newChapterId == null || newMangaId == null) continue;
+      final chapterRef = isar.chapters.getSync(newChapterId);
+      if (chapterRef == null) continue;
+      tempHistory.id = null;
+      tempHistory.mangaId = newMangaId;
+      tempHistory.chapterId = newChapterId;
+      isar.historys.putSync(tempHistory..chapter.value = chapterRef);
+      tempHistory.chapter.saveSync();
+    }
+  }
+
+  if (updates != null) {
+    for (final tempUpdate in updates) {
+      final newMangaId = tempUpdate.mangaId != null
+          ? oldToNewMangaId[tempUpdate.mangaId]
+          : null;
+      if (newMangaId == null || !newMangaIds.contains(newMangaId)) continue;
+      final chapter = isar.chapters
+          .filter()
+          .mangaIdEqualTo(newMangaId)
+          .nameEqualTo(tempUpdate.chapterName)
+          .findFirstSync();
+      if (chapter == null) continue;
+      tempUpdate.id = null;
+      tempUpdate.mangaId = newMangaId;
+      isar.updates.putSync(tempUpdate..chapter.value = chapter);
+      tempUpdate.chapter.saveSync();
+    }
+  }
+}
+
 ItemType _convertToItemType(Map<String, dynamic> backup) {
   final isManga = backup['isManga'];
   return isManga == null
@@ -749,10 +1037,13 @@ Future<void> restoreTachiBkBackup(
   backup.mergeFromCodedBufferReader(
     CodedBufferReader(content, sizeLimit: 250 << 20),
   );
+  // sourceCode is never null for a browsed-but-not-installed source (every
+  // repo listing path defaults it to '' rather than leaving it null) - isAdded
+  // is the only field that actually means "installed".
   final installedSources = isar.sources
       .where()
       .findAllSync()
-      .where((s) => s.sourceCode != null)
+      .where((s) => s.isAdded ?? false)
       .toList();
   Source? resolveSource(String originalName, ItemType itemType) {
     final decision = sourceDecisions[originalName];

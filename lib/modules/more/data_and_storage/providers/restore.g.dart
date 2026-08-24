@@ -23,6 +23,7 @@ final class DoRestoreProvider
       bool merge,
       Map<String, bool> categoryDecisions,
       Map<String, int> sourceDecisions,
+      Map<String, dynamic>? decodedMangayomiBackup,
       bool? syncAfterRestore,
     })
     super.argument,
@@ -59,6 +60,7 @@ final class DoRestoreProvider
               bool merge,
               Map<String, bool> categoryDecisions,
               Map<String, int> sourceDecisions,
+              Map<String, dynamic>? decodedMangayomiBackup,
               bool? syncAfterRestore,
             });
     return doRestore(
@@ -68,6 +70,7 @@ final class DoRestoreProvider
       merge: argument.merge,
       categoryDecisions: argument.categoryDecisions,
       sourceDecisions: argument.sourceDecisions,
+      decodedMangayomiBackup: argument.decodedMangayomiBackup,
       syncAfterRestore: argument.syncAfterRestore,
     );
   }
@@ -83,7 +86,7 @@ final class DoRestoreProvider
   }
 }
 
-String _$doRestoreHash() => r'21371f2df249a161fccaa258cf49f95dbc6b74ff';
+String _$doRestoreHash() => r'10e58343c6ae92c7d31664fcd94ca7239187a392';
 
 final class DoRestoreFamily extends $Family
     with
@@ -95,6 +98,7 @@ final class DoRestoreFamily extends $Family
             bool merge,
             Map<String, bool> categoryDecisions,
             Map<String, int> sourceDecisions,
+            Map<String, dynamic>? decodedMangayomiBackup,
             bool? syncAfterRestore,
           })
         > {
@@ -113,6 +117,7 @@ final class DoRestoreFamily extends $Family
     bool merge = false,
     Map<String, bool> categoryDecisions = const {},
     Map<String, int> sourceDecisions = const {},
+    Map<String, dynamic>? decodedMangayomiBackup,
     bool? syncAfterRestore,
   }) => DoRestoreProvider._(
     argument: (
@@ -121,6 +126,7 @@ final class DoRestoreFamily extends $Family
       merge: merge,
       categoryDecisions: categoryDecisions,
       sourceDecisions: sourceDecisions,
+      decodedMangayomiBackup: decodedMangayomiBackup,
       syncAfterRestore: syncAfterRestore,
     ),
     from: this,
@@ -138,7 +144,14 @@ final class RestoreBackupProvider
     with $FutureModifier<void>, $FutureProvider<void> {
   RestoreBackupProvider._({
     required RestoreBackupFamily super.from,
-    required (Map<String, dynamic>, {bool full}) super.argument,
+    required (
+      Map<String, dynamic>, {
+      bool full,
+      bool merge,
+      Map<String, bool> categoryDecisions,
+      Map<String, int> sourceDecisions,
+    })
+    super.argument,
   }) : super(
          retry: null,
          name: r'restoreBackupProvider',
@@ -164,8 +177,23 @@ final class RestoreBackupProvider
 
   @override
   FutureOr<void> create(Ref ref) {
-    final argument = this.argument as (Map<String, dynamic>, {bool full});
-    return restoreBackup(ref, argument.$1, full: argument.full);
+    final argument =
+        this.argument
+            as (
+              Map<String, dynamic>, {
+              bool full,
+              bool merge,
+              Map<String, bool> categoryDecisions,
+              Map<String, int> sourceDecisions,
+            });
+    return restoreBackup(
+      ref,
+      argument.$1,
+      full: argument.full,
+      merge: argument.merge,
+      categoryDecisions: argument.categoryDecisions,
+      sourceDecisions: argument.sourceDecisions,
+    );
   }
 
   @override
@@ -179,13 +207,19 @@ final class RestoreBackupProvider
   }
 }
 
-String _$restoreBackupHash() => r'e2091b4ae0a868f6f13697663be45affe2c58a71';
+String _$restoreBackupHash() => r'2f59eaff521162e612752a61603f42e1593b7818';
 
 final class RestoreBackupFamily extends $Family
     with
         $FunctionalFamilyOverride<
           FutureOr<void>,
-          (Map<String, dynamic>, {bool full})
+          (
+            Map<String, dynamic>, {
+            bool full,
+            bool merge,
+            Map<String, bool> categoryDecisions,
+            Map<String, int> sourceDecisions,
+          })
         > {
   RestoreBackupFamily._()
     : super(
@@ -196,8 +230,22 @@ final class RestoreBackupFamily extends $Family
         isAutoDispose: true,
       );
 
-  RestoreBackupProvider call(Map<String, dynamic> backup, {bool full = true}) =>
-      RestoreBackupProvider._(argument: (backup, full: full), from: this);
+  RestoreBackupProvider call(
+    Map<String, dynamic> backup, {
+    bool full = true,
+    bool merge = false,
+    Map<String, bool> categoryDecisions = const {},
+    Map<String, int> sourceDecisions = const {},
+  }) => RestoreBackupProvider._(
+    argument: (
+      backup,
+      full: full,
+      merge: merge,
+      categoryDecisions: categoryDecisions,
+      sourceDecisions: sourceDecisions,
+    ),
+    from: this,
+  );
 
   @override
   String toString() => r'restoreBackupProvider';
@@ -345,7 +393,7 @@ final class RestoreTachiBkBackupProvider
 }
 
 String _$restoreTachiBkBackupHash() =>
-    r'aa5e671fb4c3c4f8d09c6b6fc464f96aa1b67d2b';
+    r'f9f0dcd07669e9be816021b7cd7c8e0f9083ee0a';
 
 final class RestoreTachiBkBackupFamily extends $Family
     with
