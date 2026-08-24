@@ -304,7 +304,12 @@ class _TvAnimeDetailViewState extends ConsumerState<TvAnimeDetailView> {
   }
 
   void _openInBrowser() {
-    final source = getSource(manga.lang!, manga.source!, manga.sourceId);
+    final source = getSource(
+      manga.lang!,
+      manga.source!,
+      manga.sourceId,
+      installedOnly: true,
+    );
     if (source == null || manga.link == null) return;
     context.push(
       '/mangawebview',

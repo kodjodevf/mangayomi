@@ -7,16 +7,36 @@ import 'package:mangayomi/models/manga.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/pre_import_backup.dart';
 import 'package:mangayomi/modules/more/data_and_storage/providers/restore.dart';
 import 'package:mangayomi/modules/more/data_and_storage/widgets/rollback_last_change_tile.dart';
+import 'package:mangayomi/modules/more/settings/sync/providers/sync_providers.dart';
 import 'package:mangayomi/modules/more/widgets/dialog_actions.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 
-Future<void> performRestore(BuildContext context, WidgetRef ref) async {
+/// Whether there's a sync server configured to ask about (regardless of
+/// whether sync is currently on or off) and, if so, whether it's on.
+(bool hasServer, bool syncOn) _syncState(WidgetRef ref) {
+  final syncPreference = ref.read(synchingProvider(syncId: 1));
+  final hasServer =
+      (syncPreference.authToken?.isNotEmpty ?? false) &&
+      (syncPreference.server?.isNotEmpty ?? false);
+  return (hasServer, syncPreference.syncOn);
+}
+
+/// Runs the restore flow and reports whether anything was actually restored.
+///
+/// False covers every way out that leaves the app as it was: no file chosen,
+/// a confirmation declined, a conflict sheet dismissed. Callers that act on
+/// the result, like the first-run screen, need to tell that apart from a
+/// restore that went through.
+Future<bool> performRestore(BuildContext context, WidgetRef ref) async {
   String? safetyBackupPath;
   try {
     final file = await FilePicker.pickFile();
-    if (file?.path == null || !context.mounted) return;
+    if (file?.path == null || !context.mounted) return false;
     final path = file!.path!;
+    // A successful restore pushes to the sync server automatically, so a
+    // wrong backup here could overwrite good server data — ask first.
+    final (hasServer, syncOn) = _syncState(ref);
 
     final backupType = peekBackupType(path);
     final isMihonFamily =
@@ -24,27 +44,164 @@ Future<void> performRestore(BuildContext context, WidgetRef ref) async {
         backupType == BackupType.aniyomi ||
         backupType == BackupType.neko;
 
+    if (backupType == BackupType.mangayomi) {
+      await _performMangayomiRestore(context, ref, path);
+      return true;
+    }
+
     if (!isMihonFamily) {
-      if (!context.mounted) return;
+      if (!context.mounted) return false;
       final confirmed = await _confirmPlainRestore(context);
-      if (confirmed != true || !context.mounted) return;
+      if (confirmed != true || !context.mounted) return false;
+      bool? syncAfterRestore;
+      if (hasServer) {
+        if (!context.mounted) return false;
+        syncAfterRestore = await confirmSyncAfterRestore(
+          context,
+          syncOn: syncOn,
+        );
+        if (!context.mounted) return false;
+      }
       showBusyDialog(context, context.l10n.restoring_backup);
       try {
-        await ref.watch(doRestoreProvider(path: path, context: context).future);
+        await ref.watch(
+          doRestoreProvider(
+            path: path,
+            context: context,
+            syncAfterRestore: syncAfterRestore,
+          ).future,
+        );
       } finally {
         if (context.mounted) hideBusyDialog(context);
       }
-      return;
+      return true;
     }
 
     final l10n = context.l10n;
     final preview = previewTachiBkImport(path);
     if (preview == null) {
       botToast("Unsupported or unrecognized backup file.");
-      return;
+      return false;
     }
 
+    if (!context.mounted) return false;
+    final keepExisting = await _chooseImportMode(context);
+    if (keepExisting == null || !context.mounted) return false;
+
+    var categoryDecisions = const <String, bool>{};
+    var sourceDecisions = const <String, int>{};
+
+    if (keepExisting && preview.conflictingCategories.isNotEmpty) {
+      if (!context.mounted) return false;
+      final decisions = await _resolveCategoryConflicts(
+        context,
+        preview.conflictingCategories,
+      );
+      if (decisions == null || !context.mounted) return false;
+      categoryDecisions = decisions;
+    }
+
+    if (preview.unmatchedSourceNames.isNotEmpty) {
+      if (!context.mounted) return false;
+      final decisions = await _resolveSourceConflicts(
+        context,
+        preview.unmatchedSourceNames,
+      );
+      if (decisions == null || !context.mounted) return false;
+      sourceDecisions = decisions;
+    }
+
+    if (!context.mounted) return false;
+    final proceed = keepExisting
+        ? await _confirmImportSummary(context, preview)
+        : await _confirmReplaceSummary(context, preview);
+    if (proceed != true || !context.mounted) return false;
+
+    bool? syncAfterRestore;
+    if (hasServer) {
+      if (!context.mounted) return false;
+      syncAfterRestore = await confirmSyncAfterRestore(context, syncOn: syncOn);
+      if (!context.mounted) return false;
+    }
+
+    final resultDescription = keepExisting
+        ? l10n.import_result_message(
+            preview.newSeriesCount,
+            preview.updatedSeriesCount,
+            preview.newChapterCount,
+          )
+        : l10n.replace_result_message(
+            preview.newSeriesCount + preview.updatedSeriesCount,
+          );
+
+    if (!context.mounted) return false;
+    showBusyDialog(context, l10n.restoring_backup);
+    try {
+      try {
+        safetyBackupPath = await createLibrarySafetyBackup();
+        await writeLastLibrarySnapshot(
+          LibrarySafetySnapshot(
+            backupPath: safetyBackupPath,
+            createdAt: DateTime.now().millisecondsSinceEpoch,
+            description: resultDescription,
+          ),
+        );
+      } catch (_) {
+        safetyBackupPath = null;
+      }
+
+      // false, not a bare return: performRestore reports whether anything was
+      // actually restored, so the first-run screen can tell a cancel from a
+      // completed restore. ref.watch is upstream's.
+      if (!context.mounted) return false;
+      await ref.watch(
+        doRestoreProvider(
+          path: path,
+          context: context,
+          merge: keepExisting,
+          categoryDecisions: categoryDecisions,
+          sourceDecisions: sourceDecisions,
+          syncAfterRestore: syncAfterRestore,
+        ).future,
+      );
+    } finally {
+      if (context.mounted) hideBusyDialog(context);
+    }
+    if (!context.mounted) return false;
+    ref.invalidate(lastLibrarySnapshotProvider);
+
+    _showImportResultToast(context, ref, resultDescription, safetyBackupPath);
+    return true;
+  } catch (e) {
+    botToast("Error restoring backup: $e");
+    if (safetyBackupPath != null && context.mounted) {
+      offerLibraryRollback(context, ref, safetyBackupPath);
+    }
+    return false;
+  }
+}
+
+/// Native mangayomi-format restore, with the same merge/replace choice and
+/// category/source conflict resolution the Mihon-family path already has -
+/// the dialogs below are shared with it, not duplicated.
+Future<void> _performMangayomiRestore(
+  BuildContext context,
+  WidgetRef ref,
+  String path,
+) async {
+  String? safetyBackupPath;
+  try {
+    final Map<String, dynamic> backup;
+    try {
+      backup = await decodeMangayomiBackup(path, context);
+    } catch (e) {
+      if (context.mounted) botToast("$e");
+      return;
+    }
     if (!context.mounted) return;
+    final l10n = context.l10n;
+    final preview = previewMangayomiBackup(backup);
+
     final keepExisting = await _chooseImportMode(context);
     if (keepExisting == null || !context.mounted) return;
 
@@ -111,6 +268,7 @@ Future<void> performRestore(BuildContext context, WidgetRef ref) async {
           merge: keepExisting,
           categoryDecisions: categoryDecisions,
           sourceDecisions: sourceDecisions,
+          decodedMangayomiBackup: backup,
         ).future,
       );
     } finally {

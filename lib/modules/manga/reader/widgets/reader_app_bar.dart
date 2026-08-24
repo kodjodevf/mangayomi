@@ -146,7 +146,12 @@ Map<String, dynamic>? buildWebViewData(Chapter chapter) {
   final manga = chapter.manga.value;
   if (manga == null) return null;
 
-  final source = getSource(manga.lang!, manga.source!, manga.sourceId);
+  final source = getSource(
+    manga.lang!,
+    manga.source!,
+    manga.sourceId,
+    installedOnly: true,
+  );
   if (source == null) return null;
 
   final url = "${source.baseUrl}${chapter.url!.getUrlWithoutDomain}";

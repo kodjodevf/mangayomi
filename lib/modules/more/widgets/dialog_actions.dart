@@ -46,6 +46,58 @@ List<Widget> dialogCancelOnlyAction(BuildContext dialogContext) {
   ];
 }
 
+/// Asked right before a restore that would push its data to a connected
+/// sync server — lets the user back out of overwriting good server data
+/// with a wrong backup, or re-enable sync if it was previously disabled.
+/// Not dismissible (no back button, no barrier tap); always resolves to
+/// true (sync/re-enable) or false (skip/keep disabled).
+Future<bool?> confirmSyncAfterRestore(
+  BuildContext context, {
+  required bool syncOn,
+}) {
+  final l10n = context.l10n;
+  return showDialog<bool>(
+    context: context,
+    barrierDismissible: false,
+    builder: (dialogContext) {
+      return PopScope(
+        canPop: false,
+        child: AlertDialog(
+          title: Text(
+            syncOn
+                ? l10n.restore_sync_question_title
+                : l10n.restore_sync_disabled_question_title,
+          ),
+          content: Text(
+            syncOn
+                ? l10n.restore_sync_question_message
+                : l10n.restore_sync_disabled_question_message,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: Text(
+                syncOn
+                    ? l10n.restore_sync_question_deny
+                    : l10n.restore_sync_question_keep_disabled,
+                style: const TextStyle(color: Colors.red),
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: Text(
+                syncOn
+                    ? l10n.restore_sync_question_confirm
+                    : l10n.restore_sync_question_reenable,
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
 void showBusyDialog(BuildContext context, String message) {
   showDialog(
     context: context,

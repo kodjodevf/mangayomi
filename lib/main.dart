@@ -28,6 +28,8 @@ import 'package:mangayomi/modules/more/data_and_storage/providers/storage_usage.
 import 'package:mangayomi/modules/more/settings/browse/providers/browse_state_provider.dart';
 import 'package:mangayomi/modules/more/settings/general/providers/general_state_provider.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/modules/onboarding/onboarding_screen.dart';
+import 'package:mangayomi/modules/onboarding/providers/onboarding_state_provider.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/router/router.dart';
 import 'package:mangayomi/modules/more/settings/appearance/providers/theme_mode_state_provider.dart';
@@ -37,6 +39,8 @@ import 'package:mangayomi/services/m_extension_server.dart';
 import 'package:mangayomi/services/download_manager/m_downloader.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
 import 'package:mangayomi/utils/discord_rpc.dart';
+import 'package:mangayomi/modules/more/about/widgets/crash_report_banner.dart';
+import 'package:mangayomi/services/crash_report.dart';
 import 'package:mangayomi/utils/log/logger.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/utils/url_protocol/api.dart';
@@ -78,6 +82,11 @@ void main(List<String> args) async {
           'FlutterError: ${details.exceptionAsString()}\n${details.stack}',
           logLevel: LogLevel.error,
         );
+        CrashReports.record(
+          source: 'FlutterError',
+          error: details.exceptionAsString(),
+          stack: details.stack,
+        );
       };
 
       // Async errors that escape the Flutter framework (PlatformDispatcher)
@@ -85,6 +94,11 @@ void main(List<String> args) async {
         AppLogger.log(
           'PlatformDispatcher error: $error\n$stack',
           logLevel: LogLevel.error,
+        );
+        CrashReports.record(
+          source: 'PlatformDispatcher',
+          error: error,
+          stack: stack,
         );
         return true; // handled — prevent app termination
       };
@@ -120,6 +134,12 @@ void main(List<String> args) async {
       // can start, browse and read online without it. The permission is still
       // requested lazily by `createDirectorySafely` / `initDB` the first time a
       // public path actually needs to be written (e.g. a download). See #740.
+      // Caught errors are kept for everyone, unlike the verbose log behind
+      // "Enable logs". Anything raised before this is held in memory and
+      // written out here.
+      unawaited(
+        storage.getDefaultDirectory().then(CrashReports.init).catchError((_) {}),
+      );
       Object? startupError;
       try {
         isar = await storage.initDB(null, inspector: kDebugMode);
@@ -138,6 +158,11 @@ void main(List<String> args) async {
       AppLogger.log(
         'runZonedGuarded error: $error\n$stack',
         logLevel: LogLevel.error,
+      );
+      CrashReports.record(
+        source: 'runZonedGuarded',
+        error: error,
+        stack: stack,
       );
     },
   );
@@ -179,6 +204,7 @@ class _StartupErrorApp extends StatelessWidget {
 
 Future<void> _postLaunchInit(StorageProvider storage) async {
   await AppLogger.init();
+  unawaited(maybeShowCrashBanner());
   unawaited(MDownloader.initializeIsolatePool(poolSize: 6));
   final hivePath = isApple ? "databases" : p.join("Mangayomi", "databases");
   await Hive.initFlutter(Platform.isAndroid ? "" : hivePath);
@@ -275,6 +301,26 @@ class _MyAppState extends ConsumerState<MyApp>
       supportedLocales: AppLocalizations.supportedLocales,
       builder: (context, child) {
         Widget content = child ?? const SizedBox.shrink();
+        // First launch of a fresh install: the app has no sources of its own,
+        // so say so before dropping the user into an empty Browse. Gating here
+        // rather than in the router keeps the TV shortcuts, the UI scale and
+        // the toast host below wrapping it exactly as they wrap everything else.
+        // Fading rather than swapping. The first run used to vanish in a
+        // single frame onto whatever the router had underneath it, which is
+        // also the frame the browse branch is still building in, so the end of
+        // the flow was the roughest part of it.
+        final onboarding = !ref.watch(onboardingCompletedStateProvider);
+        content = AnimatedSwitcher(
+          duration: const Duration(milliseconds: 380),
+          // The app fades up over most of the window while the first run
+          // holds, then leaves. Crossing them evenly showed both at half
+          // strength through the middle, which reads as a flicker.
+          switchInCurve: const Interval(0.35, 1, curve: Curves.easeOut),
+          switchOutCurve: const Interval(0, 0.5, curve: Curves.easeIn),
+          child: onboarding
+              ? const OnboardingScreen()
+              : KeyedSubtree(key: const ValueKey('app'), child: content),
+        );
         // On TV, a single-line text field consumes Up/Down for the text cursor,
         // trapping focus so the remote can't reach the surrounding buttons (a
         // dialog's Cancel/Add, etc.). Remap Up/Down to move focus app-wide: a
