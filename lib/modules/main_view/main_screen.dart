@@ -145,6 +145,26 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         _onSyncTimerTick,
       );
     }
+
+    // Pauses the auto-sync timer for the duration of a restore (and its
+    // post-restore upload), instead of just rescheduling it — a restore can
+    // outlast one sync interval, so a reschedule alone could still let the
+    // timer fire mid-restore. syncServerProvider.startSync also checks this
+    // guard directly, covering a manual sync trigger too.
+    ref.listenManual<bool>(restoreSyncGuardProvider, (_, restoring) {
+      if (restoring) {
+        _syncTimer?.cancel();
+        return;
+      }
+      // Re-read the live setting rather than the _autoSyncFrequency snapshot
+      // taken at init — a restore can turn sync off (frequency reset to 0),
+      // and that must take effect immediately, not just on next app launch.
+      final freq = ref.read(synchingProvider(syncId: 1)).autoSyncFrequency;
+      _syncTimer?.cancel();
+      if (freq != 0) {
+        _syncTimer = Timer.periodic(Duration(seconds: freq), _onSyncTimerTick);
+      }
+    });
   }
 
   void _initializeProviders() {

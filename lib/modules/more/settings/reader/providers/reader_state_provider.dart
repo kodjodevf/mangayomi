@@ -384,6 +384,26 @@ class NovelReaderLineHeightState extends _$NovelReaderLineHeightState {
 }
 
 @riverpod
+class NovelFontFamilyState extends _$NovelFontFamilyState {
+  @override
+  String? build() {
+    return isar.settings.getSync(227)!.novelFontFamily;
+  }
+
+  void set(String? value) {
+    final settings = isar.settings.getSync(227);
+    state = value;
+    isar.writeTxnSync(
+      () => isar.settings.putSync(
+        settings!
+          ..novelFontFamily = value
+          ..updatedAt = DateTime.now().millisecondsSinceEpoch,
+      ),
+    );
+  }
+}
+
+@riverpod
 class NovelShowScrollPercentageState extends _$NovelShowScrollPercentageState {
   @override
   bool build() {
