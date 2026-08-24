@@ -51,6 +51,7 @@ import 'package:mangayomi/services/torrent_server.dart';
 import 'package:mangayomi/utils/extensions/build_context_extensions.dart';
 import 'package:mangayomi/utils/language.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
+import 'package:mangayomi/utils/share.dart';
 import 'package:mangayomi/utils/system_ui.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit/generated/libmpv/bindings.dart' as generated;
@@ -2654,7 +2655,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                               if (context.mounted) {
                                 final box =
                                     context.findRenderObject() as RenderBox?;
-                                await SharePlus.instance.share(
+                                await shareOrCopy(
                                   ShareParams(
                                     files: [
                                       XFile.fromData(
@@ -2667,6 +2668,7 @@ mp.register_script_message('call_button_${button.id}_long', button${button.id}lo
                                         box!.localToGlobal(Offset.zero) &
                                         box.size,
                                   ),
+                                  fallbackName: name,
                                 );
                               }
                             },

@@ -1222,6 +1222,7 @@
     }
   },
   "beta": "Beta",
+  "share_unavailable_copied": "Sharing isn't available on this platform, so it was copied to the clipboard instead.",
   "onboarding_title": "Welcome to Mangayomi",
   "onboarding_libraries_body": "Pick what you read and watch. The ones you leave out stay out of the navigation bar, and you can change this later under Appearance.",
   "onboarding_nav_title": "Your libraries",

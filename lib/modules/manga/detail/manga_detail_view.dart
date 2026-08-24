@@ -52,6 +52,7 @@ import 'package:mangayomi/utils/global_style.dart';
 import 'package:mangayomi/utils/headers.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
 import 'package:mangayomi/utils/riverpod.dart';
+import 'package:mangayomi/utils/share.dart';
 import 'package:mangayomi/utils/utils.dart';
 import 'package:path/path.dart' as p;
 import 'package:photo_view/photo_view.dart';
@@ -151,7 +152,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
         final url =
             "${source.baseUrl}${widget.manga!.link!.getUrlWithoutDomain}";
         final box = context.findRenderObject() as RenderBox?;
-        SharePlus.instance.share(
+        shareOrCopy(
           ShareParams(
             text: url,
             sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size,
@@ -2234,7 +2235,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                       final bytes = await imageProvider
                                           .getBytes(context);
                                       if (bytes != null) {
-                                        await SharePlus.instance.share(
+                                        await shareOrCopy(
                                           ShareParams(
                                             files: [
                                               XFile.fromData(
@@ -2244,6 +2245,7 @@ class _MangaDetailViewState extends ConsumerState<MangaDetailView>
                                               ),
                                             ],
                                           ),
+                                          fallbackName: widget.manga!.name,
                                         );
                                       }
                                     },
