@@ -19,6 +19,7 @@ import 'package:mangayomi/modules/widgets/tv_pill.dart';
 import 'package:mangayomi/services/fetch_sources_list.dart';
 import 'package:mangayomi/utils/item_type_localization.dart';
 import 'package:mangayomi/utils/platform_utils.dart';
+import 'package:mangayomi/modules/browse/providers/browse_initial_tab_provider.dart';
 
 class BrowseScreen extends ConsumerStatefulWidget {
   const BrowseScreen({super.key});
@@ -73,15 +74,43 @@ class _BrowseScreenState extends ConsumerState<BrowseScreen>
     _tabBarController = TabController(
       length: _tabList.length,
       vsync: this,
-      // The shell disposes this screen on every tab switch, so without seeding
-      // it the section you left is forgotten the moment you swipe away.
-      initialIndex: rememberedSection(_sectionKey)
-          .clamp(0, _tabList.length - 1),
+      // A tab somebody asked for wins; otherwise the shell disposes this
+      // screen on every tab switch, so without seeding it the section you
+      // left is forgotten the moment you swipe away.
+      initialIndex: _takeRequestedTabIndex() ?? _rememberedTabIndex(),
     );
     _tabBarController.addListener(_onTabChanged);
   }
 
   static const _sectionKey = 'browse';
+
+  /// The index of the tab somebody asked us to open on, or null when nobody
+  /// asked and when the tab they asked for is not in this list.
+  ///
+  /// This answered zero for both of those before the screen remembered where
+  /// you left it. Now zero is a real answer meaning "the first tab", so the
+  /// two no-answer cases have to be distinguishable from it, or every return
+  /// to Browse lands on the first tab instead of the one you were on.
+  ///
+  /// The request is cleared after this frame rather than as it is read.
+  /// Riverpod counts initState as part of the build and throws on a write
+  /// there, which took the whole Browse screen down.
+  int? _takeRequestedTabIndex() {
+    final requested = ref.read(browseInitialTabProvider);
+    if (requested == null) return null;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) ref.read(browseInitialTabProvider.notifier).clear();
+    });
+    final index = _tabList.indexWhere(
+      (tab) => tab.kind == requested.kind && tab.type == requested.type,
+    );
+    return index < 0 ? null : index;
+  }
+
+  int _rememberedTabIndex() {
+    if (_tabList.isEmpty) return 0;
+    return rememberedSection(_sectionKey).clamp(0, _tabList.length - 1);
+  }
 
   void _onTabChanged() {
     rememberSection(_sectionKey, _tabBarController.index);

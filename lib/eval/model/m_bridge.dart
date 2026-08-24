@@ -673,6 +673,9 @@ void Function() botToast(
   bool onlyOne = true,
   bool? themeDark,
   bool showIcon = true,
+  int maxLines = 6,
+  VoidCallback? onDetails,
+  String? detailsLabel,
 }) {
   final context = navigatorKey.currentState?.context;
   final assets = [
@@ -694,7 +697,14 @@ void Function() botToast(
             height: 25,
           )
         : null,
-    title: (_) => Text(title, style: TextStyle(fontSize: fontSize)),
+    // Capped, because some callers pass an exception and a caller that passes
+    // a stack trace would otherwise paint one over the whole screen.
+    title: (_) => Text(
+      title,
+      style: TextStyle(fontSize: fontSize),
+      maxLines: maxLines,
+      overflow: TextOverflow.ellipsis,
+    ),
     trailing: hasCloudFlare
         ? (_) => OutlinedButton.icon(
             style: OutlinedButton.styleFrom(elevation: 10),
@@ -707,7 +717,15 @@ void Function() botToast(
             ),
             icon: const Icon(Icons.public),
           )
-        : null,
+        : onDetails == null
+        ? null
+        : (cancel) => TextButton(
+            onPressed: () {
+              cancel();
+              onDetails();
+            },
+            child: Text(detailsLabel ?? 'Details'),
+          ),
   );
 }
 

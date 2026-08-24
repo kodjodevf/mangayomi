@@ -214,3 +214,19 @@ class Synching extends _$Synching {
     }
   }
 }
+
+/// True while a restore (and its post-restore upload) is in progress.
+/// main_screen.dart pauses the auto-sync timer while this is true, and
+/// syncServerProvider itself checks it too, so a manual sync trigger or an
+/// already-running periodic timer can't race with an in-progress restore.
+@riverpod
+class RestoreSyncGuard extends _$RestoreSyncGuard {
+  @override
+  bool build() {
+    ref.keepAlive();
+    return false;
+  }
+
+  void start() => state = true;
+  void finish() => state = false;
+}

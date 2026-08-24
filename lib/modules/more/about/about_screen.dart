@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mangayomi/eval/model/m_bridge.dart';
@@ -11,9 +10,12 @@ import 'package:mangayomi/modules/more/about/providers/download_file_screen.dart
 import 'package:mangayomi/modules/more/about/providers/get_package_info.dart';
 import 'package:mangayomi/modules/more/about/providers/logs_state.dart';
 import 'package:mangayomi/modules/widgets/progress_center.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
+import 'package:mangayomi/services/crash_report.dart';
 import 'package:mangayomi/providers/storage_provider.dart';
 import 'package:mangayomi/utils/log/logger.dart';
+import 'package:mangayomi/utils/share.dart';
 import 'package:path/path.dart' as path;
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -96,6 +98,14 @@ class AboutScreen extends ConsumerWidget {
                         },
                         title: Text(l10n.check_for_update),
                       ),
+                      ListTile(
+                        onTap: () => context.push('/errorReports'),
+                        title: Text(l10n.error_reports),
+                        subtitle: Text(l10n.error_reports_subtitle),
+                        trailing: CrashReports.reports.isEmpty
+                            ? null
+                            : Text('${CrashReports.reports.length}'),
+                      ),
                       SwitchListTile(
                         title: Text(l10n.logs_on),
                         value: enableLogs,
@@ -118,15 +128,10 @@ class AboutScreen extends ConsumerWidget {
                               path.join(directory!.path, 'logs.txt'),
                             );
                             if (await file.exists()) {
-                              if (Platform.isLinux) {
-                                await Clipboard.setData(
-                                  ClipboardData(text: file.path),
-                                );
-                              }
                               if (context.mounted) {
                                 final box =
                                     context.findRenderObject() as RenderBox?;
-                                SharePlus.instance.share(
+                                await shareOrCopy(
                                   ShareParams(
                                     files: [XFile(file.path)],
                                     text: "log.txt",

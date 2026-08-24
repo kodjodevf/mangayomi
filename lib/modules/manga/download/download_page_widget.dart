@@ -13,6 +13,7 @@ import 'package:mangayomi/modules/manga/download/providers/download_provider.dar
 import 'package:mangayomi/utils/extensions/chapter_extensions.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:mangayomi/utils/global_style.dart';
+import 'package:mangayomi/utils/share.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:path/path.dart' as p;
 
@@ -39,7 +40,7 @@ class ChapterPageDownload extends ConsumerWidget {
     final files = (await _downloadedFiles()).map((e) => XFile(e.path)).toList();
     if (files.isNotEmpty && context.mounted) {
       final box = context.findRenderObject() as RenderBox?;
-      SharePlus.instance.share(
+      shareOrCopy(
         ShareParams(
           files: files,
           text: chapter.name,

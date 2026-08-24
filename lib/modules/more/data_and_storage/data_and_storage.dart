@@ -193,6 +193,7 @@ class DataAndStorage extends ConsumerWidget {
               ),
             ),
             const RollbackLastChangeTile(),
+            const MissingSourceCheckTile(),
             const DeleteSourceTile(),
             const MergeDuplicateMangaTile(),
             ListTile(
