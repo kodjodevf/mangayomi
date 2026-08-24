@@ -23,6 +23,7 @@ final class DoRestoreProvider
       bool merge,
       Map<String, bool> categoryDecisions,
       Map<String, int> sourceDecisions,
+      bool? syncAfterRestore,
     })
     super.argument,
   }) : super(
@@ -58,6 +59,7 @@ final class DoRestoreProvider
               bool merge,
               Map<String, bool> categoryDecisions,
               Map<String, int> sourceDecisions,
+              bool? syncAfterRestore,
             });
     return doRestore(
       ref,
@@ -66,6 +68,7 @@ final class DoRestoreProvider
       merge: argument.merge,
       categoryDecisions: argument.categoryDecisions,
       sourceDecisions: argument.sourceDecisions,
+      syncAfterRestore: argument.syncAfterRestore,
     );
   }
 
@@ -80,7 +83,7 @@ final class DoRestoreProvider
   }
 }
 
-String _$doRestoreHash() => r'44cee71b4ad28492800f34f72a9c8b385d8b6ca3';
+String _$doRestoreHash() => r'21371f2df249a161fccaa258cf49f95dbc6b74ff';
 
 final class DoRestoreFamily extends $Family
     with
@@ -92,6 +95,7 @@ final class DoRestoreFamily extends $Family
             bool merge,
             Map<String, bool> categoryDecisions,
             Map<String, int> sourceDecisions,
+            bool? syncAfterRestore,
           })
         > {
   DoRestoreFamily._()
@@ -109,6 +113,7 @@ final class DoRestoreFamily extends $Family
     bool merge = false,
     Map<String, bool> categoryDecisions = const {},
     Map<String, int> sourceDecisions = const {},
+    bool? syncAfterRestore,
   }) => DoRestoreProvider._(
     argument: (
       path: path,
@@ -116,6 +121,7 @@ final class DoRestoreFamily extends $Family
       merge: merge,
       categoryDecisions: categoryDecisions,
       sourceDecisions: sourceDecisions,
+      syncAfterRestore: syncAfterRestore,
     ),
     from: this,
   );
@@ -173,7 +179,7 @@ final class RestoreBackupProvider
   }
 }
 
-String _$restoreBackupHash() => r'02e1e607cf60fc3e0784deef5bdc27debe8d847e';
+String _$restoreBackupHash() => r'e2091b4ae0a868f6f13697663be45affe2c58a71';
 
 final class RestoreBackupFamily extends $Family
     with
@@ -247,7 +253,7 @@ final class RestoreKotatsuBackupProvider
 }
 
 String _$restoreKotatsuBackupHash() =>
-    r'e63edd7e3260920b9ced279927cae3902701f8a3';
+    r'5c3ac81350d5a6ca4c4f72e4f15928e9817beeb9';
 
 final class RestoreKotatsuBackupFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<void>, Archive> {
@@ -339,7 +345,7 @@ final class RestoreTachiBkBackupProvider
 }
 
 String _$restoreTachiBkBackupHash() =>
-    r'20c74e7c12682bd61d4df5ab0ae6ac79cbac0e8b';
+    r'aa5e671fb4c3c4f8d09c6b6fc464f96aa1b67d2b';
 
 final class RestoreTachiBkBackupFamily extends $Family
     with
