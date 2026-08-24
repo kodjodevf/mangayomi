@@ -292,6 +292,8 @@ class Settings {
 
   double? novelReaderLineHeight;
 
+  String? novelFontFamily;
+
   bool? novelShowScrollPercentage;
 
   bool? novelRemoveExtraParagraphSpacing;
@@ -551,6 +553,7 @@ class Settings {
     this.novelReaderTextColor = '#CCCCCC',
     this.novelReaderPadding = 16,
     this.novelReaderLineHeight = 1.5,
+    this.novelFontFamily,
     this.novelShowScrollPercentage = true,
     this.novelRemoveExtraParagraphSpacing = false,
     this.novelTapToScroll = false,
@@ -857,6 +860,9 @@ class Settings {
     if (json['novelReaderLineHeight'] != null) {
       novelReaderLineHeight = json['novelReaderLineHeight'];
     }
+    if (json['novelFontFamily'] != null) {
+      novelFontFamily = json['novelFontFamily'];
+    }
     novelShowScrollPercentage = json['novelShowScrollPercentage'];
     novelRemoveExtraParagraphSpacing = json['novelRemoveExtraParagraphSpacing'];
     novelTapToScroll = json['novelTapToScroll'];
@@ -1119,6 +1125,7 @@ class Settings {
     'novelReaderTextColor': novelReaderTextColor,
     'novelReaderPadding': novelReaderPadding,
     'novelReaderLineHeight': novelReaderLineHeight,
+    'novelFontFamily': novelFontFamily,
     'novelShowScrollPercentage': novelShowScrollPercentage,
     'novelRemoveExtraParagraphSpacing': novelRemoveExtraParagraphSpacing,
     'novelTapToScroll': novelTapToScroll,

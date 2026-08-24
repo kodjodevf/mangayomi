@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mangayomi/models/settings.dart';
 import 'package:mangayomi/modules/more/settings/reader/providers/reader_state_provider.dart';
 import 'package:mangayomi/modules/novel/novel_reader_controller_provider.dart';
+import 'package:mangayomi/modules/novel/utils/novel_reader_fonts.dart';
 import 'package:mangayomi/providers/l10n_providers.dart';
 
 class ReaderSettingsTab extends ConsumerWidget {
@@ -17,6 +18,7 @@ class ReaderSettingsTab extends ConsumerWidget {
     final textAlign = ref.watch(novelTextAlignStateProvider);
     final backgroundColor = ref.watch(novelReaderThemeStateProvider);
     final textColor = ref.watch(novelReaderTextColorStateProvider);
+    final fontFamilyKey = ref.watch(novelFontFamilyStateProvider);
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -319,6 +321,28 @@ class ReaderSettingsTab extends ConsumerWidget {
                     ),
                   ],
                 ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          _SettingSection(
+            title: 'Font',
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final option in novelReaderFontOptions)
+                  ChoiceChip(
+                    label: Text(option.label),
+                    selected: fontFamilyKey == option.key,
+                    onSelected: (_) {
+                      ref
+                          .read(novelFontFamilyStateProvider.notifier)
+                          .set(option.key);
+                    },
+                  ),
               ],
             ),
           ),
