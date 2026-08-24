@@ -12,6 +12,7 @@ import 'package:mangayomi/services/http/rhttp/src/model/settings.dart';
 import 'package:mangayomi/services/download_manager/m3u8/models/download.dart';
 import 'package:mangayomi/services/download_manager/m3u8/models/ts_info.dart';
 import 'package:mangayomi/src/rust/frb_generated.dart';
+import 'package:mangayomi/utils/downloaded_page_file.dart';
 import 'package:mangayomi/utils/extensions/string_extensions.dart';
 import 'package:path/path.dart' as path;
 import 'package:encrypt/encrypt.dart' as encrypt;
@@ -493,8 +494,12 @@ Future<void> _downloadFile(
         );
       }
 
-      final file = File(pageUrl.fileName!);
-      await file.writeAsBytes(response.bodyBytes);
+      final bytes = response.bodyBytes;
+      final realExt = detectImageExtension(bytes);
+      // fileName has no extension at this point (see download_provider.dart)
+      // - the real one is only knowable now that the bytes are in hand.
+      final targetFile = File(path.setExtension(pageUrl.fileName!, realExt));
+      await targetFile.writeAsBytes(bytes);
     } else {
       // Streaming for videos (saves RAM)
       await _withRetry(() async {
