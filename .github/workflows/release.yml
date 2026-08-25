@@ -74,12 +74,6 @@ jobs:
           name: Mangayomi-${{ github.ref_name }}-android
           path: "build/app/outputs/flutter-apk/Mangayomi-*.apk"
 
-      - name: release packages android apks
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: "build/app/outputs/flutter-apk/Mangayomi-*.apk"
-          allowUpdates: true
-
   # Dedicated Android TV build: same app, but with TV branding swapped in (a
   # TV launcher icon + banner). Fire TV shows the square launcher icon for
   # sideloaded apps and doesn't reliably honour the `-television` resource
@@ -161,12 +155,6 @@ jobs:
           name: Mangayomi-${{ github.ref_name }}-android-tv
           path: "build/app/outputs/flutter-apk/Mangayomi-*android-tv*.apk"
 
-      - name: release packages android tv apks
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: "build/app/outputs/flutter-apk/Mangayomi-*android-tv*.apk"
-          allowUpdates: true
-
   build-and-release-ios-ipa:
     permissions:
       contents: write
@@ -226,12 +214,6 @@ jobs:
           name: Mangayomi-${{ github.ref_name }}-ios
           path: "build/ios/iphoneos/Mangayomi-*.ipa"
 
-      - name: Release package iOS IPA
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: "build/ios/iphoneos/Mangayomi-*.ipa"
-          allowUpdates: true
-
   build-and-release-macos-dmg:
     permissions:
       contents: write
@@ -265,12 +247,6 @@ jobs:
         with:
           name: Mangayomi-${{ github.ref_name }}-macos
           path: "/Users/runner/work/mangayomi/mangayomi/*.dmg"
-
-      - name: release package macos dmg
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: "/Users/runner/work/mangayomi/mangayomi/*.dmg"
-          allowUpdates: true
 
   build-and-release-windows-exe_zip:
     permissions:
@@ -320,14 +296,6 @@ jobs:
           path: |
             build/windows/x64/installer/Release/Mangayomi-*.exe
             build/windows/x64/runner/Release/Mangayomi-*.zip
-
-      - name: release package windows exe_zip
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: |
-            build/windows/x64/installer/Release/Mangayomi-*.exe
-            build/windows/x64/runner/Release/Mangayomi-*.zip
-          allowUpdates: true
 
   build-and-release-linux-zip_AppImage_RPM:
     permissions:
@@ -465,14 +433,6 @@ jobs:
             build/linux/x64/release/Mangayomi-*.zip
             build/linux/x64/release/Mangayomi-*.AppImage
             build/linux/x64/release/Mangayomi-*.rpm
-      - name: release packages linux zip
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: |
-            build/linux/x64/release/Mangayomi-*.zip
-            build/linux/x64/release/Mangayomi-*.AppImage
-            build/linux/x64/release/Mangayomi-*.rpm
-          allowUpdates: true
 
   build-and-release-linux-deb:
     permissions:
@@ -526,12 +486,33 @@ jobs:
           name: Mangayomi-${{ github.ref_name }}-linux-deb
           path: dist/Mangayomi-*.deb
 
-      - name: Release package deb
+  publish-release:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    needs:
+      - build-and-release-android-apks
+      - build-and-release-android-tv
+      - build-and-release-ios-ipa
+      - build-and-release-macos-dmg
+      - build-and-release-windows-exe_zip
+      - build-and-release-linux-zip_AppImage_RPM
+      - build-and-release-linux-deb
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: Mangayomi-*
+          merge-multiple: true
+          path: release-assets
+
+      - name: Publish GitHub Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: dist/Mangayomi-*.deb
+          artifacts: "release-assets/*"
+          generateReleaseNotes: true
           allowUpdates: true
 
   ios-source-build:
-    needs: build-and-release-ios-ipa
+    needs: publish-release
     uses: ./.github/workflows/update_sideloading_source.yml
