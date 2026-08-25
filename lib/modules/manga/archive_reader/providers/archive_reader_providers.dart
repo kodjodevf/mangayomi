@@ -3,18 +3,12 @@ import 'dart:io';
 import 'package:archive/archive_io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mangayomi/modules/manga/archive_reader/models/models.dart';
+import 'package:mangayomi/utils/downloaded_page_file.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:path/path.dart' as p;
 part 'archive_reader_providers.g.dart';
 
 // Constants for supported file types
-const List<String> _kImageExtensions = [
-  '.png',
-  '.jpg',
-  '.jpeg',
-  '.gif',
-  '.webp',
-];
 const List<String> _kArchiveExtensions = ['.cbz', '.zip', '.cbt', '.tar'];
 
 @riverpod
@@ -139,8 +133,7 @@ Future<void> _scanDirectoryRecursive(
 /// Check if a file is an image based on extension
 bool _isImageFile(String path) {
   if (_isHiddenSystemFile(path)) return false;
-  final extension = p.extension(path).toLowerCase();
-  return _kImageExtensions.contains(extension);
+  return isRecognizedImageFile(path);
 }
 
 /// Check if a file is a supported archive based on extension
