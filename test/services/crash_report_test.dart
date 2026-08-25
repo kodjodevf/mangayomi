@@ -154,6 +154,74 @@ void main() {
     });
   });
 
+  group('an expected failure', () {
+    setUp(CrashReports.resetForTest);
+    tearDown(CrashReports.resetForTest);
+
+    test('is recognised from what the app actually reports', () {
+      // Captured from #915 and #916, both filed as bugs through the reporter.
+      expect(
+        isExpectedFailure('Bad state: Failed to load https://manhwaz.com/...'),
+        true,
+      );
+      expect(
+        isExpectedFailure(
+          'Bad state: Failed to load https://cdn.jsdelivr.net/...',
+        ),
+        true,
+      );
+      expect(
+        isExpectedFailure("SocketException: Failed host lookup: 'x.test'"),
+        true,
+      );
+    });
+
+    test('an app bug is not one of them', () {
+      expect(
+        isExpectedFailure(
+          "Runtime Error: Undefined property or method 'toList'",
+        ),
+        false,
+      );
+      expect(
+        isExpectedFailure('Null check operator used on a null value'),
+        false,
+      );
+      expect(
+        isExpectedFailure('PanicException(Expect rustls-platform-verifier)'),
+        false,
+      );
+    });
+
+    test('is kept, but does not interrupt the reader', () async {
+      final directory = Directory.systemTemp.createTempSync('expected');
+      addTearDown(() => directory.deleteSync(recursive: true));
+      await CrashReports.init(directory);
+
+      CrashReports.record(
+        source: 'FlutterError',
+        error: 'Bad state: Failed to load https://example.test/...',
+      );
+
+      expect(CrashReports.reports, hasLength(1), reason: 'still recorded');
+      expect(CrashReports.hasUnseen, false, reason: 'but no banner');
+    });
+
+    test('a real bug alongside one still interrupts', () async {
+      final directory = Directory.systemTemp.createTempSync('mixed');
+      addTearDown(() => directory.deleteSync(recursive: true));
+      await CrashReports.init(directory);
+
+      CrashReports.record(
+        source: 'FlutterError',
+        error: 'Bad state: Failed to load https://example.test/...',
+      );
+      CrashReports.record(source: 'FlutterError', error: 'Null check operator');
+
+      expect(CrashReports.hasUnseen, true);
+    });
+  });
+
   group('the issue link', () {
     final report = CrashReport(
       time: DateTime.utc(2026, 8, 22, 21, 35),

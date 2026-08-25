@@ -85,6 +85,21 @@ class _ReportTile extends StatelessWidget {
       childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       expandedCrossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        if (isExpectedFailure(report.error)) ...[
+          // #915 and #916 were both filed through this screen for images that
+          // failed to load. The likely-cause line was not enough on its own,
+          // so say plainly that this one is probably not the app's fault.
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: context.secondaryColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(l10n.error_reports_expected_failure),
+          ),
+          const SizedBox(height: 12),
+        ],
         if (cause != null) ...[
           Text(
             l10n.error_reports_likely_cause,

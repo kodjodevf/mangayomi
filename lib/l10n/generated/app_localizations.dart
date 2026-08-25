@@ -5585,6 +5585,12 @@ abstract class AppLocalizations {
   /// **'Clear'**
   String get error_reports_clear;
 
+  /// No description provided for @error_reports_expected_failure.
+  ///
+  /// In en, this message translates to:
+  /// **'This one is usually the source or the network rather than the app: a link that expired, a server that was down, or a connection that dropped. Worth reporting only if it keeps happening on a source that works elsewhere.'**
+  String get error_reports_expected_failure;
+
   /// No description provided for @share_unavailable_copied.
   ///
   /// In en, this message translates to:

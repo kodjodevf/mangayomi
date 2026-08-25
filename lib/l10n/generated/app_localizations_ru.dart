@@ -3136,6 +3136,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get error_reports_clear => 'Очистить';
 
   @override
+  String get error_reports_expected_failure =>
+      'This one is usually the source or the network rather than the app: a link that expired, a server that was down, or a connection that dropped. Worth reporting only if it keeps happening on a source that works elsewhere.';
+
+  @override
   String get share_unavailable_copied =>
       'Отправка недоступна, скопировано в буфер обмена.';
 

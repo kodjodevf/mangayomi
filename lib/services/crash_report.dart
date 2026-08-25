@@ -114,6 +114,34 @@ String? describeLikelyCause(String error) {
   return null;
 }
 
+/// Whether [error] is a thing that goes wrong rather than a thing that is
+/// broken.
+///
+/// A cover that 404s, a CDN that times out, a source that is down: these are
+/// expected on a network, they already show as a broken image in the UI, and
+/// nothing in the app needs changing when one happens. They still reach
+/// FlutterError.onError, though, because an ImageProvider reports a failed
+/// load whether or not the widget drew a placeholder for it.
+///
+/// Left unfiltered they raise the "something went wrong" banner and get filed
+/// as bugs. Issues #915 and #916 are exactly that: two reports about images
+/// not loading from a CDN, sent through the reporter as if the app had
+/// crashed.
+///
+/// These are still recorded, because "images stopped loading" is worth being
+/// able to look up. They just do not interrupt anybody.
+bool isExpectedFailure(Object error) {
+  final text = error.toString().toLowerCase();
+  return text.contains('failed to load http') ||
+      text.contains('socketexception') ||
+      text.contains('failed host lookup') ||
+      text.contains('connection closed') ||
+      text.contains('connection reset') ||
+      text.contains('connection refused') ||
+      text.contains('timeoutexception') ||
+      text.contains('handshakeexception');
+}
+
 /// Strips anything from [text] that identifies the reader or what they were
 /// reading, so a report can be sent without sending their library with it.
 ///
@@ -242,7 +270,9 @@ class CrashReports {
       );
       _reports.add(report);
       if (!_loaded) _pending.add(report);
-      _seen = false;
+      // Kept, but it does not raise the banner: nothing here needs the
+      // reader's attention or a bug report.
+      if (!isExpectedFailure(error)) _seen = false;
       _trim();
       _flush();
     } catch (_) {}
