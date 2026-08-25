@@ -5585,6 +5585,18 @@ abstract class AppLocalizations {
   /// **'Clear'**
   String get error_reports_clear;
 
+  /// No description provided for @error_reports_extension_failure.
+  ///
+  /// In en, this message translates to:
+  /// **'This came from an extension, not from Mangayomi. Extensions are written and maintained by whoever runs the repository you installed this source from, so a fix has to go there. The source name and what you were opening are the useful details to give them.'**
+  String get error_reports_extension_failure;
+
+  /// No description provided for @error_reports_already_reported.
+  ///
+  /// In en, this message translates to:
+  /// **'Already reported'**
+  String get error_reports_already_reported;
+
   /// No description provided for @error_reports_expected_failure.
   ///
   /// In en, this message translates to:

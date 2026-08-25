@@ -113,7 +113,8 @@ void main() {
 
         expect(CrashReports.reports, hasLength(10));
         expect(CrashReports.reports.first.error, 'error 20');
-        expect(jsonDecode(file().readAsStringSync()), hasLength(10));
+        final stored = jsonDecode(file().readAsStringSync()) as Map;
+      expect(stored['reports'], hasLength(10));
       },
     );
 
@@ -219,6 +220,100 @@ void main() {
       CrashReports.record(source: 'FlutterError', error: 'Null check operator');
 
       expect(CrashReports.hasUnseen, true);
+    });
+  });
+
+  group('an extension failure', () {
+    test('is told apart from an app bug', () {
+      // #914, filed here because the screen offered a button pointing at this
+      // repository.
+      expect(
+        isExtensionFailure(
+          "Runtime Error: Undefined property or method 'toList' on bi<qOb, dynamic>.",
+        ),
+        true,
+      );
+      expect(
+        isExtensionFailure(
+          "Native error during bridged method call 'forEach' on List",
+        ),
+        true,
+      );
+    });
+
+    test('an app bug is not one', () {
+      expect(
+        isExtensionFailure('Null check operator used on a null value'),
+        false,
+      );
+      expect(
+        isExtensionFailure('PanicException(Expect rustls-platform-verifier)'),
+        false,
+      );
+      expect(
+        isExtensionFailure('Bad state: Failed to load https://a.test/...'),
+        false,
+      );
+    });
+  });
+
+  group('reporting the same fault twice', () {
+    late Directory directory;
+
+    setUp(() async {
+      CrashReports.resetForTest();
+      directory = Directory.systemTemp.createTempSync('reported');
+      await CrashReports.init(directory);
+    });
+
+    tearDown(() {
+      CrashReports.resetForTest();
+      if (directory.existsSync()) directory.deleteSync(recursive: true);
+    });
+
+    test('is refused once it has been sent', () {
+      CrashReports.record(source: 'test', error: 'PanicException(boom)');
+      final report = CrashReports.latest!;
+
+      expect(CrashReports.wasReported(report), false);
+      CrashReports.markReported(report);
+      expect(CrashReports.wasReported(report), true);
+    });
+
+    test('matches the same fault across runs, ids and all', () {
+      // #917 and #918 are one crash filed twice. The numbers in a message
+      // change between runs; the fault does not.
+      expect(
+        fingerprintOf('Failed at offset 4821 in isolate 3'),
+        fingerprintOf('Failed at offset 9902 in isolate 7'),
+      );
+      expect(
+        fingerprintOf('Null check operator used on a null value'),
+        isNot(fingerprintOf('Bad state: no element')),
+      );
+    });
+
+    test('survives a restart, or the reader is asked again', () async {
+      CrashReports.record(source: 'test', error: 'PanicException(boom)');
+      CrashReports.markReported(CrashReports.latest!);
+
+      CrashReports.resetForTest();
+      await CrashReports.init(directory);
+
+      expect(CrashReports.wasReported(CrashReports.latest!), true);
+    });
+
+    test('a file written by an older build is still read', () async {
+      // That build stored a bare list rather than an object.
+      File(p.join(directory.path, 'crash_reports.json')).writeAsStringSync(
+        '[{"time":"2026-08-25T10:00:00.000","source":"test","error":"old"}]',
+      );
+      CrashReports.resetForTest();
+
+      await CrashReports.init(directory);
+
+      expect(CrashReports.reports, hasLength(1));
+      expect(CrashReports.latest!.error, 'old');
     });
   });
 

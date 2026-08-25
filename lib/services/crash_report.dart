@@ -142,6 +142,34 @@ bool isExpectedFailure(Object error) {
       text.contains('handshakeexception');
 }
 
+/// Whether [error] came from an extension rather than from the app.
+///
+/// Extensions are third-party code the app runs in an interpreter, and when
+/// one is wrong the fix belongs in the repository it came from. #914 is an
+/// extension calling `.toList()` on a Map, filed here because the reporter had
+/// no way to tell the difference and the app offered them a button.
+///
+/// d4rt prefixes everything it raises with "Runtime Error:", and wraps
+/// failures inside bridged calls with a recognisable phrase, so this can be
+/// told apart from an app bug with reasonable confidence.
+bool isExtensionFailure(Object error) {
+  final text = error.toString();
+  return text.startsWith('Runtime Error:') ||
+      text.startsWith('SourceCodeException:') ||
+      text.contains('Native error during bridged method call') ||
+      text.contains('Undefined property or method');
+}
+
+/// A stable key for "this same thing went wrong again".
+///
+/// The first line only, with digits flattened, so two runs of the same fault
+/// match even though their addresses, ids and timestamps differ. #917 and #918
+/// are one crash reported twice by one person, which is what this is for.
+String fingerprintOf(Object error) {
+  final first = error.toString().split('\n').first.trim();
+  return first.replaceAll(RegExp(r'\d+'), '#').toLowerCase();
+}
+
 /// Strips anything from [text] that identifies the reader or what they were
 /// reading, so a report can be sent without sending their library with it.
 ///
@@ -183,6 +211,10 @@ class CrashReports {
   static const _fileName = 'crash_reports.json';
 
   static final List<CrashReport> _reports = [];
+
+  /// Fingerprints the reader has already opened a report for. Kept so the
+  /// same fault is not filed twice, which is what #917 and #918 are.
+  static final Set<String> _reported = {};
 
   /// Recorded before [init] found somewhere to put them. The handlers are
   /// installed before storage is resolved, so a startup error arrives with
@@ -227,13 +259,19 @@ class CrashReports {
     try {
       if (await _file!.exists()) {
         final decoded = jsonDecode(await _file!.readAsString());
-        if (decoded is List) {
-          for (final entry in decoded) {
-            if (entry is! Map) continue;
-            final report = CrashReport.fromJson(
-              Map<String, dynamic>.from(entry),
-            );
-            if (report != null) _reports.add(report);
+        // Earlier builds wrote a bare list. Read it rather than throwing the
+        // reader's history away on upgrade.
+        final entries = decoded is List
+            ? decoded
+            : (decoded is Map ? decoded['reports'] as List? : null) ?? const [];
+        for (final entry in entries) {
+          if (entry is! Map) continue;
+          final report = CrashReport.fromJson(Map<String, dynamic>.from(entry));
+          if (report != null) _reports.add(report);
+        }
+        if (decoded is Map) {
+          for (final f in (decoded['reported'] as List?) ?? const []) {
+            if (f is String) _reported.add(f);
           }
         }
       }
@@ -278,6 +316,16 @@ class CrashReports {
     } catch (_) {}
   }
 
+  /// Whether this fault has already been sent somewhere.
+  static bool wasReported(CrashReport report) =>
+      _reported.contains(fingerprintOf(report.error));
+
+  /// Records that the reader opened a report for this fault.
+  static void markReported(CrashReport report) {
+    _reported.add(fingerprintOf(report.error));
+    _flush();
+  }
+
   /// Marks what is kept as shown, so the banner stops offering it.
   static void markSeen() {
     _seen = true;
@@ -297,6 +345,7 @@ class CrashReports {
   static void resetForTest() {
     _reports.clear();
     _pending.clear();
+    _reported.clear();
     _file = null;
     _screen = null;
     _seen = false;
@@ -315,7 +364,10 @@ class CrashReports {
     if (file == null) return;
     try {
       file.writeAsStringSync(
-        jsonEncode(_reports.map((e) => e.toJson()).toList()),
+        jsonEncode({
+          'reports': _reports.map((e) => e.toJson()).toList(),
+          'reported': _reported.toList(),
+        }),
         flush: true,
       );
     } catch (_) {}
